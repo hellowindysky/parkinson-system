@@ -4,6 +4,9 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 
+// 加入我们的自定义图标字体
+import 'styles/iconfont.css'
+
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */

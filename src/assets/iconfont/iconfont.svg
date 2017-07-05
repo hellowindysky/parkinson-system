@@ -1,0 +1,51 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<svg xmlns="http://www.w3.org/2000/svg">
+<metadata>
+Created by FontForge 20120731 at Tue Jul  4 16:42:21 2017
+ By admin
+</metadata>
+<defs>
+<font id="iconfont" horiz-adv-x="1024" >
+  <font-face 
+    font-family="iconfont"
+    font-weight="500"
+    font-stretch="normal"
+    units-per-em="1024"
+    panose-1="2 0 6 3 0 0 0 0 0 0"
+    ascent="896"
+    descent="-128"
+    x-height="792"
+    bbox="44 -62.0909 957 833"
+    underline-thickness="0"
+    underline-position="0"
+    unicode-range="U+0078-E6DB"
+  />
+<missing-glyph 
+ />
+    <glyph glyph-name=".notdef" 
+ />
+    <glyph glyph-name=".notdef" 
+ />
+    <glyph glyph-name=".null" horiz-adv-x="0" 
+ />
+    <glyph glyph-name="nonmarkingreturn" horiz-adv-x="341" 
+ />
+    <glyph glyph-name="x" unicode="x" horiz-adv-x="1001" 
+d="M281 543q-27 -1 -53 -1h-83q-18 0 -36.5 -6t-32.5 -18.5t-23 -32t-9 -45.5v-76h912v41q0 16 -0.5 30t-0.5 18q0 13 -5 29t-17 29.5t-31.5 22.5t-49.5 9h-133v-97h-438v97zM955 310v-52q0 -23 0.5 -52t0.5 -58t-10.5 -47.5t-26 -30t-33 -16t-31.5 -4.5q-14 -1 -29.5 -0.5
+t-29.5 0.5h-32l-45 128h-439l-44 -128h-29h-34q-20 0 -45 1q-25 0 -41 9.5t-25.5 23t-13.5 29.5t-4 30v167h911zM163 247q-12 0 -21 -8.5t-9 -21.5t9 -21.5t21 -8.5q13 0 22 8.5t9 21.5t-9 21.5t-22 8.5zM316 123q-8 -26 -14 -48q-5 -19 -10.5 -37t-7.5 -25t-3 -15t1 -14.5
+t9.5 -10.5t21.5 -4h37h67h81h80h64h36q23 0 34 12t2 38q-5 13 -9.5 30.5t-9.5 34.5q-5 19 -11 39h-368zM336 498v228q0 11 2.5 23t10 21.5t20.5 15.5t34 6h188q31 0 51.5 -14.5t20.5 -52.5v-227h-327z" />
+    <glyph glyph-name="medicine" unicode="&#xe6da;" 
+d="M957 526h-306v306h-281v-306h-306v-281h306v-306h281v306h306v281z" />
+    <glyph glyph-name="medicine1" unicode="&#xe6db;" 
+d="M910 568q-2 49 -45 73l-306 178l-5 3q-42 22 -84 0l-7 -4l-304 -175l-3 -1q-20 -12 -32 -33q-11 -19 -12 -42v-5v-346q-1 -8 0 -16q4 -47 45 -70l309 -179q40 -24 83 -4q7 3 14 8l297 171q5 2 10 5q17 12 27.5 30.5t12.5 39.5v11v346v10zM729 318h-149v-149h-138v149
+h-149v137h149v150h138v-150h149v-137z" />
+    <glyph glyph-name="medicine2" unicode="&#xe61a;" 
+d="M751 503q0 4 -2 6q0 1 -1 1q0 2 -2 2l-96 137l-5 5q0 1 1 4.5t1 5.5v55q1 16 -11 28t-28 12h-243q-16 0 -28.5 -12t-12.5 -28v-55q0 -7 2 -10l-5 -5l-96 -137q0 -2 -1 -2q0 -1 -2 -1q0 -1 -1 -3t-1 -3v-443q0 -22 15 -36.5t36 -14.5h427q22 0 36.5 14.5t14.5 36.5v443h2z
+M358 719q0 6 7 6h243q6 0 6 -6v-55q0 -7 -6 -7h-243q-7 0 -7 7v55zM343 623h287l71 -102h-430zM700 43h-427q-17 0 -17 17v426h461v-426q0 -17 -17 -17zM512 401h-51v-85h-86v-51h86v-86h51v86h85v51h-85v85z" />
+    <glyph glyph-name="medicine3" unicode="&#xe6a1;" 
+d="M551 522q-4 -4 -4 -11.5t4 -11.5q9 -9 19 0q13 14 33.5 14t34.5 -14q4 -4 9 -4q6 0 9 4q4 4 4 11.5t-4 11.5q-22 22 -52.5 22t-52.5 -22zM700 571q-37 37 -88.5 37t-88.5 -37l-199 -199q-36 -36 -36 -87.5t36 -87.5q37 -37 88.5 -37t88.5 37l199 199q36 37 36 88.5
+t-36 86.5zM479 223q-27 -27 -64 -27q-38 0 -65 27q-26 26 -26 63.5t26 64.5l85 84l127 -128zM673 417l-84 -83l-14 14l-114 115l84 83q26 27 64 27t65 -27q26 -27 25.5 -64.5t-26.5 -64.5zM512 796q-112 0 -207.5 -55t-151 -150t-55.5 -207t55.5 -207t150.5 -150.5
+t208 -55.5q112 0 207.5 55.5t151 150.5t55.5 207t-55.5 207t-151 150t-207.5 55zM512 7q-103 0 -190 50.5t-137.5 137.5t-50.5 190t50.5 190t137.5 137.5t190 50.5t190 -50.5t137.5 -137.5t50.5 -190t-50.5 -190t-137.5 -137.5t-190 -50.5z" />
+  </font>
+</defs></svg>
