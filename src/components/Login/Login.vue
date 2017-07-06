@@ -1,7 +1,7 @@
 <template>
   <div class='login'>
     <div id='particles'></div>
-    <img src='../assets/logo.png'>
+    <img src='~img/logo.png'>
     <h1>{{ msg }}</h1>
     <!-- <div class='iconfont icon-medicine'></div> -->
   </div>
