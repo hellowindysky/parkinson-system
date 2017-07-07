@@ -136,7 +136,7 @@
     font-size: 14px;
     margin: 0 34px 0 0;
     white-space: nowrap;
-    color: rgb(131, 165, 160);
+    color: rgb(131, 148, 165);
     text-align: justify;
 }
 
@@ -162,12 +162,12 @@
     right: 0;
     position: absolute;
     cursor: pointer;
-    color: rgb(191, 217, 212);
+    color: rgb(191, 206, 217);
     font-size: 14px;
 }
 
 .el-message__closeBtn:hover{
-    color: rgb(151, 190, 184);
+    color: rgb(151, 171, 190);
 }
 
 .el-message-fade-enter, .el-message-fade-leave-active {

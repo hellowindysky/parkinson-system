@@ -99,7 +99,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    color: rgb(72, 106, 101);
+    color: rgb(72, 90, 106);
     height: 36px;
     line-height: 1.5;
     box-sizing: border-box;
@@ -107,7 +107,7 @@
 }
 
 .el-select-dropdown__item.hover, .el-select-dropdown__item:hover{
-    background-color: rgb(228, 241, 241)
+    background-color: rgb(228, 233, 241)
 }
 
 .el-select-dropdown__item.selected{
@@ -124,7 +124,7 @@
 }
 
 .el-select-dropdown__item.is-disabled{
-    color: rgb(191, 217, 212);
+    color: rgb(191, 206, 217);
     cursor: not-allowed
 }
 

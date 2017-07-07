@@ -91,7 +91,7 @@
   --------------------------*/
 }
 .el-checkbox{
-    color: rgb(31, 61, 55);
+    color: rgb(31, 48, 61);
     position: relative;
     cursor: pointer;
     display: inline-block;
@@ -140,27 +140,27 @@
     transform: rotate(45deg) scaleY(1);
 }
 .el-checkbox__input.is-disabled .el-checkbox__inner{
-    background-color: rgb(238, 246, 246);
-    border-color: rgb(209, 229, 225);
+    background-color: rgb(238, 242, 246);
+    border-color: rgb(209, 221, 229);
     cursor: not-allowed;
 }
 .el-checkbox__input.is-disabled .el-checkbox__inner::after{
     cursor: not-allowed;
-    border-color: rgb(238, 246, 246);
+    border-color: rgb(238, 242, 246);
 }
 .el-checkbox__input.is-disabled .el-checkbox__inner + .el-checkbox__label{
     cursor: not-allowed;
 }
 .el-checkbox__input.is-disabled.is-checked .el-checkbox__inner{
-    background-color: rgb(209, 229, 225);
-    border-color: rgb(209, 229, 225);
+    background-color: rgb(209, 221, 229);
+    border-color: rgb(209, 221, 229);
 }
 .el-checkbox__input.is-disabled.is-checked .el-checkbox__inner::after{
     border-color: #fff;
 }
 .el-checkbox__input.is-disabled.is-indeterminate .el-checkbox__inner{
-    background-color: rgb(209, 229, 225);
-    border-color: rgb(209, 229, 225);
+    background-color: rgb(209, 221, 229);
+    border-color: rgb(209, 221, 229);
 }
 .el-checkbox__input.is-disabled.is-indeterminate .el-checkbox__inner::before{
     border-color: #fff;
@@ -172,7 +172,7 @@
 .el-checkbox__inner{
     display: inline-block;
     position: relative;
-    border: 1px solid rgb(191, 217, 212);
+    border: 1px solid rgb(191, 206, 217);
     border-radius: 4px;
     box-sizing: border-box;
     width: 18px;
@@ -226,11 +226,11 @@
 }
 .el-checkbox-button.is-disabled{}
 .el-checkbox-button.is-disabled .el-checkbox-button__inner{
-    color: rgb(191, 217, 212);
+    color: rgb(191, 206, 217);
     cursor: not-allowed;
     background-image: none;
-    background-color: rgb(238, 246, 246);
-    border-color: rgb(209, 229, 225);
+    background-color: rgb(238, 242, 246);
+    border-color: rgb(209, 221, 229);
     box-shadow: none;
 }
 .el-checkbox-button.is-focus{}
@@ -238,7 +238,7 @@
     border-color: #35b790;
 }
 .el-checkbox-button:first-child .el-checkbox-button__inner{
-    border-left: 1px solid rgb(191, 217, 212);
+    border-left: 1px solid rgb(191, 206, 217);
     border-radius: 4px 0 0 4px;
     box-shadow: none !important;
 }
@@ -252,9 +252,9 @@
     vertical-align: middle;
     cursor: pointer;
     background: #fff;
-    border: 1px solid rgb(191, 217, 212);
+    border: 1px solid rgb(191, 206, 217);
     border-left: 0;
-    color: rgb(31, 61, 55);
+    color: rgb(31, 48, 61);
     -webkit-appearance: none;
     text-align: center;
     box-sizing: border-box;
@@ -397,7 +397,7 @@
   --------------------------*/
 }
 .el-tag{
-    background-color: rgb(131, 165, 160);
+    background-color: rgb(131, 148, 165);
     display: inline-block;
     padding: 0 5px;
     height: 24px;
@@ -425,19 +425,19 @@
 }
 .el-tag .el-icon-close:hover{
     background-color: #fff;
-    color: rgb(131, 165, 160);
+    color: rgb(131, 148, 165);
 }
 .el-tag--gray{
-    background-color: rgb(228, 241, 241);
-    border-color: rgb(228, 241, 241);
-    color: rgb(72, 106, 101);
+    background-color: rgb(228, 233, 241);
+    border-color: rgb(228, 233, 241);
+    color: rgb(72, 90, 106);
 }
 .el-tag--gray .el-tag__close:hover{
-    background-color: rgb(72, 106, 101);
+    background-color: rgb(72, 90, 106);
     color: #fff;
 }
 .el-tag--gray.is-hit{
-    border-color: rgb(72, 106, 101);
+    border-color: rgb(72, 90, 106);
 }
 .el-tag--primary{
     background-color: rgba(53, 183, 144, 0.1);
@@ -586,7 +586,7 @@
 }
 
 .el-table-filter{
-    border: solid 1px rgb(209, 229, 225);
+    border: solid 1px rgb(209, 221, 229);
     border-radius: 2px;
     background-color: #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .12);
@@ -610,8 +610,8 @@
 }
 
 .el-table-filter__list-item:hover{
-    background-color: rgb(228, 241, 241);
-    color: rgb(72, 106, 101);
+    background-color: rgb(228, 233, 241);
+    color: rgb(72, 90, 106);
 }
 
 .el-table-filter__list-item.is-active{
@@ -624,14 +624,14 @@
 }
 
 .el-table-filter__bottom{
-    border-top: 1px solid rgb(209, 229, 225);
+    border-top: 1px solid rgb(209, 221, 229);
     padding: 8px;
 }
 
 .el-table-filter__bottom button {
     background: transparent;
     border: none;
-    color: rgb(131, 165, 160);
+    color: rgb(131, 148, 165);
     cursor: pointer;
     font-size: 14px;
     padding: 0 3px
@@ -646,7 +646,7 @@
 }
 
 .el-table-filter__bottom button.is-disabled{
-    color: rgb(191, 217, 212);
+    color: rgb(191, 206, 217);
     cursor: not-allowed;
 }
 

@@ -104,16 +104,16 @@
 }
 
 .el-switch.is-disabled .el-switch__core{
-    border-color: rgb(228, 241, 241) !important;
-    background: rgb(228, 241, 241) !important
+    border-color: rgb(228, 233, 241) !important;
+    background: rgb(228, 233, 241) !important
 }
 
 .el-switch.is-disabled .el-switch__core span{
-    background-color: rgb(251, 254, 253) !important
+    background-color: rgb(252, 252, 253) !important
 }
 
 .el-switch.is-disabled .el-switch__core ~ .el-switch__label *{
-    color: rgb(251, 254, 253) !important
+    color: rgb(252, 252, 253) !important
 }
 
 .el-switch.is-checked .el-switch__core{
@@ -166,11 +166,11 @@
     position: relative;
     width: 46px;
     height: 22px;
-    border: 1px solid rgb(191, 217, 212);
+    border: 1px solid rgb(191, 206, 217);
     outline: none;
     border-radius: 12px;
     box-sizing: border-box;
-    background: rgb(191, 217, 212);
+    background: rgb(191, 206, 217);
     cursor: pointer;
     transition: border-color .3s, background-color .3s
 }
