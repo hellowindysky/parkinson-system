@@ -71,11 +71,14 @@ export default {
   z-index: -100;
 }
 .panel {
-  position: relative;
-  margin: 100px auto;
+  // position: relative;
+  // margin: 100px auto;
   padding: 20px;
-  width: 500px;
+  width: 400px;
   height: 370px;
+  position: absolute;
+  left: 50%; top: 40%;
+  transform: translate(-50%, -50%);
   background-color: rgba(224,224,224,0.3);
   border-radius: 30px;
   z-index: 100;
@@ -121,7 +124,7 @@ export default {
   .input-wrapper {
     margin: 20px auto;
     width: 300px;
-    overflow: auto;
+    height: 130px;
     .input {
       margin-bottom: 10px;
     }
