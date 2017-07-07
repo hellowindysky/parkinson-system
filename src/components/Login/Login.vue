@@ -41,10 +41,13 @@ export default {
     };
   },
   mounted() {
+    /* 下划线随着点击有左右移动的动画效果 */
     tabBottomBar = $('#tabBottomBar');
     accountOffsetLeft = $('#accountLogin').position().left;
     telOffsetLeft = $('#telLogin').position().left;
     tabBottomBar.css({'transform': `translate3d(${accountOffsetLeft}px,0,0)`});
+
+    /* 初始化的时候不希望下划线有动画效果，所以才用这种方式添加transition */
     window.setTimeout(function() {
       tabBottomBar.css({'transition': '0.3s'});
     }, 0);
