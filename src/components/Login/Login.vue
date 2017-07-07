@@ -14,7 +14,9 @@
         <el-input class="input" v-model="account" placeholder="请输入您的睿云账号"></el-input>
         <el-input class="input" v-model="password" placeholder="请输入6-10位数字和字母的密码"></el-input>
         <el-checkbox class="checkbox" v-model="autoLogin">自动登录</el-checkbox>
+        <span class="hint">使用账号登录</span>
       </div>
+      <el-button class="button" type="primary">登 录</el-button>
     </div>
   </div>
 </template>
@@ -73,8 +75,8 @@ export default {
   margin: 100px auto;
   padding: 20px;
   width: 500px;
-  height: 400px;
-  background-color: rgba(224,224,224,0.7);
+  height: 370px;
+  background-color: rgba(224,224,224,0.3);
   border-radius: 30px;
   z-index: 100;
   .title {
@@ -119,9 +121,23 @@ export default {
   .input-wrapper {
     margin: 20px auto;
     width: 300px;
+    overflow: auto;
     .input {
       margin-bottom: 10px;
     }
+    .checkbox {
+      margin-top: 10px;
+      float: left;
+    }
+    .hint {
+      margin-top: 10px;
+      float: right;
+      font-size: 14px;
+    }
+  }
+  .button {
+    margin: 10px auto;
+    width: 150px;
   }
 }
 </style>
