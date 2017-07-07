@@ -28,7 +28,11 @@ $(function() {
 });
 
 export default {
-  name: 'app'
+  name: 'app',
+  created() {
+    // 默认跳转到login页面
+    this.$router.push('login');
+  }
 };
 </script>
 
