@@ -6,6 +6,8 @@
 
 <script>
 import $ from 'jquery';
+import 'particles.js';
+import particlesConfig from 'js/particlesConfig.js';
 
 $(function() {
   // 屏幕缩放时，重新调整大小
@@ -22,16 +24,14 @@ $(function() {
   resize();
 
   // 载入特效背景
-  window.particlesJS.load('particles', 'static/js/config/particles.json', function() {
-    console.log('callback: particles-js config loaded');
-  });
+  window.particlesJS('particles', particlesConfig);
 });
 
 export default {
   name: 'app',
   created() {
     // 默认跳转到login页面
-    this.$router.push('login');
+    // this.$router.push('login');
   }
 };
 </script>
@@ -39,7 +39,6 @@ export default {
 <style lang="less">
 @import '~styles/variables.less';
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;

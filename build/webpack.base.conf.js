@@ -26,6 +26,7 @@ module.exports = {
       'styles': resolve('src/assets/styles'),
       'iconfont': resolve('src/assets/styles/iconfont'),
       'img': resolve('src/assets/img'),
+      'js': resolve('src/assets/js'),
       'api': resolve('src/api'),
       'components': resolve('src/components'),
       'router': resolve('src/router'),

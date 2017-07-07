@@ -3,6 +3,7 @@
 import Vue from 'vue';
 import ElementUI from 'element-ui';
 
+import 'normalize.css';  // 引入normalize.css
 // import 'element-ui/lib/theme-default/index.css';  // 放弃默认的element-theme
 import 'styles/element-theme/index.css';  // 改用自定义配置生成的css
 import 'styles/iconfont/iconfont.css';  // 加入自定义图标字体
