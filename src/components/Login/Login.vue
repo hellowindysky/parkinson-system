@@ -1,6 +1,6 @@
 <template>
   <div class='login'>
-    <div id='particles'></div>
+    <particles></particles>
     <!-- <div class='iconfont icon-medicine'></div> -->
     <div class="panel">
       <h1 class="title">睿云</h1>
@@ -23,6 +23,7 @@
 
 <script>
 import $ from 'jquery';
+import particles from 'components/Particles/Particles';
 
 const ACCOUT_LOGIN = 0;
 const TEL_LOGIN = 1;
@@ -61,18 +62,15 @@ export default {
       this.loginType = TEL_LOGIN;
       tabBottomBar.css({'transform': `translate3d(${telOffsetLeft}px,0,0)`});
     }
+  },
+  components: {
+    particles
   }
 };
 </script>
 
 <style lang="less" scoped>
 @import '~styles/variables.less';
-#particles {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: -100;
-}
 .panel {
   // position: relative;
   // margin: 100px auto;
