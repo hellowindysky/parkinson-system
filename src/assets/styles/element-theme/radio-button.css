@@ -96,7 +96,7 @@
 }
 
 .el-radio-button:first-child .el-radio-button__inner{
-    border-left: 1px solid rgb(191, 206, 217);
+    border-left: 1px solid rgb(191, 204, 217);
     border-radius: 4px 0 0 4px;
     box-shadow: none !important
 }
@@ -112,9 +112,9 @@
     vertical-align: middle;
     cursor: pointer;
     background: #fff;
-    border: 1px solid rgb(191, 206, 217);
+    border: 1px solid rgb(191, 204, 217);
     border-left: 0;
-    color: rgb(31, 48, 61);
+    color: rgb(31, 46, 61);
     -webkit-appearance: none;
     text-align: center;
     box-sizing: border-box;
@@ -160,11 +160,11 @@
 .el-radio-button__orig-radio:disabled{}
 
 .el-radio-button__orig-radio:disabled + .el-radio-button__inner{
-    color: rgb(191, 206, 217);
+    color: rgb(191, 204, 217);
     cursor: not-allowed;
     background-image: none;
-    background-color: rgb(238, 242, 246);
-    border-color: rgb(209, 221, 229);
+    background-color: rgb(238, 241, 246);
+    border-color: rgb(209, 219, 229);
     box-shadow: none
 }
 
