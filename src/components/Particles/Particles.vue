@@ -3,24 +3,11 @@
 </template>
 
 <script>
-import $ from 'jquery';
 import 'particles.js';
 import particlesConfig from './particlesConfig.js';
 
 export default {
   mounted() {
-    // 屏幕缩放时，重新调整大小
-    var resize = function() {
-      var deviceWidth = document.documentElement.clientWidth;
-      var deviceHeight = document.documentElement.clientHeight;
-
-      var $particlesArea = $('#particles');
-      $particlesArea.width(deviceWidth);
-      $particlesArea.height(deviceHeight);
-    };
-    window.addEventListener('resize', resize);
-    resize();
-
     // 载入特效背景
     window.particlesJS('particles', particlesConfig);
   }
@@ -32,6 +19,8 @@ export default {
   position: absolute;
   top: 0;
   left: 0;
+  width: 100%;
+  height: 100%;
   z-index: -100;
 }
 </style>
