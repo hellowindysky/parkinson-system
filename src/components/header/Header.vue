@@ -80,9 +80,12 @@ export default {
     }
     .iconfont {
       margin-right: 5px;
+      line-height: @header-height;
+      font-size: @big-font-size;
       font-weight: bold;
     }
     .name {
+      line-height: @header-height;
       font-size: @big-font-size;
     }
   }

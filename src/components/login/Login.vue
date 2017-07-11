@@ -15,7 +15,7 @@
         <el-checkbox class="checkbox" v-model="autoLogin">自动登录</el-checkbox>
         <span class="hint">使用账号登录</span>
       </div>
-      <el-button class="button" type="primary">登 录</el-button>
+      <el-button class="button" type="primary" @click="submit">登 录</el-button>
     </div>
   </div>
 </template>
@@ -23,6 +23,7 @@
 <script>
 import $ from 'jquery';
 import particles from 'components/particles/Particles';
+import md5 from 'md5';
 
 const ACCOUT_LOGIN = 0;
 const TEL_LOGIN = 1;
@@ -40,6 +41,11 @@ export default {
       autoLogin: false
     };
   },
+  computed: {
+    md5Password() {
+      return md5(this.password);
+    }
+  },
   mounted() {
     /* 下划线随着点击有左右移动的动画效果 */
     tabBottomBar = $('#tabBottomBar');
@@ -47,7 +53,7 @@ export default {
     telOffsetLeft = $('#telLogin').position().left;
     tabBottomBar.css({'transform': `translate3d(${accountOffsetLeft}px,0,0)`});
 
-    /* 初始化的时候不希望下划线有动画效果，所以才用这种方式添加transition */
+    /* 下划线第一次出现的时候不希望它有动画效果，所以才用这种方式添加transition */
     window.setTimeout(function() {
       tabBottomBar.css({'transition': '0.3s'});
     }, 0);
@@ -60,6 +66,9 @@ export default {
     telLogin() {
       this.loginType = TEL_LOGIN;
       tabBottomBar.css({'transform': `translate3d(${telOffsetLeft}px,0,0)`});
+    },
+    submit() {
+      this.$router.push('/home');
     }
   },
   components: {
