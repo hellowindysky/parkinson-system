@@ -1,7 +1,6 @@
 <template>
   <div class='login'>
     <particles></particles>
-    <!-- <div class='iconfont icon-medicine'></div> -->
     <div class="panel">
       <h1 class="title">睿云</h1>
       <h3 class="subtitle">帕金森疾病病历管理系统</h3>
@@ -98,7 +97,7 @@ export default {
   .tabs-wrapper {
     height: 20px;
     line-height: 20px;
-    font-size: 14px;
+    font-size: @normal-font-size;
     .tab {
       margin: auto 20px;
       padding: 2px;
@@ -136,7 +135,7 @@ export default {
     .hint {
       margin-top: 10px;
       float: right;
-      font-size: 14px;
+      font-size: @normal-font-size;
     }
   }
   .button {

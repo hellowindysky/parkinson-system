@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="app-wrapper">
-    <Header></Header>
+    <topbar></topbar>
     <router-view></router-view>
   </div>
 </template>
@@ -10,7 +10,7 @@ import Header from 'components/header/Header';
 
 export default {
   components: {
-    Header
+    topbar: Header
   }
 };
 </script>
