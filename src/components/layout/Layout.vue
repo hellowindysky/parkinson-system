@@ -22,6 +22,7 @@ export default {
   width: 100%;
   min-width: 640px;
   height: 100vh;
+  z-index: 100;
   .topbar {
     display: block;
     position: relative;
