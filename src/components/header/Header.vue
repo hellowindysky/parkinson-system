@@ -34,11 +34,24 @@ var tabBottomBar;
 export default {
   data() {
     return {
-      showPanel: true
+      showPanel: false
     };
   },
   mounted() {
     tabBottomBar = document.getElementById('tab-bottom-bar');
+  },
+  watch: {
+    // 监控路由变化，调整下划线的位置
+    $route() {
+      var path = this.$route.path;
+      if ('/home'.indexOf(path) > -1) {
+        this.chooseHome();
+      } else if ('/patients'.indexOf(path) > -1) {
+        this.choosePatients();
+      } else if ('/analytics'.indexOf(path) > -1) {
+        this.chooseAnalytics();
+      }
+    }
   },
   methods: {
     chooseHome() {
@@ -59,13 +72,8 @@ export default {
 
 <style lang="less" scoped>
 @import "~styles/variables.less";
-@header-height: 50px;
 
 .header {
-  position: absolute;
-  top: 0;
-  width: 100%;
-  height: @header-height;
   line-height: @header-height;
   background-color: rgba(224,224,224,0.6);
   color: @font-color;
@@ -102,7 +110,7 @@ export default {
     padding: 0;
     height: @header-height;
     left: 40%;
-    @media screen and (max-width: 720px) {
+    @media screen and (max-width: 800px) {
       left: 30%;
     }
     margin: 0;
@@ -113,6 +121,9 @@ export default {
       padding: 0;
       width: 100px;
       .link {
+        display: block;
+        width: 100%;
+        height: 100%;
         font-size: @big-font-size;
         color: @font-color;
         text-decoration: none;
@@ -125,7 +136,7 @@ export default {
     .tab-bottom-bar {
       position: absolute;
       width: 80px;
-      height: 2px;
+      height: 3px;
       bottom: 0;
       left: 10px;
       background-color: @font-color;
