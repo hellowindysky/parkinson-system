@@ -22,8 +22,10 @@
 
 <script>
 import $ from 'jquery';
-import particles from 'components/particles/Particles';
 import md5 from 'md5';
+import axios from 'axios';
+
+import particles from 'components/particles/Particles';
 
 const ACCOUT_LOGIN = 0;
 const TEL_LOGIN = 1;
@@ -68,7 +70,19 @@ export default {
       tabBottomBar.css({'transform': `translate3d(${telOffsetLeft}px,0,0)`});
     },
     submit() {
-      this.$router.push('/home');
+      var self = this;
+      axios.post('http://apitest.gyenno.com/pdms/usermgr/userSignIn', {
+        'accountNumber': '15012670416',
+        'pwd': 'e10adc3949ba59abbe56e057f20f883e',
+        'userType': 1
+      })
+      .then(function(response) {
+        console.log(response);
+        self.$router.push('/home');
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
     }
   },
   components: {
