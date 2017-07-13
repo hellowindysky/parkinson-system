@@ -46,14 +46,16 @@ export default new Router({
               components: {
                 list: List,
                 content: PatientInfo
-              }
+              },
+              name: 'patientList'
             },
             {
               path: 'groups',
               components: {
                 list: List,
                 content: PatientInfo
-              }
+              },
+              name: 'patientGroups'
             }
           ]
         },
