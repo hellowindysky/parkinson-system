@@ -2,10 +2,15 @@ import Vue from 'vue';
 import Router from 'vue-router';
 
 import Login from 'components/login/Login';
+
 import Layout from 'components/layout/Layout';
-import Home from 'components/home/Home';
+// import Home from 'components/home/Home';   // 首页还没做
 import Patients from 'components/patients/Patients';
 import Analytics from 'components/analytics/Analytics';
+import Configuration from 'components/configuration/Configuration';
+
+import List from 'components/list/List';
+import PatientInfo from 'components/patientinfo/PatientInfo';
 
 Vue.use(Router);
 
@@ -16,30 +21,51 @@ export default new Router({
       name: 'Login',
       component: Login
     },
-    {
-      path: '*',
-      redirect: '/login'
-    },
+    // {
+    //   path: '*',
+    //   redirect: '/login'
+    // },
     {
       path: '/',
       name: 'Layout',
       component: Layout,
-      redirect: '/home',
+      redirect: '/patients',
       children: [
-        {
-          path: 'home',
-          component: Home,
-          name: '首页'
-        },
+        // {
+        //   path: 'home',
+        //   component: Home,
+        //   name: 'home'
+        // },
         {
           path: 'patients',
           component: Patients,
-          name: '我的患者'
+          name: 'patients',
+          children: [
+            {
+              path: 'list',
+              components: {
+                list: List,
+                content: PatientInfo
+              }
+            },
+            {
+              path: 'groups',
+              components: {
+                list: List,
+                content: PatientInfo
+              }
+            }
+          ]
         },
         {
           path: 'analytics',
           component: Analytics,
-          name: '统计分析'
+          name: 'analytics'
+        },
+        {
+          path: 'configuration',
+          component: Configuration,
+          name: 'configuration'
         }
       ]
     }
