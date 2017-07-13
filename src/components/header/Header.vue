@@ -8,14 +8,14 @@
 
     </div>
     <ul class="tabs-wrapper">
-      <li class="tab" @click="chooseHome">
-        <router-link to="home" class="link">首页</router-link>
-      </li>
       <li class="tab" @click="choosePatients">
-        <router-link to="patients" class="link">我的患者</router-link>
+        <router-link to="/patients" class="link">我的患者</router-link>
       </li>
       <li class="tab" @click="chooseAnalytics">
-        <router-link to="analytics" class="link">统计分析</router-link>
+        <router-link to="/analytics" class="link">统计分析</router-link>
+      </li>
+      <li class="tab" @click="chooseConfiguration">
+        <router-link to="/configuration" class="link">系统配置</router-link>
       </li>
       <div class="tab-bottom-bar" id="tab-bottom-bar"></div>
     </ul>
@@ -39,32 +39,36 @@ export default {
   },
   mounted() {
     tabBottomBar = document.getElementById('tab-bottom-bar');
+    this.checkCurrentTab();
   },
   watch: {
     // 监控路由变化，调整下划线的位置
     $route() {
-      var path = this.$route.path;
-      if ('/home'.indexOf(path) > -1) {
-        this.chooseHome();
-      } else if ('/patients'.indexOf(path) > -1) {
-        this.choosePatients();
-      } else if ('/analytics'.indexOf(path) > -1) {
-        this.chooseAnalytics();
-      }
+      this.checkCurrentTab();
     }
   },
   methods: {
-    chooseHome() {
+    choosePatients() {
       tabBottomBar.style.transform = 'translate3d(0,0,0)';
     },
-    choosePatients() {
+    chooseAnalytics() {
       tabBottomBar.style.transform = 'translate3d(100px,0,0)';
     },
-    chooseAnalytics() {
+    chooseConfiguration() {
       tabBottomBar.style.transform = 'translate3d(200px,0,0)';
     },
     togglePanel() {
       this.showPanel = !this.showPanel;
+    },
+    checkCurrentTab() {
+      var path = this.$route.path;
+      if ('/patients'.indexOf(path) > -1) {
+        this.choosePatients();
+      } else if ('/analytics'.indexOf(path) > -1) {
+        this.chooseAnalytics();
+      } else if ('/configuration'.indexOf(path) > -1) {
+        this.chooseConfiguration();
+      }
     }
   }
 };
@@ -77,6 +81,7 @@ export default {
   line-height: @header-height;
   background-color: rgba(224,224,224,0.6);
   color: @font-color;
+  z-index: 200;
   .organization-wrapper {
     position: absolute;
     display: inline-block;
@@ -104,13 +109,17 @@ export default {
     width: 240px;
     height: 360px;
     background-color: rgba(16,16,16,0.6);
+    z-index: 150;
   }
   .tabs-wrapper {
     position: absolute;
     padding: 0;
     height: @header-height;
     left: 40%;
-    @media screen and (max-width: 800px) {
+    @media screen and (max-width: 900px) {
+      left: 35%;
+    }
+    @media screen and (max-width: 750px) {
       left: 30%;
     }
     margin: 0;
