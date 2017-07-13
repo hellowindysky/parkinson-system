@@ -1,14 +1,16 @@
 <template lang="html">
   <div class="sidebar">
     <div class="item">
-      <div class="iconfont icon-accountfilling"></div>
-      <div class="title">患者管理</div>
-      <router-link class="link" to="/patients/list" replace></router-link>
+      <router-link class="link" :to="{name: 'patientList'}">
+        <div class="iconfont icon-accountfilling"></div>
+        <div class="title">患者管理</div>
+      </router-link>
     </div>
     <div class="item">
-      <div class="iconfont icon-accountfilling"></div>
-      <div class="title">分组管理</div>
-      <router-link class="link" to="/patients/groups"></router-link>
+      <router-link class="link" :to="{name: 'patientGroups'}">
+        <div class="iconfont icon-accountfilling"></div>
+        <div class="title">分组管理</div>
+      </router-link>
     </div>
   </div>
 </template>
@@ -37,20 +39,25 @@ export default {
     &:hover {
       background-color: #ddd;
     }
-    .iconfont {
-      padding-top: 15px;
-      padding-bottom: 5px;
-      font-size: 20px;
-    }
-    .title {
-      font-size: @normal-font-size;
-    }
     .link {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
+      text-decoration: none;
+      color: @font-color;
+      .iconfont {
+        padding-top: 15px;
+        padding-bottom: 5px;
+        font-size: 20px;
+      }
+      .title {
+        font-size: @normal-font-size;
+      }
+    }
+    .router-link-active {
+      background-color: #bac0ca;
     }
   }
 }
