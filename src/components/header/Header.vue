@@ -9,7 +9,7 @@
     </div>
     <ul class="tabs-wrapper">
       <li class="tab" @click="choosePatients">
-        <router-link to="/patients" class="link">我的患者</router-link>
+        <router-link to="/patients" class="link">患者管理</router-link>
       </li>
       <li class="tab" @click="chooseAnalytics">
         <router-link to="/analytics" class="link">统计分析</router-link>
@@ -39,6 +39,7 @@ export default {
   },
   mounted() {
     tabBottomBar = document.getElementById('tab-bottom-bar');
+    // 控件第一次加载的时候，调整下划线的位置
     this.checkCurrentTab();
   },
   watch: {
@@ -94,12 +95,12 @@ export default {
     .iconfont {
       margin-right: 5px;
       line-height: @header-height;
-      font-size: @big-font-size;
+      font-size: @large-font-size;
       font-weight: bold;
     }
     .name {
       line-height: @header-height;
-      font-size: @big-font-size;
+      font-size: @large-font-size;
     }
   }
   .organization-panel {
@@ -133,7 +134,7 @@ export default {
         display: block;
         width: 100%;
         height: 100%;
-        font-size: @big-font-size;
+        font-size: @large-font-size;
         color: @font-color;
         text-decoration: none;
         cursor: pointer;
@@ -157,7 +158,7 @@ export default {
     right: 20px;
     .iconfont {
       margin-left: 15px;
-      font-size: @big-font-size;
+      font-size: @large-font-size;
       cursor: pointer;
       font-weight: bold;
     }
