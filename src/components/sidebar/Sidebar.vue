@@ -28,16 +28,16 @@ export default {
 @import "~styles/variables.less";
 
 .sidebar {
-  background-color: #a0a3ad;
+  background-color: #ddd;
   .item {
     position: relative;
     width: 100%;
     height: 70px;
     border-bottom: 1px solid @font-color;
     cursor: pointer;
-    background-color: #ccc;
+    background-color: #ddd;
     &:hover {
-      background-color: #ddd;
+      background-color: #eee;
     }
     .link {
       position: absolute;
