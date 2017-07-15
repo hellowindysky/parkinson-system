@@ -11,7 +11,7 @@
       <li class="tab" @click="choosePatients">患者管理</li>
       <li class="tab" @click="chooseAnalytics">统计分析</li>
       <li class="tab" @click="chooseConfiguration">系统配置</li>
-      <div class="tab-bottom-bar" id="tab-bottom-bar"></div>
+      <div class="tab-bottom-bar" :class="tabPlaceClass"></div>
     </ul>
     <div class="operation-wrapper">
       <span class="iconfont icon-search"></span>
@@ -23,42 +23,41 @@
 </template>
 
 <script>
-var tabBottomBar;
-
 export default {
   data() {
     return {
       showPanel: false
     };
   },
-  mounted() {
-    tabBottomBar = document.getElementById('tab-bottom-bar');
-    // 控件第一次加载的时候，调整下划线的位置
-    this.checkCurrentTab();
-  },
-  watch: {
-    // 监控路由变化，调整下划线的位置
-    $route() {
-      this.checkCurrentTab();
+  computed: {
+    tabPlace() {
+      var path = this.$route.path;
+      if (path.match(/^\/patients/)) {
+        return 1;
+      } else if (path.match(/^\/analytics/)) {
+        return 2;
+      } else if (path.match(/^\/configuration/)) {
+        return 3;
+      }
+    },
+    tabPlaceClass() {
+      return 'tab-place-' + this.tabPlace;
     }
   },
   methods: {
     choosePatients() {
-      tabBottomBar.style.transform = 'translate3d(0,0,0)';
       // 如果当前路径不是以“/patients”开头了，才发生跳转
       if (!this.$route.path.match(/^\/patients/)) {
         this.$router.push('/patients');
       }
     },
     chooseAnalytics() {
-      tabBottomBar.style.transform = 'translate3d(100px,0,0)';
       // 如果当前路径不是以“/analytics”开头了，才发生跳转
       if (!this.$route.path.match(/^\/analytics/)) {
         this.$router.push('/analytics');
       }
     },
     chooseConfiguration() {
-      tabBottomBar.style.transform = 'translate3d(200px,0,0)';
       // 如果当前路径不是以“/configuration”开头了，才发生跳转
       if (!this.$route.path.match(/^\/configuration/)) {
         this.$router.push('/configuration');
@@ -66,16 +65,6 @@ export default {
     },
     togglePanel() {
       this.showPanel = !this.showPanel;
-    },
-    checkCurrentTab() {
-      var path = this.$route.path;
-      if (path.match(/^\/patients/)) {
-        this.choosePatients();
-      } else if (path.match(/^\/analytics/)) {
-        this.chooseAnalytics();
-      } else if (path.match(/^\/configuration/)) {
-        this.chooseConfiguration();
-      }
     }
   }
 };
@@ -83,6 +72,7 @@ export default {
 
 <style lang="less" scoped>
 @import "~styles/variables.less";
+@tab-width: 100px;
 
 .header {
   line-height: @header-height;
@@ -137,7 +127,7 @@ export default {
       display: inline-block;
       margin: 0;
       padding: 0;
-      width: 100px;
+      width: @tab-width;
       font-size: @large-font-size;
       color: @font-color;
       cursor: pointer;
@@ -148,11 +138,20 @@ export default {
     .tab-bottom-bar {
       position: absolute;
       width: 80px;
-      height: 3px;
+      height: 4px;
       bottom: 0;
       left: 10px;
       background-color: @font-color;
       transition: 0.15s;
+      &.tab-place-1 {
+        transform: translateX(0px);
+      }
+      &.tab-place-2 {
+        transform: translateX(@tab-width);
+      }
+      &.tab-place-3 {
+        transform: translateX(@tab-width * 2);
+      }
     }
   }
   .operation-wrapper {
