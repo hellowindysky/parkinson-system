@@ -8,15 +8,9 @@
 
     </div>
     <ul class="tabs-wrapper">
-      <li class="tab" @click="choosePatients">
-        <router-link to="/patients" class="link">患者管理</router-link>
-      </li>
-      <li class="tab" @click="chooseAnalytics">
-        <router-link to="/analytics" class="link">统计分析</router-link>
-      </li>
-      <li class="tab" @click="chooseConfiguration">
-        <router-link to="/configuration" class="link">系统配置</router-link>
-      </li>
+      <li class="tab" @click="choosePatients">患者管理</li>
+      <li class="tab" @click="chooseAnalytics">统计分析</li>
+      <li class="tab" @click="chooseConfiguration">系统配置</li>
       <div class="tab-bottom-bar" id="tab-bottom-bar"></div>
     </ul>
     <div class="operation-wrapper">
@@ -51,23 +45,35 @@ export default {
   methods: {
     choosePatients() {
       tabBottomBar.style.transform = 'translate3d(0,0,0)';
+      // 如果当前路径不是以“/patients”开头了，才发生跳转
+      if (!this.$route.path.match(/^\/patients/)) {
+        this.$router.push('/patients');
+      }
     },
     chooseAnalytics() {
       tabBottomBar.style.transform = 'translate3d(100px,0,0)';
+      // 如果当前路径不是以“/analytics”开头了，才发生跳转
+      if (!this.$route.path.match(/^\/analytics/)) {
+        this.$router.push('/analytics');
+      }
     },
     chooseConfiguration() {
       tabBottomBar.style.transform = 'translate3d(200px,0,0)';
+      // 如果当前路径不是以“/configuration”开头了，才发生跳转
+      if (!this.$route.path.match(/^\/configuration/)) {
+        this.$router.push('/configuration');
+      }
     },
     togglePanel() {
       this.showPanel = !this.showPanel;
     },
     checkCurrentTab() {
       var path = this.$route.path;
-      if ('/patients'.indexOf(path) > -1) {
+      if (path.match(/^\/patients/)) {
         this.choosePatients();
-      } else if ('/analytics'.indexOf(path) > -1) {
+      } else if (path.match(/^\/analytics/)) {
         this.chooseAnalytics();
-      } else if ('/configuration'.indexOf(path) > -1) {
+      } else if (path.match(/^\/configuration/)) {
         this.chooseConfiguration();
       }
     }
@@ -81,8 +87,10 @@ export default {
 .header {
   line-height: @header-height;
   background-color: rgba(224,224,224,0.6);
+  box-sizing: border-box;
+  border-bottom: 1px solid #555;
   color: @font-color;
-  z-index: 200;
+  z-index: 400;
   .organization-wrapper {
     position: absolute;
     display: inline-block;
@@ -110,7 +118,7 @@ export default {
     width: 240px;
     height: 360px;
     background-color: rgba(16,16,16,0.6);
-    z-index: 150;
+    z-index: 300;
   }
   .tabs-wrapper {
     position: absolute;
@@ -130,17 +138,11 @@ export default {
       margin: 0;
       padding: 0;
       width: 100px;
-      .link {
-        display: block;
-        width: 100%;
-        height: 100%;
-        font-size: @large-font-size;
-        color: @font-color;
-        text-decoration: none;
-        cursor: pointer;
-        &:hover {
-          color: lighten(@font-color, 20%);
-        }
+      font-size: @large-font-size;
+      color: @font-color;
+      cursor: pointer;
+      &:hover {
+        color: lighten(@font-color, 20%);
       }
     }
     .tab-bottom-bar {
