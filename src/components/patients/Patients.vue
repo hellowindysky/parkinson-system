@@ -2,21 +2,15 @@
   <div class="content-wrapper">
     <sidebar class="sidebar"></sidebar>
     <router-view class="list" name="list"></router-view>
-    <div class="toggle-list-button" @click="toggleList">
-      <div class="arrow"></div>
+    <div class="toggle-list-button" :class="{'hide-list-state': !listDisplay}" @click="toggleList">
+      <div class="arrow">{{arrowText}}</div>
     </div>
-    <router-view class="content" name="content"></router-view>
+    <router-view class="content-area" :class="{'hide-list-state': !listDisplay}" name="content"></router-view>
   </div>
 </template>
 
 <script>
-import $ from 'jquery';
-
 import sidebar from 'components/sidebar/Sidebar';
-
-var toggleListButton;
-var contentArea;
-var arrow;
 
 export default {
   data() {
@@ -24,28 +18,16 @@ export default {
       listDisplay: true
     };
   },
+  computed: {
+    arrowText() {
+      return this.listDisplay ? '<<' : '>>';
+    }
+  },
   mounted() {
-    toggleListButton = $('.toggle-list-button');
-    contentArea = $('.content');
-    arrow = $('.arrow');
-    arrow.text('<<');
   },
   methods: {
     toggleList() {
-      if (this.listDisplay) {
-        // Then will hide list
-        toggleListButton.addClass('hide-list-state');
-        contentArea.addClass('hide-list-state');
-        arrow.text('>>');
-        this.listDisplay = false;
-
-      } else if (!this.listDisplay) {
-        // Then will show list
-        toggleListButton.removeClass('hide-list-state');
-        contentArea.removeClass('hide-list-state');
-        arrow.text('<<');
-        this.listDisplay = true;
-      }
+      this.listDisplay = !this.listDisplay;
     }
   },
   components: {
@@ -90,11 +72,12 @@ export default {
       position: absolute;
       top: 50%;
       width: 100%;
+      height: @bar-width;
       transform: translateY(-50%);
       color: #fff;
     }
   }
-  .content {
+  .content-area {
     position: absolute;
     left: @sidebar-width + @list-width + @bar-width;
     width: calc(~"100% - @{sidebar-width} - @{list-width} - @{bar-width}");
