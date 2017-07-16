@@ -6,11 +6,14 @@
 
 <script>
 export default {
+  mounted() {
+    // console.log(this.$route.params.id);
+  }
 };
 </script>
 
 <style lang="less" scoped>
 .content {
-  background-color: #29c;
+  background-color: #38d;
 }
 </style>

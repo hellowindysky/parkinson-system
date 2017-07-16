@@ -1,25 +1,25 @@
 <template lang="html">
-  <div class="sidebar">
-    <div class="item">
-      <router-link class="link" :to="{name: 'patientList'}">
-        <div class="iconfont icon-accountfilling"></div>
-        <div class="title">患者管理</div>
-      </router-link>
-    </div>
-    <div class="item">
-      <router-link class="link" :to="{name: 'patientGroups'}">
-        <div class="iconfont icon-accountfilling"></div>
-        <div class="title">分组管理</div>
-      </router-link>
-    </div>
-  </div>
+  <ul class="sidebar">
+    <router-link class="item" :to="{name: 'patientList', params:{id: 124}}" tag="li">
+      <div class="iconfont icon-accountfilling"></div>
+      <div class="title">我的患者</div>
+    </router-link>
+    <router-link class="item" :to="{name: 'patientGroups'}" tag="li">
+      <div class="iconfont icon-accountfilling"></div>
+      <div class="title">分组管理</div>
+    </router-link>
+    <router-link class="item" :to="{name: 'patientGroups'}" tag="li">
+      <div class="iconfont icon-accountfilling"></div>
+      <div class="title">科室患者</div>
+    </router-link>
+  </ul>
 </template>
 
 <script>
 export default {
   mounted() {
-    // console.log(this.$router);
-    // this.$router.push('list');
+    // 初始化该组件时，自动跳转到病患列表下第一个患者
+    this.$router.push('/patients/list/id=123');
   }
 };
 </script>
@@ -28,6 +28,10 @@ export default {
 @import "~styles/variables.less";
 
 .sidebar {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  border-right: 1px solid #888;
   background-color: #ddd;
   .item {
     position: relative;
@@ -35,26 +39,18 @@ export default {
     height: 70px;
     border-bottom: 1px solid @font-color;
     cursor: pointer;
+    list-style: none;
     background-color: #ddd;
     &:hover {
       background-color: #eee;
     }
-    .link {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      text-decoration: none;
-      color: @font-color;
-      .iconfont {
-        padding-top: 15px;
-        padding-bottom: 5px;
-        font-size: 20px;
-      }
-      .title {
-        font-size: @normal-font-size;
-      }
+    .iconfont {
+      padding-top: 15px;
+      padding-bottom: 5px;
+      font-size: 20px;
+    }
+    .title {
+      font-size: @normal-font-size;
     }
     .router-link-active {
       background-color: #bac0ca;
