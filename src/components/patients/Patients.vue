@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="content-wrapper">
     <sidebar class="sidebar"></sidebar>
-    <router-view class="list" name="list"></router-view>
+    <list></list>
     <div class="toggle-list-button" :class="{'hide-list-state': !listDisplay}" @click="toggleList">
       <div class="arrow">{{arrowText}}</div>
     </div>
@@ -11,6 +11,7 @@
 
 <script>
 import sidebar from 'components/sidebar/Sidebar';
+import list from 'components/list/List';
 
 export default {
   data() {
@@ -31,7 +32,8 @@ export default {
     }
   },
   components: {
-    sidebar
+    sidebar,
+    list
   }
 };
 </script>

@@ -1,6 +1,6 @@
 <template lang="html">
   <ul class="sidebar">
-    <router-link class="item" :to="{name: 'patientList', params:{id: 124}}" tag="li">
+    <router-link class="item" :to="{name: 'list', params: {id: 124}}" tag="li">
       <div class="iconfont icon-accountfilling"></div>
       <div class="title">我的患者</div>
     </router-link>
@@ -8,7 +8,7 @@
       <div class="iconfont icon-accountfilling"></div>
       <div class="title">分组管理</div>
     </router-link>
-    <router-link class="item" :to="{name: 'patientGroups'}" tag="li">
+    <router-link class="item" :to="{name: 'otherList', params: {id: 223}}" tag="li">
       <div class="iconfont icon-accountfilling"></div>
       <div class="title">科室患者</div>
     </router-link>

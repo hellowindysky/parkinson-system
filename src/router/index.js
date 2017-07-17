@@ -9,9 +9,7 @@ import Patients from 'components/patients/Patients';
 import Analytics from 'components/analytics/Analytics';
 import Configuration from 'components/configuration/Configuration';
 
-import PatientList from 'components/patientlist/PatientList';
 import PatientInfo from 'components/patientinfo/PatientInfo';
-import GroupList from 'components/grouplist/GroupList';
 
 Vue.use(Router);
 
@@ -45,18 +43,23 @@ export default new Router({
             {
               path: 'list/:id',
               components: {
-                list: PatientList,
                 content: PatientInfo
               },
-              name: 'patientList'
+              name: 'list'
             },
             {
               path: 'groups',
               components: {
-                list: GroupList,
                 content: PatientInfo
               },
               name: 'patientGroups'
+            },
+            {
+              path: 'otherlist/:id',
+              components: {
+                content: PatientInfo
+              },
+              name: 'otherList'
             }
           ]
         },
