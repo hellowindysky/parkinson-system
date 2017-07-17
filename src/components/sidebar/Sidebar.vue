@@ -52,7 +52,7 @@ export default {
     .title {
       font-size: @normal-font-size;
     }
-    .router-link-active {
+    .active {
       background-color: #bac0ca;
     }
   }

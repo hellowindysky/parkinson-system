@@ -25,6 +25,7 @@ export default {
   box-sizing: border-box;
   background-color: #bbb;
   border-bottom: 1px solid #888;
+  cursor: pointer;
   &:hover {
     background-color: #ddd;
   }
@@ -38,31 +39,31 @@ export default {
   .name {
     position: absolute;
     font-size: @normal-font-size;
-    left: 65px;
+    left: 60px;
     top: 10px;
   }
   .date {
     position: absolute;
     font-size: @small-font-size;
-    left: 180px;
+    right: 10px;
     top: 12px;
   }
   .gender {
     position: absolute;
     font-size: @small-font-size;
-    left: 65px;
+    left: 60px;
     top: 40px;
   }
   .age {
     position: absolute;
     font-size: @small-font-size;
-    left: 90px;
+    left: 85px;
     top: 40px;
   }
   .location {
     position: absolute;
     font-size: @small-font-size;
-    left: 130px;
+    left: 125px;
     top: 40px;
   }
 }

@@ -1,35 +1,83 @@
 <template lang="html">
   <div class="list">
     <div class="top-area">
-      <div class="num-info">患者：345人</div>
-      <div class="filter-button">筛选条件</div>
+      <div class="num-info">{{totalNumText}}</div>
+      <div class="filter-button" @click="togglePanelDisplay" :class="{'active': panelDisplay}">
+        筛选条件
+        <span class="iconfont icon-moreunfold"></span>
+      </div>
     </div>
     <div class="search-area">
       <el-input class="search-input" size="small" placeholder="请输入姓名或身份证号" icon="search" v-model="searchInput" :on-icon-click="clickSearchIcon"></el-input>
     </div>
-    <div class="list-area">
+
+    <div class="list-area" v-if="this.listType === 'patients'">
       <patientListItem></patientListItem>
       <patientListItem></patientListItem>
+    </div>
+    <div class="list-area" v-else-if="this.listType === 'groups'">
+      <groupListItem></groupListItem>
+      <groupListItem></groupListItem>
+      <groupListItem></groupListItem>
+    </div>
+
+    <div class="filter-panel" v-show="panelDisplay" v-if="this.listType === 'patients'">
+
+    </div>
+    <div class="filter-panel" v-show="panelDisplay" v-else-if="this.listType === 'group'">
+
     </div>
   </div>
 </template>
 
 <script>
 import patientListItem from 'components/patientitem/PatientItem';
+import groupListItem from 'components/groupitem/GroupItem';
 
 export default {
   data() {
     return {
-      searchInput: ''
+      searchInput: '',
+      panelDisplay: false
     };
+  },
+  computed: {
+    // 根据路由信息对象提供的当前路径，来判断列表类型
+    listType() {
+      var path = this.$route.path;
+      if (path.match(/^\/patients\/list/)) {
+        return 'patients';
+      } else if (path.match(/^\/patients\/groups/)) {
+        return 'groups';
+      } else if (path.match(/^\/patients\/otherlist/)) {
+        return 'patients';
+      }
+    },
+    totalNumText() {
+      if (this.listType === 'patients') {
+        return '患者：345人';
+      } else if (this.listType === 'groups') {
+        return '分组：19个';
+      }
+    }
   },
   methods: {
     clickSearchIcon(event) {
       console.log(event);
+    },
+    togglePanelDisplay() {
+      this.panelDisplay = !this.panelDisplay;
     }
   },
   components: {
-    patientListItem
+    patientListItem,
+    groupListItem
+  },
+  watch: {
+    // 路由一旦发生变化，就关闭筛选面板
+    $route() {
+      this.panelDisplay = false;
+    }
   }
 };
 </script>
@@ -73,7 +121,16 @@ export default {
       line-height: @top-area-height;
       cursor: pointer;
       &:hover {
+        opacity: 0.8;
+      }
+      &.active {
         background-color: #aaa;
+      }
+      .iconfont {
+        padding-left: 20px;
+        font-size: @large-font-size;
+        font-weight: bold;
+        vertical-align: middle;
       }
     }
   }
@@ -87,6 +144,14 @@ export default {
     .search-input {
       // width: calc(~"100% - 20px");
     }
+  }
+  .filter-panel {
+    position: absolute;
+    top: @top-area-height;
+    width: 100%;
+    height: calc(~"100% - @{top-area-height}");
+    background-color: rgba(32,32,32,0.9);
+    z-index: 150;
   }
 }
 </style>
