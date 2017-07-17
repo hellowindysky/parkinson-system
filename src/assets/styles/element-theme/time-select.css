@@ -440,8 +440,8 @@
   --------------------------*/
 }
 .el-picker-panel {
-  color: rgb(72, 88, 106);
-  border: 1px solid rgb(209, 219, 229);
+  color: rgb(72, 90, 106);
+  border: 1px solid rgb(209, 221, 229);
   box-shadow: 0 2px 6px #ccc;
   background: #fff;
   border-radius: 2px;
@@ -472,14 +472,14 @@
   background-color: transparent;
   line-height: 28px;
   font-size: 14px;
-  color: rgb(72, 88, 106);
+  color: rgb(72, 90, 106);
   padding-left: 12px;
   text-align: left;
   outline: none;
   cursor: pointer;
 }
 .el-picker-panel__shortcut:hover {
-  background-color: rgb(228, 232, 241);
+  background-color: rgb(228, 233, 241);
 }
 .el-picker-panel__shortcut.active {
   background-color: #e6f1fe;
@@ -502,7 +502,7 @@
 }
 .el-picker-panel__icon-btn {
   font-size: 12px;
-  color: rgb(151, 169, 190);
+  color: rgb(151, 171, 190);
   border: 0;
   background: transparent;
   cursor: pointer;
@@ -803,11 +803,11 @@
   height: 0;
   cursor: pointer;
   border-radius: inherit;
-  background-color: rgba(151, 169, 190, 0.3);
+  background-color: rgba(151, 171, 190, 0.3);
   transition: .3s background-color;
 }
 .el-scrollbar__thumb:hover {
-  background-color: rgba(151, 169, 190, 0.5);
+  background-color: rgba(151, 171, 190, 0.5);
 }
 .el-scrollbar__bar {
   position: absolute;
@@ -858,12 +858,12 @@
 }
 
 .time-select-item.disabled {
-  color: rgb(209, 219, 229);
+  color: rgb(209, 221, 229);
   cursor: not-allowed;
 }
 
 .time-select-item:hover {
-  background-color: rgb(228, 232, 241);
+  background-color: rgb(228, 233, 241);
   cursor: pointer;
 }
 :root {

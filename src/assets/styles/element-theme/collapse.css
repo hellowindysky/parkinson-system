@@ -91,7 +91,7 @@
 }
 
 .el-collapse{
-    border: 1px solid rgb(223, 230, 236);
+    border: 1px solid rgb(223, 231, 236);
     border-radius: 0;
 }
 
@@ -110,9 +110,9 @@
     line-height: 43px;
     padding-left: 15px;
     background-color: #fff;
-    color: rgb(72, 88, 106);
+    color: rgb(72, 90, 106);
     cursor: pointer;
-    border-bottom: 1px solid rgb(223, 230, 236);
+    border-bottom: 1px solid rgb(223, 231, 236);
     font-size: 13px;
 }
 
@@ -126,13 +126,13 @@
     background-color: rgb(252, 252, 253);
     overflow: hidden;
     box-sizing: border-box;
-    border-bottom: 1px solid rgb(223, 230, 236);
+    border-bottom: 1px solid rgb(223, 231, 236);
 }
 
 .el-collapse-item__content{
     padding: 10px 15px;
     font-size: 13px;
-    color: rgb(31, 46, 61);
+    color: rgb(31, 48, 61);
     line-height: 1.769230769230769;
 }
 :root{
