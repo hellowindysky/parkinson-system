@@ -26,7 +26,7 @@
         <div class="filter-condition">
           <span class="name">分组:</span>
           <el-dropdown class="selection" @command="handleGroupCommand" trigger="click">
-            <el-button type="primary" class="button">
+            <el-button class="button">
               {{filterPatientsOptions.group}}
               <i class="el-icon-caret-bottom el-icon--right icon"></i>
             </el-button>
@@ -42,7 +42,7 @@
         <div class="filter-condition">
           <span class="name">性别:</span>
           <el-dropdown class="selection" @command="handleGenderCommand" trigger="click">
-            <el-button type="primary" class="button">
+            <el-button class="button">
               {{filterPatientsOptions.gender}}
               <i class="el-icon-caret-bottom el-icon--right icon"></i>
             </el-button>
@@ -56,7 +56,7 @@
         <div class="filter-condition">
           <span class="name">地区:</span>
           <el-dropdown class="selection" @command="handleDistrictCommand" trigger="click">
-            <el-button type="primary" class="button">
+            <el-button class="button">
               {{filterPatientsOptions.district}}
               <i class="el-icon-caret-bottom el-icon--right icon"></i>
             </el-button>
@@ -86,9 +86,31 @@
           <span class="name">随诊:</span>
           <el-checkbox class="checkbox" v-model="filterPatientsOptions.followUp">随诊中</el-checkbox>
         </div>
+        <div class="button-wrapper">
+          <el-button class="button reset" @click="reset">重置</el-button>
+          <el-button type="primary" class="button confirm" @click="submit">确定</el-button>
+        </div>
       </div>
-      <div class="filter-panel" v-show="panelDisplay" v-else-if="this.listType === 'group'">
 
+      <div class="filter-panel" v-show="panelDisplay" v-else-if="this.listType === 'groups'">
+        <div class="filter-condition">
+          <span class="name">分类:</span>
+          <el-dropdown class="selection" @command="handleGenderCommand" trigger="click">
+            <el-button class="button">
+              {{filterGroupsOptions.category}}
+              <i class="el-icon-caret-bottom el-icon--right icon"></i>
+            </el-button>
+            <el-dropdown-menu slot="dropdown" class="dropdown">
+              <el-dropdown-item command="不限">不限</el-dropdown-item>
+              <el-dropdown-item command="临床">临床</el-dropdown-item>
+              <el-dropdown-item command="科研">科研</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </div>
+        <div class="button-wrapper">
+          <el-button class="button reset" @click="reset">重置</el-button>
+          <el-button type="primary" class="button confirm" @click="submit">确定</el-button>
+        </div>
       </div>
     </transition>
   </div>
@@ -110,6 +132,9 @@ export default {
         minAge: '',
         maxAge: '',
         followUp: false
+      },
+      filterGroupsOptions: {
+        category: '不限'
       }
     };
   },
@@ -148,6 +173,12 @@ export default {
     },
     handleDistrictCommand(command) {
       this.filterPatientsOptions.district = command;
+    },
+    reset() {
+      this.togglePanelDisplay();
+    },
+    submit() {
+      this.togglePanelDisplay();
     }
   },
   components: {
@@ -242,7 +273,7 @@ export default {
     top: @top-area-height;
     width: 100%;
     height: calc(~"100% - @{top-area-height}");
-    padding-top: 10px;
+    padding-top: 15px;
     background-color: rgba(32,32,32,0.9);
     font-size: @normal-font-size;
     z-index: 150;
@@ -316,6 +347,14 @@ export default {
         left: 20%;
         line-height: @filter-text-height;
         color: #fff;
+      }
+    }
+    .button-wrapper {
+      margin-top: 40px;
+      .button {
+        display: inline-block;
+        width: 35%;
+        margin: auto 10px;
       }
     }
   }
