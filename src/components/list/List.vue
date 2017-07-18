@@ -83,6 +83,14 @@
           <span class="text second-unit">岁</span>
         </div>
         <div class="filter-condition">
+          <span class="name">病程:</span>
+          <el-input class="input min" v-model="filterPatientsOptions.minCourseYear" size="small" placeholder="不限"></el-input>
+          <span class="text first-unit">年</span>
+          <span class="text dash">~</span>
+          <el-input class="input max" v-model="filterPatientsOptions.maxCourseYear" size="small" placeholder="不限"></el-input>
+          <span class="text second-unit">年</span>
+        </div>
+        <div class="filter-condition">
           <span class="name">随诊:</span>
           <el-checkbox class="checkbox" v-model="filterPatientsOptions.followUp">随诊中</el-checkbox>
         </div>
@@ -131,6 +139,8 @@ export default {
         district: '不限',
         minAge: '',
         maxAge: '',
+        minCourseYear: '',
+        maxCourseYear: '',
         followUp: false
       },
       filterGroupsOptions: {
