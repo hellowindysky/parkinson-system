@@ -9,12 +9,20 @@
         <span class="tab tab-place-2" :class="{'current-tab':loginType===TEL}" @click="telLogin">手机登录</span>
         <div class="tab-bottom-bar" :class="tabPlaceClass"></div>
       </div>
-      <div class="input-wrapper">
-        <el-input class="input" v-model="account" :placeholder="holderText"></el-input>
-        <el-input class="input" v-model="password" placeholder="请输入6-10位数字和字母的密码"></el-input>
-        <el-checkbox class="checkbox" v-model="autoLogin">自动登录</el-checkbox>
-      </div>
-      <el-button class="button" type="primary" @click="submit">登 录</el-button>
+      <el-form class="input-wrapper" :model="ruleForm" :rules="rules" ref="ruleForm" label-width="0">
+        <el-form-item prop="account">
+          <el-input v-model="ruleForm.account" :placeholder="holderText"></el-input>
+        </el-form-item>
+        <el-form-item prop="password">
+          <el-input v-model="ruleForm.password" type="password" auto-complete="off" placeholder="请输入6-10位数字和字母的密码"></el-input>
+        </el-form-item>
+        <el-form-item prop="remember">
+          <el-checkbox v-model="ruleForm.remember" class="checkbox" label="记住用户名" name="type"></el-checkbox>
+        </el-form-item>
+        <el-form-item>
+          <el-button class="button" type="primary" @click="submit('ruleForm')">登 录</el-button>
+        </el-form-item>
+      </el-form>
     </div>
   </div>
 </template>
@@ -35,9 +43,21 @@ export default {
       loginType: ACCOUNT_LOGIN,
       ACCOUNT: ACCOUNT_LOGIN,
       TEL: TEL_LOGIN,
-      account: '',
-      password: '',
-      autoLogin: false
+      ruleForm: {
+        account: '',
+        password: '',
+        remember: false
+      },
+      rules: {
+        account: [
+          { required: true, message: '请输入账号', trigger: 'change' },
+          { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'change' }
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'change' },
+          { min: 6,  message: '长度至少为 6 个字符', trigger: 'change' }
+        ]
+      }
     };
   },
   computed: {
@@ -95,12 +115,10 @@ export default {
 @tab-horizontal-space: 20px;
 
 .panel {
-  // position: relative;
-  padding: 20px;
-  width: 400px;
-  height: 370px;
   position: absolute;
-  left: 50%; top: 40%;
+  left: 50%; top: 45%;
+  width: 300px;
+  height: 400px;
   transform: translate(-50%, -50%);
   background-color: rgba(224,224,224,0);
   border-radius: 30px;
@@ -162,19 +180,14 @@ export default {
   }
   .input-wrapper {
     margin: 20px auto;
-    width: 300px;
+    width: 250px;
     height: 130px;
-    .input {
-      margin-bottom: 10px;
-    }
     .checkbox {
-      margin-top: 10px;
       float: left;
     }
-  }
-  .button {
-    margin: 10px auto;
-    width: 150px;
+    .button {
+      width: 100px;
+    }
   }
 }
 </style>
