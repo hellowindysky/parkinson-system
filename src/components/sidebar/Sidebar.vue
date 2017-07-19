@@ -19,7 +19,7 @@
 export default {
   mounted() {
     // 初始化该组件时，自动跳转到病患列表下第一个患者
-    this.$router.push('/patients/list/id=123');
+    this.$router.replace('/patients/list/id=123');
   }
 };
 </script>

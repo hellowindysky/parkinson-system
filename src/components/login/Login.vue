@@ -11,7 +11,7 @@
       </div>
       <el-form class="input-wrapper" :model="ruleForm" :rules="rules" ref="ruleForm" label-width="0">
         <el-form-item prop="account">
-          <el-input v-model="ruleForm.account" :placeholder="holderText"></el-input>
+          <el-input v-model="ruleForm.account" type="text" auto-complete="off" :placeholder="holderText"></el-input>
         </el-form-item>
         <el-form-item prop="password">
           <el-input v-model="ruleForm.password" type="password" auto-complete="off" placeholder="请输入6-10位数字和字母的密码"></el-input>
@@ -20,7 +20,7 @@
           <el-checkbox v-model="ruleForm.remember" class="checkbox" label="记住用户名" name="type"></el-checkbox>
         </el-form-item>
         <el-form-item>
-          <el-button class="button" type="primary" @click="submit('ruleForm')">登 录</el-button>
+          <el-button class="button" type="primary" @click="submitForm('ruleForm')">登 录</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -55,7 +55,7 @@ export default {
         ],
         password: [
           { required: true, message: '请输入密码', trigger: 'change' },
-          { min: 6,  message: '长度至少为 6 个字符', trigger: 'change' }
+          { min: 6, message: '长度至少为 6 个字符', trigger: 'change' }
         ]
       }
     };
@@ -82,8 +82,18 @@ export default {
     telLogin() {
       this.loginType = TEL_LOGIN;
     },
-    submit() {
-      var self = this;
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.$router.push('/patients');
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
+    }
+    // submit() {
+    //   var self = this;
       // axios.post('http://apitest.gyenno.com/pdms/usermgr/userSignIn', {
       //   'accountNumber': '15012670416',
       //   'pwd': 'e10adc3949ba59abbe56e057f20f883e',
@@ -98,10 +108,10 @@ export default {
       // });
 
       // 暂时模拟一个登录效果
-      setTimeout(function() {
-        self.$router.push('/patients');
-      }, 1000);
-    }
+    //   setTimeout(function() {
+    //     self.$router.push('/patients');
+    //   }, 1000);
+    // }
   },
   components: {
     particles
