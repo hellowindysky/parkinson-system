@@ -32,11 +32,11 @@ export default {
   computed: {
     tabPlace() {
       var path = this.$route.path;
-      if (path.match(/^\/patients/)) {
+      if (/^\/patients/.test(path)) {
         return 1;
-      } else if (path.match(/^\/analytics/)) {
+      } else if (/^\/analytics/.test(path)) {
         return 2;
-      } else if (path.match(/^\/configuration/)) {
+      } else if (/^\/configuration/.test(path)) {
         return 3;
       }
     },
@@ -47,19 +47,19 @@ export default {
   methods: {
     choosePatients() {
       // 如果当前路径不是以“/patients”开头了，才发生跳转
-      if (!this.$route.path.match(/^\/patients/)) {
+      if (!/^\/patients/.test(this.$route.path)) {
         this.$router.push('/patients');
       }
     },
     chooseAnalytics() {
       // 如果当前路径不是以“/analytics”开头了，才发生跳转
-      if (!this.$route.path.match(/^\/analytics/)) {
+      if (!/^\/analytics/.test(this.$route.path)) {
         this.$router.push('/analytics');
       }
     },
     chooseConfiguration() {
       // 如果当前路径不是以“/configuration”开头了，才发生跳转
-      if (!this.$route.path.match(/^\/configuration/)) {
+      if (!/^\/configuration/.test(this.$route.path)) {
         this.$router.push('/configuration');
       }
     },

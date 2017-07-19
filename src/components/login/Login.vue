@@ -83,7 +83,6 @@ export default {
       this.loginType = TEL_LOGIN;
     },
     submitForm(formName) {
-      var self = this;
       // axios.post('http://apitest.gyenno.com/pdms/usermgr/userSignIn', {
       //   'accountNumber': '15012670416',
       //   'pwd': 'e10adc3949ba59abbe56e057f20f883e',
@@ -100,9 +99,9 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           // 暂时模拟一个延时登录效果
-          setTimeout(function() {
-            self.$router.push('/patients');
-          }, 1000);;
+          setTimeout(() => {
+            this.$router.push('/patients');
+          }, 1000);
         } else {
           console.log('error submit!!');
           return false;

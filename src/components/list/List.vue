@@ -22,104 +22,83 @@
     </div>
 
     <transition name="slide-fade">
-      <div class="filter-panel" v-show="panelDisplay" v-if="this.listType === 'patients'">
-        <div class="filter-condition">
-          <span class="name">分组:</span>
-          <el-dropdown class="selection" @command="handleGroupCommand" trigger="click">
-            <el-button class="button">
-              {{filterPatientsOptions.group}}
-              <i class="el-icon-caret-bottom el-icon--right icon"></i>
-            </el-button>
-            <el-dropdown-menu slot="dropdown" class="dropdown">
-              <el-dropdown-item command="不限">不限</el-dropdown-item>
-              <el-dropdown-item command="FOG2组">FOG2组</el-dropdown-item>
-              <el-dropdown-item command="帕金森1组">帕金森1组</el-dropdown-item>
-              <el-dropdown-item command="帕金森2组">帕金森2组</el-dropdown-item>
-              <el-dropdown-item command="一个名字超长的组，很长很长很长很长。。。。">一个名字超长的组，很长很长很长很长。。。。</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </div>
-        <div class="filter-condition">
-          <span class="name">性别:</span>
-          <el-dropdown class="selection" @command="handleGenderCommand" trigger="click">
-            <el-button class="button">
-              {{filterPatientsOptions.gender}}
-              <i class="el-icon-caret-bottom el-icon--right icon"></i>
-            </el-button>
-            <el-dropdown-menu slot="dropdown" class="dropdown">
-              <el-dropdown-item command="不限">不限</el-dropdown-item>
-              <el-dropdown-item command="男">男</el-dropdown-item>
-              <el-dropdown-item command="女">女</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </div>
-        <div class="filter-condition">
-          <span class="name">地区:</span>
-          <el-dropdown class="selection" @command="handleDistrictCommand" trigger="click">
-            <el-button class="button">
-              {{filterPatientsOptions.district}}
-              <i class="el-icon-caret-bottom el-icon--right icon"></i>
-            </el-button>
-            <el-dropdown-menu slot="dropdown" class="dropdown">
-              <el-dropdown-item command="不限">不限</el-dropdown-item>
-              <el-dropdown-item command="北京">北京</el-dropdown-item>
-              <el-dropdown-item command="天津">天津</el-dropdown-item>
-              <el-dropdown-item command="上海">上海</el-dropdown-item>
-              <el-dropdown-item command="深圳">深圳</el-dropdown-item>
-              <el-dropdown-item command="广州">广州</el-dropdown-item>
-              <el-dropdown-item command="武汉">武汉</el-dropdown-item>
-              <el-dropdown-item command="杭州">杭州</el-dropdown-item>
-              <el-dropdown-item command="成都">成都</el-dropdown-item>
-              <el-dropdown-item command="重庆">重庆</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </div>
-        <div class="filter-condition">
-          <span class="name">年龄:</span>
-          <el-input class="input min" v-model="filterPatientsOptions.minAge" size="small" placeholder="不限"></el-input>
-          <span class="text first-unit">岁</span>
-          <span class="text dash">~</span>
-          <el-input class="input max" v-model="filterPatientsOptions.maxAge" size="small" placeholder="不限"></el-input>
-          <span class="text second-unit">岁</span>
-        </div>
-        <div class="filter-condition">
-          <span class="name">病程:</span>
-          <el-input class="input min" v-model="filterPatientsOptions.minCourseYear" size="small" placeholder="不限"></el-input>
-          <span class="text first-unit">年</span>
-          <span class="text dash">~</span>
-          <el-input class="input max" v-model="filterPatientsOptions.maxCourseYear" size="small" placeholder="不限"></el-input>
-          <span class="text second-unit">年</span>
-        </div>
-        <div class="filter-condition">
-          <span class="name">随诊:</span>
-          <el-checkbox class="checkbox" v-model="filterPatientsOptions.followUp">随诊中</el-checkbox>
-        </div>
-        <div class="button-wrapper">
-          <el-button class="button reset" @click="reset">重置</el-button>
-          <el-button type="primary" class="button confirm" @click="submit">确定</el-button>
-        </div>
-      </div>
+      <el-form class="filter-panel" :model="filterPatientsForm" :rules="rules" ref="filterPatientsForm" label-width="20%"  v-show="panelDisplay" v-if="this.listType === 'patients'">
+        <el-form-item label="分组" prop="group" class="item">
+          <el-select v-model="filterPatientsForm.group">
+            <el-option label="不限" value="all"></el-option>
+            <el-option label="FOG1组" value="fog1"></el-option>
+            <el-option label="FOG2组" value="fog2"></el-option>
+            <el-option label="帕金森1组" value="parkinson1"></el-option>
+            <el-option label="一个名字很长很长很长很长很长很长很长很长的组" value="longName"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="性别" prop="gender" class="item">
+          <el-select v-model="filterPatientsForm.gender">
+            <el-option label="不限" value="all"></el-option>
+            <el-option label="男" value="male"></el-option>
+            <el-option label="女" value="female"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="地区" prop="district" class="item">
+          <el-select v-model="filterPatientsForm.district">
+            <el-option label="不限" value="all"></el-option>
+            <el-option label="北京" value="北京"></el-option>
+            <el-option label="天津" value="天津"></el-option>
+            <el-option label="上海" value="上海"></el-option>
+            <el-option label="深圳" value="深圳"></el-option>
+            <el-option label="武汉" value="武汉"></el-option>
+            <el-option label="杭州" value="杭州"></el-option>
+            <el-option label="广州" value="广州"></el-option>
+            <el-option label="成都" value="成都"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="病程" class="item">
+          <el-col :span="8">
+            <el-form-item prop="minCourseYear">
+              <el-input v-model.number="filterPatientsForm.minCourseYear" :min="0" :max="120"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="5">年 -</el-col>
+          <el-col :span="8">
+            <el-form-item prop="maxCourseYear">
+              <el-input type="number" v-model.number="filterPatientsForm.maxCourseYear" :min="0" :max="120"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="3">年</el-col>
+        </el-form-item>
+        <el-form-item label="年龄" class="item">
+          <el-col :span="8">
+            <el-form-item prop="minAge">
+              <el-input type="number" v-model.number="filterPatientsForm.minAge" :min="0" :max="120"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="5">岁 -</el-col>
+          <el-col :span="8">
+            <el-form-item prop="maxAge">
+              <el-input type="number" v-model.number="filterPatientsForm.maxAge" :min="0" :max="120"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="3">岁</el-col>
+        </el-form-item>
+        <el-form-item class="item" label-width="0">
+          <el-button @click="resetForm('filterPatientsForm')" class="button">重置</el-button>
+          <el-button type="primary" @click="submitForm('filterPatientsForm')" class="button">确定</el-button>
+        </el-form-item>
+      </el-form>
 
-      <div class="filter-panel" v-show="panelDisplay" v-else-if="this.listType === 'groups'">
-        <div class="filter-condition">
-          <span class="name">分类:</span>
-          <el-dropdown class="selection" @command="handleGenderCommand" trigger="click">
-            <el-button class="button">
-              {{filterGroupsOptions.category}}
-              <i class="el-icon-caret-bottom el-icon--right icon"></i>
-            </el-button>
-            <el-dropdown-menu slot="dropdown" class="dropdown">
-              <el-dropdown-item command="不限">不限</el-dropdown-item>
-              <el-dropdown-item command="临床">临床</el-dropdown-item>
-              <el-dropdown-item command="科研">科研</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </div>
-        <div class="button-wrapper">
-          <el-button class="button reset" @click="reset">重置</el-button>
-          <el-button type="primary" class="button confirm" @click="submit">确定</el-button>
-        </div>
-      </div>
+      <el-form class="filter-panel" :model="filterGroupsForm" :rules="rules" ref="filterGroupsForm" label-width="20%"  v-show="panelDisplay" v-if="this.listType === 'groups'">
+        <el-form-item label="分组" prop="category" class="item">
+          <el-select v-model="filterGroupsForm.category">
+            <el-option label="不限" value="all"></el-option>
+            <el-option label="临床" value="clinical"></el-option>
+            <el-option label="科研" value="research"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item class="item" label-width="0">
+          <el-button @click="resetForm('filterPatientsForm')" class="button">重置</el-button>
+          <el-button type="primary" @click="submitForm('filterPatientsForm')" class="button">确定</el-button>
+        </el-form-item>
+      </el-form>
     </transition>
   </div>
 </template>
@@ -133,18 +112,32 @@ export default {
     return {
       searchInput: '',
       panelDisplay: false,
-      filterPatientsOptions: {
-        group: '不限',
-        gender: '不限',
-        district: '不限',
+      filterPatientsForm: {
+        group: 'all',
+        gender: 'all',
+        district: 'all',
         minAge: '',
         maxAge: '',
         minCourseYear: '',
         maxCourseYear: '',
         followUp: false
       },
-      filterGroupsOptions: {
+      filterGroupsForm: {
         category: '不限'
+      },
+      rules: {
+        minCourseYear: [
+          { type: 'number', message: '填入数字', trigger: 'change' }
+        ],
+        maxCourseYear: [
+          { max: 3, message: '不超过120', trigger: 'change' }
+        ],
+        minAge: [
+          { max: 3, message: '不超过120', trigger: 'change' }
+        ],
+        maxAge: [
+          { max: 3, message: '不超过120', trigger: 'change' }
+        ]
       }
     };
   },
@@ -152,11 +145,11 @@ export default {
     // 根据路由信息对象提供的当前路径，来判断列表类型
     listType() {
       var path = this.$route.path;
-      if (path.match(/^\/patients\/list/)) {
+      if (/^\/patients\/list/.test(path)) {
         return 'patients';
-      } else if (path.match(/^\/patients\/groups/)) {
+      } else if (/^\/patients\/groups/.test(path)) {
         return 'groups';
-      } else if (path.match(/^\/patients\/otherlist/)) {
+      } else if (/^\/patients\/otherlist/.test(path)) {
         return 'patients';
       }
     },
@@ -175,19 +168,19 @@ export default {
     togglePanelDisplay() {
       this.panelDisplay = !this.panelDisplay;
     },
-    handleGroupCommand(command) {
-      this.filterPatientsOptions.group = command;
-    },
-    handleGenderCommand(command) {
-      this.filterPatientsOptions.gender = command;
-    },
-    handleDistrictCommand(command) {
-      this.filterPatientsOptions.district = command;
-    },
-    reset() {
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
       this.togglePanelDisplay();
     },
-    submit() {
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          // 提交新的筛选条件，发出post请求
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
       this.togglePanelDisplay();
     }
   },
@@ -283,97 +276,19 @@ export default {
     top: @top-area-height;
     width: 100%;
     height: calc(~"100% - @{top-area-height}");
-    padding-top: 15px;
+    padding-top: 20px;
     background-color: rgba(32,32,32,0.9);
     font-size: @normal-font-size;
     z-index: 150;
-    .filter-condition {
-      position: relative;
-      height: 42px;
-      padding: 6px;
-      width: 100%;
-      box-sizing: border-box;
-      .name {
-        position: absolute;
-        left: 0;
-        width: 20%;
-        height: 100%;
-        line-height: @filter-text-height;
-        color: #fff;
-      }
-      .selection {
-        position: absolute;
-        left: 20%;
-        width: 75%;
-        height: @filter-text-height;
-        box-sizing: border-box;
-        .button {
-          position: relative;
-          width: 100%;
-          height: @filter-text-height;
-          box-sizing: border-box;
-          text-align: left;
-          line-height: 0;   // 加上这一行，按钮内的文字高度才正常
-          .icon {
-            position: absolute;
-            top: 8px;
-            right: 10px;
-          }
-        }
-        .dropdown {
-          width: 100%;
-          max-height: 200px;
-        }
-      }
-      .text {
-        position: absolute;
-        line-height: @filter-text-height;
-        color: #fff;
-      }
-      .first-unit {
-        left: 43%;
-      }
-      .second-unit {
-        left: 88%;
-      }
-      .dash {
-        left: 55%;
-      }
-      .input {
-        display: inline-block;
-        position: absolute;
-        width: 50px;
-        height: @filter-text-height;
-        text-align: center;
-        &.min {
-          left: 20%;
-        }
-        &.max {
-          left: 65%;
-        }
-      }
-      .checkbox {
-        position: absolute;
-        left: 20%;
-        line-height: @filter-text-height;
-        color: #fff;
-      }
-    }
-    .button-wrapper {
-      margin-top: 40px;
+    .item {
+      padding-left: 10px;
+      padding-right: 10px;
+      color: #fff;
       .button {
-        display: inline-block;
+        margin: 30px 10px;
         width: 35%;
-        margin: auto 10px;
       }
     }
   }
-}
-
-// 以下是为了覆盖element-ui的默认样式
-.el-dropdown-menu {
-  max-height: 300px;
-  overflow-y: auto;
-  max-width: 200px;
 }
 </style>

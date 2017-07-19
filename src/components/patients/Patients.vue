@@ -40,7 +40,7 @@ export default {
 
 <style lang="less" scoped>
 @sidebar-width: 70px;
-@list-width: 235px;
+@list-width: 250px;
 @bar-width: 25px;
 
 .content-wrapper {
