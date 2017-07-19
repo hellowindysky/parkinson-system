@@ -20,7 +20,7 @@
           <el-checkbox v-model="ruleForm.remember" class="checkbox" label="记住用户名" name="type"></el-checkbox>
         </el-form-item>
         <el-form-item>
-          <el-button class="button" type="primary" @click="submit">登 录</el-button>
+          <el-button class="button" type="primary" @click="submitForm('ruleForm')">登 录</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -82,7 +82,7 @@ export default {
     telLogin() {
       this.loginType = TEL_LOGIN;
     },
-    submit() {
+    submitForm(formName) {
       var self = this;
       // axios.post('http://apitest.gyenno.com/pdms/usermgr/userSignIn', {
       //   'accountNumber': '15012670416',
@@ -97,7 +97,7 @@ export default {
       //   console.log(error);
       // });
 
-      this.$refs['ruleForm'].validate((valid) => {
+      this.$refs[formName].validate((valid) => {
         if (valid) {
           // 暂时模拟一个延时登录效果
           setTimeout(function() {
