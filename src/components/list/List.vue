@@ -109,6 +109,23 @@ import groupListItem from 'components/groupitem/GroupItem';
 
 export default {
   data() {
+    // 自定义校验规则，可以为空，数值在 0 ~ 120 之间
+    var checkNum = (rule, value, callback) => {
+      if (!value) {
+        return callback();
+      }
+      setTimeout(() => {
+        if (!Number.isInteger(value)) {
+          callback(new Error('请输入数字'));
+        } else {
+          if (value < 0 || value > 120) {
+            callback(new Error('0~120之间'));
+          } else {
+            callback();
+          }
+        }
+      }, 0);
+    };
     return {
       searchInput: '',
       panelDisplay: false,
@@ -127,16 +144,16 @@ export default {
       },
       rules: {
         minCourseYear: [
-          { type: 'number', message: '填入数字', trigger: 'change' }
+          { validator: checkNum, trigger: 'change' }
         ],
         maxCourseYear: [
-          { max: 3, message: '不超过120', trigger: 'change' }
+          { validator: checkNum, trigger: 'change' }
         ],
         minAge: [
-          { max: 3, message: '不超过120', trigger: 'change' }
+          { validator: checkNum, trigger: 'change' }
         ],
         maxAge: [
-          { max: 3, message: '不超过120', trigger: 'change' }
+          { validator: checkNum, trigger: 'change' }
         ]
       }
     };
