@@ -1,14 +1,14 @@
 <template lang="html">
   <ul class="sidebar">
-    <router-link class="item" :to="{name: 'list', params: {id: 124}}" tag="li">
+    <router-link class="item" :class="{'current': currentItem === 'list'}" :to="{name: 'list', params: {id: 124}}" tag="li">
       <div class="iconfont icon-accountfilling"></div>
       <div class="title">我的患者</div>
     </router-link>
-    <router-link class="item" :to="{name: 'patientGroups'}" tag="li">
+    <router-link class="item" :class="{'current': currentItem === 'groups'}" :to="{name: 'patientGroups'}" tag="li">
       <div class="iconfont icon-accountfilling"></div>
       <div class="title">分组管理</div>
     </router-link>
-    <router-link class="item" :to="{name: 'otherList', params: {id: 223}}" tag="li">
+    <router-link class="item" :class="{'current': currentItem === 'otherlist'}" :to="{name: 'otherList', params: {id: 223}}" tag="li">
       <div class="iconfont icon-accountfilling"></div>
       <div class="title">科室患者</div>
     </router-link>
@@ -17,6 +17,18 @@
 
 <script>
 export default {
+  computed: {
+    currentItem() {
+      var path = this.$route.path;
+      if (/^\/patients\/list/.test(path)) {
+        return 'list';
+      } else if (/^\/patients\/groups/.test(path)) {
+        return 'groups';
+      } else if (/^\/patients\/otherlist/.test(path)) {
+        return 'otherlist';
+      }
+    }
+  },
   mounted() {
     // 初始化该组件时，自动跳转到病患列表下第一个患者
     this.$router.replace('/patients/list/id=123');
@@ -43,6 +55,12 @@ export default {
     background-color: #ddd;
     &:hover {
       background-color: #eee;
+    }
+    &.current {
+      background-color: #bbb;
+      &:hover {
+        background-color: #bbb;
+      }
     }
     .iconfont {
       padding-top: 15px;

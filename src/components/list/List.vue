@@ -12,8 +12,8 @@
     </div>
 
     <div class="list-area" v-if="this.listType === 'patients'">
-      <patientListItem></patientListItem>
-      <patientListItem></patientListItem>
+      <patientListItem :id="123"></patientListItem>
+      <patientListItem :id="124"></patientListItem>
     </div>
     <div class="list-area" v-else-if="this.listType === 'groups'">
       <groupListItem></groupListItem>
@@ -191,6 +191,11 @@ export default {
     togglePanelDisplay() {
       this.panelDisplay = !this.panelDisplay;
     },
+    setCurrent() {
+      console.log('aaaa');
+      // this.id = id;
+      // console.log(id);
+    },
     resetForm(formName) {
       this.$refs[formName].resetFields();
       this.togglePanelDisplay();
@@ -227,12 +232,12 @@ export default {
 
 .list {
   box-sizing: border-box;
-  background-color: #999;
+  background-color: #eee;
   .top-area {
     position: relative;
     width: 100%;
     height: @top-area-height;
-    background-color: #ddd;
+    background-color: #e0e0e0;
     box-sizing: border-box;
     border-bottom: 1px solid #ddd;
     font-size: @normal-font-size;
@@ -279,7 +284,7 @@ export default {
     height: 36px;
     padding: 3px 5px;
     box-sizing: border-box;
-    background-color: #aaa;
+    background-color: #ccc;
     .search-input {
       // width: calc(~"100% - 20px");
     }

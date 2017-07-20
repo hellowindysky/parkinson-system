@@ -11,7 +11,7 @@
       </div>
       <el-form class="input-wrapper" :model="loginForm" :rules="rules" ref="loginForm" label-width="0">
         <el-form-item prop="account">
-          <el-input v-model="loginForm.account" type="text" auto-complete="off" :placeholder="holderText"></el-input>
+          <el-input v-model="loginForm.account" auto-complete="off" :placeholder="holderText"></el-input>
         </el-form-item>
         <el-form-item prop="password">
           <el-input v-model="loginForm.password" type="password" auto-complete="off" placeholder="请输入6-10位数字和字母的密码"></el-input>
