@@ -9,18 +9,18 @@
         <span class="tab tab-place-2" :class="{'current-tab':loginType===TEL}" @click="telLogin">手机登录</span>
         <div class="tab-bottom-bar" :class="tabPlaceClass"></div>
       </div>
-      <el-form class="input-wrapper" :model="ruleForm" :rules="rules" ref="ruleForm" label-width="0">
+      <el-form class="input-wrapper" :model="loginForm" :rules="rules" ref="loginForm" label-width="0">
         <el-form-item prop="account">
-          <el-input v-model="ruleForm.account" type="text" auto-complete="off" :placeholder="holderText"></el-input>
+          <el-input v-model="loginForm.account" type="text" auto-complete="off" :placeholder="holderText"></el-input>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input v-model="ruleForm.password" type="password" auto-complete="off" placeholder="请输入6-10位数字和字母的密码"></el-input>
+          <el-input v-model="loginForm.password" type="password" auto-complete="off" placeholder="请输入6-10位数字和字母的密码"></el-input>
         </el-form-item>
         <el-form-item prop="remember">
-          <el-checkbox v-model="ruleForm.remember" class="checkbox" label="记住用户名" name="type"></el-checkbox>
+          <el-checkbox v-model="loginForm.remember" class="checkbox" label="记住用户名" name="type"></el-checkbox>
         </el-form-item>
         <el-form-item>
-          <el-button class="button" type="primary" @click="submitForm('ruleForm')">登 录</el-button>
+          <el-button class="button" type="primary" @click="submitForm">登 录</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -43,7 +43,7 @@ export default {
       loginType: ACCOUNT_LOGIN,
       ACCOUNT: ACCOUNT_LOGIN,
       TEL: TEL_LOGIN,
-      ruleForm: {
+      loginForm: {
         account: '',
         password: '',
         remember: false
@@ -51,7 +51,7 @@ export default {
       rules: {
         account: [
           { required: true, message: '请输入账号', trigger: 'change' },
-          { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'change' }
+          { min: 3, max: 15, message: '长度在 3 到 15 个字符', trigger: 'change' }
         ],
         password: [
           { required: true, message: '请输入密码', trigger: 'change' },
@@ -82,7 +82,7 @@ export default {
     telLogin() {
       this.loginType = TEL_LOGIN;
     },
-    submitForm(formName) {
+    submitForm() {
       // axios.post('http://apitest.gyenno.com/pdms/usermgr/userSignIn', {
       //   'accountNumber': '15012670416',
       //   'pwd': 'e10adc3949ba59abbe56e057f20f883e',
@@ -96,7 +96,7 @@ export default {
       //   console.log(error);
       // });
 
-      this.$refs[formName].validate((valid) => {
+      this.$refs['loginForm'].validate((valid) => {
         if (valid) {
           // 暂时模拟一个延时登录效果
           setTimeout(() => {
