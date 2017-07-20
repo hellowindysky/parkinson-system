@@ -23,7 +23,8 @@
 
     <transition name="slide-fade">
       <el-form class="filter-panel" :model="filterPatientsForm" :rules="rules" ref="filterPatientsForm" label-width="20%"  v-show="panelDisplay" v-if="this.listType === 'patients'">
-        <el-form-item label="分组" prop="group" class="item">
+        <el-form-item label="" prop="group" class="item">
+          <label class="alterLabel">分组</label>
           <el-select v-model="filterPatientsForm.group">
             <el-option label="不限" value="all"></el-option>
             <el-option label="FOG1组" value="fog1"></el-option>
@@ -32,14 +33,16 @@
             <el-option label="一个名字很长很长很长很长很长很长很长很长的组" value="longName"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="性别" prop="gender" class="item">
+        <el-form-item label="" prop="gender" class="item">
+          <label class="alterLabel">性别</label>
           <el-select v-model="filterPatientsForm.gender">
             <el-option label="不限" value="all"></el-option>
             <el-option label="男" value="male"></el-option>
             <el-option label="女" value="female"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="地区" prop="district" class="item">
+        <el-form-item label="" prop="district" class="item">
+          <label class="alterLabel">地区</label>
           <el-select v-model="filterPatientsForm.district">
             <el-option label="不限" value="all"></el-option>
             <el-option label="北京" value="北京"></el-option>
@@ -52,42 +55,45 @@
             <el-option label="成都" value="成都"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="病程" class="item">
+        <el-form-item label="" class="item">
+          <label class="alterLabel">病程</label>
           <el-col :span="8">
             <el-form-item prop="minCourseYear">
-              <el-input v-model.number="filterPatientsForm.minCourseYear" :min="0" :max="120"></el-input>
+              <el-input v-model.number="filterPatientsForm.minCourseYear" :min="0" :max="120" placeholder="不限"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="5">年 -</el-col>
           <el-col :span="8">
             <el-form-item prop="maxCourseYear">
-              <el-input type="number" v-model.number="filterPatientsForm.maxCourseYear" :min="0" :max="120"></el-input>
+              <el-input v-model.number="filterPatientsForm.maxCourseYear" :min="0" :max="120" placeholder="不限"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="3">年</el-col>
         </el-form-item>
-        <el-form-item label="年龄" class="item">
+        <el-form-item label="" class="item">
+          <label class="alterLabel">年龄</label>
           <el-col :span="8">
             <el-form-item prop="minAge">
-              <el-input type="number" v-model.number="filterPatientsForm.minAge" :min="0" :max="120"></el-input>
+              <el-input v-model.number="filterPatientsForm.minAge" :min="0" :max="120" placeholder="不限"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="5">岁 -</el-col>
           <el-col :span="8">
             <el-form-item prop="maxAge">
-              <el-input type="number" v-model.number="filterPatientsForm.maxAge" :min="0" :max="120"></el-input>
+              <el-input v-model.number="filterPatientsForm.maxAge" :min="0" :max="120" placeholder="不限"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="3">岁</el-col>
         </el-form-item>
         <el-form-item class="item" label-width="0">
           <el-button @click="resetForm('filterPatientsForm')" class="button">重置</el-button>
-          <el-button type="primary" @click="submitForm('filterPatientsForm')" class="button">确定</el-button>
+          <el-button type="primary" @click="submitForm('filterPatientsForm')" class="button">应用</el-button>
         </el-form-item>
       </el-form>
 
       <el-form class="filter-panel" :model="filterGroupsForm" :rules="rules" ref="filterGroupsForm" label-width="20%"  v-show="panelDisplay" v-if="this.listType === 'groups'">
-        <el-form-item label="分组" prop="category" class="item">
+        <el-form-item label="" prop="category" class="item">
+          <label class="alterLabel">分类</label>
           <el-select v-model="filterGroupsForm.category">
             <el-option label="不限" value="all"></el-option>
             <el-option label="临床" value="clinical"></el-option>
@@ -96,7 +102,7 @@
         </el-form-item>
         <el-form-item class="item" label-width="0">
           <el-button @click="resetForm('filterPatientsForm')" class="button">重置</el-button>
-          <el-button type="primary" @click="submitForm('filterPatientsForm')" class="button">确定</el-button>
+          <el-button type="primary" @click="submitForm('filterPatientsForm')" class="button">应用</el-button>
         </el-form-item>
       </el-form>
     </transition>
@@ -301,6 +307,11 @@ export default {
       padding-left: 10px;
       padding-right: 10px;
       color: #fff;
+      // 控件自带label，但是没找到单独调节颜色的办法，所以想办法插入了一个自定义的label
+      .alterLabel {
+        position: absolute;
+        left: -22%;
+      }
       .button {
         margin: 30px 10px;
         width: 35%;
