@@ -49,17 +49,16 @@ export default {
     position: relative;
     width: 100%;
     height: 70px;
-    border-bottom: 1px solid @font-color;
     cursor: pointer;
     list-style: none;
     background-color: #ddd;
     &:hover {
-      background-color: #eee;
+      color: lighten(@font-color, 10%);
     }
     &.current {
-      background-color: #bbb;
+      color: saturate(@font-color, 100%);
       &:hover {
-        background-color: #bbb;
+        color: saturate(@font-color, 20%);
       }
     }
     .iconfont {
