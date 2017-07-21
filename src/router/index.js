@@ -17,7 +17,7 @@ export default new Router({
   routes: [
     {
       path: '/login',
-      name: 'Login',
+      name: 'login',
       component: Login
     },
     // {
@@ -26,7 +26,7 @@ export default new Router({
     // },
     {
       path: '/',
-      name: 'Layout',
+      name: 'layout',
       component: Layout,
       redirect: '/login',
       children: [
@@ -41,25 +41,37 @@ export default new Router({
           name: 'patients',
           children: [
             {
+              path: 'list',
+              name: 'list'
+            },
+            {
               path: 'list/:id',
               components: {
                 content: PatientInfo
               },
-              name: 'list'
+              name: 'patientInfo'
             },
             {
               path: 'groups',
+              name: 'patientGroups'
+            },
+            {
+              path: 'groups/:id',
               components: {
                 content: PatientInfo
               },
-              name: 'patientGroups'
+              name: 'groupInfo'
+            },
+            {
+              path: 'otherlist',
+              name: 'otherList'
             },
             {
               path: 'otherlist/:id',
               components: {
                 content: PatientInfo
               },
-              name: 'otherList'
+              name: 'otherPatientInfo'
             }
           ]
         },

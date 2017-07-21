@@ -12,17 +12,22 @@
     </div>
 
     <div class="list-area" v-if="this.listType === 'patients'">
-      <patientListItem :id="123"></patientListItem>
-      <patientListItem :id="124"></patientListItem>
+      <patientListItem :id="10001"></patientListItem>
+      <patientListItem :id="10002"></patientListItem>
     </div>
     <div class="list-area" v-else-if="this.listType === 'groups'">
-      <groupListItem></groupListItem>
-      <groupListItem></groupListItem>
-      <groupListItem></groupListItem>
+      <groupListItem :id="90001"></groupListItem>
+      <groupListItem :id="90002"></groupListItem>
+      <groupListItem :id="90003"></groupListItem>
+    </div>
+    <div class="list-area" v-if="this.listType === 'otherPatients'">
+      <patientListItem :id="20001"></patientListItem>
+      <patientListItem :id="20002"></patientListItem>
     </div>
 
     <transition name="slide-fade">
-      <el-form class="filter-panel" :model="filterPatientsForm" :rules="rules" ref="filterPatientsForm" label-width="20%"  v-show="panelDisplay" v-if="this.listType === 'patients'">
+      <el-form class="filter-panel" :model="filterPatientsForm" :rules="rules" ref="filterPatientsForm"
+      label-width="20%"  v-show="panelDisplay" v-if="this.listType === 'patients' || this.listType === 'otherPatients'">
         <el-form-item label="" prop="group" class="item">
           <label class="alterLabel">分组</label>
           <el-select v-model="filterPatientsForm.group">
@@ -91,7 +96,8 @@
         </el-form-item>
       </el-form>
 
-      <el-form class="filter-panel" :model="filterGroupsForm" :rules="rules" ref="filterGroupsForm" label-width="20%"  v-show="panelDisplay" v-if="this.listType === 'groups'">
+      <el-form class="filter-panel" :model="filterGroupsForm" :rules="rules" ref="filterGroupsForm"
+      label-width="20%"  v-show="panelDisplay" v-else-if="this.listType === 'groups'">
         <el-form-item label="" prop="category" class="item">
           <label class="alterLabel">分类</label>
           <el-select v-model="filterGroupsForm.category">
@@ -173,7 +179,7 @@ export default {
       } else if (/^\/patients\/groups/.test(path)) {
         return 'groups';
       } else if (/^\/patients\/otherlist/.test(path)) {
-        return 'patients';
+        return 'otherPatients';
       }
     },
     totalNumText() {
@@ -181,8 +187,13 @@ export default {
         return '患者：345人';
       } else if (this.listType === 'groups') {
         return '分组：19个';
+      } else if (this.listType === 'otherPatients') {
+        return '患者：2568人';
       }
     }
+  },
+  mounted() {
+
   },
   methods: {
     clickSearchIcon(event) {
@@ -191,10 +202,20 @@ export default {
     togglePanelDisplay() {
       this.panelDisplay = !this.panelDisplay;
     },
-    setCurrent() {
-      console.log('aaaa');
-      // this.id = id;
-      // console.log(id);
+    selectFirstItem() {
+      // 列表类型切换时，判断当前列表类型，然后自动跳转到该列表下第一个选项
+      if (this.listType === 'patients') {
+        // TODO 获取病患列表的所有id，然后根据第一个id进行跳转
+        this.$router.replace({ name: 'patientInfo', params: { id: 10001 }});
+
+      } else if (this.listType === 'groups') {
+        // TODO 获取分组列表的所有id，然后根据第一个id进行跳转
+        this.$router.replace({ name: 'groupInfo', params: { id: 90001 }});
+
+      } else if (this.listType === 'otherlist') {
+        // TODO 获取科室患者列表的所有id，然后根据第一个id进行跳转
+        this.$router.replace({ name: 'otherPatientInfo', params: { id: 20001 }});
+      }
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
@@ -217,9 +238,24 @@ export default {
     groupListItem
   },
   watch: {
-    // 路由一旦发生变化，就关闭筛选面板
     $route() {
+      // 路由一旦发生变化，就关闭筛选面板
       this.panelDisplay = false;
+
+      // 一旦发现路由地址中还没有id，就默认加载当前列表中的第一项
+      var path = this.$route.path;
+      if (/^\/patients\/list$/.test(path)) {
+        // TODO 获取病患列表的所有id，然后根据第一个id进行跳转
+        this.$router.replace({ name: 'patientInfo', params: { id: 10001 }});
+
+      } else if (/^\/patients\/groups$/.test(path)) {
+        // TODO 获取分组列表的所有id，然后根据第一个id进行跳转
+        this.$router.replace({ name: 'groupInfo', params: { id: 90001 }});
+
+      } else if (/^\/patients\/otherlist$/.test(path)) {
+        // TODO 获取科室患者列表的所有id，然后根据第一个id进行跳转
+        this.$router.replace({ name: 'otherPatientInfo', params: { id: 20001 }});
+      }
     }
   }
 };
@@ -233,6 +269,7 @@ export default {
 .list {
   box-sizing: border-box;
   background-color: #eee;
+  overflow: hidden;
   .top-area {
     position: relative;
     width: 100%;

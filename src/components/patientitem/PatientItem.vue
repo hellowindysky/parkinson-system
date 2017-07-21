@@ -21,7 +21,7 @@ export default {
     // 根据路由信息对象提供的当前路径，来判断自己是否被选择
     selected() {
       var path = this.$route.path;
-      var re = new RegExp('^\/patients\/list\/id=' + this.id);
+      var re = new RegExp('^\/patients\/list\/' + this.id);
       if (re.test(path)) {
         return true;
       } else {
@@ -34,7 +34,7 @@ export default {
   },
   methods: {
     select() {
-      this.$router.push('/patients/list/id=' + this.id);
+      this.$router.push('/patients/list/' + this.id);
     }
   }
 };

@@ -1,6 +1,6 @@
 <template lang="html">
   <ul class="sidebar">
-    <router-link class="item" :class="{'current': currentItem === 'list'}" :to="{name: 'list', params: {id: 123}}" tag="li">
+    <router-link class="item" :class="{'current': currentItem === 'list'}" :to="{name: 'list'}" tag="li">
       <div class="iconfont icon-accountfilling"></div>
       <div class="title">我的患者</div>
     </router-link>
@@ -8,7 +8,7 @@
       <div class="iconfont icon-accountfilling"></div>
       <div class="title">分组管理</div>
     </router-link>
-    <router-link class="item" :class="{'current': currentItem === 'otherlist'}" :to="{name: 'otherList', params: {id: 223}}" tag="li">
+    <router-link class="item" :class="{'current': currentItem === 'otherlist'}" :to="{name: 'otherList'}" tag="li">
       <div class="iconfont icon-accountfilling"></div>
       <div class="title">科室患者</div>
     </router-link>
@@ -30,8 +30,8 @@ export default {
     }
   },
   mounted() {
-    // 初始化该组件时，自动跳转到病患列表下第一个患者
-    this.$router.replace({ name: 'list', params: { id: 123 }});
+    // 初始化该组件时，自动跳转到病患列表(第一个选项所对应的列表)
+    this.$router.replace({ name: 'list' });
   }
 };
 </script>
