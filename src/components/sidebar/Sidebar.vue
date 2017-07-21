@@ -52,14 +52,8 @@ export default {
     cursor: pointer;
     list-style: none;
     background-color: #ddd;
-    &:hover {
-      color: lighten(@font-color, 10%);
-    }
     &.current {
       color: saturate(@font-color, 100%);
-      &:hover {
-        color: saturate(@font-color, 20%);
-      }
     }
     .iconfont {
       padding-top: 15px;
