@@ -1,6 +1,6 @@
 <template lang="html">
   <ul class="sidebar">
-    <router-link class="item" :class="{'current': currentItem === 'list'}" :to="{name: 'list', params: {id: 124}}" tag="li">
+    <router-link class="item" :class="{'current': currentItem === 'list'}" :to="{name: 'list', params: {id: 123}}" tag="li">
       <div class="iconfont icon-accountfilling"></div>
       <div class="title">我的患者</div>
     </router-link>
@@ -31,7 +31,7 @@ export default {
   },
   mounted() {
     // 初始化该组件时，自动跳转到病患列表下第一个患者
-    this.$router.replace('/patients/list/id=123');
+    this.$router.replace({ name: 'list', params: { id: 123 }});
   }
 };
 </script>
