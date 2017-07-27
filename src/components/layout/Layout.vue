@@ -22,20 +22,20 @@ export default {
   width: 100%;
   min-width: 640px;
   height: 100vh;
+  background-color: @screen-color;
   z-index: 100;
   .topbar {
     display: block;
     position: relative;
     width: 100%;
     height: @header-height;
+    margin-bottom: @header-margin-bottom;
   }
   .content {
     display: block;
     position: relative;
     width: 100%;
-    height: calc(~"100% - @{header-height}");
-    height: calc(~"100% - "@header-height);
-    height: calc(~"100% - "@header-height);
+    height: calc(~"100% - @{header-height} - @{header-margin-bottom}");
   }
 }
 </style>

@@ -39,7 +39,8 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@sidebar-width: 70px;
+@import "~styles/variables.less";
+
 @list-width: 250px;
 @bar-width: 25px;
 

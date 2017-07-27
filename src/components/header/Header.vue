@@ -1,7 +1,6 @@
 <template lang="html">
   <div class="header">
     <div class="organization-wrapper" @click="togglePanel">
-      <span class="iconfont icon-category"></span>
       <span class="name">北京市人民医院</span>
     </div>
     <div class="organization-panel" v-show="showPanel">
@@ -76,9 +75,9 @@ export default {
 
 .header {
   line-height: @header-height;
-  background-color: rgba(224,224,224,0.6);
+  background-color: @background-color;
   box-sizing: border-box;
-  border-bottom: 1px solid #555;
+  box-shadow: 0 1px 3px #999;
   color: @font-color;
   z-index: 400;
   .organization-wrapper {
@@ -89,12 +88,6 @@ export default {
     cursor: pointer;
     &:hover {
       color: lighten(@font-color, 20%);
-    }
-    .iconfont {
-      margin-right: 5px;
-      line-height: @header-height;
-      font-size: @large-font-size;
-      font-weight: bold;
     }
     .name {
       line-height: @header-height;

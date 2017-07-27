@@ -38,33 +38,34 @@ export default {
 
 <style lang="less" scoped>
 @import "~styles/variables.less";
+@item-height: 50px;
 
 .sidebar {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  border-right: 1px solid #888;
-  background-color: #ddd;
+  background-color: @theme-color;
+  color: @inverse-font-color;
   .item {
     position: relative;
+    margin-top: 15px;
     width: 100%;
-    height: 70px;
+    height: @item-height;
     cursor: pointer;
     list-style: none;
-    background-color: #ddd;
     &.current {
-      color: saturate(@font-color, 100%);
+      background-color: @button-color;
+      color: #fff;
     }
     .iconfont {
-      padding-top: 15px;
-      padding-bottom: 5px;
+      display: inline-block;
       font-size: 20px;
+      line-height: @item-height;
     }
     .title {
+      display: inline-block;
       font-size: @normal-font-size;
-    }
-    .active {
-      background-color: #bac0ca;
+      line-height: @item-height
     }
   }
 }
