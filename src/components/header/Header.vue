@@ -121,7 +121,7 @@ export default {
       margin: 0;
       padding: 0;
       width: @tab-width;
-      font-size: @large-font-size;
+      font-size: @normal-font-size;
       color: @font-color;
       cursor: pointer;
       &:hover {

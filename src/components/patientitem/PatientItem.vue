@@ -48,17 +48,6 @@ export default {
   width: 100%;
   height: 65px;
   padding: 5px;
-  box-sizing: border-box;
-  cursor: pointer;
-  &:hover {
-    background-color: darken(@background-color, 2%);
-  }
-  &.current {
-    background-color: darken(@background-color, 8%);
-    &:hover {
-      background-color: darken(@background-color, 8%);
-    }
-  }
   .image {
     position: absolute;
     left: 10px;

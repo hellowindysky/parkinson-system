@@ -41,7 +41,7 @@ export default {
 <style lang="less" scoped>
 @import "~styles/variables.less";
 
-@list-width: 250px;
+@list-width: 260px;
 @bar-width: 20px;
 
 .content-wrapper {

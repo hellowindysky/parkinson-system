@@ -19,20 +19,7 @@ export default {
   width: 100%;
   height: 65px;
   padding: 5px;
-  box-sizing: border-box;
-  background-color: #eee;
-  border-bottom: 1px solid #888;
   overflow: hidden;
-  cursor: pointer;
-  &:hover {
-    background-color: #ddd;
-  }
-  &.current {
-    background-color: #d0d0d0;
-    &:hover {
-      background-color: #d0d0d0;
-    }
-  }
   .name {
     position: absolute;
     font-size: @normal-font-size;

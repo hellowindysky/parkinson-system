@@ -13,7 +13,7 @@
     </div>
 
     <div class="list-area" v-if="this.listType === 'patients'">
-      <patientListItem :id="10001"></patientListItem>
+      <patientListItem class="item" :id="10001"></patientListItem>
       <patientListItem :id="10002"></patientListItem>
     </div>
     <div class="list-area" v-else-if="this.listType === 'groups'">
@@ -40,8 +40,7 @@
     <transition name="slide-fade">
       <el-form class="filter-panel" :model="filterPatientsForm" :rules="rules" ref="filterPatientsForm"
       label-width="20%"  v-show="panelDisplay" v-if="this.listType === 'patients' || this.listType === 'otherPatients'">
-        <el-form-item label="" prop="group" class="item">
-          <label class="alterLabel">分组</label>
+        <el-form-item label="分组" prop="group" class="item">
           <el-select v-model="filterPatientsForm.group">
             <el-option label="不限" value="all"></el-option>
             <el-option label="FOG1组" value="fog1"></el-option>
@@ -50,16 +49,14 @@
             <el-option label="一个名字很长很长很长很长很长很长很长很长的组" value="longName"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="" prop="gender" class="item">
-          <label class="alterLabel">性别</label>
+        <el-form-item label="性别" prop="gender" class="item">
           <el-select v-model="filterPatientsForm.gender">
             <el-option label="不限" value="all"></el-option>
             <el-option label="男" value="male"></el-option>
             <el-option label="女" value="female"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="" prop="district" class="item">
-          <label class="alterLabel">地区</label>
+        <el-form-item label="地区" prop="district" class="item">
           <el-select v-model="filterPatientsForm.district">
             <el-option label="不限" value="all"></el-option>
             <el-option label="北京" value="北京"></el-option>
@@ -72,8 +69,7 @@
             <el-option label="成都" value="成都"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="" class="item">
-          <label class="alterLabel">病程</label>
+        <el-form-item label="病程" class="item">
           <el-col :span="8">
             <el-form-item prop="minCourseYear">
               <el-input v-model.number="filterPatientsForm.minCourseYear" :min="0" :max="120" placeholder="不限"></el-input>
@@ -87,8 +83,7 @@
           </el-col>
           <el-col :span="3">年</el-col>
         </el-form-item>
-        <el-form-item label="" class="item">
-          <label class="alterLabel">年龄</label>
+        <el-form-item label="年龄" class="item">
           <el-col :span="8">
             <el-form-item prop="minAge">
               <el-input v-model.number="filterPatientsForm.minAge" :min="0" :max="120" placeholder="不限"></el-input>
@@ -103,15 +98,14 @@
           <el-col :span="3">岁</el-col>
         </el-form-item>
         <el-form-item class="item" label-width="0">
-          <el-button @click="resetForm('filterPatientsForm')" class="button">重置</el-button>
-          <el-button type="primary" @click="submitForm('filterPatientsForm')" class="button">应用</el-button>
+          <el-button @click="resetForm('filterPatientsForm')" class="button reset">重置</el-button>
+          <el-button type="primary" @click="submitForm('filterPatientsForm')" class="button apply">应用</el-button>
         </el-form-item>
       </el-form>
 
       <el-form class="filter-panel" :model="filterGroupsForm" :rules="rules" ref="filterGroupsForm"
-      label-width="20%"  v-show="panelDisplay" v-else-if="this.listType === 'groups'">
-        <el-form-item label="" prop="category" class="item">
-          <label class="alterLabel">分类</label>
+      label-width="20%" v-show="panelDisplay" v-else-if="this.listType === 'groups'">
+        <el-form-item label="分类" prop="category" class="item">
           <el-select v-model="filterGroupsForm.category">
             <el-option label="不限" value="all"></el-option>
             <el-option label="临床" value="clinical"></el-option>
@@ -119,8 +113,8 @@
           </el-select>
         </el-form-item>
         <el-form-item class="item" label-width="0">
-          <el-button @click="resetForm('filterPatientsForm')" class="button">重置</el-button>
-          <el-button type="primary" @click="submitForm('filterPatientsForm')" class="button">应用</el-button>
+          <el-button @click="resetForm('filterPatientsForm')" class="button reset">重置</el-button>
+          <el-button type="primary" @click="submitForm('filterPatientsForm')" class="button apply">应用</el-button>
         </el-form-item>
       </el-form>
     </transition>
@@ -273,7 +267,7 @@ export default {
 };
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 @import "~styles/variables.less";
 
 @search-area-height: 40px;
@@ -281,13 +275,16 @@ export default {
 @function-area-height: 45px;
 @vertical-spacing: 5px;
 
+@list-left-padding: 8px;
+@list-right-padding: 3px;
+
 @filter-text-height: 30px;
 
 .list {
   box-sizing: border-box;
   background-color: @screen-color;
-  padding-left: 8px;
-  padding-right: 3px;
+  padding-left: @list-left-padding;
+  padding-right: @list-right-padding;
   overflow: hidden;
   .search-area {
     position: relative;
@@ -297,10 +294,11 @@ export default {
     padding-top: 10px;
     padding-left: 15px;
     box-sizing: border-box;
-    box-shadow: 2px 2px 2px @light-gray-color;
+    // box-shadow: 2px 2px 2px @light-gray-color;
     background-color: @background-color;
     font-size: @normal-font-size;
     color: @light-font-color;
+    z-index: 200;
     .iconfont {
       float: left;
       padding-right: 10px;
@@ -336,9 +334,10 @@ export default {
     height: @control-area-height;
     background-color: @background-color;
     box-sizing: border-box;
-    box-shadow: 2px 2px 2px @light-gray-color;
+    // box-shadow: 2px 2px 2px @light-gray-color;
     font-size: @normal-font-size;
     text-align: left;
+    z-index: 200;
     .filter-button {
       position: absolute;
       display: inline-block;
@@ -380,7 +379,7 @@ export default {
     height: @function-area-height;
     background-color: @background-color;
     box-sizing: border-box;
-    box-shadow: 2px 2px 2px @light-gray-color;
+    // box-shadow: 2px 2px 2px @light-gray-color;
     font-size: @normal-font-size;
     .function-button {
       float: left;
@@ -404,7 +403,20 @@ export default {
     width: 100%;
     height: calc(~"100% - @{search-area-height} - @{control-area-height} - @{function-area-height} - @{vertical-spacing} * 3");
     background-color: @background-color;
-    box-shadow: 2px 2px 2px @light-gray-color;
+    // box-shadow: 2px 2px 2px @light-gray-color;
+    .item {
+      box-sizing: border-box;
+      cursor: pointer;
+      &:hover {
+        background-color: darken(@background-color, 2%);
+      }
+      &.current {
+        background-color: darken(@background-color, 8%);
+        &:hover {
+          background-color: darken(@background-color, 8%);
+        }
+      }
+    }
   }
 
   .slide-fade-enter-active {
@@ -414,30 +426,40 @@ export default {
     transition: all .3s cubic-bezier(0.42,0,1,1);
   }
   .slide-fade-enter, .slide-fade-leave-to {
-    transform: translateX(200px);
+    transform: translateY(-@control-area-height);
     opacity: 0;
   }
   .filter-panel {
     position: absolute;
-    top: @search-area-height;
-    width: 100%;
-    height: calc(~"100% - @{search-area-height}");
+    top: @search-area-height + @control-area-height + @vertical-spacing;
+    margin-right: @list-right-padding;
+    width: calc(~"100% - @{list-left-padding} - @{list-right-padding}");
+    height: calc(~"100% - @{search-area-height} - @{control-area-height} - @{vertical-spacing}");
     padding-top: 20px;
-    background-color: rgba(32,32,32,0.9);
+    background-color: @theme-color;
     font-size: @normal-font-size;
+    color: @inverse-font-color;
     z-index: 150;
     .item {
       padding-left: 10px;
       padding-right: 10px;
-      color: #fff;
-      // 控件自带label，但是没找到单独调节颜色的办法，所以想办法插入了一个自定义的label
-      .alterLabel {
-        position: absolute;
-        left: -22%;
+      .el-form-item__label {
+        color: @inverse-font-color;
+      }
+      .el-form-item__content input{
+        // background-color: #414a54;
       }
       .button {
         margin: 30px 10px;
         width: 35%;
+        border: none;
+        color: @button-font-color;
+        &.reset {
+          background-color: @secondary-button-color;
+        }
+        &.apply {
+          background-color: @button-color;
+        }
       }
     }
   }
