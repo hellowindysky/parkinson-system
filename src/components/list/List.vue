@@ -1,14 +1,15 @@
 <template lang="html">
   <div class="list">
-    <div class="top-area">
-      <div class="num-info">{{totalNumText}}</div>
-      <div class="filter-button" @click="togglePanelDisplay" :class="{'active': panelDisplay}">
+    <div class="search-area">
+      <span class="iconfont icon-search"></span>
+      <input class="search-input" placeholder="请输入姓名或身份证号" v-model="searchInput" @input="search"></input>
+    </div>
+    <div class="control-area">
+      <div class="filter-button" @click="togglePanelDisplay">
         筛选条件
         <span class="iconfont icon-moreunfold"></span>
       </div>
-    </div>
-    <div class="search-area">
-      <el-input class="search-input" size="small" placeholder="请输入姓名或身份证号" icon="search" v-model="searchInput" :on-icon-click="clickSearchIcon"></el-input>
+      <div class="num-info">{{totalNumText}}</div>
     </div>
 
     <div class="list-area" v-if="this.listType === 'patients'">
@@ -23,6 +24,17 @@
     <div class="list-area" v-if="this.listType === 'otherPatients'">
       <patientListItem :id="20001"></patientListItem>
       <patientListItem :id="20002"></patientListItem>
+    </div>
+
+    <div class="function-area">
+      <div class="function-button left">
+        <span class="iconfont icon-more"></span>
+        <span class="text">新增患者</span>
+      </div>
+      <div class="function-button right">
+        <span class="iconfont icon-more"></span>
+        <span class="text">批量导入</span>
+      </div>
     </div>
 
     <transition name="slide-fade">
@@ -196,8 +208,8 @@ export default {
 
   },
   methods: {
-    clickSearchIcon(event) {
-      console.log(event);
+    search() {
+      // console.log(this.searchInput);
     },
     togglePanelDisplay() {
       this.panelDisplay = !this.panelDisplay;
@@ -263,23 +275,71 @@ export default {
 
 <style lang="less" scoped>
 @import "~styles/variables.less";
-@top-area-height: 40px;
+
+@search-area-height: 40px;
+@control-area-height: 35px;
+@function-area-height: 45px;
+@vertical-spacing: 5px;
+
 @filter-text-height: 30px;
 
 .list {
   box-sizing: border-box;
-  background-color: #eee;
+  background-color: @screen-color;
+  padding-left: 8px;
+  padding-right: 3px;
   overflow: hidden;
-  .top-area {
+  .search-area {
     position: relative;
+    margin-bottom: @vertical-spacing;
     width: 100%;
-    height: @top-area-height;
-    background-color: #e0e0e0;
+    height: @search-area-height;
+    padding-top: 10px;
+    padding-left: 15px;
     box-sizing: border-box;
-    border-bottom: 1px solid #ddd;
+    box-shadow: 2px 2px 2px @light-gray-color;
+    background-color: @background-color;
+    font-size: @normal-font-size;
+    color: @light-font-color;
+    .iconfont {
+      float: left;
+      padding-right: 10px;
+      line-height: 1.6 * @normal-font-size;
+    }
+    .search-input {
+      float: left;
+      width: 170px;
+      padding-left: 5px;
+      border: none;
+      border-bottom: 1px solid @light-gray-color;
+      line-height: 1.5 * @normal-font-size;
+      color: @light-font-color;
+      outline: none;
+    }
+    ::-webkit-input-placeholder { /* WebKit browsers */
+      color: darken(@light-gray-color, 20%);
+    }
+    :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+      color: darken(@light-gray-color, 20%);
+    }
+    ::-moz-placeholder { /* Mozilla Firefox 19+ */
+      color: darken(@light-gray-color, 20%);
+    }
+    :-ms-input-placeholder { /* Internet Explorer 10+ */
+      color: darken(@light-gray-color, 20%);
+    }
+  }
+  .control-area {
+    position: relative;
+    margin-bottom: @vertical-spacing;
+    width: 100%;
+    height: @control-area-height;
+    background-color: @background-color;
+    box-sizing: border-box;
+    box-shadow: 2px 2px 2px @light-gray-color;
     font-size: @normal-font-size;
     text-align: left;
-    .num-info {
+    .filter-button {
       position: absolute;
       display: inline-block;
       left: 0;
@@ -287,45 +347,66 @@ export default {
       height: 100%;
       padding-left: 10px;
       box-sizing: border-box;
-      border-right: 1px solid #eee;
-      line-height: @top-area-height;
-      cursor: default;
-    }
-    .filter-button {
-      position: absolute;
-      display: inline-block;
-      left: 50%;
-      width: 50%;
-      height: 100%;
-      padding-left: 10px;
-      box-sizing: border-box;
-      line-height: @top-area-height;
+      line-height: @control-area-height;
       cursor: pointer;
       &:hover {
         opacity: 0.8;
       }
-      &.active {
-        background-color: #aaa;
-      }
       .iconfont {
-        padding-left: 20px;
+        padding-left: 10px;
         font-size: @large-font-size;
         font-weight: bold;
         vertical-align: middle;
       }
     }
-  }
-  .search-area {
-    position: relative;
-    width: 100%;
-    height: 36px;
-    padding: 3px 5px;
-    box-sizing: border-box;
-    background-color: #ccc;
-    .search-input {
-      // width: calc(~"100% - 20px");
+    .num-info {
+      position: absolute;
+      display: inline-block;
+      right: 0;
+      width: 50%;
+      height: 100%;
+      padding-right: 10px;
+      box-sizing: border-box;
+      line-height: @control-area-height;
+      text-align: right;
+      cursor: default;
     }
   }
+  .function-area {
+    position: relative;
+    bottom: 0;
+    margin-top: @vertical-spacing;
+    width: 100%;
+    height: @function-area-height;
+    background-color: @background-color;
+    box-sizing: border-box;
+    box-shadow: 2px 2px 2px @light-gray-color;
+    font-size: @normal-font-size;
+    .function-button {
+      float: left;
+      margin-top: @function-area-height * 0.15;
+      margin-bottom: @function-area-height * 0.15;
+      width: 50%;
+      height: 70%;
+      box-sizing: border-box;
+      line-height: @function-area-height * 0.7;
+      cursor: pointer;
+      &.left {
+        border-right: 1px solid @light-gray-color;
+      }
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+  .list-area {
+    position: relative;
+    width: 100%;
+    height: calc(~"100% - @{search-area-height} - @{control-area-height} - @{function-area-height} - @{vertical-spacing} * 3");
+    background-color: @background-color;
+    box-shadow: 2px 2px 2px @light-gray-color;
+  }
+
   .slide-fade-enter-active {
     transition: all .3s ease;
   }
@@ -338,9 +419,9 @@ export default {
   }
   .filter-panel {
     position: absolute;
-    top: @top-area-height;
+    top: @search-area-height;
     width: 100%;
-    height: calc(~"100% - @{top-area-height}");
+    height: calc(~"100% - @{search-area-height}");
     padding-top: 20px;
     background-color: rgba(32,32,32,0.9);
     font-size: @normal-font-size;

@@ -77,7 +77,7 @@ export default {
   line-height: @header-height;
   background-color: @background-color;
   box-sizing: border-box;
-  box-shadow: 0 1px 3px #999;
+  box-shadow: 0 2px 3px @light-gray-color;
   color: @font-color;
   z-index: 400;
   .organization-wrapper {

@@ -1,6 +1,6 @@
 <template>
   <div class='login'>
-    <particles></particles>
+    <!-- <particles></particles> -->
     <div class="panel">
       <img class="logo" src="/static/img/logo.png" alt="logo.png">
       <h1 class="title">睿云</h1>
@@ -33,7 +33,7 @@
 import md5 from 'md5';
 // import axios from 'axios';
 
-import particles from 'components/particles/Particles';
+// import particles from 'components/particles/Particles';
 
 const ACCOUNT_LOGIN = 1;
 
@@ -104,7 +104,7 @@ export default {
     }
   },
   components: {
-    particles
+    // particles
   }
 };
 </script>
@@ -119,7 +119,7 @@ export default {
 .login {
   width: 100vw;
   height: 100vh;
-  // background-color: @theme-color;
+  background-color: @theme-color;
   .panel {
     position: absolute;
     left: 50%; top: 45%;

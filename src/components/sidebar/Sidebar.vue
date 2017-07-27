@@ -55,7 +55,7 @@ export default {
     list-style: none;
     &.current {
       background-color: @button-color;
-      color: #fff;
+      color: @button-font-color;
     }
     .iconfont {
       display: inline-block;

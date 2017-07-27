@@ -42,10 +42,9 @@ export default {
 @import "~styles/variables.less";
 
 @list-width: 250px;
-@bar-width: 25px;
+@bar-width: 20px;
 
 .content-wrapper {
-  background-color: #fafafa;
   .sidebar {
     position: absolute;
     left: 0;
@@ -64,7 +63,7 @@ export default {
     left: @sidebar-width + @list-width;
     width: @bar-width;
     height: 100%;
-    background-color: #666;
+    background-color: @screen-color;
     cursor: pointer;
     transition: 0.3s;
     z-index: 200;
@@ -77,7 +76,7 @@ export default {
       width: 100%;
       height: @bar-width;
       transform: translateY(-50%);
-      color: #fff;
+      color: #ced1db;
     }
   }
   .content-area {

@@ -49,16 +49,14 @@ export default {
   height: 65px;
   padding: 5px;
   box-sizing: border-box;
-  background-color: #eee;
-  border-bottom: 1px solid #888;
   cursor: pointer;
   &:hover {
-    background-color: #ddd;
+    background-color: darken(@background-color, 2%);
   }
   &.current {
-    background-color: #d0d0d0;
+    background-color: darken(@background-color, 8%);
     &:hover {
-      background-color: #d0d0d0;
+      background-color: darken(@background-color, 8%);
     }
   }
   .image {
