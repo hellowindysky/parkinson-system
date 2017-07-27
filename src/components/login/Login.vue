@@ -2,7 +2,7 @@
   <div class='login'>
     <!-- <particles></particles> -->
     <div class="panel">
-      <img class="logo" src="/static/img/logo.png" alt="logo.png">
+      <img class="logo" src="static/img/logo.png" alt="logo.png">
       <h1 class="title">睿云</h1>
       <h3 class="subtitle"></h3>
       <div class="tabs-wrapper">
