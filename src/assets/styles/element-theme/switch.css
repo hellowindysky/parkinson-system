@@ -104,21 +104,21 @@
 }
 
 .el-switch.is-disabled .el-switch__core{
-    border-color: rgb(228, 233, 241) !important;
-    background: rgb(228, 233, 241) !important
+    border-color: rgb(228, 230, 241) !important;
+    background: rgb(228, 230, 241) !important
 }
 
 .el-switch.is-disabled .el-switch__core span{
-    background-color: rgb(252, 252, 253) !important
+    background-color: rgb(251, 252, 252) !important
 }
 
 .el-switch.is-disabled .el-switch__core ~ .el-switch__label *{
-    color: rgb(252, 252, 253) !important
+    color: rgb(251, 252, 252) !important
 }
 
 .el-switch.is-checked .el-switch__core{
-    border-color: #35b790;
-    background-color: #35b790;
+    border-color: #4f5b6a;
+    background-color: #4f5b6a;
 }
 
 .el-switch.is-disabled{}
@@ -166,11 +166,11 @@
     position: relative;
     width: 46px;
     height: 22px;
-    border: 1px solid rgb(191, 206, 217);
+    border: 1px solid rgb(191, 200, 217);
     outline: none;
     border-radius: 12px;
     box-sizing: border-box;
-    background: rgb(191, 206, 217);
+    background: rgb(191, 200, 217);
     cursor: pointer;
     transition: border-color .3s, background-color .3s
 }

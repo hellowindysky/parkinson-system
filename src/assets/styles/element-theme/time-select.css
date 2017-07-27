@@ -225,8 +225,21 @@
   opacity: 0;
   transform: scaleY(0);
 }
+.el-zoom-in-left-enter-active, .el-zoom-in-left-leave-active {
+  opacity: 1;
+  transform: scale(1, 1);
+  transition: transform 300ms cubic-bezier(0.23, 1, 0.32, 1) 100ms, opacity 300ms cubic-bezier(0.23, 1, 0.32, 1) 100ms;
+  transform-origin: top left;
+}
+.el-zoom-in-left-enter, .el-zoom-in-left-leave-active {
+  opacity: 0;
+  transform: scale(.45, .45);
+}
 .collapse-transition {
   transition: 0.3s height ease-in-out, 0.3s padding-top ease-in-out, 0.3s padding-bottom ease-in-out;
+}
+.horizontal-collapse-transition {
+  transition: 0.3s width ease-in-out, 0.3s padding-left ease-in-out, 0.3s padding-right ease-in-out;
 }
 .el-list-enter-active, .el-list-leave-active {
   transition: all 1s;
@@ -234,6 +247,9 @@
 .el-list-enter, .el-list-leave-active {
   opacity: 0;
   transform: translateY(-30px);
+}
+.el-opacity-transition {
+  transition: opacity .3s cubic-bezier(.55,0,.1,1);
 }
 .el-date-editor {
   position: relative;
@@ -440,8 +456,8 @@
   --------------------------*/
 }
 .el-picker-panel {
-  color: rgb(72, 90, 106);
-  border: 1px solid rgb(209, 221, 229);
+  color: rgb(72, 82, 106);
+  border: 1px solid rgb(209, 216, 229);
   box-shadow: 0 2px 6px #ccc;
   background: #fff;
   border-radius: 2px;
@@ -472,18 +488,18 @@
   background-color: transparent;
   line-height: 28px;
   font-size: 14px;
-  color: rgb(72, 90, 106);
+  color: rgb(72, 82, 106);
   padding-left: 12px;
   text-align: left;
   outline: none;
   cursor: pointer;
 }
 .el-picker-panel__shortcut:hover {
-  background-color: rgb(228, 233, 241);
+  background-color: rgb(228, 230, 241);
 }
 .el-picker-panel__shortcut.active {
   background-color: #e6f1fe;
-  color: #35b790;
+  color: #4f5b6a;
 }
 .el-picker-panel__btn {
   border: 1px solid #dcdcdc;
@@ -502,7 +518,7 @@
 }
 .el-picker-panel__icon-btn {
   font-size: 12px;
-  color: rgb(151, 171, 190);
+  color: rgb(151, 162, 190);
   border: 0;
   background: transparent;
   cursor: pointer;
@@ -510,11 +526,11 @@
   margin-top: 3px;
 }
 .el-picker-panel__icon-btn:hover {
-  color: #35b790;
+  color: #4f5b6a;
 }
 .el-picker-panel__link-btn {
   cursor: pointer;
-  color: #35b790;
+  color: #4f5b6a;
   text-decoration: none;
   padding: 15px;
   font-size: 12px;
@@ -527,7 +543,7 @@
   border-right: 1px solid #e4e4e4;
   box-sizing: border-box;
   padding-top: 6px;
-  background-color: rgb(252, 252, 253);
+  background-color: rgb(251, 252, 252);
   overflow: auto;
 }
 .el-picker-panel *[slot=sidebar] + .el-picker-panel__body, .el-picker-panel__sidebar + .el-picker-panel__body {
@@ -578,10 +594,10 @@
   cursor: pointer;
 }
 .el-date-picker__header-label:hover {
-  color: #35b790;
+  color: #4f5b6a;
 }
 .el-date-picker__header-label.active {
-  color: #35b790;
+  color: #4f5b6a;
 }
 .el-date-picker__prev-btn {
   float: left;
@@ -803,11 +819,11 @@
   height: 0;
   cursor: pointer;
   border-radius: inherit;
-  background-color: rgba(151, 171, 190, 0.3);
+  background-color: rgba(151, 162, 190, 0.3);
   transition: .3s background-color;
 }
 .el-scrollbar__thumb:hover {
-  background-color: rgba(151, 171, 190, 0.5);
+  background-color: rgba(151, 162, 190, 0.5);
 }
 .el-scrollbar__bar {
   position: absolute;
@@ -849,21 +865,21 @@
 }
 
 .time-select-item.selected:not(.disabled) {
-  background-color: #35b790;
+  background-color: #4f5b6a;
   color: #fff
 }
 
 .time-select-item.selected:not(.disabled):hover {
-  background-color: #35b790;
+  background-color: #4f5b6a;
 }
 
 .time-select-item.disabled {
-  color: rgb(209, 221, 229);
+  color: rgb(209, 216, 229);
   cursor: not-allowed;
 }
 
 .time-select-item:hover {
-  background-color: rgb(228, 233, 241);
+  background-color: rgb(228, 230, 241);
   cursor: pointer;
 }
 :root {

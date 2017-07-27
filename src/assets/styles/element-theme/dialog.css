@@ -172,23 +172,23 @@
 }
 
 .el-dialog__headerbtn .el-dialog__close {
-    color: rgb(191, 206, 217);
+    color: rgb(191, 200, 217);
 }
 
 .el-dialog__headerbtn:focus .el-dialog__close, .el-dialog__headerbtn:hover .el-dialog__close{
-    color: #35b790;
+    color: #4f5b6a;
 }
 
 .el-dialog__title{
     line-height: 1;
     font-size: 16px;
     font-weight: 700;
-    color: rgb(31, 48, 61);
+    color: rgb(31, 41, 61);
 }
 
 .el-dialog__body{
     padding: 30px 20px;
-    color: rgb(72, 90, 106);
+    color: rgb(72, 82, 106);
     font-size: 14px;
 }
 

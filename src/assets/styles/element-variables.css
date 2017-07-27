@@ -11,7 +11,7 @@
 
   /* Colors
   -------------------------- */
-  --color-primary: #35b790;
+  --color-primary: #4f5b6a;
   --color-primary-default: #20a0ff;
   --color-primary-amend: #788084;
 
@@ -22,10 +22,10 @@
 
   --color-secondary: color(var(--color-primary) s(99%) l(*0.9));
   --color-white: #fff;
-  --color-dark-white: color(var(--color-white) blend(var(--color-primary-amend) 2%));
+  --color-dark-white: color(var(--color-white) blend(var(--color-primary) 2%));
   --color-black: #000;
 
-  --color-base-black: color(var(--color-primary-amend) h(+6) s(33%) l(18%));
+  --color-base-black: color(var(--color-primary) h(+6) s(33%) l(18%));
   --color-light-black: color(var(--color-base-black) h(+5) s(27%) l(27%));
   --color-extra-light-black: color(var(--color-base-black) h(+2) s(19%) l(35%));
 
