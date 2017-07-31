@@ -279,7 +279,7 @@ export default {
 @vertical-spacing: 5px;
 
 @list-left-padding: 8px;
-@list-right-padding: 3px;
+@list-right-padding: 0px;
 
 @filter-text-height: 30px;
 

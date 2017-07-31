@@ -42,7 +42,7 @@ export default {
 @import "~styles/variables.less";
 
 @list-width: 260px;
-@bar-width: 20px;
+@bar-width: 15px;
 
 .content-wrapper {
   .sidebar {
@@ -72,6 +72,8 @@ export default {
     }
     .iconfont {
       position: absolute;
+      left: -1px;
+      font-size: 18px;
       top: 45%;
       width: 100%;
       transform: translateY(-50%);
