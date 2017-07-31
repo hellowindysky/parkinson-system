@@ -6,8 +6,8 @@
     </div>
     <div class="control-area">
       <div class="filter-button" @click="togglePanelDisplay">
-        筛选条件
-        <span class="iconfont icon-moreunfold"></span>
+        筛选
+        <span class="iconfont" :class="togglePanelIcon"></span>
       </div>
       <div class="num-info">{{totalNumText}}</div>
     </div>
@@ -28,11 +28,11 @@
 
     <div class="function-area">
       <div class="function-button left">
-        <span class="iconfont icon-more"></span>
+        <span class="iconfont icon-new-patient"></span>
         <span class="text">新增患者</span>
       </div>
       <div class="function-button right">
-        <span class="iconfont icon-more"></span>
+        <span class="iconfont icon-import"></span>
         <span class="text">批量导入</span>
       </div>
     </div>
@@ -196,6 +196,9 @@ export default {
       } else if (this.listType === 'otherPatients') {
         return '患者：2568人';
       }
+    },
+    togglePanelIcon() {
+      return this.panelDisplay ? 'icon-up' : 'icon-down';
     }
   },
   mounted() {
@@ -302,15 +305,17 @@ export default {
     .iconfont {
       float: left;
       padding-right: 10px;
-      line-height: 1.6 * @normal-font-size;
+      line-height: 1.9 * @normal-font-size;
+      vertical-align: middle;
     }
     .search-input {
       float: left;
-      width: 170px;
-      padding-left: 5px;
+      width: 180px;
+      padding-left: 10px;
       border: none;
       border-bottom: 1px solid @light-gray-color;
-      line-height: 1.5 * @normal-font-size;
+      line-height: 1.6 * @normal-font-size;
+      vertical-align: middle;
       color: @light-font-color;
       outline: none;
     }
@@ -352,10 +357,11 @@ export default {
         opacity: 0.8;
       }
       .iconfont {
-        padding-left: 10px;
-        font-size: @large-font-size;
+        padding-left: 5px;
+        font-size: @normal-font-size;
         font-weight: bold;
         vertical-align: middle;
+        color: @button-color;
       }
     }
     .num-info {
@@ -381,6 +387,7 @@ export default {
     box-sizing: border-box;
     // box-shadow: 2px 2px 2px @light-gray-color;
     font-size: @normal-font-size;
+    vertical-align: middle;
     .function-button {
       float: left;
       margin-top: @function-area-height * 0.15;
@@ -395,6 +402,11 @@ export default {
       }
       &:hover {
         opacity: 0.8;
+      }
+      .iconfont {
+        font-size: 24px;
+        line-height: 20px;
+        vertical-align: middle;
       }
     }
   }

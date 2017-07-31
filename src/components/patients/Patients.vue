@@ -3,7 +3,7 @@
     <sidebar class="sidebar"></sidebar>
     <list></list>
     <div class="toggle-list-button" :class="{'hide-list-state': !listDisplay}" @click="toggleList">
-      <div class="arrow">{{arrowText}}</div>
+      <div class="iconfont" :class="toggleIconClass"></div>
     </div>
     <router-view class="content-area" :class="{'hide-list-state': !listDisplay}" name="content"></router-view>
   </div>
@@ -20,8 +20,8 @@ export default {
     };
   },
   computed: {
-    arrowText() {
-      return this.listDisplay ? '<<' : '>>';
+    toggleIconClass() {
+      return this.listDisplay ? 'icon-fold' : 'icon-unfold';
     }
   },
   mounted() {
@@ -70,11 +70,10 @@ export default {
     &.hide-list-state {
       left: @sidebar-width;
     }
-    .arrow {
+    .iconfont {
       position: absolute;
-      top: 50%;
+      top: 45%;
       width: 100%;
-      height: @bar-width;
       transform: translateY(-50%);
       color: #ced1db;
     }

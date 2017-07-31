@@ -201,6 +201,7 @@ export default {
       }
       .checkbox {
         float: left;
+        margin-left: 20px;
         .is-checked .el-checkbox__inner {
           background-color: @button-color;
           border-color: @button-color;

@@ -1,15 +1,15 @@
 <template lang="html">
   <ul class="sidebar">
     <router-link class="item" :class="{'current': currentItem === 'list'}" :to="{name: 'list'}" tag="li">
-      <div class="iconfont icon-accountfilling"></div>
+      <div class="iconfont icon-my-patients"></div>
       <div class="title">我的患者</div>
     </router-link>
     <router-link class="item" :class="{'current': currentItem === 'groups'}" :to="{name: 'patientGroups'}" tag="li">
-      <div class="iconfont icon-accountfilling"></div>
+      <div class="iconfont icon-group-management"></div>
       <div class="title">分组管理</div>
     </router-link>
     <router-link class="item" :class="{'current': currentItem === 'otherlist'}" :to="{name: 'otherList'}" tag="li">
-      <div class="iconfont icon-accountfilling"></div>
+      <div class="iconfont icon-other-patients"></div>
       <div class="title">科室患者</div>
     </router-link>
   </ul>
@@ -59,13 +59,15 @@ export default {
     }
     .iconfont {
       display: inline-block;
-      font-size: 20px;
+      font-size: 24px;
       line-height: @item-height;
+      vertical-align: middle;
     }
     .title {
       display: inline-block;
       font-size: @normal-font-size;
-      line-height: @item-height
+      line-height: @item-height;
+      vertical-align: middle;
     }
   }
 }
