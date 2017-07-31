@@ -30,7 +30,7 @@ export default {
     }
   },
   mounted() {
-    console.log(this.id);
+    // console.log(this.id);
   },
   methods: {
     select() {
@@ -64,7 +64,7 @@ export default {
   .date {
     position: absolute;
     font-size: @small-font-size;
-    right: 10px;
+    right: 20px;
     top: 12px;
   }
   .gender {

@@ -12,18 +12,30 @@
       <div class="num-info">{{totalNumText}}</div>
     </div>
 
-    <div class="list-area" v-if="this.listType === 'patients'">
-      <patientListItem class="item" :id="10001"></patientListItem>
-      <patientListItem :id="10002"></patientListItem>
-    </div>
-    <div class="list-area" v-else-if="this.listType === 'groups'">
-      <groupListItem :id="90001"></groupListItem>
-      <groupListItem :id="90002"></groupListItem>
-      <groupListItem :id="90003"></groupListItem>
-    </div>
-    <div class="list-area" v-if="this.listType === 'otherPatients'">
-      <patientListItem :id="20001"></patientListItem>
-      <patientListItem :id="20002"></patientListItem>
+    <div class="list-area" ref="listArea">
+      <div v-if="this.listType === 'patients'">
+        <patientListItem class="item" :id="10001"></patientListItem>
+        <patientListItem class="item" :id="10002"></patientListItem>
+        <patientListItem class="item" :id="10003"></patientListItem>
+        <patientListItem class="item" :id="10004"></patientListItem>
+        <patientListItem class="item" :id="10005"></patientListItem>
+        <patientListItem class="item" :id="10006"></patientListItem>
+        <patientListItem class="item" :id="10007"></patientListItem>
+        <patientListItem class="item" :id="10008"></patientListItem>
+        <patientListItem class="item" :id="10009"></patientListItem>
+        <patientListItem class="item" :id="10010"></patientListItem>
+        <patientListItem class="item" :id="10011"></patientListItem>
+        <patientListItem class="item" :id="10012"></patientListItem>
+      </div>
+      <div class="list-area" v-else-if="this.listType === 'groups'">
+        <groupListItem :id="90001"></groupListItem>
+        <groupListItem :id="90002"></groupListItem>
+        <groupListItem :id="90003"></groupListItem>
+      </div>
+      <div class="list-area" v-if="this.listType === 'otherPatients'">
+        <patientListItem :id="20001"></patientListItem>
+        <patientListItem :id="20002"></patientListItem>
+      </div>
     </div>
 
     <div class="function-area">
@@ -122,6 +134,8 @@
 </template>
 
 <script>
+import Ps from 'perfect-scrollbar';
+
 import patientListItem from 'components/patientitem/PatientItem';
 import groupListItem from 'components/groupitem/GroupItem';
 
@@ -202,7 +216,14 @@ export default {
     }
   },
   mounted() {
-
+    console.log(this.$refs.listArea);
+    Ps.destroy(this.$refs.listArea);
+    Ps.initialize(this.$refs.listArea, {
+      wheelSpeed: 1,
+      minScrollbarLength: 40
+    });
+    // this.$refs.listArea.scrollTop = 20;
+    // Ps.update(this.$refs.listArea);
   },
   methods: {
     search() {
@@ -347,14 +368,14 @@ export default {
       position: absolute;
       display: inline-block;
       left: 0;
-      width: 50%;
+      width: 30%;
       height: 100%;
       padding-left: 10px;
       box-sizing: border-box;
       line-height: @control-area-height;
       cursor: pointer;
       &:hover {
-        opacity: 0.8;
+        color: lighten(@font-color, 20%);
       }
       .iconfont {
         padding-left: 5px;
@@ -416,6 +437,7 @@ export default {
     height: calc(~"100% - @{search-area-height} - @{control-area-height} - @{function-area-height} - @{vertical-spacing} * 3");
     background-color: @background-color;
     // box-shadow: 2px 2px 2px @light-gray-color;
+    overflow: hidden;
     .item {
       box-sizing: border-box;
       cursor: pointer;
@@ -426,6 +448,27 @@ export default {
         background-color: darken(@background-color, 8%);
         &:hover {
           background-color: darken(@background-color, 8%);
+        }
+      }
+    }
+    // 下面这组 CSS 是为了让 perfect-scrollbar正常工作的，不知道为什么，默认状态下这个组件不能正常显示
+    .ps__scrollbar-y-rail {
+      position: absolute;
+      width: 15px;
+      right: 0;
+      opacity: 0.3;
+      transition: opacity 0.3s, width 0.2s;
+      .ps__scrollbar-y {
+        position: relative;
+        background-color: #aaa;
+        border-radius: 20px;
+      }
+    }
+    &:hover {
+      .ps__scrollbar-y-rail {
+        opacity: 0.6;
+        &:hover {
+          width: 20px;
         }
       }
     }
