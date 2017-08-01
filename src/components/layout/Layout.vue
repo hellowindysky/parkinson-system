@@ -20,9 +20,10 @@ export default {
 
 .app-wrapper {
   width: 100%;
-  min-width: 640px;
+  min-width: @min-screen-width;
   height: 100vh;
   background-color: @screen-color;
+  font-size: @normal-font-size;
   z-index: 100;
   .topbar {
     display: block;

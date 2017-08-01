@@ -8,7 +8,7 @@
       <div class="iconfont icon-group-management"></div>
       <div class="title">分组管理</div>
     </router-link>
-    <router-link class="item" :class="{'current': currentItem === 'otherlist'}" :to="{name: 'otherList'}" tag="li">
+    <router-link class="item" :class="{'current': currentItem === 'otherList'}" :to="{name: 'otherList'}" tag="li">
       <div class="iconfont icon-other-patients"></div>
       <div class="title">科室患者</div>
     </router-link>
@@ -24,8 +24,8 @@ export default {
         return 'list';
       } else if (/^\/patients\/groups/.test(path)) {
         return 'groups';
-      } else if (/^\/patients\/otherlist/.test(path)) {
-        return 'otherlist';
+      } else if (/^\/patients\/otherList/.test(path)) {
+        return 'otherList';
       }
     }
   },

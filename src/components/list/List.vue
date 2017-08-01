@@ -198,7 +198,7 @@ export default {
         return 'patients';
       } else if (/^\/patients\/groups/.test(path)) {
         return 'groups';
-      } else if (/^\/patients\/otherlist/.test(path)) {
+      } else if (/^\/patients\/otherList/.test(path)) {
         return 'otherPatients';
       }
     },
@@ -216,7 +216,7 @@ export default {
     }
   },
   mounted() {
-    console.log(this.$refs.listArea);
+    // 如果之前有绑定的话，先进行解除
     Ps.destroy(this.$refs.listArea);
     Ps.initialize(this.$refs.listArea, {
       wheelSpeed: 1,
@@ -333,6 +333,7 @@ export default {
       float: left;
       width: 180px;
       padding-left: 10px;
+      border-radius: 0;
       border: none;
       border-bottom: 1px solid @light-gray-color;
       line-height: 1.6 * @normal-font-size;
@@ -514,6 +515,12 @@ export default {
         }
         &.apply {
           background-color: @button-color;
+        }
+        &:hover {
+          opacity: 0.8;
+        }
+        &:active {
+          opacity: 0.9;
         }
       }
     }

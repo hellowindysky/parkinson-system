@@ -10,6 +10,8 @@ import Analytics from 'components/analytics/Analytics';
 import Configuration from 'components/configuration/Configuration';
 
 import PatientInfo from 'components/patientinfo/PatientInfo';
+import PersonalInfo from 'components/personalinfo/PersonalInfo';
+import DiagnosticInfo from 'components/diagnosticinfo/DiagnosticInfo';
 
 Vue.use(Router);
 
@@ -49,7 +51,17 @@ export default new Router({
               components: {
                 content: PatientInfo
               },
-              name: 'patientInfo'
+              name: 'patientInfo',
+              children: [
+                {
+                  path: 'personalInfo',
+                  component: PersonalInfo
+                },
+                {
+                  path: 'diagnosticInfo',
+                  component: DiagnosticInfo
+                }
+              ]
             },
             {
               path: 'groups',
@@ -63,11 +75,11 @@ export default new Router({
               name: 'groupInfo'
             },
             {
-              path: 'otherlist',
+              path: 'otherList',
               name: 'otherList'
             },
             {
-              path: 'otherlist/:id',
+              path: 'otherList/:id',
               components: {
                 content: PatientInfo
               },

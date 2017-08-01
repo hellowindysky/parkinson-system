@@ -41,9 +41,6 @@ export default {
 <style lang="less" scoped>
 @import "~styles/variables.less";
 
-@list-width: 260px;
-@bar-width: 15px;
-
 .content-wrapper {
   .sidebar {
     position: absolute;
