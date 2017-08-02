@@ -2,8 +2,8 @@
   <div class="item" :class="{'current': selected}" @click="select">
     <img class="image" src="~img/profile.png" alt="">
     <div class="name">陈晓晓</div>
+    <div class="gender iconfont icon-male"></div>
     <div class="date">2017/01/01</div>
-    <div class="gender">男</div>
     <div class="age">34岁</div>
     <div class="location">北京</div>
   </div>
@@ -46,14 +46,14 @@ export default {
 .item {
   position: relative;
   width: 100%;
-  height: 65px;
+  height: 60px;
   padding: 5px;
   .image {
     position: absolute;
     left: 10px;
     top: 10px;
-    width: 40px;
-    height: 40px;
+    width: 35px;
+    height: 35px;
   }
   .name {
     position: absolute;
@@ -61,29 +61,32 @@ export default {
     left: 60px;
     top: 10px;
   }
+  .gender {
+    position: absolute;
+    font-size: @small-font-size;
+    left: 110px;
+    top: 10px;
+    &.icon-male {
+      color: @male-color;
+    }
+  }
   .date {
     position: absolute;
     font-size: @small-font-size;
     right: 20px;
     top: 12px;
   }
-  .gender {
-    position: absolute;
-    font-size: @small-font-size;
-    left: 60px;
-    top: 40px;
-  }
   .age {
     position: absolute;
     font-size: @small-font-size;
-    left: 85px;
-    top: 40px;
+    left: 60px;
+    top: 35px;
   }
   .location {
     position: absolute;
     font-size: @small-font-size;
-    left: 125px;
-    top: 40px;
+    left: 100px;
+    top: 35px;
   }
 }
 </style>

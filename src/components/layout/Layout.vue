@@ -48,7 +48,7 @@ export default {
     position: absolute;
     left: @sidebar-width;
     top: @header-height + @header-margin-bottom;
-    width: 100%;
+    width: calc(~"100% - @{sidebar-width}");
     height: calc(~"100% - @{header-height} - @{header-margin-bottom}");
   }
 }

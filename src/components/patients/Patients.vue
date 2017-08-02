@@ -19,7 +19,7 @@ export default {
   },
   computed: {
     toggleIconClass() {
-      return this.listDisplay ? 'icon-fold' : 'icon-unfold';
+      return this.listDisplay ? 'icon-arrow-left' : 'icon-arrow-right';
     }
   },
   mounted() {

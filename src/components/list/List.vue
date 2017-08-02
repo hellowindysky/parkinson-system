@@ -457,8 +457,10 @@ export default {
       position: absolute;
       width: 15px;
       right: 0;
+      padding: 0 3px;
+      box-sizing: border-box;
       opacity: 0.3;
-      transition: opacity 0.3s, width 0.2s;
+      transition: opacity 0.3s, padding 0.2s;
       .ps__scrollbar-y {
         position: relative;
         background-color: #aaa;
@@ -469,7 +471,7 @@ export default {
       .ps__scrollbar-y-rail {
         opacity: 0.6;
         &:hover {
-          width: 20px;
+          padding: 0;
         }
       }
     }

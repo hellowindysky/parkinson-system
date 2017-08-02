@@ -29,7 +29,7 @@
 
 .icon-calendar:before { content: "\e61b"; }
 
-.icon-fold:before { content: "\e61c"; }
+.icon-arrow-right:before { content: "\e61c"; }
 
 .icon-search:before { content: "\e61d"; }
 
@@ -45,7 +45,7 @@
 
 .icon-new-group:before { content: "\e623"; }
 
-.icon-unfold:before { content: "\e624"; }
+.icon-arrow-left:before { content: "\e624"; }
 
 .icon-new-patient:before { content: "\e625"; }
 
