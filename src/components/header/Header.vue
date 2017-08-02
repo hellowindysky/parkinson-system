@@ -4,15 +4,7 @@
       <span class="name">北京市人民医院</span>
       <span class="iconfont" :class="togglePanelIcon"></span>
     </div>
-    <div class="organization-panel" v-show="showPanel">
-
-    </div>
-    <ul class="tabs-wrapper">
-      <li class="tab" @click="choosePatients">患者管理</li>
-      <li class="tab" @click="chooseAnalytics">统计分析</li>
-      <li class="tab" @click="chooseConfiguration">系统配置</li>
-      <div class="tab-bottom-bar" :class="tabPlaceClass"></div>
-    </ul>
+    <div class="organization-panel" v-show="showPanel"></div>
     <div class="operation-wrapper">
       <span class="iconfont icon-search"></span>
       <span class="iconfont icon-notice"></span>
@@ -29,19 +21,6 @@ export default {
     };
   },
   computed: {
-    tabPlace() {
-      var path = this.$route.path;
-      if (/^\/patients/.test(path)) {
-        return 1;
-      } else if (/^\/analytics/.test(path)) {
-        return 2;
-      } else if (/^\/configuration/.test(path)) {
-        return 3;
-      }
-    },
-    tabPlaceClass() {
-      return 'tab-place-' + this.tabPlace;
-    },
     togglePanelIcon() {
       return this.showPanel ? 'icon-up' : 'icon-down';
     }

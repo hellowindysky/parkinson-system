@@ -94,7 +94,7 @@ export default {
         if (valid) {
           // 暂时模拟一个延时登录效果
           setTimeout(() => {
-            this.$router.push('/patients');
+            this.$router.push('/');
           }, 1000);
         } else {
           console.log('error submit!!');

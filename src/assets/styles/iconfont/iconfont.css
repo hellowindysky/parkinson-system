@@ -55,7 +55,6 @@
 
 .icon-home-page:before { content: "\e628"; }
 
-.icon-system:before { content: "\e629"; }
+.icon-configuration:before { content: "\e629"; }
 
 .icon-analytics:before { content: "\e62a"; }
-

@@ -30,7 +30,6 @@ export default new Router({
       path: '/',
       name: 'layout',
       component: Layout,
-      redirect: '/login',
       children: [
         // {
         //   path: 'home',
@@ -44,7 +43,7 @@ export default new Router({
           children: [
             {
               path: 'list',
-              name: 'list'
+              name: 'myPatients'
             },
             {
               path: 'list/:id',
@@ -66,7 +65,7 @@ export default new Router({
             },
             {
               path: 'groups',
-              name: 'patientGroups'
+              name: 'groupsManagement'
             },
             {
               path: 'groups/:id',
@@ -77,7 +76,7 @@ export default new Router({
             },
             {
               path: 'otherList',
-              name: 'otherList'
+              name: 'otherPatients'
             },
             {
               path: 'otherList/:id',
