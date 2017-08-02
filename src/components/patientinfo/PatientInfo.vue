@@ -39,11 +39,30 @@ export default {
     },
     chooseDiagnostic() {
       this.currentTab = 'diagnosticInfo';
+    },
+    checkIfJump() {
+      var path = this.$route.path;
+      var reList = new RegExp(/^\/patients\/list\//);
+      var reOtherList = new RegExp(/^\/patients\/otherList\//);
+      var rePersonal = new RegExp('\/personalInfo$');
+      var reDiagnostic = new RegExp('\/diagnosticInfo$');
+
+      var isPatientsList = reList.test(path) || reOtherList.test(path);
+      var withoutPersonalOrDiagostic = !rePersonal.test(path) && !reDiagnostic.test(path);
+
+      // 路由还停留在在病患信息这一层，但没有指明是个人信息还是诊断信息，那么就默认跳转到个人信息
+      if (isPatientsList && withoutPersonalOrDiagostic) {
+        this.$router.replace({ name: 'personalInfo' });
+      }
     }
   },
   mounted() {
-    // console.log(this.$route.params.id);
-    // this.$router.push('personalinfo');
+    this.checkIfJump();
+  },
+  watch: {
+    $route() {
+      this.checkIfJump();
+    }
   }
 };
 </script>

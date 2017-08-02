@@ -34,7 +34,7 @@ export default {
   },
   methods: {
     select() {
-      this.$router.push('/patients/list/' + this.id);
+      this.$router.push({ name: 'patientInfo', params: { id: this.id }});
     }
   }
 };

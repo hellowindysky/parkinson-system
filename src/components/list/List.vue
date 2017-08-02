@@ -14,27 +14,27 @@
 
     <div class="list-area" ref="listArea">
       <div v-if="this.listType === 'patients'">
-        <patientListItem class="item" :id="10001"></patientListItem>
-        <patientListItem class="item" :id="10002"></patientListItem>
-        <patientListItem class="item" :id="10003"></patientListItem>
-        <patientListItem class="item" :id="10004"></patientListItem>
-        <patientListItem class="item" :id="10005"></patientListItem>
-        <patientListItem class="item" :id="10006"></patientListItem>
-        <patientListItem class="item" :id="10007"></patientListItem>
-        <patientListItem class="item" :id="10008"></patientListItem>
-        <patientListItem class="item" :id="10009"></patientListItem>
-        <patientListItem class="item" :id="10010"></patientListItem>
-        <patientListItem class="item" :id="10011"></patientListItem>
-        <patientListItem class="item" :id="10012"></patientListItem>
+        <patient-list-item class="item" :id="10001"></patient-list-item>
+        <patient-list-item class="item" :id="10002"></patient-list-item>
+        <patient-list-item class="item" :id="10003"></patient-list-item>
+        <patient-list-item class="item" :id="10004"></patient-list-item>
+        <patient-list-item class="item" :id="10005"></patient-list-item>
+        <patient-list-item class="item" :id="10006"></patient-list-item>
+        <patient-list-item class="item" :id="10007"></patient-list-item>
+        <patient-list-item class="item" :id="10008"></patient-list-item>
+        <patient-list-item class="item" :id="10009"></patient-list-item>
+        <patient-list-item class="item" :id="10010"></patient-list-item>
+        <patient-list-item class="item" :id="10011"></patient-list-item>
+        <patient-list-item class="item" :id="10012"></patient-list-item>
       </div>
       <div class="list-area" v-else-if="this.listType === 'groups'">
-        <groupListItem :id="90001"></groupListItem>
-        <groupListItem :id="90002"></groupListItem>
-        <groupListItem :id="90003"></groupListItem>
+        <group-list-item :id="90001"></group-list-item>
+        <group-list-item :id="90002"></group-list-item>
+        <group-list-item :id="90003"></group-list-item>
       </div>
-      <div class="list-area" v-if="this.listType === 'otherPatients'">
-        <patientListItem :id="20001"></patientListItem>
-        <patientListItem :id="20002"></patientListItem>
+      <div class="list-area" v-else-if="this.listType === 'otherPatients'">
+        <patient-list-item :id="20001"></patient-list-item>
+        <patient-list-item :id="20002"></patient-list-item>
       </div>
     </div>
 

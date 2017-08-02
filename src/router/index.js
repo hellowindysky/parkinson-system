@@ -55,7 +55,8 @@ export default new Router({
               children: [
                 {
                   path: 'personalInfo',
-                  component: PersonalInfo
+                  component: PersonalInfo,
+                  name: 'personalInfo'
                 },
                 {
                   path: 'diagnosticInfo',
