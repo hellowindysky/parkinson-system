@@ -1,10 +1,10 @@
 
 @font-face {font-family: "iconfont";
-  src: url('iconfont.eot?t=1501249131055'); /* IE9*/
-  src: url('iconfont.eot?t=1501249131055#iefix') format('embedded-opentype'), /* IE6-IE8 */
-  url('iconfont.woff?t=1501249131055') format('woff'), /* chrome, firefox */
-  url('iconfont.ttf?t=1501249131055') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
-  url('iconfont.svg?t=1501249131055#iconfont') format('svg'); /* iOS 4.1- */
+  src: url('iconfont.eot?t=1501635954396'); /* IE9*/
+  src: url('iconfont.eot?t=1501635954396#iefix') format('embedded-opentype'), /* IE6-IE8 */
+  url('iconfont.woff?t=1501635954396') format('woff'), /* chrome, firefox */
+  url('iconfont.ttf?t=1501635954396') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
+  url('iconfont.svg?t=1501635954396#iconfont') format('svg'); /* iOS 4.1- */
 }
 
 .iconfont {
@@ -21,38 +21,41 @@
 
 .icon-import:before { content: "\e617"; }
 
-.icon-other-patients:before { content: "\e618"; }
+.icon-remove:before { content: "\e618"; }
 
-.icon-group-management:before { content: "\e619"; }
+.icon-bind:before { content: "\e619"; }
 
-.icon-remove:before { content: "\e61a"; }
+.icon-delete:before { content: "\e61a"; }
 
-.icon-bind:before { content: "\e61b"; }
+.icon-calendar:before { content: "\e61b"; }
 
-.icon-delete:before { content: "\e61c"; }
+.icon-fold:before { content: "\e61c"; }
 
-.icon-calendar:before { content: "\e61d"; }
+.icon-search:before { content: "\e61d"; }
 
-.icon-unfold:before { content: "\e61e"; }
+.icon-task:before { content: "\e61e"; }
 
-.icon-search:before { content: "\e61f"; }
+.icon-notice:before { content: "\e61f"; }
 
-.icon-task:before { content: "\e620"; }
+.icon-unchecked:before { content: "\e620"; }
 
-.icon-notice:before { content: "\e621"; }
+.icon-up:before { content: "\e621"; }
 
-.icon-unchecked:before { content: "\e622"; }
+.icon-down:before { content: "\e622"; }
 
-.icon-up:before { content: "\e623"; }
+.icon-new-group:before { content: "\e623"; }
 
-.icon-down:before { content: "\e624"; }
+.icon-unfold:before { content: "\e624"; }
 
-.icon-new-group:before { content: "\e625"; }
+.icon-new-patient:before { content: "\e625"; }
 
-.icon-my-patients:before { content: "\e626"; }
+.icon-checked:before { content: "\e626"; }
 
-.icon-fold:before { content: "\e627"; }
+.icon-patients-management:before { content: "\e627"; }
 
-.icon-new-patient:before { content: "\e628"; }
+.icon-home-page:before { content: "\e628"; }
 
-.icon-checked:before { content: "\e629"; }
+.icon-system:before { content: "\e629"; }
+
+.icon-analytics:before { content: "\e62a"; }
+
