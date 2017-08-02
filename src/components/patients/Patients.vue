@@ -1,6 +1,5 @@
 <template lang="html">
   <div class="content-wrapper">
-    <sidebar class="sidebar"></sidebar>
     <list></list>
     <div class="toggle-list-button" :class="{'hide-list-state': !listDisplay}" @click="toggleList">
       <div class="iconfont" :class="toggleIconClass"></div>
@@ -10,7 +9,6 @@
 </template>
 
 <script>
-import sidebar from 'components/sidebar/Sidebar';
 import list from 'components/list/List';
 
 export default {
@@ -32,7 +30,6 @@ export default {
     }
   },
   components: {
-    sidebar,
     list
   }
 };
@@ -42,22 +39,16 @@ export default {
 @import "~styles/variables.less";
 
 .content-wrapper {
-  .sidebar {
-    position: absolute;
-    left: 0;
-    width: @sidebar-width;
-    height: 100%;
-  }
   .list {
     position: absolute;
-    left: @sidebar-width;
+    left: 0;
     width: @list-width;
     height: 100%;
     z-index: 100;
   }
   .toggle-list-button {
     position: absolute;
-    left: @sidebar-width + @list-width;
+    left: @list-width;
     width: @bar-width;
     height: 100%;
     background-color: @screen-color;
@@ -65,7 +56,7 @@ export default {
     transition: 0.3s;
     z-index: 200;
     &.hide-list-state {
-      left: @sidebar-width;
+      left: 0;
     }
     .iconfont {
       position: absolute;
@@ -79,14 +70,14 @@ export default {
   }
   .content-area {
     position: absolute;
-    left: @sidebar-width + @list-width + @bar-width;
-    width: calc(~"100% - @{sidebar-width} - @{list-width} - @{bar-width}");
+    left: @list-width + @bar-width;
+    width: calc(~"100% - @{list-width} - @{bar-width}");
     height: 100%;
     transition: 0.3s;
     z-index: 200;
     &.hide-list-state {
-      left: @sidebar-width + @bar-width;
-      width: calc(~"100% - @{sidebar-width} - @{bar-width}");
+      left: @bar-width;
+      width: calc(~"100% - @{bar-width}");
     }
   }
 }

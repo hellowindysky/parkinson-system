@@ -1,16 +1,19 @@
 <template lang="html">
   <div class="app-wrapper">
     <topbar class="topbar"></topbar>
+    <sidebar class="sidebar"></sidebar>
     <router-view class="content"></router-view>
   </div>
 </template>
 
 <script>
-import Header from 'components/header/Header';
+import topbar from 'components/header/Header';
+import sidebar from 'components/sidebar/Sidebar';
 
 export default {
   components: {
-    topbar: Header
+    topbar,
+    sidebar
   }
 };
 </script>
@@ -19,6 +22,7 @@ export default {
 @import "~styles/variables.less";
 
 .app-wrapper {
+  position: relative;
   width: 100%;
   min-width: @min-screen-width;
   height: 100vh;
@@ -32,9 +36,18 @@ export default {
     height: @header-height;
     margin-bottom: @header-margin-bottom;
   }
+  .sidebar {
+    position: absolute;
+    left: 0;
+    top: @header-height + @header-margin-bottom;
+    width: @sidebar-width;
+    height: calc(~"100% - @{header-height} - @{header-margin-bottom}");
+  }
   .content {
     display: block;
-    position: relative;
+    position: absolute;
+    left: @sidebar-width;
+    top: @header-height + @header-margin-bottom;
     width: 100%;
     height: calc(~"100% - @{header-height} - @{header-margin-bottom}");
   }
