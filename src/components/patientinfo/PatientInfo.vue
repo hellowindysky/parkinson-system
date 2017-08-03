@@ -5,23 +5,26 @@
       <div class="tab right-tab" :class="{'current-tab': currentTab === 'diagnosticInfo'}" @click="chooseDiagnostic">诊断信息</div>
       <div class="button left-button">导出</div>
       <div class="button right-button">添加</div>
+      <div class="tab-bottom-bar" :class="currentTabBottomBar"></div>
     </div>
-    <div class="shared-info">
-      <div class="info adscription">
-        <span class="info-title">归属医生: </span>
-        <span class="info-text">陈大雄</span>
+    <div class="info-wrapper">
+      <div class="shared-info">
+        <div class="info adscription">
+          <span class="info-title">归属医生: </span>
+          <span class="info-text">陈大雄</span>
+        </div>
+        <div class="info create-time">
+          <span class="info-title">创建时间: </span>
+          <span class="info-text">2017-12-7</span>
+        </div>
+        <div class="info groups">
+          <span class="info-title">分组情况: </span>
+          <span class="info-text">帕金森1组  帕金森2组</span>
+        </div>
       </div>
-      <div class="info create-time">
-        <span class="info-title">创建时间: </span>
-        <span class="info-text">2017-12-7</span>
+      <div class="respective-info">
+        <router-view></router-view>
       </div>
-      <div class="info groups">
-        <span class="info-title">分组情况: </span>
-        <span class="info-text">帕金森1组  帕金森2组</span>
-      </div>
-    </div>
-    <div class="respective-info">
-      <router-view></router-view>
     </div>
   </div>
 </template>
@@ -30,22 +33,47 @@
 export default {
   data() {
     return {
-      currentTab: 'personalInfo'
     };
+  },
+  computed: {
+    currentTab() {
+      var path = this.$route.path;
+      var rePersonal = new RegExp(/\/personalInfo(\/|$)/);
+      var reDiagnostic = new RegExp(/\/diagnosticInfo(\/|$)/);
+      if (rePersonal.test(path)) {
+        return 'personalInfo';
+      } else if (reDiagnostic.test(path)) {
+        return 'diagnosticInfo';
+      } else {
+        // 逻辑正确的话，不会返回这行的。只是怕以后路由修改，出现问题。
+        return 'something wrong here';
+      }
+    },
+    currentTabBottomBar() {
+      if (this.currentTab === 'personalInfo') {
+        return 'first-tab';
+      } else if (this.currentTab === 'diagnosticInfo') {
+        return 'second-tab';
+      } else {
+        return 'Oops! check currentTab';
+      }
+    }
   },
   methods: {
     choosePersonal() {
       this.currentTab = 'personalInfo';
+      this.$router.push('personalInfo');
     },
     chooseDiagnostic() {
       this.currentTab = 'diagnosticInfo';
+      this.$router.push('diagnosticInfo');
     },
     checkIfJump() {
       var path = this.$route.path;
       var reList = new RegExp(/^\/patients\/list\//);
       var reOtherList = new RegExp(/^\/patients\/otherList\//);
-      var rePersonal = new RegExp('\/personalInfo$');
-      var reDiagnostic = new RegExp('\/diagnosticInfo$');
+      var rePersonal = new RegExp(/\/personalInfo(\/|$)/);
+      var reDiagnostic = new RegExp(/\/diagnosticInfo(\/|$)/);
 
       var isPatientsList = reList.test(path) || reOtherList.test(path);
       var withoutPersonalOrDiagostic = !rePersonal.test(path) && !reDiagnostic.test(path);
@@ -70,48 +98,73 @@ export default {
 <style lang="less" scoped>
 @import "~styles/variables.less";
 
+@tabs-wrapper-height: 40px;
+@tab-width: 80px;
+@first-tab-x: 20px;
+@second-tab-x: 120px;
+
+@vertical-spacing: 5px;
+@margin-right: 15px;
+
 .content {
   background-color: @screen-color;
   min-width: @min-screen-width - @sidebar-width - @bar-width;
   .tabs-wrapper {
     position: relative;
-    height: 35px;
+    margin: 0 @margin-right @vertical-spacing 0;
+    height: @tabs-wrapper-height;
+    background-color: @background-color;
+    box-shadow: 0 10px 10px @screen-color;
     .tab {
       position: absolute;
-      width: 105px;
+      width: @tab-width;
       height: 100%;
-      line-height: 35px;
+      line-height: 40px;
       box-sizing: border-box;
-      border-radius: 5px 5px 0 0;
-      font-size: @normal-font-size;
-      background-color: @light-gray-color;
+      font-size: @large-font-size;
+      font-weight: bold;
       cursor: pointer;
       &.left-tab {
-        left: 0;
+        left: @first-tab-x;
       }
       &.right-tab {
-        left: 120px;
+        left: @second-tab-x;
       }
       &.current-tab {
-        background-color: @background-color;
+        color: @button-color;
+      }
+    }
+    .tab-bottom-bar {
+      position: absolute;
+      width: @tab-width;
+      height: 3px;
+      bottom: 0;
+      background-color: @button-color;
+      left: @first-tab-x;
+      transition: transform 0.2s;
+      &.first-tab {
+        transform: translate3d(0, 0, 0);
+      }
+      &.second-tab {
+        transform: translate3d(@second-tab-x - @first-tab-x, 0, 0);
       }
     }
     .button {
       position: absolute;
-      top: 3px;
-      width: 70px;
-      height: 25px;
-      line-height: 25px;
+      top: 8px;
+      width: @small-button-width;
+      height: @small-button-height;
+      line-height: @small-button-height;
       font-size: @normal-font-size;
       color: @button-font-color;
       cursor: pointer;
       &.left-button {
         background-color: @secondary-button-color;
-        right: 110px;
+        right: 100px;
       }
       &.right-button {
         background-color: @button-color;
-        right: 20px;
+        right: 10px;
       }
       &:hover {
         opacity: 0.8;
@@ -121,37 +174,41 @@ export default {
       }
     }
   }
-  .shared-info {
+  .info-wrapper {
     position: relative;
-    padding: 5px 25px;
-    width: calc(~"100% - 5px");
-    height: 70px;
-    box-sizing: border-box;
-    background-color: @background-color;
-    font-size: 0;
-    text-align: left;
-    box-shadow: 0 10px 10px @screen-color;
-    .info {
-      display: inline-block;
-      width: 50%;
-      line-height: 30px;
-      font-size: @normal-font-size;
-      &.adscription {
-        top: 5px;
-      }
-      &.create-time {
-        top: 5px;
-      }
-      &.groups {
-        top: 40px;
-      }
-      .info-title {
+    width: 100%;
+    height: calc(~"100% - @{tabs-wrapper-height}");
+    .shared-info {
+      position: relative;
+      margin: 0 @margin-right @vertical-spacing 0;
+      padding: 5px 25px;
+      height: 70px;
+      box-sizing: border-box;
+      background-color: @background-color;
+      font-size: 0;
+      text-align: left;
+      .info {
         display: inline-block;
-        width: 85px;
-        color: @font-color;
-      }
-      .info-text {
-        color: @light-font-color;
+        width: 50%;
+        line-height: 30px;
+        font-size: @normal-font-size;
+        &.adscription {
+          top: 5px;
+        }
+        &.create-time {
+          top: 5px;
+        }
+        &.groups {
+          top: 40px;
+        }
+        .info-title {
+          display: inline-block;
+          width: 85px;
+          color: @font-color;
+        }
+        .info-text {
+          color: @light-font-color;
+        }
       }
     }
   }
