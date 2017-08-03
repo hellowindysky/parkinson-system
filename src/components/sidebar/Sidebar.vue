@@ -4,7 +4,7 @@
       <div class="iconfont icon-patients-management"></div>
       <div class="title">患者管理</div>
     </li>
-    <ul class="sub-item-list" v-show="showPatientsList">
+    <ul class="sub-item-list" :class="{'folded': !showPatientsList}">
       <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'myPatients'}" @click="chooseMyPatients">
         我的患者
       </li>
@@ -127,6 +127,12 @@ export default {
     padding: 10px 0 20px;
     box-sizing: border-box;
     background-color: @font-color;
+    overflow: hidden;
+    transition: 0.2s;
+    &.folded {
+      height: 0;
+      padding: 0;
+    }
     .sub-item {
       padding-left: 10px;
       width: 100%;
