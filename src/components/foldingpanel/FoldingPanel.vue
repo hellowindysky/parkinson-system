@@ -1,11 +1,11 @@
 <template lang="html">
   <div class="folding-panel-wrapper">
     <div class="header">
-      <h2 class="title">基础信息</h2>
-      <span class="iconfont icon-down"></span>
+      <div class="iconfont" :class="iconToggleFolded"></div>
+      <h2 class="title" @click="toggleFoldedPanel">{{title}}</h2>
       <div class="button edit-button">编辑</div>
     </div>
-    <div class="content">
+    <div class="content" :class="{'folded': folded}">
       <slot></slot>
     </div>
   </div>
@@ -13,33 +13,92 @@
 
 <script>
 export default {
+  props: {
+    title: {
+      required: true,
+      type: String
+    }
+  },
+  data() {
+    return {
+      folded: true
+    };
+  },
+  computed: {
+    iconToggleFolded() {
+      return this.folded ? 'icon-down' : 'icon-up';
+    }
+  },
+  methods: {
+    toggleFoldedPanel() {
+      this.folded = !this.folded;
+    }
+  }
 };
 </script>
 
 <style lang="less" scoped>
 @import "~styles/variables.less";
+@panel-header-height: 40px;
 
 .folding-panel-wrapper {
   background-color: @background-color;
+  font-size: 0;
+  overflow: hidden;
   .header {
     position: relative;
-    height: 35px;
+    height: @panel-header-height;
     .title {
+      margin: 0;
+      position: absolute;
       display: inline-block;
+      padding-left: 20px;
+      left: 0;
+      width: 100%;
+      height: @panel-header-height;
+      line-height: @panel-header-height;
+      text-align: left;
       font-size: @large-font-size;
+      cursor: pointer;
+      color: @font-color;
+      &:hover {
+        color: lighten(@font-color, 20%);
+      }
     }
     .iconfont {
-      padding-left: 10px;
+      position: absolute;
+      display: inline-block;
+      left: 110px;
+      top: 0;
+      height: @panel-header-height;
+      line-height: @panel-header-height;
+      color: @button-color;
     }
     .button {
-      float: right;
-      margin-right: 25px;
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      width: @small-button-width;
+      height: @small-button-height;
+      line-height: @small-button-height;
+      font-size: @normal-font-size;
       background-color: @button-color;
       color: @button-font-color;
+      cursor: pointer;
+      &:hover {
+        opacity: 0.8;
+      }
+      &:active {
+        opacity: 0.9;
+      }
     }
   }
   .content {
-    padding: 10px 25px;
+    box-sizing: border-box;
+    transition: 0.3s;
+    &.folded {
+      height: 0;
+    }
   }
 }
 

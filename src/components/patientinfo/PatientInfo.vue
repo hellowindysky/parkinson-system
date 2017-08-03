@@ -61,11 +61,9 @@ export default {
   },
   methods: {
     choosePersonal() {
-      this.currentTab = 'personalInfo';
       this.$router.push('personalInfo');
     },
     chooseDiagnostic() {
-      this.currentTab = 'diagnosticInfo';
       this.$router.push('diagnosticInfo');
     },
     checkIfJump() {
@@ -99,11 +97,10 @@ export default {
 @import "~styles/variables.less";
 
 @tabs-wrapper-height: 40px;
-@tab-width: 80px;
+@tab-width: 70px;
 @first-tab-x: 20px;
 @second-tab-x: 120px;
 
-@vertical-spacing: 5px;
 @margin-right: 15px;
 
 .content {
@@ -124,6 +121,10 @@ export default {
       font-size: @large-font-size;
       font-weight: bold;
       cursor: pointer;
+      color: @inverse-font-color;
+      &:hover {
+        color: darken(@inverse-font-color, 10%);
+      }
       &.left-tab {
         left: @first-tab-x;
       }
@@ -178,6 +179,7 @@ export default {
     position: relative;
     width: 100%;
     height: calc(~"100% - @{tabs-wrapper-height}");
+    overflow: hidden;
     .shared-info {
       position: relative;
       margin: 0 @margin-right @vertical-spacing 0;
@@ -210,6 +212,12 @@ export default {
           color: @light-font-color;
         }
       }
+    }
+    .respective-info {
+      position: relative;
+      margin-right: @margin-right;
+      box-sizing: border-box;
+      background-color: @background-color;
     }
   }
 }

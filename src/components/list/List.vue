@@ -297,7 +297,6 @@ export default {
 @search-area-height: 40px;
 @control-area-height: 35px;
 @function-area-height: 45px;
-@vertical-spacing: 5px;
 
 @list-left-padding: 8px;
 @list-right-padding: 0px;
