@@ -10,6 +10,8 @@ import Analytics from 'components/analytics/Analytics';
 import Configuration from 'components/configuration/Configuration';
 
 import PatientInfo from 'components/patientinfo/PatientInfo';
+import GroupInfo from 'components/groupinfo/GroupInfo';
+
 import PersonalInfo from 'components/personalinfo/PersonalInfo';
 import DiagnosticInfo from 'components/diagnosticinfo/DiagnosticInfo';
 
@@ -70,7 +72,7 @@ export default new Router({
             {
               path: 'groups/:id',
               components: {
-                content: PatientInfo
+                content: GroupInfo
               },
               name: 'groupInfo'
             },
