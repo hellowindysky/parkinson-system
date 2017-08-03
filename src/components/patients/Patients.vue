@@ -4,7 +4,7 @@
     <div class="toggle-list-button" :class="{'hide-list-state': !listDisplay}" @click="toggleList">
       <div class="iconfont" :class="toggleIconClass"></div>
     </div>
-    <router-view class="content-area" :class="{'hide-list-state': !listDisplay}" name="content"></router-view>
+    <router-view class="content-area" :class="{'hide-list-state': !listDisplay}" name="content" :key="key"></router-view>
   </div>
 </template>
 
@@ -20,6 +20,10 @@ export default {
   computed: {
     toggleIconClass() {
       return this.listDisplay ? 'icon-arrow-left' : 'icon-arrow-right';
+    },
+    key() {
+      // 绑定了这个变量之后，点击列表中的其它选项，就会保证右侧的内容组件重新加载
+      return this.$route.params.id !== undefined ? this.$route.params.id : this.$route;
     }
   },
   mounted() {
