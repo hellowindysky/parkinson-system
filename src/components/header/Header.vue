@@ -9,6 +9,10 @@
       <span class="iconfont icon-search"></span>
       <span class="iconfont icon-notice"></span>
       <span class="iconfont icon-task"></span>
+      <span class="account">
+        <img src="~img/profile.png" alt="doctor image" class="picture">
+        <span class="name">陈奕迅医生</span>
+      </span>
     </div>
   </div>
 </template>
@@ -76,11 +80,36 @@ export default {
   .operation-wrapper {
     position: absolute;
     right: 20px;
+    height: @header-height;
+    font-size: 0;
     .iconfont {
-      margin-left: 20px;
+      display: inline-block;
+      margin-top: 10px;
+      padding: 0 10px;
+      width: 40px;
+      height: 30px;
+      line-height: 30px;
+      border-right: 1px solid lighten(@inverse-font-color, 20%);
       font-size: 18px;
       color: @light-font-color;
       cursor: pointer;
+      &:first-child {
+        border-left: 1px solid lighten(@inverse-font-color, 20%);
+      }
+    }
+    .account {
+      margin-left: 20px;
+      cursor: pointer;
+      .picture {
+        position: relative;
+        width: 30px;
+        height: 30px;
+        top: 10px;
+      }
+      .name {
+        padding-left: 10px;
+        font-size: @normal-font-size;
+      }
     }
   }
 }
