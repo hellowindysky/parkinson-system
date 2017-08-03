@@ -79,7 +79,7 @@ export default {
     }
   },
   mounted() {
-    // 初始化该组件时，自动跳转到病患列表(第一个选项所对应的列表)
+    // 初始化该组件时，自动跳转到病患管理
     if (!/^\/patients/.test(this.$route.path)) {
       this.$router.replace({ name: 'myPatients' });
     }
