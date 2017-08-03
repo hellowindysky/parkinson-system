@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="content">
+  <div class="patient-info">
     <div class="tabs-wrapper">
       <div class="tab left-tab" :class="{'current-tab': currentTab === 'personalInfo'}" @click="choosePersonal">个人信息</div>
       <div class="tab right-tab" :class="{'current-tab': currentTab === 'diagnosticInfo'}" @click="chooseDiagnostic">诊断信息</div>
@@ -7,7 +7,7 @@
       <div class="button right-button">添加</div>
       <div class="tab-bottom-bar" :class="currentTabBottomBar"></div>
     </div>
-    <div class="info-wrapper">
+    <div class="info-wrapper" ref="scrollArea">
       <div class="shared-info">
         <div class="info adscription">
           <span class="info-title">归属医生: </span>
@@ -30,6 +30,8 @@
 </template>
 
 <script>
+import Ps from 'perfect-scrollbar';
+
 export default {
   data() {
     return {
@@ -84,6 +86,13 @@ export default {
   },
   mounted() {
     this.checkIfJump();
+
+    // 如果之前有绑定的话，先进行解除
+    Ps.destroy(this.$refs.scrollArea);
+    Ps.initialize(this.$refs.scrollArea, {
+      wheelSpeed: 1,
+      minScrollbarLength: 40
+    });
   },
   watch: {
     $route() {
@@ -93,7 +102,7 @@ export default {
 };
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 @import "~styles/variables.less";
 
 @tabs-wrapper-height: 40px;
@@ -103,7 +112,7 @@ export default {
 
 @margin-right: 15px;
 
-.content {
+.patient-info {
   background-color: @screen-color;
   min-width: @min-screen-width - @sidebar-width - @bar-width;
   .tabs-wrapper {
@@ -218,6 +227,30 @@ export default {
       margin-right: @margin-right;
       box-sizing: border-box;
       background-color: @background-color;
+    }
+
+    // 下面这组 CSS 是为了让 perfect-scrollbar正常工作的，不知道为什么，默认状态下这个组件不能正常显示
+    .ps__scrollbar-y-rail {
+      position: absolute;
+      width: 15px;
+      right: 0;
+      padding: 0 3px;
+      box-sizing: border-box;
+      opacity: 0.3;
+      transition: opacity 0.3s, padding 0.2s;
+      .ps__scrollbar-y {
+        position: relative;
+        background-color: #aaa;
+        border-radius: 20px;
+      }
+    }
+    &:hover {
+      .ps__scrollbar-y-rail {
+        opacity: 0.6;
+        &:hover {
+          padding: 0;
+        }
+      }
     }
   }
 }
