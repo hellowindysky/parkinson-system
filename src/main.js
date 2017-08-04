@@ -3,6 +3,7 @@
 import Vue from 'vue';
 import ElementUI from 'element-ui';
 
+import 'babel-polyfill';  // 这样 Babel 才能转换新的API，比如 Generator、Promise 等全局对象
 import 'normalize.css';  // 引入normalize.css
 // import 'element-ui/lib/theme-default/index.css';  // 放弃默认的element-theme
 import 'styles/element-theme/index.css';  // 改用自定义配置生成的css
