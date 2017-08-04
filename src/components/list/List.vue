@@ -274,15 +274,15 @@ export default {
 
       // 一旦发现路由地址中还没有id，就默认加载当前列表中的第一项
       var path = this.$route.path;
-      if (/^\/patients\/list$/.test(path)) {
+      if (/^\/patients\/list\/?$/.test(path)) {
         // TODO 获取病患列表的所有id，然后根据第一个id进行跳转
         this.$router.replace({ name: 'patientInfo', params: { id: 10001 }});
 
-      } else if (/^\/patients\/groups$/.test(path)) {
+      } else if (/^\/patients\/groups\/?$/.test(path)) {
         // TODO 获取分组列表的所有id，然后根据第一个id进行跳转
         this.$router.replace({ name: 'groupInfo', params: { id: 90001 }});
 
-      } else if (/^\/patients\/otherlist$/.test(path)) {
+      } else if (/^\/patients\/otherlist\/?$/.test(path)) {
         // TODO 获取科室患者列表的所有id，然后根据第一个id进行跳转
         this.$router.replace({ name: 'otherPatientInfo', params: { id: 20001 }});
       }
