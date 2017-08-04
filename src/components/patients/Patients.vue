@@ -22,8 +22,8 @@ export default {
       return this.listDisplay ? 'icon-arrow-left' : 'icon-arrow-right';
     },
     key() {
-      // 绑定了这个变量之后，点击列表中的其它选项，就会保证右侧的内容组件重新加载
-      return this.$route.params.id !== undefined ? this.$route.params.id : this.$route;
+      // 绑定这个变量作为属性之后，点击列表中的其它选项，就会保证右侧的内容组件重新加载（组件的属性不同时，会重新触发 mounted 钩子）
+      return this.$route.params.id !== undefined ? this.$route.params.id : 0;
     }
   },
   mounted() {
