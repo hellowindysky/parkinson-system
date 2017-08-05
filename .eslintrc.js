@@ -8,6 +8,7 @@ module.exports = {
   },
   env: {
     browser: true,
+    es6: true
   },
   // 默认配置来自于饿了么的eslint config
   // https://github.com/ElemeFE/eslint-config-elemefe
