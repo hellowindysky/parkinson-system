@@ -40,7 +40,7 @@ npm run et
 
 `phantomjs_cdnurl = https://npm.taobao.org/mirrors/phantomjs/`
 
-然后就可以正常 npm install 了。不过据我测试，有了package-lockage.json文件的帮助，应该不会再出现进度条卡住的问题。详细情况请参考[这里](https://github.com/xhlwill/blog/issues/11)
+然后就可以正常 npm install 了。不过据我测试，有了 **package-lockage.json** 文件的帮助，应该不会再出现进度条卡住的问题。详细情况请参考[这里](https://github.com/xhlwill/blog/issues/11)
 
 #### 如果 npm install 的过程太慢，甚至因为延时而导致错误
 
@@ -49,8 +49,13 @@ npm run et
 
 ## 关于element-theme
 
-src/assets/styles/目录下有个element-variables.css文件，以CSS4的格式写好了自定义的element-theme样式，我们利用它来编译出项目所需要的CSS，目标文件夹是src/assets/styles/element-theme。编译工具是node_modules中的element-theme组件，这样我们就能用et命令对element-variables.css进行编译：node_modules/.bin/et -c src/assets/styles/element-variables.css -o src/assets/styles/element-theme。此命令被封装在package.json的脚本中，因此执行npm run et即可。
+**src/assets/styles/** 目录下有个 **element-variables.css** 文件，以 CSS4 的格式规定了 element-theme 的样式，从而方便我们自定义 element-ui 组件。我们利用它来编译出项目实际使用的 CSS，输出路径是 **src/assets/styles/element-theme**。
+
+编译工具是 **node_modules** 中的 **element-theme** 组件，这样我们就能用 `et` 命令对 **element-variables.css** 进行编译：
+
+`node_modules/.bin/et -c src/assets/styles/element-variables.css -o src/assets/styles/element-theme`
+
+此命令被封装在 **package.json** 的脚本中，因此执行 `npm run et` 即可。
 
 ## 模态框
-本项目多处使用到模态框，基本思想参考于知乎上尤雨溪的这个回答。状态驱动，挂载在根组件，然后由子组件触发事件传递上来。
-https://www.zhihu.com/question/35820643/answer/64646527#
+本项目多处使用到模态框，基本思想参考于知乎上[尤雨溪的回答](https://www.zhihu.com/question/35820643/answer/64646527#)。状态驱动，挂载在根组件，然后由子组件触发事件传递上来。
