@@ -31,10 +31,13 @@
 
 <script>
 import Ps from 'perfect-scrollbar';
+import {getPatientInfo} from 'api/patient.js';
+// import Promise from 'babel-runtime/core-js/promise';
 
 export default {
   data() {
     return {
+      patientInfo: {}
     };
   },
   computed: {
@@ -86,6 +89,11 @@ export default {
   },
   mounted() {
     this.checkIfJump();
+
+    getPatientInfo((data) => {
+      this.patientInfo = data;
+    });
+    // console.log(this.patientInfo);
 
     // 如果之前有绑定的话，先进行解除
     Ps.destroy(this.$refs.scrollArea);
