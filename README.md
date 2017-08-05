@@ -49,7 +49,7 @@ npm run et
 
 ## 关于element-theme
 
-**src/assets/styles/** 目录下有个 **element-variables.css** 文件，以 CSS4 的格式规定了 element-theme 的样式，从而方便我们自定义 element-ui 组件。我们利用它来编译出项目实际使用的 CSS，输出路径是 **src/assets/styles/element-theme**。
+**src/assets/styles/** 目录下有个 **element-variables.css** 文件，以 CSS4 的格式规定了 element-ui 组件的自定义样式。我们利用它来编译出项目实际使用的 CSS，输出路径是 **src/assets/styles/element-theme**。
 
 编译工具是 **node_modules** 中的 **element-theme** 组件，这样我们就能用 `et` 命令对 **element-variables.css** 进行编译：
 
