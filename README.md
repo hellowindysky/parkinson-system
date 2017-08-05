@@ -30,7 +30,7 @@ npm test
 npm run et
 ```
 
-#### 如果 npm install 的时候出现 'PhantomJS not found on PATH'，并且进度条卡住不动的话，怎么办？
+### 如果 npm install 的时候出现 'PhantomJS not found on PATH'，并且进度条卡住不动的话，怎么办？
 
 这是由于天朝的防火墙引起的，可以借助淘宝镜像来解决这个问题。用下面的命令单独安装 **phantomjs-prebuilt**
 
@@ -42,7 +42,7 @@ npm run et
 
 然后就可以正常 npm install 了。不过据我测试，有了 **package-lockage.json** 文件的帮助（因为它已经把每个依赖的下载地址指向了淘宝镜像），应该不会再出现进度条卡住的问题。详细情况请参考[这里](https://github.com/xhlwill/blog/issues/11)
 
-#### 如果 npm install 的过程太慢，甚至因为延时而导致错误，怎么办？
+### 如果 npm install 的过程太慢，甚至因为延时而导致错误，怎么办？
 
 依然类似于上面的解决办法，借助淘宝镜像来下载依赖模块。将 'registry = https://registry.npm.taobao.org' 写入 **~/.npmrc** 文件，再 npm install 就会快很多。不过还是因为 **package-lockage.json** 的存在，你一般不会遇到这个问题。
 
