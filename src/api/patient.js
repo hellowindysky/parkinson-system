@@ -8,7 +8,7 @@ export function getPatientInfo() {
     "userType": 1,
     "orgId": 34,
     "orgType": 2,
-    "patientId": 1120,
+    "patientId": 112,
     "patientPersonVersion": 98
   };
 
@@ -21,11 +21,11 @@ export function getPatientInfo() {
       if (response.data.code === 0) {
         resolve(response.data.data);
       } else {
-        console.log('参数错误', response.data.msg);
+        console.log('参数错误: ', response.data.msg);
       }
 
     }).catch(function(error) {
-      console.error('请求出错', error);
+      console.error('请求出错: ', error);
     });
   });
 
