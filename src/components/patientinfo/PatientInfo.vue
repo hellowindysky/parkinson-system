@@ -32,12 +32,14 @@
 <script>
 import Ps from 'perfect-scrollbar';
 import {getPatientInfo} from 'api/patient.js';
-// import Promise from 'babel-runtime/core-js/promise';
+import {getDictionary} from 'api/user.js';
 
 export default {
   data() {
     return {
-      patientInfo: {}
+      patientInfo: {},
+      dictionay: {},
+      patientInfoDictionary: {}
     };
   },
   computed: {
@@ -85,6 +87,12 @@ export default {
       if (isPatientsList && withoutPersonalOrDiagostic) {
         this.$router.replace({ name: 'personalInfo' });
       }
+    },
+    filterDictionary() {
+      this.patientInfoDictionary = this.dictionay.tables.filter((table) => {
+        return table.tableName === 'tc_patient_info';
+      })[0];
+      console.log(this.patientInfoDictionary);
     }
   },
   mounted() {
@@ -92,7 +100,13 @@ export default {
 
     getPatientInfo().then((data) => {
       this.patientInfo = data;
-      console.log(this.patientInfo);
+      // console.log(this.patientInfo);
+    });
+
+    getDictionary().then((data) => {
+      this.dictionay = data;
+      // console.log(data);
+      this.filterDictionary();
     });
 
     // 如果之前有绑定的话，先进行解除
