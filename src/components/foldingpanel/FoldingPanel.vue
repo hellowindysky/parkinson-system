@@ -95,6 +95,7 @@ export default {
   }
   .content {
     box-sizing: border-box;
+    font-size: @normal-font-size;
     transition: 0.3s;
     &.folded {
       height: 0;
