@@ -90,10 +90,10 @@ export default {
   mounted() {
     this.checkIfJump();
 
-    getPatientInfo((data) => {
+    getPatientInfo().then((data) => {
       this.patientInfo = data;
+      console.log(this.patientInfo);
     });
-    // console.log(this.patientInfo);
 
     // 如果之前有绑定的话，先进行解除
     Ps.destroy(this.$refs.scrollArea);
