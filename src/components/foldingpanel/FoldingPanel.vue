@@ -96,9 +96,10 @@ export default {
   .content {
     box-sizing: border-box;
     font-size: @normal-font-size;
-    transition: 0.3s;
+    max-height: 1000px;
+    transition: max-height 0.3s ease-in;
     &.folded {
-      height: 0;
+      max-height: 0;
     }
   }
 }
