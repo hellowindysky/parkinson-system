@@ -7,7 +7,7 @@ const state = {
 };
 
 const getters = {
-  patientInfoDictionaryGroups: (state) => {
+  basicInfoDictionaryGroups: (state) => {
     // 如果 state.all.tables 为空，则返回空数组
     if (!state.all.tables) {
       return [];

@@ -13,31 +13,25 @@
       <p>测试</p>
       <p>测试</p>
       <p>测试</p>
-      <p>测试</p>
-      <p>测试</p>
-      <p>测试</p>
-      <p>测试</p>
-      <p>测试</p>
-      <p>测试</p>
-      <p>测试</p>
-      <p>测试</p>
-      <p>测试</p>
-      <p>测试</p>
-      <p>测试</p>
-      <p>测试</p>
-      <p>测试</p>
-      <p>测试</p>
-      <p>测试</p>
     </div>
   </folding-panel>
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 
 export default {
+  computed: {
+    ...mapGetters([
+      'basicInfoDictionaryGroups'
+    ])
+  },
   components: {
     FoldingPanel
+  },
+  mounted() {
+    console.log(this.basicInfoDictionaryGroups);
   }
 };
 </script>
