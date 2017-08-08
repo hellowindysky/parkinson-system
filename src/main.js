@@ -10,6 +10,7 @@ import 'styles/iconfont/iconfont.css';  // 加入自定义图标字体
 
 import App from './App';
 import router from './router';
+import store from './store';
 
 Vue.config.productionTip = false;
 
@@ -19,6 +20,7 @@ Vue.use(ElementUI);
 new Vue({
   el: '#app',
   router,
+  store,
   template: '<App/>',
   components: { App }
 });
