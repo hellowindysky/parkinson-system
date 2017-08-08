@@ -224,6 +224,8 @@ export default {
     });
     // this.$refs.listArea.scrollTop = 20;
     // Ps.update(this.$refs.listArea);
+
+    this.checkRoute();
   },
   methods: {
     search() {
@@ -261,17 +263,8 @@ export default {
         }
       });
       this.togglePanelDisplay();
-    }
-  },
-  components: {
-    patientListItem,
-    groupListItem
-  },
-  watch: {
-    $route() {
-      // 路由一旦发生变化，就关闭筛选面板
-      this.panelDisplay = false;
-
+    },
+    checkRoute() {
       // 一旦发现路由地址中还没有id，就默认加载当前列表中的第一项
       var path = this.$route.path;
       if (/^\/patients\/list\/?$/.test(path)) {
@@ -286,6 +279,18 @@ export default {
         // TODO 获取科室患者列表的所有id，然后根据第一个id进行跳转
         this.$router.replace({ name: 'otherPatientInfo', params: { id: 20001 }});
       }
+    }
+  },
+  components: {
+    patientListItem,
+    groupListItem
+  },
+  watch: {
+    $route() {
+      // 路由一旦发生变化，就关闭筛选面板
+      this.panelDisplay = false;
+
+      this.checkRoute();
     }
   }
 };
