@@ -33,6 +33,12 @@ export default {
     togglePanel() {
       this.showPanel = !this.showPanel;
     }
+  },
+  mounted() {
+    // 一旦登录验证成功，并且进入到主界面时，就向服务器调取相应的数据，如字典项信息
+    // TODO 如果在header中改变了所属机构，就需要重新获取这些信息
+    this.$store.dispatch('getWholeDictionary');
+    this.$store.dispatch('getWholeTemplate');
   }
 };
 </script>

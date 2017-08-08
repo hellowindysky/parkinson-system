@@ -1,19 +1,9 @@
 /* eslint-disable quotes */
 import axios from 'axios';
 
-export function getDictionary() {
-  var request = {
-    "userId": 93242,
-    "accountNumber": "15012670416",
-    "userType": 1,
-    "orgId": 34,
-    "orgType": 2,
-    "version": 43
-  };
+// axios.post 本身就是个 Promise 对象，这里我们再用 Promise 封装一次，在本文件内对响应数据进行处理，对外只暴露请求成功时的有效数据
+function encapsulatePromise(url, request) {
 
-  var url = 'http://apitest.gyenno.com/pdms/queryDictionary';
-
-  // axios.post 本身就是个 Promise 对象，这里我们再用 Promise 封装一次，在本文件内对响应数据进行处理，对外只暴露有效数据
   var promise = new Promise(function(resolve) {
 
     axios.post(url, request).then((response) => {
@@ -30,3 +20,33 @@ export function getDictionary() {
 
   return promise;
 }
+
+export function getDictionary() {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15012670416",
+    "userType": 1,
+    "orgId": 34,
+    "orgType": 2,
+    "version": 43
+  };
+
+  var url = 'http://apitest.gyenno.com/pdms/queryDictionary';
+
+  return encapsulatePromise(url, request);
+};
+
+export function getTemplate() {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15012670416",
+    "userType": 1,
+    "orgId": 34,
+    "orgType": 2,
+    "activeType": 1
+  };
+
+  var url = 'http://apitest.gyenno.com/pdms/queryTemplate';
+
+  return encapsulatePromise(url, request);
+};

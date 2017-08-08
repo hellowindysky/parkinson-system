@@ -1,18 +1,15 @@
 <template lang="html">
   <folding-panel :title="'基础信息'">
     <div class="basic-info">
-      <p>测试</p>
-      <p>测试</p>
-      <p>测试</p>
-      <p>测试</p>
-      <p>测试</p>
-      <p>测试</p>
-      <p>测试</p>
-      <p>测试</p>
-      <p>测试</p>
-      <p>测试</p>
-      <p>测试</p>
-      <p>测试</p>
+      <div class="group1">
+        {{basicInfoDictionaryGroups.length}}
+      </div>
+      <div class="group2">
+
+      </div>
+      <div class="group3">
+
+      </div>
     </div>
   </folding-panel>
 </template>
@@ -24,14 +21,18 @@ import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 export default {
   computed: {
     ...mapGetters([
-      'basicInfoDictionaryGroups'
+      'basicInfoDictionaryGroups',
+      'patientInfoTemplateGroups'
     ])
   },
   components: {
     FoldingPanel
   },
   mounted() {
-    console.log(this.basicInfoDictionaryGroups);
+    setTimeout(() => {
+      console.log(this.basicInfoDictionaryGroups);
+      console.log(this.patientInfoTemplateGroups);
+    }, 1000);
   }
 };
 </script>

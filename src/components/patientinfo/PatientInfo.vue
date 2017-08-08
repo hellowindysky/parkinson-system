@@ -69,7 +69,7 @@ export default {
     chooseDiagnostic() {
       this.$router.push('diagnosticInfo');
     },
-    checkIfJump() {
+    checkRoute() {
       var path = this.$route.path;
       var reList = new RegExp(/^\/patients\/list\//);
       var reOtherList = new RegExp(/^\/patients\/otherList\//);
@@ -86,7 +86,7 @@ export default {
     }
   },
   mounted() {
-    this.checkIfJump();
+    this.checkRoute();
 
     // 如果之前有绑定的话，先进行解除
     Ps.destroy(this.$refs.scrollArea);
@@ -97,7 +97,7 @@ export default {
   },
   watch: {
     $route() {
-      this.checkIfJump();
+      this.checkRoute();
     }
   }
 };

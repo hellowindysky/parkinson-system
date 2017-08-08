@@ -92,9 +92,6 @@ export default {
 
       this.$refs['loginForm'].validate((valid) => {
         if (valid) {
-          // 一旦登录验证成功，就向服务器调取相应的数据，如字典项信息
-          this.$store.dispatch('getWholeDictionary');
-
           // 暂时模拟一个延时登录效果
           setTimeout(() => {
             this.$router.push('/');
