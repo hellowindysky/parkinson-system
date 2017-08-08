@@ -96,10 +96,14 @@ export default {
   .content {
     box-sizing: border-box;
     font-size: @normal-font-size;
-    max-height: 1000px;
-    transition: max-height 0.3s ease-in;
+    height: auto;
+    overflow: hidden;
+    padding: 20px 20px;
+    transition: all 0.2s;
     &.folded {
-      max-height: 0;
+      height: 0;
+      opacity: 0.3;
+      padding: 0 20px;
     }
   }
 }
