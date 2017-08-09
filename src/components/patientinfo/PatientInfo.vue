@@ -23,7 +23,7 @@
         </div>
       </div>
       <div class="respective-info">
-        <router-view></router-view>
+        <router-view :patientInfo="patientInfo"></router-view>
       </div>
     </div>
   </div>
@@ -31,6 +31,8 @@
 
 <script>
 import Ps from 'perfect-scrollbar';
+
+import { getPatientInfo } from 'api/patient';
 
 export default {
   data() {
@@ -86,6 +88,11 @@ export default {
     }
   },
   mounted() {
+    getPatientInfo().then((data) => {
+      this.patientInfo = data;
+      console.log(data);
+    });
+
     this.checkRoute();
 
     // 如果之前有绑定的话，先进行解除

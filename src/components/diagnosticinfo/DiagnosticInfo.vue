@@ -4,6 +4,12 @@
 
 <script>
 export default {
+  props: {
+    patientInfo: {
+      type: Object,
+      required: true
+    }
+  }
 };
 </script>
 

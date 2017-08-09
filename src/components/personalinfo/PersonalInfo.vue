@@ -12,6 +12,12 @@ import DiseaseInfo from 'components/diseaseinfo/DiseaseInfo';
 import OtherInfo from 'components/otherinfo/OtherInfo';
 
 export default {
+  props: {
+    patientInfo: {
+      type: Object,
+      required: true
+    }
+  },
   components: {
     BasicInfo,
     DiseaseInfo,
