@@ -8,8 +8,8 @@ const state = {
 
 const getters = {
   basicInfoDictionaryGroups: (state) => {
-    // 如果 state.all 为空，则返回一个包含三个空数组的数组
-    if (state.all.tables.length === 0) {
+    // 如果 state.all.tables 为 undefined，则返回一个包含三个空数组的数组
+    if (!state.all.tables) {
       return [[], [], []];
 
     } else {
