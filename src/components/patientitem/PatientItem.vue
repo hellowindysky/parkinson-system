@@ -1,19 +1,19 @@
 <template lang="html">
   <div class="item" :class="{'current': selected}" @click="select">
     <img class="image" src="~img/profile.png" alt="">
-    <div class="name">陈晓晓</div>
-    <div class="gender iconfont icon-male"></div>
-    <div class="date">2017/01/01</div>
-    <div class="age">34岁</div>
-    <div class="location">北京</div>
+    <div class="name">{{patient.name}}</div>
+    <div class="gender iconfont icon-male" :class="genderIcon"></div>
+    <div class="date">{{patient.createDate}}</div>
+    <div class="age">？岁</div>
+    <div class="location">{{patient.homeProvince}}</div>
   </div>
 </template>
 
 <script>
 export default {
   props: {
-    id: {
-      type: Number,
+    patient: {
+      type: Object,
       required: true
     }
   },
@@ -21,20 +21,29 @@ export default {
     // 根据路由信息对象提供的当前路径，来判断自己是否被选择
     selected() {
       var path = this.$route.path;
-      var re = new RegExp('^\/patients\/list\/' + this.id);
+      var re = new RegExp('^\/patients\/list\/' + this.patient.patientId);
       if (re.test(path)) {
         return true;
       } else {
         return false;
       }
+    },
+    genderIcon() {
+      if (this.patient.sex === 0) {
+        return 'icon-male';
+      } else if (this.patient.sex === 1) {
+        return 'icon-female';
+      }
     }
   },
   mounted() {
-    // console.log(this.id);
   },
   methods: {
     select() {
-      this.$router.push({ name: 'patientInfo', params: { id: this.id }});
+      this.$router.push({
+        name: 'patientInfo',
+        params: { id: this.patient.patientId }
+      });
     }
   }
 };

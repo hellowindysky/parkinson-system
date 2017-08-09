@@ -1,20 +1,8 @@
 /* eslint-disable quotes */
 import axios from 'axios';
 
-export function getPatientInfo() {
-  var request = {
-    "userId": 93242,
-    "accountNumber": "15012670416",
-    "userType": 1,
-    "orgId": 34,
-    "orgType": 2,
-    "patientId": 112,
-    "patientPersonVersion": 98
-  };
+function encapsulatePromise(url, request) {
 
-  var url = 'http://apitest.gyenno.com/pdms/queryPatientPerson';
-
-  // axios.post 本身就是个 Promise 对象，这里我们再用 Promise 封装一次，在本文件内对响应数据进行处理，对外只暴露有效数据
   var promise = new Promise(function(resolve) {
 
     axios.post(url, request).then((response) => {
@@ -30,4 +18,35 @@ export function getPatientInfo() {
   });
 
   return promise;
+}
+
+export function getPatientList() {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15012670416",
+    "userType": 1,
+    "orgId": 34,
+    "orgType": 2,
+    "pageNo": 1,
+    "pageSize": 10
+  };
+
+  var url = 'http://apitest.gyenno.com/pdms/queryPatientList';
+  return encapsulatePromise(url, request);
+};
+
+export function getPatientInfo() {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15012670416",
+    "userType": 1,
+    "orgId": 34,
+    "orgType": 2,
+    "patientId": 112,
+    "patientPersonVersion": 98
+  };
+
+  var url = 'http://apitest.gyenno.com/pdms/queryPatientPerson';
+
+  return encapsulatePromise(url, request);
 }

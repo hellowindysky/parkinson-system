@@ -14,18 +14,7 @@
 
     <div class="list-area" ref="listArea">
       <div v-if="this.listType === 'patients'">
-        <patient-list-item class="item" :id="10001"></patient-list-item>
-        <patient-list-item class="item" :id="10002"></patient-list-item>
-        <patient-list-item class="item" :id="10003"></patient-list-item>
-        <patient-list-item class="item" :id="10004"></patient-list-item>
-        <patient-list-item class="item" :id="10005"></patient-list-item>
-        <patient-list-item class="item" :id="10006"></patient-list-item>
-        <patient-list-item class="item" :id="10007"></patient-list-item>
-        <patient-list-item class="item" :id="10008"></patient-list-item>
-        <patient-list-item class="item" :id="10009"></patient-list-item>
-        <patient-list-item class="item" :id="10010"></patient-list-item>
-        <patient-list-item class="item" :id="10011"></patient-list-item>
-        <patient-list-item class="item" :id="10012"></patient-list-item>
+        <patient-list-item class="item" v-for="patient in myPatientsList" :patient="patient" :key="patient.patientId"></patient-list-item>
       </div>
       <div class="list-area" v-else-if="this.listType === 'groups'">
         <group-list-item :id="90001"></group-list-item>
@@ -139,6 +128,8 @@ import Ps from 'perfect-scrollbar';
 import patientListItem from 'components/patientitem/PatientItem';
 import groupListItem from 'components/groupitem/GroupItem';
 
+import { getPatientList } from 'api/patient';
+
 export default {
   data() {
     // 自定义校验规则，可以为空，数值在 0 ~ 120 之间
@@ -160,6 +151,7 @@ export default {
     };
     return {
       searchInput: '',
+      myPatientsList: [],
       panelDisplay: false,
       filterPatientsForm: {
         group: 'all',
@@ -204,7 +196,7 @@ export default {
     },
     totalNumText() {
       if (this.listType === 'patients') {
-        return '患者：345人';
+        return '患者：' + this.myPatientsList.length + '人';
       } else if (this.listType === 'groups') {
         return '分组：19个';
       } else if (this.listType === 'otherPatients') {
@@ -226,28 +218,23 @@ export default {
     // Ps.update(this.$refs.listArea);
 
     this.checkRoute();
+
+    // 如果在某个指定了 id 的页面进行刷新，checkRoute函数内的更新列表数据，不会执行，这个时候就需要手动更新
+    this.updateMyPatientsList();
   },
   methods: {
     search() {
       // console.log(this.searchInput);
     },
+    updateMyPatientsList(cb) {
+      getPatientList().then((data) => {
+        this.myPatientsList = data;
+        // 如果有回调函数作为参数传递进来了，则执行该函数
+        cb && cb();
+      });
+    },
     togglePanelDisplay() {
       this.panelDisplay = !this.panelDisplay;
-    },
-    selectFirstItem() {
-      // 列表类型切换时，判断当前列表类型，然后自动跳转到该列表下第一个选项
-      if (this.listType === 'patients') {
-        // TODO 获取病患列表的所有id，然后根据第一个id进行跳转
-        this.$router.replace({ name: 'patientInfo', params: { id: 10001 }});
-
-      } else if (this.listType === 'groups') {
-        // TODO 获取分组列表的所有id，然后根据第一个id进行跳转
-        this.$router.replace({ name: 'groupInfo', params: { id: 90001 }});
-
-      } else if (this.listType === 'otherlist') {
-        // TODO 获取科室患者列表的所有id，然后根据第一个id进行跳转
-        this.$router.replace({ name: 'otherPatientInfo', params: { id: 20001 }});
-      }
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
@@ -265,11 +252,17 @@ export default {
       this.togglePanelDisplay();
     },
     checkRoute() {
-      // 一旦发现路由地址中还没有id，就默认加载当前列表中的第一项
       var path = this.$route.path;
+
+      // 一旦发现路由地址中还没有id，就更新病患列表数据，并默认加载当前列表中的第一项
       if (/^\/patients\/list\/?$/.test(path)) {
-        // TODO 获取病患列表的所有id，然后根据第一个id进行跳转
-        this.$router.replace({ name: 'patientInfo', params: { id: 10001 }});
+        this.updateMyPatientsList(() => {
+          var firstPatientId = this.myPatientsList.length > 0 ? this.myPatientsList[0].patientId : 0;
+          this.$router.replace({
+            name: 'patientInfo',
+            params: { id: firstPatientId }
+          });
+        });
 
       } else if (/^\/patients\/groups\/?$/.test(path)) {
         // TODO 获取分组列表的所有id，然后根据第一个id进行跳转
