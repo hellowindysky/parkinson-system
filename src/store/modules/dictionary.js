@@ -8,15 +8,21 @@ const state = {
 
 const getters = {
   basicInfoDictionaryGroups: (state) => {
-    // 如果 state.all.tables 为空，则返回空数组
-    if (!state.all.tables) {
-      return [];
+    // 如果 state.all 为空，则返回一个包含三个空数组的数组
+    if (state.all.tables.length === 0) {
+      return [[], [], []];
 
     } else {
       var groups = state.all.tables.filter((table) => {
         return table.tableName === 'tc_patient_info';
       })[0].groups;
-      return groups;
+
+      // 然后对这个数组进行加工，让它更扁平化，方便我们在组件中使用
+      var processedGroups = [];
+      for (var i = 0; i < groups.length; i++) {
+        processedGroups.push(groups[i].fields);
+      }
+      return processedGroups;
     }
   }
 };

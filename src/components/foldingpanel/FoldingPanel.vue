@@ -95,15 +95,14 @@ export default {
   }
   .content {
     box-sizing: border-box;
-    font-size: @normal-font-size;
     height: auto;
     overflow: hidden;
-    padding: 20px 20px;
+    padding: 10px 25px;
     transition: all 0.2s;
     &.folded {
       height: 0;
       opacity: 0.3;
-      padding: 0 20px;
+      padding: 0 25px;
     }
   }
 }
