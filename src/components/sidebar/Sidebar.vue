@@ -1,8 +1,9 @@
 <template lang="html">
   <ul class="sidebar">
     <li class="item" :class="{'current-item': currentItem === 'patients'}" @click="togglePatientsList">
-      <div class="iconfont icon-patients-management"></div>
+      <div class="menu-icon iconfont icon-patients-management"></div>
       <div class="title">患者管理</div>
+      <div class="fold-icon iconfont" :class="showPatientsList ? 'icon-up' : 'icon-down'"></div>
     </li>
     <ul class="sub-item-list" :class="{'folded': !showPatientsList}">
       <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'myPatients'}" @click="chooseMyPatients">
@@ -16,13 +17,29 @@
       </li>
     </ul>
     <li class="item" :class="{'current': currentItem === 'analytics'}">
-      <div class="iconfont icon-analytics"></div>
+      <div class="menu-icon iconfont icon-analytics"></div>
       <div class="title">统计分析</div>
+      <div class="fold-icon iconfont"></div>
     </li>
-    <li class="item" :class="{'current': currentItem === 'configuration'}">
-      <div class="iconfont icon-configuration"></div>
+    <li class="item" :class="{'current': currentItem === 'configuration'}" @click="toggleConfigurationList">
+      <div class="menu-icon iconfont icon-configuration"></div>
       <div class="title">系统配置</div>
+      <div class="fold-icon iconfont" :class="showConfigurationList ? 'icon-up' : 'icon-down'"></div>
     </li>
+    <ul class="sub-item-list" :class="{'folded': !showConfigurationList}">
+      <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'featureConfiguration'}" @click="chooseFeatureConfiguration">
+        功能配置
+      </li>
+      <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'userManagement'}" @click="chooseUserManagement">
+        用户管理
+      </li>
+      <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'roleManagement'}" @click="chooseRoleManagement">
+        角色管理
+      </li>
+      <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'dictionaryManagement'}" @click="chooseDictionaryManagement">
+        档案管理
+      </li>
+    </ul>
   </ul>
 </template>
 
@@ -30,7 +47,8 @@
 export default {
   data() {
     return {
-      showPatientsList: false
+      showPatientsList: false,
+      showConfigurationList: false
     };
   },
   computed: {
@@ -59,6 +77,9 @@ export default {
     togglePatientsList() {
       this.showPatientsList = !this.showPatientsList;
     },
+    toggleConfigurationList() {
+      this.showConfigurationList = !this.showConfigurationList;
+    },
     chooseMyPatients() {
       // 如果当前路径不是以“/patients/list”开头了，才发生跳转
       if (!/^\/patients\/list/.test(this.$route.path)) {
@@ -76,6 +97,18 @@ export default {
       if (!/^\/patients\/otherList/.test(this.$route.path)) {
         this.$router.push({name: 'otherPatients'});
       }
+    },
+    chooseFeatureConfiguration() {
+
+    },
+    chooseUserManagement() {
+
+    },
+    chooseRoleManagement() {
+
+    },
+    chooseDictionaryManagement() {
+
     }
   },
   mounted() {
@@ -113,12 +146,22 @@ export default {
     }
     .iconfont {
       display: inline-block;
-      font-size: 24px;
+      position: absolute;
       line-height: @item-height;
       vertical-align: middle;
+      &.menu-icon {
+        left: 5px;
+        font-size: 20px;
+      }
+      &.fold-icon {
+        left: 95px;
+        font-size: @normal-font-size;
+      }
     }
     .title {
       display: inline-block;
+      position: absolute;
+      left: 30px;
       font-size: @normal-font-size;
       line-height: @item-height;
       vertical-align: middle;
