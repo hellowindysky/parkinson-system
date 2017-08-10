@@ -3,7 +3,9 @@
     <div class="header">
       <div class="iconfont" :class="iconToggleFolded"></div>
       <h2 class="title" @click="toggleFoldedPanel">{{title}}</h2>
-      <div class="button edit-button">编辑</div>
+      <div v-show="mode==='reading'" class="button edit-button" @click="edit">编辑</div>
+      <div v-show="mode==='editing'" class="button cancel-button" @click="cancel">取消</div>
+      <div v-show="mode==='editing'" class="button submit-button" @click="submit">完成</div>
     </div>
     <div class="content" :class="{'folded': folded}">
       <slot></slot>
@@ -12,6 +14,9 @@
 </template>
 
 <script>
+const READING_MODE = 'reading';
+const EDITING_MODE = 'editing';
+
 export default {
   props: {
     title: {
@@ -21,7 +26,8 @@ export default {
   },
   data() {
     return {
-      folded: true
+      folded: true,
+      mode: READING_MODE
     };
   },
   computed: {
@@ -32,6 +38,18 @@ export default {
   methods: {
     toggleFoldedPanel() {
       this.folded = !this.folded;
+    },
+    edit() {
+      this.mode = EDITING_MODE;
+      this.$emit('edit');
+    },
+    cancel() {
+      this.mode = READING_MODE;
+      this.$emit('cancel');
+    },
+    submit() {
+      this.mode = READING_MODE;
+      this.$emit('submit');
     }
   }
 };
@@ -77,12 +95,10 @@ export default {
     .button {
       position: absolute;
       top: 8px;
-      right: 10px;
       width: @small-button-width;
       height: @small-button-height;
       line-height: @small-button-height;
       font-size: @normal-font-size;
-      background-color: @button-color;
       color: @button-font-color;
       cursor: pointer;
       &:hover {
@@ -90,6 +106,18 @@ export default {
       }
       &:active {
         opacity: 0.9;
+      }
+      &.edit-button {
+        right: 10px;
+        background-color: @button-color;
+      }
+      &.cancel-button {
+        right: 30px + @small-button-width;
+        background-color: @light-font-color;
+      }
+      &.submit-button {
+        right: 10px;
+        background-color: @button-color;
       }
     }
   }

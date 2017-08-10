@@ -1,10 +1,10 @@
 <template lang="html">
-  <folding-panel :title="'基础信息'">
+  <folding-panel :title="'基础信息'" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
     <div class="basic-info">
       <div class="group" v-for="group in patientInfoTemplateGroups">
         <div class="field" v-for="field in group">
           <span class="field-name">{{field.cnfieldName}}</span>
-          <span class="field-value">yeah</span>
+          <span class="field-value">{{basicInfo[field.fieldName]}}</span>
         </div>
       </div>
       <div class="group2">
@@ -21,18 +21,44 @@
 import { mapGetters } from 'vuex';
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 
+const READING_MODE = 'reading';
+const EDITING_MODE = 'editing';
+
 export default {
+  props: {
+    basicInfo: {
+      type: Object,
+      required: true
+    }
+  },
+  data() {
+    return {
+      mode: READING_MODE
+    };
+  },
   computed: {
     ...mapGetters([
       'basicInfoDictionaryGroups',
       'patientInfoTemplateGroups'
     ])
   },
+  methods: {
+    startEditing() {
+      this.mode = EDITING_MODE;
+    },
+    cancel() {
+      this.mode = READING_MODE;
+    },
+    submit() {
+      this.mode = READING_MODE;
+    }
+  },
   components: {
     FoldingPanel
   },
   mounted() {
     setTimeout(() => {
+      console.log(this.basicInfo);
       console.log(this.basicInfoDictionaryGroups);
       console.log(this.patientInfoTemplateGroups);
     }, 1000);

@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="personal-info-wrapper">
-    <basic-info class="component"></basic-info>
+    <basic-info class="component" :basic-info="basicInfo"></basic-info>
     <disease-info class="component"></disease-info>
     <other-info class="component"></other-info>
   </div>
@@ -16,6 +16,15 @@ export default {
     patientInfo: {
       type: Object,
       required: true
+    }
+  },
+  computed: {
+    basicInfo() {
+      if (this.patientInfo.patientInfo) {
+        return this.patientInfo.patientInfo;
+      } else {
+        return {};
+      }
     }
   },
   components: {

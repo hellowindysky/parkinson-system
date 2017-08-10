@@ -23,7 +23,7 @@
         </div>
       </div>
       <div class="respective-info">
-        <router-view :patientInfo="patientInfo"></router-view>
+        <router-view :patient-info="patientInfo"></router-view>
       </div>
     </div>
   </div>
@@ -90,7 +90,6 @@ export default {
   mounted() {
     getPatientInfo().then((data) => {
       this.patientInfo = data;
-      console.log(data);
     });
 
     this.checkRoute();
