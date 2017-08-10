@@ -14,6 +14,8 @@
 </template>
 
 <script>
+import Bus from 'utils/bus.js';
+
 const READING_MODE = 'reading';
 const EDITING_MODE = 'editing';
 
@@ -38,6 +40,10 @@ export default {
   methods: {
     toggleFoldedPanel() {
       this.folded = !this.folded;
+      setTimeout(() => {
+        // 之所以要延时发送事件，是为了等待折叠动画结束
+        Bus.$emit('foldingStatusChanged');
+      }, 300);
     },
     edit() {
       this.mode = EDITING_MODE;

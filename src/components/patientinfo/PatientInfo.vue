@@ -31,6 +31,7 @@
 
 <script>
 import Ps from 'perfect-scrollbar';
+import Bus from 'utils/bus.js';
 
 import { getPatientInfo } from 'api/patient';
 
@@ -85,6 +86,17 @@ export default {
       if (isPatientsList && withoutPersonalOrDiagostic) {
         this.$router.replace({ name: 'personalInfo' });
       }
+    },
+    updateScrollbar() {
+      // 之所以弃用 update 方法，是因为它在某些情况下会出现问题，导致滚动条不能有效刷新
+      // Ps.update(this.$refs.scrollArea);
+
+      // 如果之前有绑定滚动条的话，先进行解除
+      Ps.destroy(this.$refs.scrollArea);
+      Ps.initialize(this.$refs.scrollArea, {
+        wheelSpeed: 1,
+        minScrollbarLength: 40
+      });
     }
   },
   mounted() {
@@ -94,12 +106,10 @@ export default {
 
     this.checkRoute();
 
-    // 如果之前有绑定的话，先进行解除
-    Ps.destroy(this.$refs.scrollArea);
-    Ps.initialize(this.$refs.scrollArea, {
-      wheelSpeed: 1,
-      minScrollbarLength: 40
-    });
+    this.updateScrollbar();
+
+    // 监听折叠面板是否发生状态的改变，如果发生了，那么就需要重新计算滚动区域的高度
+    Bus.$on('foldingStatusChanged', this.updateScrollbar);
   },
   watch: {
     $route() {
