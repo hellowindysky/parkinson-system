@@ -179,7 +179,6 @@ export default {
       padding: 0;
     }
     .sub-item {
-      padding-left: 10px;
       width: 100%;
       height: 40px;
       line-height: 40px;
