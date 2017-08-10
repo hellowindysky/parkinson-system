@@ -1,10 +1,30 @@
 <template lang="html">
   <folding-panel :title="'基础信息'" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
     <div class="basic-info">
-      <div class="group" v-for="group in patientInfoTemplateGroups">
+      <div class="group" v-for="(group, groupIndex) in patientInfoTemplateGroups">
         <div class="field" v-for="field in group">
           <span class="field-name">{{field.cnfieldName}}</span>
-          <span class="field-value">{{basicInfo[field.fieldName]}}</span>
+          <span class="field-value" v-show="mode==='reading'">{{basicInfo[field.fieldName]}}</span>
+          <span class="field-value" v-show="mode==='editing'">
+            <span v-if="checkUIType(field, groupIndex)===1">
+              1
+            </span>
+            <span v-else-if="checkUIType(field, groupIndex)===2">
+              2
+            </span>
+            <span v-else-if="checkUIType(field, groupIndex)===3">
+              3
+            </span>
+            <span v-else-if="checkUIType(field, groupIndex)===4">
+              4
+            </span>
+            <span v-else-if="checkUIType(field, groupIndex)===5">
+              5
+            </span>
+            <span v-else-if="checkUIType(field, groupIndex)===6">
+              6
+            </span>
+          </span>
         </div>
       </div>
       <div class="group2">
@@ -51,6 +71,15 @@ export default {
     },
     submit() {
       this.mode = READING_MODE;
+    },
+    checkUIType(field, groupIndex) {
+      // 这个函数根据实际数据，在字典项中查询到对应的字段，然后得到其 uiType 类型
+      // uitype: 0/无 1/输入框 2/数字箭头 3/单选下拉框 4/单选按纽 5/多选复选框 6/日期 7/日期时间
+      var matchedField = this.basicInfoDictionaryGroups[groupIndex].filter((fieldInDictionary) => {
+        return fieldInDictionary.fieldName === field.fieldName;
+      })[0];
+      var uiType = matchedField ? matchedField.uiType : '';
+      return uiType;
     }
   },
   components: {
@@ -61,7 +90,7 @@ export default {
       console.log(this.basicInfo);
       console.log(this.basicInfoDictionaryGroups);
       console.log(this.patientInfoTemplateGroups);
-    }, 1000);
+    }, 1500);
   }
 };
 </script>
