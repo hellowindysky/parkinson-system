@@ -5,7 +5,26 @@
         <div class="field" v-for="field in group">
           <span class="field-name">{{field.cnfieldName}}</span>
           <span class="field-value" v-show="mode==='reading'">{{basicInfo[field.fieldName]}}</span>
-          <field-input class="field-value" v-show="mode==='editing'" :field="field" :dictionary-field="getDictionaryField(field, groupIndex)" :model-object="copyInfo"></field-input>
+          <div class="field-input" v-show="mode==='editing'" >
+            <span v-if="getUIType(field, groupIndex)===1">
+              <el-input v-model="copyInfo[field.fieldName]"></el-input>
+            </span>
+            <span v-else-if="getUIType(field, groupIndex)===2">
+              2
+            </span>
+            <span v-else-if="getUIType(field, groupIndex)===3">
+              3
+            </span>
+            <span v-else-if="getUIType(field, groupIndex)===4">
+              4
+            </span>
+            <span v-else-if="getUIType(field, groupIndex)===5">
+              5
+            </span>
+            <span v-else-if="getUIType(field, groupIndex)===6">
+              6
+            </span>
+          </div>
         </div>
       </div>
       <div class="group2">
@@ -21,7 +40,6 @@
 <script>
 import { mapGetters } from 'vuex';
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
-import FieldInput from 'components/fieldinput/FieldInput';
 
 const READING_MODE = 'reading';
 const EDITING_MODE = 'editing';
@@ -37,9 +55,6 @@ export default {
   data() {
     return {
       mode: READING_MODE,
-
-      // 因为 copyInfo 是 Object，所以我们将它作为 props 传递到子组件后，实际上传递的是一个引用对象。
-      // 我们在子组件里面修改这个属性对象的属性值，会直接影响到父组件的 copyInfo 对象
       copyInfo: {}
     };
   },
@@ -62,11 +77,11 @@ export default {
       // 点击提交按钮，将修改后的 copyInfo 提交到服务器，一旦提交成功，basicInfo也会更新，这个时候再切换回阅读状态
       this.mode = READING_MODE;
     },
-    getDictionaryField(field, groupIndex) {
-      // 这个函数根据实际数据，在字典项中查询到对应的字段，然后得到其 uiType 等信息
+    getMatchedField(field, groupIndex) {
+      // 这个函数根据实际数据，在字典项中查询到对应的字段，然后得到其 uiType 信息
       var matchedGroup = this.basicInfoDictionaryGroups[groupIndex];
       if (!matchedGroup) {
-        return {};
+        matchedGroup = [];
       }
       var matchedField = matchedGroup.filter((dictionaryField) => {
         return dictionaryField.fieldName === field.fieldName;
@@ -76,11 +91,13 @@ export default {
       } else {
         return matchedField;
       }
+    },
+    getUIType(field, groupIndex) {
+      return this.getMatchedField(field, groupIndex).uiType;
     }
   },
   components: {
-    FoldingPanel,
-    FieldInput
+    FoldingPanel
   },
   mounted() {
     setTimeout(() => {
@@ -100,9 +117,9 @@ export default {
 };
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 @import "~styles/variables.less";
-@field-height: 36px;
+@field-height: 46px;
 
 .basic-info {
   width: 100%;
@@ -133,6 +150,17 @@ export default {
         line-height: @field-height;
         font-size: @normal-font-size;
         color: @light-font-color;
+      }
+      .field-input {
+        display: inline-block;
+        .el-input {
+          .el-input__inner {
+            height: 30px;
+            border: none;
+            background-color: @screen-color;
+          }
+        }
+
       }
     }
   }
