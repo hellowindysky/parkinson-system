@@ -156,9 +156,14 @@ export default {
       }
     },
     updateWarning(field) {
-      if (field.must === 1 && !this.copyInfo[field.fieldName]) {
+      var fieldName = field.fieldName;
+      var copyFieldValue = this.copyInfo[fieldName];
+      if (field.must === 1 && !copyFieldValue && copyFieldValue !== 0) {
         // must 为 1 代表必填，为 2 代表选填
-        this.warningResults[field.fieldName] = '必填项';
+        console.log(fieldName, copyFieldValue);
+        this.warningResults[fieldName] = '必填项';
+      } else if (copyFieldValue.toString().indexOf(' ') > -1) {
+        this.warningResults[fieldName] = '不能包含空格';
       } else {
         // 初始化组件的时候，对应字段的警告文本为 undefined，判断之后，就为实际文本或 null
         // null 代表该字段项的填写没有毛病
