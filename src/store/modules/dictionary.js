@@ -24,6 +24,14 @@ const getters = {
       }
       return processedGroups;
     }
+  },
+  typeGroup: (state) => {
+    // 如果 state.all.typegroup 为 undefined，则返回一个空数组
+    if (!state.all.typegroup) {
+      return [];
+    } else {
+      return state.all.typegroup;
+    }
   }
 };
 

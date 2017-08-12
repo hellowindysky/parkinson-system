@@ -5,7 +5,7 @@
         <div class="field" v-for="field in group">
           <span class="field-name">{{field.cnfieldName}}</span>
           <span class="field-value" v-show="mode==='reading'">{{basicInfo[field.fieldName]}}</span>
-          <div class="field-input" v-show="mode==='editing'" >
+          <div class="field-input" v-show="mode==='editing'">
             <span v-if="getUIType(field, groupIndex)===1">
               <el-input v-model="copyInfo[field.fieldName]"></el-input>
             </span>
@@ -13,7 +13,10 @@
               2
             </span>
             <span v-else-if="getUIType(field, groupIndex)===3">
-              3
+              <el-select v-model="copyInfo[field.fieldName]">
+                <el-option v-for="(type, typeIndex) in getTypes(field, groupIndex)" :label="getLabel(field, groupIndex, typeIndex)"
+                 :value="getValue(field, groupIndex, 0)" :key="getValue(field, groupIndex, 0)"></el-option>
+              </el-select>
             </span>
             <span v-else-if="getUIType(field, groupIndex)===4">
               4
@@ -61,7 +64,8 @@ export default {
   computed: {
     ...mapGetters([
       'basicInfoDictionaryGroups',
-      'patientInfoTemplateGroups'
+      'patientInfoTemplateGroups',
+      'typeGroup'
     ])
   },
   methods: {
@@ -93,7 +97,29 @@ export default {
       }
     },
     getUIType(field, groupIndex) {
+      // uiType类型 0/无 1/输入框 2/数字箭头 3/单选下拉框 4/单选按纽 5/多选复选框 6/日期 7/日期时间
       return this.getMatchedField(field, groupIndex).uiType;
+    },
+    getTypes(field, groupIndex) {
+      var dictionaryField = this.getMatchedField(field, groupIndex);
+      var typeInfo = this.typeGroup.filter((type) => {
+        return type.typegroupcode === dictionaryField.fieldEnumId;
+      })[0];
+      return typeInfo ? typeInfo.types : [];
+    },
+    getLabel(field, groupIndex, index) {
+      var types = this.getTypes(field, groupIndex);
+      if (!types[index]) {
+        return '';
+      }
+      return types[index].typeName;
+    },
+    getValue(field, groupIndex, index) {
+      var types = this.getTypes(field, groupIndex);
+      if (!types[index]) {
+        return '';
+      }
+      return types[index].typeCode;
     }
   },
   components: {
@@ -104,7 +130,8 @@ export default {
       console.log(this.basicInfo);
       console.log(this.basicInfoDictionaryGroups);
       console.log(this.patientInfoTemplateGroups);
-    }, 1500);
+      console.log(this.typeGroup);
+    }, 2000);
   },
   watch: {
     basicInfo: function(newBasicInfo) {
@@ -119,7 +146,9 @@ export default {
 
 <style lang="less">
 @import "~styles/variables.less";
+
 @field-height: 46px;
+@field-name-width: 100px;
 
 .basic-info {
   width: 100%;
@@ -140,7 +169,7 @@ export default {
       text-align: left;
       .field-name {
         display: inline-block;
-        width: 100px;
+        width: @field-name-width;
         line-height: @field-height;
         font-size: @normal-font-size;
         color: @font-color;
@@ -153,6 +182,7 @@ export default {
       }
       .field-input {
         display: inline-block;
+        width: 60%;
         .el-input {
           .el-input__inner {
             height: 30px;
@@ -160,7 +190,9 @@ export default {
             background-color: @screen-color;
           }
         }
-
+        .el-select {
+          width: 100%;
+        }
       }
     }
   }
