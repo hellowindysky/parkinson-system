@@ -18,14 +18,16 @@
           </div>
 
           <div class="field-input" v-show="mode==='editing'">
+            <span class="warning-text">{{getWarningText(field.fieldName)}}</span>
             <span v-if="getUIType(field, groupIndex)===1">
-              <el-input v-model="copyInfo[field.fieldName]" :placeholder="getMatchedField(field, groupIndex).cnFieldDesc"></el-input>
+              <el-input v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
+               :placeholder="getMatchedField(field, groupIndex).cnFieldDesc" @change="updateWarning(field)"></el-input>
             </span>
             <span v-else-if="getUIType(field, groupIndex)===2">
               2
             </span>
             <span v-else-if="getUIType(field, groupIndex)===3">
-              <el-select v-model="copyInfo[field.fieldName]">
+              <el-select v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}">
                 <el-option v-for="type in getTypes(field, groupIndex)" :label="type.typeName"
                  :value="parseInt(type.typeCode)" :key="type.typeCode"></el-option>
               </el-select>
@@ -45,12 +47,6 @@
             </span>
           </div>
         </div>
-      </div>
-      <div class="group2">
-
-      </div>
-      <div class="group3">
-
       </div>
     </div>
   </folding-panel>
@@ -79,7 +75,8 @@ export default {
         disabledDate(time) {
           return time.getTime() > Date.now();
         }
-      }
+      },
+      warningResults: {}
     };
   },
   computed: {
@@ -99,6 +96,22 @@ export default {
       this.mode = READING_MODE;
     },
     submit() {
+      // 首先检查是否每个字段都合格，检查一遍之后，如果 warningResults 的所有属性值都为空，就证明表单符合要求
+      var groupsLength = this.patientInfoTemplateGroups.length;
+      for (var i = 0; i < groupsLength; i++) {
+        var group = this.patientInfoTemplateGroups[i];
+        var fieldsNum = group.length;
+        for (var j = 0; j < fieldsNum; j++) {
+          this.updateWarning(group[j]);
+        }
+      }
+      console.log(this.warningResults);
+      for (var fieldName in this.warningResults) {
+        if (this.warningResults[fieldName]) {
+          return false;
+        }
+      }
+
       // 点击提交按钮，将修改后的 copyInfo 提交到服务器，一旦提交成功，basicInfo也会更新，这个时候再切换回阅读状态
       this.mode = READING_MODE;
     },
@@ -130,6 +143,7 @@ export default {
       return typeInfo ? typeInfo.types : [];
     },
     transformTypeCode(typeCode, field, groupIndex) {
+      // 根据 typeCode 找到对应的 typeName
       var types = this.getTypes(field, groupIndex);
       if (types.length === 0) {
         return '';
@@ -140,6 +154,20 @@ export default {
         })[0];
         return matchedType ? matchedType.typeName : '';
       }
+    },
+    updateWarning(field) {
+      if (field.must === 1 && !this.copyInfo[field.fieldName]) {
+        // must 为 1 代表必填，为 2 代表选填
+        this.warningResults[field.fieldName] = '必填项';
+      } else {
+        // 初始化组件的时候，对应字段的警告文本为 undefined，判断之后，就为实际文本或 null
+        // null 代表该字段项的填写没有毛病
+        this.warningResults[field.fieldName] = null;
+      }
+    },
+    getWarningText(fieldName) {
+      var warningResult = this.warningResults[fieldName];
+      return warningResult ? warningResult : '';
     }
   },
   components: {
@@ -167,7 +195,7 @@ export default {
 <style lang="less">
 @import "~styles/variables.less";
 
-@field-height: 46px;
+@field-height: 50px;
 @field-name-width: 100px;
 
 .basic-info {
@@ -195,6 +223,8 @@ export default {
         color: @font-color;
         .required-mark {
           color: red;
+          font-size: 20px;
+          vertical-align: middle;
         }
       }
       .field-value {
@@ -205,7 +235,17 @@ export default {
       }
       .field-input {
         display: inline-block;
+        position: relative;
         width: 60%;
+        overflow: visible;
+        .warning-text {
+          position: absolute;
+          top: 32px;
+          left: 10px;
+          height: 15px;
+          color: red;
+          font-size: @small-font-size;
+        }
         .el-input {
           .el-input__inner {
             height: 30px;
@@ -218,6 +258,9 @@ export default {
         }
         .el-date-editor {
           width: 100%;
+        }
+        .warning .el-input__inner {
+          border: 1px solid red;
         }
       }
     }
