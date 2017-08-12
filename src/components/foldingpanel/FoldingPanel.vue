@@ -16,20 +16,20 @@
 <script>
 import Bus from 'utils/bus.js';
 
-const READING_MODE = 'reading';
-const EDITING_MODE = 'editing';
-
 export default {
   props: {
     title: {
       required: true,
       type: String
+    },
+    mode: {
+      type: String,
+      default: 'reading'
     }
   },
   data() {
     return {
-      folded: true,
-      mode: READING_MODE
+      folded: true
     };
   },
   computed: {
@@ -46,15 +46,12 @@ export default {
       }, 300);
     },
     edit() {
-      this.mode = EDITING_MODE;
       this.$emit('edit');
     },
     cancel() {
-      this.mode = READING_MODE;
       this.$emit('cancel');
     },
     submit() {
-      this.mode = READING_MODE;
       this.$emit('submit');
     }
   },

@@ -1,5 +1,5 @@
 <template lang="html">
-  <folding-panel :title="'基础信息'" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
+  <folding-panel :title="'基础信息'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
     <div class="basic-info">
       <div class="group" v-for="(group, groupIndex) in patientInfoTemplateGroups">
         <div class="field" v-for="field in group">
