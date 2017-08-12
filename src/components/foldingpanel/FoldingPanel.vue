@@ -57,6 +57,12 @@ export default {
       this.mode = READING_MODE;
       this.$emit('submit');
     }
+  },
+  mounted() {
+    // 默认让基础信息面板呈展开状态
+    if (this.title === '基础信息') {
+      this.folded = false;
+    }
   }
 };
 </script>
