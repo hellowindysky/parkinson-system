@@ -27,7 +27,7 @@
               2
             </span>
             <span v-else-if="getUIType(field, groupIndex)===3">
-              <el-select v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}">
+              <el-select v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}" @change="updateWarning(field)">
                 <el-option v-for="type in getTypes(field, groupIndex)" :label="type.typeName"
                  :value="parseInt(type.typeCode)" :key="type.typeCode"></el-option>
               </el-select>
@@ -160,7 +160,6 @@ export default {
       var copyFieldValue = this.copyInfo[fieldName];
       if (field.must === 1 && !copyFieldValue && copyFieldValue !== 0) {
         // must 为 1 代表必填，为 2 代表选填
-        console.log(fieldName, copyFieldValue);
         this.warningResults[fieldName] = '必填项';
       } else if (copyFieldValue.toString().indexOf(' ') > -1) {
         this.warningResults[fieldName] = '不能包含空格';
