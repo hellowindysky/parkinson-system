@@ -4,7 +4,16 @@
       <div class="group" v-for="(group, groupIndex) in patientInfoTemplateGroups">
         <div class="field" v-for="field in group">
           <span class="field-name">{{field.cnfieldName}}</span>
-          <span class="field-value" v-show="mode==='reading'">{{basicInfo[field.fieldName]}}</span>
+
+          <div class="field-value" v-show="mode==='reading'">
+            <span v-if="getUIType(field, groupIndex)===3">
+              {{ transformTypeCode(basicInfo[field.fieldName], field, groupIndex) }}
+            </span>
+            <span v-else>
+              {{ basicInfo[field.fieldName] }}
+            </span>
+          </div>
+
           <div class="field-input" v-show="mode==='editing'">
             <span v-if="getUIType(field, groupIndex)===1">
               <el-input v-model="copyInfo[field.fieldName]"></el-input>
@@ -14,8 +23,8 @@
             </span>
             <span v-else-if="getUIType(field, groupIndex)===3">
               <el-select v-model="copyInfo[field.fieldName]">
-                <el-option v-for="(type, typeIndex) in getTypes(field, groupIndex)" :label="getLabel(field, groupIndex, typeIndex)"
-                 :value="getValue(field, groupIndex, 0)" :key="getValue(field, groupIndex, 0)"></el-option>
+                <el-option v-for="type in getTypes(field, groupIndex)" :label="type.typeName"
+                 :value="parseInt(type.typeCode)" :key="type.typeCode"></el-option>
               </el-select>
             </span>
             <span v-else-if="getUIType(field, groupIndex)===4">
@@ -82,7 +91,7 @@ export default {
       this.mode = READING_MODE;
     },
     getMatchedField(field, groupIndex) {
-      // 这个函数根据实际数据，在字典项中查询到对应的字段，然后得到其 uiType 信息
+      // 这个函数根据实际数据，在字典项中查询到对应的字段，从而方便我们得到其 uiType 等信息
       var matchedGroup = this.basicInfoDictionaryGroups[groupIndex];
       if (!matchedGroup) {
         matchedGroup = [];
@@ -101,25 +110,24 @@ export default {
       return this.getMatchedField(field, groupIndex).uiType;
     },
     getTypes(field, groupIndex) {
+      // 在 typegroup 里面查找到 field 所对应的 types（选项组）
       var dictionaryField = this.getMatchedField(field, groupIndex);
       var typeInfo = this.typeGroup.filter((type) => {
         return type.typegroupcode === dictionaryField.fieldEnumId;
       })[0];
       return typeInfo ? typeInfo.types : [];
     },
-    getLabel(field, groupIndex, index) {
+    transformTypeCode(typeCode, field, groupIndex) {
       var types = this.getTypes(field, groupIndex);
-      if (!types[index]) {
+      if (types.length === 0) {
         return '';
+      } else {
+        var matchedType = types.filter((type) => {
+          // patientInfo 中用的是数字，而 typegroup 里面的 typeCode 是字符串，因此要确定匹配之前，需要将数字转译为字符串
+          return type.typeCode === typeCode + '';
+        })[0];
+        return matchedType ? matchedType.typeName : '';
       }
-      return types[index].typeName;
-    },
-    getValue(field, groupIndex, index) {
-      var types = this.getTypes(field, groupIndex);
-      if (!types[index]) {
-        return '';
-      }
-      return types[index].typeCode;
     }
   },
   components: {
