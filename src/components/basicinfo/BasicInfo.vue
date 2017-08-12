@@ -16,7 +16,7 @@
 
           <div class="field-input" v-show="mode==='editing'">
             <span v-if="getUIType(field, groupIndex)===1">
-              <el-input v-model="copyInfo[field.fieldName]"></el-input>
+              <el-input v-model="copyInfo[field.fieldName]" :placeholder="getMatchedField(field, groupIndex).cnFieldDesc"></el-input>
             </span>
             <span v-else-if="getUIType(field, groupIndex)===2">
               2
@@ -34,7 +34,8 @@
               5
             </span>
             <span v-else-if="getUIType(field, groupIndex)===6">
-              6
+              <el-date-picker v-model="copyInfo[field.fieldName]" type="date" placeholder="选择日期"
+               :picker-options="futureDisabledptions"></el-date-picker>
             </span>
           </div>
         </div>
@@ -67,7 +68,12 @@ export default {
   data() {
     return {
       mode: READING_MODE,
-      copyInfo: {}
+      copyInfo: {},
+      futureDisabledptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        }
+      }
     };
   },
   computed: {
@@ -138,7 +144,7 @@ export default {
       console.log(this.basicInfo);
       console.log(this.basicInfoDictionaryGroups);
       console.log(this.patientInfoTemplateGroups);
-      console.log(this.typeGroup);
+      // console.log(this.typeGroup);
     }, 2000);
   },
   watch: {
@@ -199,6 +205,9 @@ export default {
           }
         }
         .el-select {
+          width: 100%;
+        }
+        .el-date-editor {
           width: 100%;
         }
       }
