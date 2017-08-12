@@ -3,7 +3,10 @@
     <div class="basic-info">
       <div class="group" v-for="(group, groupIndex) in patientInfoTemplateGroups">
         <div class="field" v-for="field in group">
-          <span class="field-name">{{field.cnfieldName}}</span>
+          <span class="field-name">
+            {{field.cnfieldName}}
+            <span class="required-mark" v-show="field.must===1">*</span>
+          </span>
 
           <div class="field-value" v-show="mode==='reading'">
             <span v-if="getUIType(field, groupIndex)===3">
@@ -36,6 +39,9 @@
             <span v-else-if="getUIType(field, groupIndex)===6">
               <el-date-picker v-model="copyInfo[field.fieldName]" type="date" placeholder="选择日期"
                :picker-options="futureDisabledptions"></el-date-picker>
+            </span>
+            <span v-else-if="getUIType(field, groupIndex)===7">
+              7
             </span>
           </div>
         </div>
@@ -187,6 +193,9 @@ export default {
         line-height: @field-height;
         font-size: @normal-font-size;
         color: @font-color;
+        .required-mark {
+          color: red;
+        }
       }
       .field-value {
         display: inline-block;
