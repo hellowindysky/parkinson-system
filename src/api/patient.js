@@ -35,18 +35,33 @@ export function getPatientList() {
   return encapsulatePromise(url, request);
 };
 
-export function getPatientInfo() {
+export function getPatientInfo(patientId) {
   var request = {
     "userId": 93242,
     "accountNumber": "15012670416",
     "userType": 1,
     "orgId": 34,
     "orgType": 2,
-    "patientId": 112,
+    "patientId": 112,   // 暂时用 112，等接口改好了，再用 patientId 作为参数
     "patientPersonVersion": 98
   };
-
+  console.log('查询id为' + patientId + '的患者，临时用112替代');
   var url = 'http://apitest.gyenno.com/pdms/queryPatientPerson';
 
   return encapsulatePromise(url, request);
-}
+};
+
+export function modifyPatientInfo(patientInfo) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15012670416",
+    "userType": 1,
+    "orgId": 34,
+    "orgType": 2,
+    "patientInfo": patientInfo
+  };
+
+  var url = 'http://apitest.gyenno.com/pdms/modPatientInfo';
+
+  return encapsulatePromise(url, request);
+};

@@ -97,12 +97,15 @@ export default {
         wheelSpeed: 1,
         minScrollbarLength: 40
       });
+    },
+    updatePatientInfo() {
+      getPatientInfo(this.$route.params.id).then((data) => {
+        this.patientInfo = data;
+      });
     }
   },
   mounted() {
-    getPatientInfo().then((data) => {
-      this.patientInfo = data;
-    });
+    this.updatePatientInfo();
 
     this.checkRoute();
 
@@ -110,6 +113,9 @@ export default {
 
     // 监听折叠面板是否发生状态的改变，如果发生了，那么就需要重新计算滚动区域的高度
     Bus.$on('foldingStatusChanged', this.updateScrollbar);
+
+    // 监听子组件是否要求刷新病患数据
+    Bus.$on('updatePatientInfo', this.updatePatientInfo);
   },
   watch: {
     $route() {

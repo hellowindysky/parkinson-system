@@ -54,7 +54,10 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import Bus from 'utils/bus.js';
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
+
+import { modifyPatientInfo } from 'api/patient.js';
 
 const READING_MODE = 'reading';
 const EDITING_MODE = 'editing';
@@ -104,7 +107,6 @@ export default {
           this.updateWarning(field);
         }
       }
-
       for (let fieldName in this.warningResults) {
         if (this.warningResults[fieldName]) {
           return false;
@@ -112,7 +114,12 @@ export default {
       }
 
       // 点击提交按钮，将修改后的 copyInfo 提交到服务器，一旦提交成功，basicInfo也会更新，这个时候再切换回阅读状态
-      this.mode = READING_MODE;
+      // this.copyInfo.patientId = this.$route.params.id;
+      this.copyInfo.patientId = 112;
+      modifyPatientInfo(this.copyInfo).then(() => {
+        Bus.$emit('updatePatientInfo');
+        this.mode = READING_MODE;
+      });
     },
     getMatchedField(field, groupIndex) {
       // 这个函数根据实际数据，在字典项中查询到对应的字段，从而方便我们得到其 uiType 等信息
