@@ -97,16 +97,13 @@ export default {
     },
     submit() {
       // 首先检查是否每个字段都合格，检查一遍之后，如果 warningResults 的所有属性值都为空，就证明表单符合要求
-      var groupsLength = this.patientInfoTemplateGroups.length;
-      for (var i = 0; i < groupsLength; i++) {
-        var group = this.patientInfoTemplateGroups[i];
-        var fieldsNum = group.length;
-        for (var j = 0; j < fieldsNum; j++) {
-          this.updateWarning(group[j]);
+      for (let group of this.patientInfoTemplateGroups) {
+        for (let field of group) {
+          this.updateWarning(field);
         }
       }
 
-      for (var fieldName in this.warningResults) {
+      for (let fieldName in this.warningResults) {
         if (this.warningResults[fieldName]) {
           return false;
         }
