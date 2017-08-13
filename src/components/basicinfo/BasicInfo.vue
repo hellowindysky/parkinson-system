@@ -2,7 +2,7 @@
   <folding-panel :title="'基础信息'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
     <div class="basic-info">
       <div class="group" v-for="(group, groupIndex) in patientInfoTemplateGroups">
-        <div class="field" v-for="field in group">
+        <div class="field" v-for="field in group" :class="{'whole-line': checkIfWholeLine(field, groupIndex)}">
           <span class="field-name">
             {{field.cnfieldName}}
             <span class="required-mark" v-show="field.must===1">*</span>
@@ -58,6 +58,8 @@ import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 
 const READING_MODE = 'reading';
 const EDITING_MODE = 'editing';
+
+const wholeLineFieldList = ['homeAddress'];
 
 export default {
   props: {
@@ -126,6 +128,11 @@ export default {
       } else {
         return matchedField;
       }
+    },
+    checkIfWholeLine(field, groupIndex) {
+      var dictionaryField = this.getMatchedField(field, groupIndex);
+      // 判断该字段是否跨行
+      return wholeLineFieldList.indexOf(dictionaryField.fieldName) > -1;
     },
     getUIType(field, groupIndex) {
       // uiType类型 0/无 1/输入框 2/数字箭头 3/单选下拉框 4/单选按纽 5/多选复选框 6/日期 7/日期时间
@@ -208,6 +215,7 @@ export default {
   .group {
     padding: 15px 0;
     border-bottom: 1px solid @light-gray-color;
+    text-align: left;
     &:first-child {
       padding-top: 0;
     }
@@ -220,6 +228,12 @@ export default {
       width: 50%;
       height: @field-height;
       text-align: left;
+      &.whole-line {
+        width: 100%;
+        .field-input {
+          width: 81%;
+        }
+      }
       .field-name {
         display: inline-block;
         width: @field-name-width;
@@ -241,7 +255,7 @@ export default {
       .field-input {
         display: inline-block;
         position: relative;
-        width: 60%;
+        width: 62%;
         overflow: visible;
         .warning-text {
           position: absolute;
