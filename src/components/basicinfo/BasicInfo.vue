@@ -105,7 +105,7 @@ export default {
           this.updateWarning(group[j]);
         }
       }
-      console.log(this.warningResults);
+
       for (var fieldName in this.warningResults) {
         if (this.warningResults[fieldName]) {
           return false;
@@ -160,13 +160,16 @@ export default {
       var copyFieldValue = this.copyInfo[fieldName];
       if (field.must === 1 && !copyFieldValue && copyFieldValue !== 0) {
         // must 为 1 代表必填，为 2 代表选填
-        this.warningResults[fieldName] = '必填项';
+        // 下面这个方法将响应属性添加到嵌套的对象上，这样 Vue 才能实时检测和渲染
+        this.$set(this.warningResults, fieldName, '必填项');
+
       } else if (copyFieldValue.toString().indexOf(' ') > -1) {
-        this.warningResults[fieldName] = '不能包含空格';
+        this.$set(this.warningResults, fieldName, '不能包含空格');
+
       } else {
         // 初始化组件的时候，对应字段的警告文本为 undefined，判断之后，就为实际文本或 null
         // null 代表该字段项的填写没有毛病
-        this.warningResults[field.fieldName] = null;
+        this.$set(this.warningResults, fieldName, null);
       }
     },
     getWarningText(fieldName) {
@@ -190,6 +193,7 @@ export default {
       // 当 basicInfo这个属性变量发生变化时（包括第一次传递进来），我们都对其进行浅复制，复制到 copyInfo 对象中。
       // 这样一来，编辑状态下修改 copyInfo 对象的属性时，就不会影响到 basicInfo 对象本身。
       // 如果组件的 basicInfo 属性发生变化，copyInfo 对象就会重置，而我们对 copyInfo 所做的还未提交的修改则会丢失。
+      // 另外，下面这行还有一个特殊作用，能让 Vue 动态检测已有对象的新添加的属性，参看 https://cn.vuejs.org/v2/guide/reactivity.html
       this.copyInfo = Object.assign({}, newBasicInfo);
     }
   }
