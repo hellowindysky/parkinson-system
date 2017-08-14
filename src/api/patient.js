@@ -23,7 +23,7 @@ function encapsulatePromise(url, request) {
 export function getPatientList() {
   var request = {
     "userId": 93242,
-    "accountNumber": "15012670416",
+    "accountNumber": "13265852476",
     "userType": 1,
     "orgId": 34,
     "orgType": 2,
@@ -36,16 +36,17 @@ export function getPatientList() {
 };
 
 export function getPatientInfo(patientId) {
+  // 传进来的 patientId 可能是字符串，这里需要转化为数字
+  var patientIdNum = parseInt(patientId, 10);
   var request = {
     "userId": 93242,
-    "accountNumber": "15012670416",
+    "accountNumber": "13265852476",
     "userType": 1,
     "orgId": 34,
     "orgType": 2,
-    "patientId": 112,   // 暂时用 112，等接口改好了，再用 patientId 作为参数
+    "patientId": patientIdNum,
     "patientPersonVersion": 98
   };
-  console.log('查询id为' + patientId + '的患者，临时用112替代');
   var url = 'http://apitest.gyenno.com/pdms/queryPatientPerson';
 
   return encapsulatePromise(url, request);
@@ -54,7 +55,7 @@ export function getPatientInfo(patientId) {
 export function modifyPatientInfo(patientInfo) {
   var request = {
     "userId": 93242,
-    "accountNumber": "15012670416",
+    "accountNumber": "13265852476",
     "userType": 1,
     "orgId": 34,
     "orgType": 2,

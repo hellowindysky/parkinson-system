@@ -29,7 +29,7 @@
             <span v-else-if="getUIType(field, groupIndex)===3">
               <el-select v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}" @change="updateWarning(field)">
                 <el-option v-for="type in getTypes(field, groupIndex)" :label="type.typeName"
-                 :value="parseInt(type.typeCode)" :key="type.typeCode"></el-option>
+                 :value="parseInt(type.typeCode, 10)" :key="type.typeCode"></el-option>
               </el-select>
             </span>
             <span v-else-if="getUIType(field, groupIndex)===4">
