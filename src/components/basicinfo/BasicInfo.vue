@@ -206,9 +206,9 @@ export default {
   },
   mounted() {
     setTimeout(() => {
-      console.log(this.basicInfo);
-      console.log(this.basicInfoDictionaryGroups);
-      console.log(this.patientInfoTemplateGroups);
+      // console.log(this.basicInfo);
+      // console.log(this.basicInfoDictionaryGroups);
+      // console.log(this.patientInfoTemplateGroups);
       // console.log(this.typeGroup);
     }, 2000);
   },

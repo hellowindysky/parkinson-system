@@ -8,9 +8,9 @@ const state = {
 
 const getters = {
   patientInfoTemplateGroups: (state) => {
-    // 如果 state.all 为空，则返回一个包含三个空数组的数组
+    // 如果 state.all 为空，则返回一个空数组
     if (state.all.length === 0) {
-      return [[], [], []];
+      return [];
 
     } else {
       var groups = state.all.filter((table) => {
