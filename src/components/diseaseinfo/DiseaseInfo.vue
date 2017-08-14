@@ -7,12 +7,27 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+// import Bus from 'utils/bus.js';
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 
 const READING_MODE = 'reading';
 const EDITING_MODE = 'editing';
 
 export default {
+  props: {
+    diseaseInfo: {
+      type: Object,
+      required: true,
+      default: {}
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'diseaseInfoDictionaryGroups',
+      'typeGroup'
+    ])
+  },
   components: {
     FoldingPanel
   },
@@ -26,6 +41,12 @@ export default {
     submit() {
       this.mode = READING_MODE;
     }
+  },
+  mounted() {
+    setTimeout(() => {
+      console.log(this.diseaseInfo);
+      console.log(this.diseaseInfoDictionaryGroups);
+    }, 2000);
   }
 };
 </script>

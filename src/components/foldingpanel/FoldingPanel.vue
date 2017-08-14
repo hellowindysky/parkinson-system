@@ -42,7 +42,7 @@ export default {
       this.folded = !this.folded;
       setTimeout(() => {
         // 之所以要延时发送事件，是为了等待折叠动画结束
-        Bus.$emit('foldingStatusChanged');
+        Bus.$emit('scrollAreaSizeChange');
       }, 300);
     },
     edit() {

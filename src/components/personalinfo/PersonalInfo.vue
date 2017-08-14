@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="personal-info-wrapper">
     <basic-info class="component" :basic-info="basicInfo"></basic-info>
-    <disease-info class="component"></disease-info>
+    <disease-info class="component" :disease-info="diseaseInfo"></disease-info>
     <other-info class="component"></other-info>
   </div>
 </template>
@@ -22,6 +22,13 @@ export default {
     basicInfo() {
       if (this.patientInfo.patientInfo) {
         return this.patientInfo.patientInfo;
+      } else {
+        return {};
+      }
+    },
+    diseaseInfo() {
+      if (this.patientInfo.patientDiseaseInfo) {
+        return this.patientInfo.patientDiseaseInfo;
       } else {
         return {};
       }

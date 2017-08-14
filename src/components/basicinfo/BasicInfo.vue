@@ -111,7 +111,6 @@ export default {
     cancel() {
       // 点击取消按钮，将我们对 copyInfo 所做的临时修改全部放弃，还原其为 basicInfo 的复制对象
       this.shallowCopy(this.basicInfo);
-      console.log(this.copyInfo);
       this.mode = READING_MODE;
     },
     submit() {

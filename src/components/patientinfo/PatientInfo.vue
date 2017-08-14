@@ -101,7 +101,7 @@ export default {
     updatePatientInfo() {
       getPatientInfo(this.$route.params.id).then((data) => {
         this.patientInfo = data;
-        console.log(data);
+        // console.log(data);
       });
     }
   },
@@ -113,7 +113,7 @@ export default {
     this.updateScrollbar();
 
     // 监听折叠面板是否发生状态的改变，如果发生了，那么就需要重新计算滚动区域的高度
-    Bus.$on('foldingStatusChanged', this.updateScrollbar);
+    Bus.$on('scrollAreaSizeChange', this.updateScrollbar);
 
     // 监听子组件是否要求刷新病患数据
     Bus.$on('updatePatientInfo', this.updatePatientInfo);
