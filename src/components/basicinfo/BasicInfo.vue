@@ -10,10 +10,10 @@
 
           <div class="field-value" v-show="mode==='reading'">
             <span v-if="getUIType(field, groupIndex)===3">
-              {{ transformTypeCode(basicInfo[field.fieldName], field, groupIndex) }}
+              {{ transformTypeCode(copyInfo[field.fieldName], field, groupIndex) }}
             </span>
             <span v-else>
-              {{ basicInfo[field.fieldName] }}
+              {{ copyInfo[field.fieldName] }}
             </span>
           </div>
 
@@ -63,6 +63,7 @@ const READING_MODE = 'reading';
 const EDITING_MODE = 'editing';
 
 const wholeLineFieldList = ['homeAddress'];
+const converToDecimalList = ['height', 'weight'];
 
 export default {
   props: {
@@ -95,9 +96,22 @@ export default {
     startEditing() {
       this.mode = EDITING_MODE;
     },
+    shallowCopy(obj) {
+      // 进行浅复制之后，修改复制对象的属性，不会影响到原始对象
+      // 下面这行有一个特殊作用，能让 Vue 动态检测已有对象的新添加的属性，参看 https://cn.vuejs.org/v2/guide/reactivity.html
+      this.copyInfo = Object.assign({}, obj);
+
+      // 复制过来的 basicInfo 有几个字段的值需要特殊处理一下
+      for (let fieldName of converToDecimalList) {
+        if (this.copyInfo[fieldName]) {
+          this.$set(this.copyInfo, fieldName, this.copyInfo[fieldName] / 10);
+        }
+      }
+    },
     cancel() {
       // 点击取消按钮，将我们对 copyInfo 所做的临时修改全部放弃，还原其为 basicInfo 的复制对象
-      this.copyInfo = Object.assign({}, this.basicInfo);
+      this.shallowCopy(this.basicInfo);
+      console.log(this.copyInfo);
       this.mode = READING_MODE;
     },
     submit() {
@@ -114,8 +128,7 @@ export default {
       }
 
       // 点击提交按钮，将修改后的 copyInfo 提交到服务器，一旦提交成功，basicInfo也会更新，这个时候再切换回阅读状态
-      // this.copyInfo.patientId = this.$route.params.id;
-      this.copyInfo.patientId = 112;
+      this.copyInfo.patientId = this.$route.params.id;
       modifyPatientInfo(this.copyInfo).then(() => {
         Bus.$emit('updatePatientInfo');
         this.mode = READING_MODE;
@@ -204,8 +217,7 @@ export default {
       // 当 basicInfo这个属性变量发生变化时（包括第一次传递进来），我们都对其进行浅复制，复制到 copyInfo 对象中。
       // 这样一来，编辑状态下修改 copyInfo 对象的属性时，就不会影响到 basicInfo 对象本身。
       // 如果组件的 basicInfo 属性发生变化，copyInfo 对象就会重置，而我们对 copyInfo 所做的还未提交的修改则会丢失。
-      // 另外，下面这行还有一个特殊作用，能让 Vue 动态检测已有对象的新添加的属性，参看 https://cn.vuejs.org/v2/guide/reactivity.html
-      this.copyInfo = Object.assign({}, newBasicInfo);
+      this.shallowCopy(newBasicInfo);
     }
   }
 };
