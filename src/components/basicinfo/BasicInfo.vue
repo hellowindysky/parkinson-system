@@ -94,18 +94,6 @@ export default {
     startEditing() {
       this.mode = EDITING_MODE;
     },
-    shallowCopy(obj) {
-      // 进行浅复制之后，修改复制对象的属性，不会影响到原始对象
-      // 下面这行有一个特殊作用，能让 Vue 动态检测已有对象的新添加的属性，参看 https://cn.vuejs.org/v2/guide/reactivity.html
-      this.copyInfo = Object.assign({}, obj);
-
-      // 复制过来的 basicInfo 有几个字段的值需要特殊处理一下
-      for (let fieldName of converToDecimalList) {
-        if (this.copyInfo[fieldName]) {
-          this.$set(this.copyInfo, fieldName, this.copyInfo[fieldName] / 10);
-        }
-      }
-    },
     cancel() {
       // 点击取消按钮，将我们对 copyInfo 所做的临时修改全部放弃，还原其为 basicInfo 的复制对象
       this.shallowCopy(this.basicInfo);
@@ -130,6 +118,18 @@ export default {
         Bus.$emit('updatePatientInfo');
         this.mode = READING_MODE;
       });
+    },
+    shallowCopy(obj) {
+      // 进行浅复制之后，修改复制对象的属性，不会影响到原始对象
+      // 下面这行有一个特殊作用，能让 Vue 动态检测已有对象的新添加的属性，参看 https://cn.vuejs.org/v2/guide/reactivity.html
+      this.copyInfo = Object.assign({}, obj);
+
+      // 复制过来的 basicInfo 有几个字段的值需要特殊处理一下
+      for (let fieldName of converToDecimalList) {
+        if (this.copyInfo[fieldName]) {
+          this.$set(this.copyInfo, fieldName, this.copyInfo[fieldName] / 10);
+        }
+      }
     },
     getMatchedField(field, groupIndex) {
       // 这个函数根据实际数据，在字典项中查询到对应的字段，从而方便我们得到其 uiType 等信息
@@ -206,7 +206,7 @@ export default {
       // console.log(this.basicInfo);
       // console.log(this.basicInfoDictionaryGroups);
       // console.log(this.basicInfoTemplateGroups);
-      // console.log(this.typeGroup);
+      console.log(this.typeGroup);
     }, 2000);
   },
   watch: {
