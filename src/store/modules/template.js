@@ -29,7 +29,7 @@ const getters = {
   basicInfoTemplateGroups: (state) => {
     return getGroups(state, 'tc_patient_info');
   },
-  DiseaseInfoTemplateGroups: (state) => {
+  diseaseInfoTemplateGroups: (state) => {
     return getGroups(state, 'tc_patient_disease_info');
   }
 };

@@ -58,9 +58,7 @@ import Bus from 'utils/bus.js';
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 
 import { modifyPatientInfo } from 'api/patient.js';
-
-const READING_MODE = 'reading';
-const EDITING_MODE = 'editing';
+import { READING_MODE, EDITING_MODE } from 'utils/constant.js';
 
 const wholeLineFieldList = ['homeAddress'];
 const converToDecimalList = ['height', 'weight'];

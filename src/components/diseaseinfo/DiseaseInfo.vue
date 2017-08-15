@@ -1,7 +1,8 @@
 <template lang="html">
   <folding-panel :title="'病症信息'" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
-    <div class="">
-      病症信息
+    <div class="diseaseInfo">
+      <div class="group" v-for="(group, groupIndex) in diseaseInfoTemplateGroups">
+      </div>
     </div>
   </folding-panel>
 </template>
@@ -11,8 +12,7 @@ import { mapGetters } from 'vuex';
 // import Bus from 'utils/bus.js';
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 
-const READING_MODE = 'reading';
-const EDITING_MODE = 'editing';
+import { READING_MODE, EDITING_MODE } from 'utils/constant.js';
 
 export default {
   props: {
@@ -25,7 +25,7 @@ export default {
   computed: {
     ...mapGetters([
       'diseaseInfoDictionaryGroups',
-      'DiseaseInfoTemplateGroups',
+      'diseaseInfoTemplateGroups',
       'typeGroup'
     ])
   },
@@ -47,11 +47,14 @@ export default {
     setTimeout(() => {
       console.log(this.diseaseInfo);
       console.log(this.diseaseInfoDictionaryGroups);
-      console.log(this.DiseaseInfoTemplateGroups);
+      console.log(this.diseaseInfoTemplateGroups);
     }, 2000);
   }
 };
 </script>
 
 <style lang="less">
+.diseaseInfo {
+  width: 100%;
+}
 </style>

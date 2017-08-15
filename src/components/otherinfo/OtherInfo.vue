@@ -9,8 +9,7 @@
 <script>
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 
-const READING_MODE = 'reading';
-const EDITING_MODE = 'editing';
+import { READING_MODE, EDITING_MODE } from 'utils/constant.js';
 
 export default {
   components: {
