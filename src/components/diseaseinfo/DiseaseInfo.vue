@@ -16,6 +16,35 @@
               {{ copyInfo[field.fieldName] }}
             </span>
           </div>
+
+          <div class="field-input" v-show="mode==='editing'">
+            <span class="warning-text">{{getWarningText(field.fieldName)}}</span>
+            <span v-if="getUIType(field, groupIndex)===1">
+              <el-input v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
+               :placeholder="getMatchedField(field, groupIndex).cnFieldDesc" @change="updateWarning(field)"></el-input>
+            </span>
+            <span v-else-if="getUIType(field, groupIndex)===2">
+              2
+            </span>
+            <span v-else-if="getUIType(field, groupIndex)===3">
+              <el-select v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}" @change="updateWarning(field)">
+                <el-option v-for="type in getTypes(field, groupIndex)" :label="type.typeName"
+                 :value="parseInt(type.typeCode, 10)" :key="type.typeCode"></el-option>
+              </el-select>
+            </span>
+            <span v-else-if="getUIType(field, groupIndex)===4">
+              4
+            </span>
+            <span v-else-if="getUIType(field, groupIndex)===5">
+              5
+            </span>
+            <span v-else-if="getUIType(field, groupIndex)===6">
+              <el-date-picker v-model="copyInfo[field.fieldName]" type="date" placeholder="选择日期"></el-date-picker>
+            </span>
+            <span v-else-if="getUIType(field, groupIndex)===7">
+              7
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -42,7 +71,8 @@ export default {
   data() {
     return {
       mode: READING_MODE,
-      copyInfo: {}
+      copyInfo: {},
+      warningResults: {}
     };
   },
   computed: {
@@ -79,11 +109,7 @@ export default {
       var matchedField = matchedGroup.filter((dictionaryField) => {
         return dictionaryField.fieldName === field.fieldName;
       })[0];
-      if (!matchedField) {
-        return {};
-      } else {
-        return matchedField;
-      }
+      return matchedField ? matchedField : {};
     },
     checkIfHalfLine(field, groupIndex) {
       var dictionaryField = this.getMatchedField(field, groupIndex);
@@ -115,13 +141,34 @@ export default {
         return matchedType ? matchedType.typeName : '';
       }
     },
-    watch: {
-      diseaseInfo: function(newBasicInfo) {
-        // 当 diseaseInfo这个属性变量发生变化时（包括第一次传递进来），我们都对其进行浅复制，复制到 copyInfo 对象中。
-        // 这样一来，编辑状态下修改 copyInfo 对象的属性时，就不会影响到 diseaseInfo 对象本身。
-        // 如果组件的 diseaseInfo 属性发生变化，copyInfo 对象就会重置，而我们对 copyInfo 所做的还未提交的修改则会丢失。
-        this.shallowCopy(newBasicInfo);
+    updateWarning(field) {
+      var fieldName = field.fieldName;
+      var copyFieldValue = this.copyInfo[fieldName];
+      if (field.must === 1 && !copyFieldValue && copyFieldValue !== 0) {
+        // must 为 1 代表必填，为 2 代表选填
+        // 下面这个方法将响应属性添加到嵌套的对象上，这样 Vue 才能实时检测和渲染
+        this.$set(this.warningResults, fieldName, '必填项');
+
+      } else if (copyFieldValue.toString().indexOf(' ') > -1) {
+        this.$set(this.warningResults, fieldName, '不能包含空格');
+
+      } else {
+        // 初始化组件的时候，对应字段的警告文本为 undefined，判断之后，就为实际文本或 null
+        // null 代表该字段项的填写没有毛病
+        this.$set(this.warningResults, fieldName, null);
       }
+    },
+    getWarningText(fieldName) {
+      var warningResult = this.warningResults[fieldName];
+      return warningResult ? warningResult : '';
+    }
+  },
+  watch: {
+    diseaseInfo: function(newBasicInfo) {
+      // 当 diseaseInfo这个属性变量发生变化时（包括第一次传递进来），我们都对其进行浅复制，复制到 copyInfo 对象中。
+      // 这样一来，编辑状态下修改 copyInfo 对象的属性时，就不会影响到 diseaseInfo 对象本身。
+      // 如果组件的 diseaseInfo 属性发生变化，copyInfo 对象就会重置，而我们对 copyInfo 所做的还未提交的修改则会丢失。
+      this.shallowCopy(newBasicInfo);
     }
   },
   mounted() {
