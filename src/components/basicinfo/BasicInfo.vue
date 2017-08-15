@@ -29,7 +29,7 @@
             <span v-else-if="getUIType(field, groupIndex)===3">
               <el-select v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}" @change="updateWarning(field)">
                 <el-option v-for="type in getTypes(field, groupIndex)" :label="type.typeName"
-                 :value="parseInt(type.typeCode, 10)" :key="type.typeCode"></el-option>
+                 :value="type.typeCode" :key="type.typeCode"></el-option>
               </el-select>
             </span>
             <span v-else-if="getUIType(field, groupIndex)===4">
@@ -140,11 +140,7 @@ export default {
       var matchedField = matchedGroup.filter((dictionaryField) => {
         return dictionaryField.fieldName === field.fieldName;
       })[0];
-      if (!matchedField) {
-        return {};
-      } else {
-        return matchedField;
-      }
+      return matchedField ? matchedField : {};
     },
     checkIfWholeLine(field, groupIndex) {
       var dictionaryField = this.getMatchedField(field, groupIndex);
@@ -170,8 +166,7 @@ export default {
         return '';
       } else {
         var matchedType = types.filter((type) => {
-          // patientInfo 中用的是数字，而 typegroup 里面的 typeCode 是字符串，因此要确定匹配之前，需要将数字转译为字符串
-          return type.typeCode === typeCode + '';
+          return type.typeCode === typeCode;
         })[0];
         return matchedType ? matchedType.typeName : '';
       }

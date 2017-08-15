@@ -46,10 +46,13 @@ const getters = {
       var typegroup = deepCopy(state.all.typegroup);
 
       for (let group of typegroup) {
-        if (specialList.indexOf(group.typegroupcode) > -1) {
-          let types = group.types;
-          for (let type of types) {
+        let types = group.types;
+        for (let type of types) {
+          if (specialList.indexOf(group.typegroupcode) > -1) {
             type.typeCode = type.typeName;
+          } else {
+            // 对于其它普通的 typeCode，因为服务器给的是字符串，需要转化为 Number
+            type.typeCode = parseInt(type.typeCode, 10);
           }
         }
       }
