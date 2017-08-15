@@ -1,7 +1,7 @@
 <template lang="html">
   <folding-panel :title="'基础信息'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
     <div class="basic-info">
-      <div class="group" v-for="(group, groupIndex) in patientInfoTemplateGroups">
+      <div class="group" v-for="(group, groupIndex) in basicInfoTemplateGroups">
         <div class="field" v-for="field in group" :class="{'whole-line': checkIfWholeLine(field, groupIndex)}">
           <span class="field-name">
             {{field.cnfieldName}}
@@ -88,7 +88,7 @@ export default {
   computed: {
     ...mapGetters([
       'basicInfoDictionaryGroups',
-      'patientInfoTemplateGroups',
+      'basicInfoTemplateGroups',
       'typeGroup'
     ])
   },
@@ -115,7 +115,7 @@ export default {
     },
     submit() {
       // 首先检查是否每个字段都合格，检查一遍之后，如果 warningResults 的所有属性值都为空，就证明表单符合要求
-      for (let group of this.patientInfoTemplateGroups) {
+      for (let group of this.basicInfoTemplateGroups) {
         for (let field of group) {
           this.updateWarning(field);
         }
@@ -207,7 +207,7 @@ export default {
     setTimeout(() => {
       // console.log(this.basicInfo);
       // console.log(this.basicInfoDictionaryGroups);
-      // console.log(this.patientInfoTemplateGroups);
+      // console.log(this.basicInfoTemplateGroups);
       // console.log(this.typeGroup);
     }, 2000);
   },

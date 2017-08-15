@@ -25,6 +25,7 @@ export default {
   computed: {
     ...mapGetters([
       'diseaseInfoDictionaryGroups',
+      'DiseaseInfoTemplateGroups',
       'typeGroup'
     ])
   },
@@ -46,6 +47,7 @@ export default {
     setTimeout(() => {
       console.log(this.diseaseInfo);
       console.log(this.diseaseInfoDictionaryGroups);
+      console.log(this.DiseaseInfoTemplateGroups);
     }, 2000);
   }
 };
