@@ -1,8 +1,8 @@
 <template lang="html">
-  <folding-panel :title="'病症信息'" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
+  <folding-panel :title="'病症信息'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
     <div class="diseaseInfo">
       <div class="group" v-for="(group, groupIndex) in diseaseInfoTemplateGroups">
-        <div class="field" v-for="field in group" :class="{'half-line': checkIfHalfLine(field, groupIndex)}">
+        <div class="field" v-for="field in group" :class="checkField(field, groupIndex)">
           <span class="field-name">
             {{field.cnfieldName}}
             <span class="required-mark" v-show="field.must===1">*</span>
@@ -11,6 +11,9 @@
           <div class="field-value" v-show="mode==='reading'">
             <span v-if="getUIType(field, groupIndex)===3">
               {{ transformTypeCode(copyInfo[field.fieldName], field, groupIndex) }}
+            </span>
+            <span v-else-if="getUIType(field, groupIndex)===5">
+              {{ translateCodes(copyInfo[field.fieldName], field, groupIndex) }}
             </span>
             <span v-else>
               {{ copyInfo[field.fieldName] }}
@@ -29,14 +32,17 @@
             <span v-else-if="getUIType(field, groupIndex)===3">
               <el-select v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}" @change="updateWarning(field)">
                 <el-option v-for="type in getTypes(field, groupIndex)" :label="type.typeName"
-                 :value="parseInt(type.typeCode, 10)" :key="type.typeCode"></el-option>
+                 :value="type.typeCode" :key="type.typeCode"></el-option>
               </el-select>
             </span>
             <span v-else-if="getUIType(field, groupIndex)===4">
               4
             </span>
             <span v-else-if="getUIType(field, groupIndex)===5">
-              5
+              <el-checkbox-group v-model="copyInfo[field.fieldName]">
+                <el-checkbox v-for="type in getTypes(field, groupIndex)" :label="type.typeCode"
+                 :key="type.typeCode">{{type.typeName}}</el-checkbox>
+              </el-checkbox-group>
             </span>
             <span v-else-if="getUIType(field, groupIndex)===6">
               <el-date-picker v-model="copyInfo[field.fieldName]" type="date" placeholder="选择日期"></el-date-picker>
@@ -100,6 +106,27 @@ export default {
       // 下面这行有一个特殊作用，能让 Vue 动态检测已有对象的新添加的属性，参看 https://cn.vuejs.org/v2/guide/reactivity.html
       this.copyInfo = Object.assign({}, obj);
     },
+    changeCopyInfo() {
+      // 复制得到的 copyInfo 有几个字段的值需要特殊处理一下
+      // uiType 为 5 (多选框)的字段，形如 “1，3，4” 要转化为 [1, 3, 4]
+      // 我们先将 CopyInfo 所有属性的名字放到一个数组里，然后遍历 diseaseInfoDictionaryGroups 下的所有 field
+      // 看 哪些 field 的 fieldName 在这个数组里，同时该 field 的 uiType 为 5，这时就把 copyInfo 的相应字段进行转换
+      var nameList = [];
+      for (let fieldName in this.copyInfo) {
+        nameList.push(fieldName);
+      }
+      for (let group of this.diseaseInfoDictionaryGroups) {
+        for (let field of group) {
+          let name = field.fieldName;
+          if (nameList.indexOf(name) > -1 && field.uiType === 5) {
+            var codesArray = this.copyInfo[name].split(',').map((str) => {
+              return parseInt(str, 10);
+            });
+            this.copyInfo[name] = codesArray;
+          }
+        }
+      }
+    },
     getMatchedField(field, groupIndex) {
       // 这个函数根据实际数据，在字典项中查询到对应的字段，从而方便我们得到其 uiType 等信息
       var matchedGroup = this.diseaseInfoDictionaryGroups[groupIndex];
@@ -110,6 +137,17 @@ export default {
         return dictionaryField.fieldName === field.fieldName;
       })[0];
       return matchedField ? matchedField : {};
+    },
+    checkField(field, groupIndex) {
+      // 用来检测当前 field 的特殊样式
+      var dictionaryField = this.getMatchedField(field, groupIndex);
+
+      // 判断该字段是否是半行
+      if (halfLineFieldList.indexOf(dictionaryField.fieldName) > -1) {
+        return 'half-line';
+      } else if (this.getUIType(field, groupIndex) === 5) {
+        return 'multiple-select';
+      }
     },
     checkIfHalfLine(field, groupIndex) {
       var dictionaryField = this.getMatchedField(field, groupIndex);
@@ -135,11 +173,21 @@ export default {
         return '';
       } else {
         var matchedType = types.filter((type) => {
-          // patientInfo 中用的是数字，而 typegroup 里面的 typeCode 是字符串，因此要确定匹配之前，需要将数字转译为字符串
-          return type.typeCode === typeCode + '';
+          return type.typeCode === typeCode;
         })[0];
         return matchedType ? matchedType.typeName : '';
       }
+    },
+    translateCodes(typeCodes, field, groupIndex) {
+      if (!typeCodes) {
+        return '';
+      }
+      var result = [];
+
+      for (let typeCode of typeCodes) {
+        result.push(this.transformTypeCode(typeCode, field, groupIndex));
+      }
+      return result.join('，');
     },
     updateWarning(field) {
       var fieldName = field.fieldName;
@@ -169,6 +217,15 @@ export default {
       // 这样一来，编辑状态下修改 copyInfo 对象的属性时，就不会影响到 diseaseInfo 对象本身。
       // 如果组件的 diseaseInfo 属性发生变化，copyInfo 对象就会重置，而我们对 copyInfo 所做的还未提交的修改则会丢失。
       this.shallowCopy(newBasicInfo);
+
+      // 这里对 copyInfo 的某些字段进行特殊处理
+      // 因为要等到 diseaseInfo 和 diseaseInfoDictionaryGroups 这两个对象都异步调用成功才能有效执行
+      // 所以我们对它们同时进行监控，任何一个调用成功，都会试图执行该函数（只有一个成功时，执行该函数是没有效果的）
+      // 这样就保证，当两个异步数据都调用成功的时候，一定会有效地执行 changeCopyInfo
+      this.changeCopyInfo();
+    },
+    diseaseInfoDictionaryGroups: function() {
+      this.changeCopyInfo();
     }
   },
   mounted() {
@@ -186,7 +243,8 @@ export default {
 @import "~styles/variables.less";
 
 @field-height: 50px;
-@field-name-width: 160px;
+@field-name-width: 100px;
+@long-field-name-width: 170px;
 
 .diseaseInfo {
   width: 100%;
@@ -195,14 +253,36 @@ export default {
     text-align: left;
     .field {
       display: inline-block;
+      position: relative;
       width: 100%;
       height: @field-height;
       text-align: left;
       &.half-line {
         width: 50%;
+        .field-input {
+          right: 4%;
+        }
+      }
+      &.multiple-select {
+        height: @field-height * 1.3;
+        .field-name {
+          width: @long-field-name-width;
+          line-height: @field-height * 0.3;
+        }
+        .field-value {
+          left: @long-field-name-width;
+          line-height: @field-height * 0.3;
+        }
+        .field-input {
+          left: @long-field-name-width;
+          line-height: @field-height * 0.3;
+        }
       }
       .field-name {
         display: inline-block;
+        position: absolute;
+        top: 0;
+        left: 0;
         width: @field-name-width;
         line-height: @field-height;
         font-size: @normal-font-size;
@@ -215,9 +295,50 @@ export default {
       }
       .field-value {
         display: inline-block;
+        position: absolute;
+        top: 0;
+        left: @field-name-width;
         line-height: @field-height;
         font-size: @normal-font-size;
         color: @light-font-color;
+      }
+      .field-input {
+        display: inline-block;
+        position: absolute;
+        top: 0;
+        left: @field-name-width;
+        right: 2%;
+        line-height: @field-height;
+        overflow: visible;
+        .warning-text {
+          position: absolute;
+          top: 32px;
+          left: 10px;
+          height: 15px;
+          color: red;
+          font-size: @small-font-size;
+        }
+        .el-input {
+          .el-input__inner {
+            height: 30px;
+            border: none;
+            background-color: @screen-color;
+          }
+        }
+        .el-select {
+          width: 100%;
+        }
+        .el-date-editor {
+          width: 100%;
+        }
+        .el-checkbox-group {
+          .el-checkbox__input {
+            line-height: 18px;
+          }
+        }
+        .warning .el-input__inner {
+          border: 1px solid red;
+        }
       }
     }
   }
