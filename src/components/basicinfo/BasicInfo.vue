@@ -201,7 +201,7 @@ export default {
       // console.log(this.basicInfo);
       // console.log(this.basicInfoDictionaryGroups);
       // console.log(this.basicInfoTemplateGroups);
-      console.log(this.typeGroup);
+      // console.log(this.typeGroup);
     }, 2000);
   },
   watch: {
@@ -236,13 +236,14 @@ export default {
     }
     .field {
       display: inline-block;
+      position: relative;
       width: 50%;
       height: @field-height;
       text-align: left;
       &.whole-line {
         width: 100%;
         .field-input {
-          width: 81%;
+          right: 2%;
         }
       }
       .field-name {
@@ -265,8 +266,11 @@ export default {
       }
       .field-input {
         display: inline-block;
-        position: relative;
-        width: 62%;
+        position: absolute;
+        top: 0;
+        left: @field-name-width;
+        right: 4%;
+        line-height: @field-height;
         overflow: visible;
         .warning-text {
           position: absolute;
