@@ -66,3 +66,18 @@ export function modifyPatientInfo(patientInfo) {
 
   return encapsulatePromise(url, request);
 };
+
+export function modifyPatientDiseaseInfo(patientDiseaseInfo) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "13265852476",
+    "userType": 1,
+    "orgId": 34,
+    "orgType": 2,
+    "patientDiseaseInfo": patientDiseaseInfo
+  };
+
+  var url = 'http://apitest.gyenno.com/pdms/modPatientDiseaseInfo';
+
+  return encapsulatePromise(url, request);
+};

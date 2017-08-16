@@ -39,13 +39,14 @@
               4
             </span>
             <span v-else-if="getUIType(field, groupIndex)===5">
-              <el-checkbox-group v-model="copyInfo[field.fieldName]">
+              <el-checkbox-group v-model="copyInfo[field.fieldName]" @change="updateWarning(field)">
                 <el-checkbox v-for="type in getTypes(field, groupIndex)" :label="type.typeCode"
                  :key="type.typeCode">{{type.typeName}}</el-checkbox>
               </el-checkbox-group>
             </span>
             <span v-else-if="getUIType(field, groupIndex)===6">
-              <el-date-picker v-model="copyInfo[field.fieldName]" type="date" placeholder="选择日期"></el-date-picker>
+              <el-date-picker v-model="copyInfo[field.fieldName]" type="date" placeholder="选择日期"
+               format="yyyy-MM-dd" @change="updateDate(field)"></el-date-picker>
             </span>
             <span v-else-if="getUIType(field, groupIndex)===7">
               7
@@ -59,9 +60,10 @@
 
 <script>
 import { mapGetters } from 'vuex';
-// import Bus from 'utils/bus.js';
+import Bus from 'utils/bus.js';
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 
+import { modifyPatientDiseaseInfo } from 'api/patient.js';
 import { READING_MODE, EDITING_MODE } from 'utils/constant.js';
 
 const halfLineFieldList = ['diseaseType', 'ariTime', 'firTime', 'surTime'];
@@ -96,10 +98,33 @@ export default {
       this.mode = EDITING_MODE;
     },
     cancel() {
+      // 点击取消按钮，将我们对 copyInfo 所做的临时修改全部放弃，还原其为 diseaseInfo 的复制对象，同时不要忘了重新对其进行特殊处理
+      this.shallowCopy(this.diseaseInfo);
+      this.changeCopyInfo();
       this.mode = READING_MODE;
     },
     submit() {
-      this.mode = READING_MODE;
+      // 首先检查是否每个字段都合格，检查一遍之后，如果 warningResults 的所有属性值都为空，就证明表单符合要求
+      for (let group of this.diseaseInfoTemplateGroups) {
+        for (let field of group) {
+          this.updateWarning(field);
+        }
+      }
+      for (let fieldName in this.warningResults) {
+        if (this.warningResults[fieldName]) {
+          return false;
+        }
+      }
+
+      // 对于那些 uiType 为 5 的字段来说，我们需要将形如 [1,2] 这样的数组转化为 "1,2"这样的字符串
+      this.restoreCopyInfo();
+      console.log(this.copyInfo);
+      // 点击提交按钮，将修改后的 copyInfo 提交到服务器，一旦提交成功，diseaseInfo也会更新，这个时候再切换回阅读状态
+      this.copyInfo.patientId = this.$route.params.id;
+      modifyPatientDiseaseInfo(this.copyInfo).then(() => {
+        Bus.$emit('updatePatientInfo');
+        this.mode = READING_MODE;
+      });
     },
     shallowCopy(obj) {
       // 进行浅复制之后，修改复制对象的属性，不会影响到原始对象
@@ -123,6 +148,25 @@ export default {
               return parseInt(str, 10);
             });
             this.copyInfo[name] = codesArray;
+          } else if (field.uiType === 5) {
+            // 这种情况指的是，得到对信息没有相应的字段，那么我们就为它建一个空数组，注意为了让 Vue 动态检测，这里采用 set 方法
+            this.$set(this.copyInfo, name, []);
+          }
+        }
+      }
+    },
+    restoreCopyInfo() {
+      // 这个函数可以看作和 changeCopyInfo 起到完全相反的作用，让我们的结构化数据变成适应服务器的字符串格式
+      var nameList = [];
+      for (let fieldName in this.copyInfo) {
+        nameList.push(fieldName);
+      }
+      for (let group of this.diseaseInfoDictionaryGroups) {
+        for (let field of group) {
+          let name = field.fieldName;
+          if (nameList.indexOf(name) > -1 && field.uiType === 5) {
+            var codesString = this.copyInfo[name].join(',');
+            this.copyInfo[name] = codesString;
           }
         }
       }
@@ -179,6 +223,7 @@ export default {
       }
     },
     translateCodes(typeCodes, field, groupIndex) {
+      // 将形如 [1, 2, 4] 的字段信息 转换成 '内容 1，内容 2，内容 4' 这样的单字符串进行显示
       if (!typeCodes) {
         return '';
       }
@@ -189,15 +234,30 @@ export default {
       }
       return result.join('，');
     },
+    updateDate(field) {
+      var dateStr = this.copyInfo[field.fieldName];
+      var dateObj = new Date(dateStr);
+      var year = dateObj.getFullYear();
+      var month = dateObj.getMonth() + 1;
+      var date = dateObj.getDate();
+      this.copyInfo[field.fieldName] = year + '-' + month + '-' + date;
+      this.updateWarning(field);
+    },
     updateWarning(field) {
       var fieldName = field.fieldName;
       var copyFieldValue = this.copyInfo[fieldName];
-      if (field.must === 1 && !copyFieldValue && copyFieldValue !== 0) {
+      if (field.must === 1) {
         // must 为 1 代表必填，为 2 代表选填
-        // 下面这个方法将响应属性添加到嵌套的对象上，这样 Vue 才能实时检测和渲染
-        this.$set(this.warningResults, fieldName, '必填项');
+        var isEmptyValue = !copyFieldValue && copyFieldValue !== 0;
+        var isEmptyArray = copyFieldValue instanceof Array && copyFieldValue.length === 0;
+        if (isEmptyValue || isEmptyArray) {
+          // 下面这个方法将响应属性添加到嵌套的对象上，这样 Vue 才能实时检测和渲染
+          this.$set(this.warningResults, fieldName, '必填项');
+          return;
+        }
 
-      } else if (copyFieldValue.toString().indexOf(' ') > -1) {
+      }
+      if (copyFieldValue.toString().indexOf(' ') > -1) {
         this.$set(this.warningResults, fieldName, '不能包含空格');
 
       } else {
@@ -264,6 +324,7 @@ export default {
         }
       }
       &.multiple-select {
+        margin-top: 5px;
         height: @field-height * 1.3;
         .field-name {
           width: @long-field-name-width;
@@ -312,7 +373,7 @@ export default {
         overflow: visible;
         .warning-text {
           position: absolute;
-          top: 32px;
+          top: 25px;
           left: 10px;
           height: 15px;
           color: red;
