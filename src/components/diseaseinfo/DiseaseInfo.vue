@@ -288,11 +288,17 @@ export default {
       this.changeCopyInfo();
     }
   },
-  mounted() {
+  created() {
+    // 当用户在页面中跳转，导致本组件重新装载的时候，需要将 copyInfo 进行恢复
+    // 注意，这里之所以选择 created 钩子函数而不是 mounted，是因为 el-date-picker 组件的绑定数据模型是 copyInfo 下的属性
+    // 如果在 DOM 都加载好了之后再去修改 this.copyInfo，会发现跟 el-date-picker 相关的属性会出现问题
+    this.shallowCopy(this.diseaseInfo);
+    this.changeCopyInfo();
+
     setTimeout(() => {
-      console.log(this.diseaseInfo);
-      console.log(this.diseaseInfoDictionaryGroups);
-      console.log(this.diseaseInfoTemplateGroups);
+      // console.log(this.diseaseInfo);
+      // console.log(this.diseaseInfoDictionaryGroups);
+      // console.log(this.diseaseInfoTemplateGroups);
       // console.log(this.typeGroup);
     }, 2000);
   }

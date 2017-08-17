@@ -197,14 +197,6 @@ export default {
   components: {
     FoldingPanel
   },
-  mounted() {
-    setTimeout(() => {
-      // console.log(this.basicInfo);
-      // console.log(this.basicInfoDictionaryGroups);
-      // console.log(this.basicInfoTemplateGroups);
-      // console.log(this.typeGroup);
-    }, 2000);
-  },
   watch: {
     basicInfo: function(newBasicInfo) {
       // 当 basicInfo这个属性变量发生变化时（包括第一次传递进来），我们都对其进行浅复制，复制到 copyInfo 对象中。
@@ -212,6 +204,18 @@ export default {
       // 如果组件的 basicInfo 属性发生变化，copyInfo 对象就会重置，而我们对 copyInfo 所做的还未提交的修改则会丢失。
       this.shallowCopy(newBasicInfo);
     }
+  },
+  created() {
+    // 注意，这里之所以选择 created 钩子函数而不是 mounted，是因为 el-date-picker 组件的绑定数据模型是 copyInfo 下的属性
+    // 如果在 DOM 都加载好了之后再去修改 this.copyInfo，会发现跟 el-date-picker 相关的属性会出现问题
+    this.shallowCopy(this.basicInfo);
+
+    setTimeout(() => {
+      // console.log(this.basicInfo);
+      // console.log(this.basicInfoDictionaryGroups);
+      // console.log(this.basicInfoTemplateGroups);
+      // console.log(this.typeGroup);
+    }, 2000);
   }
 };
 </script>
