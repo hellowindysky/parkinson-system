@@ -1,6 +1,6 @@
 <template lang="html">
   <folding-panel :title="'病症信息'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
-    <div class="diseaseInfo">
+    <div class="disease-info">
       <div class="group" v-for="(group, groupIndex) in diseaseInfoTemplateGroups">
         <div class="field" v-for="field in group" :class="checkField(field, groupIndex)">
           <span class="field-name">
@@ -312,7 +312,7 @@ export default {
 @field-name-width: 100px;
 @long-field-name-width: 170px;
 
-.diseaseInfo {
+.disease-info {
   width: 100%;
   .group {
     padding: 15px 0;

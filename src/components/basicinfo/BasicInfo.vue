@@ -112,6 +112,13 @@ export default {
         }
       }
 
+      // copyInfo 有几个字段的值在取过来的时候进行了特殊处理，这里在传回给服务器的时候要还原成一开始的格式
+      for (let fieldName of converToDecimalList) {
+        if (this.copyInfo[fieldName]) {
+          this.$set(this.copyInfo, fieldName, this.copyInfo[fieldName] * 10);
+        }
+      }
+
       // 点击提交按钮，将修改后的 copyInfo 提交到服务器，一旦提交成功，basicInfo也会更新，这个时候再切换回阅读状态
       this.copyInfo.patientId = this.$route.params.id;
       modifyPatientInfo(this.copyInfo).then(() => {
@@ -125,6 +132,7 @@ export default {
       this.copyInfo = Object.assign({}, obj);
 
       // 复制过来的 basicInfo 有几个字段的值需要特殊处理一下
+      // 身高和体重的数值，在传输的时候用的是 Int 整型，例如 178.8 cm 在传输的时候用的数值是 1788
       for (let fieldName of converToDecimalList) {
         if (this.copyInfo[fieldName]) {
           this.$set(this.copyInfo, fieldName, this.copyInfo[fieldName] / 10);
