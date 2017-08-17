@@ -185,13 +185,22 @@ export default {
     checkField(field, groupIndex) {
       // 用来检测当前 field 的特殊样式
       var dictionaryField = this.getMatchedField(field, groupIndex);
+      var name = dictionaryField.fieldName;
+      var classNameList = [];
 
       // 判断该字段是否是半行
-      if (halfLineFieldList.indexOf(dictionaryField.fieldName) > -1) {
-        return 'half-line';
-      } else if (this.getUIType(field, groupIndex) === 5) {
-        return 'multiple-select';
+      if (halfLineFieldList.indexOf(name) > -1) {
+        classNameList.push('half-line');
       }
+      // 判断该字段的名字是否比较长
+      if (field.cnfieldName.length > 6) {
+        classNameList.push('long-label-field');
+      }
+      // 判断该字段是否是多选框
+      if (this.getUIType(field, groupIndex) === 5) {
+        classNameList.push('multiple-select');
+      }
+      return classNameList.join(' ');
     },
     checkIfHalfLine(field, groupIndex) {
       var dictionaryField = this.getMatchedField(field, groupIndex);
@@ -310,7 +319,7 @@ export default {
 
 @field-height: 50px;
 @field-name-width: 100px;
-@long-field-name-width: 170px;
+@long-field-name-width: 160px;
 
 .disease-info {
   padding: 0 25px;
@@ -330,19 +339,27 @@ export default {
           right: 4%;
         }
       }
+      &.long-label-field {
+        .field-name {
+          width: @long-field-name-width;
+        }
+        .field-value {
+          left: @long-field-name-width;
+        }
+        .field-input {
+          left: @long-field-name-width;
+        }
+      }
       &.multiple-select {
         margin-top: 5px;
         height: @field-height * 1.3;
         .field-name {
-          width: @long-field-name-width;
           line-height: @field-height * 0.3;
         }
         .field-value {
-          left: @long-field-name-width;
           line-height: @field-height * 0.3;
         }
         .field-input {
-          left: @long-field-name-width;
           line-height: @field-height * 0.3;
         }
       }
