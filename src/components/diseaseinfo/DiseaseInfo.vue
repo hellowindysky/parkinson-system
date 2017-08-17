@@ -313,6 +313,7 @@ export default {
 @long-field-name-width: 170px;
 
 .disease-info {
+  padding: 0 25px;
   width: 100%;
   .group {
     padding: 15px 0;

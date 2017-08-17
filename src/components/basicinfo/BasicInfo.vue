@@ -235,6 +235,7 @@ export default {
 @field-name-width: 100px;
 
 .basic-info {
+  padding: 0 25px;
   width: 100%;
   .group {
     padding: 15px 0;

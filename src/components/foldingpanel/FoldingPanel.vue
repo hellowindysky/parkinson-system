@@ -57,7 +57,7 @@ export default {
   },
   mounted() {
     // 默认让基础信息面板呈展开状态
-    if (this.title === '病症信息') {
+    if (this.title === '其它信息') {
       this.folded = false;
     }
   }
@@ -134,12 +134,12 @@ export default {
     box-sizing: border-box;
     height: auto;
     overflow: hidden;
-    padding: 10px 25px;
+    padding: 10px 0;
     transition: all 0.2s;
     &.folded {
       height: 0;
       opacity: 0.3;
-      padding: 0 25px;
+      padding: 0;
     }
   }
 }

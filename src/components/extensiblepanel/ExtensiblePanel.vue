@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="extensible-panel-wrapper">
     <div class="header">
-      <h2 class="title" @click="toggleExtendedStatus">{{title}}（5条记录）</h2>
+      <h4 class="title">{{title}}（5条记录）</h4>
       <div v-show="status==='normal' && mode==='editing'" class="button add-button" @click="add">添加</div>
       <div v-show="status==='normal'" class="button extend-button" @click="extend">展开</div>
       <div v-show="status==='extended'" class="button shrink-button" @click="shrink">收起</div>
@@ -13,18 +13,25 @@
 </template>
 
 <script>
+import { READING_MODE } from 'utils/constant.js';
+
 const NORMAL_STATUS = 'normal';
 const EXTENDED_STATUS = 'extended';
 
 export default {
   props: {
     mode: {
-      type: String
+      type: String,
+      default: READING_MODE
+    },
+    title: {
+      type: String,
+      default: ''
     }
   },
   data() {
     return {
-      status: 'normal'
+      status: NORMAL_STATUS
     };
   },
   methods: {
@@ -32,10 +39,10 @@ export default {
 
     },
     extend() {
-      this.status = 'extended';
+      this.status = EXTENDED_STATUS;
     },
     shrink() {
-      this.status = 'normal';
+      this.status = NORMAL_STATUS;
     }
   }
 };
@@ -45,20 +52,60 @@ export default {
 @import "~styles/variables.less";
 
 .extensible-panel-wrapper {
+  background-color: @background-color;
+  font-size: 0;
   .header {
-    width: 100%;
-    height: 45px;
+    position: relative;
+    padding-left: 20px;
+    height: @small-button-height;
+    line-height: @small-button-height;
+    text-align: left;
     .title {
-
+      margin: 0;
+      font-size: @normal-font-size;
+      cursor: pointer;
+      color: @font-color;
     }
     .button {
-
-    }
-    .content {
-      height: 100px;
-      &.extended {
-        height: auto;
+      position: absolute;
+      top: 0;
+      width: @small-button-width;
+      height: @small-button-height;
+      line-height: @small-button-height;
+      font-size: @normal-font-size;
+      color: @button-font-color;
+      text-align: center;
+      cursor: pointer;
+      &:hover {
+        opacity: 0.8;
       }
+      &:active {
+        opacity: 0.9;
+      }
+      &.extend-button {
+        right: 10px;
+        background-color: @button-color;
+      }
+      &.shrink-button {
+        right: 10px;
+        background-color: @button-color;
+      }
+      &.add-button {
+        right: 30px + @small-button-width;
+        background-color: @light-font-color;
+      }
+    }
+  }
+  .content {
+    margin: 5px 10px 20px;
+    padding: 5px;
+    height: 100px;
+    border: 1px solid @light-gray-color;
+    transition: 0.2s;
+    &.extended {
+      padding: 10px 5px;
+      height: auto;
+      min-height: 100px;
     }
   }
 }
