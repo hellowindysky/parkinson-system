@@ -110,7 +110,10 @@ export default {
 
     this.checkRoute();
 
-    this.updateScrollbar();
+    setTimeout(() => {
+      // 如果不写在这个里面，第一次加载的时候也许会不能正确计算高度。估计是因为子组件还没有全部加载所造成的。
+      this.updateScrollbar();
+    }, 0);
 
     // 监听折叠面板是否发生状态的改变，如果发生了，那么就需要重新计算滚动区域的高度
     Bus.$on('scrollAreaSizeChange', this.updateScrollbar);

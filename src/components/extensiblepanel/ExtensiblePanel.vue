@@ -13,6 +13,7 @@
 </template>
 
 <script>
+import Bus from 'utils/bus.js';
 import { READING_MODE } from 'utils/constant.js';
 
 const NORMAL_STATUS = 'normal';
@@ -40,9 +41,16 @@ export default {
     },
     extend() {
       this.status = EXTENDED_STATUS;
+      setTimeout(() => {
+        // 之所以要延时发送事件，是为了等待 [扩展／伸缩] 动画结束
+        Bus.$emit('scrollAreaSizeChange');
+      }, 300);
     },
     shrink() {
       this.status = NORMAL_STATUS;
+      setTimeout(() => {
+        Bus.$emit('scrollAreaSizeChange');
+      }, 300);
     }
   }
 };
