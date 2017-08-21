@@ -40,7 +40,7 @@
             </span>
             <span v-else-if="getUIType(field, groupIndex)===6">
               <el-date-picker v-model="copyInfo[field.fieldName]" type="date" placeholder="选择日期"
-               :picker-options="futureDisabledptions"></el-date-picker>
+               :picker-options="futureDisabledptions" @change="updateDate(field)"></el-date-picker>
             </span>
             <span v-else-if="getUIType(field, groupIndex)===7">
               7
@@ -178,6 +178,15 @@ export default {
         })[0];
         return matchedType ? matchedType.typeName : '';
       }
+    },
+    updateDate(field) {
+      var dateStr = this.copyInfo[field.fieldName];
+      var dateObj = new Date(dateStr);
+      var year = dateObj.getFullYear();
+      var month = dateObj.getMonth() + 1;
+      var date = dateObj.getDate();
+      this.copyInfo[field.fieldName] = year + '-' + month + '-' + date;
+      this.updateWarning(field);
     },
     updateWarning(field) {
       var fieldName = field.fieldName;
