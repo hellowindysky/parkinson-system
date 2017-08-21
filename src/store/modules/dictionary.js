@@ -34,6 +34,11 @@ const getters = {
   diseaseInfoDictionaryGroups: (state) => {
     return getGroups(state, 'tc_patient_disease_info');
   },
+  diseaseHistoryDictionary: (state) => {
+    var groups = getGroups(state, 'tc_patient_disease');
+    // 既往史只有一个 group
+    return groups[0];
+  },
   typeGroup: (state) => {
     // 如果 state.all.typegroup 为 undefined，则返回一个空数组
     if (!state.all.typegroup) {

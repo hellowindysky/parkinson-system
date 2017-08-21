@@ -2,7 +2,7 @@
   <div class="personal-info-wrapper">
     <basic-info class="component" :basic-info="basicInfo"></basic-info>
     <disease-info class="component" :disease-info="diseaseInfo"></disease-info>
-    <other-info class="component"></other-info>
+    <other-info class="component" :medHistroyList="medHistroyList" :diseaseList="diseaseList"></other-info>
   </div>
 </template>
 
@@ -20,18 +20,16 @@ export default {
   },
   computed: {
     basicInfo() {
-      if (this.patientInfo.patientInfo) {
-        return this.patientInfo.patientInfo;
-      } else {
-        return {};
-      }
+      return this.patientInfo.patientInfo ? this.patientInfo.patientInfo : {};
     },
     diseaseInfo() {
-      if (this.patientInfo.patientDiseaseInfo) {
-        return this.patientInfo.patientDiseaseInfo;
-      } else {
-        return {};
-      }
+      return this.patientInfo.patientDiseaseInfo ? this.patientInfo.patientInfo.patientDiseaseInfo : {};
+    },
+    medHistroyList() {
+      return this.patientInfo.patientMedHistoryList ? this.patientInfo.patientMedHistoryList : [];
+    },
+    diseaseList() {
+      return this.patientInfo.patientDiseaseList ? this.patientInfo.patientDiseaseList : [];
     }
   },
   components: {

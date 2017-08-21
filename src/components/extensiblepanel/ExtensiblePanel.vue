@@ -107,8 +107,9 @@ export default {
   .content {
     margin: 5px 10px 20px;
     padding: 5px;
-    height: 100px;
+    height: @card-height + @card-vertical-margin * 2;
     border: 1px solid @light-gray-color;
+    overflow: hidden;
     transition: 0.2s;
     &.extended {
       padding: 10px 5px;
