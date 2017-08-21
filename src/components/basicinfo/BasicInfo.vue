@@ -245,7 +245,6 @@ export default {
 
 .basic-info {
   padding: 0 25px;
-  width: 100%;
   .group {
     padding: 15px 0;
     border-bottom: 1px solid @light-gray-color;

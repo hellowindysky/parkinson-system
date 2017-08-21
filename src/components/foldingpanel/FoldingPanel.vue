@@ -47,6 +47,8 @@ export default {
     },
     edit() {
       this.$emit('edit');
+      // 编辑状态下，面板必须展开，而且不能收起
+      this.folded = false;
     },
     cancel() {
       this.$emit('cancel');
@@ -131,6 +133,7 @@ export default {
     }
   }
   .content {
+    width: auto;
     box-sizing: border-box;
     height: auto;
     overflow: hidden;

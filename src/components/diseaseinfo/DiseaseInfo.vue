@@ -323,7 +323,6 @@ export default {
 
 .disease-info {
   padding: 0 25px;
-  width: 100%;
   .group {
     padding: 15px 0;
     text-align: left;
