@@ -73,7 +73,9 @@ export default {
     diseaseInfo: {
       type: Object,
       required: true,
-      default: {}
+      default: () => {
+        return {};
+      }
     }
   },
   data() {

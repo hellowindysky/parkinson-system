@@ -68,7 +68,9 @@ export default {
     basicInfo: {
       type: Object,
       required: true,
-      default: {}
+      default: () => {
+        return {};
+      }
     }
   },
   data() {
