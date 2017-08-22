@@ -9,14 +9,33 @@
         </card>
       </extensible-panel>
       <extensible-panel class="panel" :mode="mode" :title="'既往史'">
-        <card class="card" v-for="item in diseaseList" :key="item.surgeryHistory" :title="item.surgeryHistory">
-          <div class="text dose">是否住院： {{transform(item, 'isHospitalization')}}</div>
+        <card class="card" v-for="item in diseaseHistoryList" :key="item.surgeryHistory" :title="item.surgeryHistory">
+          <div class="text dose">是否住院： {{transform(item, 'isHospitalization', diseaseHistoryDictionary)}}</div>
           <div class="text start-time">{{item.beginTime}} ~</div>
           <div class="text end-time">{{item.endTime}}</div>
         </card>
       </extensible-panel>
       <extensible-panel class="panel" :mode="mode" :title="'个人史'">
-
+        <card class="card" v-for="item in coffeeHistoryList" :key="item.patientHabitId" :title="transform(item, 'patientHabitId', coffeeHistoryDictionary)">
+          <div class="text dose">{{item.doseInfo}} 杯/周</div>
+          <div class="text start-time">{{item.startTime}}</div>
+        </card>
+        <card class="card" v-for="item in teaHistoryList" :key="item.patientHabitId" :title="transform(item, 'patientHabitId', teaHistoryDictionary)">
+          <div class="text dose">{{item.doseInfo}} 杯/周</div>
+          <div class="text start-time">{{item.startTime}}</div>
+        </card>
+        <card class="card" v-for="item in smokeHistoryList" :key="item.patientHabitId" :title="transform(item, 'patientHabitId', smokeHistoryDictionary)">
+          <div class="text dose">{{item.doseInfo}} 支/天</div>
+          <div class="text start-time">{{item.startTime}}</div>
+        </card>
+        <card class="card" v-for="item in wineHistoryList" :key="item.patientHabitId" :title="transform(item, 'patientHabitId', wineHistoryDictionary)">
+          <div class="text dose">{{item.doseInfo}} mL/周</div>
+          <div class="text start-time">{{item.startTime}}</div>
+        </card>
+        <card class="card" v-for="item in exerciseHistoryList" :key="item.patientExerciseId" :title="item.exeName">
+          <div class="text dose">{{transform(item, 'grade', exerciseHistoryDictionary)}}</div>
+          <div class="text age-stage">{{transform(item, 'ageStage', exerciseHistoryDictionary)}}</div>
+        </card>
       </extensible-panel>
       <extensible-panel class="panel" :mode="mode" :title="'毒物接触史'">
 
@@ -40,7 +59,27 @@ export default {
       type: Array,
       default: () => []
     },
-    diseaseList: {
+    diseaseHistoryList: {
+      type: Array,
+      default: () => []
+    },
+    coffeeHistoryList: {
+      type: Array,
+      default: () => []
+    },
+    teaHistoryList: {
+      type: Array,
+      default: () => []
+    },
+    wineHistoryList: {
+      type: Array,
+      default: () => []
+    },
+    smokeHistoryList: {
+      type: Array,
+      default: () => []
+    },
+    exerciseHistoryList: {
       type: Array,
       default: () => []
     }
@@ -53,6 +92,11 @@ export default {
   computed: {
     ...mapGetters([
       'diseaseHistoryDictionary',
+      'coffeeHistoryDictionary',
+      'teaHistoryDictionary',
+      'smokeHistoryDictionary',
+      'wineHistoryDictionary',
+      'exerciseHistoryDictionary',
       'typeGroup'
     ])
   },
@@ -71,23 +115,24 @@ export default {
     submit() {
       this.mode = READING_MODE;
     },
-    getMatchedField(fieldName) {
+    getMatchedField(fieldName, dictionary) {
       // 在字典项中查询该名字所对应的字段，从而方便我们得到该字段的详细信息
-      var matchedField = this.diseaseHistoryDictionary.filter((dictionaryField) => {
+      var matchedField = dictionary.filter((dictionaryField) => {
         return dictionaryField.fieldName === fieldName;
       })[0];
       return matchedField ? matchedField : {};
     },
-    getTypes(fieldName) {
+    getTypes(fieldName, dictionary) {
       // 在 typegroup 里面查找到 fieldName 所对应的 types（选项组）
-      var dictionaryField = this.getMatchedField(fieldName);
+      var dictionaryField = this.getMatchedField(fieldName, dictionary);
       var typeInfo = this.typeGroup.filter((type) => {
         return type.typegroupcode === dictionaryField.fieldEnumId;
       })[0];
       return typeInfo ? typeInfo.types : [];
     },
-    transform(item, fieldName) {
-      var types = this.getTypes(fieldName);
+    transform(item, fieldName, dictionary) {
+      // 传递3个参数，最后一个代表需要去查询的字典
+      var types = this.getTypes(fieldName, dictionary);
       var result = types.filter((type) => {
         return type.typeCode === item[fieldName];
       })[0];
@@ -96,7 +141,7 @@ export default {
   },
   mounted() {
     setTimeout(() => {
-      console.log(this.diseaseHistoryDictionary);
+      // console.log(this.teaHistoryDictionary);
       // console.log(this.typeGroup);
     }, 2000);
   }
@@ -123,7 +168,7 @@ export default {
         left: 10px;
         top: 50px;
       }
-      .start-time {
+      .start-time, .age-stage {
         left: 10px;
         top: 75px;
       }

@@ -81,3 +81,19 @@ export function modifyPatientDiseaseInfo(patientDiseaseInfo) {
 
   return encapsulatePromise(url, request);
 };
+
+export function getPatientMedHistoryList(patientId) {
+  // 传进来的 patientId 可能是字符串，这里需要转化为数字
+  var patientIdNum = parseInt(patientId, 10);
+  var request = {
+    "userId": 93242,
+    "accountNumber": "13265852476",
+    "userType": 1,
+    "orgId": 34,
+    "orgType": 2,
+    "patientId": patientIdNum
+  };
+  var url = 'http://apitest.gyenno.com/pdms/queryPatientMedHistoryList';
+
+  return encapsulatePromise(url, request);
+};

@@ -29,15 +29,42 @@ const state = {
 
 const getters = {
   basicInfoDictionaryGroups: (state) => {
+    // 基础信息
     return getGroups(state, 'tc_patient_info');
   },
   diseaseInfoDictionaryGroups: (state) => {
+    // 病症信息
     return getGroups(state, 'tc_patient_disease_info');
   },
   diseaseHistoryDictionary: (state) => {
     var groups = getGroups(state, 'tc_patient_disease');
     // 既往史只有一个 group
-    return groups[0];
+    return groups[0] ? groups[0] : [];
+  },
+  coffeeHistoryDictionary: (state) => {
+    var groups = getGroups(state, 'tc_patient_coffee');
+    // 咖啡史只有一个 group
+    return groups[0] ? groups[0] : [];
+  },
+  teaHistoryDictionary: (state) => {
+    var groups = getGroups(state, 'tc_patient_tea');
+    // 喝茶史只有一个 group
+    return groups[0] ? groups[0] : [];
+  },
+  smokeHistoryDictionary: (state) => {
+    var groups = getGroups(state, 'tc_patient_smoke');
+    // 吸烟史只有一个 group
+    return groups[0] ? groups[0] : [];
+  },
+  wineHistoryDictionary: (state) => {
+    var groups = getGroups(state, 'tc_patient_wine');
+    // 饮酒史只有一个 group
+    return groups[0] ? groups[0] : [];
+  },
+  exerciseHistoryDictionary: (state) => {
+    var groups = getGroups(state, 'tc_patient_exercise');
+    // 锻炼史只有一个 group
+    return groups[0] ? groups[0] : [];
   },
   typeGroup: (state) => {
     // 如果 state.all.typegroup 为 undefined，则返回一个空数组
