@@ -4,7 +4,8 @@
     <disease-info class="component" :disease-info="diseaseInfo"></disease-info>
     <other-info class="component" :medHistroyList="medHistroyList" :diseaseHistoryList="diseaseHistoryList"
       :coffeeHistoryList="coffeeHistoryList" :teaHistoryList="teaHistoryList" :wineHistoryList="wineHistoryList"
-      :smokeHistoryList="smokeHistoryList" :exerciseHistoryList="exerciseHistoryList"></other-info>
+      :smokeHistoryList="smokeHistoryList" :exerciseHistoryList="exerciseHistoryList"
+      :toxicExposureHistoryList="toxicExposureHistoryList"></other-info>
   </div>
 </template>
 
@@ -56,6 +57,10 @@ export default {
     exerciseHistoryList() {
       // 锻炼史
       return this.patientInfo.patientExerciseList ? this.patientInfo.patientExerciseList : [];
+    },
+    toxicExposureHistoryList() {
+      // 毒物接触史
+      return this.patientInfo.patientCideexposedList ? this.patientInfo.patientCideexposedList : [];
     }
   },
   components: {

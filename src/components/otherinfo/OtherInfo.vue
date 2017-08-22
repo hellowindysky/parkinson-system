@@ -38,7 +38,10 @@
         </card>
       </extensible-panel>
       <extensible-panel class="panel" :mode="mode" :title="'毒物接触史'">
-
+        <card class="card" v-for="item in processedToxicList" :key="item.expmaterialName" :title="item.expmaterialName">
+          <div class="text dose">{{transform(item, 'exposedFrquency', toxicExposureHistoryDictionary)}}</div>
+          <div class="text age-stage">{{transform(item, 'lifeStage', toxicExposureHistoryDictionary)}}</div>
+        </card>
       </extensible-panel>
     </div>
   </folding-panel>
@@ -82,6 +85,10 @@ export default {
     exerciseHistoryList: {
       type: Array,
       default: () => []
+    },
+    toxicExposureHistoryList: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
@@ -97,8 +104,21 @@ export default {
       'smokeHistoryDictionary',
       'wineHistoryDictionary',
       'exerciseHistoryDictionary',
+      'toxicExposureHistoryDictionary',
       'typeGroup'
-    ])
+    ]),
+    processedToxicList() {
+      if (this.toxicExposureHistoryList.length === 0) {
+        return [];
+      } else {
+        // 得到的数据因为特殊处理过，所以这里需要拉平了才能使用
+        var processedList = [];
+        this.toxicExposureHistoryList.forEach((item) => {
+          processedList = processedList.concat(item.list);
+        });
+        return processedList;
+      }
+    }
   },
   components: {
     FoldingPanel,
@@ -141,6 +161,7 @@ export default {
   },
   mounted() {
     setTimeout(() => {
+      // console.log(this.toxicExposureHistoryList);
       // console.log(this.teaHistoryDictionary);
       // console.log(this.typeGroup);
     }, 2000);

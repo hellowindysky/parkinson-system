@@ -66,6 +66,11 @@ const getters = {
     // 锻炼史只有一个 group
     return groups[0] ? groups[0] : [];
   },
+  toxicExposureHistoryDictionary: (state) => {
+    var groups = getGroups(state, 'tc_cideexposed_history');
+    // 毒物史只有一个 group
+    return groups[0] ? groups[0] : [];
+  },
   typeGroup: (state) => {
     // 如果 state.all.typegroup 为 undefined，则返回一个空数组
     if (!state.all.typegroup) {
