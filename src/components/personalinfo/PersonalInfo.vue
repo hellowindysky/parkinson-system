@@ -27,7 +27,7 @@ export default {
     },
     diseaseInfo() {
       // 急症信息
-      return this.patientInfo.patientDiseaseInfo ? this.patientInfo.patientInfo.patientDiseaseInfo : {};
+      return this.patientInfo.patientDiseaseInfo ? this.patientInfo.patientDiseaseInfo : {};
     },
     medHistroyList() {
       // 用药史
