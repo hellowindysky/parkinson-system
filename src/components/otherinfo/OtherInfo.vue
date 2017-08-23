@@ -39,7 +39,7 @@
       </extensible-panel>
       <extensible-panel class="panel" :mode="mode" :title="'毒物接触史'">
         <card class="card" v-for="item in processedToxicList" :key="item.expmaterialName" :title="item.expmaterialName">
-          <div class="text dose">{{item.exposedFrquency}}</div>
+          <div class="text dose">{{item.exposedFrquencyg}}</div>
           <div class="text age-stage">{{transform(item, 'lifeStage', toxicExposureHistoryDictionary)}}</div>
         </card>
       </extensible-panel>
