@@ -12,6 +12,13 @@ import App from './App';
 import router from './router';
 import store from './store';
 
+import globalVariables from 'utils/constant.js'; // 引入常量
+
+// 将这些常量注入到每一个组件里面，就成了全局常量，这样在子组件里面就能用形如 this.READING_MODE 的方式读取常量了
+for (let name in globalVariables) {
+  Vue.prototype[name] = globalVariables[name];
+}
+
 Vue.config.productionTip = false;
 
 Vue.use(ElementUI);

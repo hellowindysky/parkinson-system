@@ -2,7 +2,7 @@
   <div class="extensible-panel-wrapper">
     <div class="header">
       <h4 class="title">{{title}}（5条记录）</h4>
-      <div v-show="mode==='editing'" class="button add-button" @click="add">添加</div>
+      <div v-show="mode===EDITING_MODE" class="button add-button" @click="add">添加</div>
       <div v-show="status==='normal'" class="button extend-button" @click="extend">展开</div>
       <div v-show="status==='extended'" class="button shrink-button" @click="shrink">收起</div>
     </div>
@@ -14,7 +14,7 @@
 
 <script>
 import Bus from 'utils/bus.js';
-import { READING_MODE } from 'utils/constant.js';
+// import { READING_MODE } from 'utils/constant.js';
 
 const NORMAL_STATUS = 'normal';
 const EXTENDED_STATUS = 'extended';
@@ -23,7 +23,7 @@ export default {
   props: {
     mode: {
       type: String,
-      default: READING_MODE
+      default: this.READING_MODE
     },
     title: {
       type: String,

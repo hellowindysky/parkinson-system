@@ -8,7 +8,7 @@
             <span class="required-mark" v-show="field.must===1">*</span>
           </span>
 
-          <div class="field-value" v-show="mode==='reading'">
+          <div class="field-value" v-show="mode===READING_MODE">
             <span v-if="getUIType(field, groupIndex)===3">
               {{ transformTypeCode(copyInfo[field.fieldName], field, groupIndex) }}
             </span>
@@ -20,7 +20,7 @@
             </span>
           </div>
 
-          <div class="field-input" v-show="mode==='editing'">
+          <div class="field-input" v-show="mode===EDITING_MODE">
             <span class="warning-text">{{getWarningText(field.fieldName)}}</span>
             <span v-if="getUIType(field, groupIndex)===1">
               <el-input v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
@@ -64,7 +64,7 @@ import Bus from 'utils/bus.js';
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 
 import { modifyPatientDiseaseInfo } from 'api/patient.js';
-import { READING_MODE, EDITING_MODE } from 'utils/constant.js';
+// import { READING_MODE, EDITING_MODE } from 'utils/constant.js';
 
 const halfLineFieldList = ['diseaseType', 'ariTime', 'firTime', 'surTime'];
 
@@ -80,7 +80,7 @@ export default {
   },
   data() {
     return {
-      mode: READING_MODE,
+      mode: this.READING_MODE,
       copyInfo: {},
       warningResults: {}
     };
@@ -97,13 +97,13 @@ export default {
   },
   methods: {
     startEditing() {
-      this.mode = EDITING_MODE;
+      this.mode = this.EDITING_MODE;
     },
     cancel() {
       // 点击取消按钮，将我们对 copyInfo 所做的临时修改全部放弃，还原其为 diseaseInfo 的复制对象，同时不要忘了重新对其进行特殊处理
       this.shallowCopy(this.diseaseInfo);
       this.changeCopyInfo();
-      this.mode = READING_MODE;
+      this.mode = this.READING_MODE;
     },
     submit() {
       // 首先检查是否每个字段都合格，检查一遍之后，如果 warningResults 的所有属性值都为空，就证明表单符合要求
@@ -125,7 +125,7 @@ export default {
       this.copyInfo.patientId = this.$route.params.id;
       modifyPatientDiseaseInfo(this.copyInfo).then(() => {
         Bus.$emit('updatePatientInfo');
-        this.mode = READING_MODE;
+        this.mode = this.READING_MODE;
       });
     },
     shallowCopy(obj) {

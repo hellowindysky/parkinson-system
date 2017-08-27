@@ -62,7 +62,7 @@ import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 import ExtensiblePanel from 'components/extensiblepanel/ExtensiblePanel';
 import Card from 'components/card/Card';
 
-import { READING_MODE, EDITING_MODE } from 'utils/constant.js';
+// import { READING_MODE, EDITING_MODE } from 'utils/constant.js';
 
 export default {
   props: {
@@ -101,7 +101,7 @@ export default {
   },
   data() {
     return {
-      mode: READING_MODE
+      mode: this.READING_MODE
     };
   },
   computed: {
@@ -135,13 +135,13 @@ export default {
   },
   methods: {
     startEditing() {
-      this.mode = EDITING_MODE;
+      this.mode = this.EDITING_MODE;
     },
     cancel() {
-      this.mode = READING_MODE;
+      this.mode = this.READING_MODE;
     },
     submit() {
-      this.mode = READING_MODE;
+      this.mode = this.READING_MODE;
     },
     getMatchedField(fieldName, dictionary) {
       // 在字典项中查询该名字所对应的字段，从而方便我们得到该字段的详细信息
@@ -173,6 +173,7 @@ export default {
       // console.log(this.teaHistoryDictionary);
       // console.log(this.typeGroup);
     }, 2000);
+    console.log(this.READING_MODE);
   }
 };
 </script>

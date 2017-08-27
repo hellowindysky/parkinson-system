@@ -3,9 +3,9 @@
     <div class="header">
       <div class="iconfont" :class="iconToggleFolded"></div>
       <h2 class="title" @click="toggleFoldedPanel">{{title}}</h2>
-      <div v-show="mode==='reading'" class="button edit-button" @click="edit">编辑</div>
-      <div v-show="mode==='editing'" class="button cancel-button" @click="cancel">取消</div>
-      <div v-show="mode==='editing'" class="button submit-button" @click="submit">完成</div>
+      <div v-show="mode===READING_MODE" class="button edit-button" @click="edit">编辑</div>
+      <div v-show="mode===EDITING_MODE" class="button cancel-button" @click="cancel">取消</div>
+      <div v-show="mode===EDITING_MODE" class="button submit-button" @click="submit">完成</div>
     </div>
     <div class="content" :class="{'folded': folded}">
       <slot></slot>
@@ -24,7 +24,7 @@ export default {
     },
     mode: {
       type: String,
-      default: 'reading'
+      default: this.READING_MODE
     }
   },
   data() {

@@ -1,2 +1,4 @@
-export const READING_MODE = 'reading';
-export const EDITING_MODE = 'editing';
+export default {
+  READING_MODE: 'reading',
+  EDITING_MODE: 'editing'
+};
