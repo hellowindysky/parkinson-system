@@ -2,9 +2,9 @@
   <div class="extensible-panel-wrapper">
     <div class="header">
       <h4 class="title">{{title}}（5条记录）</h4>
-      <div v-show="mode===EDITING_MODE" class="button add-button" @click="add">添加</div>
-      <div v-show="status==='normal'" class="button extend-button" @click="extend">展开</div>
-      <div v-show="status==='extended'" class="button shrink-button" @click="shrink">收起</div>
+      <div v-show="mode === EDITING_MODE" class="button add-button" @click="add">添加</div>
+      <div v-show="status === NORMAL_STATUS" class="button extend-button" @click="extend">展开</div>
+      <div v-show="status === EXTENDED_STATUS" class="button shrink-button" @click="shrink">收起</div>
     </div>
     <div class="content" :class="{'extended': status==='extended'}">
       <slot></slot>
@@ -14,9 +14,6 @@
 
 <script>
 import Bus from 'utils/bus.js';
-
-const NORMAL_STATUS = 'normal';
-const EXTENDED_STATUS = 'extended';
 
 export default {
   props: {
@@ -31,7 +28,7 @@ export default {
   },
   data() {
     return {
-      status: NORMAL_STATUS
+      status: this.NORMAL_STATUS
     };
   },
   methods: {
@@ -39,16 +36,16 @@ export default {
 
     },
     extend() {
-      this.status = EXTENDED_STATUS;
+      this.status = this.EXTENDED_STATUS;
       setTimeout(() => {
         // 之所以要延时发送事件，是为了等待 [扩展／伸缩] 动画结束
-        Bus.$emit('scrollAreaSizeChange');
+        Bus.$emit(this.SCROLL_AREA_SIZE_CHANGE);
       }, 300);
     },
     shrink() {
-      this.status = NORMAL_STATUS;
+      this.status = this.NORMAL_STATUS;
       setTimeout(() => {
-        Bus.$emit('scrollAreaSizeChange');
+        Bus.$emit(this.SCROLL_AREA_SIZE_CHANGE);
       }, 300);
     }
   }
