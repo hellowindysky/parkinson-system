@@ -7,7 +7,6 @@
 </template>
 
 <script>
-// import { READING_MODE, EDITING_MODE } from 'utils/constant.js';
 
 export default {
   props: {

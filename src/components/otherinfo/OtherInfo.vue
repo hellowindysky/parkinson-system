@@ -62,8 +62,6 @@ import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 import ExtensiblePanel from 'components/extensiblepanel/ExtensiblePanel';
 import Card from 'components/card/Card';
 
-// import { READING_MODE, EDITING_MODE } from 'utils/constant.js';
-
 export default {
   props: {
     medHistroyList: {
@@ -173,7 +171,6 @@ export default {
       // console.log(this.teaHistoryDictionary);
       // console.log(this.typeGroup);
     }, 2000);
-    console.log(this.READING_MODE);
   }
 };
 </script>

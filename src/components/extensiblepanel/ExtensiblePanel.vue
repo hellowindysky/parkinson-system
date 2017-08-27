@@ -14,7 +14,6 @@
 
 <script>
 import Bus from 'utils/bus.js';
-// import { READING_MODE } from 'utils/constant.js';
 
 const NORMAL_STATUS = 'normal';
 const EXTENDED_STATUS = 'extended';

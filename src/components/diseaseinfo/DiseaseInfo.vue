@@ -64,7 +64,6 @@ import Bus from 'utils/bus.js';
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 
 import { modifyPatientDiseaseInfo } from 'api/patient.js';
-// import { READING_MODE, EDITING_MODE } from 'utils/constant.js';
 
 const halfLineFieldList = ['diseaseType', 'ariTime', 'firTime', 'surTime'];
 
