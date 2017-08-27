@@ -1,14 +1,20 @@
 <template lang="html">
   <div class="card">
     <div class="title">{{title}}</div>
-    <div class="iconfont icon-delete"></div>
+    <div class="iconfont icon-delete" v-show="mode === 'editing'"></div>
     <slot></slot>
   </div>
 </template>
 
 <script>
+import { READING_MODE, EDITING_MODE } from 'utils/constant.js';
+
 export default {
   props: {
+    mode: {
+      type: String,
+      default: READING_MODE
+    },
     title: {
       type: String,
       default: ''

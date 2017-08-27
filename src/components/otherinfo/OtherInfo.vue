@@ -2,43 +2,51 @@
   <folding-panel :title="'其它信息'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
     <div class="other-info">
       <extensible-panel class="panel" :mode="mode" :title="'其它用药史'">
-        <card class="card" v-for="item in medHistroyList" :key="item.medName" :title="item.medName">
+        <card class="card" :mode="mode" v-for="item in medHistroyList" :key="item.medName"
+         :title="item.medName">
           <div class="text dose">一天{{item.medDose}}次</div>
           <div class="text start-time">{{item.medStart}} ~</div>
           <div class="text end-time">{{item.medEnd}}</div>
         </card>
       </extensible-panel>
       <extensible-panel class="panel" :mode="mode" :title="'既往史'">
-        <card class="card" v-for="item in diseaseHistoryList" :key="item.surgeryHistory" :title="item.surgeryHistory">
+        <card class="card" :mode="mode" v-for="item in diseaseHistoryList" :key="item.surgeryHistory"
+         :title="item.surgeryHistory">
           <div class="text dose">是否住院： {{transform(item, 'isHospitalization', diseaseHistoryDictionary)}}</div>
           <div class="text start-time">{{item.beginTime}} ~</div>
           <div class="text end-time">{{item.endTime}}</div>
         </card>
       </extensible-panel>
       <extensible-panel class="panel" :mode="mode" :title="'个人史'">
-        <card class="card" v-for="item in coffeeHistoryList" :key="item.patientHabitId" :title="transform(item, 'patientHabitId', coffeeHistoryDictionary)">
+        <card class="card" :mode="mode" v-for="item in coffeeHistoryList" :key="item.patientHabitId"
+         :title="transform(item, 'patientHabitId', coffeeHistoryDictionary)">
           <div class="text dose">{{item.doseInfo}} 杯/周</div>
           <div class="text start-time">{{item.startTime}}</div>
         </card>
-        <card class="card" v-for="item in teaHistoryList" :key="item.patientHabitId" :title="transform(item, 'patientHabitId', teaHistoryDictionary)">
+        <card class="card" :mode="mode" v-for="item in teaHistoryList" :key="item.patientHabitId"
+         :title="transform(item, 'patientHabitId', teaHistoryDictionary)">
           <div class="text dose">{{item.doseInfo}} 杯/周</div>
           <div class="text start-time">{{item.startTime}}</div>
         </card>
-        <card class="card" v-for="item in smokeHistoryList" :key="item.patientHabitId" :title="transform(item, 'patientHabitId', smokeHistoryDictionary)">
+        <card class="card" :mode="mode" v-for="item in smokeHistoryList" :key="item.patientHabitId"
+         :title="transform(item, 'patientHabitId', smokeHistoryDictionary)">
           <div class="text dose">{{item.doseInfo}} 支/天</div>
           <div class="text start-time">{{item.startTime}}</div>
         </card>
-        <card class="card" v-for="item in wineHistoryList" :key="item.patientHabitId" :title="transform(item, 'patientHabitId', wineHistoryDictionary)">
+        <card class="card" :mode="mode" v-for="item in wineHistoryList" :key="item.patientHabitId"
+         :title="transform(item, 'patientHabitId', wineHistoryDictionary)">
           <div class="text dose">{{item.doseInfo}} mL/周</div>
           <div class="text start-time">{{item.startTime}}</div>
         </card>
-        <card class="card" v-for="item in exerciseHistoryList" :key="item.patientExerciseId" :title="item.exeName">
+        <card class="card" :mode="mode" v-for="item in exerciseHistoryList" :key="item.patientExerciseId"
+         :title="item.exeName">
           <div class="text dose">{{transform(item, 'grade', exerciseHistoryDictionary)}}</div>
           <div class="text age-stage">{{transform(item, 'ageStage', exerciseHistoryDictionary)}}</div>
         </card>
       </extensible-panel>
       <extensible-panel class="panel" :mode="mode" :title="'毒物接触史'">
-        <card class="card" v-for="item in processedToxicList" :key="item.expmaterialName" :title="item.expmaterialName">
+        <card class="card" :mode="mode" v-for="item in processedToxicList" :key="item.expmaterialName"
+         :title="item.expmaterialName">
           <div class="text dose">{{item.exposedFrquency}}</div>
           <div class="text age-stage">{{transform(item, 'lifeStage', toxicExposureHistoryDictionary)}}</div>
         </card>
