@@ -7,6 +7,7 @@ var getGroups = function(state, tableName) {
     return [];
 
   } else {
+    console.log(state.all);
     var groups = state.all.filter((table) => {
       return table.tableName === tableName;
     })[0].groups;
@@ -20,6 +21,16 @@ var getGroups = function(state, tableName) {
   }
 };
 
+var getFirstGroup = function(state, tableName) {
+  // 对于那些 getGroups() 后只有 1 个元素的数组，我们直接取其第一个元素的 fields 属性值，这样就不用在使用的时候再去处理
+  var groups = getGroups(state, tableName);
+  if (groups[0] && groups[0].fields) {
+    return groups[0].fields;
+  } else {
+    return [];
+  }
+};
+
 // initial state
 const state = {
   all: []
@@ -27,11 +38,49 @@ const state = {
 
 const getters = {
   basicInfoTemplateGroups: (state) => {
+    // 基本信息
     return getGroups(state, 'tc_patient_info');
   },
   diseaseInfoTemplateGroups: (state) => {
+    // 病症信息
     return getGroups(state, 'tc_patient_disease_info');
-  }
+  },
+  medHistoryTemplate: (state) => {
+    // 其它用药史
+    return getFirstGroup(state, 'tc_patient_medhistory');
+  },
+  diseaseHistoryTemplate: (state) => {
+    // 既往史
+    return getFirstGroup(state, 'tc_patient_disease');
+  },
+  familyHistoryTemplate: (state) => {
+    // 家族史
+    return getFirstGroup(state, 'tc_family_history');
+  },
+  toxicHistoryTemplate: (state) => {
+    // 毒物接触史
+    return getFirstGroup(state, 'tc_cideexposed');
+  },
+  coffeeHistoryTemplate: (state) => {
+    // 咖啡史
+    return getFirstGroup(state, 'tc_patient_coffee');
+  },
+  teaHistoryTemplate: (state) => {
+    // 喝茶史
+    return getFirstGroup(state, 'tc_patient_tea');
+  },
+  smokeHistoryTemplate: (state) => {
+    // 吸烟史
+    return getFirstGroup(state, 'tc_patient_smoke');
+  },
+  wineHistoryTemplate: (state) => {
+    // 饮酒史
+    return getFirstGroup(state, 'tc_patient_wine');
+  },
+  exerciseHistoryTemplate: (state) => {
+    // 锻炼史
+    return getFirstGroup(state, 'tc_patient_exercise');
+  },
 };
 
 const actions = {
