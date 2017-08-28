@@ -1,7 +1,7 @@
 <template lang="html">
   <folding-panel :title="'其它信息'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
     <div class="other-info">
-      <extensible-panel class="panel" :mode="mode" :title="'其它用药史'" v-on:addNewCard="addMedRecord">
+      <extensible-panel class="panel" :mode="mode" :title="medHistroyTitle" v-on:addNewCard="addMedRecord">
         <card class="card" :mode="mode" v-for="item in medHistroyList" :key="item.medName"
          :title="item.medName">
           <div class="text dose">一天{{item.medDose}}次</div>
@@ -9,7 +9,7 @@
           <div class="text end-time">{{item.medEnd}}</div>
         </card>
       </extensible-panel>
-      <extensible-panel class="panel" :mode="mode" :title="'既往史'">
+      <extensible-panel class="panel" :mode="mode" :title="diseaseHistoryTitle">
         <card class="card" :mode="mode" v-for="item in diseaseHistoryList" :key="item.surgeryHistory"
          :title="item.surgeryHistory">
           <div class="text dose">是否住院： {{transform(item, 'isHospitalization', diseaseHistoryDictionary)}}</div>
@@ -17,7 +17,7 @@
           <div class="text end-time">{{item.endTime}}</div>
         </card>
       </extensible-panel>
-      <extensible-panel class="panel" :mode="mode" :title="'个人史'">
+      <extensible-panel class="panel" :mode="mode" :title="personHistoryTitle">
         <card class="card" :mode="mode" v-for="item in coffeeHistoryList" :key="item.patientHabitId"
          :title="transform(item, 'patientHabitId', coffeeHistoryDictionary)">
           <div class="text dose">{{item.doseInfo}} 杯/周</div>
@@ -44,7 +44,7 @@
           <div class="text age-stage">{{transform(item, 'ageStage', exerciseHistoryDictionary)}}</div>
         </card>
       </extensible-panel>
-      <extensible-panel class="panel" :mode="mode" :title="'毒物接触史'">
+      <extensible-panel class="panel" :mode="mode" :title="toxicHistoryTitle">
         <card class="card" :mode="mode" v-for="item in processedToxicList" :key="item.expmaterialName"
          :title="item.expmaterialName">
           <div class="text dose">{{item.exposedFrquency}}</div>
@@ -113,6 +113,21 @@ export default {
       'toxicExposureHistoryDictionary',
       'typeGroup'
     ]),
+    medHistroyTitle() {
+      return '其它用药史 (' + this.medHistroyList.length + '条记录)';
+    },
+    diseaseHistoryTitle() {
+      return '既往史 (' + this.diseaseHistoryList.length + '条记录)';
+    },
+    personHistoryTitle() {
+      var totalCount = this.coffeeHistoryList.length + this.teaHistoryList.length +
+       this.smokeHistoryList.length + this.wineHistoryList.length +
+       this.exerciseHistoryList.length;
+      return '个人史 (' + totalCount + '条记录)';
+    },
+    toxicHistoryTitle() {
+      return '毒物接触史 (' + this.processedToxicList.length + '条记录)';
+    },
     processedToxicList() {
       if (this.toxicExposureHistoryList.length === 0) {
         return [];
@@ -165,7 +180,7 @@ export default {
       return result && result.typeName ? result.typeName : '';
     },
     addMedRecord() {
-      Bus.$emit(this.SHOW_MODAL_BOX, '新增既往史');
+      Bus.$emit(this.SHOW_MODAL_BOX, '新增用药史');
     }
   },
   mounted() {

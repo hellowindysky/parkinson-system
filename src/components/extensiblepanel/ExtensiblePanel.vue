@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="extensible-panel-wrapper">
     <div class="header">
-      <h4 class="title">{{title}}（5条记录）</h4>
+      <h4 class="title">{{title}}</h4>
       <div v-show="mode === EDITING_MODE" class="button add-button" @click="add">添加</div>
       <div v-show="status === NORMAL_STATUS" class="button extend-button" @click="extend">展开</div>
       <div v-show="status === EXTENDED_STATUS" class="button shrink-button" @click="shrink">收起</div>
