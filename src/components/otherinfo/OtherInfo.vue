@@ -2,8 +2,8 @@
   <folding-panel :title="'其它信息'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
     <div class="other-info">
 
-      <extensible-panel class="panel" :mode="mode" :title="medHistroyTitle" v-on:addNewCard="addMedRecord">
-        <card class="card" :mode="mode" v-for="item in medHistroyList" :key="item.medName"
+      <extensible-panel class="panel" :mode="mode" :title="medHistoryTitle" v-on:addNewCard="addMedRecord">
+        <card class="card" :mode="mode" v-for="item in medHistoryList" :key="item.medName"
          :title="item.medName">
           <div class="text first-line">一天{{item.medDose}}次</div>
           <div class="text start-time">{{item.medStart}} ~</div>
@@ -11,7 +11,7 @@
         </card>
       </extensible-panel>
 
-      <extensible-panel class="panel" :mode="mode" :title="diseaseHistoryTitle">
+      <extensible-panel class="panel" :mode="mode" :title="diseaseHistoryTitle" v-on:addNewCard="addDiseaseRecord">
         <card class="card" :mode="mode" v-for="item in diseaseHistoryList" :key="item.surgeryHistory"
          :title="item.surgeryHistory">
           <div class="text first-line">是否住院： {{transform(item, 'isHospitalization', diseaseHistoryDictionary)}}</div>
@@ -20,7 +20,7 @@
         </card>
       </extensible-panel>
 
-      <extensible-panel class="panel" :mode="mode" :title="familyHistoryTitle">
+      <extensible-panel class="panel" :mode="mode" :title="familyHistoryTitle" v-on:addNewCard="addFamilyRecord">
         <card class="card" :mode="mode" v-for="item in familyHistoryList" :key="item.patientFamilyId"
          :title="item.diseaseName">
           <div class="text first-line">{{transform(item, 'similarRole', familyHistoryDictionary)}}</div>
@@ -28,7 +28,7 @@
         </card>
       </extensible-panel>
 
-      <extensible-panel class="panel" :mode="mode" :title="personHistoryTitle">
+      <extensible-panel class="panel" :mode="mode" :title="personHistoryTitle" v-on:addNewCard="addPersonRecord">
         <card class="card" :mode="mode" v-for="item in coffeeHistoryList" :key="item.patientHabitId"
          :title="transform(item, 'patientHabitId', coffeeHistoryDictionary)">
           <div class="text first-line">{{item.doseInfo}} 杯/周</div>
@@ -56,7 +56,7 @@
         </card>
       </extensible-panel>
 
-      <extensible-panel class="panel" :mode="mode" :title="toxicHistoryTitle">
+      <extensible-panel class="panel" :mode="mode" :title="toxicHistoryTitle" v-on:addNewCard="addToxicRecord">
         <card class="card" :mode="mode" v-for="item in processedToxicList" :key="item.expmaterialName"
          :title="item.expmaterialName">
           <div class="text first-line">{{item.exposedFrquency}}</div>
@@ -78,7 +78,7 @@ import Card from 'components/card/Card';
 
 export default {
   props: {
-    medHistroyList: {
+    medHistoryList: {
       type: Array,
       default: () => []
     },
@@ -133,8 +133,8 @@ export default {
       'toxicExposureHistoryDictionary',
       'typeGroup'
     ]),
-    medHistroyTitle() {
-      return '其它用药史（' + this.medHistroyList.length + '条记录）';
+    medHistoryTitle() {
+      return '其它用药史（' + this.medHistoryList.length + '条记录）';
     },
     diseaseHistoryTitle() {
       return '既往史（' + this.diseaseHistoryList.length + '条记录）';
@@ -203,13 +203,26 @@ export default {
       return result && result.typeName ? result.typeName : '';
     },
     addMedRecord() {
-      Bus.$emit(this.SHOW_MODAL_BOX, '新增用药史');
+      // 这里要传递 3 个参数，一个是 title，一个是当前数据对象（新建的时候为空），另一个是模态框的类型
+      Bus.$emit(this.SHOW_MODAL_BOX, '新增用药史', {}, this.MEDICINE_MODAL);
+    },
+    addDiseaseRecord() {
+      Bus.$emit(this.SHOW_MODAL_BOX, '新增既往史', {}, this.DISEASE_MODAL);
+    },
+    addFamilyRecord() {
+      Bus.$emit(this.SHOW_MODAL_BOX, '新增家族史', {}, this.FAMILY_MODAL);
+    },
+    addPersonRecord() {
+      Bus.$emit(this.SHOW_MODAL_BOX, '新增个人史', {}, this.PERSON_MODAL);
+    },
+    addToxicRecord() {
+      Bus.$emit(this.SHOW_MODAL_BOX, '新增毒物接触史', {}, this.TOXIC_MODAL);
     }
   },
   mounted() {
     setTimeout(() => {
       // console.log(this.toxicExposureHistoryList);
-      // console.log(this.teaHistoryDictionary);
+      // console.log(this.medHistoryDictionary);
       // console.log(this.typeGroup);
     }, 2000);
   }

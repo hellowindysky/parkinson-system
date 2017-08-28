@@ -7,7 +7,6 @@ var getGroups = function(state, tableName) {
     return [];
 
   } else {
-    console.log(state.all);
     var groups = state.all.filter((table) => {
       return table.tableName === tableName;
     })[0].groups;
@@ -57,7 +56,7 @@ const getters = {
     // 家族史
     return getFirstGroup(state, 'tc_family_history');
   },
-  toxicHistoryTemplate: (state) => {
+  toxicExposureHistoryTemplate: (state) => {
     // 毒物接触史
     return getFirstGroup(state, 'tc_cideexposed');
   },

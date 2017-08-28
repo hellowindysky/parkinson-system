@@ -2,7 +2,7 @@
   <div class="personal-info-wrapper">
     <basic-info class="component" :basic-info="basicInfo"></basic-info>
     <disease-info class="component" :disease-info="diseaseInfo"></disease-info>
-    <other-info class="component" :medHistroyList="medHistroyList" :diseaseHistoryList="diseaseHistoryList"
+    <other-info class="component" :medHistoryList="medHistoryList" :diseaseHistoryList="diseaseHistoryList"
       :familyHistoryList="familyHistoryList" :coffeeHistoryList="coffeeHistoryList" :teaHistoryList="teaHistoryList" :wineHistoryList="wineHistoryList"
       :smokeHistoryList="smokeHistoryList" :exerciseHistoryList="exerciseHistoryList"
       :toxicExposureHistoryList="toxicExposureHistoryList"></other-info>
@@ -30,12 +30,12 @@ export default {
       // 急症信息
       return this.patientInfo.patientDiseaseInfo ? this.patientInfo.patientDiseaseInfo : {};
     },
-    medHistroyList() {
+    medHistoryList() {
       // 用药史
       return this.patientInfo.patientMedHistoryList ? this.patientInfo.patientMedHistoryList : [];
     },
     diseaseHistoryList() {
-      // 既往史（手术史）
+      // 既往史
       return this.patientInfo.patientDiseaseList ? this.patientInfo.patientDiseaseList : [];
     },
     familyHistoryList() {

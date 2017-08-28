@@ -4,25 +4,71 @@
       <h3 class="title">{{title}}</h3>
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
-      <div class="button submit-button">确定</div>
+      <div class="button submit-button" @click="cancel">确定</div>
     </div>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 
 export default {
   data() {
     return {
       displayModal: false,
-      title: ''
+      modalType: '',
+      title: '',
+      item: {}
     };
   },
+  computed: {
+    ...mapGetters([
+      'medHistoryTemplate',
+      'diseaseHistoryTemplate',
+      'familyHistoryTemplate',
+      'coffeeHistoryTemplate',
+      'teaHistoryTemplate',
+      'smokeHistoryTemplate',
+      'wineHistoryTemplate',
+      'exerciseHistoryTemplate',
+      'toxicExposureHistoryTemplate',
+
+      'medHistoryDictionary',
+      'diseaseHistoryDictionary',
+      'familyHistoryDictionary',
+      'coffeeHistoryDictionary',
+      'teaHistoryDictionary',
+      'smokeHistoryDictionary',
+      'wineHistoryDictionary',
+      'exerciseHistoryDictionary',
+      'toxicExposureHistoryDictionary',
+
+      'typeGroup'
+    ]),
+    dictionary() {
+      if (this.modalType === this.MEDICINE_MODAL) {
+        return this.medHistoryDictionary;
+      } else if (this.modalType === this.DISEASE_MODAL) {
+        return this.diseaseHistoryDictionary;
+      } else if (this.modalType === this.FAMILY_MODAL) {
+        return this.familyHistoryDictionary;
+      } else if (this.modalType === this.PERSON_MODAL) {
+        // 如果是个人信息面板，则将几个子字典合并成一个新的总字典
+        return [].concat(this.coffeeHistoryDictionary, this.teaHistoryDictionary,
+           this.smokeHistoryDictionary, this.wineHistoryDictionary, this.exerciseHistoryDictionary);
+      } else if (this.modalType === this.TOXIC_MODAL) {
+        return [].concat(this.toxicExposureHistoryDictionary);
+      }
+    }
+  },
   methods: {
-    showPanel(title) {
+    showPanel(title, item, modalType) {
       this.displayModal = true;
+      this.modalType = modalType;
       this.title = title;
+      this.item = Object.assign({}, item);
+      console.log(this.dictionary);
     },
     cancel() {
       this.displayModal = false;
