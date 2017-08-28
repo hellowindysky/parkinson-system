@@ -23,8 +23,8 @@ var getGroups = function(state, tableName) {
 var getFirstGroup = function(state, tableName) {
   // 对于那些 getGroups() 后只有 1 个元素的数组，我们直接取其第一个元素的 fields 属性值，这样就不用在使用的时候再去处理
   var groups = getGroups(state, tableName);
-  if (groups[0] && groups[0].fields) {
-    return groups[0].fields;
+  if (groups[0]) {
+    return groups[0];
   } else {
     return [];
   }

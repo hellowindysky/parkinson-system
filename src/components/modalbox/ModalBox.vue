@@ -2,6 +2,9 @@
   <div class="modal-box-wrapper" v-show="displayModal">
     <div class="modal-box">
       <h3 class="title">{{title}}</h3>
+      <div class="" v-for="field in template">
+
+      </div>
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
       <div class="button submit-button" @click="cancel">确定</div>
@@ -54,11 +57,25 @@ export default {
       } else if (this.modalType === this.FAMILY_MODAL) {
         return this.familyHistoryDictionary;
       } else if (this.modalType === this.PERSON_MODAL) {
-        // 如果是个人信息面板，则将几个子字典合并成一个新的总字典
+        // 如果是个人史面板，则将几个子字典合并成一个新的总字典
         return [].concat(this.coffeeHistoryDictionary, this.teaHistoryDictionary,
            this.smokeHistoryDictionary, this.wineHistoryDictionary, this.exerciseHistoryDictionary);
       } else if (this.modalType === this.TOXIC_MODAL) {
         return [].concat(this.toxicExposureHistoryDictionary);
+      }
+    },
+    template() {
+      if (this.modalType === this.MEDICINE_MODAL) {
+        return this.medHistoryTemplate;
+      } else if (this.modalType === this.DISEASE_MODAL) {
+        return this.diseaseHistoryTemplate;
+      } else if (this.modalType === this.FAMILY_MODAL) {
+        return this.familyHistoryTemplate;
+      } else if (this.modalType === this.PERSON_MODAL) {
+        // 如果是个人史面板，则有几个子模版，需要在选择个人史类型后，自动确定新的模版
+        return [];
+      } else if (this.modalType === this.TOXIC_MODAL) {
+        return [].concat(this.toxicExposureHistoryTemplate);
       }
     }
   },
@@ -68,7 +85,9 @@ export default {
       this.modalType = modalType;
       this.title = title;
       this.item = Object.assign({}, item);
-      console.log(this.dictionary);
+      for (var i = 0; i < this.template.length; i++) {
+        console.log(this.template[i].fieldName);
+      }
     },
     cancel() {
       this.displayModal = false;
