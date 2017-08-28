@@ -1,74 +1,92 @@
 <template lang="html">
   <folding-panel :title="'其它信息'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
     <div class="other-info">
-      <extensible-panel class="panel" :mode="mode" :title="'其它用药史'" v-on:addNewCard="addMedRecord">
-        <card class="card" :mode="mode" v-for="item in medHistroyList" :key="item.medName"
+
+      <extensible-panel class="panel" :mode="mode" :title="medHistoryTitle" v-on:addNewCard="addMedRecord">
+        <card class="card" :mode="mode" v-for="item in medHistoryList" :key="item.medName"
          :title="item.medName">
-          <div class="text dose">一天{{item.medDose}}次</div>
+          <div class="text first-line">一天{{item.medDose}}次</div>
           <div class="text start-time">{{item.medStart}} ~</div>
           <div class="text end-time">{{item.medEnd}}</div>
         </card>
       </extensible-panel>
-      <extensible-panel class="panel" :mode="mode" :title="'既往史'">
+
+      <extensible-panel class="panel" :mode="mode" :title="diseaseHistoryTitle" v-on:addNewCard="addDiseaseRecord">
         <card class="card" :mode="mode" v-for="item in diseaseHistoryList" :key="item.surgeryHistory"
          :title="item.surgeryHistory">
-          <div class="text dose">是否住院： {{transform(item, 'isHospitalization', diseaseHistoryDictionary)}}</div>
+          <div class="text first-line">是否住院： {{transform(item, 'isHospitalization', diseaseHistoryDictionary)}}</div>
           <div class="text start-time">{{item.beginTime}} ~</div>
           <div class="text end-time">{{item.endTime}}</div>
         </card>
       </extensible-panel>
-      <extensible-panel class="panel" :mode="mode" :title="'个人史'">
+
+      <extensible-panel class="panel" :mode="mode" :title="familyHistoryTitle" v-on:addNewCard="addFamilyRecord">
+        <card class="card" :mode="mode" v-for="item in familyHistoryList" :key="item.patientFamilyId"
+         :title="item.diseaseName">
+          <div class="text first-line">{{transform(item, 'similarRole', familyHistoryDictionary)}}</div>
+          <div class="text start-time">{{transform(item, 'diseaseType', familyHistoryDictionary)}}</div>
+        </card>
+      </extensible-panel>
+
+      <extensible-panel class="panel" :mode="mode" :title="personHistoryTitle" v-on:addNewCard="addPersonRecord">
         <card class="card" :mode="mode" v-for="item in coffeeHistoryList" :key="item.patientHabitId"
          :title="transform(item, 'patientHabitId', coffeeHistoryDictionary)">
-          <div class="text dose">{{item.doseInfo}} 杯/周</div>
+          <div class="text first-line">{{item.doseInfo}} 杯/周</div>
           <div class="text start-time">{{item.startTime}}</div>
         </card>
         <card class="card" :mode="mode" v-for="item in teaHistoryList" :key="item.patientHabitId"
          :title="transform(item, 'patientHabitId', teaHistoryDictionary)">
-          <div class="text dose">{{item.doseInfo}} 杯/周</div>
+          <div class="text first-line">{{item.doseInfo}} 杯/周</div>
           <div class="text start-time">{{item.startTime}}</div>
         </card>
         <card class="card" :mode="mode" v-for="item in smokeHistoryList" :key="item.patientHabitId"
          :title="transform(item, 'patientHabitId', smokeHistoryDictionary)">
-          <div class="text dose">{{item.doseInfo}} 支/天</div>
+          <div class="text first-line">{{item.doseInfo}} 支/天</div>
           <div class="text start-time">{{item.startTime}}</div>
         </card>
         <card class="card" :mode="mode" v-for="item in wineHistoryList" :key="item.patientHabitId"
          :title="transform(item, 'patientHabitId', wineHistoryDictionary)">
-          <div class="text dose">{{item.doseInfo}} mL/周</div>
+          <div class="text first-line">{{item.doseInfo}} mL/周</div>
           <div class="text start-time">{{item.startTime}}</div>
         </card>
         <card class="card" :mode="mode" v-for="item in exerciseHistoryList" :key="item.patientExerciseId"
          :title="item.exeName">
-          <div class="text dose">{{transform(item, 'grade', exerciseHistoryDictionary)}}</div>
-          <div class="text age-stage">{{transform(item, 'ageStage', exerciseHistoryDictionary)}}</div>
+          <div class="text first-line">{{transform(item, 'grade', exerciseHistoryDictionary)}}</div>
+          <div class="text second-line">{{transform(item, 'ageStage', exerciseHistoryDictionary)}}</div>
         </card>
       </extensible-panel>
-      <extensible-panel class="panel" :mode="mode" :title="'毒物接触史'">
+
+      <extensible-panel class="panel" :mode="mode" :title="toxicHistoryTitle" v-on:addNewCard="addToxicRecord">
         <card class="card" :mode="mode" v-for="item in processedToxicList" :key="item.expmaterialName"
          :title="item.expmaterialName">
-          <div class="text dose">{{item.exposedFrquency}}</div>
-          <div class="text age-stage">{{transform(item, 'lifeStage', toxicExposureHistoryDictionary)}}</div>
+          <div class="text first-line">{{item.exposedFrquency}}</div>
+          <div class="text second-line">{{transform(item, 'lifeStage', toxicExposureHistoryDictionary)}}</div>
         </card>
       </extensible-panel>
+
     </div>
   </folding-panel>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
-// import Bus from 'utils/bus.js';
+import Bus from 'utils/bus.js';
+
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 import ExtensiblePanel from 'components/extensiblepanel/ExtensiblePanel';
 import Card from 'components/card/Card';
 
 export default {
   props: {
-    medHistroyList: {
+    medHistoryList: {
       type: Array,
       default: () => []
     },
     diseaseHistoryList: {
+      type: Array,
+      default: () => []
+    },
+    familyHistoryList: {
       type: Array,
       default: () => []
     },
@@ -104,7 +122,9 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'medHistoryDictionary',
       'diseaseHistoryDictionary',
+      'familyHistoryDictionary',
       'coffeeHistoryDictionary',
       'teaHistoryDictionary',
       'smokeHistoryDictionary',
@@ -113,6 +133,24 @@ export default {
       'toxicExposureHistoryDictionary',
       'typeGroup'
     ]),
+    medHistoryTitle() {
+      return '其它用药史（' + this.medHistoryList.length + '条记录）';
+    },
+    diseaseHistoryTitle() {
+      return '既往史（' + this.diseaseHistoryList.length + '条记录）';
+    },
+    familyHistoryTitle() {
+      return '家族史（' + this.familyHistoryList.length + '条记录）';
+    },
+    personHistoryTitle() {
+      var totalCount = this.coffeeHistoryList.length + this.teaHistoryList.length +
+       this.smokeHistoryList.length + this.wineHistoryList.length +
+       this.exerciseHistoryList.length;
+      return '个人史（' + totalCount + '条记录）';
+    },
+    toxicHistoryTitle() {
+      return '毒物接触史（' + this.processedToxicList.length + '条记录）';
+    },
     processedToxicList() {
       if (this.toxicExposureHistoryList.length === 0) {
         return [];
@@ -165,13 +203,26 @@ export default {
       return result && result.typeName ? result.typeName : '';
     },
     addMedRecord() {
-      console.log('yoyoyo');
+      // 这里要传递 3 个参数，一个是 title，一个是当前数据对象（新建的时候为空），另一个是模态框的类型
+      Bus.$emit(this.SHOW_MODAL_BOX, '新增用药史', {}, this.MEDICINE_MODAL);
+    },
+    addDiseaseRecord() {
+      Bus.$emit(this.SHOW_MODAL_BOX, '新增既往史', {}, this.DISEASE_MODAL);
+    },
+    addFamilyRecord() {
+      Bus.$emit(this.SHOW_MODAL_BOX, '新增家族史', {}, this.FAMILY_MODAL);
+    },
+    addPersonRecord() {
+      Bus.$emit(this.SHOW_MODAL_BOX, '新增个人史', {}, this.PERSON_MODAL);
+    },
+    addToxicRecord() {
+      Bus.$emit(this.SHOW_MODAL_BOX, '新增毒物接触史', {}, this.TOXIC_MODAL);
     }
   },
   mounted() {
     setTimeout(() => {
       // console.log(this.toxicExposureHistoryList);
-      // console.log(this.teaHistoryDictionary);
+      // console.log(this.medHistoryDictionary);
       // console.log(this.typeGroup);
     }, 2000);
   }
@@ -194,11 +245,11 @@ export default {
         font-size: @small-font-size;
         color: @light-font-color;
       }
-      .dose {
+      .first-line {
         left: 10px;
         top: 50px;
       }
-      .start-time, .age-stage {
+      .start-time, .second-line {
         left: 10px;
         top: 75px;
       }

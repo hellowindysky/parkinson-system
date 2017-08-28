@@ -36,9 +36,19 @@ const getters = {
     // 病症信息
     return getGroups(state, 'tc_patient_disease_info');
   },
+  medHistoryDictionary: (state) => {
+    var groups = getGroups(state, 'tc_patient_medhistory');
+    // 其它用药史只有一个 group
+    return groups[0] ? groups[0] : [];
+  },
   diseaseHistoryDictionary: (state) => {
     var groups = getGroups(state, 'tc_patient_disease');
     // 既往史只有一个 group
+    return groups[0] ? groups[0] : [];
+  },
+  familyHistoryDictionary: (state) => {
+    var groups = getGroups(state, 'tc_family_history');
+    // 家族史只有一个 group
     return groups[0] ? groups[0] : [];
   },
   coffeeHistoryDictionary: (state) => {
