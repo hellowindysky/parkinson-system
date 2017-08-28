@@ -57,7 +57,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
-// import Bus from 'utils/bus.js';
+import Bus from 'utils/bus.js';
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 import ExtensiblePanel from 'components/extensiblepanel/ExtensiblePanel';
 import Card from 'components/card/Card';
@@ -165,7 +165,7 @@ export default {
       return result && result.typeName ? result.typeName : '';
     },
     addMedRecord() {
-      console.log('yoyoyo');
+      Bus.$emit(this.SHOW_MODAL_BOX, '新增既往史');
     }
   },
   mounted() {
