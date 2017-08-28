@@ -97,7 +97,25 @@ export default new Router({
         {
           path: 'configuration',
           component: Configuration,
-          name: 'configuration'
+          name: 'configuration',
+          children: [
+            {
+              path: 'featureConfiguration',
+              name: 'featureConfiguration'
+            },
+            {
+              path: 'userManagement',
+              name: 'userManagement'
+            },
+            {
+              path: 'roleManagement',
+              name: 'roleManagement'
+            },
+            {
+              path: 'dictionaryManagement',
+              name: 'dictionaryManagement'
+            }
+          ]
         }
       ]
     }

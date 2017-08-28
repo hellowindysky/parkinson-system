@@ -1,5 +1,5 @@
 <template lang="html">
-
+    <router-view name="figcontent" :key="key"></router-view>
 </template>
 
 <script>
