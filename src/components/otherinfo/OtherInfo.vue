@@ -1,7 +1,7 @@
 <template lang="html">
   <folding-panel :title="'其它信息'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
     <div class="other-info">
-      <extensible-panel class="panel" :mode="mode" :title="'其它用药史'">
+      <extensible-panel class="panel" :mode="mode" :title="'其它用药史'" v-on:addNewCard="addMedRecord">
         <card class="card" :mode="mode" v-for="item in medHistroyList" :key="item.medName"
          :title="item.medName">
           <div class="text dose">一天{{item.medDose}}次</div>
@@ -163,6 +163,9 @@ export default {
         return type.typeCode === item[fieldName];
       })[0];
       return result && result.typeName ? result.typeName : '';
+    },
+    addMedRecord() {
+      console.log('yoyoyo');
     }
   },
   mounted() {

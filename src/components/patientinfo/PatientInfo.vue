@@ -119,7 +119,7 @@ export default {
     Bus.$on(this.SCROLL_AREA_SIZE_CHANGE, this.updateScrollbar);
 
     // 监听子组件是否要求刷新病患数据
-    Bus.$on('updatePatientInfo', this.updatePatientInfo);
+    Bus.$on(this.UPDATE_PATIENT_INFO, this.updatePatientInfo);
   },
   watch: {
     $route() {

@@ -123,7 +123,7 @@ export default {
       // 点击提交按钮，将修改后的 copyInfo 提交到服务器，一旦提交成功，diseaseInfo也会更新，这个时候再切换回阅读状态
       this.copyInfo.patientId = this.$route.params.id;
       modifyPatientDiseaseInfo(this.copyInfo).then(() => {
-        Bus.$emit('updatePatientInfo');
+        Bus.$emit(this.UPDATE_PATIENT_INFO);
         this.mode = this.READING_MODE;
       });
     },

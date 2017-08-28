@@ -46,15 +46,15 @@ export default {
       }, 300);
     },
     edit() {
-      this.$emit('edit');
-      // 编辑状态下，面板必须展开，而且不能收起
+      this.$emit(this.EDIT);
+      // 进入编辑状态，面板自动展开
       this.folded = false;
     },
     cancel() {
-      this.$emit('cancel');
+      this.$emit(this.CANCEL);
     },
     submit() {
-      this.$emit('submit');
+      this.$emit(this.SUBMIT);
     }
   },
   mounted() {

@@ -33,7 +33,7 @@ export default {
   },
   methods: {
     add() {
-
+      this.$emit(this.ADD_NEW_CARD);
     },
     extend() {
       this.status = this.EXTENDED_STATUS;
