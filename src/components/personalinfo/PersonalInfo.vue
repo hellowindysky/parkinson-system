@@ -3,7 +3,7 @@
     <basic-info class="component" :basic-info="basicInfo"></basic-info>
     <disease-info class="component" :disease-info="diseaseInfo"></disease-info>
     <other-info class="component" :medHistroyList="medHistroyList" :diseaseHistoryList="diseaseHistoryList"
-      :coffeeHistoryList="coffeeHistoryList" :teaHistoryList="teaHistoryList" :wineHistoryList="wineHistoryList"
+      :familyHistoryList="familyHistoryList" :coffeeHistoryList="coffeeHistoryList" :teaHistoryList="teaHistoryList" :wineHistoryList="wineHistoryList"
       :smokeHistoryList="smokeHistoryList" :exerciseHistoryList="exerciseHistoryList"
       :toxicExposureHistoryList="toxicExposureHistoryList"></other-info>
   </div>
@@ -35,8 +35,12 @@ export default {
       return this.patientInfo.patientMedHistoryList ? this.patientInfo.patientMedHistoryList : [];
     },
     diseaseHistoryList() {
-      // 既往史（手术）
+      // 既往史（手术史）
       return this.patientInfo.patientDiseaseList ? this.patientInfo.patientDiseaseList : [];
+    },
+    familyHistoryList() {
+      // 家族史
+      return this.patientInfo.patientFamilyList ? this.patientInfo.patientFamilyList : [];
     },
     coffeeHistoryList() {
       // 咖啡史

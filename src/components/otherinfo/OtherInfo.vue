@@ -5,7 +5,7 @@
       <extensible-panel class="panel" :mode="mode" :title="medHistroyTitle" v-on:addNewCard="addMedRecord">
         <card class="card" :mode="mode" v-for="item in medHistroyList" :key="item.medName"
          :title="item.medName">
-          <div class="text dose">一天{{item.medDose}}次</div>
+          <div class="text first-line">一天{{item.medDose}}次</div>
           <div class="text start-time">{{item.medStart}} ~</div>
           <div class="text end-time">{{item.medEnd}}</div>
         </card>
@@ -14,45 +14,53 @@
       <extensible-panel class="panel" :mode="mode" :title="diseaseHistoryTitle">
         <card class="card" :mode="mode" v-for="item in diseaseHistoryList" :key="item.surgeryHistory"
          :title="item.surgeryHistory">
-          <div class="text dose">是否住院： {{transform(item, 'isHospitalization', diseaseHistoryDictionary)}}</div>
+          <div class="text first-line">是否住院： {{transform(item, 'isHospitalization', diseaseHistoryDictionary)}}</div>
           <div class="text start-time">{{item.beginTime}} ~</div>
           <div class="text end-time">{{item.endTime}}</div>
+        </card>
+      </extensible-panel>
+
+      <extensible-panel class="panel" :mode="mode" :title="familyHistoryTitle">
+        <card class="card" :mode="mode" v-for="item in familyHistoryList" :key="item.patientFamilyId"
+         :title="item.diseaseName">
+          <div class="text first-line">{{transform(item, 'similarRole', familyHistoryDictionary)}}</div>
+          <div class="text start-time">{{transform(item, 'diseaseType', familyHistoryDictionary)}}</div>
         </card>
       </extensible-panel>
 
       <extensible-panel class="panel" :mode="mode" :title="personHistoryTitle">
         <card class="card" :mode="mode" v-for="item in coffeeHistoryList" :key="item.patientHabitId"
          :title="transform(item, 'patientHabitId', coffeeHistoryDictionary)">
-          <div class="text dose">{{item.doseInfo}} 杯/周</div>
+          <div class="text first-line">{{item.doseInfo}} 杯/周</div>
           <div class="text start-time">{{item.startTime}}</div>
         </card>
         <card class="card" :mode="mode" v-for="item in teaHistoryList" :key="item.patientHabitId"
          :title="transform(item, 'patientHabitId', teaHistoryDictionary)">
-          <div class="text dose">{{item.doseInfo}} 杯/周</div>
+          <div class="text first-line">{{item.doseInfo}} 杯/周</div>
           <div class="text start-time">{{item.startTime}}</div>
         </card>
         <card class="card" :mode="mode" v-for="item in smokeHistoryList" :key="item.patientHabitId"
          :title="transform(item, 'patientHabitId', smokeHistoryDictionary)">
-          <div class="text dose">{{item.doseInfo}} 支/天</div>
+          <div class="text first-line">{{item.doseInfo}} 支/天</div>
           <div class="text start-time">{{item.startTime}}</div>
         </card>
         <card class="card" :mode="mode" v-for="item in wineHistoryList" :key="item.patientHabitId"
          :title="transform(item, 'patientHabitId', wineHistoryDictionary)">
-          <div class="text dose">{{item.doseInfo}} mL/周</div>
+          <div class="text first-line">{{item.doseInfo}} mL/周</div>
           <div class="text start-time">{{item.startTime}}</div>
         </card>
         <card class="card" :mode="mode" v-for="item in exerciseHistoryList" :key="item.patientExerciseId"
          :title="item.exeName">
-          <div class="text dose">{{transform(item, 'grade', exerciseHistoryDictionary)}}</div>
-          <div class="text age-stage">{{transform(item, 'ageStage', exerciseHistoryDictionary)}}</div>
+          <div class="text first-line">{{transform(item, 'grade', exerciseHistoryDictionary)}}</div>
+          <div class="text second-line">{{transform(item, 'ageStage', exerciseHistoryDictionary)}}</div>
         </card>
       </extensible-panel>
 
       <extensible-panel class="panel" :mode="mode" :title="toxicHistoryTitle">
         <card class="card" :mode="mode" v-for="item in processedToxicList" :key="item.expmaterialName"
          :title="item.expmaterialName">
-          <div class="text dose">{{item.exposedFrquency}}</div>
-          <div class="text age-stage">{{transform(item, 'lifeStage', toxicExposureHistoryDictionary)}}</div>
+          <div class="text first-line">{{item.exposedFrquency}}</div>
+          <div class="text second-line">{{transform(item, 'lifeStage', toxicExposureHistoryDictionary)}}</div>
         </card>
       </extensible-panel>
 
@@ -63,6 +71,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
+
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 import ExtensiblePanel from 'components/extensiblepanel/ExtensiblePanel';
 import Card from 'components/card/Card';
@@ -74,6 +83,10 @@ export default {
       default: () => []
     },
     diseaseHistoryList: {
+      type: Array,
+      default: () => []
+    },
+    familyHistoryList: {
       type: Array,
       default: () => []
     },
@@ -109,7 +122,9 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'medHistoryDictionary',
       'diseaseHistoryDictionary',
+      'familyHistoryDictionary',
       'coffeeHistoryDictionary',
       'teaHistoryDictionary',
       'smokeHistoryDictionary',
@@ -119,19 +134,22 @@ export default {
       'typeGroup'
     ]),
     medHistroyTitle() {
-      return '其它用药史 (' + this.medHistroyList.length + '条记录)';
+      return '其它用药史（' + this.medHistroyList.length + '条记录）';
     },
     diseaseHistoryTitle() {
-      return '既往史 (' + this.diseaseHistoryList.length + '条记录)';
+      return '既往史（' + this.diseaseHistoryList.length + '条记录）';
+    },
+    familyHistoryTitle() {
+      return '家族史（' + this.familyHistoryList.length + '条记录）';
     },
     personHistoryTitle() {
       var totalCount = this.coffeeHistoryList.length + this.teaHistoryList.length +
        this.smokeHistoryList.length + this.wineHistoryList.length +
        this.exerciseHistoryList.length;
-      return '个人史 (' + totalCount + '条记录)';
+      return '个人史（' + totalCount + '条记录）';
     },
     toxicHistoryTitle() {
-      return '毒物接触史 (' + this.processedToxicList.length + '条记录)';
+      return '毒物接触史（' + this.processedToxicList.length + '条记录）';
     },
     processedToxicList() {
       if (this.toxicExposureHistoryList.length === 0) {
@@ -214,11 +232,11 @@ export default {
         font-size: @small-font-size;
         color: @light-font-color;
       }
-      .dose {
+      .first-line {
         left: 10px;
         top: 50px;
       }
-      .start-time, .age-stage {
+      .start-time, .second-line {
         left: 10px;
         top: 75px;
       }
