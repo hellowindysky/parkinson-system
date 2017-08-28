@@ -80,7 +80,7 @@ const getters = {
   exerciseHistoryTemplate: (state) => {
     // 锻炼史
     return getFirstGroup(state, 'tc_patient_exercise');
-  },
+  }
 };
 
 const actions = {

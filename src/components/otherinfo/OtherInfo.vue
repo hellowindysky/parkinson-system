@@ -1,6 +1,7 @@
 <template lang="html">
   <folding-panel :title="'其它信息'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
     <div class="other-info">
+
       <extensible-panel class="panel" :mode="mode" :title="medHistroyTitle" v-on:addNewCard="addMedRecord">
         <card class="card" :mode="mode" v-for="item in medHistroyList" :key="item.medName"
          :title="item.medName">
@@ -9,6 +10,7 @@
           <div class="text end-time">{{item.medEnd}}</div>
         </card>
       </extensible-panel>
+
       <extensible-panel class="panel" :mode="mode" :title="diseaseHistoryTitle">
         <card class="card" :mode="mode" v-for="item in diseaseHistoryList" :key="item.surgeryHistory"
          :title="item.surgeryHistory">
@@ -17,6 +19,7 @@
           <div class="text end-time">{{item.endTime}}</div>
         </card>
       </extensible-panel>
+
       <extensible-panel class="panel" :mode="mode" :title="personHistoryTitle">
         <card class="card" :mode="mode" v-for="item in coffeeHistoryList" :key="item.patientHabitId"
          :title="transform(item, 'patientHabitId', coffeeHistoryDictionary)">
@@ -44,6 +47,7 @@
           <div class="text age-stage">{{transform(item, 'ageStage', exerciseHistoryDictionary)}}</div>
         </card>
       </extensible-panel>
+
       <extensible-panel class="panel" :mode="mode" :title="toxicHistoryTitle">
         <card class="card" :mode="mode" v-for="item in processedToxicList" :key="item.expmaterialName"
          :title="item.expmaterialName">
@@ -51,6 +55,7 @@
           <div class="text age-stage">{{transform(item, 'lifeStage', toxicExposureHistoryDictionary)}}</div>
         </card>
       </extensible-panel>
+
     </div>
   </folding-panel>
 </template>
