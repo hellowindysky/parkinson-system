@@ -225,10 +225,8 @@ export default {
       if (types.length === 0) {
         return '';
       } else {
-        var matchedType = types.filter((type) => {
-          return type.typeCode === typeCode;
-        })[0];
-        return matchedType ? matchedType.typeName : '';
+        var matchedType = Util.getElement('typeCode', typeCode, types);
+        return matchedType.typeName ? matchedType.typeName : '';
       }
     },
     translateCodes(typeCodes, field, groupIndex) {

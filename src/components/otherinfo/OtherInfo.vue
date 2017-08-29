@@ -195,12 +195,10 @@ export default {
       return typeInfo.types ? typeInfo.types : [];
     },
     transform(item, fieldName, dictionary) {
-      // 传递3个参数，最后一个代表需要去查询的字典
+      // 传递 3 个参数，最后一个代表需要去查询的字典
       var types = this.getTypes(fieldName, dictionary);
-      var result = types.filter((type) => {
-        return type.typeCode === item[fieldName];
-      })[0];
-      return result && result.typeName ? result.typeName : '';
+      var matchedType = Util.getElement('typeCode', item[fieldName], types);
+      return matchedType.typeName ? matchedType.typeName : '';
     },
     addMedRecord() {
       // 这里要传递 3 个参数，一个是 title，一个是当前数据对象（新建的时候为空），另一个是模态框的类型
