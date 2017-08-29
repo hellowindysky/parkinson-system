@@ -197,10 +197,9 @@ export default {
     getTypes(field) {
       // 在 typegroup 里面查找到 field 所对应的 types（选项组）
       var dictionaryField = this.getMatchedField(field);
-      var typeInfo = this.typeGroup.filter((type) => {
-        return type.typegroupcode === dictionaryField.fieldEnumId;
-      })[0];
-      return typeInfo ? typeInfo.types : [];
+      var value = dictionaryField.fieldEnumId;
+      var typeInfo = Util.getElement('typegroupcode', value, this.typeGroup);
+      return typeInfo.types ? typeInfo.types : [];
     },
     updateDate(field) {
       var dateStr = this.item[field.fieldName];

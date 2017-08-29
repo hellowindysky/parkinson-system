@@ -71,6 +71,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
+import Util from 'utils/util.js';
 
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 import ExtensiblePanel from 'components/extensiblepanel/ExtensiblePanel';
@@ -189,10 +190,9 @@ export default {
     getTypes(fieldName, dictionary) {
       // 在 typegroup 里面查找到 fieldName 所对应的 types（选项组）
       var dictionaryField = this.getMatchedField(fieldName, dictionary);
-      var typeInfo = this.typeGroup.filter((type) => {
-        return type.typegroupcode === dictionaryField.fieldEnumId;
-      })[0];
-      return typeInfo ? typeInfo.types : [];
+      var value = dictionaryField.fieldEnumId;
+      var typeInfo = Util.getElement('typegroupcode', value, this.typeGroup);
+      return typeInfo.types ? typeInfo.types : [];
     },
     transform(item, fieldName, dictionary) {
       // 传递3个参数，最后一个代表需要去查询的字典

@@ -163,10 +163,9 @@ export default {
     getTypes(field, groupIndex) {
       // 在 typegroup 里面查找到 field 所对应的 types（选项组）
       var dictionaryField = this.getMatchedField(field, groupIndex);
-      var typeInfo = this.typeGroup.filter((type) => {
-        return type.typegroupcode === dictionaryField.fieldEnumId;
-      })[0];
-      return typeInfo ? typeInfo.types : [];
+      var value = dictionaryField.fieldEnumId;
+      var typeInfo = Util.getElement('typegroupcode', value, this.typeGroup);
+      return typeInfo.types ? typeInfo.types : [];
     },
     transformTypeCode(typeCode, field, groupIndex) {
       // 根据 typeCode 找到对应的 typeName
