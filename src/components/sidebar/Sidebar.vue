@@ -21,7 +21,7 @@
       <div class="title">统计分析</div>
       <div class="fold-icon iconfont"></div>
     </li>
-    <li class="item" :class="{'current': currentItem === 'configuration'}" @click="toggleConfigurationList">
+    <li class="item" :class="{'current-item': currentItem === 'configuration'}" @click="toggleConfigurationList">
       <div class="menu-icon iconfont icon-configuration"></div>
       <div class="title">系统配置</div>
       <div class="fold-icon iconfont" :class="showConfigurationList ? 'icon-up' : 'icon-down'"></div>
@@ -70,6 +70,14 @@ export default {
         return 'groupsManagement';
       } else if (/^\/patients\/otherList/.test(path)) {
         return 'otherPatients';
+      } else if (/^\/configuration\/featureConfiguration/.test(path)) {
+        return 'featureConfiguration';
+      } else if (/^\/configuration\/userManagement/.test(path)) {
+        return 'userManagement';
+      } else if (/^\/configuration\/roleManagement/.test(path)) {
+        return 'roleManagement';
+      } else if (/^\/configuration\/dictionaryManagement/.test(path)) {
+        return 'dictionaryManagement';
       }
     }
   },
@@ -99,16 +107,28 @@ export default {
       }
     },
     chooseFeatureConfiguration() {
-
+      // 如果当前路径不是以“/configuration/featureConfiguration”开头了，才发生跳转
+      if (!/^\/configuration\/featureConfiguration/.test(this.$route.path)) {
+        this.$router.push({name: 'featureConfiguration'});
+      }
     },
     chooseUserManagement() {
-
+      // 如果当前路径不是以“/configuration/userManagement”开头了，才发生跳转
+      if (!/^\/configuration\/userManagement/.test(this.$route.path)) {
+        this.$router.push({name: 'userManagement'});
+      }
     },
     chooseRoleManagement() {
-
+      // 如果当前路径不是以“/configuration/roleManagement”开头了，才发生跳转
+      if (!/^\/configuration\/roleManagement/.test(this.$route.path)) {
+        this.$router.push({name: 'roleManagement'});
+      }
     },
     chooseDictionaryManagement() {
-
+      // 如果当前路径不是以“/configuration/dictionaryManagement”开头了，才发生跳转
+      if (!/^\/configuration\/dictionaryManagement/.test(this.$route.path)) {
+        this.$router.push({name: 'dictionaryManagement'});
+      }
     }
   },
   mounted() {
