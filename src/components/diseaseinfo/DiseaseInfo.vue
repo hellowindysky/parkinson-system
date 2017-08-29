@@ -121,7 +121,7 @@ export default {
 
       // 对于那些 uiType 为 5 的字段来说，我们需要将形如 [1,2] 这样的数组转化为 "1,2"这样的字符串
       this.restoreCopyInfo();
-      console.log(this.copyInfo);
+
       // 点击提交按钮，将修改后的 copyInfo 提交到服务器，一旦提交成功，diseaseInfo也会更新，这个时候再切换回阅读状态
       this.copyInfo.patientId = this.$route.params.id;
       modifyPatientDiseaseInfo(this.copyInfo).then(() => {
@@ -262,7 +262,8 @@ export default {
         // must 为 1 代表必填，为 2 代表选填
         var isEmptyValue = !copyFieldValue && copyFieldValue !== 0;
         var isEmptyArray = copyFieldValue instanceof Array && copyFieldValue.length === 0;
-        if (isEmptyValue || isEmptyArray) {
+        var isEmptyDate = copyFieldValue && copyFieldValue instanceof String && copyFieldValue.indexOf('NaN') > -1;
+        if (isEmptyValue || isEmptyArray || isEmptyDate) {
           // 下面这个方法将响应属性添加到嵌套的对象上，这样 Vue 才能实时检测和渲染
           this.$set(this.warningResults, fieldName, '必填项');
           return;
