@@ -67,7 +67,7 @@ import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 
-const halfLineFieldList = ['diseaseType', 'ariTime', 'firTime', 'surTime'];
+const HALF_LINE_FIELD_LIST = ['diseaseType', 'ariTime', 'firTime', 'surTime'];
 
 export default {
   props: {
@@ -190,7 +190,7 @@ export default {
       var classNameList = [];
 
       // 判断该字段是否是半行
-      if (halfLineFieldList.indexOf(name) > -1) {
+      if (HALF_LINE_FIELD_LIST.indexOf(name) > -1) {
         classNameList.push('half-line');
       }
       // 判断该字段的名字是否比较长
@@ -206,7 +206,7 @@ export default {
     checkIfHalfLine(field, groupIndex) {
       var dictionaryField = this.getMatchedField(field, groupIndex);
       // 判断该字段是否跨行
-      return halfLineFieldList.indexOf(dictionaryField.fieldName) > -1;
+      return HALF_LINE_FIELD_LIST.indexOf(dictionaryField.fieldName) > -1;
     },
     getUIType(field, groupIndex) {
       // uiType类型 0/无 1/输入框 2/数字箭头 3/单选下拉框 4/单选按纽 5/多选复选框 6/日期 7/日期时间
