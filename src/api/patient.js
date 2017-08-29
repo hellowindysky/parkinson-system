@@ -24,7 +24,7 @@ export function getPatientList() {
   var request = {
     "userId": 93242,
     "accountNumber": "13265852476",
-    "userType": 1,
+    "userType": 2,
     "orgId": 34,
     "orgType": 2,
     "pageNo": 1,
@@ -41,7 +41,7 @@ export function getPatientInfo(patientId) {
   var request = {
     "userId": 93242,
     "accountNumber": "13265852476",
-    "userType": 1,
+    "userType": 2,
     "orgId": 34,
     "orgType": 2,
     "patientId": patientIdNum,
@@ -56,7 +56,7 @@ export function modifyPatientInfo(patientInfo) {
   var request = {
     "userId": 93242,
     "accountNumber": "13265852476",
-    "userType": 1,
+    "userType": 2,
     "orgId": 34,
     "orgType": 2,
     "patientInfo": patientInfo
@@ -71,7 +71,7 @@ export function modifyPatientDiseaseInfo(patientDiseaseInfo) {
   var request = {
     "userId": 93242,
     "accountNumber": "13265852476",
-    "userType": 1,
+    "userType": 2,
     "orgId": 34,
     "orgType": 2,
     "patientDiseaseInfo": patientDiseaseInfo
@@ -88,7 +88,7 @@ export function getPatientMedHistoryList(patientId) {
   var request = {
     "userId": 93242,
     "accountNumber": "13265852476",
-    "userType": 1,
+    "userType": 2,
     "orgId": 34,
     "orgType": 2,
     "patientId": patientIdNum
