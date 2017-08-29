@@ -199,7 +199,7 @@ export default {
         // 下面这个方法将响应属性添加到嵌套的对象上，这样 Vue 才能实时检测和渲染
         this.$set(this.warningResults, fieldName, '必填项');
 
-      } else if (copyFieldValue.toString().indexOf(' ') > -1) {
+      } else if (copyFieldValue && copyFieldValue.toString().indexOf(' ') > -1) {
         this.$set(this.warningResults, fieldName, '不能包含空格');
 
       } else {

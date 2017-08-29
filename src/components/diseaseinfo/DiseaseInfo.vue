@@ -269,7 +269,7 @@ export default {
         }
 
       }
-      if (copyFieldValue.toString().indexOf(' ') > -1) {
+      if (copyFieldValue && copyFieldValue.toString().indexOf(' ') > -1) {
         this.$set(this.warningResults, fieldName, '不能包含空格');
 
       } else {
