@@ -1,0 +1,85 @@
+<template>
+    <div class='secondbar-content'>
+        <ul class='secondbar-wrapper'>
+            <li class="tab left-tab" :class="{'current-tab': currentTab === 'configpersonalinf'}" @click="chooseconfigPersonal">个人信息</li>
+            <li class="tab right-tab" :class="{'current-tab': currentTab === 'configdiagnosticinfo'}" @click="chooseConfigDiagnostic">诊断信息</li>
+        </ul>
+    </div>
+</template>
+
+<script>
+export default {
+  computed: {
+    currentTab() {
+      var path = this.$route.path;
+      var rePersonal = new RegExp(/\/configpersonalinf(\/|$)/);
+      var reDiagnostic = new RegExp(/\/configdiagnosticinfo(\/|$)/);
+      if (rePersonal.test(path)) {
+        return 'configpersonalinf';
+      } else if (reDiagnostic.test(path)) {
+        return 'configdiagnosticinfo';
+      } else {
+        // 逻辑正确的话，不会返回这行的。只是怕以后路由修改，出现问题。
+        return 'something wrong here';
+      }
+    }
+  }, 
+  methods: {
+    chooseconfigPersonal() {
+      if (!/\/configpersonalinf(\/|$)/.test(this.$route.path)) {
+        this.$router.push({ name: 'configpersonalinf' });
+      }
+    },
+    chooseConfigDiagnostic() {
+      if (!/\/configdiagnosticinfo(\/|$)/.test(this.$route.path)) {
+        this.$router.push({ name: 'configdiagnosticinfo' });
+      }
+    }
+  },
+  mounted() {
+    if (!/\/configpersonalinf(\/|$)/.test(this.$route.path)) {
+      this.$router.push({ name: 'configpersonalinf' });
+    }
+  }      
+};
+</script>
+
+<style lang="less" scoped>
+@import "~styles/variables.less";
+@tabs-wrapper-height: 40px;
+@tab-width: 70px;
+@first-tab-x: 20px;
+@second-tab-x: 120px;
+
+@margin-right: 15px;
+.secondbar-wrapper {
+    position: relative;
+    margin: 0 @margin-right @vertical-spacing 0;
+    height: @tabs-wrapper-height;
+    background-color: @background-color;
+    box-shadow: 0 10px 10px @screen-color;
+    .tab {
+        list-style: none;
+        position: absolute;
+        width: @tab-width;
+        line-height: 40px;
+        box-sizing: border-box;
+        font-size: @large-font-size;
+        font-weight: bold;
+        cursor: pointer;
+        color: @inverse-font-color;
+        &:hover {
+            color: darken(@inverse-font-color, 10%);
+        }
+        &.left-tab {
+            left: @first-tab-x;
+        }
+        &.right-tab {
+            left: @second-tab-x;
+        }
+        &.current-tab {
+            color: @button-color;
+        }
+    }
+}
+</style>
