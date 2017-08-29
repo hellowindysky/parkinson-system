@@ -2,6 +2,26 @@
   <div class="modal-box-wrapper" v-show="displayModal">
     <div class="modal-box">
       <h3 class="title">{{title}}</h3>
+
+      <!-- 这个 field 是专门为个人史准备的，用来确定最终的 template 到底是哪个子类 -->
+      <div class="field" v-show="this.modalType === this.PERSON_MODAL">
+        <span class="field-name">
+          个人史类型
+          <span class="required-mark">*</span>
+        </span>
+        <span class="field-input">
+          <el-select v-model="subModalType" :class="{'warning': false}"
+           placeholder="请输入个人史类型" @change="">
+            <el-option label="饮酒史" :value="WINE_MODAL"></el-option>
+            <el-option label="吸烟史" :value="SMOKE_MODAL"></el-option>
+            <el-option label="喝茶史" :value="TEA_MODAL"></el-option>
+            <el-option label="咖啡史" :value="COFFEE_MODAL"></el-option>
+            <el-option label="锻炼史" :value="EXERCISE_MODAL"></el-option>
+          </el-select>
+        </span>
+      </div>
+      <div class="seperate-line" v-show="this.modalType === this.PERSON_MODAL && this.subModalType !== ''"></div>
+
       <div class="field" v-for="field in template">
         <span class="field-name">
           {{field.cnfieldName}}
@@ -42,6 +62,7 @@ export default {
     return {
       displayModal: false,
       modalType: '',
+      subModalType: '',
       title: '',
       item: {},
       warningResults: {}
@@ -94,7 +115,20 @@ export default {
       } else if (this.modalType === this.FAMILY_MODAL) {
         return this.familyHistoryTemplate;
       } else if (this.modalType === this.PERSON_MODAL) {
+
         // 如果是个人史面板，则有几个子模版，需要在选择个人史类型后，自动确定新的模版
+        if (this.subModalType === this.WINE_MODAL) {
+          return this.wineHistoryTemplate;
+        } else if (this.subModalType === this.TEA_MODAL) {
+          return this.teaHistoryTemplate;
+        } else if (this.subModalType === this.COFFEE_MODAL) {
+          return this.coffeeHistoryTemplate;
+        } else if (this.subModalType === this.SMOKE_MODAL) {
+          return this.smokeHistoryTemplate;
+        } else if (this.subModalType === this.EXERCISE_MODAL) {
+          return this.exerciseHistoryTemplate;
+        }
+
         return [];
       } else if (this.modalType === this.TOXIC_MODAL) {
         return this.toxicExposureHistoryTemplate;
@@ -303,13 +337,13 @@ export default {
     .seperate-line {
       width: 90%;
       height: 1px;
-      margin: 20px auto 0;
+      margin: 10px auto;
       background-color: @light-gray-color;
     }
     .button {
       display: inline-block;
       width: 100px;
-      margin: 20px;
+      margin: 10px 20px 20px 20px;
       height: 30px;
       line-height: 30px;
       color: #fff;
