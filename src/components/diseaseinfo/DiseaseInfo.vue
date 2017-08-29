@@ -105,6 +105,7 @@ export default {
       this.shallowCopy(this.diseaseInfo);
       this.changeCopyInfo();
       this.mode = this.READING_MODE;
+      this.clearWarning();
     },
     submit() {
       // 首先检查是否每个字段都合格，检查一遍之后，如果 warningResults 的所有属性值都为空，就证明表单符合要求
@@ -282,6 +283,11 @@ export default {
     getWarningText(fieldName) {
       var warningResult = this.warningResults[fieldName];
       return warningResult ? warningResult : '';
+    },
+    clearWarning() {
+      for (let key in this.warningResults) {
+        this.warningResults[key] = null;
+      }
     }
   },
   watch: {
