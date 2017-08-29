@@ -15,6 +15,9 @@ import GroupInfo from 'components/groupinfo/GroupInfo';
 import PersonalInfo from 'components/personalinfo/PersonalInfo';
 import DiagnosticInfo from 'components/diagnosticinfo/DiagnosticInfo';
 
+import FeatureConfiguration from 'components/featureConfiguration/FeatureConfiguration';
+import secondbar from 'components/configuration/secondbar';
+
 Vue.use(Router);
 
 export default new Router({
@@ -101,7 +104,37 @@ export default new Router({
           children: [
             {
               path: 'featureConfiguration',
-              name: 'featureConfiguration'
+              component: FeatureConfiguration,
+              name: 'featureConfiguration',
+              children: [
+                {
+                  path: 'minepait',
+                  name: 'minepait',
+                  component: secondbar,
+                  children: [
+                    {
+                      path: 'configpersonalinf',
+                      name: 'configpersonalinf'
+                    },
+                    {
+                      path: 'configdiagnosticinfo',
+                      name: 'configdiagnosticinfo'
+                    }
+                  ]
+                },
+                {
+                  path: 'groupmana',
+                  name: 'groupmana'
+                },
+                {
+                  path: 'department',
+                  name: 'department'
+                },
+                {
+                  path: 'statisticalanalysis',
+                  name: 'statisticalanalysis'
+                }
+              ]
             },
             {
               path: 'userManagement',

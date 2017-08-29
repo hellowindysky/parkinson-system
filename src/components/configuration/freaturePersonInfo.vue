@@ -1,12 +1,13 @@
-<template lang="html">
-    <router-view></router-view>
+<template>
+    
 </template>
 
 <script>
 export default {
+
 };
 </script>
 
 <style lang="less" scoped>
-
+@import "~styles/variables.less";
 </style>
