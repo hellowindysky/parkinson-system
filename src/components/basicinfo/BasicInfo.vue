@@ -27,7 +27,8 @@
               2
             </span>
             <span v-else-if="getUIType(field, groupIndex)===3">
-              <el-select v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}" @change="updateWarning(field)">
+              <el-select v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
+               :placeholder="getMatchedField(field, groupIndex).cnFieldDesc" @change="updateWarning(field)">
                 <el-option v-for="type in getTypes(field, groupIndex)" :label="type.typeName"
                  :value="type.typeCode" :key="type.typeCode"></el-option>
               </el-select>
@@ -39,8 +40,8 @@
               5
             </span>
             <span v-else-if="getUIType(field, groupIndex)===6">
-              <el-date-picker v-model="copyInfo[field.fieldName]" type="date" placeholder="选择日期"
-               :picker-options="futureDisabledptions" @change="updateDate(field)"></el-date-picker>
+              <el-date-picker v-model="copyInfo[field.fieldName]" type="date" :picker-options="futureDisabledptions"
+               :placeholder="getMatchedField(field, groupIndex).cnFieldDesc" @change="updateDate(field)"></el-date-picker>
             </span>
             <span v-else-if="getUIType(field, groupIndex)===7">
               7

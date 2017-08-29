@@ -10,16 +10,17 @@
         <span class="field-input">
           <span v-if="getUIType(field)===1">
             <el-input v-model="item[field.fieldName]" :class="{'warning': false}"
-             :placeholder="getMatchedField(field).cnFieldDesc"></el-input>
+             :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)"></el-input>
           </span>
           <span v-else-if="getUIType(field)===3">
-            <el-select v-model="item[field.fieldName]" :class="{'warning': false}">
+            <el-select v-model="item[field.fieldName]" :class="{'warning': false}"
+             :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)">
               <el-option v-for="type in getTypes(field)" :label="type.typeName"
                :value="type.typeCode" :key="type.typeCode"></el-option>
             </el-select>
           </span>
           <span v-else-if="getUIType(field)===6">
-            <el-date-picker v-model="item[field.fieldName]" type="date" placeholder="选择日期"
+            <el-date-picker v-model="item[field.fieldName]" type="date" :placeholder="getMatchedField(field).cnFieldDesc"
              format="yyyy-MM-dd" @change="updateDate(field)"></el-date-picker>
           </span>
         </span>

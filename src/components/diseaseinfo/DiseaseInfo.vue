@@ -30,7 +30,8 @@
               2
             </span>
             <span v-else-if="getUIType(field, groupIndex)===3">
-              <el-select v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}" @change="updateWarning(field)">
+              <el-select v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
+               :placeholder="getMatchedField(field, groupIndex).cnFieldDesc" @change="updateWarning(field)">
                 <el-option v-for="type in getTypes(field, groupIndex)" :label="type.typeName"
                  :value="type.typeCode" :key="type.typeCode"></el-option>
               </el-select>
@@ -39,13 +40,14 @@
               4
             </span>
             <span v-else-if="getUIType(field, groupIndex)===5">
-              <el-checkbox-group v-model="copyInfo[field.fieldName]" @change="updateWarning(field)">
+              <el-checkbox-group v-model="copyInfo[field.fieldName]" @change="updateWarning(field)"
+               :placeholder="getMatchedField(field, groupIndex).cnFieldDesc">
                 <el-checkbox v-for="type in getTypes(field, groupIndex)" :label="type.typeCode"
                  :key="type.typeCode">{{type.typeName}}</el-checkbox>
               </el-checkbox-group>
             </span>
             <span v-else-if="getUIType(field, groupIndex)===6">
-              <el-date-picker v-model="copyInfo[field.fieldName]" type="date" placeholder="选择日期"
+              <el-date-picker v-model="copyInfo[field.fieldName]" type="date" :placeholder="getMatchedField(field, groupIndex).cnFieldDesc"
                format="yyyy-MM-dd" @change="updateDate(field)"></el-date-picker>
             </span>
             <span v-else-if="getUIType(field, groupIndex)===7">
