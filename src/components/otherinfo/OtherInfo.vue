@@ -182,10 +182,7 @@ export default {
     },
     getMatchedField(fieldName, dictionary) {
       // 在字典项中查询该名字所对应的字段，从而方便我们得到该字段的详细信息
-      var matchedField = dictionary.filter((dictionaryField) => {
-        return dictionaryField.fieldName === fieldName;
-      })[0];
-      return matchedField ? matchedField : {};
+      return Util.getElement('fieldName', fieldName, dictionary);
     },
     getTypes(fieldName, dictionary) {
       // 在 typegroup 里面查找到 fieldName 所对应的 types（选项组）
