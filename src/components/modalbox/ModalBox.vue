@@ -239,7 +239,8 @@ export default {
     width: 600px;
     background-color: @background-color;
     .title {
-      padding: 10px 0;
+      padding: 30px 0 10px;
+      font-size: @large-font-size;
     }
     .field {
       padding: 10px 0;
