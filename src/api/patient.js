@@ -23,8 +23,8 @@ function encapsulatePromise(url, request) {
 export function getPatientList() {
   var request = {
     "userId": 93242,
-    "accountNumber": "13265852476",
-    "userType": 1,
+    "accountNumber": "15527231713",
+    "userType": 2,
     "orgId": 34,
     "orgType": 2,
     "pageNo": 1,
@@ -40,8 +40,8 @@ export function getPatientInfo(patientId) {
   var patientIdNum = parseInt(patientId, 10);
   var request = {
     "userId": 93242,
-    "accountNumber": "13265852476",
-    "userType": 1,
+    "accountNumber": "15527231713",
+    "userType": 2,
     "orgId": 34,
     "orgType": 2,
     "patientId": patientIdNum,
@@ -55,8 +55,8 @@ export function getPatientInfo(patientId) {
 export function modifyPatientInfo(patientInfo) {
   var request = {
     "userId": 93242,
-    "accountNumber": "13265852476",
-    "userType": 1,
+    "accountNumber": "15527231713",
+    "userType": 2,
     "orgId": 34,
     "orgType": 2,
     "patientInfo": patientInfo
@@ -70,8 +70,8 @@ export function modifyPatientInfo(patientInfo) {
 export function modifyPatientDiseaseInfo(patientDiseaseInfo) {
   var request = {
     "userId": 93242,
-    "accountNumber": "13265852476",
-    "userType": 1,
+    "accountNumber": "15527231713",
+    "userType": 2,
     "orgId": 34,
     "orgType": 2,
     "patientDiseaseInfo": patientDiseaseInfo
@@ -87,8 +87,8 @@ export function getPatientMedHistoryList(patientId) {
   var patientIdNum = parseInt(patientId, 10);
   var request = {
     "userId": 93242,
-    "accountNumber": "13265852476",
-    "userType": 1,
+    "accountNumber": "15527231713",
+    "userType": 2,
     "orgId": 34,
     "orgType": 2,
     "patientId": patientIdNum

@@ -30,7 +30,8 @@
               2
             </span>
             <span v-else-if="getUIType(field, groupIndex)===3">
-              <el-select v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}" @change="updateWarning(field)">
+              <el-select v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
+               :placeholder="getMatchedField(field, groupIndex).cnFieldDesc" @change="updateWarning(field)">
                 <el-option v-for="type in getTypes(field, groupIndex)" :label="type.typeName"
                  :value="type.typeCode" :key="type.typeCode"></el-option>
               </el-select>
@@ -39,13 +40,14 @@
               4
             </span>
             <span v-else-if="getUIType(field, groupIndex)===5">
-              <el-checkbox-group v-model="copyInfo[field.fieldName]" @change="updateWarning(field)">
+              <el-checkbox-group v-model="copyInfo[field.fieldName]" @change="updateWarning(field)"
+               :placeholder="getMatchedField(field, groupIndex).cnFieldDesc">
                 <el-checkbox v-for="type in getTypes(field, groupIndex)" :label="type.typeCode"
                  :key="type.typeCode">{{type.typeName}}</el-checkbox>
               </el-checkbox-group>
             </span>
             <span v-else-if="getUIType(field, groupIndex)===6">
-              <el-date-picker v-model="copyInfo[field.fieldName]" type="date" placeholder="选择日期"
+              <el-date-picker v-model="copyInfo[field.fieldName]" type="date" :placeholder="getMatchedField(field, groupIndex).cnFieldDesc"
                format="yyyy-MM-dd" @change="updateDate(field)"></el-date-picker>
             </span>
             <span v-else-if="getUIType(field, groupIndex)===7">
@@ -103,6 +105,7 @@ export default {
       this.shallowCopy(this.diseaseInfo);
       this.changeCopyInfo();
       this.mode = this.READING_MODE;
+      this.clearWarning();
     },
     submit() {
       // 首先检查是否每个字段都合格，检查一遍之后，如果 warningResults 的所有属性值都为空，就证明表单符合要求
@@ -119,7 +122,7 @@ export default {
 
       // 对于那些 uiType 为 5 的字段来说，我们需要将形如 [1,2] 这样的数组转化为 "1,2"这样的字符串
       this.restoreCopyInfo();
-      console.log(this.copyInfo);
+
       // 点击提交按钮，将修改后的 copyInfo 提交到服务器，一旦提交成功，diseaseInfo也会更新，这个时候再切换回阅读状态
       this.copyInfo.patientId = this.$route.params.id;
       modifyPatientDiseaseInfo(this.copyInfo).then(() => {
@@ -260,14 +263,15 @@ export default {
         // must 为 1 代表必填，为 2 代表选填
         var isEmptyValue = !copyFieldValue && copyFieldValue !== 0;
         var isEmptyArray = copyFieldValue instanceof Array && copyFieldValue.length === 0;
-        if (isEmptyValue || isEmptyArray) {
+        var isEmptyDate = copyFieldValue && copyFieldValue instanceof String && copyFieldValue.indexOf('NaN') > -1;
+        if (isEmptyValue || isEmptyArray || isEmptyDate) {
           // 下面这个方法将响应属性添加到嵌套的对象上，这样 Vue 才能实时检测和渲染
           this.$set(this.warningResults, fieldName, '必填项');
           return;
         }
 
       }
-      if (copyFieldValue.toString().indexOf(' ') > -1) {
+      if (copyFieldValue && copyFieldValue.toString().indexOf(' ') > -1) {
         this.$set(this.warningResults, fieldName, '不能包含空格');
 
       } else {
@@ -279,6 +283,11 @@ export default {
     getWarningText(fieldName) {
       var warningResult = this.warningResults[fieldName];
       return warningResult ? warningResult : '';
+    },
+    clearWarning() {
+      for (let key in this.warningResults) {
+        this.warningResults[key] = null;
+      }
     }
   },
   watch: {

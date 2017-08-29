@@ -24,8 +24,8 @@ function encapsulatePromise(url, request) {
 export function getDictionary() {
   var request = {
     "userId": 93242,
-    "accountNumber": "13265852476",
-    "userType": 1,
+    "accountNumber": "15527231713",
+    "userType": 2,
     "orgId": 34,
     "orgType": 2,
     "version": 43
@@ -39,8 +39,8 @@ export function getDictionary() {
 export function getTemplate() {
   var request = {
     "userId": 93242,
-    "accountNumber": "13265852476",
-    "userType": 1,
+    "accountNumber": "15527231713",
+    "userType": 2,
     "orgId": 34,
     "orgType": 2,
     "activeType": 1

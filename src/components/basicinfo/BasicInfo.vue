@@ -27,7 +27,8 @@
               2
             </span>
             <span v-else-if="getUIType(field, groupIndex)===3">
-              <el-select v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}" @change="updateWarning(field)">
+              <el-select v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
+               :placeholder="getMatchedField(field, groupIndex).cnFieldDesc" @change="updateWarning(field)">
                 <el-option v-for="type in getTypes(field, groupIndex)" :label="type.typeName"
                  :value="type.typeCode" :key="type.typeCode"></el-option>
               </el-select>
@@ -39,8 +40,8 @@
               5
             </span>
             <span v-else-if="getUIType(field, groupIndex)===6">
-              <el-date-picker v-model="copyInfo[field.fieldName]" type="date" placeholder="选择日期"
-               :picker-options="futureDisabledptions" @change="updateDate(field)"></el-date-picker>
+              <el-date-picker v-model="copyInfo[field.fieldName]" type="date" :picker-options="futureDisabledptions"
+               :placeholder="getMatchedField(field, groupIndex).cnFieldDesc" @change="updateDate(field)"></el-date-picker>
             </span>
             <span v-else-if="getUIType(field, groupIndex)===7">
               7
@@ -99,6 +100,7 @@ export default {
       // 点击取消按钮，将我们对 copyInfo 所做的临时修改全部放弃，还原其为 basicInfo 的复制对象
       this.shallowCopy(this.basicInfo);
       this.mode = this.READING_MODE;
+      this.clearWarning();
     },
     submit() {
       // 首先检查是否每个字段都合格，检查一遍之后，如果 warningResults 的所有属性值都为空，就证明表单符合要求
@@ -198,7 +200,7 @@ export default {
         // 下面这个方法将响应属性添加到嵌套的对象上，这样 Vue 才能实时检测和渲染
         this.$set(this.warningResults, fieldName, '必填项');
 
-      } else if (copyFieldValue.toString().indexOf(' ') > -1) {
+      } else if (copyFieldValue && copyFieldValue.toString().indexOf(' ') > -1) {
         this.$set(this.warningResults, fieldName, '不能包含空格');
 
       } else {
@@ -210,6 +212,11 @@ export default {
     getWarningText(fieldName) {
       var warningResult = this.warningResults[fieldName];
       return warningResult ? warningResult : '';
+    },
+    clearWarning() {
+      for (let key in this.warningResults) {
+        this.warningResults[key] = null;
+      }
     }
   },
   components: {

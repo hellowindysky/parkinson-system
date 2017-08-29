@@ -7,9 +7,10 @@ var getGroups = function(state, tableName) {
     return [];
 
   } else {
-    var groups = state.all.filter((table) => {
+    var table = state.all.filter((table) => {
       return table.tableName === tableName;
-    })[0].groups;
+    })[0];
+    var groups = table && table.groups ? table.groups : [];
 
     // 然后对这个数组进行加工，让它更扁平化，方便我们在组件中使用
     var processedGroups = [];
@@ -58,7 +59,7 @@ const getters = {
   },
   toxicExposureHistoryTemplate: (state) => {
     // 毒物接触史
-    return getFirstGroup(state, 'tc_cideexposed');
+    return getFirstGroup(state, 'tc_cideexposed_history');
   },
   coffeeHistoryTemplate: (state) => {
     // 咖啡史
