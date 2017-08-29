@@ -10,8 +10,9 @@
           <span class="required-mark">*</span>
         </span>
         <span class="field-input">
-          <el-select v-model="subModalType" :class="{'warning': false}"
-           placeholder="请输入个人史类型" @change="">
+          <span class="warning-text">{{getWarningText('subModal')}}</span>
+          <el-select v-model="subModalType" :class="{'warning': warningResults['subModal']}"
+           placeholder="请输入个人史类型" @change="chooseSubModal">
             <el-option label="饮酒史" :value="WINE_MODAL"></el-option>
             <el-option label="吸烟史" :value="SMOKE_MODAL"></el-option>
             <el-option label="喝茶史" :value="TEA_MODAL"></el-option>
@@ -152,9 +153,16 @@ export default {
     cancel() {
       this.displayModal = false;
       this.clearWarning();
+      this.item = {};
+      this.subModalType = '';
     },
     submit() {
-      // 首先检查是否每个字段都合格，检查一遍之后，如果 warningResults 的所有属性值都为空，就证明表单符合要求
+      // 对于特殊的个人史，检查 subModal 字段是否有被选择
+      if (this.subModalType === '') {
+        this.$set(this.warningResults, 'subModal', '请选择');
+      }
+
+      // 检查是否每个字段都合格，检查一遍之后，如果 warningResults 的所有属性值都为空，就证明表单符合要求
       for (let field of this.template) {
         this.updateWarning(field);
       }
@@ -166,6 +174,8 @@ export default {
 
       this.displayModal = false;
       this.clearWarning();
+      this.item = {};
+      this.subModalType = '';
     },
     initItem() {
       // 遍历当前的 template，对其中的每个 field，检查 this.item 下有没有名字对应的属性值，没有的化，就初始化为空字符串
@@ -236,6 +246,11 @@ export default {
     clearWarning() {
       for (let key in this.warningResults) {
         this.warningResults[key] = null;
+      }
+    },
+    chooseSubModal() {
+      if (this.subModalType !== '') {
+        this.warningResults['subModal'] = null;
       }
     }
   },
