@@ -178,7 +178,8 @@ export default {
         // must 为 1 代表必填，为 2 代表选填
         var isEmptyValue = !fieldValue && fieldValue !== 0;
         var isEmptyArray = fieldValue instanceof Array && fieldValue.length === 0;
-        if (isEmptyValue || isEmptyArray || fieldValue.indexOf('NaN') > -1) {
+        var isEmptyDate = fieldValue && fieldValue instanceof String && fieldValue.indexOf('NaN') > -1;
+        if (isEmptyValue || isEmptyArray || isEmptyDate) {
           // 下面这个方法将响应属性添加到嵌套的对象上，这样 Vue 才能实时检测和渲染
           this.$set(this.warningResults, fieldName, '必填项');
           return;
