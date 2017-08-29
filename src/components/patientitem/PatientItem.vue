@@ -2,9 +2,9 @@
   <div class="item" :class="{'current': selected}" @click="select">
     <img class="image" src="~img/profile.png" alt="">
     <div class="name">{{patient.name}}</div>
-    <div class="gender iconfont icon-male" :class="genderIcon"></div>
     <div class="date">{{patient.createDate}}</div>
-    <div class="age">？岁</div>
+    <div class="age">{{patient.age}}岁</div>
+    <div class="gender iconfont icon-male" :class="genderIcon"></div>
     <div class="location">{{patient.homeProvince}}</div>
   </div>
 </template>
@@ -69,12 +69,17 @@ export default {
     font-size: @normal-font-size;
     left: 60px;
     top: 10px;
+    width: 100px;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .gender {
     position: absolute;
     font-size: @small-font-size;
-    left: 110px;
-    top: 10px;
+    left: 60px;
+    top: 35px;
     &.icon-male {
       color: @male-color;
     }
@@ -88,13 +93,13 @@ export default {
   .age {
     position: absolute;
     font-size: @small-font-size;
-    left: 60px;
+    left: 85px;
     top: 35px;
   }
   .location {
     position: absolute;
     font-size: @small-font-size;
-    left: 100px;
+    left: 120px;
     top: 35px;
   }
 }
