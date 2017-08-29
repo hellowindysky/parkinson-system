@@ -154,7 +154,6 @@ export default {
     cancel() {
       this.displayModal = false;
       this.clearWarning();
-      this.item = {};
       this.subModalType = '';
     },
     submit() {
@@ -175,7 +174,6 @@ export default {
 
       this.displayModal = false;
       this.clearWarning();
-      this.item = {};
       this.subModalType = '';
     },
     initItem() {
