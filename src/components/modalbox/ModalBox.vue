@@ -203,11 +203,7 @@ export default {
     },
     updateDate(field) {
       var dateStr = this.item[field.fieldName];
-      var dateObj = new Date(dateStr);
-      var year = dateObj.getFullYear();
-      var month = dateObj.getMonth() + 1;
-      var date = dateObj.getDate();
-      this.item[field.fieldName] = year + '-' + month + '-' + date;
+      this.item[field.fieldName] = Util.simplifyDate(dateStr);
       this.updateWarning(field);
     },
     updateWarning(field) {

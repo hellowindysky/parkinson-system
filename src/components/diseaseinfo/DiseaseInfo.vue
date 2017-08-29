@@ -245,11 +245,7 @@ export default {
     },
     updateDate(field) {
       var dateStr = this.copyInfo[field.fieldName];
-      var dateObj = new Date(dateStr);
-      var year = dateObj.getFullYear();
-      var month = dateObj.getMonth() + 1;
-      var date = dateObj.getDate();
-      this.copyInfo[field.fieldName] = year + '-' + month + '-' + date;
+      this.copyInfo[field.fieldName] = Util.simplifyDate(dateStr);
       this.updateWarning(field);
     },
     updateWarning(field) {
