@@ -170,12 +170,8 @@ export default {
     transformTypeCode(typeCode, field, groupIndex) {
       // 根据 typeCode 找到对应的 typeName
       var types = this.getTypes(field, groupIndex);
-      if (types.length === 0) {
-        return '';
-      } else {
-        var matchedType = Util.getElement('typeCode', typeCode, types);
-        return matchedType.typeName ? matchedType.typeName : '';
-      }
+      var matchedType = Util.getElement('typeCode', typeCode, types);
+      return matchedType.typeName ? matchedType.typeName : '';
     },
     updateDate(field) {
       var dateStr = this.copyInfo[field.fieldName];
