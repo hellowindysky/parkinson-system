@@ -55,13 +55,14 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import { modifyPatientInfo } from 'api/patient.js';
 import Bus from 'utils/bus.js';
+import Util from 'utils/util.js';
+
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 
-import { modifyPatientInfo } from 'api/patient.js';
-
-const wholeLineFieldList = ['homeAddress'];
-const converToDecimalList = ['height', 'weight'];
+const WHOLE_LINE_FIELD_LIST = ['homeAddress'];
+const CONVERT_TO_DECIMAL_LIST = ['height', 'weight'];
 
 export default {
   props: {
@@ -116,7 +117,7 @@ export default {
       }
 
       // copyInfo 有几个字段的值在取过来的时候进行了特殊处理，这里在传回给服务器的时候要还原成一开始的格式
-      for (let fieldName of converToDecimalList) {
+      for (let fieldName of CONVERT_TO_DECIMAL_LIST) {
         if (this.copyInfo[fieldName]) {
           this.$set(this.copyInfo, fieldName, this.copyInfo[fieldName] * 10);
         }
@@ -136,7 +137,7 @@ export default {
 
       // 复制过来的 basicInfo 有几个字段的值需要特殊处理一下
       // 身高和体重的数值，在传输的时候用的是 Int 整型，例如 178.8 cm 在传输的时候用的数值是 1788
-      for (let fieldName of converToDecimalList) {
+      for (let fieldName of CONVERT_TO_DECIMAL_LIST) {
         if (this.copyInfo[fieldName]) {
           this.$set(this.copyInfo, fieldName, this.copyInfo[fieldName] / 10);
         }
@@ -148,15 +149,12 @@ export default {
       if (!matchedGroup) {
         matchedGroup = [];
       }
-      var matchedField = matchedGroup.filter((dictionaryField) => {
-        return dictionaryField.fieldName === field.fieldName;
-      })[0];
-      return matchedField ? matchedField : {};
+      return Util.getElement('fieldName', field.fieldName, matchedGroup);
     },
     checkIfWholeLine(field, groupIndex) {
       var dictionaryField = this.getMatchedField(field, groupIndex);
       // 判断该字段是否跨行
-      return wholeLineFieldList.indexOf(dictionaryField.fieldName) > -1;
+      return WHOLE_LINE_FIELD_LIST.indexOf(dictionaryField.fieldName) > -1;
     },
     getUIType(field, groupIndex) {
       // uiType类型 0/无 1/输入框 2/数字箭头 3/单选下拉框 4/单选按纽 5/多选复选框 6/日期 7/日期时间

@@ -62,10 +62,10 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import Bus from 'utils/bus.js';
-import FoldingPanel from 'components/foldingpanel/FoldingPanel';
-
 import { modifyPatientDiseaseInfo } from 'api/patient.js';
+import Bus from 'utils/bus.js';
+import Util from 'utils/util.js';
+import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 
 const halfLineFieldList = ['diseaseType', 'ariTime', 'firTime', 'surTime'];
 
@@ -181,10 +181,7 @@ export default {
       if (!matchedGroup) {
         matchedGroup = [];
       }
-      var matchedField = matchedGroup.filter((dictionaryField) => {
-        return dictionaryField.fieldName === field.fieldName;
-      })[0];
-      return matchedField ? matchedField : {};
+      return Util.getElement('fieldName', field.fieldName, matchedGroup);
     },
     checkField(field, groupIndex) {
       // 用来检测当前 field 的特殊样式
