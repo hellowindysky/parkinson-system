@@ -16,3 +16,11 @@ export function deepCopy(obj) {
   }
   return newobj;
 };
+
+export function isEmptyObject(obj) {
+  // 检查一个对象是否为 {}
+  for (var name in obj) {
+    return false;
+  }
+  return true;
+};
