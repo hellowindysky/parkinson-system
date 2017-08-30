@@ -183,20 +183,14 @@ export default {
     updateWarning(field) {
       var fieldName = field.fieldName;
       var copyFieldValue = this.copyInfo[fieldName];
-      if (field.must === 1) {
+      if (field.must === 1 && !copyFieldValue && copyFieldValue !== 0) {
         // must 为 1 代表必填，为 2 代表选填
 
         // !copyFieldValue 为真 代表 copyFieldValue 为 undefined, null, '', 0 这些值，
         // 但是 0 是有意义的值，所以要把 0 排除掉
-        var isEmptyValue = !copyFieldValue && copyFieldValue !== 0;
+        // 下面这个方法将响应属性添加到嵌套的对象上，这样 Vue 才能实时检测和渲染
+        this.$set(this.warningResults, fieldName, '必填项');
 
-        // 将日期控件置空时，绑定的数据会变成 'NaN-NaN-NaN' 这个字符串
-        var isEmptyDate = copyFieldValue && typeof copyFieldValue === 'string' && copyFieldValue.indexOf('NaN') > -1;
-
-        if (isEmptyValue || isEmptyDate) {
-          // 下面这个方法将响应属性添加到嵌套的对象上，这样 Vue 才能实时检测和渲染
-          this.$set(this.warningResults, fieldName, '必填项');
-        }
       } else if (copyFieldValue && copyFieldValue.toString().indexOf(' ') > -1) {
         this.$set(this.warningResults, fieldName, '不能包含空格');
 
