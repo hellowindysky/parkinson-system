@@ -257,6 +257,10 @@ export default {
       // 只有在 template 更新后，才去初始化 this.item 的值
       this.initItem();
     }
+  },
+  beforeDestroy() {
+    // 依然要记得，销毁组件之前解除绑定在自己身上的事件监听器·
+    Bus.$off(this.SHOW_MODAL_BOX, this.showPanel);
   }
 };
 </script>
