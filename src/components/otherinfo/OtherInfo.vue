@@ -4,7 +4,7 @@
 
       <extensible-panel class="panel" :mode="mode" :title="medHistoryTitle" v-on:addNewCard="addMedRecord">
         <card class="card" :mode="mode" v-for="item in medHistoryList" :key="item.medName"
-         :title="item.medName">
+         :title="item.medName" v-on:editCurrentCard="editMedRecord(item)">
           <div class="text first-line">一天{{item.medDose}}次</div>
           <div class="text start-time">{{item.medStart}} ~</div>
           <div class="text end-time">{{item.medEnd}}</div>
@@ -13,7 +13,7 @@
 
       <extensible-panel class="panel" :mode="mode" :title="diseaseHistoryTitle" v-on:addNewCard="addDiseaseRecord">
         <card class="card" :mode="mode" v-for="item in diseaseHistoryList" :key="item.surgeryHistory"
-         :title="item.surgeryHistory">
+         :title="item.surgeryHistory" v-on:editCurrentCard="editDiseaseRecord(item)">
           <div class="text first-line">是否住院： {{transform(item, 'isHospitalization', diseaseHistoryDictionary)}}</div>
           <div class="text start-time">{{item.beginTime}} ~</div>
           <div class="text end-time">{{item.endTime}}</div>
@@ -22,7 +22,7 @@
 
       <extensible-panel class="panel" :mode="mode" :title="familyHistoryTitle" v-on:addNewCard="addFamilyRecord">
         <card class="card" :mode="mode" v-for="item in familyHistoryList" :key="item.patientFamilyId"
-         :title="item.diseaseName">
+         :title="item.diseaseName" v-on:editCurrentCard="editFamilyRecord(item)">
           <div class="text first-line">{{transform(item, 'similarRole', familyHistoryDictionary)}}</div>
           <div class="text start-time">{{transform(item, 'diseaseType', familyHistoryDictionary)}}</div>
         </card>
@@ -30,27 +30,31 @@
 
       <extensible-panel class="panel" :mode="mode" :title="personHistoryTitle" v-on:addNewCard="addPersonRecord">
         <card class="card" :mode="mode" v-for="item in coffeeHistoryList" :key="item.patientHabitId"
-         :title="transform(item, 'patientHabitId', coffeeHistoryDictionary)">
+         :title="transform(item, 'patientHabitId', coffeeHistoryDictionary)"
+         v-on:editCurrentCard="editPersonRecord(item, COFFEE_MODAL)">
           <div class="text first-line">{{item.doseInfo}} 杯/周</div>
           <div class="text start-time">{{item.startTime}}</div>
         </card>
         <card class="card" :mode="mode" v-for="item in teaHistoryList" :key="item.patientHabitId"
-         :title="transform(item, 'patientHabitId', teaHistoryDictionary)">
+         :title="transform(item, 'patientHabitId', teaHistoryDictionary)"
+         v-on:editCurrentCard="editPersonRecord(item, TEA_MODAL)">
           <div class="text first-line">{{item.doseInfo}} 杯/周</div>
           <div class="text start-time">{{item.startTime}}</div>
         </card>
         <card class="card" :mode="mode" v-for="item in smokeHistoryList" :key="item.patientHabitId"
-         :title="transform(item, 'patientHabitId', smokeHistoryDictionary)">
+         :title="transform(item, 'patientHabitId', smokeHistoryDictionary)"
+         v-on:editCurrentCard="editPersonRecord(item, SMOKE_MODAL)">
           <div class="text first-line">{{item.doseInfo}} 支/天</div>
           <div class="text start-time">{{item.startTime}}</div>
         </card>
         <card class="card" :mode="mode" v-for="item in wineHistoryList" :key="item.patientHabitId"
-         :title="transform(item, 'patientHabitId', wineHistoryDictionary)">
+         :title="transform(item, 'patientHabitId', wineHistoryDictionary)"
+         v-on:editCurrentCard="editPersonRecord(item, WINE_MODAL)">
           <div class="text first-line">{{item.doseInfo}} mL/周</div>
           <div class="text start-time">{{item.startTime}}</div>
         </card>
         <card class="card" :mode="mode" v-for="item in exerciseHistoryList" :key="item.patientExerciseId"
-         :title="item.exeName">
+         :title="item.exeName" v-on:editCurrentCard="editPersonRecord(item, EXERCISE_MODAL)">
           <div class="text first-line">{{transform(item, 'grade', exerciseHistoryDictionary)}}</div>
           <div class="text second-line">{{transform(item, 'ageStage', exerciseHistoryDictionary)}}</div>
         </card>
@@ -58,7 +62,7 @@
 
       <extensible-panel class="panel" :mode="mode" :title="toxicHistoryTitle" v-on:addNewCard="addToxicRecord">
         <card class="card" :mode="mode" v-for="item in processedToxicList" :key="item.expmaterialName"
-         :title="item.expmaterialName">
+         :title="item.expmaterialName" v-on:editCurrentCard="editToxicRecord(item)">
           <div class="text first-line">{{item.exposedFrquency}}</div>
           <div class="text second-line">{{transform(item, 'lifeStage', toxicExposureHistoryDictionary)}}</div>
         </card>
@@ -201,17 +205,33 @@ export default {
       // 这里要传递 3 个参数，一个是 title，一个是当前数据对象（新建的时候为空），另一个是模态框的类型
       Bus.$emit(this.SHOW_MODAL_BOX, '新增用药史', {}, this.MEDICINE_MODAL);
     },
+    editMedRecord(item) {
+      Bus.$emit(this.SHOW_MODAL_BOX, '用药史', item, this.MEDICINE_MODAL);
+    },
     addDiseaseRecord() {
       Bus.$emit(this.SHOW_MODAL_BOX, '新增既往史', {}, this.DISEASE_MODAL);
+    },
+    editDiseaseRecord(item) {
+      Bus.$emit(this.SHOW_MODAL_BOX, '既往史', item, this.DISEASE_MODAL);
     },
     addFamilyRecord() {
       Bus.$emit(this.SHOW_MODAL_BOX, '新增家族史', {}, this.FAMILY_MODAL);
     },
+    editFamilyRecord(item) {
+      Bus.$emit(this.SHOW_MODAL_BOX, '家族史', item, this.FAMILY_MODAL);
+    },
     addPersonRecord() {
       Bus.$emit(this.SHOW_MODAL_BOX, '新增个人史', {}, this.PERSON_MODAL);
     },
+    editPersonRecord(item, modal) {
+      // 个人史下面有几个子类（咖啡史，喝茶史，饮酒史，吸烟史，锻炼史），作为第二个参数传进来
+      Bus.$emit(this.SHOW_MODAL_BOX, '个人史', item, modal);
+    },
     addToxicRecord() {
       Bus.$emit(this.SHOW_MODAL_BOX, '新增毒物接触史', {}, this.TOXIC_MODAL);
+    },
+    editToxicRecord(item) {
+      Bus.$emit(this.SHOW_MODAL_BOX, '新增毒物接触史', item, this.TOXIC_MODAL);
     }
   },
   mounted() {

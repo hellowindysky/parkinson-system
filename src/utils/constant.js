@@ -15,6 +15,7 @@ export default {
 
   SCROLL_AREA_SIZE_CHANGE: 'scrollAreaSizeChange',
   ADD_NEW_CARD: 'addNewCard',
+  EDIT_CURRENT_CARD: 'editCurrentCard',
   UPDATE_PATIENT_INFO: 'updatePatientInfo',
   SHOW_MODAL_BOX: 'showModalBox',
 

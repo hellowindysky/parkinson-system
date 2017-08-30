@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="card">
+  <div class="card" @click="clickSelf">
     <div class="title">{{title}}</div>
     <div class="iconfont icon-delete" v-show="mode === EDITING_MODE"></div>
     <slot></slot>
@@ -17,6 +17,11 @@ export default {
     title: {
       type: String,
       default: ''
+    }
+  },
+  methods: {
+    clickSelf() {
+      this.$emit(this.EDIT_CURRENT_CARD);
     }
   }
 };

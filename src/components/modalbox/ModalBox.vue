@@ -12,7 +12,7 @@
         <span class="field-input">
           <span class="warning-text">{{getWarningText('subModal')}}</span>
           <el-select v-model="subModalType" :class="{'warning': warningResults['subModal']}"
-           placeholder="请输入个人史类型" @change="chooseSubModal">
+           placeholder="请输入个人史类型" @change="chooseSubModal" :disabled="disableChangingSubModal">
             <el-option label="饮酒史" :value="WINE_MODAL"></el-option>
             <el-option label="吸烟史" :value="SMOKE_MODAL"></el-option>
             <el-option label="喝茶史" :value="TEA_MODAL"></el-option>
@@ -65,6 +65,7 @@ export default {
       displayModal: false,
       modalType: '',
       subModalType: '',
+      disableChangingSubModal: false,
       title: '',
       item: {},
       warningResults: {}
@@ -140,7 +141,19 @@ export default {
   methods: {
     showPanel(title, item, modalType) {
       this.displayModal = true;
-      this.modalType = modalType;
+
+      // 如果传过来的 modalType 是个人史下的子类，则将其赋值为 this.subModalType，而 this.modalType 还是个人史
+      // 同时，还要禁止个人史下子类的选择，因为此时子类不可更换
+      const SUB_MODAL_LIST = [this.TEA_MODAL, this.COFFEE_MODAL, this.WINE_MODAL, this.SMOKE_MODAL, this.EXERCISE_MODAL];
+      if (SUB_MODAL_LIST.indexOf(modalType) > -1) {
+        this.subModalType = modalType;
+        this.modalType = this.PERSON_MODAL;
+        this.disableChangingSubModal = true;
+      } else {
+        this.modalType = modalType;
+        this.disableChangingSubModal = false;
+      }
+
       this.title = title;
       this.item = Object.assign({}, item);
 
