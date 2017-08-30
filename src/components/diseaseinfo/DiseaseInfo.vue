@@ -222,12 +222,8 @@ export default {
     transformTypeCode(typeCode, field, groupIndex) {
       // 根据 typeCode 找到对应的 typeName
       var types = this.getTypes(field, groupIndex);
-      if (types.length === 0) {
-        return '';
-      } else {
-        var matchedType = Util.getElement('typeCode', typeCode, types);
-        return matchedType.typeName ? matchedType.typeName : '';
-      }
+      var matchedType = Util.getElement('typeCode', typeCode, types);
+      return matchedType.typeName ? matchedType.typeName : '';
     },
     translateCodes(typeCodes, field, groupIndex) {
       // 将形如 [1, 2, 4] 的字段信息 转换成 '内容 1，内容 2，内容 4' 这样的单字符串进行显示
@@ -322,9 +318,9 @@ export default {
 @long-field-name-width: 160px;
 
 .disease-info {
-  padding: 0 25px;
+  padding: 0 25px 20px;
   .group {
-    padding: 15px 0;
+    padding: 0;
     text-align: left;
     .field {
       display: inline-block;
@@ -350,8 +346,8 @@ export default {
         }
       }
       &.multiple-select {
-        margin-top: 5px;
-        height: @field-height * 1.3;
+        transform: translateY(@field-height * 0.4);
+        height: @field-height * 1.0;
         .field-name {
           line-height: @field-height * 0.3;
         }
