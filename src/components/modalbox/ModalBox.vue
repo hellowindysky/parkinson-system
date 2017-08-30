@@ -147,13 +147,19 @@ export default {
       // 每次打开这个模态框，都会重新初始化 this.item
       this.initItem();
 
+      // 清空警告信息
+      // 改变 item 的时候会触发 warningResults 的跟踪变化（这里的自动触发是由 el-date-picker 的 v-model造成的）
+      // 因此这一步要等到 item 变化结束之后再执行，我们将其放到下一个事件循环 tick 中
+      this.$nextTick(() => {
+        this.clearWarning();
+      });
+
       for (var i = 0; i < this.template.length; i++) {
         // console.log(this.template[i].fieldName);
       }
     },
     cancel() {
       this.displayModal = false;
-      this.clearWarning();
       this.subModalType = '';
     },
     submit() {
@@ -173,7 +179,6 @@ export default {
       }
 
       this.displayModal = false;
-      this.clearWarning();
       this.subModalType = '';
     },
     initItem() {
@@ -213,8 +218,7 @@ export default {
         // must 为 1 代表必填，为 2 代表选填
         var isEmptyValue = !fieldValue && fieldValue !== 0;
         var isEmptyArray = fieldValue instanceof Array && fieldValue.length === 0;
-        var isEmptyDate = fieldValue && fieldValue instanceof String && fieldValue.indexOf('NaN') > -1;
-        if (isEmptyValue || isEmptyArray || isEmptyDate) {
+        if (isEmptyValue || isEmptyArray) {
           // 下面这个方法将响应属性添加到嵌套的对象上，这样 Vue 才能实时检测和渲染
           this.$set(this.warningResults, fieldName, '必填项');
           return;
@@ -253,6 +257,10 @@ export default {
       // 只有在 template 更新后，才去初始化 this.item 的值
       this.initItem();
     }
+  },
+  beforeDestroy() {
+    // 依然要记得，销毁组件之前解除绑定在自己身上的事件监听器·
+    Bus.$off(this.SHOW_MODAL_BOX, this.showPanel);
   }
 };
 </script>

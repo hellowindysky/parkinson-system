@@ -88,14 +88,17 @@ export default {
       }
     },
     updateScrollbar() {
-      // 之所以弃用 update 方法，是因为它在某些情况下会出现问题，导致滚动条不能有效刷新
-      // Ps.update(this.$refs.scrollArea);
+      // 如果不写在 $nextTick() 里面，第一次加载的时候也许会不能正确计算高度。估计是因为子组件还没有全部加载所造成的。
+      this.$nextTick(() => {
+        // 之所以弃用 update 方法，是因为它在某些情况下会出现问题，导致滚动条不能有效刷新
+        // Ps.update(this.$refs.scrollArea);
 
-      // 如果之前有绑定滚动条的话，先进行解除
-      Ps.destroy(this.$refs.scrollArea);
-      Ps.initialize(this.$refs.scrollArea, {
-        wheelSpeed: 1,
-        minScrollbarLength: 40
+        // 如果之前有绑定滚动条的话，先进行解除
+        Ps.destroy(this.$refs.scrollArea);
+        Ps.initialize(this.$refs.scrollArea, {
+          wheelSpeed: 1,
+          minScrollbarLength: 40
+        });
       });
     },
     updatePatientInfo() {
@@ -110,10 +113,7 @@ export default {
 
     this.checkRoute();
 
-    setTimeout(() => {
-      // 如果不写在这个里面，第一次加载的时候也许会不能正确计算高度。估计是因为子组件还没有全部加载所造成的。
-      this.updateScrollbar();
-    }, 0);
+    this.updateScrollbar();
 
     // 监听折叠面板是否发生状态的改变，如果发生了，那么就需要重新计算滚动区域的高度
     Bus.$on(this.SCROLL_AREA_SIZE_CHANGE, this.updateScrollbar);
@@ -125,6 +125,11 @@ export default {
     $route() {
       this.checkRoute();
     }
+  },
+  beforeDestroy() {
+    // 在组件销毁前，移除绑定在当前组件下的事件监听器
+    Bus.$off(this.SCROLL_AREA_SIZE_CHANGE, this.updateScrollbar);
+    Bus.$off(this.UPDATE_PATIENT_INFO, this.updatePatientInfo);
   }
 };
 </script>

@@ -40,8 +40,10 @@
               5
             </span>
             <span v-else-if="getUIType(field, groupIndex)===6">
-              <el-date-picker v-model="copyInfo[field.fieldName]" type="date" :picker-options="futureDisabledptions"
-               :placeholder="getMatchedField(field, groupIndex).cnFieldDesc" @change="updateDate(field)"></el-date-picker>
+              <el-date-picker v-model="copyInfo[field.fieldName]" type="date" :class="{'warning': warningResults[field.fieldName]}"
+               :picker-options="futureDisabledptions" :placeholder="getMatchedField(field, groupIndex).cnFieldDesc"
+               @change="updateDate(field)">
+              </el-date-picker>
             </span>
             <span v-else-if="getUIType(field, groupIndex)===7">
               7
@@ -96,12 +98,12 @@ export default {
   methods: {
     startEditing() {
       this.mode = this.EDITING_MODE;
+      this.clearWarning();
     },
     cancel() {
       // 点击取消按钮，将我们对 copyInfo 所做的临时修改全部放弃，还原其为 basicInfo 的复制对象
       this.shallowCopy(this.basicInfo);
       this.mode = this.READING_MODE;
-      this.clearWarning();
     },
     submit() {
       // 首先检查是否每个字段都合格，检查一遍之后，如果 warningResults 的所有属性值都为空，就证明表单符合要求
@@ -183,6 +185,7 @@ export default {
       var copyFieldValue = this.copyInfo[fieldName];
       if (field.must === 1 && !copyFieldValue && copyFieldValue !== 0) {
         // must 为 1 代表必填，为 2 代表选填
+
         // !copyFieldValue 为真 代表 copyFieldValue 为 undefined, null, '', 0 这些值，
         // 但是 0 是有意义的值，所以要把 0 排除掉
         // 下面这个方法将响应属性添加到嵌套的对象上，这样 Vue 才能实时检测和渲染

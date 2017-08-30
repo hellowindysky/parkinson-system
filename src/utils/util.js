@@ -11,6 +11,10 @@ function getElement(keyName, value, array) {
 
 // 将完整的时间字符串（包含时分秒，时区等信息）简化为适合 element-ui 控件的 yyyy-MM-dd 的形式
 function simplifyDate(dateStr) {
+  // 如果参数本身就为空，那么直接返回 undefined
+  if (!dateStr) {
+    return undefined;
+  }
   var dateObj = new Date(dateStr);
   var year = dateObj.getFullYear();
   var month = dateObj.getMonth() + 1;

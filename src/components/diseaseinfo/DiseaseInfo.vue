@@ -47,8 +47,8 @@
               </el-checkbox-group>
             </span>
             <span v-else-if="getUIType(field, groupIndex)===6">
-              <el-date-picker v-model="copyInfo[field.fieldName]" type="date" :placeholder="getMatchedField(field, groupIndex).cnFieldDesc"
-               format="yyyy-MM-dd" @change="updateDate(field)"></el-date-picker>
+              <el-date-picker v-model="copyInfo[field.fieldName]" type="date" :class="{'warning': warningResults[field.fieldName]}"
+               :placeholder="getMatchedField(field, groupIndex).cnFieldDesc" format="yyyy-MM-dd" @change="updateDate(field)"></el-date-picker>
             </span>
             <span v-else-if="getUIType(field, groupIndex)===7">
               7
@@ -99,13 +99,13 @@ export default {
   methods: {
     startEditing() {
       this.mode = this.EDITING_MODE;
+      this.clearWarning();
     },
     cancel() {
       // 点击取消按钮，将我们对 copyInfo 所做的临时修改全部放弃，还原其为 diseaseInfo 的复制对象，同时不要忘了重新对其进行特殊处理
       this.shallowCopy(this.diseaseInfo);
       this.changeCopyInfo();
       this.mode = this.READING_MODE;
-      this.clearWarning();
     },
     submit() {
       // 首先检查是否每个字段都合格，检查一遍之后，如果 warningResults 的所有属性值都为空，就证明表单符合要求
@@ -222,12 +222,8 @@ export default {
     transformTypeCode(typeCode, field, groupIndex) {
       // 根据 typeCode 找到对应的 typeName
       var types = this.getTypes(field, groupIndex);
-      if (types.length === 0) {
-        return '';
-      } else {
-        var matchedType = Util.getElement('typeCode', typeCode, types);
-        return matchedType.typeName ? matchedType.typeName : '';
-      }
+      var matchedType = Util.getElement('typeCode', typeCode, types);
+      return matchedType.typeName ? matchedType.typeName : '';
     },
     translateCodes(typeCodes, field, groupIndex) {
       // 将形如 [1, 2, 4] 的字段信息 转换成 '内容 1，内容 2，内容 4' 这样的单字符串进行显示
@@ -253,13 +249,11 @@ export default {
         // must 为 1 代表必填，为 2 代表选填
         var isEmptyValue = !copyFieldValue && copyFieldValue !== 0;
         var isEmptyArray = copyFieldValue instanceof Array && copyFieldValue.length === 0;
-        var isEmptyDate = copyFieldValue && copyFieldValue instanceof String && copyFieldValue.indexOf('NaN') > -1;
-        if (isEmptyValue || isEmptyArray || isEmptyDate) {
+        if (isEmptyValue || isEmptyArray) {
           // 下面这个方法将响应属性添加到嵌套的对象上，这样 Vue 才能实时检测和渲染
           this.$set(this.warningResults, fieldName, '必填项');
           return;
         }
-
       }
       if (copyFieldValue && copyFieldValue.toString().indexOf(' ') > -1) {
         this.$set(this.warningResults, fieldName, '不能包含空格');
@@ -322,9 +316,9 @@ export default {
 @long-field-name-width: 160px;
 
 .disease-info {
-  padding: 0 25px;
+  padding: 0 25px 20px;
   .group {
-    padding: 15px 0;
+    padding: 0;
     text-align: left;
     .field {
       display: inline-block;
@@ -350,8 +344,8 @@ export default {
         }
       }
       &.multiple-select {
-        margin-top: 5px;
-        height: @field-height * 1.3;
+        transform: translateY(@field-height * 0.4);
+        height: @field-height * 1.0;
         .field-name {
           line-height: @field-height * 0.3;
         }
