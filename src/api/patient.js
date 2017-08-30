@@ -97,3 +97,63 @@ export function getPatientMedHistoryList(patientId) {
 
   return encapsulatePromise(url, request);
 };
+
+// 新增用药史
+export function addPatientMedHistory(medHistory) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientMedHistory": medHistory
+  };
+  var url = 'http://apitest.gyenno.com/pdms/addPatientMedHistory';
+
+  return encapsulatePromise(url, request);
+};
+
+// 修改用药史
+export function modifyPatientMedHistory(medHistory) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientMedHistory": medHistory
+  };
+  var url = 'http://apitest.gyenno.com/pdms/modPatientMedHistory';
+
+  return encapsulatePromise(url, request);
+};
+
+// 新增既往史
+export function addPatientDisease(patientDisease) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientDisease": patientDisease
+  };
+  var url = 'http://apitest.gyenno.com/pdms/addPatientDisease';
+
+  return encapsulatePromise(url, request);
+};
+
+// 修改既往史
+export function modifyPatientDisease(patientDisease) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientDisease": patientDisease
+  };
+  var url = 'http://apitest.gyenno.com/pdms/modPatientDisease';
+
+  return encapsulatePromise(url, request);
+};

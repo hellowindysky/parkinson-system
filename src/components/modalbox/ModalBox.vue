@@ -59,10 +59,19 @@ import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 
+import { isEmptyObject } from 'utils/helper.js';
+import { addPatientMedHistory, modifyPatientMedHistory,
+         addPatientDisease, modifyPatientDisease
+       } from 'api/patient.js';
+
+const ADD_MODE = 'add';
+const MODIFY_MODE = 'modify';
+
 export default {
   data() {
     return {
       displayModal: false,
+      mode: '',
       modalType: '',
       subModalType: '',
       disableChangingSubModal: false,
@@ -142,6 +151,13 @@ export default {
     showPanel(title, item, modalType) {
       this.displayModal = true;
 
+      // 通过检查 item 参数是否为空对象 {}，来决定提交时是新增记录，还是修改记录
+      if (isEmptyObject(item)) {
+        this.mode = ADD_MODE;
+      } else {
+        this.mode = MODIFY_MODE;
+      }
+
       // 如果传过来的 modalType 是个人史下的子类，则将其赋值为 this.subModalType，而 this.modalType 还是个人史
       // 同时，还要禁止个人史下子类的选择，因为此时子类不可更换
       const SUB_MODAL_LIST = [this.TEA_MODAL, this.COFFEE_MODAL, this.WINE_MODAL, this.SMOKE_MODAL, this.EXERCISE_MODAL];
@@ -150,6 +166,7 @@ export default {
         this.modalType = this.PERSON_MODAL;
         this.disableChangingSubModal = true;
       } else {
+        this.subModalType = '';
         this.modalType = modalType;
         this.disableChangingSubModal = false;
       }
@@ -173,11 +190,10 @@ export default {
     },
     cancel() {
       this.displayModal = false;
-      this.subModalType = '';
     },
     submit() {
       // 对于特殊的个人史，检查 subModal 字段是否有被选择
-      if (this.subModalType === '') {
+      if (this.modalType === this.PERSON_MODAL && this.subModalType === '') {
         this.$set(this.warningResults, 'subModal', '请选择');
       }
 
@@ -191,8 +207,34 @@ export default {
         }
       }
 
-      this.displayModal = false;
-      this.subModalType = '';
+      // 到这里，检验合格，准备提交数据了
+      if (this.mode === ADD_MODE) {
+        this.item.patientId = this.$route.params.id;
+        if (this.modalType === this.MEDICINE_MODAL) {
+          addPatientMedHistory(this.item).then(() => {
+            Bus.$emit(this.UPDATE_PATIENT_INFO);
+            this.displayModal = false;
+          });
+        } else if (this.modalType === this.DISEASE_MODAL) {
+          addPatientDisease(this.item).then(() => {
+            Bus.$emit(this.UPDATE_PATIENT_INFO);
+            this.displayModal = false;
+          });
+        }
+
+      } else if (this.mode === MODIFY_MODE) {
+        if (this.modalType === this.MEDICINE_MODAL) {
+          modifyPatientMedHistory(this.item).then(() => {
+            Bus.$emit(this.UPDATE_PATIENT_INFO);
+            this.displayModal = false;
+          });
+        } else if (this.modalType === this.DISEASE_MODAL) {
+          modifyPatientDisease(this.item).then(() => {
+            Bus.$emit(this.UPDATE_PATIENT_INFO);
+            this.displayModal = false;
+          });
+        }
+      }
     },
     initItem() {
       // 遍历当前的 template，对其中的每个 field，检查 this.item 下有没有名字对应的属性值，没有的化，就初始化为空字符串
