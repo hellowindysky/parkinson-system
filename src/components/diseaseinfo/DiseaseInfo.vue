@@ -47,8 +47,8 @@
               </el-checkbox-group>
             </span>
             <span v-else-if="getUIType(field, groupIndex)===6">
-              <el-date-picker v-model="copyInfo[field.fieldName]" type="date" :placeholder="getMatchedField(field, groupIndex).cnFieldDesc"
-               format="yyyy-MM-dd" @change="updateDate(field)"></el-date-picker>
+              <el-date-picker v-model="copyInfo[field.fieldName]" type="date" :class="{'warning': warningResults[field.fieldName]}"
+               :placeholder="getMatchedField(field, groupIndex).cnFieldDesc" format="yyyy-MM-dd" @change="updateDate(field)"></el-date-picker>
             </span>
             <span v-else-if="getUIType(field, groupIndex)===7">
               7
@@ -249,13 +249,12 @@ export default {
         // must 为 1 代表必填，为 2 代表选填
         var isEmptyValue = !copyFieldValue && copyFieldValue !== 0;
         var isEmptyArray = copyFieldValue instanceof Array && copyFieldValue.length === 0;
-        var isEmptyDate = copyFieldValue && copyFieldValue instanceof String && copyFieldValue.indexOf('NaN') > -1;
+        var isEmptyDate = copyFieldValue && typeof copyFieldValue === 'string' && copyFieldValue.indexOf('NaN') > -1;
         if (isEmptyValue || isEmptyArray || isEmptyDate) {
           // 下面这个方法将响应属性添加到嵌套的对象上，这样 Vue 才能实时检测和渲染
           this.$set(this.warningResults, fieldName, '必填项');
           return;
         }
-
       }
       if (copyFieldValue && copyFieldValue.toString().indexOf(' ') > -1) {
         this.$set(this.warningResults, fieldName, '不能包含空格');
