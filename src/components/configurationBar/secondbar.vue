@@ -5,10 +5,12 @@
             <li class="tab right-tab" :class="{'current-tab': currentTab === 'configdiagnosticinfo'}" @click="chooseConfigDiagnostic">诊断信息</li>
             <li class="tab-bottom-bar" :class="currentTabBottomBar"></li>
         </ul>
+        <featureTableHead></featureTableHead>
     </div>
 </template>
 
 <script>
+import featureTableHead from '../tableHead/featureTableHead';
 export default {
   computed: {
     currentTab() {
@@ -50,6 +52,9 @@ export default {
     if (!/\/configpersonalinf(\/|$)/.test(this.$route.path)) {
       this.$router.push({ name: 'configpersonalinf' });
     }
+  },
+  components: {
+    featureTableHead
   }
 };
 </script>
@@ -60,7 +65,6 @@ export default {
 @tab-width: 70px;
 @first-tab-x: 20px;
 @second-tab-x: 120px;
-
 @margin-right: 15px;
 .secondbar-wrapper {
     position: relative;
@@ -70,7 +74,6 @@ export default {
     box-shadow: 0 10px 10px @screen-color;
     list-style: none;
     .tab {
-       
         position: absolute;
         width: @tab-width;
         line-height: 40px;
