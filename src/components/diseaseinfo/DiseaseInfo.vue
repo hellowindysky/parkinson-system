@@ -99,13 +99,13 @@ export default {
   methods: {
     startEditing() {
       this.mode = this.EDITING_MODE;
+      this.clearWarning();
     },
     cancel() {
       // 点击取消按钮，将我们对 copyInfo 所做的临时修改全部放弃，还原其为 diseaseInfo 的复制对象，同时不要忘了重新对其进行特殊处理
       this.shallowCopy(this.diseaseInfo);
       this.changeCopyInfo();
       this.mode = this.READING_MODE;
-      this.clearWarning();
     },
     submit() {
       // 首先检查是否每个字段都合格，检查一遍之后，如果 warningResults 的所有属性值都为空，就证明表单符合要求

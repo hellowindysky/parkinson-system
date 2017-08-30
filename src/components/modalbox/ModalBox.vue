@@ -147,13 +147,19 @@ export default {
       // 每次打开这个模态框，都会重新初始化 this.item
       this.initItem();
 
+      // 清空警告信息
+      // 改变 item 的时候会触发 warningResults 的跟踪变化（这里的自动触发是由 el-date-picker 的 v-model造成的）
+      // 因此这一步要等到 item 变化结束之后再执行，我们将其放到下一个事件循环 tick 中
+      this.$nextTick(() => {
+        this.clearWarning();
+      });
+
       for (var i = 0; i < this.template.length; i++) {
         // console.log(this.template[i].fieldName);
       }
     },
     cancel() {
       this.displayModal = false;
-      this.clearWarning();
       this.subModalType = '';
     },
     submit() {
@@ -173,7 +179,6 @@ export default {
       }
 
       this.displayModal = false;
-      this.clearWarning();
       this.subModalType = '';
     },
     initItem() {
