@@ -3,17 +3,19 @@ import axios from 'axios';
 
 function encapsulatePromise(url, request) {
 
-  var promise = new Promise(function(resolve) {
+  var promise = new Promise(function(resolve, reject) {
 
     axios.post(url, request).then((response) => {
       if (response.data.code === 0) {
         resolve(response.data.data);
       } else {
-        console.log('参数错误: ', response.data.msg);
+        console.log('参数错误或服务器内部错误: ', response.data.msg);
+        reject();
       }
 
     }).catch(function(error) {
       console.error('请求出错: ', error);
+      reject();
     });
   });
 
