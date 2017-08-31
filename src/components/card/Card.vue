@@ -24,7 +24,7 @@ export default {
       this.$emit(this.EDIT_CURRENT_CARD);
     },
     deleteSelf() {
-      console.log('delete this card');
+      this.$emit(this.DELETE_CURRENT_CARD);
     }
   }
 };
