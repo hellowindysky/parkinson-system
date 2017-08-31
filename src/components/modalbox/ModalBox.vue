@@ -216,7 +216,7 @@ export default {
 
       // 到这里，检验合格，准备提交数据了
       if (this.mode === ADD_MODE) {
-        this.item.patientId = this.$route.params.id;
+        this.item.patientId = parseInt(this.$route.params.id, 10);
         if (this.modalType === this.MEDICINE_MODAL) {
           addPatientMedHistory(this.item).then(() => {
             this.updateAndClose();
