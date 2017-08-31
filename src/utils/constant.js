@@ -13,6 +13,10 @@ export default {
   CANCEL: 'cancel',
   SUBMIT: 'submit',
 
+  GIVE_UP: 'giveUpDecision',
+  CONFIRM: 'confirmDecision',
+  REQUEST_CONFIRMATION: 'requestConfirmation',
+
   SCROLL_AREA_SIZE_CHANGE: 'scrollAreaSizeChange',
   ADD_NEW_CARD: 'addNewCard',
   EDIT_CURRENT_CARD: 'editCurrentCard',
