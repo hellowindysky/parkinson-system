@@ -6,6 +6,7 @@
       <div class="button-wrapper">
         <span class="button cancel-button" @click="cancel">取消</span>
         <span class="button confirm-button" @click="confirm">确定</span>
+        <div class="seperate-line"></div>
       </div>
     </div>
   </div>
@@ -66,6 +67,7 @@ export default {
       padding: 0 10px 10px;
     }
     .button-wrapper {
+      position: relative;
       margin: 0 20px;
       border-top: 1px solid @light-font-color;
       text-align: center;
@@ -92,6 +94,14 @@ export default {
         &:active {
           opacity: 0.9;
         }
+      }
+      .seperate-line {
+        position: absolute;
+        top: 5px;
+        left: 50%;
+        width: 1px;
+        height: 28px;
+        background-color: @light-font-color;
       }
     }
   }
