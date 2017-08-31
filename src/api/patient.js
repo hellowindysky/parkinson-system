@@ -97,3 +97,17 @@ export function getPatientMedHistoryList(patientId) {
 
   return encapsulatePromise(url, request);
 };
+
+export function getPatientConfigTemplate() {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15012670416",
+    "userType": 1,
+    "orgId": 34,
+    "orgType": 2,
+    "activeType": 1
+  };
+  var url = 'http://api.gyenno.com/pdms/queryTemplate';
+
+  return encapsulatePromise(url, request);
+};

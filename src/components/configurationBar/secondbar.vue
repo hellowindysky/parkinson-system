@@ -5,13 +5,25 @@
             <li class="tab right-tab" :class="{'current-tab': currentTab === 'configdiagnosticinfo'}" @click="chooseConfigDiagnostic">诊断信息</li>
             <li class="tab-bottom-bar" :class="currentTabBottomBar"></li>
         </ul>
-        <featureTableHead></featureTableHead>
+        <div class="scroll-content" ref="scrollArea">
+            <featureTableHead></featureTableHead>
+            <router-view :configbase-info="configbaseInfo"></router-view>
+        </div>
     </div>
 </template>
 
 <script>
 import featureTableHead from '../tableHead/featureTableHead';
+
+import { getPatientConfigTemplate } from 'api/patient';
+import Ps from 'perfect-scrollbar';
+
 export default {
+  data() {
+    return {
+      configbaseInfo: {}
+    };
+  },
   computed: {
     currentTab() {
       var path = this.$route.path;
@@ -46,12 +58,32 @@ export default {
       if (!/\/configdiagnosticinfo(\/|$)/.test(this.$route.path)) {
         this.$router.push({ name: 'configdiagnosticinfo' });
       }
+    },
+    updateScrollbar() {
+      // 如果不写在 $nextTick() 里面，第一次加载的时候也许会不能正确计算高度。估计是因为子组件还没有全部加载所造成的。
+      this.$nextTick(() => {
+        // 之所以弃用 update 方法，是因为它在某些情况下会出现问题，导致滚动条不能有效刷新
+        // Ps.update(this.$refs.scrollArea);
+
+        // 如果之前有绑定滚动条的话，先进行解除
+        Ps.destroy(this.$refs.scrollArea);
+        Ps.initialize(this.$refs.scrollArea, {
+          wheelSpeed: 1,
+          minScrollbarLength: 40
+        });
+      });
+    },
+    updatePatientInfo() {
+      getPatientConfigTemplate().then((data) => {
+        this.configbaseInfo = data;
+      });
     }
   },
   mounted() {
     if (!/\/configpersonalinf(\/|$)/.test(this.$route.path)) {
       this.$router.push({ name: 'configpersonalinf' });
     }
+    this.updatePatientInfo();
   },
   components: {
     featureTableHead
@@ -66,6 +98,7 @@ export default {
 @first-tab-x: 20px;
 @second-tab-x: 120px;
 @margin-right: 15px;
+
 .secondbar-wrapper {
     position: relative;
     margin: 0 @margin-right @vertical-spacing 0;
@@ -110,6 +143,12 @@ export default {
       &.second-tab {
         transform: translate3d(@second-tab-x - @first-tab-x, 0, 0);
       }
+    }
+    .scroll-content {
+      position: relative;
+      width: 100%;
+      height: calc(~"100% - @{tabs-wrapper-height}");
+      overflow: hidden;
     }
 }
 </style>

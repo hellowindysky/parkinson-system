@@ -34,22 +34,22 @@
 @table-head-margin:0.5%;
 
 .featureTableHead {
+  position: relative;
   padding-top: 15px;
   box-sizing: border-box;
+  overflow: hidden;
   ul {
-    position: relative;
     height: @table-head-height;
     margin: 0;
     padding: 0;
-    float: left;
     background: @theme-color;
     z-index: 100;
     color: @background-color;
     border-radius: 2px;
-    box-sizing: border-box;
     list-style: none;
     font-size: @normal-font-size;
     margin-left: @table-head-margin;
+    float: left;
     li {
       box-sizing: border-box;
       border-right: 1px solid @table-middle-button-color;
