@@ -321,7 +321,7 @@ export default {
         version: item.version
       };
       deletePatientExercise(patientExercise).then(() => {
-        this.item.patientId = parseInt(this.$route.params.id, 10);
+        Bus.$emit(this.UPDATE_PATIENT_INFO);
       });
     },
     addToxicRecord() {
@@ -337,7 +337,7 @@ export default {
         version: item.version
       };
       deletePatientToxicExposure(patientToxic).then(() => {
-        this.item.patientId = parseInt(this.$route.params.id, 10);
+        Bus.$emit(this.UPDATE_PATIENT_INFO);
       });
     }
   },
