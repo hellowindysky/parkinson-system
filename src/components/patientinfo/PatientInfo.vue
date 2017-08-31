@@ -104,7 +104,6 @@ export default {
     updatePatientInfo() {
       getPatientInfo(this.$route.params.id).then((data) => {
         this.patientInfo = data;
-        console.log(data);
       });
     }
   },

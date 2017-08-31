@@ -1,0 +1,250 @@
+{
+  "personalInfo": {
+      "belongInfo": {
+          "createInfo": {
+
+
+          },
+          "groupInfo": {
+
+
+          }
+      },
+      "baseInfo": {
+          "basicSituation": [
+            {
+              "switchname": "患者编号",
+              "isswitchopen": true,
+              "isnecessary": 2
+            },
+            {
+              "switchname": "身份证号",
+              "isswitchopen": true,
+              "isnecessary": 1
+            },
+            {
+              "switchname": "患者姓名",
+              "isswitchopen": true,
+              "isnecessary": 1
+            },
+            {
+              "switchname": "性别展示",
+              "isswitchopen": true,
+              "isnecessary": 1
+            },
+            {
+              "switchname": "民族",
+              "isswitchopen": true,
+              "isnecessary": 1
+            },
+            {
+              "switchname": "出生日期",
+              "isswitchopen": true,
+              "isnecessary": 1
+            },
+            {
+              "switchname": "联系电话（主）",
+              "isswitchopen": true,
+              "isnecessary": 1
+            },
+            {
+              "switchname": "联系电话（次）",
+              "isswitchopen": true,
+              "isnecessary": 1
+            }
+          ],
+          "relatedSituation": [
+            {
+              "switchname": "婚姻状况",
+              "isswitchopen": true,
+              "isnecessary": 2
+            },
+            {
+              "switchname": "学历",
+              "isswitchopen": true,
+              "isnecessary": 1
+            },
+            {
+              "switchname": "职业",
+              "isswitchopen": true,
+              "isnecessary": 1
+            },
+            {
+              "switchname": "血型",
+              "isswitchopen": true,
+              "isnecessary": 1
+            },
+            {
+              "switchname": "体重",
+              "isswitchopen": true,
+              "isnecessary": 1
+            },
+            {
+              "switchname": "身高",
+              "isswitchopen": true,
+              "isnecessary": 1
+            },
+            {
+              "switchname": "经济现状",
+              "isswitchopen": true,
+              "isnecessary": 1
+            },
+            {
+              "switchname": "居住现状",
+              "isswitchopen": true,
+              "isnecessary": 1
+            }, 
+            {
+              "switchname": "籍贯",
+              "isswitchopen": true,
+              "isnecessary": 1
+            },
+            {
+              "switchname": "常住地址",
+              "isswitchopen": true,
+              "isnecessary": 1
+            } 
+          ]
+      },
+      "Diseaseinfo": {
+        "causeofillness": [
+          {
+            "switchname": "病症类型",
+            "isswitchopen": true,
+            "isnecessary": 2
+          },
+          {
+            "switchname": "起病时间",
+            "isswitchopen": true,
+            "isnecessary": 1
+          },
+          {
+            "switchname": "起病年龄",
+            "isswitchopen": true,
+            "isnecessary": 1
+          },
+          {
+            "switchname": "首发症状",
+            "isswitchopen": true,
+            "isnecessary": 1
+          },
+          {
+            "switchname": "首发部位",
+            "isswitchopen": true,
+            "isnecessary": 1
+          },
+          {
+            "switchname": "对称起病",
+            "isswitchopen": true,
+            "isnecessary": 1
+          },
+          {
+            "switchname": "患者主诉",
+            "isswitchopen": true,
+            "isnecessary": 1
+          },
+          {
+            "switchname": "运动症状",
+            "isswitchopen": true,
+            "isnecessary": 1
+          }, 
+          {
+            "switchname": "运动并发症",
+            "isswitchopen": true,
+            "isnecessary": 1
+          },
+          {
+            "switchname": "非运动症状",
+            "isswitchopen": true,
+            "isnecessary": 1
+          } 
+        ],
+        "treatmentcondition": [
+          {
+            "switchname": "出诊时间",
+            "isswitchopen": true,
+            "isnecessary": 2
+          },
+          {
+            "switchname": "初诊医院",
+            "isswitchopen": true,
+            "isnecessary": 1
+          },
+          {
+            "switchname": "确诊时间",
+            "isswitchopen": true,
+            "isnecessary": 1
+          },
+          {
+            "switchname": "确诊医院",
+            "isswitchopen": true,
+            "isnecessary": 1
+          },
+          {
+            "switchname": "诊断方式",
+            "isswitchopen": true,
+            "isnecessary": 1
+          },
+          {
+            "switchname": "诊疗项目",
+            "isswitchopen": true,
+            "isnecessary": 1
+          },
+          {
+            "switchname": "初次用药",
+            "isswitchopen": true,
+            "isnecessary": 1
+          },
+          {
+            "switchname": "初次获得信息",
+            "isswitchopen": true,
+            "isnecessary": 1
+          }, 
+          {
+            "switchname": "不断获得信息",
+            "isswitchopen": true,
+            "isnecessary": 1
+          },
+          {
+            "switchname": "非运动症状",
+            "isswitchopen": true,
+            "isnecessary": 1
+          } 
+        ]
+      },
+      "otherInfo": {
+        "Othermedicationhistory": [
+          {
+            "switchname": "药物类型",
+            "isswitchopen": true,
+            "isnecessary": 1
+          }, 
+          {
+            "switchname": "药物名称",
+            "isswitchopen": true,
+            "isnecessary": 1
+          },
+          {
+            "switchname": "开始服药时间",
+            "isswitchopen": true,
+            "isnecessary": 1
+          },
+          {
+            "switchname": "停止服药时间",
+            "isswitchopen": true,
+            "isnecessary": 1
+          }, 
+          {
+            "switchname": "用药频率",
+            "isswitchopen": true,
+            "isnecessary": 1
+          },
+          {
+            "switchname": "备注",
+            "isswitchopen": true,
+            "isnecessary": 1
+          }  
+        ]
+      }
+  }
+}

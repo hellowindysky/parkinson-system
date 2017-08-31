@@ -16,7 +16,13 @@ import PersonalInfo from 'components/personalinfo/PersonalInfo';
 import DiagnosticInfo from 'components/diagnosticinfo/DiagnosticInfo';
 
 import FeatureConfiguration from 'components/featureConfiguration/FeatureConfiguration';
-import secondbar from 'components/configuration/secondbar';
+import secondbar from 'components/configurationBar/secondbar';
+import groupConfiguration from 'components/groupConfiguration/groupConfiguration';
+import departmentConfiguration from 'components/departmentConfiguration/departmentConfiguration';
+import analysisConfiguration from 'components/analysisConfiguration/analysisConfiguration';
+
+import featureDiagnosticInfo from 'components/featureConfiguration/featureDiagnosticInfo';
+import freaturePersonInfo from 'components/featureConfiguration/freaturePersonInfo';
 
 Vue.use(Router);
 
@@ -114,25 +120,30 @@ export default new Router({
                   children: [
                     {
                       path: 'configpersonalinf',
-                      name: 'configpersonalinf'
+                      name: 'configpersonalinf',
+                      component: freaturePersonInfo
                     },
                     {
                       path: 'configdiagnosticinfo',
-                      name: 'configdiagnosticinfo'
+                      name: 'configdiagnosticinfo',
+                      component: featureDiagnosticInfo
                     }
                   ]
                 },
                 {
                   path: 'groupmana',
-                  name: 'groupmana'
+                  name: 'groupmana',
+                  component: groupConfiguration
                 },
                 {
                   path: 'department',
-                  name: 'department'
+                  name: 'department',
+                  component: departmentConfiguration
                 },
                 {
                   path: 'statisticalanalysis',
-                  name: 'statisticalanalysis'
+                  name: 'statisticalanalysis',
+                  component: analysisConfiguration
                 }
               ]
             },
