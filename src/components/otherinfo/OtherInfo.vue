@@ -231,9 +231,10 @@ export default {
         patientMedHistoryId: item.patientMedHistoryId,
         version: item.version
       };
-      deletePatientMedHistory(patientMed).then(() => {
-        Bus.$emit(this.UPDATE_PATIENT_INFO);
+      Bus.$on(this.CONFIRM, () => {
+        deletePatientMedHistory(patientMed).then(this._resolveDeletion, this._rejectDeletion);
       });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addDiseaseRecord() {
       Bus.$emit(this.SHOW_MODAL_BOX, '新增既往史', {}, this.DISEASE_MODAL);
@@ -247,9 +248,10 @@ export default {
         patientDiseaseId: item.patientDiseaseId,
         version: item.version
       };
-      deletePatientDisease(patientDisease).then(() => {
-        Bus.$emit(this.UPDATE_PATIENT_INFO);
+      Bus.$on(this.CONFIRM, () => {
+        deletePatientDisease(patientDisease).then(this._resolveDeletion, this._rejectDeletion);
       });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addFamilyRecord() {
       Bus.$emit(this.SHOW_MODAL_BOX, '新增家族史', {}, this.FAMILY_MODAL);
@@ -263,9 +265,10 @@ export default {
         patientFamilyId: item.patientFamilyId,
         version: item.version
       };
-      deletePatientFamily(patientFamily).then(() => {
-        Bus.$emit(this.UPDATE_PATIENT_INFO);
+      Bus.$on(this.CONFIRM, () => {
+        deletePatientFamily(patientFamily).then(this._resolveDeletion, this._rejectDeletion);
       });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addPersonRecord() {
       Bus.$emit(this.SHOW_MODAL_BOX, '新增个人史', {}, this.PERSON_MODAL);
@@ -280,9 +283,10 @@ export default {
         patientCoffeeId: item.patientCoffeeId,
         version: item.version
       };
-      deletePatientCoffee(patientCoffee).then(() => {
-        Bus.$emit(this.UPDATE_PATIENT_INFO);
+      Bus.$on(this.CONFIRM, () => {
+        deletePatientCoffee(patientCoffee).then(this._resolveDeletion, this._rejectDeletion);
       });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     deleteTeaRecord(item) {
       var patientTea = {
@@ -290,9 +294,10 @@ export default {
         patientTeaId: item.patientTeaId,
         version: item.version
       };
-      deletePatientTea(patientTea).then(() => {
-        Bus.$emit(this.UPDATE_PATIENT_INFO);
+      Bus.$on(this.CONFIRM, () => {
+        deletePatientTea(patientTea).then(this._resolveDeletion, this._rejectDeletion);
       });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     deleteWineRecord(item) {
       var patientWine = {
@@ -300,9 +305,10 @@ export default {
         patientWineId: item.patientWineId,
         version: item.version
       };
-      deletePatientWine(patientWine).then(() => {
-        Bus.$emit(this.UPDATE_PATIENT_INFO);
+      Bus.$on(this.CONFIRM, () => {
+        deletePatientWine(patientWine).then(this._resolveDeletion, this._rejectDeletion);
       });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     deleteSmokeRecord(item) {
       var patientSmoke = {
@@ -310,9 +316,10 @@ export default {
         patientSmokeId: item.patientSmokeId,
         version: item.version
       };
-      deletePatientSmoke(patientSmoke).then(() => {
-        Bus.$emit(this.UPDATE_PATIENT_INFO);
+      Bus.$on(this.CONFIRM, () => {
+        deletePatientSmoke(patientSmoke).then(this._resolveDeletion, this._rejectDeletion);
       });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     deleteExerciseRecord(item) {
       var patientExercise = {
@@ -320,9 +327,10 @@ export default {
         patientExerciseId: item.patientExerciseId,
         version: item.version
       };
-      deletePatientExercise(patientExercise).then(() => {
-        Bus.$emit(this.UPDATE_PATIENT_INFO);
+      Bus.$on(this.CONFIRM, () => {
+        deletePatientExercise(patientExercise).then(this._resolveDeletion, this._rejectDeletion);
       });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addToxicRecord() {
       Bus.$emit(this.SHOW_MODAL_BOX, '新增毒物接触史', {}, this.TOXIC_MODAL);
@@ -331,17 +339,32 @@ export default {
       Bus.$emit(this.SHOW_MODAL_BOX, '毒物接触史', item, this.TOXIC_MODAL);
     },
     deleteToxicRecord(item) {
-      var patientToxic = {
+      var patientToxicExposure = {
         patientId: this.id,
         patientCideexposedId: item.patientCideexposedId,
         version: item.version
       };
-      deletePatientToxicExposure(patientToxic).then(() => {
-        Bus.$emit(this.UPDATE_PATIENT_INFO);
+      Bus.$on(this.CONFIRM, () => {
+        deletePatientToxicExposure(patientToxicExposure).then(this._resolveDeletion, this._rejectDeletion);
       });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
+    },
+    _resolveDeletion() {
+      // 如果成功删除记录，则重新发出请求，获取最新数据。同时解除 [确认对话框] 的 “确认” 回调函数
+      Bus.$emit(this.UPDATE_PATIENT_INFO);
+      Bus.$off(this.CONFIRM);
+    },
+    _rejectDeletion() {
+      // 即使删除不成功，也要解除 [确认对话框] 的 “确认” 回调函数
+      Bus.$off(this.CONFIRM);
     }
   },
   mounted() {
+    // 如果收到 [确认对话框] 发过来的 “取消” 事件，则解除 “确认” 事件的回调函数
+    Bus.$on(this.GIVE_UP, () => {
+      Bus.$off(this.CONFIRM);
+    });
+
     setTimeout(() => {
       // console.log(this.toxicExposureHistoryList);
       // console.log(this.medHistoryDictionary);

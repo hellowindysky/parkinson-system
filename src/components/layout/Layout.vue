@@ -4,6 +4,7 @@
     <sidebar class="sidebar"></sidebar>
     <router-view class="content"></router-view>
     <modal-box></modal-box>
+    <confirm-box></confirm-box>
   </div>
 </template>
 
@@ -11,12 +12,14 @@
 import topbar from 'components/header/Header';
 import sidebar from 'components/sidebar/Sidebar';
 import modalBox from 'components/modalbox/ModalBox';
+import confirmBox from 'components/confirmbox/ConfirmBox';
 
 export default {
   components: {
     topbar,
     sidebar,
-    modalBox
+    modalBox,
+    confirmBox
   }
 };
 </script>
