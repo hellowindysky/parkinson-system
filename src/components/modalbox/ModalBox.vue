@@ -61,7 +61,14 @@ import Util from 'utils/util.js';
 
 import { isEmptyObject } from 'utils/helper.js';
 import { addPatientMedHistory, modifyPatientMedHistory,
-         addPatientDisease, modifyPatientDisease
+         addPatientDisease, modifyPatientDisease,
+         addPatientFamily, modifyPatientFamily,
+         addPatientToxicExposure, modifyPatientToxicExposure,
+         addPatientCoffee, modifyPatientCoffee,
+         addPatientTea, modifyPatientTea,
+         addPatientWine, modifyPatientWine,
+         addPatientSmoke, modifyPatientSmoke,
+         addPatientExercise, modifyPatientExercise
        } from 'api/patient.js';
 
 const ADD_MODE = 'add';
@@ -212,29 +219,85 @@ export default {
         this.item.patientId = this.$route.params.id;
         if (this.modalType === this.MEDICINE_MODAL) {
           addPatientMedHistory(this.item).then(() => {
-            Bus.$emit(this.UPDATE_PATIENT_INFO);
-            this.displayModal = false;
+            this.updateAndClose();
           });
         } else if (this.modalType === this.DISEASE_MODAL) {
           addPatientDisease(this.item).then(() => {
-            Bus.$emit(this.UPDATE_PATIENT_INFO);
-            this.displayModal = false;
+            this.updateAndClose();
+          });
+        } else if (this.modalType === this.FAMILY_MODAL) {
+          addPatientFamily(this.item).then(() => {
+            this.updateAndClose();
+          });
+        } else if (this.modalType === this.TOXIC_MODAL) {
+          addPatientToxicExposure(this.item).then(() => {
+            this.updateAndClose();
+          });
+        } else if (this.subModalType === this.COFFEE_MODAL) {
+          addPatientCoffee(this.item).then(() => {
+            this.updateAndClose();
+          });
+        } else if (this.subModalType === this.TEA_MODAL) {
+          addPatientTea(this.item).then(() => {
+            this.updateAndClose();
+          });
+        } else if (this.subModalType === this.WINE_MODAL) {
+          addPatientWine(this.item).then(() => {
+            this.updateAndClose();
+          });
+        } else if (this.subModalType === this.SMOKE_MODAL) {
+          addPatientSmoke(this.item).then(() => {
+            this.updateAndClose();
+          });
+        } else if (this.subModalType === this.EXERCISE_MODAL) {
+          addPatientExercise(this.item).then(() => {
+            this.updateAndClose();
           });
         }
 
       } else if (this.mode === MODIFY_MODE) {
         if (this.modalType === this.MEDICINE_MODAL) {
           modifyPatientMedHistory(this.item).then(() => {
-            Bus.$emit(this.UPDATE_PATIENT_INFO);
-            this.displayModal = false;
+            this.updateAndClose();
           });
         } else if (this.modalType === this.DISEASE_MODAL) {
           modifyPatientDisease(this.item).then(() => {
-            Bus.$emit(this.UPDATE_PATIENT_INFO);
-            this.displayModal = false;
+            this.updateAndClose();
+          });
+        } else if (this.modalType === this.FAMILY_MODAL) {
+          modifyPatientFamily(this.item).then(() => {
+            this.updateAndClose();
+          });
+        } else if (this.modalType === this.TOXIC_MODAL) {
+          modifyPatientToxicExposure(this.item).then(() => {
+            this.updateAndClose();
+          });
+        } else if (this.subModalType === this.COFFEE_MODAL) {
+          modifyPatientCoffee(this.item).then(() => {
+            this.updateAndClose();
+          });
+        } else if (this.subModalType === this.TEA_MODAL) {
+          modifyPatientTea(this.item).then(() => {
+            this.updateAndClose();
+          });
+        } else if (this.subModalType === this.WINE_MODAL) {
+          modifyPatientWine(this.item).then(() => {
+            this.updateAndClose();
+          });
+        } else if (this.subModalType === this.SMOKE_MODAL) {
+          modifyPatientSmoke(this.item).then(() => {
+            this.updateAndClose();
+          });
+        } else if (this.subModalType === this.EXERCISE_MODAL) {
+          modifyPatientExercise(this.item).then(() => {
+            this.updateAndClose();
           });
         }
       }
+    },
+    updateAndClose() {
+      Bus.$emit(this.UPDATE_PATIENT_INFO);
+      this.displayModal = false;
     },
     initItem() {
       // 遍历当前的 template，对其中的每个 field，检查 this.item 下有没有名字对应的属性值，没有的化，就初始化为空字符串

@@ -231,7 +231,7 @@ export default {
       Bus.$emit(this.SHOW_MODAL_BOX, '新增毒物接触史', {}, this.TOXIC_MODAL);
     },
     editToxicRecord(item) {
-      Bus.$emit(this.SHOW_MODAL_BOX, '新增毒物接触史', item, this.TOXIC_MODAL);
+      Bus.$emit(this.SHOW_MODAL_BOX, '毒物接触史', item, this.TOXIC_MODAL);
     }
   },
   mounted() {

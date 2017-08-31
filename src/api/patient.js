@@ -157,3 +157,213 @@ export function modifyPatientDisease(patientDisease) {
 
   return encapsulatePromise(url, request);
 };
+
+// 新增家族史
+export function addPatientFamily(patientFamily) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientFamily": patientFamily
+  };
+  var url = 'http://apitest.gyenno.com/pdms/addPatientFamily';
+
+  return encapsulatePromise(url, request);
+};
+
+// 修改家族史
+export function modifyPatientFamily(patientFamily) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientFamily": patientFamily
+  };
+  var url = 'http://apitest.gyenno.com/pdms/modPatientFamily';
+
+  return encapsulatePromise(url, request);
+};
+
+// 新增锻炼史
+export function addPatientExercise(patientExercise) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientExercise": patientExercise
+  };
+  var url = 'http://apitest.gyenno.com/pdms/addPatientExercise';
+
+  return encapsulatePromise(url, request);
+};
+
+// 修改锻炼史
+export function modifyPatientExercise(patientExercise) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientExercise": patientExercise
+  };
+  var url = 'http://apitest.gyenno.com/pdms/modPatientExercise';
+
+  return encapsulatePromise(url, request);
+};
+
+// 新增吸烟史
+export function addPatientSmoke(patientSmoke) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientSmoke": patientSmoke
+  };
+  var url = 'http://apitest.gyenno.com/pdms/addPatientSmoke';
+
+  return encapsulatePromise(url, request);
+};
+
+// 修改吸烟史
+export function modifyPatientSmoke(patientSmoke) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientSmoke": patientSmoke
+  };
+  var url = 'http://apitest.gyenno.com/pdms/modPatientSmoke';
+
+  return encapsulatePromise(url, request);
+};
+
+// 新增饮酒史
+export function addPatientWine(patientWine) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientWine": patientWine
+  };
+  var url = 'http://apitest.gyenno.com/pdms/addPatientWine';
+
+  return encapsulatePromise(url, request);
+};
+
+// 修改饮酒史
+export function modifyPatientWine(patientWine) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientWine": patientWine
+  };
+  var url = 'http://apitest.gyenno.com/pdms/modPatientWine';
+
+  return encapsulatePromise(url, request);
+};
+
+// 新增喝茶史
+export function addPatientTea(patientTea) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientTea": patientTea
+  };
+  var url = 'http://apitest.gyenno.com/pdms/addPatientTea';
+
+  return encapsulatePromise(url, request);
+};
+
+// 修改喝茶史
+export function modifyPatientTea(patientTea) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientTea": patientTea
+  };
+  var url = 'http://apitest.gyenno.com/pdms/modPatientTea';
+
+  return encapsulatePromise(url, request);
+};
+
+// 新增咖啡史
+export function addPatientCoffee(patientCoffee) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientCoffee": patientCoffee
+  };
+  var url = 'http://apitest.gyenno.com/pdms/addPatientCoffee';
+
+  return encapsulatePromise(url, request);
+};
+
+// 修改咖啡史
+export function modifyPatientCoffee(patientCoffee) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientCoffee": patientCoffee
+  };
+  var url = 'http://apitest.gyenno.com/pdms/modPatientCoffee';
+
+  return encapsulatePromise(url, request);
+};
+
+// 新增毒物接触史
+export function addPatientToxicExposure(toxicExposure) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientCideexposed": toxicExposure
+  };
+  var url = 'http://apitest.gyenno.com/pdms/addPatientCideexposed';
+
+  return encapsulatePromise(url, request);
+};
+
+// 修改毒物接触史
+export function modifyPatientToxicExposure(toxicExposure) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientCideexposed": toxicExposure
+  };
+  var url = 'http://apitest.gyenno.com/pdms/modPatientCideexposed';
+
+  return encapsulatePromise(url, request);
+};
