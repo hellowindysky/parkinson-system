@@ -40,10 +40,6 @@ export default {
   methods: {
     toggleFoldedPanel() {
       this.folded = !this.folded;
-      setTimeout(() => {
-        // 之所以要延时发送事件，是为了等待折叠动画结束
-        Bus.$emit(this.SCROLL_AREA_SIZE_CHANGE);
-      }, 300);
     },
     edit() {
       this.$emit(this.EDIT);
@@ -61,6 +57,15 @@ export default {
     // 默认让基础信息面板呈展开状态
     if (this.title === '其它信息') {
       this.folded = false;
+    }
+  },
+  watch: {
+    folded: function() {
+      // 每当面板的折叠状态发生变化，就会通知所在的滚动区域，需要重新计算高度
+      setTimeout(() => {
+        // 之所以要延时发送事件，是为了等待折叠动画结束
+        Bus.$emit(this.SCROLL_AREA_SIZE_CHANGE);
+      }, 300);
     }
   }
 };
