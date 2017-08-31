@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="card" @click="clickSelf">
     <div class="title">{{title}}</div>
-    <div class="iconfont icon-delete" v-show="mode === EDITING_MODE"></div>
+    <div class="iconfont icon-delete" v-show="mode === EDITING_MODE" @click.stop="deleteSelf"></div>
     <slot></slot>
   </div>
 </template>
@@ -22,6 +22,9 @@ export default {
   methods: {
     clickSelf() {
       this.$emit(this.EDIT_CURRENT_CARD);
+    },
+    deleteSelf() {
+      console.log('delete this card');
     }
   }
 };
