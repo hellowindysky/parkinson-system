@@ -131,6 +131,7 @@ export default {
   beforeDestroy() {
     // 在组件销毁前，移除绑定在当前组件下的事件监听器
     Bus.$off(this.SCROLL_AREA_SIZE_CHANGE, this.updateScrollbar);
+    Bus.$off(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
     Bus.$off(this.UPDATE_PATIENT_INFO, this.updatePatientInfo);
   }
 };
