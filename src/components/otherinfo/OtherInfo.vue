@@ -389,6 +389,13 @@ export default {
       // console.log(this.medHistoryDictionary);
       // console.log(this.typeGroup);
     }, 2000);
+  },
+  beforeDestroy() {
+    // 还是记得销毁组件前，解除事件绑定
+    Bus.$off(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
+    Bus.$off(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
+    Bus.$off(this.CONFIRM);
+    Bus.$off(this.GIVE_UP);
   }
 };
 </script>
