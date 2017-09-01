@@ -2,7 +2,7 @@
 
 > 睿云 2.0 PC版
 
-## Build Setup
+## 使用方法
 
 ``` bash
 # 安装依赖 ———— 你拷贝了代码后需要做的第一件事
@@ -11,7 +11,8 @@ npm install
 # 安装依赖之后，你就可以快乐地在本地运行项目啦！！ 端口号 8086
 npm run dev
 
-# 压缩打包出生产代码，目标地址是 dist 目录，第一次执行会新建该目录（如果你希望更改项目在服务器上的部署路径，那么需要修改 config/index.js 文件下的 assetsPublicPath 属性值，默认是在服务器的根目录）
+# 压缩打包出生产代码，目标地址是 dist 目录，第一次执行会新建该目录
+# 如果你希望更改项目在服务器上的部署路径，那么需要修改 config/index.js 文件下的 assetsPublicPath 属性值，默认是在域名下的根路径
 npm run build
 
 # 发布生产代码的同时，输出构建情况
@@ -31,21 +32,23 @@ npm run e2e
 npm test
 ```
 
-### 如果 npm install 的时候出现 'PhantomJS not found on PATH'，并且进度条卡住不动的话，怎么办？
+> #### 如果 npm install 的时候出现 'PhantomJS not found on PATH'，并且进度条卡住不动的话，怎么办？
 
-这是由于天朝的防火墙引起的，可以借助淘宝镜像来解决这个问题。用下面的命令单独安装 **phantomjs-prebuilt**
+> 这是由于天朝的防火墙引起的，可以借助淘宝镜像来解决这个问题。用下面的命令单独安装 **phantomjs-prebuilt**
 
-`PHANTOMJS_CDNURL=https://npm.taobao.org/mirrors/phantomjs/ npm install phantomjs-prebuilt --save-dev`
+> `PHANTOMJS_CDNURL=https://npm.taobao.org/mirrors/phantomjs/ npm install phantomjs-prebuilt --save-dev`
 
-如果你不想输入这么长的命令，那也可以在 **~/.npmrc** 文件中加入这一行
+> 如果你不想输入这么长的命令，那也可以在 **~/.npmrc** 文件中加入这一行
 
-`phantomjs_cdnurl = https://npm.taobao.org/mirrors/phantomjs/`
+> `phantomjs_cdnurl = https://npm.taobao.org/mirrors/phantomjs/`
 
-然后就可以正常 npm install 了。不过据我测试，有了 **package-lockage.json** 文件的帮助（因为它已经把每个依赖的下载地址指向了淘宝镜像），应该不会再出现进度条卡住的问题。详细情况请参考[这里](https://github.com/xhlwill/blog/issues/11)
+> 然后就可以正常 npm install 了。不过据我测试，有了 **package-lockage.json** 文件的帮助（因为它已经把每个依赖的下载地址指向了淘宝镜像），应该不会再出现进度条卡住的问题。详细情况请参考[这里](https://github.com/xhlwill/blog/issues/11)
 
-### 如果 npm install 的过程太慢，甚至因为延时而导致错误，怎么办？
+---
 
-依然类似于上面的解决办法，借助淘宝镜像来下载依赖模块。将 'registry = https://registry.npm.taobao.org' 写入 **~/.npmrc** 文件，再 npm install 就会快很多。不过还是因为 **package-lockage.json** 的存在，你一般不会遇到这个问题。
+> #### 如果 npm install 的过程太慢，甚至因为延时而导致错误，怎么办？
+
+> 依然类似于上面的解决办法，借助淘宝镜像来下载依赖模块。将 'registry = https://registry.npm.taobao.org' 写入 **~/.npmrc** 文件，再 npm install 就会快很多。不过还是因为 **package-lockage.json** 的存在，你一般不会遇到这个问题。
 
 ## 项目结构
 对于最外层的组件，是按照路由信息进行加载的。比方说你点击了菜单中的选项，就会直接改变路由，再根据 **src/router/index.js** 找到到底该加载哪些组件，而如果你直接在浏览器地址栏改变路由，也会起到同样的作用。也就是说，这些外层组件加载的决定因素就是路由地址。但是对于层级很深的子组件来说，并没有路由信息去表达这个状态。例如在毒物接触史当中添加一个新记录，这个时候路由信息是不会有变化的，一旦点击网页刷新，就会回到路由地址所能控制到的最深层级，而放弃这些层级过深的子组件。更多详情需要参看 [Vue-Router 官网](https://router.vuejs.org/zh-cn/) 。
