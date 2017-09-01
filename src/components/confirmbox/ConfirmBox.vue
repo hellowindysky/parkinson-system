@@ -38,6 +38,9 @@ export default {
   },
   mounted() {
     Bus.$on(this.REQUEST_CONFIRMATION, this.showConfirmBox);
+  },
+  beforeDestroy() {
+    Bus.$off(this.REQUEST_CONFIRMATION);
   }
 };
 </script>
