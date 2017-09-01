@@ -67,7 +67,7 @@ export default {
     .title {
       margin: 0;
       font-size: @normal-font-size;
-      cursor: pointer;
+      cursor: default;
       color: @font-color;
     }
     .button {

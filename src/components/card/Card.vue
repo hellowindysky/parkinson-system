@@ -35,7 +35,6 @@ export default {
 .card {
   position: relative;
   background-color: @screen-color;
-  margin: @card-vertical-margin @card-horizontal-margin;
   height: @card-height;
   cursor: pointer;
   .title {

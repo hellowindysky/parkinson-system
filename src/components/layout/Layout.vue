@@ -9,6 +9,8 @@
 </template>
 
 <script>
+import Bus from 'utils/bus.js';
+
 import topbar from 'components/header/Header';
 import sidebar from 'components/sidebar/Sidebar';
 import modalBox from 'components/modalbox/ModalBox';
@@ -20,6 +22,11 @@ export default {
     sidebar,
     modalBox,
     confirmBox
+  },
+  mounted() {
+    window.onresize = () => {
+      Bus.$emit(this.SCREEN_SIZE_CHANGE);
+    };
   }
 };
 </script>

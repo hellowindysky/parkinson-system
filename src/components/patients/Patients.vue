@@ -9,6 +9,7 @@
 </template>
 
 <script>
+import Bus from 'utils/bus.js';
 import list from 'components/list/List';
 
 export default {
@@ -31,6 +32,12 @@ export default {
   methods: {
     toggleList() {
       this.listDisplay = !this.listDisplay;
+
+      // 如果列表折叠情况发生变化，右侧的区域宽度就会改变，里面的一些元素需要重新计算宽度，因此发送事件通知
+      // 由于这个动画会有一定时间，因此在动画结束之后再发送事件
+      setTimeout(() => {
+        Bus.$emit(this.TOGGLE_LIST_DISPLAY);
+      }, 300);
     }
   },
   components: {

@@ -9,6 +9,9 @@ export default {
   EXTENDED_STATUS: 'extended',
 
   // event
+  SCREEN_SIZE_CHANGE: 'screenSizeChange',
+  TOGGLE_LIST_DISPLAY: 'toggleListDisplay',
+
   EDIT: 'edit',
   CANCEL: 'cancel',
   SUBMIT: 'submit',

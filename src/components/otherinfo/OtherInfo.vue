@@ -1,9 +1,9 @@
 <template lang="html">
   <folding-panel :title="'其它信息'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
-    <div class="other-info">
+    <div class="other-info" ref="otherInfo">
 
       <extensible-panel class="panel" :mode="mode" :title="medHistoryTitle" v-on:addNewCard="addMedRecord">
-        <card class="card" :mode="mode" v-for="item in medHistoryList" :key="item.medName"
+        <card class="card" :class="devideWidth" :mode="mode" v-for="item in medHistoryList" :key="item.medName"
          :title="item.medName" v-on:editCurrentCard="editMedRecord(item)"
          v-on:deleteCurrentCard="deleteMedRecord(item)">
           <div class="text first-line">一天{{item.medDose}}次</div>
@@ -13,7 +13,7 @@
       </extensible-panel>
 
       <extensible-panel class="panel" :mode="mode" :title="diseaseHistoryTitle" v-on:addNewCard="addDiseaseRecord">
-        <card class="card" :mode="mode" v-for="item in diseaseHistoryList" :key="item.diseaseRelationId"
+        <card class="card" :class="devideWidth" :mode="mode" v-for="item in diseaseHistoryList" :key="item.diseaseRelationId"
          :title="transform(item, 'diseaseRelationId', diseaseHistoryDictionary)" v-on:editCurrentCard="editDiseaseRecord(item)"
          v-on:deleteCurrentCard="deleteDiseaseRecord(item)">
           <div class="text first-line">是否住院： {{transform(item, 'isHospitalization', diseaseHistoryDictionary)}}</div>
@@ -23,7 +23,7 @@
       </extensible-panel>
 
       <extensible-panel class="panel" :mode="mode" :title="familyHistoryTitle" v-on:addNewCard="addFamilyRecord">
-        <card class="card" :mode="mode" v-for="item in familyHistoryList" :key="item.patientFamilyId"
+        <card class="card" :class="devideWidth" :mode="mode" v-for="item in familyHistoryList" :key="item.patientFamilyId"
          :title="item.diseaseName" v-on:editCurrentCard="editFamilyRecord(item)"
          v-on:deleteCurrentCard="deleteFamilyRecord(item)">
           <div class="text first-line">{{transform(item, 'similarRole', familyHistoryDictionary)}}</div>
@@ -32,35 +32,35 @@
       </extensible-panel>
 
       <extensible-panel class="panel" :mode="mode" :title="personHistoryTitle" v-on:addNewCard="addPersonRecord">
-        <card class="card" :mode="mode" v-for="item in coffeeHistoryList" :key="item.patientHabitId"
+        <card class="card" :class="devideWidth" :mode="mode" v-for="item in coffeeHistoryList" :key="item.patientHabitId"
          :title="transform(item, 'patientHabitId', coffeeHistoryDictionary)"
          v-on:editCurrentCard="editPersonRecord(item, COFFEE_MODAL)"
          v-on:deleteCurrentCard="deleteCoffeeRecord(item)">
           <div class="text first-line">{{item.doseInfo}} 杯/周</div>
           <div class="text start-time">{{item.startTime}}</div>
         </card>
-        <card class="card" :mode="mode" v-for="item in teaHistoryList" :key="item.patientHabitId"
+        <card class="card" :class="devideWidth" :mode="mode" v-for="item in teaHistoryList" :key="item.patientHabitId"
          :title="transform(item, 'patientHabitId', teaHistoryDictionary)"
          v-on:editCurrentCard="editPersonRecord(item, TEA_MODAL)"
          v-on:deleteCurrentCard="deleteTeaRecord(item)">
           <div class="text first-line">{{item.doseInfo}} 杯/周</div>
           <div class="text start-time">{{item.startTime}}</div>
         </card>
-        <card class="card" :mode="mode" v-for="item in smokeHistoryList" :key="item.patientHabitId"
+        <card class="card" :class="devideWidth" :mode="mode" v-for="item in smokeHistoryList" :key="item.patientHabitId"
          :title="transform(item, 'patientHabitId', smokeHistoryDictionary)"
          v-on:editCurrentCard="editPersonRecord(item, SMOKE_MODAL)"
          v-on:deleteCurrentCard="deleteSmokeRecord(item)">
           <div class="text first-line">{{item.doseInfo}} 支/天</div>
           <div class="text start-time">{{item.startTime}}</div>
         </card>
-        <card class="card" :mode="mode" v-for="item in wineHistoryList" :key="item.patientHabitId"
+        <card class="card" :class="devideWidth" :mode="mode" v-for="item in wineHistoryList" :key="item.patientHabitId"
          :title="transform(item, 'patientHabitId', wineHistoryDictionary)"
          v-on:editCurrentCard="editPersonRecord(item, WINE_MODAL)"
          v-on:deleteCurrentCard="deleteWineRecord(item)">
           <div class="text first-line">{{item.doseInfo}} mL/周</div>
           <div class="text start-time">{{item.startTime}}</div>
         </card>
-        <card class="card" :mode="mode" v-for="item in exerciseHistoryList" :key="item.patientExerciseId"
+        <card class="card" :class="devideWidth" :mode="mode" v-for="item in exerciseHistoryList" :key="item.patientExerciseId"
          :title="item.exeName" v-on:editCurrentCard="editPersonRecord(item, EXERCISE_MODAL)"
          v-on:deleteCurrentCard="deleteExerciseRecord(item)">
           <div class="text first-line">{{transform(item, 'grade', exerciseHistoryDictionary)}}</div>
@@ -69,7 +69,7 @@
       </extensible-panel>
 
       <extensible-panel class="panel" :mode="mode" :title="toxicHistoryTitle" v-on:addNewCard="addToxicRecord">
-        <card class="card" :mode="mode" v-for="item in processedToxicList" :key="item.expmaterialName"
+        <card class="card" :class="devideWidth" :mode="mode" v-for="item in processedToxicList" :key="item.expmaterialName"
          :title="item.expmaterialName" v-on:editCurrentCard="editToxicRecord(item)"
          v-on:deleteCurrentCard="deleteToxicRecord(item)">
           <div class="text first-line">{{item.exposedFrquency}}</div>
@@ -136,7 +136,8 @@ export default {
   },
   data() {
     return {
-      mode: this.READING_MODE
+      mode: this.READING_MODE,
+      devideWidth: ''
     };
   },
   computed: {
@@ -357,6 +358,18 @@ export default {
     _rejectDeletion() {
       // 即使删除不成功，也要解除 [确认对话框] 的 “确认” 回调函数
       Bus.$off(this.CONFIRM);
+    },
+    recalculateCardWidth() {
+      var panelWidth = this.$refs.otherInfo.clientWidth;
+      var devideNum = 1.0;
+      // 20px 是卡片的横向间距，定义在了 varaibles.less 中，200px 是卡片的最小宽度
+      while (panelWidth / devideNum > 200 + 20) {
+        devideNum += 1.0;
+      }
+      devideNum -= 1;
+      // 一排最多显示 10 个卡片
+      devideNum = devideNum <= 10 ? devideNum : 10;
+      this.devideWidth = 'width-1-' + parseInt(devideNum, 10);
     }
   },
   mounted() {
@@ -364,6 +377,12 @@ export default {
     Bus.$on(this.GIVE_UP, () => {
       Bus.$off(this.CONFIRM);
     });
+
+    // 如果收到屏幕宽度变化，或者内容区域宽度变化的事件，则重新计算卡片的宽度
+    Bus.$on(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
+    Bus.$on(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
+    // 第一次加载的时候，去计算一次卡片宽度
+    this.recalculateCardWidth();
 
     setTimeout(() => {
       // console.log(this.toxicExposureHistoryList);
@@ -382,9 +401,39 @@ export default {
     text-align: left;
     .card {
       display: inline-block;
-      width: calc(~"25% - @{card-horizontal-margin} * 2");
-      min-width: 200px;
-      max-width: 250px;
+      margin: @card-vertical-margin @card-horizontal-margin;
+      // min-width: 200px;
+      // max-width: 250px;
+      &.width-1-1 {
+        width: calc(~"100% - @{card-horizontal-margin} * 2");
+      }
+      &.width-1-2 {
+        width: calc(~"50% - @{card-horizontal-margin} * 2");
+      }
+      &.width-1-3 {
+        width: calc(~"33.3333% - @{card-horizontal-margin} * 2");
+      }
+      &.width-1-4 {
+        width: calc(~"25% - @{card-horizontal-margin} * 2");
+      }
+      &.width-1-5 {
+        width: calc(~"20% - @{card-horizontal-margin} * 2");
+      }
+      &.width-1-6 {
+        width: calc(~"16.6666% - @{card-horizontal-margin} * 2");
+      }
+      &.width-1-7 {
+        width: calc(~"14.2857% - @{card-horizontal-margin} * 2");
+      }
+      &.width-1-8 {
+        width: calc(~"12.5% - @{card-horizontal-margin} * 2");
+      }
+      &.width-1-9 {
+        width: calc(~"11.1111% - @{card-horizontal-margin} * 2");
+      }
+      &.width-1-10 {
+        width: calc(~"10% - @{card-horizontal-margin} * 2");
+      }
       .text {
         position: absolute;
         font-size: @small-font-size;
