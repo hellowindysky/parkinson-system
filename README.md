@@ -1,22 +1,26 @@
 # ruiyun-web
 
-> A new version of ruiyun web
+> 睿云 2.0 PC版
 
 ## Build Setup
 
 ``` bash
-# install dependencies
+# 安装依赖 ———— 你拷贝了代码后需要做的第一件事
 npm install
 
-# serve with hot reload at localhost:8080
+# 安装依赖之后，你就可以快乐地在本地运行项目啦！！ 端口号 8086
 npm run dev
 
-# build for production with minification
+# 压缩打包出生产代码，目标地址是 dist 目录，第一次执行会新建该目录（如果你希望更改项目在服务器上的部署路径，那么需要修改 config/index.js 文件下的 assetsPublicPath 属性值，默认是在服务器的根目录）
 npm run build
 
-# build for production and view the bundle analyzer report
+# 发布生产代码的同时，输出构建情况
 npm run build --report
 
+# 如果你更改了 element-ui 的默认样式(一个 CSS 4 风格的 CSS 文件)，那么需要用这个命令进行编译一下，详情参考后面的 "关于 element-theme"
+npm run et
+
+# 后面这几个是关于测试的，我引入了这些模块，但目前还没有用上
 # run unit tests
 npm run unit
 
@@ -25,9 +29,6 @@ npm run e2e
 
 # run all tests
 npm test
-
-# compile element-theme css
-npm run et
 ```
 
 ### 如果 npm install 的时候出现 'PhantomJS not found on PATH'，并且进度条卡住不动的话，怎么办？
@@ -60,6 +61,10 @@ npm run et
 `node_modules/.bin/et -c src/assets/styles/element-variables.css -o src/assets/styles/element-theme`
 
 此命令被封装在 **package.json** 的脚本中，因此执行 `npm run et` 即可。
+
+## 再谈自定义 element-ui
+
+刚才提到了利用 **element-theme** 工具，对 **element-ui** 的默认样式文件进行编译，这个修改是全局性质的，而且可配置项并不是那么多。对于更加具体、更加灵活的 CSS 自定义，需要在组件本身的 CSS 部分，覆盖原始样式。一定要注意，此时组件的 `style` 标签不能加 `scoped` 选项，否则 webpack 对 CSS `class` 名字处理后将导致无法应用到 **element-ui** 组件上。那么，如果要保证这里自定义的 CSS 局限在我们可控的范围内，就需要利用好 CSS `class` 名字的组合关系。幸好，在 less 文件的嵌套式写法下，做到这一点是很方便的。
 
 ## 模态框
 本项目多处使用到模态框，基本思想参考于知乎上[尤雨溪的回答](https://www.zhihu.com/question/35820643/answer/64646527#)。状态驱动，挂载在根组件，然后由子组件触发事件传递上来。
