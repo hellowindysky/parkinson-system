@@ -6,24 +6,18 @@
             <li class="tab-bottom-bar" :class="currentTabBottomBar"></li>
         </ul>
         <div class="scroll-content" ref="scrollArea">
-            <featureTableHead></featureTableHead>
-            <router-view :configbase-info="configbaseInfo"></router-view>
+            <feature-table-head></feature-table-head>
+            <router-view></router-view>
         </div>
     </div>
 </template>
 
 <script>
-import featureTableHead from '../tableHead/featureTableHead';
 
-import { getTemplate } from 'api/user';
+import featureTableHead from '../tableHead/featureTableHead';
 import Ps from 'perfect-scrollbar';
 
 export default {
-  data() {
-    return {
-      configbaseInfo: {}
-    };
-  },
   computed: {
     currentTab() {
       var path = this.$route.path;
@@ -72,18 +66,13 @@ export default {
           minScrollbarLength: 40
         });
       });
-    },
-    updatePatientInfo() {
-      getTemplate().then((data) => {
-        this.configbaseInfo = data;
-      });
     }
   },
   mounted() {
     if (!/\/configpersonalinf(\/|$)/.test(this.$route.path)) {
       this.$router.push({ name: 'configpersonalinf' });
     }
-    this.updatePatientInfo();
+    this.updateScrollbar();
   },
   components: {
     featureTableHead
