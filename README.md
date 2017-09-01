@@ -18,10 +18,12 @@ npm run build
 # 发布生产代码的同时，输出构建情况
 npm run build --report
 
-# 如果你更改了 element-ui 的默认样式(一个 CSS 4 风格的 CSS 文件)，那么需要用这个命令进行编译一下，详情参考后面的 "关于 element-theme"
+# 如果你更改了 element-ui 的默认样式(一个 CSS 4 风格的 CSS 文件)，那么需要用这个命令进行编译一下，详情参考后面的 "关于 element-theme "
 npm run et
 
+
 # 后面这几个是关于测试的，我引入了这些模块，但目前还没有用上
+
 # run unit tests
 npm run unit
 
@@ -74,4 +76,4 @@ npm test
 
 ## 关于组件之间的通信
 
-如果是父子组件之间的通信，则由子组件调用 `this.$emit()` 方法，父组件采用 `v-on` 进行监听就好了。如果是层级关联度较低的组件，则加入一个第三方的 Vue 实例对象充当中转站的作用，我们这里定义在了 **src/utils/bus.js** 中，使用的时候先 `import Bus from 'utils/bus.js'`，然后使用 `Bus.$emit()` 和 `Bus.$on()` 即可。值得注意的是，在组件卸载的时候记得解除建立在 `Bus` 上的事件监听，因为绑定的回调函数不会随着组件卸载而自动销毁，一旦再次发生相应事件，则会报错。因此，对于使用了 `Bus.$on()` 的组件，需要在它的 `beforeDestroy` 钩子中，执行 `Bus.$off()`，将相关事件监听全部解除。详情参考[官网](https://cn.vuejs.org/v2/api/#vm-off-event-callback)。
+如果是父子组件之间的通信，则由子组件调用 `this.$emit()` 方法，父组件采用 `v-on` 进行监听就好了。如果是层级关联度较低的组件，则加入一个第三方的 Vue 实例对象充当中转站的作用，我们这里定义在了 **src/utils/bus.js** 中，使用的时候先 `import Bus from 'utils/bus.js'`，然后使用 `Bus.$emit()` 和 `Bus.$on()` 即可。值得注意的是，在组件卸载的时候记得 **解除建立在 `Bus` 上的事件监听**，因为绑定的回调函数不会随着组件卸载而自动销毁，一旦再次发生相应事件，则会报错。因此，对于使用了 `Bus.$on()` 的组件，需要在它的 `beforeDestroy` 钩子中，执行 `Bus.$off()`，将相关事件监听全部解除。详情参考[官网](https://cn.vuejs.org/v2/api/#vm-off-event-callback)。
