@@ -242,11 +242,6 @@ export default {
       }
       return result.join('，');
     },
-    updateDate(field) {
-      var dateStr = this.copyInfo[field.fieldName];
-      this.copyInfo[field.fieldName] = Util.simplifyDate(dateStr);
-      this.updateWarning(field);
-    },
     updateWarning(field) {
       var fieldName = field.fieldName;
       var copyFieldValue = this.copyInfo[fieldName];
