@@ -114,29 +114,18 @@ export default {
       this.mode = this.READING_MODE;
     },
     submit() {
+      // 首先检查是否每个字段都合格，检查一遍之后，如果 warningResults 的所有属性值都为空，就证明表单符合要求
       for (let group of this.basicInfoTemplateGroups) {
         for (let field of group) {
-
-          // 首先检查是否每个字段都合格，检查一遍之后，如果 warningResults 的所有属性值都为空，就证明表单符合要求
           this.updateWarning(field);
           if (this.warningResults[field.fieldName]) {
             return false;
           }
-
-          // 日期控件(el-date-picker)给的是一个表示完整日期对象的字符串，我们需要格式化之后再提交
-          if (this.getUIType(field) === 6) {
-            var dateStr = this.copyInfo[field.fieldName];
-            this.copyInfo[field.fieldName] = Util.simplifyDate(dateStr);
-          }
         }
       }
 
-      // copyInfo 有几个字段的值在取过来的时候进行了特殊处理，这里在传回给服务器的时候要还原成一开始的格式
-      for (let fieldName of CONVERT_TO_DECIMAL_LIST) {
-        if (this.copyInfo[fieldName]) {
-          this.$set(this.copyInfo, fieldName, this.copyInfo[fieldName] * 10);
-        }
-      }
+      // 在提交前，将 copyInfo 中的数据还原成适合服务器传输的格式
+      this.restoreCopyInfo();
 
       // 点击提交按钮，将修改后的 copyInfo 提交到服务器，一旦提交成功，basicInfo也会更新，这个时候再切换回阅读状态
       this.copyInfo.patientId = this.$route.params.id;
@@ -155,6 +144,25 @@ export default {
       for (let fieldName of CONVERT_TO_DECIMAL_LIST) {
         if (this.copyInfo[fieldName]) {
           this.$set(this.copyInfo, fieldName, this.copyInfo[fieldName] / 10);
+        }
+      }
+    },
+    restoreCopyInfo() {
+      // 这个函数用来在提交之前，将我们的临时数据 copyInfo，调整成适合服务器传输的格式
+      for (let group of this.basicInfoTemplateGroups) {
+        for (let field of group) {
+          var fieldName = field.fieldName;
+
+          // 日期控件(el-date-picker)给的是一个表示完整日期对象的字符串，我们需要格式化之后再提交
+          if (this.getUIType(field) === 6) {
+            var dateStr = this.copyInfo[fieldName];
+            this.copyInfo[fieldName] = Util.simplifyDate(dateStr);
+          }
+
+          // copyInfo 有几个字段的值在取过来的时候进行了特殊处理，这里在传回给服务器的时候要还原成一开始的格式
+          if (CONVERT_TO_DECIMAL_LIST.indexOf(fieldName) > -1) {
+            this.$set(this.copyInfo, fieldName, this.copyInfo[fieldName] * 10);
+          }
         }
       }
     },
