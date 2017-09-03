@@ -4,71 +4,21 @@
 
 <script>
 import featurefoldingpanel from '../featurefoldingpanel/featurefoldingpanel';
+import { mapGetters } from 'vuex';
+
 export default {
-  props: {
-    medHistoryListConf: {
-      type: Object,
-      required: true,
-      default: () => {
-        return {};
-      }
-    },
-    diseaseHistoryListConf: {
-      type: Object,
-      required: true,
-      default: () => {
-        return {};
-      }
-    },
-    familyHistoryListConf: {
-      type: Object,
-      required: true,
-      default: () => {
-        return {};
-      }
-    },
-    coffeeHistoryListConf: {
-      type: Object,
-      required: true,
-      default: () => {
-        return {};
-      }
-    },
-    smokeHistoryListConf: {
-      type: Object,
-      required: true,
-      default: () => {
-        return {};
-      }
-    },
-    wineHistoryListConf: {
-      type: Object,
-      required: true,
-      default: () => {
-        return {};
-      }
-    },
-    teaHistoryListConf: {
-      type: Object,
-      required: true,
-      default: () => {
-        return {};
-      }
-    },
-    exerciseHistoryListConf: {
-      type: Object,
-      required: true,
-      default: () => {
-        return {};
-      }
-    },
-    toxicExposureHistoryListConf: {
-      type: Object,
-      required: true,
-      default: () => {
-        return {};
-      }
-    }
+  computed: {
+    ...mapGetters([
+      'medHistoryTemplate',
+      'diseaseHistoryTemplate',
+      'familyHistoryTemplate',
+      'toxicExposureHistoryTemplate',
+      'coffeeHistoryTemplate',
+      'teaHistoryTemplate',
+      'smokeHistoryTemplate',
+      'wineHistoryTemplate',
+      'exerciseHistoryTemplate'
+    ])
   },
   components: {
     featurefoldingpanel

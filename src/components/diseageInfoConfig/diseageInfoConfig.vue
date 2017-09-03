@@ -4,16 +4,15 @@
 
 <script>
 import featurefoldingpanel from '../featurefoldingpanel/featurefoldingpanel';
+import { mapGetters } from 'vuex';
 
 export default {
-  props: {
-    diseaseInfoConf: {
-      type: Object,
-      required: true,
-      default: () => {
-        return {};
-      }
-    }
+  computed: {
+    ...mapGetters([
+      'diseaseInfoDictionaryGroups',
+      'diseaseInfoTemplateGroups',
+      'typeGroup'
+    ])
   },
   components: {
     featurefoldingpanel

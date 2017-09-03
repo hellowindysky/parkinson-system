@@ -3,7 +3,8 @@
     <div class="feature-header">
       <div class="iconfont" :class="iconToggleFolded"></div>
       <h2 class="feature-title" @click="toggleFoldedPanel">{{title}}</h2>
-      <el-switch  on-color="#ff9c00" off-color="#6e849f" on-text="" off-text=""></el-switch>
+      <el-switch class="top-switch" v-model="isopen" on-color="#ff9c00" off-color="#eff0f6" on-text="" off-text=""></el-switch>
+      <el-checkbox class="top-checked" v-model="checked"></el-checkbox>
     </div>
     <div class="feature-content" :class="{'folded': folded}">
       <slot></slot>
@@ -21,7 +22,9 @@ export default {
   },
   data() {
     return {
-      folded: true
+      folded: true,
+      checked: true,
+      isopen: true
     };
   },
   computed: {
@@ -42,9 +45,11 @@ export default {
 <style lang="less" scoped>
 @import "~styles/variables.less";
 @panel-header-height: 40px;
+@panel-top-bottom-margin: 10px;
 
 .feature-panel-wrapper {
   background-color: @background-color;
+  margin: @panel-top-bottom-margin 0;
   font-size: 0;
   overflow: hidden;
   .feature-header {
@@ -66,6 +71,17 @@ export default {
       &:hover {
         color: lighten(@font-color, 20%);
       }
+    }
+    .top-switch{
+      position: absolute;
+      left: 210px;
+      top: 10px;
+    }
+    .top-checked{
+      position: absolute;
+      left: 330px;
+      top: 12px;
+      color: #ff9c00;
     }
     .iconfont {
       position: absolute;
