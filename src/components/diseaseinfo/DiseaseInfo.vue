@@ -48,7 +48,7 @@
             </span>
             <span v-else-if="getUIType(field)===6">
               <el-date-picker v-model="copyInfo[field.fieldName]" type="date" :class="{'warning': warningResults[field.fieldName]}"
-               :placeholder="getMatchedField(field).cnFieldDesc" format="yyyy-MM-dd" @change="updateDate(field)"></el-date-picker>
+               :placeholder="getMatchedField(field).cnFieldDesc" format="yyyy-MM-dd" @change="updateWarning(field)"></el-date-picker>
             </span>
             <span v-else-if="getUIType(field)===7">
               7
@@ -116,19 +116,17 @@ export default {
       this.mode = this.READING_MODE;
     },
     submit() {
-      // 首先检查是否每个字段都合格，检查一遍之后，如果 warningResults 的所有属性值都为空，就证明表单符合要求
+
       for (let group of this.diseaseInfoTemplateGroups) {
         for (let field of group) {
+          // 首先检查是否每个字段都合格，检查一遍之后，如果 warningResults 的所有属性值都为空，就证明表单符合要求
           this.updateWarning(field);
-        }
-      }
-      for (let fieldName in this.warningResults) {
-        if (this.warningResults[fieldName]) {
-          return false;
+          if (this.warningResults[field.fieldName]) {
+            return false;
+          }
         }
       }
 
-      // 对于那些 uiType 为 5 的字段来说，我们需要将形如 [1,2] 这样的数组转化为 "1,2"这样的字符串
       this.restoreCopyInfo();
 
       // 点击提交按钮，将修改后的 copyInfo 提交到服务器，一旦提交成功，diseaseInfo也会更新，这个时候再切换回阅读状态
@@ -173,9 +171,16 @@ export default {
       }
       for (let field of this.diseaseInfoDictionary) {
         let name = field.fieldName;
+
         if (nameList.indexOf(name) > -1 && field.uiType === 5) {
+          // 对于那些 uiType 为 5 的字段来说，我们需要将形如 [1,2] 这样的数组转化为 "1,2"这样的字符串
           var codesString = this.copyInfo[name].join(',');
           this.copyInfo[name] = codesString;
+
+        } else if (nameList.indexOf(name) > -1 && field.uiType === 6) {
+          // 日期控件(el-date-picker)给的是一个表示完整日期对象的字符串，我们需要格式化之后再提交
+          var dateStr = this.copyInfo[name];
+          this.copyInfo[name] = Util.simplifyDate(dateStr);
         }
       }
     },
@@ -245,6 +250,10 @@ export default {
     updateWarning(field) {
       var fieldName = field.fieldName;
       var copyFieldValue = this.copyInfo[fieldName];
+      if (this.getUIType(field) === 6) {
+        // 日期控件(el-date-picker)给的是一个表示完整日期对象的字符串，我们需要格式化之后再校验
+        copyFieldValue = Util.simplifyDate(copyFieldValue);
+      }
       if (field.must === 1) {
         // must 为 1 代表必填，为 2 代表选填
         var isEmptyValue = !copyFieldValue && copyFieldValue !== 0;
