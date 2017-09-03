@@ -1,19 +1,19 @@
 <template lang="html">
   <folding-panel :title="'病症信息'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
     <div class="disease-info">
-      <div class="group" v-for="(group, groupIndex) in diseaseInfoTemplateGroups">
-        <div class="field" v-for="field in group" :class="checkField(field, groupIndex)">
+      <div class="group" v-for="group in diseaseInfoTemplateGroups">
+        <div class="field" v-for="field in group" :class="checkField(field)">
           <span class="field-name">
             {{field.cnfieldName}}
             <span class="required-mark" v-show="field.must===1">*</span>
           </span>
 
           <div class="field-value" v-show="mode===READING_MODE">
-            <span v-if="getUIType(field, groupIndex)===3">
-              {{ transformTypeCode(copyInfo[field.fieldName], field, groupIndex) }}
+            <span v-if="getUIType(field)===3">
+              {{ transformTypeCode(copyInfo[field.fieldName], field) }}
             </span>
-            <span v-else-if="getUIType(field, groupIndex)===5">
-              {{ translateCodes(copyInfo[field.fieldName], field, groupIndex) }}
+            <span v-else-if="getUIType(field)===5">
+              {{ translateCodes(copyInfo[field.fieldName], field) }}
             </span>
             <span v-else>
               {{ copyInfo[field.fieldName] }}
@@ -22,35 +22,35 @@
 
           <div class="field-input" v-show="mode===EDITING_MODE">
             <span class="warning-text">{{getWarningText(field.fieldName)}}</span>
-            <span v-if="getUIType(field, groupIndex)===1">
+            <span v-if="getUIType(field)===1">
               <el-input v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-               :placeholder="getMatchedField(field, groupIndex).cnFieldDesc" @change="updateWarning(field)"></el-input>
+               :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)"></el-input>
             </span>
-            <span v-else-if="getUIType(field, groupIndex)===2">
+            <span v-else-if="getUIType(field)===2">
               2
             </span>
-            <span v-else-if="getUIType(field, groupIndex)===3">
+            <span v-else-if="getUIType(field)===3">
               <el-select v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-               :placeholder="getMatchedField(field, groupIndex).cnFieldDesc" @change="updateWarning(field)">
-                <el-option v-for="type in getTypes(field, groupIndex)" :label="type.typeName"
+               :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)">
+                <el-option v-for="type in getTypes(field)" :label="type.typeName"
                  :value="type.typeCode" :key="type.typeCode"></el-option>
               </el-select>
             </span>
-            <span v-else-if="getUIType(field, groupIndex)===4">
+            <span v-else-if="getUIType(field)===4">
               4
             </span>
-            <span v-else-if="getUIType(field, groupIndex)===5">
+            <span v-else-if="getUIType(field)===5">
               <el-checkbox-group v-model="copyInfo[field.fieldName]" @change="updateWarning(field)"
-               :placeholder="getMatchedField(field, groupIndex).cnFieldDesc">
-                <el-checkbox v-for="type in getTypes(field, groupIndex)" :label="type.typeCode"
+               :placeholder="getMatchedField(field).cnFieldDesc">
+                <el-checkbox v-for="type in getTypes(field)" :label="type.typeCode"
                  :key="type.typeCode">{{type.typeName}}</el-checkbox>
               </el-checkbox-group>
             </span>
-            <span v-else-if="getUIType(field, groupIndex)===6">
+            <span v-else-if="getUIType(field)===6">
               <el-date-picker v-model="copyInfo[field.fieldName]" type="date" :class="{'warning': warningResults[field.fieldName]}"
-               :placeholder="getMatchedField(field, groupIndex).cnFieldDesc" format="yyyy-MM-dd" @change="updateDate(field)"></el-date-picker>
+               :placeholder="getMatchedField(field).cnFieldDesc" format="yyyy-MM-dd" @change="updateDate(field)"></el-date-picker>
             </span>
-            <span v-else-if="getUIType(field, groupIndex)===7">
+            <span v-else-if="getUIType(field)===7">
               7
             </span>
           </div>
@@ -91,7 +91,15 @@ export default {
       'diseaseInfoDictionaryGroups',
       'diseaseInfoTemplateGroups',
       'typeGroup'
-    ])
+    ]),
+    diseaseInfoDictionary() {
+      // 对 diseaseInfoDictionaryGroups 进行扁平化处理，方便之后操作
+      var flattenedGroup = [];
+      for (let group of this.diseaseInfoDictionaryGroups) {
+        flattenedGroup = flattenedGroup.concat(group);
+      }
+      return flattenedGroup;
+    }
   },
   components: {
     FoldingPanel
@@ -138,24 +146,22 @@ export default {
     changeCopyInfo() {
       // 复制得到的 copyInfo 有几个字段的值需要特殊处理一下
       // uiType 为 5 (多选框)的字段，形如 “1，3，4” 要转化为 [1, 3, 4]
-      // 我们先将 CopyInfo 所有属性的名字放到一个数组里，然后遍历 diseaseInfoDictionaryGroups 下的所有 field
+      // 我们先将 CopyInfo 所有属性的名字放到一个数组里，然后遍历 diseaseInfoDictionary 下的所有 field
       // 看 哪些 field 的 fieldName 在这个数组里，同时该 field 的 uiType 为 5，这时就把 copyInfo 的相应字段进行转换
       var nameList = [];
       for (let fieldName in this.copyInfo) {
         nameList.push(fieldName);
       }
-      for (let group of this.diseaseInfoDictionaryGroups) {
-        for (let field of group) {
-          let name = field.fieldName;
-          if (nameList.indexOf(name) > -1 && field.uiType === 5) {
-            var codesArray = this.copyInfo[name].split(',').map((str) => {
-              return parseInt(str, 10);
-            });
-            this.copyInfo[name] = codesArray;
-          } else if (field.uiType === 5) {
-            // 这种情况指的是，得到对信息没有相应的字段，那么我们就为它建一个空数组，注意为了让 Vue 动态检测，这里采用 set 方法
-            this.$set(this.copyInfo, name, []);
-          }
+      for (let field of this.diseaseInfoDictionary) {
+        let name = field.fieldName;
+        if (nameList.indexOf(name) > -1 && field.uiType === 5) {
+          var codesArray = this.copyInfo[name].split(',').map((str) => {
+            return parseInt(str, 10);
+          });
+          this.copyInfo[name] = codesArray;
+        } else if (field.uiType === 5) {
+          // 这种情况指的是，得到的信息没有相应的字段，那么我们就为它建一个空数组，注意为了让 Vue 动态检测，这里采用 set 方法
+          this.$set(this.copyInfo, name, []);
         }
       }
     },
@@ -165,27 +171,21 @@ export default {
       for (let fieldName in this.copyInfo) {
         nameList.push(fieldName);
       }
-      for (let group of this.diseaseInfoDictionaryGroups) {
-        for (let field of group) {
-          let name = field.fieldName;
-          if (nameList.indexOf(name) > -1 && field.uiType === 5) {
-            var codesString = this.copyInfo[name].join(',');
-            this.copyInfo[name] = codesString;
-          }
+      for (let field of this.diseaseInfoDictionary) {
+        let name = field.fieldName;
+        if (nameList.indexOf(name) > -1 && field.uiType === 5) {
+          var codesString = this.copyInfo[name].join(',');
+          this.copyInfo[name] = codesString;
         }
       }
     },
-    getMatchedField(field, groupIndex) {
+    getMatchedField(field) {
       // 这个函数根据实际数据，在字典项中查询到对应的字段，从而方便我们得到其 uiType 等信息
-      var matchedGroup = this.diseaseInfoDictionaryGroups[groupIndex];
-      if (!matchedGroup) {
-        matchedGroup = [];
-      }
-      return Util.getElement('fieldName', field.fieldName, matchedGroup);
+      return Util.getElement('fieldName', field.fieldName, this.diseaseInfoDictionary);
     },
-    checkField(field, groupIndex) {
+    checkField(field) {
       // 用来检测当前 field 的特殊样式
-      var dictionaryField = this.getMatchedField(field, groupIndex);
+      var dictionaryField = this.getMatchedField(field);
       var name = dictionaryField.fieldName;
       var classNameList = [];
 
@@ -198,34 +198,34 @@ export default {
         classNameList.push('long-label-field');
       }
       // 判断该字段是否是多选框
-      if (this.getUIType(field, groupIndex) === 5) {
+      if (this.getUIType(field) === 5) {
         classNameList.push('multiple-select');
       }
       return classNameList.join(' ');
     },
-    checkIfHalfLine(field, groupIndex) {
-      var dictionaryField = this.getMatchedField(field, groupIndex);
+    checkIfHalfLine(field) {
+      var dictionaryField = this.getMatchedField(field);
       // 判断该字段是否跨行
       return HALF_LINE_FIELD_LIST.indexOf(dictionaryField.fieldName) > -1;
     },
-    getUIType(field, groupIndex) {
+    getUIType(field) {
       // uiType类型 0/无 1/输入框 2/数字箭头 3/单选下拉框 4/单选按纽 5/多选复选框 6/日期 7/日期时间
-      return this.getMatchedField(field, groupIndex).uiType;
+      return this.getMatchedField(field).uiType;
     },
-    getTypes(field, groupIndex) {
+    getTypes(field) {
       // 在 typegroup 里面查找到 field 所对应的 types（选项组）
-      var dictionaryField = this.getMatchedField(field, groupIndex);
+      var dictionaryField = this.getMatchedField(field);
       var value = dictionaryField.fieldEnumId;
       var typeInfo = Util.getElement('typegroupcode', value, this.typeGroup);
       return typeInfo.types ? typeInfo.types : [];
     },
-    transformTypeCode(typeCode, field, groupIndex) {
+    transformTypeCode(typeCode, field) {
       // 根据 typeCode 找到对应的 typeName
-      var types = this.getTypes(field, groupIndex);
+      var types = this.getTypes(field);
       var matchedType = Util.getElement('typeCode', typeCode, types);
       return matchedType.typeName ? matchedType.typeName : '';
     },
-    translateCodes(typeCodes, field, groupIndex) {
+    translateCodes(typeCodes, field) {
       // 将形如 [1, 2, 4] 的字段信息 转换成 '内容 1，内容 2，内容 4' 这样的单字符串进行显示
       if (!typeCodes) {
         return '';
@@ -233,7 +233,7 @@ export default {
       var result = [];
 
       for (let typeCode of typeCodes) {
-        result.push(this.transformTypeCode(typeCode, field, groupIndex));
+        result.push(this.transformTypeCode(typeCode, field));
       }
       return result.join('，');
     },
