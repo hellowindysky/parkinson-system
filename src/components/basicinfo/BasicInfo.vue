@@ -42,7 +42,7 @@
             <span v-else-if="getUIType(field)===6">
               <el-date-picker v-model="copyInfo[field.fieldName]" type="date" :class="{'warning': warningResults[field.fieldName]}"
                :picker-options="futureDisabledptions" :placeholder="getMatchedField(field).cnFieldDesc"
-               @change="updateDate(field)">
+               @change="updateWarning(field)">
               </el-date-picker>
             </span>
             <span v-else-if="getUIType(field)===7">
@@ -114,15 +114,20 @@ export default {
       this.mode = this.READING_MODE;
     },
     submit() {
-      // 首先检查是否每个字段都合格，检查一遍之后，如果 warningResults 的所有属性值都为空，就证明表单符合要求
       for (let group of this.basicInfoTemplateGroups) {
         for (let field of group) {
+
+          // 首先检查是否每个字段都合格，检查一遍之后，如果 warningResults 的所有属性值都为空，就证明表单符合要求
           this.updateWarning(field);
-        }
-      }
-      for (let fieldName in this.warningResults) {
-        if (this.warningResults[fieldName]) {
-          return false;
+          if (this.warningResults[field.fieldName]) {
+            return false;
+          }
+
+          // 日期控件(el-date-picker)给的是一个表示完整日期对象的字符串，我们需要格式化之后再提交
+          if (this.getUIType(field) === 6) {
+            var dateStr = this.copyInfo[field.fieldName];
+            this.copyInfo[field.fieldName] = Util.simplifyDate(dateStr);
+          }
         }
       }
 
@@ -179,14 +184,13 @@ export default {
       var matchedType = Util.getElement('typeCode', typeCode, types);
       return matchedType.typeName ? matchedType.typeName : '';
     },
-    updateDate(field) {
-      var dateStr = this.copyInfo[field.fieldName];
-      this.copyInfo[field.fieldName] = Util.simplifyDate(dateStr);
-      this.updateWarning(field);
-    },
     updateWarning(field) {
       var fieldName = field.fieldName;
       var copyFieldValue = this.copyInfo[fieldName];
+      if (this.getUIType(field) === 6) {
+        // 日期控件(el-date-picker)给的是一个表示完整日期对象的字符串，我们需要格式化之后再校验
+        copyFieldValue = Util.simplifyDate(copyFieldValue);
+      }
       if (field.must === 1 && !copyFieldValue && copyFieldValue !== 0) {
         // must 为 1 代表必填，为 2 代表选填
 
