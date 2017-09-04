@@ -123,18 +123,9 @@ export default {
           }
         }
       }
-<<<<<<< HEAD
-      // copyInfo 有几个字段的值在取过来的时候进行了特殊处理，这里在传回给服务器的时候要还原成一开始的格式
-      for (let fieldName of CONVERT_TO_DECIMAL_LIST) {
-        if (this.copyInfo[fieldName]) {
-          this.$set(this.copyInfo, fieldName, this.copyInfo[fieldName] * 10);
-        }
-      }
-=======
 
       // 在提交前，将 copyInfo 中的数据还原成适合服务器传输的格式
       this.restoreCopyInfo();
->>>>>>> d742fe1c48ba574e8e436b4bfcd94d083611c741
 
       // 点击提交按钮，将修改后的 copyInfo 提交到服务器，一旦提交成功，basicInfo也会更新，这个时候再切换回阅读状态
       this.copyInfo.patientId = this.$route.params.id;
