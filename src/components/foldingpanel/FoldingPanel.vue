@@ -55,7 +55,7 @@ export default {
   },
   mounted() {
     // 默认让基础信息面板呈展开状态
-    if (this.title === '其它信息') {
+    if (this.title === '其它信息' || this.title === '看诊记录') {
       this.folded = false;
     }
   },

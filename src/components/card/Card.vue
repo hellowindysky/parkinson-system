@@ -40,7 +40,7 @@ export default {
   .title {
     position: absolute;
     left: 10px;
-    right: 50px;
+    right: 40px;
     top: 15px;
     font-size: @normal-font-size;
     cursor: pointer;

@@ -23,7 +23,7 @@
         </div>
       </div>
       <div class="respective-info">
-        <router-view :patient-info="patientInfo"></router-view>
+        <router-view :patient-info="patientInfo" :patient-case-list="patientCaseList"></router-view>
       </div>
     </div>
   </div>
@@ -33,12 +33,13 @@
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 
-import { getPatientInfo } from 'api/patient';
+import { getPatientInfo, getPatientCaseList } from 'api/patient';
 
 export default {
   data() {
     return {
-      patientInfo: {}
+      patientInfo: {},
+      patientCaseList: []
     };
   },
   computed: {
@@ -103,7 +104,12 @@ export default {
     },
     updatePatientInfo() {
       getPatientInfo(this.$route.params.id).then((data) => {
+        // console.log('patientInfo: ', data);
         this.patientInfo = data;
+      });
+      getPatientCaseList(this.$route.params.id).then((data) => {
+        // console.log('patientCaseList: ', data);
+        this.patientCaseList = data;
       });
     }
   },

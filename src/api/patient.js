@@ -30,7 +30,7 @@ export function getPatientList() {
     "orgId": 34,
     "orgType": 2,
     "pageNo": 1,
-    "pageSize": 10
+    "pageSize": 0
   };
 
   var url = 'http://apitest.gyenno.com/pdms/queryPatientList';
@@ -502,5 +502,23 @@ export function deletePatientToxicExposure(toxicExposure) {
   };
   var url = 'http://apitest.gyenno.com/pdms/delPatientCideexposed';
 
+  return encapsulatePromise(url, request);
+};
+
+// 获取患者诊断列表
+export function getPatientCaseList(patientId) {
+  // 传进来的 patientId 可能是字符串，这里需要转化为数字
+  var patientIdNum = parseInt(patientId, 10);
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientId": patientIdNum,
+    "pageSize": 0,
+    "pageNo": 1
+  };
+  var url = 'http://apitest.gyenno.com/pdms/queryPatientCaseList';
   return encapsulatePromise(url, request);
 };

@@ -1,13 +1,14 @@
 <template lang="html">
   <div class="diagnostic-info-wrapper" ref="diagnosticInfo">
     <folding-panel class="panel" :title="'看诊记录'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
-      <card class="card" :class="devideWidth" :mode="mode" v-for="item in [1,2,3,4,5,6,7,8,9]" :key="item" :title="item+'号'">
-
+      <card class="card" :class="devideWidth" :mode="mode" v-for="item in patientCaseList" :key="item.caseName" :title="item.caseName">
+        <div class="text first-line">诊断内容：</div>
+        <div class="text second-line" v-html="getDiagnosticContent(item)"></div>
+        <div class="text third-line">归档情况：<span class="third-line-content"> 已归档</span></div>
       </card>
     </folding-panel>
-    <folding-panel class="panel" :title="'随诊记录'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
-      <card class="card" :class="devideWidth" :mode="mode" v-for="item in [1,2,3,4,5,6,7,8,9]" :key="item" :title="item+'号'">
-
+    <folding-panel class="panel" v-show="false" :title="'随诊记录'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
+      <card class="card" :class="devideWidth" :mode="mode" v-for="item in [1,2,3,4,5,6,7,8,9]" :key="item" :title="'第' + item+ '条'">
       </card>
     </folding-panel>
   </div>
@@ -20,9 +21,10 @@ import Bus from 'utils/bus.js';
 
 export default {
   props: {
-    patientInfo: {
-      type: Object,
-      required: true
+    patientCaseList: {
+      type: Array,
+      required: true,
+      default: []
     }
   },
   data() {
@@ -45,14 +47,35 @@ export default {
       var panelWidth = this.$refs.diagnosticInfo.clientWidth;
       panelWidth += 10 * 2;
       var devideNum = 1.0;
-      // 10px 是卡片的横向间距，定义在了 varaibles.less 中，200px 是卡片的最小宽度
-      while (panelWidth / devideNum > 200 + 10) {
+      // 10px 是卡片的横向间距，定义在了 varaibles.less 中，260px 是卡片的最小宽度
+      while (panelWidth / devideNum > 260 + 10) {
         devideNum += 1.0;
       }
       devideNum -= 1;
       // 一排最多显示 10 个卡片
       devideNum = devideNum <= 10 ? devideNum : 10;
       this.devideWidth = 'width-1-' + parseInt(devideNum, 10);
+    },
+    getDiagnosticContent(item) {
+      var content = '';
+      var diagnosticDictionary = [
+        {fieldName: 'scaleBrief', cnName: '量表信息'},
+        {fieldName: 'sideeffectBrief', cnName: '副作用'},
+        {fieldName: 'spephysicalBrief', cnName: '神经检查'},
+        {fieldName: 'surgicalBrief', cnName: '外科治疗'},
+        {fieldName: 'bioexaBrief', cnName: '生化检查'},
+        {fieldName: 'etgBrief', cnName: '肌电图检查'},
+        {fieldName: 'auxiliaryexamBrief', cnName: '辅助信息'}
+      ];
+      for (let field of diagnosticDictionary) {
+        if (item[field.fieldName]) {
+          // 正因为这里需要加入连续空格，所以我们才使用 v-html 指令来直接解析 html
+          content += field.cnName + ' <span>&nbsp;&nbsp;</span> ';
+        }
+      }
+      // 去掉尾部空格
+      content = content.trim();
+      return content;
     }
   },
   components: {
@@ -77,6 +100,11 @@ export default {
     Bus.$off(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
     Bus.$off(this.CONFIRM);
     Bus.$off(this.GIVE_UP);
+  },
+  watch: {
+    patientCaseList: function() {
+      console.log(this.patientCaseList);
+    }
   }
 };
 </script>
@@ -100,9 +128,10 @@ export default {
       }
     }
     .card {
-      background-color: @background-color;
       display: inline-block;
       margin: 3px @this-card-horizontal-margin;
+      height: 130px;
+      background-color: @background-color;
       &.width-1-1 {
         width: calc(~"100% - @{this-card-horizontal-margin} * 2");
       }
@@ -135,6 +164,30 @@ export default {
       }
       .title {
         left: 20px;
+      }
+      .text {
+        position: absolute;
+        font-size: @small-font-size;
+        &.first-line {
+          left: 20px;
+          top: 45px;
+          right: 20px;
+          color: @font-color;
+        }
+        &.second-line {
+          left: 20px;
+          top: 65px;
+          right: 20px;
+          color: @light-font-color;
+        }
+        &.third-line {
+          left: 20px;
+          top: 100px;
+          right: 20px;
+          .third-line-content {
+            color: @light-font-color;
+          }
+        }
       }
     }
   }
