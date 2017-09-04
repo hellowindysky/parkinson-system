@@ -1,16 +1,16 @@
 <template lang="html">
   <folding-panel :title="'基础信息'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
     <div class="basic-info">
-      <div class="group" v-for="(group, groupIndex) in basicInfoTemplateGroups">
-        <div class="field" v-for="field in group" :class="{'whole-line': checkIfWholeLine(field, groupIndex)}">
+      <div class="group" v-for="group in basicInfoTemplateGroups">
+        <div class="field" v-for="field in group" :class="{'whole-line': checkIfWholeLine(field)}">
           <span class="field-name">
             {{field.cnfieldName}}
             <span class="required-mark" v-show="field.must===1">*</span>
           </span>
 
           <div class="field-value" v-show="mode===READING_MODE">
-            <span v-if="getUIType(field, groupIndex)===3">
-              {{ transformTypeCode(copyInfo[field.fieldName], field, groupIndex) }}
+            <span v-if="getUIType(field)===3">
+              {{ transformTypeCode(copyInfo[field.fieldName], field) }}
             </span>
             <span v-else>
               {{ copyInfo[field.fieldName] }}
@@ -19,33 +19,33 @@
 
           <div class="field-input" v-show="mode===EDITING_MODE">
             <span class="warning-text">{{getWarningText(field.fieldName)}}</span>
-            <span v-if="getUIType(field, groupIndex)===1">
+            <span v-if="getUIType(field)===1">
               <el-input v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-               :placeholder="getMatchedField(field, groupIndex).cnFieldDesc" @change="updateWarning(field)"></el-input>
+               :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)"></el-input>
             </span>
-            <span v-else-if="getUIType(field, groupIndex)===2">
+            <span v-else-if="getUIType(field)===2">
               2
             </span>
-            <span v-else-if="getUIType(field, groupIndex)===3">
+            <span v-else-if="getUIType(field)===3">
               <el-select v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-               :placeholder="getMatchedField(field, groupIndex).cnFieldDesc" @change="updateWarning(field)">
-                <el-option v-for="type in getTypes(field, groupIndex)" :label="type.typeName"
+               :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)">
+                <el-option v-for="type in getTypes(field)" :label="type.typeName"
                  :value="type.typeCode" :key="type.typeCode"></el-option>
               </el-select>
             </span>
-            <span v-else-if="getUIType(field, groupIndex)===4">
+            <span v-else-if="getUIType(field)===4">
               4
             </span>
-            <span v-else-if="getUIType(field, groupIndex)===5">
+            <span v-else-if="getUIType(field)===5">
               5
             </span>
-            <span v-else-if="getUIType(field, groupIndex)===6">
+            <span v-else-if="getUIType(field)===6">
               <el-date-picker v-model="copyInfo[field.fieldName]" type="date" :class="{'warning': warningResults[field.fieldName]}"
-               :picker-options="futureDisabledptions" :placeholder="getMatchedField(field, groupIndex).cnFieldDesc"
-               @change="updateDate(field)">
+               :picker-options="futureDisabledptions" :placeholder="getMatchedField(field).cnFieldDesc"
+               @change="updateWarning(field)">
               </el-date-picker>
             </span>
-            <span v-else-if="getUIType(field, groupIndex)===7">
+            <span v-else-if="getUIType(field)===7">
               7
             </span>
           </div>
@@ -93,7 +93,15 @@ export default {
       'basicInfoDictionaryGroups',
       'basicInfoTemplateGroups',
       'typeGroup'
-    ])
+    ]),
+    basicInfoDictionary() {
+      // 对 basicInfoDictionaryGroups 进行扁平化处理，方便之后操作
+      var flattenedGroup = [];
+      for (let group of this.basicInfoDictionaryGroups) {
+        flattenedGroup = flattenedGroup.concat(group);
+      }
+      return flattenedGroup;
+    }
   },
   methods: {
     startEditing() {
@@ -110,19 +118,23 @@ export default {
       for (let group of this.basicInfoTemplateGroups) {
         for (let field of group) {
           this.updateWarning(field);
+          if (this.warningResults[field.fieldName]) {
+            return false;
+          }
         }
       }
-      for (let fieldName in this.warningResults) {
-        if (this.warningResults[fieldName]) {
-          return false;
-        }
-      }
+<<<<<<< HEAD
       // copyInfo 有几个字段的值在取过来的时候进行了特殊处理，这里在传回给服务器的时候要还原成一开始的格式
       for (let fieldName of CONVERT_TO_DECIMAL_LIST) {
         if (this.copyInfo[fieldName]) {
           this.$set(this.copyInfo, fieldName, this.copyInfo[fieldName] * 10);
         }
       }
+=======
+
+      // 在提交前，将 copyInfo 中的数据还原成适合服务器传输的格式
+      this.restoreCopyInfo();
+>>>>>>> d742fe1c48ba574e8e436b4bfcd94d083611c741
 
       // 点击提交按钮，将修改后的 copyInfo 提交到服务器，一旦提交成功，basicInfo也会更新，这个时候再切换回阅读状态
       this.copyInfo.patientId = this.$route.params.id;
@@ -144,44 +156,58 @@ export default {
         }
       }
     },
-    getMatchedField(field, groupIndex) {
-      // 这个函数根据实际数据，在字典项中查询到对应的字段，从而方便我们得到其 uiType 等信息
-      var matchedGroup = this.basicInfoDictionaryGroups[groupIndex];
-      if (!matchedGroup) {
-        matchedGroup = [];
+    restoreCopyInfo() {
+      // 这个函数用来在提交之前，将我们的临时数据 copyInfo，调整成适合服务器传输的格式
+      for (let group of this.basicInfoTemplateGroups) {
+        for (let field of group) {
+          var fieldName = field.fieldName;
+
+          // 日期控件(el-date-picker)给的是一个表示完整日期对象的字符串，我们需要格式化之后再提交
+          if (this.getUIType(field) === 6) {
+            var dateStr = this.copyInfo[fieldName];
+            this.copyInfo[fieldName] = Util.simplifyDate(dateStr);
+          }
+
+          // copyInfo 有几个字段的值在取过来的时候进行了特殊处理，这里在传回给服务器的时候要还原成一开始的格式
+          if (CONVERT_TO_DECIMAL_LIST.indexOf(fieldName) > -1) {
+            this.$set(this.copyInfo, fieldName, this.copyInfo[fieldName] * 10);
+          }
+        }
       }
-      return Util.getElement('fieldName', field.fieldName, matchedGroup);
     },
-    checkIfWholeLine(field, groupIndex) {
-      var dictionaryField = this.getMatchedField(field, groupIndex);
+    getMatchedField(field) {
+      // 这个函数根据实际数据，在字典项中查询到对应的字段，从而方便我们得到其 uiType 等信息
+      return Util.getElement('fieldName', field.fieldName, this.basicInfoDictionary);
+    },
+    checkIfWholeLine(field) {
+      var dictionaryField = this.getMatchedField(field);
       // 判断该字段是否跨行
       return WHOLE_LINE_FIELD_LIST.indexOf(dictionaryField.fieldName) > -1;
     },
-    getUIType(field, groupIndex) {
+    getUIType(field) {
       // uiType类型 0/无 1/输入框 2/数字箭头 3/单选下拉框 4/单选按纽 5/多选复选框 6/日期 7/日期时间
-      return this.getMatchedField(field, groupIndex).uiType;
+      return this.getMatchedField(field).uiType;
     },
-    getTypes(field, groupIndex) {
+    getTypes(field) {
       // 在 typegroup 里面查找到 field 所对应的 types（选项组）
-      var dictionaryField = this.getMatchedField(field, groupIndex);
+      var dictionaryField = this.getMatchedField(field);
       var value = dictionaryField.fieldEnumId;
       var typeInfo = Util.getElement('typegroupcode', value, this.typeGroup);
       return typeInfo.types ? typeInfo.types : [];
     },
-    transformTypeCode(typeCode, field, groupIndex) {
+    transformTypeCode(typeCode, field) {
       // 根据 typeCode 找到对应的 typeName
-      var types = this.getTypes(field, groupIndex);
+      var types = this.getTypes(field);
       var matchedType = Util.getElement('typeCode', typeCode, types);
       return matchedType.typeName ? matchedType.typeName : '';
-    },
-    updateDate(field) {
-      var dateStr = this.copyInfo[field.fieldName];
-      this.copyInfo[field.fieldName] = Util.simplifyDate(dateStr);
-      this.updateWarning(field);
     },
     updateWarning(field) {
       var fieldName = field.fieldName;
       var copyFieldValue = this.copyInfo[fieldName];
+      if (this.getUIType(field) === 6) {
+        // 日期控件(el-date-picker)给的是一个表示完整日期对象的字符串，我们需要格式化之后再校验
+        copyFieldValue = Util.simplifyDate(copyFieldValue);
+      }
       if (field.must === 1 && !copyFieldValue && copyFieldValue !== 0) {
         // must 为 1 代表必填，为 2 代表选填
 

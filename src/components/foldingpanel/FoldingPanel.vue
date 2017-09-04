@@ -116,6 +116,7 @@ export default {
       line-height: @small-button-height;
       font-size: @normal-font-size;
       color: @button-font-color;
+      text-align: center;
       cursor: pointer;
       &:hover {
         opacity: 0.8;

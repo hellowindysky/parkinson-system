@@ -1,17 +1,142 @@
 <template lang="html">
+  <div class="diagnostic-info-wrapper" ref="diagnosticInfo">
+    <folding-panel class="panel" :title="'看诊记录'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
+      <card class="card" :class="devideWidth" :mode="mode" v-for="item in [1,2,3,4,5,6,7,8,9]" :key="item" :title="item+'号'">
 
+      </card>
+    </folding-panel>
+    <folding-panel class="panel" :title="'随诊记录'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
+      <card class="card" :class="devideWidth" :mode="mode" v-for="item in [1,2,3,4,5,6,7,8,9]" :key="item" :title="item+'号'">
+
+      </card>
+    </folding-panel>
+  </div>
 </template>
 
 <script>
+import FoldingPanel from 'components/foldingpanel/FoldingPanel';
+import Card from 'components/card/Card';
+import Bus from 'utils/bus.js';
+
 export default {
   props: {
     patientInfo: {
       type: Object,
       required: true
     }
+  },
+  data() {
+    return {
+      mode: this.READING_MODE,
+      devideWidth: ''
+    };
+  },
+  methods: {
+    startEditing() {
+      this.mode = this.EDITING_MODE;
+    },
+    cancel() {
+      this.mode = this.READING_MODE;
+    },
+    submit() {
+      this.mode = this.READING_MODE;
+    },
+    recalculateCardWidth() {
+      var panelWidth = this.$refs.diagnosticInfo.clientWidth;
+      panelWidth += 10 * 2;
+      var devideNum = 1.0;
+      // 10px 是卡片的横向间距，定义在了 varaibles.less 中，200px 是卡片的最小宽度
+      while (panelWidth / devideNum > 200 + 10) {
+        devideNum += 1.0;
+      }
+      devideNum -= 1;
+      // 一排最多显示 10 个卡片
+      devideNum = devideNum <= 10 ? devideNum : 10;
+      this.devideWidth = 'width-1-' + parseInt(devideNum, 10);
+    }
+  },
+  components: {
+    FoldingPanel,
+    Card
+  },
+  mounted() {
+    // 如果收到 [确认对话框] 发过来的 “取消” 事件，则解除 “确认” 事件的回调函数
+    Bus.$on(this.GIVE_UP, () => {
+      Bus.$off(this.CONFIRM);
+    });
+
+    // 如果收到屏幕宽度变化，或者内容区域宽度变化的事件，则重新计算卡片的宽度
+    Bus.$on(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
+    Bus.$on(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
+    // 第一次加载的时候，去计算一次卡片宽度
+    this.recalculateCardWidth();
+  },
+  beforeDestroy() {
+    // 还是记得销毁组件前，解除事件绑定
+    Bus.$off(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
+    Bus.$off(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
+    Bus.$off(this.CONFIRM);
+    Bus.$off(this.GIVE_UP);
   }
 };
 </script>
 
 <style lang="less">
+@import "~styles/variables.less";
+@this-card-horizontal-margin: 5px;
+
+.diagnostic-info-wrapper {
+  background-color: @screen-color;
+  .panel {
+    text-align: left;
+    margin-bottom: 5px;
+    .content {
+      // 下面几行为了覆盖 FoldingPanel 子组件内的 content 样式，注意父组件的 style 标签不能加 scoped
+      margin: 0 -@this-card-horizontal-margin;
+      padding: 3px 0 !important;
+      background-color: @screen-color;
+      &.folded {
+        padding: 0 !important;
+      }
+    }
+    .card {
+      background-color: @background-color;
+      display: inline-block;
+      margin: 3px @this-card-horizontal-margin;
+      &.width-1-1 {
+        width: calc(~"100% - @{this-card-horizontal-margin} * 2");
+      }
+      &.width-1-2 {
+        width: calc(~"50% - @{this-card-horizontal-margin} * 2");
+      }
+      &.width-1-3 {
+        width: calc(~"33.3333% - @{this-card-horizontal-margin} * 2");
+      }
+      &.width-1-4 {
+        width: calc(~"25% - @{this-card-horizontal-margin} * 2");
+      }
+      &.width-1-5 {
+        width: calc(~"20% - @{this-card-horizontal-margin} * 2");
+      }
+      &.width-1-6 {
+        width: calc(~"16.6666% - @{this-card-horizontal-margin} * 2");
+      }
+      &.width-1-7 {
+        width: calc(~"14.2857% - @{this-card-horizontal-margin} * 2");
+      }
+      &.width-1-8 {
+        width: calc(~"12.5% - @{this-card-horizontal-margin} * 2");
+      }
+      &.width-1-9 {
+        width: calc(~"11.1111% - @{this-card-horizontal-margin} * 2");
+      }
+      &.width-1-10 {
+        width: calc(~"10% - @{this-card-horizontal-margin} * 2");
+      }
+      .title {
+        left: 20px;
+      }
+    }
+  }
+}
 </style>
