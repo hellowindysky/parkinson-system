@@ -1,17 +1,16 @@
 <template>
   <div class="featureTableHead">
     <ul class="tableHeado" >
-      <li>功能名称</li>
       <li>功能</li>
       <li>开通</li>
       <li>必填</li>
     </ul>
-    <ul class="tableHeadtw">
+    <ul class="tableHeado">
       <li>功能</li>
       <li>开通</li>
       <li>必填</li>
     </ul>
-    <ul class="tableHeadth">
+    <ul class="tableHeado">
       <li>功能</li>
       <li>开通</li>
       <li>必填</li>
@@ -24,14 +23,11 @@
 @featureTableHead-height: 70px;
 @table-head-height: 45px;
 
-@table-head-one-Wid: 40%;
-@table-head-two-Wid: 29%;
-@table-head-three-Wid: 29%;
+@table-head-one-Wid: 32.6%;
 
-@td-one-width: 25%;
 @td-two-width: 33.33%;
 
-@table-head-margin:0.5%;
+@table-head-margin: 0.6%;
 
 .featureTableHead {
   position: relative;
@@ -67,18 +63,6 @@
   .tableHeado {
     width: @table-head-one-Wid;
     li{
-        width: @td-one-width;
-    }
-  }
-  .tableHeadtw {
-   width: @table-head-two-Wid;
-   li{
-        width: @td-two-width;
-    }
-  }
-  .tableHeadth {
-    width: @table-head-three-Wid;
-     li{
         width: @td-two-width;
     }
   }
