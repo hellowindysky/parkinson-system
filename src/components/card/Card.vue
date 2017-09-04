@@ -21,7 +21,7 @@ export default {
   },
   methods: {
     clickSelf() {
-      this.$emit(this.EDIT_CURRENT_CARD);
+      this.$emit(this.CLICK_CURRENT_CARD);
     },
     deleteSelf() {
       this.$emit(this.DELETE_CURRENT_CARD);
