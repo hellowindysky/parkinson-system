@@ -4,8 +4,15 @@
       <div class="iconfont" :class="iconToggleFolded"></div>
       <h2 class="title" @click="toggleFoldedPanel">{{title}}</h2>
       <div v-show="mode===READING_MODE" class="button edit-button" @click="edit">编辑</div>
-      <div v-show="mode===EDITING_MODE" class="button cancel-button" @click="cancel">取消</div>
+      <div v-show="mode===EDITING_MODE && !isCardsPanel" class="button cancel-button" @click="cancel">取消</div>
+      <div v-show="mode===EDITING_MODE && isCardsPanel" class="button add-button" @click="add">添加</div>
       <div v-show="mode===EDITING_MODE" class="button submit-button" @click="submit">完成</div>
+
+      <el-select v-show="mode===READING_MODE && isCardsPanel" v-model="filterCondition" size="small" placeholder="筛选" class="button filter-button">
+        <el-option label="全部" :value="'all'"></el-option>
+        <el-option label="已归档" :value="'filed'"></el-option>
+        <el-option label="未归档" :value="'notFiled'"></el-option>
+      </el-select>
     </div>
     <div class="content" :class="{'folded': folded}">
       <slot></slot>
@@ -25,11 +32,16 @@ export default {
     mode: {
       type: String,
       default: this.READING_MODE
+    },
+    isCardsPanel: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
-      folded: true
+      folded: true,
+      filterCondition: 'all'
     };
   },
   computed: {
@@ -51,6 +63,9 @@ export default {
     },
     submit() {
       this.$emit(this.SUBMIT);
+    },
+    add() {
+      this.$emit(this.ADD_NEW_CARD);
     }
   },
   mounted() {
@@ -71,7 +86,7 @@ export default {
 };
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 @import "~styles/variables.less";
 @panel-header-height: 40px;
 
@@ -128,13 +143,31 @@ export default {
         right: 10px;
         background-color: @button-color;
       }
-      &.cancel-button {
+      &.cancel-button, &.add-button {
         right: 30px + @small-button-width;
         background-color: @light-font-color;
       }
       &.submit-button {
         right: 10px;
         background-color: @button-color;
+      }
+      &.filter-button {
+        right: 30px + @small-button-width;
+        .el-input {
+          .el-input__inner {
+            padding-right: 20px;
+            height: @small-button-height;
+            line-height: @small-button-height;
+            border: none;
+            border-radius: 0;
+            background-color: @secondary-button-color;
+            color: #fff;
+            text-align: center;
+          }
+          .el-input__icon {
+            width: 22px;
+          }
+        }
       }
     }
   }

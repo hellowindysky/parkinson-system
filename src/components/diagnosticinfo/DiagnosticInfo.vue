@@ -1,7 +1,9 @@
 <template lang="html">
   <div class="diagnostic-info-wrapper" ref="diagnosticInfo">
-    <folding-panel class="panel" :title="'看诊记录'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
-      <card class="card" :class="devideWidth" :mode="mode" v-for="item in patientCaseList" :key="item.caseName" :title="item.caseName">
+    <folding-panel class="panel" :title="'看诊记录'" :mode="mode" :isCardsPanel="true" v-on:edit="startEditing" v-on:cancel="cancel"
+     v-on:submit="submit" v-on:addNewCard="addRecord">
+      <card class="card" :class="devideWidth" :mode="mode" v-for="item in patientCaseList" :key="item.caseName"
+       :title="item.caseName" v-on:clickCurrentCard="seeDetail(item)" v-on:deleteCurrentCard="deleteRecord(item)">
         <div class="text first-line">诊断内容：</div>
         <div class="text second-line" v-html="getDiagnosticContent(item)"></div>
         <div class="text third-line">归档情况：<span class="third-line-content"> 已归档</span></div>
@@ -24,7 +26,7 @@ export default {
     patientCaseList: {
       type: Array,
       required: true,
-      default: []
+      default: () => []
     }
   },
   data() {
@@ -76,6 +78,18 @@ export default {
       // 去掉尾部空格
       content = content.trim();
       return content;
+    },
+    seeDetail(item) {
+      console.log(item);
+    },
+    deleteRecord(item) {
+      Bus.$on(this.CONFIRM, () => {
+        console.log('要删除了: ', item);
+      });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
+    },
+    addRecord() {
+      console.log('现在要新增一个诊断信息');
     }
   },
   components: {

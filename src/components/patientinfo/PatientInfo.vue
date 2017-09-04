@@ -3,8 +3,7 @@
     <div class="tabs-wrapper">
       <div class="tab left-tab" :class="{'current-tab': currentTab === 'personalInfo'}" @click="choosePersonal">个人信息</div>
       <div class="tab right-tab" :class="{'current-tab': currentTab === 'diagnosticInfo'}" @click="chooseDiagnostic">诊断信息</div>
-      <div class="button left-button">导出</div>
-      <div class="button right-button">添加</div>
+      <div class="button">导出病历</div>
       <div class="tab-bottom-bar" :class="currentTabBottomBar"></div>
     </div>
     <div class="info-wrapper" ref="scrollArea">
@@ -19,7 +18,10 @@
         </div>
         <div class="info groups">
           <span class="info-title">分组情况: </span>
-          <span class="info-text">帕金森1组  帕金森2组</span>
+          <span class="info-text">
+            帕金森1组  帕金森2组
+            <span class="iconfont icon-plus"></span>
+          </span>
         </div>
       </div>
       <div class="respective-info">
@@ -209,14 +211,8 @@ export default {
       font-size: @normal-font-size;
       color: @button-font-color;
       cursor: pointer;
-      &.left-button {
-        background-color: @secondary-button-color;
-        right: 100px;
-      }
-      &.right-button {
-        background-color: @button-color;
-        right: 10px;
-      }
+      background-color: @button-color;
+      right: 10px;
       &:hover {
         opacity: 0.8;
       }
@@ -260,6 +256,23 @@ export default {
         }
         .info-text {
           color: @light-font-color;
+          .iconfont {
+            display: inline-block;
+            margin-left: 15px;
+            padding: 5px;
+            font-weight: bold;
+            font-size: 18px;
+            line-height: @normal-font-size;
+            color: @font-color;
+            transform: translateY(2px);
+            cursor: pointer;
+            &:hover {
+              color: @light-font-color;
+            }
+            &:active {
+              color: @theme-color;
+            }
+          }
         }
       }
     }
