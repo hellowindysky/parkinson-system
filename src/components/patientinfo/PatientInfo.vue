@@ -261,10 +261,10 @@ export default {
             margin-left: 15px;
             padding: 5px;
             font-weight: bold;
-            font-size: 18px;
+            font-size: 16px;
             line-height: @normal-font-size;
             color: @font-color;
-            transform: translateY(2px);
+            transform: translateY(1px);
             cursor: pointer;
             &:hover {
               color: @light-font-color;
