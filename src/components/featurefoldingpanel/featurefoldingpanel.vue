@@ -3,8 +3,8 @@
     <div class="feature-header">
       <div class="iconfont" :class="iconToggleFolded"></div>
       <h2 class="feature-title" @click="toggleFoldedPanel">{{title}}</h2>
-      <el-switch class="top-switch" v-model="isopen" on-color="#ff9c00" off-color="#eff0f6" on-text="" off-text=""></el-switch>
-      <el-checkbox class="top-checked" v-model="checked"></el-checkbox>
+      <!-- <el-switch class="top-switch" v-model="isopen" on-color="#ff9c00" off-color="#eff0f6" on-text="" off-text=""></el-switch>
+      <el-checkbox class="top-checked" v-model="checked"></el-checkbox> -->
     </div>
     <div class="feature-content" :class="{'folded': folded}">
       <slot></slot>
@@ -24,7 +24,7 @@ export default {
     return {
       folded: true,
       checked: true,
-      isopen: true
+      isopen: false
     };
   },
   computed: {
@@ -126,7 +126,7 @@ export default {
     box-sizing: border-box;
     height: auto;
     overflow: hidden;
-    padding: 10px 0;
+    padding-bottom: 10px;
     transition: all 0.2s;
     &.folded {
       height: 0;

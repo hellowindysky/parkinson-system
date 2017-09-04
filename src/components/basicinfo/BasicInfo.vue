@@ -117,7 +117,6 @@ export default {
           return false;
         }
       }
-
       // copyInfo 有几个字段的值在取过来的时候进行了特殊处理，这里在传回给服务器的时候要还原成一开始的格式
       for (let fieldName of CONVERT_TO_DECIMAL_LIST) {
         if (this.copyInfo[fieldName]) {
