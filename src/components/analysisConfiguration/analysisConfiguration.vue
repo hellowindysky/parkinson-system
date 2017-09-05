@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import featureTableHead from '../tableHead/featureTableHead';
+import featureTableHead from '../tablehead/featureTableHead';
 export default {
   components: {
     featureTableHead

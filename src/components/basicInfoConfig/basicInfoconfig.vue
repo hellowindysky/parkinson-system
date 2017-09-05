@@ -1,6 +1,5 @@
 <template>
   <featurefoldingpanel :title="'基础信息'">
-
     <div class="basicconfig-group" v-for="(group, groupIndex) in basicInfoTemplateGroups" :key="groupIndex">
       <div class="small-area-title" v-if="groupIndex===0">基本情况</div>
       <div class="small-area-title" v-if="groupIndex===1">相关现状</div>
@@ -19,7 +18,6 @@
   </featurefoldingpanel>
 </template>
 <script>
-
 import featurefoldingpanel from '../featurefoldingpanel/featurefoldingpanel';
 import { mapGetters } from 'vuex';
 export default {
@@ -37,9 +35,12 @@ export default {
 </script>
 <style lang="less" scoped>
 @import "~styles/variables.less";
+@margin-right: 15px;
 .basicconfig-group {
   font-size: @normal-font-size;
   text-align: left;
+  position: relative;
+  overflow: hidden;
   .small-area-title {
     width: 100%;
     text-align: left;
@@ -48,6 +49,7 @@ export default {
     line-height: 38px;
     font-weight: bold;
     color: @button-color;
+    float: left;
   }
   .config-small-table {
     margin: 0;
@@ -55,33 +57,43 @@ export default {
     width: 32.6%;
     height: auto;
     margin-left: 0.6%;
-    display: inline-block;
-    position: relative;
+    float: left;
     list-style: none;
-    margin-top: -4px;
-    border-bottom: 1px solid #a2afc3;
+    overflow: hidden;
     li {
-      padding: 0;
-      margin: 0;
       width: 33.3%;
       height: 50px;
-      padding: 7px 0px;
       float: left;
       border: 1px solid #a2afc3;
+      border-bottom: none;
       box-sizing: border-box;
       text-align: center;
-      line-height: 36px;
-      border-bottom: none;
+      line-height: 50px;
+      position: relative;
     } 
-    li:nth-of-type(1),li:nth-of-type(2){
+    li:nth-of-type(1),li:nth-of-type(2) {
       border-right: none;
     }
-  }
-  ul:nth-of-type(3n+1) {
-      margin-left: 0;
+    li:nth-of-type(2),li:nth-of-type(3) {
+      border-left: none;
+    }
+    li:nth-of-type(1):before,li:nth-of-type(2):before {
+      content: " ";  
+      position: absolute;  
+      width: 2px;
+      background: url("~img/border.png") no-repeat;
+      height: 32px;
+      top: 9px;
+      left: 100%;
+    }
   }
   ul:nth-last-of-type(1),ul:nth-last-of-type(2),ul:nth-last-of-type(3) {
-      
+    border-bottom: 1px solid #a2afc3;
+  }
+}
+.basicconfig-group:nth-of-type(2) {
+  ul:nth-last-of-type(1),ul:nth-last-of-type(2),ul:nth-last-of-type(3) {
+    border-bottom: none;
   }
 }
 </style>

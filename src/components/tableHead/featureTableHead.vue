@@ -22,18 +22,17 @@
 @import "~styles/variables.less";
 @featureTableHead-height: 70px;
 @table-head-height: 45px;
-
 @table-head-one-Wid: 32.6%;
-
 @td-two-width: 33.33%;
-
 @table-head-margin: 0.6%;
+@margin-right: 20px;
 
 .featureTableHead {
   position: relative;
-  padding-top: 15px;
+  padding-top: 12px;
   box-sizing: border-box;
   overflow: hidden;
+  margin-right: @margin-right;
   ul {
     height: @table-head-height;
     margin: 0;
@@ -56,9 +55,6 @@
     li:last-child {
       border: none;
     }
-  }
-  ul:nth-of-type(3n+1){
-    margin-left: 0;
   }
   .tableHeado {
     width: @table-head-one-Wid;
