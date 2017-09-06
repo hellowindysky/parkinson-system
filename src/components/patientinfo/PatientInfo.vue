@@ -28,6 +28,7 @@
         <router-view :patient-info="patientInfo" :patient-case-list="patientCaseList"></router-view>
       </div>
     </div>
+    <DiagnosticDetail class="diagnostic-detail"></DiagnosticDetail>
   </div>
 </template>
 
@@ -36,6 +37,8 @@ import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 
 import { getPatientInfo, getPatientCaseList } from 'api/patient';
+
+import DiagnosticDetail from 'components/diagnosticdetail/DiagnosticDetail';
 
 export default {
   data() {
@@ -115,6 +118,9 @@ export default {
       });
     }
   },
+  components: {
+    DiagnosticDetail
+  },
   mounted() {
     this.updatePatientInfo();
 
@@ -158,6 +164,13 @@ export default {
 .patient-info {
   background-color: @screen-color;
   min-width: @min-screen-width - @sidebar-width - @bar-width;
+  .diagnostic-detail {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    z-index: 300;
+  }
   .tabs-wrapper {
     position: relative;
     margin: 0 @margin-right @vertical-spacing 0;
@@ -204,7 +217,7 @@ export default {
     }
     .button {
       position: absolute;
-      top: 8px;
+      top: 6px;
       width: @small-button-width;
       height: @small-button-height;
       line-height: @small-button-height;
