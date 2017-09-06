@@ -125,7 +125,7 @@ export default {
     }
     .button {
       position: absolute;
-      top: 8px;
+      top: 6px;
       width: @small-button-width;
       height: @small-button-height;
       line-height: @small-button-height;
@@ -154,6 +154,7 @@ export default {
       &.filter-button {
         right: 30px + @small-button-width;
         .el-input {
+          font-size: @normal-font-size;
           .el-input__inner {
             padding-right: 20px;
             height: @small-button-height;
