@@ -1,8 +1,10 @@
 <template>
-  <div class="freature-person-conf-wrapper" ref="scrollArea">
-    <basicInfoConfig></basicInfoConfig>
-    <diseageInfoConfig></diseageInfoConfig>
-    <otherInfoConfig></otherInfoConfig>
+  <div class="scroll-wrapper">
+    <div class="freature-person-conf-wrapper" ref="scrollArea">
+      <basicInfoConfig></basicInfoConfig>
+      <diseageInfoConfig></diseageInfoConfig>
+      <otherInfoConfig></otherInfoConfig>
+    </div>
   </div>
 </template>
 
@@ -54,31 +56,34 @@ export default {
 <style lang="less">
 @import "~styles/variables.less";
 @tabs-wrapper-height: 40px;
-
-.freature-person-conf-wrapper {
+.scroll-wrapper {
   position: relative;
-  width: 100%;
-  //overflow: hidden;
-  .ps__scrollbar-y-rail {
-    position: absolute;
-    top: 0;
-    width: 15px;
-    right: 10px;
-    padding: 0 3px;
-    box-sizing: border-box;
-    opacity: 0.3;
-    transition: opacity 0.3s, padding 0.2s;
-    .ps__scrollbar-y {
-      position: relative;
-      background-color: #aaa;
-      border-radius: 20px;
-    }
-  }
-  &:hover {
+  overflow: hidden;
+  .freature-person-conf-wrapper {
+    width: 100%;
+    height: auto;
+    overflow: hidden;
     .ps__scrollbar-y-rail {
-      opacity: 0.6;
-      &:hover {
-        padding: 0;
+      position: absolute;
+      top: 0;
+      width: 15px;
+      right: 12px;
+      padding: 0 3px;
+      box-sizing: border-box;
+      opacity: 0.3;
+      transition: opacity 0.3s, padding 0.2s;
+      .ps__scrollbar-y {
+        position: relative;
+        background-color: #aaa;
+        border-radius: 20px;
+      }
+    }
+    &:hover {
+      .ps__scrollbar-y-rail {
+        opacity: 0.6;
+        &:hover {
+          padding: 0;
+        }
       }
     }
   }

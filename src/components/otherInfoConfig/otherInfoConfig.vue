@@ -7,10 +7,10 @@
           <span>{{field.cnfieldName}}</span>
         </li>
         <li>
-          <el-switch v-model="field.active" class="config-small-switch" on-color="#ff9c00" off-color="#eff0f6" on-text="" off-text=""></el-switch>
+          <el-switch  class="config-small-switch" on-color="#ff9c00" off-color="#eff0f6" on-text="" off-text=""></el-switch>
         </li>
         <li>
-          <el-checkbox class="config-small-checked" v-model="field.must"></el-checkbox>
+          <el-checkbox class="config-small-checked" ></el-checkbox>
         </li>
       </ul>
     </div>
@@ -21,10 +21,10 @@
           <span>{{field.cnfieldName}}</span>
         </li>
         <li>
-          <el-switch v-model="field.active" class="config-small-switch" on-color="#ff9c00" off-color="#eff0f6" on-text="" off-text=""></el-switch>
+          <el-switch  class="config-small-switch" on-color="#ff9c00" off-color="#eff0f6" on-text="" off-text=""></el-switch>
         </li>
         <li>
-          <el-checkbox class="config-small-checked" v-model="field.must"></el-checkbox>
+          <el-checkbox class="config-small-checked"></el-checkbox>
         </li>
       </ul>
     </div>
@@ -35,10 +35,10 @@
           <span>{{field.cnfieldName}}</span>
         </li>
         <li>
-          <el-switch v-model="field.active" class="config-small-switch" on-color="#ff9c00" off-color="#eff0f6" on-text="" off-text=""></el-switch>
+          <el-switch  class="config-small-switch" on-color="#ff9c00" off-color="#eff0f6" on-text="" off-text=""></el-switch>
         </li>
         <li>
-          <el-checkbox class="config-small-checked" v-model="field.must"></el-checkbox>
+          <el-checkbox class="config-small-checked"></el-checkbox>
         </li>
       </ul>
     </div>
@@ -49,10 +49,10 @@
           <span>{{field.cnfieldName}}</span>
         </li>
         <li>
-          <el-switch v-model="field.active" class="config-small-switch" on-color="#ff9c00" off-color="#eff0f6" on-text="" off-text=""></el-switch>
+          <el-switch class="config-small-switch" on-color="#ff9c00" off-color="#eff0f6" on-text="" off-text=""></el-switch>
         </li>
         <li>
-          <el-checkbox class="config-small-checked" v-model="field.must"></el-checkbox>
+          <el-checkbox class="config-small-checked"></el-checkbox>
         </li>
       </ul>
     </div>
@@ -63,10 +63,10 @@
           <span>{{field.cnfieldName}}</span>
         </li>
         <li>
-          <el-switch v-model="field.active" class="config-small-switch" on-color="#ff9c00" off-color="#eff0f6" on-text="" off-text=""></el-switch>
+          <el-switch  class="config-small-switch" on-color="#ff9c00" off-color="#eff0f6" on-text="" off-text=""></el-switch>
         </li>
         <li>
-          <el-checkbox class="config-small-checked" v-model="field.must"></el-checkbox>
+          <el-checkbox class="config-small-checked" ></el-checkbox>
         </li>
       </ul>
     </div>
@@ -77,10 +77,10 @@
           <span>{{field.cnfieldName}}</span>
         </li>
         <li>
-          <el-switch v-model="field.active" class="config-small-switch" on-color="#ff9c00" off-color="#eff0f6" on-text="" off-text=""></el-switch>
+          <el-switch  class="config-small-switch" on-color="#ff9c00" off-color="#eff0f6" on-text="" off-text=""></el-switch>
         </li>
         <li>
-          <el-checkbox class="config-small-checked" v-model="field.must"></el-checkbox>
+          <el-checkbox class="config-small-checked" ></el-checkbox>
         </li>
       </ul>
     </div>
@@ -91,10 +91,10 @@
           <span>{{field.cnfieldName}}</span>
         </li>
         <li>
-          <el-switch v-model="field.active" class="config-small-switch" on-color="#ff9c00" off-color="#eff0f6" on-text="" off-text=""></el-switch>
+          <el-switch  class="config-small-switch" on-color="#ff9c00" off-color="#eff0f6" on-text="" off-text=""></el-switch>
         </li>
         <li>
-          <el-checkbox class="config-small-checked" v-model="field.must"></el-checkbox>
+          <el-checkbox class="config-small-checked"></el-checkbox>
         </li>
       </ul>
     </div>
@@ -105,10 +105,10 @@
           <span>{{field.cnfieldName}}</span>
         </li>
         <li>
-          <el-switch v-model="field.active" class="config-small-switch" on-color="#ff9c00" off-color="#eff0f6" on-text="" off-text=""></el-switch>
+          <el-switch  class="config-small-switch" on-color="#ff9c00" off-color="#eff0f6" on-text="" off-text=""></el-switch>
         </li>
         <li>
-          <el-checkbox class="config-small-checked" v-model="field.must"></el-checkbox>
+          <el-checkbox class="config-small-checked"></el-checkbox>
         </li>
       </ul>
     </div>
@@ -120,10 +120,10 @@
           <span>{{field.cnfieldName}}</span>
         </li>
         <li>
-          <el-switch v-model="field.active" class="config-small-switch" on-color="#ff9c00" off-color="#eff0f6" on-text="" off-text=""></el-switch>
+          <el-switch  class="config-small-switch" on-color="#ff9c00" off-color="#eff0f6" on-text="" off-text=""></el-switch>
         </li>
         <li>
-          <el-checkbox class="config-small-checked" v-model="field.must"></el-checkbox>
+          <el-checkbox class="config-small-checked"></el-checkbox>
         </li>
       </ul>
     </div>
