@@ -62,7 +62,6 @@ export default {
   .freature-person-conf-wrapper {
     width: 100%;
     height: auto;
-    overflow: hidden;
     .ps__scrollbar-y-rail {
       position: absolute;
       top: 0;
