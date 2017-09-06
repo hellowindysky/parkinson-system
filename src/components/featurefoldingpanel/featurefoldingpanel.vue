@@ -12,6 +12,7 @@
   </div>
 </template>
 <script>
+import Bus from 'utils/bus.js';
 
 export default {
   props: {
@@ -38,6 +39,19 @@ export default {
     }
   },
   mounted() {
+    // 默认让基础信息面板呈展开状态
+    if (this.title === '其它信息') {
+      this.folded = false;
+    }
+  },
+  watch: {
+    folded: function() {
+      // 每当面板的折叠状态发生变化，就会通知所在的滚动区域，需要重新计算高度
+      setTimeout(() => {
+        // 之所以要延时发送事件，是为了等待折叠动画结束
+        Bus.$emit(this.SCROLL_AREA_SIZE_CHANGE);
+      }, 300);
+    }
   }
 };
 </script>
@@ -46,12 +60,14 @@ export default {
 @import "~styles/variables.less";
 @panel-header-height: 40px;
 @panel-top-bottom-margin: 10px;
-
+@margin-right: 20px;
 .feature-panel-wrapper {
+  position: relative;
   background-color: @background-color;
   margin: @panel-top-bottom-margin 0;
   font-size: 0;
   overflow: hidden;
+  margin-right: @margin-right;
   .feature-header {
     position: relative;
     height: @panel-header-height;

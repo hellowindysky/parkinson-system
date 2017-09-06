@@ -66,8 +66,11 @@ export default {
         list-style: none;
         height: 60px;
         box-sizing: border-box;
+        text-align: left;
         .topbar-item {
-            float: left;
+            position: relative;
+            display: inline-block;
+            text-align: center;
             width: @middle-button-width;
             height: @middle-button-height;
             margin: 10px 14px 0 14px;

@@ -15,14 +15,14 @@ import GroupInfo from 'components/groupinfo/GroupInfo';
 import PersonalInfo from 'components/personalinfo/PersonalInfo';
 import DiagnosticInfo from 'components/diagnosticinfo/DiagnosticInfo';
 
-import FeatureConfiguration from 'components/featureConfiguration/FeatureConfiguration';
-import secondbar from 'components/configurationBar/secondbar';
+import FeatureConfiguration from 'components/featureconfiguration/FeatureConfiguration';
+import secondbar from 'components/configurationbar/SecondBar';
 import groupConfiguration from 'components/groupConfiguration/groupConfiguration';
-import departmentConfiguration from 'components/departmentConfiguration/departmentConfiguration';
-import analysisConfiguration from 'components/analysisConfiguration/analysisConfiguration';
+import departmentConfiguration from 'components/departmentconfiguration/DepartmentConfiguration';
+import analysisConfiguration from 'components/analysisconfiguration/AnalysisConfiguration';
 
-import featureDiagnosticInfo from 'components/featureConfiguration/featureDiagnosticInfo';
-import freaturePersonInfo from 'components/featureConfiguration/freaturePersonInfo';
+import featureDiagnosticInfo from 'components/featureconfiguration/FeatureDiagnosticInfo';
+import freaturePersonInfo from 'components/featureconfiguration/FreaturePersonInfo';
 
 Vue.use(Router);
 
