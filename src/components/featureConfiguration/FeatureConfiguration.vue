@@ -60,6 +60,7 @@ export default {
 @import "~styles/variables.less";
 .fConfig-wrapper {
     margin: 0 12px;
+    z-index: 200;
     .feature-topbar {
         margin: 0;
         padding: 0;

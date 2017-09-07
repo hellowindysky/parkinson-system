@@ -3,8 +3,6 @@
     <div class="feature-header">
       <div class="iconfont" :class="iconToggleFolded"></div>
       <h2 class="feature-title" @click="toggleFoldedPanel">{{title}}</h2>
-      <!-- <el-switch class="top-switch" v-model="isopen" on-color="#ff9c00" off-color="#eff0f6" on-text="" off-text=""></el-switch>
-      <el-checkbox class="top-checked" v-model="checked"></el-checkbox> -->
     </div>
     <div class="feature-content" :class="{'folded': folded}">
       <slot></slot>
@@ -23,9 +21,7 @@ export default {
   },
   data() {
     return {
-      folded: true,
-      checked: true,
-      isopen: false
+      folded: true
     };
   },
   computed: {
@@ -39,7 +35,7 @@ export default {
     }
   },
   mounted() {
-    // 默认让基础信息面板呈展开状态
+    console.log(this.title);
     if (this.title === '其它信息') {
       this.folded = false;
     }

@@ -1,5 +1,5 @@
 <template>
-  <featurefoldingpanel :title="'其他信息'">
+  <featurefoldingpanel :title="'其它信息'">
     <div class="otherconfig-group">
       <div class="small-area-title">其他用药史</div>
       <ul class="config-small-table" v-for="(field, groupNo) in exerciseHistoryTemplate" :key="groupNo">

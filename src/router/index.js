@@ -16,13 +16,13 @@ import PersonalInfo from 'components/personalinfo/PersonalInfo';
 import DiagnosticInfo from 'components/diagnosticinfo/DiagnosticInfo';
 
 import FeatureConfiguration from 'components/featureconfiguration/FeatureConfiguration';
-import secondbar from 'components/configurationbar/SecondBar';
-import groupConfiguration from 'components/groupConfiguration/groupConfiguration';
-import departmentConfiguration from 'components/departmentconfiguration/DepartmentConfiguration';
-import analysisConfiguration from 'components/analysisconfiguration/AnalysisConfiguration';
+import SecondBar from 'components/configurationbar/SecondBar';
+import GroupConfiguration from 'components/groupConfiguration/groupConfiguration';
+import DepartmentConfiguration from 'components/departmentconfiguration/DepartmentConfiguration';
+import AnalysisConfiguration from 'components/analysisconfiguration/AnalysisConfiguration';
 
-import featureDiagnosticInfo from 'components/featureconfiguration/FeatureDiagnosticInfo';
-import freaturePersonInfo from 'components/featureconfiguration/FreaturePersonInfo';
+import FeatureDiagnosticInfo from 'components/featureconfiguration/FeatureDiagnosticInfo';
+import FreaturePersonInfo from 'components/featureconfiguration/FreaturePersonInfo';
 
 Vue.use(Router);
 
@@ -116,34 +116,34 @@ export default new Router({
                 {
                   path: 'minepait',
                   name: 'minepait',
-                  component: secondbar,
+                  component: SecondBar,
                   children: [
                     {
                       path: 'configpersonalinf',
                       name: 'configpersonalinf',
-                      component: freaturePersonInfo
+                      component: FreaturePersonInfo
                     },
                     {
                       path: 'configdiagnosticinfo',
                       name: 'configdiagnosticinfo',
-                      component: featureDiagnosticInfo
+                      component: FeatureDiagnosticInfo
                     }
                   ]
                 },
                 {
                   path: 'groupmana',
                   name: 'groupmana',
-                  component: groupConfiguration
+                  component: GroupConfiguration
                 },
                 {
                   path: 'department',
                   name: 'department',
-                  component: departmentConfiguration
+                  component: DepartmentConfiguration
                 },
                 {
                   path: 'statisticalanalysis',
                   name: 'statisticalanalysis',
-                  component: analysisConfiguration
+                  component: AnalysisConfiguration
                 }
               ]
             },
