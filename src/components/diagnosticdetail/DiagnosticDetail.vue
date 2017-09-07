@@ -6,12 +6,12 @@
       <div class="button file-button" @click="fileCase">归档</div>
     </div>
     <div class="scroll-area" ref="scrollArea">
-      <diagnostic-basic class="folding-panel"></diagnostic-basic>
-      <diagnostic-disease class="folding-panel"></diagnostic-disease>
-      <diagnostic-medicine class="folding-panel"></diagnostic-medicine>
-      <diagnostic-surgery class="folding-panel"></diagnostic-surgery>
-      <diagnostic-scale class="folding-panel"></diagnostic-scale>
-      <diagnostic-examination class="folding-panel"></diagnostic-examination>
+      <diagnostic-basic class="folding-panel" :mode="mode"></diagnostic-basic>
+      <diagnostic-disease class="folding-panel" :mode="mode"></diagnostic-disease>
+      <diagnostic-medicine class="folding-panel" :mode="mode"></diagnostic-medicine>
+      <diagnostic-surgery class="folding-panel" :mode="mode"></diagnostic-surgery>
+      <diagnostic-scale class="folding-panel" :mode="mode"></diagnostic-scale>
+      <diagnostic-examination class="folding-panel" :mode="mode"></diagnostic-examination>
     </div>
   </div>
 </template>
@@ -32,7 +32,8 @@ export default {
   data() {
     return {
       displayDetail: false,
-      caseDetail: {}
+      caseDetail: {},
+      mode: this.READING_MODE
     };
   },
   methods: {
