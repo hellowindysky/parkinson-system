@@ -2,23 +2,49 @@
   <div class="diagnostic-detail-wrapper" v-show="displayDetail">
     <div class="title-bar">
       <h2 class="title">XX 的诊断记录</h2>
-      <div class="button back-button">返回</div>
+      <div class="button back-button" @click="goBack">返回</div>
     </div>
     <folding-panel :title="'基础情况'"></folding-panel>
   </div>
 </template>
 
 <script>
+import Bus from 'utils/bus.js';
+import { getPatientCase } from 'api/patient.js';
+
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 
 export default {
   data() {
     return {
-      displayDetail: false
+      displayDetail: false,
+      caseDetail: {}
     };
+  },
+  methods: {
+    goBack() {
+      this.displayDetail = false;
+      this.caseDetail = {};
+      console.log(this.caseDetail);
+    }
   },
   components: {
     FoldingPanel
+  },
+  mounted() {
+    Bus.$on(this.SHOW_CASE_DETAIL, (patientCaseId) => {
+      // 接收到相应消息之后，打开诊断详情窗口，然后再向服务器请求数据
+      this.displayDetail = true;
+
+      var patientId = this.$route.params.id;
+      getPatientCase(patientId, patientCaseId).then((caseDetail) => {
+        this.caseDetail = Object.assign({}, caseDetail);
+        console.log(this.caseDetail);
+      });
+    });
+  },
+  beforeDestroy() {
+    Bus.$off(this.SHOW_CASE_DETAIL);
   }
 };
 </script>

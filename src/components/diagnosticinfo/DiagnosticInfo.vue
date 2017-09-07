@@ -80,7 +80,7 @@ export default {
       return content;
     },
     seeDetail(item) {
-      console.log(item);
+      Bus.$emit(this.SHOW_CASE_DETAIL, item.patientCaseId);
     },
     deleteRecord(item) {
       Bus.$on(this.CONFIRM, () => {

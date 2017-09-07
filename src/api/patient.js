@@ -522,3 +522,20 @@ export function getPatientCaseList(patientId) {
   var url = 'http://apitest.gyenno.com/pdms/queryPatientCaseList';
   return encapsulatePromise(url, request);
 };
+
+// 获取患者诊断详情
+export function getPatientCase(patientId, patientCaseId) {
+  var patientIdNum = parseInt(patientId, 10);
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientId": patientIdNum,
+    "patientCaseId": patientCaseId
+  };
+  var url = 'http://apitest.gyenno.com/pdms/queryPatientCase';
+  console.log(request);
+  return encapsulatePromise(url, request);
+};
