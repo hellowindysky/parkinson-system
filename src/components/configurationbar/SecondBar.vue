@@ -14,7 +14,7 @@
 
 <script>
 
-import featureTableHead from '../tablehead/featureTableHead';
+import featureTableHead from '../tablehead/FeatureTableHead';
 export default {
   computed: {
     currentTab() {
