@@ -6,7 +6,12 @@
       <div class="button file-button" @click="fileCase">归档</div>
     </div>
     <div class="scroll-area" ref="scrollArea">
-      <folding-panel class="folding-panel" :title="'基础情况'"></folding-panel>
+      <diagnostic-basic class="folding-panel"></diagnostic-basic>
+      <diagnostic-disease class="folding-panel"></diagnostic-disease>
+      <diagnostic-medicine class="folding-panel"></diagnostic-medicine>
+      <diagnostic-surgery class="folding-panel"></diagnostic-surgery>
+      <diagnostic-scale class="folding-panel"></diagnostic-scale>
+      <diagnostic-examination class="folding-panel"></diagnostic-examination>
     </div>
   </div>
 </template>
@@ -16,7 +21,12 @@ import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import { getPatientCase } from 'api/patient.js';
 
-import FoldingPanel from 'components/foldingpanel/FoldingPanel';
+import DiagnosticBasic from 'components/diagnosticbasic/DiagnosticBasic';
+import DiagnosticDisease from 'components/diagnosticdisease/DiagnosticDisease';
+import DiagnosticMedicine from 'components/diagnosticmedicine/DiagnosticMedicine';
+import DiagnosticSurgery from 'components/diagnosticsurgery/DiagnosticSurgery';
+import DiagnosticScale from 'components/diagnosticscale/DiagnosticScale';
+import DiagnosticExamination from 'components/diagnosticexamination/DiagnosticExamination';
 
 export default {
   data() {
@@ -78,7 +88,12 @@ export default {
     }
   },
   components: {
-    FoldingPanel
+    DiagnosticBasic,
+    DiagnosticDisease,
+    DiagnosticMedicine,
+    DiagnosticSurgery,
+    DiagnosticScale,
+    DiagnosticExamination
   },
   mounted() {
     this.checkRoute();
@@ -111,7 +126,7 @@ export default {
     position: relative;
     height: @title-bar-height;
     margin-right: @margin-right;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     background-color: @background-color;
     .title {
       margin: 0;
@@ -158,6 +173,7 @@ export default {
     overflow: hidden;
     .folding-panel {
       margin-right: @margin-right;
+      margin-bottom: @vertical-spacing;
     }
 
     .ps__scrollbar-y-rail {
