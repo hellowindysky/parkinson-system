@@ -11,6 +11,8 @@
 // import Util from 'utils/util.js';
 
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
+// import ExtensiblePanel from 'components/extensiblepanel/ExtensiblePanel';
+// import Card from 'components/card/Card';
 
 export default {
   data() {
