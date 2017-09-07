@@ -17,7 +17,7 @@ import DiagnosticInfo from 'components/diagnosticinfo/DiagnosticInfo';
 
 import FeatureConfiguration from 'components/featureconfiguration/FeatureConfiguration';
 import SecondBar from 'components/configurationbar/SecondBar';
-import GroupConfiguration from 'components/groupConfiguration/groupConfiguration';
+import GroupConfiguration from 'components/groupconfiguration/GroupConfiguration';
 import DepartmentConfiguration from 'components/departmentconfiguration/DepartmentConfiguration';
 import AnalysisConfiguration from 'components/analysisconfiguration/AnalysisConfiguration';
 
