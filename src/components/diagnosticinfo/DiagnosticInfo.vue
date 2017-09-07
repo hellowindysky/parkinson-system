@@ -80,7 +80,10 @@ export default {
       return content;
     },
     seeDetail(item) {
-      Bus.$emit(this.SHOW_CASE_DETAIL, item.patientCaseId);
+      this.$router.push({
+        name: 'diagnosticDetail',
+        params: { caseId: item.patientCaseId }
+      });
     },
     deleteRecord(item) {
       Bus.$on(this.CONFIRM, () => {

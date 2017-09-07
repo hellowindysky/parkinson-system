@@ -26,7 +26,6 @@ export default {
   DELETE_CURRENT_CARD: 'deleteCurrentCard',
   UPDATE_PATIENT_INFO: 'updatePatientInfo',
   SHOW_MODAL_BOX: 'showModalBox',
-  SHOW_CASE_DETAIL: 'showCaseDetail',
 
   // modal
   MEDICINE_MODAL: 'medcineModal',

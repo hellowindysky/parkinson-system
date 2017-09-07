@@ -40,6 +40,20 @@ export default {
         });
       });
     },
+    checkRoute() {
+      var path = this.$route.path;
+
+      if (/^\/patients\/list\/[0-9]+\/diagnosticInfo\/?$/.test(path)) {
+        // 一旦发现路由地址中还没有 caseId，则不显示诊断详情面板
+        this.closePanel();
+      } else if (/^\/patients\/list\/[0-9]+\/diagnosticInfo\/[0-9a-zA-Z]+$/.test(path)) {
+        // 如果路由地址中有 caseId，则显示面板并获取对应的诊断数据
+        var caseId = this.$route.params.caseId;
+        this.showDetailPanel(caseId);
+      } else {
+        this.closePanel();
+      }
+    },
     showDetailPanel(patientCaseId) {
       // 接收到相应的消息之后，打开诊断详情窗口，然后再向服务器请求数据
       this.displayDetail = true;
@@ -48,13 +62,16 @@ export default {
       getPatientCase(patientId, patientCaseId).then((data) => {
         this.caseDetail = Object.assign({}, data.patientCase);
         this.updateScrollbar();
-        console.log('cd: ', this.caseDetail);
+        console.log('caseDetail: ', this.caseDetail);
       });
     },
     goBack() {
+      // 按下返回按钮，实际上是修改的路由地址 ———— 因为我们是监控路由地址来决定这个详情窗口是否显示的
+      this.$router.push({name: 'diagnosticInfo'});
+    },
+    closePanel() {
       this.displayDetail = false;
       this.caseDetail = {};
-      console.log(this.caseDetail);
     },
     fileCase() {
       console.log('要归档了');
@@ -64,16 +81,19 @@ export default {
     FoldingPanel
   },
   mounted() {
-    this.updateScrollbar();
+    this.checkRoute();
 
+    Bus.$on(this.SCROLL_AREA_SIZE_CHANGE, this.updateScrollbar);
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
-
-    Bus.$on(this.SHOW_CASE_DETAIL, (patientCaseId) => {
-      this.showDetailPanel(patientCaseId);
-    });
   },
   beforeDestroy() {
-    Bus.$off(this.SHOW_CASE_DETAIL);
+    Bus.$off(this.SCROLL_AREA_SIZE_CHANGE);
+    Bus.$off(this.SCREEN_SIZE_CHANGE);
+  },
+  watch: {
+    $route() {
+      this.checkRoute();
+    }
   }
 };
 </script>

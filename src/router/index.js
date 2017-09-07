@@ -70,7 +70,13 @@ export default new Router({
                 },
                 {
                   path: 'diagnosticInfo',
-                  component: DiagnosticInfo
+                  component: DiagnosticInfo,
+                  name: 'diagnosticInfo'
+                },
+                {
+                  path: 'diagnosticInfo/:caseId',
+                  component: DiagnosticInfo,
+                  name: 'diagnosticDetail'
                 }
               ]
             },
