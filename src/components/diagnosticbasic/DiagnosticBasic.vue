@@ -7,8 +7,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-import Util from 'utils/util.js';
+// import { mapGetters } from 'vuex';
+// import Util from 'utils/util.js';
 
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 

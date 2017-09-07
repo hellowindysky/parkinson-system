@@ -16,11 +16,19 @@
         科室患者
       </li>
     </ul>
-    <li class="item" :class="{'current': currentItem === 'analytics'}">
+    <li class="item" :class="{'current': currentItem === 'analytics'}" @click="toggleAnalyticsList">
       <div class="menu-icon iconfont icon-analytics"></div>
       <div class="title">统计分析</div>
-      <div class="fold-icon iconfont"></div>
+      <div class="fold-icon iconfont" :class="showAnalyticsList ? 'icon-up' : 'icon-down'"></div>
     </li>
+    <ul class="sub-item-list" :class="{'folded': !showAnalyticsList}">
+      <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'basicAnalytics'}" @click="chooseBasicAnalytics">
+        基础统计
+      </li>
+      <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'advancedAnalytics'}" @click="chooseAdvancedAnalytics">
+        高级统计
+      </li>
+    </ul>
     <li class="item" :class="{'current-item': currentItem === 'configuration'}" @click="toggleConfigurationList">
       <div class="menu-icon iconfont icon-configuration"></div>
       <div class="title">系统配置</div>
@@ -48,6 +56,7 @@ export default {
   data() {
     return {
       showPatientsList: false,
+      showAnalyticsList: false,
       showConfigurationList: false
     };
   },
@@ -85,6 +94,9 @@ export default {
     togglePatientsList() {
       this.showPatientsList = !this.showPatientsList;
     },
+    toggleAnalyticsList() {
+      this.showAnalyticsList = !this.showAnalyticsList;
+    },
     toggleConfigurationList() {
       this.showConfigurationList = !this.showConfigurationList;
     },
@@ -106,6 +118,8 @@ export default {
         this.$router.push({name: 'otherPatients'});
       }
     },
+    chooseBasicAnalytics() {},
+    chooseAdvancedAnalytics() {},
     chooseFeatureConfiguration() {
       // 如果当前路径不是以“/configuration/featureConfiguration”开头了，才发生跳转
       if (!/^\/configuration\/featureConfiguration/.test(this.$route.path)) {
