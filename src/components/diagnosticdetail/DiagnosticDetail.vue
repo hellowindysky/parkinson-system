@@ -1,14 +1,17 @@
 <template lang="html">
   <div class="diagnostic-detail-wrapper" v-show="displayDetail">
     <div class="title-bar">
-      <h2 class="title">XX 的诊断记录</h2>
+      <h2 class="title">{{caseDetail.caseName}}</h2>
       <div class="button back-button" @click="goBack">返回</div>
     </div>
-    <folding-panel :title="'基础情况'"></folding-panel>
+    <div class="scroll-area" ref="scrollArea">
+      <folding-panel class="folding-panel" :title="'基础情况'"></folding-panel>
+    </div>
   </div>
 </template>
 
 <script>
+import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import { getPatientCase } from 'api/patient.js';
 
@@ -22,6 +25,31 @@ export default {
     };
   },
   methods: {
+    updateScrollbar() {
+      // 如果不写在 $nextTick() 里面，第一次加载的时候也许会不能正确计算高度。估计是因为子组件还没有全部加载所造成的。
+      this.$nextTick(() => {
+        // 之所以弃用 update 方法，是因为它在某些情况下会出现问题，导致滚动条不能有效刷新
+        // Ps.update(this.$refs.scrollArea);
+
+        // 如果之前有绑定滚动条的话，先进行解除
+        Ps.destroy(this.$refs.scrollArea);
+        Ps.initialize(this.$refs.scrollArea, {
+          wheelSpeed: 1,
+          minScrollbarLength: 40
+        });
+      });
+    },
+    showDetailPanel(patientCaseId) {
+      // 接收到相应的消息之后，打开诊断详情窗口，然后再向服务器请求数据
+      this.displayDetail = true;
+
+      var patientId = this.$route.params.id;
+      getPatientCase(patientId, patientCaseId).then((data) => {
+        this.caseDetail = Object.assign({}, data.patientCase);
+        this.updateScrollbar();
+        console.log('cd: ', this.caseDetail);
+      });
+    },
     goBack() {
       this.displayDetail = false;
       this.caseDetail = {};
@@ -32,15 +60,12 @@ export default {
     FoldingPanel
   },
   mounted() {
-    Bus.$on(this.SHOW_CASE_DETAIL, (patientCaseId) => {
-      // 接收到相应消息之后，打开诊断详情窗口，然后再向服务器请求数据
-      this.displayDetail = true;
+    this.updateScrollbar();
 
-      var patientId = this.$route.params.id;
-      getPatientCase(patientId, patientCaseId).then((caseDetail) => {
-        this.caseDetail = Object.assign({}, caseDetail);
-        console.log(this.caseDetail);
-      });
+    Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
+
+    Bus.$on(this.SHOW_CASE_DETAIL, (patientCaseId) => {
+      this.showDetailPanel(patientCaseId);
     });
   },
   beforeDestroy() {
@@ -53,13 +78,15 @@ export default {
 @import "~styles/variables.less";
 
 @title-bar-height: 40px;
+@title-bar-margin-bottom: 10px;
+@margin-right: 15px;
 
 .diagnostic-detail-wrapper {
   background-color: @screen-color;
   .title-bar {
     position: relative;
-    width: 100%;
     height: @title-bar-height;
+    margin-right: @margin-right;
     margin-bottom: 10px;
     background-color: @background-color;
     .title {
@@ -93,6 +120,38 @@ export default {
       &.back-button {
         background-color: @secondary-button-color;
         right: 10px;
+      }
+    }
+  }
+  .scroll-area {
+    position: relative;
+    width: 100%;
+    height: calc(~"100% - @{title-bar-height} - @{title-bar-margin-bottom}");
+    overflow: hidden;
+    .folding-panel {
+      margin-right: @margin-right;
+    }
+
+    .ps__scrollbar-y-rail {
+      position: absolute;
+      width: 15px;
+      right: 0;
+      padding: 0 3px;
+      box-sizing: border-box;
+      opacity: 0.3;
+      transition: opacity 0.3s, padding 0.2s;
+      .ps__scrollbar-y {
+        position: relative;
+        background-color: #aaa;
+        border-radius: 20px;
+      }
+    }
+    &:hover {
+      .ps__scrollbar-y-rail {
+        opacity: 0.6;
+        &:hover {
+          padding: 0;
+        }
       }
     }
   }

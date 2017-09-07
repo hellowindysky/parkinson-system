@@ -536,6 +536,6 @@ export function getPatientCase(patientId, patientCaseId) {
     "patientCaseId": patientCaseId
   };
   var url = 'http://apitest.gyenno.com/pdms/queryPatientCase';
-  console.log(request);
+
   return encapsulatePromise(url, request);
 };
