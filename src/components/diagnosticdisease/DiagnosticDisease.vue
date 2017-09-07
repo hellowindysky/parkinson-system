@@ -1,7 +1,23 @@
 <template lang="html">
   <folding-panel :title="'病症情况'" :mode="mutableMode"  v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
-    <div class="">
+    <div class="diagnostic-disease">
+      <div class="field" :class="{'whole-line': true, 'multi-line': false}">
+        <span class="field-name">
+          病症类型
+          <span class="required-mark" v-show="true">*</span>
+        </span>
 
+        <div class="field-value" v-show="mutableMode===READING_MODE">
+          帕金森
+        </div>
+
+        <div class="field-input" v-show="mutableMode===EDITING_MODE">
+          <span class="warning-text" v-show="false">测试警告信息</span>
+          <el-select :class="{'warning': false}" v-model="test" placeholder="'请选择'">
+            <el-option label="看诊" value="0"></el-option>
+          </el-select>
+        </div>
+      </div>
     </div>
   </folding-panel>
 </template>
@@ -15,7 +31,8 @@ import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 export default {
   data() {
     return {
-      mutableMode: this.mode
+      mutableMode: this.mode,
+      test: 0
     };
   },
   props: {
@@ -43,5 +60,88 @@ export default {
 
 <style lang="less">
 @import "~styles/variables.less";
+
+@field-height: 50px;
+@field-name-width: 100px;
+
+.diagnostic-disease {
+  padding: 0 25px;
+  text-align: left;
+  .field {
+    display: inline-block;
+    position: relative;
+    width: 50%;
+    height: @field-height;
+    text-align: left;
+    &.whole-line {
+      width: 100%;
+      .field-input {
+        right: 2%;
+      }
+    }
+    &.multi-line {
+      height: @field-height * 1.5;
+    }
+    .field-name {
+      display: inline-block;
+      width: @field-name-width;
+      line-height: @field-height;
+      font-size: @normal-font-size;
+      color: @font-color;
+      .required-mark {
+        color: red;
+        font-size: 20px;
+        vertical-align: middle;
+      }
+    }
+    .field-value {
+      display: inline-block;
+      line-height: @field-height;
+      font-size: @normal-font-size;
+      color: @light-font-color;
+    }
+    .field-input {
+      display: inline-block;
+      position: absolute;
+      top: 0;
+      left: @field-name-width;
+      right: 4%;
+      line-height: @field-height;
+      overflow: visible;
+      .warning-text {
+        position: absolute;
+        top: 25px;
+        left: 10px;
+        height: 15px;
+        color: red;
+        font-size: @small-font-size;
+      }
+      .el-input {
+        .el-input__inner {
+          height: 30px;
+          border: none;
+          background-color: @screen-color;
+        }
+      }
+      .el-textarea {
+        vertical-align: middle;
+        transform: translateY(10px);
+        .el-textarea__inner {
+          border: none;
+          background-color: @screen-color;
+        }
+      }
+      .el-select {
+        width: 100%;
+      }
+      .el-date-editor {
+        width: 100%;
+      }
+      .warning .el-input__inner {
+        border: 1px solid red;
+      }
+    }
+  }
+}
 
 </style>
