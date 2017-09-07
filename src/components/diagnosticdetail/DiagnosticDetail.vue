@@ -3,6 +3,7 @@
     <div class="title-bar">
       <h2 class="title">{{caseDetail.caseName}}</h2>
       <div class="button back-button" @click="goBack">返回</div>
+      <div class="button file-button" @click="fileCase">归档</div>
     </div>
     <div class="scroll-area" ref="scrollArea">
       <folding-panel class="folding-panel" :title="'基础情况'"></folding-panel>
@@ -54,6 +55,9 @@ export default {
       this.displayDetail = false;
       this.caseDetail = {};
       console.log(this.caseDetail);
+    },
+    fileCase() {
+      console.log('要归档了');
     }
   },
   components: {
@@ -119,6 +123,10 @@ export default {
       }
       &.back-button {
         background-color: @secondary-button-color;
+        right: 30px + @small-button-width;
+      }
+      &.file-button {
+        background-color: @button-color;
         right: 10px;
       }
     }
