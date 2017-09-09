@@ -1,16 +1,14 @@
 <template>
-  <featureTableHead></featureTableHead>
+  <feature-table-head></feature-table-head>
 </template>
 
 <script>
-import featureTableHead from 'components/tablehead/FeatureTableHead';
+import FeatureTableHead from 'components/tablehead/FeatureTableHead';
 export default {
   components: {
-    featureTableHead
+    FeatureTableHead
   }
 };
 </script>
-
 <style lang="less" scoped>
-
 </style>

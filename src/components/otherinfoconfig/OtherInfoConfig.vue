@@ -1,5 +1,5 @@
 <template>
-  <featurefoldingpanel :title="'其它信息'">
+  <feature-foldingpanel :title="'其它信息'">
     <div class="otherconfig-group">
       <div class="small-area-title">其他用药史</div>
       <ul class="config-small-table" v-for="(field, groupNo) in exerciseHistoryTemplate" :key="groupNo">
@@ -127,11 +127,11 @@
         </li>
       </ul>
     </div>
-  </featurefoldingpanel>
+  </feature-foldingpanel>
 </template>
 
 <script>
-import featurefoldingpanel from '../featurefoldingpanel/featurefoldingpanel';
+import FeatureFoldingpanel from '../featurefoldingpanel/FeatureFoldingpanel';
 import { mapGetters } from 'vuex';
 
 export default {
@@ -149,7 +149,7 @@ export default {
     ])
   },
   components: {
-    featurefoldingpanel
+    FeatureFoldingpanel
   }
 };
 </script>

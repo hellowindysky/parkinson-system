@@ -1,5 +1,5 @@
 <template>
-  <featurefoldingpanel :title="'基础信息'">
+  <feature-foldingpanel :title="'基础信息'">
     <div class="basicconfig-group" v-for="(group, groupIndex) in basicInfoTemplateGroups" :key="groupIndex">
       <div class="small-area-title" v-if="groupIndex===0">基本情况</div>
       <div class="small-area-title" v-if="groupIndex===1">相关现状</div>
@@ -15,10 +15,10 @@
         </li>
       </ul>
     </div>
-  </featurefoldingpanel>
+  </feature-foldingpanel>
 </template>
 <script>
-import featurefoldingpanel from '../featurefoldingpanel/featurefoldingpanel';
+import FeatureFoldingpanel from '../featurefoldingpanel/FeatureFoldingpanel';
 import { mapGetters } from 'vuex';
 export default {
   computed: {
@@ -29,7 +29,7 @@ export default {
     ])
   },
   components: {
-    featurefoldingpanel
+    FeatureFoldingpanel
   }
 };
 </script>
