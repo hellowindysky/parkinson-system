@@ -1,5 +1,5 @@
 <template>
-  <featurefoldingpanel :title="'病症信息'">
+  <feature-foldingpanel :title="'病症信息'">
     <div class="diseageconfig-group" v-for="(group, dgroupIndex) in diseaseInfoTemplateGroups" :key="dgroupIndex">
       <div class="small-area-title" v-if="dgroupIndex===0">起病情况</div>
       <div class="small-area-title" v-if="dgroupIndex===1">首发情况</div>
@@ -16,10 +16,10 @@
         </li>
       </ul>
     </div>
-  </featurefoldingpanel>
+  </feature-foldingpanel>
 </template>
 <script>
-import featurefoldingpanel from '../featurefoldingpanel/featurefoldingpanel';
+import FeatureFoldingpanel from '../featurefoldingpanel/FeatureFoldingpanel';
 import { mapGetters } from 'vuex';
 export default {
   computed: {
@@ -30,7 +30,7 @@ export default {
     ])
   },
   components: {
-    featurefoldingpanel
+    FeatureFoldingpanel
   }
 };
 </script>

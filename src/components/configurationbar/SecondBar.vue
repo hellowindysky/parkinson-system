@@ -14,7 +14,7 @@
 
 <script>
 
-import featureTableHead from '../tablehead/FeatureTableHead';
+import FeatureTableHead from '../tablehead/FeatureTableHead';
 export default {
   computed: {
     currentTab() {
@@ -58,7 +58,7 @@ export default {
     };
   },
   components: {
-    featureTableHead
+    FeatureTableHead
   }
 };
 </script>

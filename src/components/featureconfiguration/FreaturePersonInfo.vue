@@ -1,33 +1,30 @@
 <template>
   <div class="scroll-wrapper">
     <div class="freature-person-conf-wrapper" ref="scrollArea">
-      <basicInfoConfig></basicInfoConfig>
-      <diseageInfoConfig></diseageInfoConfig>
-      <otherInfoConfig></otherInfoConfig>
+      <basic-infoConfig></basic-infoConfig>
+      <diseage-infoConfig></diseage-infoConfig>
+      <other-infoConfig></other-infoConfig>
     </div>
   </div>
 </template>
-
 <script>
-
-import basicInfoConfig from '../basicinfoconfig/BasicInfoConfig';
-import diseageInfoConfig from '../diseageinfoconfig/DiseageInfoConfig';
-import otherInfoConfig from '../otherinfoconfig/OtherInfoConfig';
+import BasicInfoConfig from '../basicinfoconfig/BasicInfoConfig';
+import DiseageInfoConfig from '../diseageinfoconfig/DiseageInfoConfig';
+import OtherInfoConfig from '../otherinfoconfig/OtherInfoConfig';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 
 export default {
   components: {
-    basicInfoConfig,
-    diseageInfoConfig,
-    otherInfoConfig
+    BasicInfoConfig,
+    DiseageInfoConfig,
+    OtherInfoConfig
   },
   methods: {
     updateScrollbar() {
       // 如果不写在 $nextTick() 里面，第一次加载的时候也许会不能正确计算高度。估计是因为子组件还没有全部加载所造成的。
       this.$nextTick(() => {
         Ps.destroy(this.$refs.scrollArea);
-        // console.log(this.$refs.scrollArea);
         Ps.initialize(this.$refs.scrollArea, {
           wheelSpeed: 1,
           minScrollbarLength: 40
