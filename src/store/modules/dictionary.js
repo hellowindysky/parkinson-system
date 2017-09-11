@@ -9,14 +9,20 @@ var getGroups = function(state, tableName) {
     return [];
 
   } else {
-    var groups = state.all.tables.filter((table) => {
+    var table = state.all.tables.filter((table) => {
       return table.tableName === tableName;
-    })[0].groups;
+    })[0];
+
+    if (!table || !table.groups) {
+      return [];
+    }
+    var groups = table.groups;
 
     // 然后对这个数组进行加工，让它更扁平化，方便我们在组件中使用
     var processedGroups = [];
     for (var i = 0; i < groups.length; i++) {
-      processedGroups.push(groups[i].fields);
+      var group = groups[i].fields ? groups[i].fields : [];
+      processedGroups.push(group);
     }
     return processedGroups;
   }
@@ -79,6 +85,11 @@ const getters = {
   toxicExposureHistoryDictionary: (state) => {
     var groups = getGroups(state, 'tc_cideexposed_history');
     // 毒物史只有一个 group
+    return groups[0] ? groups[0] : [];
+  },
+  medicineDictionary: (state) => {
+    var groups = getGroups(state, 'tc_medicine_info');
+    // 药物信息只有一个 group
     return groups[0] ? groups[0] : [];
   },
   typeGroup: (state) => {

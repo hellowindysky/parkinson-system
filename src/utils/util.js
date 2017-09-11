@@ -2,6 +2,9 @@
 
 // 在数组中找到具有特定键值对 的 对象元素，并将其返回
 function getElement(keyName, value, array) {
+  if (!array || !(array instanceof Array)) {
+    return {};
+  }
   var target = array.filter((element) => {
     return element[keyName] === value;
   })[0];
