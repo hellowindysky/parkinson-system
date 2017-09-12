@@ -1,7 +1,7 @@
 <template lang="html">
-  <folding-panel :title="'药物方案'" :mode="mutableMode"  v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
+  <folding-panel :title="title" :mode="mutableMode"  v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
     <div class="diagnostic-medicine" ref="diagnosticMedicine">
-      <extensible-panel class="panel" :mode="mutableMode" :title="'药物方案'" v-on:addNewCard="addMedicine">
+      <extensible-panel class="panel" :mode="mutableMode" :title="subTitle" v-on:addNewCard="addMedicine">
         <card class="card" :class="devideWidth" :mode="mutableMode" v-for="item in medicineList" :key="item.medicineId"
          :title="getTitle(item.medicineId)" v-on:clickCurrentCard="editMedicine(item)"
          v-on:deleteCurrentCard="deleteMedicine(item)">
@@ -26,6 +26,7 @@ export default {
   data() {
     return {
       mutableMode: this.mode,
+      title: '药物方案',
       devideWidth: '',
       medicineList: [
         {
@@ -68,7 +69,11 @@ export default {
       'medicineDictionary',
       'typeGroup',
       'medicineInfo'
-    ])
+    ]),
+    subTitle() {
+      var count = this.medicineList.length;
+      return this.title + '（' + count + '条记录）';
+    }
   },
   methods: {
     startEditing() {
@@ -88,7 +93,7 @@ export default {
       // 在 typegroup 里面查找到 fieldName 所对应的 types（选项组）
       var dictionaryField = this.getMatchedField(fieldName);
       var value = dictionaryField.fieldEnumId;
-      value = fieldName; // 等以后字典项返回 OK 了，就去掉这一行
+      value = fieldName; // TODO 等以后字典项返回 OK 了，就去掉这一行
       var typeInfo = Util.getElement('typegroupcode', value, this.typeGroup);
       return typeInfo.types ? typeInfo.types : [];
     },
@@ -106,10 +111,10 @@ export default {
       return medicine.medicineName + '(' + medicine.commonName + ')';
     },
     addMedicine() {
-
+      Bus.$emit(this.SHOW_MEDICINE_MODAL, '新增药物方案');
     },
     editMedicine() {
-
+      Bus.$emit(this.SHOW_MEDICINE_MODAL, '药物方案');
     },
     deleteMedicine() {
 
