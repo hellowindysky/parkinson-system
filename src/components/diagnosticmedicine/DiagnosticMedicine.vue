@@ -2,8 +2,8 @@
   <folding-panel :title="'药物方案'" :mode="mutableMode"  v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
     <div class="diagnostic-medicine" ref="diagnosticMedicine">
       <extensible-panel class="panel" :mode="mutableMode" :title="'药物方案'" v-on:addNewCard="addMedicine">
-        <card class="card" :class="devideWidth" :mode="mode" v-for="item in medicineList" :key="item.medicineId"
-         :title="item.medicineId.toString()" v-on:clickCurrentCard="editMedicine(item)"
+        <card class="card" :class="devideWidth" :mode="mutableMode" v-for="item in medicineList" :key="item.medicineId"
+         :title="getTitle(item.medicineId)" v-on:clickCurrentCard="editMedicine(item)"
          v-on:deleteCurrentCard="deleteMedicine(item)">
           <div class="text first-line">{{transform(item, 'usages')}}</div>
           <div class="text second-line">{{item.ariseTime}}</div>
@@ -66,7 +66,8 @@ export default {
   computed: {
     ...mapGetters([
       'medicineDictionary',
-      'typeGroup'
+      'typeGroup',
+      'medicineInfo'
     ])
   },
   methods: {
@@ -92,10 +93,17 @@ export default {
       return typeInfo.types ? typeInfo.types : [];
     },
     transform(item, fieldName) {
-      // 传递 3 个参数，最后一个代表需要去查询的字典
       var types = this.getTypes(fieldName);
       var matchedType = Util.getElement('typeCode', item[fieldName], types);
       return matchedType.typeName ? matchedType.typeName : '';
+    },
+    getMedicine(medicineId) {
+      // 根据药物 id，在相应的 tableData 里面寻找对应的 药物详情
+      return Util.getElement('medicineId', medicineId, this.medicineInfo);
+    },
+    getTitle(medicineId) {
+      var medicine = this.getMedicine(medicineId);
+      return medicine.medicineName + '(' + medicine.commonName + ')';
     },
     addMedicine() {
 
@@ -107,16 +115,18 @@ export default {
 
     },
     recalculateCardWidth() {
-      var panelWidth = this.$refs.diagnosticMedicine.clientWidth;
-      var devideNum = 1.0;
-      // 20px 是卡片的横向间距，定义在了 varaibles.less 中，200px 是卡片的最小宽度
-      while (panelWidth / devideNum > 200 + 20) {
-        devideNum += 1.0;
-      }
-      devideNum -= 1;
-      // 一排最多显示 10 个卡片
-      devideNum = devideNum <= 10 ? devideNum : 10;
-      this.devideWidth = 'width-1-' + parseInt(devideNum, 10);
+      this.$nextTick(() => {
+        var panelWidth = this.$refs.diagnosticMedicine.clientWidth;
+        var devideNum = 1.0;
+        // 20px 是卡片的横向间距，定义在了 varaibles.less 中，200px 是卡片的最小宽度
+        while (panelWidth / devideNum > 200 + 20) {
+          devideNum += 1.0;
+        }
+        devideNum -= 1;
+        // 一排最多显示 10 个卡片
+        devideNum = devideNum <= 10 ? devideNum : 10;
+        this.devideWidth = 'width-1-' + parseInt(devideNum, 10);
+      });
     }
   },
   components: {
