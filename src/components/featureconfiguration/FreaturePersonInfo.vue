@@ -1,8 +1,8 @@
 <template>
   <div class="scroll-wrapper">
     <div class="freature-person-conf-wrapper" ref="scrollArea">
-      <basic-infoConfig></basic-infoConfig>
-      <diseage-infoConfig></diseage-infoConfig>
+      <basic-infoConfig :basicInfoF="basicInfoF" :basicInfoS="basicInfoS" :basicInfoT="basicInfoT"></basic-infoConfig>
+      <diseage-infoConfig :diseaseInfoF="diseaseInfoF"  :diseaseInfoS="diseaseInfoS" :diseaseInfoT="diseaseInfoT"></diseage-infoConfig>
       <other-infoConfig></other-infoConfig>
     </div>
   </div>
@@ -14,7 +14,16 @@ import OtherInfoConfig from '../otherinfoconfig/OtherInfoConfig';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 
+import { getTemplate } from 'api/user';
+
 export default {
+  data() {
+    return {
+      userInfo: {
+        all: []
+      }
+    };
+  },
   components: {
     BasicInfoConfig,
     DiseageInfoConfig,
@@ -30,22 +39,107 @@ export default {
           minScrollbarLength: 40
         });
       });
+    },
+    updateUserInfo() {
+      getTemplate().then((data) => {
+        this.userInfo.all = data;
+      });
+    },
+    getGroups(state, tableName) {
+      // 如果 state.all 为空，则返回一个空数组
+      if (state.all.length === 0) {
+        return [];
+
+      } else {
+        var table = state.all.filter((table) => {
+          return table.tableName === tableName;
+        })[0];
+        var groups = table && table.groups ? table.groups : [];
+
+        // 然后对这个数组进行加工，让它更扁平化，方便我们在组件中使用
+        var processedGroups = [];
+        for (var i = 0; i < groups.length; i++) {
+          processedGroups.push(groups[i].fields);
+        }
+        return processedGroups;
+      }
     }
   },
   mounted() {
     this.updateScrollbar();
+    this.updateUserInfo();
     // 监听折叠面板，如果发生状态的改变，就需要重新计算滚动区域的高度
     Bus.$on(this.SCROLL_AREA_SIZE_CHANGE, this.updateScrollbar);
     // 如果屏幕高度发生改变，也需要重新计算滚动区域高度
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
-    // 监听子组件是否要求刷新病患数据
-    Bus.$on(this.UPDATE_PATIENT_INFO, this.updatePatientInfo);
   },
   beforeDestroy() {
     // 在组件销毁前，移除绑定在当前组件下的事件监听器
     Bus.$off(this.SCROLL_AREA_SIZE_CHANGE, this.updateScrollbar);
     Bus.$off(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
     Bus.$off(this.UPDATE_PATIENT_INFO, this.updatePatientInfo);
+  },
+  computed: {
+    basicInfoF() {
+      // 基本信息模块一
+      return this.getGroups(this.userInfo, 'tc_patient_info')[0];
+    },
+    basicInfoS() {
+      // 基本信息模块二
+      return this.getGroups(this.userInfo, 'tc_patient_info')[1];
+    },
+    basicInfoT() {
+      // 基本信息模块三
+      return this.getGroups(this.userInfo, 'tc_patient_info')[2];
+    },
+    diseaseInfoF() {
+      // 患病信息模块一
+      return this.getGroups(this.userInfo, 'tc_patient_disease_info')[0];
+    },
+    diseaseInfoS() {
+      // 患病信息模块二
+      return this.getGroups(this.userInfo, 'tc_patient_disease_info')[1];
+    },
+    diseaseInfoT() {
+      // 患病信息模块三
+      return this.getGroups(this.userInfo, 'tc_patient_disease_info')[2];
+    },
+    medHistoryList() {
+      // 用药史
+      return this.getGroups(this.userInfo, 'tc_patient_info');
+    },
+    diseaseHistoryList() {
+      // 既往史
+      return this.getGroups(this.userInfo, 'tc_patient_info');
+    },
+    familyHistoryList() {
+      // 家族史
+      return this.userInfo[9] ? this.userInfo[9] : {};
+    },
+    coffeeHistoryList() {
+      // 咖啡史
+      return this.userInfo[5] ? this.userInfo[5] : {};
+    },
+    smokeHistoryList() {
+      // 吸烟史
+      return this.userInfo[7] ? this.userInfo[7] : {};
+    },
+    wineHistoryList() {
+      // 饮酒史
+      return this.userInfo[0] ? this.userInfo[0] : {};
+    },
+    teaHistoryList() {
+      // 喝茶史
+      return this.userInfo[6] ? this.userInfo[6] : {};
+    },
+    exerciseHistoryList() {
+      // 锻炼史
+      return this.userInfo[11] ? this.userInfo[11] : {};
+    },
+    toxicExposureHistoryList() {
+      // 毒物接触史
+      return this.userInfo[8] ? this.userInfo[8] : {};
+    }
   }
 };
 </script>
