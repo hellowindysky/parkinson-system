@@ -70,7 +70,7 @@ export default {
   },
   mounted() {
     // 默认让基础信息面板呈展开状态
-    if (this.title === '基础信息' || this.title === '看诊记录' || this.title === '基本情况') {
+    if (this.title === '基础信息' || this.title === '看诊记录' || this.title === '药物方案') {
       this.folded = false;
     }
   },
