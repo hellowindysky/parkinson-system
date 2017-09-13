@@ -300,7 +300,7 @@ export default {
       this.displayModal = false;
     },
     initItem() {
-      // 遍历当前的 template，对其中的每个 field，检查 this.item 下有没有名字对应的属性值，没有的化，就初始化为空字符串
+      // 遍历当前的 template，对其中的每个 field，检查 this.item 下有没有名字对应的属性值，没有的话，就初始化为空字符串
       // 注意初始化采用 this.$set 方法，使得当前 Vue 实例对象可以跟踪该属性值的变化
       for (let field of this.template) {
         let name = field.fieldName;
