@@ -88,7 +88,7 @@ const getters = {
     return groups[0] ? groups[0] : [];
   },
   medicineDictionary: (state) => {
-    var groups = getGroups(state, 'tc_medicine_info');
+    var groups = getGroups(state, 'tc_patient_medicine');
     // 药物信息只有一个 group
     return groups[0] ? groups[0] : [];
   },
