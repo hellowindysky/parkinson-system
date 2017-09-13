@@ -149,7 +149,7 @@ export default {
       margin: 3px @this-card-horizontal-margin;
       height: 130px;
       background-color: @background-color;
-      &.width-1-1 {
+      &.width-1-1, &.width-1-0 {
         width: calc(~"100% - @{this-card-horizontal-margin} * 2");
       }
       &.width-1-2 {
