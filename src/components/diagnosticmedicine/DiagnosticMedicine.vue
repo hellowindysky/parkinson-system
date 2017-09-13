@@ -111,10 +111,10 @@ export default {
       return medicine.medicineName + '(' + medicine.commonName + ')';
     },
     addMedicine() {
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, '新增药物方案');
+      Bus.$emit(this.SHOW_MEDICINE_MODAL, '新增药物方案', {});
     },
-    editMedicine() {
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, '药物方案');
+    editMedicine(item) {
+      Bus.$emit(this.SHOW_MEDICINE_MODAL, '药物方案', item);
     },
     deleteMedicine() {
 
@@ -161,7 +161,7 @@ export default {
     .card {
       display: inline-block;
       margin: @card-vertical-margin @card-horizontal-margin;
-      &.width-1-1 {
+      &.width-1-, &.width-1-0 {
         width: calc(~"100% - @{card-horizontal-margin} * 2");
       }
       &.width-1-2 {
