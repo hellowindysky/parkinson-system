@@ -76,6 +76,9 @@ export default {
     cancel() {
       // 点击取消按钮，将我们对 copyInfo 所做的临时修改全部放弃，还原其为 basicInfo 的复制对象
       // this.shallowCopy(this.basicInfo);
+      this.deepCopy(this.diseaseInfoF, 1);
+      this.deepCopy(this.diseaseInfoS, 2);
+      this.deepCopy(this.diseaseInfoT, 3);
       this.mode = this.READING_MODE;
       this.isEdit = true;
     },

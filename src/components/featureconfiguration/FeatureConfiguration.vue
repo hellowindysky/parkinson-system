@@ -47,12 +47,22 @@ export default {
       if (!/\/featureConfiguration\/statisticalanalysis/.test(this.$route.path)) {
         this.$router.push({ name: 'statisticalanalysis' });
       }
+    },
+    checkRoute() {
+      var path = this.$route.path;
+      var reList = new RegExp(/\/featureConfiguration\/minepait/);
+      var isConfigPatientsList = reList.test(path);
+      // 路由还停留在在配置我的患者这一层，但没有指明是个人信息还是诊断信息，那么就默认跳转到个人信息
+      if (isConfigPatientsList) {
+        this.$router.push({ name: 'configpersonalinf' });
+      }
     }
   },
   mounted() {
-    if (!/^\/featureConfiguration\/minepait/.test(this.$route.path)) {
+    if (!/\/featureConfiguration\/minepait/.test(this.$route.path)) {
       this.$router.push({ name: 'minepait' });
     }
+    this.checkRoute();
   }
 };
 </script>

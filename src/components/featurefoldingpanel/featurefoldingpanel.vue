@@ -52,8 +52,7 @@ export default {
     }
   },
   mounted() {
-    console.log(this.title);
-    if (this.title === '其它信息') {
+    if (this.title === '基础信息') {
       this.folded = false;
     }
   },
