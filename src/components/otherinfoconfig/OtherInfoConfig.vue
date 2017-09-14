@@ -1,129 +1,129 @@
 <template>
-  <feature-foldingpanel :title="'其它信息'">
+  <feature-foldingpanel :title="'其它信息'" :mode="mode" @edit="startEditing" @cancel="cancel" @submit="submit">
     <div class="otherconfig-group">
       <div class="small-area-title">其他用药史</div>
-      <ul class="config-small-table" v-for="(field, groupNo) in exerciseHistoryTemplate" :key="groupNo">
+      <ul class="config-small-table" v-for="(field, groupNo) in copyInfoMedHistory" :key="groupNo">
         <li>
           <span>{{field.cnfieldName}}</span>
         </li>
-        <li>
-          <el-switch  class="config-small-switch" on-color="#ff9c00" off-color="#eff0f6" on-text="" off-text=""></el-switch>
+         <li>
+            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="" off-text="" off-color="#eff0f6" ></el-switch>
         </li>
         <li>
-          <el-checkbox class="config-small-checked" ></el-checkbox>
+          <el-checkbox v-model="field.active" :disabled="isEdit" class="config-small-checked"></el-checkbox>
         </li>
       </ul>
     </div>
     <div class="otherconfig-group">
       <div class="small-area-title">既往史</div>
-      <ul class="config-small-table" v-for="(field, groupNo) in diseaseHistoryTemplate" :key="groupNo">
+      <ul class="config-small-table" v-for="(field, groupNo) in copyInfoDiseaseHistory" :key="groupNo">
         <li>
           <span>{{field.cnfieldName}}</span>
         </li>
         <li>
-          <el-switch  class="config-small-switch" on-color="#ff9c00" off-color="#eff0f6" on-text="" off-text=""></el-switch>
+            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="" off-text="" off-color="#eff0f6" ></el-switch>
         </li>
         <li>
-          <el-checkbox class="config-small-checked"></el-checkbox>
+          <el-checkbox v-model="field.active" :disabled="isEdit" class="config-small-checked"></el-checkbox>
         </li>
       </ul>
     </div>
     <div class="otherconfig-group">
       <div class="small-area-title">家族史</div>
-      <ul class="config-small-table" v-for="(field, groupNo) in familyHistoryTemplate" :key="groupNo">
+      <ul class="config-small-table" v-for="(field, groupNo) in copyInfoFamilyHistory" :key="groupNo">
         <li>
           <span>{{field.cnfieldName}}</span>
         </li>
         <li>
-          <el-switch  class="config-small-switch" on-color="#ff9c00" off-color="#eff0f6" on-text="" off-text=""></el-switch>
+            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="" off-text="" off-color="#eff0f6"  ></el-switch>
         </li>
         <li>
-          <el-checkbox class="config-small-checked"></el-checkbox>
+          <el-checkbox v-model="field.active" :disabled="isEdit" class="config-small-checked"></el-checkbox>
         </li>
       </ul>
     </div>
     <div class="otherconfig-group">
       <div class="small-area-title">吸烟史</div>
-      <ul class="config-small-table" v-for="(field, groupNo) in smokeHistoryTemplate" :key="groupNo">
+      <ul class="config-small-table" v-for="(field, groupNo) in copyInfoSmokeHistory" :key="groupNo">
         <li>
           <span>{{field.cnfieldName}}</span>
         </li>
-        <li>
-          <el-switch class="config-small-switch" on-color="#ff9c00" off-color="#eff0f6" on-text="" off-text=""></el-switch>
+         <li>
+            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="" off-text="" off-color="#eff0f6"  ></el-switch>
         </li>
         <li>
-          <el-checkbox class="config-small-checked"></el-checkbox>
+          <el-checkbox v-model="field.active" :disabled="isEdit" class="config-small-checked"></el-checkbox>
         </li>
       </ul>
     </div>
     <div class="otherconfig-group">
       <div class="small-area-title">饮酒史</div>
-      <ul class="config-small-table" v-for="(field, groupNo) in wineHistoryTemplate" :key="groupNo">
+      <ul class="config-small-table" v-for="(field, groupNo) in copyInfoWineHistory" :key="groupNo">
         <li>
           <span>{{field.cnfieldName}}</span>
         </li>
         <li>
-          <el-switch  class="config-small-switch" on-color="#ff9c00" off-color="#eff0f6" on-text="" off-text=""></el-switch>
+            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="" off-text="" off-color="#eff0f6"  ></el-switch>
         </li>
         <li>
-          <el-checkbox class="config-small-checked" ></el-checkbox>
+          <el-checkbox v-model="field.active" :disabled="isEdit" class="config-small-checked"></el-checkbox>
         </li>
       </ul>
     </div>
     <div class="otherconfig-group">
       <div class="small-area-title">喝茶史</div>
-      <ul class="config-small-table" v-for="(field, groupNo) in teaHistoryTemplate" :key="groupNo">
+      <ul class="config-small-table" v-for="(field, groupNo) in copyInfoTeaHistory" :key="groupNo">
         <li>
           <span>{{field.cnfieldName}}</span>
         </li>
-        <li>
-          <el-switch  class="config-small-switch" on-color="#ff9c00" off-color="#eff0f6" on-text="" off-text=""></el-switch>
+         <li>
+            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="" off-text="" off-color="#eff0f6"  ></el-switch>
         </li>
         <li>
-          <el-checkbox class="config-small-checked" ></el-checkbox>
+          <el-checkbox v-model="field.active" :disabled="isEdit" class="config-small-checked"></el-checkbox>
         </li>
       </ul>
     </div>
     <div class="otherconfig-group">
       <div class="small-area-title">咖啡史</div>
-      <ul class="config-small-table" v-for="(field, groupNo) in coffeeHistoryTemplate" :key="groupNo">
+      <ul class="config-small-table" v-for="(field, groupNo) in copyInfoCoffeeHistory" :key="groupNo">
         <li>
           <span>{{field.cnfieldName}}</span>
         </li>
-        <li>
-          <el-switch  class="config-small-switch" on-color="#ff9c00" off-color="#eff0f6" on-text="" off-text=""></el-switch>
+         <li>
+            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="" off-text="" off-color="#eff0f6"  ></el-switch>
         </li>
         <li>
-          <el-checkbox class="config-small-checked"></el-checkbox>
+          <el-checkbox v-model="field.active" :disabled="isEdit" class="config-small-checked"></el-checkbox>
         </li>
       </ul>
     </div>
     <div class="otherconfig-group">
       <div class="small-area-title">锻炼史</div>
-      <ul class="config-small-table" v-for="(field, groupNo) in exerciseHistoryTemplate" :key="groupNo">
+      <ul class="config-small-table" v-for="(field, groupNo) in copyInfoExerciseHistory" :key="groupNo">
         <li>
           <span>{{field.cnfieldName}}</span>
         </li>
         <li>
-          <el-switch  class="config-small-switch" on-color="#ff9c00" off-color="#eff0f6" on-text="" off-text=""></el-switch>
+            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="" off-text="" off-color="#eff0f6"  ></el-switch>
         </li>
         <li>
-          <el-checkbox class="config-small-checked"></el-checkbox>
+          <el-checkbox v-model="field.active" :disabled="isEdit" class="config-small-checked"></el-checkbox>
         </li>
       </ul>
     </div>
     </div>
     <div class="otherconfig-group">
       <div class="small-area-title">毒物接触史</div>
-      <ul class="config-small-table" v-for="(field, groupNo) in toxicExposureHistoryTemplate" :key="groupNo">
+      <ul class="config-small-table" v-for="(field, groupNo) in copyInfoToxicExposureHistory" :key="groupNo">
         <li>
           <span>{{field.cnfieldName}}</span>
         </li>
         <li>
-          <el-switch  class="config-small-switch" on-color="#ff9c00" off-color="#eff0f6" on-text="" off-text=""></el-switch>
+            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="" off-text="" off-color="#eff0f6"  ></el-switch>
         </li>
         <li>
-          <el-checkbox class="config-small-checked"></el-checkbox>
+          <el-checkbox v-model="field.active" :disabled="isEdit" class="config-small-checked"></el-checkbox>
         </li>
       </ul>
     </div>
@@ -132,28 +132,170 @@
 
 <script>
 import FeatureFoldingpanel from '../featurefoldingpanel/FeatureFoldingpanel';
-import { mapGetters } from 'vuex';
 
 export default {
-  computed: {
-    ...mapGetters([
-      'medHistoryTemplate',
-      'diseaseHistoryTemplate',
-      'familyHistoryTemplate',
-      'toxicExposureHistoryTemplate',
-      'coffeeHistoryTemplate',
-      'teaHistoryTemplate',
-      'smokeHistoryTemplate',
-      'wineHistoryTemplate',
-      'exerciseHistoryTemplate'
-    ])
+  data() {
+    return {
+      copyInfoMedHistory: [{}, {}, {}, {}, {}, {}],
+      copyInfoDiseaseHistory: [{}, {}, {}, {}, {}, {}],
+      copyInfoFamilyHistory: [{}, {}, {}, {}, {}],
+      copyInfoCoffeeHistory: [{}, {}, {}, {}, {}],
+      copyInfoSmokeHistory: [{}, {}, {}, {}, {}],
+      copyInfoWineHistory: [{}, {}, {}, {}, {}],
+      copyInfoTeaHistory: [{}, {}, {}, {}, {}],
+      copyInfoExerciseHistory: [{}, {}, {}, {}],
+      copyInfoToxicExposureHistory: [{}, {}, {}, {}, {}, {}],
+      mode: this.READING_MODE,
+      isEdit: true
+    };
+  },
+  props: {
+    medHistoryList: {
+      required: true
+    },
+    diseaseHistoryList: {
+      required: true
+    },
+    familyHistoryList: {
+      required: true
+    },
+    coffeeHistoryList: {
+      required: true
+    },
+    smokeHistoryList: {
+      required: true
+    },
+    wineHistoryList: {
+      required: true
+    },
+    teaHistoryList: {
+      required: true
+    },
+    exerciseHistoryList: {
+      required: true
+    },
+    toxicExposureHistoryList: {
+      required: true
+    }
+  },
+  methods: {
+    startEditing() {
+      this.mode = this.EDITING_MODE;
+      this.isEdit = false;
+    },
+    cancel() {
+      // 点击取消按钮，将我们对 copyInfo 所做的临时修改全部放弃，还原其为 basicInfo 的复制对象
+      // this.shallowCopy(this.basicInfo);
+      this.mode = this.READING_MODE;
+      this.isEdit = true;
+    },
+    submit() {
+      this.mode = this.READING_MODE;
+      this.isEdit = true;
+    },
+    deepCopy(copyFile, type) {
+      var dataTemp = null;
+      if (type === 1) {
+        dataTemp = this.copyInfoMedHistory;
+      } else if (type === 2) {
+        dataTemp = this.copyInfoDiseaseHistory;
+      } else if (type === 3) {
+        dataTemp = this.copyInfoFamilyHistory;
+      } else if (type === 4) {
+        dataTemp = this.copyInfoCoffeeHistory;
+      } else if (type === 5) {
+        dataTemp = this.copyInfoSmokeHistory;
+      } else if (type === 6) {
+        dataTemp = this.copyInfoWineHistory;
+      } else if (type === 7) {
+        dataTemp = this.copyInfoTeaHistory;
+      } else if (type === 8) {
+        dataTemp = this.copyInfoExerciseHistory;
+      } else if (type === 9) {
+        dataTemp = this.copyInfoToxicExposureHistory;
+      }
+      for (let i = 0; i < copyFile.length; i++) {
+        // this.copyInfoF[i] = {};
+        let sonData = copyFile[i];
+        for (let key in sonData) {
+          this.$set(dataTemp[i], key, sonData[key]);
+          if (key === 'must') {
+            this.$set(dataTemp[i], 'must', this.changeSwitch(sonData['must']));
+          } else if (key === 'active') {
+            this.$set(dataTemp[i], 'active', this.changeSwitch(sonData['active']));
+          }
+        }
+      }
+    },
+    changeSwitch(val) {
+      if (val === 1) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  },
+  watch: {
+    medHistoryList: {
+      handler: function(newVal) {
+        this.deepCopy(newVal, 1);
+      },
+      deep: true
+    },
+    diseaseHistoryList: {
+      handler: function(newVal) {
+        this.deepCopy(newVal, 2);
+      },
+      deep: true
+    },
+    familyHistoryList: {
+      handler: function(newVal) {
+        this.deepCopy(newVal, 3);
+      },
+      deep: true
+    },
+    coffeeHistoryList: {
+      handler: function(newVal) {
+        this.deepCopy(newVal, 4);
+      },
+      deep: true
+    },
+    smokeHistoryList: {
+      handler: function(newVal) {
+        this.deepCopy(newVal, 5);
+      },
+      deep: true
+    },
+    wineHistoryList: {
+      handler: function(newVal) {
+        this.deepCopy(newVal, 6);
+      },
+      deep: true
+    },
+    teaHistoryList: {
+      handler: function(newVal) {
+        this.deepCopy(newVal, 7);
+      },
+      deep: true
+    },
+    exerciseHistoryList: {
+      handler: function(newVal) {
+        this.deepCopy(newVal, 8);
+      },
+      deep: true
+    },
+    toxicExposureHistoryList: {
+      handler: function(newVal) {
+        this.deepCopy(newVal, 9);
+      },
+      deep: true
+    }
   },
   components: {
     FeatureFoldingpanel
   }
 };
 </script>
-
 <style lang="less" scoped>
 @import "~styles/variables.less";
 @margin-right: 15px;

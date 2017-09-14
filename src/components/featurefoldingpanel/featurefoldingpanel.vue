@@ -3,6 +3,9 @@
     <div class="feature-header">
       <div class="iconfont" :class="iconToggleFolded"></div>
       <h2 class="feature-title" @click="toggleFoldedPanel">{{title}}</h2>
+      <div v-show="mode===READING_MODE" class="button edit-button" @click="edit">编辑</div>
+      <div v-show="mode===EDITING_MODE" class="button cancel-button" @click="cancel">取消</div>
+      <div v-show="mode===EDITING_MODE" class="button submit-button" @click="submit">完成</div>
     </div>
     <div class="feature-content" :class="{'folded': folded}">
       <slot></slot>
@@ -11,12 +14,15 @@
 </template>
 <script>
 import Bus from 'utils/bus.js';
-
 export default {
   props: {
     title: {
       required: true,
       type: String
+    },
+    mode: {
+      type: String,
+      default: this.READING_MODE
     }
   },
   data() {
@@ -32,6 +38,17 @@ export default {
   methods: {
     toggleFoldedPanel() {
       this.folded = !this.folded;
+    },
+    edit() {
+      this.$emit(this.EDIT);
+      // 进入编辑状态，面板自动展开
+      this.folded = false;
+    },
+    cancel() {
+      this.$emit(this.CANCEL);
+    },
+    submit() {
+      this.$emit(this.SUBMIT);
     }
   },
   mounted() {

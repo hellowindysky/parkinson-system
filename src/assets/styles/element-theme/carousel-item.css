@@ -99,9 +99,12 @@
     width: 100%;
     height: 100%;
     display: inline-block;
-    transition: .4s ease-in-out;
     overflow: hidden;
     z-index: 0
+}
+
+.el-carousel__item.is-animating{
+    transition: transform .4s ease-in-out
 }
 
 .el-carousel__item.is-active{
@@ -109,7 +112,8 @@
 }
 
 .el-carousel__item--card{
-    width: 50%
+    width: 50%;
+    transition: transform .4s ease-in-out
 }
 
 .el-carousel__item--card.is-in-stage{

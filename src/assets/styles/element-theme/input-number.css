@@ -395,7 +395,8 @@
 .el-input-number{
     display: inline-block;
     width: 180px;
-    position: relative
+    position: relative;
+    line-height: normal
 }
 
 .el-input-number .el-input{
@@ -464,7 +465,7 @@
 }
 
 .el-input-number--large .el-input-number__increase, .el-input-number--large .el-input-number__decrease {
-    line-height: 42px;
+    line-height: 40px;
     width: 42px;
     font-size: 16px;
 }
@@ -482,7 +483,7 @@
 }
 
 .el-input-number--small .el-input-number__increase, .el-input-number--small .el-input-number__decrease {
-    line-height: 30px;
+    line-height: 28px;
     width: 30px;
     font-size: 13px;
 }

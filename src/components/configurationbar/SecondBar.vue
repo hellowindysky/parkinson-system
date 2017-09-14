@@ -70,50 +70,60 @@ export default {
 @first-tab-x: 20px;
 @second-tab-x: 120px;
 @margin-right: 20px;
+@first-bar-height: 60px;
+@second-bar-height: 45px;
 
-.secondbar-wrapper {
+.secondbar-content {
   position: relative;
-  margin: 0 @margin-right @vertical-spacing 0;
-  height: @tabs-wrapper-height;
-  background-color: @background-color;
-  box-shadow: 0 10px 10px @screen-color;
-  list-style: none;
-  .tab {
-    position: absolute;
-    width: @tab-width;
-    line-height: 40px;
-    box-sizing: border-box;
-    font-size: @large-font-size;
-    font-weight: bold;
-    cursor: pointer;
-    color: @inverse-font-color;
-    &:hover {
-      color: darken(@inverse-font-color, 10%);
+  height: calc(~"100% - @{first-bar-height}");
+  .secondbar-wrapper {
+    position: relative;
+    margin: 0 @margin-right @vertical-spacing 0;
+    height: @tabs-wrapper-height;
+    background-color: @background-color;
+    box-shadow: 0 10px 10px @screen-color;
+    list-style: none;
+    .tab {
+      position: absolute;
+      width: @tab-width;
+      line-height: 40px;
+      box-sizing: border-box;
+      font-size: @large-font-size;
+      font-weight: bold;
+      cursor: pointer;
+      color: @inverse-font-color;
+      &:hover {
+        color: darken(@inverse-font-color, 10%);
+      }
+      &.left-tab {
+        left: @first-tab-x;
+      }
+      &.right-tab {
+        left: @second-tab-x;
+      }
+      &.current-tab {
+        color: @button-color;
+      }
     }
-    &.left-tab {
+    .tab-bottom-bar {
+      position: absolute;
+      width: @tab-width;
+      height: 3px;
+      bottom: 0;
+      background-color: @button-color;
       left: @first-tab-x;
-    }
-    &.right-tab {
-      left: @second-tab-x;
-    }
-    &.current-tab {
-      color: @button-color;
+      transition: transform 0.2s;
+      &.first-tab {
+        transform: translate3d(0, 0, 0);
+      }
+      &.second-tab {
+        transform: translate3d(@second-tab-x - @first-tab-x, 0, 0);
+      }
     }
   }
-  .tab-bottom-bar {
-    position: absolute;
-    width: @tab-width;
-    height: 3px;
-    bottom: 0;
-    background-color: @button-color;
-    left: @first-tab-x;
-    transition: transform 0.2s;
-    &.first-tab {
-      transform: translate3d(0, 0, 0);
-    }
-    &.second-tab {
-      transform: translate3d(@second-tab-x - @first-tab-x, 0, 0);
-    }
+  .scroll-content {
+    position: relative;
+    height: calc(~"100% - @{second-bar-height}");
   }
 }
 </style>

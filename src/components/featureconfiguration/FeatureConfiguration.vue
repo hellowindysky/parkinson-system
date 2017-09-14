@@ -59,6 +59,7 @@ export default {
 
 <style lang="less" scoped>
 @import "~styles/variables.less";
+@first-bar-height: 60px;
 .fConfig-wrapper {
     margin: 0 12px;
     z-index: 200;

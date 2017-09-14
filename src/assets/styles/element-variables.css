@@ -393,7 +393,7 @@
  -------------------------- */
   --switch-on-color: var(--color-primary);
   --switch-off-color: var(--color-extra-light-silver);
-  --switch-disabled-color: var(--color-light-gray);
+  --switch-disabled-color: rgb(192,192,192);
   --switch-disabled-text-color: var(--color-dark-white);
 
   --switch-font-size: var(--font-size-base);

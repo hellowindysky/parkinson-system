@@ -189,6 +189,7 @@
     text-align: right;
     border-radius: 100px;
     line-height: 1;
+    white-space: nowrap;
 }
 .el-progress-bar__innerText{
     display: inline-block;
@@ -398,6 +399,10 @@
     margin: 0;
     padding: 0;
     list-style: none;
+}
+
+.el-upload-list.is-disabled .el-upload-list__item:hover .el-upload-list__item-status-label{
+    display: block;
 }
 
 .el-upload-list__item{
