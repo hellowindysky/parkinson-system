@@ -2,15 +2,22 @@
   <div class="medicine-modal-wrapper" v-show="displayModal">
     <div class="medicine-modal">
       <h3 class="title">{{title}}</h3>
-      <div class="field" v-for="field in medicineTemplate">
+      <div class="field" v-for="field in firstTemplateGroup">
         <span class="field-name">
           {{field.cnfieldName}}
           <span class="required-mark">*</span>
         </span>
         <span class="field-input">
           <span class="warning-text">{{warningResults[field.fieldName]}}</span>
-          <el-input v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-           :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)"></el-input>
+          <span v-if="getMatchedField(field.fieldName).readOnlyType===2">000</span>
+          <!-- <el-input v-else-if="getUIType(field.fieldName)===1" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
+           :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)">
+          </el-input> -->
+          <el-select v-else-if="getUIType(field.fieldName)===3" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
+           :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)">
+           <el-option v-for="option in getOptions(field.fieldName)" :label="option.code"
+            :value="option.name" :key="option.code"></el-option>
+          </el-select>
         </span>
       </div>
       <div class="seperate-line"></div>
@@ -37,8 +44,18 @@ export default {
   computed: {
     ...mapGetters([
       'medicineDictionary',
-      'medicineTemplate'
-    ])
+      'medicineTemplateGroups',
+      'medicineInfo'
+    ]),
+    firstTemplateGroup() {
+      return this.medicineTemplateGroups[0] ? this.medicineTemplateGroups[0] : [];
+    },
+    secondeTemplateGroup() {
+      return this.medicineTemplateGroups[1] ? this.medicineTemplateGroups[1] : [];
+    },
+    thirdTemplateGroup() {
+      return this.medicineTemplateGroups[2] ? this.medicineTemplateGroups[2] : [];
+    }
   },
   methods: {
     showModal(title, item) {
@@ -49,6 +66,12 @@ export default {
 
       this.medicine = Object.assign({}, item);
       console.log(this.medicine);
+      setTimeout(() => {
+        console.log('firstTemplate', this.firstTemplateGroup);
+        console.log('dictionary', this.medicineDictionary);
+        console.log('medicineInfo', this.medicineInfo);
+      }, 2000);
+
       this.initMedicine();
     },
     cancel() {
@@ -60,7 +83,7 @@ export default {
     initMedicine() {
       // 遍历当前的 template，对其中的每个 field，检查 this.medicine 下有没有名字对应的属性值，没有的话，就初始化为空字符串
       // 注意初始化采用 this.$set 方法，使得当前 Vue 实例对象可以跟踪该属性值的变化
-      for (let field of this.medicineTemplate) {
+      for (let field of this.firstTemplateGroup) {
         let name = field.fieldName;
         if (this.medicine[name] === undefined) {
           this.$set(this.medicine, name, '');
@@ -70,6 +93,17 @@ export default {
     getMatchedField(fieldName) {
       // 在字典项中查询该名字所对应的字段，从而方便我们得到该字段的详细信息
       return Util.getElement('fieldName', fieldName, this.medicineDictionary);
+    },
+    getUIType(fieldName) {
+      return this.getMatchedField(fieldName).uiType;
+    },
+    getOptions(fieldName) {
+      var dictionaryField = this.getMatchedField(fieldName);
+      if (dictionaryField.fieldName === 'medicineId') {
+        console.log(dictionaryField);
+      }
+      // var typeInfo = Util.getElement('typegroupcode', value, this.typeGroup);
+      return {};
     },
     updateWarning(field) {
       var fieldName = field.fieldName;

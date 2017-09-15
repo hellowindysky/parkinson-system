@@ -120,7 +120,7 @@ export default {
   },
   watch: {
     patientCaseList: function() {
-      console.log(this.patientCaseList);
+      // console.log(this.patientCaseList);
     }
   }
 };
