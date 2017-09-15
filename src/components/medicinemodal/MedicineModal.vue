@@ -15,8 +15,8 @@
           </el-input> -->
           <el-select v-else-if="getUIType(field.fieldName)===3" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
            :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)">
-           <el-option v-for="option in getOptions(field.fieldName)" :label="option.code"
-            :value="option.name" :key="option.code"></el-option>
+           <el-option v-for="option in getOptions(field.fieldName)" :label="option.name"
+            :value="option.code" :key="option.code"></el-option>
           </el-select>
         </span>
       </div>
@@ -98,12 +98,15 @@ export default {
       return this.getMatchedField(fieldName).uiType;
     },
     getOptions(fieldName) {
+      var options = [];
       var dictionaryField = this.getMatchedField(fieldName);
       if (dictionaryField.fieldName === 'medicineId') {
-        console.log(dictionaryField);
+        for (let medicineItem of this.medicineInfo) {
+          options.push({name: medicineItem.medicineName, code: medicineItem.medicineId});
+        }
       }
       // var typeInfo = Util.getElement('typegroupcode', value, this.typeGroup);
-      return {};
+      return options;
     },
     updateWarning(field) {
       var fieldName = field.fieldName;
