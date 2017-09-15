@@ -850,6 +850,10 @@
     border-bottom: 1px solid rgb(223, 228, 236);
 }
 
+.el-table--hidden{
+    visibility: hidden;
+}
+
 .el-table__fixed, .el-table__fixed-right{
     position: absolute;
     top: 0;
@@ -970,7 +974,11 @@
     background: rgb(241, 242, 243);
 }
 
-.el-table__body tr.hover-row > td {
+.el-table__body tr.hover-row {}
+
+.el-table__body tr.hover-row, .el-table__body tr.hover-row.el-table__row--striped{}
+
+.el-table__body tr.hover-row > td, .el-table__body tr.hover-row.current-row > td, .el-table__body tr.hover-row.el-table__row--striped > td, .el-table__body tr.hover-row.el-table__row--striped.current-row > td{
     background-color: rgb(238, 240, 246);
 }
 

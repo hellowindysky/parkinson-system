@@ -1,5 +1,5 @@
 <template>
-  <feature-foldingpanel :title="'病症信息'">
+  <feature-foldingpanel :title="'病症信息'" :mode="mode" @edit="startEditing" @cancel="cancel" @submit="submit">
     <div class="diseageconfig-group">
       <div class="small-area-title">起病情况</div>
       <ul class="config-small-table" v-for="(field, groupNo) in copyInfoF" :key="groupNo">
@@ -7,12 +7,10 @@
           <span>{{field.cnfieldName}}</span>
         </li>
         <li>
-          <el-tooltip>
-            <el-switch v-model="field.must" class="config-small-switch" on-color="#ff9c00" on-text="" off-text="" off-color="#eff0f6" on-value='1' off-value='2'></el-switch>
-          </el-tooltip>
+            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="" off-text="" off-color="#eff0f6"></el-switch>
         </li>
         <li>
-          <el-checkbox v-model="field.active" class="config-small-checked"></el-checkbox>
+          <el-checkbox v-model="field.active" :disabled="isEdit" class="config-small-checked"></el-checkbox>
         </li>
       </ul>
     </div>
@@ -23,12 +21,10 @@
           <span>{{field.cnfieldName}}</span>
         </li>
         <li>
-          <el-tooltip>
-            <el-switch v-model="field.must" class="config-small-switch" on-color="#ff9c00" on-text="" off-text="" off-color="#eff0f6" on-value='1' off-value='2'></el-switch>
-          </el-tooltip>
+            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="" off-text="" off-color="#eff0f6"></el-switch>
         </li>
         <li>
-          <el-checkbox v-model="field.active" class="config-small-checked"></el-checkbox>
+          <el-checkbox v-model="field.active" :disabled="isEdit" class="config-small-checked"></el-checkbox>
         </li>
       </ul>
     </div>
@@ -39,12 +35,10 @@
           <span>{{field.cnfieldName}}</span>
         </li>
         <li>
-          <el-tooltip>
-            <el-switch v-model="field.must" class="config-small-switch" on-color="#ff9c00" on-text="" off-text="" off-color="#eff0f6" on-value='1' off-value='2'></el-switch>
-          </el-tooltip>
+            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="" off-text="" off-color="#eff0f6"></el-switch>
         </li>
         <li>
-          <el-checkbox v-model="field.active" class="config-small-checked"></el-checkbox>
+          <el-checkbox v-model="field.active" :disabled="isEdit" class="config-small-checked"></el-checkbox>
         </li>
       </ul>
     </div>
@@ -69,10 +63,29 @@ export default {
     return {
       copyInfoF: [{}, {}, {}, {}, {}],
       copyInfoS: [{}, {}],
-      copyInfoT: [{}, {}, {}, {}, {}]
+      copyInfoT: [{}, {}, {}, {}, {}],
+      mode: this.READING_MODE,
+      isEdit: true
     };
   },
   methods: {
+    startEditing() {
+      this.mode = this.EDITING_MODE;
+      this.isEdit = false;
+    },
+    cancel() {
+      // 点击取消按钮，将我们对 copyInfo 所做的临时修改全部放弃，还原其为 basicInfo 的复制对象
+      // this.shallowCopy(this.basicInfo);
+      this.deepCopy(this.diseaseInfoF, 1);
+      this.deepCopy(this.diseaseInfoS, 2);
+      this.deepCopy(this.diseaseInfoT, 3);
+      this.mode = this.READING_MODE;
+      this.isEdit = true;
+    },
+    submit() {
+      this.mode = this.READING_MODE;
+      this.isEdit = true;
+    },
     deepCopy(copyFile, type) {
       var dataTemp = null;
       if (type === 1) {
@@ -88,7 +101,7 @@ export default {
         for (let key in sonData) {
           this.$set(dataTemp[i], key, sonData[key]);
           if (key === 'must') {
-            this.$set(dataTemp[i], 'must', String(sonData['must']));
+            this.$set(dataTemp[i], 'must', this.changeSwitch(sonData['must']));
           } else if (key === 'active') {
             this.$set(dataTemp[i], 'active', this.changeSwitch(sonData['active']));
           }
@@ -117,7 +130,6 @@ export default {
     diseaseInfoF: {
       handler: function(newVal) {
         this.deepCopy(newVal, 1);
-        console.log(this.newVal);
       },
       deep: true
     },

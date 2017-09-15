@@ -1,5 +1,5 @@
 <template>
-  <feature-foldingpanel :title="'基础信息'">
+  <feature-foldingpanel :title="'基础信息'" :mode="mode" @edit="startEditing" @cancel="cancel" @submit="submit">
     <div class="basicconfig-group">
       <div class="small-area-title" >基本情况</div>
       <ul class="config-small-table" v-for="(field, groupNo) in copyInfoF" :key="groupNo">
@@ -7,12 +7,10 @@
           <span>{{field.cnfieldName}}</span>
         </li>
         <li>
-          <el-tooltip>
-            <el-switch v-model="field.must" class="config-small-switch" on-color="#ff9c00" on-text="" off-text="" off-color="#eff0f6" on-value='1' off-value='2' @change="changeStatus(field.must)"></el-switch>
-          </el-tooltip>
+            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="" off-text="" off-color="#eff0f6"></el-switch>
         </li>
         <li>
-          <el-checkbox v-model="field.active" class="config-small-checked"></el-checkbox>
+          <el-checkbox :disabled="isEdit" v-model="field.active" class="config-small-checked"></el-checkbox>
         </li>
       </ul>
     </div>
@@ -23,12 +21,10 @@
           <span>{{field.cnfieldName}}</span>
         </li>
         <li>
-          <el-tooltip>
-            <el-switch v-model="field.must" class="config-small-switch" on-color="#ff9c00" on-text="" off-text="" off-color="#eff0f6" on-value='1' off-value='2'></el-switch>
-          </el-tooltip>
+            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="" off-text="" off-color="#eff0f6"></el-switch>
         </li>
         <li>
-          <el-checkbox v-model="field.active" class="config-small-checked"></el-checkbox>
+          <el-checkbox :disabled="isEdit" v-model="field.active" class="config-small-checked"></el-checkbox>
         </li>
       </ul>
     </div>
@@ -38,12 +34,10 @@
           <span>{{field.cnfieldName}}</span>
         </li>
         <li>
-          <el-tooltip>
-            <el-switch v-model="field.must" class="config-small-switch" on-color="#ff9c00" on-text="" off-text="" off-color="#eff0f6" on-value='1' off-value='2'></el-switch>
-          </el-tooltip>
+            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="" off-text="" off-color="#eff0f6"></el-switch>
         </li>
         <li>
-          <el-checkbox v-model="field.active" class="config-small-checked"></el-checkbox>
+          <el-checkbox :disabled="isEdit" v-model="field.active" class="config-small-checked"></el-checkbox>
         </li>
       </ul>
     </div>
@@ -75,13 +69,33 @@ export default {
     return {
       copyInfoF: [{}, {}, {}, {}, {}, {}, {}, {}],
       copyInfoS: [{}, {}, {}, {}, {}, {}],
-      copyInfoT: [{}, {}, {}, {}]
+      copyInfoT: [{}, {}, {}, {}],
+      mode: this.READING_MODE,
+      isEdit: true
     };
   },
   components: {
     FeatureFoldingpanel
   },
   methods: {
+    startEditing() {
+      this.mode = this.EDITING_MODE;
+      this.isEdit = false;
+    },
+    cancel() {
+      // 点击取消按钮，将我们对 copyInfo 所做的临时修改全部放弃，还原其为 basicInfo 的复制对象
+      this.deepCopy(this.basicInfoF, 1);
+      this.deepCopy(this.basicInfoS, 2);
+      this.deepCopy(this.basicInfoT, 3);
+      this.mode = this.READING_MODE;
+      this.isEdit = true;
+      console.log(this.copyInfoF);
+    },
+    submit() {
+      this.mode = this.READING_MODE;
+      this.isEdit = true;
+      // 点击提交按钮之后的后续
+    },
     deepCopy(copyFile, type) {
       var dataTemp = null;
       if (type === 1) {
@@ -97,17 +111,38 @@ export default {
         for (let key in sonData) {
           this.$set(dataTemp[i], key, sonData[key]);
           if (key === 'must') {
-            this.$set(dataTemp[i], 'must', String(sonData['must']));
+            this.$set(dataTemp[i], 'must', this.changeCheck(sonData['must']));
           } else if (key === 'active') {
-            this.$set(dataTemp[i], 'active', this.changeSwitch(sonData['active']));
+            this.$set(dataTemp[i], 'active', this.changeCheck(sonData['active']));
           }
         }
       }
     },
-    changeStatus(val) {
-      alert(val);
-    },
-    changeSwitch(val) {
+    // deepCopy2(copyFile, type) {
+    //   var dataTemp = null;
+    //   if (type === 1) {
+    //     dataTemp = this.copyInfoF;
+    //     console.log('first');
+    //   } else if (type === 2) {
+    //     dataTemp = this.copyInfoS;
+    //     console.log('second');
+    //   } else if (type === 3) {
+    //     dataTemp = this.copyInfoT;
+    //   }
+    //   for (let i = 0; i < copyFile.length; i++) {
+    //     dataTemp[i] = Object.assign({}, {});
+    //     let sonData = copyFile[i];
+    //     for (let key in sonData) {
+    //       this.$set(dataTemp[i], key, sonData[key]);
+    //       if (key === 'must') {
+    //         this.$set(dataTemp[i], 'must', String(sonData['must']));
+    //       } else if (key === 'active') {
+    //         this.$set(dataTemp[i], 'active', this.changeSwitch(sonData['active']));
+    //       }
+    //     }
+    //   }
+    // },
+    changeCheck(val) {
       if (val === 1) {
         return true;
       } else {

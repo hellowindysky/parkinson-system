@@ -1418,6 +1418,7 @@
     margin: 0 6px;
     box-sizing: border-box;
     transition: border .3s;
+    -moz-appearance: textfield;
 }
 
 .el-pagination__editor::-webkit-inner-spin-button, .el-pagination__editor::-webkit-outer-spin-button{

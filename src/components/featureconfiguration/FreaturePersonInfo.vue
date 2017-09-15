@@ -3,7 +3,7 @@
     <div class="freature-person-conf-wrapper" ref="scrollArea">
       <basic-infoConfig :basicInfoF="basicInfoF" :basicInfoS="basicInfoS" :basicInfoT="basicInfoT"></basic-infoConfig>
       <diseage-infoConfig :diseaseInfoF="diseaseInfoF"  :diseaseInfoS="diseaseInfoS" :diseaseInfoT="diseaseInfoT"></diseage-infoConfig>
-      <other-infoConfig></other-infoConfig>
+      <other-infoConfig :medHistoryList="medHistoryList" :diseaseHistoryList="diseaseHistoryList" :familyHistoryList="familyHistoryList" :coffeeHistoryList="coffeeHistoryList" :smokeHistoryList="smokeHistoryList" :wineHistoryList="wineHistoryList" :teaHistoryList="teaHistoryList" :exerciseHistoryList="exerciseHistoryList" :toxicExposureHistoryList="toxicExposureHistoryList"></other-infoConfig>
     </div>
   </div>
 </template>
@@ -106,39 +106,39 @@ export default {
     },
     medHistoryList() {
       // 用药史
-      return this.getGroups(this.userInfo, 'tc_patient_info');
+      return this.getGroups(this.userInfo, 'tc_patient_medhistory')[0];
     },
     diseaseHistoryList() {
       // 既往史
-      return this.getGroups(this.userInfo, 'tc_patient_info');
+      return this.getGroups(this.userInfo, 'tc_patient_disease')[0];
     },
     familyHistoryList() {
       // 家族史
-      return this.userInfo[9] ? this.userInfo[9] : {};
+      return this.getGroups(this.userInfo, 'tc_family_history')[0];
     },
     coffeeHistoryList() {
       // 咖啡史
-      return this.userInfo[5] ? this.userInfo[5] : {};
+      return this.getGroups(this.userInfo, 'tc_patient_coffee')[0];
     },
     smokeHistoryList() {
       // 吸烟史
-      return this.userInfo[7] ? this.userInfo[7] : {};
+      return this.getGroups(this.userInfo, 'tc_patient_smoke')[0];
     },
     wineHistoryList() {
       // 饮酒史
-      return this.userInfo[0] ? this.userInfo[0] : {};
+      return this.getGroups(this.userInfo, 'tc_patient_wine')[0];
     },
     teaHistoryList() {
       // 喝茶史
-      return this.userInfo[6] ? this.userInfo[6] : {};
+      return this.getGroups(this.userInfo, 'tc_patient_tea')[0];
     },
     exerciseHistoryList() {
       // 锻炼史
-      return this.userInfo[11] ? this.userInfo[11] : {};
+      return this.getGroups(this.userInfo, 'tc_patient_exercise')[0];
     },
     toxicExposureHistoryList() {
       // 毒物接触史
-      return this.userInfo[8] ? this.userInfo[8] : {};
+      return this.getGroups(this.userInfo, 'tc_cideexposed_history')[0];
     }
   }
 };
@@ -146,13 +146,16 @@ export default {
 
 <style lang="less">
 @import "~styles/variables.less";
-@tabs-wrapper-height: 40px;
+@tabs-wrapper-height: 15px;
+@table-head-height: 57px;
 .scroll-wrapper {
   position: relative;
-  overflow: hidden;
+  height: calc(~"100% - @{table-head-height}");
   .freature-person-conf-wrapper {
+    position: relative;
     width: 100%;
-    height: auto;
+    overflow: hidden;
+    height: 100%;
     .ps__scrollbar-y-rail {
       position: absolute;
       top: 0;
