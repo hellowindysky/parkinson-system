@@ -45,7 +45,8 @@ export default {
     ...mapGetters([
       'medicineDictionary',
       'medicineTemplateGroups',
-      'medicineInfo'
+      'medicineInfo',
+      'typeGroup'
     ]),
     firstTemplateGroup() {
       return this.medicineTemplateGroups[0] ? this.medicineTemplateGroups[0] : [];
@@ -73,6 +74,12 @@ export default {
       }, 2000);
 
       this.initMedicine();
+
+      // 改变 this.medicine 的时候会触发 warningResults 的跟踪变化（这里的自动触发是由 v-model 造成的）
+      // 因此这一步要等到 this.medicine 变化结束之后再执行，我们将其放到下一个事件循环 tick 中
+      this.$nextTick(() => {
+        this.clearWarning();
+      });
     },
     cancel() {
       this.displayModal = false;
@@ -104,9 +111,29 @@ export default {
         for (let medicineItem of this.medicineInfo) {
           options.push({name: medicineItem.medicineName, code: medicineItem.medicineId});
         }
+
+      } else if (dictionaryField.fieldName === 'medicalSpecUsed') {
+        // 如果是药物规格，则先根据 medicineId 去 this.medicineInfo 里面找到对应的药物
+        let targetMedicine = Util.getElement('medicineId', this.medicine.medicineId, this.medicineInfo);
+        let specGroups = targetMedicine.spec ? targetMedicine.spec : [];
+        for (let spec of specGroups) {
+          options.push({name: spec.specOral, code: spec.specOral});
+        }
+
+      } else {
+        // 如果是其它下拉框，属于普通字段，去 typeGroup 里面查就可以了
+        let typeInfo = Util.getElement('typegroupcode', dictionaryField.fieldName, this.typeGroup);
+        let types = typeInfo.types ? typeInfo.types : [];
+        for (let type of types) {
+          options.push({name: type.typeName, code: type.typeCode});
+        }
       }
-      // var typeInfo = Util.getElement('typegroupcode', value, this.typeGroup);
       return options;
+    },
+    clearWarning() {
+      for (let key in this.warningResults) {
+        this.warningResults[key] = null;
+      }
     },
     updateWarning(field) {
       var fieldName = field.fieldName;
