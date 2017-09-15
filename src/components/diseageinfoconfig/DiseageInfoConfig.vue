@@ -1,5 +1,5 @@
 <template>
-  <feature-foldingpanel :title="'病症信息'" :mode="mode" @edit="startEditing" @cancel="cancel" @submit="submit">
+  <feature-folding-panel :title="'病症信息'" :mode="mode" @edit="startEditing" @cancel="cancel" @submit="submit">
     <div class="diseageconfig-group">
       <div class="small-area-title">起病情况</div>
       <ul class="config-small-table" v-for="(field, groupNo) in copyInfoF" :key="groupNo">
@@ -7,7 +7,7 @@
           <span>{{field.cnfieldName}}</span>
         </li>
         <li>
-            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="" off-text="" off-color="#eff0f6"></el-switch>
+            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="on" off-text="off" off-color="#eff0f6" :width="switchWidth"></el-switch>
         </li>
         <li>
           <el-checkbox v-model="field.active" :disabled="isEdit" class="config-small-checked"></el-checkbox>
@@ -21,7 +21,7 @@
           <span>{{field.cnfieldName}}</span>
         </li>
         <li>
-            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="" off-text="" off-color="#eff0f6"></el-switch>
+            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="on" off-text="off" off-color="#eff0f6" :width="switchWidth"></el-switch>
         </li>
         <li>
           <el-checkbox v-model="field.active" :disabled="isEdit" class="config-small-checked"></el-checkbox>
@@ -35,17 +35,17 @@
           <span>{{field.cnfieldName}}</span>
         </li>
         <li>
-            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="" off-text="" off-color="#eff0f6"></el-switch>
+            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="on" off-text="off" off-color="#eff0f6" :width="switchWidth"></el-switch>
         </li>
         <li>
           <el-checkbox v-model="field.active" :disabled="isEdit" class="config-small-checked"></el-checkbox>
         </li>
       </ul>
     </div>
-  </feature-foldingpanel>
+  </feature-folding-panel>
 </template>
 <script>
-import FeatureFoldingpanel from '../featurefoldingpanel/FeatureFoldingpanel';
+import FeatureFoldingPanel from '../featurefoldingpanel/FeatureFoldingPanel';
 import { mapGetters } from 'vuex';
 export default {
   props: {
@@ -65,7 +65,8 @@ export default {
       copyInfoS: [{}, {}],
       copyInfoT: [{}, {}, {}, {}, {}],
       mode: this.READING_MODE,
-      isEdit: true
+      isEdit: true,
+      switchWidth: 50
     };
   },
   methods: {
@@ -96,7 +97,6 @@ export default {
         dataTemp = this.copyInfoT;
       }
       for (let i = 0; i < copyFile.length; i++) {
-        // this.copyInfoF[i] = {};
         let sonData = copyFile[i];
         for (let key in sonData) {
           this.$set(dataTemp[i], key, sonData[key]);
@@ -124,7 +124,7 @@ export default {
     ])
   },
   components: {
-    FeatureFoldingpanel
+    FeatureFoldingPanel
   },
   watch: {
     diseaseInfoF: {
