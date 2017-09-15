@@ -1,5 +1,5 @@
 <template>
-  <feature-foldingpanel :title="'其它信息'" :mode="mode" @edit="startEditing" @cancel="cancel" @submit="submit">
+  <feature-folding-panel :title="'其它信息'" :mode="mode" @edit="startEditing" @cancel="cancel" @submit="submit">
     <div class="otherconfig-group">
       <div class="small-area-title">其他用药史</div>
       <ul class="config-small-table" v-for="(field, groupNo) in copyInfoMedHistory" :key="groupNo">
@@ -7,7 +7,7 @@
           <span>{{field.cnfieldName}}</span>
         </li>
          <li>
-            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="" off-text="" off-color="#eff0f6" ></el-switch>
+            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="on" off-text="off" off-color="#eff0f6" :width="switchWidth"</el-switch>
         </li>
         <li>
           <el-checkbox v-model="field.active" :disabled="isEdit" class="config-small-checked"></el-checkbox>
@@ -21,7 +21,7 @@
           <span>{{field.cnfieldName}}</span>
         </li>
         <li>
-            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="" off-text="" off-color="#eff0f6" ></el-switch>
+            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="on" off-text="off" off-color="#eff0f6" :width="switchWidth"</el-switch>
         </li>
         <li>
           <el-checkbox v-model="field.active" :disabled="isEdit" class="config-small-checked"></el-checkbox>
@@ -35,7 +35,7 @@
           <span>{{field.cnfieldName}}</span>
         </li>
         <li>
-            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="" off-text="" off-color="#eff0f6"  ></el-switch>
+            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="on" off-text="off" off-color="#eff0f6" :width="switchWidth"></el-switch>
         </li>
         <li>
           <el-checkbox v-model="field.active" :disabled="isEdit" class="config-small-checked"></el-checkbox>
@@ -49,7 +49,7 @@
           <span>{{field.cnfieldName}}</span>
         </li>
          <li>
-            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="" off-text="" off-color="#eff0f6"  ></el-switch>
+            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="on" off-text="off" off-color="#eff0f6" :width="switchWidth"></el-switch>
         </li>
         <li>
           <el-checkbox v-model="field.active" :disabled="isEdit" class="config-small-checked"></el-checkbox>
@@ -63,7 +63,7 @@
           <span>{{field.cnfieldName}}</span>
         </li>
         <li>
-            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="" off-text="" off-color="#eff0f6"  ></el-switch>
+            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="on" off-text="off" off-color="#eff0f6" :width="switchWidth"></el-switch>
         </li>
         <li>
           <el-checkbox v-model="field.active" :disabled="isEdit" class="config-small-checked"></el-checkbox>
@@ -77,7 +77,7 @@
           <span>{{field.cnfieldName}}</span>
         </li>
          <li>
-            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="" off-text="" off-color="#eff0f6"  ></el-switch>
+            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="on" off-text="off" off-color="#eff0f6" :width="switchWidth"></el-switch>
         </li>
         <li>
           <el-checkbox v-model="field.active" :disabled="isEdit" class="config-small-checked"></el-checkbox>
@@ -91,7 +91,7 @@
           <span>{{field.cnfieldName}}</span>
         </li>
          <li>
-            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="" off-text="" off-color="#eff0f6"  ></el-switch>
+            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="on" off-text="off" off-color="#eff0f6" :width="switchWidth"></el-switch>
         </li>
         <li>
           <el-checkbox v-model="field.active" :disabled="isEdit" class="config-small-checked"></el-checkbox>
@@ -105,7 +105,7 @@
           <span>{{field.cnfieldName}}</span>
         </li>
         <li>
-            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="" off-text="" off-color="#eff0f6"  ></el-switch>
+            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="on" off-text="off" off-color="#eff0f6" :width="switchWidth"></el-switch>
         </li>
         <li>
           <el-checkbox v-model="field.active" :disabled="isEdit" class="config-small-checked"></el-checkbox>
@@ -120,18 +120,18 @@
           <span>{{field.cnfieldName}}</span>
         </li>
         <li>
-            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="" off-text="" off-color="#eff0f6"  ></el-switch>
+            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="on" off-text="off" off-color="#eff0f6" :width="switchWidth"></el-switch>
         </li>
         <li>
           <el-checkbox v-model="field.active" :disabled="isEdit" class="config-small-checked"></el-checkbox>
         </li>
       </ul>
     </div>
-  </feature-foldingpanel>
+  </feature-folding-panel>
 </template>
 
 <script>
-import FeatureFoldingpanel from '../featurefoldingpanel/FeatureFoldingpanel';
+import FeatureFoldingPanel from '../featurefoldingpanel/FeatureFoldingPanel';
 
 export default {
   data() {
@@ -146,7 +146,8 @@ export default {
       copyInfoExerciseHistory: [{}, {}, {}, {}],
       copyInfoToxicExposureHistory: [{}, {}, {}, {}, {}, {}],
       mode: this.READING_MODE,
-      isEdit: true
+      isEdit: true,
+      switchWidth: 50
     };
   },
   props: {
@@ -300,7 +301,7 @@ export default {
     }
   },
   components: {
-    FeatureFoldingpanel
+    FeatureFoldingPanel
   }
 };
 </script>
