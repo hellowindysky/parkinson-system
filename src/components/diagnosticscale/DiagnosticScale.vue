@@ -1,30 +1,41 @@
 <template lang="html">
   <folding-panel :title="'医学量表'" :mode="mutableMode"  v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
     <div class="diagnostic-scale" ref="diagnosticscale">
+      <extensible-panel class="panel" :mode="mutableMode" :title="subTitle">
+         <card class="card" :class="devideWidth" :mode="mutableMode" v-for="item in patientScale" :key="item.id" :title="getTitle(item.scaleInfoId)" v-on:clickCurrentCard="updateScaleDetail(item.scaleInfoId)">
+           <div class="text first-line">量表得分: {{item.scalePoint}}</div>
+           <div class="text second-line"></div>
+        </card>
+      </extensible-panel>
     </div>
   </folding-panel>
 </template>
 
 <script>
-// import { mapGetters } from 'vuex';
-// import Util from 'utils/util.js';
 import Bus from 'utils/bus.js';
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
-// import ExtensiblePanel from 'components/extensiblepanel/ExtensiblePanel';
-// import Card from 'components/card/Card';
+import ExtensiblePanel from 'components/extensiblepanel/ExtensiblePanel';
+import Card from 'components/card/Card';
+
+import { getScaleInfo } from 'api/patient';
 
 export default {
   data() {
     return {
       mutableMode: this.mode,
-      title: '医学量表',
-      devideWidth: ''
+      titles: '医学量表',
+      devideWidth: '',
+      scaleData: [],
+      count: 0
     };
   },
   props: {
     mode: {
       type: String,
       default: this.READING_MODE
+    },
+    patientScale: {
+      type: Array
     }
   },
   methods: {
@@ -41,36 +52,75 @@ export default {
       this.$nextTick(() => {
         var panelWidth = this.$refs.diagnosticscale.clientWidth;
         var devideNum = 1.0;
-        // 20px 是卡片的横向间距，定义在了 varaibles.less 中，200px 是卡片的最小宽度
-        while (panelWidth / devideNum > 200 + 20) {
+        // 20px 是卡片的横向间距，定义在了 varaibles.less 中，300px 是卡片的最小宽度
+        while (panelWidth / devideNum > 300 + 20) {
           devideNum += 1.0;
         }
         devideNum -= 1;
         // 一排最多显示 10 个卡片
         devideNum = devideNum <= 10 ? devideNum : 10;
         this.devideWidth = 'width-1-' + parseInt(devideNum, 10);
-        console.log(panelWidth);
       });
+    },
+    getPatientScaleInfo() {
+      getScaleInfo().then((data) => {
+        this.scaleData = data['scales'];
+      });
+    },
+    getTitle(scaleInfoId) {
+      // 通过量表的ID来找到量表的名字
+      for (let key in this.scaleData) {
+        let sonData = this.scaleData[key];
+        for (let sonkey in sonData) {
+          if (sonkey === 'scaleInfoId') {
+            if (sonData[sonkey] === scaleInfoId) {
+              return sonData['gaugeName'];
+            }
+          }
+        }
+      }
+    },
+    updateScaleDetail(item) {
+      Bus.$emit(this.UPDATE_SCALE_DETAIL, item);
     }
-  },
-  components: {
-    FoldingPanel
   },
   computed: {
     subTitle() {
-      var count = this.medicineList.length;
-      return this.title + '（' + count + '条记录）';
+      return this.titles + '（' + this.count + '条记录）';
     }
   },
+  components: {
+    FoldingPanel,
+    ExtensiblePanel,
+    Card
+  },
   mounted() {
+    this.getPatientScaleInfo();
     this.recalculateCardWidth();
-
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
     Bus.$on(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
   },
   beforeDestroy() {
     Bus.$off(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
     Bus.$off(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
+  },
+  watch: {
+    patientScale: {
+      handler: function(newVal) {
+        if (newVal) {
+          this.count = this.patientScale.length;
+        }
+      },
+      deep: true
+    },
+    scaleData: {
+      handler: function(newVal) {
+        if (newVal) {
+          this.scaleData = newVal;
+        }
+      },
+      deep: true
+    }
   }
 };
 </script>

@@ -1,39 +1,23 @@
 <template lang="html">
-  <div class="diagnostic-detail-wrapper" v-show="displayDetail">
+  <div class="diagnostic-update-wrapper" v-show="displayUpdateScale">
     <div class="title-bar">
-      <h2 class="title">{{caseDetail.caseName}}</h2>
-      <div class="button back-button" @click="goBack">返回</div>
-      <div class="button file-button" @click="fileCase">归档</div>
+      <h2 class="title"></h2>
     </div>
     <div class="scroll-area" ref="scrollArea">
-      <diagnostic-basic class="folding-panel" :mode="mode"></diagnostic-basic>
-      <diagnostic-disease class="folding-panel" :mode="mode"></diagnostic-disease>
-      <diagnostic-medicine class="folding-panel" :mode="mode"></diagnostic-medicine>
-      <diagnostic-surgery class="folding-panel" :mode="mode"></diagnostic-surgery>
-      <diagnostic-scale class="folding-panel" :patientScale="caseDetail.patientScale" :mode="mode"></diagnostic-scale>
-      <diagnostic-examination class="folding-panel" :mode="mode"></diagnostic-examination>
     </div>
-  </div>
+  </div>  
 </template>
 
 <script>
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
-import { getPatientCase } from 'api/patient.js';
-
-import DiagnosticBasic from 'components/diagnosticbasic/DiagnosticBasic';
-import DiagnosticDisease from 'components/diagnosticdisease/DiagnosticDisease';
-import DiagnosticMedicine from 'components/diagnosticmedicine/DiagnosticMedicine';
-import DiagnosticSurgery from 'components/diagnosticsurgery/DiagnosticSurgery';
-import DiagnosticScale from 'components/diagnosticscale/DiagnosticScale';
-import DiagnosticExamination from 'components/diagnosticexamination/DiagnosticExamination';
 
 export default {
   data() {
     return {
-      displayDetail: false,
-      caseDetail: {},
-      mode: this.READING_MODE
+      displayUpdateScale: false,
+      mode: this.READING_MODE,
+      scaleDetail: {}
     };
   },
   methods: {
@@ -51,66 +35,29 @@ export default {
         });
       });
     },
-    checkRoute() {
-      var path = this.$route.path;
-
-      if (/^\/patients\/list\/[0-9]+\/diagnosticInfo\/?$/.test(path)) {
-        // 一旦发现路由地址中还没有 caseId，则不显示诊断详情面板
-        this.closePanel();
-      } else if (/^\/patients\/list\/[0-9]+\/diagnosticInfo\/[0-9a-zA-Z]+$/.test(path)) {
-        // 如果路由地址中有 caseId，则显示面板并获取对应的诊断数据
-        var caseId = this.$route.params.caseId;
-        this.showDetailPanel(caseId);
-      } else {
-        this.closePanel();
-      }
-    },
-    showDetailPanel(patientCaseId) {
+    showDetailPanel(scaleId) {
       // 接收到相应的消息之后，打开诊断详情窗口，然后再向服务器请求数据
-      this.displayDetail = true;
-
-      var patientId = this.$route.params.id;
-      getPatientCase(patientId, patientCaseId).then((data) => {
-        this.caseDetail = Object.assign({}, data.patientCase);
-        // console.log(data);
-        this.updateScrollbar();
-        // console.log('caseDetail: ', this.caseDetail);
-      });
+      this.displayUpdateScale = true;
+      console.log(scaleId);
     },
-    goBack() {
-      // 按下返回按钮，实际上是修改的路由地址 ———— 因为我们是监控路由地址来决定这个详情窗口是否显示的
-      this.$router.push({name: 'diagnosticInfo'});
-    },
+    // goBack() {
+    //   // 按下返回按钮，实际上是修改的路由地址 ———— 因为我们是监控路由地址来决定这个详情窗口是否显示的
+    //   this.$router.push({name: 'diagnosticInfo'});
+    // },
     closePanel() {
-      this.displayDetail = false;
-      this.caseDetail = {};
-    },
-    fileCase() {
-      console.log('要归档了');
+      this.displayUpdateScale = false;
+      this.scaleDetail = {};
     }
   },
-  components: {
-    DiagnosticBasic,
-    DiagnosticDisease,
-    DiagnosticMedicine,
-    DiagnosticSurgery,
-    DiagnosticScale,
-    DiagnosticExamination
-  },
   mounted() {
-    this.checkRoute();
-
+    Bus.$on(this.UPDATE_SCALE_DETAIL, this.showDetailPanel);
     Bus.$on(this.SCROLL_AREA_SIZE_CHANGE, this.updateScrollbar);
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
   },
   beforeDestroy() {
+    Bus.$on(this.UPDATE_SCALE_DETAIL);
     Bus.$off(this.SCROLL_AREA_SIZE_CHANGE);
     Bus.$off(this.SCREEN_SIZE_CHANGE);
-  },
-  watch: {
-    $route() {
-      this.checkRoute();
-    }
   }
 };
 </script>
