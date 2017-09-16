@@ -30,13 +30,57 @@ export default {
       devideWidth: '',
       medicineList: [
         {
+          'ariseTime': '2017-09-13',
+          'totalMeasure': 800,
+          'usages': 4,
+          'medicineId': 11,
+          'patientCaseId': '8a9e2d385e4b7bd6015e7adaf191025c',
+          'patientId': 122,
+          'medicalSpecUsed': '200.0mg/片',
+          'medicineSpecId': 12,
+          'remarks': '测试用药',
+          'patientMedicineId': 160,
+          'totalLevodopa': 264,
+          'levodopaFactor': 66,
+          'patientMedicineDetail': [
+            {
+              'id': 236,
+              'computUnit': 1,
+              'takeDose': '1',
+              'takeTime': '17:00',
+              'patientMedicineId': 160
+            },
+            {
+              'id': 237,
+              'computUnit': 1,
+              'takeDose': '1',
+              'takeTime': '17:30',
+              'patientMedicineId': 160
+            },
+            {
+              'id': 238,
+              'computUnit': 1,
+              'takeDose': '1',
+              'takeTime': '18:00',
+              'patientMedicineId': 160
+            },
+            {
+              'id': 239,
+              'computUnit': 1,
+              'takeDose': '1',
+              'takeTime': '18:30',
+              'patientMedicineId': 160
+            }
+          ]
+        },
+        {
           'ariseTime': '2017-09-11',
           'totalMeasure': 250,
           'usages': 2,
           'medicineId': 4,
           'patientCaseId': '8a9e2d385e4b7bd6015e6ff4325e01a0',
           'patientId': 32,
-          'medicalSpecUsed': '50.0mg /片 ',
+          'medicalSpecUsed': '50.0mg/片',
           'remarks': 'asda承集合和',
           'patientMedicineId': 156,
           'totalLevodopa': 250,
@@ -49,7 +93,7 @@ export default {
           'medicineId': 6,
           'patientCaseId': '8a9e2d385e4b7bd6015e6ff4325e01a0',
           'patientId': 32,
-          'medicalSpecUsed': '0.25mg /片 ',
+          'medicalSpecUsed': '0.25mg/片',
           'remarks': '',
           'patientMedicineId': 157,
           'totalLevodopa': 50,
@@ -144,10 +188,12 @@ export default {
 
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
     Bus.$on(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
+    Bus.$on(this.RECALCULATE_CARD_WIDTH, this.recalculateCardWidth);
   },
   beforeDestroy() {
     Bus.$off(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
     Bus.$off(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
+    Bus.$off(this.RECALCULATE_CARD_WIDTH, this.recalculateCardWidth);
   }
 };
 </script>

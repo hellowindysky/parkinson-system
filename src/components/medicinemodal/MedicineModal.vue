@@ -9,12 +9,14 @@
         </span>
         <span class="field-input">
           <span class="warning-text">{{warningResults[field.fieldName]}}</span>
-          <span v-if="getMatchedField(field.fieldName).readOnlyType===2">000</span>
+          <span v-if="getMatchedField(field.fieldName).readOnlyType===2">
+            <span>{{medicine[field.fieldName]}}</span>
+          </span>
           <!-- <el-input v-else-if="getUIType(field.fieldName)===1" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
            :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)">
           </el-input> -->
           <el-select v-else-if="getUIType(field.fieldName)===3" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-           :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)">
+           :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
            <el-option v-for="option in getOptions(field.fieldName)" :label="option.name"
             :value="option.code" :key="option.code"></el-option>
           </el-select>
@@ -38,14 +40,16 @@ export default {
       displayModal: false,
       title: '',
       medicine: {},
-      warningResults: {}
+      warningResults: {},
+      completeInit: false
     };
   },
   computed: {
     ...mapGetters([
       'medicineDictionary',
       'medicineTemplateGroups',
-      'medicineInfo'
+      'medicineInfo',
+      'typeGroup'
     ]),
     firstTemplateGroup() {
       return this.medicineTemplateGroups[0] ? this.medicineTemplateGroups[0] : [];
@@ -55,24 +59,44 @@ export default {
     },
     thirdTemplateGroup() {
       return this.medicineTemplateGroups[2] ? this.medicineTemplateGroups[2] : [];
+    },
+    medicalSpec() {
+      // 这个变量用来保存当前药物的规格，是一个数字，默认是 0
+      // 先根据 medicineId 去 this.medicineInfo 里面找到对应的药物
+      let targetMedicine = Util.getElement('medicineId', this.medicine.medicineId, this.medicineInfo);
+      let specGroups = targetMedicine.spec ? targetMedicine.spec : [];
+      let spec = Util.getElement('specOral', this.medicine.medicalSpecUsed, specGroups);
+      return spec.medicalPec;   // 你没有看错，数据库里面就拼写错误了，正确的应该是 'medicalSpec'
     }
   },
   methods: {
     showModal(title, item) {
       this.title = title;
       this.displayModal = true;
-      // console.log(this.medicineTemplate);
-      // console.log(this.medicineDictionary);
+      this.completeInit = false;
 
-      this.medicine = Object.assign({}, item);
-      console.log(this.medicine);
       setTimeout(() => {
         console.log('firstTemplate', this.firstTemplateGroup);
         console.log('dictionary', this.medicineDictionary);
         console.log('medicineInfo', this.medicineInfo);
       }, 2000);
 
+      this.medicine = Object.assign({}, item);
+      console.log(this.medicine);
       this.initMedicine();
+
+      for (let field of [].concat(this.firstTemplateGroup, this.secondeTemplateGroup, this.thirdTemplateGroup)) {
+        this.updateField(field);
+      }
+
+      // 改变 this.medicine 的时候会触发 warningResults 的跟踪变化（这里的自动触发是由 v-model 造成的）
+      // 因此这一步要等到 this.medicine 变化结束之后再执行，我们将其放到下一个事件循环 tick 中
+      this.$nextTick(() => {
+        this.clearWarning();
+
+        // 这里加一个开关，用来标记数字是否会改变
+        this.completeInit = true;
+      });
     },
     cancel() {
       this.displayModal = false;
@@ -104,9 +128,51 @@ export default {
         for (let medicineItem of this.medicineInfo) {
           options.push({name: medicineItem.medicineName, code: medicineItem.medicineId});
         }
+
+      } else if (dictionaryField.fieldName === 'medicalSpecUsed') {
+        // 如果是药物规格，则先根据 medicineId 去 this.medicineInfo 里面找到对应的药物
+        let targetMedicine = Util.getElement('medicineId', this.medicine.medicineId, this.medicineInfo);
+        let specGroups = targetMedicine.spec ? targetMedicine.spec : [];
+        for (let spec of specGroups) {
+          options.push({name: spec.specOral, code: spec.specOral});
+        }
+
+      } else {
+        // 如果是其它下拉框，属于普通字段，去 typeGroup 里面查就可以了
+        let typeInfo = Util.getElement('typegroupcode', dictionaryField.fieldName, this.typeGroup);
+        let types = typeInfo.types ? typeInfo.types : [];
+        for (let type of types) {
+          options.push({name: type.typeName, code: type.typeCode});
+        }
       }
-      // var typeInfo = Util.getElement('typegroupcode', value, this.typeGroup);
       return options;
+    },
+    clearWarning() {
+      for (let key in this.warningResults) {
+        this.warningResults[key] = null;
+      }
+    },
+    updateField(field) {
+      this.updateWarning(field);
+
+      // 字段的修改会影响到关联文本的变动
+      if (field.fieldName === 'medicineId') {
+        // 通用名
+        let targetMedicine = Util.getElement('medicineId', this.medicine.medicineId, this.medicineInfo);
+        this.medicine['commonName'] = targetMedicine.commonName;
+
+        // 药物类型
+        let medicalTypeNum = targetMedicine.medicalType;
+        let typeInfo = Util.getElement('typegroupcode', 'medType', this.typeGroup);
+        this.medicine['medicalType'] = Util.getElement('typeCode', medicalTypeNum, typeInfo.types).typeName;
+
+        // 药物规格
+        console.log(this.completeInit);
+        if (this.completeInit) {
+          this.medicine['medicalSpecUsed'] = '';
+          console.log(this.medicine['medicalSpecUsed']);
+        }
+      }
     },
     updateWarning(field) {
       var fieldName = field.fieldName;

@@ -110,6 +110,9 @@ export default {
   watch: {
     $route() {
       this.checkRoute();
+    },
+    displayDetail: function() {
+      Bus.$emit(this.RECALCULATE_CARD_WIDTH);
     }
   }
 };

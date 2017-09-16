@@ -25,6 +25,7 @@ export default {
   ADD_NEW_CARD: 'addNewCard',
   CLICK_CURRENT_CARD: 'clickCurrentCard',
   DELETE_CURRENT_CARD: 'deleteCurrentCard',
+  RECALCULATE_CARD_WIDTH: 'recalculateCardWidth',
   UPDATE_PATIENT_INFO: 'updatePatientInfo',
   SHOW_MODAL_BOX: 'showModalBox',
   SHOW_MEDICINE_MODAL: 'showMedicineModal',
