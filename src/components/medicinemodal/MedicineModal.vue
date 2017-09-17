@@ -42,11 +42,11 @@
         <tr v-for="i in rowArray" class="row">
           <td class="col col-id">{{i}}</td>
           <td class="col col-time">
-            <el-date-picker type="datetime" :class="{'warning': false}" placeholder="具体时间点">
-            </el-date-picker>
+            <el-time-select v-model="medicine.patientMedicineDetail[i - 1].takeTime" :class="{'warning': false}" placeholder="具体时间点">
+            </el-time-select>
           </td>
           <td class="col col-amount">
-            <el-input v-model="medicine.patientMedicineDetail[i - 1].id" :class="{'warning': false}" placeholder="单次服用量"></el-input>
+            <el-input v-model="medicine.patientMedicineDetail[i - 1].takeDose" :class="{'warning': false}" placeholder="单次服用量"></el-input>
           </td>
           <td class="col col-unit">{{medicineUnit}}</td>
         </tr>
@@ -69,6 +69,7 @@ export default {
       displayModal: false,
       title: '',
       medicine: {},
+      originalMedicine: {},
       warningResults: {},
       completeInit: false,
       computeUnit: 0,
@@ -105,22 +106,36 @@ export default {
     },
     rowArray() {
       var arr = [];   // 这个数组用来帮助生成表格，其中的元素就是每行的序号
-      console.log('here', this.medicine.patientMedicineDetail, this.completeInit);
-      if (true) {
-        this.medicine.patientMedicineDetail = [];
-        for (let i = 0; i < this.medicine.usages; i++) {
-          this.medicine.patientMedicineDetail.push({});
-          for (let field of this.secondTemplateGroup) {
-            var fieldName = field.fieldName;
-            this.$set(this.medicine.patientMedicineDetail[i], fieldName, '');
+
+      // this.medicine对象下有个属性，patientMedicineDetail，它是一个数组，每个原素都是一个对象。
+      // 这个数组的长度 始终和 this.rowArray 保持一致，因此把这个数组的初始化逻辑放在了 rowArray() 中
+      this.medicine.patientMedicineDetail = [];
+      for (let i = 0; i < this.medicine.usages; i++) {
+        this.medicine.patientMedicineDetail.push({});
+
+        // 这个 secondTemplateGroup 数组里的原素，对应着表格的列，也对应着 patientMedicineDetail 里的不同属性
+        for (let field of this.secondTemplateGroup) {
+          var fieldName = field.fieldName;
+
+          var value = '';
+          // 下面这个是为了初始化 this.medicine 的时候不覆盖掉 originalMedicine.patientMedicineDetail 的值，
+          // 就设定了一个条件 ———— 如果药物名和每日服药次数都是原来的值的话，就把原来的每次服药时间 和 每次服用量 都复制过来
+          if (this.medicine.usages === this.originalMedicine.usages && this.medicine.medicineId &&
+           this.medicine.medicineId === this.originalMedicine.medicineId) {
+            value = this.originalMedicine.patientMedicineDetail[i][fieldName];
           }
+
+          if (fieldName === 'computUnit') { // 数据库拼写错误，掉了一个 e
+            value = this.computeUnit;
+          }
+          value = value ? value : '';
+          this.$set(this.medicine.patientMedicineDetail[i], fieldName, value);
         }
       }
 
       for (let i = 1; i <= this.medicine.usages; i++) {
         arr.push(i);
       }
-      console.log('there', this.medicine.patientMedicineDetail, this.completeInit);
       return arr;
     }
   },
@@ -138,7 +153,7 @@ export default {
       }, 2000);
 
       this.initMedicine(item);
-      // console.log(this.medicine);
+      console.log(this.medicine);
 
       for (let field of this.totalTemplate) {
         this.updateField(field);
@@ -157,30 +172,22 @@ export default {
       this.displayModal = false;
     },
     submit() {
-      this.displayModal = false;
+      console.log(this.medicine);
+      // this.displayModal = false;
     },
     initMedicine(item) {
-      console.log('begin to init: ', this.medicine);
+      // originalMedicine 是原始数据，在修改表格的时候需要参考这个对象，medicine 是我们编辑和上传的对象
       this.medicine = Object.assign({}, item);
-      // 遍历当前的 template，对其中的每个 field，检查 this.medicine 下有没有名字对应的属性值，没有的话，就初始化为空字符串
+      this.originalMedicine = Object.assign({}, item);
+
+      // 遍历 firstTemplateGroup，对其中的每个 field，检查 this.medicine 下有没有名字对应的属性值，没有的话，就初始化为空字符串
       // 注意初始化采用 this.$set 方法，使得当前 Vue 实例对象可以跟踪该属性值的变化
-      for (let field of this.firstTemplateGroup) {
+      for (let field of this.firstTemplateGroup.concat(this.thirdTemplateGroup)) {
         let name = field.fieldName;
         if (this.medicine[name] === undefined) {
           this.$set(this.medicine, name, '');
         }
       }
-      var pmd = item.patientMedicineDetail;
-      console.log('before', this.medicine.patientMedicineDetail);
-      if (pmd && (pmd instanceof Array)) {
-        for (var i = 0; i < pmd.length; i++) {
-          for (let field of this.secondTemplateGroup) {
-            let fieldName = field.fieldName;
-            this.$set(this.medicine.patientMedicineDetail[i], fieldName, pmd[i][fieldName]);
-          }
-        }
-      }
-      console.log('after', this.medicine.patientMedicineDetail);
     },
     getMatchedField(fieldName) {
       // 在字典项中查询该名字所对应的字段，从而方便我们得到该字段的详细信息
@@ -241,7 +248,8 @@ export default {
 
         // 药物计算单位
         var unitTypes = Util.getElement('typegroupcode', 'oralUnit', this.typeGroup).types;
-        this.computeUnit = targetMedicine.computUnit;   // 数据库又拼写错误了，compute 拼掉了一个 e
+        this.computeUnit = targetMedicine.oralUnit;
+        console.log(targetMedicine);
         this.medicineUnit = Util.getElement('typeCode', this.computeUnit, unitTypes).typeName;
       }
     },
