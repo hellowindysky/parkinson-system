@@ -12,7 +12,7 @@
           <span v-if="getMatchedField(field.fieldName).readOnlyType===2">
             <span v-if="field.fieldName==='commonName'">{{commonName}}</span>
             <span v-else-if="field.fieldName==='medicalType'">{{medicalType}}</span>
-            <span v-else-if="field.fieldName==='computUnit'">{{computeUnit}}</span>
+            <span v-else-if="field.fieldName==='totalMeasure'">{{totalMeasure}}</span>
             <span v-else>{{medicine[field.fieldName]}}</span>
           </span>
           <!-- <el-input v-else-if="getUIType(field.fieldName)===1" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
@@ -74,8 +74,7 @@ export default {
       medicine: {},
       originalMedicine: {},
       warningResults: {},
-      completeInit: false,
-      medicineUnit: ''
+      completeInit: false
     };
   },
   computed: {
@@ -116,18 +115,39 @@ export default {
       this.medicine.medicalType = medicalType;
       return medicalType;
     },
+    totalMeasure() {
+      // 日总剂量，由药物规格和每日总服用量相乘得到。同时，每次更新这个计算属性的时候，同时更新 this.medicine 下的相应属性值
+      let amount = 0;
+
+      if (!this.medicine.patientMedicineDetail || !(this.medicine.patientMedicineDetail instanceof Array)) {
+        this.medicine.totalMeasure = 0;
+        return 0;
+      }
+
+      for (let item of this.medicine.patientMedicineDetail) {
+        let dose = parseInt(item.takeDose, 10);
+        dose = isNaN(dose) ? 0 : dose;  // 如果上一步算出来的为 NaN，那么就取 0
+        amount += dose;
+      }
+      let spec = this.medicalSpec;
+      spec = isNaN(spec) ? 0 : spec;
+      this.medicine.totalMeasure = amount * spec;
+      return amount * spec;
+    },
     computeUnit() {
-      // 计算单位，这个计算属性也是用来渲染的，而每次更新这个计算属性的时候，都会为 this.medicine 进行相应的赋值
+      // 计算单位，是一个数字，这个计算属性是在和服务器进行数据交互时使用的，在 rowArray() 中有用到
+      return this.medicineInfoObj.oralUnit;
+    },
+    medicineUnit() {
+      // 计算单位，它是 this.computeUnit 所对应的 字符串
       let unitTypes = Util.getElement('typegroupcode', 'oralUnit', this.typeGroup).types;
-      let computeUnit = this.medicineInfoObj.oralUnit;
-      this.medicineUnit = Util.getElement('typeCode', computeUnit, unitTypes).typeName;
-      return computeUnit;
+      return Util.getElement('typeCode', this.computeUnit, unitTypes).typeName;
     },
     medicalSpec() {
       // 这个变量用来保存当前药物的规格，是一个数字
       let specGroups = this.medicineInfoObj.spec ? this.medicineInfoObj.spec : [];
       let spec = Util.getElement('specOral', this.medicine.medicalSpecUsed, specGroups);
-      return spec.medicalPec;   // 你没有看错，数据库里面就拼写错误了，正确的应该是 'medicalSpec'
+      return spec.medicalPec;   // 你没有看错，数据库里面就拼写错误了，正确的应该是 'medicalSpec'，少了一个 S
     },
     rowArray() {
       var arr = [];   // 这个数组用来帮助生成表格，其中的元素就是每行的序号
@@ -147,7 +167,12 @@ export default {
           // 就设定了一个条件 ———— 如果药物名和每日服药次数都是原来的值的话，就把原来的每次服药时间 和 每次服用量 都复制过来
           if (this.medicine.usages === this.originalMedicine.usages && this.medicine.medicineId &&
            this.medicine.medicineId === this.originalMedicine.medicineId) {
-            value = this.originalMedicine.patientMedicineDetail[i][fieldName];
+
+            // 记得验证原始值是否存在
+            if (this.originalMedicine.patientMedicineDetail &&
+             this.originalMedicine.patientMedicineDetail[i]) {
+              value = this.originalMedicine.patientMedicineDetail[i][fieldName];
+            }
           }
 
           if (fieldName === 'computUnit') { // 数据库拼写错误，掉了一个 e
@@ -172,7 +197,7 @@ export default {
 
       setTimeout(() => {
         // console.log('firstTemplate', this.firstTemplateGroup);
-        console.log('secondTemplate', this.secondTemplateGroup);
+        // console.log('secondTemplate', this.secondTemplateGroup);
         // console.log('dictionary', this.medicineDictionary);
         // console.log('medicineInfo', this.medicineInfo);
       }, 2000);
@@ -254,13 +279,9 @@ export default {
     updateField(field) {
       this.updateWarning(field);
 
-      // 字段的修改会影响到关联文本的变动
-      if (field.fieldName === 'medicineId') {
-        // 药物规格
-        if (this.completeInit) {
-          this.medicine['medicalSpecUsed'] = '';
-        }
-
+      // 如果修改了药物名称 (medicineId)，那么就将药物规格清空，注意这一步逻辑一定要在初始化之后才会执行
+      if (field.fieldName === 'medicineId' && this.completeInit) {
+        this.medicine.medicalSpecUsed = '';
       }
     },
     updateWarning(field) {
