@@ -5,7 +5,7 @@
       <div class="field" v-for="field in firstTemplateGroup">
         <span class="field-name">
           {{field.cnfieldName}}
-          <span class="required-mark">*</span>
+          <span class="required-mark" v-show="field.must===1">*</span>
         </span>
         <span class="field-input">
           <span class="warning-text">{{warningResults[field.fieldName]}}</span>
@@ -22,6 +22,35 @@
           </el-select>
         </span>
       </div>
+      <table class="form">
+        <tr class="row first-row">
+          <td class="col col-id">
+            序号
+          </td>
+          <td class="col col-time">
+            时间
+            <span class="required-mark">*</span>
+          </td>
+          <td class="col col-amount">
+            服用量
+            <span class="required-mark">*</span>
+          </td>
+          <td class="col col-unit">
+            计算单位
+          </td>
+        </tr>
+        <tr v-for="i in rowArray" class="row">
+          <td class="col col-id">{{i}}</td>
+          <td class="col col-time">
+            <el-date-picker type="datetime" :class="{'warning': false}" placeholder="具体时间点">
+            </el-date-picker>
+          </td>
+          <td class="col col-amount">
+            <el-input v-model="medicine.patientMedicineDetail[i - 1].id" :class="{'warning': false}" placeholder="单次服用量"></el-input>
+          </td>
+          <td class="col col-unit">{{medicineUnit}}</td>
+        </tr>
+      </table>
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
       <div class="button submit-button" @click="submit">确定</div>
@@ -41,7 +70,9 @@ export default {
       title: '',
       medicine: {},
       warningResults: {},
-      completeInit: false
+      completeInit: false,
+      computeUnit: 0,
+      medicineUnit: ''
     };
   },
   computed: {
@@ -54,11 +85,15 @@ export default {
     firstTemplateGroup() {
       return this.medicineTemplateGroups[0] ? this.medicineTemplateGroups[0] : [];
     },
-    secondeTemplateGroup() {
+    secondTemplateGroup() {
       return this.medicineTemplateGroups[1] ? this.medicineTemplateGroups[1] : [];
     },
     thirdTemplateGroup() {
       return this.medicineTemplateGroups[2] ? this.medicineTemplateGroups[2] : [];
+    },
+    totalTemplate() {
+      // 把 template 的几个 group 拼到一起
+      return [].concat(this.firstTemplateGroup, this.secondTemplateGroup, this.thirdTemplateGroup);
     },
     medicalSpec() {
       // 这个变量用来保存当前药物的规格，是一个数字，默认是 0
@@ -67,6 +102,26 @@ export default {
       let specGroups = targetMedicine.spec ? targetMedicine.spec : [];
       let spec = Util.getElement('specOral', this.medicine.medicalSpecUsed, specGroups);
       return spec.medicalPec;   // 你没有看错，数据库里面就拼写错误了，正确的应该是 'medicalSpec'
+    },
+    rowArray() {
+      var arr = [];   // 这个数组用来帮助生成表格，其中的元素就是每行的序号
+      console.log('here', this.medicine.patientMedicineDetail, this.completeInit);
+      if (true) {
+        this.medicine.patientMedicineDetail = [];
+        for (let i = 0; i < this.medicine.usages; i++) {
+          this.medicine.patientMedicineDetail.push({});
+          for (let field of this.secondTemplateGroup) {
+            var fieldName = field.fieldName;
+            this.$set(this.medicine.patientMedicineDetail[i], fieldName, '');
+          }
+        }
+      }
+
+      for (let i = 1; i <= this.medicine.usages; i++) {
+        arr.push(i);
+      }
+      console.log('there', this.medicine.patientMedicineDetail, this.completeInit);
+      return arr;
     }
   },
   methods: {
@@ -76,16 +131,16 @@ export default {
       this.completeInit = false;
 
       setTimeout(() => {
-        console.log('firstTemplate', this.firstTemplateGroup);
-        console.log('dictionary', this.medicineDictionary);
-        console.log('medicineInfo', this.medicineInfo);
+        // console.log('firstTemplate', this.firstTemplateGroup);
+        console.log('secondTemplate', this.secondTemplateGroup);
+        // console.log('dictionary', this.medicineDictionary);
+        // console.log('medicineInfo', this.medicineInfo);
       }, 2000);
 
-      this.medicine = Object.assign({}, item);
-      console.log(this.medicine);
-      this.initMedicine();
+      this.initMedicine(item);
+      // console.log(this.medicine);
 
-      for (let field of [].concat(this.firstTemplateGroup, this.secondeTemplateGroup, this.thirdTemplateGroup)) {
+      for (let field of this.totalTemplate) {
         this.updateField(field);
       }
 
@@ -104,7 +159,9 @@ export default {
     submit() {
       this.displayModal = false;
     },
-    initMedicine() {
+    initMedicine(item) {
+      console.log('begin to init: ', this.medicine);
+      this.medicine = Object.assign({}, item);
       // 遍历当前的 template，对其中的每个 field，检查 this.medicine 下有没有名字对应的属性值，没有的话，就初始化为空字符串
       // 注意初始化采用 this.$set 方法，使得当前 Vue 实例对象可以跟踪该属性值的变化
       for (let field of this.firstTemplateGroup) {
@@ -113,6 +170,17 @@ export default {
           this.$set(this.medicine, name, '');
         }
       }
+      var pmd = item.patientMedicineDetail;
+      console.log('before', this.medicine.patientMedicineDetail);
+      if (pmd && (pmd instanceof Array)) {
+        for (var i = 0; i < pmd.length; i++) {
+          for (let field of this.secondTemplateGroup) {
+            let fieldName = field.fieldName;
+            this.$set(this.medicine.patientMedicineDetail[i], fieldName, pmd[i][fieldName]);
+          }
+        }
+      }
+      console.log('after', this.medicine.patientMedicineDetail);
     },
     getMatchedField(fieldName) {
       // 在字典项中查询该名字所对应的字段，从而方便我们得到该字段的详细信息
@@ -163,15 +231,18 @@ export default {
 
         // 药物类型
         let medicalTypeNum = targetMedicine.medicalType;
-        let typeInfo = Util.getElement('typegroupcode', 'medType', this.typeGroup);
+        let typeInfo = Util.getElement('typegroupcode', 'durgType', this.typeGroup);  // 数据库拼写错误，把 drug 拼成了 drug
         this.medicine['medicalType'] = Util.getElement('typeCode', medicalTypeNum, typeInfo.types).typeName;
 
         // 药物规格
-        console.log(this.completeInit);
         if (this.completeInit) {
           this.medicine['medicalSpecUsed'] = '';
-          console.log(this.medicine['medicalSpecUsed']);
         }
+
+        // 药物计算单位
+        var unitTypes = Util.getElement('typegroupcode', 'oralUnit', this.typeGroup).types;
+        this.computeUnit = targetMedicine.computUnit;   // 数据库又拼写错误了，compute 拼掉了一个 e
+        this.medicineUnit = Util.getElement('typeCode', this.computeUnit, unitTypes).typeName;
       }
     },
     updateWarning(field) {
@@ -213,6 +284,11 @@ export default {
 @field-height: 40px;
 @field-name-width: 80px;
 
+@col-id-width: 100px;
+@col-time-width: 200px;
+@col-amount-width: 150px;
+@col-unit-width: 150px;
+
 .medicine-modal-wrapper {
   position: absolute;
   left: 0;
@@ -225,15 +301,15 @@ export default {
     position: relative;
     margin: auto;
     padding: 0 40px;
-    top: 10%;
-    width: 600px;
+    top: 5%;
+    width: 660px;
     background-color: @background-color;
     .title {
       padding: 30px 0 10px;
       font-size: @large-font-size;
     }
     .field {
-      padding: 10px 0;
+      padding: 5px 0;
       text-align: left;
       display: inline-block;
       position: relative;
@@ -287,6 +363,54 @@ export default {
         }
         .warning .el-input__inner {
           border: 1px solid red;
+        }
+      }
+    }
+    .form {
+      position: relative;
+      left: calc(~"50% - (@{col-id-width} + @{col-time-width} + @{col-amount-width} + @{col-unit-width}) / 2");
+      border: 1px solid @inverse-font-color;
+      border-spacing: 0;
+      width: @col-id-width + @col-time-width + @col-amount-width + @col-unit-width;
+      .row {
+        height: 45px;
+        &.first-row {
+          background-color: @screen-color;
+          height: 30px;
+        }
+        .col {
+          font-size: @normal-font-size;
+          text-align: center;
+          &.col-id {
+            width: @col-id-width;
+          }
+          &.col-time {
+            width: @col-time-width;
+          }
+          &.col-amount {
+            width: @col-amount-width;
+          }
+          &.col-unit {
+            width: @col-unit-width;
+          }
+          .required-mark {
+            color: red;
+            font-size: 20px;
+            vertical-align: middle;
+          }
+          .el-input {
+            margin-left: 2%;
+            width: 90%;
+            .el-input__inner {
+              height: 30px;
+              border: none;
+              background-color: @screen-color;
+              text-align: center;
+            }
+          }
+          .warning .el-input__inner {
+            border: 1px solid red;
+          }
         }
       }
     }
