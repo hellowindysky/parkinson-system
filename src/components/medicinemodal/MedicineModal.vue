@@ -12,7 +12,7 @@
           <span v-if="getMatchedField(field.fieldName).readOnlyType===2">
             <span v-if="field.fieldName==='commonName'">{{commonName}}</span>
             <span v-else-if="field.fieldName==='medicalType'">{{medicalType}}</span>
-            <span v-else-if="field.fieldName==='totalMeasure'">{{totalMeasure}}</span>
+            <span v-else-if="field.fieldName==='totalMeasure'">{{totalMeasure}} mg</span>
             <span v-else>{{medicine[field.fieldName]}}</span>
           </span>
           <!-- <el-input v-else-if="getUIType(field.fieldName)===1" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
@@ -45,11 +45,13 @@
         <tr v-for="i in rowArray" class="row">
           <td class="col col-id">{{i}}</td>
           <td class="col col-time">
-            <el-time-select v-model="medicine.patientMedicineDetail[i - 1].takeTime" :class="{'warning': false}" placeholder="具体时间点">
+            <el-time-select v-model="medicine.patientMedicineDetail[i - 1].takeTime"
+             :class="{'warning': false}" placeholder="具体时间点">
             </el-time-select>
           </td>
           <td class="col col-amount">
-            <el-input v-model="medicine.patientMedicineDetail[i - 1].takeDose" :class="{'warning': false}" placeholder="单次服用量"></el-input>
+            <el-input v-model="medicine.patientMedicineDetail[i - 1].takeDose"
+             :class="{'warning': false}" placeholder="单次服用量"></el-input>
           </td>
           <td class="col col-unit">{{medicineUnit}}</td>
         </tr>
@@ -154,7 +156,7 @@ export default {
 
       // this.medicine对象下有个属性，patientMedicineDetail，它是一个数组，每个原素都是一个对象。
       // 这个数组的长度 始终和 this.rowArray 保持一致，因此把这个数组的初始化逻辑放在了 rowArray() 中
-      this.medicine.patientMedicineDetail = [];
+      this.$set(this.medicine, 'patientMedicineDetail', []);
       for (let i = 0; i < this.medicine.usages; i++) {
         this.medicine.patientMedicineDetail.push({});
 
