@@ -10,7 +10,10 @@
         <span class="field-input">
           <span class="warning-text">{{warningResults[field.fieldName]}}</span>
           <span v-if="getMatchedField(field.fieldName).readOnlyType===2">
-            <span>{{medicine[field.fieldName]}}</span>
+            <span v-if="field.fieldName==='commonName'">{{commonName}}</span>
+            <span v-else-if="field.fieldName==='medicalType'">{{medicalType}}</span>
+            <span v-else-if="field.fieldName==='computUnit'">{{computeUnit}}</span>
+            <span v-else>{{medicine[field.fieldName]}}</span>
           </span>
           <!-- <el-input v-else-if="getUIType(field.fieldName)===1" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
            :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)">
@@ -72,7 +75,6 @@ export default {
       originalMedicine: {},
       warningResults: {},
       completeInit: false,
-      computeUnit: 0,
       medicineUnit: ''
     };
   },
@@ -96,11 +98,34 @@ export default {
       // 把 template 的几个 group 拼到一起
       return [].concat(this.firstTemplateGroup, this.secondTemplateGroup, this.thirdTemplateGroup);
     },
+    medicineInfoObj() {
+      // 根据最新的 medicineId，去 this.medicineInfo 里面获取相应的对象，从而获得该类型药物的详细参考信息
+      return Util.getElement('medicineId', this.medicine.medicineId, this.medicineInfo);
+    },
+    commonName() {
+      // 通用名，这个计算属性是用来渲染的，而每次更新这个计算属性的时候，都会为 this.medicine 进行相应的赋值
+      let commonName = this.medicineInfoObj.commonName;
+      this.medicine.commonName = commonName;
+      return commonName;
+    },
+    medicalType() {
+      // 药物类型，这个计算属性也是用来渲染的，而每次更新这个计算属性的时候，都会为 this.medicine 进行相应的赋值
+      let medicalTypeNum = this.medicineInfoObj.medicalType;
+      let typeInfo = Util.getElement('typegroupcode', 'durgType', this.typeGroup);  // 数据库拼写错误，把 drug 拼成了 drug
+      let medicalType = Util.getElement('typeCode', medicalTypeNum, typeInfo.types).typeName;
+      this.medicine.medicalType = medicalType;
+      return medicalType;
+    },
+    computeUnit() {
+      // 计算单位，这个计算属性也是用来渲染的，而每次更新这个计算属性的时候，都会为 this.medicine 进行相应的赋值
+      let unitTypes = Util.getElement('typegroupcode', 'oralUnit', this.typeGroup).types;
+      let computeUnit = this.medicineInfoObj.oralUnit;
+      this.medicineUnit = Util.getElement('typeCode', computeUnit, unitTypes).typeName;
+      return computeUnit;
+    },
     medicalSpec() {
-      // 这个变量用来保存当前药物的规格，是一个数字，默认是 0
-      // 先根据 medicineId 去 this.medicineInfo 里面找到对应的药物
-      let targetMedicine = Util.getElement('medicineId', this.medicine.medicineId, this.medicineInfo);
-      let specGroups = targetMedicine.spec ? targetMedicine.spec : [];
+      // 这个变量用来保存当前药物的规格，是一个数字
+      let specGroups = this.medicineInfoObj.spec ? this.medicineInfoObj.spec : [];
       let spec = Util.getElement('specOral', this.medicine.medicalSpecUsed, specGroups);
       return spec.medicalPec;   // 你没有看错，数据库里面就拼写错误了，正确的应该是 'medicalSpec'
     },
@@ -197,6 +222,7 @@ export default {
       return this.getMatchedField(fieldName).uiType;
     },
     getOptions(fieldName) {
+      // 为下拉框准备列表
       var options = [];
       var dictionaryField = this.getMatchedField(fieldName);
       if (dictionaryField.fieldName === 'medicineId') {
@@ -205,9 +231,7 @@ export default {
         }
 
       } else if (dictionaryField.fieldName === 'medicalSpecUsed') {
-        // 如果是药物规格，则先根据 medicineId 去 this.medicineInfo 里面找到对应的药物
-        let targetMedicine = Util.getElement('medicineId', this.medicine.medicineId, this.medicineInfo);
-        let specGroups = targetMedicine.spec ? targetMedicine.spec : [];
+        let specGroups = this.medicineInfoObj.spec ? this.medicineInfoObj.spec : [];
         for (let spec of specGroups) {
           options.push({name: spec.specOral, code: spec.specOral});
         }
@@ -232,25 +256,11 @@ export default {
 
       // 字段的修改会影响到关联文本的变动
       if (field.fieldName === 'medicineId') {
-        // 通用名
-        let targetMedicine = Util.getElement('medicineId', this.medicine.medicineId, this.medicineInfo);
-        this.medicine['commonName'] = targetMedicine.commonName;
-
-        // 药物类型
-        let medicalTypeNum = targetMedicine.medicalType;
-        let typeInfo = Util.getElement('typegroupcode', 'durgType', this.typeGroup);  // 数据库拼写错误，把 drug 拼成了 drug
-        this.medicine['medicalType'] = Util.getElement('typeCode', medicalTypeNum, typeInfo.types).typeName;
-
         // 药物规格
         if (this.completeInit) {
           this.medicine['medicalSpecUsed'] = '';
         }
 
-        // 药物计算单位
-        var unitTypes = Util.getElement('typegroupcode', 'oralUnit', this.typeGroup).types;
-        this.computeUnit = targetMedicine.oralUnit;
-        console.log(targetMedicine);
-        this.medicineUnit = Util.getElement('typeCode', this.computeUnit, unitTypes).typeName;
       }
     },
     updateWarning(field) {
