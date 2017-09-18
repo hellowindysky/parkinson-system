@@ -40,8 +40,8 @@ export default {
           'medicineSpecId': 12,
           'remarks': '测试用药',
           'patientMedicineId': 160,
-          'totalLevodopa': 264,
-          'levodopaFactor': 66,
+          'levodopaDose': 264,
+          'levodopaFactorUsed': 66,
           'patientMedicineDetail': [
             {
               'id': 236,
@@ -83,8 +83,8 @@ export default {
           'medicalSpecUsed': '50.0mg/片',
           'remarks': 'asda承集合和',
           'patientMedicineId': 156,
-          'totalLevodopa': 250,
-          'levodopaFactor': 50
+          'levodopaDose': 250,
+          'levodopaFactorUsed': 50
         },
         {
           'ariseTime': '2017-09-11',
@@ -96,8 +96,8 @@ export default {
           'medicalSpecUsed': '0.25mg/片',
           'remarks': '',
           'patientMedicineId': 157,
-          'totalLevodopa': 50,
-          'levodopaFactor': 25
+          'levodopaDose': 50,
+          'levodopaFactorUsed': 25
         }
       ]
     };

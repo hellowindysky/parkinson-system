@@ -2,60 +2,80 @@
   <div class="medicine-modal-wrapper" v-show="displayModal">
     <div class="medicine-modal">
       <h3 class="title">{{title}}</h3>
-      <div class="field" v-for="field in firstTemplateGroup">
-        <span class="field-name">
-          {{field.cnfieldName}}
-          <span class="required-mark" v-show="field.must===1">*</span>
-        </span>
-        <span class="field-input">
-          <span class="warning-text">{{warningResults[field.fieldName]}}</span>
-          <span v-if="getMatchedField(field.fieldName).readOnlyType===2">
-            <span v-if="field.fieldName==='commonName'">{{commonName}}</span>
-            <span v-else-if="field.fieldName==='medicalType'">{{medicalType}}</span>
-            <span v-else-if="field.fieldName==='totalMeasure'">{{totalMeasure}} mg</span>
-            <span v-else>{{medicine[field.fieldName]}}</span>
+      <div class="content">
+        <div class="field" v-for="field in firstTemplateGroup">
+          <span class="field-name">
+            {{field.cnfieldName}}
+            <span class="required-mark" v-show="field.must===1">*</span>
           </span>
-          <!-- <el-input v-else-if="getUIType(field.fieldName)===1" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-           :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)">
-          </el-input> -->
-          <el-select v-else-if="getUIType(field.fieldName)===3" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-           :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
-           <el-option v-for="option in getOptions(field.fieldName)" :label="option.name"
-            :value="option.code" :key="option.code"></el-option>
-          </el-select>
-        </span>
+          <span class="field-input">
+            <span class="warning-text">{{warningResults[field.fieldName]}}</span>
+            <span v-if="getMatchedField(field.fieldName).readOnlyType===2">
+              <span v-if="field.fieldName==='commonName'">{{commonName}}</span>
+              <span v-else-if="field.fieldName==='medicalType'">{{medicalType}}</span>
+              <span v-else-if="field.fieldName==='totalMeasure'">{{totalMeasure}} mg</span>
+              <span v-else>{{medicine[field.fieldName]}}</span>
+            </span>
+            <!-- <el-input v-else-if="getUIType(field.fieldName)===1" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
+             :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)">
+            </el-input> -->
+            <el-select v-else-if="getUIType(field.fieldName)===3" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
+             :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
+             <el-option v-for="option in getOptions(field.fieldName)" :label="option.name"
+              :value="option.code" :key="option.code"></el-option>
+            </el-select>
+          </span>
+        </div>
+        <table class="form">
+          <tr class="row first-row">
+            <td class="col col-id">
+              序号
+            </td>
+            <td class="col col-time">
+              时间
+              <span class="required-mark">*</span>
+            </td>
+            <td class="col col-amount">
+              服用量
+              <span class="required-mark">*</span>
+            </td>
+            <td class="col col-unit">
+              计算单位
+            </td>
+          </tr>
+          <tr v-for="i in rowArray" class="row">
+            <td class="col col-id">{{i}}</td>
+            <td class="col col-time">
+              <el-time-select v-model="medicine.patientMedicineDetail[i - 1].takeTime"
+               :class="{'warning': false}" placeholder="具体时间点">
+              </el-time-select>
+            </td>
+            <td class="col col-amount">
+              <el-input v-model="medicine.patientMedicineDetail[i - 1].takeDose"
+               :class="{'warning': false}" placeholder="单次服用量"></el-input>
+            </td>
+            <td class="col col-unit">{{medicineUnit}}</td>
+          </tr>
+        </table>
+        <div class="field" v-for="field in thirdTemplateGroup" :class="{'whole-line': field.fieldName==='remarks'}">
+          <span class="field-name" :class="{'long-field-name': isLongName(field.fieldName)}">
+            {{field.cnfieldName}}
+            <span class="required-mark" v-show="field.must===1">*</span>
+          </span>
+          <span class="field-input"
+          :class="{'long-field-name': isLongName(field.fieldName)}">
+            <span class="warning-text">{{warningResults[field.fieldName]}}</span>
+            <span v-if="getMatchedField(field.fieldName).readOnlyType===2">
+              <span v-if="field.fieldName==='levodopaDose'">{{levodopaDose}}</span>
+              <span v-else>{{medicine[field.fieldName]}}</span>
+            </span>
+            <el-input v-else-if="getUIType(field.fieldName)===1" v-model="medicine[field.fieldName]"
+             :class="{'warning': warningResults[field.fieldName]}" :type="getInputType(field.fieldName)"
+             :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)">
+            </el-input>
+          </span>
+        </div>
       </div>
-      <table class="form">
-        <tr class="row first-row">
-          <td class="col col-id">
-            序号
-          </td>
-          <td class="col col-time">
-            时间
-            <span class="required-mark">*</span>
-          </td>
-          <td class="col col-amount">
-            服用量
-            <span class="required-mark">*</span>
-          </td>
-          <td class="col col-unit">
-            计算单位
-          </td>
-        </tr>
-        <tr v-for="i in rowArray" class="row">
-          <td class="col col-id">{{i}}</td>
-          <td class="col col-time">
-            <el-time-select v-model="medicine.patientMedicineDetail[i - 1].takeTime"
-             :class="{'warning': false}" placeholder="具体时间点">
-            </el-time-select>
-          </td>
-          <td class="col col-amount">
-            <el-input v-model="medicine.patientMedicineDetail[i - 1].takeDose"
-             :class="{'warning': false}" placeholder="单次服用量"></el-input>
-          </td>
-          <td class="col col-unit">{{medicineUnit}}</td>
-        </tr>
-      </table>
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
       <div class="button submit-button" @click="submit">确定</div>
@@ -117,24 +137,26 @@ export default {
       this.medicine.medicalType = medicalType;
       return medicalType;
     },
-    totalMeasure() {
-      // 日总剂量，由药物规格和每日总服用量相乘得到。同时，每次更新这个计算属性的时候，同时更新 this.medicine 下的相应属性值
+    totalAmount() {
+      // 这个变量用来计算服用量之和，是一个数字，我们再利用它来计算单日总剂量和单日左旋多巴等效剂量
       let amount = 0;
-
       if (!this.medicine.patientMedicineDetail || !(this.medicine.patientMedicineDetail instanceof Array)) {
         this.medicine.totalMeasure = 0;
         return 0;
       }
-
       for (let item of this.medicine.patientMedicineDetail) {
         let dose = parseInt(item.takeDose, 10);
         dose = isNaN(dose) ? 0 : dose;  // 如果上一步算出来的为 NaN，那么就取 0
         amount += dose;
       }
+      return amount;
+    },
+    totalMeasure() {
+      // 日总剂量，由药物规格和每日总服用量相乘得到。同时，每次更新这个计算属性的时候，同时更新 this.medicine 下的相应属性值
       let spec = this.medicalSpec;
       spec = isNaN(spec) ? 0 : spec;
-      this.medicine.totalMeasure = amount * spec;
-      return amount * spec;
+      this.medicine.totalMeasure = this.totalAmount * spec;
+      return this.totalAmount * spec;
     },
     computeUnit() {
       // 计算单位，是一个数字，这个计算属性是在和服务器进行数据交互时使用的，在 rowArray() 中有用到
@@ -189,6 +211,12 @@ export default {
         arr.push(i);
       }
       return arr;
+    },
+    levodopaDose() {
+      // 单日左旋多巴等效剂量，更新这个计算属性的同时也更新 this.medicine.levodopaDose
+      let levodopaFactor = this.medicine.levodopaFactorUsed;
+      this.medicine.levodopaDose = this.totalAmount * levodopaFactor;
+      return this.totalAmount * levodopaFactor;
     }
   },
   methods: {
@@ -200,6 +228,7 @@ export default {
       setTimeout(() => {
         // console.log('firstTemplate', this.firstTemplateGroup);
         // console.log('secondTemplate', this.secondTemplateGroup);
+        console.log('thirdTemplate', this.thirdTemplateGroup);
         // console.log('dictionary', this.medicineDictionary);
         // console.log('medicineInfo', this.medicineInfo);
       }, 2000);
@@ -286,6 +315,17 @@ export default {
         this.medicine.medicalSpecUsed = '';
       }
     },
+    isLongName(name) {
+      const LONG_NAME_LIST = ['levodopaFactorUsed', 'levodopaDose'];
+      if (LONG_NAME_LIST.indexOf(name) > -1) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    getInputType(name) {
+      return name === 'remarks' ? 'textarea' : 'text';
+    },
     updateWarning(field) {
       var fieldName = field.fieldName;
       var fieldValue = this.medicine[fieldName];
@@ -300,7 +340,8 @@ export default {
         }
       }
 
-      if (fieldValue && fieldValue.toString().indexOf(' ') > -1) {
+      if (fieldValue && fieldValue.toString().indexOf(' ') > -1 && fieldName !== 'remarks') {
+        // 允许备注信息里面有空格
         this.$set(this.warningResults, fieldName, '不能包含空格');
 
       } else {
@@ -324,6 +365,7 @@ export default {
 
 @field-height: 40px;
 @field-name-width: 80px;
+@long-field-name-width: 160px;
 
 @col-id-width: 100px;
 @col-time-width: 200px;
@@ -349,108 +391,130 @@ export default {
       padding: 30px 0 10px;
       font-size: @large-font-size;
     }
-    .field {
-      padding: 5px 0;
+    .content {
       text-align: left;
-      display: inline-block;
-      position: relative;
-      width: 50%;
-      height: @field-height;
-      text-align: left;
-      .field-name {
+      .field {
+        padding: 5px 0;
+        text-align: left;
         display: inline-block;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: @field-name-width;
-        line-height: @field-height;
-        font-size: @normal-font-size;
-        color: @font-color;
-        .required-mark {
-          color: red;
-          font-size: 20px;
-          vertical-align: middle;
+        position: relative;
+        width: 50%;
+        height: @field-height;
+        text-align: left;
+        transform: translateX(10px);  // 这一行是为了修补视觉上的偏移
+        &.whole-line {
+          width: 100%;
         }
-      }
-      .field-input {
-        display: inline-block;
-        position: absolute;
-        top: 0;
-        left: @field-name-width;
-        right: 10%;
-        line-height: @field-height;
-        font-size: @normal-font-size;
-        color: @light-font-color;
-        .warning-text {
+        .field-name {
+          display: inline-block;
           position: absolute;
-          top: 25px;
-          left: 10px;
-          height: 15px;
-          color: red;
-          font-size: @small-font-size;
-        }
-        .el-input {
-          .el-input__inner {
-            height: 30px;
-            border: none;
-            background-color: @screen-color;
-          }
-        }
-        .el-select {
-          width: 100%;
-        }
-        .el-date-editor {
-          width: 100%;
-        }
-        .warning .el-input__inner {
-          border: 1px solid red;
-        }
-      }
-    }
-    .form {
-      position: relative;
-      left: calc(~"50% - (@{col-id-width} + @{col-time-width} + @{col-amount-width} + @{col-unit-width}) / 2");
-      border: 1px solid @inverse-font-color;
-      border-spacing: 0;
-      width: @col-id-width + @col-time-width + @col-amount-width + @col-unit-width;
-      .row {
-        height: 45px;
-        &.first-row {
-          background-color: @screen-color;
-          height: 30px;
-        }
-        .col {
+          top: 0;
+          left: 0;
+          width: @field-name-width;
+          line-height: @field-height;
           font-size: @normal-font-size;
-          text-align: center;
-          &.col-id {
-            width: @col-id-width;
-          }
-          &.col-time {
-            width: @col-time-width;
-          }
-          &.col-amount {
-            width: @col-amount-width;
-          }
-          &.col-unit {
-            width: @col-unit-width;
+          color: @font-color;
+          &.long-field-name {
+            width: @long-field-name-width;
           }
           .required-mark {
             color: red;
             font-size: 20px;
             vertical-align: middle;
           }
+        }
+        .field-input {
+          display: inline-block;
+          position: absolute;
+          top: 0;
+          left: @field-name-width;
+          right: 10%;
+          line-height: @field-height;
+          font-size: @normal-font-size;
+          color: @light-font-color;
+          &.long-field-name {
+            left: @long-field-name-width;
+          }
+          .warning-text {
+            position: absolute;
+            top: 25px;
+            left: 10px;
+            height: 15px;
+            color: red;
+            font-size: @small-font-size;
+          }
           .el-input {
-            margin-left: 2%;
-            width: 90%;
             .el-input__inner {
               height: 30px;
               border: none;
               background-color: @screen-color;
-              text-align: center;
             }
           }
-          .warning .el-input__inner {
+          .el-textarea {
+            vertical-align: middle;
+            transform: translateY(5px);
+            .el-textarea__inner {
+              border: none;
+              background-color: @screen-color;
+            }
+          }
+          .el-select {
+            width: 100%;
+          }
+          .el-date-editor {
+            width: 100%;
+          }
+          .warning .el-input__inner, .warning .el-textarea__inner {
             border: 1px solid red;
+          }
+        }
+      }
+      .form {
+        position: relative;
+        margin-bottom: 5px;
+        left: calc(~"50% - (@{col-id-width} + @{col-time-width} + @{col-amount-width} + @{col-unit-width}) / 2");
+        border: 1px solid @inverse-font-color;
+        border-spacing: 0;
+        width: @col-id-width + @col-time-width + @col-amount-width + @col-unit-width;
+        .row {
+          height: 45px;
+          &.first-row {
+            background-color: @screen-color;
+            height: 30px;
+          }
+          .col {
+            font-size: @normal-font-size;
+            text-align: center;
+            &.col-id {
+              width: @col-id-width;
+            }
+            &.col-time {
+              width: @col-time-width;
+            }
+            &.col-amount {
+              width: @col-amount-width;
+            }
+            &.col-unit {
+              width: @col-unit-width;
+            }
+            .required-mark {
+              color: red;
+              font-size: 20px;
+              vertical-align: middle;
+            }
+            .el-input {
+              margin-left: 2%;
+              width: 90%;
+              .el-input__inner {
+                height: 30px;
+                border: none;
+                background-color: @screen-color;
+                text-align: center;
+              }
+            }
+            .warning .el-input__inner {
+              border: 1px solid red;
+            }
           }
         }
       }
