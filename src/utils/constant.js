@@ -11,6 +11,7 @@ export default {
   // event
   SCREEN_SIZE_CHANGE: 'screenSizeChange',
   TOGGLE_LIST_DISPLAY: 'toggleListDisplay',
+  UPDATE_SCALE_DETAIL: 'updateScaleDetail',
 
   EDIT: 'edit',
   CANCEL: 'cancel',

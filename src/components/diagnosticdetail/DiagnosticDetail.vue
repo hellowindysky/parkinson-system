@@ -10,7 +10,7 @@
       <diagnostic-disease class="folding-panel" :mode="mode"></diagnostic-disease>
       <diagnostic-medicine class="folding-panel" :mode="mode"></diagnostic-medicine>
       <diagnostic-surgery class="folding-panel" :mode="mode"></diagnostic-surgery>
-      <diagnostic-scale class="folding-panel" :mode="mode"></diagnostic-scale>
+      <diagnostic-scale class="folding-panel" :patientScale="caseDetail.patientScale" :mode="mode"></diagnostic-scale>
       <diagnostic-examination class="folding-panel" :mode="mode"></diagnostic-examination>
     </div>
   </div>
@@ -72,8 +72,9 @@ export default {
       var patientId = this.$route.params.id;
       getPatientCase(patientId, patientCaseId).then((data) => {
         this.caseDetail = Object.assign({}, data.patientCase);
+        // console.log(data);
         this.updateScrollbar();
-        console.log('caseDetail: ', this.caseDetail);
+        // console.log('caseDetail: ', this.caseDetail);
       });
     },
     goBack() {

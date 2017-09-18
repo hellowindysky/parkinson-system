@@ -78,6 +78,16 @@ export default new Router({
                   component: DiagnosticInfo,
                   name: 'diagnosticDetail'
                 }
+                // {
+                //   path: 'diagnosticInfo/updatescale',
+                //   component: DiagnosticInfo,
+                //   name: 'diagnosticupdatescale'
+                // },
+                // {
+                //   path: 'diagnosticInfo/addscale',
+                //   component: DiagnosticInfo,
+                //   name: 'diagnosticaddscale'
+                // }
               ]
             },
             {

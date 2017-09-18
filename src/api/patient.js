@@ -539,3 +539,18 @@ export function getPatientCase(patientId, patientCaseId) {
 
   return encapsulatePromise(url, request);
 };
+
+// 查询医学量表
+export function getScaleInfo() {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15012670416",
+    "userType": 1,
+    "orgId": 34,
+    "orgType": 2,
+    "version": 43
+  };
+  var url = 'http://apitest.gyenno.com/pdms/queryScaleInfo';
+
+  return encapsulatePromise(url, request);
+};
