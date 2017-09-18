@@ -71,6 +71,7 @@
             <span class="warning-text">{{warningResults[field.fieldName]}}</span>
             <span v-if="getMatchedField(field.fieldName).readOnlyType===2">
               <span v-if="field.fieldName==='levodopaDose'">{{levodopaDose}}</span>
+              <span v-else-if="field.fieldName==='levodopaFactorUsed'">{{levodopaFactor}}</span>
               <span v-else>{{medicine[field.fieldName]}}</span>
             </span>
             <el-input v-else-if="getUIType(field.fieldName)===1" v-model="medicine[field.fieldName]"
@@ -178,6 +179,24 @@ export default {
       let spec = Util.getElement('specOral', this.medicine.medicalSpecUsed, specGroups);
       return spec.medicalPec;   // 你没有看错，数据库里面就拼写错误了，正确的应该是 'medicalSpec'，少了一个 S
     },
+    levodopaFactor() {
+      // 左旋多巴等效系数，这个计算属性是根据 medicineId 而变化的，同时更新 this.medicine.medicineId
+      // 先根据 medicineId 在 tableData 里面找到对应的 medicineInfoObj，然后找到它下面的 规格数组（spec属性）
+      var specGroups = this.medicineInfoObj.spec;
+      specGroups = specGroups && (specGroups instanceof Array) ? specGroups : [];
+
+      // 再根据选择的药物规格，找到相应的对象，取得该对象的左旋多巴等效系数属性值
+      let spec = Util.getElement('specOral', this.medicine.medicalSpecUsed, specGroups);
+      let levodopaFactor = spec.levodopaFactor ? spec.levodopaFactor : 0;
+      this.medicine.levodopaFactorUsed = levodopaFactor;
+      return levodopaFactor;
+    },
+    levodopaDose() {
+      // 单日左旋多巴等效剂量，更新这个计算属性的同时也更新 this.medicine.levodopaDose
+      let levodopaFactor = this.medicine.levodopaFactorUsed;
+      this.medicine.levodopaDose = this.totalAmount * levodopaFactor;
+      return this.totalAmount * levodopaFactor;
+    },
     rowArray() {
       var arr = [];   // 这个数组用来帮助生成表格，其中的元素就是每行的序号
 
@@ -218,12 +237,6 @@ export default {
 
       this.updateScrollbar();
       return arr;
-    },
-    levodopaDose() {
-      // 单日左旋多巴等效剂量，更新这个计算属性的同时也更新 this.medicine.levodopaDose
-      let levodopaFactor = this.medicine.levodopaFactorUsed;
-      this.medicine.levodopaDose = this.totalAmount * levodopaFactor;
-      return this.totalAmount * levodopaFactor;
     }
   },
   methods: {
