@@ -279,7 +279,7 @@ export default {
     },
     submit() {
       console.log(this.medicine);
-      console.log(this.warningResults);
+      // console.log(this.warningResults);
 
       // 首先，更新一下 warningResults，因为有的组件初始化的时候并不会做校验
       for (var i = 0; i < this.medicine.patientMedicineDetail.length; i++) {
@@ -432,9 +432,11 @@ export default {
     updateDose(index) {
       // 更改了表格中的服用量后，调用此函数更新 this.warningResults
       let dose = this.medicine.patientMedicineDetail[index].takeDose;
-      console.log(dose);
       if (!dose) {
         this.warningResults.patientMedicineDetail[index].takeDose = '必填'; // 实际上，这个值并不显示
+      } else if (!/^\+?[1-9][0-9]*$/.test(dose)) {
+        // 检查非零的正整数
+        this.warningResults.patientMedicineDetail[index].takeDose = '应填写正整数';
       } else {
         this.warningResults.patientMedicineDetail[index].takeDose = null;
       }
