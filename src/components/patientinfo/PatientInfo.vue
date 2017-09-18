@@ -29,8 +29,7 @@
       </div>
     </div>
     <DiagnosticDetail class="diagnostic-detail"></DiagnosticDetail>
-    <DiagnosticUpdateScale class="diagnostic-update-scale"></DiagnosticUpdateScale>
-    <!-- <DiagnosticAddScale class="diagnostic-add-scale"></DiagnosticAddScale>  -->
+    <DiagnosticHandleScale class="diagnostic-handle-scale"></DiagnosticHandleScale>
   </div>
 </template>
 
@@ -41,8 +40,7 @@ import Bus from 'utils/bus.js';
 import { getPatientInfo, getPatientCaseList } from 'api/patient';
 
 import DiagnosticDetail from 'components/diagnosticdetail/DiagnosticDetail';
-import DiagnosticUpdateScale from 'components/diagnosticupdatescale/DiagnosticUpdateScale';
-import DiagnosticAddScale from 'components/diagnosticaddscale/DiagnosticAddScale';
+import DiagnosticHandleScale from 'components/diagnostichandlescale/DiagnosticHandleScale';
 
 export default {
   data() {
@@ -124,8 +122,7 @@ export default {
   },
   components: {
     DiagnosticDetail,
-    DiagnosticUpdateScale,
-    DiagnosticAddScale
+    DiagnosticHandleScale
   },
   mounted() {
     this.updatePatientInfo();
@@ -177,21 +174,13 @@ export default {
     top: 0;
     z-index: 300;
   }
-  .diagnostic-update-scale {
+  .diagnostic-handle-scale {
     position: absolute;
     width: 100%;
     height: 100%;
     top: 0;
     z-index: 400;
     background: @screen-color;
-  }
-  .diagnostic-add-scale {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    z-index: 400;
-    background: @screen-color;    
   }
   .tabs-wrapper {
     position: relative;

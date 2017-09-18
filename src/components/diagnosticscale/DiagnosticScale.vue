@@ -1,8 +1,8 @@
 <template lang="html">
   <folding-panel :title="'医学量表'" :mode="mutableMode"  v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
     <div class="diagnostic-scale" ref="diagnosticscale">
-      <extensible-panel class="panel" :mode="mutableMode" :title="subTitle">
-         <card class="card" :class="devideWidth" :mode="mutableMode" v-for="item in patientScale" :key="item.id" :title="getTitle(item.scaleInfoId)" v-on:clickCurrentCard="updateScaleDetail(item.scaleInfoId)">
+      <extensible-panel class="panel" :mode="mutableMode" :title="subTitle" v-on:addNewCard="addScale">
+         <card class="card" :class="devideWidth" :mode="mutableMode" v-for="item in patientScale" :key="item.id" :title="getTitle(item.scaleInfoId)" v-on:clickCurrentCard="updateScaleDetail(item, 'update')">
            <div class="text first-line">量表得分: {{item.scalePoint}}</div>
            <div class="text second-line"></div>
         </card>
@@ -26,7 +26,8 @@ export default {
       titles: '医学量表',
       devideWidth: '',
       scaleData: [],
-      count: 0
+      count: 0,
+      scaleId: ''
     };
   },
   props: {
@@ -80,8 +81,11 @@ export default {
         }
       }
     },
-    updateScaleDetail(item) {
-      Bus.$emit(this.UPDATE_SCALE_DETAIL, item);
+    updateScaleDetail(item, type) {
+      Bus.$emit(this.UPDATE_SCALE_DETAIL, item, type);
+    },
+    addScale() {
+      Bus.$emit(this.UPDATE_SCALE_DETAIL);
     }
   },
   computed: {
@@ -99,10 +103,12 @@ export default {
     this.recalculateCardWidth();
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
     Bus.$on(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
+    Bus.$on(this.RECALCULATE_CARD_WIDTH, this.recalculateCardWidth);
   },
   beforeDestroy() {
     Bus.$off(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
     Bus.$off(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
+    Bus.$off(this.RECALCULATE_CARD_WIDTH, this.recalculateCardWidth);
   },
   watch: {
     patientScale: {
