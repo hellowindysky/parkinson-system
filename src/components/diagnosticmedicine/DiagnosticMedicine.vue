@@ -207,7 +207,7 @@ export default {
     .card {
       display: inline-block;
       margin: @card-vertical-margin @card-horizontal-margin;
-      &.width-1-, &.width-1-0 {
+      &.width-1-1, &.width-1-0 {
         width: calc(~"100% - @{card-horizontal-margin} * 2");
       }
       &.width-1-2 {
