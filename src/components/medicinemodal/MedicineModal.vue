@@ -48,13 +48,13 @@
             <tr v-for="i in rowArray" class="row">
               <td class="col col-id">{{i}}</td>
               <td class="col col-time">
-                <el-time-select v-model="medicine.patientMedicineDetail[i - 1].takeTime"
-                 :class="{'warning': false}" placeholder="具体时间点">
+                <el-time-select v-model="medicine.patientMedicineDetail[i - 1].takeTime" @change="updateTime(i - 1)"
+                 :class="{'warning': warningResults.patientMedicineDetail[i - 1].takeTime}" placeholder="具体时间点" :editable="false">
                 </el-time-select>
               </td>
               <td class="col col-amount">
-                <el-input v-model="medicine.patientMedicineDetail[i - 1].takeDose"
-                 :class="{'warning': false}" placeholder="单次服用量"></el-input>
+                <el-input v-model="medicine.patientMedicineDetail[i - 1].takeDose" @change="updateDose(i - 1)"
+                 :class="{'warning': warningResults.patientMedicineDetail[i - 1].takeDose}" placeholder="单次服用量"></el-input>
               </td>
               <td class="col col-unit">{{medicineUnit}}</td>
             </tr>
@@ -203,8 +203,11 @@ export default {
       // this.medicine对象下有个属性，patientMedicineDetail，它是一个数组，每个原素都是一个对象。
       // 这个数组的长度 始终和 this.rowArray 保持一致，因此把这个数组的初始化逻辑放在了 rowArray() 中
       this.$set(this.medicine, 'patientMedicineDetail', []);
+      this.$set(this.warningResults, 'patientMedicineDetail', []);
+
       for (let i = 0; i < this.medicine.usages; i++) {
         this.medicine.patientMedicineDetail.push({});
+        this.warningResults.patientMedicineDetail.push({});
 
         // 这个 secondTemplateGroup 数组里的原素，对应着表格的列，也对应着 patientMedicineDetail 里的不同属性
         for (let field of this.secondTemplateGroup) {
@@ -227,7 +230,9 @@ export default {
             value = this.computeUnit;
           }
           value = value ? value : '';
+
           this.$set(this.medicine.patientMedicineDetail[i], fieldName, value);
+          this.$set(this.warningResults.patientMedicineDetail[i], fieldName, null);
         }
       }
 
@@ -248,13 +253,13 @@ export default {
       setTimeout(() => {
         // console.log('firstTemplate', this.firstTemplateGroup);
         // console.log('secondTemplate', this.secondTemplateGroup);
-        console.log('thirdTemplate', this.thirdTemplateGroup);
+        // console.log('thirdTemplate', this.thirdTemplateGroup);
         // console.log('dictionary', this.medicineDictionary);
         // console.log('medicineInfo', this.medicineInfo);
       }, 2000);
 
       this.initMedicine(item);
-      console.log(this.medicine);
+      // console.log(this.medicine);
 
       for (let field of this.totalTemplate) {
         this.updateField(field);
@@ -274,6 +279,39 @@ export default {
     },
     submit() {
       console.log(this.medicine);
+      console.log(this.warningResults);
+
+      // 首先，更新一下 warningResults，因为有的组件初始化的时候并不会做校验
+      for (var i = 0; i < this.medicine.patientMedicineDetail.length; i++) {
+        let item = this.medicine.patientMedicineDetail[i];
+        for (let p in item) {
+          if (item.hasOwnProperty(p) && !item[p]) {
+            this.warningResults.patientMedicineDetail[i][p] = '必填';
+          }
+        }
+      }
+
+      for (let propertyName in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(propertyName)) {
+          if (propertyName === 'patientMedicineDetail') {
+            let formList = this.warningResults[propertyName];
+            for (let formItem of formList) {
+              for (let p in formItem) {
+                if (formItem.hasOwnProperty(p) && formItem[p]) {
+                  console.log('表格填写不规范，不允许提交');
+                  return;
+                }
+              }
+            }
+          } else {
+            if (this.warningResults[propertyName]) {
+              console.log('填写不合规范，不允许提交');
+              return;
+            }
+          }
+        }
+      }
+
       // this.displayModal = false;
     },
     initMedicine(item) {
@@ -378,6 +416,27 @@ export default {
         // 初始化组件的时候，对应字段的警告文本为 undefined，判断之后，就为实际文本或 null
         // null 代表该字段项的填写没有毛病
         this.$set(this.warningResults, fieldName, null);
+      }
+    },
+    updateTime(index) {
+      // 更改了表格中的时间后，调用此函数更新 this.warningResults
+      // 有个特殊情况要讲一下，每次我们设置了 this.medicine.patientMedicineDetail[index].takeTime 后，
+      // el-time-picker 会将其重置为 undefined (我也不知道为什么)
+      let time = this.medicine.patientMedicineDetail[index].takeTime;
+      if (time === '') {
+        this.warningResults.patientMedicineDetail[index].takeTime = '必填'; // 实际上，这个值并不显示
+      } else {
+        this.warningResults.patientMedicineDetail[index].takeTime = null;
+      }
+    },
+    updateDose(index) {
+      // 更改了表格中的服用量后，调用此函数更新 this.warningResults
+      let dose = this.medicine.patientMedicineDetail[index].takeDose;
+      console.log(dose);
+      if (!dose) {
+        this.warningResults.patientMedicineDetail[index].takeDose = '必填'; // 实际上，这个值并不显示
+      } else {
+        this.warningResults.patientMedicineDetail[index].takeDose = null;
       }
     }
   },
