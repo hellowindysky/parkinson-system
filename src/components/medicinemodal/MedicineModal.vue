@@ -26,37 +26,41 @@
             </el-select>
           </span>
         </div>
-        <table class="form">
-          <tr class="row first-row">
-            <td class="col col-id">
-              序号
-            </td>
-            <td class="col col-time">
-              时间
-              <span class="required-mark">*</span>
-            </td>
-            <td class="col col-amount">
-              服用量
-              <span class="required-mark">*</span>
-            </td>
-            <td class="col col-unit">
-              计算单位
-            </td>
-          </tr>
-          <tr v-for="i in rowArray" class="row">
-            <td class="col col-id">{{i}}</td>
-            <td class="col col-time">
-              <el-time-select v-model="medicine.patientMedicineDetail[i - 1].takeTime"
-               :class="{'warning': false}" placeholder="具体时间点">
-              </el-time-select>
-            </td>
-            <td class="col col-amount">
-              <el-input v-model="medicine.patientMedicineDetail[i - 1].takeDose"
-               :class="{'warning': false}" placeholder="单次服用量"></el-input>
-            </td>
-            <td class="col col-unit">{{medicineUnit}}</td>
-          </tr>
-        </table>
+
+        <div class="form-wrapper" ref="formWrapper">
+          <table class="form">
+            <tr class="row first-row">
+              <td class="col col-id">
+                序号
+              </td>
+              <td class="col col-time">
+                时间
+                <span class="required-mark">*</span>
+              </td>
+              <td class="col col-amount">
+                服用量
+                <span class="required-mark">*</span>
+              </td>
+              <td class="col col-unit">
+                计算单位
+              </td>
+            </tr>
+            <tr v-for="i in rowArray" class="row">
+              <td class="col col-id">{{i}}</td>
+              <td class="col col-time">
+                <el-time-select v-model="medicine.patientMedicineDetail[i - 1].takeTime"
+                 :class="{'warning': false}" placeholder="具体时间点">
+                </el-time-select>
+              </td>
+              <td class="col col-amount">
+                <el-input v-model="medicine.patientMedicineDetail[i - 1].takeDose"
+                 :class="{'warning': false}" placeholder="单次服用量"></el-input>
+              </td>
+              <td class="col col-unit">{{medicineUnit}}</td>
+            </tr>
+          </table>
+        </div>
+
         <div class="field" v-for="field in thirdTemplateGroup" :class="{'whole-line': field.fieldName==='remarks'}">
           <span class="field-name" :class="{'long-field-name': isLongName(field.fieldName)}">
             {{field.cnfieldName}}
@@ -85,6 +89,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 
@@ -210,6 +215,8 @@ export default {
       for (let i = 1; i <= this.medicine.usages; i++) {
         arr.push(i);
       }
+
+      this.updateScrollbar();
       return arr;
     },
     levodopaDose() {
@@ -326,6 +333,16 @@ export default {
     getInputType(name) {
       return name === 'remarks' ? 'textarea' : 'text';
     },
+    updateScrollbar() {
+      // 如果不写在 $nextTick() 里面，第一次加载的时候也许会不能正确计算高度。估计是因为子组件还没有全部加载所造成的。
+      this.$nextTick(() => {
+        Ps.destroy(this.$refs.formWrapper);
+        Ps.initialize(this.$refs.formWrapper, {
+          wheelSpeed: 1,
+          minScrollbarLength: 40
+        });
+      });
+    },
     updateWarning(field) {
       var fieldName = field.fieldName;
       var fieldValue = this.medicine[fieldName];
@@ -404,6 +421,9 @@ export default {
         transform: translateX(10px);  // 这一行是为了修补视觉上的偏移
         &.whole-line {
           width: 100%;
+          .field-input {
+            right: 5%;
+          }
         }
         .field-name {
           display: inline-block;
@@ -469,52 +489,76 @@ export default {
           }
         }
       }
-      .form {
+      .form-wrapper {
         position: relative;
-        margin-bottom: 5px;
-        left: calc(~"50% - (@{col-id-width} + @{col-time-width} + @{col-amount-width} + @{col-unit-width}) / 2");
+        max-height: 170px;
+        width: 100%;
         border: 1px solid @inverse-font-color;
-        border-spacing: 0;
-        width: @col-id-width + @col-time-width + @col-amount-width + @col-unit-width;
-        .row {
-          height: 45px;
-          &.first-row {
-            background-color: @screen-color;
-            height: 30px;
-          }
-          .col {
-            font-size: @normal-font-size;
-            text-align: center;
-            &.col-id {
-              width: @col-id-width;
+        overflow: hidden;
+        .form {
+          position: relative;
+          margin-bottom: 5px;
+          width: 100%;
+          // left: calc(~"50% - (@{col-id-width} + @{col-time-width} + @{col-amount-width} + @{col-unit-width}) / 2");
+          border-spacing: 0;
+          .row {
+            height: 45px;
+            &.first-row {
+              background-color: @screen-color;
+              height: 30px;
             }
-            &.col-time {
-              width: @col-time-width;
-            }
-            &.col-amount {
-              width: @col-amount-width;
-            }
-            &.col-unit {
-              width: @col-unit-width;
-            }
-            .required-mark {
-              color: red;
-              font-size: 20px;
-              vertical-align: middle;
-            }
-            .el-input {
-              margin-left: 2%;
-              width: 90%;
-              .el-input__inner {
-                height: 30px;
-                border: none;
-                background-color: @screen-color;
-                text-align: center;
+            .col {
+              font-size: @normal-font-size;
+              text-align: center;
+              &.col-id {
+                width: @col-id-width;
+              }
+              &.col-time {
+                width: @col-time-width;
+              }
+              &.col-amount {
+                width: @col-amount-width;
+              }
+              &.col-unit {
+                width: @col-unit-width;
+              }
+              .required-mark {
+                color: red;
+                font-size: 20px;
+                vertical-align: middle;
+              }
+              .el-input {
+                margin-left: 2%;
+                width: 90%;
+                .el-input__inner {
+                  height: 30px;
+                  border: none;
+                  background-color: @screen-color;
+                  text-align: center;
+                }
+              }
+              .warning .el-input__inner {
+                border: 1px solid red;
               }
             }
-            .warning .el-input__inner {
-              border: 1px solid red;
-            }
+          }
+        }
+        .ps__scrollbar-y-rail {
+          position: absolute;
+          top: 0;
+          width: 10px;
+          right: 0;
+          box-sizing: border-box;
+          opacity: 0.3;
+          transition: opacity 0.3s, padding 0.2s;
+          .ps__scrollbar-y {
+            position: relative;
+            background-color: #aaa;
+          }
+        }
+        &:hover {
+          .ps__scrollbar-y-rail {
+            opacity: 0.6;
           }
         }
       }
