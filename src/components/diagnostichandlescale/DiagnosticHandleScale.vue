@@ -6,15 +6,46 @@
       <div class="button back-button" @click="goBack">返回</div>
     </div>
     <div class="scroll-area" ref="scrollArea">
+      <div class="scale-selecter">
+         <div class="choose-scale">
+           <span>选择量表:</span>
+             <el-select  placeholder="请选择" v-model="scaleSelect">
+               <el-option v-for="item in scaleNameArr" :key="item.name" :label="item.name" :value="item.scaleId"></el-option>
+             </el-select> 
+         </div>
+         <div class="choose-time-type">
+           <span>量表填写时间:</span>
+           <el-select  placeholder="请选择" v-model="scaleSelect">
+               <el-option v-for="item in scaleNameArr" :key="item.name" :label="item.name" :value="item.scaleId"></el-option>
+           </el-select>   
+         </div>
+         <div class="choose-time-type">
+           <span>量表类型:</span>
+           <el-select  placeholder="请选择" v-model="scaleType">
+               <el-option v-for="item in scaleTypeData" :key="item.typeName" :label="item.typeName" :value="item.typeCode"></el-option>
+           </el-select>   
+         </div>
+         <div class=" choose-time-type">
+           <span>末次服药时间:</span>
+           <el-select  placeholder="请选择" v-model="scaleSelect">
+               <el-option v-for="item in scaleNameArr" :key="item.name" :label="item.name" :value="item.scaleId"></el-option>
+           </el-select>   
+         </div>
+         <div class="choose-time-type">
+           <span>量表状态:</span>
+           <el-select  placeholder="请选择" v-model="scaleSelect">
+               <el-option v-for="item in scaleNameArr" :key="item.name" :label="item.name" :value="item.scaleId"></el-option>
+           </el-select>   
+         </div>
+      </div>
       <div v-for="(item, key) in scaleSonDate['questions']" v-if="pageTpye==='update'">
          <div class="scale-questions">
            <p class="question-title">题目名称: <span>{{item.subjectName}}</span></p>
-           <el-checkbox-group class="question-body" v-for="(sonitem, sonkey) in item['options']" :key="sonkey" v-model="correctanswer['answer'+key]">
-               <el-checkbox class="question-selection" :label="sonitem.optionName" disabled></el-checkbox>
-           </el-checkbox-group>  
+           <el-radio-group class="question-body" v-for="(sonitem, sonkey) in item['options']" :key="sonkey" v-model="correctanswer['answer'+key]">
+               <el-radio class="question-selection" :label="sonitem.optionName"></el-radio>
+           </el-radio-group>  
          </div> 
-      </div>
-      <div v-else>        
+      </div>       
       </div>
     </div>
   </div>  
@@ -24,6 +55,7 @@
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import { getScaleInfo } from 'api/patient';
+import { getDictionary } from 'api/user.js';
 
 export default {
   data() {
@@ -36,7 +68,11 @@ export default {
       scaleAnswer: [],
       correctanswer: {},
       pageTpye: '',
-      scaleNameArr: []
+      scaleNameArr: [],
+      scaleSelect: '',
+      dictionaryData: [],
+      scaleTypeData: [],
+      scaleType: ''
     };
   },
   methods: {
@@ -60,7 +96,7 @@ export default {
       if (arguments.length) {
         // 通过bus传递过来量表ID来获取量表的信息
         this.getTitleAndScale(item.scaleInfoId);
-        console.log(item.scaleOptionIds);
+        // console.log(item);
         // 获取量表选择答案的数组
         this.scaleAnswer = item.scaleOptionIds;
         // 获取页面的类型（到底是添加页面还是修改页面）
@@ -78,6 +114,10 @@ export default {
       this.correctanswer = {};
       this.pageTpye = '';
       this.scaleNameArr = [];
+      this.scaleSelect = '';
+      this.dictionaryData = [];
+      this.scaleTypeData = [];
+      this.scaleType = '';
     },
     closePanel() {
       this.displayUpdateScale = false;
@@ -86,6 +126,11 @@ export default {
     getPatientScaleInfo() {
       getScaleInfo().then((data) => {
         this.scaleData = data['scales'];
+      });
+    },
+    getDictionaryData() {
+      getDictionary().then((data) => {
+        this.dictionaryData = data['typegroup'];
       });
     },
     getTitleAndScale(scaleInfoId) {
@@ -111,18 +156,48 @@ export default {
           let sondata1 = sondata[sonkey];
           for (let i = 0; i < this.scaleAnswer.length; i++) {
             if (sondata1['scaleOptionId'] === this.scaleAnswer[i]) {
-              this.$set(this.correctanswer, 'answer' + i, [sondata1['optionName']]);
+              this.$set(this.correctanswer, 'answer' + i, sondata1['optionName']);
             }
           }
         }
       }
     },
     getScaleNameArr(scaledata) {
-      for (let key in scaledata) {
-        let data = scaledata[key];
+      for (let i = 0; i < scaledata.length; i++) {
+        let data = scaledata[i];
         if (data['gaugeName']) {
-          this.scaleNameArr.push(data['gaugeName']);
-          console.log(this.scaleNameArr);
+          // this.scaleNameArr.push(data['gaugeName']);
+          this.scaleNameArr.push({});
+          this.$set(this.scaleNameArr[i], 'name', data['gaugeName']);
+          this.$set(this.scaleNameArr[i], 'type', data['gaugeType']);
+          this.$set(this.scaleNameArr[i], 'scaleId', data['scaleInfoId']);
+          // console.log(this.scaleNameArr);
+        }
+      }
+    },
+    getScaleTypeData(data) {
+      // 获取到dictionary的数据之后再取出对应的量表类型数据
+      for (let i = 0; i < data.length; i++) {
+        if (data[i]['typegroupcode'] === 'gaugeType') {
+          let typeData = data[i]['types'];
+          for (let j = 0; j < typeData.length; j++) {
+            this.scaleTypeData.push({});
+            this.$set(this.scaleTypeData[j], 'typeCode', typeData[j]['typeCode']);
+            this.$set(this.scaleTypeData[j], 'typeName', typeData[j]['typeName']);
+          }
+        }
+      }
+    },
+    linkAgeScaleType(scaleId) {
+      // 通过量表的ID查询到量表的类型并且改变量表类型选择框
+      for (let key in this.scaleData) {
+        let sonData = this.scaleData[key];
+        for (let sonkey in sonData) {
+          if (sonkey === 'scaleInfoId') {
+            if (sonData[sonkey] === scaleId) {
+              this.scaleType = String(sonData['gaugeType']);
+            }
+          }
         }
       }
     }
@@ -130,6 +205,7 @@ export default {
   mounted() {
     // 获取到量表的数据
     this.getPatientScaleInfo();
+    this.getDictionaryData();
     Bus.$on(this.UPDATE_SCALE_DETAIL, this.showDetailPanel);
     Bus.$on(this.SCROLL_AREA_SIZE_CHANGE, this.updateScrollbar);
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
@@ -145,7 +221,7 @@ export default {
         if (newVal) {
           this.scaleData = newVal;
           this.getCorrectAnswer(newVal['questions']);
-          console.log(newVal);
+          // console.log(newVal);
         }
       },
       deep: true
@@ -172,6 +248,19 @@ export default {
         }
       },
       deep: true
+    },
+    scaleSelect: {
+      handler: function(newVal) {
+        if (newVal && this.displayUpdateScale) {
+          // 量表改变之后同时改变量表的类型
+          this.linkAgeScaleType(newVal);
+        }
+      }
+    },
+    dictionaryData: {
+      handler: function(newVal) {
+        this.getScaleTypeData(newVal);
+      }
     }
   }
 };
@@ -184,9 +273,12 @@ export default {
 @margin-right: 15px;
 @title-left-padding: 40px;
 @title-bottom-padding: 10px;
+@select-topbottom-padding: 12px;
 
 .diagnostic-update-wrapper {
-  p {margin: 0;}
+  p {
+    margin: 0;
+  }
   background-color: @screen-color;
   .title-bar {
     position: relative;
@@ -240,7 +332,7 @@ export default {
       margin-right: @margin-right;
       margin-bottom: @vertical-spacing;
       padding-left: @title-left-padding;
-      padding-bottom: @title-bottom-padding; 
+      padding-bottom: @title-bottom-padding;
       box-sizing: border-box;
       .question-title {
         line-height: 62px;
@@ -254,14 +346,61 @@ export default {
         padding: 0;
         color: @secondary-button-color;
         font-weight: 100;
-        list-style: none;
-          .question-selection {
-            margin: 0;
-            line-height: 38px;
-          }
+        display: block !important;
+        .question-selection {
+          margin: 0;
+          line-height: 38px;
+        }
       }
     }
-
+    .scale-selecter {
+      text-align: left;
+      background: white;
+      font-size: 0px;
+      margin-right: @margin-right;
+      margin-bottom: @vertical-spacing;
+      padding-left: @title-left-padding;
+      padding-bottom: @title-bottom-padding;
+      padding-top: @select-topbottom-padding;
+      padding-bottom: @select-topbottom-padding; 
+      box-sizing: border-box;
+      // overflow: hidden;
+       .choose-scale {
+         position: relative;
+         font-size: 14px;
+         padding: 12px 0;
+         span {
+           font-weight: bold;
+         }
+         .el-select {
+           position: relative;
+           width: 88%;
+           .el-input {
+             width: 100%;
+           }
+         }
+       }
+       .choose-time-type {
+         position: relative;
+         display: inline-block;
+         font-size: 14px;
+         width: 50%;
+         min-width: 310px !important;
+         padding: 12px 0;
+         span {
+           font-weight: bold;
+         }
+         .el-select {
+           position: absolute;
+           left: 100px;
+           top: 6px;
+           right: 4%;
+           .el-input {
+             // width: 100%;
+           }
+         }         
+       }    
+    }
     .ps__scrollbar-y-rail {
       position: absolute;
       width: 15px;
