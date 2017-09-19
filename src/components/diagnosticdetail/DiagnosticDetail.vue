@@ -39,7 +39,9 @@ export default {
   computed: {
     diagnosticBasic() {
       var obj = {};
+      obj.caseType = this.caseDetail.caseType;
       obj.diagTime = this.caseDetail.diagTime;
+      obj.remarks = this.caseDetail.remarks;
       return obj;
     }
   },
