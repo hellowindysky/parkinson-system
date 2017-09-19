@@ -1,7 +1,7 @@
 <template lang="html">
   <folding-panel :title="'病症情况'" :mode="mutableMode"  v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
     <div class="diagnostic-disease">
-      <div v-for="field in patientCaseDiseaseTemplate" class="field"
+      <div v-for="field in diagnosticDiseaseTemplate" class="field"
        :class="{'whole-line': field.fieldName === 'caseSymptom', 'multi-line': field.fieldName === 'caseSymptom'}">
         <span class="field-name">
           {{field.cnfieldName}}
@@ -101,8 +101,11 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'patientCaseDiseaseDictionary',
-      'patientCaseDiseaseTemplate',
+      'diagnosticDiseaseDictionary',
+      'diagnosticDiseaseTemplate',
+      'diagnosticDiseaseMsTemplate',
+      'diagnosticDiseaseMcTemplate',
+      'diagnosticDiseaseNmsTemplate',
       'typeGroup'
     ])
   },
@@ -127,7 +130,7 @@ export default {
     },
     submit() {
       // 先手动执行一遍 updateWarning()，因为有的字段在初始化的时候并没有经过校验
-      for (let field of this.patientCaseDiseaseTemplate) {
+      for (let field of this.diagnosticDiseaseTemplate) {
         this.updateWarning(field);
       }
 
@@ -155,13 +158,13 @@ export default {
     },
     getMatchedField(fieldName) {
       // 在字典项中查询该名字所对应的字段，从而方便我们得到该字段的详细信息
-      return Util.getElement('fieldName', fieldName, this.patientCaseDiseaseDictionary);
+      return Util.getElement('fieldName', fieldName, this.diagnosticDiseaseDictionary);
     },
     getUIType(fieldName) {
       return this.getMatchedField(fieldName).uiType;
     },
     getOptions(fieldName) {
-      var dictionaryField = Util.getElement('fieldName', fieldName, this.patientCaseDiseaseDictionary);
+      var dictionaryField = Util.getElement('fieldName', fieldName, this.diagnosticDiseaseDictionary);
       var fieldEnumId = dictionaryField.fieldEnumId;
       var types = Util.getElement('typegroupcode', fieldEnumId, this.typeGroup).types;
       types = types ? types : [];
@@ -187,11 +190,14 @@ export default {
 
     setTimeout(() => {
       console.log(this.diagnosticDisease);
-      console.log(this.patientCaseDiseaseTemplate);
-      console.log(this.patientCaseDiseaseDictionary);
-      for (let item of this.patientCaseDiseaseDictionary) {
-        console.log(item.fieldName);
-      }
+      // console.log(this.diagnosticDiseaseTemplate);
+      // console.log(this.diagnosticDiseaseDictionary);
+      console.log(this.diagnosticDiseaseMsTemplate);
+      console.log(this.diagnosticDiseaseMcTemplate);
+      console.log(this.diagnosticDiseaseNmsTemplate);
+      console.log(this.diagnosticDiseaseMsDictionary);
+      console.log(this.diagnosticDiseaseMcDictionary);
+      console.log(this.diagnosticDiseaseNmsDictionary);
     }, 2000);
   },
   beforeDestroy() {
