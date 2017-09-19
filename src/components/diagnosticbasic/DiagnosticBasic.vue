@@ -22,7 +22,7 @@
             {{warningResults[field.fieldName]}}
           </span>
           <el-select v-if="getUIType(field.fieldName)===3" v-model="copyInfo[field.fieldName]"
-           :class="{'warning': warningResults[field.fieldName]}" :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)">
+           :class="{'warning': warningResults[field.fieldName]}" :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)">
             <el-option v-for="option in getOptions(field.fieldName)" :label="option.typeName"
              :value="option.typeCode" :key="option.typeCode"></el-option>
           </el-select>
@@ -31,7 +31,7 @@
            :editable="false" @change="updateWarning(field)">
           </el-date-picker>
           <el-input v-else-if="getUIType(field.fieldName)===1" v-model="copyInfo[field.fieldName]"
-           type="textarea" :rows="2" placeholder="请输入内容"></el-input>
+           type="textarea" :rows="2" :placeholder="getMatchedField(field.fieldName).cnFieldDesc"></el-input>
         </div>
       </div>
     </div>
@@ -82,6 +82,8 @@ export default {
       this.mutableMode = this.EDITING_MODE;
     },
     cancel() {
+      this.copyInfo = Object.assign({}, this.diagnosticBasic);
+      this.warningResults = {};
       this.mutableMode = this.READING_MODE;
     },
     submit() {
@@ -100,6 +102,7 @@ export default {
       }
 
       // 到这里，就可以准备提交数据了
+      // TODO 提交数据
       this.mutableMode = this.READING_MODE;
     },
     getMatchedField(fieldName) {
