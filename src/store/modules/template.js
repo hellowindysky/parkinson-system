@@ -81,6 +81,9 @@ const getters = {
     // 锻炼史
     return getFirstGroup(state, 'tc_patient_exercise');
   },
+  patientCaseTemplate: (state) => {
+    return getGroups(state, 'tc_patient_case');
+  },
   medicineTemplateGroups: (state) => {
     return getGroups(state, 'tc_patient_medicine');
   }

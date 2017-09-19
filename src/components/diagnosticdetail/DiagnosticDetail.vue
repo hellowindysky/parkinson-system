@@ -6,7 +6,7 @@
       <div class="button file-button" @click="fileCase">归档</div>
     </div>
     <div class="scroll-area" ref="scrollArea">
-      <diagnostic-basic class="folding-panel" :mode="mode"></diagnostic-basic>
+      <diagnostic-basic class="folding-panel" :mode="mode" :diagnosticBasic="diagnosticBasic"></diagnostic-basic>
       <diagnostic-disease class="folding-panel" :mode="mode"></diagnostic-disease>
       <diagnostic-medicine class="folding-panel" :mode="mode"></diagnostic-medicine>
       <diagnostic-surgery class="folding-panel" :mode="mode"></diagnostic-surgery>
@@ -35,6 +35,13 @@ export default {
       caseDetail: {},
       mode: this.READING_MODE
     };
+  },
+  computed: {
+    diagnosticBasic() {
+      var obj = {};
+      obj.diagTime = this.caseDetail.diagTime;
+      return obj;
+    }
   },
   methods: {
     updateScrollbar() {
@@ -72,9 +79,8 @@ export default {
       var patientId = this.$route.params.id;
       getPatientCase(patientId, patientCaseId).then((data) => {
         this.caseDetail = Object.assign({}, data.patientCase);
-        // console.log(data);
         this.updateScrollbar();
-        // console.log('caseDetail: ', this.caseDetail);
+        console.log('caseDetail: ', this.caseDetail);
       });
     },
     goBack() {

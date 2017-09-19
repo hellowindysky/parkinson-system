@@ -1,7 +1,7 @@
 <template lang="html">
   <folding-panel :title="'基本情况'" :mode="mutableMode"  v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
     <div class="diagnostic-basic">
-      <div class="field" :class="{'whole-line': true, 'multi-line': true}">
+      <div v-for="field in diagnosticBasic" class="field" :class="{'whole-line': true, 'multi-line': true}">
         <span class="field-name">
           诊断类型
           <span class="required-mark" v-show="true">*</span>
@@ -24,7 +24,7 @@
 </template>
 
 <script>
-// import { mapGetters } from 'vuex';
+import { mapGetters } from 'vuex';
 // import Util from 'utils/util.js';
 
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
@@ -40,7 +40,16 @@ export default {
     mode: {
       type: String,
       default: this.READING_MODE
+    },
+    diagnosticBasic: {
+      type: Object,
+      default: {}
     }
+  },
+  computed: {
+    ...mapGetters([
+      'patientCaseTemplate'
+    ])
   },
   methods: {
     startEditing() {
@@ -55,6 +64,12 @@ export default {
   },
   components: {
     FoldingPanel
+  },
+  mounted() {
+    setTimeout(() => {
+      console.log(this.diagnosticBasic);
+      console.log(this.patientCaseTemplate);
+    }, 2000);
   }
 };
 </script>
