@@ -81,8 +81,13 @@ const getters = {
     // 锻炼史
     return getFirstGroup(state, 'tc_patient_exercise');
   },
-  patientCaseTemplate: (state) => {
+  patientCaseTemplateGroups: (state) => {
+    // 诊断信息，分成两部分，分别在‘基本情况’和‘检验检查’中，所以这个 Template 分成两个 group
     return getGroups(state, 'tc_patient_case');
+  },
+  patientCaseDiseaseTemplate: (state) => {
+    // 诊断信息下的病症情况
+    return getFirstGroup(state, 'tc_patient_case_disease');
   },
   medicineTemplateGroups: (state) => {
     return getGroups(state, 'tc_patient_medicine');
