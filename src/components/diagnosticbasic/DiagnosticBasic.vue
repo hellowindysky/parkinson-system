@@ -48,8 +48,11 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'patientCaseTemplate'
-    ])
+      'patientCaseTemplateGroups'
+    ]),
+    diagnosticBasicTemplate() {
+      return this.patientCaseTemplateGroups[0] ? this.patientCaseTemplateGroups[0] : [];
+    }
   },
   methods: {
     startEditing() {
@@ -68,7 +71,7 @@ export default {
   mounted() {
     setTimeout(() => {
       console.log(this.diagnosticBasic);
-      console.log(this.patientCaseTemplate);
+      console.log(this.diagnosticBasicTemplate);
     }, 2000);
   }
 };
