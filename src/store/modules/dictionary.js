@@ -92,6 +92,11 @@ const getters = {
     // 诊断信息只有一个 group
     return groups[0] ? groups[0] : [];
   },
+  patientCaseDiseaseDictionary: (state) => {
+    var groups = getGroups(state, 'tc_patient_case_disease');
+    // 诊断信息下的病症情况只有一个 group
+    return groups[0] ? groups[0] : [];
+  },
   medicineDictionary: (state) => {
     var groups = getGroups(state, 'tc_patient_medicine');
     // 药物信息只有一个 group
