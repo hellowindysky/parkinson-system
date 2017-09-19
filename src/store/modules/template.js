@@ -24,11 +24,7 @@ var getGroups = function(state, tableName) {
 var getFirstGroup = function(state, tableName) {
   // 对于那些 getGroups() 后只有 1 个元素的数组，我们直接取其第一个元素的 fields 属性值，这样就不用在使用的时候再去处理
   var groups = getGroups(state, tableName);
-  if (groups[0]) {
-    return groups[0];
-  } else {
-    return [];
-  }
+  return groups[0] ? groups[0] : [];
 };
 
 // initial state
@@ -85,9 +81,21 @@ const getters = {
     // 诊断信息，分成两部分，分别在‘基本情况’和‘检验检查’中，所以这个 Template 分成两个 group
     return getGroups(state, 'tc_patient_case');
   },
-  patientCaseDiseaseTemplate: (state) => {
+  diagnosticDiseaseTemplate: (state) => {
     // 诊断信息下的病症情况
     return getFirstGroup(state, 'tc_patient_case_disease');
+  },
+  diagnosticDiseaseMsTemplate: (state) => {
+    // 诊断信息->病症情况->运动症状
+    return getFirstGroup(state, 'tc_patient_case_disease_ms');
+  },
+  diagnosticDiseaseMcTemplate: (state) => {
+    // 诊断信息->病症情况->运动并发症
+    return getFirstGroup(state, 'tc_patient_case_disease_mc');
+  },
+  diagnosticDiseaseNmsTemplate: (state) => {
+    // 诊断信息->病症情况->非运动症状
+    return getFirstGroup(state, 'tc_patient_case_disease_nms');
   },
   medicineTemplateGroups: (state) => {
     return getGroups(state, 'tc_patient_medicine');

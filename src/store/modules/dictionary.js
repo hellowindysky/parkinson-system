@@ -28,6 +28,12 @@ var getGroups = function(state, tableName) {
   }
 };
 
+var getFirstGroup = function(state, tableName) {
+  // 对于那些 getGroups() 后只有 1 个元素的数组，我们直接取其第一个元素的 fields 属性值，这样就不用在使用的时候再去处理
+  var groups = getGroups(state, tableName);
+  return groups[0] ? groups[0] : [];
+};
+
 // initial state
 const state = {
   all: {}
@@ -43,64 +49,64 @@ const getters = {
     return getGroups(state, 'tc_patient_disease_info');
   },
   medHistoryDictionary: (state) => {
-    var groups = getGroups(state, 'tc_patient_medhistory');
     // 其它用药史只有一个 group
-    return groups[0] ? groups[0] : [];
+    return getFirstGroup(state, 'tc_patient_medhistory');
   },
   diseaseHistoryDictionary: (state) => {
-    var groups = getGroups(state, 'tc_patient_disease');
     // 既往史只有一个 group
-    return groups[0] ? groups[0] : [];
+    return getFirstGroup(state, 'tc_patient_disease');
   },
   familyHistoryDictionary: (state) => {
-    var groups = getGroups(state, 'tc_family_history');
     // 家族史只有一个 group
-    return groups[0] ? groups[0] : [];
+    return getFirstGroup(state, 'tc_family_history');
   },
   coffeeHistoryDictionary: (state) => {
-    var groups = getGroups(state, 'tc_patient_coffee');
     // 咖啡史只有一个 group
-    return groups[0] ? groups[0] : [];
+    return getFirstGroup(state, 'tc_patient_coffee');
   },
   teaHistoryDictionary: (state) => {
-    var groups = getGroups(state, 'tc_patient_tea');
     // 喝茶史只有一个 group
-    return groups[0] ? groups[0] : [];
+    return getFirstGroup(state, 'tc_patient_tea');
   },
   smokeHistoryDictionary: (state) => {
-    var groups = getGroups(state, 'tc_patient_smoke');
     // 吸烟史只有一个 group
-    return groups[0] ? groups[0] : [];
+    return getFirstGroup(state, 'tc_patient_smoke');
   },
   wineHistoryDictionary: (state) => {
-    var groups = getGroups(state, 'tc_patient_wine');
     // 饮酒史只有一个 group
-    return groups[0] ? groups[0] : [];
+    return getFirstGroup(state, 'tc_patient_wine');
   },
   exerciseHistoryDictionary: (state) => {
-    var groups = getGroups(state, 'tc_patient_exercise');
     // 锻炼史只有一个 group
-    return groups[0] ? groups[0] : [];
+    return getFirstGroup(state, 'tc_patient_exercise');
   },
   toxicExposureHistoryDictionary: (state) => {
-    var groups = getGroups(state, 'tc_cideexposed_history');
     // 毒物史只有一个 group
-    return groups[0] ? groups[0] : [];
+    return getFirstGroup(state, 'tc_cideexposed_history');
   },
   patientCaseDictionary: (state) => {
-    var groups = getGroups(state, 'tc_patient_case');
     // 诊断信息只有一个 group
-    return groups[0] ? groups[0] : [];
+    return getFirstGroup(state, 'tc_patient_case');
   },
-  patientCaseDiseaseDictionary: (state) => {
-    var groups = getGroups(state, 'tc_patient_case_disease');
+  diagnosticDiseaseDictionary: (state) => {
     // 诊断信息下的病症情况只有一个 group
-    return groups[0] ? groups[0] : [];
+    return getFirstGroup(state, 'tc_patient_case_disease');
+  },
+  diagnosticDiseaseMsDictionary: (state) => {
+    // 诊断信息->病症情况->运动症状
+    return getFirstGroup(state, 'tc_patient_case_disease_ms');
+  },
+  diagnosticDiseaseMcDictionary: (state) => {
+    // 诊断信息->病症情况->运动并发症
+    return getFirstGroup(state, 'tc_patient_case_disease_mc');
+  },
+  diagnosticDiseaseNmsDictionary: (state) => {
+    // 诊断信息->病症情况->非运动症状
+    return getFirstGroup(state, 'tc_patient_case_disease_nms');
   },
   medicineDictionary: (state) => {
-    var groups = getGroups(state, 'tc_patient_medicine');
     // 药物信息只有一个 group
-    return groups[0] ? groups[0] : [];
+    return getFirstGroup(state, 'tc_patient_medicine');
   },
   medicineInfo: (state) => {
     // medicineInfo 是药物所具有的特殊字典项，包含了各种不规则的详细信息
