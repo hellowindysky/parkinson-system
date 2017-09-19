@@ -87,6 +87,11 @@ const getters = {
     // 毒物史只有一个 group
     return groups[0] ? groups[0] : [];
   },
+  patientCaseDictionary: (state) => {
+    var groups = getGroups(state, 'tc_patient_case');
+    // 诊断信息只有一个 group
+    return groups[0] ? groups[0] : [];
+  },
   medicineDictionary: (state) => {
     var groups = getGroups(state, 'tc_patient_medicine');
     // 药物信息只有一个 group
