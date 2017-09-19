@@ -102,6 +102,9 @@ export default {
   computed: {
     ...mapGetters([
       'diagnosticDiseaseDictionary',
+      'diagnosticDiseaseMsDictionary',
+      'diagnosticDiseaseMcDictionary',
+      'diagnosticDiseaseNmsDictionary',
       'diagnosticDiseaseTemplate',
       'diagnosticDiseaseMsTemplate',
       'diagnosticDiseaseMcTemplate',
