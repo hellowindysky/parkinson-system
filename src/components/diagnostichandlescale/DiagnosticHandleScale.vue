@@ -72,7 +72,7 @@ import Bus from 'utils/bus.js';
 import { getScaleInfo } from 'api/patient';
 import { getDictionary } from 'api/user.js';
 import { deepCopy } from 'utils/helper.js';
-import Util from 'utils/util.js';
+// import Util from 'utils/util.js';
 import { mapGetters } from 'vuex';
 
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
