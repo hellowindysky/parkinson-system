@@ -46,7 +46,7 @@
             </tr>
             <tr class="row" v-for="symptom in msSymptom">
               <td v-for="field in diagnosticDiseaseMsTemplate" class="col" :class="getClass(field.fieldName)">
-                {{symptom[field.fieldName]}}
+                {{getFieldValue(symptom, field.fieldName)}}
               </td>
             </tr>
             <!-- <tr class="row">
@@ -93,7 +93,7 @@
             </tr>
             <tr class="row" v-for="symptom in mcSymptom">
               <td v-for="field in diagnosticDiseaseMcTemplate" class="col" :class="getClass(field.fieldName)">
-                {{symptom[field.fieldName]}}
+                {{getFieldValue(symptom, field.fieldName)}}
               </td>
             </tr>
           </table>
@@ -112,7 +112,7 @@
             </tr>
             <tr class="row" v-for="symptom in nmsSymptom">
               <td v-for="field in diagnosticDiseaseNmsTemplate" class="col" :class="getClass(field.fieldName)">
-                {{symptom[field.fieldName]}}
+                {{getFieldValue(symptom, field.fieldName)}}
               </td>
             </tr>
           </table>
@@ -149,6 +149,7 @@ export default {
       'diagnosticDiseaseMsTemplate',
       'diagnosticDiseaseMcTemplate',
       'diagnosticDiseaseNmsTemplate',
+      'symptomType',
       'typeGroup'
     ]),
     allSymptom() {
@@ -288,6 +289,15 @@ export default {
         return 'col-remarks';
       }
     },
+    getFieldValue(symptom, fieldName) {
+      if (fieldName === 'symptomTypeId') {
+        var symptomType = symptom[fieldName];
+        var symptomTypeItem = Util.getElement('id', symptomType, this.symptomType);
+        return symptomTypeItem.sympName;
+      } else {
+        return symptom[fieldName];
+      }
+    },
     getMatchedField(fieldName) {
       // 在字典项中查询该名字所对应的字段，从而方便我们得到该字段的详细信息
       return Util.getElement('fieldName', fieldName, this.diagnosticDiseaseDictionary);
@@ -321,16 +331,17 @@ export default {
     Bus.$on(this.TOGGLE_LIST_DISPLAY, this.updateScrollbar);
 
     setTimeout(() => {
-      // console.log(this.diagnosticDisease);
+      console.log(this.diagnosticDisease);
       // console.log(this.diagnosticDiseaseTemplate);
       // console.log(this.diagnosticDiseaseDictionary);
       // console.log(this.diagnosticDiseaseMsTemplate);
-      console.log(this.diagnosticDiseaseMcTemplate);
-      console.log(this.diagnosticDiseaseNmsTemplate);
+      // console.log(this.diagnosticDiseaseMcTemplate);
+      // console.log(this.diagnosticDiseaseNmsTemplate);
       // console.log(this.diagnosticDiseaseMsDictionary);
       // console.log(this.diagnosticDiseaseMcDictionary);
       // console.log(this.diagnosticDiseaseNmsDictionary);
-    }, 2000);
+      // console.log(this.symptomType);
+    }, 3000);
   },
   beforeDestroy() {
     Bus.$off(this.SCREEN_SIZE_CHANGE);

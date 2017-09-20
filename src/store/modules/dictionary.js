@@ -115,6 +115,13 @@ const getters = {
     }
     return state.all.tableData.medicineInfo;
   },
+  symptomType: (state) => {
+    // patientSymptom 是药物所具有的特殊字典项，包含了各种不规则的详细信息
+    if (!state.all.tableData || !state.all.tableData.symptomType) {
+      return [];
+    }
+    return state.all.tableData.symptomType;
+  },
   typeGroup: (state) => {
     // 如果 state.all.typegroup 为 undefined，则返回一个空数组
     if (!state.all.typegroup) {
