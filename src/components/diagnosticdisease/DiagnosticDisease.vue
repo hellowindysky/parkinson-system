@@ -37,17 +37,19 @@
       <div class="form-wrapper">
         <h4 class="form-title">运动症状</h4>
         <div class="scroll-area" ref="scrollArea1">
-          <table class="form-content form-1">
+          <table class="form-content">
             <tr class="row first-row">
-              <td class="col col-name">症状名称</td>
-              <td class="col col-time">左上肢出现时间</td>
-              <td class="col col-time">右上肢出现时间</td>
-              <td class="col col-time">左下肢出现时间</td>
-              <td class="col col-time">右下肢出现时间</td>
-              <td class="col col-select">规律出现</td>
-              <td class="col col-remark">备注</td>
+              <td v-for="field in diagnosticDiseaseMsTemplate" class="col" :class="getClass(field.fieldName)">
+                {{field.cnfieldName}}
+                <span class="required-mark" v-show="field.must === 1">*</span>
+              </td>
             </tr>
-            <tr class="row">
+            <tr class="row" v-for="symptom in msSymptom">
+              <td v-for="field in diagnosticDiseaseMsTemplate" class="col" :class="getClass(field.fieldName)">
+                {{symptom[field.fieldName]}}
+              </td>
+            </tr>
+            <!-- <tr class="row">
               <td class="col col-name">运动波动-开关现象</td>
               <td class="col col-time">
                 <el-date-picker v-model="test" type="date" :class="{'warning': false}" placeholder="请输入日期">
@@ -71,8 +73,46 @@
                   <el-option label="选项2" value="1"></el-option>
                 </el-select>
               </td>
-              <td class="col col-remark">
+              <td class="col col-remarks">
                 <el-input v-model="test" :class="{'warning': true}" placeholder="请输入备注"></el-input>
+              </td>
+            </tr> -->
+          </table>
+        </div>
+      </div>
+
+      <div class="form-wrapper">
+        <h4 class="form-title">运动并发症</h4>
+        <div class="scroll-area" ref="scrollArea2">
+          <table class="form-content">
+            <tr class="row first-row">
+              <td v-for="field in diagnosticDiseaseMcTemplate" class="col" :class="getClass(field.fieldName)">
+                {{field.cnfieldName}}
+                <span class="required-mark" v-show="field.must === 1">*</span>
+              </td>
+            </tr>
+            <tr class="row" v-for="symptom in mcSymptom">
+              <td v-for="field in diagnosticDiseaseMcTemplate" class="col" :class="getClass(field.fieldName)">
+                {{symptom[field.fieldName]}}
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="form-wrapper">
+        <h4 class="form-title">非运动症状</h4>
+        <div class="scroll-area" ref="scrollArea3">
+          <table class="form-content">
+            <tr class="row first-row">
+              <td v-for="field in diagnosticDiseaseNmsTemplate" class="col" :class="getClass(field.fieldName)">
+                {{field.cnfieldName}}
+                <span class="required-mark" v-show="field.must === 1">*</span>
+              </td>
+            </tr>
+            <tr class="row" v-for="symptom in nmsSymptom">
+              <td v-for="field in diagnosticDiseaseNmsTemplate" class="col" :class="getClass(field.fieldName)">
+                {{symptom[field.fieldName]}}
               </td>
             </tr>
           </table>
@@ -110,7 +150,47 @@ export default {
       'diagnosticDiseaseMcTemplate',
       'diagnosticDiseaseNmsTemplate',
       'typeGroup'
-    ])
+    ]),
+    allSymptom() {
+      return (this.copyInfo && this.copyInfo.patientSymptom) ? this.copyInfo.patientSymptom : [];
+    },
+    msSymptom() {
+      // 运动症状
+      var msSymptom = [];
+      for (let symptom of this.allSymptom) {
+        if (symptom.symType === '运动症状') {
+          msSymptom.push(symptom);
+        }
+      }
+      return msSymptom;
+    },
+    mcSymptom() {
+      // 运动并发症
+      var mcSymptom = [];
+      for (let symptom of this.allSymptom) {
+        if (symptom.symType === '运动并发症') {
+          mcSymptom.push(symptom);
+        }
+      }
+      return mcSymptom;
+    },
+    nmsSymptom() {
+      // 非运动症状
+      var nmsSymptom = [];
+      for (let symptom of this.allSymptom) {
+        if (symptom.symType === '非运动症状') {
+          nmsSymptom.push(symptom);
+        }
+      }
+      return nmsSymptom;
+    },
+    templateLength() {
+      // 这个计算属性的返回值本身并没有价值，我设定它，只是为了在 watch 中监控 几个 Vuex 对象（因为不能直接监控它们）
+      var t1 = this.diagnosticDiseaseMsTemplate ? this.diagnosticDiseaseMsTemplate : [];
+      var t2 = this.diagnosticDiseaseMcTemplate ? this.diagnosticDiseaseMcTemplate : [];
+      var t3 = this.diagnosticDiseaseNmsTemplate ? this.diagnosticDiseaseNmsTemplate : [];
+      return [t1.length, t2.length, t3.length];  // 这个值并没有意义
+    }
   },
   props: {
     mode: {
@@ -153,11 +233,60 @@ export default {
     updateScrollbar() {
       this.$nextTick(() => {
         Ps.destroy(this.$refs.scrollArea1);
+        Ps.destroy(this.$refs.scrollArea2);
+        Ps.destroy(this.$refs.scrollArea3);
         Ps.initialize(this.$refs.scrollArea1, {
           wheelSpeed: 1,
           minScrollbarLength: 40
         });
+        Ps.initialize(this.$refs.scrollArea2, {
+          wheelSpeed: 1,
+          minScrollbarLength: 40
+        });
+        Ps.initialize(this.$refs.scrollArea3, {
+          wheelSpeed: 1,
+          minScrollbarLength: 40
+        });
       });
+    },
+    supplementCopyInfo() {
+      // this.copyInfo.patientSymptom 这个数组下的对象，有可能没有足够的属性，
+      // 这个时候我们需要根据相应的 template，给这些属性值补上，赋值为空字符串
+      if (!this.copyInfo.patientSymptom) {
+        return;   // 如果该对象不存在，就直接返回
+      }
+      for (let symptom of this.copyInfo.patientSymptom) {
+        if (symptom.symType === '运动症状') {
+          for (let field of this.diagnosticDiseaseMsTemplate) {
+            if (!symptom[field.fieldName]) {
+              this.$set(symptom, field.fieldName, '');
+            }
+          }
+        } else if (symptom.symType === '运动并发症') {
+          for (let field of this.diagnosticDiseaseMcTemplate) {
+            if (!symptom[field.fieldName]) {
+              this.$set(symptom, field.fieldName, '');
+            }
+          }
+        } else if (symptom.symType === '非运动症状') {
+          for (let field of this.diagnosticDiseaseNmsTemplate) {
+            if (!symptom[field.fieldName]) {
+              this.$set(symptom, field.fieldName, '');
+            }
+          }
+        }
+      }
+    },
+    getClass(fieldName) {
+      if (['symptomTypeId'].indexOf(fieldName) > -1) {
+        return 'col-name';
+      } else if (['ariseTime', 'ariseTimeLeftUp', 'ariseTimeRightUp', 'ariseTimeLeftDown', 'ariseTimeRightDown'].indexOf(fieldName) > -1) {
+        return 'col-time';
+      } else if (['whetherLaw'].indexOf(fieldName) > -1) {
+        return 'col-select';
+      } else if (['remarks'].indexOf(fieldName) > -1) {
+        return 'col-remarks';
+      }
     },
     getMatchedField(fieldName) {
       // 在字典项中查询该名字所对应的字段，从而方便我们得到该字段的详细信息
@@ -192,15 +321,15 @@ export default {
     Bus.$on(this.TOGGLE_LIST_DISPLAY, this.updateScrollbar);
 
     setTimeout(() => {
-      console.log(this.diagnosticDisease);
+      // console.log(this.diagnosticDisease);
       // console.log(this.diagnosticDiseaseTemplate);
       // console.log(this.diagnosticDiseaseDictionary);
-      console.log(this.diagnosticDiseaseMsTemplate);
+      // console.log(this.diagnosticDiseaseMsTemplate);
       console.log(this.diagnosticDiseaseMcTemplate);
       console.log(this.diagnosticDiseaseNmsTemplate);
-      console.log(this.diagnosticDiseaseMsDictionary);
-      console.log(this.diagnosticDiseaseMcDictionary);
-      console.log(this.diagnosticDiseaseNmsDictionary);
+      // console.log(this.diagnosticDiseaseMsDictionary);
+      // console.log(this.diagnosticDiseaseMcDictionary);
+      // console.log(this.diagnosticDiseaseNmsDictionary);
     }, 2000);
   },
   beforeDestroy() {
@@ -212,7 +341,15 @@ export default {
   },
   watch: {
     diagnosticDisease: function() {
+      // 每次传过来的数据发生变化，就重新初始化 copyInfo
       this.copyInfo = Object.assign({}, this.diagnosticDisease);
+      // 传过来的数据可能会没有某些字段属性，我们接下来将通过 template 来补齐
+      this.supplementCopyInfo();
+    },
+    templateLength: function() {
+      // 如果 template 数据还没到位，那么补齐就会没有效果，所以在获取到 template 后，也要做一次补齐操作
+      this.supplementCopyInfo();
+      console.log(this.copyInfo);
     }
   }
 };
@@ -228,7 +365,7 @@ export default {
 @col-name-width: 160px;
 @col-time-width: 170px;
 @col-select-width: 150px;
-@col-remark-width: 250px;
+@col-remarks-width: 250px;
 
 .diagnostic-disease {
   padding: 0 25px;
@@ -329,9 +466,7 @@ export default {
       .form-content {
         border: 1px solid @light-gray-color;
         border-spacing: 0;
-        &.form-1 {
-          width: @col-name-width + @col-time-width * 4 + @col-select-width + @col-remark-width;
-        }
+        table-layout: fixed;
         .row {
           height: 45px;
           &.first-row {
@@ -342,16 +477,21 @@ export default {
             font-size: @normal-font-size;
             text-align: center;
             &.col-name {
-              width: @col-name-width;
+              min-width: @col-name-width;
             }
             &.col-time {
-              width: @col-time-width;
+              min-width: @col-time-width;
             }
             &.col-select {
-              width: @col-select-width;
+              min-width: @col-select-width;
             }
-            &.col-remark {
-              width: @col-remark-width;
+            &.col-remarks {
+              min-width: @col-remarks-width;
+            }
+            .required-mark {
+              color: red;
+              font-size: 20px;
+              vertical-align: middle;
             }
             .el-input {
               margin-left: 2%;
