@@ -6,8 +6,8 @@
       <div class="button file-button" @click="fileCase">归档</div>
     </div>
     <div class="scroll-area" ref="scrollArea">
-      <diagnostic-basic class="folding-panel" :mode="mode"></diagnostic-basic>
-      <diagnostic-disease class="folding-panel" :mode="mode"></diagnostic-disease>
+      <diagnostic-basic class="folding-panel" :mode="mode" :diagnosticBasic="diagnosticBasic"></diagnostic-basic>
+      <diagnostic-disease class="folding-panel" :mode="mode" :diagnosticDisease="diagnosticDisease"></diagnostic-disease>
       <diagnostic-medicine class="folding-panel" :mode="mode"></diagnostic-medicine>
       <diagnostic-surgery class="folding-panel" :mode="mode"></diagnostic-surgery>
       <diagnostic-scale class="folding-panel" :patientScale="caseDetail.patientScale" :mode="mode"></diagnostic-scale>
@@ -35,6 +35,22 @@ export default {
       caseDetail: {},
       mode: this.READING_MODE
     };
+  },
+  computed: {
+    diagnosticBasic() {
+      var obj = {};
+      obj.caseType = this.caseDetail.caseType;
+      obj.diagTime = this.caseDetail.diagTime;
+      obj.remarks = this.caseDetail.remarks;
+      return obj;
+    },
+    diagnosticDisease() {
+      var obj = {};
+      obj.diseaseType = this.caseDetail.diseaseType;
+      obj.caseSymptom = this.caseDetail.caseSymptom;
+      obj.patientSymptom = this.caseDetail.patientSymptom;
+      return obj;
+    }
   },
   methods: {
     updateScrollbar() {
@@ -72,9 +88,8 @@ export default {
       var patientId = this.$route.params.id;
       getPatientCase(patientId, patientCaseId).then((data) => {
         this.caseDetail = Object.assign({}, data.patientCase);
-        // console.log(data);
         this.updateScrollbar();
-        // console.log('caseDetail: ', this.caseDetail);
+        console.log('caseDetail: ', this.caseDetail);
       });
     },
     goBack() {

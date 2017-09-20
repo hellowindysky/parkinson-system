@@ -43,7 +43,7 @@
           </span>
           <span v-else-if="getUIType(field)===6">
             <el-date-picker v-model="item[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}" type="date"
-             :placeholder="getMatchedField(field).cnFieldDesc" format="yyyy-MM-dd" @change="updateDate(field)"></el-date-picker>
+             :placeholder="getMatchedField(field).cnFieldDesc" format="yyyy-MM-dd" @change="updateWarning(field)"></el-date-picker>
           </span>
         </span>
       </div>
@@ -214,6 +214,14 @@ export default {
         }
       }
 
+      // 准备提交之前，需要将日期格式调整成符合服务器传输的字符串
+      for (let field of this.template) {
+        if (this.getUIType(field) === 6) {
+          var dateStr = this.item[field.fieldName];
+          this.item[field.fieldName] = Util.simplifyDate(dateStr);
+        }
+      }
+
       this.item.patientId = parseInt(this.$route.params.id, 10);
       // 到这里，检验合格，准备提交数据了
       if (this.mode === ADD_MODE) {
@@ -324,14 +332,13 @@ export default {
       var typeInfo = Util.getElement('typegroupcode', value, this.typeGroup);
       return typeInfo.types ? typeInfo.types : [];
     },
-    updateDate(field) {
-      var dateStr = this.item[field.fieldName];
-      this.item[field.fieldName] = Util.simplifyDate(dateStr);
-      this.updateWarning(field);
-    },
     updateWarning(field) {
       var fieldName = field.fieldName;
       var fieldValue = this.item[fieldName];
+      if (this.getUIType(field) === 6) {
+        // 日期控件(el-date-picker)给的是一个表示完整日期对象的字符串，我们需要格式化之后再校验
+        fieldValue = Util.simplifyDate(fieldValue);
+      }
       if (field.must === 1) {
         // must 为 1 代表必填，为 2 代表选填
         var isEmptyValue = !fieldValue && fieldValue !== 0;

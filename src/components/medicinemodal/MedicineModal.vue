@@ -282,6 +282,9 @@ export default {
       // console.log(this.warningResults);
 
       // 首先，更新一下 warningResults，因为有的组件初始化的时候并不会做校验
+      for (let field of this.firstTemplateGroup.concat(this.thirdTemplateGroup)) {
+        this.updateWarning(field);
+      }
       for (var i = 0; i < this.medicine.patientMedicineDetail.length; i++) {
         let item = this.medicine.patientMedicineDetail[i];
         for (let p in item) {
@@ -295,6 +298,7 @@ export default {
         if (this.warningResults.hasOwnProperty(propertyName)) {
           if (propertyName === 'patientMedicineDetail') {
             let formList = this.warningResults[propertyName];
+            formList = formList ? formList : [];
             for (let formItem of formList) {
               for (let p in formItem) {
                 if (formItem.hasOwnProperty(p) && formItem[p]) {
@@ -311,7 +315,7 @@ export default {
           }
         }
       }
-
+      console.log('准备提交了');
       // this.displayModal = false;
     },
     initMedicine(item) {
@@ -396,6 +400,12 @@ export default {
     },
     updateWarning(field) {
       var fieldName = field.fieldName;
+
+      // 如果是只读类型字段，则不做校验
+      if (this.getMatchedField(fieldName).readOnlyType === 2) {
+        return;
+      }
+
       var fieldValue = this.medicine[fieldName];
       if (field.must === 1) {
         // must 为 1 代表必填，为 2 代表选填

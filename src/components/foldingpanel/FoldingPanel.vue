@@ -69,8 +69,9 @@ export default {
     }
   },
   mounted() {
-    // 默认让基础信息面板呈展开状态
-    if (this.title === '基础信息' || this.title === '看诊记录' || this.title === '药物方案' || this.title === '关联症状') {
+    // 默认让以下面板呈展开状态（开发过程中随时调整）
+    const DEFAULT_OPEN_LIST = ['基础信息', '看诊记录', '病症情况', '医学量表', '关联症状'];
+    if (DEFAULT_OPEN_LIST.indexOf(this.title) > -1) {
       this.folded = false;
     }
   },
