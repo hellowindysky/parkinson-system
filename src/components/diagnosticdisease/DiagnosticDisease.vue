@@ -22,7 +22,7 @@
             {{warningResults[field.fieldName]}}
           </span>
           <el-input v-if="getUIType(field.fieldName)===1" v-model="copyInfo[field.fieldName]"
-           type="textarea" :rows="2" :class="{'warning': warningResults[field.fieldName]}"
+           type="textarea" :autosize="{ minRows: 2, maxRows: 4}" :class="{'warning': warningResults[field.fieldName]}"
            :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)">
           </el-input>
           <el-select v-else-if="getUIType(field.fieldName)===3" v-model="copyInfo[field.fieldName]"
