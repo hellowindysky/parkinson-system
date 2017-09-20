@@ -83,6 +83,10 @@ const getters = {
   },
   medicineTemplateGroups: (state) => {
     return getGroups(state, 'tc_patient_medicine');
+  },
+  scaleTemplateGroups: (state) => {
+    // 量表
+    return getGroups(state, 'tc_patient_scale');
   }
 };
 
