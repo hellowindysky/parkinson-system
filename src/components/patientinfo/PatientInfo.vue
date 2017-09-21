@@ -248,7 +248,7 @@ export default {
   .info-wrapper {
     position: relative;
     width: 100%;
-    height: calc(~"100% - @{tabs-wrapper-height}");
+    height: calc(~"100% - @{tabs-wrapper-height} - @{vertical-spacing}");
     overflow: hidden;
     .shared-info {
       position: relative;

@@ -3,7 +3,7 @@
     <img class="image" src="~img/profile.png" alt="">
     <div class="name">{{user.realname}}</div>
     <div class="date">{{user.createDate}}</div>
-    <div class="title">{{user.realname}}</div>
+    <div class="title">{{user.status}}</div>
     <div class="type">{{user.status}}</div>
   </div>
 </template>
