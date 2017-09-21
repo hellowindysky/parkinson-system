@@ -24,6 +24,9 @@ import AnalysisConfiguration from 'components/analysisconfiguration/AnalysisConf
 import FeatureDiagnosticInfo from 'components/featureconfiguration/FeatureDiagnosticInfo';
 import FreaturePersonInfo from 'components/featureconfiguration/FreaturePersonInfo';
 
+import UserManagement from 'components/usermanagement/UserManagement';
+import UserInfo from 'components/userinfo/UserInfo';
+
 Vue.use(Router);
 
 export default new Router({
@@ -165,7 +168,17 @@ export default new Router({
             },
             {
               path: 'userManagement',
-              name: 'userManagement'
+              name: 'userManagement',
+              component: UserManagement,
+              children: [
+                {
+                  path: 'list/:id',
+                  components: {
+                    content: UserInfo
+                  },
+                  name: 'userInfo'
+                }
+              ]
             },
             {
               path: 'roleManagement',

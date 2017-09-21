@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="content-wrapper">
+  <div class="user-management">
     <list></list>
     <div class="toggle-list-button" :class="{'hide-list-state': !listDisplay}" @click="toggleList">
       <div class="iconfont" :class="toggleIconClass"></div>
@@ -42,14 +42,17 @@ export default {
   },
   components: {
     List
+  },
+  beforeDestroy() {
+    Bus.$off(this.TOGGLE_LIST_DISPLAY);
   }
 };
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 @import "~styles/variables.less";
 
-.content-wrapper {
+.user-management {
   .list {
     position: absolute;
     left: 0;
