@@ -59,6 +59,9 @@ export default {
         // 然后对这个数组进行加工，让它更扁平化，方便我们在组件中使用
         var processedGroups = [];
         for (var i = 0; i < groups.length; i++) {
+          for (let key in groups[i].fields) {
+            groups[i].fields[key]['tableName'] = table.tableName;
+          }          
           processedGroups.push(groups[i].fields);
         }
         return processedGroups;

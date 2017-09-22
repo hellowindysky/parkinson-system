@@ -52,7 +52,7 @@ export default {
     }
   },
   mounted() {
-    if (this.title === '基础信息') {
+    if (this.title === '基础信息' || this.title === '分组详情' || this.title === '看诊记录') {
       this.folded = false;
     }
   },
