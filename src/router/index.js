@@ -27,6 +27,14 @@ import FreaturePersonInfo from 'components/featureconfiguration/FreaturePersonIn
 import UserManagement from 'components/usermanagement/UserManagement';
 import UserInfo from 'components/userinfo/UserInfo';
 
+import DictionaryManagement from 'components/dictionarymanagement/DictionaryManagement';
+import DictionSecondBar from 'components/dictionsecondbar/DictionSecondBar';
+
+import DictionTreatmentPlan from 'components/dictiontreatmentplan/DictionTreatmentPlan';
+import DictionMedicalScale from 'components/dictionmedicalscale/DictionMedicalScale';
+import DictionInspection from 'components/dictioninspection/DictionInspection';
+import DictionImageDatas from 'components/dictionimagedatas/DictionImageDatas';
+
 Vue.use(Router);
 
 export default new Router({
@@ -186,7 +194,45 @@ export default new Router({
             },
             {
               path: 'dictionaryManagement',
-              name: 'dictionaryManagement'
+              name: 'dictionaryManagement',
+              component: DictionaryManagement,
+              children: [
+                {
+                  path: 'diagnosisdata',
+                  name: 'diagnosisdata',
+                  component: DictionSecondBar,
+                  children: [
+                    {
+                      path: 'dictiontreatmentplan',
+                      name: 'dictiontreatmentplan',
+                      component: DictionTreatmentPlan
+                    },
+                    {
+                      path: 'dictionmedicalscale',
+                      name: 'dictionmedicalscale',
+                      component: DictionMedicalScale
+                    },
+                    {
+                      path: 'dictioninspection',
+                      name: 'dictioninspection',
+                      component: DictionInspection
+                    },
+                    {
+                      path: 'dictionimagedatas',
+                      name: 'dictionimagedatas',
+                      component: DictionImageDatas
+                    }
+                  ]
+                },
+                {
+                  path: 'personalinformationdata',
+                  name: 'personalinformationdata'
+                },
+                {
+                  path: 'patientdatabase',
+                  name: 'patientdatabase'
+                }
+              ]
             }
           ]
         }

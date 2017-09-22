@@ -6,6 +6,7 @@
       <div v-show="mode===READING_MODE" class="button edit-button" @click="edit">编辑</div>
       <div v-show="mode===EDITING_MODE" class="button cancel-button" @click="cancel">取消</div>
       <div v-show="mode===EDITING_MODE" class="button submit-button" @click="submit">完成</div>
+      <div v-show="mode!==EDITING_MODE  && mode!==READING_MODE" class="button add-button">添加</div>
     </div>
     <div class="feature-content" :class="{'folded': folded}">
       <slot></slot>
@@ -21,8 +22,8 @@ export default {
       type: String
     },
     mode: {
-      type: String,
-      default: this.READING_MODE
+      type: String
+      // default: this.READING_MODE
     }
   },
   data() {
@@ -138,6 +139,10 @@ export default {
       &.edit-button {
         right: 10px;
         background-color: @button-color;
+      }
+      &.add-button {
+        right: 10px;
+        background: @font-color;
       }
       &.cancel-button {
         right: 30px + @small-button-width;

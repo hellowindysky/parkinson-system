@@ -2,8 +2,8 @@
   <feature-folding-panel :title="'分组详情'" :mode="mode" @edit="startEditing">
     <div class="attendance-record">
       <div class="small-area-title">新增分组</div>
-      <div class="table-wrapper" v-for="(field, groupNo) in patientGroupAdd" :key="groupNo">
-        <ul class="config-small-table" v-for="(field, groupNo) in patientGroupAdd[groupNo]" :key="groupNo">
+      <div class="table-wrapper" v-for="(field, groupNo) in copyGroupAdd" :key="groupNo">
+        <ul class="config-small-table" v-for="(field, groupNo) in copyGroupAdd[groupNo]" :key="groupNo">
           <li>
             <span>{{handleFileName(field)}}</span>
           </li>
@@ -18,8 +18,8 @@
     </div>
     <div class="attendance-record">
       <div class="small-area-title">组名管理</div>
-      <div class="table-wrapper" v-for="(field, groupNo) in patientGroupName" :key="groupNo">
-        <ul class="config-small-table" v-for="(field, groupNo) in patientGroupName[groupNo]" :key="groupNo">
+      <div class="table-wrapper" v-for="(field, groupNo) in copyGroupName" :key="groupNo">
+        <ul class="config-small-table" v-for="(field, groupNo) in copyGroupName[groupNo]" :key="groupNo">
           <li>
             <span>{{handleFileName(field)}}</span>
           </li>
@@ -34,8 +34,8 @@
     </div>
     <div class="attendance-record">
       <div class="small-area-title">分组说明</div>
-      <div class="table-wrapper" v-for="(field, groupNo) in patientGroupExplain" :key="groupNo">
-        <ul class="config-small-table" v-for="(field, groupNo) in patientGroupExplain[groupNo]" :key="groupNo">
+      <div class="table-wrapper" v-for="(field, groupNo) in copyGroupExplain" :key="groupNo">
+        <ul class="config-small-table" v-for="(field, groupNo) in copyGroupExplain[groupNo]" :key="groupNo">
           <li>
             <span>{{handleFileName(field)}}</span>
           </li>
@@ -50,8 +50,8 @@
     </div>
     <div class="attendance-record">
       <div class="small-area-title">批量操作</div>
-      <div class="table-wrapper" v-for="(field, groupNo) in patientGroupBatchadd" :key="groupNo">
-        <ul class="config-small-table" v-for="(field, groupNo) in patientGroupBatchadd[groupNo]" :key="groupNo">
+      <div class="table-wrapper" v-for="(field, groupNo) in copyGroupBatchadd" :key="groupNo">
+        <ul class="config-small-table" v-for="(field, groupNo) in copyGroupBatchadd[groupNo]" :key="groupNo">
           <li>
             <span>{{handleFileName(field)}}</span>
           </li>
@@ -66,8 +66,8 @@
     </div>
     <div class="attendance-record">
       <div class="small-area-title">患者管理</div>
-      <div class="table-wrapper" v-for="(field, groupNo) in patientGroupPatient" :key="groupNo">
-        <ul class="config-small-table" v-for="(field, groupNo) in patientGroupPatient[groupNo]" :key="groupNo">
+      <div class="table-wrapper" v-for="(field, groupNo) in copyGroupPatient" :key="groupNo">
+        <ul class="config-small-table" v-for="(field, groupNo) in copyGroupPatient[groupNo]" :key="groupNo">
           <li>
             <span>{{handleFileName(field)}}</span>
           </li>
@@ -112,6 +112,11 @@ export default {
   },
   data() {
     return {
+      copyGroupAdd: [],
+      copyGroupName: [],
+      copyGroupExplain: [],
+      copyGroupBatchadd: [],
+      copyGroupPatient: [],
       mode: this.READING_MODE,
       isEdit: true,
       switchWidth: 50
@@ -152,58 +157,63 @@ export default {
     //   this.isEdit = true;
     //   // 点击提交按钮之后的后续
     // },
-    // deepCopy(copyFile, type) {
-    //   var dataTemp = null;
-    //   if (type === 1) {
-    //     dataTemp = this.copyInfoF;
-    //   } else if (type === 2) {
-    //     dataTemp = this.copyInfoS;
-    //   } else if (type === 3) {
-    //     dataTemp = this.copyInfoT;
-    //   }
-    //   for (let i = 0; i < copyFile.length; i++) {
-    //     // this.copyInfoF[i] = {};
-    //     let sonData = copyFile[i];
-    //     for (let key in sonData) {
-    //       this.$set(dataTemp[i], key, sonData[key]);
-    //       if (key === 'must') {
-    //         this.$set(dataTemp[i], 'must', this.changeCheck(sonData['must']));
-    //       } else if (key === 'active') {
-    //         this.$set(dataTemp[i], 'active', this.changeCheck(sonData['active']));
-    //       }
-    //     }
-    //   }
-    // },
-    // deepCopy2(copyFile, type) {
-    //   var dataTemp = null;
-    //   if (type === 1) {
-    //     dataTemp = this.copyInfoF;
-    //     console.log('first');
-    //   } else if (type === 2) {
-    //     dataTemp = this.copyInfoS;
-    //     console.log('second');
-    //   } else if (type === 3) {
-    //     dataTemp = this.copyInfoT;
-    //   }
-    //   for (let i = 0; i < copyFile.length; i++) {
-    //     dataTemp[i] = Object.assign({}, {});
-    //     let sonData = copyFile[i];
-    //     for (let key in sonData) {
-    //       this.$set(dataTemp[i], key, sonData[key]);
-    //       if (key === 'must') {
-    //         this.$set(dataTemp[i], 'must', String(sonData['must']));
-    //       } else if (key === 'active') {
-    //         this.$set(dataTemp[i], 'active', this.changeSwitch(sonData['active']));
-    //       }
-    //     }
-    //   }
-    // },
+    deepCopy(propsData, copyInfo) {
+      for (let i = 0; i < propsData.length; i++) {
+        let sonData = propsData[i];
+        this.$set(copyInfo, i, []);
+        for (let j = 0; j < sonData.length; j++) {
+          let sonData1 = sonData[j];
+          this.$set(copyInfo[i], j, []);
+          for (let key in sonData1) {
+            if (key === 'must') {
+              this.$set(copyInfo[i][j], 'must', this.changeCheck(sonData1['must']));
+            } else if (key === 'active') {
+              this.$set(copyInfo[i][j], 'active', this.changeCheck(sonData1['active']));
+            } else {
+              this.$set(copyInfo[i][j], key, sonData1[key]);
+            }
+          }
+        }
+      }
+    },
     changeCheck(val) {
       if (val === 1) {
         return true;
       } else {
         return false;
       }
+    }
+  },
+  watch: {
+    patientGroupAdd: {
+      handler: function(newVal) {
+        this.deepCopy(newVal, this.copyGroupAdd);
+      },
+      deep: true
+    },
+    patientGroupName: {
+      handler: function(newVal) {
+        this.deepCopy(newVal, this.copyGroupName);
+      },
+      deep: true
+    },
+    patientGroupExplain: {
+      handler: function(newVal) {
+        this.deepCopy(newVal, this.copyGroupExplain);
+      },
+      deep: true
+    },
+    patientGroupBatchadd: {
+      handler: function(newVal) {
+        this.deepCopy(newVal, this.copyGroupBatchadd);
+      },
+      deep: true
+    },
+    patientGroupPatient: {
+      handler: function(newVal) {
+        this.deepCopy(newVal, this.copyGroupPatient);
+      },
+      deep: true
     }
   }
 };

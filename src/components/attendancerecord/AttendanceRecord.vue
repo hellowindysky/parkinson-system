@@ -100,12 +100,18 @@ export default {
     deepCopy(propsData, copyInfo) {
       for (let i = 0; i < propsData.length; i++) {
         let sonData = propsData[i];
-        copyInfo.push([]);
+        this.$set(copyInfo, i, []);
         for (let j = 0; j < sonData.length; j++) {
           let sonData1 = sonData[j];
-          copyInfo[i].push([]);
+          this.$set(copyInfo[i], j, []);
           for (let key in sonData1) {
-            this.$set(copyInfo[i][j], key, sonData1[key]);
+            if (key === 'must') {
+              this.$set(copyInfo[i][j], 'must', this.changeCheck(sonData1['must']));
+            } else if (key === 'active') {
+              this.$set(copyInfo[i][j], 'active', this.changeCheck(sonData1['active']));
+            } else {
+              this.$set(copyInfo[i][j], key, sonData1[key]);
+            }
           }
         }
       }

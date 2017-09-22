@@ -61,7 +61,7 @@ export default {
         for (var i = 0; i < groups.length; i++) {
           for (let key in groups[i].fields) {
             groups[i].fields[key]['tableName'] = table.tableName;
-          }          
+          }
           processedGroups.push(groups[i].fields);
         }
         return processedGroups;
