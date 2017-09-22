@@ -87,7 +87,7 @@
         </div>
         <div class="sub-title-bar">
           <h4 class="sub-title">管理下属</h4>
-          <div class="button">添加</div>
+          <div class="button" v-show="mode===EDITING_MODE">添加</div>
         </div>
         <div class="member-panel">
           <el-tag v-for="tag in tags" class="member" :key="tag.name" :closable="mode===EDITING_MODE" :type="'primary'" :close-transition="false"
