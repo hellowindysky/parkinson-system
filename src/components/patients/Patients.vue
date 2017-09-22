@@ -15,7 +15,7 @@ import List from 'components/list/List';
 export default {
   data() {
     return {
-      listDisplay: false
+      listDisplay: true
     };
   },
   computed: {

@@ -1,10 +1,10 @@
 <template lang="html">
   <div class="item" :class="{'current': selected}" @click="select">
     <img class="image" src="~img/profile.png" alt="">
-    <div class="name">{{role.realname}}</div>
+    <div class="name">{{role.roleName}}</div>
     <div class="date">{{role.createDate}}</div>
-    <div class="count">{{role.count}}</div>
-    <div class="type">{{role.status}}</div>
+    <div class="count">{{role.userNum}}人</div>
+    <div class="type">{{type}}</div>
   </div>
 </template>
 
@@ -26,6 +26,11 @@ export default {
       } else {
         return false;
       }
+    },
+    type() {
+      var types = ['无', '默认', '自定义'];
+      var index = this.role.roleType ? this.role.roleType : 0;
+      return types[index] ? types[index] : '??';
     }
   },
   mounted() {
@@ -34,7 +39,7 @@ export default {
     select() {
       this.$router.push({
         name: 'roleInfo',
-        params: { id: this.role.id }
+        params: { id: this.role.roleId }
       });
     }
   }
