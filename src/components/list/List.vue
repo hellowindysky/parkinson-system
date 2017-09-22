@@ -16,14 +16,17 @@
       <div v-if="this.listType === 'patients'">
         <patient-list-item class="item" v-for="patient in myPatientsList" :patient="patient" :key="patient.patientId"></patient-list-item>
       </div>
-      <div class="list-area" v-else-if="this.listType === 'groups'">
+      <div v-else-if="this.listType === 'groups'">
         <group-list-item :id="90001"></group-list-item>
         <group-list-item :id="90002"></group-list-item>
         <group-list-item :id="90003"></group-list-item>
       </div>
-      <div class="list-area" v-else-if="this.listType === 'otherPatients'">
+      <div v-else-if="this.listType === 'otherPatients'">
         <patient-list-item :id="20001"></patient-list-item>
         <patient-list-item :id="20002"></patient-list-item>
+      </div>
+      <div v-else-if="this.listType === 'users'">
+        <user-list-item class="item" v-for="user in userList" :user="user" :key="user.id"></user-list-item>
       </div>
     </div>
 
@@ -118,6 +121,38 @@
           <el-button type="primary" @click="submitForm('filterPatientsForm')" class="button apply">应用</el-button>
         </el-form-item>
       </el-form>
+
+      <el-form class="filter-panel" :model="filterUsersForm" :rules="rules" ref="filterUsersForm"
+      label-width="20%"  v-show="panelDisplay" v-if="this.listType === 'users'">
+        <el-form-item label="分组" prop="type" class="item">
+          <el-select v-model="filterUsersForm.type">
+            <el-option label="全部" value="all"></el-option>
+            <el-option label="管理员" value="admin"></el-option>
+            <el-option label="普通用户" value="normal"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="职称" prop="title" class="item">
+          <el-select v-model="filterUsersForm.title">
+            <el-option label="全部" value="all"></el-option>
+            <el-option label="主任医师" value="chiefPhysician"></el-option>
+            <el-option label="副主任医师" value="associateChiefPhysician"></el-option>
+            <el-option label="主治医师" value="attendingPhysician"></el-option>
+            <el-option label="医师" value="physician"></el-option>
+            <el-option label="住院医师" value="residentPhysician"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="地区" prop="status" class="item">
+          <el-select v-model="filterUsersForm.status">
+            <el-option label="不限" value="all"></el-option>
+            <el-option label="启用" value="on"></el-option>
+            <el-option label="停用" value="off"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item class="item" label-width="0">
+          <el-button @click="resetForm('filterUsersForm')" class="button reset">重置</el-button>
+          <el-button type="primary" @click="submitForm('filterUsersForm')" class="button apply">应用</el-button>
+        </el-form-item>
+      </el-form>
     </transition>
   </div>
 </template>
@@ -127,8 +162,10 @@ import Ps from 'perfect-scrollbar';
 
 import patientListItem from 'components/patientitem/PatientItem';
 import groupListItem from 'components/groupitem/GroupItem';
+import userListItem from 'components/useritem/UserItem';
 
 import { getPatientList } from 'api/patient';
+import { getUserList } from 'api/user';
 
 export default {
   data() {
@@ -152,6 +189,7 @@ export default {
     return {
       searchInput: '',
       myPatientsList: [],
+      userList: [],
       panelDisplay: false,
       filterPatientsForm: {
         group: 'all',
@@ -165,6 +203,11 @@ export default {
       },
       filterGroupsForm: {
         category: '不限'
+      },
+      filterUsersForm: {
+        type: 'all',
+        title: 'all',
+        status: 'on'
       },
       rules: {
         minCourseYear: [
@@ -192,6 +235,8 @@ export default {
         return 'groups';
       } else if (/^\/patients\/otherList/.test(path)) {
         return 'otherPatients';
+      } else if (/^\/configuration\/userManagement/.test(path)) {
+        return 'users';
       }
     },
     totalNumText() {
@@ -201,6 +246,8 @@ export default {
         return '分组：19个';
       } else if (this.listType === 'otherPatients') {
         return '患者：2568人';
+      } else if (this.listType === 'users') {
+        return '用户：86人';
       }
     },
     togglePanelIcon() {
@@ -221,6 +268,7 @@ export default {
 
     // 如果在某个指定了 id 的页面进行刷新，checkRoute函数内的更新列表数据，不会执行，这个时候就需要手动更新
     this.updateMyPatientsList();
+    this.updateUserList();
   },
   methods: {
     search() {
@@ -229,6 +277,13 @@ export default {
     updateMyPatientsList(cb) {
       getPatientList().then((data) => {
         this.myPatientsList = data;
+        // 如果有回调函数作为参数传递进来了，则执行该函数
+        cb && cb();
+      });
+    },
+    updateUserList(cb) {
+      getUserList().then((data) => {
+        this.userList = data.userModelList ? data.userModelList : [];
         // 如果有回调函数作为参数传递进来了，则执行该函数
         cb && cb();
       });
@@ -271,12 +326,22 @@ export default {
       } else if (/^\/patients\/otherlist\/?$/.test(path)) {
         // TODO 获取科室患者列表的所有id，然后根据第一个id进行跳转
         this.$router.replace({ name: 'otherPatientInfo', params: { id: 20001 }});
+
+      } else if (/^\/configuration\/userManagement\/?$/.test(path)) {
+        this.updateUserList(() => {
+          var firstUserId = this.userList.length > 0 ? this.userList[0].id : 0;
+          this.$router.replace({
+            name: 'userInfo',
+            params: { id: firstUserId }
+          });
+        });
       }
     }
   },
   components: {
     patientListItem,
-    groupListItem
+    groupListItem,
+    userListItem
   },
   watch: {
     $route() {

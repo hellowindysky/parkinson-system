@@ -331,7 +331,7 @@ export default {
     Bus.$on(this.TOGGLE_LIST_DISPLAY, this.updateScrollbar);
 
     setTimeout(() => {
-      console.log(this.diagnosticDisease);
+      // console.log(this.diagnosticDisease);
       // console.log(this.diagnosticDiseaseTemplate);
       // console.log(this.diagnosticDiseaseDictionary);
       // console.log(this.diagnosticDiseaseMsTemplate);
@@ -360,7 +360,7 @@ export default {
     templateLength: function() {
       // 如果 template 数据还没到位，那么补齐就会没有效果，所以在获取到 template 后，也要做一次补齐操作
       this.supplementCopyInfo();
-      console.log(this.copyInfo);
+      // console.log(this.copyInfo);
     }
   }
 };

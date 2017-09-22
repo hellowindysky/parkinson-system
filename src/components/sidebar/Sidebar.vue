@@ -48,6 +48,28 @@
         档案管理
       </li>
     </ul>
+    <li class="item" :class="{'current-item': currentItem === 'institutionConfiguration'}" @click="toggleInstitutionList">
+      <div class="menu-icon iconfont icon-configuration"></div>
+      <div class="title">机构配置</div>
+      <div class="fold-icon iconfont" :class="showConfigurationList ? 'icon-up' : 'icon-down'"></div>
+    </li>
+    <ul class="sub-item-list" :class="{'folded': !showInstitutionList}">
+      <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'institutionInfo'}" @click="chooseInstitutionInfo">
+        机构信息
+      </li>
+      <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'functionConfiguration'}" @click="chooseFunctionConfiguration">
+        功能配置
+      </li>
+      <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'userConfiguration'}" @click="chooseUserConfiguration">
+        用户配置
+      </li>
+      <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'roleConfiguration'}" @click="chooseRoleConfiguration">
+        角色配置
+      </li>
+      <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'projectConfiguration'}" @click="chooseProjectConfiguration">
+        课题配置
+      </li>
+    </ul>
   </ul>
 </template>
 
@@ -57,7 +79,8 @@ export default {
     return {
       showPatientsList: false,
       showAnalyticsList: false,
-      showConfigurationList: false
+      showConfigurationList: false,
+      showInstitutionList: false
     };
   },
   computed: {
@@ -99,6 +122,9 @@ export default {
     },
     toggleConfigurationList() {
       this.showConfigurationList = !this.showConfigurationList;
+    },
+    toggleInstitutionList() {
+      this.showInstitutionList = !this.showInstitutionList;
     },
     chooseMyPatients() {
       // 如果当前路径不是以“/patients/list”开头了，才发生跳转
@@ -143,7 +169,12 @@ export default {
       if (!/^\/configuration\/dictionaryManagement/.test(this.$route.path)) {
         this.$router.push({name: 'dictionaryManagement'});
       }
-    }
+    },
+    chooseInstitutionInfo() {},
+    chooseFunctionConfiguration() {},
+    chooseUserConfiguration() {},
+    chooseRoleConfiguration() {},
+    chooseProjectConfiguration() {}
   },
   mounted() {
     // 初始化该组件时，自动跳转到病患管理
