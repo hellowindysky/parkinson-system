@@ -42,6 +42,9 @@ export default {
   },
   components: {
     List
+  },
+  beforeDestroy() {
+    Bus.$off(this.TOGGLE_LIST_DISPLAY);
   }
 };
 </script>

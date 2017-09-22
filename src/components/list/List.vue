@@ -28,6 +28,9 @@
       <div v-else-if="this.listType === 'users'">
         <user-list-item class="item" v-for="user in userList" :user="user" :key="user.id"></user-list-item>
       </div>
+      <div v-else-if="this.listType === 'roles'">
+        <role-list-item class="item" v-for="role in roleList" :role="role" :key="role.id"></role-list-item>
+      </div>
     </div>
 
     <div class="function-area">
@@ -163,9 +166,11 @@ import Ps from 'perfect-scrollbar';
 import patientListItem from 'components/patientitem/PatientItem';
 import groupListItem from 'components/groupitem/GroupItem';
 import userListItem from 'components/useritem/UserItem';
+import roleListItem from 'components/roleitem/RoleItem';
 
 import { getPatientList } from 'api/patient';
 import { getUserList } from 'api/user';
+import { getRoleList } from 'api/user';
 
 export default {
   data() {
@@ -190,6 +195,7 @@ export default {
       searchInput: '',
       myPatientsList: [],
       userList: [],
+      roleList: [],
       panelDisplay: false,
       filterPatientsForm: {
         group: 'all',
@@ -237,6 +243,8 @@ export default {
         return 'otherPatients';
       } else if (/^\/configuration\/userManagement/.test(path)) {
         return 'users';
+      } else if (/^\/configuration\/roleManagement/.test(path)) {
+        return 'roles';
       }
     },
     totalNumText() {
@@ -248,6 +256,8 @@ export default {
         return '患者：2568人';
       } else if (this.listType === 'users') {
         return '用户：86人';
+      } else if (this.listType === 'roles') {
+        return '角色：3种';
       }
     },
     togglePanelIcon() {
@@ -284,6 +294,13 @@ export default {
     updateUserList(cb) {
       getUserList().then((data) => {
         this.userList = data.userModelList ? data.userModelList : [];
+        // 如果有回调函数作为参数传递进来了，则执行该函数
+        cb && cb();
+      });
+    },
+    updateRoleList(cb) {
+      getRoleList().then((data) => {
+        this.roleList = data.roleModelList ? data.roleModelList : [];
         // 如果有回调函数作为参数传递进来了，则执行该函数
         cb && cb();
       });
@@ -335,13 +352,22 @@ export default {
             params: { id: firstUserId }
           });
         });
+      } else if (/^\/configuration\/roleManagement\/?$/.test(path)) {
+        this.updateRoleList(() => {
+          var firstRoleId = this.roleList.length > 0 ? this.roleList[0].id : 0;
+          this.$router.replace({
+            name: 'roleInfo',
+            params: { id: firstRoleId }
+          });
+        });
       }
     }
   },
   components: {
     patientListItem,
     groupListItem,
-    userListItem
+    userListItem,
+    roleListItem
   },
   watch: {
     $route() {

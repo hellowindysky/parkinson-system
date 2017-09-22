@@ -64,3 +64,17 @@ export function getUserList() {
 
   return encapsulatePromise(url, request);
 }
+
+export function getRoleList() {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2
+  };
+
+  var url = 'http://apitest.gyenno.com/usermgr/queryRoleList';
+
+  return encapsulatePromise(url, request);
+}
