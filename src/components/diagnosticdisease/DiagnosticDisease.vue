@@ -351,6 +351,9 @@ export default {
     FoldingPanel
   },
   watch: {
+    $route() {
+      this.updateScrollbar();
+    },
     diagnosticDisease: function() {
       // 每次传过来的数据发生变化，就重新初始化 copyInfo
       this.copyInfo = Object.assign({}, this.diagnosticDisease);
