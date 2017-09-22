@@ -6,6 +6,7 @@
       <div v-show="mode===READING_MODE" class="button edit-button" @click="edit">编辑</div>
       <div v-show="mode===EDITING_MODE" class="button cancel-button" @click="cancel">取消</div>
       <div v-show="mode===EDITING_MODE" class="button submit-button" @click="submit">完成</div>
+      <div v-show="mode!==EDITING_MODE  && mode!==READING_MODE" class="button add-button">添加</div>
     </div>
     <div class="feature-content" :class="{'folded': folded}">
       <slot></slot>
@@ -21,8 +22,8 @@ export default {
       type: String
     },
     mode: {
-      type: String,
-      default: this.READING_MODE
+      type: String
+      // default: this.READING_MODE
     }
   },
   data() {
@@ -52,7 +53,7 @@ export default {
     }
   },
   mounted() {
-    if (this.title === '基础信息') {
+    if (this.title === '基础信息' || this.title === '分组详情' || this.title === '看诊记录') {
       this.folded = false;
     }
   },
@@ -72,14 +73,15 @@ export default {
 @import "~styles/variables.less";
 @panel-header-height: 40px;
 @panel-top-bottom-margin: 10px;
-@margin-right: 20px;
+
 .feature-panel-wrapper {
   position: relative;
   background-color: @background-color;
   margin: @panel-top-bottom-margin 0;
+  margin-right: 10px;
   font-size: 0;
   overflow: hidden;
-  margin-right: @margin-right;
+  
   .feature-header {
     position: relative;
     height: @panel-header-height;
@@ -138,6 +140,10 @@ export default {
       &.edit-button {
         right: 10px;
         background-color: @button-color;
+      }
+      &.add-button {
+        right: 10px;
+        background: @font-color;
       }
       &.cancel-button {
         right: 30px + @small-button-width;
