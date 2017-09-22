@@ -174,6 +174,7 @@ export default {
   mounted() {
     Bus.$on(this.TOGGLE_LIST_DISPLAY, this.updateScrollbar);
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
+    this.updateScrollbar();
   },
   beforeDestroy() {
     Bus.$off(this.TOGGLE_LIST_DISPLAY, this.updateScrollbar);

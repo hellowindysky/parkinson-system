@@ -156,6 +156,21 @@
           <el-button type="primary" @click="submitForm('filterUsersForm')" class="button apply">应用</el-button>
         </el-form-item>
       </el-form>
+
+      <el-form class="filter-panel" :model="filterRolesForm" :rules="rules" ref="filterRolesForm"
+      label-width="20%"  v-show="panelDisplay" v-if="this.listType === 'roles'">
+        <el-form-item label="分类" prop="type" class="item">
+          <el-select v-model="filterUsersForm.type">
+            <el-option label="全部" value="all"></el-option>
+            <el-option label="默认" value="default"></el-option>
+            <el-option label="自定义" value="custom"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item class="item" label-width="0">
+          <el-button @click="resetForm('filterRolesForm')" class="button reset">重置</el-button>
+          <el-button type="primary" @click="submitForm('filterRolesForm')" class="button apply">应用</el-button>
+        </el-form-item>
+      </el-form>
     </transition>
   </div>
 </template>
@@ -214,6 +229,9 @@ export default {
         type: 'all',
         title: 'all',
         status: 'on'
+      },
+      filterRolesForm: {
+        type: 'all'
       },
       rules: {
         minCourseYear: [
