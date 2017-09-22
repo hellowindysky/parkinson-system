@@ -151,8 +151,10 @@ export default {
 @import "~styles/variables.less";
 @tabs-wrapper-height: 15px;
 @table-head-height: 57px;
+
 .scroll-wrapper {
   position: relative;
+  margin-right: 20px;
   height: calc(~"100% - @{table-head-height}");
   .freature-person-conf-wrapper {
     position: relative;
@@ -161,9 +163,9 @@ export default {
     height: 100%;
     .ps__scrollbar-y-rail {
       position: absolute;
-      top: 0;
+      top: 0px;
       width: 15px;
-      right: 12px;
+      right: -2px;
       padding: 0 3px;
       box-sizing: border-box;
       opacity: 0.3;

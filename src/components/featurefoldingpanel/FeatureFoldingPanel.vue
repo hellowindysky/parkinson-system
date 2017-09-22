@@ -73,14 +73,15 @@ export default {
 @import "~styles/variables.less";
 @panel-header-height: 40px;
 @panel-top-bottom-margin: 10px;
-@margin-right: 20px;
+
 .feature-panel-wrapper {
   position: relative;
   background-color: @background-color;
   margin: @panel-top-bottom-margin 0;
+  margin-right: 10px;
   font-size: 0;
   overflow: hidden;
-  margin-right: @margin-right;
+  
   .feature-header {
     position: relative;
     height: @panel-header-height;
