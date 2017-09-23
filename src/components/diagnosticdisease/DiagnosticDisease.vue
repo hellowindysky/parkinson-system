@@ -257,7 +257,6 @@ export default {
       this.mutableMode = this.EDITING_MODE;
     },
     cancel() {
-      // this.copyInfo = Object.assign({}, this.diagnosticDisease);
       this.copyInfo = {};
       vueCopy(this.diagnosticDisease, this.copyInfo);
       console.log(this.diagnosticDisease);
@@ -276,6 +275,16 @@ export default {
         if (this.warningResults.hasOwnProperty(p)) {
           if (this.warningResults[p]) {
             return;
+          }
+        }
+      }
+
+      // 把 this.copyInfo.patientSymptom 下的日期对象转换为符合传输格式的字符串
+      for (let symptom of this.copyInfo.patientSymptom) {
+        let timeNameList = ['ariseTime', 'ariseTimeLeftUp', 'ariseTimeLeftDown', 'ariseTimeRightUp', 'ariseTimeRightDown'];
+        for (let timeName of timeNameList) {
+          if (symptom.hasOwnProperty(timeName) && symptom[timeName] !== '') {
+            symptom[timeName] = Util.simplifyDate(symptom[timeName]);
           }
         }
       }
@@ -422,7 +431,6 @@ export default {
     },
     diagnosticDisease: function() {
       // 每次传过来的数据发生变化，就重新初始化 copyInfo
-      // this.copyInfo = Object.assign({}, this.diagnosticDisease);
       this.copyInfo = {};
       vueCopy(this.diagnosticDisease, this.copyInfo);
 
