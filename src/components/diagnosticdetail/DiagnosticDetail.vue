@@ -95,6 +95,9 @@ export default {
     goBack() {
       // 按下返回按钮，实际上是修改的路由地址 ———— 因为我们是监控路由地址来决定这个详情窗口是否显示的
       this.$router.push({name: 'diagnosticInfo'});
+
+      // 同时，告诉它的子页面，放弃当前修改
+      Bus.$emit(this.QUIT_DIAGNOSTIC_DETAIL);
     },
     closePanel() {
       this.displayDetail = false;

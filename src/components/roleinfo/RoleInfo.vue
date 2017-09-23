@@ -636,9 +636,6 @@ export default {
       this.mode = this.READING_MODE;
       this.updateScrollbar();
     },
-    handleClose(tag) {
-      this.tags.splice(this.tags.indexOf(tag), 1);
-    },
     updateScrollbar() {
       this.$nextTick(() => {
         Ps.destroy(this.$refs.scrollArea);

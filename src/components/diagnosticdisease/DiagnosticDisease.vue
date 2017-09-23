@@ -46,37 +46,33 @@
             </tr>
             <tr class="row" v-for="symptom in msSymptom">
               <td v-for="field in diagnosticDiseaseMsTemplate" class="col" :class="getClass(field.fieldName)">
-                {{getFieldValue(symptom, field.fieldName)}}
+                <span v-if="mutableMode===READING_MODE">
+                  {{getFieldValue(symptom, field.fieldName)}}
+                </span>
+                <span v-else-if="mutableMode===EDITING_MODE">
+                  <span v-if="field.fieldName==='symptomTypeId'">
+                    <span class="delete-button" @click="deleteSymptom(symptom)"> Θ </span>
+                    {{getFieldValue(symptom, field.fieldName)}}
+                  </span>
+                  <span v-else-if="getUIType(field.fieldName)===1">
+                    <el-input v-model="symptom[field.fieldName]" :class="{'warning': !symptom[field.fieldName]}"
+                     :placeholder="getMatchedField(field.fieldName).cnFieldDesc"></el-input>
+                  </span>
+                  <span v-else-if="getUIType(field.fieldName)===3">
+                    <el-select v-model="symptom[field.fieldName]" :class="{'warning': !symptom[field.fieldName]}"
+                     :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
+                      <el-option label="是" :value="'是'"></el-option>
+                      <el-option label="否" :value="'否'"></el-option>
+                    </el-select>
+                  </span>
+                  <span v-else-if="getUIType(field.fieldName)===6">
+                    <el-date-picker v-model="symptom[field.fieldName]" type="date" :class="{'warning': !symptom[field.fieldName]}"
+                     format="yyyy-MM-dd" :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
+                    </el-date-picker>
+                  </span>
+                </span>
               </td>
             </tr>
-            <!-- <tr class="row">
-              <td class="col col-name">运动波动-开关现象</td>
-              <td class="col col-time">
-                <el-date-picker v-model="test" type="date" :class="{'warning': false}" placeholder="请输入日期">
-                </el-date-picker>
-              </td>
-              <td class="col col-time">
-                <el-date-picker v-model="test" type="date" :class="{'warning': true}" placeholder="请输入日期">
-                </el-date-picker>
-              </td>
-              <td class="col col-time">
-                <el-date-picker v-model="test" type="date" :class="{'warning': false}" placeholder="请输入日期">
-                </el-date-picker>
-              </td>
-              <td class="col col-time">
-                <el-date-picker v-model="test" type="date" :class="{'warning': false}" placeholder="请输入日期">
-                </el-date-picker>
-              </td>
-              <td class="col col-select">
-                <el-select v-model="test" :class="{'warning': false}" placeholder="请选择">
-                  <el-option label="选项1" value="0"></el-option>
-                  <el-option label="选项2" value="1"></el-option>
-                </el-select>
-              </td>
-              <td class="col col-remarks">
-                <el-input v-model="test" :class="{'warning': true}" placeholder="请输入备注"></el-input>
-              </td>
-            </tr> -->
           </table>
         </div>
       </div>
@@ -93,7 +89,31 @@
             </tr>
             <tr class="row" v-for="symptom in mcSymptom">
               <td v-for="field in diagnosticDiseaseMcTemplate" class="col" :class="getClass(field.fieldName)">
-                {{getFieldValue(symptom, field.fieldName)}}
+                <span v-if="mutableMode===READING_MODE">
+                  {{getFieldValue(symptom, field.fieldName)}}
+                </span>
+                <span v-else-if="mutableMode===EDITING_MODE">
+                  <span v-if="field.fieldName==='symptomTypeId'">
+                    <span class="delete-button" @click="deleteSymptom(symptom)"> Θ </span>
+                    {{getFieldValue(symptom, field.fieldName)}}
+                  </span>
+                  <span v-else-if="getUIType(field.fieldName)===1">
+                    <el-input v-model="symptom[field.fieldName]" :class="{'warning': !symptom[field.fieldName]}"
+                     :placeholder="getMatchedField(field.fieldName).cnFieldDesc"></el-input>
+                  </span>
+                  <span v-else-if="getUIType(field.fieldName)===3">
+                    <el-select v-model="symptom[field.fieldName]" :class="{'warning': !symptom[field.fieldName]}"
+                     :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
+                      <el-option label="是" :value="'是'"></el-option>
+                      <el-option label="否" :value="'否'"></el-option>
+                    </el-select>
+                  </span>
+                  <span v-else-if="getUIType(field.fieldName)===6">
+                    <el-date-picker v-model="symptom[field.fieldName]" type="date" :class="{'warning': !symptom[field.fieldName]}"
+                     format="yyyy-MM-dd" :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
+                    </el-date-picker>
+                  </span>
+                </span>
               </td>
             </tr>
           </table>
@@ -112,7 +132,31 @@
             </tr>
             <tr class="row" v-for="symptom in nmsSymptom">
               <td v-for="field in diagnosticDiseaseNmsTemplate" class="col" :class="getClass(field.fieldName)">
-                {{getFieldValue(symptom, field.fieldName)}}
+                <span v-if="mutableMode===READING_MODE">
+                  {{getFieldValue(symptom, field.fieldName)}}
+                </span>
+                <span v-else-if="mutableMode===EDITING_MODE">
+                  <span v-if="field.fieldName==='symptomTypeId'">
+                    <span class="delete-button" @click="deleteSymptom(symptom)"> Θ </span>
+                    {{getFieldValue(symptom, field.fieldName)}}
+                  </span>
+                  <span v-else-if="getUIType(field.fieldName)===1">
+                    <el-input v-model="symptom[field.fieldName]" :class="{'warning': !symptom[field.fieldName]}"
+                     :placeholder="getMatchedField(field.fieldName).cnFieldDesc"></el-input>
+                  </span>
+                  <span v-else-if="getUIType(field.fieldName)===3">
+                    <el-select v-model="symptom[field.fieldName]" :class="{'warning': !symptom[field.fieldName]}"
+                     :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
+                      <el-option label="是" :value="'是'"></el-option>
+                      <el-option label="否" :value="'否'"></el-option>
+                    </el-select>
+                  </span>
+                  <span v-else-if="getUIType(field.fieldName)===6">
+                    <el-date-picker v-model="symptom[field.fieldName]" type="date" :class="{'warning': !symptom[field.fieldName]}"
+                     format="yyyy-MM-dd" :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
+                    </el-date-picker>
+                  </span>
+                </span>
               </td>
             </tr>
           </table>
@@ -152,6 +196,10 @@ export default {
       'symptomType',
       'typeGroup'
     ]),
+    totalDictionary() {
+      return [].concat(this.diagnosticDiseaseDictionary, this.diagnosticDiseaseMsDictionary,
+      this.diagnosticDiseaseMcDictionary, this.diagnosticDiseaseNmsDictionary);
+    },
     allSymptom() {
       return (this.copyInfo && this.copyInfo.patientSymptom) ? this.copyInfo.patientSymptom : [];
     },
@@ -209,6 +257,8 @@ export default {
     },
     cancel() {
       this.copyInfo = Object.assign({}, this.diagnosticDisease);
+      console.log(this.diagnosticDisease);
+      console.log(this.copyInfo);
       this.warningResults = {};
       this.mutableMode = this.READING_MODE;
     },
@@ -229,6 +279,7 @@ export default {
 
       // 到这里，就可以准备提交数据了
       // TODO 提交数据
+      console.log(this.copyInfo);
       this.mutableMode = this.READING_MODE;
     },
     updateScrollbar() {
@@ -298,15 +349,24 @@ export default {
         return symptom[fieldName];
       }
     },
+    deleteSymptom(item) {
+      // 删除 this.copyInfo.patientSymptom 中的 item 对象
+      for (var i = 0; i < this.copyInfo.patientSymptom.length; i++) {
+        if (this.copyInfo.patientSymptom[i].symptomTypeId === item.symptomTypeId) {
+          this.copyInfo.patientSymptom.splice(i, 1);
+          return;
+        }
+      }
+    },
     getMatchedField(fieldName) {
       // 在字典项中查询该名字所对应的字段，从而方便我们得到该字段的详细信息
-      return Util.getElement('fieldName', fieldName, this.diagnosticDiseaseDictionary);
+      return Util.getElement('fieldName', fieldName, this.totalDictionary);
     },
     getUIType(fieldName) {
       return this.getMatchedField(fieldName).uiType;
     },
     getOptions(fieldName) {
-      var dictionaryField = Util.getElement('fieldName', fieldName, this.diagnosticDiseaseDictionary);
+      var dictionaryField = Util.getElement('fieldName', fieldName, this.totalDictionary);
       var fieldEnumId = dictionaryField.fieldEnumId;
       var types = Util.getElement('typegroupcode', fieldEnumId, this.typeGroup).types;
       types = types ? types : [];
@@ -329,6 +389,7 @@ export default {
 
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
     Bus.$on(this.TOGGLE_LIST_DISPLAY, this.updateScrollbar);
+    Bus.$on(this.QUIT_DIAGNOSTIC_DETAIL, this.cancel);
 
     setTimeout(() => {
       // console.log(this.diagnosticDisease);
@@ -341,11 +402,13 @@ export default {
       // console.log(this.diagnosticDiseaseMcDictionary);
       // console.log(this.diagnosticDiseaseNmsDictionary);
       // console.log(this.symptomType);
+      // console.log(this.totalDictionary);
     }, 3000);
   },
   beforeDestroy() {
     Bus.$off(this.SCREEN_SIZE_CHANGE);
     Bus.$off(this.TOGGLE_LIST_DISPLAY);
+    Bus.$off(this.QUIT_DIAGNOSTIC_DETAIL);
   },
   components: {
     FoldingPanel
@@ -363,7 +426,6 @@ export default {
     templateLength: function() {
       // 如果 template 数据还没到位，那么补齐就会没有效果，所以在获取到 template 后，也要做一次补齐操作
       this.supplementCopyInfo();
-      // console.log(this.copyInfo);
     }
   }
 };
@@ -484,10 +546,12 @@ export default {
         .row {
           height: 45px;
           &.first-row {
-            background-color: @light-gray-color;
+            background-color: @screen-color;
             height: 30px;
+            line-height: 30px;
           }
           .col {
+            position: relative;
             font-size: @normal-font-size;
             text-align: center;
             &.col-name {
@@ -506,6 +570,17 @@ export default {
               color: red;
               font-size: 20px;
               vertical-align: middle;
+            }
+            .delete-button {
+              position: absolute;
+              left: 10px;
+              cursor: pointer;
+              &:hover {
+                opacity: 0.8;
+              }
+              &:active {
+                opacity: 0.9;
+              }
             }
             .el-input {
               margin-left: 2%;

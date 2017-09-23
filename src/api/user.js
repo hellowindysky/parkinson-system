@@ -63,7 +63,7 @@ export function getUserList() {
   var url = 'http://apitest.gyenno.com/usermgr/queryUserList';
 
   return encapsulatePromise(url, request);
-}
+};
 
 export function getRoleList() {
   var request = {
@@ -71,10 +71,22 @@ export function getRoleList() {
     "accountNumber": "15527231713",
     "userType": 2,
     "orgId": 34,
-    "orgType": 2
+    "orgType": 2,
+    "pageNo": 1,
+    "pageSize": 10,
+    "roleIdList": [
+      "402831815996c167015996ca6cdb0020",
+      "402831815ad9e7e7015ad9ecfab90009",
+      "402831815bccdd69015bccea151f0006"
+    ],
+    "roleName": "%",
+    "roleType": 2,
+    "org": {
+      "id": "8a9e2d385ea7264f015ea8361036008b"
+    }
   };
 
-  var url = 'http://apitest.gyenno.com/usermgr/queryRoleList';
+  var url = 'http://apitest.gyenno.com/pdms/queryRoleList';
 
   return encapsulatePromise(url, request);
-}
+};

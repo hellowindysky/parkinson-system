@@ -311,14 +311,14 @@ export default {
     },
     updateUserList(cb) {
       getUserList().then((data) => {
-        this.userList = data.userModelList ? data.userModelList : [];
+        this.userList = data.userRoles ? data.userRoles : [];
         // 如果有回调函数作为参数传递进来了，则执行该函数
         cb && cb();
       });
     },
     updateRoleList(cb) {
       getRoleList().then((data) => {
-        this.roleList = data.roleModelList ? data.roleModelList : [];
+        this.roleList = data.userRoleDTOList ? data.userRoleDTOList : [];
         // 如果有回调函数作为参数传递进来了，则执行该函数
         cb && cb();
       });
@@ -372,7 +372,7 @@ export default {
         });
       } else if (/^\/configuration\/roleManagement\/?$/.test(path)) {
         this.updateRoleList(() => {
-          var firstRoleId = this.roleList.length > 0 ? this.roleList[0].id : 0;
+          var firstRoleId = this.roleList.length > 0 ? this.roleList[0].roleId : 0;
           this.$router.replace({
             name: 'roleInfo',
             params: { id: firstRoleId }

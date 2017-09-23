@@ -3,8 +3,8 @@
     <img class="image" src="~img/profile.png" alt="">
     <div class="name">{{user.realname}}</div>
     <div class="date">{{user.createDate}}</div>
-    <div class="title">{{user.status}}</div>
-    <div class="type">{{user.status}}</div>
+    <div class="title">{{title}}</div>
+    <div class="type">{{type}}</div>
   </div>
 </template>
 
@@ -26,6 +26,17 @@ export default {
       } else {
         return false;
       }
+    },
+    title() {
+      // 1/主任医师 2/副主任医师 3/主治医师 4/医师 5/住院医师
+      var allTitles = ['无', '主任医师', '副主任医师', '主治医师', '医师', '住院医师'];
+      var index = this.user.jobtitle ? this.user.jobtitle : 0;
+      return allTitles[index];
+    },
+    type() {
+      var roleName = this.user.roleName ? this.user.roleName : '';
+      var types = roleName.split(',');
+      return types[0] ? types[0] : '无';   // 现在的角色类型有多个，默认显示第一个
     }
   },
   mounted() {
