@@ -116,7 +116,7 @@ export default {
     .iconfont {
       position: absolute;
       display: inline-block;
-      left: 110px;
+      left: 120px;
       top: 0;
       height: @panel-header-height;
       line-height: @panel-header-height;

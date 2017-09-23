@@ -1,17 +1,17 @@
 <template>
 <div class="scroll-wrapper">
   <div class="freature-person-conf-wrapper" ref="scrollArea">
-    <feature-folding-panel class="common-drugs" :title="'医学量表'" >
+    <feature-folding-panel class="common-drugs" :title="'个人史'" >
       <el-table :data="tableData">
         <el-table-column prop="xuhao" label="序号" align="center" width="80">
         </el-table-column>
-        <el-table-column prop="name" label="量表名称" align="center" width="250">
+        <el-table-column prop="name" label="习惯分类" align="center" width="250">
         </el-table-column>
-        <el-table-column prop="tname" label="英文名" align="center" width="150">
+        <el-table-column prop="tname" label="习惯名称" align="center" width="150">
         </el-table-column>
-        <el-table-column prop="guige" label="量表分类" align="center" width="200">
+        <el-table-column prop="guige" label="统计周期" align="center" width="200">
         </el-table-column>
-        <el-table-column prop="denxiao" label="细化分类" align="center" width="200">
+        <el-table-column prop="denxiao" label="统计单位" align="center" width="200">
         </el-table-column>
         <el-table-column prop="shuxing" label="属性" align="center" width="100">
         </el-table-column>
@@ -33,26 +33,42 @@ export default {
       tableData: [
         {
           xuhao: '01',
-          name: '统一帕金森评定量表第三部分(开关期评分)',
-          tname: 'UPDRS',
-          guige: '运动症状类',
-          denxiao: '疼痛类',
+          name: '吸烟',
+          tname: '香烟',
+          guige: '每天',
+          denxiao: '支',
           shuxing: '系统默认'
         },
         {
           xuhao: '02',
-          name: '39项帕金森病生存质量调查问卷',
-          tname: 'SF-39',
-          guige: '生活质量评定表',
-          denxiao: '疼痛类',
+          name: '饮酒',
+          tname: '红酒',
+          guige: '每周',
+          denxiao: 'ml',
           shuxing: '系统默认'
         },
         {
           xuhao: '03',
-          name: '39项帕金森病生存质量调查问卷',
-          tname: 'SF-39',
-          guige: '生活质量评定表',
-          denxiao: '疼痛类',
+          name: '喝茶',
+          tname: '绿茶',
+          guige: '每周',
+          denxiao: '杯',
+          shuxing: '系统默认'
+        },
+        {
+          xuhao: '04',
+          name: '锻炼',
+          tname: '篮球',
+          guige: '每周',
+          denxiao: '次',
+          shuxing: '系统默认'
+        },
+        {
+          xuhao: '05',
+          name: '咖啡',
+          tname: '咖啡',
+          guige: '每周',
+          denxiao: '杯',
           shuxing: '系统默认'
         }
       ]

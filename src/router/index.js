@@ -35,6 +35,13 @@ import DictionMedicalScale from 'components/dictionmedicalscale/DictionMedicalSc
 import DictionInspection from 'components/dictioninspection/DictionInspection';
 import DictionImageDatas from 'components/dictionimagedatas/DictionImageDatas';
 
+import InformationSecondBar from 'components/informationsecondbar/InformationSecondBar';
+import OtherMedicationHistory from 'components/othermedicationhistory/OtherMedicationHistory';
+import PastHistory from 'components/pasthistory/PastHistory';
+import FamilyHistory from 'components/familyhistory/FamilyHistory';
+import PersonalHistory from 'components/personalhistory/PersonalHistory';
+import ToxicExposure from 'components/toxicexposure/ToxicExposure';
+
 Vue.use(Router);
 
 export default new Router({
@@ -236,7 +243,35 @@ export default new Router({
                 },
                 {
                   path: 'personalinformationdata',
-                  name: 'personalinformationdata'
+                  name: 'personalinformationdata',
+                  component: InformationSecondBar,
+                  children: [
+                    {
+                      path: 'othermedicationhistory',
+                      name: 'othermedicationhistory',
+                      component: OtherMedicationHistory
+                    },
+                    {
+                      path: 'pasthistory',
+                      name: 'pasthistory',
+                      component: PastHistory
+                    },
+                    {
+                      path: 'familyhistory',
+                      name: 'familyhistory',
+                      component: FamilyHistory
+                    },
+                    {
+                      path: 'personalhistory',
+                      name: 'personalhistory',
+                      component: PersonalHistory
+                    },
+                    {
+                      path: 'toxicexposure',
+                      name: 'toxicexposure',
+                      component: ToxicExposure
+                    }
+                  ]
                 },
                 {
                   path: 'patientdatabase',
