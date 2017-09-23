@@ -5,7 +5,7 @@ import Login from 'components/login/Login';
 
 import Layout from 'components/layout/Layout';
 // import Home from 'components/home/Home';   // 首页还没做
-import Patients from 'components/patients/Patients';
+import ListFrame from 'components/listframe/ListFrame';
 import Analytics from 'components/analytics/Analytics';
 import Configuration from 'components/configuration/Configuration';
 
@@ -60,7 +60,7 @@ export default new Router({
         // },
         {
           path: 'patients',
-          component: Patients,
+          component: ListFrame,
           name: 'patients',
           children: [
             {
@@ -177,7 +177,7 @@ export default new Router({
             {
               path: 'userManagement',
               name: 'userManagement',
-              component: Patients,
+              component: ListFrame,
               children: [
                 {
                   path: 'list/:id',
@@ -191,7 +191,7 @@ export default new Router({
             {
               path: 'roleManagement',
               name: 'roleManagement',
-              component: Patients,
+              component: ListFrame,
               children: [
                 {
                   path: 'list/:id',
