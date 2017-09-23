@@ -171,6 +171,7 @@ import Ps from 'perfect-scrollbar';
 import { mapGetters } from 'vuex';
 import Util from 'utils/util.js';
 import Bus from 'utils/bus';
+import { vueCopy } from 'utils/helper';
 
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 
@@ -256,7 +257,9 @@ export default {
       this.mutableMode = this.EDITING_MODE;
     },
     cancel() {
-      this.copyInfo = Object.assign({}, this.diagnosticDisease);
+      // this.copyInfo = Object.assign({}, this.diagnosticDisease);
+      this.copyInfo = {};
+      vueCopy(this.diagnosticDisease, this.copyInfo);
       console.log(this.diagnosticDisease);
       console.log(this.copyInfo);
       this.warningResults = {};
@@ -419,7 +422,10 @@ export default {
     },
     diagnosticDisease: function() {
       // 每次传过来的数据发生变化，就重新初始化 copyInfo
-      this.copyInfo = Object.assign({}, this.diagnosticDisease);
+      // this.copyInfo = Object.assign({}, this.diagnosticDisease);
+      this.copyInfo = {};
+      vueCopy(this.diagnosticDisease, this.copyInfo);
+
       // 传过来的数据可能会没有某些字段属性，我们接下来将通过 template 来补齐
       this.supplementCopyInfo();
     },
