@@ -10,16 +10,16 @@
       <div class="shared-info">
         <div class="info adscription">
           <span class="info-title">归属医生: </span>
-          <span class="info-text">陈大雄</span>
+          <span class="info-text">{{ belongDoctor }}</span>
         </div>
         <div class="info create-time">
           <span class="info-title">创建时间: </span>
-          <span class="info-text">2017-12-7</span>
+          <span class="info-text">{{ createDate }}</span>
         </div>
         <div class="info groups">
           <span class="info-title">分组情况: </span>
           <span class="info-text">
-            帕金森1组  帕金森2组
+            <span v-for="group in belongGroups" class="group">{{ group.groupName }}</span>
             <span class="iconfont icon-plus"></span>
           </span>
         </div>
@@ -46,7 +46,10 @@ export default {
   data() {
     return {
       patientInfo: {},
-      patientCaseList: []
+      patientCaseList: [],
+      belongDoctor: '',
+      belongGroups: [],
+      createDate: ''
     };
   },
   computed: {
@@ -113,6 +116,9 @@ export default {
       getPatientInfo(this.$route.params.id).then((data) => {
         // console.log('patientInfo: ', data);
         this.patientInfo = data;
+        this.belongDoctor = data.belongDoctor;
+        this.belongGroups = data.belongGroups;
+        this.createDate = data.createDate;
       });
       getPatientCaseList(this.$route.params.id).then((data) => {
         // console.log('patientCaseList: ', data);
@@ -271,7 +277,12 @@ export default {
           top: 5px;
         }
         &.groups {
+          width: 100%;
           top: 40px;
+          .group {
+            display: inline-block;
+            padding-right: 10px;
+          }
         }
         .info-title {
           display: inline-block;
@@ -282,7 +293,7 @@ export default {
           color: @light-font-color;
           .iconfont {
             display: inline-block;
-            margin-left: 15px;
+            margin-left: 5px;
             padding: 5px;
             font-weight: bold;
             font-size: 16px;
