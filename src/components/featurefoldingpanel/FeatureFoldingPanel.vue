@@ -78,7 +78,7 @@ export default {
   position: relative;
   background-color: @background-color;
   margin: @panel-top-bottom-margin 0;
-  margin-right: 10px;
+  margin-right: 8px;
   font-size: 0;
   overflow: hidden;
   

@@ -1,6 +1,6 @@
 
 <template>
-  <div>
+  <div class="department-wrapper">
     <feature-table-head></feature-table-head>
     <div class="scroll-wrapper">
       <div class="freature-person-conf-wrapper" ref="scrollArea">
@@ -155,34 +155,36 @@ export default {
 @import "~styles/variables.less";
 @tabs-wrapper-height: 15px;
 @table-head-height: 57px;
-.scroll-wrapper {
+.department-wrapper {
   position: relative;
   height: calc(~"100% - @{table-head-height}");
-  .freature-person-conf-wrapper {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-    height: 100%;
-    .ps__scrollbar-y-rail {
-      position: absolute;
-      top: 0;
-      width: 15px;
-      right: 12px;
-      padding: 0 3px;
-      box-sizing: border-box;
-      opacity: 0.3;
-      transition: opacity 0.3s, padding 0.2s;
-      .ps__scrollbar-y {
-        position: relative;
-        background-color: #aaa;
-        border-radius: 20px;
-      }
-    }
-    &:hover {
+  .scroll-wrapper {
+    .freature-person-conf-wrapper {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      height: 100%;
       .ps__scrollbar-y-rail {
-        opacity: 0.6;
-        &:hover {
-          padding: 0;
+        position: absolute;
+        top: 0;
+        width: 15px;
+        right: -2px;
+        padding: 0 3px;
+        box-sizing: border-box;
+        opacity: 0.3;
+        transition: opacity 0.3s, padding 0.2s;
+        .ps__scrollbar-y {
+          position: relative;
+          background-color: #aaa;
+          border-radius: 20px;
+        }
+      }
+      &:hover {
+        .ps__scrollbar-y-rail {
+          opacity: 0.6;
+          &:hover {
+            padding: 0;
+          }
         }
       }
     }

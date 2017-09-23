@@ -106,7 +106,7 @@ export default {
       position: absolute;
       top: 0;
       width: 15px;
-      right: 0px;
+      right: -2px;
       padding: 0 3px;
       box-sizing: border-box;
       opacity: 0.3;

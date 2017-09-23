@@ -676,7 +676,7 @@ export default {
     .ps__scrollbar-y-rail {
       position: absolute;
       width: 15px;
-      right: 0;
+      right: -2px;
       padding: 0 3px;
       box-sizing: border-box;
       opacity: 0.3;
