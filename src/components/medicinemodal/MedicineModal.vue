@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="medicine-modal-wrapper" v-show="displayModal">
-    <div class="medicine-modal">
+    <div class="medicine-modal" ref="medicineModal">
       <h3 class="title">{{title}}</h3>
       <div class="content">
         <div class="field" v-for="field in firstTemplateGroup">
@@ -80,6 +80,54 @@
             </el-input>
           </span>
         </div>
+
+        <div class="seperate-line"></div>
+        <div class="field" v-for="field in fourthTemplateGroup" :class="{'whole-line': field.fieldName==='stopRemark'}">
+          <span class="field-name" :class="{'long-field-name': isLongName(field.fieldName)}">
+            {{field.cnfieldName}}
+            <span class="required-mark" v-show="field.must===1">*</span>
+          </span>
+          <span class="field-input"
+          :class="{'long-field-name': isLongName(field.fieldName)}">
+            <span class="warning-text">{{warningResults[field.fieldName]}}</span>
+            <el-input v-if="getUIType(field.fieldName)===1" v-model="medicine[field.fieldName]"
+             :class="{'warning': warningResults[field.fieldName]}" :type="getInputType(field.fieldName)"
+             :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)">
+            </el-input>
+            <el-select v-else-if="getUIType(field.fieldName)===3" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
+             :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
+             <el-option v-for="option in getOptions(field.fieldName)" :label="option.name"
+              :value="option.code" :key="option.code"></el-option>
+            </el-select>
+            <el-date-picker v-else-if="getUIType(field.fieldName)===6" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
+             :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
+           </el-date-picker>
+          </span>
+        </div>
+
+        <div class="seperate-line"></div>
+        <div class="field" v-for="field in fifthTemplateGroup" :class="{'whole-line': field.fieldName==='sideeffectRemark'}">
+          <span class="field-name" :class="{'long-field-name': isLongName(field.fieldName)}">
+            {{field.cnfieldName}}
+            <span class="required-mark" v-show="field.must===1 || hasSideEffect">*</span>
+          </span>
+          <span class="field-input"
+          :class="{'long-field-name': isLongName(field.fieldName)}">
+            <span class="warning-text">{{warningResults[field.fieldName]}}</span>
+            <el-input v-if="getUIType(field.fieldName)===1" v-model="medicine[field.fieldName]"
+             :class="{'warning': warningResults[field.fieldName]}" :type="getInputType(field.fieldName)"
+             :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)">
+            </el-input>
+            <el-select v-else-if="getUIType(field.fieldName)===3" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
+             :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
+             <el-option v-for="option in getOptions(field.fieldName)" :label="option.name"
+              :value="option.code" :key="option.code"></el-option>
+            </el-select>
+            <el-date-picker v-else-if="getUIType(field.fieldName)===6" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
+             :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
+           </el-date-picker>
+          </span>
+        </div>
       </div>
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
@@ -93,6 +141,7 @@ import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
+import { addPatientMedicine, modifyPatientMedicine } from 'api/patient.js';
 
 export default {
   data() {
@@ -102,7 +151,8 @@ export default {
       medicine: {},
       originalMedicine: {},
       warningResults: {},
-      completeInit: false
+      completeInit: false,
+      hasSideEffect: false  // 这个变量用来控制是否有副反应
     };
   },
   computed: {
@@ -120,6 +170,12 @@ export default {
     },
     thirdTemplateGroup() {
       return this.medicineTemplateGroups[2] ? this.medicineTemplateGroups[2] : [];
+    },
+    fourthTemplateGroup() {
+      return this.medicineTemplateGroups[3] ? this.medicineTemplateGroups[3] : [];
+    },
+    fifthTemplateGroup() {
+      return this.medicineTemplateGroups[4] ? this.medicineTemplateGroups[4] : [];
     },
     totalTemplate() {
       // 把 template 的几个 group 拼到一起
@@ -254,6 +310,8 @@ export default {
         // console.log('firstTemplate', this.firstTemplateGroup);
         // console.log('secondTemplate', this.secondTemplateGroup);
         // console.log('thirdTemplate', this.thirdTemplateGroup);
+        // console.log('secondTemplate', this.fourthTemplateGroup);
+        // console.log('thirdTemplate', this.fifthTemplateGroup);
         // console.log('dictionary', this.medicineDictionary);
         // console.log('medicineInfo', this.medicineInfo);
       }, 2000);
@@ -281,8 +339,12 @@ export default {
       console.log(this.medicine);
       // console.log(this.warningResults);
 
-      // 首先，更新一下 warningResults，因为有的组件初始化的时候并不会做校验
-      for (let field of this.firstTemplateGroup.concat(this.thirdTemplateGroup)) {
+      // 首先，将日期格式改为符合传输标准的字符串
+      this.medicine.stopDate = Util.simplifyDate(this.medicine.stopDate);
+
+      // 然后更新一下 warningResults，因为有的组件初始化的时候并不会做校验
+      for (let field of [].concat(this.firstTemplateGroup, this.thirdTemplateGroup,
+       this.fourthTemplateGroup, this.fifthTemplateGroup)) {
         this.updateWarning(field);
       }
       for (var i = 0; i < this.medicine.patientMedicineDetail.length; i++) {
@@ -316,6 +378,13 @@ export default {
         }
       }
       console.log('准备提交了');
+      if (this.title === '新增药物方案') {
+        this.medicine.patientId = this.$route.params.id;
+        addPatientMedicine(this.medicine);
+      } else if (this.title === '药物方案') {
+        modifyPatientMedicine(this.medicine);
+      }
+
       // this.displayModal = false;
     },
     initMedicine(item) {
@@ -325,7 +394,7 @@ export default {
 
       // 遍历 firstTemplateGroup，对其中的每个 field，检查 this.medicine 下有没有名字对应的属性值，没有的话，就初始化为空字符串
       // 注意初始化采用 this.$set 方法，使得当前 Vue 实例对象可以跟踪该属性值的变化
-      for (let field of this.firstTemplateGroup.concat(this.thirdTemplateGroup)) {
+      for (let field of [].concat(this.firstTemplateGroup, this.thirdTemplateGroup, this.fourthTemplateGroup, this.fifthTemplateGroup)) {
         let name = field.fieldName;
         if (this.medicine[name] === undefined) {
           this.$set(this.medicine, name, '');
@@ -356,7 +425,11 @@ export default {
 
       } else {
         // 如果是其它下拉框，属于普通字段，去 typeGroup 里面查就可以了
-        let typeInfo = Util.getElement('typegroupcode', dictionaryField.fieldName, this.typeGroup);
+        var typegroupName = dictionaryField.fieldName;
+        if (dictionaryField.fieldName === 'sideeffectType') {
+          typegroupName = 'drugEffect';
+        }
+        let typeInfo = Util.getElement('typegroupcode', typegroupName, this.typeGroup);
         let types = typeInfo.types ? typeInfo.types : [];
         for (let type of types) {
           options.push({name: type.typeName, code: type.typeCode});
@@ -370,12 +443,24 @@ export default {
       }
     },
     updateField(field) {
-      this.updateWarning(field);
-
       // 如果修改了药物名称 (medicineId)，那么就将药物规格清空，注意这一步逻辑一定要在初始化之后才会执行
       if (field.fieldName === 'medicineId' && this.completeInit) {
         this.medicine.medicalSpecUsed = '';
       }
+
+      // 如果将 “停药原因” 设置为 “药物副反应”，则后续的药物副反应变为必填项
+      if (field.fieldName === 'stopReason') {
+        if (this.medicine.stopReason === 1) {
+          this.hasSideEffect = true;
+        } else {
+          this.hasSideEffect = false;
+          for (let templateField of this.fifthTemplateGroup) {
+            this.updateWarning(templateField);
+          }
+        }
+      }
+
+      this.updateWarning(field);
     },
     isLongName(name) {
       const LONG_NAME_LIST = ['levodopaFactorUsed', 'levodopaDose'];
@@ -386,13 +471,19 @@ export default {
       }
     },
     getInputType(name) {
-      return name === 'remarks' ? 'textarea' : 'text';
+      const textAreaNameList = ['remarks', 'stopRemark', 'sideeffectRemark'];
+      return textAreaNameList.indexOf(name) > -1 ? 'textarea' : 'text';
     },
     updateScrollbar() {
       // 如果不写在 $nextTick() 里面，第一次加载的时候也许会不能正确计算高度。估计是因为子组件还没有全部加载所造成的。
       this.$nextTick(() => {
         Ps.destroy(this.$refs.formWrapper);
         Ps.initialize(this.$refs.formWrapper, {
+          wheelSpeed: 1,
+          minScrollbarLength: 40
+        });
+        Ps.destroy(this.$refs.medicineModal);
+        Ps.initialize(this.$refs.medicineModal, {
           wheelSpeed: 1,
           minScrollbarLength: 40
         });
@@ -407,7 +498,13 @@ export default {
       }
 
       var fieldValue = this.medicine[fieldName];
-      if (field.must === 1) {
+      var isSideEffectField = false;
+      for (let templateField of this.fifthTemplateGroup) {
+        if (fieldName === templateField.fieldName) {
+          isSideEffectField = true;
+        }
+      }
+      if (field.must === 1 || (isSideEffectField && this.hasSideEffect)) {
         // must 为 1 代表必填，为 2 代表选填
         var isEmptyValue = !fieldValue && fieldValue !== 0;
         var isEmptyArray = fieldValue instanceof Array && fieldValue.length === 0;
@@ -416,15 +513,7 @@ export default {
           this.$set(this.warningResults, fieldName, '必填项');
           return;
         }
-      }
-
-      if (fieldValue && fieldValue.toString().indexOf(' ') > -1 && fieldName !== 'remarks') {
-        // 允许备注信息里面有空格
-        this.$set(this.warningResults, fieldName, '不能包含空格');
-
-      } else {
-        // 初始化组件的时候，对应字段的警告文本为 undefined，判断之后，就为实际文本或 null
-        // null 代表该字段项的填写没有毛病
+      } else if (isSideEffectField && !this.hasSideEffect) {
         this.$set(this.warningResults, fieldName, null);
       }
     },
@@ -454,6 +543,10 @@ export default {
   },
   mounted() {
     Bus.$on(this.SHOW_MEDICINE_MODAL, this.showModal);
+    setTimeout(() => {
+      // console.log(this.medicineTemplateGroups);
+      // console.log(this.medicineDictionary);
+    }, 2000);
   },
   beforeDestroy() {
     Bus.$off(this.SHOW_MEDICINE_MODAL, this.showModal);
@@ -465,7 +558,7 @@ export default {
 @import "~styles/variables.less";
 
 @field-height: 40px;
-@field-name-width: 80px;
+@field-name-width: 110px;
 @long-field-name-width: 160px;
 
 @col-id-width: 100px;
@@ -485,9 +578,11 @@ export default {
     position: relative;
     margin: auto;
     padding: 0 40px;
-    top: 5%;
+    top: 3%;
     width: 660px;
+    max-height: 94%;
     background-color: @background-color;
+    overflow: hidden;
     .title {
       padding: 30px 0 10px;
       font-size: @large-font-size;
@@ -629,14 +724,16 @@ export default {
         }
         .ps__scrollbar-y-rail {
           position: absolute;
+          padding: 0;
           top: 0;
-          width: 10px;
+          width: 10px !important;
           right: 0;
           box-sizing: border-box;
           opacity: 0.3;
-          transition: opacity 0.3s, padding 0.2s;
+          transition: opacity 0.3s;
           .ps__scrollbar-y {
             position: relative;
+            border-radius: 0 !important;
             background-color: #aaa;
           }
         }
@@ -650,7 +747,7 @@ export default {
     .seperate-line {
       width: 90%;
       height: 1px;
-      margin: 10px auto;
+      margin: 15px auto 10px;
       background-color: @light-gray-color;
     }
     .button {
@@ -672,6 +769,28 @@ export default {
       }
       &:active {
         opacity: 0.9;
+      }
+    }
+    .ps__scrollbar-y-rail {
+      position: absolute;
+      width: 15px;
+      right: 0;
+      padding: 0 3px;
+      box-sizing: border-box;
+      opacity: 0.3;
+      transition: opacity 0.3s, padding 0.2s;
+      .ps__scrollbar-y {
+        position: relative;
+        background-color: #aaa;
+        border-radius: 20px;
+      }
+    }
+    &:hover {
+      .ps__scrollbar-y-rail {
+        opacity: 0.6;
+        &:hover {
+          padding: 0;
+        }
       }
     }
   }

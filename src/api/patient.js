@@ -540,6 +540,51 @@ export function getPatientCase(patientId, patientCaseId) {
   return encapsulatePromise(url, request);
 };
 
+// 新增药物方案
+export function addPatientMedicine(patientMedicine) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientMedicine": patientMedicine
+  };
+  var url = 'http://apitest.gyenno.com/pdms/addPatientMedicine';
+
+  return encapsulatePromise(url, request);
+};
+
+// 修改药物方案
+export function modifyPatientMedicine(patientMedicine) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientMedicine": patientMedicine
+  };
+  var url = 'http://apitest.gyenno.com/pdms/modPatientMedicine';
+
+  return encapsulatePromise(url, request);
+};
+
+// 删除药物方案
+export function deletePatientMedicine(patientMedicine) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientMedicine": patientMedicine
+  };
+  var url = 'http://apitest.gyenno.com/pdms/delPatientMedicine';
+
+  return encapsulatePromise(url, request);
+};
+
 // 查询医学量表
 export function getScaleInfo() {
   var request = {
