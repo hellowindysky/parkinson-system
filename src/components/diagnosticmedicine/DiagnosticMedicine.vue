@@ -2,7 +2,7 @@
   <folding-panel :title="title" :mode="mutableMode"  v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
     <div class="diagnostic-medicine" ref="diagnosticMedicine">
       <extensible-panel class="panel" :mode="mutableMode" :title="subTitle" v-on:addNewCard="addMedicine">
-        <card class="card" :class="devideWidth" :mode="mutableMode" v-for="item in medicineList" :key="item.medicineId"
+        <card class="card" :class="devideWidth" :mode="mutableMode" v-for="item in diagnosticMedicine" :key="item.medicineId"
          :title="getTitle(item.medicineId)" v-on:clickCurrentCard="editMedicine(item)"
          v-on:deleteCurrentCard="deleteMedicine(item)">
           <div class="text first-line">{{transform(item, 'usages')}}</div>
@@ -27,85 +27,19 @@ export default {
     return {
       mutableMode: this.mode,
       title: '药物方案',
-      devideWidth: '',
-      medicineList: [
-        {
-          'ariseTime': '2017-09-13',
-          'totalMeasure': 800,
-          'usages': 4,
-          'medicineId': 11,
-          'patientCaseId': '8a9e2d385e4b7bd6015e7adaf191025c',
-          'patientId': 122,
-          'medicalSpecUsed': '200.0mg/片',
-          'medicineSpecId': 12,
-          'remarks': '测试用药',
-          'patientMedicineId': 160,
-          'levodopaDose': 264,
-          'levodopaFactorUsed': 66,
-          'patientMedicineDetail': [
-            {
-              'id': 236,
-              'computUnit': 1,
-              'takeDose': '1',
-              'takeTime': '17:00',
-              'patientMedicineId': 160
-            },
-            {
-              'id': 237,
-              'computUnit': 1,
-              'takeDose': '1',
-              'takeTime': '17:30',
-              'patientMedicineId': 160
-            },
-            {
-              'id': 238,
-              'computUnit': 1,
-              'takeDose': '1',
-              'takeTime': '18:00',
-              'patientMedicineId': 160
-            },
-            {
-              'id': 239,
-              'computUnit': 1,
-              'takeDose': '1',
-              'takeTime': '18:30',
-              'patientMedicineId': 160
-            }
-          ]
-        },
-        {
-          'ariseTime': '2017-09-11',
-          'totalMeasure': 250,
-          'usages': 2,
-          'medicineId': 4,
-          'patientCaseId': '8a9e2d385e4b7bd6015e6ff4325e01a0',
-          'patientId': 32,
-          'medicalSpecUsed': '50.0mg/片',
-          'remarks': 'asda承集合和',
-          'patientMedicineId': 156,
-          'levodopaDose': 250,
-          'levodopaFactorUsed': 50
-        },
-        {
-          'ariseTime': '2017-09-11',
-          'totalMeasure': 0.5,
-          'usages': 1,
-          'medicineId': 6,
-          'patientCaseId': '8a9e2d385e4b7bd6015e6ff4325e01a0',
-          'patientId': 32,
-          'medicalSpecUsed': '0.25mg/片',
-          'remarks': '',
-          'patientMedicineId': 157,
-          'levodopaDose': 50,
-          'levodopaFactorUsed': 25
-        }
-      ]
+      devideWidth: ''
     };
   },
   props: {
     mode: {
       type: String,
       default: this.READING_MODE
+    },
+    diagnosticMedicine: {
+      type: Array,
+      default: () => {
+        return [];
+      }
     }
   },
   computed: {
@@ -115,7 +49,7 @@ export default {
       'medicineInfo'
     ]),
     subTitle() {
-      var count = this.medicineList.length;
+      var count = this.diagnosticMedicine.length;
       return this.title + '（' + count + '条记录）';
     }
   },

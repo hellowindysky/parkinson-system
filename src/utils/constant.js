@@ -14,7 +14,6 @@ export default {
   // event
   SCREEN_SIZE_CHANGE: 'screenSizeChange',
   TOGGLE_LIST_DISPLAY: 'toggleListDisplay',
-  UPDATE_SCALE_DETAIL: 'updateScaleDetail',
 
   EDIT: 'edit',
   CANCEL: 'cancel',
@@ -31,6 +30,9 @@ export default {
   RECALCULATE_CARD_WIDTH: 'recalculateCardWidth',
 
   UPDATE_PATIENT_INFO: 'updatePatientInfo',
+  UPDATE_CASE_INFO: 'updateCaseInfo',
+  UPDATE_SCALE_DETAIL: 'updateScaleDetail',
+
   SHOW_MODAL_BOX: 'showModalBox',
   SHOW_MEDICINE_MODAL: 'showMedicineModal',
 

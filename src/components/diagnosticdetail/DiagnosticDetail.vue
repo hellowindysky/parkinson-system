@@ -8,8 +8,8 @@
     <div class="scroll-area" ref="scrollArea">
       <diagnostic-basic class="folding-panel" :mode="mode" :diagnosticBasic="diagnosticBasic"></diagnostic-basic>
       <diagnostic-disease class="folding-panel" :mode="mode" :diagnosticDisease="diagnosticDisease"></diagnostic-disease>
-      <diagnostic-medicine class="folding-panel" :mode="mode"></diagnostic-medicine>
-      <diagnostic-surgery class="folding-panel" :mode="mode"></diagnostic-surgery>
+      <diagnostic-medicine class="folding-panel" :mode="mode" :diagnosticMedicine="caseDetail.patientMedicineNew"></diagnostic-medicine>
+      <diagnostic-surgery class="folding-panel" :mode="mode" :diagnosticSurgery="caseDetail.patientSurgicalDbs"></diagnostic-surgery>
       <diagnostic-scale class="folding-panel" :patientScale="caseDetail.patientScale" :mode="mode"></diagnostic-scale>
       <diagnostic-examination class="folding-panel" :mode="mode"></diagnostic-examination>
     </div>
@@ -32,6 +32,7 @@ export default {
   data() {
     return {
       displayDetail: false,
+      caseId: 0,
       caseDetail: {},
       mode: this.READING_MODE
     };
@@ -75,19 +76,25 @@ export default {
         this.closePanel();
       } else if (/^\/patients\/list\/[0-9]+\/diagnosticInfo\/[0-9a-zA-Z]+$/.test(path)) {
         // 如果路由地址中有 caseId，则显示面板并获取对应的诊断数据
-        var caseId = this.$route.params.caseId;
-        this.showDetailPanel(caseId);
+        this.caseId = this.$route.params.caseId;
+        this.showDetailPanel();
       } else {
         this.closePanel();
       }
     },
-    showDetailPanel(patientCaseId) {
+    showDetailPanel() {
       // 接收到相应的消息之后，打开诊断详情窗口，然后再向服务器请求数据
       this.displayDetail = true;
-
+      this.updatePatientCase(this.caseId);
+    },
+    updatePatientCase() {
       var patientId = this.$route.params.id;
+<<<<<<< HEAD
       getPatientCase(patientId, patientCaseId).then((data) => {
         console.log('data: ', data);
+=======
+      getPatientCase(patientId, this.caseId).then((data) => {
+>>>>>>> 9bf22cef01c435a51e651636d4b612318660f454
         this.caseDetail = Object.assign({}, data.patientCase);
         this.updateScrollbar();
         console.log('caseDetail: ', this.caseDetail);
@@ -121,10 +128,12 @@ export default {
 
     Bus.$on(this.SCROLL_AREA_SIZE_CHANGE, this.updateScrollbar);
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
+    Bus.$on(this.UPDATE_CASE_INFO, this.updatePatientCase);
   },
   beforeDestroy() {
     Bus.$off(this.SCROLL_AREA_SIZE_CHANGE);
     Bus.$off(this.SCREEN_SIZE_CHANGE);
+    Bus.$off(this.UPDATE_CASE_INFO);
   },
   watch: {
     $route() {
