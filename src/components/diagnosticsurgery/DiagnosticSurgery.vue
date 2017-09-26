@@ -33,45 +33,96 @@
       </extensible-panel>
       <extensible-panel class="panel" :mode="mutableMode" :title="operationSchemeTitle" v-on:addNewCard="addOperationRecord">
         <card class="card" :class="smallCardWidth" :mode="mutableMode" v-for="item in operationSchemeList" :key="item.patientCaseId"
-         :title="transform(item.surgicalInfoId)" v-on:clickCurrentCard="editOperationRecord(item)"
+         :title="transformSurgicalType(item.surgicalInfoId)" v-on:clickCurrentCard="editOperationRecord(item)"
          v-on:deleteCurrentCard="deleteOperationRecord(item)">
-          <div class="text first-line">{{item.surgicalDate}}</div>
+          <div class="text first-line">
+            <span class="name">备注: </span>
+            <span class="value">{{item.remarks}}</span>
+          </div>
+          <div class="text second-line">
+            {{item.surgicalDate}}
+          </div>
+        </card>
+      </extensible-panel>
+      <extensible-panel class="panel post-complication-panel" :mode="mutableMode" :title="postComplicationsTitle" v-on:addNewCard="addPostComplicationRecord">
+        <card class="card post-complication-card" :class="smallCardWidth" :mode="mutableMode" v-for="item in postComplicationList" :key="item.patientCaseId"
+         :title="transformComplicationType(item.minorComplicationType)" v-on:clickCurrentCard="editPostComplicationRecord(item)"
+         v-on:deleteCurrentCard="deletePostComplicationRecord(item)">
+          <div class="text first-line">
+            <span class="name">处理: </span>
+            <span class="value">{{item.process}}</span>
+          </div>
           <div class="text second-line">
             <span class="name">备注: </span>
             <span class="value">{{item.remarks}}</span>
           </div>
-        </card>
-      </extensible-panel>
-      <extensible-panel class="panel" :mode="mutableMode" :title="postComplicationsTitle" v-on:addNewCard="addPostComplicationRecord">
-        <card class="card" :class="smallCardWidth" :mode="mutableMode" v-for="item in postComplicationList" :key="item.patientCaseId"
-         :title="item.surgicalId" v-on:clickCurrentCard="editPostComplicationRecord(item)"
-         v-on:deleteCurrentCard="deletePostComplicationRecord(item)">
-          <div class="text first-line">12412</div>
-          <div class="text second-line">{{22}}</div>
+          <div class="text third-line">{{item.occurrenceTime}}</div>
         </card>
       </extensible-panel>
       <extensible-panel class="panel dbs-panel" :mode="mutableMode" :title="dbsTitle" v-on:addNewCard="addDbsRecord">
         <card class="card dbs-card" :class="bigCardWidth" :mode="mutableMode" v-for="item in dbsFirstList" :key="item.patientDbsFirstId"
          :title="''" v-on:clickCurrentCard="editDbsFirstRecord(item)"
          v-on:deleteCurrentCard="deleteDbsFirstRecord(item)">
-         <div class="text line-1">一</div>
-         <div class="text line-2">二</div>
-         <div class="text line-3">三</div>
-         <div class="text line-4">四</div>
-         <div class="text line-5">五</div>
-         <div class="text line-6">六</div>
-         <div class="text line-7">七</div>
+          <div class="text line-1">
+            <span class="name">手术中心: </span>
+            <span class="value">{{item.surgiCenter}}</span>
+          </div>
+          <div class="text line-2">
+            <span class="name">首次开机: </span>
+            <span class="value">{{item.dbsTimes}}</span>
+          </div>
+          <div class="text line-3">
+            <span class="name">服药情况: </span>
+            <span class="value">{{item.medicationStatus}}</span>
+          </div>
+          <div class="text line-4">
+            <span class="name">微毁损效应: </span>
+            <span class="value">{{item.damageEffect}}</span>
+          </div>
+          <div class="text line-5">
+            <span class="name">术后不良事件: </span>
+            <span class="value">{{item.adverseEvents}}</span>
+          </div>
+          <div class="text line-6">
+            <span class="name">备注: </span>
+            <span class="value">{{item.remarks}}</span>
+          </div>
+          <div class="text line-7">
+            <span class="name">记录时间: </span>
+            <span class="value">{{item.programDate}}</span>
+          </div>
         </card>
         <card class="card dbs-card" :class="bigCardWidth" :mode="mutableMode" v-for="item in dbsFollowList" :key="item.patientDbsFollowId"
          :title="''" v-on:clickCurrentCard="editDbsFollowRecord(item)"
          v-on:deleteCurrentCard="deleteDbsFollowRecord(item)">
-         <div class="text line-1">一</div>
-         <div class="text line-2">二</div>
-         <div class="text line-3">三</div>
-         <div class="text line-4">四</div>
-         <div class="text line-5">五</div>
-         <div class="text line-6">六</div>
-         <div class="text line-7">七</div>
+          <div class="text line-1">
+            <span class="name">手术中心: </span>
+            <span class="value">{{item.surgiCenter}}</span>
+          </div>
+          <div class="text line-2">
+            <span class="name">首次开机: </span>
+            <span class="value">{{item.dbsTimes}}</span>
+          </div>
+          <div class="text line-3">
+            <span class="name">服药情况: </span>
+            <span class="value">{{item.medicationStatus}}</span>
+          </div>
+          <div class="text line-4">
+            <span class="name">患者主诉: </span>
+            <span class="value">{{item.complaint}}</span>
+          </div>
+          <div class="text line-5">
+            <span class="name">效果及副作用: </span>
+            <span class="value">{{item.effectInfo}}</span>
+          </div>
+          <div class="text line-6">
+            <span class="name">备注: </span>
+            <span class="value">{{item.remarks}}</span>
+          </div>
+          <div class="text line-7">
+            <span class="name">记录时间: </span>
+            <span class="value">{{item.programDate}}</span>
+          </div>
         </card>
       </extensible-panel>
     </div>
@@ -113,7 +164,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'surgicalInfo'
+      'surgicalTypeList',
+      'complicationTypeList'
     ]),
     preEvaluationList() {
       return this.diagnosticSurgery.patientPreopsList ? this.diagnosticSurgery.patientPreopsList : [];
@@ -141,12 +193,18 @@ export default {
     submit() {
       this.mutableMode = this.READING_MODE;
     },
-    transform(value) {
+    transformSurgicalType(typeId) {
       // 在 tableData 中找到对应的值
       // 下面的 surgica 拼写掉了一个 l，是数据库的拼写错误，这里只能将错就错
-      var surgicalData = Util.getElement('surgicaType', value, this.surgicalInfo);
+      var surgicalData = Util.getElement('surgicaType', typeId, this.surgicalTypeList);
       var surgicalName = surgicalData.surgicaName ? surgicalData.surgicaName : '';
       return surgicalName;
+    },
+    transformComplicationType(typeId) {
+      // 在 tableData 中找到对应的值
+      var complicationData = Util.getElement('id', typeId, this.complicationTypeList);
+      var complicationName = complicationData.minorComplicationName ? complicationData.minorComplicationName : '';
+      return complicationName;
     },
     addPreEvaluationRecord() {
       // 这里要传递 3 个参数，一个是 title，一个是当前数据对象（新建的时候为空），另一个是模态框的类型
@@ -302,6 +360,7 @@ export default {
 @import "~styles/variables.less";
 
 @pre-evaluation-card-height: 160px;
+@post-complication-card-height: 120px;
 @dbs-card-height: 185px;
 
 .diagnostic-surgery {
@@ -315,6 +374,12 @@ export default {
     }
     &.dbs-panel .content {
       height: @dbs-card-height + @card-vertical-margin * 2 + 5px * 2;
+      &.extended {
+        height: auto;
+      }
+    }
+    &.post-complication-panel .content {
+      height: @post-complication-card-height + @card-vertical-margin * 2 + 5px * 2;
       &.extended {
         height: auto;
       }
@@ -361,6 +426,9 @@ export default {
       &.dbs-card {
         height: @dbs-card-height;
       }
+      &.post-complication-card {
+        height: @post-complication-card-height;
+      }
       .text {
         position: absolute;
         font-size: @small-font-size;
@@ -370,6 +438,7 @@ export default {
           color: @font-color;
         }
         .value {
+          padding-left: 10px;
           color: @light-font-color;
         }
       }
@@ -378,6 +447,9 @@ export default {
       }
       .second-line {
         top: 75px;
+      }
+      .third-line {
+        top: 100px;
       }
       .line-1 {
         top: 10px;

@@ -116,16 +116,25 @@ const getters = {
     return state.all.tableData.medicineInfo;
   },
   symptomType: (state) => {
+    // 主诉的各种症状
     if (!state.all.tableData || !state.all.tableData.symptomType) {
       return [];
     }
     return state.all.tableData.symptomType;
   },
-  surgicalInfo: (state) => {
+  surgicalTypeList: (state) => {
+    // 手术方案
     if (!state.all.tableData || !state.all.tableData.surgicalInfo) {
       return [];
     }
     return state.all.tableData.surgicalInfo;
+  },
+  complicationTypeList: (state) => {
+    // 术后并发症
+    if (!state.all.tableData || !state.all.tableData.patientComplicationType) {
+      return [];
+    }
+    return state.all.tableData.patientComplicationType;
   },
   typeGroup: (state) => {
     // 如果 state.all.typegroup 为 undefined，则返回一个空数组
