@@ -37,6 +37,8 @@
 <script>
 import FeatureFoldingPanel from '../featurefoldingpanel/FeatureFoldingPanel';
 import { mapGetters } from 'vuex';
+import { vueCopy } from 'utils/helper';
+
 export default {
   props: {
     attendancePatient: {
@@ -97,20 +99,16 @@ export default {
       this.isEdit = true;
       // 点击提交按钮之后的后续
     },
-    deepCopy(propsData, copyInfo) {
-      for (let i = 0; i < propsData.length; i++) {
-        let sonData = propsData[i];
-        this.$set(copyInfo, i, []);
+    changeDataType(copydata) {
+      for (let i = 0; i < copydata.length; i++) {
+        let sonData = copydata[i];
         for (let j = 0; j < sonData.length; j++) {
           let sonData1 = sonData[j];
-          this.$set(copyInfo[i], j, []);
           for (let key in sonData1) {
             if (key === 'must') {
-              this.$set(copyInfo[i][j], 'must', this.changeCheck(sonData1['must']));
+              this.$set(copydata[i][j], 'must', this.changeCheck(sonData1['must']));
             } else if (key === 'active') {
-              this.$set(copyInfo[i][j], 'active', this.changeCheck(sonData1['active']));
-            } else {
-              this.$set(copyInfo[i][j], key, sonData1[key]);
+              this.$set(copydata[i][j], 'active', this.changeCheck(sonData1['active']));
             }
           }
         }
@@ -127,14 +125,15 @@ export default {
   watch: {
     attendancePatient: {
       handler: function(newVal) {
-        this.deepCopy(newVal, this.copyAttendance);
-        console.log(newVal);
+        vueCopy(newVal, this.copyAttendance);
+        this.changeDataType(this.copyAttendance);
       },
       deep: true
     },
     conditionPatient: {
       handler: function(newVal) {
-        this.deepCopy(newVal, this.copyCondition);
+        vueCopy(newVal, this.copyCondition);
+        this.changeDataType(this.copyCondition);
       },
       deep: true
     }

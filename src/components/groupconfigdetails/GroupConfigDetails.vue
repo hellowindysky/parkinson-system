@@ -85,6 +85,8 @@
 <script>
 import FeatureFoldingPanel from '../featurefoldingpanel/FeatureFoldingPanel';
 import { mapGetters } from 'vuex';
+import { vueCopy } from 'utils/helper';
+
 export default {
   props: {
     patientGroupAdd: {
@@ -157,20 +159,16 @@ export default {
     //   this.isEdit = true;
     //   // 点击提交按钮之后的后续
     // },
-    deepCopy(propsData, copyInfo) {
-      for (let i = 0; i < propsData.length; i++) {
-        let sonData = propsData[i];
-        this.$set(copyInfo, i, []);
+    changeDataType(copydata) {
+      for (let i = 0; i < copydata.length; i++) {
+        let sonData = copydata[i];
         for (let j = 0; j < sonData.length; j++) {
           let sonData1 = sonData[j];
-          this.$set(copyInfo[i], j, []);
           for (let key in sonData1) {
             if (key === 'must') {
-              this.$set(copyInfo[i][j], 'must', this.changeCheck(sonData1['must']));
+              this.$set(copydata[i][j], 'must', this.changeCheck(sonData1['must']));
             } else if (key === 'active') {
-              this.$set(copyInfo[i][j], 'active', this.changeCheck(sonData1['active']));
-            } else {
-              this.$set(copyInfo[i][j], key, sonData1[key]);
+              this.$set(copydata[i][j], 'active', this.changeCheck(sonData1['active']));
             }
           }
         }
@@ -187,31 +185,36 @@ export default {
   watch: {
     patientGroupAdd: {
       handler: function(newVal) {
-        this.deepCopy(newVal, this.copyGroupAdd);
+        vueCopy(newVal, this.copyGroupAdd);
+        this.changeDataType(this.copyGroupAdd);
       },
       deep: true
     },
     patientGroupName: {
       handler: function(newVal) {
-        this.deepCopy(newVal, this.copyGroupName);
+        vueCopy(newVal, this.copyGroupName);
+        this.changeDataType(this.copyGroupName);
       },
       deep: true
     },
     patientGroupExplain: {
       handler: function(newVal) {
-        this.deepCopy(newVal, this.copyGroupExplain);
+        vueCopy(newVal, this.copyGroupExplain);
+        this.changeDataType(this.copyGroupExplain);
       },
       deep: true
     },
     patientGroupBatchadd: {
       handler: function(newVal) {
-        this.deepCopy(newVal, this.copyGroupBatchadd);
+        vueCopy(newVal, this.copyGroupBatchadd);
+        this.changeDataType(this.copyGroupBatchadd);
       },
       deep: true
     },
     patientGroupPatient: {
       handler: function(newVal) {
-        this.deepCopy(newVal, this.copyGroupPatient);
+        vueCopy(newVal, this.copyGroupPatient);
+        this.changeDataType(this.copyGroupPatient);
       },
       deep: true
     }

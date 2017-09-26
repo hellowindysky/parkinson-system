@@ -119,30 +119,6 @@ export default {
         }
       }
     },
-    // deepCopy2(copyFile, type) {
-    //   var dataTemp = null;
-    //   if (type === 1) {
-    //     dataTemp = this.copyInfoF;
-    //     console.log('first');
-    //   } else if (type === 2) {
-    //     dataTemp = this.copyInfoS;
-    //     console.log('second');
-    //   } else if (type === 3) {
-    //     dataTemp = this.copyInfoT;
-    //   }
-    //   for (let i = 0; i < copyFile.length; i++) {
-    //     dataTemp[i] = Object.assign({}, {});
-    //     let sonData = copyFile[i];
-    //     for (let key in sonData) {
-    //       this.$set(dataTemp[i], key, sonData[key]);
-    //       if (key === 'must') {
-    //         this.$set(dataTemp[i], 'must', String(sonData['must']));
-    //       } else if (key === 'active') {
-    //         this.$set(dataTemp[i], 'active', this.changeSwitch(sonData['active']));
-    //       }
-    //     }
-    //   }
-    // },
     changeCheck(val) {
       if (val === 1) {
         return true;
@@ -155,7 +131,6 @@ export default {
     basicInfoF: {
       handler: function(newVal) {
         this.deepCopy(newVal, 1);
-        console.log(this.copyInfoF);
       },
       deep: true
     },

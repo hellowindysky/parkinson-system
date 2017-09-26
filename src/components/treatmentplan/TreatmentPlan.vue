@@ -133,6 +133,8 @@
 <script>
 import FeatureFoldingPanel from '../featurefoldingpanel/FeatureFoldingPanel';
 import { mapGetters } from 'vuex';
+import { vueCopy } from 'utils/helper';
+
 export default {
   props: {
     patientMedicine: {
@@ -214,20 +216,16 @@ export default {
       this.isEdit = true;
       // 点击提交按钮之后的后续
     },
-    deepCopy(propsData, copyInfo) {
-      for (let i = 0; i < propsData.length; i++) {
-        let sonData = propsData[i];
-        this.$set(copyInfo, i, []);
+    changeDataType(copydata) {
+      for (let i = 0; i < copydata.length; i++) {
+        let sonData = copydata[i];
         for (let j = 0; j < sonData.length; j++) {
           let sonData1 = sonData[j];
-          this.$set(copyInfo[i], j, []);
           for (let key in sonData1) {
             if (key === 'must') {
-              this.$set(copyInfo[i][j], 'must', this.changeCheck(sonData1['must']));
+              this.$set(copydata[i][j], 'must', this.changeCheck(sonData1['must']));
             } else if (key === 'active') {
-              this.$set(copyInfo[i][j], 'active', this.changeCheck(sonData1['active']));
-            } else {
-              this.$set(copyInfo[i][j], key, sonData1[key]);
+              this.$set(copydata[i][j], 'active', this.changeCheck(sonData1['active']));
             }
           }
         }
@@ -244,49 +242,57 @@ export default {
   watch: {
     patientMedicine: {
       handler: function(newVal) {
-        this.deepCopy(newVal, this.copyMedicine);
+        vueCopy(newVal, this.copyMedicine);
+        this.changeDataType(this.copyMedicine);
       },
       deep: true
     },
     patientScale: {
       handler: function(newVal) {
-        this.deepCopy(newVal, this.copyScale);
+        vueCopy(newVal, this.copyScale);
+        this.changeDataType(this.copyScale);
       },
       deep: true
     },
     patientSpephysical: {
       handler: function(newVal) {
-        this.deepCopy(newVal, this.copySpephysical);
+        vueCopy(newVal, this.copySpephysical);
+        this.changeDataType(this.copySpephysical);
       },
       deep: true
     },
     patientSideeffect: {
       handler: function(newVal) {
-        this.deepCopy(newVal, this.copySideeffect);
+        vueCopy(newVal, this.copySideeffect);
+        this.changeDataType(this.copySideeffect);
       },
       deep: true
     },
     patientBioexam: {
       handler: function(newVal) {
-        this.deepCopy(newVal, this.copyBioexam);
+        vueCopy(newVal, this.copyBioexam);
+        this.changeDataType(this.copyBioexam);
       },
       deep: true
     },
     patElecTrogram: {
       handler: function(newVal) {
-        this.deepCopy(newVal, this.copyTrogram);
+        vueCopy(newVal, this.copyTrogram);
+        this.changeDataType(this.copyTrogram);
       },
       deep: true
     },
     patientVideoInfo: {
       handler: function(newVal) {
-        this.deepCopy(newVal, this.copyVideoInfo);
+        vueCopy(newVal, this.copyVideoInfo);
+        this.changeDataType(this.copyVideoInfo);
       },
       deep: true
     },
     patientAttachment: {
       handler: function(newVal) {
-        this.deepCopy(newVal, this.copyAttachment);
+        vueCopy(newVal, this.copyAttachment);
+        this.changeDataType(this.copyAttachment);
       },
       deep: true
     }

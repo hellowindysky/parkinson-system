@@ -4,6 +4,9 @@ export default {
   READING_MODE: 'reading',
   EDITING_MODE: 'editing',
 
+  // scale mode
+  SCALE_READING_MODE: 'scaleReading',
+  SCALE_EDITING_MODE: 'scaleEditing',
   // status
   NORMAL_STATUS: 'normal',
   EXTENDED_STATUS: 'extended',

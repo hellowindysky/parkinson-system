@@ -4,12 +4,16 @@
       <h2 class="title" v-if="pageTpye==='update'">{{scaleName}}</h2>
       <h2 class="title" v-else>新增量表信息</h2>
       <div class="button back-button" @click="goBack">返回</div>
+      <div class="button edit-button" @click="editScale" v-if="scaleMode===SCALE_READING_MODE && pageTpye==='update'">编辑</div>
+      <div class="button save-button" @click="saveScale(pageTpye)" v-if="scaleMode===SCALE_EDITING_MODE && pageTpye==='update'">保存</div>
+      <div class="button save-button" @click="saveScale(pageTpye)" v-if="!isSelected.status && pageTpye!=='update'">保存</div>
     </div>
     <div class="scroll-area" ref="scrollArea">
-      <div class="scale-selecter" v-show="pageTpye!=='update'">
+      
+      <div class="scale-selecter" v-if="pageTpye!=='update' || scaleMode===SCALE_EDITING_MODE">
          <div class="choose-scale">
            <span>选择量表:</span>
-             <el-select  placeholder="请选择量表" v-model="patientScale['scaleInfoId']">
+             <el-select  placeholder="请选择量表" v-model="patientScale['scaleInfoId']" :disabled="pageTpye==='update' || !isSelected.status" @change="firstSelected">
                <el-option v-for="item in scaleNameArr" :key="item.name" :label="item.name" :value="item.scaleId"></el-option>
              </el-select> 
          </div>
@@ -19,16 +23,14 @@
                <el-option v-for="item in scaleTypeData" :key="item.typeName" :label="item.typeName" :value="item.typeCode"></el-option>
            </el-select>   
          </div>
-      </div>   
-      <div class="scale-selecter" v-show="pageTpye!=='update'">            
          <div class="choose-time-type">
            <span>量表填写时间:</span>
-             <el-date-picker type="date" v-model="patientScale['inspectTime']"  placeholder="请选择量表填写时间" :picker-options="pickerOptions0">
+             <el-date-picker  type="date" v-model="patientScale['inspectTime']"  placeholder="请选择量表填写时间">
              </el-date-picker>  
          </div>
          <div class="choose-time-type">
            <span>末次服药时间:</span>
-             <el-date-picker type="date" v-model="patientScale['lastTakingTime']"  placeholder="请选择末次服药时间" :picker-options="pickerOptions0">
+             <el-date-picker  type="date" v-model="patientScale['lastTakingTime']"  placeholder="请选择末次服药时间">
              </el-date-picker>  
          </div>
          <div class="choose-time-type">
@@ -38,29 +40,53 @@
            </el-select>
          </div>
       </div>
-      <folding-panel :title="'关联症状'" class="associated-symptom" v-show="pageTpye!=='update'">
-        <div class="symptom-item" v-for="(list, listkey) in scaleSympInfoName" :key="listkey">
-            <el-checkbox class="symptom-item-title" v-model="list.status">{{list.name}}</el-checkbox>
+
+      <div class="scale-selecter" v-if="pageTpye==='update' && scaleMode===SCALE_READING_MODE">
+         <div class="choose-time-type">
+           <span>量表类型:</span>  <span>{{readingScaleType}}</span>
+         </div>
+         <div class="choose-time-type" v-if="Boolean(patientScale['inspectTime'])!==false">
+           <span>量表填写时间:</span> <span>{{patientScale['inspectTime']}}</span>
+         </div>
+         <div class="choose-time-type" v-if="Boolean(patientScale['lastTakingTime'])!==false">
+           <span>末次服药时间:</span> <span>{{patientScale['lastTakingTime']}}</span>
+         </div>
+         <div class="choose-time-type" v-if="Boolean(patientScale['switchType'])!==false">
+           <span>开关状态:</span> <span>{{formatReadingScale(patientScale['switchType'])}}</span>
+         </div>
+      </div>        
+      <folding-panel v-if="pageTpye!=='update' || scaleMode===SCALE_EDITING_MODE" :title="'关联症状'"  class="associated-symptom">
+        <div class="symptom-item" v-for="(list, listkey) in patientScale['scaleSympInfoList']" :key="listkey">
+            <el-checkbox class="symptom-item-title" v-model="list.status">{{list.typeName}}</el-checkbox>
             <div class="symptom-item-start">
               <span>出现时间:</span>
-              <el-date-picker type="date" v-model="patientScale['lastTakingTime']"  placeholder="请输入出现关联症状的时间">
+              <el-date-picker  type="date" v-model="list['ariseTime']"  placeholder="请输入出现关联症状的时间">
               </el-date-picker>    
             </div>
             <div class="symptom-item-dose">
               <span>服用药物:</span>
-              <el-input placeholder="请输入复合用药物"></el-input>    
+              <el-input v-model="list['scaleMedicine']"  placeholder="请输入复合用药物"></el-input>    
             </div>
-        </div>  
-                                            
+        </div>                                  
       </folding-panel>
+
       <div v-for="(item, key) in scaleSonDate['questions']" v-if="pageTpye==='update'">
          <div class="scale-questions">
-           <p class="question-title" @mouseenter="showOption(key)" @mouseleave="hideOption(key)">题目名称: <span>{{item.subjectName}}</span><span>得分{{correctGrade['grade'+key]}}</span></p>
-           <el-radio-group v-show="isShowOption['showoption'+key]" class="question-body" :class="{'absolu': isShowOption['showoption'+key]}" :key="key" v-model="correctanswer['answer'+key]">
-               <el-radio class="question-selection" :label="sonitem.optionName" v-for="(sonitem, key1) in item['options']" :key="key1" disabled></el-radio>
+           <p class="question-title">题目名称: <span>{{item.subjectName}}</span><!-- <span>得分{{correctGrade['grade'+key]}}</span> --></p>
+           <el-radio-group  class="question-body"  :key="key" v-model="patientScale['scaleOptionIds'][key]">
+               <el-radio class="question-selection" v-for="(sonitem, key1) in item['options']" :label="sonitem.scaleOptionId" :key="key1" :disabled="isDisabled">{{sonitem.optionName}}</el-radio>
            </el-radio-group>
          </div> 
-      </div>       
+      </div>
+
+      <div v-for="(item, key) in scaleAddSonDate['questions']" v-if="!isSelected.status">
+         <div class="scale-questions">
+           <p class="question-title">题目名称: <span>{{item.subjectName}}</span></p>
+           <el-radio-group  class="question-body"  :key="key" v-model="patientScale['scaleOptionIds'][key]">
+               <el-radio class="question-selection" v-for="(sonitem, key1) in item['options']" :label="sonitem.scaleOptionId" :key="key1">{{sonitem.optionName}}</el-radio>
+           </el-radio-group>
+         </div> 
+      </div>
       </div>
     </div>
   </div>  
@@ -71,34 +97,31 @@ import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import { getScaleInfo } from 'api/patient';
 import { getDictionary } from 'api/user.js';
-import { deepCopy } from 'utils/helper.js';
-// import Util from 'utils/util.js';
 import { mapGetters } from 'vuex';
-
+import { vueCopy } from 'utils/helper';
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 
 export default {
   data() {
     return {
+      isSelected: {}, // 在新增的时候选了一次就改变状态
+      readingScaleType: '',
+      isDisabled: true,
+      scaleMode: this.SCALE_READING_MODE, // 在修改的页面下是编辑状态还是只读状态
       patientScale: {},  // 需要向服务器提交的对象
       displayUpdateScale: false,  // 此组件是否显示
       scaleData: {},  // 获取到所有的量表数据
       scaleSonDate: {}, // 这是通过量表的ID筛选出的其中一个量表
+      scaleAddSonDate: {},
       scaleName: '',  // 筛选出来的量表的名字
       scaleAnswer: [],  // 放筛选出来的量表病人填写答案的数组
       correctGrade: [], // 放筛选出来的量表题目的分数的数组
-      correctanswer: {}, // 通过函数处理后得出的对应答案选项数组
+      correctanswer: [], // 通过函数处理后得出的对应答案选项数组
       pageTpye: '',  // 确定到底是新增量表还是修改量表页面
       scaleNameArr: [], // 获取到所有量表的名字,类型,和量表ID
       dictionaryData: [], // 获取到量表的字典项
       scaleTypeData: [], // 这是从量表的字典项中查到的量表类型具体信息
       scaleType: '',   // 这个值是量表类型下拉框绑定的变量改变它可以随时改变量表类型下拉框
-      isShowOption: [],
-      pickerOptions0: {
-        disabledDate(time) {
-          return time.getTime() < Date.now() - 8.64e7;
-        }
-      },
       switchScaleArr: [
         {
           status: 1,
@@ -109,41 +132,36 @@ export default {
           options: '关'
         }
       ],
-      scaleSympInfoName: [
-        {
-          name: '异动症剂峰',
-          status: false,
-          code: 0
-        },
-        {
-          name: '异动症剂末',
-          status: false,
-          code: 1
-        },
-        {
-          name: '剂末现象',
-          status: false,
-          code: 2
-        },
-        {
-          name: '痛性痉挛',
-          status: false,
-          code: 3
-        },
-        {
-          name: '晨僵',
-          status: false,
-          code: 4
-        },
-        {
-          name: '开关现象',
-          status: false,
-          code: 5
-        }
-      ]
+      scaleSympInfoName: []
     };
   },
   methods: {
+    firstSelected() {
+      // 用户在选择完量表之后就不能选择其他的量表了,现在需要把用户选择的量表题目展示出来
+      if (this.isSelected.time === 1) {
+        this.isSelected['time']++;
+      } else {
+        this.isSelected['status'] = false;
+        for (let key in this.scaleData) {
+          let sonData = this.scaleData[key];
+          for (let sonkey in sonData) {
+            if (sonkey === 'scaleInfoId') {
+              // 获取对应量表的数据
+              if (sonData[sonkey] === this.patientScale['scaleInfoId']) {
+                vueCopy(sonData, this.scaleAddSonDate);
+              }
+            }
+          }
+        }
+      }
+    },
+    formatReadingScale(switchType) {
+      if (switchType === '1') {
+        return '开';
+      } else {
+        return '关';
+      }
+    },
     updateScrollbar() {
       // 如果不写在 $nextTick() 里面，第一次加载的时候也许会不能正确计算高度。估计是因为子组件还没有全部加载所造成的。
       this.$nextTick(() => {
@@ -169,6 +187,29 @@ export default {
         this.scaleAnswer = item.scaleOptionIds;
         // 获取页面的类型（到底是添加页面还是修改页面）
         this.pageTpye = type;
+        // 在修改页面的状态下将原来的数据对象给服务器的对象
+        vueCopy(item, this.patientScale);
+        let hasScaleSympInfoList = false;
+        let hasScaleOptionIds = false;
+        for (let key in this.patientScale) {
+          if (key === 'scaleSympInfoList') {
+            hasScaleSympInfoList = true;
+          } else if (key === 'scaleOptionIds') {
+            hasScaleOptionIds = true;
+          }
+        }
+        if (!hasScaleSympInfoList) {
+          this.$set(this.patientScale, 'scaleSympInfoList', []);
+        } else if (!hasScaleOptionIds) {
+          this.$set(this.patientScale, 'scaleOptionIds', []);
+        }
+        vueCopy(this.scaleSympInfoName, this.patientScale['scaleSympInfoList']);
+        vueCopy({status: true, time: 1}, this.isSelected);
+      } else {
+        // 这是在新添加页面的状态下就自己新建一个服务器的对象
+        this.initPatientScale();
+        vueCopy(this.scaleSympInfoName, this.patientScale['scaleSympInfoList']);
+        vueCopy({status: true, time: 1}, this.isSelected);
       }
     },
     goBack() {
@@ -176,17 +217,26 @@ export default {
       this.displayUpdateScale = false;
       this.correctanswer = [];
       this.scaleData = {};
-      // this.scaleSonDate = {};
       this.scaleName = '';
       this.scaleAnswer = [];
-      this.correctanswer = {};
       this.correctGrade = [];
       this.pageTpye = '';
       this.scaleNameArr = [];
       this.dictionaryData = [];
-      this.scaleTypeData = [];
       this.scaleType = '';
-      // this.isShowOption = [];
+      this.patientScale = {};
+      this.scaleMode = this.SCALE_READING_MODE;
+      this.isDisabled = true;
+      this.scaleAddSonDate = {};
+    },
+    editScale() {
+      this.scaleMode = this.SCALE_EDITING_MODE;
+      this.isDisabled = false;
+    },
+    saveScale() {
+      this.scaleMode = this.SCALE_READING_MODE;
+      this.isDisabled = true;
+      // console.log(this.patientScale);
     },
     closePanel() {
       this.displayUpdateScale = false;
@@ -200,6 +250,16 @@ export default {
     getDictionaryData() {
       getDictionary().then((data) => {
         this.dictionaryData = data['typegroup'];
+        for (let key in this.dictionaryData) {
+          if (this.dictionaryData[key]['typegroupcode'] === 'scaleSymp') {
+            vueCopy(this.dictionaryData[key]['types'], this.scaleSympInfoName);
+            for (let i = 0; i < this.scaleSympInfoName.length; i++) {
+              this.$set(this.scaleSympInfoName[i], 'status', false);
+              this.$set(this.scaleSympInfoName[i], 'ariseTime', '');
+              this.$set(this.scaleSympInfoName[i], 'scaleMedicine', '');
+            }
+          }
+        }
       });
     },
     getTitleAndScale(scaleInfoId) {
@@ -210,9 +270,13 @@ export default {
           if (sonkey === 'scaleInfoId') {
             // 获取对应量表的数据
             if (sonData[sonkey] === scaleInfoId) {
-              this.scaleSonDate = deepCopy(sonData);
+              vueCopy(sonData, this.scaleSonDate);
               this.scaleName = sonData['gaugeName'];
-              console.log(this.scaleSonDate);
+              for (let key in this.scaleTypeData) {
+                if (this.scaleTypeData[key]['typeCode'] === String(sonData['gaugeType'])) {
+                  this.readingScaleType = this.scaleTypeData[key]['typeName'];
+                }
+              }
             }
           }
         }
@@ -220,30 +284,24 @@ export default {
     },
     getCorrectAnswer1(data) {
       // 取出量表的选中答案以及对应的分数
-      console.log(this.scaleAnswer);
-      for (let key in data) {
-        let sondata = data[key]['options'];
+      for (let j = 0; j < data.length; j++) {
+        let sondata = data[j]['options'];
         let isNull = true;
         let answer = '';
-        let grade = '';
         for (let sonkey in sondata) {
           let sondata1 = sondata[sonkey];
           for (let i = 0; i < this.scaleAnswer.length; i++) {
             if (sondata1['scaleOptionId'] === this.scaleAnswer[i]) {
               isNull = false;
-              answer = sondata1['optionName'];
-              grade = sondata1['grade'];
+              answer = sondata1['scaleOptionId'];
             }
           }
         }
         if (isNull) {
-          this.$set(this.correctanswer, 'answer' + key, null);
-          this.$set(this.correctGrade, 'grade' + key, null);
+          this.$set(this.patientScale['scaleOptionIds'], j, null);
         } else {
-          this.$set(this.correctanswer, 'answer' + key, answer);
-          this.$set(this.correctGrade, 'grade' + key, grade);
+          this.$set(this.patientScale['scaleOptionIds'], j, answer);
         }
-        console.log(this.correctGrade);
       }
     },
     getScaleNameArr(scaledata) {
@@ -255,7 +313,6 @@ export default {
           this.$set(this.scaleNameArr[i], 'name', data['gaugeName']);
           this.$set(this.scaleNameArr[i], 'type', data['gaugeType']);
           this.$set(this.scaleNameArr[i], 'scaleId', data['scaleInfoId']);
-          // console.log(this.scaleNameArr);
         }
       }
     },
@@ -285,26 +342,6 @@ export default {
         }
       }
     },
-    initIsShowOption(len) {
-      for (let i = 0; i < len; i++) {
-        this.$set(this.isShowOption, 'showoption' + i, false);
-      }
-      console.log(this.isShowOption);
-    },
-    showOption(key) {
-      let that = this;
-      setTimeout(
-        function() {
-          that.$set(that.isShowOption, 'showoption' + key, true);
-        }, 500);
-    },
-    hideOption(key) {
-      let that = this;
-      setTimeout(
-        function() {
-          that.$set(that.isShowOption, 'showoption' + key, false);
-        }, 500);
-    },
     initPatientScale() {
       // 初始化patientScale对象
       this.$set(this.patientScale, 'inspectTime', '');
@@ -313,50 +350,8 @@ export default {
       this.$set(this.patientScale, 'scaleInfoId', '');
       this.$set(this.patientScale, 'switchType', '');
       this.$set(this.patientScale, 'scaleSympInfoList', []);
-      console.log(this.patientScale);
-      // 获取量表的template
-
-    },
-    handlerSympInfo(newVal) {
-      for (let key in newVal) {
-        let sonData = newVal[key];
-        let sympName = sonData['name'];
-        let flag = false;
-        if (!this.patientScale['scaleSympInfoList'].length) {
-          flag = true;
-        } else {
-          flag = true;
-          for (let key in this.patientScale['scaleSympInfoList']) {
-            let obj = this.patientScale['scaleSympInfoList'][key];
-            if (obj['sympName'] === sympName) {
-              flag = false;
-            }
-          }
-        }
-        if (sonData['status'] === true) {
-          if (flag) {
-            this.patientScale['scaleSympInfoList'].push({});
-            let len = this.patientScale['scaleSympInfoList'].length - 1;
-            let code = '';
-            for (let key in this.scaleSympInfoName) {
-              if (this.scaleSympInfoName[key]['name'] === sympName) {
-                code = this.scaleSympInfoName[key]['code'];
-              }
-            }
-            this.$set(this.patientScale['scaleSympInfoList'][len], 'sympName', sonData['name']);
-            this.$set(this.patientScale['scaleSympInfoList'][len], 'sympCode', code);
-            this.$set(this.patientScale['scaleSympInfoList'][len], 'ariseTime', '');
-            this.$set(this.patientScale['scaleSympInfoList'][len], 'scaleMedicine', '');
-          }
-        } else {
-          for (let key in this.patientScale['scaleSympInfoList']) {
-            let sonData1 = this.patientScale['scaleSympInfoList'][key];
-            if (sonData1['sympName'] === sonData['name']) {
-              this.patientScale['scaleSympInfoList'].splice(key, 1);
-            }
-          }
-        }
-      }
+      this.$set(this.patientScale, 'patientCaseId', this.$route.params.caseId);
+      this.$set(this.patientScale, 'patientId', this.$route.params.id);
     }
   },
   mounted() {
@@ -365,7 +360,6 @@ export default {
     // 获取到字典项的所有数据
     this.getDictionaryData();
     // 初始化提交到服务器的对象
-    this.initPatientScale();
     Bus.$on(this.UPDATE_SCALE_DETAIL, this.showDetailPanel);
     Bus.$on(this.SCROLL_AREA_SIZE_CHANGE, this.updateScrollbar);
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
@@ -384,12 +378,18 @@ export default {
     ])
   },
   watch: {
+    correctanswer: {
+      handler: function(newVal) {
+        if (newVal) {
+          // console.log(newVal);
+        }
+      },
+      deep: true
+    },
     scaleSonDate: {
       handler: function(newVal) {
         if (newVal) {
-          this.scaleData = newVal;
           this.getCorrectAnswer1(newVal['questions']);
-          this.initIsShowOption(newVal['questions'].length);
         }
       },
       deep: true
@@ -400,18 +400,9 @@ export default {
       },
       deep: true
     },
-    scaleAnswer: {
-      handler: function(newVal) {
-        if (newVal) {
-          this.scaleAnswer = newVal;
-        }
-      },
-      deep: true
-    },
     scaleData: {
       handler: function(newVal) {
         if (newVal && this.displayUpdateScale) {
-          this.scaleAnswer = newVal;
           this.getScaleNameArr(newVal);
         }
       },
@@ -425,21 +416,9 @@ export default {
     patientScale: {
       handler: function(newVal) {
         if (newVal && this.displayUpdateScale) {
-          console.log(newVal);
           this.linkAgeScaleType(newVal['scaleInfoId']);
-        }
-      },
-      deep: true
-    },
-    scaleSympInfoName: {
-      handler: function(newVal) {
-        if (newVal && this.displayUpdateScale) {
-          // 监听这个对象的目的是用户点击了check多选框如果选中了那个就在patientScale下面添加相应的对象
-          // console.log(newVal);
           console.log(newVal);
-          this.handlerSympInfo(newVal);
         }
-        // console.log(this.patientScale['scaleSympInfoList']);
       },
       deep: true
     }
@@ -501,6 +480,14 @@ export default {
       &.back-button {
         background-color: @secondary-button-color;
         right: 10px;
+      }
+      &.edit-button {
+        background-color: @button-color;
+        right: 100px;
+      }
+      &.save-button {
+        background-color: @button-color;
+        right: 100px;
       }
     }
   }
@@ -578,8 +565,8 @@ export default {
         }
       }
       .choose-scale:nth-of-type(2) {
-        margin-bottom: @title-bar-margin-bottom; 
-      } 
+        margin-bottom: @title-bar-margin-bottom;
+      }
       .choose-time-type {
         position: relative;
         display: inline-block;
@@ -590,6 +577,10 @@ export default {
           font-weight: bold;
           display: inline-block;
           width: 90px;
+        }
+        span:nth-of-type(2) {
+          font-weight: normal;
+          width: auto;
         }
         .el-select {
           position: absolute;
@@ -613,64 +604,67 @@ export default {
     }
     .associated-symptom {
       margin-right: @margin-right;
+      margin-bottom: @vertical-spacing;
       text-align: left;
-      .symptom-item { // 这是一个关联症状的外层盒子
-        position: relative; 
+      .symptom-item {
+        // 这是一个关联症状的外层盒子
+        position: relative;
         width: 100%;
         display: inline-block;
         font-size: 0;
         line-height: 60px;
         height: 60px;
-         .symptom-item-title { // 标题固定一个宽度
-           box-sizing: border-box;
-           padding-left: @symptom-item-title-padding;
-           width: @symptom-item-title-width;
-           display: inline-block;
-           .el-checkbox__input {
-             position: relative;
-             top: -4px !important;
-           }
-         }
-         .symptom-item-start {
-           position: relative;
-           width: calc(~"50% - @{symptom-item-title-width}/2");
-           height: 60px;
-           line-height: 60px;
-           display: inline-block;
-           font-size: 0;
-            span {
-              display: inline-block;
-              width: 90px;
-              text-align: center;
-              font-size: 14px;
-            }
-            .el-date-editor {
-              position: absolute;
-              left: 100px;
-              right: 4%;
-              width: auto; 
-            }
-         }
-         .symptom-item-dose {
-           width: calc(~"50% - @{symptom-item-title-width}/2");
-           height: 60px;
-           line-height: 60px;
-           position: relative;
-           display: inline-block;
-           font-size: 0;
-           span {
-              display: inline-block;
-              width: 90px;
-              text-align: center;
-              font-size: 14px;
-            }
-            .el-input {
-              position: absolute;
-              left: 100px;
-              right: 4%;
-              width: auto; 
-            }           
-         }
+        .symptom-item-title {
+          // 标题固定一个宽度
+          box-sizing: border-box;
+          padding-left: @symptom-item-title-padding;
+          width: @symptom-item-title-width;
+          display: inline-block;
+          .el-checkbox__input {
+            position: relative;
+            top: -4px !important;
+          }
+        }
+        .symptom-item-start {
+          position: relative;
+          width: calc(~"50% - @{symptom-item-title-width}/2");
+          height: 60px;
+          line-height: 60px;
+          display: inline-block;
+          font-size: 0;
+          span {
+            display: inline-block;
+            width: 90px;
+            text-align: center;
+            font-size: 14px;
+          }
+          .el-date-editor {
+            position: absolute;
+            left: 100px;
+            right: 4%;
+            width: auto;
+          }
+        }
+        .symptom-item-dose {
+          width: calc(~"50% - @{symptom-item-title-width}/2");
+          height: 60px;
+          line-height: 60px;
+          position: relative;
+          display: inline-block;
+          font-size: 0;
+          span {
+            display: inline-block;
+            width: 90px;
+            text-align: center;
+            font-size: 14px;
+          }
+          .el-input {
+            position: absolute;
+            left: 100px;
+            right: 4%;
+            width: auto;
+          }
+        }
       }
     }
     .ps__scrollbar-y-rail {
