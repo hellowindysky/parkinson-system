@@ -249,14 +249,13 @@ export default {
           // case 'scaleSympInfoList' :
           //   if (submit[key].length) {
           //     for (let sympKey in submit[key]) {
-          //       let symData = submit[key][sympKey]; 
+          //       let symData = submit[key][sympKey];
           //       if (sympKey === 'status') {
           //         if (symData[sympKey] === false) {
-                    
           //         }
           //       }
           //     }
-          //   }    
+          //   }
         }
       }
       console.log('submit', submit);
