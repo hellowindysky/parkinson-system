@@ -380,12 +380,20 @@ export default {
       console.log('准备提交了');
       if (this.title === '新增药物方案') {
         this.medicine.patientId = this.$route.params.id;
-        addPatientMedicine(this.medicine);
+        addPatientMedicine(this.medicine).then(() => {
+          this.updateAndClose();
+        });
       } else if (this.title === '药物方案') {
-        modifyPatientMedicine(this.medicine);
+        modifyPatientMedicine(this.medicine).then(() => {
+          this.updateAndClose();
+        });
       }
 
-      // this.displayModal = false;
+      this.displayModal = false;
+    },
+    updateAndClose() {
+      Bus.$emit(this.UPDATE_CASE_INFO);
+      this.displayModal = false;
     },
     initMedicine(item) {
       // originalMedicine 是原始数据，在修改表格的时候需要参考这个对象，medicine 是我们编辑和上传的对象
@@ -601,7 +609,7 @@ export default {
         &.whole-line {
           width: 100%;
           .field-input {
-            right: 5%;
+            right: 4%;
           }
         }
         .field-name {
@@ -627,7 +635,7 @@ export default {
           position: absolute;
           top: 0;
           left: @field-name-width;
-          right: 10%;
+          right: 8%;
           line-height: @field-height;
           font-size: @normal-font-size;
           color: @light-font-color;
