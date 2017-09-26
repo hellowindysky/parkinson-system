@@ -336,7 +336,7 @@ export default {
       this.displayModal = false;
     },
     submit() {
-      console.log(this.medicine);
+      // console.log(this.medicine);
       // console.log(this.warningResults);
 
       // 首先，将日期格式改为符合传输标准的字符串
@@ -378,8 +378,9 @@ export default {
         }
       }
       console.log('准备提交了');
+      this.medicine.patientId = this.$route.params.id;
+      this.medicine.patientCaseId = this.$route.params.caseId;
       if (this.title === '新增药物方案') {
-        this.medicine.patientId = this.$route.params.id;
         addPatientMedicine(this.medicine).then(() => {
           this.updateAndClose();
         });
@@ -388,8 +389,6 @@ export default {
           this.updateAndClose();
         });
       }
-
-      this.displayModal = false;
     },
     updateAndClose() {
       Bus.$emit(this.UPDATE_CASE_INFO);
