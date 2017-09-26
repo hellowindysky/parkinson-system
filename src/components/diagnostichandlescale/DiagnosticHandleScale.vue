@@ -5,8 +5,8 @@
       <h2 class="title" v-else>新增量表信息</h2>
       <div class="button back-button" @click="goBack">返回</div>
       <div class="button edit-button" @click="editScale" v-if="scaleMode===SCALE_READING_MODE && pageTpye==='update'">编辑</div>
-      <div class="button save-button" @click="saveScale(pageTpye)" v-if="scaleMode===SCALE_EDITING_MODE && pageTpye==='update'">保存</div>
-      <div class="button save-button" @click="saveScale(pageTpye)" v-if="!isSelected.status && pageTpye!=='update'">保存</div>
+      <div class="button save-button" @click="saveScale" v-if="scaleMode===SCALE_EDITING_MODE && pageTpye==='update'">保存</div>
+      <div class="button save-button"  v-if="!isSelected.status && pageTpye!=='update'">保存</div>
     </div>
     <div class="scroll-area" ref="scrollArea">
       
@@ -100,10 +100,13 @@ import { getDictionary } from 'api/user.js';
 import { mapGetters } from 'vuex';
 import { vueCopy } from 'utils/helper';
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
+// import { simplifyDate } from 'utils/util';
+// import { deepCopy } from 'utils/helper';
 
 export default {
   data() {
     return {
+      LastSubmit: {},
       isSelected: {}, // 在新增的时候选了一次就改变状态
       readingScaleType: '',
       isDisabled: true,
@@ -204,12 +207,12 @@ export default {
           this.$set(this.patientScale, 'scaleOptionIds', []);
         }
         vueCopy(this.scaleSympInfoName, this.patientScale['scaleSympInfoList']);
-        vueCopy({status: true, time: 1}, this.isSelected);
+        vueCopy({ status: true, time: 1 }, this.isSelected);
       } else {
         // 这是在新添加页面的状态下就自己新建一个服务器的对象
         this.initPatientScale();
         vueCopy(this.scaleSympInfoName, this.patientScale['scaleSympInfoList']);
-        vueCopy({status: true, time: 1}, this.isSelected);
+        vueCopy({ status: true, time: 1 }, this.isSelected);
       }
     },
     goBack() {
@@ -236,7 +239,7 @@ export default {
     saveScale() {
       this.scaleMode = this.SCALE_READING_MODE;
       this.isDisabled = true;
-      // console.log(this.patientScale);
+      // let submit = this.patientScale;
     },
     closePanel() {
       this.displayUpdateScale = false;
