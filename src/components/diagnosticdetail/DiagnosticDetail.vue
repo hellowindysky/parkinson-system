@@ -89,12 +89,7 @@ export default {
     },
     updatePatientCase() {
       var patientId = this.$route.params.id;
-<<<<<<< HEAD
-      getPatientCase(patientId, patientCaseId).then((data) => {
-        console.log('data: ', data);
-=======
       getPatientCase(patientId, this.caseId).then((data) => {
->>>>>>> 9bf22cef01c435a51e651636d4b612318660f454
         this.caseDetail = Object.assign({}, data.patientCase);
         this.updateScrollbar();
         console.log('caseDetail: ', this.caseDetail);
