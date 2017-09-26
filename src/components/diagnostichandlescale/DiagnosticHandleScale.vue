@@ -100,8 +100,8 @@ import { getDictionary } from 'api/user.js';
 import { mapGetters } from 'vuex';
 import { vueCopy } from 'utils/helper';
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
-// import { simplifyDate } from 'utils/util';
-// import { deepCopy } from 'utils/helper';
+import Util from 'utils/util.js';
+import { deepCopy } from 'utils/helper';
 
 export default {
   data() {
@@ -239,11 +239,30 @@ export default {
     saveScale() {
       this.scaleMode = this.SCALE_READING_MODE;
       this.isDisabled = true;
-      // let submit = this.patientScale;
+      let submit = deepCopy(this.patientScale);
+      for (let key in submit) {
+        switch (key) {
+          case 'inspectTime' :
+          case 'lastTakingTime' :
+            Util.simplifyDate(submit[key]);
+            break;
+          // case 'scaleSympInfoList' :
+          //   if (submit[key].length) {
+          //     for (let sympKey in submit[key]) {
+          //       let symData = submit[key][sympKey];
+          //       if (sympKey === 'status') {
+          //         if (symData[sympKey] === false) {
+          //         }
+          //       }
+          //     }
+          //   }
+        }
+      }
+      console.log('submit', submit);
     },
     closePanel() {
       this.displayUpdateScale = false;
-      this.scaleDetail = {};
+      // this.scaleDetail = {};
     },
     getPatientScaleInfo() {
       getScaleInfo().then((data) => {
