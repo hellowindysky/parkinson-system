@@ -1,42 +1,77 @@
 <template lang="html">
   <folding-panel :title="'外科手术'" :mode="mutableMode"  v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
     <div class="diagnostic-surgery" ref="diagnosticSurgery">
-      <extensible-panel class="panel" :mode="mutableMode" :title="preEvaluationTitle" v-on:addNewCard="addPreEvaluationRecord">
-        <card class="card" :class="bigCardWidth" :mode="mutableMode" v-for="item in preEvaluationList" :key="item.preopsInfoId"
-         :title="'ssaa'" v-on:clickCurrentCard="editPreEvaluationRecord(item)"
+      <extensible-panel class="panel pre-evaluation-panel" :mode="mutableMode" :title="preEvaluationTitle" v-on:addNewCard="addPreEvaluationRecord">
+        <card class="card pre-evaluation-card" :class="bigCardWidth" :mode="mutableMode" v-for="item in preEvaluationList" :key="item.preopsInfoId"
+         :title="''" v-on:clickCurrentCard="editPreEvaluationRecord(item)"
          v-on:deleteCurrentCard="deletePreEvaluationRecord(item)">
-          <div class="text first-line">一天{{11}}次</div>
-          <div class="text second-line">{{22}}</div>
+          <div class="text line-1">
+            <span class="name">剂末现象: </span>
+            <span class="value">{{item.terminalDesc}}</span>
+          </div>
+          <div class="text line-2">
+            <span class="name">患者日记: </span>
+            <span class="value">{{item.diaryDesc}}</span>
+          </div>
+          <div class="text line-3">
+            <span class="name">统一异动症评估: </span>
+            <span class="value">{{item.dyskinesiaDesc}}</span>
+          </div>
+          <div class="text line-4">
+            <span class="name">非运动症状评估: </span>
+            <span class="value">{{item.nonMotorDesc}}</span>
+          </div>
+          <div class="text line-5">
+            <span class="name">运动症状评估: </span>
+            <span class="value">{{item.motorDesc}}</span>
+          </div>
+          <div class="text line-6">
+            <span class="name">患者手术意愿: </span>
+            <span class="value">{{item.intensionDesc}}</span>
+          </div>
         </card>
       </extensible-panel>
       <extensible-panel class="panel" :mode="mutableMode" :title="operationSchemeTitle" v-on:addNewCard="addOperationRecord">
         <card class="card" :class="smallCardWidth" :mode="mutableMode" v-for="item in operationSchemeList" :key="item.patientCaseId"
-         :title="'ssaa'" v-on:clickCurrentCard="editOperationRecord(item)"
+         :title="transform(item.surgicalInfoId)" v-on:clickCurrentCard="editOperationRecord(item)"
          v-on:deleteCurrentCard="deleteOperationRecord(item)">
-          <div class="text first-line">一天{{11}}次</div>
-          <div class="text second-line">{{22}}</div>
+          <div class="text first-line">{{item.surgicalDate}}</div>
+          <div class="text second-line">
+            <span class="name">备注: </span>
+            <span class="value">{{item.remarks}}</span>
+          </div>
         </card>
       </extensible-panel>
-      <extensible-panel class="panel" :mode="mutableMode" :title="postComplicationsTitle" v-on:addNewCard="addPreEvaluationRecord">
+      <extensible-panel class="panel" :mode="mutableMode" :title="postComplicationsTitle" v-on:addNewCard="addPostComplicationRecord">
         <card class="card" :class="smallCardWidth" :mode="mutableMode" v-for="item in postComplicationList" :key="item.patientCaseId"
-         :title="'ssaa'" v-on:clickCurrentCard="editPreEvaluationRecord(item)"
-         v-on:deleteCurrentCard="deletePreEvaluationRecord(item)">
-          <div class="text first-line">一天{{11}}次</div>
+         :title="item.surgicalId" v-on:clickCurrentCard="editPostComplicationRecord(item)"
+         v-on:deleteCurrentCard="deletePostComplicationRecord(item)">
+          <div class="text first-line">12412</div>
           <div class="text second-line">{{22}}</div>
         </card>
       </extensible-panel>
-      <extensible-panel class="panel" :mode="mutableMode" :title="dbsTitle" v-on:addNewCard="addPreEvaluationRecord">
-        <card class="card" :class="bigCardWidth" :mode="mutableMode" v-for="item in dbsFirstList" :key="item.patientDbsFirstId"
-         :title="'ssaa'" v-on:clickCurrentCard="editPreEvaluationRecord(item)"
-         v-on:deleteCurrentCard="deletePreEvaluationRecord(item)">
-          <div class="text first-line">一天{{11}}次</div>
-          <div class="text second-line">{{22}}</div>
+      <extensible-panel class="panel dbs-panel" :mode="mutableMode" :title="dbsTitle" v-on:addNewCard="addDbsRecord">
+        <card class="card dbs-card" :class="bigCardWidth" :mode="mutableMode" v-for="item in dbsFirstList" :key="item.patientDbsFirstId"
+         :title="''" v-on:clickCurrentCard="editDbsFirstRecord(item)"
+         v-on:deleteCurrentCard="deleteDbsFirstRecord(item)">
+         <div class="text line-1">一</div>
+         <div class="text line-2">二</div>
+         <div class="text line-3">三</div>
+         <div class="text line-4">四</div>
+         <div class="text line-5">五</div>
+         <div class="text line-6">六</div>
+         <div class="text line-7">七</div>
         </card>
-        <card class="card" :class="bigCardWidth" :mode="mutableMode" v-for="item in dbsFollowList" :key="item.patientDbsFollowId"
-         :title="'ssaa'" v-on:clickCurrentCard="editPreEvaluationRecord(item)"
-         v-on:deleteCurrentCard="deletePreEvaluationRecord(item)">
-          <div class="text first-line">一天{{11}}次</div>
-          <div class="text second-line">{{22}}</div>
+        <card class="card dbs-card" :class="bigCardWidth" :mode="mutableMode" v-for="item in dbsFollowList" :key="item.patientDbsFollowId"
+         :title="''" v-on:clickCurrentCard="editDbsFollowRecord(item)"
+         v-on:deleteCurrentCard="deleteDbsFollowRecord(item)">
+         <div class="text line-1">一</div>
+         <div class="text line-2">二</div>
+         <div class="text line-3">三</div>
+         <div class="text line-4">四</div>
+         <div class="text line-5">五</div>
+         <div class="text line-6">六</div>
+         <div class="text line-7">七</div>
         </card>
       </extensible-panel>
     </div>
@@ -44,9 +79,9 @@
 </template>
 
 <script>
-// import { mapGetters } from 'vuex';
-// import Util from 'utils/util.js';
+import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
+import Util from 'utils/util.js';
 
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 import ExtensiblePanel from 'components/extensiblepanel/ExtensiblePanel';
@@ -77,6 +112,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters([
+      'surgicalInfo'
+    ]),
     preEvaluationList() {
       return this.diagnosticSurgery.patientPreopsList ? this.diagnosticSurgery.patientPreopsList : [];
     },
@@ -102,6 +140,13 @@ export default {
     },
     submit() {
       this.mutableMode = this.READING_MODE;
+    },
+    transform(value) {
+      // 在 tableData 中找到对应的值
+      // 下面的 surgica 拼写掉了一个 l，是数据库的拼写错误，这里只能将错就错
+      var surgicalData = Util.getElement('surgicaType', value, this.surgicalInfo);
+      var surgicalName = surgicalData.surgicaName ? surgicalData.surgicaName : '';
+      return surgicalName;
     },
     addPreEvaluationRecord() {
       // 这里要传递 3 个参数，一个是 title，一个是当前数据对象（新建的时候为空），另一个是模态框的类型
@@ -145,6 +190,64 @@ export default {
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
+    addPostComplicationRecord() {
+      // 这里要传递 3 个参数，一个是 title，一个是当前数据对象（新建的时候为空），另一个是模态框的类型
+      // Bus.$emit(this.SHOW_MODAL_BOX, '新增用药史', {}, this.MEDICINE_MODAL);
+      console.log('add');
+    },
+    editPostComplicationRecord(item) {
+      // Bus.$emit(this.SHOW_MODAL_BOX, '用药史', item, this.MEDICINE_MODAL);
+      console.log('edit', item);
+    },
+    deletePostComplicationRecord(item) {
+      // var patientMed = {
+      //   patientId: this.id,
+      //   patientMedHistoryId: item.patientMedHistoryId,
+      //   version: item.version
+      // };
+      Bus.$on(this.CONFIRM, () => {
+        // deletePatientMedHistory(patientMed).then(this._resolveDeletion, this._rejectDeletion);
+        console.log('delete', item);
+      });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
+    },
+    addDbsRecord() {
+      // 这里要传递 3 个参数，一个是 title，一个是当前数据对象（新建的时候为空），另一个是模态框的类型
+      // Bus.$emit(this.SHOW_MODAL_BOX, '新增用药史', {}, this.MEDICINE_MODAL);
+      console.log('add');
+    },
+    editDbsFirstRecord(item) {
+      // Bus.$emit(this.SHOW_MODAL_BOX, '用药史', item, this.MEDICINE_MODAL);
+      console.log('edit', item);
+    },
+    deleteDbsFirstRecord(item) {
+      // var patientMed = {
+      //   patientId: this.id,
+      //   patientMedHistoryId: item.patientMedHistoryId,
+      //   version: item.version
+      // };
+      Bus.$on(this.CONFIRM, () => {
+        // deletePatientMedHistory(patientMed).then(this._resolveDeletion, this._rejectDeletion);
+        console.log('delete', item);
+      });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
+    },
+    editDbsFollowRecord(item) {
+      // Bus.$emit(this.SHOW_MODAL_BOX, '用药史', item, this.MEDICINE_MODAL);
+      console.log('edit', item);
+    },
+    deleteDbsFollowRecord(item) {
+      // var patientMed = {
+      //   patientId: this.id,
+      //   patientMedHistoryId: item.patientMedHistoryId,
+      //   version: item.version
+      // };
+      Bus.$on(this.CONFIRM, () => {
+        // deletePatientMedHistory(patientMed).then(this._resolveDeletion, this._rejectDeletion);
+        console.log('delete', item);
+      });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
+    },
     recalculateCardWidth() {
       this.$nextTick(() => {
         var panelWidth = this.$refs.diagnosticSurgery.clientWidth;
@@ -156,8 +259,8 @@ export default {
         this.smallCardWidth = 'width-1-' + parseInt(smallCardNum, 10);
 
         var bigCardNum = 1.0;
-        // 20px 是卡片的横向间距，定义在了 varaibles.less 中，300px 是卡片的最小宽度，一排最多显示 10 个卡片
-        while (panelWidth / (bigCardNum + 1) > 300 + 20 && bigCardNum < 10) {
+        // 20px 是卡片的横向间距，定义在了 varaibles.less 中，350px 是卡片的最小宽度，一排最多显示 10 个卡片
+        while (panelWidth / (bigCardNum + 1) > 350 + 20 && bigCardNum < 10) {
           bigCardNum += 1.0;
         }
         this.bigCardWidth = 'width-1-' + parseInt(bigCardNum, 10);
@@ -198,9 +301,24 @@ export default {
 <style lang="less">
 @import "~styles/variables.less";
 
+@pre-evaluation-card-height: 160px;
+@dbs-card-height: 185px;
+
 .diagnostic-surgery {
   .panel {
     text-align: left;
+    &.pre-evaluation-panel .content {
+      height: @pre-evaluation-card-height + @card-vertical-margin * 2 + 5px * 2;
+      &.extended {
+        height: auto;
+      }
+    }
+    &.dbs-panel .content {
+      height: @dbs-card-height + @card-vertical-margin * 2 + 5px * 2;
+      &.extended {
+        height: auto;
+      }
+    }
     .card {
       display: inline-block;
       position: relative;
@@ -237,18 +355,50 @@ export default {
       &.width-1-10 {
         width: calc(~"10% - @{card-horizontal-margin} * 2");
       }
+      &.pre-evaluation-card {
+        height: @pre-evaluation-card-height;
+      }
+      &.dbs-card {
+        height: @dbs-card-height;
+      }
       .text {
         position: absolute;
         font-size: @small-font-size;
         color: @light-font-color;
+        left: 10px;
+        .name {
+          color: @font-color;
+        }
+        .value {
+          color: @light-font-color;
+        }
       }
       .first-line {
-        left: 10px;
         top: 50px;
       }
       .second-line {
-        left: 10px;
         top: 75px;
+      }
+      .line-1 {
+        top: 10px;
+      }
+      .line-2 {
+        top: 35px;
+      }
+      .line-3 {
+        top: 60px;
+      }
+      .line-4 {
+        top: 85px;
+      }
+      .line-5 {
+        top: 110px;
+      }
+      .line-6 {
+        top: 135px;
+      }
+      .line-7 {
+        top: 160px;
       }
     }
   }
