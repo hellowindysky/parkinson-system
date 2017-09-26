@@ -2,7 +2,37 @@
   <folding-panel :title="'外科手术'" :mode="mutableMode"  v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
     <div class="diagnostic-surgery" ref="diagnosticSurgery">
       <extensible-panel class="panel" :mode="mutableMode" :title="preEvaluationTitle" v-on:addNewCard="addPreEvaluationRecord">
-        <card class="card" :class="devideWidth" :mode="mutableMode" v-for="item in [1,2,3]" :key="item"
+        <card class="card" :class="bigCardWidth" :mode="mutableMode" v-for="item in preEvaluationList" :key="item.preopsInfoId"
+         :title="'ssaa'" v-on:clickCurrentCard="editPreEvaluationRecord(item)"
+         v-on:deleteCurrentCard="deletePreEvaluationRecord(item)">
+          <div class="text first-line">一天{{11}}次</div>
+          <div class="text second-line">{{22}}</div>
+        </card>
+      </extensible-panel>
+      <extensible-panel class="panel" :mode="mutableMode" :title="operationSchemeTitle" v-on:addNewCard="addOperationRecord">
+        <card class="card" :class="smallCardWidth" :mode="mutableMode" v-for="item in operationSchemeList" :key="item.patientCaseId"
+         :title="'ssaa'" v-on:clickCurrentCard="editOperationRecord(item)"
+         v-on:deleteCurrentCard="deleteOperationRecord(item)">
+          <div class="text first-line">一天{{11}}次</div>
+          <div class="text second-line">{{22}}</div>
+        </card>
+      </extensible-panel>
+      <extensible-panel class="panel" :mode="mutableMode" :title="postComplicationsTitle" v-on:addNewCard="addPreEvaluationRecord">
+        <card class="card" :class="smallCardWidth" :mode="mutableMode" v-for="item in postComplicationList" :key="item.patientCaseId"
+         :title="'ssaa'" v-on:clickCurrentCard="editPreEvaluationRecord(item)"
+         v-on:deleteCurrentCard="deletePreEvaluationRecord(item)">
+          <div class="text first-line">一天{{11}}次</div>
+          <div class="text second-line">{{22}}</div>
+        </card>
+      </extensible-panel>
+      <extensible-panel class="panel" :mode="mutableMode" :title="dbsTitle" v-on:addNewCard="addPreEvaluationRecord">
+        <card class="card" :class="bigCardWidth" :mode="mutableMode" v-for="item in dbsFirstList" :key="item.patientDbsFirstId"
+         :title="'ssaa'" v-on:clickCurrentCard="editPreEvaluationRecord(item)"
+         v-on:deleteCurrentCard="deletePreEvaluationRecord(item)">
+          <div class="text first-line">一天{{11}}次</div>
+          <div class="text second-line">{{22}}</div>
+        </card>
+        <card class="card" :class="bigCardWidth" :mode="mutableMode" v-for="item in dbsFollowList" :key="item.patientDbsFollowId"
          :title="'ssaa'" v-on:clickCurrentCard="editPreEvaluationRecord(item)"
          v-on:deleteCurrentCard="deletePreEvaluationRecord(item)">
           <div class="text first-line">一天{{11}}次</div>
@@ -26,14 +56,41 @@ export default {
   data() {
     return {
       mutableMode: this.mode,
-      preEvaluationTitle: 'gogo',
-      devideWidth: ''
+      preEvaluationTitle: '术前评估',
+      operationSchemeTitle: '手术方案',
+      postComplicationsTitle: '术后并发症',
+      dbsTitle: '程控记录',
+      smallCardWidth: '',
+      bigCardWidth: ''
     };
   },
   props: {
     mode: {
       type: String,
       default: this.READING_MODE
+    },
+    diagnosticSurgery: {
+      type: Object,
+      default: () => {
+        return {};
+      }
+    }
+  },
+  computed: {
+    preEvaluationList() {
+      return this.diagnosticSurgery.patientPreopsList ? this.diagnosticSurgery.patientPreopsList : [];
+    },
+    operationSchemeList() {
+      return this.diagnosticSurgery.patientTreatmentList ? this.diagnosticSurgery.patientTreatmentList : [];
+    },
+    postComplicationList() {
+      return this.diagnosticSurgery.patientComplicationList ? this.diagnosticSurgery.patientComplicationList : [];
+    },
+    dbsFirstList() {
+      return this.diagnosticSurgery.patientDbsFirstList ? this.diagnosticSurgery.patientDbsFirstList : [];
+    },
+    dbsFollowList() {
+      return this.diagnosticSurgery.patientDbsFollowList ? this.diagnosticSurgery.patientDbsFollowList : [];
     }
   },
   methods: {
@@ -67,18 +124,43 @@ export default {
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
+    addOperationRecord() {
+      // 这里要传递 3 个参数，一个是 title，一个是当前数据对象（新建的时候为空），另一个是模态框的类型
+      // Bus.$emit(this.SHOW_MODAL_BOX, '新增用药史', {}, this.MEDICINE_MODAL);
+      console.log('add');
+    },
+    editOperationRecord(item) {
+      // Bus.$emit(this.SHOW_MODAL_BOX, '用药史', item, this.MEDICINE_MODAL);
+      console.log('edit', item);
+    },
+    deleteOperationRecord(item) {
+      // var patientMed = {
+      //   patientId: this.id,
+      //   patientMedHistoryId: item.patientMedHistoryId,
+      //   version: item.version
+      // };
+      Bus.$on(this.CONFIRM, () => {
+        // deletePatientMedHistory(patientMed).then(this._resolveDeletion, this._rejectDeletion);
+        console.log('delete', item);
+      });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
+    },
     recalculateCardWidth() {
       this.$nextTick(() => {
         var panelWidth = this.$refs.diagnosticSurgery.clientWidth;
-        var devideNum = 1.0;
-        // 20px 是卡片的横向间距，定义在了 varaibles.less 中，200px 是卡片的最小宽度
-        while (panelWidth / devideNum > 200 + 20) {
-          devideNum += 1.0;
+        var smallCardNum = 1.0;
+        // 20px 是卡片的横向间距，定义在了 varaibles.less 中，200px 是卡片的最小宽度，一排最多显示 10 个卡片
+        while (panelWidth / (smallCardNum + 1) > 200 + 20 && smallCardNum < 10) {
+          smallCardNum += 1.0;
         }
-        devideNum -= 1;
-        // 一排最多显示 10 个卡片
-        devideNum = devideNum <= 10 ? devideNum : 10;
-        this.devideWidth = 'width-1-' + parseInt(devideNum, 10);
+        this.smallCardWidth = 'width-1-' + parseInt(smallCardNum, 10);
+
+        var bigCardNum = 1.0;
+        // 20px 是卡片的横向间距，定义在了 varaibles.less 中，300px 是卡片的最小宽度，一排最多显示 10 个卡片
+        while (panelWidth / (bigCardNum + 1) > 300 + 20 && bigCardNum < 10) {
+          bigCardNum += 1.0;
+        }
+        this.bigCardWidth = 'width-1-' + parseInt(bigCardNum, 10);
       });
     }
   },
@@ -98,6 +180,10 @@ export default {
     Bus.$on(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
     // 第一次加载的时候，去计算一次卡片宽度
     this.recalculateCardWidth();
+
+    setTimeout(() => {
+      console.log(this.diagnosticSurgery);
+    }, 2000);
   },
   beforeDestroy() {
     // 还是记得销毁组件前，解除事件绑定
