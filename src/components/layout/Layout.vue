@@ -32,15 +32,11 @@ export default {
     sidebar,
     modalBox,
     medicineModal,
-<<<<<<< HEAD
     confirmBox,
     nervousSystem,
     biochemicalExam,
-    emgModal
-=======
-    preEvaluation,
-    confirmBox
->>>>>>> 4e7bb1179983c0cad798741150ddd80d55be0368
+    emgModal,
+    preEvaluation
   },
   mounted() {
     window.onresize = () => {
