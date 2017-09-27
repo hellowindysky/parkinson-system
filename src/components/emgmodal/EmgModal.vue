@@ -1,139 +1,77 @@
 <template lang="html">
   <div class="modal-box-wrapper" v-show="displayModal">
     <div class="modal-box">
-      <h3 class="title">{{title}}</h3>
-
+      <h3 class="title"></h3>
       <div class="field">
         <span class="field-name">
-          检查类型&nbsp;:
+          <span class="required-mark">*</span>
         </span>
         <span class="field-input">
-          <el-select v-if="mode===ADD_MODE" placeholder="请选择检查类型" v-model="item['spephysicalInfo']">
-               <el-option v-for="spephyItem in spephysicalType" :key="spephyItem.spephysicalInfo" :label="spephyItem.spephysicalName" :value="spephyItem.spephysicalInfo"></el-option>
-          </el-select>
-          <span v-if="mode===MODIFY_MODE">{{getSpephyName(item['spephysicalInfo'])}}</span> 
+          <span class="warning-text"></span>
         </span>
       </div>
-
-      <div class="field" v-if="item['ariseTime'] || mode===ADD_MODE">
-        <span class="field-name">
-          检查时间&nbsp;:
-        </span>
-        <span class="field-input">
-          <el-date-picker v-model="item['ariseTime']" type="date" format="yyyy-MM-dd"></el-date-picker>
-        </span>
-      </div>
-      <div class="field" v-if="item['spephysicalResult'] || mode===ADD_MODE">
-        <span class="field-name">
-          检查结果&nbsp;:
-        </span>
-        <span class="field-input">
-          <el-input v-model="item['spephysicalResult']"></el-input>
-        </span>
-      </div>
-      <div class="field" v-if="item['remarks'] || mode===ADD_MODE">
-        <span class="field-name">
-          备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注&nbsp;:
-        </span>
-        <span class="field-input">
-          <el-input type="textarea" :autosize="{ minRows: 2, maxRows: 4}" placeholder="请输入内容" v-model="item['remarks']"></el-input>
-        </span>
-      </div>
-
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
-      <div class="button submit-button" @click="submit">确定</div>
+      <div class="button submit-button" >确定</div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+// import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
-import { vueCopy } from 'utils/helper';
-import { deepCopy } from 'utils/helper';
-import Util from 'utils/util.js';
+// import Util from 'utils/util.js';
 
 import { isEmptyObject } from 'utils/helper.js';
+const ADD_MODE = 'add';
+const MODIFY_MODE = 'modify';
 
 export default {
   data() {
     return {
       displayModal: false,
-      ADD_MODE: 'add',
-      MODIFY_MODE: 'modify',
       mode: '',
       modalType: '',
       subModalType: '',
       disableChangingSubModal: false,
       title: '',
       item: {},
-      warningResults: {},
-      spephysicalType: []
+      warningResults: {}
     };
   },
-  computed: {
-    ...mapGetters([
-      'neurologicCheckTypeList'
-    ])
-  },
+  computed: {},
   methods: {
-    getSpephyName(code) {
-      for (let key in this.spephysicalType) {
-        let sonData = this.spephysicalType[key];
-        for (let sonkey in sonData) {
-          if (sonkey === 'spephysicalInfo') {
-            if (code === sonData[sonkey]) {
-              return sonData['spephysicalName'];
-            }
-          }
-        }
-      }
-    },
     showPanel(title, item) {
       this.displayModal = true;
-      // console.log(item);
+      console.log('open');
       // 通过检查 item 参数是否为空对象 {}，来决定提交时是新增记录，还是修改记录
       if (isEmptyObject(item)) {
-        this.mode = this.ADD_MODE;
-        // 如果是新增卡片那么需要造一个对象
-        this.$set(this.item, 'ariseTime', '');
-        this.$set(this.item, 'patientCaseId', this.$route.params.caseId);
-        this.$set(this.item, 'patientId', this.$route.params.id);
-        this.$set(this.item, 'remarks', '');
-        this.$set(this.item, 'spephysicalInfo', '');
-        this.$set(this.item, 'spephysicalResult', '');
+        this.mode = ADD_MODE;
       } else {
-        this.mode = this.MODIFY_MODE;
-        // 如果是修改卡片内容，那么直接渲染传进来的数据
-        vueCopy(item, this.item);
+        this.mode = MODIFY_MODE;
       }
       this.title = title;
-      // this.$nextTick(() => {
-      //   this.clearWarning();
-      // });
-      // 处理一下检查类型
-      let typeDiction = deepCopy(this.neurologicCheckTypeList);
-      for (let j = 0; j < typeDiction.length; j++) {
-        this.$set(this.spephysicalType, j, {});
-        for (let key in typeDiction[j]) {
-          if (key === 'id') {
-            this.$set(this.spephysicalType[j], 'spephysicalInfo', typeDiction[j][key]);
-          } else if (key === 'spephysicalName') {
-            this.$set(this.spephysicalType[j], 'spephysicalName', typeDiction[j][key]);
-          }
-        }
-      }
+      this.item = Object.assign({}, item);
+      // 每次打开这个模态框，都会重新初始化 this.item
+      // this.initItem();
+
+      // 清空警告信息
+      // 改变 item 的时候会触发 warningResults 的跟踪变化（这里的自动触发是由 el-date-picker 的 v-model造成的）
+      // 因此这一步要等到 item 变化结束之后再执行，我们将其放到下一个事件循环 tick 中
+      this.$nextTick(() => {
+        this.clearWarning();
+      });
     },
-    submit() {
-      let submitData = deepCopy(this.item);
-      submitData.ariseTime = Util.simplifyDate(submitData.ariseTime);
-      // console.log(submitData.ariseTime);
-    },
-    updateAndClose() {
-      // Bus.$emit(this.UPDATE_PATIENT_INFO);
-      this.displayModal = false;
-    },
+    // initItem() {
+    //   // 遍历当前的 template，对其中的每个 field，检查 this.item 下有没有名字对应的属性值，没有的话，就初始化为空字符串
+    //   // 注意初始化采用 this.$set 方法，使得当前 Vue 实例对象可以跟踪该属性值的变化
+    //   for (let field of this.template) {
+    //     let name = field.fieldName;
+    //     if (this.item[name] === undefined) {
+    //       this.$set(this.item, name, '');
+    //     }
+    //   }
+    // },
     cancel() {
       this.displayModal = false;
     },
@@ -163,20 +101,11 @@ export default {
     }
   },
   mounted() {
-    Bus.$on(this.SHOW_NERVOU_SYSTEM_MODAL, this.showPanel);
+    Bus.$on(this.SHOW_EMG_MODAL, this.showPanel);
   },
-  watch: {
-    item: {
-      handler: function(newVal) {
-        if (newVal) {
-          console.log(newVal);
-        }
-      },
-      deep: true
-    }
-  },
+  watch: {},
   beforeDestroy() {
-    Bus.$off(this.SHOW_NERVOU_SYSTEM_MODAL, this.showPanel);
+    Bus.$off(this.SHOW_EMG_MODAL, this.showPanel);
   }
 };
 </script>

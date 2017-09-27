@@ -66,7 +66,7 @@ export default {
     getPatientScaleInfo() {
       getScaleInfo().then((data) => {
         this.scaleData = data['scales'];
-        console.log(this.scaleData);
+        // console.log(this.scaleData);
       });
     },
     getTitle(scaleInfoId) {
@@ -116,7 +116,7 @@ export default {
       handler: function(newVal) {
         if (newVal) {
           this.count = this.patientScale.length;
-          console.log(newVal);
+          // console.log(newVal);
         }
       },
       deep: true

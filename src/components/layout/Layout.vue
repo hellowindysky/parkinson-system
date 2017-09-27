@@ -7,6 +7,8 @@
     <medicine-modal></medicine-modal>
     <confirm-box></confirm-box>
     <nervous-system></nervous-system>
+    <biochemical-exam></biochemical-exam>
+    <emg-modal></emg-modal>
   </div>
 </template>
 
@@ -19,6 +21,8 @@ import modalBox from 'components/modalbox/ModalBox';
 import medicineModal from 'components/medicinemodal/MedicineModal';
 import confirmBox from 'components/confirmbox/ConfirmBox';
 import nervousSystem from 'components/nervousystemmodal/NervouSystemModal';
+import biochemicalExam from 'components/biochemicalexammodal/BiochemicalExamModal';
+import emgModal from 'components/emgmodal/EmgModal';
 
 export default {
   components: {
@@ -27,7 +31,9 @@ export default {
     modalBox,
     medicineModal,
     confirmBox,
-    nervousSystem
+    nervousSystem,
+    biochemicalExam,
+    emgModal
   },
   mounted() {
     window.onresize = () => {
