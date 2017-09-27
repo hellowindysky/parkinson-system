@@ -207,12 +207,12 @@ export default {
       return complicationName;
     },
     addPreEvaluationRecord() {
-      // 这里要传递 3 个参数，一个是 title，一个是当前数据对象（新建的时候为空），另一个是模态框的类型
-      // Bus.$emit(this.SHOW_MODAL_BOX, '新增用药史', {}, this.MEDICINE_MODAL);
+      // 这里要传递 2 个参数，一个是模式（新增／修改），一个是当前数据对象（新建的时候为空）
+      Bus.$emit(this.SHOW_PRE_EVALUATION_MODAL, this.ADD_DATA, {});
       console.log('add');
     },
     editPreEvaluationRecord(item) {
-      // Bus.$emit(this.SHOW_MODAL_BOX, '用药史', item, this.MEDICINE_MODAL);
+      Bus.$emit(this.SHOW_PRE_EVALUATION_MODAL, this.EDIT_DATA, {});
       console.log('edit', item);
     },
     deletePreEvaluationRecord(item) {

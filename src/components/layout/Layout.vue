@@ -5,6 +5,7 @@
     <router-view class="content"></router-view>
     <modal-box></modal-box>
     <medicine-modal></medicine-modal>
+    <pre-evaluation></pre-evaluation>
     <confirm-box></confirm-box>
   </div>
 </template>
@@ -16,6 +17,7 @@ import topbar from 'components/header/Header';
 import sidebar from 'components/sidebar/Sidebar';
 import modalBox from 'components/modalbox/ModalBox';
 import medicineModal from 'components/medicinemodal/MedicineModal';
+import preEvaluation from 'components/preevaluation/preEvaluation';
 import confirmBox from 'components/confirmbox/ConfirmBox';
 
 export default {
@@ -24,6 +26,7 @@ export default {
     sidebar,
     modalBox,
     medicineModal,
+    preEvaluation,
     confirmBox
   },
   mounted() {

@@ -23,6 +23,9 @@ export default {
   CONFIRM: 'confirmDecision',
   REQUEST_CONFIRMATION: 'requestConfirmation',
 
+  ADD_DATA: 'addData',
+  EDIT_DATA: 'editData',
+
   SCROLL_AREA_SIZE_CHANGE: 'scrollAreaSizeChange',
   ADD_NEW_CARD: 'addNewCard',
   CLICK_CURRENT_CARD: 'clickCurrentCard',
@@ -35,6 +38,7 @@ export default {
 
   SHOW_MODAL_BOX: 'showModalBox',
   SHOW_MEDICINE_MODAL: 'showMedicineModal',
+  SHOW_PRE_EVALUATION_MODAL: 'showPreEvaluationModal',
 
   QUIT_DIAGNOSTIC_DETAIL: 'quitDiagnosticDetail',
 
