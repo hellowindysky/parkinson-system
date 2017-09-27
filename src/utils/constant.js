@@ -35,6 +35,7 @@ export default {
 
   SHOW_MODAL_BOX: 'showModalBox',
   SHOW_MEDICINE_MODAL: 'showMedicineModal',
+  SHOW_NERVOU_SYSTEM_MODAL: 'showNervouSystemModal',
 
   QUIT_DIAGNOSTIC_DETAIL: 'quitDiagnosticDetail',
 
@@ -49,5 +50,6 @@ export default {
   COFFEE_MODAL: 'coffeeModal',
   WINE_MODAL: 'wineModal',
   SMOKE_MODAL: 'smokeModal',
-  EXERCISE_MODAL: 'exerciseModal'
+  EXERCISE_MODAL: 'exerciseModal',
+  NERVOUSYSTOMMODAL: 'nervouSystemModal'
 };

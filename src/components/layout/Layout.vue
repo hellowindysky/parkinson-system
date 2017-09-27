@@ -6,6 +6,7 @@
     <modal-box></modal-box>
     <medicine-modal></medicine-modal>
     <confirm-box></confirm-box>
+    <nervous-system></nervous-system>
   </div>
 </template>
 
@@ -17,6 +18,7 @@ import sidebar from 'components/sidebar/Sidebar';
 import modalBox from 'components/modalbox/ModalBox';
 import medicineModal from 'components/medicinemodal/MedicineModal';
 import confirmBox from 'components/confirmbox/ConfirmBox';
+import nervousSystem from 'components/nervousystemmodal/NervouSystemModal';
 
 export default {
   components: {
@@ -24,7 +26,8 @@ export default {
     sidebar,
     modalBox,
     medicineModal,
-    confirmBox
+    confirmBox,
+    nervousSystem
   },
   mounted() {
     window.onresize = () => {

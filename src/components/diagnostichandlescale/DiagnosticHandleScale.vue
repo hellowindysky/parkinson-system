@@ -35,8 +35,8 @@
          </div>
          <div class="choose-time-type">
            <span>开关状态:</span>
-           <el-select  placeholder="请选择量表开关状态" v-model="patientScale['switchType']">
-               <el-option v-for="item in switchScaleArr" :key="item.options" :label="item.options" :value="item.status"></el-option>
+           <el-select v-model="patientScale['switchType']" placeholder="请选择量表开关状态">
+               <el-option v-for="item in switchScaleArr" :key="item.status" :value="item.status">{{item.options}}</el-option>
            </el-select>
          </div>
       </div>
@@ -67,7 +67,7 @@
               <span>服用药物:</span>
               <el-input v-model="list['scaleMedicine']"  placeholder="请输入复合用药物"></el-input>    
             </div>
-        </div>                                  
+        </div>                                 
       </folding-panel>
 
       <div v-for="(item, key) in scaleSonDate['questions']" v-if="pageTpye==='update'">
@@ -106,6 +106,7 @@ import { deepCopy } from 'utils/helper';
 export default {
   data() {
     return {
+      useless: {},
       LastSubmit: {},
       isSelected: {}, // 在新增的时候选了一次就改变状态
       readingScaleType: '',
@@ -246,16 +247,26 @@ export default {
           case 'lastTakingTime' :
             Util.simplifyDate(submit[key]);
             break;
-          // case 'scaleSympInfoList' :
-          //   if (submit[key].length) {
-          //     for (let sympKey in submit[key]) {
-          //       let symData = submit[key][sympKey];
-          //       if (sympKey === 'status') {
-          //         if (symData[sympKey] === false) {
-          //         }
-          //       }
-          //     }
-          //   }
+          case 'scaleSympInfoList' :
+            if (submit[key].length) {
+              let sympInfo = submit[key];
+              let flag = false;
+              for (let j = 0; j < sympInfo.length; j++) {
+                let sonSympInfo = sympInfo[j];
+                for (let sonSympKey in sonSympInfo) {
+                  this.useless = sonSympKey;
+                  if (sonSympInfo['status'] === false) {
+                    sympInfo.splice(j, 1);
+                  } else {
+                    flag = true;
+                    delete sonSympInfo.status;
+                  }
+                }
+              }
+              if (!flag) {
+                submit[key] = [];
+              }
+            }
         }
       }
       console.log('submit', submit);
