@@ -5,6 +5,7 @@
     <router-view class="content"></router-view>
     <modal-box></modal-box>
     <medicine-modal></medicine-modal>
+    <pre-evaluation></pre-evaluation>
     <confirm-box></confirm-box>
     <nervous-system></nervous-system>
     <biochemical-exam></biochemical-exam>
@@ -19,6 +20,7 @@ import topbar from 'components/header/Header';
 import sidebar from 'components/sidebar/Sidebar';
 import modalBox from 'components/modalbox/ModalBox';
 import medicineModal from 'components/medicinemodal/MedicineModal';
+import preEvaluation from 'components/preevaluation/preEvaluation';
 import confirmBox from 'components/confirmbox/ConfirmBox';
 import nervousSystem from 'components/nervousystemmodal/NervouSystemModal';
 import biochemicalExam from 'components/biochemicalexammodal/BiochemicalExamModal';
@@ -30,10 +32,15 @@ export default {
     sidebar,
     modalBox,
     medicineModal,
+<<<<<<< HEAD
     confirmBox,
     nervousSystem,
     biochemicalExam,
     emgModal
+=======
+    preEvaluation,
+    confirmBox
+>>>>>>> 4e7bb1179983c0cad798741150ddd80d55be0368
   },
   mounted() {
     window.onresize = () => {

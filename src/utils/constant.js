@@ -23,6 +23,9 @@ export default {
   CONFIRM: 'confirmDecision',
   REQUEST_CONFIRMATION: 'requestConfirmation',
 
+  ADD_DATA: 'addData',
+  EDIT_DATA: 'editData',
+
   SCROLL_AREA_SIZE_CHANGE: 'scrollAreaSizeChange',
   ADD_NEW_CARD: 'addNewCard',
   CLICK_CURRENT_CARD: 'clickCurrentCard',
@@ -38,6 +41,7 @@ export default {
   SHOW_NERVOU_SYSTEM_MODAL: 'showNervouSystemModal',
   SHOW_BIOCHEMICAL_EXAM_MODAL: 'showBiochemicalExamModal',
   SHOW_EMG_MODAL: 'showEmgModal',
+  SHOW_PRE_EVALUATION_MODAL: 'showPreEvaluationModal',
 
   QUIT_DIAGNOSTIC_DETAIL: 'quitDiagnosticDetail',
 
