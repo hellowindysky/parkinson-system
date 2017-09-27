@@ -136,6 +136,27 @@ const getters = {
     }
     return state.all.tableData.patientComplicationType;
   },
+  neurologicCheckTypeList: (state) => {
+    // 神经系统检查
+    if (!state.all.tableData || !state.all.tableData.spephysicalInfo) {
+      return [];
+    }
+    return state.all.tableData.spephysicalInfo;
+  },
+  bioexamTypeList: (state) => {
+    // 生化指标检查
+    if (!state.all.tableData || !state.all.tableData.bioexamInfo) {
+      return [];
+    }
+    return state.all.tableData.bioexamInfo;
+  },
+  emgTypeList: (state) => {
+    // 肌电图
+    if (!state.all.tableData || !state.all.tableData.elecTroGramInfo) {
+      return [];
+    }
+    return state.all.tableData.elecTroGramInfo;
+  },
   typeGroup: (state) => {
     // 如果 state.all.typegroup 为 undefined，则返回一个空数组
     if (!state.all.typegroup) {
