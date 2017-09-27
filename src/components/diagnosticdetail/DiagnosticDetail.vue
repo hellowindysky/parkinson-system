@@ -11,7 +11,11 @@
       <diagnostic-medicine class="folding-panel" :mode="mode" :diagnosticMedicine="caseDetail.patientMedicineNew"></diagnostic-medicine>
       <diagnostic-surgery class="folding-panel" :mode="mode" :diagnosticSurgery="caseDetail.patientSurgicalDbs"></diagnostic-surgery>
       <diagnostic-scale class="folding-panel" :patientScale="caseDetail.patientScale" :mode="mode"></diagnostic-scale>
-      <diagnostic-examination class="folding-panel" :mode="mode"></diagnostic-examination>
+      <diagnostic-examination class="folding-panel" :mode="mode"
+        :neurologicCheckList="caseDetail.patientSpephysical"
+        :biochemicalExamList="caseDetail.patientBioexam"
+        :emgList="caseDetail.patientElecTroGram">
+      </diagnostic-examination>
     </div>
   </div>
 </template>
