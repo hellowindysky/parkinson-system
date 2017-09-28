@@ -12,7 +12,7 @@
 </template>
 
 <script>
-// import { mapGetters } from 'vuex';
+import { mapGetters } from 'vuex';
 // import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 // import Util from 'utils/util.js';
@@ -24,6 +24,12 @@ export default {
       title: ''
     };
   },
+  computed: {
+    ...mapGetters([
+      'operativeComplicationDictionary',
+      'operativeComplicationTemplate'
+    ])
+  },
   methods: {
     showModal(changeWay, info) {
       if (changeWay === this.ADD_DATA) {
@@ -32,6 +38,10 @@ export default {
         this.title = '术后并发症';
       }
       console.log(info);
+      setTimeout(() => {
+        console.log(this.operativeComplicationDictionary);
+        console.log(this.operativeComplicationTemplate);
+      }, 2000);
       this.displayModal = true;
     },
     cancel() {

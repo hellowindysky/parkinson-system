@@ -12,7 +12,7 @@
 </template>
 
 <script>
-// import { mapGetters } from 'vuex';
+import { mapGetters } from 'vuex';
 // import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 // import Util from 'utils/util.js';
@@ -24,6 +24,12 @@ export default {
       title: ''
     };
   },
+  computed: {
+    ...mapGetters([
+      'surgicalMethodDictionary',
+      'surgicalMethodTemplate'
+    ])
+  },
   methods: {
     showModal(changeWay, info) {
       if (changeWay === this.ADD_DATA) {
@@ -32,6 +38,10 @@ export default {
         this.title = '手术方案';
       }
       console.log(info);
+      setTimeout(() => {
+        console.log(this.surgicalMethodDictionary);
+        console.log(this.surgicalMethodTemplate);
+      }, 2000);
       this.displayModal = true;
     },
     cancel() {
