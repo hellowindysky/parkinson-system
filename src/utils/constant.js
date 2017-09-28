@@ -39,6 +39,9 @@ export default {
   SHOW_MODAL_BOX: 'showModalBox',
   SHOW_MEDICINE_MODAL: 'showMedicineModal',
   SHOW_PRE_EVALUATION_MODAL: 'showPreEvaluationModal',
+  SHOW_SURGICAL_METHOD_MODAL: 'showSurgicalMethodModal',
+  SHOW_OPERATIVE_COMPLICATION_MODAL: 'showOperativeComplication',
+  SHOW_DBS_MODAL: 'showDbsModal',
 
   QUIT_DIAGNOSTIC_DETAIL: 'quitDiagnosticDetail',
 

@@ -6,6 +6,9 @@
     <modal-box></modal-box>
     <medicine-modal></medicine-modal>
     <pre-evaluation-modal></pre-evaluation-modal>
+    <surgical-method-modal></surgical-method-modal>
+    <operative-complication-modal></operative-complication-modal>
+    <dbs-modal></dbs-modal>
     <confirm-box></confirm-box>
   </div>
 </template>
@@ -17,7 +20,10 @@ import topbar from 'components/header/Header';
 import sidebar from 'components/sidebar/Sidebar';
 import modalBox from 'components/modalbox/ModalBox';
 import medicineModal from 'components/medicinemodal/MedicineModal';
-import preEvaluationModal from 'components/preevaluationmodal/preEvaluationModal';
+import preEvaluationModal from 'components/preevaluationmodal/PreEvaluationModal';
+import surgicalMethodModal from 'components/surgicalmethodmodal/SurgicalMethodModal';
+import operativeComplicationModal from 'components/operativecomplicationmodal/OperativeComplicationModal';
+import dbsModal from 'components/dbsmodal/DbsModal';
 import confirmBox from 'components/confirmbox/ConfirmBox';
 
 export default {
@@ -27,6 +33,9 @@ export default {
     modalBox,
     medicineModal,
     preEvaluationModal,
+    surgicalMethodModal,
+    operativeComplicationModal,
+    dbsModal,
     confirmBox
   },
   mounted() {
