@@ -31,8 +31,8 @@
           </div>
         </card>
       </extensible-panel>
-      <extensible-panel class="panel" :mode="mutableMode" :title="operationSchemeTitle" v-on:addNewCard="addOperationRecord">
-        <card class="card" :class="smallCardWidth" :mode="mutableMode" v-for="item in operationSchemeList" :key="item.patientCaseId"
+      <extensible-panel class="panel" :mode="mutableMode" :title="operationMethodTitle" v-on:addNewCard="addOperationRecord">
+        <card class="card" :class="smallCardWidth" :mode="mutableMode" v-for="item in operationMethodList" :key="item.patientCaseId"
          :title="transformSurgicalType(item.surgicalInfoId)" v-on:clickCurrentCard="editOperationRecord(item)"
          v-on:deleteCurrentCard="deleteOperationRecord(item)">
           <div class="text first-line">
@@ -143,7 +143,7 @@ export default {
     return {
       mutableMode: this.mode,
       preEvaluationTitle: '术前评估',
-      operationSchemeTitle: '手术方案',
+      operationMethodTitle: '手术方案',
       postComplicationsTitle: '术后并发症',
       dbsTitle: '程控记录',
       smallCardWidth: '',
@@ -170,7 +170,7 @@ export default {
     preEvaluationList() {
       return this.diagnosticSurgery.patientPreopsList ? this.diagnosticSurgery.patientPreopsList : [];
     },
-    operationSchemeList() {
+    operationMethodList() {
       return this.diagnosticSurgery.patientTreatmentList ? this.diagnosticSurgery.patientTreatmentList : [];
     },
     postComplicationList() {
