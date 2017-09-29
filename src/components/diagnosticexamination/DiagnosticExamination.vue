@@ -173,6 +173,7 @@ export default {
     },
     editEmgRecord(item) {
       Bus.$emit(this.SHOW_EMG_MODAL, '肌电图', item);
+      console.log('肌电图', item);
     },
     deleteEmgRecord(item) {
       // var patientMed = {

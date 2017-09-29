@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="medicine-modal-wrapper" v-show="displayModal">
+  <div class="biochemical-modal-wrapper" v-show="displayModal">
     <div class="medicine-modal" ref="medicineModal">
       <h3 class="title">{{title}}</h3>
       <div class="content">
@@ -10,8 +10,8 @@
           </span>
           <span class="field-input">
             <span class="warning-text"></span>
-            <el-select  placeholder="请选择检查名称" v-model="bioexamTypeData['bioexamId']">
-               <el-option v-for="bioexItem in bioexamNameArr" :key="bioexItem.bioexamId" :label="bioexItem.examName" :value="bioexItem.bioexamId"></el-option>
+            <el-select  placeholder="请选择检查名称" v-model="bioexamTypeData['bioexamId']" @change="changeTemplate(mode)" :disabled="mode===MODIFY_MODE">
+               <el-option v-for="bioexItem in bioexamNameArr" :key="bioexItem.bioexamId" :label="bioexItem.examName" :value="bioexItem.bioexamId" ></el-option>
             </el-select>
           </span>
         </div>
@@ -23,11 +23,9 @@
               </td>
               <td class="col col-name">
                 项目名称
-                <span class="required-mark">*</span>
               </td>
               <td class="col col-english">
                 英文缩写
-                <span class="required-mark">*</span>
               </td>
               <td class="col col-result">
                 检查结果
@@ -42,22 +40,45 @@
                 备注
               </td>
             </tr>
+             <tr v-for="(item, key) in templateData" class="row">
+              <td class="col col-id">{{key+1}}</td>
+              <td class="col col-name">
+                {{item.projectName}}
+              </td>
+              <td class="col col-english">
+                {{item.englishAbbreviation}}
+              </td>
+              <td class="col col-result">
+                <el-input v-model="bioexamTypeData['bioexamResult'][key]['result']" placeholder="请输入检查结果"></el-input>                
+              </td>
+              <td class="col col-danwei">
+                {{item.projectUnit}}
+              </td>
+              <td class="col col-cankao">
+                {{item.referenceRanges}}
+              </td>
+              <td class="col col-beizhu">
+                <el-input v-model="bioexamTypeData['bioexamResult'][key]['remarks']" placeholder="请输入备注"></el-input>
+              </td>              
+            </tr>
           </table>
         </div>
       </div>
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
-      <div class="button submit-button">确定</div>
+      <div class="button submit-button" @click="submit">确定</div>
     </div>
   </div>
 </template>
 
 <script>
+import Ps from 'perfect-scrollbar';
 import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import { vueCopy } from 'utils/helper';
 // import Util from 'utils/util.js';
-
+import { deepCopy } from 'utils/helper';
+import { addBiochemical, modBiochemical } from 'api/patient.js';
 import { isEmptyObject } from 'utils/helper.js';
 export default {
   data() {
@@ -74,7 +95,7 @@ export default {
       warningResults: {},
       dictionData: [],
       bioexamTypeData: {},
-      templateData: {},
+      templateData: [],
       bioexamNameArr: []
     };
   },
@@ -89,7 +110,6 @@ export default {
       // 拷贝dictionary的数据
       vueCopy(this.bioexamTypeList, this.dictionData);
       // 将检查的名字从dictionary中取出来
-      console.log('dictionData', this.dictionData);
       for (let i = 0; i < this.dictionData.length; i++) {
         this.$set(this.bioexamNameArr, i, {});
         for (let key in this.dictionData[i]) {
@@ -100,10 +120,11 @@ export default {
           }
         }
       }
-      console.log('bioexamNameArr', this.bioexamNameArr);
       // 通过检查 item 参数是否为空对象 {}，来决定提交时是新增记录，还是修改记录
+
       if (isEmptyObject(item)) {
         // 如果是新增生化指标那么需要新造一个对象来提交
+        this.mode = this.ADD_MODE;
         this.$set(this.bioexamTypeData, 'bioexamId', '');
         this.$set(this.bioexamTypeData, 'bioexamResult', []);
         this.$set(this.bioexamTypeData, 'patientBioexamId', '');
@@ -111,17 +132,23 @@ export default {
         this.$set(this.bioexamTypeData, 'remarks', '');
         this.$set(this.bioexamTypeData, 'patientCaseId', this.$route.params.caseId);
         this.$set(this.bioexamTypeData, 'patientId', this.$route.params.id);
-        this.mode = this.ADD_MODE;
+
       } else {
         // 修改生化指标那么直接拷贝它
         vueCopy(item, this.bioexamTypeData);
+        let bioexamId = this.bioexamTypeData['bioexamId']; // 获取到检查类型的ID
+        for (let i = 0; i < this.dictionData.length; i++) {
+          if (this.dictionData[i]['id'] === bioexamId) {
+            vueCopy(this.dictionData[i].projects, this.templateData);
+            // console.log('projects', this.templateData);
+          }
+        }
         this.mode = this.MODIFY_MODE;
       }
       this.title = title;
       this.item = Object.assign({}, item);
       // 每次打开这个模态框，都会重新初始化 this.item
       // this.initItem();
-
       // 清空警告信息
       // 改变 item 的时候会触发 warningResults 的跟踪变化（这里的自动触发是由 el-date-picker 的 v-model造成的）
       // 因此这一步要等到 item 变化结束之后再执行，我们将其放到下一个事件循环 tick 中
@@ -129,29 +156,52 @@ export default {
         this.clearWarning();
       });
     },
-    // initItem() {
-    //   // 遍历当前的 template，对其中的每个 field，检查 this.item 下有没有名字对应的属性值，没有的话，就初始化为空字符串
-    //   // 注意初始化采用 this.$set 方法，使得当前 Vue 实例对象可以跟踪该属性值的变化
-    //   for (let field of this.template) {
-    //     let name = field.fieldName;
-    //     if (this.item[name] === undefined) {
-    //       this.$set(this.item, name, '');
-    //     }
-    //   }
-    // },
-    cancel() {
-      this.displayModal = false;
-    },
-    initItem() {
-      // 遍历当前的 template，对其中的每个 field，检查 this.item 下有没有名字对应的属性值，没有的话，就初始化为空字符串
-      // 注意初始化采用 this.$set 方法，使得当前 Vue 实例对象可以跟踪该属性值的变化
-      for (let field of this.template) {
-        let name = field.fieldName;
-        if (this.item[name] === undefined) {
-          this.$set(this.item, name, '');
+    changeTemplate(mode) {
+      // 每当改变检查名字下拉框就重新给template赋对应的值
+      let bioexamId = this.bioexamTypeData['bioexamId']; // 获取到检查类型的ID
+      for (let i = 0; i < this.dictionData.length; i++) {
+        if (this.dictionData[i]['id'] === bioexamId) {
+          vueCopy(this.dictionData[i].projects, this.templateData);
+          // console.log('template', this.templateData);
         }
       }
+      // 接下来要把检查结果和备注信息还原成原来的样子
+      if (mode === this.MODIFY_MODE) { // 要在用户编辑生化检查的时候执行
+      } else if (mode === this.ADD_MODE) { // 在新增生化检查的时候要根据检查类型的长度来生成监听的数据对象
+        for (let i = 0; i < this.templateData.length; i++) {
+          this.$set(this.bioexamTypeData['bioexamResult'], i, {});
+          for (let key in this.templateData[i]) {
+            if (key === 'id') {
+              this.$set(this.bioexamTypeData['bioexamResult'][i], 'bioexamProjectId', this.templateData[i][key]);
+            }
+          }
+          this.$set(this.bioexamTypeData['bioexamResult'][i], 'patientCaseId', this.$route.params.caseId);
+          this.$set(this.bioexamTypeData['bioexamResult'][i], 'patientId', this.$route.params.id);
+          this.$set(this.bioexamTypeData['bioexamResult'][i], 'remarks', '');
+          this.$set(this.bioexamTypeData['bioexamResult'][i], 'result', '');
+        }
+        // console.log('current', this.bioexamTypeData['bioexamResult']);
+      }
     },
+    cancel() {
+      this.displayModal = false;
+      this.templateData = [];
+    },
+    submit() {
+      let submitData = deepCopy(this.bioexamTypeData);
+      if (this.mode === this.MODIFY_MODE) {
+        modBiochemical(submitData).then(() => {
+          this.updateAndClose();
+        });
+      } else if (this.mode === this.ADD_MODE) {
+        addBiochemical(submitData).then(() => {
+          this.updateAndClose();
+        });
+      }
+    },
+    updateAndClose() {
+      this.displayModal = false;
+    },    
     getWarningText(fieldName) {
       var warningResult = this.warningResults[fieldName];
       return warningResult ? warningResult : '';
@@ -165,14 +215,49 @@ export default {
       if (this.subModalType !== '') {
         this.warningResults['subModal'] = null;
       }
+    },
+    updateScrollbar() {
+      // 如果不写在 $nextTick() 里面，第一次加载的时候也许会不能正确计算高度。估计是因为子组件还没有全部加载所造成的。
+      this.$nextTick(() => {
+        // 之所以弃用 update 方法，是因为它在某些情况下会出现问题，导致滚动条不能有效刷新
+        // Ps.update(this.$refs.scrollArea);
+
+        // 如果之前有绑定滚动条的话，先进行解除
+        Ps.destroy(this.$refs.formWrapper);
+        Ps.initialize(this.$refs.formWrapper, {
+          wheelSpeed: 1,
+          minScrollbarLength: 40
+        });
+      });
     }
   },
   mounted() {
+    this.updateScrollbar();
     Bus.$on(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.showPanel);
+    // 监听折叠面板，如果发生状态的改变，就需要重新计算滚动区域的高度
+    Bus.$on(this.SCROLL_AREA_SIZE_CHANGE, this.updateScrollbar);
+
+    // 如果屏幕高度发生改变，也需要重新计算滚动区域高度
+    Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
+
+    // 监听子组件是否要求刷新病患数据
+    Bus.$on(this.UPDATE_PATIENT_INFO, this.updatePatientInfo);
   },
-  watch: {},
+  watch: {
+    bioexamTypeData: {
+      handler: function(newVal) {
+        if (newVal) {
+          // console.log('bioexamTypeData', newVal);
+        }
+      },
+      deep: true
+    }
+  },
   beforeDestroy() {
     Bus.$off(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.showPanel);
+    Bus.$off(this.SCROLL_AREA_SIZE_CHANGE, this.updateScrollbar);
+    Bus.$off(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
+    Bus.$off(this.UPDATE_PATIENT_INFO, this.updatePatientInfo);
   }
 };
 </script>
@@ -192,7 +277,7 @@ export default {
 @col-cankao-width: 70px;
 @col-beizhu-width: 180px;
 
-.medicine-modal-wrapper {
+.biochemical-modal-wrapper {
   position: absolute;
   left: 0;
   top: 0;
@@ -296,7 +381,8 @@ export default {
       }
       .form-wrapper {
         position: relative;
-        max-height: 170px;
+        max-height: 250px;
+        height: auto;
         width: 100%;
         border: 1px solid @inverse-font-color;
         overflow: hidden;

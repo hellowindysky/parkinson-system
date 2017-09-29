@@ -82,11 +82,11 @@ export default {
         }
       }
     },
-    updateScaleDetail(item, type) {
-      Bus.$emit(this.UPDATE_SCALE_DETAIL, item, type);
+    updateScaleDetail(item) {
+      Bus.$emit(this.UPDATE_SCALE_DETAIL, item);
     },
     addScale() {
-      Bus.$emit(this.UPDATE_SCALE_DETAIL);
+      Bus.$emit(this.UPDATE_SCALE_DETAIL, {});
     }
   },
   computed: {

@@ -15,7 +15,7 @@
         </span>
       </div>
 
-      <div class="field" v-if="item['ariseTime'] || mode===ADD_MODE">
+      <div class="field">
         <span class="field-name">
           检查时间&nbsp;:
         </span>
@@ -23,7 +23,7 @@
           <el-date-picker v-model="item['ariseTime']" type="date" format="yyyy-MM-dd"></el-date-picker>
         </span>
       </div>
-      <div class="field" v-if="item['spephysicalResult'] || mode===ADD_MODE">
+      <div class="field" v-if="showItem['spephysicalResult'] || mode===ADD_MODE">
         <span class="field-name">
           检查结果&nbsp;:
         </span>
@@ -31,12 +31,12 @@
           <el-input v-model="item['spephysicalResult']"></el-input>
         </span>
       </div>
-      <div class="field" v-if="item['remarks'] || mode===ADD_MODE">
+      <div class="field" v-if="showItem['remarks'] || mode===ADD_MODE">
         <span class="field-name">
           备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注&nbsp;:
         </span>
         <span class="field-input">
-          <el-input type="textarea" :autosize="{ minRows: 2, maxRows: 4}" placeholder="请输入内容" v-model="item['remarks']"></el-input>
+          <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="item['remarks']"></el-input>
         </span>
       </div>
 
@@ -53,6 +53,7 @@ import Bus from 'utils/bus.js';
 import { vueCopy } from 'utils/helper';
 import { deepCopy } from 'utils/helper';
 import Util from 'utils/util.js';
+import { modifyNervouSystem, addNervouSystem } from 'api/patient.js';
 
 import { isEmptyObject } from 'utils/helper.js';
 
@@ -68,6 +69,7 @@ export default {
       disableChangingSubModal: false,
       title: '',
       item: {},
+      showItem: {},
       warningResults: {},
       spephysicalType: []
     };
@@ -107,6 +109,7 @@ export default {
         this.mode = this.MODIFY_MODE;
         // 如果是修改卡片内容，那么直接渲染传进来的数据
         vueCopy(item, this.item);
+        vueCopy(item, this.showItem);
       }
       this.title = title;
       // this.$nextTick(() => {
@@ -128,10 +131,23 @@ export default {
     submit() {
       let submitData = deepCopy(this.item);
       submitData.ariseTime = Util.simplifyDate(submitData.ariseTime);
-      // console.log(submitData.ariseTime);
+      if (this.mode === this.MODIFY_MODE) {
+        // 修改的状态
+        // console.log('mod', submitData);
+        modifyNervouSystem(submitData).then((data) => {
+          console.log('back', data);
+          this.updateAndClose();
+        });
+      } else if (this.mode === this.ADD_MODE) {
+        // 新增的状态
+        // console.log('add', submitData);
+        delete submitData.patientSpephysicalId;
+        addNervouSystem(submitData).then(() => {
+          this.updateAndClose();
+        });
+      }
     },
     updateAndClose() {
-      // Bus.$emit(this.UPDATE_PATIENT_INFO);
       this.displayModal = false;
     },
     cancel() {

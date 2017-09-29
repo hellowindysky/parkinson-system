@@ -589,13 +589,109 @@ export function deletePatientMedicine(patientMedicine) {
 export function getScaleInfo() {
   var request = {
     "userId": 93242,
-    "accountNumber": "15012670416",
-    "userType": 1,
+    "accountNumber": "15527231713",
+    "userType": 2,
     "orgId": 34,
     "orgType": 2,
     "version": 43
   };
   var url = 'http://apitest.gyenno.com/pdms/queryScaleInfo';
+
+  return encapsulatePromise(url, request);
+};
+
+// 新增医学量表
+export function addScaleInfo(patientScale) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "version": 43,
+    "patientScale": patientScale
+  };
+  var url = 'http://apitest.gyenno.com/pdms/addPatientScaleInfo';
+
+  return encapsulatePromise(url, request);
+};
+
+// 修改医学量表
+export function modifyScaleInfo(patientScale) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "version": 43,
+    "patientScale": patientScale
+  };
+  var url = 'http://apitest.gyenno.com/pdms/modPatientScaleInfo';
+
+  return encapsulatePromise(url, request);
+};
+
+// 修改神经系统检查
+export function modifyNervouSystem(patientSpephysical) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "version": 43,
+    "patientSpephysical": patientSpephysical
+  };
+  var url = 'http://apitest.gyenno.com/pdms/modPatientSpephysical';
+
+  return encapsulatePromise(url, request);
+};
+
+// 新增神经系统检查
+export function addNervouSystem(patientSpephysical) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "version": 43,
+    "patientSpephysical": patientSpephysical
+  };
+  var url = 'http://apitest.gyenno.com/pdms/addPatientSpephysical';
+
+  return encapsulatePromise(url, request);
+};
+
+// 新增生化指标
+export function addBiochemical(patientBioexam) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "version": 43,
+    "patientBioexam": patientBioexam
+  };
+  var url = 'http://apitest.gyenno.com/pdms/addBioexam';
+
+  return encapsulatePromise(url, request);
+};
+
+// 修改生化指标
+export function modBiochemical(patientBioexam) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "version": 43,
+    "patientBioexam": patientBioexam
+  };
+  var url = 'http://apitest.gyenno.com/pdms/modBioexam';
 
   return encapsulatePromise(url, request);
 };

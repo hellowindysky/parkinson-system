@@ -25,7 +25,29 @@ function simplifyDate(dateStr) {
   return year + '-' + month + '-' + date;
 }
 
+function simplifyTime(dateStr) {
+  // 如果参数本身就为空，那么直接返回 undefined
+  if (!dateStr) {
+    return undefined;
+  }
+  var dateObj = new Date(dateStr);
+  var year = dateObj.getFullYear();
+  var month = dateObj.getMonth() + 1;
+  var date = dateObj.getDate();
+  var hour = dateObj.getHours();
+  var min = dateObj.getMinutes();
+  var formatHour = '';
+  var formatMin = '';
+  if (Number(hour) < 10) {
+    formatHour = 0;
+  } else if (Number(min) < 10) {
+    formatMin = 0;
+  }
+  return year + '-' + month + '-' + date + ' ' + formatHour + hour + ':' + formatMin + min;
+}
+
 export default {
   getElement,
-  simplifyDate
+  simplifyDate,
+  simplifyTime
 };
