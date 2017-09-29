@@ -36,6 +36,7 @@ import { mapGetters } from 'vuex';
 // import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
+import { vueCopy } from 'utils/helper.js';
 
 export default {
   data() {
@@ -59,6 +60,7 @@ export default {
       } else if (changeWay === this.EDIT_DATA) {
         this.title = '手术方案';
       }
+      vueCopy(info, this.copyInfo);
       console.log(info);
       setTimeout(() => {
         console.log(this.surgicalMethodDictionary);
@@ -82,6 +84,9 @@ export default {
     getOptions(fieldName) {
       // 为下拉框准备列表
       var options = [];
+      if (fieldName) {
+        options = [];
+      }
       // var dictionaryField = this.getMatchedField(fieldName);
       // if (dictionaryField.fieldName === 'medicineId') {
       //   for (let medicineItem of this.medicineInfo) {
