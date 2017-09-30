@@ -61,8 +61,8 @@
       </extensible-panel>
       <extensible-panel class="panel dbs-panel" :mode="mutableMode" :title="dbsTitle" v-on:addNewCard="addDbsRecord">
         <card class="card dbs-card" :class="bigCardWidth" :mode="mutableMode" v-for="item in dbsFirstList" :key="item.patientDbsFirstId"
-         :title="''" v-on:clickCurrentCard="editDbsFirstRecord(item)"
-         v-on:deleteCurrentCard="deleteDbsFirstRecord(item)">
+         :title="''" v-on:clickCurrentCard="editDbsRecord(item)"
+         v-on:deleteCurrentCard="deleteDbsRecord(item)">
           <div class="text line-1">
             <span class="name">手术中心: </span>
             <span class="value">{{item.surgiCenter}}</span>
@@ -93,8 +93,8 @@
           </div>
         </card>
         <card class="card dbs-card" :class="bigCardWidth" :mode="mutableMode" v-for="item in dbsFollowList" :key="item.patientDbsFollowId"
-         :title="''" v-on:clickCurrentCard="editDbsFollowRecord(item)"
-         v-on:deleteCurrentCard="deleteDbsFollowRecord(item)">
+         :title="''" v-on:clickCurrentCard="editDbsRecord(item)"
+         v-on:deleteCurrentCard="deleteDbsRecord(item)">
           <div class="text line-1">
             <span class="name">手术中心: </span>
             <span class="value">{{item.surgiCenter}}</span>
@@ -274,27 +274,11 @@ export default {
       Bus.$emit(this.SHOW_DBS_MODAL, this.ADD_DATA, {});
       console.log('add');
     },
-    editDbsFirstRecord(item) {
+    editDbsRecord(item) {
       Bus.$emit(this.SHOW_DBS_MODAL, this.ADD_DATA, item);
       console.log('edit', item);
     },
-    deleteDbsFirstRecord(item) {
-      // var patientMed = {
-      //   patientId: this.id,
-      //   patientMedHistoryId: item.patientMedHistoryId,
-      //   version: item.version
-      // };
-      Bus.$on(this.CONFIRM, () => {
-        // deletePatientMedHistory(patientMed).then(this._resolveDeletion, this._rejectDeletion);
-        console.log('delete', item);
-      });
-      Bus.$emit(this.REQUEST_CONFIRMATION);
-    },
-    editDbsFollowRecord(item) {
-      // Bus.$emit(this.SHOW_MODAL_BOX, '用药史', item, this.MEDICINE_MODAL);
-      console.log('edit', item);
-    },
-    deleteDbsFollowRecord(item) {
+    deleteDbsRecord(item) {
       // var patientMed = {
       //   patientId: this.id,
       //   patientMedHistoryId: item.patientMedHistoryId,
