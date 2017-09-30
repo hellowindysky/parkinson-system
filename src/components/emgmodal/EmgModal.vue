@@ -35,19 +35,20 @@
             <el-input type="textarea" :rows="2" v-model="EmgTypeData['patEleHint']" placeholder="请输入提示信息"></el-input> 
           </span>
         </div>
+        <h3 class="form-title" v-if="tableMode===SON_OPEN">{{currentTableName}}</h3>
         <div class="form-wrapper" ref="formWrapper">
           <table class="form" v-if="tableMode===FATHER_OPEN">
             <tr class="row first-row">
-              <td class="col col-id">
+              <td class="col col-width5">
                 序号
               </td>
-              <td class="col col-name">
+              <td class="col col-width30">
                 检查项
               </td>
-              <td class="col col-name">
+              <td class="col col-width30">
                 更新时间
               </td>
-              <td class="col col-name">
+              <td class="col col-width30">
                 操作
               </td>
             </tr>
@@ -66,34 +67,316 @@
               </td>
             </tr>
           </table>
-          <table class="form" v-if="tableMode===SON_OPEN">
+          <table class="form" v-if="tableMode===SON_OPEN && currentTable===MOTNERCONDITEM">
              <tr class="row first-row">
-              <td class="col col-id">
+              <td class="col col-width5">
                 序号
               </td>
-              <td class="col col-width70">
-                神经类型
+              <td class="col col-width10">
+                神经类型                  
               </td>
-              <td class="col col-width150">
+              <td class="col col-width20">
                 Nerve and Site
               </td>
-              <td class="col col-width70">
-                Latency（ms）
+              <td class="col col-width10">
+                Latency(ms)
               </td>
-              <td class="col col-width70">
-                Amplitude（mV）
+              <td class="col col-width10">
+                Amplitude(mV)
               </td>
-              <td class="col col-width150">
+              <td class="col col-width15">
                 Segment
               </td>
-              <td class="col col-width100">
-                Latency Difference（ms）
+              <td class="col col-width10">
+                Latency Difference(ms)
               </td>
-              <td class="col col-width100">
-                Distance（mm）
+              <td class="col col-width10">
+                Distance(mm)
               </td>
-              <td class="col col-width100">
-                Conduction Velocity（m/s）
+              <td class="col col-width10">
+                Conduction Velocity(m/s)
+              </td>
+            </tr>
+              
+             <tr class="row" v-for="(item, key) in SonTempData">
+              <td class="col col-width5">
+                {{key+1}}
+              </td>
+              <td class="col col-width10">
+                <el-input v-model="item['nervName']" disabled></el-input>
+              </td>
+              <td class="col col-width20">
+                <el-input v-model="item['nerveAndSite']" disabled></el-input>
+              </td>
+              <td class="col col-width10">
+                <el-input v-model="EmgTypeData['patientMotNerCondResu'][key]['latency']"></el-input>
+              </td>
+              <td class="col col-width10">
+                <el-input v-model="EmgTypeData['patientMotNerCondResu'][key]['amplitude']"></el-input>
+              </td>
+              <td class="col col-width15">
+                <el-input v-model="item['segment']"></el-input>
+              </td>
+              <td class="col col-width10">
+                <el-input v-model="EmgTypeData['patientMotNerCondResu'][key]['latencyDifference']"></el-input>
+              </td>
+              <td class="col col-width10">
+                <el-input v-model="EmgTypeData['patientMotNerCondResu'][key]['distance']"></el-input>
+              </td>
+              <td class="col col-width10">
+                <el-input v-model="EmgTypeData['patientMotNerCondResu'][key]['conductionVelocity']"></el-input>
+              </td>
+            </tr>
+          </table>
+          <table class="form" v-if="tableMode===SON_OPEN && currentTable===fWAVSTUITEM">
+             <tr class="row first-row">
+              <td class="col col-width5">
+                序号
+              </td>
+              <td class="col col-width25">
+                Nerve
+              </td>
+              <td class="col col-width25">
+                M-Latency 
+              </td>
+              <td class="col col-width25">
+                F-Latency
+              </td>
+              <td class="col col-width20">
+                F%
+              </td>
+            </tr>
+            <tr class="row" v-for="(item, key) in SonTempData">
+              <td class="col col-width5">
+                {{key+1}}
+              </td>
+              <td class="col col-width25">
+                <el-input v-model="item['nerve']" disabled></el-input>
+              </td>
+              <td class="col col-width25">
+                <el-input v-model="EmgTypeData['patienFWaStuResu'][key]['mLatency']"></el-input>
+              </td>
+              <td class="col col-width25">
+                <el-input v-model="EmgTypeData['patienFWaStuResu'][key]['fLatency']"></el-input>
+              </td>
+              <td class="col col-width20">
+                <el-input v-model="EmgTypeData['patienFWaStuResu'][key]['fProportion']"></el-input>
+              </td>
+            </tr>
+          </table>
+          <table class="form" v-if="tableMode===SON_OPEN && currentTable===SENNERCONDITEM">
+             <tr class="row first-row">
+              <td class="col col-width5">
+                序号
+              </td>
+              <td class="col col-width10">
+                神经类型
+              </td>
+              <td class="col col-width15">
+                Nerve and Site
+              </td>
+              <td class="col col-width10">
+                Onset Latency(ms)
+              </td>
+              <td class="col col-width10">
+                Peak Latency(ms)
+              </td>
+              <td class="col col-width10">
+                Amplitude(μV)
+              </td>
+              <td class="col col-width18">
+                Segment
+              </td>
+              <td class="col col-width10">
+                Latency Difference(ms)
+              </td>
+              <td class="col col-width5">
+                Distance(mm)
+              </td>
+              <td class="col col-width7">
+                Conduction Velocity(m/s)
+              </td>
+            </tr>
+             <tr class="row" v-for="(item, key) in SonTempData">
+              <td class="col col-width5">
+                {{key+1}}
+              </td>
+              <td class="col col-width10">
+                 <el-input v-model="item.nervName" disabled></el-input>
+              </td>
+              <td class="col col-width15">
+                 <el-input v-model="item.nerveAndSite" disabled></el-input>
+              </td>
+              <td class="col col-width10">
+                 <el-input v-model="EmgTypeData['patientSenNerCondResu'][key]['onsetLatency']"></el-input>
+              </td>
+              <td class="col col-width10">
+                 <el-input v-model="EmgTypeData['patientSenNerCondResu'][key]['peakLatency']"></el-input>
+              </td>
+              <td class="col col-width10">
+                 <el-input v-model="EmgTypeData['patientSenNerCondResu'][key]['amplitude']"></el-input>
+              </td>
+              <td class="col col-width18">
+                 <el-input v-model="item.segment" disabled></el-input>
+              </td>
+              <td class="col col-width10">
+                 <el-input v-model="EmgTypeData['patientSenNerCondResu'][key]['latencyDifference']"></el-input>
+              </td>
+              <td class="col col-width5">
+                 <el-input v-model="EmgTypeData['patientSenNerCondResu'][key]['distance']"></el-input>
+              </td>
+              <td class="col col-width7">
+                 <el-input v-model="EmgTypeData['patientSenNerCondResu'][key]['conductionVelocity']"></el-input>
+              </td>
+            </tr>
+          </table>
+           <table class="form" v-if="tableMode===SON_OPEN && currentTable===NEEDEXAMITEM">
+             <tr class="row first-row">
+              <td class="col col-width5">
+                序号
+              </td>
+              <td class="col col-width25">
+                Muscle
+              </td>
+              <td class="col col-width10">
+                Insertional
+              </td>
+              <td class="col col-width7">
+                Fibs(Spontaneous Activity)
+              </td>
+              <td class="col col-width7">
+                +Wave(Spontaneous Activity)
+              </td>
+              <td class="col col-width7">
+                Fasc(Spontaneous Activity)
+              </td>
+              <td class="col col-width7">
+                Duration(Volitional MUAPs)
+              </td>
+              <td class="col col-width7">
+                Amplitude(Volitional MUAPs)
+              </td>
+              <td class="col col-width7">
+                Poly(Volitional MUAPs)
+              </td>
+            </tr>
+            <tr class="row" v-for="(item, key) in SonTempData">
+              <td class="col col-width5">
+                {{key+1}}
+              </td>
+              <td class="col col-width25">
+                <el-input v-model="item.muscle"></el-input>
+              </td>
+              <td class="col col-width10">
+                <el-input v-model="EmgTypeData['patientNeedExamItemResu'][key]['insertional']"></el-input>
+              </td>
+              <td class="col col-width7">
+                <el-input v-model="EmgTypeData['patientNeedExamItemResu'][key]['spoActFib']"></el-input>
+              </td>
+              <td class="col col-width7">
+                <el-input v-model="EmgTypeData['patientNeedExamItemResu'][key]['spoActWave']"></el-input>
+              </td>
+              <td class="col col-width7">
+                <el-input v-model="EmgTypeData['patientNeedExamItemResu'][key]['spoActFasc']"></el-input>
+              </td>
+              <td class="col col-width7">
+                <el-input v-model="EmgTypeData['patientNeedExamItemResu'][key]['volMuapdur']"></el-input>
+              </td>
+              <td class="col col-width7">
+                <el-input v-model="EmgTypeData['patientNeedExamItemResu'][key]['volmuapamp']"></el-input>
+              </td>
+              <td class="col col-width7">
+                <el-input v-model="EmgTypeData['patientNeedExamItemResu'][key]['volmuappoly']"></el-input>
+              </td>
+            </tr>
+          </table>
+           <table class="form" v-if="tableMode===SON_OPEN && currentTable===MOTUNIANAITEM">
+             <tr class="row first-row">
+              <td class="col col-width5">
+                序号
+              </td>
+              <td class="col col-width25">
+                Muscle
+              </td>
+              <td class="col col-width30">
+                检查项名称
+              </td>
+              <td class="col col-width7">
+                Duration(ms)
+              </td>
+              <td class="col col-width7">
+                Amplitude(μV)
+              </td>
+              <td class="col col-width7">
+                Phases
+              </td>
+              <td class="col col-width7">
+                Spike Duration(ms)
+              </td>
+              <td class="col col-width10">
+                备注
+              </td>
+            </tr>
+            <tr class="row" v-for="(item, key) in SonTempData">
+              <td class="col col-width5">
+                {{key+1}}
+              </td>
+              <td class="col col-width25">
+                <el-input v-model="item['nervName']" disabled></el-input>
+              </td>
+              <td class="col col-width30">
+                <el-input v-model="item['examItemName']" disabled></el-input>
+              </td>
+              <td class="col col-width7">
+                <el-input v-model="EmgTypeData['patientMotUniAnaResu'][key]['duration']"></el-input>
+              </td>
+              <td class="col col-width7">
+                <el-input v-model="EmgTypeData['patientMotUniAnaResu'][key]['amplitude']"></el-input>
+              </td>
+              <td class="col col-width7">
+                <el-input v-model="EmgTypeData['patientMotUniAnaResu'][key]['phases']"></el-input>
+              </td>
+              <td class="col col-width7">
+                <el-input v-model="EmgTypeData['patientMotUniAnaResu'][key]['spikeDuration']"></el-input>
+              </td>
+              <td class="col col-width10">
+                <el-input v-model="EmgTypeData['patientMotUniAnaResu'][key]['remarks']"></el-input>
+              </td>
+            </tr>
+          </table>
+          <table class="form" v-if="tableMode===SON_OPEN && currentTable===INTPATANAITEM">
+             <tr class="row first-row">
+              <td class="col col-width5">
+                序号
+              </td>
+              <td class="col col-width30">
+                Muscle
+              </td>
+              <td class="col col-width25">
+                Turn/Second(T)
+              </td>
+              <td class="col col-width20">
+                Amplitude/Turn(M)(μV)
+              </td>
+              <td class="col col-width20">
+                Ratio(M/T)(%)
+              </td>
+            </tr>
+            <tr class="row" v-for="(item, key) in SonTempData">
+              <td class="col col-width5">
+                {{key+1}}
+              </td>
+              <td class="col col-width30">
+                <el-input v-model="item['muscle']" disabled></el-input>
+              </td>
+              <td class="col col-width25">
+                <el-input v-model="EmgTypeData['patientIntPatAnaItem'][key]['turn']"></el-input>
+              </td>
+              <td class="col col-width20">
+                <el-input v-model="EmgTypeData['patientIntPatAnaItem'][key]['amplitude']" ></el-input>
+              </td>
+              <td class="col col-width20">
+                <el-input v-model="EmgTypeData['patientIntPatAnaItem'][key]['ratio']"></el-input>
               </td>
             </tr>
           </table>
@@ -102,7 +385,7 @@
       <div class="seperate-line"></div>
       <div class="button cancel-button" v-if="tableMode===FATHER_OPEN" @click="cancel">取消</div>
       <div class="button son-submit-button" v-if="tableMode===FATHER_OPEN">确认</div>
-      <div class="button son-submit-button" v-if="tableMode===SON_OPEN">编辑完成</div>
+      <div class="button son-submit-button" v-if="tableMode===SON_OPEN" @click="editEnd">编辑完成</div>
     </div>
   </div>
 </template>
@@ -112,11 +395,13 @@ import Ps from 'perfect-scrollbar';
 import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import { vueCopy } from 'utils/helper';
+import Util from 'utils/util.js';
 
 import { isEmptyObject } from 'utils/helper.js';
 export default {
   data() {
     return {
+      motNerCondType: [],
       FATHER_OPEN: 'fatheropen',
       SON_OPEN: 'sonopen',
       tableMode: '',
@@ -125,6 +410,13 @@ export default {
       displayModal: false,
       mode: '',
       currentTable: '',
+      currentTableName: '',
+      fWAVSTUITEM: 'fwavStuItem',
+      INTPATANAITEM: 'intPatAnaItem',
+      MOTNERCONDITEM: 'motNerCondItem',
+      MOTUNIANAITEM: 'motUniAnaItem',
+      NEEDEXAMITEM: 'needExamItem',
+      SENNERCONDITEM: 'senNerCondItem',
       title: '',
       item: {},
       warningResults: {},
@@ -199,7 +491,7 @@ export default {
         this.mode = this.MODIFY_MODE;
       }
       this.title = title;
-      // 改变 item 的时候会触发 warningResults 的跟踪变化（这里的自动触发是由 el-date-picker 的 v-model造成的）
+      // 改变 item 的时候会触发 warningResults 的跟踪变化(这里的自动触发是由 el-date-picker 的 v-model造成的)
       // 因此这一步要等到 item 变化结束之后再执行，我们将其放到下一个事件循环 tick 中
       this.$nextTick(() => {
         this.clearWarning();
@@ -215,14 +507,81 @@ export default {
     selectSonTemp(arrName) {
       // 点击编辑按钮之后就通过arr的名字来生成一个肌电图的子表格
       // 在dictionary中找到这个数组
+      this.SonTempData = [];
       for (let key in this.FatherTempData) {
         if (key === arrName) {
           vueCopy(this.FatherTempData[key], this.SonTempData);
-          console.log('succss');
+          console.log('SonTempData', this.SonTempData);
         }
       }
+
       // 取到这个值之后就要关闭父表格，打开子表格
       this.tableMode = this.SON_OPEN;
+      switch (arrName) {
+        case 'senNerCondItem':
+          this.currentTable = this.SENNERCONDITEM;
+          this.currentTableName = '感觉神经传导项';
+           // 获取到运动单元分析项
+          let tha = this;
+          Util.getDictionaryData('nervType').then(function(data) {
+            for (let i = 0; i < tha.SonTempData.length; i++) {
+              let sonData = tha.SonTempData[i];
+              for (let key in data) {
+                if (sonData['nerveType'] === data[key]['typeCode']) {
+                  tha.$set(tha.SonTempData[i], 'nervName', data[key]['typeName']);
+                }
+              }
+            }
+          });
+          break;
+        case 'needExamItem':
+          this.currentTable = this.NEEDEXAMITEM;
+          this.currentTableName = '针刺肌电图检查';
+          break;
+        case 'motUniAnaItem':
+          this.currentTable = this.MOTUNIANAITEM;
+          this.currentTableName = '运动单元分析';
+          // 获取到运动单元分析项
+          let thats = this;
+          Util.getDictionaryData('muscleType').then(function(data) {
+            for (let i = 0; i < thats.SonTempData.length; i++) {
+              let sonData = thats.SonTempData[i];
+              for (let key in data) {
+                if (sonData['muscle'] === data[key]['typeCode']) {
+                  thats.$set(thats.SonTempData[i], 'nervName', data[key]['typeName']);
+                }
+              }
+            }
+          });
+          break;
+        case 'motNerCondItem':
+          this.currentTable = this.MOTNERCONDITEM;
+          this.currentTableName = '运动神经传导项';
+          // 获取到运动神经传导项的类型
+          let that = this;
+          Util.getDictionaryData('nervType').then(function(data) {
+            for (let i = 0; i < that.SonTempData.length; i++) {
+              let sonData = that.SonTempData[i];
+              for (let key in data) {
+                if (sonData['nerveType'] === data[key]['typeCode']) {
+                  that.$set(that.SonTempData[i], 'nervName', data[key]['typeName']);
+                }
+              }
+            }
+          });
+          break;
+        case 'intPatAnaItem':
+          this.currentTable = this.INTPATANAITEM;
+          this.currentTableName = '干扰项分析';
+          break;
+        case 'fwavStuItem':
+          this.currentTable = this.fWAVSTUITEM;
+          this.currentTableName = 'F波研究';
+          break;
+      }
+    },
+    editEnd() {
+      this.tableMode = this.FATHER_OPEN;
     },
     cancel() {
       this.displayModal = false;
@@ -308,10 +667,6 @@ export default {
 @col-cankao-width: 70px;
 @col-beizhu-width: 180px;
 
-@col-table-width70: 70px;
-@col-table-width150: 150px; 
-@col-table-width100: 100px; 
-
 .emg-modal-wrapper {
   position: absolute;
   left: 0;
@@ -323,9 +678,10 @@ export default {
   .medicine-modal {
     position: relative;
     margin: auto;
-    padding: 0 40px;
+    padding: 0 20px;
     top: 3%;
-    width: 800px;
+    width: 80%;
+    max-width: 1100px;
     max-height: 94%;
     background-color: @background-color;
     overflow: hidden;
@@ -415,13 +771,24 @@ export default {
           }
         }
       }
+      .form-title {
+        padding: 0;
+        line-height: 40px;
+        font-size: @normal-font-size;
+        color: @font-color;
+        margin: 0;
+        text-align: center;
+        padding-top: 20px;
+      }
       .form-wrapper {
         position: relative;
-        max-height: 250px;
+        max-height: 300px;
         height: auto;
         width: 100%;
+        padding-right: 10px;
         border: 1px solid @inverse-font-color;
         overflow: hidden;
+
         .form {
           position: relative;
           margin-bottom: 5px;
@@ -432,46 +799,46 @@ export default {
             &.first-row {
               background-color: @screen-color;
               height: 30px;
+              .col {
+                padding: 0 3px;
+              }
             }
 
             .col {
               font-size: @small-font-size;
               text-align: center;
+              padding: 0;
+              margin: 0;
               span {
                 color: @theme-color;
                 text-decoration: underline;
                 cursor: pointer;
-                margin-right: 8px; 
+                margin-right: 8px;
               }
-              &.col-id {
-                width: @col-id-width;
+              &.col-width5 {
+                width: 5%;
+                min-width: 40px;
               }
-              &.col-name {
-                width: @col-name-width;
+              &.col-width10 {
+                width: 10%;
               }
-              &.col-english {
-                width: @col-english-width;
+              &.col-width15 {
+                width: 15%;
               }
-              &.col-result {
-                width: @col-result-width;
+              &.col-width20 {
+                width: 20%;
               }
-              &.col-danwei {
-                width: @col-danwei-width;
+              &.col-width25 {
+                width: 25%;
               }
-              &.col-cankao {
-                width: @col-cankao-width;
+              &.col-width30 {
+                width: 30%;
               }
-              &.col-beizhu {
-                width: @col-beizhu-width;
+              &.col-width18 {
+                width: 18%;
               }
-              &.col-width70 {
-                width: @col-table-width70;
-              }
-              &.col-width100 {
-                width: @col-table-width100;
-              }
-              &.col-width150 {
-                width: @col-table-width150;
+              &.col-width7 {
+                width: 7%;
               }
               .required-mark {
                 color: red;

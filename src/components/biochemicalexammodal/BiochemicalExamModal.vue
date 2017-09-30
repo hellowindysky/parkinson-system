@@ -201,7 +201,7 @@ export default {
     },
     updateAndClose() {
       this.displayModal = false;
-    },    
+    },
     getWarningText(fieldName) {
       var warningResult = this.warningResults[fieldName];
       return warningResult ? warningResult : '';
@@ -384,6 +384,7 @@ export default {
         max-height: 250px;
         height: auto;
         width: 100%;
+        padding-right: 10px;
         border: 1px solid @inverse-font-color;
         overflow: hidden;
         .form {
