@@ -120,7 +120,9 @@
             <td class="col w2" colspan="2" rowspan="2">上次方案</td>
             <td class="col w2" colspan="2">左侧肢体</td>
             <td class="col w3" colspan="3">
-              <el-select></el-select>
+              <el-select :value="1">
+                <el-option label="a" :value="1"></el-option>
+              </el-select>
             </td>
             <td class="col w5" colspan="5">
               <el-checkbox-group v-model="cl">
@@ -161,7 +163,9 @@
           <tr class="row">
             <td class="col w2" colspan="2">左侧肢体</td>
             <td class="col w3" colspan="3">
-              <el-select></el-select>
+              <el-select :value="1">
+                <el-option label="a" :value="1"></el-option>
+              </el-select>
             </td>
             <td class="col w5" colspan="5">
               <el-checkbox-group v-model="cl">
@@ -235,10 +239,15 @@
             <td class="col w3" colspan="3">效果及副作用</td>
           </tr>
           <tr class="row">
-            <td class="col w2" colspan="2" rowspan="2">调整1</td>
+            <td class="col w2" colspan="2" rowspan="2">
+              调整1
+              <span class="iconfont icon-remove"></span>
+            </td>
             <td class="col w2" colspan="2">左侧肢体</td>
             <td class="col w3" colspan="3">
-              <el-select></el-select>
+              <el-select :value="1">
+                <el-option label="a" :value="1"></el-option>
+              </el-select>
             </td>
             <td class="col w5" colspan="5">
               <el-checkbox-group v-model="cl">
@@ -273,7 +282,9 @@
           <tr class="row">
             <td class="col w2" colspan="2">左侧肢体</td>
             <td class="col w3" colspan="3">
-              <el-select></el-select>
+              <el-select :value="1">
+                <el-option label="a" :value="1"></el-option>
+              </el-select>
             </td>
             <td class="col w5" colspan="5">
               <el-checkbox-group v-model="cl">
@@ -302,6 +313,246 @@
               <el-input></el-input>
             </td>
             <td class="col w3" colspan="3">
+              <el-input></el-input>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="form-wrapper" ref="form3">
+        <table class="form form3">
+          <tr class="row top-row">
+            <td class="col" colspan="22">
+              调整多个参数
+            </td>
+          </tr>
+          <tr class="row">
+            <td class="col w2" colspan="2">疗效满意度</td>
+            <td class="col w2" colspan="2">左侧</td>
+            <td class="col w8" colspan="8">
+              <el-input></el-input>
+            </td>
+            <td class="col w2" colspan="2">右侧</td>
+            <td class="col w8" colspan="8">
+              <el-input></el-input>
+            </td>
+          </tr>
+          <tr class="row title-row">
+            <td class="col w2" colspan="2">
+              方案
+              <span class="iconfont icon-plus"></span>
+            </td>
+            <td class="col w2" colspan="2">肢体侧</td>
+            <td class="col w3" colspan="3">刺激模式</td>
+            <td class="col w5" colspan="5">正极</td>
+            <td class="col w4" colspan="5">负极</td>
+            <td class="col w1" colspan="1">频率<br></br>(Hz)</td>
+            <td class="col w1" colspan="1">脉宽<br></br>(μs)</td>
+            <td class="col w1" colspan="1">电压<br></br>(V)</td>
+            <td class="col w1" colspan="1">电阻<br></br>(Ω)</td>
+            <td class="col w1" colspan="1">电流<br></br>(mA)</td>
+          </tr>
+          <tr class="row">
+            <td class="col w2" colspan="2" rowspan="2">
+              调整1
+              <span class="iconfont icon-remove"></span>
+            </td>
+            <td class="col w2" colspan="2">左侧肢体</td>
+            <td class="col w3" colspan="3">
+              <el-select :value="1">
+                <el-option label="a" :value="1"></el-option>
+              </el-select>
+            </td>
+            <td class="col w5" colspan="5">
+              <el-checkbox-group v-model="cl">
+                <el-checkbox label="C+"></el-checkbox>
+                <el-checkbox label="0+"></el-checkbox>
+                <el-checkbox label="1+"></el-checkbox>
+                <el-checkbox label="2+"></el-checkbox>
+                <el-checkbox label="3+"></el-checkbox>
+              </el-checkbox-group>
+            </td>
+            <td class="col w4" colspan="5">
+              <el-checkbox-group v-model="cl2">
+                <el-checkbox label="0-"></el-checkbox>
+                <el-checkbox label="1-"></el-checkbox>
+                <el-checkbox label="2-"></el-checkbox>
+                <el-checkbox label="3-"></el-checkbox>
+              </el-checkbox-group>
+            </td>
+            <td class="col w1" colspan="1">
+              <el-input></el-input>
+            </td>
+            <td class="col w1" colspan="1">
+              <el-input></el-input>
+            </td>
+            <td class="col w1" colspan="1">
+              <el-input></el-input>
+            </td>
+            <td class="col w1" colspan="1">
+              <el-input></el-input>
+            </td>
+            <td class="col w1" colspan="1">
+              <el-input></el-input>
+            </td>
+          </tr>
+          <tr class="row">
+            <td class="col w2" colspan="2">左侧肢体</td>
+            <td class="col w3" colspan="3">
+              <el-select :value="1">
+                <el-option label="a" :value="1"></el-option>
+              </el-select>
+            </td>
+            <td class="col w5" colspan="5">
+              <el-checkbox-group v-model="cl">
+                <el-checkbox label="C+"></el-checkbox>
+                <el-checkbox label="0+"></el-checkbox>
+                <el-checkbox label="1+"></el-checkbox>
+                <el-checkbox label="2+"></el-checkbox>
+                <el-checkbox label="3+"></el-checkbox>
+              </el-checkbox-group>
+            </td>
+            <td class="col w4" colspan="5">
+              <el-checkbox-group v-model="cl2">
+                <el-checkbox label="0-"></el-checkbox>
+                <el-checkbox label="1-"></el-checkbox>
+                <el-checkbox label="2-"></el-checkbox>
+                <el-checkbox label="3-"></el-checkbox>
+              </el-checkbox-group>
+            </td>
+            <td class="col w1" colspan="1">
+              <el-input></el-input>
+            </td>
+            <td class="col w1" colspan="1">
+              <el-input></el-input>
+            </td>
+            <td class="col w1" colspan="1">
+              <el-input></el-input>
+            </td>
+            <td class="col w1" colspan="1">
+              <el-input></el-input>
+            </td>
+            <td class="col w1" colspan="1">
+              <el-input></el-input>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="form-wrapper" ref="form4">
+        <table class="form form4">
+          <tr class="row top-row">
+            <td class="col" colspan="22">
+              调整后参数
+            </td>
+          </tr>
+          <tr class="row">
+            <td class="col w2" colspan="2">疗效满意度</td>
+            <td class="col w2" colspan="2">左侧</td>
+            <td class="col w8" colspan="8">
+              <el-input></el-input>
+            </td>
+            <td class="col w2" colspan="2">右侧</td>
+            <td class="col w8" colspan="8">
+              <el-input></el-input>
+            </td>
+          </tr>
+          <tr class="row title-row">
+            <td class="col w2" colspan="2">
+              方案
+              <span class="iconfont icon-plus"></span>
+            </td>
+            <td class="col w2" colspan="2">肢体侧</td>
+            <td class="col w3" colspan="3">刺激模式</td>
+            <td class="col w5" colspan="5">正极</td>
+            <td class="col w4" colspan="5">负极</td>
+            <td class="col w1" colspan="1">频率<br></br>(Hz)</td>
+            <td class="col w1" colspan="1">脉宽<br></br>(μs)</td>
+            <td class="col w1" colspan="1">电压<br></br>(V)</td>
+            <td class="col w1" colspan="1">电阻<br></br>(Ω)</td>
+            <td class="col w1" colspan="1">电流<br></br>(mA)</td>
+          </tr>
+          <tr class="row">
+            <td class="col w2" colspan="2" rowspan="2">
+              调整1
+              <span class="iconfont icon-remove"></span>
+            </td>
+            <td class="col w2" colspan="2">左侧肢体</td>
+            <td class="col w3" colspan="3">
+              <el-select :value="1">
+                <el-option label="a" :value="1"></el-option>
+              </el-select>
+            </td>
+            <td class="col w5" colspan="5">
+              <el-checkbox-group v-model="cl">
+                <el-checkbox label="C+"></el-checkbox>
+                <el-checkbox label="0+"></el-checkbox>
+                <el-checkbox label="1+"></el-checkbox>
+                <el-checkbox label="2+"></el-checkbox>
+                <el-checkbox label="3+"></el-checkbox>
+              </el-checkbox-group>
+            </td>
+            <td class="col w4" colspan="5">
+              <el-checkbox-group v-model="cl2">
+                <el-checkbox label="0-"></el-checkbox>
+                <el-checkbox label="1-"></el-checkbox>
+                <el-checkbox label="2-"></el-checkbox>
+                <el-checkbox label="3-"></el-checkbox>
+              </el-checkbox-group>
+            </td>
+            <td class="col w1" colspan="1">
+              <el-input></el-input>
+            </td>
+            <td class="col w1" colspan="1">
+              <el-input></el-input>
+            </td>
+            <td class="col w1" colspan="1">
+              <el-input></el-input>
+            </td>
+            <td class="col w1" colspan="1">
+              <el-input></el-input>
+            </td>
+            <td class="col w1" colspan="1">
+              <el-input></el-input>
+            </td>
+          </tr>
+          <tr class="row">
+            <td class="col w2" colspan="2">左侧肢体</td>
+            <td class="col w3" colspan="3">
+              <el-select :value="1">
+                <el-option label="a" :value="1"></el-option>
+              </el-select>
+            </td>
+            <td class="col w5" colspan="5">
+              <el-checkbox-group v-model="cl">
+                <el-checkbox label="C+"></el-checkbox>
+                <el-checkbox label="0+"></el-checkbox>
+                <el-checkbox label="1+"></el-checkbox>
+                <el-checkbox label="2+"></el-checkbox>
+                <el-checkbox label="3+"></el-checkbox>
+              </el-checkbox-group>
+            </td>
+            <td class="col w4" colspan="5">
+              <el-checkbox-group v-model="cl2">
+                <el-checkbox label="0-"></el-checkbox>
+                <el-checkbox label="1-"></el-checkbox>
+                <el-checkbox label="2-"></el-checkbox>
+                <el-checkbox label="3-"></el-checkbox>
+              </el-checkbox-group>
+            </td>
+            <td class="col w1" colspan="1">
+              <el-input></el-input>
+            </td>
+            <td class="col w1" colspan="1">
+              <el-input></el-input>
+            </td>
+            <td class="col w1" colspan="1">
+              <el-input></el-input>
+            </td>
+            <td class="col w1" colspan="1">
+              <el-input></el-input>
+            </td>
+            <td class="col w1" colspan="1">
               <el-input></el-input>
             </td>
           </tr>
@@ -363,6 +614,18 @@ export default {
 
         Ps.destroy(this.$refs.form2);
         Ps.initialize(this.$refs.form2, {
+          wheelSpeed: 1,
+          minScrollbarLength: 40
+        });
+
+        Ps.destroy(this.$refs.form3);
+        Ps.initialize(this.$refs.form3, {
+          wheelSpeed: 1,
+          minScrollbarLength: 40
+        });
+
+        Ps.destroy(this.$refs.form4);
+        Ps.initialize(this.$refs.form4, {
           wheelSpeed: 1,
           minScrollbarLength: 40
         });
@@ -500,7 +763,7 @@ export default {
     }
     .form-wrapper {
       position: relative;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
       width: 100%;
       padding-bottom: 10px;
       overflow: hidden;
@@ -515,6 +778,12 @@ export default {
           width: @unit-width * 22;
         }
         &.form2 {
+          width: @unit-width * 22;
+        }
+        &.form3 {
+          width: @unit-width * 22;
+        }
+        &.form4 {
           width: @unit-width * 22;
         }
         .row {
