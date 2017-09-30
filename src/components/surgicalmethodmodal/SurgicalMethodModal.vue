@@ -61,10 +61,10 @@ export default {
         this.title = '手术方案';
       }
       vueCopy(info, this.copyInfo);
-      console.log(info);
+      console.log(this.copyInfo);
       setTimeout(() => {
-        console.log(this.surgicalMethodDictionary);
-        console.log(this.surgicalMethodTemplate);
+        // console.log(this.surgicalMethodDictionary);
+        // console.log(this.surgicalMethodTemplate);
       }, 2000);
       this.displayModal = true;
     },
@@ -72,6 +72,23 @@ export default {
       this.displayModal = false;
     },
     submit() {
+      // 先将日期格式改成符合服务器传输的格式
+      this.copyInfo.surgicalDate = Util.simplifyDate(this.copyInfo.surgicalDate);
+      console.log(this.copyInfo);
+
+      // 点击确定按钮的时候，需要手动为这些字段校验一遍
+      for (let field of this.surgicalMethodTemplate) {
+        this.updateWarning(field);
+      }
+
+      // 然后检查 warningResults，看填写的数据是否合规
+      for (var p in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(p) && this.warningResults[p]) {
+          return;
+        }
+      }
+
+      // 到这里，就可以提交了
       this.displayModal = false;
     },
     getMatchedField(fieldName) {
