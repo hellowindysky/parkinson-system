@@ -71,6 +71,36 @@
             </el-select>
           </span>
         </div>
+        <div class="field">
+          <span class="field-name">微毁损效应</span>
+          <span class="field-input">
+            <el-select :value="1">
+              <el-option label="有" :value="1"></el-option>
+              <el-option label="否" :value="2"></el-option>
+            </el-select>
+          </span>
+        </div>
+        <div class="field">
+          <span class="field-name long-field-name">微毁损效应持续时间</span>
+          <span class="field-input long-field-name">
+            <el-input></el-input>
+          </span>
+        </div>
+        <div class="field">
+          <span class="field-name">术后不良事件</span>
+          <span class="field-input">
+            <el-select :value="1">
+              <el-option label="有" :value="1"></el-option>
+              <el-option label="否" :value="2"></el-option>
+            </el-select>
+          </span>
+        </div>
+        <div class="field whole-line double-line">
+          <span class="field-name">不良事件描述</span>
+          <span class="field-input">
+            <el-input type="textarea"></el-input>
+          </span>
+        </div>
         <div class="field whole-line double-line">
           <span class="field-name">患者主诉</span>
           <span class="field-input">
@@ -646,8 +676,8 @@ export default {
 @import "~styles/variables.less";
 
 @field-height: 40px;
-@field-name-width: 120px;
-@long-field-name-width: 160px;
+@field-name-width: 100px;
+@long-field-name-width: 150px;
 @scroll-bar-height: 10px;
 @unit-width: 50px;
 
