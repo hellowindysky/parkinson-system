@@ -38,6 +38,9 @@ export default {
 
   SHOW_MODAL_BOX: 'showModalBox',
   SHOW_MEDICINE_MODAL: 'showMedicineModal',
+  SHOW_NERVOU_SYSTEM_MODAL: 'showNervouSystemModal',
+  SHOW_BIOCHEMICAL_EXAM_MODAL: 'showBiochemicalExamModal',
+  SHOW_EMG_MODAL: 'showEmgModal',
   SHOW_PRE_EVALUATION_MODAL: 'showPreEvaluationModal',
   SHOW_SURGICAL_METHOD_MODAL: 'showSurgicalMethodModal',
   SHOW_OPERATIVE_COMPLICATION_MODAL: 'showOperativeComplication',
@@ -56,5 +59,6 @@ export default {
   COFFEE_MODAL: 'coffeeModal',
   WINE_MODAL: 'wineModal',
   SMOKE_MODAL: 'smokeModal',
-  EXERCISE_MODAL: 'exerciseModal'
+  EXERCISE_MODAL: 'exerciseModal',
+  NERVOUSYSTOMMODAL: 'nervouSystemModal'
 };

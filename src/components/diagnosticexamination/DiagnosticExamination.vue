@@ -130,11 +130,11 @@ export default {
     },
     addNeurologicCheckRecord() {
       // 这里要传递 3 个参数，一个是 title，一个是当前数据对象（新建的时候为空），另一个是模态框的类型
-      // Bus.$emit(this.SHOW_MODAL_BOX, '新增用药史', {}, this.MEDICINE_MODAL);
+      Bus.$emit(this.SHOW_NERVOU_SYSTEM_MODAL, '新增神经系统检查', {});
       console.log('add');
     },
     editNeurologicCheckRecord(item) {
-      // Bus.$emit(this.SHOW_MODAL_BOX, '用药史', item, this.MEDICINE_MODAL);
+      Bus.$emit(this.SHOW_NERVOU_SYSTEM_MODAL, '神经系统检查', item);
       console.log('edit', item);
     },
     deleteNeurologicCheckRecord(item) {
@@ -150,15 +150,13 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addBiochemicalExamRecord() {
-      // 这里要传递 3 个参数，一个是 title，一个是当前数据对象（新建的时候为空），另一个是模态框的类型
-      // Bus.$emit(this.SHOW_MODAL_BOX, '新增用药史', {}, this.MEDICINE_MODAL);
-      console.log('add');
+      Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, '新增生化指标', {});
     },
     editBiochemicalExamRecord(item) {
-      // Bus.$emit(this.SHOW_MODAL_BOX, '用药史', item, this.MEDICINE_MODAL);
-      console.log('edit', item);
+      Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, '生化指标', item);
+      console.log('Biochemical', item);
     },
-    deleteBiochemicalExamRecord(item) {
+    deleteBiochemicalExamRecord() {
       // var patientMed = {
       //   patientId: this.id,
       //   patientMedHistoryId: item.patientMedHistoryId,
@@ -166,18 +164,16 @@ export default {
       // };
       Bus.$on(this.CONFIRM, () => {
         // deletePatientMedHistory(patientMed).then(this._resolveDeletion, this._rejectDeletion);
-        console.log('delete', item);
+        // console.log('delete', item);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addEmgRecord() {
-      // 这里要传递 3 个参数，一个是 title，一个是当前数据对象（新建的时候为空），另一个是模态框的类型
-      // Bus.$emit(this.SHOW_MODAL_BOX, '新增用药史', {}, this.MEDICINE_MODAL);
-      console.log('add');
+      Bus.$emit(this.SHOW_EMG_MODAL, '新增肌电图', {});
     },
     editEmgRecord(item) {
-      // Bus.$emit(this.SHOW_MODAL_BOX, '用药史', item, this.MEDICINE_MODAL);
-      console.log('edit', item);
+      Bus.$emit(this.SHOW_EMG_MODAL, '肌电图', item);
+      console.log('肌电图', item);
     },
     deleteEmgRecord(item) {
       // var patientMed = {

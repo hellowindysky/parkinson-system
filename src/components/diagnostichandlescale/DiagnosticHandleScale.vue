@@ -1,19 +1,18 @@
 <template lang="html">
   <div class="diagnostic-update-wrapper" v-show="displayUpdateScale">
     <div class="title-bar">
-      <h2 class="title" v-if="pageTpye==='update'">{{scaleName}}</h2>
+      <h2 class="title" v-if="mode===MODIFY_PAGE">{{scaleName}}</h2>
       <h2 class="title" v-else>新增量表信息</h2>
       <div class="button back-button" @click="goBack">返回</div>
-      <div class="button edit-button" @click="editScale" v-if="scaleMode===SCALE_READING_MODE && pageTpye==='update'">编辑</div>
-      <div class="button save-button" @click="saveScale" v-if="scaleMode===SCALE_EDITING_MODE && pageTpye==='update'">保存</div>
-      <div class="button save-button"  v-if="!isSelected.status && pageTpye!=='update'">保存</div>
+      <div class="button edit-button" @click="editScale" v-if="scaleMode===SCALE_READING_MODE && mode===MODIFY_PAGE">编辑</div>
+      <div class="button save-button" @click="submit" v-if="scaleMode===SCALE_EDITING_MODE || mode===ADD_PAGE">保存</div>
     </div>
     <div class="scroll-area" ref="scrollArea">
       
-      <div class="scale-selecter" v-if="pageTpye!=='update' || scaleMode===SCALE_EDITING_MODE">
+      <div class="scale-selecter" v-if="mode===ADD_PAGE || scaleMode===SCALE_EDITING_MODE">
          <div class="choose-scale">
            <span>选择量表:</span>
-             <el-select  placeholder="请选择量表" v-model="patientScale['scaleInfoId']" :disabled="pageTpye==='update' || !isSelected.status" @change="firstSelected">
+             <el-select  placeholder="请选择量表" v-model="patientScale['scaleInfoId']" :disabled="mode===MODIFY_PAGE || isSelected" @change="firstSelected">
                <el-option v-for="item in scaleNameArr" :key="item.name" :label="item.name" :value="item.scaleId"></el-option>
              </el-select> 
          </div>
@@ -25,61 +24,61 @@
          </div>
          <div class="choose-time-type">
            <span>量表填写时间:</span>
-             <el-date-picker  type="date" v-model="patientScale['inspectTime']"  placeholder="请选择量表填写时间">
+             <el-date-picker  type="datetime" format="yyyy-MM-dd" v-model="patientScale['inspectTime']"  placeholder="请选择量表填写时间">
              </el-date-picker>  
          </div>
          <div class="choose-time-type">
            <span>末次服药时间:</span>
-             <el-date-picker  type="date" v-model="patientScale['lastTakingTime']"  placeholder="请选择末次服药时间">
+             <el-date-picker  type="datetime" format="yyyy-MM-dd" v-model="patientScale['lastTakingTime']"  placeholder="请选择末次服药时间">
              </el-date-picker>  
          </div>
          <div class="choose-time-type">
            <span>开关状态:</span>
-           <el-select  placeholder="请选择量表开关状态" v-model="patientScale['switchType']">
-               <el-option v-for="item in switchScaleArr" :key="item.options" :label="item.options" :value="item.status"></el-option>
+           <el-select v-model="patientScale['switchType']" placeholder="请选择量表开关状态">
+               <el-option v-for="item in switchScaleArr" :key="item.status" :value="item.status" :label="item.options"></el-option>
            </el-select>
          </div>
       </div>
 
-      <div class="scale-selecter" v-if="pageTpye==='update' && scaleMode===SCALE_READING_MODE">
+      <div class="scale-selecter" v-if="mode===MODIFY_PAGE && scaleMode===SCALE_READING_MODE">
          <div class="choose-time-type">
            <span>量表类型:</span>  <span>{{readingScaleType}}</span>
          </div>
-         <div class="choose-time-type" v-if="Boolean(patientScale['inspectTime'])!==false">
+         <div class="choose-time-type" v-if="Boolean(String(patientScale['inspectTime']))!==false">
            <span>量表填写时间:</span> <span>{{patientScale['inspectTime']}}</span>
          </div>
-         <div class="choose-time-type" v-if="Boolean(patientScale['lastTakingTime'])!==false">
+         <div class="choose-time-type" v-if="Boolean(String(patientScale['lastTakingTime']))!==false">
            <span>末次服药时间:</span> <span>{{patientScale['lastTakingTime']}}</span>
          </div>
-         <div class="choose-time-type" v-if="Boolean(patientScale['switchType'])!==false">
+         <div class="choose-time-type" v-if="Boolean(String(patientScale['switchType']))!==false">
            <span>开关状态:</span> <span>{{formatReadingScale(patientScale['switchType'])}}</span>
          </div>
       </div>        
-      <folding-panel v-if="pageTpye!=='update' || scaleMode===SCALE_EDITING_MODE" :title="'关联症状'"  class="associated-symptom">
+      <folding-panel v-if="mode===ADD_PAGE || scaleMode===SCALE_EDITING_MODE" :title="'关联症状'"  class="associated-symptom">
         <div class="symptom-item" v-for="(list, listkey) in patientScale['scaleSympInfoList']" :key="listkey">
             <el-checkbox class="symptom-item-title" v-model="list.status">{{list.typeName}}</el-checkbox>
             <div class="symptom-item-start">
               <span>出现时间:</span>
-              <el-date-picker  type="date" v-model="list['ariseTime']"  placeholder="请输入出现关联症状的时间">
+              <el-date-picker  type="datetime" format="yyyy-MM-dd" v-model="list['ariseTime']"  placeholder="请输入出现关联症状的时间">
               </el-date-picker>    
             </div>
             <div class="symptom-item-dose">
               <span>服用药物:</span>
               <el-input v-model="list['scaleMedicine']"  placeholder="请输入复合用药物"></el-input>    
             </div>
-        </div>                                  
+        </div>                                 
       </folding-panel>
 
-      <div v-for="(item, key) in scaleSonDate['questions']" v-if="pageTpye==='update'">
+      <div v-for="(item, key) in scaleSonDate['questions']" v-if="mode===MODIFY_PAGE">
          <div class="scale-questions">
-           <p class="question-title">题目名称: <span>{{item.subjectName}}</span><!-- <span>得分{{correctGrade['grade'+key]}}</span> --></p>
+           <p class="question-title">题目名称: <span>{{item.subjectName}}</span></p>
            <el-radio-group  class="question-body"  :key="key" v-model="patientScale['scaleOptionIds'][key]">
-               <el-radio class="question-selection" v-for="(sonitem, key1) in item['options']" :label="sonitem.scaleOptionId" :key="key1" :disabled="isDisabled">{{sonitem.optionName}}</el-radio>
+               <el-radio class="question-selection" v-for="(sonitem, key1) in item['options']" :label="sonitem.scaleOptionId" :key="key1" :disabled="isSubjectDisabled">{{sonitem.optionName}}</el-radio>
            </el-radio-group>
          </div> 
       </div>
 
-      <div v-for="(item, key) in scaleAddSonDate['questions']" v-if="!isSelected.status">
+      <div v-for="(item, key) in scaleAddSonDate['questions']" v-if="isSelected">
          <div class="scale-questions">
            <p class="question-title">题目名称: <span>{{item.subjectName}}</span></p>
            <el-radio-group  class="question-body"  :key="key" v-model="patientScale['scaleOptionIds'][key]">
@@ -102,25 +101,28 @@ import { vueCopy } from 'utils/helper';
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 import Util from 'utils/util.js';
 import { deepCopy } from 'utils/helper';
+import { isEmptyObject } from 'utils/helper.js';
+import { modifyScaleInfo, addScaleInfo } from 'api/patient.js';
 
 export default {
   data() {
     return {
-      LastSubmit: {},
-      isSelected: {}, // 在新增的时候选了一次就改变状态
+      ADD_PAGE: 'addPage',
+      MODIFY_PAGE: 'modifyPage',
+      mode: '',
+      useless: {},
+      isSelected: false, // 在新增的时候选了一次就改变状态
       readingScaleType: '',
-      isDisabled: true,
+      isSubjectDisabled: true,
       scaleMode: this.SCALE_READING_MODE, // 在修改的页面下是编辑状态还是只读状态
       patientScale: {},  // 需要向服务器提交的对象
       displayUpdateScale: false,  // 此组件是否显示
       scaleData: {},  // 获取到所有的量表数据
       scaleSonDate: {}, // 这是通过量表的ID筛选出的其中一个量表
-      scaleAddSonDate: {},
+      scaleAddSonDate: {}, // 新增量表的时候选中量表后的题目数据
       scaleName: '',  // 筛选出来的量表的名字
       scaleAnswer: [],  // 放筛选出来的量表病人填写答案的数组
-      correctGrade: [], // 放筛选出来的量表题目的分数的数组
       correctanswer: [], // 通过函数处理后得出的对应答案选项数组
-      pageTpye: '',  // 确定到底是新增量表还是修改量表页面
       scaleNameArr: [], // 获取到所有量表的名字,类型,和量表ID
       dictionaryData: [], // 获取到量表的字典项
       scaleTypeData: [], // 这是从量表的字典项中查到的量表类型具体信息
@@ -140,26 +142,22 @@ export default {
   },
   methods: {
     firstSelected() {
-      // 用户在选择完量表之后就不能选择其他的量表了,现在需要把用户选择的量表题目展示出来
-      if (this.isSelected.time === 1) {
-        this.isSelected['time']++;
-      } else {
-        this.isSelected['status'] = false;
-        for (let key in this.scaleData) {
-          let sonData = this.scaleData[key];
-          for (let sonkey in sonData) {
-            if (sonkey === 'scaleInfoId') {
-              // 获取对应量表的数据
-              if (sonData[sonkey] === this.patientScale['scaleInfoId']) {
-                vueCopy(sonData, this.scaleAddSonDate);
-              }
+      this.isSelected = true;
+      for (let key in this.scaleData) {
+        let sonData = this.scaleData[key];
+        for (let sonkey in sonData) {
+          if (sonkey === 'scaleInfoId') {
+            // 获取对应量表的数据
+            if (sonData[sonkey] === this.patientScale['scaleInfoId']) {
+              vueCopy(sonData, this.scaleAddSonDate);
             }
           }
         }
       }
+      // console.log(this.mode);
     },
     formatReadingScale(switchType) {
-      if (switchType === '1') {
+      if (switchType === 1) {
         return '开';
       } else {
         return '关';
@@ -179,86 +177,119 @@ export default {
         });
       });
     },
-    showDetailPanel(item, type) {
+    showDetailPanel(item) {
       // 接收到相应的消息之后，打开诊断详情窗口
       this.displayUpdateScale = true;
-      if (arguments.length) {
+      if (!isEmptyObject(item)) {
         // 通过bus传递过来量表ID来获取量表的信息
         this.getTitleAndScale(item.scaleInfoId);
-        // console.log(item);
-        // 获取量表选择答案的数组
         this.scaleAnswer = item.scaleOptionIds;
         // 获取页面的类型（到底是添加页面还是修改页面）
-        this.pageTpye = type;
+        this.mode = this.MODIFY_PAGE;
+
         // 在修改页面的状态下将原来的数据对象给服务器的对象
         vueCopy(item, this.patientScale);
-        let hasScaleSympInfoList = false;
-        let hasScaleOptionIds = false;
-        for (let key in this.patientScale) {
-          if (key === 'scaleSympInfoList') {
-            hasScaleSympInfoList = true;
-          } else if (key === 'scaleOptionIds') {
-            hasScaleOptionIds = true;
+        // 还原关联信息这个对象
+
+        for (let i = 0; i < this.scaleSympInfoName.length; i++) {
+          let sympKey = this.scaleSympInfoName[i];
+          for (let j = 0; j < this.patientScale['scaleSympInfoList'].length; j++) {
+            let patientKey = this.patientScale['scaleSympInfoList'][j];
+            // console.log(patientKey);
+            if (sympKey['sympName'] === patientKey['sympName']) {
+              this.$set(this.scaleSympInfoName, i, this.patientScale['scaleSympInfoList'][j]);
+              this.$set(this.scaleSympInfoName[i], 'status', true);
+            }
           }
         }
-        if (!hasScaleSympInfoList) {
-          this.$set(this.patientScale, 'scaleSympInfoList', []);
-        } else if (!hasScaleOptionIds) {
-          this.$set(this.patientScale, 'scaleOptionIds', []);
-        }
+        // console.log(this.scaleSympInfoName);
+        // 把关联症状那个数组赋值给这个提交的对象
         vueCopy(this.scaleSympInfoName, this.patientScale['scaleSympInfoList']);
-        vueCopy({ status: true, time: 1 }, this.isSelected);
+        this.isSelected = false;
       } else {
         // 这是在新添加页面的状态下就自己新建一个服务器的对象
+        this.mode = this.ADD_PAGE;
         this.initPatientScale();
         vueCopy(this.scaleSympInfoName, this.patientScale['scaleSympInfoList']);
-        vueCopy({ status: true, time: 1 }, this.isSelected);
+        this.isSelected = false;
       }
     },
     goBack() {
       // 按下返回按钮，把所有的数据都初始化一遍
-      this.displayUpdateScale = false;
+      // this.displayUpdateScale = false;
       this.correctanswer = [];
       this.scaleData = {};
       this.scaleName = '';
       this.scaleAnswer = [];
-      this.correctGrade = [];
-      this.pageTpye = '';
       this.scaleNameArr = [];
       this.dictionaryData = [];
       this.scaleType = '';
-      this.patientScale = {};
       this.scaleMode = this.SCALE_READING_MODE;
-      this.isDisabled = true;
+      this.isSubjectDisabled = true;
       this.scaleAddSonDate = {};
+      this.displayUpdateScale = false;
+      console.log('hasgo');
     },
     editScale() {
       this.scaleMode = this.SCALE_EDITING_MODE;
-      this.isDisabled = false;
+      this.isSubjectDisabled = false;
     },
-    saveScale() {
+    submit() {
       this.scaleMode = this.SCALE_READING_MODE;
-      this.isDisabled = true;
-      let submit = deepCopy(this.patientScale);
-      for (let key in submit) {
+      this.isSubjectDisabled = true;
+      let submitData = deepCopy(this.patientScale);
+      // 删除不需要的字段
+      delete submitData.scaleSympName;
+      delete submitData.scaleSympTip;
+      for (let key in submitData) {
         switch (key) {
           case 'inspectTime' :
           case 'lastTakingTime' :
-            Util.simplifyDate(submit[key]);
+            submitData[key] = Util.simplifyTime(submitData[key]);
             break;
-          // case 'scaleSympInfoList' :
-          //   if (submit[key].length) {
-          //     for (let sympKey in submit[key]) {
-          //       let symData = submit[key][sympKey];
-          //       if (sympKey === 'status') {
-          //         if (symData[sympKey] === false) {
-          //         }
-          //       }
-          //     }
-          //   }
+          case 'scaleSympInfoList' :
+            if (submitData[key].length) {
+              let sympInfo = submitData[key];
+              let flag = false;
+              for (let j = 0; j < sympInfo.length; j++) {
+                let sonSympInfo = sympInfo[j];
+                for (let sonSympKey in sonSympInfo) {
+                  this.useless = sonSympKey;
+                  if (sonSympInfo['status'] === false) {
+                    sympInfo.splice(j, 1);
+                  } else {
+                    flag = true;
+                    delete sonSympInfo.status;
+                  }
+                }
+              }
+              if (!flag) {
+                submitData[key] = [];
+              }
+            }
+            for (let i = 0; i < submitData[key].length; i++) {
+              for (let sonkey in submitData[key][i]) {
+                // console.log(submitData[key][i]);
+                if (sonkey === 'ariseTime') {
+                  submitData[key][i][sonkey] = Util.simplifyTime(submitData[key][i][sonkey]);
+                  console.log('succ');
+                }
+              }
+            }
         }
       }
-      console.log('submit', submit);
+      if (this.mode === this.ADD_PAGE) {
+        console.log('add', submitData);
+        // 新增量表的接口
+        addScaleInfo(submitData).then(() => {
+          this.goBack();
+        });
+      } else if (this.mode === this.MODIFY_PAGE) {
+        // 修改量表的接口
+        modifyScaleInfo(submitData).then(() => {
+          this.goBack();
+        });
+      }
     },
     closePanel() {
       this.displayUpdateScale = false;
@@ -279,6 +310,10 @@ export default {
               this.$set(this.scaleSympInfoName[i], 'status', false);
               this.$set(this.scaleSympInfoName[i], 'ariseTime', '');
               this.$set(this.scaleSympInfoName[i], 'scaleMedicine', '');
+              this.$set(this.scaleSympInfoName[i], 'sympName', this.scaleSympInfoName[i]['typeName']);
+              this.$set(this.scaleSympInfoName[i], 'sympCode', this.scaleSympInfoName[i]['typeCode']);
+              delete this.scaleSympInfoName[i]['typeName'];
+              delete this.scaleSympInfoName[i]['typeCode'];
             }
           }
         }
@@ -400,14 +435,6 @@ export default {
     ])
   },
   watch: {
-    correctanswer: {
-      handler: function(newVal) {
-        if (newVal) {
-          // console.log(newVal);
-        }
-      },
-      deep: true
-    },
     scaleSonDate: {
       handler: function(newVal) {
         if (newVal) {

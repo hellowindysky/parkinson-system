@@ -10,6 +10,9 @@
     <operative-complication-modal></operative-complication-modal>
     <dbs-modal></dbs-modal>
     <confirm-box></confirm-box>
+    <nervous-system></nervous-system>
+    <biochemical-exam></biochemical-exam>
+    <emg-modal></emg-modal>
   </div>
 </template>
 
@@ -25,6 +28,9 @@ import surgicalMethodModal from 'components/surgicalmethodmodal/SurgicalMethodMo
 import operativeComplicationModal from 'components/operativecomplicationmodal/OperativeComplicationModal';
 import dbsModal from 'components/dbsmodal/DbsModal';
 import confirmBox from 'components/confirmbox/ConfirmBox';
+import nervousSystem from 'components/nervousystemmodal/NervouSystemModal';
+import biochemicalExam from 'components/biochemicalexammodal/BiochemicalExamModal';
+import emgModal from 'components/emgmodal/EmgModal';
 
 export default {
   components: {
@@ -36,7 +42,10 @@ export default {
     surgicalMethodModal,
     operativeComplicationModal,
     dbsModal,
-    confirmBox
+    confirmBox,
+    nervousSystem,
+    biochemicalExam,
+    emgModal
   },
   mounted() {
     window.onresize = () => {
