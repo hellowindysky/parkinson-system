@@ -114,7 +114,206 @@
           </span>
         </div>
       </div>
-      <!-- <div class="seperate-line"></div> -->
+
+      <div class="form-wrapper form0-wrapper" ref="form0">
+        <div class="form-left">
+          <table class="form form0">
+            <tr class="row top-row">
+              <td class="col" colspan="16">
+                左侧肢体(右侧STN)触电疗效排序为:
+              </td>
+            </tr>
+            <tr class="row title-row">
+              <td class="col w1" rowspan="2">Case</td>
+              <td class="col w1" rowspan="2">Contact</td>
+              <td class="col w1" rowspan="2">
+                电压(V)
+              </td>
+              <td class="col w4" colspan="4">肌张力</td>
+              <td class="col w1" rowspan="2">震颤</td>
+              <td class="col w1" rowspan="2">总和</td>
+              <td class="col w1" rowspan="2">异动</td>
+              <td class="col w4" rowspan="2" colspan="4">副作用</td>
+              <td class="col w2" rowspan="2" colspan="2">副作用持续时间</td>
+            </tr>
+            <tr class="row title-row">
+              <td class="col w1">肘</td>
+              <td class="col w1">腕</td>
+              <td class="col w1">膝</td>
+              <td class="col w1">颈</td>
+            </tr>
+            <tr class="row">
+              <td class="col w1" rowspan="6">C+</td>
+              <td class="col w1" rowspan="6">0-</td>
+              <td class="col w1">
+                <el-input></el-input>
+              </td>
+              <td class="col w1">
+                <el-input></el-input>
+              </td>
+              <td class="col w1">
+                <el-input></el-input>
+              </td>
+              <td class="col w1">
+                <el-input></el-input>
+              </td>
+              <td class="col w1">
+                <el-input></el-input>
+              </td>
+              <td class="col w1">
+                <el-input></el-input>
+              </td>
+              <td class="col w1">
+                <el-input></el-input>
+              </td>
+              <td class="col w1">
+                <el-input></el-input>
+              </td>
+              <td class="col w4" colspan="4">
+                <el-select :value="1">
+                  <el-option label="a" :value="1"></el-option>
+                </el-select>
+              </td>
+              <td class="col w2" colspan="2">
+                <el-input></el-input>
+              </td>
+            </tr>
+            <tr class="row">
+              <td class="col w1">
+                <el-input></el-input>
+              </td>
+              <td class="col w1">
+                <el-input></el-input>
+              </td>
+              <td class="col w1">
+                <el-input></el-input>
+              </td>
+              <td class="col w1">
+                <el-input></el-input>
+              </td>
+              <td class="col w1">
+                <el-input></el-input>
+              </td>
+              <td class="col w1">
+                <el-input></el-input>
+              </td>
+              <td class="col w1">
+                <el-input></el-input>
+              </td>
+              <td class="col w1">
+                <el-input></el-input>
+              </td>
+              <td class="col w4" colspan="4">
+                <el-select :value="1">
+                  <el-option label="a" :value="1"></el-option>
+                </el-select>
+              </td>
+              <td class="col w2" colspan="2">
+                <el-input></el-input>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="form-right">
+          <table class="form form0">
+            <tr class="row top-row">
+              <td class="col" colspan="16">
+                右侧肢体(左侧STN)触电疗效排序为:
+              </td>
+            </tr>
+            <tr class="row title-row">
+              <td class="col w1" rowspan="2">Case</td>
+              <td class="col w1" rowspan="2">Contact</td>
+              <td class="col w1" rowspan="2">
+                电压(V)
+              </td>
+              <td class="col w4" colspan="4">肌张力</td>
+              <td class="col w1" rowspan="2">震颤</td>
+              <td class="col w1" rowspan="2">总和</td>
+              <td class="col w1" rowspan="2">异动</td>
+              <td class="col w4" rowspan="2" colspan="4">副作用</td>
+              <td class="col w2" rowspan="2" colspan="2">副作用持续时间</td>
+            </tr>
+            <tr class="row title-row">
+              <td class="col w1">肘</td>
+              <td class="col w1">腕</td>
+              <td class="col w1">膝</td>
+              <td class="col w1">颈</td>
+            </tr>
+            <tr class="row">
+              <td class="col w1" rowspan="6">C+</td>
+              <td class="col w1" rowspan="6">8-</td>
+              <td class="col w1">
+                <el-input></el-input>
+              </td>
+              <td class="col w1">
+                <el-input></el-input>
+              </td>
+              <td class="col w1">
+                <el-input></el-input>
+              </td>
+              <td class="col w1">
+                <el-input></el-input>
+              </td>
+              <td class="col w1">
+                <el-input></el-input>
+              </td>
+              <td class="col w1">
+                <el-input></el-input>
+              </td>
+              <td class="col w1">
+                <el-input></el-input>
+              </td>
+              <td class="col w1">
+                <el-input></el-input>
+              </td>
+              <td class="col w4" colspan="4">
+                <el-select :value="1">
+                  <el-option label="a" :value="1"></el-option>
+                </el-select>
+              </td>
+              <td class="col w2" colspan="2">
+                <el-input></el-input>
+              </td>
+            </tr>
+            <tr class="row">
+              <td class="col w1">
+                <el-input></el-input>
+              </td>
+              <td class="col w1">
+                <el-input></el-input>
+              </td>
+              <td class="col w1">
+                <el-input></el-input>
+              </td>
+              <td class="col w1">
+                <el-input></el-input>
+              </td>
+              <td class="col w1">
+                <el-input></el-input>
+              </td>
+              <td class="col w1">
+                <el-input></el-input>
+              </td>
+              <td class="col w1">
+                <el-input></el-input>
+              </td>
+              <td class="col w1">
+                <el-input></el-input>
+              </td>
+              <td class="col w4" colspan="4">
+                <el-select :value="1">
+                  <el-option label="a" :value="1"></el-option>
+                </el-select>
+              </td>
+              <td class="col w2" colspan="2">
+                <el-input></el-input>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
       <div class="form-wrapper" ref="form1">
         <table class="form form1">
           <tr class="row top-row">
@@ -636,6 +835,12 @@ export default {
           minScrollbarLength: 40
         });
 
+        Ps.destroy(this.$refs.form0);
+        Ps.initialize(this.$refs.form0, {
+          wheelSpeed: 1,
+          minScrollbarLength: 40
+        });
+
         Ps.destroy(this.$refs.form1);
         Ps.initialize(this.$refs.form1, {
           wheelSpeed: 1,
@@ -665,9 +870,11 @@ export default {
   mounted() {
     this.updateScrollbar();
     Bus.$on(this.SHOW_DBS_MODAL, this.showModal);
+    Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
   },
   beforeDestroy() {
     Bus.$off(this.SHOW_DBS_MODAL, this.showModal);
+    Bus.$off(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
   }
 };
 </script>
@@ -679,7 +886,7 @@ export default {
 @field-name-width: 100px;
 @long-field-name-width: 150px;
 @scroll-bar-height: 10px;
-@unit-width: 50px;
+@unit-width: 55px;
 
 .dbs-modal-wrapper {
   position: absolute;
@@ -696,7 +903,7 @@ export default {
     top: 3%;
     width: 80%;
     min-width: 660px;
-    max-width: 1200px;
+    max-width: 1500px;
     max-height: 94%;
     background-color: @background-color;
     overflow: hidden;
@@ -797,6 +1004,17 @@ export default {
       width: 100%;
       padding-bottom: 10px;
       overflow: hidden;
+      &.form0-wrapper {
+        text-align: left;
+      }
+      .form-left, .form-right {
+        display: inline-block;
+      }
+      .form-right {
+        position: absolute; // 这里利用两个表格高度相等，只定义一个为 absolute，从而避免容器坍塌
+        left: @unit-width * 17;
+        top: 0;
+      }
       .form {
         margin: 10px auto 0;
         border-spacing: 0;
@@ -804,6 +1022,9 @@ export default {
         border: 1px solid @light-gray-color;
         border-collapse:collapse;
         text-align: center;
+        &.form0 {
+          width: @unit-width * 16;
+        }
         &.form1 {
           width: @unit-width * 22;
         }
@@ -877,6 +1098,9 @@ export default {
               .el-icon-date {
                 display: none;
               }
+            }
+            .el-select {
+              width: 100%;
             }
           }
         }
