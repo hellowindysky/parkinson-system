@@ -42,6 +42,9 @@ export default {
   SHOW_BIOCHEMICAL_EXAM_MODAL: 'showBiochemicalExamModal',
   SHOW_EMG_MODAL: 'showEmgModal',
   SHOW_PRE_EVALUATION_MODAL: 'showPreEvaluationModal',
+  SHOW_SURGICAL_METHOD_MODAL: 'showSurgicalMethodModal',
+  SHOW_OPERATIVE_COMPLICATION_MODAL: 'showOperativeComplication',
+  SHOW_DBS_MODAL: 'showDbsModal',
 
   QUIT_DIAGNOSTIC_DETAIL: 'quitDiagnosticDetail',
 

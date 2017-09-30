@@ -31,10 +31,10 @@
           </div>
         </card>
       </extensible-panel>
-      <extensible-panel class="panel" :mode="mutableMode" :title="operationSchemeTitle" v-on:addNewCard="addOperationRecord">
-        <card class="card" :class="smallCardWidth" :mode="mutableMode" v-for="item in operationSchemeList" :key="item.patientCaseId"
-         :title="transformSurgicalType(item.surgicalInfoId)" v-on:clickCurrentCard="editOperationRecord(item)"
-         v-on:deleteCurrentCard="deleteOperationRecord(item)">
+      <extensible-panel class="panel" :mode="mutableMode" :title="surgicalMethodTitle" v-on:addNewCard="addSurgicalRecord">
+        <card class="card" :class="smallCardWidth" :mode="mutableMode" v-for="item in surgicalMethodList" :key="item.patientCaseId"
+         :title="transformSurgicalType(item.surgicalInfoId)" v-on:clickCurrentCard="editSurgicalRecord(item)"
+         v-on:deleteCurrentCard="deleteSurgicalRecord(item)">
           <div class="text first-line">
             <span class="name">备注: </span>
             <span class="value">{{item.remarks}}</span>
@@ -61,8 +61,8 @@
       </extensible-panel>
       <extensible-panel class="panel dbs-panel" :mode="mutableMode" :title="dbsTitle" v-on:addNewCard="addDbsRecord">
         <card class="card dbs-card" :class="bigCardWidth" :mode="mutableMode" v-for="item in dbsFirstList" :key="item.patientDbsFirstId"
-         :title="''" v-on:clickCurrentCard="editDbsFirstRecord(item)"
-         v-on:deleteCurrentCard="deleteDbsFirstRecord(item)">
+         :title="''" v-on:clickCurrentCard="editDbsRecord(item)"
+         v-on:deleteCurrentCard="deleteDbsRecord(item)">
           <div class="text line-1">
             <span class="name">手术中心: </span>
             <span class="value">{{item.surgiCenter}}</span>
@@ -93,8 +93,8 @@
           </div>
         </card>
         <card class="card dbs-card" :class="bigCardWidth" :mode="mutableMode" v-for="item in dbsFollowList" :key="item.patientDbsFollowId"
-         :title="''" v-on:clickCurrentCard="editDbsFollowRecord(item)"
-         v-on:deleteCurrentCard="deleteDbsFollowRecord(item)">
+         :title="''" v-on:clickCurrentCard="editDbsRecord(item)"
+         v-on:deleteCurrentCard="deleteDbsRecord(item)">
           <div class="text line-1">
             <span class="name">手术中心: </span>
             <span class="value">{{item.surgiCenter}}</span>
@@ -143,7 +143,7 @@ export default {
     return {
       mutableMode: this.mode,
       preEvaluationTitle: '术前评估',
-      operationSchemeTitle: '手术方案',
+      surgicalMethodTitle: '手术方案',
       postComplicationsTitle: '术后并发症',
       dbsTitle: '程控记录',
       smallCardWidth: '',
@@ -170,7 +170,7 @@ export default {
     preEvaluationList() {
       return this.diagnosticSurgery.patientPreopsList ? this.diagnosticSurgery.patientPreopsList : [];
     },
-    operationSchemeList() {
+    surgicalMethodList() {
       return this.diagnosticSurgery.patientTreatmentList ? this.diagnosticSurgery.patientTreatmentList : [];
     },
     postComplicationList() {
@@ -227,16 +227,16 @@ export default {
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
-    addOperationRecord() {
-      // 这里要传递 3 个参数，一个是 title，一个是当前数据对象（新建的时候为空），另一个是模态框的类型
-      // Bus.$emit(this.SHOW_MODAL_BOX, '新增用药史', {}, this.MEDICINE_MODAL);
+    addSurgicalRecord() {
+      // 这里要传递 2 个参数，一个是模式（新增／修改），一个是当前数据对象（新建的时候为空）
+      Bus.$emit(this.SHOW_SURGICAL_METHOD_MODAL, this.ADD_DATA, {});
       console.log('add');
     },
-    editOperationRecord(item) {
-      // Bus.$emit(this.SHOW_MODAL_BOX, '用药史', item, this.MEDICINE_MODAL);
+    editSurgicalRecord(item) {
+      Bus.$emit(this.SHOW_SURGICAL_METHOD_MODAL, this.EDIT_DATA, item);
       console.log('edit', item);
     },
-    deleteOperationRecord(item) {
+    deleteSurgicalRecord(item) {
       // var patientMed = {
       //   patientId: this.id,
       //   patientMedHistoryId: item.patientMedHistoryId,
@@ -249,12 +249,12 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addPostComplicationRecord() {
-      // 这里要传递 3 个参数，一个是 title，一个是当前数据对象（新建的时候为空），另一个是模态框的类型
-      // Bus.$emit(this.SHOW_MODAL_BOX, '新增用药史', {}, this.MEDICINE_MODAL);
+      // 这里要传递 2 个参数，一个是模式（新增／修改），一个是当前数据对象（新建的时候为空）
+      Bus.$emit(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.ADD_DATA, {});
       console.log('add');
     },
     editPostComplicationRecord(item) {
-      // Bus.$emit(this.SHOW_MODAL_BOX, '用药史', item, this.MEDICINE_MODAL);
+      Bus.$emit(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.EDIT_DATA, item);
       console.log('edit', item);
     },
     deletePostComplicationRecord(item) {
@@ -270,31 +270,15 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addDbsRecord() {
-      // 这里要传递 3 个参数，一个是 title，一个是当前数据对象（新建的时候为空），另一个是模态框的类型
-      // Bus.$emit(this.SHOW_MODAL_BOX, '新增用药史', {}, this.MEDICINE_MODAL);
+      // 这里要传递 2 个参数，一个是模式（新增／修改），一个是当前数据对象（新建的时候为空）
+      Bus.$emit(this.SHOW_DBS_MODAL, this.ADD_DATA, {});
       console.log('add');
     },
-    editDbsFirstRecord(item) {
-      // Bus.$emit(this.SHOW_MODAL_BOX, '用药史', item, this.MEDICINE_MODAL);
+    editDbsRecord(item) {
+      Bus.$emit(this.SHOW_DBS_MODAL, this.ADD_DATA, item);
       console.log('edit', item);
     },
-    deleteDbsFirstRecord(item) {
-      // var patientMed = {
-      //   patientId: this.id,
-      //   patientMedHistoryId: item.patientMedHistoryId,
-      //   version: item.version
-      // };
-      Bus.$on(this.CONFIRM, () => {
-        // deletePatientMedHistory(patientMed).then(this._resolveDeletion, this._rejectDeletion);
-        console.log('delete', item);
-      });
-      Bus.$emit(this.REQUEST_CONFIRMATION);
-    },
-    editDbsFollowRecord(item) {
-      // Bus.$emit(this.SHOW_MODAL_BOX, '用药史', item, this.MEDICINE_MODAL);
-      console.log('edit', item);
-    },
-    deleteDbsFollowRecord(item) {
+    deleteDbsRecord(item) {
       // var patientMed = {
       //   patientId: this.id,
       //   patientMedHistoryId: item.patientMedHistoryId,

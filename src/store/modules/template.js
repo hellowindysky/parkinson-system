@@ -103,6 +103,14 @@ const getters = {
   scaleTemplateGroups: (state) => {
     // 量表
     return getGroups(state, 'tc_patient_scale');
+  },
+  surgicalMethodTemplate: (state) => {
+    // 手术方案
+    return getFirstGroup(state, 'tc_patient_treatment');
+  },
+  operativeComplicationTemplate: (state) => {
+    // 术后并发症
+    return getFirstGroup(state, 'tc_patient_complication');
   }
 };
 
