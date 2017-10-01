@@ -42,6 +42,9 @@
               <td v-for="field in diagnosticDiseaseMsTemplate" class="col" :class="getClass(field.fieldName)">
                 {{field.cnfieldName}}
                 <span class="required-mark" v-show="field.must === 1">*</span>
+                <span class="add-button iconfont icon-plus"
+                  v-show="field.fieldName === 'symptomTypeId' && mutableMode===EDITING_MODE">
+                </span>
               </td>
             </tr>
             <tr class="row" v-for="symptom in msSymptom">
@@ -52,7 +55,11 @@
                 <span v-else-if="mutableMode===EDITING_MODE">
                   <span v-if="field.fieldName==='symptomTypeId'">
                     <span class="delete-button iconfont icon-remove" @click="deleteSymptom(symptom)"></span>
-                    {{getFieldValue(symptom, field.fieldName)}}
+                    <el-select v-model="symptom[field.fieldName]" :class="{'warning': !symptom[field.fieldName]}"
+                      :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
+                      <el-option v-for="option in getOptions(field.fieldName, 'ms')"
+                        :label="option.name" :value="option.code" :key="option.code"></el-option>
+                    </el-select>
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===1">
                     <el-input v-model="symptom[field.fieldName]" :class="{'warning': !symptom[field.fieldName]}"
@@ -85,6 +92,9 @@
               <td v-for="field in diagnosticDiseaseMcTemplate" class="col" :class="getClass(field.fieldName)">
                 {{field.cnfieldName}}
                 <span class="required-mark" v-show="field.must === 1">*</span>
+                <span class="add-button iconfont icon-plus"
+                  v-show="field.fieldName === 'symptomTypeId' && mutableMode===EDITING_MODE">
+                </span>
               </td>
             </tr>
             <tr class="row" v-for="symptom in mcSymptom">
@@ -95,7 +105,11 @@
                 <span v-else-if="mutableMode===EDITING_MODE">
                   <span v-if="field.fieldName==='symptomTypeId'">
                     <span class="delete-button iconfont icon-remove" @click="deleteSymptom(symptom)"></span>
-                    {{getFieldValue(symptom, field.fieldName)}}
+                    <el-select v-model="symptom[field.fieldName]" :class="{'warning': !symptom[field.fieldName]}"
+                      :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
+                      <el-option v-for="option in getOptions(field.fieldName, 'mc')"
+                        :label="option.name" :value="option.code" :key="option.code"></el-option>
+                    </el-select>
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===1">
                     <el-input v-model="symptom[field.fieldName]" :class="{'warning': !symptom[field.fieldName]}"
@@ -128,6 +142,9 @@
               <td v-for="field in diagnosticDiseaseNmsTemplate" class="col" :class="getClass(field.fieldName)">
                 {{field.cnfieldName}}
                 <span class="required-mark" v-show="field.must === 1">*</span>
+                <span class="add-button iconfont icon-plus"
+                  v-show="field.fieldName === 'symptomTypeId' && mutableMode===EDITING_MODE">
+                </span>
               </td>
             </tr>
             <tr class="row" v-for="symptom in nmsSymptom">
@@ -138,7 +155,11 @@
                 <span v-else-if="mutableMode===EDITING_MODE">
                   <span v-if="field.fieldName==='symptomTypeId'">
                     <span class="delete-button iconfont icon-remove" @click="deleteSymptom(symptom)"></span>
-                    {{getFieldValue(symptom, field.fieldName)}}
+                    <el-select v-model="symptom[field.fieldName]" :class="{'warning': !symptom[field.fieldName]}"
+                      :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
+                      <el-option v-for="option in getOptions(field.fieldName, 'nms')"
+                        :label="option.name" :value="option.code" :key="option.code"></el-option>
+                    </el-select>
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===1">
                     <el-input v-model="symptom[field.fieldName]" :class="{'warning': !symptom[field.fieldName]}"
@@ -377,12 +398,34 @@ export default {
     getUIType(fieldName) {
       return this.getMatchedField(fieldName).uiType;
     },
-    getOptions(fieldName) {
-      var dictionaryField = Util.getElement('fieldName', fieldName, this.totalDictionary);
-      var fieldEnumId = dictionaryField.fieldEnumId;
-      var types = Util.getElement('typegroupcode', fieldEnumId, this.typeGroup).types;
-      types = types ? types : [];
-      return types;
+    getOptions(fieldName, type) {
+      // 第二个参数代表主诉的类型（'ms', 'mc', 'nms' 分别代表运动症状，运动并发症，非运动症状），
+      // 第二个参数只有在主诉字段内才是必须的
+      if (fieldName === 'symptomTypeId') {
+        var options = [];
+        const typeDict = {
+          'ms': 0,
+          'mc': 1,
+          'nms': 2
+        };
+        for (let syptomTypeItem of this.symptomType) {
+          if (syptomTypeItem.symptomtype === typeDict[type]) {
+            options.push({
+              name: syptomTypeItem.sympName,
+              code: syptomTypeItem.id
+            });
+          }
+        }
+        return options;
+
+      } else {
+        var dictionaryField = Util.getElement('fieldName', fieldName, this.totalDictionary);
+        var fieldEnumId = dictionaryField.fieldEnumId;
+        var types = Util.getElement('typegroupcode', fieldEnumId, this.typeGroup).types;
+        types = types ? types : [];
+        return types;
+      }
+
     },
     transformTypeCode(typeCode, fieldName) {
       return Util.getElement('typeCode', typeCode, this.getOptions(fieldName)).typeName;
@@ -413,7 +456,7 @@ export default {
       // console.log(this.diagnosticDiseaseMsDictionary);
       // console.log(this.diagnosticDiseaseMcDictionary);
       // console.log(this.diagnosticDiseaseNmsDictionary);
-      // console.log(this.symptomType);
+      console.log(this.symptomType);
       // console.log(this.totalDictionary);
     }, 3000);
   },
@@ -452,10 +495,11 @@ export default {
 @field-name-width: 100px;
 @scroll-bar-height: 10px;
 
-@col-name-width: 170px;
+@col-name-width: 200px;
 @col-time-width: 170px;
 @col-select-width: 150px;
 @col-remarks-width: 250px;
+@row-height: 45px;
 
 .diagnostic-disease {
   padding: 0 25px;
@@ -558,11 +602,22 @@ export default {
         border-spacing: 0;
         table-layout: fixed;
         .row {
-          height: 45px;
+          height: @row-height;
           &.first-row {
             background-color: @screen-color;
             height: 30px;
             line-height: 30px;
+            .add-button {
+              position: absolute;
+              left: 5px;
+              cursor: pointer;
+              &:hover {
+                opacity: 0.8;
+              }
+              &:active {
+                opacity: 0.9;
+              }
+            }
           }
           .col {
             position: relative;
@@ -570,6 +625,10 @@ export default {
             text-align: center;
             &.col-name {
               min-width: @col-name-width;
+              .el-input {
+                margin-left: 20px;
+                width: @col-name-width - 30px;
+              }
             }
             &.col-time {
               min-width: @col-time-width;
@@ -587,7 +646,8 @@ export default {
             }
             .delete-button {
               position: absolute;
-              left: 10px;
+              left: 5px;
+              top: 13px;
               color: @alert-color;
               cursor: pointer;
               &:hover {
