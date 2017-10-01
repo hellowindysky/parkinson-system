@@ -47,7 +47,8 @@ export default {
       displayModal: false,
       mode: '',
       warningResults: {},
-      copyInfo: {}
+      copyInfo: {},
+      originalInfo: {}
     };
   },
   computed: {
@@ -67,8 +68,9 @@ export default {
   methods: {
     showModal(changeWay, info) {
       this.mode = changeWay;
-      this.copyInfo = {};
-      vueCopy(info, this.copyInfo);
+      this.originalInfo = info;
+
+      this.initCopyInfo();
       // console.log(this.copyInfo);
       setTimeout(() => {
         // console.log(this.surgicalMethodDictionary);
@@ -76,6 +78,18 @@ export default {
         // console.log(this.surgicalTypeList);
       }, 2000);
       this.displayModal = true;
+    },
+    initCopyInfo() {
+      this.copyInfo = {};
+      for (let field of this.surgicalMethodTemplate) {
+        this.$set(this.copyInfo, field.fieldName, '');
+      }
+      vueCopy(this.originalInfo, this.copyInfo);
+
+      // 重设 copyInfo 之后记得把警告信息对象也一并清空了，记得放在 nextTick 里执行
+      this.$nextTick(() => {
+        this.clearWarning();
+      });
     },
     cancel() {
       this.displayModal = false;
@@ -159,6 +173,11 @@ export default {
   },
   beforeDestroy() {
     Bus.$off(this.SHOW_SURGICAL_METHOD_MODAL, this.showModal);
+  },
+  watch: {
+    surgicalMethodTemplate: function() {
+      this.initCopyInfo();
+    }
   }
 };
 </script>
