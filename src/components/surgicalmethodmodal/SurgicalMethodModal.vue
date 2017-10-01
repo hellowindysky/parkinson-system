@@ -67,6 +67,7 @@ export default {
   methods: {
     showModal(changeWay, info) {
       this.mode = changeWay;
+      this.copyInfo = {};
       vueCopy(info, this.copyInfo);
       // console.log(this.copyInfo);
       setTimeout(() => {
