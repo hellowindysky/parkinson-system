@@ -191,10 +191,12 @@ export default {
       let submitData = deepCopy(this.bioexamTypeData);
       if (this.mode === this.MODIFY_MODE) {
         modBiochemical(submitData).then(() => {
+          Bus.$emit(this.UPDATE_PATIENT_INFO);
           this.updateAndClose();
         });
       } else if (this.mode === this.ADD_MODE) {
         addBiochemical(submitData).then(() => {
+          Bus.$emit(this.UPDATE_PATIENT_INFO);
           this.updateAndClose();
         });
       }
@@ -239,9 +241,6 @@ export default {
 
     // 如果屏幕高度发生改变，也需要重新计算滚动区域高度
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
-
-    // 监听子组件是否要求刷新病患数据
-    Bus.$on(this.UPDATE_PATIENT_INFO, this.updatePatientInfo);
   },
   watch: {
     bioexamTypeData: {
@@ -257,7 +256,6 @@ export default {
     Bus.$off(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.showPanel);
     Bus.$off(this.SCROLL_AREA_SIZE_CHANGE, this.updateScrollbar);
     Bus.$off(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
-    Bus.$off(this.UPDATE_PATIENT_INFO, this.updatePatientInfo);
   }
 };
 </script>

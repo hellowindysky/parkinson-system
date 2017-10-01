@@ -133,16 +133,15 @@ export default {
       submitData.ariseTime = Util.simplifyDate(submitData.ariseTime);
       if (this.mode === this.MODIFY_MODE) {
         // 修改的状态
-        // console.log('mod', submitData);
-        modifyNervouSystem(submitData).then((data) => {
-          console.log('back', data);
+        modifyNervouSystem(submitData).then(() => {
+          Bus.$emit(this.UPDATE_PATIENT_INFO);
           this.updateAndClose();
         });
       } else if (this.mode === this.ADD_MODE) {
         // 新增的状态
-        // console.log('add', submitData);
         delete submitData.patientSpephysicalId;
         addNervouSystem(submitData).then(() => {
+          Bus.$emit(this.UPDATE_PATIENT_INFO);
           this.updateAndClose();
         });
       }

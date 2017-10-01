@@ -695,3 +695,35 @@ export function modBiochemical(patientBioexam) {
 
   return encapsulatePromise(url, request);
 };
+
+// 新增肌电图
+export function addEmg(patientElecTroGram) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "version": 43,
+    "patientElecTroGram": patientElecTroGram
+  };
+  var url = 'http://apitest.gyenno.com/pdms/addPatElecTroGram';
+
+  return encapsulatePromise(url, request);
+};
+
+// 修改肌电图
+export function modEmg(patientElecTroGram) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "version": 43,
+    "patientElecTroGram": patientElecTroGram
+  };
+  var url = 'http://apitest.gyenno.com/pdms/modPatElecTroGram';
+
+  return encapsulatePromise(url, request);
+};
