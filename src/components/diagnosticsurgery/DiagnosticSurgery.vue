@@ -133,7 +133,7 @@
 import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import { deleteSurgicalMethod } from 'api/patient.js';
+import { deleteSurgicalMethod, deleteOperativeCompliation } from 'api/patient.js';
 
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 import ExtensiblePanel from 'components/extensiblepanel/ExtensiblePanel';
@@ -256,20 +256,16 @@ export default {
     addPostComplicationRecord() {
       // 这里要传递 2 个参数，一个是模式（新增／修改），一个是当前数据对象（新建的时候为空）
       Bus.$emit(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.ADD_DATA, {});
-      console.log('add');
     },
     editPostComplicationRecord(item) {
       Bus.$emit(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.EDIT_DATA, item);
-      console.log('edit', item);
     },
     deletePostComplicationRecord(item) {
-      // var patientMed = {
-      //   patientId: this.id,
-      //   patientMedHistoryId: item.patientMedHistoryId,
-      //   version: item.version
-      // };
+      var operativeComplication = {
+        'patientComplicationId': item.patientComplicationId
+      };
       Bus.$on(this.CONFIRM, () => {
-        // deletePatientMedHistory(patientMed).then(this._resolveDeletion, this._rejectDeletion);
+        deleteOperativeCompliation(operativeComplication).then(this._resolveDeletion, this._rejectDeletion);
         console.log('delete', item);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);

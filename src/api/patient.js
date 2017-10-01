@@ -630,6 +630,51 @@ export function deleteSurgicalMethod(surgicalMethod) {
   return encapsulatePromise(url, request);
 };
 
+// 新增术后并发症
+export function addOperativeCompliation(operativeComplication) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientComplication": operativeComplication
+  };
+  var url = 'http://apitest.gyenno.com/pdms/addPatientComplication';
+
+  return encapsulatePromise(url, request);
+};
+
+// 修改术后并发症
+export function modifyOperativeCompliation(operativeComplication) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientComplication": operativeComplication
+  };
+  var url = 'http://apitest.gyenno.com/pdms/modPatientComplication';
+
+  return encapsulatePromise(url, request);
+};
+
+// 删除术后并发症
+export function deleteOperativeCompliation(operativeComplication) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientComplication": operativeComplication
+  };
+  var url = 'http://apitest.gyenno.com/pdms/delPatientComplication';
+
+  return encapsulatePromise(url, request);
+};
+
 // 查询医学量表
 export function getScaleInfo() {
   var request = {
