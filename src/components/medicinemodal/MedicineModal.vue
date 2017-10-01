@@ -111,8 +111,7 @@
             {{field.cnfieldName}}
             <span class="required-mark" v-show="field.must===1 || hasSideEffect">*</span>
           </span>
-          <span class="field-input"
-          :class="{'long-field-name': isLongName(field.fieldName)}">
+          <span class="field-input" :class="{'long-field-name': isLongName(field.fieldName)}">
             <span class="warning-text">{{warningResults[field.fieldName]}}</span>
             <el-input v-if="getUIType(field.fieldName)===1" v-model="medicine[field.fieldName]"
              :class="{'warning': warningResults[field.fieldName]}" :type="getInputType(field.fieldName)"
@@ -472,7 +471,8 @@ export default {
 
       // 如果将 “停药原因” 设置为 “药物副反应”，则后续的药物副反应变为必填项
       if (field.fieldName === 'stopReason') {
-        if (this.medicine.stopReason === 1) {
+        var reason = Util.getElement('id', this.medicine.stopReason, this.medicineStopReason);
+        if (reason.effectMust === 1) {
           this.hasSideEffect = true;
         } else {
           this.hasSideEffect = false;
@@ -531,10 +531,12 @@ export default {
         var isEmptyValue = !fieldValue && fieldValue !== 0;
         var isEmptyArray = fieldValue instanceof Array && fieldValue.length === 0;
         if (isEmptyValue || isEmptyArray) {
-          // 下面这个方法将响应属性添加到嵌套的对象上，这样 Vue 才能实时检测和渲染
           this.$set(this.warningResults, fieldName, '必填项');
-          return;
+
+        } else {
+          this.$set(this.warningResults, fieldName, null);
         }
+
       } else if (isSideEffectField && !this.hasSideEffect) {
         this.$set(this.warningResults, fieldName, null);
       }

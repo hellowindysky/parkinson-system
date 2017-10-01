@@ -17,6 +17,7 @@
 import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
+import { deletePatientMedicine } from 'api/patient.js';
 
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 import ExtensiblePanel from 'components/extensiblepanel/ExtensiblePanel';
@@ -94,8 +95,24 @@ export default {
     editMedicine(item) {
       Bus.$emit(this.SHOW_MEDICINE_MODAL, '药物方案', item);
     },
-    deleteMedicine() {
-
+    deleteMedicine(item) {
+      var patientMedicine = {
+        patientId: parseInt(this.$route.params.id, 10),
+        patientMedicineId: item.patientMedicineId
+      };
+      Bus.$on(this.CONFIRM, () => {
+        deletePatientMedicine(patientMedicine).then(this._resolveDeletion, this._rejectDeletion);
+      });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
+    },
+    _resolveDeletion() {
+      // 如果成功删除记录，则重新发出请求，获取最新数据。同时解除 [确认对话框] 的 “确认” 回调函数
+      Bus.$emit(this.UPDATE_CASE_INFO);
+      Bus.$off(this.CONFIRM);
+    },
+    _rejectDeletion() {
+      // 即使删除不成功，也要解除 [确认对话框] 的 “确认” 回调函数
+      Bus.$off(this.CONFIRM);
     },
     recalculateCardWidth() {
       this.$nextTick(() => {
