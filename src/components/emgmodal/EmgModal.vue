@@ -498,8 +498,8 @@ export default {
         this.$set(this.EmgTypeData, 'etgType', '');
         this.$set(this.EmgTypeData, 'patEleHint', '');
         this.$set(this.EmgTypeData, 'patEleResule', '');
-        this.$set(this.EmgTypeData, 'patientCaseId', this.$route.params.caseId);
-        this.$set(this.EmgTypeData, 'patientId', this.$route.params.id);
+        this.$set(this.EmgTypeData, 'pcaseId', this.$route.params.caseId);
+        this.$set(this.EmgTypeData, 'pinfoId', this.$route.params.id);
         this.$set(this.EmgTypeData, 'patientMotNerCondResu', []);
         this.$set(this.EmgTypeData, 'patienFWaStuResu', []);
         this.$set(this.EmgTypeData, 'patientNeedExamItemResu', []);
@@ -695,6 +695,20 @@ export default {
             this.$set(this.EmgTypeData['patientIntPatAnaItem'][i], 'turn', '');
           }
           break;
+        case 'fwavStuItem':
+          // console.log(this.SonTempData);
+          for (let i = 0; i < this.SonTempData.length; i++) {
+            this.$set(this.EmgTypeData['patienFWaStuResu'], i, {});
+            for (let key in this.SonTempData[i]) {
+              if (key === 'id') {
+                this.$set(this.EmgTypeData['patienFWaStuResu'][i], 'fWavStuItemId', this.SonTempData[i][key]);
+              }
+            }
+            this.$set(this.EmgTypeData['patienFWaStuResu'][i], 'fLatency', '');
+            this.$set(this.EmgTypeData['patienFWaStuResu'][i], 'fProportion', '');
+            this.$set(this.EmgTypeData['patienFWaStuResu'][i], 'mLatency', '');
+          }
+          break;
       }
     },
     editEnd() {
@@ -709,6 +723,7 @@ export default {
       let submitData = this.EmgTypeData;
       if (this.mode === this.ADD_MODE) {
         // 新增肌电图
+        console.log('submit', submitData);
         addEmg(submitData).then(() => {
           Bus.$emit(this.UPDATE_PATIENT_INFO);
           this.cancel();
