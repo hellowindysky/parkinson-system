@@ -298,14 +298,13 @@ export default {
             font-weight: bold;
             font-size: 16px;
             line-height: @normal-font-size;
-            color: @font-color;
             transform: translateY(1px);
             cursor: pointer;
             &:hover {
-              color: @light-font-color;
+              color: darken(@light-font-color, 20%);
             }
             &:active {
-              color: @theme-color;
+              color: darken(@light-font-color, 10%);
             }
           }
         }
