@@ -585,6 +585,51 @@ export function deletePatientMedicine(patientMedicine) {
   return encapsulatePromise(url, request);
 };
 
+// 新增手术方案
+export function addSurgicalMethod(surgicalMethod) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientTreatment": surgicalMethod
+  };
+  var url = 'http://apitest.gyenno.com/pdms/addPatientTreatment';
+
+  return encapsulatePromise(url, request);
+};
+
+// 修改手术方案
+export function modifySurgicalMethod(surgicalMethod) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientTreatment": surgicalMethod
+  };
+  var url = 'http://apitest.gyenno.com/pdms/modPatientTreatment';
+
+  return encapsulatePromise(url, request);
+};
+
+// 删除手术方案
+export function deleteSurgicalMethod(surgicalMethod) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientTreatment": surgicalMethod
+  };
+  var url = 'http://apitest.gyenno.com/pdms/delPatientTreatment';
+
+  return encapsulatePromise(url, request);
+};
+
 // 查询医学量表
 export function getScaleInfo() {
   var request = {

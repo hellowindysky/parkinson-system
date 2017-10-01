@@ -16,7 +16,7 @@
               :value="option.code" :key="option.code"></el-option>
             </el-select>
             <el-date-picker v-else-if="getUIType(field.fieldName)===6" v-model="copyInfo[field.fieldName]"
-              :class="{'warning': warningResults[field.fieldName]}"></el-date-picker>
+              :class="{'warning': warningResults[field.fieldName]}" :editable="false"></el-date-picker>
             <el-input v-else-if="getUIType(field.fieldName)===1" v-model="copyInfo[field.fieldName]"
               :class="{'warning': warningResults[field.fieldName]}" type="textarea"
               :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)">
@@ -37,12 +37,13 @@ import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import { vueCopy } from 'utils/helper.js';
+import { addSurgicalMethod, modifySurgicalMethod } from 'api/patient.js';
 
 export default {
   data() {
     return {
       displayModal: false,
-      title: '',
+      mode: '',
       warningResults: {},
       copyInfo: {}
     };
@@ -50,21 +51,26 @@ export default {
   computed: {
     ...mapGetters([
       'surgicalMethodDictionary',
-      'surgicalMethodTemplate'
-    ])
+      'surgicalMethodTemplate',
+      'surgicalTypeList'
+    ]),
+    title() {
+      if (this.mode === this.ADD_DATA) {
+        return '新增手术方案';
+      } else if (this.mode === this.EDIT_DATA) {
+        return '手术方案';
+      }
+    }
   },
   methods: {
     showModal(changeWay, info) {
-      if (changeWay === this.ADD_DATA) {
-        this.title = '新增手术方案';
-      } else if (changeWay === this.EDIT_DATA) {
-        this.title = '手术方案';
-      }
+      this.mode = changeWay;
       vueCopy(info, this.copyInfo);
-      console.log(this.copyInfo);
+      // console.log(this.copyInfo);
       setTimeout(() => {
         // console.log(this.surgicalMethodDictionary);
         // console.log(this.surgicalMethodTemplate);
+        // console.log(this.surgicalTypeList);
       }, 2000);
       this.displayModal = true;
     },
@@ -74,7 +80,6 @@ export default {
     submit() {
       // 先将日期格式改成符合服务器传输的格式
       this.copyInfo.surgicalDate = Util.simplifyDate(this.copyInfo.surgicalDate);
-      console.log(this.copyInfo);
 
       // 点击确定按钮的时候，需要手动为这些字段校验一遍
       for (let field of this.surgicalMethodTemplate) {
@@ -89,6 +94,18 @@ export default {
       }
 
       // 到这里，就可以提交了
+      if (this.mode === this.ADD_DATA) {
+        addSurgicalMethod(this.copyInfo).then(() => {
+          this.updateAndClose();
+        });
+      } else if (this.mode === this.EDIT_DATA) {
+        modifySurgicalMethod(this.copyInfo).then(() => {
+          this.updateAndClose();
+        });
+      }
+    },
+    updateAndClose() {
+      Bus.$emit(this.UPDATE_CASE_INFO);
       this.displayModal = false;
     },
     getMatchedField(fieldName) {
@@ -104,30 +121,12 @@ export default {
       if (fieldName) {
         options = [];
       }
-      // var dictionaryField = this.getMatchedField(fieldName);
-      // if (dictionaryField.fieldName === 'medicineId') {
-      //   for (let medicineItem of this.medicineInfo) {
-      //     options.push({name: medicineItem.medicineName, code: medicineItem.medicineId});
-      //   }
-      //
-      // } else if (dictionaryField.fieldName === 'medicalSpecUsed') {
-      //   let specGroups = this.medicineInfoObj.spec ? this.medicineInfoObj.spec : [];
-      //   for (let spec of specGroups) {
-      //     options.push({name: spec.specOral, code: spec.specOral});
-      //   }
-      //
-      // } else {
-      //   // 如果是其它下拉框，属于普通字段，去 typeGroup 里面查就可以了
-      //   var typegroupName = dictionaryField.fieldName;
-      //   if (dictionaryField.fieldName === 'sideeffectType') {
-      //     typegroupName = 'drugEffect';
-      //   }
-      //   let typeInfo = Util.getElement('typegroupcode', typegroupName, this.typeGroup);
-      //   let types = typeInfo.types ? typeInfo.types : [];
-      //   for (let type of types) {
-      //     options.push({name: type.typeName, code: type.typeCode});
-      //   }
-      // }
+      for (let surgicalMethod of this.surgicalTypeList) {
+        options.push({
+          code: surgicalMethod.id,
+          name: surgicalMethod.surgicaName  // 数据库拼写错误，掉了一个 l
+        });
+      }
       return options;
     },
     clearWarning() {

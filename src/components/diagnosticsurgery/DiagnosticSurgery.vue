@@ -196,7 +196,7 @@ export default {
     transformSurgicalType(typeId) {
       // 在 tableData 中找到对应的值
       // 下面的 surgica 拼写掉了一个 l，是数据库的拼写错误，这里只能将错就错
-      var surgicalData = Util.getElement('surgicaType', typeId, this.surgicalTypeList);
+      var surgicalData = Util.getElement('id', typeId, this.surgicalTypeList);
       var surgicalName = surgicalData.surgicaName ? surgicalData.surgicaName : '';
       return surgicalName;
     },
