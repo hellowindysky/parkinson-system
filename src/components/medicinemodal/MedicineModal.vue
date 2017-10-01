@@ -160,6 +160,7 @@ export default {
       'medicineDictionary',
       'medicineTemplateGroups',
       'medicineInfo',
+      'medicineStopReason',
       'typeGroup'
     ]),
     firstTemplateGroup() {
@@ -377,7 +378,7 @@ export default {
           }
         }
       }
-      console.log('准备提交了');
+      // 准备提交了
       this.medicine.patientId = this.$route.params.id;
       this.medicine.patientCaseId = this.$route.params.caseId;
       if (this.title === '新增药物方案') {
@@ -421,13 +422,27 @@ export default {
       var dictionaryField = this.getMatchedField(fieldName);
       if (dictionaryField.fieldName === 'medicineId') {
         for (let medicineItem of this.medicineInfo) {
-          options.push({name: medicineItem.medicineName, code: medicineItem.medicineId});
+          options.push({
+            name: medicineItem.medicineName,
+            code: medicineItem.medicineId
+          });
         }
 
       } else if (dictionaryField.fieldName === 'medicalSpecUsed') {
         let specGroups = this.medicineInfoObj.spec ? this.medicineInfoObj.spec : [];
         for (let spec of specGroups) {
-          options.push({name: spec.specOral, code: spec.specOral});
+          options.push({
+            name: spec.specOral,
+            code: spec.specOral
+          });
+        }
+
+      } else if (dictionaryField.fieldName === 'stopReason') {
+        for (let reason of this.medicineStopReason) {
+          options.push({
+            name: reason.stopReason,
+            code: reason.id
+          });
         }
 
       } else {
