@@ -16,7 +16,9 @@
               :value="option.code" :key="option.code"></el-option>
             </el-select>
             <el-date-picker v-else-if="getUIType(field.fieldName)===6" v-model="copyInfo[field.fieldName]"
-              :class="{'warning': warningResults[field.fieldName]}" :editable="false"></el-date-picker>
+              :class="{'warning': warningResults[field.fieldName]}" :editable="false"
+              @change="updateWarning(field)">
+            </el-date-picker>
             <el-input v-else-if="getUIType(field.fieldName)===1" v-model="copyInfo[field.fieldName]"
               :class="{'warning': warningResults[field.fieldName]}" type="textarea"
               :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)">
@@ -95,6 +97,7 @@ export default {
 
       // 到这里，就可以提交了
       if (this.mode === this.ADD_DATA) {
+        this.copyInfo.patientCaseId = this.$route.params.caseId;  // 补充诊断 id 这个属性
         addSurgicalMethod(this.copyInfo).then(() => {
           this.updateAndClose();
         });
@@ -144,6 +147,8 @@ export default {
         if (isEmptyValue || isEmptyArray) {
           this.$set(this.warningResults, fieldName, '必填项');
           return;
+        } else {
+          this.$set(this.warningResults, fieldName, null);
         }
       }
     }

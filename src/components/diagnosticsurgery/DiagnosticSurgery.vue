@@ -133,6 +133,7 @@
 import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
+import { deleteSurgicalMethod } from 'api/patient.js';
 
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 import ExtensiblePanel from 'components/extensiblepanel/ExtensiblePanel';
@@ -235,14 +236,11 @@ export default {
       Bus.$emit(this.SHOW_SURGICAL_METHOD_MODAL, this.EDIT_DATA, item);
     },
     deleteSurgicalRecord(item) {
-      // var patientMed = {
-      //   patientId: this.id,
-      //   patientMedHistoryId: item.patientMedHistoryId,
-      //   version: item.version
-      // };
+      var surgicalMethod = {
+        'patientTreatmentId': item.patientTreatmentId
+      };
       Bus.$on(this.CONFIRM, () => {
-        // deletePatientMedHistory(patientMed).then(this._resolveDeletion, this._rejectDeletion);
-        console.log('delete', item);
+        deleteSurgicalMethod(surgicalMethod).then(this._resolveDeletion, this._rejectDeletion);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
@@ -288,6 +286,15 @@ export default {
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
+    _resolveDeletion() {
+      // 如果成功删除记录，则重新发出请求，获取最新数据。同时解除 [确认对话框] 的 “确认” 回调函数
+      Bus.$emit(this.UPDATE_CASE_INFO);
+      Bus.$off(this.CONFIRM);
+    },
+    _rejectDeletion() {
+      // 即使删除不成功，也要解除 [确认对话框] 的 “确认” 回调函数
+      Bus.$off(this.CONFIRM);
+    },
     recalculateCardWidth() {
       this.$nextTick(() => {
         var panelWidth = this.$refs.diagnosticSurgery.clientWidth;
@@ -325,7 +332,7 @@ export default {
     this.recalculateCardWidth();
 
     setTimeout(() => {
-      console.log(this.diagnosticSurgery);
+      // console.log(this.diagnosticSurgery);
     }, 2000);
   },
   beforeDestroy() {
