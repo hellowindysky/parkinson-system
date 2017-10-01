@@ -42,7 +42,7 @@
               <td v-for="field in diagnosticDiseaseMsTemplate" class="col" :class="getClass(field.fieldName)">
                 {{field.cnfieldName}}
                 <span class="required-mark" v-show="field.must === 1">*</span>
-                <span class="add-button iconfont icon-plus"
+                <span class="add-button iconfont icon-plus" @click="addSymtom('ms')"
                   v-show="field.fieldName === 'symptomTypeId' && mutableMode===EDITING_MODE">
                 </span>
               </td>
@@ -92,7 +92,7 @@
               <td v-for="field in diagnosticDiseaseMcTemplate" class="col" :class="getClass(field.fieldName)">
                 {{field.cnfieldName}}
                 <span class="required-mark" v-show="field.must === 1">*</span>
-                <span class="add-button iconfont icon-plus"
+                <span class="add-button iconfont icon-plus" @click="addSymtom('mc')"
                   v-show="field.fieldName === 'symptomTypeId' && mutableMode===EDITING_MODE">
                 </span>
               </td>
@@ -142,7 +142,7 @@
               <td v-for="field in diagnosticDiseaseNmsTemplate" class="col" :class="getClass(field.fieldName)">
                 {{field.cnfieldName}}
                 <span class="required-mark" v-show="field.must === 1">*</span>
-                <span class="add-button iconfont icon-plus"
+                <span class="add-button iconfont icon-plus" @click="addSymtom('nms')"
                   v-show="field.fieldName === 'symptomTypeId' && mutableMode===EDITING_MODE">
                 </span>
               </td>
@@ -391,6 +391,41 @@ export default {
         }
       }
     },
+    addSymtom(type) {
+      // 在 this.copyInfo.patientSymptom 中添加对象，传入的参数代表症状类型
+      var newSymptom = {};
+      var template = [];
+      switch (type) {
+        case 'ms':
+          template = this.diagnosticDiseaseMsTemplate;
+          newSymptom.symType = '运动症状';
+          break;
+        case 'mc':
+          template = this.diagnosticDiseaseMcTemplate;
+          newSymptom.symType = '运动并发症';
+          break;
+        case 'nms':
+          template = this.diagnosticDiseaseNmsTemplate;
+          newSymptom.symType = '非运动症状';
+          break;
+        default:
+          return;
+      }
+
+      // 然后为这条症状记录补上相应的属性值，因为它们无需被 Vue 做数据绑定，所以直接定义属性即可
+      newSymptom.patientId = parseInt(this.$route.params.id, 10);
+      newSymptom.patientCaseId = this.$route.params.caseId;
+
+      for (let field of template) {
+        this.$set(newSymptom, field.fieldName, '');
+      }
+
+      var index = 0;
+      if (this.copyInfo.patientSymptom && this.copyInfo.patientSymptom instanceof Array) {
+        index = this.copyInfo.patientSymptom.length;
+        this.$set(this.copyInfo.patientSymptom, index, newSymptom);
+      }
+    },
     getMatchedField(fieldName) {
       // 在字典项中查询该名字所对应的字段，从而方便我们得到该字段的详细信息
       return Util.getElement('fieldName', fieldName, this.totalDictionary);
@@ -456,7 +491,7 @@ export default {
       // console.log(this.diagnosticDiseaseMsDictionary);
       // console.log(this.diagnosticDiseaseMcDictionary);
       // console.log(this.diagnosticDiseaseNmsDictionary);
-      console.log(this.symptomType);
+      // console.log(this.symptomType);
       // console.log(this.totalDictionary);
     }, 3000);
   },
@@ -650,6 +685,7 @@ export default {
               top: 13px;
               color: @alert-color;
               cursor: pointer;
+              z-index: 10;
               &:hover {
                 opacity: 0.8;
               }
