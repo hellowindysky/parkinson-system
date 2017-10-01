@@ -51,7 +51,7 @@
                 </span>
                 <span v-else-if="mutableMode===EDITING_MODE">
                   <span v-if="field.fieldName==='symptomTypeId'">
-                    <span class="delete-button" @click="deleteSymptom(symptom)"> Θ </span>
+                    <span class="delete-button iconfont icon-remove" @click="deleteSymptom(symptom)"></span>
                     {{getFieldValue(symptom, field.fieldName)}}
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===1">
@@ -94,7 +94,7 @@
                 </span>
                 <span v-else-if="mutableMode===EDITING_MODE">
                   <span v-if="field.fieldName==='symptomTypeId'">
-                    <span class="delete-button" @click="deleteSymptom(symptom)"> Θ </span>
+                    <span class="delete-button iconfont icon-remove" @click="deleteSymptom(symptom)"></span>
                     {{getFieldValue(symptom, field.fieldName)}}
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===1">
@@ -137,7 +137,7 @@
                 </span>
                 <span v-else-if="mutableMode===EDITING_MODE">
                   <span v-if="field.fieldName==='symptomTypeId'">
-                    <span class="delete-button" @click="deleteSymptom(symptom)"> Θ </span>
+                    <span class="delete-button iconfont icon-remove" @click="deleteSymptom(symptom)"></span>
                     {{getFieldValue(symptom, field.fieldName)}}
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===1">
@@ -452,7 +452,7 @@ export default {
 @field-name-width: 100px;
 @scroll-bar-height: 10px;
 
-@col-name-width: 160px;
+@col-name-width: 170px;
 @col-time-width: 170px;
 @col-select-width: 150px;
 @col-remarks-width: 250px;
@@ -588,6 +588,7 @@ export default {
             .delete-button {
               position: absolute;
               left: 10px;
+              color: @alert-color;
               cursor: pointer;
               &:hover {
                 opacity: 0.8;
