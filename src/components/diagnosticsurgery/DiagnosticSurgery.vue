@@ -44,7 +44,7 @@
           </div>
         </card>
       </extensible-panel>
-      <extensible-panel class="panel post-complication-panel" :mode="mutableMode" :title="postComplicationsTitle" v-on:addNewCard="addPostComplicationRecord">
+      <extensible-panel class="panel post-complication-panel" :mode="mutableMode" :title="postComplicationTitle" v-on:addNewCard="addPostComplicationRecord">
         <card class="card post-complication-card" :class="smallCardWidth" :mode="mutableMode" v-for="item in postComplicationList" :key="item.patientCaseId"
          :title="transformComplicationType(item.minorComplicationType)" v-on:clickCurrentCard="editPostComplicationRecord(item)"
          v-on:deleteCurrentCard="deletePostComplicationRecord(item)">
@@ -143,10 +143,6 @@ export default {
   data() {
     return {
       mutableMode: this.mode,
-      preEvaluationTitle: '术前评估',
-      surgicalMethodTitle: '手术方案',
-      postComplicationsTitle: '术后并发症',
-      dbsTitle: '程控记录',
       smallCardWidth: '',
       bigCardWidth: ''
     };
@@ -168,6 +164,19 @@ export default {
       'surgicalTypeList',
       'complicationTypeList'
     ]),
+    preEvaluationTitle() {
+      return '术前评估（' + this.preEvaluationList.length + '条记录）';
+    },
+    surgicalMethodTitle() {
+      return '手术方案（' + this.surgicalMethodList.length + '条记录）';
+    },
+    postComplicationTitle() {
+      return '术后并发症（' + this.postComplicationList.length + '条记录）';
+    },
+    dbsTitle() {
+      var amount = this.dbsFirstList.length + this.dbsFollowList.length;
+      return '程控记录（' + amount + '条记录）';
+    },
     preEvaluationList() {
       return this.diagnosticSurgery.patientPreopsList ? this.diagnosticSurgery.patientPreopsList : [];
     },
