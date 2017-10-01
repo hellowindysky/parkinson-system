@@ -1,8 +1,9 @@
 <template lang="html">
-  <folding-panel :title="'病症情况'" :mode="mutableMode"  v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
+  <folding-panel :title="'病症情况'" :mode="mutableMode"  v-on:edit="startEditing"
+    v-on:cancel="cancel" v-on:submit="submit" v-on:toggleFoldedPanel="updateScrollbar">
     <div class="diagnostic-disease">
       <div v-for="field in diagnosticDiseaseTemplate" class="field"
-       :class="{'whole-line': field.fieldName === 'caseSymptom', 'multi-line': field.fieldName === 'caseSymptom'}">
+        :class="{'whole-line': field.fieldName === 'caseSymptom', 'multi-line': field.fieldName === 'caseSymptom'}">
         <span class="field-name">
           {{field.cnfieldName}}
           <span class="required-mark" v-show="field.must === 1">*</span>
@@ -22,14 +23,14 @@
             {{warningResults[field.fieldName]}}
           </span>
           <el-input v-if="getUIType(field.fieldName)===1" v-model="copyInfo[field.fieldName]"
-           type="textarea" :autosize="{ minRows: 2, maxRows: 4}" :class="{'warning': warningResults[field.fieldName]}"
-           :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)">
+            type="textarea" :autosize="{ minRows: 2, maxRows: 4}" :class="{'warning': warningResults[field.fieldName]}"
+            :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)">
           </el-input>
           <el-select v-else-if="getUIType(field.fieldName)===3" v-model="copyInfo[field.fieldName]"
-           :class="{'warning': warningResults[field.fieldName]}" :placeholder="getMatchedField(field).cnFieldDesc"
-           @change="updateWarning(field)">
+            :class="{'warning': warningResults[field.fieldName]}" :placeholder="getMatchedField(field).cnFieldDesc"
+            @change="updateWarning(field)">
             <el-option v-for="option in getOptions(field.fieldName)" :label="option.typeName"
-             :value="option.typeCode" :key="option.typeCode"></el-option>
+              :value="option.typeCode" :key="option.typeCode"></el-option>
           </el-select>
         </div>
       </div>
@@ -63,18 +64,18 @@
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===1">
                     <el-input v-model="symptom[field.fieldName]" :class="{'warning': !symptom[field.fieldName]}"
-                     :placeholder="getMatchedField(field.fieldName).cnFieldDesc"></el-input>
+                      :placeholder="getMatchedField(field.fieldName).cnFieldDesc"></el-input>
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===3">
                     <el-select v-model="symptom[field.fieldName]" :class="{'warning': !symptom[field.fieldName]}"
-                     :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
+                      :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
                       <el-option label="是" :value="'是'"></el-option>
                       <el-option label="否" :value="'否'"></el-option>
                     </el-select>
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===6">
                     <el-date-picker v-model="symptom[field.fieldName]" type="date" :class="{'warning': !symptom[field.fieldName]}"
-                     format="yyyy-MM-dd" :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
+                      format="yyyy-MM-dd" :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
                     </el-date-picker>
                   </span>
                 </span>
@@ -117,14 +118,14 @@
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===3">
                     <el-select v-model="symptom[field.fieldName]" :class="{'warning': !symptom[field.fieldName]}"
-                     :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
+                      :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
                       <el-option label="是" :value="'是'"></el-option>
                       <el-option label="否" :value="'否'"></el-option>
                     </el-select>
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===6">
                     <el-date-picker v-model="symptom[field.fieldName]" type="date" :class="{'warning': !symptom[field.fieldName]}"
-                     format="yyyy-MM-dd" :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
+                      format="yyyy-MM-dd" :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
                     </el-date-picker>
                   </span>
                 </span>
@@ -163,18 +164,18 @@
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===1">
                     <el-input v-model="symptom[field.fieldName]" :class="{'warning': !symptom[field.fieldName]}"
-                     :placeholder="getMatchedField(field.fieldName).cnFieldDesc"></el-input>
+                      :placeholder="getMatchedField(field.fieldName).cnFieldDesc"></el-input>
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===3">
                     <el-select v-model="symptom[field.fieldName]" :class="{'warning': !symptom[field.fieldName]}"
-                     :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
+                      :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
                       <el-option label="是" :value="'是'"></el-option>
                       <el-option label="否" :value="'否'"></el-option>
                     </el-select>
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===6">
                     <el-date-picker v-model="symptom[field.fieldName]" type="date" :class="{'warning': !symptom[field.fieldName]}"
-                     format="yyyy-MM-dd" :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
+                      format="yyyy-MM-dd" :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
                     </el-date-picker>
                   </span>
                 </span>
