@@ -87,7 +87,7 @@
       <div class="sub-title-bar">患者日记</div>
       <div class="content">
         <table class="table">
-          <tr class="row">
+          <tr class="row title-row">
             <td class="col" rowspan="2">状态</td>
             <td class="col">第一天</td>
             <td class="col">第二天</td>
@@ -105,29 +105,25 @@
             </td>
           </tr>
           <tr class="row" v-for="(rowName, index) in diaryRowNameList">
-            <td class="col">{{rowName}}</td>
+            <td class="col title-col">{{rowName}}</td>
             <td class="col" v-for="hourName in hourNameList">
               <el-input v-model="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[index][hourName]"
                 @blur="updateField('diaryHour')"></el-input>
             </td>
-            <td class="col">
+            <td class="col computed-col">
               {{ copyInfo.preopsDiaryDTO.patientPreopsDiaryList[index].dayCount }}
             </td>
-            <td class="col">
+            <td class="col computed-col">
               {{ copyInfo.preopsDiaryDTO.patientPreopsDiaryList[index].hourAverage }}
             </td>
           </tr>
           <tr class="row">
-            <td class="col">总和</td>
-            <td class="col" v-for="hourName in hourNameList">
+            <td class="col title-col">总和</td>
+            <td class="col computed-col" v-for="hourName in hourNameList">
               {{copyInfo.preopsDiaryDTO.patientPreopsDiaryList[5][hourName]}}
             </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
+            <td class="col computed-col"></td>
+            <td class="col computed-col"></td>
           </tr>
         </table>
         <table class="table">
@@ -930,213 +926,225 @@ export default {
 @end-words-width: 180px;
 
 .pre-evaluation-modal-wrapper {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: fadeout(@light-font-color, 30%);
-    z-index: 500;
-    .pre-evaluation-modal {
-        position: relative;
-        margin: auto;
-        padding: 0 40px;
-        top: 3%;
-        width: 760px;
-        max-height: 94%;
-        background-color: @background-color;
-        overflow: hidden;
-        .title {
-            padding: 30px 0 10px;
-            font-size: @large-font-size;
-        }
-        .sub-title-bar {
-            padding: 15px 10px;
-            text-align: left;
-            font-weight: bold;
-        }
-        .content {
-            text-align: left;
-            font-size: 0;
-            .field {
-                padding: 5px 0;
-                text-align: left;
-                display: inline-block;
-                position: relative;
-                width: 50%;
-                height: @field-height;
-                text-align: left;
-                transform: translateX(10px);
-                // 这一行是为了修补视觉上的偏移
-                &.whole-line {
-                    width: 100%;
-                    .field-input {
-                        right: 4%;
-                    }
-                }
-                .field-name {
-                    display: inline-block;
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: @field-name-width;
-                    line-height: @field-height;
-                    font-size: @normal-font-size;
-                    color: @font-color;
-                    &.long-field-name {
-                        width: @long-field-name-width;
-                    }
-                    .required-mark {
-                        color: red;
-                        font-size: 20px;
-                        vertical-align: middle;
-                    }
-                }
-                .end-words {
-                    display: inline-block;
-                    position: absolute;
-                    padding-left: 10px;
-                    box-sizing: border-box;
-                    top: 0;
-                    right: 8%;
-                    width: @end-words-width;
-                    text-align: left;
-                    line-height: @field-height;
-                    font-size: @normal-font-size;
-                }
-                .field-input {
-                    display: inline-block;
-                    position: absolute;
-                    top: 0;
-                    left: @field-name-width;
-                    right: 8%;
-                    line-height: @field-height;
-                    font-size: @normal-font-size;
-                    color: @light-font-color;
-                    &.short-input {
-                        right: calc(~'8% + @{end-words-width}');
-                    }
-                    &.long-field-name {
-                        left: @long-field-name-width;
-                    }
-                    .warning-text {
-                        position: absolute;
-                        top: 25px;
-                        left: 10px;
-                        height: 15px;
-                        color: red;
-                        font-size: @small-font-size;
-                    }
-                    .el-input {
-                        .el-input__inner {
-                            height: 30px;
-                            border: none;
-                            background-color: @screen-color;
-                        }
-                    }
-                    .el-textarea {
-                        vertical-align: middle;
-                        transform: translateY(5px);
-                        .el-textarea__inner {
-                            border: none;
-                            background-color: @screen-color;
-                        }
-                    }
-                    .el-select {
-                        width: 100%;
-                    }
-                    .el-date-editor {
-                        width: 100%;
-                    }
-                    .warning .el-input__inner,
-                    .warning .el-textarea__inner {
-                        border: 1px solid red;
-                    }
-                }
-            }
-            .table {
-                margin: 10px 0 20px;
-                width: 100%;
-                border: 1px solid @light-gray-color;
-                border-collapse: collapse;
-                text-align: center;
-                .row {
-                    height: 35px;
-                    font-size: @normal-font-size;
-                    .col {
-                        position: relative;
-                        width: 10%;
-                        border: 1px solid @light-gray-color;
-                        &.wide-col {
-                            width: 30%;
-                        }
-                        &.narrow-col {
-                            width: 5%;
-                        }
-                        .el-input {
-                            width: 100%;
-                            .el-input__inner {
-                                padding: 0;
-                                border: none;
-                                text-align: center;
-                            }
-                            .el-icon-date {
-                                display: none;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        .seperate-line {
-            width: 90%;
-            height: 1px;
-            margin: 15px auto 10px;
-            background-color: @light-gray-color;
-        }
-        .button {
-            display: inline-block;
-            width: 100px;
-            margin: 10px 20px 20px;
-            height: 30px;
-            line-height: 30px;
-            color: #fff;
-            cursor: pointer;
-            &.cancel-button {
-                background-color: @light-font-color;
-            }
-            &.submit-button {
-                background-color: @button-color;
-            }
-            &:hover {
-                opacity: 0.8;
-            }
-            &:active {
-                opacity: 0.9;
-            }
-        }
-        .ps__scrollbar-y-rail {
-            position: absolute;
-            width: 15px;
-            right: 0;
-            padding: 0 3px;
-            box-sizing: border-box;
-            opacity: 0.3;
-            transition: opacity 0.3s, padding 0.2s;
-            .ps__scrollbar-y {
-                position: relative;
-                background-color: #aaa;
-                border-radius: 20px;
-            }
-        }
-        &:hover {
-            .ps__scrollbar-y-rail {
-                opacity: 0.6;
-                &:hover {
-                    padding: 0;
-                }
-            }
-        }
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: fadeout(@light-font-color, 30%);
+  z-index: 500;
+  .pre-evaluation-modal {
+    position: relative;
+    margin: auto;
+    padding: 0 40px;
+    top: 3%;
+    width: 760px;
+    max-height: 94%;
+    background-color: @background-color;
+    overflow: hidden;
+    .title {
+      padding: 30px 0 10px;
+      font-size: @large-font-size;
     }
+    .sub-title-bar {
+      padding: 15px 10px;
+      text-align: left;
+      font-weight: bold;
+    }
+    .content {
+      text-align: left;
+      font-size: 0;
+      .field {
+        padding: 5px 0;
+        text-align: left;
+        display: inline-block;
+        position: relative;
+        width: 50%;
+        height: @field-height;
+        text-align: left;
+        transform: translateX(10px);
+        // 这一行是为了修补视觉上的偏移
+        &.whole-line {
+          width: 100%;
+          .field-input {
+            right: 4%;
+          }
+        }
+        .field-name {
+          display: inline-block;
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: @field-name-width;
+          line-height: @field-height;
+          font-size: @normal-font-size;
+          color: @font-color;
+          &.long-field-name {
+            width: @long-field-name-width;
+          }
+          .required-mark {
+            color: red;
+            font-size: 20px;
+            vertical-align: middle;
+          }
+        }
+        .end-words {
+          display: inline-block;
+          position: absolute;
+          padding-left: 10px;
+          box-sizing: border-box;
+          top: 0;
+          right: 8%;
+          width: @end-words-width;
+          text-align: left;
+          line-height: @field-height;
+          font-size: @normal-font-size;
+        }
+        .field-input {
+          display: inline-block;
+          position: absolute;
+          top: 0;
+          left: @field-name-width;
+          right: 8%;
+          line-height: @field-height;
+          font-size: @normal-font-size;
+          color: @light-font-color;
+          &.short-input {
+            right: calc(~'8% + @{end-words-width}');
+          }
+          &.long-field-name {
+            left: @long-field-name-width;
+          }
+          .warning-text {
+            position: absolute;
+            top: 25px;
+            left: 10px;
+            height: 15px;
+            color: red;
+            font-size: @small-font-size;
+          }
+          .el-input {
+            .el-input__inner {
+              height: 30px;
+              border: none;
+              background-color: @screen-color;
+            }
+          }
+          .el-textarea {
+            vertical-align: middle;
+            transform: translateY(5px);
+            .el-textarea__inner {
+              border: none;
+              background-color: @screen-color;
+            }
+          }
+          .el-select {
+            width: 100%;
+          }
+          .el-date-editor {
+            width: 100%;
+          }
+          .warning .el-input__inner,
+          .warning .el-textarea__inner {
+            border: 1px solid red;
+          }
+        }
+      }
+      .table {
+        margin: 10px 0 20px;
+        width: 100%;
+        border: 1px solid @light-gray-color;
+        border-collapse: collapse;
+        text-align: center;
+        .row {
+          height: 35px;
+          font-size: @normal-font-size;
+          &.title-row {
+            background-color: @font-color;
+            color: #fff;
+          }
+          .col {
+            position: relative;
+            width: 10%;
+            border: 1px solid @light-gray-color;
+            &.title-col {
+              background-color: @font-color;
+              color: #fff;
+            }
+            &.computed-col {
+              background-color: lighten(@font-color, 20%);
+              color: #fff;
+            }
+            &.wide-col {
+              width: 30%;
+            }
+            &.narrow-col {
+              width: 5%;
+            }
+            .el-input {
+              width: 100%;
+              .el-input__inner {
+                padding: 0;
+                border: none;
+                text-align: center;
+              }
+              .el-icon-date {
+                display: none;
+              }
+            }
+          }
+        }
+      }
+    }
+    .seperate-line {
+      width: 90%;
+      height: 1px;
+      margin: 15px auto 10px;
+      background-color: @light-gray-color;
+    }
+    .button {
+      display: inline-block;
+      width: 100px;
+      margin: 10px 20px 20px;
+      height: 30px;
+      line-height: 30px;
+      color: #fff;
+      cursor: pointer;
+      &.cancel-button {
+        background-color: @light-font-color;
+      }
+      &.submit-button {
+        background-color: @button-color;
+      }
+      &:hover {
+        opacity: 0.8;
+      }
+      &:active {
+        opacity: 0.9;
+      }
+    }
+    .ps__scrollbar-y-rail {
+      position: absolute;
+      width: 15px;
+      right: 0;
+      padding: 0 3px;
+      box-sizing: border-box;
+      opacity: 0.3;
+      transition: opacity 0.3s, padding 0.2s;
+      .ps__scrollbar-y {
+        position: relative;
+        background-color: #aaa;
+        border-radius: 20px;
+      }
+    }
+    &:hover {
+      .ps__scrollbar-y-rail {
+        opacity: 0.6;
+        &:hover {
+          padding: 0;
+        }
+      }
+    }
+  }
 }
 </style>
