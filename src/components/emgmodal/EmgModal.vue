@@ -22,7 +22,7 @@
           </span>
           <span class="field-input">
             <span class="warning-text"></span>
-            <el-select v-model="EmgTypeData['etgType']"  :disabled="mode===MODIFY_MODE">
+            <el-select v-model="EmgTypeData['etgType']"  disabled>
                <el-option v-for="item in EmgTypeNameArrs" :key="item.typeCode" :label="item.typeName" :value="item.typeCode" ></el-option>
             </el-select>
           </span>
@@ -48,7 +48,7 @@
           </span>
         </div>
         <h3 class="form-title" v-if="tableMode===SON_OPEN">{{currentTableName}}</h3>
-        <div class="form-wrapper"  ref="formWrapper">
+        <div class="form-wrapper" :class="{'father-open':tableMode==='' && mode===ADD_MODE}"  ref="formWrapper">
           <table class="form" v-if="tableMode===FATHER_OPEN">
             <tr class="row first-row">
               <td class="col col-width5">
@@ -74,7 +74,7 @@
               </td>
             </tr>
           </table>
-          <table class="form" v-if="tableMode===SON_OPEN && currentTable===MOTNERCONDITEM">
+          <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-if="tableMode===SON_OPEN && currentTable===MOTNERCONDITEM">
              <tr class="row first-row">
               <td class="col col-width5">
                 序号
@@ -135,7 +135,7 @@
               </td>
             </tr>
           </table>
-          <table class="form" v-if="tableMode===SON_OPEN && currentTable===fWAVSTUITEM">
+          <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-if="tableMode===SON_OPEN && currentTable===fWAVSTUITEM">
              <tr class="row first-row">
               <td class="col col-width5">
                 序号
@@ -171,7 +171,7 @@
               </td>
             </tr>
           </table>
-          <table class="form" v-if="tableMode===SON_OPEN && currentTable===SENNERCONDITEM">
+          <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-if="tableMode===SON_OPEN && currentTable===SENNERCONDITEM">
              <tr class="row first-row">
               <td class="col col-width5">
                 序号
@@ -237,7 +237,7 @@
               </td>
             </tr>
           </table>
-           <table class="form" v-if="tableMode===SON_OPEN && currentTable===NEEDEXAMITEM">
+           <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-if="tableMode===SON_OPEN && currentTable===NEEDEXAMITEM">
              <tr class="row first-row">
               <td class="col col-width5">
                 序号
@@ -297,7 +297,7 @@
               </td>
             </tr>
           </table>
-           <table class="form" v-if="tableMode===SON_OPEN && currentTable===MOTUNIANAITEM">
+           <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-if="tableMode===SON_OPEN && currentTable===MOTUNIANAITEM">
              <tr class="row first-row">
               <td class="col col-width5">
                 序号
@@ -351,7 +351,7 @@
               </td>
             </tr>
           </table>
-          <table class="form" v-if="tableMode===SON_OPEN && currentTable===INTPATANAITEM">
+          <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-if="tableMode===SON_OPEN && currentTable===INTPATANAITEM">
              <tr class="row first-row">
               <td class="col col-width5">
                 序号
@@ -390,9 +390,13 @@
         </div>
       </div>
       <div class="seperate-line"></div>
-      <div class="button cancel-button" v-if="tableMode===FATHER_OPEN || mode===ADD_MODE" @click="cancel">取消</div>
-      <div class="button son-submit-button" v-if="tableMode===FATHER_OPEN || mode===ADD_MODE" @click="submit">确认</div>
-      <div class="button son-submit-button" v-if="tableMode===SON_OPEN" @click="editEnd">编辑完成</div>
+      <div class="button cancel-button" v-if="tableMode===FATHER_OPEN && mode===MODIFY_MODE" @click="cancel">取消</div>
+      <div class="button son-submit-button" v-if="tableMode===FATHER_OPEN && mode===MODIFY_MODE" @click="submit">确认</div>
+      <div class="button son-submit-button" v-if="tableMode===SON_OPEN && mode===MODIFY_MODE" @click="editEnd">编辑完成</div>
+
+      <div class="button cancel-button" v-if="mode===ADD_MODE && tableMode!==SON_OPEN" @click="cancel">取消</div>
+      <div class="button son-submit-button" v-if="mode===ADD_MODE && tableMode!==SON_OPEN" @click="submit">确认</div>
+      <div class="button son-submit-button" v-if="mode===ADD_MODE && tableMode===SON_OPEN" @click="editEnd">编辑完成</div>
     </div>
   </div>
 </template>
@@ -495,7 +499,7 @@ export default {
         this.mode = this.ADD_MODE;
         this.$set(this.EmgTypeData, 'etgName', '');
         this.$set(this.EmgTypeData, 'elecTroGramId', '');
-        this.$set(this.EmgTypeData, 'etgType', '');
+        this.$set(this.EmgTypeData, 'etgType', '0');
         this.$set(this.EmgTypeData, 'patEleHint', '');
         this.$set(this.EmgTypeData, 'patEleResule', '');
         this.$set(this.EmgTypeData, 'pcaseId', this.$route.params.caseId);
@@ -927,15 +931,6 @@ export default {
         text-align: center;
         padding-top: 20px;
       }
-      .father-form-wrapper {
-        position: relative;
-        max-height: 300px;
-        height: auto;
-        width: 100%;
-        padding-right: 10px;
-        overflow: hidden;
-        border: 1px solid @inverse-font-color;
-      }
       .form-wrapper {
         position: relative;
         max-height: 300px;
@@ -944,12 +939,18 @@ export default {
         padding-right: 10px;
         overflow: hidden;
         border: 1px solid @inverse-font-color;
+        &.father-open {
+          border: none;
+        }
         .form {
           position: relative;
           margin-bottom: 5px;
           width: 100%; // left: calc(~"50% - (@{col-id-width} + @{col-time-width} + @{col-amount-width} + @{col-unit-width}) / 2");
           border-spacing: 0;
-          
+          font-size: 14px;
+          &.font-change {
+            font-size: 12px !important;
+          }
           .row {
             height: 45px;
             &.first-row {
@@ -959,9 +960,7 @@ export default {
                 padding: 0 3px;
               }
             }
-
             .col {
-              font-size: @small-font-size;
               text-align: center;
               padding: 0;
               margin: 0;
