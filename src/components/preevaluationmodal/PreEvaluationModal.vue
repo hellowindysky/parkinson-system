@@ -877,31 +877,38 @@ export default {
 
       } else if (fieldName === 'diaryHour') {
         // 每次更新患者日记中的小时数，都会重新计算每一行的 “总天数” 和 “平均值”，以及最后一行的 “总和”
-        // 用一个二维数组将日记中 5 * 6 (5行6列，不包括最后总和的那一行)的格子里的小时数 存下来
-        var diaryHourMatrix = [];
+        // 用一个对象 colTotalHour 将每一列的格子里的小时数 存下来
+        var colTotalHour = {};
         for (var i = 0; i < 5; i++) {
           var rowDayCount = 0;
           var rowTotalHour = 0;
-          diaryHourMatrix.push([]);
 
           this.hourNameList.forEach((hourName) => {
+            colTotalHour[hourName] = colTotalHour[hourName] ? colTotalHour[hourName] : 0;
+
             var hour = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i][hourName];
             if (hour && !isNaN(hour) && hour > 0) {
               // toFixed() 返回的是一个字符串，所以需要用 Number() 将其还原为数字
               // 另外 Number(2.000) 返回的值是 2，正好符合我们的需要
               hour = Number(parseFloat(hour).toFixed(1));
-              diaryHourMatrix[i].push(hour);
               rowDayCount += 1;
               rowTotalHour += hour;
               this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i][hourName] = hour;
+
+              colTotalHour[hourName] += hour;
+
             } else {
-              diaryHourMatrix[i].push(0);
               this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i][hourName] = 0;
             }
           });
           this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i].dayCount = rowDayCount;
           var hourAverage = rowDayCount > 0 ? Number((rowTotalHour * 1.0 / rowDayCount).toFixed(1)) : 0;
           this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i].hourAverage = hourAverage;
+        }
+
+        for (let hourName of this.hourNameList) {
+          // 最后一排，即“总和”这一排，填上我们保存的每列各自的数据之和
+          this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[5][hourName] = colTotalHour[hourName];
         }
       }
     }
