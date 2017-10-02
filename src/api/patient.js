@@ -46,8 +46,7 @@ export function getPatientInfo(patientId) {
     "userType": 2,
     "orgId": 34,
     "orgType": 2,
-    "patientId": patientIdNum,
-    "patientPersonVersion": 98
+    "patientId": patientIdNum
   };
   var url = 'http://apitest.gyenno.com/pdms/queryPatientPerson';
 
@@ -65,6 +64,22 @@ export function modifyPatientInfo(patientInfo) {
   };
 
   var url = 'http://apitest.gyenno.com/pdms/modPatientInfo';
+
+  return encapsulatePromise(url, request);
+};
+
+// 获取一个简单的病患对象，仅包含该患者的几个基本信息
+export function getPatientSimpleInfo(patientId) {
+  var patientIdNum = parseInt(patientId, 10);
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientId": patientIdNum
+  };
+  var url = 'http://apitest.gyenno.com/pdms/queryPatientInfo';
 
   return encapsulatePromise(url, request);
 };

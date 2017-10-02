@@ -552,11 +552,14 @@ import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 // import Util from 'utils/util.js';
 
+import { getPatientSimpleInfo } from 'api/patient.js';
+
 export default {
   data() {
     return {
       displayModal: false,
-      title: ''
+      title: '',
+      dbsPatientCode: ''
     };
   },
   computed: {
@@ -570,7 +573,15 @@ export default {
         this.title = '术前评估';
       }
       console.log(info);
+
+      // 获取患者的 DBS 编码
+      getPatientSimpleInfo(this.$route.params.id).then((data) => {
+        this.dbsPatientCode = data.patientInfo.dbsPatientCode;
+        console.log(this.dbsPatientCode);
+      });
+
       this.displayModal = true;
+      this.updateScrollbar();
     },
     updateScrollbar() {
       // 如果不写在 $nextTick() 里面，第一次加载的时候也许会不能正确计算高度。估计是因为子组件还没有全部加载所造成的。
