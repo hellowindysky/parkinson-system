@@ -44,7 +44,7 @@
           </div>
         </card>
       </extensible-panel>
-      <extensible-panel class="panel post-complication-panel" :mode="mutableMode" :title="postComplicationsTitle" v-on:addNewCard="addPostComplicationRecord">
+      <extensible-panel class="panel post-complication-panel" :mode="mutableMode" :title="postComplicationTitle" v-on:addNewCard="addPostComplicationRecord">
         <card class="card post-complication-card" :class="smallCardWidth" :mode="mutableMode" v-for="item in postComplicationList" :key="item.patientCaseId"
          :title="transformComplicationType(item.minorComplicationType)" v-on:clickCurrentCard="editPostComplicationRecord(item)"
          v-on:deleteCurrentCard="deletePostComplicationRecord(item)">
@@ -133,6 +133,7 @@
 import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
+import { deleteSurgicalMethod, deleteOperativeCompliation } from 'api/patient.js';
 
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 import ExtensiblePanel from 'components/extensiblepanel/ExtensiblePanel';
@@ -142,10 +143,6 @@ export default {
   data() {
     return {
       mutableMode: this.mode,
-      preEvaluationTitle: '术前评估',
-      surgicalMethodTitle: '手术方案',
-      postComplicationsTitle: '术后并发症',
-      dbsTitle: '程控记录',
       smallCardWidth: '',
       bigCardWidth: ''
     };
@@ -167,6 +164,19 @@ export default {
       'surgicalTypeList',
       'complicationTypeList'
     ]),
+    preEvaluationTitle() {
+      return '术前评估（' + this.preEvaluationList.length + '条记录）';
+    },
+    surgicalMethodTitle() {
+      return '手术方案（' + this.surgicalMethodList.length + '条记录）';
+    },
+    postComplicationTitle() {
+      return '术后并发症（' + this.postComplicationList.length + '条记录）';
+    },
+    dbsTitle() {
+      var amount = this.dbsFirstList.length + this.dbsFollowList.length;
+      return '程控记录（' + amount + '条记录）';
+    },
     preEvaluationList() {
       return this.diagnosticSurgery.patientPreopsList ? this.diagnosticSurgery.patientPreopsList : [];
     },
@@ -196,7 +206,7 @@ export default {
     transformSurgicalType(typeId) {
       // 在 tableData 中找到对应的值
       // 下面的 surgica 拼写掉了一个 l，是数据库的拼写错误，这里只能将错就错
-      var surgicalData = Util.getElement('surgicaType', typeId, this.surgicalTypeList);
+      var surgicalData = Util.getElement('id', typeId, this.surgicalTypeList);
       var surgicalName = surgicalData.surgicaName ? surgicalData.surgicaName : '';
       return surgicalName;
     },
@@ -230,41 +240,32 @@ export default {
     addSurgicalRecord() {
       // 这里要传递 2 个参数，一个是模式（新增／修改），一个是当前数据对象（新建的时候为空）
       Bus.$emit(this.SHOW_SURGICAL_METHOD_MODAL, this.ADD_DATA, {});
-      console.log('add');
     },
     editSurgicalRecord(item) {
       Bus.$emit(this.SHOW_SURGICAL_METHOD_MODAL, this.EDIT_DATA, item);
-      console.log('edit', item);
     },
     deleteSurgicalRecord(item) {
-      // var patientMed = {
-      //   patientId: this.id,
-      //   patientMedHistoryId: item.patientMedHistoryId,
-      //   version: item.version
-      // };
+      var surgicalMethod = {
+        'patientTreatmentId': item.patientTreatmentId
+      };
       Bus.$on(this.CONFIRM, () => {
-        // deletePatientMedHistory(patientMed).then(this._resolveDeletion, this._rejectDeletion);
-        console.log('delete', item);
+        deleteSurgicalMethod(surgicalMethod).then(this._resolveDeletion, this._rejectDeletion);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addPostComplicationRecord() {
       // 这里要传递 2 个参数，一个是模式（新增／修改），一个是当前数据对象（新建的时候为空）
       Bus.$emit(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.ADD_DATA, {});
-      console.log('add');
     },
     editPostComplicationRecord(item) {
       Bus.$emit(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.EDIT_DATA, item);
-      console.log('edit', item);
     },
     deletePostComplicationRecord(item) {
-      // var patientMed = {
-      //   patientId: this.id,
-      //   patientMedHistoryId: item.patientMedHistoryId,
-      //   version: item.version
-      // };
+      var operativeComplication = {
+        'patientComplicationId': item.patientComplicationId
+      };
       Bus.$on(this.CONFIRM, () => {
-        // deletePatientMedHistory(patientMed).then(this._resolveDeletion, this._rejectDeletion);
+        deleteOperativeCompliation(operativeComplication).then(this._resolveDeletion, this._rejectDeletion);
         console.log('delete', item);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
@@ -289,6 +290,15 @@ export default {
         console.log('delete', item);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
+    },
+    _resolveDeletion() {
+      // 如果成功删除记录，则重新发出请求，获取最新数据。同时解除 [确认对话框] 的 “确认” 回调函数
+      Bus.$emit(this.UPDATE_CASE_INFO);
+      Bus.$off(this.CONFIRM);
+    },
+    _rejectDeletion() {
+      // 即使删除不成功，也要解除 [确认对话框] 的 “确认” 回调函数
+      Bus.$off(this.CONFIRM);
     },
     recalculateCardWidth() {
       this.$nextTick(() => {
@@ -323,17 +333,19 @@ export default {
     // 如果收到屏幕宽度变化，或者内容区域宽度变化的事件，则重新计算卡片的宽度
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
     Bus.$on(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
+    Bus.$on(this.RECALCULATE_CARD_WIDTH, this.recalculateCardWidth);
     // 第一次加载的时候，去计算一次卡片宽度
     this.recalculateCardWidth();
 
     setTimeout(() => {
-      console.log(this.diagnosticSurgery);
+      // console.log(this.diagnosticSurgery);
     }, 2000);
   },
   beforeDestroy() {
     // 还是记得销毁组件前，解除事件绑定
     Bus.$off(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
     Bus.$off(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
+    Bus.$off(this.RECALCULATE_CARD_WIDTH, this.recalculateCardWidth);
     Bus.$off(this.CONFIRM);
     Bus.$off(this.GIVE_UP);
   }

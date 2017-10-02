@@ -51,6 +51,7 @@ export default {
   },
   methods: {
     toggleFoldedPanel() {
+      this.$emit(this.TOGGLE_FOLDED_PANEL);
       this.folded = !this.folded;
     },
     edit() {

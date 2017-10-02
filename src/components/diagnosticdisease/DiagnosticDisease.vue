@@ -1,8 +1,9 @@
 <template lang="html">
-  <folding-panel :title="'病症情况'" :mode="mutableMode"  v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
+  <folding-panel :title="'病症情况'" :mode="mutableMode"  v-on:edit="startEditing"
+    v-on:cancel="cancel" v-on:submit="submit" v-on:toggleFoldedPanel="updateScrollbar">
     <div class="diagnostic-disease">
       <div v-for="field in diagnosticDiseaseTemplate" class="field"
-       :class="{'whole-line': field.fieldName === 'caseSymptom', 'multi-line': field.fieldName === 'caseSymptom'}">
+        :class="{'whole-line': field.fieldName === 'caseSymptom', 'multi-line': field.fieldName === 'caseSymptom'}">
         <span class="field-name">
           {{field.cnfieldName}}
           <span class="required-mark" v-show="field.must === 1">*</span>
@@ -22,14 +23,14 @@
             {{warningResults[field.fieldName]}}
           </span>
           <el-input v-if="getUIType(field.fieldName)===1" v-model="copyInfo[field.fieldName]"
-           type="textarea" :autosize="{ minRows: 2, maxRows: 4}" :class="{'warning': warningResults[field.fieldName]}"
-           :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)">
+            type="textarea" :autosize="{ minRows: 2, maxRows: 4}" :class="{'warning': warningResults[field.fieldName]}"
+            :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)">
           </el-input>
           <el-select v-else-if="getUIType(field.fieldName)===3" v-model="copyInfo[field.fieldName]"
-           :class="{'warning': warningResults[field.fieldName]}" :placeholder="getMatchedField(field).cnFieldDesc"
-           @change="updateWarning(field)">
+            :class="{'warning': warningResults[field.fieldName]}" :placeholder="getMatchedField(field).cnFieldDesc"
+            @change="updateWarning(field)">
             <el-option v-for="option in getOptions(field.fieldName)" :label="option.typeName"
-             :value="option.typeCode" :key="option.typeCode"></el-option>
+              :value="option.typeCode" :key="option.typeCode"></el-option>
           </el-select>
         </div>
       </div>
@@ -42,6 +43,9 @@
               <td v-for="field in diagnosticDiseaseMsTemplate" class="col" :class="getClass(field.fieldName)">
                 {{field.cnfieldName}}
                 <span class="required-mark" v-show="field.must === 1">*</span>
+                <span class="add-button iconfont icon-plus" @click="addSymtom('ms')"
+                  v-show="field.fieldName === 'symptomTypeId' && mutableMode===EDITING_MODE">
+                </span>
               </td>
             </tr>
             <tr class="row" v-for="symptom in msSymptom">
@@ -51,23 +55,27 @@
                 </span>
                 <span v-else-if="mutableMode===EDITING_MODE">
                   <span v-if="field.fieldName==='symptomTypeId'">
-                    <span class="delete-button" @click="deleteSymptom(symptom)"> Θ </span>
-                    {{getFieldValue(symptom, field.fieldName)}}
+                    <span class="delete-button iconfont icon-remove" @click="deleteSymptom(symptom)"></span>
+                    <el-select v-model="symptom[field.fieldName]" :class="{'warning': !symptom[field.fieldName]}"
+                      :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
+                      <el-option v-for="option in getOptions(field.fieldName, 'ms')"
+                        :label="option.name" :value="option.code" :key="option.code"></el-option>
+                    </el-select>
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===1">
                     <el-input v-model="symptom[field.fieldName]" :class="{'warning': !symptom[field.fieldName]}"
-                     :placeholder="getMatchedField(field.fieldName).cnFieldDesc"></el-input>
+                      :placeholder="getMatchedField(field.fieldName).cnFieldDesc"></el-input>
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===3">
                     <el-select v-model="symptom[field.fieldName]" :class="{'warning': !symptom[field.fieldName]}"
-                     :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
+                      :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
                       <el-option label="是" :value="'是'"></el-option>
                       <el-option label="否" :value="'否'"></el-option>
                     </el-select>
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===6">
                     <el-date-picker v-model="symptom[field.fieldName]" type="date" :class="{'warning': !symptom[field.fieldName]}"
-                     format="yyyy-MM-dd" :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
+                      format="yyyy-MM-dd" :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
                     </el-date-picker>
                   </span>
                 </span>
@@ -85,6 +93,9 @@
               <td v-for="field in diagnosticDiseaseMcTemplate" class="col" :class="getClass(field.fieldName)">
                 {{field.cnfieldName}}
                 <span class="required-mark" v-show="field.must === 1">*</span>
+                <span class="add-button iconfont icon-plus" @click="addSymtom('mc')"
+                  v-show="field.fieldName === 'symptomTypeId' && mutableMode===EDITING_MODE">
+                </span>
               </td>
             </tr>
             <tr class="row" v-for="symptom in mcSymptom">
@@ -94,8 +105,12 @@
                 </span>
                 <span v-else-if="mutableMode===EDITING_MODE">
                   <span v-if="field.fieldName==='symptomTypeId'">
-                    <span class="delete-button" @click="deleteSymptom(symptom)"> Θ </span>
-                    {{getFieldValue(symptom, field.fieldName)}}
+                    <span class="delete-button iconfont icon-remove" @click="deleteSymptom(symptom)"></span>
+                    <el-select v-model="symptom[field.fieldName]" :class="{'warning': !symptom[field.fieldName]}"
+                      :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
+                      <el-option v-for="option in getOptions(field.fieldName, 'mc')"
+                        :label="option.name" :value="option.code" :key="option.code"></el-option>
+                    </el-select>
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===1">
                     <el-input v-model="symptom[field.fieldName]" :class="{'warning': !symptom[field.fieldName]}"
@@ -103,14 +118,14 @@
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===3">
                     <el-select v-model="symptom[field.fieldName]" :class="{'warning': !symptom[field.fieldName]}"
-                     :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
+                      :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
                       <el-option label="是" :value="'是'"></el-option>
                       <el-option label="否" :value="'否'"></el-option>
                     </el-select>
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===6">
                     <el-date-picker v-model="symptom[field.fieldName]" type="date" :class="{'warning': !symptom[field.fieldName]}"
-                     format="yyyy-MM-dd" :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
+                      format="yyyy-MM-dd" :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
                     </el-date-picker>
                   </span>
                 </span>
@@ -128,6 +143,9 @@
               <td v-for="field in diagnosticDiseaseNmsTemplate" class="col" :class="getClass(field.fieldName)">
                 {{field.cnfieldName}}
                 <span class="required-mark" v-show="field.must === 1">*</span>
+                <span class="add-button iconfont icon-plus" @click="addSymtom('nms')"
+                  v-show="field.fieldName === 'symptomTypeId' && mutableMode===EDITING_MODE">
+                </span>
               </td>
             </tr>
             <tr class="row" v-for="symptom in nmsSymptom">
@@ -137,23 +155,27 @@
                 </span>
                 <span v-else-if="mutableMode===EDITING_MODE">
                   <span v-if="field.fieldName==='symptomTypeId'">
-                    <span class="delete-button" @click="deleteSymptom(symptom)"> Θ </span>
-                    {{getFieldValue(symptom, field.fieldName)}}
+                    <span class="delete-button iconfont icon-remove" @click="deleteSymptom(symptom)"></span>
+                    <el-select v-model="symptom[field.fieldName]" :class="{'warning': !symptom[field.fieldName]}"
+                      :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
+                      <el-option v-for="option in getOptions(field.fieldName, 'nms')"
+                        :label="option.name" :value="option.code" :key="option.code"></el-option>
+                    </el-select>
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===1">
                     <el-input v-model="symptom[field.fieldName]" :class="{'warning': !symptom[field.fieldName]}"
-                     :placeholder="getMatchedField(field.fieldName).cnFieldDesc"></el-input>
+                      :placeholder="getMatchedField(field.fieldName).cnFieldDesc"></el-input>
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===3">
                     <el-select v-model="symptom[field.fieldName]" :class="{'warning': !symptom[field.fieldName]}"
-                     :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
+                      :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
                       <el-option label="是" :value="'是'"></el-option>
                       <el-option label="否" :value="'否'"></el-option>
                     </el-select>
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===6">
                     <el-date-picker v-model="symptom[field.fieldName]" type="date" :class="{'warning': !symptom[field.fieldName]}"
-                     format="yyyy-MM-dd" :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
+                      format="yyyy-MM-dd" :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
                     </el-date-picker>
                   </span>
                 </span>
@@ -370,6 +392,41 @@ export default {
         }
       }
     },
+    addSymtom(type) {
+      // 在 this.copyInfo.patientSymptom 中添加对象，传入的参数代表症状类型
+      var newSymptom = {};
+      var template = [];
+      switch (type) {
+        case 'ms':
+          template = this.diagnosticDiseaseMsTemplate;
+          newSymptom.symType = '运动症状';
+          break;
+        case 'mc':
+          template = this.diagnosticDiseaseMcTemplate;
+          newSymptom.symType = '运动并发症';
+          break;
+        case 'nms':
+          template = this.diagnosticDiseaseNmsTemplate;
+          newSymptom.symType = '非运动症状';
+          break;
+        default:
+          return;
+      }
+
+      // 然后为这条症状记录补上相应的属性值，因为它们无需被 Vue 做数据绑定，所以直接定义属性即可
+      newSymptom.patientId = parseInt(this.$route.params.id, 10);
+      newSymptom.patientCaseId = this.$route.params.caseId;
+
+      for (let field of template) {
+        this.$set(newSymptom, field.fieldName, '');
+      }
+
+      var index = 0;
+      if (this.copyInfo.patientSymptom && this.copyInfo.patientSymptom instanceof Array) {
+        index = this.copyInfo.patientSymptom.length;
+        this.$set(this.copyInfo.patientSymptom, index, newSymptom);
+      }
+    },
     getMatchedField(fieldName) {
       // 在字典项中查询该名字所对应的字段，从而方便我们得到该字段的详细信息
       return Util.getElement('fieldName', fieldName, this.totalDictionary);
@@ -377,12 +434,34 @@ export default {
     getUIType(fieldName) {
       return this.getMatchedField(fieldName).uiType;
     },
-    getOptions(fieldName) {
-      var dictionaryField = Util.getElement('fieldName', fieldName, this.totalDictionary);
-      var fieldEnumId = dictionaryField.fieldEnumId;
-      var types = Util.getElement('typegroupcode', fieldEnumId, this.typeGroup).types;
-      types = types ? types : [];
-      return types;
+    getOptions(fieldName, type) {
+      // 第二个参数代表主诉的类型（'ms', 'mc', 'nms' 分别代表运动症状，运动并发症，非运动症状），
+      // 第二个参数只有在主诉字段内才是必须的
+      if (fieldName === 'symptomTypeId') {
+        var options = [];
+        const typeDict = {
+          'ms': 0,
+          'mc': 1,
+          'nms': 2
+        };
+        for (let syptomTypeItem of this.symptomType) {
+          if (syptomTypeItem.symptomtype === typeDict[type]) {
+            options.push({
+              name: syptomTypeItem.sympName,
+              code: syptomTypeItem.id
+            });
+          }
+        }
+        return options;
+
+      } else {
+        var dictionaryField = Util.getElement('fieldName', fieldName, this.totalDictionary);
+        var fieldEnumId = dictionaryField.fieldEnumId;
+        var types = Util.getElement('typegroupcode', fieldEnumId, this.typeGroup).types;
+        types = types ? types : [];
+        return types;
+      }
+
     },
     transformTypeCode(typeCode, fieldName) {
       return Util.getElement('typeCode', typeCode, this.getOptions(fieldName)).typeName;
@@ -452,10 +531,11 @@ export default {
 @field-name-width: 100px;
 @scroll-bar-height: 10px;
 
-@col-name-width: 160px;
+@col-name-width: 200px;
 @col-time-width: 170px;
 @col-select-width: 150px;
 @col-remarks-width: 250px;
+@row-height: 45px;
 
 .diagnostic-disease {
   padding: 0 25px;
@@ -558,11 +638,22 @@ export default {
         border-spacing: 0;
         table-layout: fixed;
         .row {
-          height: 45px;
+          height: @row-height;
           &.first-row {
             background-color: @screen-color;
             height: 30px;
             line-height: 30px;
+            .add-button {
+              position: absolute;
+              left: 5px;
+              cursor: pointer;
+              &:hover {
+                opacity: 0.8;
+              }
+              &:active {
+                opacity: 0.9;
+              }
+            }
           }
           .col {
             position: relative;
@@ -570,6 +661,10 @@ export default {
             text-align: center;
             &.col-name {
               min-width: @col-name-width;
+              .el-input {
+                margin-left: 20px;
+                width: @col-name-width - 30px;
+              }
             }
             &.col-time {
               min-width: @col-time-width;
@@ -587,8 +682,11 @@ export default {
             }
             .delete-button {
               position: absolute;
-              left: 10px;
+              left: 5px;
+              top: 13px;
+              color: @alert-color;
               cursor: pointer;
+              z-index: 10;
               &:hover {
                 opacity: 0.8;
               }

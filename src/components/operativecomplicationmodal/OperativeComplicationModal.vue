@@ -11,12 +11,14 @@
           <span class="field-input">
             <span class="warning-text">{{warningResults[field.fieldName]}}</span>
             <el-select v-if="getUIType(field.fieldName)===3" v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-             :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)">
-             <el-option v-for="option in getOptions(field.fieldName)" :label="option.name"
-              :value="option.code" :key="option.code"></el-option>
+              :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)">
+              <el-option v-for="option in getOptions(field.fieldName)" :label="option.name"
+                :value="option.code" :key="option.code"></el-option>
             </el-select>
             <el-date-picker v-else-if="getUIType(field.fieldName)===6" v-model="copyInfo[field.fieldName]"
-              :class="{'warning': warningResults[field.fieldName]}"></el-date-picker>
+              :class="{'warning': warningResults[field.fieldName]}"  @change="updateWarning(field)"
+              :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
+            </el-date-picker>
             <el-input v-else-if="getUIType(field.fieldName)===1" v-model="copyInfo[field.fieldName]"
               :class="{'warning': warningResults[field.fieldName]}" :type="getType(field.fieldName)"
               :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)">
@@ -37,41 +39,91 @@ import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import { vueCopy } from 'utils/helper.js';
+import { addOperativeCompliation, modifyOperativeCompliation } from 'api/patient.js';
 
 export default {
   data() {
     return {
       displayModal: false,
-      title: '',
+      mode: '',
       copyInfo: {},
+      originalInfo: {},
       warningResults: {}
     };
   },
   computed: {
     ...mapGetters([
       'operativeComplicationDictionary',
-      'operativeComplicationTemplate'
-    ])
+      'operativeComplicationTemplate',
+      'complicationTypeList',
+      'typeGroup'
+    ]),
+    title() {
+      if (this.mode === this.ADD_DATA) {
+        return '新增术后并发症';
+      } else if (this.mode === this.EDIT_DATA) {
+        return '术后并发症';
+      }
+    }
   },
   methods: {
     showModal(changeWay, info) {
-      if (changeWay === this.ADD_DATA) {
-        this.title = '新增术后并发症';
-      } else if (changeWay === this.EDIT_DATA) {
-        this.title = '术后并发症';
-      }
-      vueCopy(info, this.copyInfo);
-      console.log(info);
+      this.mode = changeWay;
+
+      this.originalInfo = info;
+      this.initCopyInfo();
+
       setTimeout(() => {
-        console.log(this.operativeComplicationDictionary);
-        console.log(this.operativeComplicationTemplate);
+        // console.log(this.operativeComplicationDictionary);
+        // console.log(this.operativeComplicationTemplate);
       }, 2000);
       this.displayModal = true;
+    },
+    initCopyInfo() {
+      this.copyInfo = {};
+      for (let field of this.operativeComplicationTemplate) {
+        this.$set(this.copyInfo, field.fieldName, '');
+      }
+      vueCopy(this.originalInfo, this.copyInfo);
+
+      // 重设 copyInfo 之后记得把警告信息对象也一并清空了，记得放在 nextTick 里执行
+      this.$nextTick(() => {
+        this.clearWarning();
+      });
     },
     cancel() {
       this.displayModal = false;
     },
     submit() {
+      // 先将日期格式改成符合服务器传输的格式
+      this.copyInfo.occurrenceTime = Util.simplifyDate(this.copyInfo.occurrenceTime);
+
+      // 点击确定按钮的时候，需要手动为这些字段校验一遍
+      for (let field of this.operativeComplicationTemplate) {
+        this.updateWarning(field);
+      }
+
+      // 然后检查 warningResults，看填写的数据是否合规
+      for (var p in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(p) && this.warningResults[p]) {
+          return;
+        }
+      }
+
+      // 到这里，就可以提交了
+      if (this.mode === this.ADD_DATA) {
+        this.copyInfo.patientCaseId = this.$route.params.caseId;  // 补充诊断 id 这个属性
+        addOperativeCompliation(this.copyInfo).then(() => {
+          this.updateAndClose();
+        });
+      } else if (this.mode === this.EDIT_DATA) {
+        modifyOperativeCompliation(this.copyInfo).then(() => {
+          this.updateAndClose();
+        });
+      }
+    },
+    updateAndClose() {
+      Bus.$emit(this.UPDATE_CASE_INFO);
       this.displayModal = false;
     },
     getMatchedField(fieldName) {
@@ -84,8 +136,27 @@ export default {
     getOptions(fieldName) {
       // 为下拉框准备列表
       var options = [];
-      if (fieldName) {
-        options = [];
+      if (fieldName === 'minorComplicationType') {
+        // 并发症细类，需要查 tableData
+        for (let type of this.complicationTypeList) {
+          options.push({
+            name: type.minorComplicationName,
+            code: type.id
+          });
+        }
+
+      } else {
+        // 其它字段都去 typeGroup 里面查
+        var dictionaryField = Util.getElement('fieldName', fieldName, this.operativeComplicationDictionary);
+        var fieldEnumId = dictionaryField.fieldEnumId;
+        var types = Util.getElement('typegroupcode', fieldEnumId, this.typeGroup).types;
+        types = types ? types : [];
+        for (let type of types) {
+          options.push({
+            name: type.typeName,
+            code: type.typeCode
+          });
+        }
       }
       return options;
     },
@@ -110,7 +181,8 @@ export default {
         var isEmptyArray = fieldValue instanceof Array && fieldValue.length === 0;
         if (isEmptyValue || isEmptyArray) {
           this.$set(this.warningResults, fieldName, '必填项');
-          return;
+        } else {
+          this.$set(this.warningResults, fieldName, null);
         }
       }
     }
@@ -120,6 +192,11 @@ export default {
   },
   beforeDestroy() {
     Bus.$off(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.showModal);
+  },
+  watch: {
+    operativeComplicationTemplate: function() {
+      this.initCopyInfo();
+    }
   }
 };
 </script>
@@ -141,11 +218,10 @@ export default {
   z-index: 500;
   .operative-complication-modal {
     position: relative;
-    margin: auto 30px;
+    margin: auto;
     padding: 0 40px;
-    top: 3%;
-    min-width: 660px;
-    max-height: 94%;
+    top: 10%;
+    width: 660px;
     background-color: @background-color;
     .title {
       padding: 30px 0 10px;

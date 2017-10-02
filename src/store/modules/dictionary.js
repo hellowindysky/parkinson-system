@@ -123,6 +123,13 @@ const getters = {
     }
     return state.all.tableData.medicineInfo;
   },
+  medicineStopReason: (state) => {
+    // 停药原因
+    if (!state.all.tableData || !state.all.tableData.medicineStopReason) {
+      return [];
+    }
+    return state.all.tableData.medicineStopReason;
+  },
   symptomType: (state) => {
     // 主诉的各种症状
     if (!state.all.tableData || !state.all.tableData.symptomType) {
