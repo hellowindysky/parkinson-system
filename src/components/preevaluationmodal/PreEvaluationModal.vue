@@ -99,16 +99,16 @@
             <td class="col" rowspan="2">平均值</td>
           </tr>
           <tr class="row">
-            <td class="col" v-for="dayTimeName in dayTimeNameList">
+            <td class="col" v-for="(dayTimeName, listIndex) in dayTimeNameList">
               <el-date-picker v-model="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName]"
-                @change="updateField('diaryDayTime')"></el-date-picker>
+                @change="updateField('diaryDayTime')" :editable="false" :disabled="!isTimeEditable(listIndex)"></el-date-picker>
             </td>
           </tr>
           <tr class="row" v-for="(rowName, index) in diaryRowNameList">
             <td class="col title-col">{{rowName}}</td>
-            <td class="col" v-for="hourName in hourNameList">
+            <td class="col" v-for="(hourName, listIndex) in hourNameList">
               <el-input v-model="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[index][hourName]"
-                @blur="updateField('diaryHour')"></el-input>
+                @blur="updateField('diaryHour')" :disabled="!hasDayTime(listIndex)"></el-input>
             </td>
             <td class="col computed-col">
               {{ copyInfo.preopsDiaryDTO.patientPreopsDiaryList[index].dayCount }}
@@ -790,6 +790,8 @@ export default {
       console.log(info);
 
       this.initCopyInfo();
+      this.updateField('diaryDayTime');
+      this.updateField('diaryHour');
 
       // 获取患者的 DBS 编码
       getPatientSimpleInfo(this.$route.params.id).then((data) => {
@@ -804,7 +806,7 @@ export default {
       if (changeWay === this.EDIT_DATA) {
         var preEvaluationId = info.preopsInfoId ? info.preopsInfoId : -1;
         getPreEvaluation(preEvaluationId).then((data) => {
-          console.log(data);
+          console.log('获取的详细数据', data);
         });
       }
 
@@ -852,6 +854,7 @@ export default {
           // 如果“是否存在剂末现象”选择了“否”，则将“是否首次出现”字段值置为空
           this.copyInfo.preopsTerminalDTO.terminalIsfirst = '';
         }
+        return;
 
       } else if (fieldName === 'terminalIsfirst') {
         if (this.copyInfo.preopsTerminalDTO.terminalExist === 1) {
@@ -859,17 +862,33 @@ export default {
           this.copyInfo.preopsTerminalDTO.terminalFirstTime = '';
           this.copyInfo.preopsTerminalDTO.terminalDuration = '';
         }
+        return;
 
       } else if (fieldName === 'diaryDayTime') {
-        // 患者日记是一个数组，一共 6 行（睡眠，关期，重异动开，轻异动开，无异动开，总和），每一行是数组下的一个对象
-        // 而这些对象，每一个都包含有日期信息（即列信息），所以每一个日期都在该数组中出现了 6 次！
-        // 我们为 组件绑定日期 时，选取该数组的第一个元素下的日期值，那么一旦日期发生更改，就要将更改应用到每一行中
+        // 患者日记是一个数组(preopsDiaryDTO.patientPreopsDiaryList)，
+        // 一共 6 行（睡眠，关期，重异动开，轻异动开，无异动开，总和），每一行是数组下的一个对象
+        // 而这些对象，每一个都包含有日期信息（即列信息），所以每一个日期都在该数组中重复出现了 6 次！
+        // 我们为 组件绑定日期 时，只选取该数组的第一个元素下的日期值，那么一旦日期发生更改，就要将更改应用到每一行中
+
+        // 在做上述操作之前，我们还要做一步校验，如果前一列的日期为空，则后面的日期也必须为空，
+        // 因为实际的表格是填完了一列，才能填写下一列
+        var hasToBeEmpty = false;
         this.dayTimeNameList.forEach((dayTimeName) => {
-          var dayTime = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName];
-          for (let diaryItem of this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList) {
-            diaryItem[dayTimeName] = dayTime;
+          if (hasToBeEmpty) {
+            this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName] = '';
+
+          } else {
+            var dayTime = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName];
+            for (let diaryItem of this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList) {
+              diaryItem[dayTimeName] = dayTime;
+            }
+            if (!dayTime) {
+              hasToBeEmpty = true;
+            }
           }
         });
+        this.updateField('diaryHour');
+        return;
 
       } else if (fieldName === 'diaryHour') {
         // 每次更新患者日记中的小时数，都会重新计算每一行的 “总天数” 和 “平均值”，以及最后一行的 “总和”
@@ -879,11 +898,18 @@ export default {
           var rowDayCount = 0;
           var rowTotalHour = 0;
 
-          this.hourNameList.forEach((hourName) => {
+          for (var listIndex = 0; listIndex < this.hourNameList.length; listIndex++) {
+            var hourName = this.hourNameList[listIndex];
             colTotalHour[hourName] = colTotalHour[hourName] ? colTotalHour[hourName] : 0;
 
+            // 取到格子中的小时数之后，要先做校验，如果该列顶端的时间没有值，那么将该格子中的值强制改成空字符串
             var hour = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i][hourName];
-            if (hour && !isNaN(hour) && hour > 0) {
+
+            var dayTimeName = this.dayTimeNameList[listIndex];
+            if (!this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName]) {
+              this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i][hourName] = '';
+
+            } else if (hour && !isNaN(hour) && hour > 0) {
               // toFixed() 返回的是一个字符串，所以需要用 Number() 将其还原为数字
               // 另外 Number(2.000) 返回的值是 2，正好符合我们的需要
               hour = Number(parseFloat(hour).toFixed(1));
@@ -896,7 +922,7 @@ export default {
             } else {
               this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i][hourName] = 0;
             }
-          });
+          }
           this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i].dayCount = rowDayCount;
           var hourAverage = rowDayCount > 0 ? Number((rowTotalHour * 1.0 / rowDayCount).toFixed(1)) : 0;
           this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i].hourAverage = hourAverage;
@@ -906,7 +932,25 @@ export default {
           // 最后一排，即“总和”这一排，填上我们保存的每列各自的数据之和
           this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[5][hourName] = colTotalHour[hourName];
         }
+        return;
       }
+    },
+    isTimeEditable(listIndex) {
+      if (listIndex === 0) {
+        return true;
+      } else {
+        var dayTimeName = this.dayTimeNameList[listIndex - 1];
+        var dayTime = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName];
+        if (!dayTime) {
+          return false;
+        } else {
+          return true;
+        }
+      }
+    },
+    hasDayTime(listIndex) {
+      var dayTimeName = this.dayTimeNameList[listIndex];
+      return Boolean(this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName]);
     }
   },
   mounted() {
