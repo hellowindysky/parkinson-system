@@ -99,185 +99,28 @@
             <td class="col" rowspan="2">平均值</td>
           </tr>
           <tr class="row">
-            <td class="col">
-              <el-date-picker v-model="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0].oneDayTime"
-                @change="updateField('diaryDayTime')"></el-date-picker>
-            </td>
-            <td class="col">
-              <el-date-picker v-model="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0].twoDayTime"
-                @change="updateField('diaryDayTime')"></el-date-picker>
-            </td>
-            <td class="col">
-              <el-date-picker v-model="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0].threeDayTime"
-                @change="updateField('diaryDayTime')"></el-date-picker>
-            </td>
-            <td class="col">
-              <el-date-picker v-model="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0].fourDayTime"
-                @change="updateField('diaryDayTime')"></el-date-picker>
-            </td>
-            <td class="col">
-              <el-date-picker v-model="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0].fiveDayTime"
-                @change="updateField('diaryDayTime')"></el-date-picker>
-            </td>
-            <td class="col">
-              <el-date-picker v-model="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0].sixDayTime"
+            <td class="col" v-for="dayTimeName in dayTimeNameList">
+              <el-date-picker v-model="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName]"
                 @change="updateField('diaryDayTime')"></el-date-picker>
             </td>
           </tr>
-          <tr class="row">
-            <td class="col">睡眠</td>
-            <td class="col">
-              <el-input></el-input>
+          <tr class="row" v-for="(rowName, index) in diaryRowNameList">
+            <td class="col">{{rowName}}</td>
+            <td class="col" v-for="hourName in hourNameList">
+              <el-input v-model="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[index][hourName]"
+                @blur="updateField('diaryHour')"></el-input>
             </td>
             <td class="col">
-              <el-input></el-input>
+              {{ copyInfo.preopsDiaryDTO.patientPreopsDiaryList[index].dayCount }}
             </td>
             <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-          </tr>
-          <tr class="row">
-            <td class="col">关期</td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-          </tr>
-          <tr class="row">
-            <td class="col">重异动开</td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-          </tr>
-          <tr class="row">
-            <td class="col">轻异动开</td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-          </tr>
-          <tr class="row">
-            <td class="col">无异动开</td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
+              {{ copyInfo.preopsDiaryDTO.patientPreopsDiaryList[index].hourAverage }}
             </td>
           </tr>
           <tr class="row">
             <td class="col">总和</td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
+            <td class="col" v-for="hourName in hourNameList">
+              {{copyInfo.preopsDiaryDTO.patientPreopsDiaryList[5][hourName]}}
             </td>
             <td class="col">
               <el-input></el-input>
@@ -571,6 +414,9 @@ export default {
     return {
       displayModal: false,
       mode: '',
+      diaryRowNameList: ['睡眠', '关期', '重异动开', '轻异动开', '无异动开'],
+      dayTimeNameList: ['oneDayTime', 'twoDayTime', 'threeDayTime', 'fourDayTime', 'fiveDayTime', 'sixDayTime'],
+      hourNameList: ['oneDayDiaryHour', 'twoDayDiaryHour', 'threeDayDiaryHour', 'fourDayDiaryHour', 'fiveDayDiaryHour', 'sixDayDiaryHour'],
       copyInfo: {
         'preopsTime': '',
         'preopsRemark': '',
@@ -1022,13 +868,41 @@ export default {
         // 患者日记是一个数组，一共 6 行（睡眠，关期，重异动开，轻异动开，无异动开，总和），每一行是数组下的一个对象
         // 而这些对象，每一个都包含有日期信息（即列信息），所以每一个日期都在该数组中出现了 6 次！
         // 我们为 组件绑定日期 时，选取该数组的第一个元素下的日期值，那么一旦日期发生更改，就要将更改应用到每一行中
-        var dayTimeList = ['oneDayTime', 'twoDayTime', 'threeDayTime', 'fourDayTime', 'fiveDayTime', 'sixDayTime'];
-        dayTimeList.forEach((dayTimeName) => {
+        this.dayTimeNameList.forEach((dayTimeName) => {
           var dayTime = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName];
           for (let diaryItem of this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList) {
             diaryItem[dayTimeName] = dayTime;
           }
         });
+
+      } else if (fieldName === 'diaryHour') {
+        // 每次更新患者日记中的小时数，都会重新计算每一行的 “总天数” 和 “平均值”，以及最后一行的 “总和”
+        // 用一个二维数组将日记中 5 * 6 (5行6列，不包括最后总和的那一行)的格子里的小时数 存下来
+        var diaryHourMatrix = [];
+        for (var i = 0; i < 5; i++) {
+          var rowDayCount = 0;
+          var rowTotalHour = 0;
+          diaryHourMatrix.push([]);
+
+          this.hourNameList.forEach((hourName) => {
+            var hour = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i][hourName];
+            if (hour && !isNaN(hour) && hour > 0) {
+              // toFixed() 返回的是一个字符串，所以需要用 Number() 将其还原为数字
+              // 另外 Number(2.000) 返回的值是 2，正好符合我们的需要
+              hour = Number(parseFloat(hour).toFixed(1));
+              diaryHourMatrix[i].push(hour);
+              rowDayCount += 1;
+              rowTotalHour += hour;
+              this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i][hourName] = hour;
+            } else {
+              diaryHourMatrix[i].push(0);
+              this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i][hourName] = 0;
+            }
+          });
+          this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i].dayCount = rowDayCount;
+          var hourAverage = rowDayCount > 0 ? Number((rowTotalHour * 1.0 / rowDayCount).toFixed(1)) : 0;
+          this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i].hourAverage = hourAverage;
+        }
       }
     }
   },
