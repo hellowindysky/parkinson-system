@@ -6,19 +6,19 @@
         <div class="field">
           <span class="field-name">DBS患者编码</span>
           <span class="field-input">
-            <el-input></el-input>
+            <el-input v-model="copyInfo.dbsPatientCode"></el-input>
           </span>
         </div>
         <div class="field">
           <span class="field-name">评估时间</span>
           <span class="field-input">
-            <el-date-picker></el-date-picker>
+            <el-date-picker v-model="copyInfo.preopsTime"></el-date-picker>
           </span>
         </div>
         <div class="field whole-line">
           <span class="field-name">术前评估备注</span>
           <span class="field-input">
-            <el-input></el-input>
+            <el-input v-model="copyInfo.preobsRemark"></el-input>
           </span>
         </div>
       </div>
@@ -30,59 +30,61 @@
         <div class="field">
           <span class="field-name">剂末现象评估时间</span>
           <span class="field-input">
-            <el-date-picker></el-date-picker>
+            <el-date-picker v-model="copyInfo.preopsTerminalDTO.terminalTime"></el-date-picker>
           </span>
         </div>
         <div class="field">
           <span class="field-name">剂末现象评估量表</span>
           <span class="field-input">
-            <el-select :value="1">
-              <el-option label="a" :value="1"></el-option>
+            <el-select v-model="copyInfo.preopsTerminalDTO.terminalScale">
+              <el-option v-for="option in getOptions('terminalScale')"
+                :label="option.name" :value="option.code" :key="option.code">
+              </el-option>
             </el-select>
           </span>
         </div>
         <div class="field">
           <span class="field-name">是否存在剂末现象</span>
           <span class="field-input">
-            <el-select :value="1">
+            <el-select v-model="copyInfo.preopsTerminalDTO.terminalExist" @change="updateField('terminalExist')">
               <el-option label="是" :value="1"></el-option>
-              <el-option label="否" :value="2"></el-option>
+              <el-option label="否" :value="0"></el-option>
             </el-select>
           </span>
         </div>
-        <div class="field">
+        <div class="field" v-show="copyInfo.preopsTerminalDTO.terminalExist===1">
           <span class="field-name">是否首次出现</span>
           <span class="field-input">
-            <el-select :value="1">
+            <el-select v-model="copyInfo.preopsTerminalDTO.terminalIsfirst" @change="updateField('terminalIsfirst')">
               <el-option label="是" :value="1"></el-option>
-              <el-option label="否" :value="2"></el-option>
+              <el-option label="否" :value="0"></el-option>
             </el-select>
           </span>
         </div>
-        <div class="field">
+        <div class="field" v-show="copyInfo.preopsTerminalDTO.terminalIsfirst===0">
           <span class="field-name">初次出现时间</span>
           <span class="field-input">
-            <el-date-picker></el-date-picker>
+            <el-date-picker v-model="copyInfo.preopsTerminalDTO.terminalFirstTime"></el-date-picker>
           </span>
         </div>
-        <div class="field">
+        <div class="field" v-show="copyInfo.preopsTerminalDTO.terminalIsfirst===0">
           <span class="field-name">已出现剂末现象</span>
           <span class="field-input short-input">
-            <el-input></el-input>
+            <el-input v-model="copyInfo.preopsTerminalDTO.terminalDuration"></el-input>
           </span>
           <span class="end-words">年 (运动并发症早期&lt;=3年)</span>
         </div>
         <div class="field whole-line">
           <span class="field-name">备注</span>
           <span class="field-input">
-            <el-input></el-input>
+            <el-input v-model="copyInfo.preopsTerminalDTO.terminalRemark"></el-input>
           </span>
         </div>
       </div>
 
       <div class="seperate-line"></div>
 
-      <div class="sub-title-bar">剂末现象评估</div>
+      <div class="sub-title-bar">患者日记</div>
       <div class="content">
         <table class="table">
           <tr class="row">
@@ -98,22 +100,28 @@
           </tr>
           <tr class="row">
             <td class="col">
-              <el-date-picker></el-date-picker>
+              <el-date-picker v-model="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0].oneDayTime"
+                @change="updateField('diaryDayTime')"></el-date-picker>
             </td>
             <td class="col">
-              <el-date-picker></el-date-picker>
+              <el-date-picker v-model="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0].twoDayTime"
+                @change="updateField('diaryDayTime')"></el-date-picker>
             </td>
             <td class="col">
-              <el-date-picker></el-date-picker>
+              <el-date-picker v-model="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0].threeDayTime"
+                @change="updateField('diaryDayTime')"></el-date-picker>
             </td>
             <td class="col">
-              <el-date-picker></el-date-picker>
+              <el-date-picker v-model="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0].fourDayTime"
+                @change="updateField('diaryDayTime')"></el-date-picker>
             </td>
             <td class="col">
-              <el-date-picker></el-date-picker>
+              <el-date-picker v-model="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0].fiveDayTime"
+                @change="updateField('diaryDayTime')"></el-date-picker>
             </td>
             <td class="col">
-              <el-date-picker></el-date-picker>
+              <el-date-picker v-model="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0].sixDayTime"
+                @change="updateField('diaryDayTime')"></el-date-picker>
             </td>
           </tr>
           <tr class="row">
@@ -547,41 +555,422 @@
 </template>
 
 <script>
-// import { mapGetters } from 'vuex';
+import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
-// import Util from 'utils/util.js';
+import Util from 'utils/util.js';
+// import { vueCopy } from 'utils/helper.js';
 
-import { getPatientSimpleInfo } from 'api/patient.js';
+import {
+  getPatientSimpleInfo,
+  getPreEvaluation
+} from 'api/patient.js';
 
 export default {
   data() {
     return {
       displayModal: false,
-      title: '',
-      dbsPatientCode: ''
+      mode: '',
+      copyInfo: {
+        'preopsTime': '',
+        'preopsRemark': '',
+        'preopsTerminalDTO': {
+          'terminalTime': '',
+          'terminalScale': '',
+          'terminalExist': '',
+          'terminalIsfirst': '',
+          'terminalFirstTime': '',
+          'terminalDuration': '',
+          'terminalRemark': ''
+        },
+        'preopsDiaryDTO': {
+          'patientPreopsDiaryList': [
+            {
+              'oneDayDiaryHour': 1,
+              'oneDayDiaryType': 1,
+              'oneDayTime': '',
+              'twoDayDiaryHour': 2,
+              'twoDayDiaryType': 1,
+              'twoDayTime': '',
+              'threeDayDiaryHour': 3,
+              'threeDayDiaryType': 1,
+              'threeDayTime': '',
+              'fourDayDiaryHour': 4,
+              'fourDayDiaryType': 1,
+              'fourDayTime': '',
+              'fiveDayDiaryHour': 5,
+              'fiveDayDiaryType': 1,
+              'fiveDayTime': '',
+              'sixDayDiaryHour': 6,
+              'sixDayDiaryType': 1,
+              'sixDayTime': '',
+              'dayCount': 6,
+              'hourAverage': 3.5,
+              'patientPreopsInfoId': 15
+            },
+            {
+              'oneDayDiaryHour': 1,
+              'oneDayDiaryType': 2,
+              'oneDayTime': '',
+              'twoDayDiaryHour': 2,
+              'twoDayDiaryType': 2,
+              'twoDayTime': '',
+              'threeDayDiaryHour': 3,
+              'threeDayDiaryType': 2,
+              'threeDayTime': '',
+              'fourDayDiaryHour': 4,
+              'fourDayDiaryType': 2,
+              'fourDayTime': '',
+              'fiveDayDiaryHour': 5,
+              'fiveDayDiaryType': 2,
+              'fiveDayTime': '',
+              'sixDayDiaryHour': 6,
+              'sixDayDiaryType': 2,
+              'sixDayTime': '',
+              'dayCount': 6,
+              'hourAverage': 3.5,
+              'patientPreopsInfoId': 15
+            },
+            {
+              'oneDayDiaryHour': 1,
+              'oneDayDiaryType': 3,
+              'oneDayTime': '',
+              'twoDayDiaryHour': 2,
+              'twoDayDiaryType': 3,
+              'twoDayTime': '',
+              'threeDayDiaryHour': 3,
+              'threeDayDiaryType': 3,
+              'threeDayTime': '',
+              'fourDayDiaryHour': 4,
+              'fourDayDiaryType': 3,
+              'fourDayTime': '',
+              'fiveDayDiaryHour': 5,
+              'fiveDayDiaryType': 3,
+              'fiveDayTime': '',
+              'sixDayDiaryHour': 6,
+              'sixDayDiaryType': 3,
+              'sixDayTime': '',
+              'dayCount': 6,
+              'hourAverage': 3.5,
+              'patientPreopsInfoId': 15
+            },
+            {
+              'oneDayDiaryHour': 1,
+              'oneDayDiaryType': 4,
+              'oneDayTime': '',
+              'twoDayDiaryHour': 2,
+              'twoDayDiaryType': 4,
+              'twoDayTime': '',
+              'threeDayDiaryHour': 3,
+              'threeDayDiaryType': 4,
+              'threeDayTime': '',
+              'fourDayDiaryHour': 4,
+              'fourDayDiaryType': 4,
+              'fourDayTime': '',
+              'fiveDayDiaryHour': 5,
+              'fiveDayDiaryType': 4,
+              'fiveDayTime': '',
+              'sixDayDiaryHour': 6,
+              'sixDayDiaryType': 4,
+              'sixDayTime': '',
+              'dayCount': 6,
+              'hourAverage': 3.5,
+              'patientPreopsInfoId': 15
+            },
+            {
+              'oneDayDiaryHour': 1,
+              'oneDayDiaryType': 5,
+              'oneDayTime': '',
+              'twoDayDiaryHour': 2,
+              'twoDayDiaryType': 5,
+              'twoDayTime': '',
+              'threeDayDiaryHour': 3,
+              'threeDayDiaryType': 5,
+              'threeDayTime': '',
+              'fourDayDiaryHour': 4,
+              'fourDayDiaryType': 5,
+              'fourDayTime': '',
+              'fiveDayDiaryHour': 5,
+              'fiveDayDiaryType': 5,
+              'fiveDayTime': '',
+              'sixDayDiaryHour': 6,
+              'sixDayDiaryType': 5,
+              'sixDayTime': '',
+              'dayCount': 6,
+              'hourAverage': 3.5,
+              'patientPreopsInfoId': 15
+            },
+            {
+              'oneDayDiaryHour': 5,
+              'oneDayDiaryType': 0,
+              'oneDayTime': '',
+              'twoDayDiaryHour': 10,
+              'twoDayDiaryType': 0,
+              'twoDayTime': '',
+              'threeDayDiaryHour': 15,
+              'threeDayDiaryType': 0,
+              'threeDayTime': '',
+              'fourDayDiaryHour': 20,
+              'fourDayDiaryType': 0,
+              'fourDayTime': '',
+              'fiveDayDiaryHour': 25,
+              'fiveDayDiaryType': 0,
+              'fiveDayTime': '',
+              'sixDayDiaryHour': 30,
+              'sixDayDiaryType': 0,
+              'sixDayTime': '',
+              'dayCount': 6,
+              'hourAverage': 17.5,
+              'patientPreopsInfoId': 15
+            }
+          ],
+          'wakeTime': 20.5,
+          'dyskinesiaTime': 7,
+          'closeTime': 3.5,
+          'totalOpenTime': 10.5,
+          'openTime': 7,
+          'udysbsOneRatio': 66.67,
+          'updrsFourOneRatio': 34.15,
+          'updrsFourThreeRatio': 17.07,
+          'openRatio': 34.15,
+          'depDyskinesiaOpenRatio': 17.07,
+          'norDyskinesiaOpenRatio': 34.15,
+          'closeRatio': 17.07
+        },
+        'preopsDyskinesiaDTO': {
+          'patientPreopsScaleList': [
+            {
+              'id': 233,
+              'ariseTime': '2017-10-13',
+              'bodyStatus': 1,
+              'scaleInfo': 1,
+              'scaleScore': 99,
+              'scaleType': 2,
+              'patientPreopsInfoId': 15,
+              'scaleName': 'MDS-UDysRS'
+            }
+          ],
+          'dyskinesiaRemark': '王者农药SDZZC'
+        },
+        'preopsNonMotorDTO': {
+          'patientPreopsScaleList': [
+            {
+              'id': 234,
+              'ariseTime': '2017-10-05',
+              'scaleInfo': 1,
+              'scaleScore': 11,
+              'scaleType': 3,
+              'patientPreopsInfoId': 15,
+              'scaleName': 'MDS-UPDRS Ⅰ'
+            },
+            {
+              'id': 235,
+              'ariseTime': '2017-10-06',
+              'scaleInfo': 2,
+              'scaleScore': 22,
+              'scaleType': 3,
+              'patientPreopsInfoId': 15,
+              'scaleName': 'MDS-UPDRS Ⅱ'
+            },
+            {
+              'id': 236,
+              'ariseTime': '2017-10-07',
+              'scaleInfo': 3,
+              'scaleScore': 33,
+              'scaleType': 3,
+              'patientPreopsInfoId': 15,
+              'scaleName': 'MDS-UPDRS Ⅳ'
+            },
+            {
+              'id': 237,
+              'ariseTime': '2017-10-08',
+              'scaleInfo': 4,
+              'scaleScore': 44,
+              'scaleType': 3,
+              'patientPreopsInfoId': 15,
+              'scaleName': '帕金森病生活质量调查表（PDQ-39）'
+            },
+            {
+              'id': 238,
+              'ariseTime': '2017-10-09',
+              'scaleInfo': 5,
+              'scaleScore': 55,
+              'scaleType': 3,
+              'patientPreopsInfoId': 15,
+              'scaleName': 'Pittsburgh睡眠质量指数调查表（PSQJ）'
+            },
+            {
+              'id': 239,
+              'ariseTime': '2017-10-10',
+              'scaleInfo': 6,
+              'scaleScore': 66,
+              'scaleType': 3,
+              'patientPreopsInfoId': 15,
+              'scaleName': '帕金森病睡眠量表（PDSS）'
+            },
+            {
+              'id': 240,
+              'ariseTime': '2017-10-11',
+              'scaleInfo': 7,
+              'scaleScore': 77,
+              'scaleType': 3,
+              'patientPreopsInfoId': 15,
+              'scaleName': 'Epworth嗜睡评分量表（ESS）'
+            },
+            {
+              'id': 241,
+              'ariseTime': '2017-10-12',
+              'scaleInfo': 8,
+              'scaleScore': 88,
+              'scaleType': 3,
+              'patientPreopsInfoId': 15,
+              'scaleName': '简易只能精神状态量表（MMSE）'
+            },
+            {
+              'id': 242,
+              'ariseTime': '2017-10-13',
+              'scaleInfo': 9,
+              'scaleScore': 99,
+              'scaleType': 3,
+              'patientPreopsInfoId': 15,
+              'scaleName': '蒙特利尔认知评估（MoCA）'
+            },
+            {
+              'id': 243,
+              'ariseTime': '2017-10-14',
+              'scaleInfo': 10,
+              'scaleScore': 87,
+              'scaleType': 3,
+              'patientPreopsInfoId': 15,
+              'scaleName': '汉密尔顿抑郁量表（HAMD）'
+            },
+            {
+              'id': 244,
+              'ariseTime': '2017-10-15',
+              'scaleInfo': 11,
+              'scaleScore': 76,
+              'scaleType': 3,
+              'patientPreopsInfoId': 15,
+              'scaleName': '汉密尔顿焦虑量表（HAMA）'
+            },
+            {
+              'id': 245,
+              'ariseTime': '2017-10-16',
+              'scaleInfo': 12,
+              'scaleScore': 65,
+              'scaleType': 3,
+              'patientPreopsInfoId': 15,
+              'scaleName': '贝克抑郁自评量表（BDI）'
+            },
+            {
+              'id': 246,
+              'ariseTime': '2017-10-17',
+              'scaleInfo': 13,
+              'scaleScore': 54,
+              'scaleType': 3,
+              'patientPreopsInfoId': 15,
+              'scaleName': '非运动症状评定量表（NMSS）'
+            }
+          ],
+          'nonmotorRemark': '333EF'
+        },
+        'preopsMotorDTO': {
+          'motorTestTime': '2017-10-01',
+          'loadingDoseCount': 378,
+          'patientPreopsMedicineList': [
+            {
+              'id': 21,
+              'loadingDose': 375,
+              'medSpecification': 250,
+              'medUsage': 1,
+              'medicineInfo': 1,
+              'morningDose': 250,
+              'patientPreopsInfoId': 15
+            },
+            {
+              'id': 22,
+              'loadingDose': 3,
+              'medSpecification': 1,
+              'medUsage': 2,
+              'medicineInfo': 3,
+              'morningDose': 2,
+              'patientPreopsInfoId': 15
+            }
+          ],
+          'patientPreopsScaleList': [
+            {
+              'id': 247,
+              'drugFlag': 0,
+              'scaleInfo': 1,
+              'scaleScore': 99,
+              'scaleType': 4,
+              'patientPreopsInfoId': 15,
+              'scaleName': 'MDS-UPDRS III'
+            },
+            {
+              'id': 248,
+              'drugFlag': 1,
+              'medImproveRatio': 11.11,
+              'scaleInfo': 1,
+              'scaleScore': 88,
+              'scaleType': 4,
+              'patientPreopsInfoId': 15,
+              'scaleName': 'MDS-UPDRS III'
+            }
+          ],
+          'motorRemark': 'ADFA'
+        },
+        'preopsIntensionDTO': {
+          'intensionAriseTime': '2017-10-29',
+          'operationIntension': 1,
+          'deviceId': '8a8d9f635dc9f57f015dcba7d615002a',
+          'devicePowerType': 0,
+          'intensionRemark': 'R232Q4RSD'
+        }
+      }
     };
   },
   computed: {
-
+    ...mapGetters([
+      'typeGroup'
+    ]),
+    title() {
+      if (this.mode === this.ADD_DATA) {
+        return '新增术前评估';
+      } else if (this.mode === this.EDIT_DATA) {
+        return '术前评估';
+      }
+    }
   },
   methods: {
     showModal(changeWay, info) {
-      if (changeWay === this.ADD_DATA) {
-        this.title = '新增术前评估';
-      } else if (changeWay === this.EDIT_DATA) {
-        this.title = '术前评估';
-      }
+      this.mode = changeWay;
       console.log(info);
+
+      this.initCopyInfo();
 
       // 获取患者的 DBS 编码
       getPatientSimpleInfo(this.$route.params.id).then((data) => {
-        this.dbsPatientCode = data.patientInfo.dbsPatientCode;
-        console.log(this.dbsPatientCode);
+        if (data && data.patientInfo && data.patientInfo && data.patientInfo.dbsPatientCode) {
+          this.$set(this.copyInfo, 'dbsPatientCode', data.patientInfo.dbsPatientCode);
+        } else {
+          this.$set(this.copyInfo, 'dbsPatientCode', '');
+        }
       });
+
+      // 获取术前评估详情
+      if (changeWay === this.EDIT_DATA) {
+        var preEvaluationId = info.preopsInfoId ? info.preopsInfoId : -1;
+        getPreEvaluation(preEvaluationId).then((data) => {
+          console.log(data);
+        });
+      }
 
       this.displayModal = true;
       this.updateScrollbar();
+    },
+    initCopyInfo() {
+      // this.copyInfo = {};
     },
     updateScrollbar() {
       // 如果不写在 $nextTick() 里面，第一次加载的时候也许会不能正确计算高度。估计是因为子组件还没有全部加载所造成的。
@@ -597,7 +986,50 @@ export default {
       this.displayModal = false;
     },
     submit() {
-      this.displayModal = false;
+      // pruneObj(this.copyInfo);  // 调用此函数将值为空的属性去除掉
+      console.log(this.copyInfo);
+      // this.displayModal = false;
+    },
+    getOptions(fieldName) {
+      var options = [];
+      if (fieldName === 'terminalScale') {
+        var typesInfo = Util.getElement('typegroupcode', 'eodScale', this.typeGroup);
+        var types = typesInfo && typesInfo.types ? typesInfo.types : [];
+        for (let type of types) {
+          options.push({
+            name: type.typeName,
+            code: type.typeCode
+          });
+        }
+      }
+      return options;
+    },
+    updateField(fieldName) {
+      if (fieldName === 'terminalExist') {
+        if (this.copyInfo.preopsTerminalDTO.terminalExist === 0) {
+          // 如果“是否存在剂末现象”选择了“否”，则将“是否首次出现”字段值置为空
+          this.copyInfo.preopsTerminalDTO.terminalIsfirst = '';
+        }
+
+      } else if (fieldName === 'terminalIsfirst') {
+        if (this.copyInfo.preopsTerminalDTO.terminalExist === 1) {
+          // 如果“是否首次出现（剂末现象）”选择了“是”，则将“首次出现时间”和“已出现剂末现象”两个字段值置为空
+          this.copyInfo.preopsTerminalDTO.terminalFirstTime = '';
+          this.copyInfo.preopsTerminalDTO.terminalDuration = '';
+        }
+
+      } else if (fieldName === 'diaryDayTime') {
+        // 患者日记是一个数组，一共 6 行（睡眠，关期，重异动开，轻异动开，无异动开，总和），每一行是数组下的一个对象
+        // 而这些对象，每一个都包含有日期信息（即列信息），所以每一个日期都在该数组中出现了 6 次！
+        // 我们为 组件绑定日期 时，选取该数组的第一个元素下的日期值，那么一旦日期发生更改，就要将更改应用到每一行中
+        var dayTimeList = ['oneDayTime', 'twoDayTime', 'threeDayTime', 'fourDayTime', 'fiveDayTime', 'sixDayTime'];
+        dayTimeList.forEach((dayTimeName) => {
+          var dayTime = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName];
+          for (let diaryItem of this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList) {
+            diaryItem[dayTimeName] = dayTime;
+          }
+        });
+      }
     }
   },
   mounted() {
@@ -610,221 +1042,220 @@ export default {
 };
 </script>
 
-<style lang="less">
-@import "~styles/variables.less";
-
+<style lang='less'>@import '~styles/variables.less';
 @field-height: 40px;
 @field-name-width: 120px;
 @long-field-name-width: 160px;
 @end-words-width: 180px;
 
 .pre-evaluation-modal-wrapper {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: fadeout(@light-font-color, 30%);
-  z-index: 500;
-  .pre-evaluation-modal {
-    position: relative;
-    margin: auto;
-    padding: 0 40px;
-    top: 3%;
-    width: 760px;
-    max-height: 94%;
-    background-color: @background-color;
-    overflow: hidden;
-    .title {
-      padding: 30px 0 10px;
-      font-size: @large-font-size;
-    }
-    .sub-title-bar {
-      padding: 15px 10px 15px;
-      text-align: left;
-      font-weight: bold;
-    }
-    .content {
-      text-align: left;
-      font-size: 0;
-      .field {
-        padding: 5px 0;
-        text-align: left;
-        display: inline-block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: fadeout(@light-font-color, 30%);
+    z-index: 500;
+    .pre-evaluation-modal {
         position: relative;
-        width: 50%;
-        height: @field-height;
-        text-align: left;
-        transform: translateX(10px);  // 这一行是为了修补视觉上的偏移
-        &.whole-line {
-          width: 100%;
-          .field-input {
-            right: 4%;
-          }
+        margin: auto;
+        padding: 0 40px;
+        top: 3%;
+        width: 760px;
+        max-height: 94%;
+        background-color: @background-color;
+        overflow: hidden;
+        .title {
+            padding: 30px 0 10px;
+            font-size: @large-font-size;
         }
-        .field-name {
-          display: inline-block;
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: @field-name-width;
-          line-height: @field-height;
-          font-size: @normal-font-size;
-          color: @font-color;
-          &.long-field-name {
-            width: @long-field-name-width;
-          }
-          .required-mark {
-            color: red;
-            font-size: 20px;
-            vertical-align: middle;
-          }
+        .sub-title-bar {
+            padding: 15px 10px;
+            text-align: left;
+            font-weight: bold;
         }
-        .end-words {
-          display: inline-block;
-          position: absolute;
-          padding-left: 10px;
-          box-sizing: border-box;
-          top: 0;
-          right: 8%;
-          width: @end-words-width;
-          text-align: left;
-          line-height: @field-height;
-          font-size: @normal-font-size;
-        }
-        .field-input {
-          display: inline-block;
-          position: absolute;
-          top: 0;
-          left: @field-name-width;
-          right: 8%;
-          line-height: @field-height;
-          font-size: @normal-font-size;
-          color: @light-font-color;
-          &.short-input {
-            right: calc(~"8% + @{end-words-width}");
-          }
-          &.long-field-name {
-            left: @long-field-name-width;
-          }
-          .warning-text {
-            position: absolute;
-            top: 25px;
-            left: 10px;
-            height: 15px;
-            color: red;
-            font-size: @small-font-size;
-          }
-          .el-input {
-            .el-input__inner {
-              height: 30px;
-              border: none;
-              background-color: @screen-color;
+        .content {
+            text-align: left;
+            font-size: 0;
+            .field {
+                padding: 5px 0;
+                text-align: left;
+                display: inline-block;
+                position: relative;
+                width: 50%;
+                height: @field-height;
+                text-align: left;
+                transform: translateX(10px);
+                // 这一行是为了修补视觉上的偏移
+                &.whole-line {
+                    width: 100%;
+                    .field-input {
+                        right: 4%;
+                    }
+                }
+                .field-name {
+                    display: inline-block;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: @field-name-width;
+                    line-height: @field-height;
+                    font-size: @normal-font-size;
+                    color: @font-color;
+                    &.long-field-name {
+                        width: @long-field-name-width;
+                    }
+                    .required-mark {
+                        color: red;
+                        font-size: 20px;
+                        vertical-align: middle;
+                    }
+                }
+                .end-words {
+                    display: inline-block;
+                    position: absolute;
+                    padding-left: 10px;
+                    box-sizing: border-box;
+                    top: 0;
+                    right: 8%;
+                    width: @end-words-width;
+                    text-align: left;
+                    line-height: @field-height;
+                    font-size: @normal-font-size;
+                }
+                .field-input {
+                    display: inline-block;
+                    position: absolute;
+                    top: 0;
+                    left: @field-name-width;
+                    right: 8%;
+                    line-height: @field-height;
+                    font-size: @normal-font-size;
+                    color: @light-font-color;
+                    &.short-input {
+                        right: calc(~'8% + @{end-words-width}');
+                    }
+                    &.long-field-name {
+                        left: @long-field-name-width;
+                    }
+                    .warning-text {
+                        position: absolute;
+                        top: 25px;
+                        left: 10px;
+                        height: 15px;
+                        color: red;
+                        font-size: @small-font-size;
+                    }
+                    .el-input {
+                        .el-input__inner {
+                            height: 30px;
+                            border: none;
+                            background-color: @screen-color;
+                        }
+                    }
+                    .el-textarea {
+                        vertical-align: middle;
+                        transform: translateY(5px);
+                        .el-textarea__inner {
+                            border: none;
+                            background-color: @screen-color;
+                        }
+                    }
+                    .el-select {
+                        width: 100%;
+                    }
+                    .el-date-editor {
+                        width: 100%;
+                    }
+                    .warning .el-input__inner,
+                    .warning .el-textarea__inner {
+                        border: 1px solid red;
+                    }
+                }
             }
-          }
-          .el-textarea {
-            vertical-align: middle;
-            transform: translateY(5px);
-            .el-textarea__inner {
-              border: none;
-              background-color: @screen-color;
-            }
-          }
-          .el-select {
-            width: 100%;
-          }
-          .el-date-editor {
-            width: 100%;
-          }
-          .warning .el-input__inner, .warning .el-textarea__inner {
-            border: 1px solid red;
-          }
-        }
-      }
-      .table {
-        margin: 10px 0 20px;
-        width: 100%;
-        border: 1px solid @light-gray-color;
-        border-collapse:collapse;
-        text-align: center;
-        .row {
-          height: 35px;
-          font-size: @normal-font-size;
-          .col {
-            position: relative;
-            width: 10%;
-            border: 1px solid @light-gray-color;
-            &.wide-col {
-              width: 30%;
-            }
-            &.narrow-col {
-              width: 5%;
-            }
-            .el-input {
-              width: 100%;
-              .el-input__inner {
-                padding: 0;
-                border: none;
+            .table {
+                margin: 10px 0 20px;
+                width: 100%;
+                border: 1px solid @light-gray-color;
+                border-collapse: collapse;
                 text-align: center;
-              }
-              .el-icon-date {
-                display: none;
-              }
+                .row {
+                    height: 35px;
+                    font-size: @normal-font-size;
+                    .col {
+                        position: relative;
+                        width: 10%;
+                        border: 1px solid @light-gray-color;
+                        &.wide-col {
+                            width: 30%;
+                        }
+                        &.narrow-col {
+                            width: 5%;
+                        }
+                        .el-input {
+                            width: 100%;
+                            .el-input__inner {
+                                padding: 0;
+                                border: none;
+                                text-align: center;
+                            }
+                            .el-icon-date {
+                                display: none;
+                            }
+                        }
+                    }
+                }
             }
-          }
         }
-      }
-    }
-    .seperate-line {
-      width: 90%;
-      height: 1px;
-      margin: 15px auto 10px;
-      background-color: @light-gray-color;
-    }
-    .button {
-      display: inline-block;
-      width: 100px;
-      margin: 10px 20px 20px 20px;
-      height: 30px;
-      line-height: 30px;
-      color: #fff;
-      cursor: pointer;
-      &.cancel-button {
-        background-color: @light-font-color;
-      }
-      &.submit-button {
-        background-color: @button-color;
-      }
-      &:hover {
-        opacity: 0.8;
-      }
-      &:active {
-        opacity: 0.9;
-      }
-    }
-    .ps__scrollbar-y-rail {
-      position: absolute;
-      width: 15px;
-      right: 0;
-      padding: 0 3px;
-      box-sizing: border-box;
-      opacity: 0.3;
-      transition: opacity 0.3s, padding 0.2s;
-      .ps__scrollbar-y {
-        position: relative;
-        background-color: #aaa;
-        border-radius: 20px;
-      }
-    }
-    &:hover {
-      .ps__scrollbar-y-rail {
-        opacity: 0.6;
+        .seperate-line {
+            width: 90%;
+            height: 1px;
+            margin: 15px auto 10px;
+            background-color: @light-gray-color;
+        }
+        .button {
+            display: inline-block;
+            width: 100px;
+            margin: 10px 20px 20px;
+            height: 30px;
+            line-height: 30px;
+            color: #fff;
+            cursor: pointer;
+            &.cancel-button {
+                background-color: @light-font-color;
+            }
+            &.submit-button {
+                background-color: @button-color;
+            }
+            &:hover {
+                opacity: 0.8;
+            }
+            &:active {
+                opacity: 0.9;
+            }
+        }
+        .ps__scrollbar-y-rail {
+            position: absolute;
+            width: 15px;
+            right: 0;
+            padding: 0 3px;
+            box-sizing: border-box;
+            opacity: 0.3;
+            transition: opacity 0.3s, padding 0.2s;
+            .ps__scrollbar-y {
+                position: relative;
+                background-color: #aaa;
+                border-radius: 20px;
+            }
+        }
         &:hover {
-          padding: 0;
+            .ps__scrollbar-y-rail {
+                opacity: 0.6;
+                &:hover {
+                    padding: 0;
+                }
+            }
         }
-      }
     }
-  }
 }
-
 </style>

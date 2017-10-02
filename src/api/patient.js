@@ -600,6 +600,67 @@ export function deletePatientMedicine(patientMedicine) {
   return encapsulatePromise(url, request);
 };
 
+// 查看某次术前评估详情
+export function getPreEvaluation(preEvaluationId) {
+  preEvaluationId = parseInt(preEvaluationId, 10);
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "preopsInfoId": preEvaluationId
+  };
+  var url = 'http://apitest.gyenno.com/pdms/queryPatientPreopsDetail';
+
+  return encapsulatePromise(url, request);
+};
+
+// 新增术前评估
+export function addPreEvaluation(preEvaluation) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientPreops": preEvaluation
+  };
+  var url = 'http://apitest.gyenno.com/pdms/addPatientPreops';
+
+  return encapsulatePromise(url, request);
+};
+
+// 修改术前评估
+export function modifyPreEvaluation(preEvaluation) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientPreops": preEvaluation
+  };
+  var url = 'http://apitest.gyenno.com/pdms/modPatientPreops';
+
+  return encapsulatePromise(url, request);
+};
+
+// 删除术前评估
+export function deletePreEvaluation(preEvaluation) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientPreops": preEvaluation
+  };
+  var url = 'http://apitest.gyenno.com/pdms/delPatientPreops';
+
+  return encapsulatePromise(url, request);
+};
+
 // 新增手术方案
 export function addSurgicalMethod(surgicalMethod) {
   var request = {
