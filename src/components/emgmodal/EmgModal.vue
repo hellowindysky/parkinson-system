@@ -5,13 +5,25 @@
       <div class="content">
         <div class="field">
           <span class="field-name">
-            检查名称:
+            肌电图名称:
             <span class="required-mark">*</span>
           </span>
           <span class="field-input">
             <span class="warning-text"></span>
             <el-select  placeholder="请肌电图名称" v-model="EmgTypeData['elecTroGramId']"  :disabled="mode===MODIFY_MODE" @change="selectFatherTempData">
                <el-option v-for="bioexItem in EmgNameArr" :key="bioexItem.id" :label="bioexItem.emgName" :value="bioexItem.id" ></el-option>
+            </el-select>
+          </span>
+        </div>
+        <div class="field">
+          <span class="field-name">
+            肌电图类型:
+            <span class="required-mark"></span>
+          </span>
+          <span class="field-input">
+            <span class="warning-text"></span>
+            <el-select v-model="EmgTypeData['etgType']"  disabled>
+               <el-option v-for="item in EmgTypeNameArrs" :key="item.typeCode" :label="item.typeName" :value="item.typeCode" ></el-option>
             </el-select>
           </span>
         </div>
@@ -36,7 +48,7 @@
           </span>
         </div>
         <h3 class="form-title" v-if="tableMode===SON_OPEN">{{currentTableName}}</h3>
-        <div class="form-wrapper" ref="formWrapper">
+        <div class="form-wrapper" :class="{'father-open':tableMode==='' && mode===ADD_MODE}"  ref="formWrapper">
           <table class="form" v-if="tableMode===FATHER_OPEN">
             <tr class="row first-row">
               <td class="col col-width5">
@@ -46,28 +58,23 @@
                 检查项
               </td>
               <td class="col col-width30">
-                更新时间
-              </td>
-              <td class="col col-width30">
                 操作
               </td>
             </tr>
             <tr class="row" v-for="(item, key) in emgTableName">
-              <td class="col col-id">
+              <td class="col col-width5">
                 {{key+1}}
               </td>
-              <td class="col col-name">
+              <td class="col col-width30">
                 {{item.tableName}}
               </td>
-              <td class="col col-name">
-              </td>
-              <td class="col col-name">
+              <td class="col col-width30">
                 <span @click="selectSonTemp(item.arr)">编辑</span>
                 <span>重置</span>
               </td>
             </tr>
           </table>
-          <table class="form" v-if="tableMode===SON_OPEN && currentTable===MOTNERCONDITEM">
+          <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-if="tableMode===SON_OPEN && currentTable===MOTNERCONDITEM">
              <tr class="row first-row">
               <td class="col col-width5">
                 序号
@@ -128,7 +135,7 @@
               </td>
             </tr>
           </table>
-          <table class="form" v-if="tableMode===SON_OPEN && currentTable===fWAVSTUITEM">
+          <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-if="tableMode===SON_OPEN && currentTable===fWAVSTUITEM">
              <tr class="row first-row">
               <td class="col col-width5">
                 序号
@@ -164,7 +171,7 @@
               </td>
             </tr>
           </table>
-          <table class="form" v-if="tableMode===SON_OPEN && currentTable===SENNERCONDITEM">
+          <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-if="tableMode===SON_OPEN && currentTable===SENNERCONDITEM">
              <tr class="row first-row">
               <td class="col col-width5">
                 序号
@@ -230,7 +237,7 @@
               </td>
             </tr>
           </table>
-           <table class="form" v-if="tableMode===SON_OPEN && currentTable===NEEDEXAMITEM">
+           <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-if="tableMode===SON_OPEN && currentTable===NEEDEXAMITEM">
              <tr class="row first-row">
               <td class="col col-width5">
                 序号
@@ -290,7 +297,7 @@
               </td>
             </tr>
           </table>
-           <table class="form" v-if="tableMode===SON_OPEN && currentTable===MOTUNIANAITEM">
+           <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-if="tableMode===SON_OPEN && currentTable===MOTUNIANAITEM">
              <tr class="row first-row">
               <td class="col col-width5">
                 序号
@@ -344,7 +351,7 @@
               </td>
             </tr>
           </table>
-          <table class="form" v-if="tableMode===SON_OPEN && currentTable===INTPATANAITEM">
+          <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-if="tableMode===SON_OPEN && currentTable===INTPATANAITEM">
              <tr class="row first-row">
               <td class="col col-width5">
                 序号
@@ -383,9 +390,13 @@
         </div>
       </div>
       <div class="seperate-line"></div>
-      <div class="button cancel-button" v-if="tableMode===FATHER_OPEN" @click="cancel">取消</div>
-      <div class="button son-submit-button" v-if="tableMode===FATHER_OPEN">确认</div>
-      <div class="button son-submit-button" v-if="tableMode===SON_OPEN" @click="editEnd">编辑完成</div>
+      <div class="button cancel-button" v-if="tableMode===FATHER_OPEN && mode===MODIFY_MODE" @click="cancel">取消</div>
+      <div class="button son-submit-button" v-if="tableMode===FATHER_OPEN && mode===MODIFY_MODE" @click="submit">确认</div>
+      <div class="button son-submit-button" v-if="tableMode===SON_OPEN && mode===MODIFY_MODE" @click="editEnd">编辑完成</div>
+
+      <div class="button cancel-button" v-if="mode===ADD_MODE && tableMode!==SON_OPEN" @click="cancel">取消</div>
+      <div class="button son-submit-button" v-if="mode===ADD_MODE && tableMode!==SON_OPEN" @click="submit">确认</div>
+      <div class="button son-submit-button" v-if="mode===ADD_MODE && tableMode===SON_OPEN" @click="editEnd">编辑完成</div>
     </div>
   </div>
 </template>
@@ -396,6 +407,7 @@ import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import { vueCopy } from 'utils/helper';
 import Util from 'utils/util.js';
+import { addEmg, modEmg } from 'api/patient.js';
 
 import { isEmptyObject } from 'utils/helper.js';
 export default {
@@ -423,6 +435,7 @@ export default {
       dictionData: [],
       EmgTypeData: {},
       EmgNameArr: [],
+      EmgTypeNameArrs: [],
       FatherTempData: {},
       SonTempData: [],
       emgTableName: [
@@ -461,12 +474,9 @@ export default {
   },
   methods: {
     showPanel(title, item) {
-      // 刚进入模态框的时候父表格打开
-      this.tableMode = this.FATHER_OPEN;
       this.displayModal = true;
       // 拷贝dictionary的数据
       vueCopy(this.emgTypeList, this.dictionData);
-      // console.log('emgTypeList', this.emgTypeList);
       // 在dictionary中取出肌电图的名字和ID
       for (let i = 0; i < this.dictionData.length; i++) {
         this.$set(this.EmgNameArr, i, {});
@@ -478,14 +488,31 @@ export default {
           }
         }
       }
+      // 在肌电图中取出肌电图的类型与类型名
+      let thatO = this;
+      Util.getDictionaryData('eleType').then(function(data) {
+        vueCopy(data, thatO.EmgTypeNameArrs);
+      });
       // 通过检查 item 参数是否为空对象 {}，来决定提交时是新增记录，还是修改记录
       if (isEmptyObject(item)) {
-        // 如果是新增生化指标那么需要新造一个对象来提交
+        // 如果是新增肌电图那么需要新造一个对象来提交
         this.mode = this.ADD_MODE;
-        // this.$set(this.EmgTypeData, 'patientCaseId', this.$route.params.caseId);
-        // this.$set(this.EmgTypeData, 'patientId', this.$route.params.id);
-
+        this.$set(this.EmgTypeData, 'etgName', '');
+        this.$set(this.EmgTypeData, 'elecTroGramId', '');
+        this.$set(this.EmgTypeData, 'etgType', '0');
+        this.$set(this.EmgTypeData, 'patEleHint', '');
+        this.$set(this.EmgTypeData, 'patEleResule', '');
+        this.$set(this.EmgTypeData, 'pcaseId', this.$route.params.caseId);
+        this.$set(this.EmgTypeData, 'pinfoId', this.$route.params.id);
+        this.$set(this.EmgTypeData, 'patientMotNerCondResu', []);
+        this.$set(this.EmgTypeData, 'patienFWaStuResu', []);
+        this.$set(this.EmgTypeData, 'patientNeedExamItemResu', []);
+        this.$set(this.EmgTypeData, 'patientMotUniAnaResu', []);
+        this.$set(this.EmgTypeData, 'patientIntPatAnaItem', []);
+        this.$set(this.EmgTypeData, 'patientSenNerCondResu', []);
       } else {
+        // 刚进入模态框的时候父表格打开
+        this.tableMode = this.FATHER_OPEN;
         // 修改生化指标那么直接拷贝它
         vueCopy(item, this.EmgTypeData);
         this.mode = this.MODIFY_MODE;
@@ -493,14 +520,15 @@ export default {
       this.title = title;
       // 改变 item 的时候会触发 warningResults 的跟踪变化(这里的自动触发是由 el-date-picker 的 v-model造成的)
       // 因此这一步要等到 item 变化结束之后再执行，我们将其放到下一个事件循环 tick 中
-      this.$nextTick(() => {
-        this.clearWarning();
-      });
     },
     selectFatherTempData() {
       for (let i = 0; i < this.dictionData.length; i++) {
         if (this.dictionData[i]['id'] === this.EmgTypeData['elecTroGramId']) {
           vueCopy(this.dictionData[i], this.FatherTempData);
+          this.$set(this.EmgTypeData, 'etgName', this.FatherTempData['emgName']);
+          if (this.mode === this.ADD_MODE) {
+            this.tableMode = this.FATHER_OPEN;
+          }
         }
       }
     },
@@ -514,14 +542,12 @@ export default {
           console.log('SonTempData', this.SonTempData);
         }
       }
-
       // 取到这个值之后就要关闭父表格，打开子表格
       this.tableMode = this.SON_OPEN;
       switch (arrName) {
         case 'senNerCondItem':
           this.currentTable = this.SENNERCONDITEM;
           this.currentTableName = '感觉神经传导项';
-           // 获取到运动单元分析项
           let tha = this;
           Util.getDictionaryData('nervType').then(function(data) {
             for (let i = 0; i < tha.SonTempData.length; i++) {
@@ -533,15 +559,22 @@ export default {
               }
             }
           });
+          // 在新增的状态下需要把肌电图的子表格造出来
+          if (this.mode === this.ADD_MODE) {
+            this.addEmgSonData(arrName);
+          }
           break;
         case 'needExamItem':
           this.currentTable = this.NEEDEXAMITEM;
           this.currentTableName = '针刺肌电图检查';
+          // 在新增的状态下需要把肌电图的子表格造出来
+          if (this.mode === this.ADD_MODE) {
+            this.addEmgSonData(arrName);
+          }
           break;
         case 'motUniAnaItem':
           this.currentTable = this.MOTUNIANAITEM;
           this.currentTableName = '运动单元分析';
-          // 获取到运动单元分析项
           let thats = this;
           Util.getDictionaryData('muscleType').then(function(data) {
             for (let i = 0; i < thats.SonTempData.length; i++) {
@@ -553,6 +586,10 @@ export default {
               }
             }
           });
+          // 在新增的状态下需要把肌电图的子表格造出来
+          if (this.mode === this.ADD_MODE) {
+            this.addEmgSonData(arrName);
+          }
           break;
         case 'motNerCondItem':
           this.currentTable = this.MOTNERCONDITEM;
@@ -569,14 +606,112 @@ export default {
               }
             }
           });
+          // 在新增的状态下需要把肌电图的子表格造出来
+          if (this.mode === this.ADD_MODE) {
+            this.addEmgSonData(arrName);
+          }
           break;
         case 'intPatAnaItem':
           this.currentTable = this.INTPATANAITEM;
           this.currentTableName = '干扰项分析';
+          // 在新增的状态下需要把肌电图的子表格造出来
+          if (this.mode === this.ADD_MODE) {
+            this.addEmgSonData(arrName);
+          }
           break;
         case 'fwavStuItem':
           this.currentTable = this.fWAVSTUITEM;
           this.currentTableName = 'F波研究';
+          // 在新增的状态下需要把肌电图的子表格造出来
+          if (this.mode === this.ADD_MODE) {
+            this.addEmgSonData(arrName);
+          }
+          break;
+      }
+    },
+    addEmgSonData(Name) {
+      switch (Name) {
+        case 'senNerCondItem':
+          for (let i = 0; i < this.SonTempData.length; i++) {
+            this.$set(this.EmgTypeData['patientSenNerCondResu'], i, {});
+            this.$set(this.EmgTypeData['patientSenNerCondResu'][i], 'amplitude', '');
+            this.$set(this.EmgTypeData['patientSenNerCondResu'][i], 'conductionVelocity', '');
+            this.$set(this.EmgTypeData['patientSenNerCondResu'][i], 'distance', '');
+            this.$set(this.EmgTypeData['patientSenNerCondResu'][i], 'latencyDifference', '');
+            this.$set(this.EmgTypeData['patientSenNerCondResu'][i], 'onsetLatency', '');
+            this.$set(this.EmgTypeData['patientSenNerCondResu'][i], 'peakLatency', '');
+          }
+          break;
+        case 'needExamItem':
+          for (let i = 0; i < this.SonTempData.length; i++) {
+            this.$set(this.EmgTypeData['patientNeedExamItemResu'], i, {});
+            for (let key in this.SonTempData[i]) {
+              if (key === 'id') {
+                this.$set(this.EmgTypeData['patientNeedExamItemResu'][i], 'needExamItemId', this.SonTempData[i][key]);
+              }
+            }
+            this.$set(this.EmgTypeData['patientNeedExamItemResu'][i], 'insertional', '');
+            this.$set(this.EmgTypeData['patientNeedExamItemResu'][i], 'spoActFasc', '');
+            this.$set(this.EmgTypeData['patientNeedExamItemResu'][i], 'spoActFib', '');
+            this.$set(this.EmgTypeData['patientNeedExamItemResu'][i], 'spoActWave', '');
+            this.$set(this.EmgTypeData['patientNeedExamItemResu'][i], 'volmuapamp', '');
+            this.$set(this.EmgTypeData['patientNeedExamItemResu'][i], 'volMuapdur', '');
+            this.$set(this.EmgTypeData['patientNeedExamItemResu'][i], 'volmuappoly', '');
+          }
+          console.log('need', this.SonTempData);
+          break;
+        case 'motUniAnaItem':
+          for (let i = 0; i < this.SonTempData.length; i++) {
+            this.$set(this.EmgTypeData['patientMotUniAnaResu'], i, {});
+            this.$set(this.EmgTypeData['patientMotUniAnaResu'][i], 'amplitude', '');
+            this.$set(this.EmgTypeData['patientMotUniAnaResu'][i], 'conductionVelocity', '');
+            this.$set(this.EmgTypeData['patientMotUniAnaResu'][i], 'distance', '');
+            this.$set(this.EmgTypeData['patientMotUniAnaResu'][i], 'latency', '');
+            this.$set(this.EmgTypeData['patientMotUniAnaResu'][i], 'latencyDifference', '');
+            this.$set(this.EmgTypeData['patientMotUniAnaResu'][i], 'motNerItemId', '');
+          }
+          console.log('need', this.SonTempData);
+          break;
+        case 'motNerCondItem':
+          for (let i = 0; i < this.SonTempData.length; i++) {
+            this.$set(this.EmgTypeData['patientMotNerCondResu'], i, {});
+            for (let key in this.SonTempData[i]) {
+              if (key === 'id') {
+                this.$set(this.EmgTypeData['patientMotNerCondResu'][i], 'motNerItemId', this.SonTempData[i][key]);
+              }
+            }
+            this.$set(this.EmgTypeData['patientMotNerCondResu'][i], 'amplitude', '');
+            this.$set(this.EmgTypeData['patientMotNerCondResu'][i], 'duration', '');
+            this.$set(this.EmgTypeData['patientMotNerCondResu'][i], 'phases', '');
+            this.$set(this.EmgTypeData['patientMotNerCondResu'][i], 'spikeDuration', '');
+          }
+          break;
+        case 'intPatAnaItem':
+          for (let i = 0; i < this.SonTempData.length; i++) {
+            this.$set(this.EmgTypeData['patientIntPatAnaItem'], i, {});
+            for (let key in this.SonTempData[i]) {
+              if (key === 'id') {
+                this.$set(this.EmgTypeData['patientIntPatAnaItem'][i], 'intPatAnaId', this.SonTempData[i][key]);
+              }
+            }
+            this.$set(this.EmgTypeData['patientIntPatAnaItem'][i], 'amplitude', '');
+            this.$set(this.EmgTypeData['patientIntPatAnaItem'][i], 'ratio', '');
+            this.$set(this.EmgTypeData['patientIntPatAnaItem'][i], 'turn', '');
+          }
+          break;
+        case 'fwavStuItem':
+          // console.log(this.SonTempData);
+          for (let i = 0; i < this.SonTempData.length; i++) {
+            this.$set(this.EmgTypeData['patienFWaStuResu'], i, {});
+            for (let key in this.SonTempData[i]) {
+              if (key === 'id') {
+                this.$set(this.EmgTypeData['patienFWaStuResu'][i], 'fWavStuItemId', this.SonTempData[i][key]);
+              }
+            }
+            this.$set(this.EmgTypeData['patienFWaStuResu'][i], 'fLatency', '');
+            this.$set(this.EmgTypeData['patienFWaStuResu'][i], 'fProportion', '');
+            this.$set(this.EmgTypeData['patienFWaStuResu'][i], 'mLatency', '');
+          }
           break;
       }
     },
@@ -585,7 +720,28 @@ export default {
     },
     cancel() {
       this.displayModal = false;
-      this.templateData = [];
+      this.EmgTypeData = {};
+      this.tableMode = '';
+    },
+    submit() {
+      let submitData = this.EmgTypeData;
+      if (this.mode === this.ADD_MODE) {
+        // 新增肌电图
+        console.log('submit', submitData);
+        addEmg(submitData).then(() => {
+          Bus.$emit(this.UPDATE_PATIENT_INFO);
+          this.cancel();
+        });
+      } else if (this.mode === this.MODIFY_MODE) {
+        // 修改肌电图
+        modEmg(submitData).then(() => {
+          Bus.$emit(this.UPDATE_PATIENT_INFO);
+          this.cancel();
+        });
+      }
+    },
+    updateAndClose() {
+      this.displayModal = false;
     },
     getWarningText(fieldName) {
       var warningResult = this.warningResults[fieldName];
@@ -624,9 +780,6 @@ export default {
 
     // 如果屏幕高度发生改变，也需要重新计算滚动区域高度
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
-
-    // 监听子组件是否要求刷新病患数据
-    Bus.$on(this.UPDATE_PATIENT_INFO, this.updatePatientInfo);
   },
   watch: {
     dictionData: {
@@ -635,7 +788,6 @@ export default {
           for (let i = 0; i < this.dictionData.length; i++) {
             if (this.dictionData[i]['id'] === this.EmgTypeData['elecTroGramId']) {
               vueCopy(this.dictionData[i], this.FatherTempData);
-              console.log('FatherTempData', this.FatherTempData);
             }
           }
         }
@@ -647,7 +799,6 @@ export default {
     Bus.$off(this.SHOW_EMG_MODAL, this.showPanel);
     Bus.$off(this.SCROLL_AREA_SIZE_CHANGE, this.updateScrollbar);
     Bus.$off(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
-    Bus.$off(this.UPDATE_PATIENT_INFO, this.updatePatientInfo);
   }
 };
 </script>
@@ -786,14 +937,20 @@ export default {
         height: auto;
         width: 100%;
         padding-right: 10px;
-        border: 1px solid @inverse-font-color;
         overflow: hidden;
-
+        border: 1px solid @inverse-font-color;
+        &.father-open {
+          border: none;
+        }
         .form {
           position: relative;
           margin-bottom: 5px;
           width: 100%; // left: calc(~"50% - (@{col-id-width} + @{col-time-width} + @{col-amount-width} + @{col-unit-width}) / 2");
           border-spacing: 0;
+          font-size: 14px;
+          &.font-change {
+            font-size: 12px !important;
+          }
           .row {
             height: 45px;
             &.first-row {
@@ -803,9 +960,7 @@ export default {
                 padding: 0 3px;
               }
             }
-
             .col {
-              font-size: @small-font-size;
               text-align: center;
               padding: 0;
               margin: 0;

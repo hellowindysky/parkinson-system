@@ -2,7 +2,7 @@
   <folding-panel :title="'医学量表'" :mode="mutableMode"  v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
     <div class="diagnostic-scale" ref="diagnosticscale">
       <extensible-panel class="panel" :mode="mutableMode" :title="subTitle" v-on:addNewCard="addScale">
-         <card class="card" :class="devideWidth" :mode="mutableMode" v-for="item in patientScale" :key="item.id" :title="getTitle(item.scaleInfoId)" v-on:clickCurrentCard="updateScaleDetail(item, 'update')">
+         <card class="card" :class="devideWidth" :mode="mutableMode" v-for="item in patientScale" :key="item.id" :title="getTitle(item.scaleInfoId)" v-on:deleteCurrentCard="deleteScaleRecord(item)" v-on:clickCurrentCard="updateScaleDetail(item, 'update')">
            <div class="text first-line">量表得分: {{item.scalePoint}}</div>
            <div class="text second-line"></div>
         </card>
@@ -16,6 +16,7 @@ import Bus from 'utils/bus.js';
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 import ExtensiblePanel from 'components/extensiblepanel/ExtensiblePanel';
 import Card from 'components/card/Card';
+import { delScaleInfo } from 'api/patient.js';
 
 import { getScaleInfo } from 'api/patient';
 
@@ -87,6 +88,25 @@ export default {
     },
     addScale() {
       Bus.$emit(this.UPDATE_SCALE_DETAIL, {});
+    },
+    deleteScaleRecord(item) { // 删除肌电图
+      // console.log(item);
+      let ScaleId = {
+        id: item.id
+      };
+      Bus.$on(this.CONFIRM, () => {
+        delScaleInfo(ScaleId).then(this._resolveDeletion, this._rejectDeletion);
+      });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
+    },
+    _resolveDeletion() {
+      // 如果成功删除记录，则重新发出请求，获取最新数据。同时解除 [确认对话框] 的 “确认” 回调函数
+      Bus.$emit(this.UPDATE_PATIENT_INFO);
+      Bus.$off(this.CONFIRM);
+    },
+    _rejectDeletion() {
+      // 即使删除不成功，也要解除 [确认对话框] 的 “确认” 回调函数
+      Bus.$off(this.CONFIRM);
     }
   },
   computed: {

@@ -282,11 +282,13 @@ export default {
         console.log('add', submitData);
         // 新增量表的接口
         addScaleInfo(submitData).then(() => {
+          Bus.$emit(this.UPDATE_PATIENT_INFO);
           this.goBack();
         });
       } else if (this.mode === this.MODIFY_PAGE) {
         // 修改量表的接口
         modifyScaleInfo(submitData).then(() => {
+          Bus.$emit(this.UPDATE_PATIENT_INFO);
           this.goBack();
         });
       }

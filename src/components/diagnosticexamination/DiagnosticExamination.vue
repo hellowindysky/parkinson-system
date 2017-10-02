@@ -50,6 +50,7 @@
 import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
+import { delEmg, delBiochemical, delNervouSystem } from 'api/patient.js';
 
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 import ExtensiblePanel from 'components/extensiblepanel/ExtensiblePanel';
@@ -137,15 +138,12 @@ export default {
       Bus.$emit(this.SHOW_NERVOU_SYSTEM_MODAL, '神经系统检查', item);
       console.log('edit', item);
     },
-    deleteNeurologicCheckRecord(item) {
-      // var patientMed = {
-      //   patientId: this.id,
-      //   patientMedHistoryId: item.patientMedHistoryId,
-      //   version: item.version
-      // };
+    deleteNeurologicCheckRecord(item) { // 删除神经检查
+      let NeuroId = {
+        patientSpephysicalId: item.patientSpephysicalId
+      };
       Bus.$on(this.CONFIRM, () => {
-        // deletePatientMedHistory(patientMed).then(this._resolveDeletion, this._rejectDeletion);
-        console.log('delete', item);
+        delNervouSystem(NeuroId).then(this._resolveDeletion, this._rejectDeletion);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
@@ -156,15 +154,12 @@ export default {
       Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, '生化指标', item);
       console.log('Biochemical', item);
     },
-    deleteBiochemicalExamRecord() {
-      // var patientMed = {
-      //   patientId: this.id,
-      //   patientMedHistoryId: item.patientMedHistoryId,
-      //   version: item.version
-      // };
+    deleteBiochemicalExamRecord(item) { // 删除生化指标
+      let BiochemicalId = {
+        patientBioexamId: item.patientBioexamId
+      };
       Bus.$on(this.CONFIRM, () => {
-        // deletePatientMedHistory(patientMed).then(this._resolveDeletion, this._rejectDeletion);
-        // console.log('delete', item);
+        delBiochemical(BiochemicalId).then(this._resolveDeletion, this._rejectDeletion);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
@@ -175,17 +170,23 @@ export default {
       Bus.$emit(this.SHOW_EMG_MODAL, '肌电图', item);
       console.log('肌电图', item);
     },
-    deleteEmgRecord(item) {
-      // var patientMed = {
-      //   patientId: this.id,
-      //   patientMedHistoryId: item.patientMedHistoryId,
-      //   version: item.version
-      // };
+    deleteEmgRecord(item) { // 删除肌电图
+      let EmgId = {
+        id: item.id
+      };
       Bus.$on(this.CONFIRM, () => {
-        // deletePatientMedHistory(patientMed).then(this._resolveDeletion, this._rejectDeletion);
-        console.log('delete', item);
+        delEmg(EmgId).then(this._resolveDeletion, this._rejectDeletion);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
+    },
+    _resolveDeletion() {
+      // 如果成功删除记录，则重新发出请求，获取最新数据。同时解除 [确认对话框] 的 “确认” 回调函数
+      Bus.$emit(this.UPDATE_PATIENT_INFO);
+      Bus.$off(this.CONFIRM);
+    },
+    _rejectDeletion() {
+      // 即使删除不成功，也要解除 [确认对话框] 的 “确认” 回调函数
+      Bus.$off(this.CONFIRM);
     },
     recalculateCardWidth() {
       this.$nextTick(() => {
