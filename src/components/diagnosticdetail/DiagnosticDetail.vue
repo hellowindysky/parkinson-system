@@ -102,7 +102,6 @@ export default {
     },
     getVitalSignsData(data) {
       // 获取到生命体征的数据项
-      console.log(12345);
       if (data.breathing) {
         this.VitalSignsData['breathing'] = data.breathing;
       } else {
@@ -158,7 +157,6 @@ export default {
       } else {
         this.VitalSignsData['doiCdr'] = '';
       }
-      console.log('VitalSignsData', this.VitalSignsData);
     },
     goBack() {
       // 按下返回按钮，实际上是修改的路由地址 ———— 因为我们是监控路由地址来决定这个详情窗口是否显示的
