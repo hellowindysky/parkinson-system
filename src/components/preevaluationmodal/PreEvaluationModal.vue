@@ -1159,12 +1159,11 @@ export default {
                 text-align: center;
               }
               .el-input__icon {
-                width: 15px;
-                height: 15px;
-                padding: 0 0 5px 5px;
-                transition: 0s;
+                width: 12px;
+                height: 12px;
+                padding: 0 0 18px 10px;
                 &.el-icon-date {
-                  opacity: 0;
+                  opacity: 0.3;
                 }
                 &.el-icon-close {
                   color: @alert-color;
