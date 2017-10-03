@@ -139,21 +139,11 @@
             <td class="col">好的开期时间</td>
           </tr>
           <tr class="row">
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
+            <td class="col">{{copyInfo.preopsDiaryDTO.wakeTime}}</td>
+            <td class="col">{{copyInfo.preopsDiaryDTO.dyskinesiaTime}}</td>
+            <td class="col">{{copyInfo.preopsDiaryDTO.closeTime}}</td>
+            <td class="col">{{copyInfo.preopsDiaryDTO.totalOpenTime}}</td>
+            <td class="col">{{copyInfo.preopsDiaryDTO.openTime}}</td>
           </tr>
         </table>
         <table class="table">
@@ -930,6 +920,7 @@ export default {
             }
           }
         });
+        // 更新了日期行后，自动更新后面几排的小时数
         this.updateField('diaryHour');
         return;
 
@@ -964,15 +955,29 @@ export default {
               this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i][hourName] = 0;
             }
           }
-          let dayCount = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i].datCount;
+          let dayCount = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i].dayCount;
           let hourAverage = dayCount > 0 ? Number((rowTotalHour * 1.0 / dayCount).toFixed(1)) : 0;
           this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i].hourAverage = hourAverage;
         }
 
         for (let hourName of this.hourNameList) {
           // 最后一排，即“总和”这一排，填上我们保存的每列各自的数据之和
+          colTotalHour[hourName] = Number(colTotalHour[hourName].toFixed(1));
           this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[5][hourName] = colTotalHour[hourName];
         }
+
+        // 再根据该表格的数据，更新其它表格的对应数据
+        let sleepTime = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0].hourAverage;
+        let closeTime = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[1].hourAverage;
+        let seriousOpenTime = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[2].hourAverage;
+        let mildOpenTime = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[3].hourAverage;
+        let noneOpenTime = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[4].hourAverage;
+
+        this.copyInfo.preopsDiaryDTO.wakeTime = Number((24 - sleepTime).toFixed(1));
+        this.copyInfo.preopsDiaryDTO.dyskinesiaTime = Number((seriousOpenTime + mildOpenTime).toFixed(1));
+        this.copyInfo.preopsDiaryDTO.closeTime = Number(closeTime.toFixed(1));
+        this.copyInfo.preopsDiaryDTO.totalOpenTime = Number((seriousOpenTime + mildOpenTime + noneOpenTime).toFixed(1));
+        this.copyInfo.preopsDiaryDTO.openTime = Number((mildOpenTime + noneOpenTime).toFixed(1));
         return;
       }
     },
