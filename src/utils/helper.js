@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import Uitl from 'utils/util.js';
+import Util from 'utils/util.js';
 
 export function deepCopy(obj) {
   // 这个函数是个简化的深复制函数，复制的对象下面不能有函数
@@ -108,7 +108,7 @@ export function reviseDateFormat(obj) {
     } else if (obj.hasOwnProperty(p) && (obj[p] instanceof Date)) {
       obj[p] = Util.simplifyDate(obj[p]);
     } else {
-      revieseDateFormat(obj[p]);
+      reviseDateFormat(obj[p]);
     }
   }
 };
