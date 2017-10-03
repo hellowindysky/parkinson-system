@@ -75,7 +75,7 @@
           <span class="field-input short-input">
             <el-input v-model="copyInfo.preopsTerminalDTO.terminalDuration"></el-input>
           </span>
-          <span class="end-words">年 (运动并发症早期&lt;=3年)</span>
+          <span class="end-words">年 {{terminalDurationNote}}</span>
         </div>
         <div class="field whole-line">
           <span class="field-name">备注</span>
@@ -784,6 +784,18 @@ export default {
         return '新增术前评估';
       } else if (this.mode === this.EDIT_DATA) {
         return '术前评估';
+      }
+    },
+    terminalDurationNote() {
+      var terminalDuration = this.copyInfo.preopsTerminalDTO.terminalDuration;
+      if (terminalDuration === undefined || terminalDuration === null || terminalDuration === '') {
+        return '';
+      } else if (!isNaN(terminalDuration) && Number(terminalDuration) > 3) {
+        return '(运动并发症晚期＞3年)';
+      } else if (!isNaN(terminalDuration) && Number(terminalDuration) <= 3) {
+        return '(运动并发症早期≤3年)';
+      } else {
+        return '';
       }
     }
   },
