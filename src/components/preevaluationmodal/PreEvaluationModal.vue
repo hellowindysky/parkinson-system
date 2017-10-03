@@ -982,7 +982,7 @@ export default {
     margin: auto;
     padding: 0 40px;
     top: 3%;
-    width: 760px;
+    width: 800px;
     max-height: 94%;
     background-color: @background-color;
     overflow: hidden;
@@ -1116,8 +1116,7 @@ export default {
               color: #fff;
             }
             &.computed-col {
-              background-color: lighten(@font-color, 20%);
-              color: #fff;
+              background-color: lighten(@font-color, 55%);
             }
             &.wide-col {
               width: 30%;
@@ -1132,8 +1131,17 @@ export default {
                 border: none;
                 text-align: center;
               }
-              .el-icon-date {
-                display: none;
+              .el-input__icon {
+                width: 15px;
+                height: 15px;
+                padding: 0 0 5px 5px;
+                transition: 0s;
+                &.el-icon-date {
+                  opacity: 0;
+                }
+                &.el-icon-close {
+                  color: @alert-color;
+                }
               }
             }
           }
