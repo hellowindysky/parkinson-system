@@ -102,7 +102,6 @@ export default {
       width: 100%;
       position: relative;
       margin-right: 20px;
-      padding: 0 20px;
       box-sizing: border-box;
       .el-table {
         width: 981px;

@@ -58,7 +58,6 @@ export default {
 .common-drugs {
   width: 100%;
   position: relative;
-  padding: 0 20px;
   box-sizing: border-box;
   .el-table {
     width: 981px;
