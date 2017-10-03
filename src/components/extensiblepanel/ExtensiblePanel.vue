@@ -2,11 +2,11 @@
   <div class="extensible-panel-wrapper">
     <div class="header">
       <h4 class="title">{{title}}</h4>
-      <div v-show="mode === EDITING_MODE" class="button add-button" @click="add">添加</div>
+      <div v-show="mode === EDITING_MODE" class="button add-button" :class="{'vitalsigns':isVitalSigns===true}"  @click="add">添加</div>
       <div v-show="status === NORMAL_STATUS" class="button extend-button" @click="extend">展开</div>
       <div v-show="status === EXTENDED_STATUS" class="button shrink-button" @click="shrink">收起</div>
     </div>
-    <div class="content" :class="{'extended': status==='extended'}">
+    <div class="content" :class="{'extended': status==='extended' || isVitalSigns===true}">
       <slot></slot>
     </div>
   </div>
@@ -24,6 +24,10 @@ export default {
     title: {
       type: String,
       default: ''
+    },
+    isVitalSigns: { // 如果是生命体征那么就将添加按钮隐藏
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -98,6 +102,9 @@ export default {
         right: 30px + @small-button-width;
         background-color: @light-font-color;
       }
+      &.vitalsigns {
+        display: none;
+      }
     }
   }
   .content {
@@ -111,6 +118,9 @@ export default {
       padding: 5px;
       height: auto;
       min-height: 100px;
+    }
+    &.vitalsignsone {
+      height: auto;
     }
   }
 }

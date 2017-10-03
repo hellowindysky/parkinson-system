@@ -880,3 +880,19 @@ export function delEmg(patientElecTroGram) {
 
   return encapsulatePromise(url, request);
 };
+
+// 修改生命体征
+export function modVitalSigns(patientCase) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "version": 43,
+    "patientCase": patientCase
+  };
+  var url = 'http://apitest.gyenno.com/pdms/modPatientCase';
+
+  return encapsulatePromise(url, request);
+};
