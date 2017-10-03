@@ -12,7 +12,8 @@
         <div class="field">
           <span class="field-name">评估时间</span>
           <span class="field-input">
-            <el-date-picker v-model="copyInfo.preopsTime"></el-date-picker>
+            <el-date-picker v-model="copyInfo.preopsTime" :picker-options="dateOptions"
+              :editable="false"></el-date-picker>
           </span>
         </div>
         <div class="field whole-line">
@@ -30,7 +31,8 @@
         <div class="field">
           <span class="field-name">剂末现象评估时间</span>
           <span class="field-input">
-            <el-date-picker v-model="copyInfo.preopsTerminalDTO.terminalTime"></el-date-picker>
+            <el-date-picker v-model="copyInfo.preopsTerminalDTO.terminalTime"
+              :picker-options="dateOptions" :editable="false"></el-date-picker>
           </span>
         </div>
         <div class="field">
@@ -64,7 +66,8 @@
         <div class="field" v-show="copyInfo.preopsTerminalDTO.terminalIsfirst===0">
           <span class="field-name">初次出现时间</span>
           <span class="field-input">
-            <el-date-picker v-model="copyInfo.preopsTerminalDTO.terminalFirstTime"></el-date-picker>
+            <el-date-picker v-model="copyInfo.preopsTerminalDTO.terminalFirstTime" :picker-options="dateOptions"
+              @change="updateField('terminalFirstTime')" :editable="false"></el-date-picker>
           </span>
         </div>
         <div class="field" v-show="copyInfo.preopsTerminalDTO.terminalIsfirst===0">
@@ -101,7 +104,8 @@
           <tr class="row">
             <td class="col" v-for="(dayTimeName, listIndex) in dayTimeNameList">
               <el-date-picker v-model="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName]"
-                @change="updateField('diaryDayTime')" :editable="false" :disabled="!isTimeEditable(listIndex)"></el-date-picker>
+                @change="updateField('diaryDayTime')" :editable="false" :disabled="!isTimeEditable(listIndex)"
+                :picker-options="dateOptions"></el-date-picker>
             </td>
           </tr>
           <tr class="row" v-for="(rowName, index) in diaryRowNameList">
@@ -215,7 +219,7 @@
               <el-input></el-input>
             </td>
             <td class="col">
-              <el-date-picker></el-date-picker>
+              <el-date-picker :picker-options="dateOptions" :editable="false"></el-date-picker>
             </td>
           </tr>
         </table>
@@ -249,7 +253,7 @@
               <el-input></el-input>
             </td>
             <td class="col">
-              <el-date-picker></el-date-picker>
+              <el-date-picker :picker-options="dateOptions" :editable="false"></el-date-picker>
             </td>
             <td class="col">
               <el-input></el-input>
@@ -270,7 +274,7 @@
         <div class="field">
           <span class="field-name">试验日期时间</span>
           <span class="field-input">
-            <el-date-picker></el-date-picker>
+            <el-date-picker :picker-options="dateOptions" :editable="false"></el-date-picker>
           </span>
         </div>
         <div class="field">
@@ -351,7 +355,7 @@
         <div class="field">
           <span class="field-name">表态时间</span>
           <span class="field-input">
-            <el-date-picker></el-date-picker>
+            <el-date-picker :picker-options="dateOptions" :editable="false"></el-date-picker>
           </span>
         </div>
         <div class="field">
@@ -413,6 +417,11 @@ export default {
       diaryRowNameList: ['睡眠', '关期', '重异动开', '轻异动开', '无异动开'],
       dayTimeNameList: ['oneDayTime', 'twoDayTime', 'threeDayTime', 'fourDayTime', 'fiveDayTime', 'sixDayTime'],
       hourNameList: ['oneDayDiaryHour', 'twoDayDiaryHour', 'threeDayDiaryHour', 'fourDayDiaryHour', 'fiveDayDiaryHour', 'sixDayDiaryHour'],
+      dateOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        }
+      },
       copyInfo: {
         'preopsTime': '',
         'preopsRemark': '',
@@ -857,6 +866,30 @@ export default {
           this.copyInfo.preopsTerminalDTO.terminalDuration = '';
         }
         return;
+
+      } else if (fieldName === 'terminalFirstTime') {
+        // 选择了首次出现剂末现象的时间，就要相应地更新 “已出现__年” 这个字段
+        var inputTime = this.copyInfo.preopsTerminalDTO.terminalFirstTime;
+        if (!inputTime) {
+          return;
+        } else {
+          inputTime = new Date(inputTime);
+        }
+        var currentTime = new Date();
+
+        var differenceYear = 0;
+        var inputYear = inputTime.getFullYear();
+        var inputMonth = inputTime.getMonth();
+        var inputDate = inputTime.getDate();
+        var currentYear = currentTime.getFullYear();
+        var currentMonth = currentTime.getMonth();
+        var currentDate = currentTime.getDate();
+        if (currentMonth > inputMonth || (currentMonth === inputMonth && currentDate >= inputDate)) {
+          differenceYear = currentYear - inputYear;
+        } else {
+          differenceYear = currentYear - inputYear - 1;
+        }
+        this.copyInfo.preopsTerminalDTO.terminalDuration = differenceYear >= 0 ? differenceYear : 0;
 
       } else if (fieldName === 'diaryDayTime') {
         // 患者日记是一个数组(preopsDiaryDTO.patientPreopsDiaryList)，
