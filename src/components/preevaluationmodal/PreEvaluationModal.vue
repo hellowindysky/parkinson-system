@@ -195,7 +195,8 @@
               </el-select>
             </td>
             <td class="col">
-              <el-input v-model="scale.scaleScore" @blur="transformToNum(scale, 'scaleScore')" :class="{'warning': isNaN(scale.scaleScore)}"></el-input>
+              <el-input v-model="scale.scaleScore" @blur="transformToNum(scale, 'scaleScore')"
+                :class="{'warning': isNaN(scale.scaleScore)}"></el-input>
             </td>
             <td class="col">
               <el-date-picker v-model="scale.ariseTime" :picker-options="dateOptions" :editable="false"></el-date-picker>
@@ -214,35 +215,34 @@
       <div class="sub-title-bar">非运动症状评估</div>
       <div class="content">
         <table class="table">
-          <tr class="row">
+          <tr class="row title-row">
             <td class="col narrow-col">序号</td>
             <td class="col wide-col">量表</td>
             <td class="col narrow-col">分数</td>
             <td class="col">量表完成时间</td>
             <td class="col">备注</td>
           </tr>
-          <tr class="row">
-            <td class="col narrow-col">
-              <el-input></el-input>
-            </td>
+          <tr class="row" v-for="(scale, index) in copyInfo.preopsNonMotorDTO.patientPreopsScaleList">
+            <td class="col narrow-col">{{index + 1}}</td>
             <td class="col wide-col">
-              <el-input></el-input>
+              {{getRealName(scale.scaleInfo, 'nmScale')}}
             </td>
             <td class="col narrow-col">
-              <el-input></el-input>
+              <el-input v-model="scale.scaleScore" @blur="transformToNum(scale, 'scaleScore')"
+                :class="{'warning': isNaN(scale.scaleScore)}"></el-input>
             </td>
             <td class="col">
-              <el-date-picker :picker-options="dateOptions" :editable="false"></el-date-picker>
+              <el-date-picker v-model="scale.ariseTime" :picker-options="dateOptions" :editable="false"></el-date-picker>
             </td>
             <td class="col">
-              <el-input></el-input>
+              <el-input v-model="scale.remarks"></el-input>
             </td>
           </tr>
         </table>
         <div class="field whole-line">
           <span class="field-name">备注</span>
           <span class="field-input">
-            <el-input></el-input>
+            <el-input v-model="copyInfo.preopsNonMotorDTO.nonmotorRemark"></el-input>
           </span>
         </div>
       </div>
@@ -577,111 +577,98 @@ export default {
         'preopsNonMotorDTO': {
           'patientPreopsScaleList': [
             {
-              'ariseTime': '2017-10-05',
+              'ariseTime': '',
               'scaleInfo': 1,
-              'scaleScore': 11,
+              'scaleScore': '',
               'scaleType': 3,
-              'patientPreopsInfoId': 15,
-              'scaleName': 'MDS-UPDRS Ⅰ'
+              'remarks': ''
             },
             {
-              'ariseTime': '2017-10-06',
+              'ariseTime': '',
               'scaleInfo': 2,
-              'scaleScore': 22,
+              'scaleScore': '',
               'scaleType': 3,
-              'patientPreopsInfoId': 15,
-              'scaleName': 'MDS-UPDRS Ⅱ'
+              'remarks': ''
             },
             {
-              'ariseTime': '2017-10-07',
+              'ariseTime': '',
               'scaleInfo': 3,
-              'scaleScore': 33,
+              'scaleScore': '',
               'scaleType': 3,
-              'patientPreopsInfoId': 15,
-              'scaleName': 'MDS-UPDRS Ⅳ'
+              'remarks': ''
             },
             {
-              'ariseTime': '2017-10-08',
+              'ariseTime': '',
               'scaleInfo': 4,
-              'scaleScore': 44,
+              'scaleScore': '',
               'scaleType': 3,
-              'patientPreopsInfoId': 15,
-              'scaleName': '帕金森病生活质量调查表（PDQ-39）'
+              'remarks': ''
             },
             {
-              'ariseTime': '2017-10-09',
+              'ariseTime': '',
               'scaleInfo': 5,
-              'scaleScore': 55,
+              'scaleScore': '',
               'scaleType': 3,
-              'patientPreopsInfoId': 15,
-              'scaleName': 'Pittsburgh睡眠质量指数调查表（PSQJ）'
+              'remarks': ''
             },
             {
-              'ariseTime': '2017-10-10',
+              'ariseTime': '',
               'scaleInfo': 6,
-              'scaleScore': 66,
+              'scaleScore': '',
               'scaleType': 3,
-              'patientPreopsInfoId': 15,
-              'scaleName': '帕金森病睡眠量表（PDSS）'
+              'remarks': ''
             },
             {
-              'ariseTime': '2017-10-11',
+              'ariseTime': '',
               'scaleInfo': 7,
-              'scaleScore': 77,
+              'scaleScore': '',
               'scaleType': 3,
-              'patientPreopsInfoId': 15,
-              'scaleName': 'Epworth嗜睡评分量表（ESS）'
+              'remarks': ''
             },
             {
-              'ariseTime': '2017-10-12',
+              'ariseTime': '',
               'scaleInfo': 8,
-              'scaleScore': 88,
+              'scaleScore': '',
               'scaleType': 3,
-              'patientPreopsInfoId': 15,
-              'scaleName': '简易只能精神状态量表（MMSE）'
+              'remarks': ''
             },
             {
-              'ariseTime': '2017-10-13',
+              'ariseTime': '',
               'scaleInfo': 9,
-              'scaleScore': 99,
+              'scaleScore': '',
               'scaleType': 3,
-              'patientPreopsInfoId': 15,
-              'scaleName': '蒙特利尔认知评估（MoCA）'
+              'remarks': ''
             },
             {
-              'ariseTime': '2017-10-14',
+              'ariseTime': '',
               'scaleInfo': 10,
-              'scaleScore': 87,
+              'scaleScore': '',
               'scaleType': 3,
-              'patientPreopsInfoId': 15,
-              'scaleName': '汉密尔顿抑郁量表（HAMD）'
+              'remarks': ''
             },
             {
-              'ariseTime': '2017-10-15',
+              'ariseTime': '',
               'scaleInfo': 11,
-              'scaleScore': 76,
+              'scaleScore': '',
               'scaleType': 3,
-              'patientPreopsInfoId': 15,
-              'scaleName': '汉密尔顿焦虑量表（HAMA）'
+              'remarks': ''
             },
             {
-              'ariseTime': '2017-10-16',
+              'ariseTime': '',
               'scaleInfo': 12,
-              'scaleScore': 65,
+              'scaleScore': '',
               'scaleType': 3,
-              'patientPreopsInfoId': 15,
-              'scaleName': '贝克抑郁自评量表（BDI）'
+              'remarks': ''
             },
             {
-              'ariseTime': '2017-10-17',
+              'ariseTime': '',
               'scaleInfo': 13,
-              'scaleScore': 54,
+              'scaleScore': '',
               'scaleType': 3,
-              'patientPreopsInfoId': 15,
-              'scaleName': '非运动症状评定量表（NMSS）'
+              'remarks': ''
             }
           ],
-          'nonmotorRemark': '333EF'
+          'nonmotorRemark': ''
         },
         'preopsMotorDTO': {
           'motorTestTime': '2017-10-01',
