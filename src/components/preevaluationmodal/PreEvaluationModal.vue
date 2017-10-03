@@ -157,13 +157,13 @@
             <td class="col">关期%</td>
           </tr>
           <tr class="row">
-            <td class="col computed-cell"></td>
-            <td class="col computed-cell"></td>
-            <td class="col computed-cell"></td>
-            <td class="col computed-cell"></td>
-            <td class="col computed-cell"></td>
-            <td class="col computed-cell"></td>
-            <td class="col computed-cell"></td>
+            <td class="col computed-cell">{{copyInfo.preopsDiaryDTO.udysbsOneRatio}}</td>
+            <td class="col computed-cell">{{copyInfo.preopsDiaryDTO.updrsFourOneRatio}}</td>
+            <td class="col computed-cell">{{copyInfo.preopsDiaryDTO.updrsFourThreeRatio}}</td>
+            <td class="col computed-cell">{{copyInfo.preopsDiaryDTO.openRatio}}</td>
+            <td class="col computed-cell">{{copyInfo.preopsDiaryDTO.depDyskinesiaOpenRatio}}</td>
+            <td class="col computed-cell">{{copyInfo.preopsDiaryDTO.norDyskinesiaOpenRatio}}</td>
+            <td class="col computed-cell">{{copyInfo.preopsDiaryDTO.closeRatio}}</td>
           </tr>
         </table>
         <div class="field whole-line">
@@ -895,15 +895,17 @@ export default {
 
           } else {
             let dayTime = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName];
-            for (let diaryItem of this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList) {
-              diaryItem[dayTimeName] = dayTime;
-              diaryItem.dayCount = dayCount;
-            }
+
             if (!dayTime) {
               hasToBeEmpty = true;
             } else {
               dayCount += 1;
             }
+            for (let diaryItem of this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList) {
+              diaryItem[dayTimeName] = dayTime;
+              diaryItem.dayCount = dayCount;
+            }
+
           }
         });
         // 更新了日期行后，自动更新后面几排的小时数
@@ -942,7 +944,7 @@ export default {
             }
           }
           let dayCount = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i].dayCount;
-          let hourAverage = dayCount > 0 ? Number((rowTotalHour * 1.0 / dayCount).toFixed(1)) : 0;
+          let hourAverage = dayCount > 0 ? Number((rowTotalHour * 1.0 / dayCount).toFixed(2)) : 0;
           this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i].hourAverage = hourAverage;
         }
 
@@ -959,11 +961,24 @@ export default {
         let mildOpenTime = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[3].hourAverage;
         let noneOpenTime = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[4].hourAverage;
 
-        this.copyInfo.preopsDiaryDTO.wakeTime = Number((24 - sleepTime).toFixed(1));
-        this.copyInfo.preopsDiaryDTO.dyskinesiaTime = Number((seriousOpenTime + mildOpenTime).toFixed(1));
-        this.copyInfo.preopsDiaryDTO.closeTime = Number(closeTime.toFixed(1));
-        this.copyInfo.preopsDiaryDTO.totalOpenTime = Number((seriousOpenTime + mildOpenTime + noneOpenTime).toFixed(1));
-        this.copyInfo.preopsDiaryDTO.openTime = Number((mildOpenTime + noneOpenTime).toFixed(1));
+        let totalOpenTime = seriousOpenTime + mildOpenTime + noneOpenTime;
+        let wakeTime = 24 - sleepTime;
+        let dyskinesiaTime = seriousOpenTime + mildOpenTime;
+        let goodOpenTime = mildOpenTime + noneOpenTime;
+
+        this.copyInfo.preopsDiaryDTO.wakeTime = Number(wakeTime.toFixed(2));
+        this.copyInfo.preopsDiaryDTO.dyskinesiaTime = Number(dyskinesiaTime.toFixed(2));
+        this.copyInfo.preopsDiaryDTO.closeTime = Number(closeTime.toFixed(2));
+        this.copyInfo.preopsDiaryDTO.totalOpenTime = Number(totalOpenTime.toFixed(2));
+        this.copyInfo.preopsDiaryDTO.openTime = Number(goodOpenTime.toFixed(2));
+        this.copyInfo.preopsDiaryDTO.udysbsOneRatio = totalOpenTime !== 0 ? Number((dyskinesiaTime / totalOpenTime * 100.0).toFixed(2)) : 0;
+        this.copyInfo.preopsDiaryDTO.updrsFourOneRatio = wakeTime !== 0 ? Number((dyskinesiaTime / wakeTime * 100.0).toFixed(2)) : 0;
+        this.copyInfo.preopsDiaryDTO.updrsFourThreeRatio = wakeTime !== 0 ? Number((closeTime / wakeTime * 100.0).toFixed(2)) : 0;
+        this.copyInfo.preopsDiaryDTO.openRatio = wakeTime !== 0 ? Number((goodOpenTime / wakeTime * 100.0).toFixed(2)) : 0;
+        this.copyInfo.preopsDiaryDTO.depDyskinesiaOpenRatio = wakeTime !== 0 ? Number((seriousOpenTime / wakeTime * 100.0).toFixed(2)) : 0;
+        this.copyInfo.preopsDiaryDTO.norDyskinesiaOpenRatio = wakeTime !== 0 ? Number((dyskinesiaTime / wakeTime * 100.0).toFixed(2)) : 0;
+        this.copyInfo.preopsDiaryDTO.closeRatio = wakeTime !== 0 ? Number((closeTime / wakeTime * 100.0).toFixed(2)) : 0;
+
         return;
       }
     },
