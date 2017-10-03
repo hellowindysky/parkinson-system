@@ -167,9 +167,9 @@
           </tr>
         </table>
         <div class="field whole-line">
-          <span class="field-name">备注</span>
+          <span class="field-name">日记备注</span>
           <span class="field-input">
-            <el-input></el-input>
+            <el-input v-model="copyInfo.preopsDiaryDTO.diaryRemark"></el-input>
           </span>
         </div>
       </div>
@@ -545,18 +545,19 @@ export default {
               'hourAverage': ''
             }
           ],
-          'wakeTime': 20.5,
-          'dyskinesiaTime': 7,
-          'closeTime': 3.5,
-          'totalOpenTime': 10.5,
-          'openTime': 7,
-          'udysbsOneRatio': 66.67,
-          'updrsFourOneRatio': 34.15,
-          'updrsFourThreeRatio': 17.07,
-          'openRatio': 34.15,
-          'depDyskinesiaOpenRatio': 17.07,
-          'norDyskinesiaOpenRatio': 34.15,
-          'closeRatio': 17.07
+          'wakeTime': '',
+          'dyskinesiaTime': '',
+          'closeTime': '',
+          'totalOpenTime': '',
+          'openTime': '',
+          'udysbsOneRatio': '',
+          'updrsFourOneRatio': '',
+          'updrsFourThreeRatio': '',
+          'openRatio': '',
+          'depDyskinesiaOpenRatio': '',
+          'norDyskinesiaOpenRatio': '',
+          'closeRatio': '',
+          'diaryRemark': ''
         },
         'preopsDyskinesiaDTO': {
           'patientPreopsScaleList': [
