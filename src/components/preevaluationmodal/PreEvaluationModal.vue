@@ -881,21 +881,21 @@ export default {
 
       } else if (fieldName === 'terminalFirstTime') {
         // 选择了首次出现剂末现象的时间，就要相应地更新 “已出现__年” 这个字段
-        var inputTime = this.copyInfo.preopsTerminalDTO.terminalFirstTime;
+        let inputTime = this.copyInfo.preopsTerminalDTO.terminalFirstTime;
         if (!inputTime) {
           return;
         } else {
           inputTime = new Date(inputTime);
         }
-        var currentTime = new Date();
+        let currentTime = new Date();
 
-        var differenceYear = 0;
-        var inputYear = inputTime.getFullYear();
-        var inputMonth = inputTime.getMonth();
-        var inputDate = inputTime.getDate();
-        var currentYear = currentTime.getFullYear();
-        var currentMonth = currentTime.getMonth();
-        var currentDate = currentTime.getDate();
+        let differenceYear = 0;
+        let inputYear = inputTime.getFullYear();
+        let inputMonth = inputTime.getMonth();
+        let inputDate = inputTime.getDate();
+        let currentYear = currentTime.getFullYear();
+        let currentMonth = currentTime.getMonth();
+        let currentDate = currentTime.getDate();
         if (currentMonth > inputMonth || (currentMonth === inputMonth && currentDate >= inputDate)) {
           differenceYear = currentYear - inputYear;
         } else {
@@ -911,18 +911,22 @@ export default {
 
         // 在做上述操作之前，我们还要做一步校验，如果前一列的日期为空，则后面的日期也必须为空，
         // 因为实际的表格是填完了一列，才能填写下一列
-        var hasToBeEmpty = false;
+        let hasToBeEmpty = false;
+        let dayCount = 0;
         this.dayTimeNameList.forEach((dayTimeName) => {
           if (hasToBeEmpty) {
             this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName] = '';
 
           } else {
-            var dayTime = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName];
+            let dayTime = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName];
             for (let diaryItem of this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList) {
               diaryItem[dayTimeName] = dayTime;
+              diaryItem.dayCount = dayCount;
             }
             if (!dayTime) {
               hasToBeEmpty = true;
+            } else {
+              dayCount += 1;
             }
           }
         });
@@ -932,27 +936,25 @@ export default {
       } else if (fieldName === 'diaryHour') {
         // 每次更新患者日记中的小时数，都会重新计算每一行的 “总天数” 和 “平均值”，以及最后一行的 “总和”
         // 用一个对象 colTotalHour 将每一列的格子里的小时数 存下来
-        var colTotalHour = {};
-        for (var i = 0; i < 5; i++) {
-          var rowDayCount = 0;
-          var rowTotalHour = 0;
+        let colTotalHour = {};
+        for (let i = 0; i < 5; i++) {
+          let rowTotalHour = 0;
 
-          for (var listIndex = 0; listIndex < this.hourNameList.length; listIndex++) {
-            var hourName = this.hourNameList[listIndex];
+          for (let listIndex = 0; listIndex < this.hourNameList.length; listIndex++) {
+            let hourName = this.hourNameList[listIndex];
             colTotalHour[hourName] = colTotalHour[hourName] ? colTotalHour[hourName] : 0;
 
             // 取到格子中的小时数之后，要先做校验，如果该列顶端的时间没有值，那么将该格子中的值强制改成空字符串
-            var hour = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i][hourName];
+            let hour = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i][hourName];
 
-            var dayTimeName = this.dayTimeNameList[listIndex];
+            let dayTimeName = this.dayTimeNameList[listIndex];
             if (!this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName]) {
               this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i][hourName] = '';
 
-            } else if (hour && !isNaN(hour) && hour > 0) {
+            } else if (hour !== '' && !isNaN(hour) && hour > 0) {
               // toFixed() 返回的是一个字符串，所以需要用 Number() 将其还原为数字
               // 另外 Number(2.000) 返回的值是 2，正好符合我们的需要
               hour = Number(parseFloat(hour).toFixed(1));
-              rowDayCount += 1;
               rowTotalHour += hour;
               this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i][hourName] = hour;
 
@@ -962,8 +964,8 @@ export default {
               this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i][hourName] = 0;
             }
           }
-          this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i].dayCount = rowDayCount;
-          var hourAverage = rowDayCount > 0 ? Number((rowTotalHour * 1.0 / rowDayCount).toFixed(1)) : 0;
+          let dayCount = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i].datCount;
+          let hourAverage = dayCount > 0 ? Number((rowTotalHour * 1.0 / dayCount).toFixed(1)) : 0;
           this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i].hourAverage = hourAverage;
         }
 
