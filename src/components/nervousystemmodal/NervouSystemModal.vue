@@ -134,14 +134,14 @@ export default {
       if (this.mode === this.MODIFY_MODE) {
         // 修改的状态
         modifyNervouSystem(submitData).then(() => {
-          Bus.$emit(this.UPDATE_PATIENT_INFO);
+          Bus.$emit(this.UPDATE_CASE_INFO);
           this.updateAndClose();
         });
       } else if (this.mode === this.ADD_MODE) {
         // 新增的状态
         delete submitData.patientSpephysicalId;
         addNervouSystem(submitData).then(() => {
-          Bus.$emit(this.UPDATE_PATIENT_INFO);
+          Bus.$emit(this.UPDATE_CASE_INFO);
           this.updateAndClose();
         });
       }

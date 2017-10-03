@@ -191,12 +191,12 @@ export default {
       let submitData = deepCopy(this.bioexamTypeData);
       if (this.mode === this.MODIFY_MODE) {
         modBiochemical(submitData).then(() => {
-          Bus.$emit(this.UPDATE_PATIENT_INFO);
+          Bus.$emit(this.UPDATE_CASE_INFO);
           this.updateAndClose();
         });
       } else if (this.mode === this.ADD_MODE) {
         addBiochemical(submitData).then(() => {
-          Bus.$emit(this.UPDATE_PATIENT_INFO);
+          Bus.$emit(this.UPDATE_CASE_INFO);
           this.updateAndClose();
         });
       }

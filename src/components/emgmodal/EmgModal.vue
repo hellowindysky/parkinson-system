@@ -724,13 +724,13 @@ export default {
       if (this.mode === this.ADD_MODE) {
         // 新增肌电图
         addEmg(submitData).then(() => {
-          Bus.$emit(this.UPDATE_PATIENT_INFO);
+          Bus.$emit(this.UPDATE_CASE_INFO);
           this.cancel();
         });
       } else if (this.mode === this.MODIFY_MODE) {
         // 修改肌电图
         modEmg(submitData).then(() => {
-          Bus.$emit(this.UPDATE_PATIENT_INFO);
+          Bus.$emit(this.UPDATE_CASE_INFO);
           this.cancel();
         });
       }

@@ -247,6 +247,7 @@ export default {
       }
       submitData['patientCaseId'] = this.$route.params.caseId;
       modVitalSigns(submitData).then(() => {
+        Bus.$emit(this.UPDATE_CASE_INFO);
       }); // 提交生命体征
     },
     handleVitalData(data) {
@@ -327,7 +328,6 @@ export default {
     },
     editBiochemicalExamRecord(item) {
       Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, '生化指标', item);
-      console.log('Biochemical', item);
     },
     deleteBiochemicalExamRecord(item) { // 删除生化指标
       let BiochemicalId = {
@@ -343,7 +343,6 @@ export default {
     },
     editEmgRecord(item) {
       Bus.$emit(this.SHOW_EMG_MODAL, '肌电图', item);
-      console.log('肌电图', item);
     },
     deleteEmgRecord(item) { // 删除肌电图
       let EmgId = {
@@ -356,7 +355,7 @@ export default {
     },
     _resolveDeletion() {
       // 如果成功删除记录，则重新发出请求，获取最新数据。同时解除 [确认对话框] 的 “确认” 回调函数
-      Bus.$emit(this.UPDATE_PATIENT_INFO);
+      Bus.$emit(this.UPDATE_CASE_INFO);
       Bus.$off(this.CONFIRM);
     },
     _rejectDeletion() {
