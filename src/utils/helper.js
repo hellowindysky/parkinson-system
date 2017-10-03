@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import Uitl from 'utils/util.js';
 
 export function deepCopy(obj) {
   // 这个函数是个简化的深复制函数，复制的对象下面不能有函数
@@ -89,6 +90,25 @@ export function pruneObj(obj) {
       }
     } else if (obj.hasOwnProperty(p) && !(obj[p] instanceof Array)) {
       pruneObj(obj[p]);
+    }
+  }
+};
+
+export function reviseDateFormat(obj) {
+  // 如果一个对象里面存在类型为 Date 对象的属性值，我们需要将其转换为符合格式 "yyyy-MM-dd" 的字符串
+  if (typeof obj !== 'object') {
+    return;   // 如果参数不是对象，则结束本次操作
+  }
+
+  for (var p in obj) {
+    if (obj.hasOwnProperty(p) && (obj[p] instanceof Array)) {
+      for (let item of obj[p]) {
+        reviseDateFormat(item);
+      }
+    } else if (obj.hasOwnProperty(p) && (obj[p] instanceof Date)) {
+      obj[p] = Util.simplifyDate(obj[p]);
+    } else {
+      revieseDateFormat(obj[p]);
     }
   }
 };
