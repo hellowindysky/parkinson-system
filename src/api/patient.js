@@ -520,6 +520,51 @@ export function deletePatientToxicExposure(toxicExposure) {
   return encapsulatePromise(url, request);
 };
 
+// 新增诊断信息-基本情况
+export function addDiagnosticBasic(diagnosticBasic) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientCase": diagnosticBasic
+  };
+  var url = 'http://apitest.gyenno.com/pdms/addPatientCase';
+
+  return encapsulatePromise(url, request);
+};
+
+// 修改诊断信息-基本情况
+export function modifyDiagnosticBasic(diagnosticBasic) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientCase": diagnosticBasic
+  };
+  var url = 'http://apitest.gyenno.com/pdms/modPatientCase';
+
+  return encapsulatePromise(url, request);
+};
+
+// 修改诊断信息-病症情况（新增也用这个接口）
+export function modifyDiagnosticDisease(diagnosticDisease) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientDisease": diagnosticDisease
+  };
+  var url = 'http://apitest.gyenno.com/pdms/modPatientSymptom';
+
+  return encapsulatePromise(url, request);
+};
+
 // 获取患者诊断列表
 export function getPatientCaseList(patientId) {
   // 传进来的 patientId 可能是字符串，这里需要转化为数字

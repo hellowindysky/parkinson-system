@@ -42,7 +42,7 @@
             <tr class="row first-row">
               <td v-for="field in diagnosticDiseaseMsTemplate" class="col" :class="getClass(field.fieldName)">
                 {{field.cnfieldName}}
-                <span class="required-mark" v-show="field.must === 1">*</span>
+                <!-- <span class="required-mark" v-show="field.must === 1">*</span> -->
                 <span class="add-button iconfont icon-plus" @click="addSymtom('ms')"
                   v-show="field.fieldName === 'symptomTypeId' && mutableMode===EDITING_MODE">
                 </span>
@@ -63,18 +63,17 @@
                     </el-select>
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===1">
-                    <el-input v-model="symptom[field.fieldName]" :class="{'warning': !symptom[field.fieldName]}"
-                      :placeholder="getMatchedField(field.fieldName).cnFieldDesc"></el-input>
+                    <el-input v-model="symptom[field.fieldName]" :placeholder="getMatchedField(field.fieldName).cnFieldDesc"></el-input>
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===3">
-                    <el-select v-model="symptom[field.fieldName]" :class="{'warning': !symptom[field.fieldName]}"
+                    <el-select v-model="symptom[field.fieldName]"
                       :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
                       <el-option label="是" :value="'是'"></el-option>
                       <el-option label="否" :value="'否'"></el-option>
                     </el-select>
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===6">
-                    <el-date-picker v-model="symptom[field.fieldName]" type="date" :class="{'warning': !symptom[field.fieldName]}"
+                    <el-date-picker v-model="symptom[field.fieldName]" type="date"
                       format="yyyy-MM-dd" :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
                     </el-date-picker>
                   </span>
@@ -92,7 +91,7 @@
             <tr class="row first-row">
               <td v-for="field in diagnosticDiseaseMcTemplate" class="col" :class="getClass(field.fieldName)">
                 {{field.cnfieldName}}
-                <span class="required-mark" v-show="field.must === 1">*</span>
+                <!-- <span class="required-mark" v-show="field.must === 1">*</span> -->
                 <span class="add-button iconfont icon-plus" @click="addSymtom('mc')"
                   v-show="field.fieldName === 'symptomTypeId' && mutableMode===EDITING_MODE">
                 </span>
@@ -113,18 +112,18 @@
                     </el-select>
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===1">
-                    <el-input v-model="symptom[field.fieldName]" :class="{'warning': !symptom[field.fieldName]}"
+                    <el-input v-model="symptom[field.fieldName]"
                      :placeholder="getMatchedField(field.fieldName).cnFieldDesc"></el-input>
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===3">
-                    <el-select v-model="symptom[field.fieldName]" :class="{'warning': !symptom[field.fieldName]}"
+                    <el-select v-model="symptom[field.fieldName]"
                       :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
                       <el-option label="是" :value="'是'"></el-option>
                       <el-option label="否" :value="'否'"></el-option>
                     </el-select>
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===6">
-                    <el-date-picker v-model="symptom[field.fieldName]" type="date" :class="{'warning': !symptom[field.fieldName]}"
+                    <el-date-picker v-model="symptom[field.fieldName]" type="date"
                       format="yyyy-MM-dd" :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
                     </el-date-picker>
                   </span>
@@ -142,7 +141,7 @@
             <tr class="row first-row">
               <td v-for="field in diagnosticDiseaseNmsTemplate" class="col" :class="getClass(field.fieldName)">
                 {{field.cnfieldName}}
-                <span class="required-mark" v-show="field.must === 1">*</span>
+                <!-- <span class="required-mark" v-show="field.must === 1">*</span> -->
                 <span class="add-button iconfont icon-plus" @click="addSymtom('nms')"
                   v-show="field.fieldName === 'symptomTypeId' && mutableMode===EDITING_MODE">
                 </span>
@@ -163,18 +162,16 @@
                     </el-select>
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===1">
-                    <el-input v-model="symptom[field.fieldName]" :class="{'warning': !symptom[field.fieldName]}"
-                      :placeholder="getMatchedField(field.fieldName).cnFieldDesc"></el-input>
+                    <el-input v-model="symptom[field.fieldName]" :placeholder="getMatchedField(field.fieldName).cnFieldDesc"></el-input>
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===3">
-                    <el-select v-model="symptom[field.fieldName]" :class="{'warning': !symptom[field.fieldName]}"
-                      :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
+                    <el-select v-model="symptom[field.fieldName]" :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
                       <el-option label="是" :value="'是'"></el-option>
                       <el-option label="否" :value="'否'"></el-option>
                     </el-select>
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===6">
-                    <el-date-picker v-model="symptom[field.fieldName]" type="date" :class="{'warning': !symptom[field.fieldName]}"
+                    <el-date-picker v-model="symptom[field.fieldName]" type="date"
                       format="yyyy-MM-dd" :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
                     </el-date-picker>
                   </span>
@@ -192,8 +189,10 @@
 import Ps from 'perfect-scrollbar';
 import { mapGetters } from 'vuex';
 import Util from 'utils/util.js';
-import Bus from 'utils/bus';
+import Bus from 'utils/bus.js';
 import { vueCopy } from 'utils/helper';
+import { modifyDiagnosticDisease } from 'api/patient.js';
+import { reviseDateFormat } from 'utils/helper.js';
 
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 
@@ -281,8 +280,6 @@ export default {
     cancel() {
       this.copyInfo = {};
       vueCopy(this.diagnosticDisease, this.copyInfo);
-      console.log(this.diagnosticDisease);
-      console.log(this.copyInfo);
       this.warningResults = {};
       this.mutableMode = this.READING_MODE;
     },
@@ -301,19 +298,25 @@ export default {
         }
       }
 
-      // 把 this.copyInfo.patientSymptom 下的日期对象转换为符合传输格式的字符串
-      for (let symptom of this.copyInfo.patientSymptom) {
-        let timeNameList = ['ariseTime', 'ariseTimeLeftUp', 'ariseTimeLeftDown', 'ariseTimeRightUp', 'ariseTimeRightDown'];
-        for (let timeName of timeNameList) {
-          if (symptom.hasOwnProperty(timeName) && symptom[timeName] !== '') {
-            symptom[timeName] = Util.simplifyDate(symptom[timeName]);
-          }
+      // 症状表单并没有用 warningResults 来校验，所以这里手动校验每一行是否都选择了名字
+      for (let symptom of this.allSymptom) {
+        if (!symptom.symptomTypeId) {
+          return;
         }
       }
 
+      // 把 this.copyInfo.patientSymptom 下的日期对象转换为符合传输格式的字符串
+      reviseDateFormat(this.copyInfo);
+
       // 到这里，就可以准备提交数据了
-      // TODO 提交数据
-      console.log(this.copyInfo);
+      this.copyInfo.patientId = this.$route.params.id;
+      this.copyInfo.patientCaseId = this.$route.params.caseId;
+      modifyDiagnosticDisease(this.copyInfo).then(() => {
+        this.updateAndClose();
+      });
+    },
+    updateAndClose() {
+      Bus.$emit(this.UPDATE_CASE_INFO);
       this.mutableMode = this.READING_MODE;
     },
     updateScrollbar() {

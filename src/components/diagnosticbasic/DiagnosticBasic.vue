@@ -41,6 +41,9 @@
 <script>
 import { mapGetters } from 'vuex';
 import Util from 'utils/util.js';
+import Bus from 'utils/bus.js';
+import { addDiagnosticBasic, modifyDiagnosticBasic } from 'api/patient.js';
+import { reviseDateFormat } from 'utils/helper.js';
 
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 
@@ -101,8 +104,16 @@ export default {
         }
       }
 
+      reviseDateFormat(this.copyInfo);
+
       // 到这里，就可以准备提交数据了
-      // TODO 提交数据
+      this.copyInfo.patientCaseId = this.$route.params.caseId;
+      modifyDiagnosticBasic(this.copyInfo).then(() => {
+        this.updateAndClose();
+      });
+    },
+    updateAndClose() {
+      Bus.$emit(this.UPDATE_CASE_INFO);
       this.mutableMode = this.READING_MODE;
     },
     getMatchedField(fieldName) {
