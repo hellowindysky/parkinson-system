@@ -255,7 +255,7 @@
         <div class="field">
           <span class="field-name">试验日期时间</span>
           <span class="field-input">
-            <el-date-picker :picker-options="dateOptions"
+            <el-date-picker v-model="copyInfo.preopsMotorDTO.motorTestTime" :picker-options="dateOptions"
               :editable="false" :default-value="copyInfo.preopsTime"></el-date-picker>
           </span>
         </div>
@@ -272,7 +272,7 @@
           <span class="field-input"></span>
         </div>
         <table class="table">
-          <tr class="row">
+          <tr class="row title-row">
             <td class="col">晨用药物</td>
             <td class="col">规格</td>
             <td class="col">使用量(片)</td>
@@ -302,7 +302,7 @@
           </tr>
         </table>
         <table class="table">
-          <tr class="row">
+          <tr class="row title-row">
             <td class="col wide-col">量表</td>
             <td class="col">服药前得分</td>
             <td class="col">服药后最低分</td>
@@ -326,7 +326,7 @@
         <div class="field whole-line">
           <span class="field-name">备注</span>
           <span class="field-input">
-            <el-input></el-input>
+            <el-input v-model="copyInfo.preopsMotorDTO.motorRemark"></el-input>
           </span>
         </div>
       </div>
@@ -337,38 +337,41 @@
         <div class="field">
           <span class="field-name">表态时间</span>
           <span class="field-input">
-            <el-date-picker :picker-options="dateOptions"
+            <el-date-picker v-model="copyInfo.preopsIntensionDTO.intensionAriseTime" :picker-options="dateOptions"
               :editable="false" :default-value="copyInfo.preopsTime"></el-date-picker>
           </span>
         </div>
         <div class="field">
           <span class="field-name">手术意愿</span>
           <span class="field-input">
-            <el-select :value="1">
-              <el-option label="a" :value="1"></el-option>
+            <el-select v-model="copyInfo.preopsIntensionDTO.operationIntension">
+              <el-option label="同意" :value="1"></el-option>
+              <el-option label="不同意" :value="0"></el-option>
             </el-select>
           </span>
         </div>
         <div class="field">
           <span class="field-name">设备品牌</span>
           <span class="field-input">
-            <el-select :value="1">
-              <el-option label="a" :value="1"></el-option>
+            <el-select v-model="copyInfo.preopsIntensionDTO.operationIntension">
+              <el-option v-for="option in getOptions('deviceType')" :label="option.name"
+                :value="option.code" :key="option.code"></el-option>
             </el-select>
           </span>
         </div>
         <div class="field">
           <span class="field-name">设备类型</span>
           <span class="field-input">
-            <el-select :value="1">
-              <el-option label="a" :value="1"></el-option>
+            <el-select v-model="copyInfo.preopsIntensionDTO.devicePowerType">
+              <el-option label="充电" :value="1"></el-option>
+              <el-option label="不充电" :value="0"></el-option>
             </el-select>
           </span>
         </div>
         <div class="field whole-line">
           <span class="field-name">备注</span>
           <span class="field-input">
-            <el-input></el-input>
+            <el-input v-model="copyInfo.preopsIntensionDTO.intensionRemark"></el-input>
           </span>
         </div>
       </div>
@@ -714,14 +717,14 @@ export default {
               'scaleName': 'MDS-UPDRS III'
             }
           ],
-          'motorRemark': 'ADFA'
+          'motorRemark': ''
         },
         'preopsIntensionDTO': {
-          'intensionAriseTime': '2017-10-29',
-          'operationIntension': 1,
-          'deviceId': '8a8d9f635dc9f57f015dcba7d615002a',
-          'devicePowerType': 0,
-          'intensionRemark': 'R232Q4RSD'
+          'intensionAriseTime': '',
+          'operationIntension': '',
+          'deviceId': '',
+          'devicePowerType': '',
+          'intensionRemark': ''
         }
       }
     };
@@ -809,10 +812,11 @@ export default {
     getOptions(fieldName) {
       var options = [];
       var typeGroupCodeMap = {
-        'terminalScale': 'eodScale'
+        'terminalScale': 'eodScale',
+        'deviceType': 'deviceType'
       };
       if (typeGroupCodeMap[fieldName]) {
-        var typesInfo = Util.getElement('typegroupcode', 'eodScale', this.typeGroup);
+        var typesInfo = Util.getElement('typegroupcode', typeGroupCodeMap[fieldName], this.typeGroup);
         var types = typesInfo && typesInfo.types ? typesInfo.types : [];
         for (let type of types) {
           options.push({
