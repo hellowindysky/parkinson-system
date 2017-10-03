@@ -104,7 +104,7 @@
           <tr class="row">
             <td class="col" v-for="(dayTimeName, listIndex) in dayTimeNameList">
               <el-date-picker v-model="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName]"
-                @change="updateField('diaryDayTime')" :editable="false" :disabled="!isTimeEditable(listIndex)"
+                @change="updateDiaryDayTime()" :editable="false" :disabled="!isTimeEditable(listIndex)"
                 :picker-options="dateOptions"></el-date-picker>
             </td>
           </tr>
@@ -112,7 +112,7 @@
             <td class="col title-col">{{rowName}}</td>
             <td class="col" v-for="(hourName, listIndex) in hourNameList">
               <el-input v-model="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[index][hourName]"
-                @blur="updateField('diaryHour')" :disabled="!hasDayTime(listIndex)"></el-input>
+                @blur="updateDiaryHour()" :disabled="!hasDayTime(listIndex)"></el-input>
             </td>
             <td class="col computed-cell">
               {{ copyInfo.preopsDiaryDTO.patientPreopsDiaryList[index].dayCount }}
@@ -178,7 +178,7 @@
       <div class="sub-title-bar">统一异动症评估</div>
       <div class="content">
         <table class="table">
-          <tr class="row">
+          <tr class="row title-row">
             <td class="col wide-col">量表</td>
             <td class="col">状态</td>
             <td class="col">分数</td>
@@ -782,8 +782,8 @@ export default {
       console.log(info);
 
       this.initCopyInfo();
-      this.updateField('diaryDayTime');
-      this.updateField('diaryHour');
+      this.updateDiaryDayTime();
+      this.updateDiaryHour();
 
       // 获取患者的 DBS 编码
       getPatientSimpleInfo(this.$route.params.id).then((data) => {
@@ -880,108 +880,109 @@ export default {
         }
         this.copyInfo.preopsTerminalDTO.terminalDuration = differenceYear >= 0 ? differenceYear : 0;
 
-      } else if (fieldName === 'diaryDayTime') {
-        // 患者日记是一个数组(preopsDiaryDTO.patientPreopsDiaryList)，
-        // 一共 6 行（睡眠，关期，重异动开，轻异动开，无异动开，总和），每一行是数组下的一个对象
-        // 而这些对象，每一个都包含有日期信息（即列信息），所以每一个日期都在该数组中重复出现了 6 次！
-        // 我们为 组件绑定日期 时，只选取该数组的第一个元素下的日期值，那么一旦日期发生更改，就要将更改应用到每一行中
+      }
+    },
+    updateDiaryDayTime() {
+      // 患者日记是一个数组(preopsDiaryDTO.patientPreopsDiaryList)，
+      // 一共 6 行（睡眠，关期，重异动开，轻异动开，无异动开，总和），每一行是数组下的一个对象
+      // 而这些对象，每一个都包含有日期信息（即列信息），所以每一个日期都在该数组中重复出现了 6 次！
+      // 我们为 组件绑定日期 时，只选取该数组的第一个元素下的日期值，那么一旦日期发生更改，就要将更改应用到每一行中
 
-        // 在做上述操作之前，我们还要做一步校验，如果前一列的日期为空，则后面的日期也必须为空，
-        // 因为实际的表格是填完了一列，才能填写下一列
-        let hasToBeEmpty = false;
-        let dayCount = 0;
-        this.dayTimeNameList.forEach((dayTimeName) => {
-          if (hasToBeEmpty) {
-            this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName] = '';
+      // 在做上述操作之前，我们还要做一步校验，如果前一列的日期为空，则后面的日期也必须为空，
+      // 因为实际的表格是填完了一列，才能填写下一列
+      let hasToBeEmpty = false;
+      let dayCount = 0;
+      this.dayTimeNameList.forEach((dayTimeName) => {
+        if (hasToBeEmpty) {
+          this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName] = '';
+
+        } else {
+          let dayTime = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName];
+
+          if (!dayTime) {
+            hasToBeEmpty = true;
+          } else {
+            dayCount += 1;
+          }
+          for (let diaryItem of this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList) {
+            diaryItem[dayTimeName] = dayTime;
+            diaryItem.dayCount = dayCount;
+          }
+
+        }
+      });
+      // 更新了日期行后，自动更新后面几排的小时数
+      this.updateDiaryHour();
+      return;
+    },
+    updateDiaryHour() {
+      // 每次更新患者日记中的小时数，都会重新计算每一行的 “总天数” 和 “平均值”，以及最后一行的 “总和”
+      // 用一个对象 colTotalHour 将每一列的格子里的小时数 存下来
+      let colTotalHour = {};
+      for (let i = 0; i < 5; i++) {
+        let rowTotalHour = 0;
+
+        for (let listIndex = 0; listIndex < this.hourNameList.length; listIndex++) {
+          let hourName = this.hourNameList[listIndex];
+          colTotalHour[hourName] = colTotalHour[hourName] ? colTotalHour[hourName] : 0;
+
+          // 取到格子中的小时数之后，要先做校验，如果该列顶端的时间没有值，那么将该格子中的值强制改成空字符串
+          let hour = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i][hourName];
+
+          let dayTimeName = this.dayTimeNameList[listIndex];
+          if (!this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName]) {
+            this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i][hourName] = '';
+
+          } else if (hour !== '' && !isNaN(hour) && hour > 0) {
+            // toFixed() 返回的是一个字符串，所以需要用 Number() 将其还原为数字
+            // 另外 Number(2.000) 返回的值是 2，正好符合我们的需要
+            hour = Number(parseFloat(hour).toFixed(1));
+            rowTotalHour += hour;
+            this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i][hourName] = hour;
+
+            colTotalHour[hourName] += hour;
 
           } else {
-            let dayTime = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName];
-
-            if (!dayTime) {
-              hasToBeEmpty = true;
-            } else {
-              dayCount += 1;
-            }
-            for (let diaryItem of this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList) {
-              diaryItem[dayTimeName] = dayTime;
-              diaryItem.dayCount = dayCount;
-            }
-
+            this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i][hourName] = 0;
           }
-        });
-        // 更新了日期行后，自动更新后面几排的小时数
-        this.updateField('diaryHour');
-        return;
-
-      } else if (fieldName === 'diaryHour') {
-        // 每次更新患者日记中的小时数，都会重新计算每一行的 “总天数” 和 “平均值”，以及最后一行的 “总和”
-        // 用一个对象 colTotalHour 将每一列的格子里的小时数 存下来
-        let colTotalHour = {};
-        for (let i = 0; i < 5; i++) {
-          let rowTotalHour = 0;
-
-          for (let listIndex = 0; listIndex < this.hourNameList.length; listIndex++) {
-            let hourName = this.hourNameList[listIndex];
-            colTotalHour[hourName] = colTotalHour[hourName] ? colTotalHour[hourName] : 0;
-
-            // 取到格子中的小时数之后，要先做校验，如果该列顶端的时间没有值，那么将该格子中的值强制改成空字符串
-            let hour = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i][hourName];
-
-            let dayTimeName = this.dayTimeNameList[listIndex];
-            if (!this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName]) {
-              this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i][hourName] = '';
-
-            } else if (hour !== '' && !isNaN(hour) && hour > 0) {
-              // toFixed() 返回的是一个字符串，所以需要用 Number() 将其还原为数字
-              // 另外 Number(2.000) 返回的值是 2，正好符合我们的需要
-              hour = Number(parseFloat(hour).toFixed(1));
-              rowTotalHour += hour;
-              this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i][hourName] = hour;
-
-              colTotalHour[hourName] += hour;
-
-            } else {
-              this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i][hourName] = 0;
-            }
-          }
-          let dayCount = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i].dayCount;
-          let hourAverage = dayCount > 0 ? Number((rowTotalHour * 1.0 / dayCount).toFixed(2)) : 0;
-          this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i].hourAverage = hourAverage;
         }
-
-        for (let hourName of this.hourNameList) {
-          // 最后一排，即“总和”这一排，填上我们保存的每列各自的数据之和
-          colTotalHour[hourName] = Number(colTotalHour[hourName].toFixed(1));
-          this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[5][hourName] = colTotalHour[hourName];
-        }
-
-        // 再根据该表格的数据，更新其它表格的对应数据
-        let sleepTime = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0].hourAverage;
-        let closeTime = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[1].hourAverage;
-        let seriousOpenTime = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[2].hourAverage;
-        let mildOpenTime = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[3].hourAverage;
-        let noneOpenTime = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[4].hourAverage;
-
-        let totalOpenTime = seriousOpenTime + mildOpenTime + noneOpenTime;
-        let wakeTime = 24 - sleepTime;
-        let dyskinesiaTime = seriousOpenTime + mildOpenTime;
-        let goodOpenTime = mildOpenTime + noneOpenTime;
-
-        this.copyInfo.preopsDiaryDTO.wakeTime = Number(wakeTime.toFixed(2));
-        this.copyInfo.preopsDiaryDTO.dyskinesiaTime = Number(dyskinesiaTime.toFixed(2));
-        this.copyInfo.preopsDiaryDTO.closeTime = Number(closeTime.toFixed(2));
-        this.copyInfo.preopsDiaryDTO.totalOpenTime = Number(totalOpenTime.toFixed(2));
-        this.copyInfo.preopsDiaryDTO.openTime = Number(goodOpenTime.toFixed(2));
-        this.copyInfo.preopsDiaryDTO.udysbsOneRatio = totalOpenTime !== 0 ? Number((dyskinesiaTime / totalOpenTime * 100.0).toFixed(2)) : 0;
-        this.copyInfo.preopsDiaryDTO.updrsFourOneRatio = wakeTime !== 0 ? Number((dyskinesiaTime / wakeTime * 100.0).toFixed(2)) : 0;
-        this.copyInfo.preopsDiaryDTO.updrsFourThreeRatio = wakeTime !== 0 ? Number((closeTime / wakeTime * 100.0).toFixed(2)) : 0;
-        this.copyInfo.preopsDiaryDTO.openRatio = wakeTime !== 0 ? Number((goodOpenTime / wakeTime * 100.0).toFixed(2)) : 0;
-        this.copyInfo.preopsDiaryDTO.depDyskinesiaOpenRatio = wakeTime !== 0 ? Number((seriousOpenTime / wakeTime * 100.0).toFixed(2)) : 0;
-        this.copyInfo.preopsDiaryDTO.norDyskinesiaOpenRatio = wakeTime !== 0 ? Number((dyskinesiaTime / wakeTime * 100.0).toFixed(2)) : 0;
-        this.copyInfo.preopsDiaryDTO.closeRatio = wakeTime !== 0 ? Number((closeTime / wakeTime * 100.0).toFixed(2)) : 0;
-
-        return;
+        let dayCount = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i].dayCount;
+        let hourAverage = dayCount > 0 ? Number((rowTotalHour * 1.0 / dayCount).toFixed(2)) : 0;
+        this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i].hourAverage = hourAverage;
       }
+
+      for (let hourName of this.hourNameList) {
+        // 最后一排，即“总和”这一排，填上我们保存的每列各自的数据之和
+        colTotalHour[hourName] = Number(colTotalHour[hourName].toFixed(1));
+        this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[5][hourName] = colTotalHour[hourName];
+      }
+
+      // 再根据该表格的数据，更新其它表格的对应数据
+      let sleepTime = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0].hourAverage;
+      let closeTime = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[1].hourAverage;
+      let seriousOpenTime = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[2].hourAverage;
+      let mildOpenTime = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[3].hourAverage;
+      let noneOpenTime = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[4].hourAverage;
+
+      let totalOpenTime = seriousOpenTime + mildOpenTime + noneOpenTime;
+      let wakeTime = 24 - sleepTime;
+      let dyskinesiaTime = seriousOpenTime + mildOpenTime;
+      let goodOpenTime = mildOpenTime + noneOpenTime;
+
+      this.copyInfo.preopsDiaryDTO.wakeTime = wakeTime !== 24 ? Number(wakeTime.toFixed(2)) : 0; // 如果为 24，说明还没有进行有效填写
+      this.copyInfo.preopsDiaryDTO.dyskinesiaTime = Number(dyskinesiaTime.toFixed(2));
+      this.copyInfo.preopsDiaryDTO.closeTime = Number(closeTime.toFixed(2));
+      this.copyInfo.preopsDiaryDTO.totalOpenTime = Number(totalOpenTime.toFixed(2));
+      this.copyInfo.preopsDiaryDTO.openTime = Number(goodOpenTime.toFixed(2));
+      this.copyInfo.preopsDiaryDTO.udysbsOneRatio = totalOpenTime !== 0 ? Number((dyskinesiaTime / totalOpenTime * 100.0).toFixed(2)) : 0;
+      this.copyInfo.preopsDiaryDTO.updrsFourOneRatio = wakeTime !== 0 ? Number((dyskinesiaTime / wakeTime * 100.0).toFixed(2)) : 0;
+      this.copyInfo.preopsDiaryDTO.updrsFourThreeRatio = wakeTime !== 0 ? Number((closeTime / wakeTime * 100.0).toFixed(2)) : 0;
+      this.copyInfo.preopsDiaryDTO.openRatio = wakeTime !== 0 ? Number((goodOpenTime / wakeTime * 100.0).toFixed(2)) : 0;
+      this.copyInfo.preopsDiaryDTO.depDyskinesiaOpenRatio = wakeTime !== 0 ? Number((seriousOpenTime / wakeTime * 100.0).toFixed(2)) : 0;
+      this.copyInfo.preopsDiaryDTO.norDyskinesiaOpenRatio = wakeTime !== 0 ? Number((dyskinesiaTime / wakeTime * 100.0).toFixed(2)) : 0;
+      this.copyInfo.preopsDiaryDTO.closeRatio = wakeTime !== 0 ? Number((closeTime / wakeTime * 100.0).toFixed(2)) : 0;
+
+      return;
     },
     isTimeEditable(listIndex) {
       if (listIndex === 0) {
