@@ -6,19 +6,19 @@
         <div class="field">
           <span class="field-name">DBS患者编码</span>
           <span class="field-input">
-            <el-input></el-input>
+            <el-input v-model="copyInfo.dbsPatientCode"></el-input>
           </span>
         </div>
         <div class="field">
           <span class="field-name">评估时间</span>
           <span class="field-input">
-            <el-date-picker></el-date-picker>
+            <el-date-picker v-model="copyInfo.preopsTime"></el-date-picker>
           </span>
         </div>
         <div class="field whole-line">
           <span class="field-name">术前评估备注</span>
           <span class="field-input">
-            <el-input></el-input>
+            <el-input v-model="copyInfo.preobsRemark"></el-input>
           </span>
         </div>
       </div>
@@ -30,62 +30,64 @@
         <div class="field">
           <span class="field-name">剂末现象评估时间</span>
           <span class="field-input">
-            <el-date-picker></el-date-picker>
+            <el-date-picker v-model="copyInfo.preopsTerminalDTO.terminalTime"></el-date-picker>
           </span>
         </div>
         <div class="field">
           <span class="field-name">剂末现象评估量表</span>
           <span class="field-input">
-            <el-select :value="1">
-              <el-option label="a" :value="1"></el-option>
+            <el-select v-model="copyInfo.preopsTerminalDTO.terminalScale">
+              <el-option v-for="option in getOptions('terminalScale')"
+                :label="option.name" :value="option.code" :key="option.code">
+              </el-option>
             </el-select>
           </span>
         </div>
         <div class="field">
           <span class="field-name">是否存在剂末现象</span>
           <span class="field-input">
-            <el-select :value="1">
+            <el-select v-model="copyInfo.preopsTerminalDTO.terminalExist" @change="updateField('terminalExist')">
               <el-option label="是" :value="1"></el-option>
-              <el-option label="否" :value="2"></el-option>
+              <el-option label="否" :value="0"></el-option>
             </el-select>
           </span>
         </div>
-        <div class="field">
+        <div class="field" v-show="copyInfo.preopsTerminalDTO.terminalExist===1">
           <span class="field-name">是否首次出现</span>
           <span class="field-input">
-            <el-select :value="1">
+            <el-select v-model="copyInfo.preopsTerminalDTO.terminalIsfirst" @change="updateField('terminalIsfirst')">
               <el-option label="是" :value="1"></el-option>
-              <el-option label="否" :value="2"></el-option>
+              <el-option label="否" :value="0"></el-option>
             </el-select>
           </span>
         </div>
-        <div class="field">
+        <div class="field" v-show="copyInfo.preopsTerminalDTO.terminalIsfirst===0">
           <span class="field-name">初次出现时间</span>
           <span class="field-input">
-            <el-date-picker></el-date-picker>
+            <el-date-picker v-model="copyInfo.preopsTerminalDTO.terminalFirstTime"></el-date-picker>
           </span>
         </div>
-        <div class="field">
+        <div class="field" v-show="copyInfo.preopsTerminalDTO.terminalIsfirst===0">
           <span class="field-name">已出现剂末现象</span>
           <span class="field-input short-input">
-            <el-input></el-input>
+            <el-input v-model="copyInfo.preopsTerminalDTO.terminalDuration"></el-input>
           </span>
           <span class="end-words">年 (运动并发症早期&lt;=3年)</span>
         </div>
         <div class="field whole-line">
           <span class="field-name">备注</span>
           <span class="field-input">
-            <el-input></el-input>
+            <el-input v-model="copyInfo.preopsTerminalDTO.terminalRemark"></el-input>
           </span>
         </div>
       </div>
 
       <div class="seperate-line"></div>
 
-      <div class="sub-title-bar">剂末现象评估</div>
+      <div class="sub-title-bar">患者日记</div>
       <div class="content">
         <table class="table">
-          <tr class="row">
+          <tr class="row title-row">
             <td class="col" rowspan="2">状态</td>
             <td class="col">第一天</td>
             <td class="col">第二天</td>
@@ -97,186 +99,31 @@
             <td class="col" rowspan="2">平均值</td>
           </tr>
           <tr class="row">
-            <td class="col">
-              <el-date-picker></el-date-picker>
+            <td class="col" v-for="(dayTimeName, listIndex) in dayTimeNameList">
+              <el-date-picker v-model="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName]"
+                @change="updateField('diaryDayTime')" :editable="false" :disabled="!isTimeEditable(listIndex)"></el-date-picker>
             </td>
-            <td class="col">
-              <el-date-picker></el-date-picker>
+          </tr>
+          <tr class="row" v-for="(rowName, index) in diaryRowNameList">
+            <td class="col title-col">{{rowName}}</td>
+            <td class="col" v-for="(hourName, listIndex) in hourNameList">
+              <el-input v-model="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[index][hourName]"
+                @blur="updateField('diaryHour')" :disabled="!hasDayTime(listIndex)"></el-input>
             </td>
-            <td class="col">
-              <el-date-picker></el-date-picker>
+            <td class="col computed-col">
+              {{ copyInfo.preopsDiaryDTO.patientPreopsDiaryList[index].dayCount }}
             </td>
-            <td class="col">
-              <el-date-picker></el-date-picker>
-            </td>
-            <td class="col">
-              <el-date-picker></el-date-picker>
-            </td>
-            <td class="col">
-              <el-date-picker></el-date-picker>
+            <td class="col computed-col">
+              {{ copyInfo.preopsDiaryDTO.patientPreopsDiaryList[index].hourAverage }}
             </td>
           </tr>
           <tr class="row">
-            <td class="col">睡眠</td>
-            <td class="col">
-              <el-input></el-input>
+            <td class="col title-col">总和</td>
+            <td class="col computed-col" v-for="hourName in hourNameList">
+              {{copyInfo.preopsDiaryDTO.patientPreopsDiaryList[5][hourName]}}
             </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-          </tr>
-          <tr class="row">
-            <td class="col">关期</td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-          </tr>
-          <tr class="row">
-            <td class="col">重异动开</td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-          </tr>
-          <tr class="row">
-            <td class="col">轻异动开</td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-          </tr>
-          <tr class="row">
-            <td class="col">无异动开</td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-          </tr>
-          <tr class="row">
-            <td class="col">总和</td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
+            <td class="col computed-col"></td>
+            <td class="col computed-col"></td>
           </tr>
         </table>
         <table class="table">
@@ -547,30 +394,427 @@
 </template>
 
 <script>
-// import { mapGetters } from 'vuex';
+import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
-// import Util from 'utils/util.js';
+import Util from 'utils/util.js';
+// import { vueCopy } from 'utils/helper.js';
+
+import {
+  getPatientSimpleInfo,
+  getPreEvaluation
+} from 'api/patient.js';
 
 export default {
   data() {
     return {
       displayModal: false,
-      title: ''
+      mode: '',
+      diaryRowNameList: ['睡眠', '关期', '重异动开', '轻异动开', '无异动开'],
+      dayTimeNameList: ['oneDayTime', 'twoDayTime', 'threeDayTime', 'fourDayTime', 'fiveDayTime', 'sixDayTime'],
+      hourNameList: ['oneDayDiaryHour', 'twoDayDiaryHour', 'threeDayDiaryHour', 'fourDayDiaryHour', 'fiveDayDiaryHour', 'sixDayDiaryHour'],
+      copyInfo: {
+        'preopsTime': '',
+        'preopsRemark': '',
+        'preopsTerminalDTO': {
+          'terminalTime': '',
+          'terminalScale': '',
+          'terminalExist': '',
+          'terminalIsfirst': '',
+          'terminalFirstTime': '',
+          'terminalDuration': '',
+          'terminalRemark': ''
+        },
+        'preopsDiaryDTO': {
+          'patientPreopsDiaryList': [
+            {
+              'oneDayDiaryHour': 1,
+              'oneDayDiaryType': 1,
+              'oneDayTime': '',
+              'twoDayDiaryHour': 2,
+              'twoDayDiaryType': 1,
+              'twoDayTime': '',
+              'threeDayDiaryHour': 3,
+              'threeDayDiaryType': 1,
+              'threeDayTime': '',
+              'fourDayDiaryHour': 4,
+              'fourDayDiaryType': 1,
+              'fourDayTime': '',
+              'fiveDayDiaryHour': 5,
+              'fiveDayDiaryType': 1,
+              'fiveDayTime': '',
+              'sixDayDiaryHour': 6,
+              'sixDayDiaryType': 1,
+              'sixDayTime': '',
+              'dayCount': 6,
+              'hourAverage': 3.5,
+              'patientPreopsInfoId': 15
+            },
+            {
+              'oneDayDiaryHour': 1,
+              'oneDayDiaryType': 2,
+              'oneDayTime': '',
+              'twoDayDiaryHour': 2,
+              'twoDayDiaryType': 2,
+              'twoDayTime': '',
+              'threeDayDiaryHour': 3,
+              'threeDayDiaryType': 2,
+              'threeDayTime': '',
+              'fourDayDiaryHour': 4,
+              'fourDayDiaryType': 2,
+              'fourDayTime': '',
+              'fiveDayDiaryHour': 5,
+              'fiveDayDiaryType': 2,
+              'fiveDayTime': '',
+              'sixDayDiaryHour': 6,
+              'sixDayDiaryType': 2,
+              'sixDayTime': '',
+              'dayCount': 6,
+              'hourAverage': 3.5,
+              'patientPreopsInfoId': 15
+            },
+            {
+              'oneDayDiaryHour': 1,
+              'oneDayDiaryType': 3,
+              'oneDayTime': '',
+              'twoDayDiaryHour': 2,
+              'twoDayDiaryType': 3,
+              'twoDayTime': '',
+              'threeDayDiaryHour': 3,
+              'threeDayDiaryType': 3,
+              'threeDayTime': '',
+              'fourDayDiaryHour': 4,
+              'fourDayDiaryType': 3,
+              'fourDayTime': '',
+              'fiveDayDiaryHour': 5,
+              'fiveDayDiaryType': 3,
+              'fiveDayTime': '',
+              'sixDayDiaryHour': 6,
+              'sixDayDiaryType': 3,
+              'sixDayTime': '',
+              'dayCount': 6,
+              'hourAverage': 3.5,
+              'patientPreopsInfoId': 15
+            },
+            {
+              'oneDayDiaryHour': 1,
+              'oneDayDiaryType': 4,
+              'oneDayTime': '',
+              'twoDayDiaryHour': 2,
+              'twoDayDiaryType': 4,
+              'twoDayTime': '',
+              'threeDayDiaryHour': 3,
+              'threeDayDiaryType': 4,
+              'threeDayTime': '',
+              'fourDayDiaryHour': 4,
+              'fourDayDiaryType': 4,
+              'fourDayTime': '',
+              'fiveDayDiaryHour': 5,
+              'fiveDayDiaryType': 4,
+              'fiveDayTime': '',
+              'sixDayDiaryHour': 6,
+              'sixDayDiaryType': 4,
+              'sixDayTime': '',
+              'dayCount': 6,
+              'hourAverage': 3.5,
+              'patientPreopsInfoId': 15
+            },
+            {
+              'oneDayDiaryHour': 1,
+              'oneDayDiaryType': 5,
+              'oneDayTime': '',
+              'twoDayDiaryHour': 2,
+              'twoDayDiaryType': 5,
+              'twoDayTime': '',
+              'threeDayDiaryHour': 3,
+              'threeDayDiaryType': 5,
+              'threeDayTime': '',
+              'fourDayDiaryHour': 4,
+              'fourDayDiaryType': 5,
+              'fourDayTime': '',
+              'fiveDayDiaryHour': 5,
+              'fiveDayDiaryType': 5,
+              'fiveDayTime': '',
+              'sixDayDiaryHour': 6,
+              'sixDayDiaryType': 5,
+              'sixDayTime': '',
+              'dayCount': 6,
+              'hourAverage': 3.5,
+              'patientPreopsInfoId': 15
+            },
+            {
+              'oneDayDiaryHour': 5,
+              'oneDayDiaryType': 0,
+              'oneDayTime': '',
+              'twoDayDiaryHour': 10,
+              'twoDayDiaryType': 0,
+              'twoDayTime': '',
+              'threeDayDiaryHour': 15,
+              'threeDayDiaryType': 0,
+              'threeDayTime': '',
+              'fourDayDiaryHour': 20,
+              'fourDayDiaryType': 0,
+              'fourDayTime': '',
+              'fiveDayDiaryHour': 25,
+              'fiveDayDiaryType': 0,
+              'fiveDayTime': '',
+              'sixDayDiaryHour': 30,
+              'sixDayDiaryType': 0,
+              'sixDayTime': '',
+              'dayCount': 6,
+              'hourAverage': 17.5,
+              'patientPreopsInfoId': 15
+            }
+          ],
+          'wakeTime': 20.5,
+          'dyskinesiaTime': 7,
+          'closeTime': 3.5,
+          'totalOpenTime': 10.5,
+          'openTime': 7,
+          'udysbsOneRatio': 66.67,
+          'updrsFourOneRatio': 34.15,
+          'updrsFourThreeRatio': 17.07,
+          'openRatio': 34.15,
+          'depDyskinesiaOpenRatio': 17.07,
+          'norDyskinesiaOpenRatio': 34.15,
+          'closeRatio': 17.07
+        },
+        'preopsDyskinesiaDTO': {
+          'patientPreopsScaleList': [
+            {
+              'id': 233,
+              'ariseTime': '2017-10-13',
+              'bodyStatus': 1,
+              'scaleInfo': 1,
+              'scaleScore': 99,
+              'scaleType': 2,
+              'patientPreopsInfoId': 15,
+              'scaleName': 'MDS-UDysRS'
+            }
+          ],
+          'dyskinesiaRemark': '王者农药SDZZC'
+        },
+        'preopsNonMotorDTO': {
+          'patientPreopsScaleList': [
+            {
+              'id': 234,
+              'ariseTime': '2017-10-05',
+              'scaleInfo': 1,
+              'scaleScore': 11,
+              'scaleType': 3,
+              'patientPreopsInfoId': 15,
+              'scaleName': 'MDS-UPDRS Ⅰ'
+            },
+            {
+              'id': 235,
+              'ariseTime': '2017-10-06',
+              'scaleInfo': 2,
+              'scaleScore': 22,
+              'scaleType': 3,
+              'patientPreopsInfoId': 15,
+              'scaleName': 'MDS-UPDRS Ⅱ'
+            },
+            {
+              'id': 236,
+              'ariseTime': '2017-10-07',
+              'scaleInfo': 3,
+              'scaleScore': 33,
+              'scaleType': 3,
+              'patientPreopsInfoId': 15,
+              'scaleName': 'MDS-UPDRS Ⅳ'
+            },
+            {
+              'id': 237,
+              'ariseTime': '2017-10-08',
+              'scaleInfo': 4,
+              'scaleScore': 44,
+              'scaleType': 3,
+              'patientPreopsInfoId': 15,
+              'scaleName': '帕金森病生活质量调查表（PDQ-39）'
+            },
+            {
+              'id': 238,
+              'ariseTime': '2017-10-09',
+              'scaleInfo': 5,
+              'scaleScore': 55,
+              'scaleType': 3,
+              'patientPreopsInfoId': 15,
+              'scaleName': 'Pittsburgh睡眠质量指数调查表（PSQJ）'
+            },
+            {
+              'id': 239,
+              'ariseTime': '2017-10-10',
+              'scaleInfo': 6,
+              'scaleScore': 66,
+              'scaleType': 3,
+              'patientPreopsInfoId': 15,
+              'scaleName': '帕金森病睡眠量表（PDSS）'
+            },
+            {
+              'id': 240,
+              'ariseTime': '2017-10-11',
+              'scaleInfo': 7,
+              'scaleScore': 77,
+              'scaleType': 3,
+              'patientPreopsInfoId': 15,
+              'scaleName': 'Epworth嗜睡评分量表（ESS）'
+            },
+            {
+              'id': 241,
+              'ariseTime': '2017-10-12',
+              'scaleInfo': 8,
+              'scaleScore': 88,
+              'scaleType': 3,
+              'patientPreopsInfoId': 15,
+              'scaleName': '简易只能精神状态量表（MMSE）'
+            },
+            {
+              'id': 242,
+              'ariseTime': '2017-10-13',
+              'scaleInfo': 9,
+              'scaleScore': 99,
+              'scaleType': 3,
+              'patientPreopsInfoId': 15,
+              'scaleName': '蒙特利尔认知评估（MoCA）'
+            },
+            {
+              'id': 243,
+              'ariseTime': '2017-10-14',
+              'scaleInfo': 10,
+              'scaleScore': 87,
+              'scaleType': 3,
+              'patientPreopsInfoId': 15,
+              'scaleName': '汉密尔顿抑郁量表（HAMD）'
+            },
+            {
+              'id': 244,
+              'ariseTime': '2017-10-15',
+              'scaleInfo': 11,
+              'scaleScore': 76,
+              'scaleType': 3,
+              'patientPreopsInfoId': 15,
+              'scaleName': '汉密尔顿焦虑量表（HAMA）'
+            },
+            {
+              'id': 245,
+              'ariseTime': '2017-10-16',
+              'scaleInfo': 12,
+              'scaleScore': 65,
+              'scaleType': 3,
+              'patientPreopsInfoId': 15,
+              'scaleName': '贝克抑郁自评量表（BDI）'
+            },
+            {
+              'id': 246,
+              'ariseTime': '2017-10-17',
+              'scaleInfo': 13,
+              'scaleScore': 54,
+              'scaleType': 3,
+              'patientPreopsInfoId': 15,
+              'scaleName': '非运动症状评定量表（NMSS）'
+            }
+          ],
+          'nonmotorRemark': '333EF'
+        },
+        'preopsMotorDTO': {
+          'motorTestTime': '2017-10-01',
+          'loadingDoseCount': 378,
+          'patientPreopsMedicineList': [
+            {
+              'id': 21,
+              'loadingDose': 375,
+              'medSpecification': 250,
+              'medUsage': 1,
+              'medicineInfo': 1,
+              'morningDose': 250,
+              'patientPreopsInfoId': 15
+            },
+            {
+              'id': 22,
+              'loadingDose': 3,
+              'medSpecification': 1,
+              'medUsage': 2,
+              'medicineInfo': 3,
+              'morningDose': 2,
+              'patientPreopsInfoId': 15
+            }
+          ],
+          'patientPreopsScaleList': [
+            {
+              'id': 247,
+              'drugFlag': 0,
+              'scaleInfo': 1,
+              'scaleScore': 99,
+              'scaleType': 4,
+              'patientPreopsInfoId': 15,
+              'scaleName': 'MDS-UPDRS III'
+            },
+            {
+              'id': 248,
+              'drugFlag': 1,
+              'medImproveRatio': 11.11,
+              'scaleInfo': 1,
+              'scaleScore': 88,
+              'scaleType': 4,
+              'patientPreopsInfoId': 15,
+              'scaleName': 'MDS-UPDRS III'
+            }
+          ],
+          'motorRemark': 'ADFA'
+        },
+        'preopsIntensionDTO': {
+          'intensionAriseTime': '2017-10-29',
+          'operationIntension': 1,
+          'deviceId': '8a8d9f635dc9f57f015dcba7d615002a',
+          'devicePowerType': 0,
+          'intensionRemark': 'R232Q4RSD'
+        }
+      }
     };
   },
   computed: {
-
+    ...mapGetters([
+      'typeGroup'
+    ]),
+    title() {
+      if (this.mode === this.ADD_DATA) {
+        return '新增术前评估';
+      } else if (this.mode === this.EDIT_DATA) {
+        return '术前评估';
+      }
+    }
   },
   methods: {
     showModal(changeWay, info) {
-      if (changeWay === this.ADD_DATA) {
-        this.title = '新增术前评估';
-      } else if (changeWay === this.EDIT_DATA) {
-        this.title = '术前评估';
-      }
+      this.mode = changeWay;
       console.log(info);
+
+      this.initCopyInfo();
+      this.updateField('diaryDayTime');
+      this.updateField('diaryHour');
+
+      // 获取患者的 DBS 编码
+      getPatientSimpleInfo(this.$route.params.id).then((data) => {
+        if (data && data.patientInfo && data.patientInfo && data.patientInfo.dbsPatientCode) {
+          this.$set(this.copyInfo, 'dbsPatientCode', data.patientInfo.dbsPatientCode);
+        } else {
+          this.$set(this.copyInfo, 'dbsPatientCode', '');
+        }
+      });
+
+      // 获取术前评估详情
+      if (changeWay === this.EDIT_DATA) {
+        var preEvaluationId = info.preopsInfoId ? info.preopsInfoId : -1;
+        getPreEvaluation(preEvaluationId).then((data) => {
+          console.log('获取的详细数据', data);
+        });
+      }
+
       this.displayModal = true;
+      this.updateScrollbar();
+    },
+    initCopyInfo() {
+      // this.copyInfo = {};
     },
     updateScrollbar() {
       // 如果不写在 $nextTick() 里面，第一次加载的时候也许会不能正确计算高度。估计是因为子组件还没有全部加载所造成的。
@@ -586,7 +830,127 @@ export default {
       this.displayModal = false;
     },
     submit() {
-      this.displayModal = false;
+      // pruneObj(this.copyInfo);  // 调用此函数将值为空的属性去除掉
+      console.log(this.copyInfo);
+      // this.displayModal = false;
+    },
+    getOptions(fieldName) {
+      var options = [];
+      if (fieldName === 'terminalScale') {
+        var typesInfo = Util.getElement('typegroupcode', 'eodScale', this.typeGroup);
+        var types = typesInfo && typesInfo.types ? typesInfo.types : [];
+        for (let type of types) {
+          options.push({
+            name: type.typeName,
+            code: type.typeCode
+          });
+        }
+      }
+      return options;
+    },
+    updateField(fieldName) {
+      if (fieldName === 'terminalExist') {
+        if (this.copyInfo.preopsTerminalDTO.terminalExist === 0) {
+          // 如果“是否存在剂末现象”选择了“否”，则将“是否首次出现”字段值置为空
+          this.copyInfo.preopsTerminalDTO.terminalIsfirst = '';
+        }
+        return;
+
+      } else if (fieldName === 'terminalIsfirst') {
+        if (this.copyInfo.preopsTerminalDTO.terminalExist === 1) {
+          // 如果“是否首次出现（剂末现象）”选择了“是”，则将“首次出现时间”和“已出现剂末现象”两个字段值置为空
+          this.copyInfo.preopsTerminalDTO.terminalFirstTime = '';
+          this.copyInfo.preopsTerminalDTO.terminalDuration = '';
+        }
+        return;
+
+      } else if (fieldName === 'diaryDayTime') {
+        // 患者日记是一个数组(preopsDiaryDTO.patientPreopsDiaryList)，
+        // 一共 6 行（睡眠，关期，重异动开，轻异动开，无异动开，总和），每一行是数组下的一个对象
+        // 而这些对象，每一个都包含有日期信息（即列信息），所以每一个日期都在该数组中重复出现了 6 次！
+        // 我们为 组件绑定日期 时，只选取该数组的第一个元素下的日期值，那么一旦日期发生更改，就要将更改应用到每一行中
+
+        // 在做上述操作之前，我们还要做一步校验，如果前一列的日期为空，则后面的日期也必须为空，
+        // 因为实际的表格是填完了一列，才能填写下一列
+        var hasToBeEmpty = false;
+        this.dayTimeNameList.forEach((dayTimeName) => {
+          if (hasToBeEmpty) {
+            this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName] = '';
+
+          } else {
+            var dayTime = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName];
+            for (let diaryItem of this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList) {
+              diaryItem[dayTimeName] = dayTime;
+            }
+            if (!dayTime) {
+              hasToBeEmpty = true;
+            }
+          }
+        });
+        this.updateField('diaryHour');
+        return;
+
+      } else if (fieldName === 'diaryHour') {
+        // 每次更新患者日记中的小时数，都会重新计算每一行的 “总天数” 和 “平均值”，以及最后一行的 “总和”
+        // 用一个对象 colTotalHour 将每一列的格子里的小时数 存下来
+        var colTotalHour = {};
+        for (var i = 0; i < 5; i++) {
+          var rowDayCount = 0;
+          var rowTotalHour = 0;
+
+          for (var listIndex = 0; listIndex < this.hourNameList.length; listIndex++) {
+            var hourName = this.hourNameList[listIndex];
+            colTotalHour[hourName] = colTotalHour[hourName] ? colTotalHour[hourName] : 0;
+
+            // 取到格子中的小时数之后，要先做校验，如果该列顶端的时间没有值，那么将该格子中的值强制改成空字符串
+            var hour = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i][hourName];
+
+            var dayTimeName = this.dayTimeNameList[listIndex];
+            if (!this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName]) {
+              this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i][hourName] = '';
+
+            } else if (hour && !isNaN(hour) && hour > 0) {
+              // toFixed() 返回的是一个字符串，所以需要用 Number() 将其还原为数字
+              // 另外 Number(2.000) 返回的值是 2，正好符合我们的需要
+              hour = Number(parseFloat(hour).toFixed(1));
+              rowDayCount += 1;
+              rowTotalHour += hour;
+              this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i][hourName] = hour;
+
+              colTotalHour[hourName] += hour;
+
+            } else {
+              this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i][hourName] = 0;
+            }
+          }
+          this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i].dayCount = rowDayCount;
+          var hourAverage = rowDayCount > 0 ? Number((rowTotalHour * 1.0 / rowDayCount).toFixed(1)) : 0;
+          this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i].hourAverage = hourAverage;
+        }
+
+        for (let hourName of this.hourNameList) {
+          // 最后一排，即“总和”这一排，填上我们保存的每列各自的数据之和
+          this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[5][hourName] = colTotalHour[hourName];
+        }
+        return;
+      }
+    },
+    isTimeEditable(listIndex) {
+      if (listIndex === 0) {
+        return true;
+      } else {
+        var dayTimeName = this.dayTimeNameList[listIndex - 1];
+        var dayTime = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName];
+        if (!dayTime) {
+          return false;
+        } else {
+          return true;
+        }
+      }
+    },
+    hasDayTime(listIndex) {
+      var dayTimeName = this.dayTimeNameList[listIndex];
+      return Boolean(this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName]);
     }
   },
   mounted() {
@@ -599,9 +963,7 @@ export default {
 };
 </script>
 
-<style lang="less">
-@import "~styles/variables.less";
-
+<style lang='less'>@import '~styles/variables.less';
 @field-height: 40px;
 @field-name-width: 120px;
 @long-field-name-width: 160px;
@@ -620,7 +982,7 @@ export default {
     margin: auto;
     padding: 0 40px;
     top: 3%;
-    width: 760px;
+    width: 800px;
     max-height: 94%;
     background-color: @background-color;
     overflow: hidden;
@@ -629,7 +991,7 @@ export default {
       font-size: @large-font-size;
     }
     .sub-title-bar {
-      padding: 15px 10px 15px;
+      padding: 15px 10px;
       text-align: left;
       font-weight: bold;
     }
@@ -644,7 +1006,8 @@ export default {
         width: 50%;
         height: @field-height;
         text-align: left;
-        transform: translateX(10px);  // 这一行是为了修补视觉上的偏移
+        transform: translateX(10px);
+        // 这一行是为了修补视觉上的偏移
         &.whole-line {
           width: 100%;
           .field-input {
@@ -691,7 +1054,7 @@ export default {
           font-size: @normal-font-size;
           color: @light-font-color;
           &.short-input {
-            right: calc(~"8% + @{end-words-width}");
+            right: calc(~'8% + @{end-words-width}');
           }
           &.long-field-name {
             left: @long-field-name-width;
@@ -725,7 +1088,8 @@ export default {
           .el-date-editor {
             width: 100%;
           }
-          .warning .el-input__inner, .warning .el-textarea__inner {
+          .warning .el-input__inner,
+          .warning .el-textarea__inner {
             border: 1px solid red;
           }
         }
@@ -734,15 +1098,26 @@ export default {
         margin: 10px 0 20px;
         width: 100%;
         border: 1px solid @light-gray-color;
-        border-collapse:collapse;
+        border-collapse: collapse;
         text-align: center;
         .row {
           height: 35px;
           font-size: @normal-font-size;
+          &.title-row {
+            background-color: @font-color;
+            color: #fff;
+          }
           .col {
             position: relative;
             width: 10%;
             border: 1px solid @light-gray-color;
+            &.title-col {
+              background-color: @font-color;
+              color: #fff;
+            }
+            &.computed-col {
+              background-color: lighten(@font-color, 55%);
+            }
             &.wide-col {
               width: 30%;
             }
@@ -756,8 +1131,17 @@ export default {
                 border: none;
                 text-align: center;
               }
-              .el-icon-date {
-                display: none;
+              .el-input__icon {
+                width: 15px;
+                height: 15px;
+                padding: 0 0 5px 5px;
+                transition: 0s;
+                &.el-icon-date {
+                  opacity: 0;
+                }
+                &.el-icon-close {
+                  color: @alert-color;
+                }
               }
             }
           }
@@ -773,7 +1157,7 @@ export default {
     .button {
       display: inline-block;
       width: 100px;
-      margin: 10px 20px 20px 20px;
+      margin: 10px 20px 20px;
       height: 30px;
       line-height: 30px;
       color: #fff;
@@ -815,5 +1199,4 @@ export default {
     }
   }
 }
-
 </style>

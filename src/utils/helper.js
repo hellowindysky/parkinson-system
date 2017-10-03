@@ -71,3 +71,24 @@ export function vueCopy(origin, copy) {
     }
   }
 }
+
+export function pruneObj(obj) {
+  // 精简一个对象，将其下对应值为空的属性删除，这样利于传递给后端
+  if (typeof obj !== 'object') {
+    return;   // 如果参数不是对象和数组，则直接返回，结束本次精简操作
+  }
+
+  for (var p in obj) {
+    if (obj.hasOwnProperty(p) && typeof obj[p] !== 'object') {
+      if (obj[p] === undefined || obj[p] === null || obj[p] === '') {
+        delete obj[p];  // 删除值为空的属性，这是该函数唯一结束递归的地方
+      }
+    } else if (obj.hasOwnProperty(p) && (obj[p] instanceof Array)) {
+      for (let item of obj[p]) {
+        pruneObj(item);
+      }
+    } else if (obj.hasOwnProperty(p) && !(obj[p] instanceof Array)) {
+      pruneObj(obj[p]);
+    }
+  }
+};

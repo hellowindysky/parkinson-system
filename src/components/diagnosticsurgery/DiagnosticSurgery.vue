@@ -219,11 +219,9 @@ export default {
     addPreEvaluationRecord() {
       // 这里要传递 2 个参数，一个是模式（新增／修改），一个是当前数据对象（新建的时候为空）
       Bus.$emit(this.SHOW_PRE_EVALUATION_MODAL, this.ADD_DATA, {});
-      console.log('add');
     },
     editPreEvaluationRecord(item) {
-      Bus.$emit(this.SHOW_PRE_EVALUATION_MODAL, this.EDIT_DATA, {});
-      console.log('edit', item);
+      Bus.$emit(this.SHOW_PRE_EVALUATION_MODAL, this.EDIT_DATA, item);
     },
     deletePreEvaluationRecord(item) {
       // var patientMed = {
