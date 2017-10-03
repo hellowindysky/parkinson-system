@@ -157,9 +157,9 @@
             <td class="col">关期%</td>
           </tr>
           <tr class="row">
-            <td class="col computed-cell">{{copyInfo.preopsDiaryDTO.udysbsOneRatio}}</td>
-            <td class="col computed-cell">{{copyInfo.preopsDiaryDTO.updrsFourOneRatio}}</td>
-            <td class="col computed-cell">{{copyInfo.preopsDiaryDTO.updrsFourThreeRatio}}</td>
+            <td class="col computed-cell">{{getStageScore(copyInfo.preopsDiaryDTO.udysbsOneRatio)}}</td>
+            <td class="col computed-cell">{{getStageScore(copyInfo.preopsDiaryDTO.updrsFourOneRatio)}}</td>
+            <td class="col computed-cell">{{getStageScore(copyInfo.preopsDiaryDTO.updrsFourThreeRatio)}}</td>
             <td class="col computed-cell">{{copyInfo.preopsDiaryDTO.openRatio}}</td>
             <td class="col computed-cell">{{copyInfo.preopsDiaryDTO.depDyskinesiaOpenRatio}}</td>
             <td class="col computed-cell">{{copyInfo.preopsDiaryDTO.norDyskinesiaOpenRatio}}</td>
@@ -184,25 +184,28 @@
             <td class="col">分数</td>
             <td class="col">量表完成日期</td>
           </tr>
-          <tr class="row">
+          <tr class="row" v-for="scale in copyInfo.preopsDyskinesiaDTO.patientPreopsScaleList">
             <td class="col wide-col">
-              <el-input></el-input>
+              {{getRealName(scale.scaleInfo, 'unifyScale')}}
             </td>
             <td class="col">
-              <el-input></el-input>
+              <el-select v-model="scale.bodyStatus">
+                <el-option label="开期" :value="1"></el-option>
+                <el-option label="关期" :value="0"></el-option>
+              </el-select>
             </td>
             <td class="col">
-              <el-input></el-input>
+              <el-input v-model="scale.scaleScore" @blur="transformToNum(scale, 'scaleScore')" :class="{'warning': isNaN(scale.scaleScore)}"></el-input>
             </td>
             <td class="col">
-              <el-date-picker :picker-options="dateOptions" :editable="false"></el-date-picker>
+              <el-date-picker v-model="scale.ariseTime" :picker-options="dateOptions" :editable="false"></el-date-picker>
             </td>
           </tr>
         </table>
         <div class="field whole-line">
           <span class="field-name">备注</span>
           <span class="field-input">
-            <el-input></el-input>
+            <el-input v-model="copyInfo.preopsDyskinesiaDTO.dyskinesiaRemark"></el-input>
           </span>
         </div>
       </div>
@@ -562,22 +565,18 @@ export default {
         'preopsDyskinesiaDTO': {
           'patientPreopsScaleList': [
             {
-              'id': 233,
-              'ariseTime': '2017-10-13',
-              'bodyStatus': 1,
+              'ariseTime': '',
+              'bodyStatus': '',
               'scaleInfo': 1,
-              'scaleScore': 99,
-              'scaleType': 2,
-              'patientPreopsInfoId': 15,
-              'scaleName': 'MDS-UDysRS'
+              'scaleScore': '',
+              'scaleType': 2
             }
           ],
-          'dyskinesiaRemark': '王者农药SDZZC'
+          'dyskinesiaRemark': ''
         },
         'preopsNonMotorDTO': {
           'patientPreopsScaleList': [
             {
-              'id': 234,
               'ariseTime': '2017-10-05',
               'scaleInfo': 1,
               'scaleScore': 11,
@@ -586,7 +585,6 @@ export default {
               'scaleName': 'MDS-UPDRS Ⅰ'
             },
             {
-              'id': 235,
               'ariseTime': '2017-10-06',
               'scaleInfo': 2,
               'scaleScore': 22,
@@ -595,7 +593,6 @@ export default {
               'scaleName': 'MDS-UPDRS Ⅱ'
             },
             {
-              'id': 236,
               'ariseTime': '2017-10-07',
               'scaleInfo': 3,
               'scaleScore': 33,
@@ -604,7 +601,6 @@ export default {
               'scaleName': 'MDS-UPDRS Ⅳ'
             },
             {
-              'id': 237,
               'ariseTime': '2017-10-08',
               'scaleInfo': 4,
               'scaleScore': 44,
@@ -613,7 +609,6 @@ export default {
               'scaleName': '帕金森病生活质量调查表（PDQ-39）'
             },
             {
-              'id': 238,
               'ariseTime': '2017-10-09',
               'scaleInfo': 5,
               'scaleScore': 55,
@@ -622,7 +617,6 @@ export default {
               'scaleName': 'Pittsburgh睡眠质量指数调查表（PSQJ）'
             },
             {
-              'id': 239,
               'ariseTime': '2017-10-10',
               'scaleInfo': 6,
               'scaleScore': 66,
@@ -631,7 +625,6 @@ export default {
               'scaleName': '帕金森病睡眠量表（PDSS）'
             },
             {
-              'id': 240,
               'ariseTime': '2017-10-11',
               'scaleInfo': 7,
               'scaleScore': 77,
@@ -640,7 +633,6 @@ export default {
               'scaleName': 'Epworth嗜睡评分量表（ESS）'
             },
             {
-              'id': 241,
               'ariseTime': '2017-10-12',
               'scaleInfo': 8,
               'scaleScore': 88,
@@ -649,7 +641,6 @@ export default {
               'scaleName': '简易只能精神状态量表（MMSE）'
             },
             {
-              'id': 242,
               'ariseTime': '2017-10-13',
               'scaleInfo': 9,
               'scaleScore': 99,
@@ -658,7 +649,6 @@ export default {
               'scaleName': '蒙特利尔认知评估（MoCA）'
             },
             {
-              'id': 243,
               'ariseTime': '2017-10-14',
               'scaleInfo': 10,
               'scaleScore': 87,
@@ -667,7 +657,6 @@ export default {
               'scaleName': '汉密尔顿抑郁量表（HAMD）'
             },
             {
-              'id': 244,
               'ariseTime': '2017-10-15',
               'scaleInfo': 11,
               'scaleScore': 76,
@@ -676,7 +665,6 @@ export default {
               'scaleName': '汉密尔顿焦虑量表（HAMA）'
             },
             {
-              'id': 245,
               'ariseTime': '2017-10-16',
               'scaleInfo': 12,
               'scaleScore': 65,
@@ -685,7 +673,6 @@ export default {
               'scaleName': '贝克抑郁自评量表（BDI）'
             },
             {
-              'id': 246,
               'ariseTime': '2017-10-17',
               'scaleInfo': 13,
               'scaleScore': 54,
@@ -701,7 +688,6 @@ export default {
           'loadingDoseCount': 378,
           'patientPreopsMedicineList': [
             {
-              'id': 21,
               'loadingDose': 375,
               'medSpecification': 250,
               'medUsage': 1,
@@ -710,7 +696,6 @@ export default {
               'patientPreopsInfoId': 15
             },
             {
-              'id': 22,
               'loadingDose': 3,
               'medSpecification': 1,
               'medUsage': 2,
@@ -721,7 +706,6 @@ export default {
           ],
           'patientPreopsScaleList': [
             {
-              'id': 247,
               'drugFlag': 0,
               'scaleInfo': 1,
               'scaleScore': 99,
@@ -730,7 +714,6 @@ export default {
               'scaleName': 'MDS-UPDRS III'
             },
             {
-              'id': 248,
               'drugFlag': 1,
               'medImproveRatio': 11.11,
               'scaleInfo': 1,
@@ -826,9 +809,18 @@ export default {
       console.log(this.copyInfo);
       // this.displayModal = false;
     },
+    getRealName(code, typeGroupCode) {
+      var typesInfo = Util.getElement('typegroupcode', typeGroupCode, this.typeGroup);
+      var types = typesInfo && typesInfo.types ? typesInfo.types : [];
+      var type = Util.getElement('typeCode', code, types);
+      return type.typeName ? type.typeName : '';
+    },
     getOptions(fieldName) {
       var options = [];
-      if (fieldName === 'terminalScale') {
+      var typeGroupCodeMap = {
+        'terminalScale': 'eodScale'
+      };
+      if (typeGroupCodeMap[fieldName]) {
         var typesInfo = Util.getElement('typegroupcode', 'eodScale', this.typeGroup);
         var types = typesInfo && typesInfo.types ? typesInfo.types : [];
         for (let type of types) {
@@ -839,6 +831,16 @@ export default {
         }
       }
       return options;
+    },
+    transformToNum(obj, property) {
+      // 如果填写的不是一个数字，则转换成一个空字符串，如果是一个数字，则将这个数字字符串转化为真正的数字
+      var value = obj[property];
+      var reg = new RegExp(/^[0-9]+\.{0,1}[0-9]{0,2}$/);
+      if (reg.test(value)) {
+        obj[property] = Number(value);
+      } else {
+        obj[property] = '';
+      }
     },
     updateField(fieldName) {
       if (fieldName === 'terminalExist') {
@@ -983,6 +985,22 @@ export default {
       this.copyInfo.preopsDiaryDTO.closeRatio = wakeTime !== 0 ? Number((closeTime / wakeTime * 100.0).toFixed(2)) : 0;
 
       return;
+    },
+    getStageScore(percent) {
+      // UDysRS-1，UPDRS-4.1，UPDRS-4.3 显示的是其实际百分比所对应的得分（0-4分）
+      if (!percent || isNaN(percent)) {
+        return 0;
+      } else if (percent > 0 && percent <= 25) {
+        return 1;
+      } else if (percent <= 50) {
+        return 2;
+      } else if (percent <= 75) {
+        return 3;
+      } else if (percent <= 100) {
+        return 4;
+      } else {
+        return '?';
+      }
     },
     isTimeEditable(listIndex) {
       if (listIndex === 0) {
@@ -1179,19 +1197,26 @@ export default {
             }
             .el-input {
               width: 100%;
+              &.warning {
+                margin: -1px;
+                border: 1px solid red;
+              }
               .el-input__inner {
                 padding: 0;
                 border: none;
                 text-align: center;
               }
               .el-input__icon {
-                width: 12px;
-                height: 12px;
-                padding: 0 0 18px 10px;
                 &.el-icon-date {
+                  width: 12px;
+                  height: 12px;
+                  padding: 0 0 18px 10px;
                   opacity: 0.3;
                 }
                 &.el-icon-close {
+                  width: 12px;
+                  height: 12px;
+                  padding: 0 0 18px 10px;
                   color: @alert-color;
                 }
               }
