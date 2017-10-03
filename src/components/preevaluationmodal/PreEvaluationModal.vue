@@ -31,7 +31,7 @@
         <div class="field">
           <span class="field-name">剂末现象评估时间</span>
           <span class="field-input">
-            <el-date-picker v-model="copyInfo.preopsTerminalDTO.terminalTime"
+            <el-date-picker v-model="copyInfo.preopsTerminalDTO.terminalTime" :default-value="copyInfo.preopsTime"
               :picker-options="dateOptions" :editable="false"></el-date-picker>
           </span>
         </div>
@@ -199,7 +199,8 @@
                 :class="{'warning': isNaN(scale.scaleScore)}"></el-input>
             </td>
             <td class="col">
-              <el-date-picker v-model="scale.ariseTime" :picker-options="dateOptions" :editable="false"></el-date-picker>
+              <el-date-picker v-model="scale.ariseTime" :picker-options="dateOptions"
+                :editable="false" :default-value="copyInfo.preopsTime"></el-date-picker>
             </td>
           </tr>
         </table>
@@ -232,7 +233,8 @@
                 :class="{'warning': isNaN(scale.scaleScore)}"></el-input>
             </td>
             <td class="col">
-              <el-date-picker v-model="scale.ariseTime" :picker-options="dateOptions" :editable="false"></el-date-picker>
+              <el-date-picker v-model="scale.ariseTime" :picker-options="dateOptions"
+               :editable="false" :default-value="copyInfo.preopsTime"></el-date-picker>
             </td>
             <td class="col">
               <el-input v-model="scale.remarks"></el-input>
@@ -253,7 +255,8 @@
         <div class="field">
           <span class="field-name">试验日期时间</span>
           <span class="field-input">
-            <el-date-picker :picker-options="dateOptions" :editable="false"></el-date-picker>
+            <el-date-picker :picker-options="dateOptions"
+              :editable="false" :default-value="copyInfo.preopsTime"></el-date-picker>
           </span>
         </div>
         <div class="field">
@@ -334,7 +337,8 @@
         <div class="field">
           <span class="field-name">表态时间</span>
           <span class="field-input">
-            <el-date-picker :picker-options="dateOptions" :editable="false"></el-date-picker>
+            <el-date-picker :picker-options="dateOptions"
+              :editable="false" :default-value="copyInfo.preopsTime"></el-date-picker>
           </span>
         </div>
         <div class="field">
