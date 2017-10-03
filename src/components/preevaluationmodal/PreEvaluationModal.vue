@@ -114,24 +114,24 @@
               <el-input v-model="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[index][hourName]"
                 @blur="updateField('diaryHour')" :disabled="!hasDayTime(listIndex)"></el-input>
             </td>
-            <td class="col computed-col">
+            <td class="col computed-cell">
               {{ copyInfo.preopsDiaryDTO.patientPreopsDiaryList[index].dayCount }}
             </td>
-            <td class="col computed-col">
+            <td class="col computed-cell">
               {{ copyInfo.preopsDiaryDTO.patientPreopsDiaryList[index].hourAverage }}
             </td>
           </tr>
           <tr class="row">
             <td class="col title-col">总和</td>
-            <td class="col computed-col" v-for="hourName in hourNameList">
+            <td class="col computed-cell" v-for="hourName in hourNameList">
               {{copyInfo.preopsDiaryDTO.patientPreopsDiaryList[5][hourName]}}
             </td>
-            <td class="col computed-col"></td>
-            <td class="col computed-col"></td>
+            <td class="col computed-cell"></td>
+            <td class="col computed-cell"></td>
           </tr>
         </table>
         <table class="table">
-          <tr class="row">
+          <tr class="row title-row">
             <td class="col">觉醒时间</td>
             <td class="col">异动时间</td>
             <td class="col">关期总时间</td>
@@ -139,15 +139,15 @@
             <td class="col">好的开期时间</td>
           </tr>
           <tr class="row">
-            <td class="col">{{copyInfo.preopsDiaryDTO.wakeTime}}</td>
-            <td class="col">{{copyInfo.preopsDiaryDTO.dyskinesiaTime}}</td>
-            <td class="col">{{copyInfo.preopsDiaryDTO.closeTime}}</td>
-            <td class="col">{{copyInfo.preopsDiaryDTO.totalOpenTime}}</td>
-            <td class="col">{{copyInfo.preopsDiaryDTO.openTime}}</td>
+            <td class="col computed-cell">{{copyInfo.preopsDiaryDTO.wakeTime}}</td>
+            <td class="col computed-cell">{{copyInfo.preopsDiaryDTO.dyskinesiaTime}}</td>
+            <td class="col computed-cell">{{copyInfo.preopsDiaryDTO.closeTime}}</td>
+            <td class="col computed-cell">{{copyInfo.preopsDiaryDTO.totalOpenTime}}</td>
+            <td class="col computed-cell">{{copyInfo.preopsDiaryDTO.openTime}}</td>
           </tr>
         </table>
         <table class="table">
-          <tr class="row">
+          <tr class="row title-row">
             <td class="col">UDysRS-1</td>
             <td class="col">UPDRS-4.1</td>
             <td class="col">UPDRS-4.3</td>
@@ -157,27 +157,13 @@
             <td class="col">关期%</td>
           </tr>
           <tr class="row">
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
-            <td class="col">
-              <el-input></el-input>
-            </td>
+            <td class="col computed-cell"></td>
+            <td class="col computed-cell"></td>
+            <td class="col computed-cell"></td>
+            <td class="col computed-cell"></td>
+            <td class="col computed-cell"></td>
+            <td class="col computed-cell"></td>
+            <td class="col computed-cell"></td>
           </tr>
         </table>
         <div class="field whole-line">
@@ -1009,11 +995,15 @@ export default {
 };
 </script>
 
-<style lang='less'>@import '~styles/variables.less';
+<style lang='less'>
+@import '~styles/variables.less';
+
 @field-height: 40px;
 @field-name-width: 120px;
 @long-field-name-width: 160px;
 @end-words-width: 180px;
+
+@computed-cell-color: lighten(@font-color, 55%);
 
 .pre-evaluation-modal-wrapper {
   position: absolute;
@@ -1161,8 +1151,8 @@ export default {
               background-color: @font-color;
               color: #fff;
             }
-            &.computed-col {
-              background-color: lighten(@font-color, 55%);
+            &.computed-cell {
+              background-color: @computed-cell-color;
             }
             &.wide-col {
               width: 30%;
