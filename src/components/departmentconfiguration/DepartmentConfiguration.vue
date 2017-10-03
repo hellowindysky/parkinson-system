@@ -4,9 +4,9 @@
     <feature-table-head></feature-table-head>
     <div class="scroll-wrapper">
       <div class="freature-person-conf-wrapper" ref="scrollArea">
-        <basic-infoConfig :basicInfoF="basicInfoF" :basicInfoS="basicInfoS" :basicInfoT="basicInfoT"></basic-infoConfig>
-        <diseage-infoConfig :diseaseInfoF="diseaseInfoF" :diseaseInfoS="diseaseInfoS" :diseaseInfoT="diseaseInfoT"></diseage-infoConfig>
-        <other-infoConfig :medHistoryList="medHistoryList" :diseaseHistoryList="diseaseHistoryList" :familyHistoryList="familyHistoryList" :coffeeHistoryList="coffeeHistoryList" :smokeHistoryList="smokeHistoryList" :wineHistoryList="wineHistoryList" :teaHistoryList="teaHistoryList" :exerciseHistoryList="exerciseHistoryList" :toxicExposureHistoryList="toxicExposureHistoryList"></other-infoConfig>
+       <basic-infoConfig :basicInfoF="basicInfoF" :basicInfoS="basicInfoS" :basicInfoT="basicInfoT"></basic-infoConfig>
+      <diseage-infoConfig :diseaseInfoF="diseaseInfoF"  :diseaseInfoS="diseaseInfoS" :diseaseInfoT="diseaseInfoT"></diseage-infoConfig>
+      <other-infoConfig :medHistoryList="medHistoryList" :diseaseHistoryList="diseaseHistoryList" :familyHistoryList="familyHistoryList" :coffeeHistoryList="coffeeHistoryList" :smokeHistoryList="smokeHistoryList" :wineHistoryList="wineHistoryList" :teaHistoryList="teaHistoryList" :exerciseHistoryList="exerciseHistoryList" :toxicExposureHistoryList="toxicExposureHistoryList"></other-infoConfig>
       </div>
     </div>
   </div>
@@ -112,39 +112,39 @@ export default {
     },
     medHistoryList() {
       // 用药史
-      return this.getGroups(this.userInfo, 'tc_patient_medhistory')[0];
+      return this.getGroups(this.userInfo, 'tc_patient_medhistory');
     },
     diseaseHistoryList() {
       // 既往史
-      return this.getGroups(this.userInfo, 'tc_patient_disease')[0];
+      return this.getGroups(this.userInfo, 'tc_patient_disease');
     },
     familyHistoryList() {
       // 家族史
-      return this.getGroups(this.userInfo, 'tc_family_history')[0];
+      return this.getGroups(this.userInfo, 'tc_family_history');
     },
     coffeeHistoryList() {
       // 咖啡史
-      return this.getGroups(this.userInfo, 'tc_patient_coffee')[0];
+      return this.getGroups(this.userInfo, 'tc_patient_coffee');
     },
     smokeHistoryList() {
       // 吸烟史
-      return this.getGroups(this.userInfo, 'tc_patient_smoke')[0];
+      return this.getGroups(this.userInfo, 'tc_patient_smoke');
     },
     wineHistoryList() {
       // 饮酒史
-      return this.getGroups(this.userInfo, 'tc_patient_wine')[0];
+      return this.getGroups(this.userInfo, 'tc_patient_wine');
     },
     teaHistoryList() {
       // 喝茶史
-      return this.getGroups(this.userInfo, 'tc_patient_tea')[0];
+      return this.getGroups(this.userInfo, 'tc_patient_tea');
     },
     exerciseHistoryList() {
       // 锻炼史
-      return this.getGroups(this.userInfo, 'tc_patient_exercise')[0];
+      return this.getGroups(this.userInfo, 'tc_patient_exercise');
     },
     toxicExposureHistoryList() {
       // 毒物接触史
-      return this.getGroups(this.userInfo, 'tc_cideexposed_history')[0];
+      return this.getGroups(this.userInfo, 'tc_cideexposed_history');
     }
   }
 };
