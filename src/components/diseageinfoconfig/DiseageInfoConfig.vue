@@ -4,7 +4,7 @@
       <div class="small-area-title">起病情况</div>
       <ul class="config-small-table" v-for="(field, groupNo) in copyInfoF" :key="groupNo">
         <li>
-          <span>{{field.cnfieldName}}</span>
+          <span>{{handleFileName(field)}}</span>
         </li>
         <li>
             <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="on" off-text="off" off-color="#eff0f6" :width="switchWidth"></el-switch>
@@ -18,7 +18,7 @@
       <div class="small-area-title">首发情况</div>
       <ul class="config-small-table" v-for="(field, groupNo) in copyInfoS" :key="groupNo">
         <li>
-          <span>{{field.cnfieldName}}</span>
+          <span>{{handleFileName(field)}}</span>
         </li>
         <li>
             <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="on" off-text="off" off-color="#eff0f6" :width="switchWidth"></el-switch>
@@ -32,7 +32,7 @@
       <div class="small-area-title">诊疗情况</div>
       <ul class="config-small-table" v-for="(field, groupNo) in copyInfoT" :key="groupNo">
         <li>
-          <span>{{field.cnfieldName}}</span>
+          <span>{{handleFileName(field)}}</span>
         </li>
         <li>
             <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="on" off-text="off" off-color="#eff0f6" :width="switchWidth"></el-switch>
@@ -47,6 +47,7 @@
 <script>
 import FeatureFoldingPanel from '../featurefoldingpanel/FeatureFoldingPanel';
 import { mapGetters } from 'vuex';
+import { vueCopy } from 'utils/helper';
 export default {
   props: {
     diseaseInfoF: {
@@ -61,9 +62,9 @@ export default {
   },
   data() {
     return {
-      copyInfoF: [{}, {}, {}, {}, {}],
-      copyInfoS: [{}, {}],
-      copyInfoT: [{}, {}, {}, {}, {}],
+      copyInfoF: [],
+      copyInfoS: [],
+      copyInfoT: [],
       mode: this.READING_MODE,
       isEdit: true,
       switchWidth: 50
@@ -76,39 +77,48 @@ export default {
     },
     cancel() {
       // 点击取消按钮，将我们对 copyInfo 所做的临时修改全部放弃，还原其为 basicInfo 的复制对象
-      // this.shallowCopy(this.basicInfo);
-      this.deepCopy(this.diseaseInfoF, 1);
-      this.deepCopy(this.diseaseInfoS, 2);
-      this.deepCopy(this.diseaseInfoT, 3);
+      this.reductionCopyInfo(); // 还原数据
       this.mode = this.READING_MODE;
       this.isEdit = true;
+    },
+    reductionCopyInfo() { // 还原copyInfo的数据项
+      vueCopy(this.diseaseInfoF, this.copyInfoF);
+      this.changeDataType(this.copyInfoF);
+      vueCopy(this.diseaseInfoS, this.copyInfoS);
+      this.changeDataType(this.copyInfoS);
+      vueCopy(this.diseaseInfoT, this.copyInfoT);
+      this.changeDataType(this.copyInfoT);
     },
     submit() {
       this.mode = this.READING_MODE;
       this.isEdit = true;
     },
-    deepCopy(copyFile, type) {
-      var dataTemp = null;
-      if (type === 1) {
-        dataTemp = this.copyInfoF;
-      } else if (type === 2) {
-        dataTemp = this.copyInfoS;
-      } else if (type === 3) {
-        dataTemp = this.copyInfoT;
+    handleFileName(file) {
+      let flag = true;
+      for (let key in file) {
+        if (key === 'cnfieldName') {
+          flag = false;
+        }
       }
-      for (let i = 0; i < copyFile.length; i++) {
-        let sonData = copyFile[i];
-        for (let key in sonData) {
-          this.$set(dataTemp[i], key, sonData[key]);
+      if (!flag) {
+        return file['cnfieldName'];
+      } else {
+        return file['fieldName'];
+      }
+    },
+    changeDataType(copydata) {
+      for (let j = 0; j < copydata.length; j++) {
+        let sonData1 = copydata[j];
+        for (let key in sonData1) {
           if (key === 'must') {
-            this.$set(dataTemp[i], 'must', this.changeSwitch(sonData['must']));
+            this.$set(copydata[j], 'must', this.changeCheck(sonData1['must']));
           } else if (key === 'active') {
-            this.$set(dataTemp[i], 'active', this.changeSwitch(sonData['active']));
+            this.$set(copydata[j], 'active', this.changeCheck(sonData1['active']));
           }
         }
       }
     },
-    changeSwitch(val) {
+    changeCheck(val) {
       if (val === 1) {
         return true;
       } else {
@@ -129,19 +139,22 @@ export default {
   watch: {
     diseaseInfoF: {
       handler: function(newVal) {
-        this.deepCopy(newVal, 1);
+        vueCopy(newVal, this.copyInfoF);
+        this.changeDataType(this.copyInfoF);
       },
       deep: true
     },
     diseaseInfoS: {
       handler: function(newVal) {
-        this.deepCopy(newVal, 2);
+        vueCopy(newVal, this.copyInfoS);
+        this.changeDataType(this.copyInfoS);
       },
       deep: true
     },
     diseaseInfoT: {
       handler: function(newVal) {
-        this.deepCopy(newVal, 3);
+        vueCopy(newVal, this.copyInfoT);
+        this.changeDataType(this.copyInfoT);
       },
       deep: true
     }

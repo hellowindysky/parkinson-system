@@ -101,7 +101,7 @@ export default {
     },
     _resolveDeletion() {
       // 如果成功删除记录，则重新发出请求，获取最新数据。同时解除 [确认对话框] 的 “确认” 回调函数
-      Bus.$emit(this.UPDATE_PATIENT_INFO);
+      Bus.$emit(this.UPDATE_CASE_INFO);
       Bus.$off(this.CONFIRM);
     },
     _rejectDeletion() {
@@ -136,7 +136,6 @@ export default {
       handler: function(newVal) {
         if (newVal) {
           this.count = this.patientScale.length;
-          // console.log(newVal);
         }
       },
       deep: true

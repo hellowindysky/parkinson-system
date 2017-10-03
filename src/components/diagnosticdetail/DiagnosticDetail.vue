@@ -14,7 +14,8 @@
       <diagnostic-examination class="folding-panel" :mode="mode"
         :neurologicCheckList="caseDetail.patientSpephysical"
         :biochemicalExamList="caseDetail.patientBioexam"
-        :emgList="caseDetail.patientElecTroGram">
+        :emgList="caseDetail.patientElecTroGram"
+        :VitalSignsData="VitalSignsData">
       </diagnostic-examination>
     </div>
   </div>
@@ -38,7 +39,8 @@ export default {
       displayDetail: false,
       caseId: 0,
       caseDetail: {},
-      mode: this.READING_MODE
+      mode: this.READING_MODE,
+      VitalSignsData: {}
     };
   },
   computed: {
@@ -63,7 +65,6 @@ export default {
       this.$nextTick(() => {
         // 之所以弃用 update 方法，是因为它在某些情况下会出现问题，导致滚动条不能有效刷新
         // Ps.update(this.$refs.scrollArea);
-
         // 如果之前有绑定滚动条的话，先进行解除
         Ps.destroy(this.$refs.scrollArea);
         Ps.initialize(this.$refs.scrollArea, {
@@ -74,7 +75,6 @@ export default {
     },
     checkRoute() {
       var path = this.$route.path;
-
       if (/^\/patients\/list\/[0-9]+\/diagnosticInfo\/?$/.test(path)) {
         // 一旦发现路由地址中还没有 caseId，则不显示诊断详情面板
         this.closePanel();
@@ -94,10 +94,71 @@ export default {
     updatePatientCase() {
       var patientId = this.$route.params.id;
       getPatientCase(patientId, this.caseId).then((data) => {
+        this.getVitalSignsData(data['patientCase']);
         this.caseDetail = Object.assign({}, data.patientCase);
         this.updateScrollbar();
         console.log('caseDetail: ', this.caseDetail);
       });
+    },
+    getVitalSignsData(data) {
+      // 获取到生命体征的数据项
+      console.log(12345);
+      if (data.breathing) {
+        this.VitalSignsData['breathing'] = data.breathing;
+      } else {
+        this.VitalSignsData['breathing'] = '';
+      }
+      if (data.temperature) {
+        this.VitalSignsData['temperature'] = data.temperature;
+      } else {
+        this.VitalSignsData['temperature'] = '';
+      }
+      if (data.pulse) {
+        this.VitalSignsData['pulse'] = data.pulse;
+      } else {
+        this.VitalSignsData['pulse'] = '';
+      }
+      if (data.heartRate) {
+        this.VitalSignsData['heartRate'] = data.heartRate;
+      } else {
+        this.VitalSignsData['heartRate'] = '';
+      }
+      if (data.rhythm) {
+        this.VitalSignsData['rhythm'] = data.rhythm;
+      } else {
+        this.VitalSignsData['rhythm'] = '';
+      }
+      if (data.bpDecubitus) {
+        this.VitalSignsData['bpDecubitus'] = data.bpDecubitus;
+      } else {
+        this.VitalSignsData['bpDecubitus'] = '';
+      }
+      if (data.bpSitting) {
+        this.VitalSignsData['bpSitting'] = data.bpSitting;
+      } else {
+        this.VitalSignsData['bpSitting'] = '';
+      }
+      if (data.bpOrthostatic) {
+        this.VitalSignsData['bpOrthostatic'] = data.bpOrthostatic;
+      } else {
+        this.VitalSignsData['bpOrthostatic'] = '';
+      }
+      if (data.doiMmse) {
+        this.VitalSignsData['doiMmse'] = data.doiMmse;
+      } else {
+        this.VitalSignsData['doiMmse'] = '';
+      }
+      if (data.doiMoca) {
+        this.VitalSignsData['doiMoca'] = data.doiMoca;
+      } else {
+        this.VitalSignsData['doiMoca'] = '';
+      }
+      if (data.doiCdr) {
+        this.VitalSignsData['doiCdr'] = data.doiCdr;
+      } else {
+        this.VitalSignsData['doiCdr'] = '';
+      }
+      console.log('VitalSignsData', this.VitalSignsData);
     },
     goBack() {
       // 按下返回按钮，实际上是修改的路由地址 ———— 因为我们是监控路由地址来决定这个详情窗口是否显示的
@@ -124,7 +185,6 @@ export default {
   },
   mounted() {
     this.checkRoute();
-
     Bus.$on(this.SCROLL_AREA_SIZE_CHANGE, this.updateScrollbar);
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
     Bus.$on(this.UPDATE_CASE_INFO, this.updatePatientCase);

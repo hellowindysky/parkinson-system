@@ -87,12 +87,16 @@ export default {
     },
     cancel() {
       // 点击取消按钮，将我们对 copyInfo 所做的临时修改全部放弃，还原其为 basicInfo 的复制对象
-      // this.deepCopy(this.basicInfoF, 1);
-      // this.deepCopy(this.basicInfoS, 2);
-      // this.deepCopy(this.basicInfoT, 3);
+      this.reductionCopyInfo(); // 还原数据
       this.mode = this.READING_MODE;
       this.isEdit = true;
       console.log(this.copyInfoF);
+    },
+    reductionCopyInfo() { // 还原copyInfo的数据项
+      vueCopy(this.attendancePatient, this.copyAttendance);
+      this.changeDataType(this.copyAttendance);
+      vueCopy(this.conditionPatient, this.copyCondition);
+      this.changeDataType(this.copyCondition);
     },
     submit() {
       this.mode = this.READING_MODE;

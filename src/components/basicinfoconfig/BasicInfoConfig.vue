@@ -1,13 +1,13 @@
 <template>
   <feature-folding-panel :title="'基础信息'" :mode="mode" @edit="startEditing" @cancel="cancel" @submit="submit">
     <div class="basicconfig-group">
-      <div class="small-area-title" >基本情况</div>
+      <div class="small-area-title">基本情况</div>
       <ul class="config-small-table" v-for="(field, groupNo) in copyInfoF" :key="groupNo">
         <li>
-          <span>{{field.cnfieldName}}</span>
+          <span>{{handleFileName(field)}}</span>
         </li>
         <li>
-            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="on" off-text="off" off-color="#eff0f6" :width="switchWidth"></el-switch>
+          <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="on" off-text="off" off-color="#eff0f6" :width="switchWidth"></el-switch>
         </li>
         <li>
           <el-checkbox :disabled="isEdit" v-model="field.active" class="config-small-checked"></el-checkbox>
@@ -18,10 +18,10 @@
       <div class="small-area-title">相关状况</div>
       <ul class="config-small-table" v-for="(field, groupNo) in copyInfoS" :key="groupNo">
         <li>
-          <span>{{field.cnfieldName}}</span>
+          <span>{{handleFileName(field)}}</span>
         </li>
         <li>
-            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="on" off-text="off" off-color="#eff0f6" :width="switchWidth"></el-switch>
+          <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="on" off-text="off" off-color="#eff0f6" :width="switchWidth"></el-switch>
         </li>
         <li>
           <el-checkbox :disabled="isEdit" v-model="field.active" class="config-small-checked"></el-checkbox>
@@ -31,10 +31,10 @@
     <div class="basicconfig-group">
       <ul class="config-small-table" v-for="(field, groupNo) in copyInfoT" :key="groupNo">
         <li>
-          <span>{{field.cnfieldName}}</span>
+          <span>{{handleFileName(field)}}</span>
         </li>
         <li>
-            <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="on" off-text="off" off-color="#eff0f6" :width="switchWidth"></el-switch>
+          <el-switch v-model="field.must" :disabled="isEdit" class="config-small-switch" on-color="#ff9c00" on-text="on" off-text="off" off-color="#eff0f6" :width="switchWidth"></el-switch>
         </li>
         <li>
           <el-checkbox :disabled="isEdit" v-model="field.active" class="config-small-checked"></el-checkbox>
@@ -46,6 +46,8 @@
 <script>
 import FeatureFoldingPanel from '../featurefoldingpanel/FeatureFoldingPanel';
 import { mapGetters } from 'vuex';
+import { vueCopy } from 'utils/helper';
+
 export default {
   props: {
     basicInfoF: {
@@ -67,9 +69,9 @@ export default {
   },
   data() {
     return {
-      copyInfoF: [{}, {}, {}, {}, {}, {}, {}, {}],
-      copyInfoS: [{}, {}, {}, {}, {}, {}],
-      copyInfoT: [{}, {}, {}, {}],
+      copyInfoF: [],
+      copyInfoS: [],
+      copyInfoT: [],
       mode: this.READING_MODE,
       isEdit: true,
       switchWidth: 50
@@ -85,36 +87,44 @@ export default {
     },
     cancel() {
       // 点击取消按钮，将我们对 copyInfo 所做的临时修改全部放弃，还原其为 basicInfo 的复制对象
-      this.deepCopy(this.basicInfoF, 1);
-      this.deepCopy(this.basicInfoS, 2);
-      this.deepCopy(this.basicInfoT, 3);
+      this.reductionCopyInfo(); // 还原数据
       this.mode = this.READING_MODE;
       this.isEdit = true;
-      console.log(this.copyInfoF);
+    },
+    reductionCopyInfo() { // 还原copyInfo的数据项
+      vueCopy(this.basicInfoF, this.copyInfoF);
+      this.changeDataType(this.copyInfoF);
+      vueCopy(this.basicInfoS, this.copyInfoS);
+      this.changeDataType(this.copyInfoS);
+      vueCopy(this.basicInfoT, this.copyInfoT);
+      this.changeDataType(this.copyInfoT);
     },
     submit() {
       this.mode = this.READING_MODE;
       this.isEdit = true;
       // 点击提交按钮之后的后续
     },
-    deepCopy(copyFile, type) {
-      var dataTemp = null;
-      if (type === 1) {
-        dataTemp = this.copyInfoF;
-      } else if (type === 2) {
-        dataTemp = this.copyInfoS;
-      } else if (type === 3) {
-        dataTemp = this.copyInfoT;
+    handleFileName(file) {
+      let flag = true;
+      for (let key in file) {
+        if (key === 'cnfieldName') {
+          flag = false;
+        }
       }
-      for (let i = 0; i < copyFile.length; i++) {
-        // this.copyInfoF[i] = {};
-        let sonData = copyFile[i];
-        for (let key in sonData) {
-          this.$set(dataTemp[i], key, sonData[key]);
+      if (!flag) {
+        return file['cnfieldName'];
+      } else {
+        return file['fieldName'];
+      }
+    },
+    changeDataType(copydata) {
+      for (let j = 0; j < copydata.length; j++) {
+        let sonData1 = copydata[j];
+        for (let key in sonData1) {
           if (key === 'must') {
-            this.$set(dataTemp[i], 'must', this.changeCheck(sonData['must']));
+            this.$set(copydata[j], 'must', this.changeCheck(sonData1['must']));
           } else if (key === 'active') {
-            this.$set(dataTemp[i], 'active', this.changeCheck(sonData['active']));
+            this.$set(copydata[j], 'active', this.changeCheck(sonData1['active']));
           }
         }
       }
@@ -130,24 +140,25 @@ export default {
   watch: {
     basicInfoF: {
       handler: function(newVal) {
-        this.deepCopy(newVal, 1);
+        vueCopy(newVal, this.copyInfoF);
+        this.changeDataType(this.copyInfoF);
       },
       deep: true
     },
     basicInfoS: {
       handler: function(newVal) {
-        this.deepCopy(newVal, 2);
+        vueCopy(newVal, this.copyInfoS);
+        this.changeDataType(this.copyInfoS);
       },
       deep: true
     },
     basicInfoT: {
       handler: function(newVal) {
-        this.deepCopy(newVal, 3);
+        vueCopy(newVal, this.copyInfoT);
+        this.changeDataType(this.copyInfoT);
       },
       deep: true
     }
-  },
-  created() {
   }
 };
 </script>

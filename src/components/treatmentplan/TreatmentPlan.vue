@@ -205,8 +205,27 @@ export default {
         return file['fieldName'];
       }
     },
+    reductionCopyInfo() { // 还原copyInfo的数据项
+      vueCopy(this.patientMedicine, this.copyMedicine);
+      this.changeDataType(this.copyMedicine);
+      vueCopy(this.patientScale, this.copyScale);
+      this.changeDataType(this.copyScale);
+      vueCopy(this.patientSpephysical, this.copySpephysical);
+      this.changeDataType(this.copySpephysical);
+      vueCopy(this.patientSideeffect, this.copySideeffect);
+      this.changeDataType(this.copySideeffect);
+      vueCopy(this.patientBioexam, this.copyBioexam);
+      this.changeDataType(this.copyBioexam);
+      vueCopy(this.patElecTrogram, this.copyTrogram);
+      this.changeDataType(this.copyTrogram);
+      vueCopy(this.patientVideoInfo, this.copyVideoInfo);
+      this.changeDataType(this.copyVideoInfo);
+      vueCopy(this.patientAttachment, this.copyAttachment);
+      this.changeDataType(this.copyAttachment);
+    },
     cancel() {
       // 点击取消按钮，将我们对 copyInfo 所做的临时修改全部放弃，还原其为 basicInfo 的复制对象
+      this.reductionCopyInfo(); // 还原数据
       this.mode = this.READING_MODE;
       this.isEdit = true;
       console.log(this.copyInfoF);

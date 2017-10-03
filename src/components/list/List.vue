@@ -182,7 +182,8 @@ import patientListItem from 'components/patientitem/PatientItem';
 import groupListItem from 'components/groupitem/GroupItem';
 import userListItem from 'components/useritem/UserItem';
 import roleListItem from 'components/roleitem/RoleItem';
-
+import axios from 'axios';
+import { vueCopy } from 'utils/helper';
 import { getPatientList } from 'api/patient';
 import { getUserList } from 'api/user';
 import { getRoleList } from 'api/user';
@@ -207,6 +208,7 @@ export default {
       }, 0);
     };
     return {
+      proviceCity: {},
       searchInput: '',
       myPatientsList: [],
       userList: [],
@@ -283,6 +285,8 @@ export default {
     }
   },
   mounted() {
+    // 将省市的数据请求过来
+    this.initProCity();
     // 如果之前有绑定的话，先进行解除
     Ps.destroy(this.$refs.listArea);
     Ps.initialize(this.$refs.listArea, {
@@ -299,6 +303,13 @@ export default {
     this.updateUserList();
   },
   methods: {
+    initProCity() {
+      axios.get('../../static/mockData/city.json').then((response) => {
+        vueCopy(response['data'], this.proviceCity);
+      }).catch(function(error) {
+        console.error('请求出错: ', error);
+      });
+    },
     search() {
       // console.log(this.searchInput);
     },
@@ -356,11 +367,11 @@ export default {
 
       } else if (/^\/patients\/groups\/?$/.test(path)) {
         // TODO 获取分组列表的所有id，然后根据第一个id进行跳转
-        this.$router.replace({ name: 'groupInfo', params: { id: 90001 }});
+        this.$router.replace({ name: 'groupInfo', params: { id: 90001 } });
 
       } else if (/^\/patients\/otherlist\/?$/.test(path)) {
         // TODO 获取科室患者列表的所有id，然后根据第一个id进行跳转
-        this.$router.replace({ name: 'otherPatientInfo', params: { id: 20001 }});
+        this.$router.replace({ name: 'otherPatientInfo', params: { id: 20001 } });
 
       } else if (/^\/configuration\/userManagement\/?$/.test(path)) {
         this.updateUserList(() => {
@@ -391,7 +402,6 @@ export default {
     $route() {
       // 路由一旦发生变化，就关闭筛选面板
       this.panelDisplay = false;
-
       this.checkRoute();
     }
   }
@@ -423,8 +433,7 @@ export default {
     height: @search-area-height;
     padding-top: 10px;
     padding-left: 15px;
-    box-sizing: border-box;
-    // box-shadow: 2px 2px 2px @light-gray-color;
+    box-sizing: border-box; // box-shadow: 2px 2px 2px @light-gray-color;
     background-color: @background-color;
     font-size: @normal-font-size;
     color: @light-font-color;
@@ -447,16 +456,20 @@ export default {
       color: @light-font-color;
       outline: none;
     }
-    ::-webkit-input-placeholder { /* WebKit browsers */
+     ::-webkit-input-placeholder {
+      /* WebKit browsers */
       color: darken(@light-gray-color, 20%);
     }
-    :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+     :-moz-placeholder {
+      /* Mozilla Firefox 4 to 18 */
       color: darken(@light-gray-color, 20%);
     }
-    ::-moz-placeholder { /* Mozilla Firefox 19+ */
+     ::-moz-placeholder {
+      /* Mozilla Firefox 19+ */
       color: darken(@light-gray-color, 20%);
     }
-    :-ms-input-placeholder { /* Internet Explorer 10+ */
+     :-ms-input-placeholder {
+      /* Internet Explorer 10+ */
       color: darken(@light-gray-color, 20%);
     }
   }
@@ -466,8 +479,7 @@ export default {
     width: 100%;
     height: @control-area-height;
     background-color: @background-color;
-    box-sizing: border-box;
-    // box-shadow: 2px 2px 2px @light-gray-color;
+    box-sizing: border-box; // box-shadow: 2px 2px 2px @light-gray-color;
     font-size: @normal-font-size;
     text-align: left;
     z-index: 200;
@@ -512,8 +524,7 @@ export default {
     width: 100%;
     height: @function-area-height;
     background-color: @background-color;
-    box-sizing: border-box;
-    // box-shadow: 2px 2px 2px @light-gray-color;
+    box-sizing: border-box; // box-shadow: 2px 2px 2px @light-gray-color;
     font-size: @normal-font-size;
     vertical-align: middle;
     .function-button {
@@ -542,8 +553,7 @@ export default {
     position: relative;
     width: 100%;
     height: calc(~"100% - @{search-area-height} - @{control-area-height} - @{function-area-height} - @{vertical-spacing} * 3");
-    background-color: @background-color;
-    // box-shadow: 2px 2px 2px @light-gray-color;
+    background-color: @background-color; // box-shadow: 2px 2px 2px @light-gray-color;
     overflow: hidden;
     .item {
       box-sizing: border-box;
@@ -557,8 +567,7 @@ export default {
           background-color: darken(@background-color, 8%);
         }
       }
-    }
-    // 下面这组 CSS 是为了让 perfect-scrollbar正常工作的，不知道为什么，默认状态下这个组件不能正常显示
+    } // 下面这组 CSS 是为了让 perfect-scrollbar正常工作的，不知道为什么，默认状态下这个组件不能正常显示
     .ps__scrollbar-y-rail {
       position: absolute;
       width: 15px;
@@ -587,9 +596,10 @@ export default {
     transition: all .3s ease;
   }
   .slide-fade-leave-active {
-    transition: all .3s cubic-bezier(0.42,0,1,1);
+    transition: all .3s cubic-bezier(0.42, 0, 1, 1);
   }
-  .slide-fade-enter, .slide-fade-leave-to {
+  .slide-fade-enter,
+  .slide-fade-leave-to {
     transform: translateY(-@control-area-height);
     opacity: 0;
   }
@@ -610,7 +620,7 @@ export default {
       .el-form-item__label {
         color: @inverse-font-color;
       }
-      .el-form-item__content input{
+      .el-form-item__content input {
         // background-color: #414a54;
       }
       .button {

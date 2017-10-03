@@ -539,7 +539,6 @@ export default {
       for (let key in this.FatherTempData) {
         if (key === arrName) {
           vueCopy(this.FatherTempData[key], this.SonTempData);
-          console.log('SonTempData', this.SonTempData);
         }
       }
       // 取到这个值之后就要关闭父表格，打开子表格
@@ -658,7 +657,6 @@ export default {
             this.$set(this.EmgTypeData['patientNeedExamItemResu'][i], 'volMuapdur', '');
             this.$set(this.EmgTypeData['patientNeedExamItemResu'][i], 'volmuappoly', '');
           }
-          console.log('need', this.SonTempData);
           break;
         case 'motUniAnaItem':
           for (let i = 0; i < this.SonTempData.length; i++) {
@@ -670,7 +668,6 @@ export default {
             this.$set(this.EmgTypeData['patientMotUniAnaResu'][i], 'latencyDifference', '');
             this.$set(this.EmgTypeData['patientMotUniAnaResu'][i], 'motNerItemId', '');
           }
-          console.log('need', this.SonTempData);
           break;
         case 'motNerCondItem':
           for (let i = 0; i < this.SonTempData.length; i++) {
@@ -700,7 +697,6 @@ export default {
           }
           break;
         case 'fwavStuItem':
-          // console.log(this.SonTempData);
           for (let i = 0; i < this.SonTempData.length; i++) {
             this.$set(this.EmgTypeData['patienFWaStuResu'], i, {});
             for (let key in this.SonTempData[i]) {
@@ -727,15 +723,14 @@ export default {
       let submitData = this.EmgTypeData;
       if (this.mode === this.ADD_MODE) {
         // 新增肌电图
-        console.log('submit', submitData);
         addEmg(submitData).then(() => {
-          Bus.$emit(this.UPDATE_PATIENT_INFO);
+          Bus.$emit(this.UPDATE_CASE_INFO);
           this.cancel();
         });
       } else if (this.mode === this.MODIFY_MODE) {
         // 修改肌电图
         modEmg(submitData).then(() => {
-          Bus.$emit(this.UPDATE_PATIENT_INFO);
+          Bus.$emit(this.UPDATE_CASE_INFO);
           this.cancel();
         });
       }

@@ -1,6 +1,77 @@
 <template lang="html">
   <folding-panel :title="'检验检查'" :mode="mutableMode"  v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
     <div class="diagnostic-examination" ref="diagnosticExamination">
+      <extensible-panel class="panel" :mode="mutableMode" :title="vitalSigns" :isVitalSigns="true">
+        <ul class="vitalsigns">
+          <li class="vital-item">
+            <span class="vital-name">呼吸(次/分):</span>
+            <div class="vital-vlaue" v-if="mutableMode===READING_MODE">{{VitalSignsData.breathing}}</div>
+            <el-input class="vital-vlaue" v-else-if="mutableMode===EDITING_MODE" v-model="vitalData.breathing" placeholder="请输入检查结果"></el-input>
+          </li>
+          <li class="vital-item">
+            <span class="vital-name">体温(℃):</span> 
+            <div class="vital-vlaue" v-if="mutableMode===READING_MODE">{{VitalSignsData.temperature}}</div>
+            <el-input class="vital-vlaue" v-else-if="mutableMode===EDITING_MODE" v-model="vitalData.temperature" placeholder="请输入检查结果"></el-input>
+          </li>
+          <li class="vital-item">
+            <span class="vital-name">脉搏(次/分):</span> 
+            <div class="vital-vlaue" v-if="mutableMode===READING_MODE">{{VitalSignsData.pulse}}</div>
+            <el-input class="vital-vlaue" v-else-if="mutableMode===EDITING_MODE" v-model="vitalData.pulse" placeholder="请输入检查结果"></el-input>
+          </li>
+          <li class="vital-item">
+            <span class="vital-name">心率(次/分):</span> 
+            <div class="vital-vlaue" v-if="mutableMode===READING_MODE">{{VitalSignsData.heartRate}}</div>
+            <el-input class="vital-vlaue" v-else-if="mutableMode===EDITING_MODE" v-model="vitalData.heartRate" placeholder="请输入检查结果"></el-input>
+          </li>
+          <li class="vital-item">
+            <span class="vital-name">心率情况:</span> 
+            <div class="vital-vlaue" v-if="mutableMode===READING_MODE">{{showVital(VitalSignsData.rhythm)}}</div>
+            <el-select class="vital-select" v-else-if="mutableMode===EDITING_MODE" v-model="vitalData.rhythm" placeholder="请选择">
+              <el-option v-for="item in heartRate" :key="item.typeCode" :label="item.typeName" :value="item.typeCode">
+              </el-option>
+            </el-select>
+          </li>
+          <li class="vital-item">
+            <span class="vital-name">血压 :卧位-左/右(mmHg):</span> 
+            <div class="vital-vlaue" v-if="mutableMode===READING_MODE">{{VitalSignsData.bpDecubitus}}</div>
+            <div class="vital-two-vlaue" v-else-if="mutableMode===EDITING_MODE">
+              <el-input class="son-vlaue" v-model="vitalData.bpDecubitusL"></el-input>/&nbsp;
+              <el-input class="son-vlaue" v-model="vitalData.bpDecubitusR"></el-input>
+            </div>
+          </li>
+          <li class="vital-item">
+            <span class="vital-name">血压 :坐位-左/右(mmHg):</span> 
+            <div class="vital-vlaue" v-if="mutableMode===READING_MODE">{{VitalSignsData.bpSitting}}</div>
+            <div class="vital-two-vlaue" v-else-if="mutableMode===EDITING_MODE">
+              <el-input class="son-vlaue" v-model="vitalData.bpSittingL"></el-input>/&nbsp;
+              <el-input class="son-vlaue" v-model="vitalData.bpSittingR"></el-input>
+            </div>
+          </li>
+          <li class="vital-item">
+            <span class="vital-name">血压 :立位-左/右(mmHg):</span>
+            <div class="vital-vlaue" v-if="mutableMode===READING_MODE">{{VitalSignsData.bpOrthostatic}}</div>
+            <div class="vital-two-vlaue" v-else-if="mutableMode===EDITING_MODE">
+              <el-input class="son-vlaue" v-model="vitalData.bpOrthostaticL"></el-input>/&nbsp;
+              <el-input class="son-vlaue" v-model="vitalData.bpOrthostaticR"></el-input>
+            </div>
+          </li>
+          <li class="vital-item">
+            <span class="vital-name">智能障碍-MMSE:</span> 
+            <div class="vital-vlaue" v-if="mutableMode===READING_MODE">{{VitalSignsData.doiMmse}}</div>
+            <el-input class="vital-vlaue" v-else-if="mutableMode===EDITING_MODE" v-model="vitalData.doiMmse" placeholder="请输入检查结果"></el-input>
+          </li>   
+          <li class="vital-item">
+            <span class="vital-name">智能障碍-MoCA:</span> 
+            <div class="vital-vlaue" v-if="mutableMode===READING_MODE">{{VitalSignsData.doiMoca}}</div>
+            <el-input class="vital-vlaue" v-else-if="mutableMode===EDITING_MODE" v-model="vitalData.doiMoca" placeholder="请输入检查结果"></el-input>
+          </li> 
+          <li class="vital-item">
+            <span class="vital-name">智能障碍-CDR:</span> 
+            <div class="vital-vlaue" v-if="mutableMode===READING_MODE">{{VitalSignsData.doiCdr}}</div>
+            <el-input class="vital-vlaue" v-else-if="mutableMode===EDITING_MODE" v-model="vitalData.doiCdr" placeholder="请输入检查结果"></el-input>
+          </li>  
+        </ul>
+      </extensible-panel>
       <extensible-panel class="panel" :mode="mutableMode" :title="neurologicCheckTitle" v-on:addNewCard="addNeurologicCheckRecord">
         <card class="card" :class="cardWidth" :mode="mutableMode" v-for="item in neurologicCheckList" :key="item.preopsInfoId"
          :title="transformNeurologicCheckType(item.spephysicalInfo)" v-on:clickCurrentCard="editNeurologicCheckRecord(item)"
@@ -50,7 +121,8 @@
 import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import { delEmg, delBiochemical, delNervouSystem } from 'api/patient.js';
+import { delEmg, delBiochemical, delNervouSystem, modVitalSigns } from 'api/patient.js';
+import { vueCopy } from 'utils/helper';
 
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 import ExtensiblePanel from 'components/extensiblepanel/ExtensiblePanel';
@@ -60,9 +132,21 @@ export default {
   data() {
     return {
       mutableMode: this.mode,
-      neurologicCheckTitle: '神经系统检查',
-      biochemicalExamTitle: '生化指标',
-      emgTitle: '肌电图',
+      vitalSigns: '生命体征',
+      heartRate: [],
+      vitalData: {
+        breathing: '',
+        temperature: '',
+        pulse: '',
+        heartRate: '',
+        rhythm: '',
+        bpDecubitus: '',
+        bpSitting: '',
+        bpOrthostatic: '',
+        doiMmse: '',
+        doiMoca: '',
+        doiCdr: ''
+      },
       cardWidth: ''
     };
   },
@@ -88,6 +172,12 @@ export default {
       default: () => {
         return [];
       }
+    },
+    VitalSignsData: {
+      type: Object,
+      default: () => {
+        return {};
+      }
     }
   },
   computed: {
@@ -98,17 +188,103 @@ export default {
       'bioexamTypeList',
       'emgTypeList',
       'typeGroup'
-    ])
+    ]),
+    neurologicCheckTitle() {
+      return '神经系统检查（' + this.neurologicCheckList.length + '条记录）';
+    },
+    biochemicalExamTitle() {
+      return '生化指标（' + this.biochemicalExamList.length + '条记录）';
+    },
+    emgTitle() {
+      return '肌电图（' + this.emgList.length + '条记录）';
+    }
   },
   methods: {
     startEditing() {
       this.mutableMode = this.EDITING_MODE;
+      this.handleVitalData(this.VitalSignsData);
     },
     cancel() {
       this.mutableMode = this.READING_MODE;
     },
     submit() {
       this.mutableMode = this.READING_MODE;
+      // 在此页面点击完成要提交生命体征
+      this.submitVitalData(); // 提交生命体征
+    },
+    showVital(data) {
+      if (data === '0') {
+        return '不齐';
+      } else {
+        return '齐';
+      }
+    },
+    submitVitalData() {
+      let submitData = this.vitalData;
+      for (let key in submitData) {
+        switch (key) {
+          case 'bpOrthostatic':
+          case 'bpSitting':
+          case 'bpDecubitus':
+            switch (true) {
+              case (Boolean(submitData[key + 'L']) === false && Boolean(submitData[key + 'R']) === false): // 左右值都不存在
+                submitData[key] = '';
+                break;
+              case (Boolean(submitData[key + 'L']) && Boolean(submitData[key + 'R'])): // 左右值都存在
+                submitData[key] = submitData[key + 'L'] + ',' + submitData[key + 'R'];
+                break;
+              case (Boolean(submitData[key + 'L']) && Boolean(submitData[key + 'R']) === false): // 左边的值存在
+                submitData[key] = submitData[key + 'L'];
+                break;
+              case (Boolean(submitData[key + 'L']) === false && Boolean(submitData[key + 'R'])): // 右边的值存在
+                submitData[key] = ',' + submitData[key + 'R'];
+                break;
+            }
+            delete submitData[key + 'L'];  // 删除这两个辅助值
+            delete submitData[key + 'R'];
+            break;
+        }
+      }
+      submitData['patientCaseId'] = this.$route.params.caseId;
+      modVitalSigns(submitData).then(() => {
+        Bus.$emit(this.UPDATE_CASE_INFO);
+      }); // 提交生命体征
+    },
+    handleVitalData(data) {
+      // 对生命体征作特殊的处理
+      for (let key in data) {
+        switch (key) {
+          case 'bpOrthostatic':
+          case 'bpSitting':
+          case 'bpDecubitus':
+            switch (true) {
+              case data[key] === '':
+                // 为空值
+                this.$set(this.vitalData, key + 'L', '');
+                this.$set(this.vitalData, key + 'R', '');
+                break;
+              case (Boolean(data[key].split(',')[0]) && Boolean(data[key].split(',')[1])):
+                // 左右值都存在
+                this.$set(this.vitalData, key + 'L', data[key].split(',')[0]);
+                this.$set(this.vitalData, key + 'R', data[key].split(',')[1]);
+                break;
+              case (Boolean(data[key].split(',')[0]) === true) && data[key].indexOf(',') === -1:
+                // 左值存在
+                this.$set(this.vitalData, key + 'L', data[key]);
+                this.$set(this.vitalData, key + 'R', '');
+                break;
+              case Boolean(data[key].split(',')[0]) === true && data[key].indexOf(',') !== -1:
+                // 右值存在
+                this.$set(this.vitalData, key + 'L', '');
+                this.$set(this.vitalData, key + 'R', data[key].split(',')[1]);
+                break;
+            }
+            break;
+          default:
+            this.$set(this.vitalData, key, data[key]);
+            break;
+        }
+      }
     },
     transformNeurologicCheckType(typeId) {
       // 在 tableData 中找到对应的值
@@ -152,7 +328,6 @@ export default {
     },
     editBiochemicalExamRecord(item) {
       Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, '生化指标', item);
-      console.log('Biochemical', item);
     },
     deleteBiochemicalExamRecord(item) { // 删除生化指标
       let BiochemicalId = {
@@ -168,7 +343,6 @@ export default {
     },
     editEmgRecord(item) {
       Bus.$emit(this.SHOW_EMG_MODAL, '肌电图', item);
-      console.log('肌电图', item);
     },
     deleteEmgRecord(item) { // 删除肌电图
       let EmgId = {
@@ -181,7 +355,7 @@ export default {
     },
     _resolveDeletion() {
       // 如果成功删除记录，则重新发出请求，获取最新数据。同时解除 [确认对话框] 的 “确认” 回调函数
-      Bus.$emit(this.UPDATE_PATIENT_INFO);
+      Bus.$emit(this.UPDATE_CASE_INFO);
       Bus.$off(this.CONFIRM);
     },
     _rejectDeletion() {
@@ -223,6 +397,12 @@ export default {
       // console.log(this.biochemicalExamList);
       // console.log(this.emgList);
     }, 2000);
+    // 取出生命体征中的心率情况数组
+    let that = this;
+    Util.getDictionaryData('rhythm').then(function(data) {
+      vueCopy(data, that.heartRate);
+      console.log(that.heartRate);
+    });
   },
   beforeDestroy() {
     // 还是记得销毁组件前，解除事件绑定
@@ -231,6 +411,14 @@ export default {
     Bus.$off(this.RECALCULATE_CARD_WIDTH, this.recalculateCardWidth);
     Bus.$off(this.CONFIRM);
     Bus.$off(this.GIVE_UP);
+  },
+  watch: {
+    VitalSignsData: {
+      handler: function(newVal) {
+        vueCopy(newVal, this.vitalData);
+      },
+      deep: true
+    }
   }
 };
 </script>
@@ -242,16 +430,17 @@ export default {
 @post-complication-card-height: 120px;
 @dbs-card-height: 185px;
 
+@vital-item-width: 158px;
 .diagnostic-examination {
   .panel {
     text-align: left;
     .card {
       display: inline-block;
       position: relative;
-      margin: @card-vertical-margin @card-horizontal-margin;
-      // min-width: 200px;
+      margin: @card-vertical-margin @card-horizontal-margin; // min-width: 200px;
       // max-width: 250px;
-      &.width-1-1, &.width-1-0 {
+      &.width-1-1,
+      &.width-1-0 {
         width: calc(~"100% - @{card-horizontal-margin} * 2");
       }
       &.width-1-2 {
@@ -323,6 +512,58 @@ export default {
       }
       .line-7 {
         top: 160px;
+      }
+    }
+    .vitalsigns {
+      position: relative;
+      width: 100%;
+      height: auto;
+      .vital-item {
+        position: relative;
+        display: inline-block;
+        width: 50%;
+        height: 50px;
+        font-size: 0px;
+        .vital-name {
+          font-size: @normal-font-size;
+          display: inline-block;
+          width: @vital-item-width;
+          line-height: 50px;
+        }
+        .vital-vlaue {
+          display: inline-block;
+          font-size: @normal-font-size;
+          position: absolute;
+          left: @vital-item-width;
+          right: 4%;
+          line-height: 50px;
+          width: calc(~"100% - @{vital-item-width}");
+          .el-input__inner {
+            width: 90%;
+          }
+        }
+        .el-select {
+          width: calc(~"(100% - @{vital-item-width})*0.9");
+          position: absolute;
+          left: @vital-item-width;
+          right: 4%;
+        }
+        .vital-two-vlaue {
+          display: inline-block;
+          font-size: @normal-font-size;
+          position: absolute;
+          left: @vital-item-width;
+          right: 4%;
+          line-height: 50px;
+          width: calc(~"100% - @{vital-item-width}");
+          .son-vlaue {
+            position: relative;
+            width: 45%;
+            .el-input__inner {
+              width: 97%;
+            }
+          }
+        }
       }
     }
   }
