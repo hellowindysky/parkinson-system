@@ -72,7 +72,8 @@ export default new Router({
           children: [
             {
               path: 'list',
-              name: 'myPatients'
+              name: 'myPatients',
+              meta: 'myPatients'
             },
             {
               path: 'list/:id',
@@ -80,6 +81,7 @@ export default new Router({
                 content: PatientInfo
               },
               name: 'patientInfo',
+              meta: 'myPatients',
               children: [
                 {
                   path: 'personalInfo',
@@ -121,7 +123,8 @@ export default new Router({
             },
             {
               path: 'otherList',
-              name: 'otherPatients'
+              name: 'otherPatients',
+              meta: 'otherPatients'
             },
             {
               path: 'otherList/:id',
@@ -129,6 +132,7 @@ export default new Router({
                 content: PatientInfo
               },
               name: 'otherPatientInfo',
+              meta: 'otherPatients',
               children: [
                 {
                   path: 'personalInfo',
