@@ -40,6 +40,17 @@ export default {
       devideWidth: ''
     };
   },
+  computed: {
+    listType() {
+      if (this.$route.matched.some(record => record.meta.myPatients)) {
+        return 'myPatients';
+      } else if (this.$route.matched.some(record => record.meta.otherPatients)) {
+        return 'otherPatients';
+      } else {
+        return 'unknown';
+      }
+    }
+  },
   methods: {
     startEditing() {
       this.mode = this.EDITING_MODE;
@@ -92,8 +103,14 @@ export default {
       }
     },
     seeDetail(item) {
+      var routeName = '';
+      if (this.listType === 'myPatients') {
+        routeName = 'diagnosticDetail';
+      } else if (this.listType === 'otherPatients') {
+        routeName = 'otherDiagnosticDetail';
+      }
       this.$router.push({
-        name: 'diagnosticDetail',
+        name: routeName,
         params: { caseId: item.patientCaseId }
       });
     },
@@ -130,7 +147,6 @@ export default {
     Bus.$on(this.GIVE_UP, () => {
       Bus.$off(this.CONFIRM);
     });
-
     // 如果收到屏幕宽度变化，或者内容区域宽度变化的事件，则重新计算卡片的宽度
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
     Bus.$on(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);

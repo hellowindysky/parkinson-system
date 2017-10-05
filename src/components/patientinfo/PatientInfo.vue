@@ -53,6 +53,15 @@ export default {
     };
   },
   computed: {
+    listType() {
+      if (this.$route.matched.some(record => record.meta.myPatients)) {
+        return 'myPatients';
+      } else if (this.$route.matched.some(record => record.meta.otherPatients)) {
+        return 'otherPatients';
+      } else {
+        return 'unknown';
+      }
+    },
     currentTab() {
       var path = this.$route.path;
       var rePersonal = new RegExp(/\/personalInfo(\/|$)/);
@@ -85,17 +94,16 @@ export default {
     },
     checkRoute() {
       var path = this.$route.path;
-      var reList = new RegExp(/^\/patients\/list\//);
-      var reOtherList = new RegExp(/^\/patients\/otherList\//);
       var rePersonal = new RegExp(/\/personalInfo(\/|$)/);
       var reDiagnostic = new RegExp(/\/diagnosticInfo(\/|$)/);
 
-      var isPatientsList = reList.test(path) || reOtherList.test(path);
       var withoutPersonalOrDiagostic = !rePersonal.test(path) && !reDiagnostic.test(path);
 
       // 路由还停留在在病患信息这一层，但没有指明是个人信息还是诊断信息，那么就默认跳转到个人信息
-      if (isPatientsList && withoutPersonalOrDiagostic) {
+      if (this.listType === 'myPatients' && withoutPersonalOrDiagostic) {
         this.$router.replace({ name: 'personalInfo' });
+      } else if (this.listType === 'otherPatients' && withoutPersonalOrDiagostic) {
+        this.$router.replace({ name: 'otherPersonalInfo' });
       }
     },
     updateScrollbar() {

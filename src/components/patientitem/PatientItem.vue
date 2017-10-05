@@ -20,10 +20,25 @@ export default {
     }
   },
   computed: {
+    listType() {
+      if (this.$route.matched.some(record => record.meta.myPatients)) {
+        return 'myPatients';
+      } else if (this.$route.matched.some(record => record.meta.otherPatients)) {
+        return 'otherPatients';
+      } else {
+        return 'unknown';
+      }
+    },
     // 根据路由信息对象提供的当前路径，来判断自己是否被选择
     selected() {
       var path = this.$route.path;
-      var re = new RegExp('^\/patients\/list\/' + this.patient.patientId);
+      var str = '';
+      if (this.listType === 'myPatients') {
+        str = '^\/patients\/list\/';
+      } else if (this.listType === 'otherPatients') {
+        str = '^\/patients\/otherList\/';
+      }
+      var re = new RegExp(str + this.patient.patientId);
       if (re.test(path)) {
         return true;
       } else {
@@ -42,8 +57,16 @@ export default {
   },
   methods: {
     select() {
+      var routeName = '';
+      if (this.$route.matched.some(record => record.meta.myPatients)) {
+        routeName = 'patientInfo';
+      } else if (this.$route.matched.some(record => record.meta.otherPatients)) {
+        routeName = 'otherPatientInfo';
+      } else {
+        return;
+      }
       this.$router.push({
-        name: 'patientInfo',
+        name: routeName,
         params: { id: this.patient.patientId }
       });
     }

@@ -94,10 +94,10 @@ export default {
       var path = this.$route.path;
 
       var regMyPatientsWithoutCase = new RegExp(/^\/patients\/list\/[0-9]+\/diagnosticInfo\/?$/);
-      var regOtherPatientsWithoutCase = new RegExp(/^\/otherPatients\/list\/[0-9]+\/diagnosticInfo\/?$/);
+      var regOtherPatientsWithoutCase = new RegExp(/^\/patients\/otherList\/[0-9]+\/diagnosticInfo\/?$/);
 
       var regMyPatientsWithCase = new RegExp(/^\/patients\/list\/[0-9]+\/diagnosticInfo\/[0-9a-zA-Z]+$/);
-      var regOtherPatientsWithCase = new RegExp(/^\/otherPatients\/list\/[0-9]+\/diagnosticInfo\/[0-9a-zA-Z]+$/);
+      var regOtherPatientsWithCase = new RegExp(/^\/patients\/otherList\/[0-9]+\/diagnosticInfo\/[0-9a-zA-Z]+$/);
 
       if (regMyPatientsWithoutCase.test(path) || regOtherPatientsWithoutCase.test(path)) {
         // 一旦发现路由地址中还没有 caseId，则不显示诊断详情面板
