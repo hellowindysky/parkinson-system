@@ -550,6 +550,21 @@ export function modifyDiagnosticBasic(diagnosticBasic) {
   return encapsulatePromise(url, request);
 };
 
+// 删除诊断信息
+export function deleteDiagnosticInfo(diagnosticInfo) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientCase": diagnosticInfo
+  };
+  console.log(diagnosticInfo);
+  var url = 'http://apitest.gyenno.com/pdms/delPatientCase';
+  return encapsulatePromise(url, request);
+};
+
 // 修改诊断信息-病症情况（新增也用这个接口）
 export function modifyDiagnosticDisease(diagnosticDisease) {
   var request = {
