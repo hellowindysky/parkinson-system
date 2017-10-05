@@ -158,6 +158,7 @@ export default {
         .el-input {
           font-size: @normal-font-size;
           .el-input__inner {
+            padding-left: 4px;
             padding-right: 20px;
             height: @small-button-height;
             line-height: @small-button-height;
