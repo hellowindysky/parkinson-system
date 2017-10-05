@@ -6,7 +6,11 @@
        :title="item.caseName" v-on:clickCurrentCard="seeDetail(item)" v-on:deleteCurrentCard="deleteRecord(item)">
         <div class="text first-line">诊断内容：</div>
         <div class="text second-line" v-html="getDiagnosticContent(item)"></div>
-        <div class="text third-line">归档情况：<span class="third-line-content"> 已归档</span></div>
+        <div class="text third-line">归档情况：
+          <span class="third-line-content">
+            {{ getArchiveStatus(item) }}
+          </span>
+        </div>
       </card>
     </folding-panel>
     <folding-panel class="panel" v-show="false" :title="'随诊记录'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
@@ -79,6 +83,13 @@ export default {
       content = content.trim();
       return content;
     },
+    getArchiveStatus(item) {
+      if (item.archiveStatus === 1) {
+        return '已归档';
+      } else {
+        return '未归档';
+      }
+    },
     seeDetail(item) {
       this.$router.push({
         name: 'diagnosticDetail',
@@ -92,7 +103,10 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addRecord() {
-      console.log('现在要新增一个诊断信息');
+      this.$router.push({
+        name: 'diagnosticDetail',
+        params: {'caseId': 'newCase'}
+      });
     }
   },
   components: {

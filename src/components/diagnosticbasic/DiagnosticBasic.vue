@@ -109,6 +109,7 @@ export default {
       // 到这里，就可以准备提交数据了，根据是修改已有诊断还是新增诊断来决定调用哪个接口
       var caseId = this.$route.params.caseId;
       if (caseId === 'newCase') {
+        this.copyInfo.patientId = this.$route.params.id;
         addDiagnosticBasic(this.copyInfo).then((data) => {
           this.$router.push({
             name: 'diagnosticDetail',
