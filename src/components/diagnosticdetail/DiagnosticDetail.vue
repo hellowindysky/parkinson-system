@@ -1,17 +1,22 @@
 <template lang="html">
   <div class="diagnostic-detail-wrapper" v-show="displayDetail">
     <div class="title-bar">
-      <h2 class="title">{{caseDetail.caseName}}</h2>
+      <h2 class="title">{{title}}</h2>
       <div class="button back-button" @click="goBack">返回</div>
-      <div class="button file-button" @click="fileCase">归档</div>
+      <div class="button file-button" :class="{'disabled': !existed}" @click="fileCase">归档</div>
     </div>
     <div class="scroll-area" ref="scrollArea">
-      <diagnostic-basic class="folding-panel" :mode="mode" :diagnosticBasic="diagnosticBasic"></diagnostic-basic>
-      <diagnostic-disease class="folding-panel" :mode="mode" :diagnosticDisease="diagnosticDisease"></diagnostic-disease>
-      <diagnostic-medicine class="folding-panel" :mode="mode" :diagnosticMedicine="caseDetail.patientMedicineNew"></diagnostic-medicine>
-      <diagnostic-surgery class="folding-panel" :mode="mode" :diagnosticSurgery="caseDetail.patientSurgicalDbs"></diagnostic-surgery>
-      <diagnostic-scale class="folding-panel" :patientScale="caseDetail.patientScale" :mode="mode"></diagnostic-scale>
-      <diagnostic-examination class="folding-panel" :mode="mode"
+      <diagnostic-basic class="folding-panel" :mode="mode"
+        :diagnosticBasic="diagnosticBasic"></diagnostic-basic>
+      <diagnostic-disease class="folding-panel" :mode="mode" v-show="existed"
+        :diagnosticDisease="diagnosticDisease"></diagnostic-disease>
+      <diagnostic-medicine class="folding-panel" :mode="mode" v-show="existed"
+        :diagnosticMedicine="caseDetail.patientMedicineNew"></diagnostic-medicine>
+      <diagnostic-surgery class="folding-panel" :mode="mode" v-show="existed"
+        :diagnosticSurgery="caseDetail.patientSurgicalDbs"></diagnostic-surgery>
+      <diagnostic-scale class="folding-panel" :mode="mode" v-show="existed"
+        :patientScale="caseDetail.patientScale"></diagnostic-scale>
+      <diagnostic-examination class="folding-panel" :mode="mode" v-show="existed"
         :neurologicCheckList="caseDetail.patientSpephysical"
         :biochemicalExamList="caseDetail.patientBioexam"
         :emgList="caseDetail.patientElecTroGram"
@@ -40,10 +45,14 @@ export default {
       caseId: 0,
       caseDetail: {},
       mode: this.READING_MODE,
+      existed: true,  // 用来标记当前诊断信息是否存在，新增诊断时该变量为 false
       VitalSignsData: {}
     };
   },
   computed: {
+    title() {
+      return this.existed === true ? this.caseDetail.caseName : '新增诊断信息';
+    },
     diagnosticBasic() {
       var obj = {};
       obj.caseType = this.caseDetail.caseType;
@@ -75,10 +84,17 @@ export default {
     },
     checkRoute() {
       var path = this.$route.path;
-      if (/^\/patients\/list\/[0-9]+\/diagnosticInfo\/?$/.test(path)) {
+
+      var regMyPatientsWithoutCase = new RegExp(/^\/patients\/list\/[0-9]+\/diagnosticInfo\/?$/);
+      var regOtherPatientsWithoutCase = new RegExp(/^\/otherPatients\/list\/[0-9]+\/diagnosticInfo\/?$/);
+
+      var regMyPatientsWithCase = new RegExp(/^\/patients\/list\/[0-9]+\/diagnosticInfo\/[0-9a-zA-Z]+$/);
+      var regOtherPatientsWithCase = new RegExp(/^\/otherPatients\/list\/[0-9]+\/diagnosticInfo\/[0-9a-zA-Z]+$/);
+
+      if (regMyPatientsWithoutCase.test(path) || regOtherPatientsWithoutCase.test(path)) {
         // 一旦发现路由地址中还没有 caseId，则不显示诊断详情面板
         this.closePanel();
-      } else if (/^\/patients\/list\/[0-9]+\/diagnosticInfo\/[0-9a-zA-Z]+$/.test(path)) {
+      } else if (regMyPatientsWithCase.test(path) || regOtherPatientsWithCase.test(path)) {
         // 如果路由地址中有 caseId，则显示面板并获取对应的诊断数据
         this.caseId = this.$route.params.caseId;
         this.showDetailPanel();
@@ -93,12 +109,22 @@ export default {
     },
     updatePatientCase() {
       var patientId = this.$route.params.id;
-      getPatientCase(patientId, this.caseId).then((data) => {
-        this.getVitalSignsData(data['patientCase']);
-        this.caseDetail = Object.assign({}, data.patientCase);
-        this.updateScrollbar();
-        console.log('caseDetail: ', this.caseDetail);
-      });
+
+      // this.caseId 这里有两种情况，一种是正常的诊断 id，
+      // 另一种是新建诊断信息时，路由中读取到的 caseId 为'newCase'字符串(定义在了route/index.js中)
+      if (this.caseId === 'newCase') {
+        this.existed = false;
+        this.caseDetail = {};
+        this.mode = this.EDITING_MODE;
+      } else {
+        getPatientCase(patientId, this.caseId).then((data) => {
+          this.existed = true;
+          this.getVitalSignsData(data['patientCase']);
+          this.caseDetail = Object.assign({}, data.patientCase);
+          this.mode = this.READING_MODE;
+        });
+      }
+      this.updateScrollbar();
     },
     getVitalSignsData(data) {
       // 获取到生命体征的数据项
@@ -253,6 +279,12 @@ export default {
       &.file-button {
         background-color: @button-color;
         right: 10px;
+        &.disabled {
+          background-color: @light-gray-color;
+          &:hover, &:active {
+            opacity: 1;
+          }
+        }
       }
     }
   }
