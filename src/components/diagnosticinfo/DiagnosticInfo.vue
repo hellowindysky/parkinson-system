@@ -24,6 +24,7 @@
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 import Card from 'components/card/Card';
 import Bus from 'utils/bus.js';
+import { deleteDiagnosticInfo } from 'api/patient.js';
 
 export default {
   props: {
@@ -98,9 +99,20 @@ export default {
     },
     deleteRecord(item) {
       Bus.$on(this.CONFIRM, () => {
-        console.log('要删除了: ', item);
+        deleteDiagnosticInfo({
+          'patientCaseId': item.patientCaseId
+        }).then(this._resolveDeletion, this._rejectDeletion);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
+    },
+    _resolveDeletion() {
+      // 如果成功删除记录，则重新发出请求，获取最新数据。同时解除 [确认对话框] 的 “确认” 回调函数
+      Bus.$emit(this.UPDATE_PATIENT_INFO);
+      Bus.$off(this.CONFIRM);
+    },
+    _rejectDeletion() {
+      // 即使删除不成功，也要解除 [确认对话框] 的 “确认” 回调函数
+      Bus.$off(this.CONFIRM);
     },
     addRecord() {
       this.$router.push({
