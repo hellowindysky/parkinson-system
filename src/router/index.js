@@ -128,7 +128,24 @@ export default new Router({
               components: {
                 content: PatientInfo
               },
-              name: 'otherPatientInfo'
+              name: 'otherPatientInfo',
+              children: [
+                {
+                  path: 'personalInfo',
+                  component: PersonalInfo,
+                  name: 'personalInfo'
+                },
+                {
+                  path: 'diagnosticInfo',
+                  component: DiagnosticInfo,
+                  name: 'diagnosticInfo'
+                },
+                {
+                  path: 'diagnosticInfo/:caseId',
+                  component: DiagnosticInfo,
+                  name: 'diagnosticDetail'
+                }
+              ]
             }
           ]
         },
