@@ -133,17 +133,17 @@ export default new Router({
                 {
                   path: 'personalInfo',
                   component: PersonalInfo,
-                  name: 'personalInfo'
+                  name: 'otherPersonalInfo'
                 },
                 {
                   path: 'diagnosticInfo',
                   component: DiagnosticInfo,
-                  name: 'diagnosticInfo'
+                  name: 'otherDiagnosticInfo'
                 },
                 {
                   path: 'diagnosticInfo/:caseId',
                   component: DiagnosticInfo,
-                  name: 'diagnosticDetail'
+                  name: 'otherDiagnosticDetail'
                 }
               ]
             }
