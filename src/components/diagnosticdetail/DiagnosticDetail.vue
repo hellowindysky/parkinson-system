@@ -45,8 +45,7 @@ export default {
       caseId: 0,
       caseDetail: {},
       mode: this.READING_MODE,
-      existed: true,  // 用来标记当前诊断信息是否存在，新增诊断时该变量为 false
-      VitalSignsData: {}
+      existed: true  // 用来标记当前诊断信息是否存在，新增诊断时该变量为 false
     };
   },
   computed: {
@@ -65,6 +64,15 @@ export default {
       obj.diseaseType = this.caseDetail.diseaseType;
       obj.caseSymptom = this.caseDetail.caseSymptom;
       obj.patientSymptom = this.caseDetail.patientSymptom;
+      return obj;
+    },
+    VitalSignsData() {
+      var obj = {};
+      var propertyList = ['breathing', 'temperature', 'pulse', 'heartRate', 'rhythm',
+        'bpDecubitus', 'bpSitting', 'bpOrthostatic', 'doiMmse', 'doiMoca', 'doiCdr'];
+      for (let propertyName of propertyList) {
+        obj[propertyName] = this.caseDetail[propertyName] ? this.caseDetail[propertyName] : '';
+      }
       return obj;
     }
   },
@@ -119,70 +127,11 @@ export default {
       } else {
         getPatientCase(patientId, this.caseId).then((data) => {
           this.existed = true;
-          this.getVitalSignsData(data['patientCase']);
           this.caseDetail = Object.assign({}, data.patientCase);
           this.mode = this.READING_MODE;
         });
       }
       this.updateScrollbar();
-    },
-    getVitalSignsData(data) {
-      // 获取到生命体征的数据项
-      if (data.breathing) {
-        this.VitalSignsData['breathing'] = data.breathing;
-      } else {
-        this.VitalSignsData['breathing'] = '';
-      }
-      if (data.temperature) {
-        this.VitalSignsData['temperature'] = data.temperature;
-      } else {
-        this.VitalSignsData['temperature'] = '';
-      }
-      if (data.pulse) {
-        this.VitalSignsData['pulse'] = data.pulse;
-      } else {
-        this.VitalSignsData['pulse'] = '';
-      }
-      if (data.heartRate) {
-        this.VitalSignsData['heartRate'] = data.heartRate;
-      } else {
-        this.VitalSignsData['heartRate'] = '';
-      }
-      if (data.rhythm) {
-        this.VitalSignsData['rhythm'] = data.rhythm;
-      } else {
-        this.VitalSignsData['rhythm'] = '';
-      }
-      if (data.bpDecubitus) {
-        this.VitalSignsData['bpDecubitus'] = data.bpDecubitus;
-      } else {
-        this.VitalSignsData['bpDecubitus'] = '';
-      }
-      if (data.bpSitting) {
-        this.VitalSignsData['bpSitting'] = data.bpSitting;
-      } else {
-        this.VitalSignsData['bpSitting'] = '';
-      }
-      if (data.bpOrthostatic) {
-        this.VitalSignsData['bpOrthostatic'] = data.bpOrthostatic;
-      } else {
-        this.VitalSignsData['bpOrthostatic'] = '';
-      }
-      if (data.doiMmse) {
-        this.VitalSignsData['doiMmse'] = data.doiMmse;
-      } else {
-        this.VitalSignsData['doiMmse'] = '';
-      }
-      if (data.doiMoca) {
-        this.VitalSignsData['doiMoca'] = data.doiMoca;
-      } else {
-        this.VitalSignsData['doiMoca'] = '';
-      }
-      if (data.doiCdr) {
-        this.VitalSignsData['doiCdr'] = data.doiCdr;
-      } else {
-        this.VitalSignsData['doiCdr'] = '';
-      }
     },
     goBack() {
       // 按下返回按钮，实际上是修改的路由地址 ———— 因为我们是监控路由地址来决定这个详情窗口是否显示的
