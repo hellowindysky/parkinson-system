@@ -6,7 +6,7 @@
       <div class="button file-button" :class="{'disabled': !existed}" @click="fileCase">归档</div>
     </div>
     <div class="scroll-area" ref="scrollArea">
-      <diagnostic-basic class="folding-panel" :mode="mode"
+      <diagnostic-basic class="folding-panel" :mode="mode" ref="diagnosticBasic"
         :diagnosticBasic="diagnosticBasic"></diagnostic-basic>
       <diagnostic-disease class="folding-panel" :mode="mode" v-show="existed"
         :diagnosticDisease="diagnosticDisease"></diagnostic-disease>
@@ -54,16 +54,18 @@ export default {
     },
     diagnosticBasic() {
       var obj = {};
-      obj.caseType = this.caseDetail.caseType;
-      obj.diagTime = this.caseDetail.diagTime;
-      obj.remarks = this.caseDetail.remarks;
+      var propertyList = ['caseType', 'diagTime', 'remarks'];
+      for (let propertyName of propertyList) {
+        obj[propertyName] = this.caseDetail[propertyName] ? this.caseDetail[propertyName] : '';
+      }
       return obj;
     },
     diagnosticDisease() {
       var obj = {};
-      obj.diseaseType = this.caseDetail.diseaseType;
-      obj.caseSymptom = this.caseDetail.caseSymptom;
-      obj.patientSymptom = this.caseDetail.patientSymptom;
+      var propertyList = ['diseaseType', 'caseType', 'patientSymptom'];
+      for (let propertyName of propertyList) {
+        obj[propertyName] = this.caseDetail[propertyName] ? this.caseDetail[propertyName] : '';
+      }
       return obj;
     },
     VitalSignsData() {
@@ -112,19 +114,18 @@ export default {
     },
     showDetailPanel() {
       // 接收到相应的消息之后，打开诊断详情窗口，然后再向服务器请求数据
+      this.updatePatientCase();
       this.displayDetail = true;
-      this.updatePatientCase(this.caseId);
     },
     updatePatientCase() {
-      var patientId = this.$route.params.id;
-
       // this.caseId 这里有两种情况，一种是正常的诊断 id，
       // 另一种是新建诊断信息时，路由中读取到的 caseId 为'newCase'字符串(定义在了route/index.js中)
       if (this.caseId === 'newCase') {
         this.existed = false;
         this.caseDetail = {};
-        this.mode = this.EDITING_MODE;
+        this.$refs.diagnosticBasic.$emit(this.EDIT);
       } else {
+        var patientId = this.$route.params.id;
         getPatientCase(patientId, this.caseId).then((data) => {
           this.existed = true;
           this.caseDetail = Object.assign({}, data.patientCase);

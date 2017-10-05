@@ -82,6 +82,8 @@ export default {
   },
   methods: {
     startEditing() {
+      this.copyInfo = Object.assign({}, this.diagnosticBasic);
+      this.warningResults = {};
       this.mutableMode = this.EDITING_MODE;
     },
     cancel() {
@@ -116,6 +118,9 @@ export default {
             params: { caseId: data.patientCaseId }
           });
           this.updateAndClose();
+
+          // 更新个人信息是为了更新所有诊断卡片 ——— 卡片列表信息在个人信息对象里面
+          Bus.$emit(this.UPDATE_PATIENT_INFO);
         });
       } else {
         this.copyInfo.patientCaseId = caseId;
@@ -161,13 +166,13 @@ export default {
       // console.log(this.diagnosticBasicTemplate);
       // console.log(this.patientCaseDictionary);
     }, 2000);
+
+    // 添加新的诊断记录时，父组件会传递 EDIT 事件给本组件（子组件），因此需要对此进行监听
+    this.$on(this.EDIT, this.startEditing);
   },
   watch: {
     diagnosticBasic: function() {
       this.copyInfo = Object.assign({}, this.diagnosticBasic);
-    },
-    mode: function() {
-      this.mutableMode = this.mode;
     }
   }
 };
