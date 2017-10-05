@@ -22,8 +22,6 @@
         <group-list-item :id="90003"></group-list-item>
       </div>
       <div v-else-if="this.listType === 'otherPatients'">
-        <patient-list-item :id="20001"></patient-list-item>
-        <patient-list-item :id="20002"></patient-list-item>
       </div>
       <div v-else-if="this.listType === 'users'">
         <user-list-item class="item" v-for="user in userList" :user="user" :key="user.id"></user-list-item>

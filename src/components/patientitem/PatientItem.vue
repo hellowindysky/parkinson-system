@@ -13,7 +13,10 @@
 export default {
   props: {
     patient: {
-      type: Object
+      type: Object,
+      default: () => {
+        return {};
+      }
     }
   },
   computed: {
