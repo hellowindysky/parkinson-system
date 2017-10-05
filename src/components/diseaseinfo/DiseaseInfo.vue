@@ -152,7 +152,7 @@ export default {
       }
       for (let field of this.diseaseInfoDictionary) {
         let name = field.fieldName;
-        if (nameList.indexOf(name) > -1 && field.uiType === 5) {
+        if (nameList.indexOf(name) > -1 && field.uiType === 5 && this.copyInfo[name] instanceof Array) {
           var codesArray = this.copyInfo[name].split(',').map((str) => {
             return parseInt(str, 10);
           });
