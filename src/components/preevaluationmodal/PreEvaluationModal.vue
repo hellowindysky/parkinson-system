@@ -306,20 +306,22 @@
             <td class="col wide-col">量表</td>
             <td class="col">服药前得分</td>
             <td class="col">服药后最低分</td>
-            <td class="col">改善率</td>
+            <td class="col">改善率%</td>
           </tr>
-          <tr class="row">
+          <tr class="row" v-for="scale in copyInfo.preopsMotorDTO.preopsMotorScaleList">
             <td class="col wide-col">
-              <el-input></el-input>
+              {{getRealName(scale.scaleInfo, 'mScale')}}
             </td>
             <td class="col">
-              <el-input></el-input>
+              <el-input v-model="scale.scaleScoreBefore" @blur="transformToNum(scale, 'scaleScoreBefore')"
+                :class="{'warning': isNaN(scale.scaleScoreBefore)}"></el-input>
             </td>
             <td class="col">
-              <el-input></el-input>
+              <el-input v-model="scale.scaleScoreAfter" @blur="transformToNum(scale, 'scaleScoreAfter')"
+                :class="{'warning': isNaN(scale.scaleScoreAfter)}"></el-input>
             </td>
             <td class="col">
-              <el-input></el-input>
+              {{ scale.medImproveRatio }}
             </td>
           </tr>
         </table>
@@ -698,23 +700,13 @@ export default {
               'patientPreopsInfoId': 15
             }
           ],
-          'patientPreopsScaleList': [
+          'preopsMotorScaleList': [
             {
-              'drugFlag': 0,
               'scaleInfo': 1,
-              'scaleScore': 99,
               'scaleType': 4,
-              'patientPreopsInfoId': 15,
-              'scaleName': 'MDS-UPDRS III'
-            },
-            {
-              'drugFlag': 1,
-              'medImproveRatio': 11.11,
-              'scaleInfo': 1,
-              'scaleScore': 88,
-              'scaleType': 4,
-              'patientPreopsInfoId': 15,
-              'scaleName': 'MDS-UPDRS III'
+              'scaleScoreBefore': '',
+              'scaleScoreAfter': '',
+              'medImproveRatio': ''
             }
           ],
           'motorRemark': ''
@@ -835,6 +827,23 @@ export default {
         obj[property] = Number(value);
       } else {
         obj[property] = '';
+      }
+      // 在这里加一些逻辑，如果是运动症状量表的得分（服药前得分 or 服药后最低分）改变了，则重新计算改善率
+      if (property === 'scaleScoreBefore' || property === 'scaleScoreAfter') {
+        this.updateMotorScaleMedImproveRatio();
+      }
+    },
+    updateMotorScaleMedImproveRatio() {
+      for (let scale of this.copyInfo.preopsMotorDTO.preopsMotorScaleList) {
+        var scoreBefore = scale.scaleScoreBefore;
+        var scoreAfter = scale.scaleScoreAfter;
+        if (scoreBefore === undefined || scoreBefore === '' || scoreBefore === 0 || isNaN(scoreBefore) ||
+        scoreAfter === undefined || scoreAfter === '' || isNaN(scoreAfter)) {
+          return;
+        } else {
+          var medImproveRatio = (Number(scoreBefore) - Number(scoreAfter) * 1.0) / Number(scoreBefore);
+          scale.medImproveRatio = Number((medImproveRatio * 100.0).toFixed(2));
+        }
       }
     },
     updateField(fieldName) {
