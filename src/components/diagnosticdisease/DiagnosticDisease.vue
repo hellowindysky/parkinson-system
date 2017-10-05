@@ -43,20 +43,20 @@
               <td v-for="field in diagnosticDiseaseMsTemplate" class="col" :class="getClass(field.fieldName)">
                 {{field.cnfieldName}}
                 <!-- <span class="required-mark" v-show="field.must === 1">*</span> -->
-                <span class="add-button iconfont icon-plus" @click="addSymtom('ms')"
+                <span class="add-button iconfont icon-plus" @click="addSymtom(MS_SYMPTOM)"
                   v-show="field.fieldName === 'symptomTypeId' && mutableMode===EDITING_MODE">
                 </span>
               </td>
             </tr>
-            <tr class="row" v-for="symptom in msSymptom">
+            <tr class="row" v-for="(symptom, index) in msSymptom">
               <td v-for="field in diagnosticDiseaseMsTemplate" class="col" :class="getClass(field.fieldName)">
                 <span v-if="mutableMode===READING_MODE">
                   {{getFieldValue(symptom, field.fieldName)}}
                 </span>
                 <span v-else-if="mutableMode===EDITING_MODE">
                   <span v-if="field.fieldName==='symptomTypeId'">
-                    <span class="delete-button iconfont icon-remove" @click="deleteSymptom(symptom)"></span>
-                    <el-select v-model="symptom[field.fieldName]" :class="{'warning': !symptom[field.fieldName]}"
+                    <span class="delete-button iconfont icon-remove" @click="deleteSymptom(symptom, index)"></span>
+                    <el-select v-model="symptom[field.fieldName]" :class="{'warning': !isSymptomValid(symptom)}"
                       :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
                       <el-option v-for="option in getOptions(field.fieldName, 'ms')"
                         :label="option.name" :value="option.code" :key="option.code"></el-option>
@@ -92,20 +92,20 @@
               <td v-for="field in diagnosticDiseaseMcTemplate" class="col" :class="getClass(field.fieldName)">
                 {{field.cnfieldName}}
                 <!-- <span class="required-mark" v-show="field.must === 1">*</span> -->
-                <span class="add-button iconfont icon-plus" @click="addSymtom('mc')"
+                <span class="add-button iconfont icon-plus" @click="addSymtom(MC_SYMPTOM)"
                   v-show="field.fieldName === 'symptomTypeId' && mutableMode===EDITING_MODE">
                 </span>
               </td>
             </tr>
-            <tr class="row" v-for="symptom in mcSymptom">
+            <tr class="row" v-for="(symptom, index) in mcSymptom">
               <td v-for="field in diagnosticDiseaseMcTemplate" class="col" :class="getClass(field.fieldName)">
                 <span v-if="mutableMode===READING_MODE">
                   {{getFieldValue(symptom, field.fieldName)}}
                 </span>
                 <span v-else-if="mutableMode===EDITING_MODE">
                   <span v-if="field.fieldName==='symptomTypeId'">
-                    <span class="delete-button iconfont icon-remove" @click="deleteSymptom(symptom)"></span>
-                    <el-select v-model="symptom[field.fieldName]" :class="{'warning': !symptom[field.fieldName]}"
+                    <span class="delete-button iconfont icon-remove" @click="deleteSymptom(symptom, index)"></span>
+                    <el-select v-model="symptom[field.fieldName]" :class="{'warning': !isSymptomValid(symptom)}"
                       :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
                       <el-option v-for="option in getOptions(field.fieldName, 'mc')"
                         :label="option.name" :value="option.code" :key="option.code"></el-option>
@@ -142,20 +142,20 @@
               <td v-for="field in diagnosticDiseaseNmsTemplate" class="col" :class="getClass(field.fieldName)">
                 {{field.cnfieldName}}
                 <!-- <span class="required-mark" v-show="field.must === 1">*</span> -->
-                <span class="add-button iconfont icon-plus" @click="addSymtom('nms')"
+                <span class="add-button iconfont icon-plus" @click="addSymtom(NMS_SYMPTOM)"
                   v-show="field.fieldName === 'symptomTypeId' && mutableMode===EDITING_MODE">
                 </span>
               </td>
             </tr>
-            <tr class="row" v-for="symptom in nmsSymptom">
+            <tr class="row" v-for="(symptom, index) in nmsSymptom">
               <td v-for="field in diagnosticDiseaseNmsTemplate" class="col" :class="getClass(field.fieldName)">
                 <span v-if="mutableMode===READING_MODE">
                   {{getFieldValue(symptom, field.fieldName)}}
                 </span>
                 <span v-else-if="mutableMode===EDITING_MODE">
                   <span v-if="field.fieldName==='symptomTypeId'">
-                    <span class="delete-button iconfont icon-remove" @click="deleteSymptom(symptom)"></span>
-                    <el-select v-model="symptom[field.fieldName]" :class="{'warning': !symptom[field.fieldName]}"
+                    <span class="delete-button iconfont icon-remove" @click="deleteSymptom(symptom, index)"></span>
+                    <el-select v-model="symptom[field.fieldName]" :class="{'warning': !isSymptomValid(symptom)}"
                       :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
                       <el-option v-for="option in getOptions(field.fieldName, 'nms')"
                         :label="option.name" :value="option.code" :key="option.code"></el-option>
@@ -202,7 +202,9 @@ export default {
       mutableMode: this.mode,
       copyInfo: {},
       warningResults: {},
-      test: 0
+      MS_SYMPTOM: '运动症状',
+      MC_SYMPTOM: '运动并发症',
+      NMS_SYMPTOM: '非运动症状'
     };
   },
   computed: {
@@ -229,7 +231,7 @@ export default {
       // 运动症状
       var msSymptom = [];
       for (let symptom of this.allSymptom) {
-        if (symptom.symType === '运动症状') {
+        if (symptom.symType === this.MS_SYMPTOM) {
           msSymptom.push(symptom);
         }
       }
@@ -239,7 +241,7 @@ export default {
       // 运动并发症
       var mcSymptom = [];
       for (let symptom of this.allSymptom) {
-        if (symptom.symType === '运动并发症') {
+        if (symptom.symType === this.MC_SYMPTOM) {
           mcSymptom.push(symptom);
         }
       }
@@ -249,7 +251,7 @@ export default {
       // 非运动症状
       var nmsSymptom = [];
       for (let symptom of this.allSymptom) {
-        if (symptom.symType === '非运动症状') {
+        if (symptom.symType === this.NMS_SYMPTOM) {
           nmsSymptom.push(symptom);
         }
       }
@@ -298,9 +300,9 @@ export default {
         }
       }
 
-      // 症状表单并没有用 warningResults 来校验，所以这里手动校验每一行是否都选择了名字
+      // 症状列表并没有用 warningResults 来校验，所以这里手动校验每一行的名字 —— 既不为空，又没有重复
       for (let symptom of this.allSymptom) {
-        if (!symptom.symptomTypeId) {
+        if (!this.isSymptomValid(symptom)) {
           return;
         }
       }
@@ -311,6 +313,7 @@ export default {
       // 到这里，就可以准备提交数据了
       this.copyInfo.patientId = this.$route.params.id;
       this.copyInfo.patientCaseId = this.$route.params.caseId;
+      console.log(this.copyInfo);
       modifyDiagnosticDisease(this.copyInfo).then(() => {
         this.updateAndClose();
       });
@@ -345,19 +348,19 @@ export default {
         return;   // 如果该对象不存在，就直接返回
       }
       for (let symptom of this.copyInfo.patientSymptom) {
-        if (symptom.symType === '运动症状') {
+        if (symptom.symType === this.MS_SYMPTOM) {
           for (let field of this.diagnosticDiseaseMsTemplate) {
             if (!symptom[field.fieldName]) {
               this.$set(symptom, field.fieldName, '');
             }
           }
-        } else if (symptom.symType === '运动并发症') {
+        } else if (symptom.symType === this.MC_SYMPTOM) {
           for (let field of this.diagnosticDiseaseMcTemplate) {
             if (!symptom[field.fieldName]) {
               this.$set(symptom, field.fieldName, '');
             }
           }
-        } else if (symptom.symType === '非运动症状') {
+        } else if (symptom.symType === this.NMS_SYMPTOM) {
           for (let field of this.diagnosticDiseaseNmsTemplate) {
             if (!symptom[field.fieldName]) {
               this.$set(symptom, field.fieldName, '');
@@ -386,12 +389,16 @@ export default {
         return symptom[fieldName];
       }
     },
-    deleteSymptom(item) {
+    deleteSymptom(targetSymptom, indexOfItsType) {
       // 删除 this.copyInfo.patientSymptom 中的 item 对象
+      var subIndex = 0;
       for (var i = 0; i < this.copyInfo.patientSymptom.length; i++) {
-        if (this.copyInfo.patientSymptom[i].symptomTypeId === item.symptomTypeId) {
-          this.copyInfo.patientSymptom.splice(i, 1);
-          return;
+        if (this.copyInfo.patientSymptom[i].symType === targetSymptom.symType) {
+          if (subIndex === indexOfItsType) {
+            this.copyInfo.patientSymptom.splice(i, 1);
+            return;
+          }
+          subIndex += 1;
         }
       }
     },
@@ -400,17 +407,17 @@ export default {
       var newSymptom = {};
       var template = [];
       switch (type) {
-        case 'ms':
+        case this.MS_SYMPTOM:
           template = this.diagnosticDiseaseMsTemplate;
-          newSymptom.symType = '运动症状';
+          newSymptom.symType = this.MS_SYMPTOM;
           break;
-        case 'mc':
+        case this.MC_SYMPTOM:
           template = this.diagnosticDiseaseMcTemplate;
-          newSymptom.symType = '运动并发症';
+          newSymptom.symType = this.MC_SYMPTOM;
           break;
-        case 'nms':
+        case this.NMS_SYMPTOM:
           template = this.diagnosticDiseaseNmsTemplate;
-          newSymptom.symType = '非运动症状';
+          newSymptom.symType = this.NMS_SYMPTOM;
           break;
         default:
           return;
@@ -430,6 +437,24 @@ export default {
         this.$set(this.copyInfo.patientSymptom, index, newSymptom);
       }
     },
+    isSymptomValid(symptom) {
+      // 检查一个症状的名字(实际上是检查其 ID)，第一个是不能为空，第二个是不能和现有列表中的重复
+      var symptomTypeId = symptom.symptomTypeId;
+      if (symptomTypeId === undefined || symptomTypeId === null || symptomTypeId === '') {
+        return false;
+      }
+
+      var count = 0;
+      for (let existedSymptom of this.allSymptom) {
+        if (existedSymptom.symptomTypeId === symptomTypeId) {
+          count += 1;
+          if (count > 1) {
+            return false;
+          }
+        }
+      }
+      return true;
+    },
     getMatchedField(fieldName) {
       // 在字典项中查询该名字所对应的字段，从而方便我们得到该字段的详细信息
       return Util.getElement('fieldName', fieldName, this.totalDictionary);
@@ -447,11 +472,11 @@ export default {
           'mc': 1,
           'nms': 2
         };
-        for (let syptomTypeItem of this.symptomType) {
-          if (syptomTypeItem.symptomtype === typeDict[type]) {
+        for (let symptomTypeItem of this.symptomType) {
+          if (symptomTypeItem.symptomtype === typeDict[type]) {
             options.push({
-              name: syptomTypeItem.sympName,
-              code: syptomTypeItem.id
+              name: symptomTypeItem.sympName,
+              code: symptomTypeItem.id
             });
           }
         }
