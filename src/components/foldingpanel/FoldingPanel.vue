@@ -71,7 +71,7 @@ export default {
   },
   mounted() {
     // 默认让以下面板呈展开状态（开发过程中随时调整）
-    const DEFAULT_OPEN_LIST = ['基础信息', '看诊记录', '医学量表', '关联症状', '外科手术', '检验检查'];
+    const DEFAULT_OPEN_LIST = ['基础信息', '看诊记录', '基本情况', '医学量表', '关联症状', '外科手术', '检验检查'];
     if (DEFAULT_OPEN_LIST.indexOf(this.title) > -1) {
       this.folded = false;
     }
