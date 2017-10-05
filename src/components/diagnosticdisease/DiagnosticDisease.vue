@@ -313,9 +313,13 @@ export default {
       // 到这里，就可以准备提交数据了
       this.copyInfo.patientId = this.$route.params.id;
       this.copyInfo.patientCaseId = this.$route.params.caseId;
-      console.log(this.copyInfo);
+
+      // console.log(this.copyInfo);
+      // 临时将 submit 事件的回调函数卸掉，等数据传输完毕后再加回来。这样可以避免用户在短时间内多次发出重复的提交请求
+      this.$off(this.SUBMIT, this.submit);
       modifyDiagnosticDisease(this.copyInfo).then(() => {
         this.updateAndClose();
+        this.$on(this.SUBMIT, this.submit);
       });
     },
     updateAndClose() {
