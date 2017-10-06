@@ -182,7 +182,6 @@ import groupListItem from 'components/groupitem/GroupItem';
 import userListItem from 'components/useritem/UserItem';
 import roleListItem from 'components/roleitem/RoleItem';
 
-
 import axios from 'axios';
 import Bus from 'utils/bus.js';
 import { vueCopy } from 'utils/helper';
