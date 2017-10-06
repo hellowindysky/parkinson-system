@@ -335,9 +335,13 @@ export default {
     },
     addNewPatient() {
       if (this.listType === 'myPatients') {
-        this.$router.push({name: 'myNewPatient'});
+        this.$router.push({
+          name: 'patientInfo', params: {id: 'newPatient'}
+        });
       } else if (this.listType === 'otherPatients') {
-        this.$router.push({name: 'otherNewPatient'});
+        this.$router.push({
+          name: 'otherPatientInfo', params: {id: 'newPatient'}
+        });
       }
     },
     togglePanelDisplay() {

@@ -21,32 +21,20 @@
             <span class="warning-text">{{getWarningText(field.fieldName)}}</span>
             <span v-if="getUIType(field)===1">
               <el-input v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-               :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)"></el-input>
-            </span>
-            <span v-else-if="getUIType(field)===2">
-              2
+                :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)"></el-input>
             </span>
             <span v-else-if="getUIType(field)===3">
               <el-select v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-               :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)">
+                :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)">
                 <el-option v-for="type in getTypes(field)" :label="type.typeName"
-                 :value="type.typeCode" :key="type.typeCode"></el-option>
+                  :value="type.typeCode" :key="type.typeCode"></el-option>
               </el-select>
-            </span>
-            <span v-else-if="getUIType(field)===4">
-              4
-            </span>
-            <span v-else-if="getUIType(field)===5">
-              5
             </span>
             <span v-else-if="getUIType(field)===6">
               <el-date-picker v-model="copyInfo[field.fieldName]" type="date" :class="{'warning': warningResults[field.fieldName]}"
-               :picker-options="futureDisabledptions" :placeholder="getMatchedField(field).cnFieldDesc"
-               @change="updateWarning(field)">
+                :picker-options="futureDisabledptions" :placeholder="getMatchedField(field).cnFieldDesc"
+                @change="updateWarning(field)">
               </el-date-picker>
-            </span>
-            <span v-else-if="getUIType(field)===7">
-              7
             </span>
           </div>
         </div>
@@ -57,7 +45,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import { modifyPatientInfo } from 'api/patient.js';
+import { modifyPatientInfo, addPatientInfo } from 'api/patient.js';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import { reviseDateFormat } from 'utils/helper.js';
@@ -102,6 +90,15 @@ export default {
         flattenedGroup = flattenedGroup.concat(group);
       }
       return flattenedGroup;
+    },
+    listType() {
+      if (this.$route.matched.some(record => record.meta.myPatients)) {
+        return 'myPatients';
+      } else if (this.$route.matched.some(record => record.meta.otherPatients)) {
+        return 'otherPatients';
+      } else {
+        return 'unknown';
+      }
     }
   },
   methods: {
@@ -119,8 +116,12 @@ export default {
       for (let group of this.basicInfoTemplateGroups) {
         for (let field of group) {
           this.updateWarning(field);
+        }
+      }
+      for (let group of this.basicInfoTemplateGroups) {
+        for (let field of group) {
           if (this.warningResults[field.fieldName]) {
-            return false;
+            return;
           }
         }
       }
@@ -128,17 +129,49 @@ export default {
       // 在提交前，将 copyInfo 中的数据还原成适合服务器传输的格式
       this.restoreCopyInfo();
 
-      // 点击提交按钮，将修改后的 copyInfo 提交到服务器，一旦提交成功，basicInfo也会更新，这个时候再切换回阅读状态
-      this.copyInfo.patientId = this.$route.params.id;
-      modifyPatientInfo(this.copyInfo).then(() => {
-        Bus.$emit(this.UPDATE_PATIENT_INFO);
-        this.mode = this.READING_MODE;
-      });
+      // 判断是新增患者还是修改已有患者
+      if (this.$route.params.id === 'newPatient') {
+        addPatientInfo(this.copyInfo).then((data) => {
+          var newId = data.patientId;
+          if (this.listType === 'myPatients') {
+            this.$router.push({
+              name: 'patientInfo',
+              params: {id: newId}
+            });
+          } else if (this.listType === 'otherPatients') {
+            this.$router.push({
+              name: 'otherPatientInfo',
+              params: {id: newId}
+            });
+          }
+        }, (error) => {
+          console.log(error);
+        });
+
+      } else {
+        // 一旦提交成功，basicInfo也会更新，这个时候再切换回阅读状态
+        this.copyInfo.patientId = this.$route.params.id;
+        modifyPatientInfo(this.copyInfo).then(() => {
+          Bus.$emit(this.UPDATE_PATIENT_INFO);
+          this.mode = this.READING_MODE;
+        }, (error) => {
+          console.log(error);
+        });
+      }
     },
     shallowCopy(obj) {
       // 进行浅复制之后，修改复制对象的属性，不会影响到原始对象
       // 下面这行有一个特殊作用，能让 Vue 动态检测已有对象的新添加的属性，参看 https://cn.vuejs.org/v2/guide/reactivity.html
       this.copyInfo = Object.assign({}, obj);
+
+      // 如果传过来的数据对象缺少某些属性，则根据 template 补上
+      for (let group of this.basicInfoTemplateGroups) {
+        for (let field of group) {
+          if (this.copyInfo[field.fieldName] === undefined) {
+            this.$set(this.copyInfo, field.fieldName, '');
+          }
+        }
+      }
 
       // 复制过来的 basicInfo 有几个字段的值需要特殊处理一下
       // 身高和体重的数值，在传输的时候用的是 Int 整型，例如 178.8 cm 在传输的时候用的数值是 1788
@@ -232,6 +265,9 @@ export default {
       // 如果组件的 basicInfo 属性发生变化，copyInfo 对象就会重置，而我们对 copyInfo 所做的还未提交的修改则会丢失。
       this.shallowCopy(newBasicInfo);
     }
+  },
+  mounted() {
+    this.$on(this.EDIT, this.startEditing);
   },
   created() {
     // 注意，这里之所以选择 created 钩子函数而不是 mounted，是因为 el-date-picker 组件的绑定数据模型是 copyInfo 下的属性

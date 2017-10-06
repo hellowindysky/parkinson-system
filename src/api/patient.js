@@ -62,8 +62,22 @@ export function modifyPatientInfo(patientInfo) {
     "orgType": 2,
     "patientInfo": patientInfo
   };
-
   var url = 'http://apitest.gyenno.com/pdms/modPatientInfo';
+
+  return encapsulatePromise(url, request);
+};
+
+// 新增患者
+export function addPatientInfo(patientInfo) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientInfo": patientInfo
+  };
+  var url = 'http://apitest.gyenno.com/pdms/addPatientInfo';
 
   return encapsulatePromise(url, request);
 };
@@ -93,7 +107,6 @@ export function modifyPatientDiseaseInfo(patientDiseaseInfo) {
     "orgType": 2,
     "patientDiseaseInfo": patientDiseaseInfo
   };
-
   var url = 'http://apitest.gyenno.com/pdms/modPatientDiseaseInfo';
 
   return encapsulatePromise(url, request);

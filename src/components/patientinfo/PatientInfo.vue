@@ -4,7 +4,7 @@
       <div class="tab left-tab" :class="{'current-tab': currentTab === 'personalInfo'}"
         @click="choosePersonal" v-show="this.existed">个人信息</div>
       <div class="tab right-tab" :class="{'current-tab': currentTab === 'diagnosticInfo'}"
-      @click="chooseDiagnostic" v-show="this.existed">诊断信息</div>
+        @click="chooseDiagnostic" v-show="this.existed">诊断信息</div>
       <div class="button" v-show="this.existed">导出病历</div>
       <div class="tab-bottom-bar" :class="currentTabBottomBar" v-show="this.existed"></div>
       <div class="title" v-show="!this.existed">新增患者</div>
@@ -29,7 +29,7 @@
       </div>
       <div class="respective-info">
         <router-view v-if="this.existed" :patient-info="patientInfo" :patient-case-list="patientCaseList"></router-view>
-        <div v-else class=""></div>
+        <basic-info v-else ref="newPatientWindow" :basic-info="{}"></basic-info>
       </div>
     </div>
     <DiagnosticDetail class="diagnostic-detail"></DiagnosticDetail>
@@ -45,6 +45,7 @@ import { getPatientInfo, getPatientCaseList } from 'api/patient';
 
 import DiagnosticDetail from 'components/diagnosticdetail/DiagnosticDetail';
 import DiagnosticHandleScale from 'components/diagnostichandlescale/DiagnosticHandleScale';
+import BasicInfo from 'components/basicinfo/BasicInfo';
 
 export default {
   data() {
@@ -53,11 +54,13 @@ export default {
       patientCaseList: [],
       belongDoctor: '',
       belongGroups: [],
-      createDate: '',
-      existed: true
+      createDate: ''
     };
   },
   computed: {
+    existed() {
+      return !(this.$route.params.id === 'newPatient');
+    },
     listType() {
       if (this.$route.matched.some(record => record.meta.myPatients)) {
         return 'myPatients';
@@ -101,10 +104,11 @@ export default {
       var path = this.$route.path;
 
       // 首先判断是不是新增患者
-      if (this.$route.params.id === 'newPatient') {
-        this.existed = false;
+      if (!this.existed) {
+        this.$refs.newPatientWindow.$emit(this.EDIT);
         return;
       }
+
       var rePersonal = new RegExp(/\/personalInfo(\/|$)/);
       var reDiagnostic = new RegExp(/\/diagnosticInfo(\/|$)/);
 
@@ -132,22 +136,31 @@ export default {
       });
     },
     updatePatientInfo() {
+      // 如果是新增患者，则不去请求数据
+      if (!this.existed) {
+        return;
+      }
       getPatientInfo(this.$route.params.id).then((data) => {
         // console.log('patientInfo: ', data);
         this.patientInfo = data;
         this.belongDoctor = data.belongDoctor;
         this.belongGroups = data.belongGroups;
         this.createDate = data.createDate;
+      }, (error) => {
+        console.log(error);
       });
       getPatientCaseList(this.$route.params.id).then((data) => {
         // console.log('patientCaseList: ', data);
         this.patientCaseList = data;
+      }, (error) => {
+        console.log(error);
       });
     }
   },
   components: {
     DiagnosticDetail,
-    DiagnosticHandleScale
+    DiagnosticHandleScale,
+    BasicInfo
   },
   mounted() {
     this.updatePatientInfo();
