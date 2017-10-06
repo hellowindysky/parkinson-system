@@ -36,9 +36,6 @@
                  :value="type.typeCode" :key="type.typeCode"></el-option>
               </el-select>
             </span>
-            <span v-else-if="getUIType(field)===4">
-              4
-            </span>
             <span v-else-if="getUIType(field)===5">
               <el-checkbox-group v-model="copyInfo[field.fieldName]" @change="updateWarning(field)"
                :placeholder="getMatchedField(field).cnFieldDesc">
@@ -49,9 +46,6 @@
             <span v-else-if="getUIType(field)===6">
               <el-date-picker v-model="copyInfo[field.fieldName]" type="date" :class="{'warning': warningResults[field.fieldName]}"
                :placeholder="getMatchedField(field).cnFieldDesc" format="yyyy-MM-dd" @change="updateWarning(field)"></el-date-picker>
-            </span>
-            <span v-else-if="getUIType(field)===7">
-              7
             </span>
           </div>
         </div>
@@ -152,7 +146,7 @@ export default {
       }
       for (let field of this.diseaseInfoDictionary) {
         let name = field.fieldName;
-        if (nameList.indexOf(name) > -1 && field.uiType === 5 && this.copyInfo[name] instanceof Array) {
+        if (nameList.indexOf(name) > -1 && field.uiType === 5 && (typeof this.copyInfo[name]) === 'string') {
           var codesArray = this.copyInfo[name].split(',').map((str) => {
             return parseInt(str, 10);
           });
