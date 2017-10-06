@@ -60,6 +60,7 @@ import { mapGetters } from 'vuex';
 import { modifyPatientInfo } from 'api/patient.js';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
+import { reviseDateFormat } from 'utils/helper.js';
 
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 
@@ -149,16 +150,11 @@ export default {
     },
     restoreCopyInfo() {
       // 这个函数用来在提交之前，将我们的临时数据 copyInfo，调整成适合服务器传输的格式
+      // 日期控件(el-date-picker)给的是一个表示完整日期对象的字符串，我们需要转换成 "yyyy-MM-dd"的格式后再提交
+      reviseDateFormat(this.copyInfo);
       for (let group of this.basicInfoTemplateGroups) {
         for (let field of group) {
           var fieldName = field.fieldName;
-
-          // 日期控件(el-date-picker)给的是一个表示完整日期对象的字符串，我们需要格式化之后再提交
-          if (this.getUIType(field) === 6) {
-            var dateStr = this.copyInfo[fieldName];
-            this.copyInfo[fieldName] = Util.simplifyDate(dateStr);
-          }
-
           // copyInfo 有几个字段的值在取过来的时候进行了特殊处理，这里在传回给服务器的时候要还原成一开始的格式
           if (CONVERT_TO_DECIMAL_LIST.indexOf(fieldName) > -1) {
             this.$set(this.copyInfo, fieldName, this.copyInfo[fieldName] * 10);
