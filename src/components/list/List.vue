@@ -181,7 +181,10 @@ import patientListItem from 'components/patientitem/PatientItem';
 import groupListItem from 'components/groupitem/GroupItem';
 import userListItem from 'components/useritem/UserItem';
 import roleListItem from 'components/roleitem/RoleItem';
+
+
 import axios from 'axios';
+import Bus from 'utils/bus.js';
 import { vueCopy } from 'utils/helper';
 import { getPatientList } from 'api/patient';
 import { getUserList } from 'api/user';
@@ -286,20 +289,16 @@ export default {
   mounted() {
     // 将省市的数据请求过来
     this.initProCity();
-    // 如果之前有绑定的话，先进行解除
-    Ps.destroy(this.$refs.listArea);
-    Ps.initialize(this.$refs.listArea, {
-      wheelSpeed: 1,
-      minScrollbarLength: 40
-    });
-    // this.$refs.listArea.scrollTop = 20;
-    // Ps.update(this.$refs.listArea);
 
     this.checkRoute();
 
-    // 如果在某个指定了 id 的页面进行刷新，checkRoute函数内的更新列表数据，不会执行，这个时候就需要手动更新
+    // 如果在某个指定了 id 的页面进行刷新，checkRoute函数内的[更新列表数据]不会执行，这个时候就需要手动更新
     this.updateMyPatientsList();
+    this.updateOtherPatientsList();
     this.updateUserList();
+
+    Bus.$on(this.UPDATE_MY_PATIENTS_LIST, this.updateMyPatientsList);
+    Bus.$on(this.UPDATE_OTHER_PATIENTS_LIST, this.updateOtherPatientsList);
   },
   methods: {
     initProCity() {
@@ -312,16 +311,29 @@ export default {
     search() {
       // console.log(this.searchInput);
     },
+    updateScrollbar() {
+      Ps.destroy(this.$refs.listArea);
+      Ps.initialize(this.$refs.listArea, {
+        wheelSpeed: 1,
+        minScrollbarLength: 40
+      });
+    },
     updateMyPatientsList(cb) {
+      // 更新“我的患者”列表
       getPatientList().then((data) => {
         this.myPatientsList = data;
+        this.updateScrollbar();
         // 如果有回调函数作为参数传递进来了，则执行该函数
         cb && cb();
       });
     },
+    updateOtherPatientsList() {
+      // 更新“科室患者”列表
+    },
     updateUserList(cb) {
       getUserList().then((data) => {
         this.userList = data.userRoles ? data.userRoles : [];
+        this.updateScrollbar();
         // 如果有回调函数作为参数传递进来了，则执行该函数
         cb && cb();
       });
@@ -329,6 +341,7 @@ export default {
     updateRoleList(cb) {
       getRoleList().then((data) => {
         this.roleList = data.userRoleDTOList ? data.userRoleDTOList : [];
+        this.updateScrollbar();
         // 如果有回调函数作为参数传递进来了，则执行该函数
         cb && cb();
       });
@@ -413,6 +426,10 @@ export default {
       // 路由一旦发生变化，就关闭筛选面板
       this.panelDisplay = false;
       this.checkRoute();
+    },
+    beforeDestroy() {
+      Bus.$off(this.UPDATE_MY_PATIENTS_LIST);
+      Bus.$off(this.UPDATE_OTHER_PATIENTS_LIST);
     }
   }
 };

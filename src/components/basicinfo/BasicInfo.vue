@@ -138,11 +138,14 @@ export default {
               name: 'patientInfo',
               params: {id: newId}
             });
+            Bus.$emit(this.UPDATE_MY_PATIENTS_LIST);
+
           } else if (this.listType === 'otherPatients') {
             this.$router.push({
               name: 'otherPatientInfo',
               params: {id: newId}
             });
+            Bus.$emit(this.UPDATE_OTHER_PATIENTS_LIST);
           }
         }, (error) => {
           console.log(error);
