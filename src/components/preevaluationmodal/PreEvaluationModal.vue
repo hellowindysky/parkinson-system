@@ -273,31 +273,41 @@
         </div>
         <table class="table">
           <tr class="row title-row">
-            <td class="col">晨用药物</td>
+            <td class="col">
+              <span class="iconfont icon-plus"></span>
+              晨用药物
+            </td>
             <td class="col">规格</td>
             <td class="col">使用量(片)</td>
             <td class="col">晨剂量(等效美多芭量)</td>
             <td class="col">冲击剂量</td>
             <td class="col">等效左旋多巴冲击剂量</td>
           </tr>
-          <tr class="row">
+          <tr class="row" v-for="medicine in copyInfo.preopsMotorDTO.patientPreopsMedicineList">
             <td class="col">
-              <el-input></el-input>
+              <span class="iconfont icon-remove"></span>
+              <el-select v-model="medicine.medicineInfo" @change="selectMedicine(medicine)">
+                <el-option v-for="option in getOptions('medicineName')" :label="option.name"
+                  :value="option.code" :key="option.code"></el-option>
+              </el-select>
             </td>
             <td class="col">
-              <el-input></el-input>
+              <el-select v-model="medicine.medSpecification" @change="selectMedicineSpec(medicine)">
+                <el-option v-for="option in getOptions('medicineSpec', medicine.medicineInfo)" :label="option.name"
+                  :value="option.code" :key="option.code"></el-option>
+              </el-select>
             </td>
             <td class="col">
-              <el-input></el-input>
+              <el-input v-model="medicine.medUsage" @blur="updateMedicineUsage(medicine)"></el-input>
             </td>
             <td class="col">
-              <el-input></el-input>
+              {{ getMorningDose(medicine) }}
             </td>
             <td class="col">
-              <el-input></el-input>
+              {{ getLoadingDose(medicine) }}
             </td>
             <td class="col">
-              <el-input></el-input>
+              {{ getLevodopaLoadingDose(medicine) }}
             </td>
           </tr>
         </table>
@@ -688,16 +698,14 @@ export default {
               'medSpecification': 250,
               'medUsage': 1,
               'medicineInfo': 1,
-              'morningDose': 250,
-              'patientPreopsInfoId': 15
+              'morningDose': 250
             },
             {
               'loadingDose': 3,
               'medSpecification': 1,
               'medUsage': 2,
-              'medicineInfo': 3,
-              'morningDose': 2,
-              'patientPreopsInfoId': 15
+              'medicineInfo': 6,
+              'morningDose': 2
             }
           ],
           'preopsMotorScaleList': [
@@ -723,7 +731,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'typeGroup'
+      'typeGroup',
+      'medicineInfo'
     ]),
     title() {
       if (this.mode === this.ADD_DATA) {
@@ -749,7 +758,7 @@ export default {
     showModal(changeWay, info) {
       this.mode = changeWay;
       console.log(info);
-
+      console.log(this.medicineInfo);
       this.initCopyInfo();
       this.updateDiaryDayTime();
       this.updateDiaryHour();
@@ -801,13 +810,15 @@ export default {
       var type = Util.getElement('typeCode', code, types);
       return type.typeName ? type.typeName : '';
     },
-    getOptions(fieldName) {
+    getOptions(fieldName, param) {
+      // 这里的第二个参数不是必须的，在查询药物规格时会用到
       var options = [];
       var typeGroupCodeMap = {
         'terminalScale': 'eodScale',
         'deviceType': 'deviceType'
       };
       if (typeGroupCodeMap[fieldName]) {
+        // 在 typeGroup 中可以查到的
         var typesInfo = Util.getElement('typegroupcode', typeGroupCodeMap[fieldName], this.typeGroup);
         var types = typesInfo && typesInfo.types ? typesInfo.types : [];
         for (let type of types) {
@@ -816,8 +827,86 @@ export default {
             code: type.typeCode
           });
         }
+      } else {
+        // 在 typeGroup 中查不到要去 tableData 中去查的
+        if (fieldName === 'medicineName') {
+          for (let medicine of this.medicineInfo) {
+            options.push({
+              name: medicine.medicineName,
+              code: medicine.medicineId
+            });
+          }
+        } else if (fieldName === 'medicineSpec') {
+          // 药物规格要根据当前药物去找
+          var targetMedicineId = param;
+          var targetMedicine = Util.getElement('medicineId', targetMedicineId, this.medicineInfo);
+          var specGroup = targetMedicine.spec ? targetMedicine.spec : [];
+          for (let spec of specGroup) {
+            options.push({
+              name: spec.specOral,
+              code: spec.medicalPec
+            });
+          }
+        }
       }
       return options;
+    },
+    selectMedicine(medicine) {
+      // 重新选择药物后，会将规格清空
+      medicine.medSpecification = '';
+    },
+    selectMedicineSpec(medicine) {
+      // 重新选择药物规格后，会将使用量清空
+      medicine.medUsage = '';
+    },
+    updateMedicineUsage(medicine) {
+      // 重新填写使用量之后，要手动将其由字符串改成数字
+      var usage = medicine.medUsage;
+      if (usage === undefined || usage === '' || isNaN(usage)) {
+        medicine.medUsage = '';
+      } else {
+        medicine.medUsage = Number(parseInt(usage, 10));
+      }
+    },
+    getMorningDose(medicine) {
+      return 0;
+    },
+    getLoadingDose(medicine) {
+      // 根据药物，规格，使用量这三个参数计算出冲击剂量
+      var medicineId = medicine.medicineInfo;
+      var spec = medicine.medSpecification;
+      var usage = medicine.medUsage;
+
+      // 先对参数进行校验
+      if (medicineId === undefined || medicineId === '' || spec === undefined ||
+        spec === '' || isNaN(spec) || usage === 'undefined' || usage === '' || isNaN(usage)) {
+        return '';
+      }
+      spec = Number(spec);
+      usage = Number(usage);
+
+      // 再找到药物当前规格的左旋多巴系数
+      var targetMedicine = Util.getElement('medicineId', medicineId, this.medicineInfo);
+      var specGroup = targetMedicine.spec ? targetMedicine.spec : [];
+      var targetSpecInfo = Util.getElement('medicalPec', spec, specGroup);
+      var levodopaFactor = targetSpecInfo.levodopaFactor;
+      if (levodopaFactor === undefined) {
+        return '';  // 如果没找到对应的左旋多巴系数，则返回空字符串
+      }
+
+      // 最后再来计算
+      var result = Number(levodopaFactor * usage * 1.875);
+      medicine.loadingDose = result;
+      return result;
+    },
+    getLevodopaLoadingDose(medicine) {
+      // 根据药物的冲击剂量来计算出[等效左旋多巴冲击剂量]，如果参数不合法，那么返回空字符串
+      var loadingDose = medicine.loadingDose;
+      if (loadingDose === undefined || loadingDose === '' || isNaN(loadingDose)) {
+        return '';
+      } else {
+        return Number((Number(loadingDose) * 0.8).toFixed(2));
+      }
     },
     transformToNum(obj, property) {
       // 如果填写的不是一个数字，则转换成一个空字符串，如果是一个数字，则将这个数字字符串转化为真正的数字
@@ -1198,6 +1287,22 @@ export default {
             }
             &.narrow-col {
               width: 5%;
+            }
+            .iconfont {
+              position: absolute;
+              left: 5px;
+              top: 9px;
+              cursor: pointer;
+              z-index: 20;
+              &.icon-remove {
+                color: @alert-color;
+              }
+              &:hover {
+                opacity: 0.6;
+              }
+              &:active {
+                opacity: 0.8;
+              }
             }
             .el-input {
               width: 100%;
