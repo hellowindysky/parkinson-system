@@ -2,10 +2,10 @@
   <div class="personal-info-wrapper">
     <basic-info class="component" :basic-info="basicInfo"></basic-info>
     <disease-info class="component" :disease-info="diseaseInfo"></disease-info>
-    <other-info class="component" :medHistoryList="medHistoryList" :diseaseHistoryList="diseaseHistoryList"
-      :familyHistoryList="familyHistoryList" :coffeeHistoryList="coffeeHistoryList" :teaHistoryList="teaHistoryList" :wineHistoryList="wineHistoryList"
-      :smokeHistoryList="smokeHistoryList" :exerciseHistoryList="exerciseHistoryList"
-      :toxicExposureHistoryList="toxicExposureHistoryList"></other-info>
+    <other-info class="component" :med-history-list="medHistoryList" :disease-history-list="diseaseHistoryList"
+      :family-history-list="familyHistoryList" :coffee-history-list="coffeeHistoryList" :tea-history-list="teaHistoryList"
+      :wine-history-list="wineHistoryList" :smoke-history-list="smokeHistoryList" :exercise-history-list="exerciseHistoryList"
+      :toxic-exposure-history-list="toxicExposureHistoryList"></other-info>
   </div>
 </template>
 
