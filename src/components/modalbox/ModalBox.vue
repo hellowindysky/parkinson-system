@@ -119,11 +119,24 @@ export default {
       } else if (this.modalType === this.FAMILY_MODAL) {
         return this.familyHistoryDictionary;
       } else if (this.modalType === this.PERSON_MODAL) {
-        // 如果是个人史面板，则将几个子字典合并成一个新的总字典
-        return [].concat(this.coffeeHistoryDictionary, this.teaHistoryDictionary,
-           this.smokeHistoryDictionary, this.wineHistoryDictionary, this.exerciseHistoryDictionary);
+        // 如果是个人史面板，则有几个子模版，需要在选择个人史子类型后，自动确定新的 dictionary
+        if (this.subModalType === this.WINE_MODAL) {
+          return this.wineHistoryDictionary;
+        } else if (this.subModalType === this.TEA_MODAL) {
+          return this.teaHistoryDictionary;
+        } else if (this.subModalType === this.COFFEE_MODAL) {
+          return this.coffeeHistoryDictionary;
+        } else if (this.subModalType === this.SMOKE_MODAL) {
+          return this.smokeHistoryDictionary;
+        } else if (this.subModalType === this.EXERCISE_MODAL) {
+          return this.exerciseHistoryDictionary;
+        } else {
+          return [];
+        }
       } else if (this.modalType === this.TOXIC_MODAL) {
         return this.toxicExposureHistoryDictionary;
+      } else {
+        return [];
       }
     },
     template() {
@@ -134,7 +147,6 @@ export default {
       } else if (this.modalType === this.FAMILY_MODAL) {
         return this.familyHistoryTemplate;
       } else if (this.modalType === this.PERSON_MODAL) {
-
         // 如果是个人史面板，则有几个子模版，需要在选择个人史类型后，自动确定新的模版
         if (this.subModalType === this.WINE_MODAL) {
           return this.wineHistoryTemplate;
@@ -146,11 +158,13 @@ export default {
           return this.smokeHistoryTemplate;
         } else if (this.subModalType === this.EXERCISE_MODAL) {
           return this.exerciseHistoryTemplate;
+        } else {
+          return [];
         }
-
-        return [];
       } else if (this.modalType === this.TOXIC_MODAL) {
         return this.toxicExposureHistoryTemplate;
+      } else {
+        return [];
       }
     }
   },
