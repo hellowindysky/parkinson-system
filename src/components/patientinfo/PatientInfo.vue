@@ -1,13 +1,16 @@
 <template lang="html">
   <div class="patient-info">
     <div class="tabs-wrapper">
-      <div class="tab left-tab" :class="{'current-tab': currentTab === 'personalInfo'}" @click="choosePersonal">个人信息</div>
-      <div class="tab right-tab" :class="{'current-tab': currentTab === 'diagnosticInfo'}" @click="chooseDiagnostic">诊断信息</div>
-      <div class="button">导出病历</div>
-      <div class="tab-bottom-bar" :class="currentTabBottomBar"></div>
+      <div class="tab left-tab" :class="{'current-tab': currentTab === 'personalInfo'}"
+        @click="choosePersonal" v-show="this.existed">个人信息</div>
+      <div class="tab right-tab" :class="{'current-tab': currentTab === 'diagnosticInfo'}"
+      @click="chooseDiagnostic" v-show="this.existed">诊断信息</div>
+      <div class="button" v-show="this.existed">导出病历</div>
+      <div class="tab-bottom-bar" :class="currentTabBottomBar" v-show="this.existed"></div>
+      <div class="title" v-show="!this.existed">新增患者</div>
     </div>
     <div class="info-wrapper" ref="scrollArea">
-      <div class="shared-info">
+      <div class="shared-info" v-show="this.existed">
         <div class="info adscription">
           <span class="info-title">归属医生: </span>
           <span class="info-text">{{ belongDoctor }}</span>
@@ -25,7 +28,8 @@
         </div>
       </div>
       <div class="respective-info">
-        <router-view :patient-info="patientInfo" :patient-case-list="patientCaseList"></router-view>
+        <router-view v-if="this.existed" :patient-info="patientInfo" :patient-case-list="patientCaseList"></router-view>
+        <div v-else class=""></div>
       </div>
     </div>
     <DiagnosticDetail class="diagnostic-detail"></DiagnosticDetail>
@@ -49,7 +53,8 @@ export default {
       patientCaseList: [],
       belongDoctor: '',
       belongGroups: [],
-      createDate: ''
+      createDate: '',
+      existed: true
     };
   },
   computed: {
@@ -94,6 +99,12 @@ export default {
     },
     checkRoute() {
       var path = this.$route.path;
+
+      // 首先判断是不是新增患者
+      if (this.$route.params.id === 'newPatient') {
+        this.existed = false;
+        return;
+      }
       var rePersonal = new RegExp(/\/personalInfo(\/|$)/);
       var reDiagnostic = new RegExp(/\/diagnosticInfo(\/|$)/);
 
@@ -257,6 +268,17 @@ export default {
       &:active {
         opacity: 0.9;
       }
+    }
+    .title {
+      position: absolute;
+      left: @first-tab-x;
+      width: @tab-width;
+      height: 100%;
+      line-height: 40px;
+      box-sizing: border-box;
+      font-size: @large-font-size;
+      font-weight: bold;
+      color: @font-color;
     }
   }
   .info-wrapper {

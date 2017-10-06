@@ -13,7 +13,7 @@
     </div>
 
     <div class="list-area" ref="listArea">
-      <div v-if="this.listType === 'patients'">
+      <div v-if="this.listType === 'myPatients'">
         <patient-list-item class="item" v-for="patient in myPatientsList" :patient="patient" :key="patient.patientId"></patient-list-item>
       </div>
       <div v-else-if="this.listType === 'groups'">
@@ -33,7 +33,7 @@
     </div>
 
     <div class="function-area">
-      <div class="function-button left">
+      <div class="function-button left" @click="addNewPatient">
         <span class="iconfont icon-new-patient"></span>
         <span class="text">新增患者</span>
       </div>
@@ -45,7 +45,7 @@
 
     <transition name="slide-fade">
       <el-form class="filter-panel" :model="filterPatientsForm" :rules="rules" ref="filterPatientsForm"
-      label-width="20%"  v-show="panelDisplay" v-if="this.listType === 'patients' || this.listType === 'otherPatients'">
+      label-width="20%"  v-show="panelDisplay" v-if="this.listType === 'myPatients' || this.listType === 'otherPatients'">
         <el-form-item label="分组" prop="group" class="item">
           <el-select v-model="filterPatientsForm.group">
             <el-option label="不限" value="all"></el-option>
@@ -255,7 +255,7 @@ export default {
     listType() {
       var path = this.$route.path;
       if (/^\/patients\/list/.test(path)) {
-        return 'patients';
+        return 'myPatients';
       } else if (/^\/patients\/groups/.test(path)) {
         return 'groups';
       } else if (/^\/patients\/otherList/.test(path)) {
@@ -267,7 +267,7 @@ export default {
       }
     },
     totalNumText() {
-      if (this.listType === 'patients') {
+      if (this.listType === 'myPatients') {
         return '患者：' + this.myPatientsList.length + '人';
       } else if (this.listType === 'groups') {
         return '分组：19个';
@@ -332,6 +332,13 @@ export default {
         // 如果有回调函数作为参数传递进来了，则执行该函数
         cb && cb();
       });
+    },
+    addNewPatient() {
+      if (this.listType === 'myPatients') {
+        this.$router.push({name: 'myNewPatient'});
+      } else if (this.listType === 'otherPatients') {
+        this.$router.push({name: 'otherNewPatient'});
+      }
     },
     togglePanelDisplay() {
       this.panelDisplay = !this.panelDisplay;
