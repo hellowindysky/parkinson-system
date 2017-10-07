@@ -872,23 +872,25 @@ export default {
         alert(COMT_ALERT_MESSAGE);
       }
     },
-    isMedicineValid(medicine) {
+    getMedicalType(medicine) {
       var targetMedicine = Util.getElement('medicineId', medicine.medicineInfo, this.medicineInfo);
-      var isCOMTInhibitor = targetMedicine.medicalType === 3;
-      if (!isCOMTInhibitor) {
-        // 如果不是 COMT 抑制剂类药物，则直接返回 true，因为只有 COMT 抑制剂类药物才需要检验整个药物列表是否符合规则
+      return targetMedicine.medicalType;
+    },
+    isMedicineValid(medicine) {
+      // COMT 药物存在时，整个药物列表一定要有左旋多巴类制剂的药物存在
+      // 如果不是 COMT 抑制剂类药物，则直接返回 true，
+      // 如果是 COMT 抑制剂，则根据整个列表是否符合规则来返回 true 或 false
+      if (this.getMedicalType(medicine) !== 3) {
         return true;
-      }
-
-      var medicineList = this.copyInfo.preopsMotorDTO.patientPreopsMedicineList;
-      var hasLevodopa = false;
-      for (let eachMedicine of medicineList) {
-        var medicineOfTableData = Util.getElement('medicineId', eachMedicine.medicineInfo, this.medicineInfo);
-        if (medicineOfTableData.medicalType === 0) {
-          hasLevodopa = true;
+      } else {
+        var hasLevodopa = false;
+        for (let eachMedicine of this.copyInfo.preopsMotorDTO.patientPreopsMedicineList) {
+          if (this.getMedicalType(eachMedicine) === 0) {
+            hasLevodopa = true;
+          }
         }
+        return hasLevodopa;
       }
-      return hasLevodopa;
     },
     selectMedicineSpec(medicine) {
       // 重新选择药物规格后，会将使用量清空
@@ -919,7 +921,22 @@ export default {
       spec = Number(spec);
       usage = Number(usage);
 
-      // 再找到药物当前规格的左旋多巴系数
+      // 如果是 COMT 抑制剂类药物（medicalType 为 3），则单独走一套计算规则，
+      // 计算列表中所有 L-Dopa 药物的左旋多巴等效剂量只和，然后再乘以 25%，作为 COMT 抑制剂类药物的左旋多巴等效剂量
+      if (this.getMedicalType(medicine) === 3) {
+        var totalLevodopaDose = 0;
+        var levodopaMedicineList = this.copyInfo.preopsMotorDTO.patientPreopsMedicineList.filter((eachMedicine) => {
+          return this.getMedicalType(eachMedicine) === 0;
+        });
+        for (let levodopaMedicine of levodopaMedicineList) {
+          // 注意，因为 getLevodopaDose 函数的定义问题，它的返回值只能是数字（有问题的时候一律返回 0），
+          // 而且下面这行是不会出现无限递归的问题的
+          totalLevodopaDose += this.getLevodopaDose(levodopaMedicine);
+        }
+        return totalLevodopaDose * 0.25;
+      }
+
+      // 如果不是 COMT 抑制剂，那么需要在 tableData 中查询详细信息，再找到当前规格的左旋多巴系数
       var targetMedicine = Util.getElement('medicineId', medicineId, this.medicineInfo);
       var specGroup = targetMedicine.spec ? targetMedicine.spec : [];
       var targetSpecInfo = Util.getElement('medicalPec', spec, specGroup);
