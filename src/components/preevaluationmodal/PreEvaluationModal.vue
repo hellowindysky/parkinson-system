@@ -693,22 +693,22 @@ export default {
           'nonmotorRemark': ''
         },
         'preopsMotorDTO': {
-          'motorTestTime': '2017-10-01',
+          'motorTestTime': '',
           'loadingDoseCount': 378,
           'patientPreopsMedicineList': [
             {
-              'loadingDose': 375,
-              'medSpecification': 250,
-              'medUsage': 1,
-              'medicineInfo': 1,
-              'morningDose': 250
+              'loadingDose': '',
+              'medSpecification': '',
+              'medUsage': '',
+              'medicineInfo': '',
+              'morningDose': ''
             },
             {
-              'loadingDose': 3,
-              'medSpecification': 1,
-              'medUsage': 2,
-              'medicineInfo': 6,
-              'morningDose': 2
+              'loadingDose': '',
+              'medSpecification': '',
+              'medUsage': '',
+              'medicineInfo': '',
+              'morningDose': ''
             }
           ],
           'preopsMotorScaleList': [
