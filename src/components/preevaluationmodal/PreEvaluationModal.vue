@@ -804,6 +804,7 @@ export default {
       pruneObj(this.copyInfo);  // 调用此函数将值为空的属性去除掉
       reviseDateFormat(this.copyInfo);  // 将日期格式调整成符合传输要求的字符串
 
+      this.copyInfo.patientId = this.$route.params.id;
       this.copyInfo.patientCaseId = this.$route.params.caseId;
       if (this.mode === this.ADD_DATA) {
         addPreEvaluation(this.copyInfo).then(() => {
