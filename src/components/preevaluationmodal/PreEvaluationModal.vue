@@ -295,7 +295,7 @@
               </el-select>
             </td>
             <td class="col">
-              <el-select v-model="medicine.medSpecification" @change="selectMedicineSpec(medicine)">
+              <el-select v-model="medicine.medSpecification">
                 <el-option v-for="option in getOptions('medicineSpec', medicine.medicineInfo)" :label="option.name"
                   :value="option.code" :key="option.code"></el-option>
               </el-select>
@@ -743,7 +743,7 @@ export default {
     showModal(changeWay, info) {
       this.mode = changeWay;
       console.log(info);
-      console.log(this.medicineInfo);
+      // console.log(this.medicineInfo);
       this.initCopyInfo();
       this.updateDiaryDayTime();
       this.updateDiaryHour();
@@ -845,8 +845,9 @@ export default {
       return options;
     },
     selectMedicine(medicine) {
-      // 重新选择药物后，会将规格清空
+      // 重新选择药物后，会将规格和使用量清空
       medicine.medSpecification = '';
+      medicine.medUsage = '';
 
       // 因为 COMT抑制剂类药物（如珂丹）需要配合多巴胺类药物使用，所以每次有药物名字更新，
       // 就要检查是否出现了只有 COMT 抑制剂而没有 多巴胺类药物的情况
@@ -873,10 +874,6 @@ export default {
         }
         return hasLevodopa;
       }
-    },
-    selectMedicineSpec(medicine) {
-      // 重新选择药物规格后，会将使用量清空
-      medicine.medUsage = '';
     },
     updateMedicineUsage(medicine) {
       // 重新填写使用量之后，要手动将其由字符串改成数字
@@ -947,20 +944,40 @@ export default {
       // 等效左旋多巴冲击剂量，由等效左旋多巴剂量，乘以 1.5 得到
       var levodopaDose = this.getLevodopaDose(medicine);
       var levodopaLoadingDose = levodopaDose * 1.5;
-      medicine.levodopaLoadingDose = levodopaLoadingDose > 0 ? levodopaLoadingDose : '';
-      return medicine.levodopaLoadingDose;
+      return levodopaLoadingDose > 0 ? levodopaLoadingDose : '';
     },
     addMedicine() {
       var medicineList = this.copyInfo.preopsMotorDTO.patientPreopsMedicineList;
       var index = medicineList.length;
       this.$set(medicineList, index, {});
-      let propertyList = ['loadingDose', 'medSpecification', 'medUsage', 'medicineInfo', 'morningDose'];
+      let propertyList = ['medicineInfo', 'medSpecification', 'medUsage', 'morningDose', 'loadingDose'];
       for (let property of propertyList) {
         this.$set(medicineList[index], property, '');
       }
     },
     removeMedicine(index) {
-      this.copyInfo.preopsMotorDTO.patientPreopsMedicineList.splice(index, 1);
+      // 由于我们对每一行的药物名字进行了监控，一旦其发生变化，就自动清空改行的规格和使用量，
+      // 因此一旦我们删除了某一行药物，后续每一行在依次往前挪一排的过程中，会监控到这些行的药物名字发生了变化，
+      // 从而导致后面所有行的药物规格和使用量都被清除掉了（这不是我们希望看到的）
+      // 所以，这里将整个列表的有效数据先进行缓存，待删除了改行，并等待监控逻辑完毕之后，再把缓存数据填回去
+      var medicineList = this.copyInfo.preopsMotorDTO.patientPreopsMedicineList;
+      var oldList = [];
+      for (let medicine of medicineList) {
+        oldList.push({
+          medSpecification: medicine.medSpecification,
+          medUsage: medicine.medUsage
+        });
+      }
+      medicineList.splice(index, 1);
+      oldList.splice(index, 1);
+
+      // 因为要等待监控逻辑完成之后，所以下面的代码要放在 nextTick() 中执行
+      this.$nextTick(() => {
+        for (var i = 0; i < medicineList.length; i++) {
+          medicineList[i].medSpecification = oldList[i].medSpecification;
+          medicineList[i].medUsage = oldList[i].medUsage;
+        }
+      });
     },
     getTotalLoadingDose() {
       var totalLoadingDose = 0;
