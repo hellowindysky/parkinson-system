@@ -300,13 +300,13 @@
             <td class="col">
               <el-input v-model="medicine.medUsage" @blur="updateMedicineUsage(medicine)"></el-input>
             </td>
-            <td class="col">
+            <td class="col computed-cell">
               {{ getMorningDose(medicine) }}
             </td>
-            <td class="col">
+            <td class="col computed-cell">
               {{ getLoadingDose(medicine) }}
             </td>
-            <td class="col">
+            <td class="col computed-cell">
               {{ getLevodopaLoadingDose(medicine) }}
             </td>
           </tr>
@@ -330,7 +330,7 @@
               <el-input v-model="scale.scaleScoreAfter" @blur="transformToNum(scale, 'scaleScoreAfter')"
                 :class="{'warning': isNaN(scale.scaleScoreAfter)}"></el-input>
             </td>
-            <td class="col">
+            <td class="col computed-cell">
               {{ scale.medImproveRatio }}
             </td>
           </tr>
