@@ -22,17 +22,31 @@ function encapsulatePromise(url, request) {
   return promise;
 }
 
-export function getPatientList() {
-  var request = {
-    "userId": 93242,
-    "accountNumber": "15527231713",
-    "userType": 2,
-    "orgId": 34,
-    "orgType": 2,
-    "pageNo": 1,
-    "pageSize": 0
-  };
-
+export function getPatientList(condition) {
+  // condition 对象包含了查询参数，必须包含 type 属性
+  var request = {};
+  if (!(condition instanceof Object) || !condition.type) {
+    request = {
+      "userId": 93242,
+      "accountNumber": "15527231713",
+      "userType": 2,
+      "orgId": 34,
+      "orgType": 2,
+      "pageNo": 1,
+      "pageSize": 0
+    };
+  } else {
+    request = {
+      "userId": 93242,
+      "accountNumber": "15527231713",
+      "userType": 2,
+      "orgId": 34,
+      "orgType": 2,
+      "pageNo": 1,
+      "pageSize": 0,
+      "patientCond": condition
+    };
+  }
   var url = 'http://apitest.gyenno.com/pdms/queryPatientList';
   return encapsulatePromise(url, request);
 };
