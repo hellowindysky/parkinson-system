@@ -193,8 +193,7 @@
               </el-select>
             </td>
             <td class="col">
-              <el-input v-model="scale.scaleScore" @blur="transformToNum(scale, 'scaleScore')"
-                :class="{'warning': isNaN(scale.scaleScore)}"></el-input>
+              <el-input v-model="scale.scaleScore" @blur="transformToNum(scale, 'scaleScore')"></el-input>
             </td>
             <td class="col">
               <el-date-picker v-model="scale.ariseTime" :editable="false" :default-value="copyInfo.preopsTime"></el-date-picker>
@@ -226,8 +225,7 @@
               {{getRealName(scale.scaleInfo, 'nmScale')}}
             </td>
             <td class="col narrow-col">
-              <el-input v-model="scale.scaleScore" @blur="transformToNum(scale, 'scaleScore')"
-                :class="{'warning': isNaN(scale.scaleScore)}"></el-input>
+              <el-input v-model="scale.scaleScore" @blur="transformToNum(scale, 'scaleScore')"></el-input>
             </td>
             <td class="col">
               <el-date-picker v-model="scale.ariseTime" :editable="false" :default-value="copyInfo.preopsTime"></el-date-picker>
@@ -326,12 +324,10 @@
               {{getRealName(scale.scaleInfo, 'mScale')}}
             </td>
             <td class="col">
-              <el-input v-model="scale.scaleScoreBefore" @blur="transformToNum(scale, 'scaleScoreBefore')"
-                :class="{'warning': isNaN(scale.scaleScoreBefore)}"></el-input>
+              <el-input v-model="scale.scaleScoreBefore" @blur="transformToNum(scale, 'scaleScoreBefore')"></el-input>
             </td>
             <td class="col">
-              <el-input v-model="scale.scaleScoreAfter" @blur="transformToNum(scale, 'scaleScoreAfter')"
-                :class="{'warning': isNaN(scale.scaleScoreAfter)}"></el-input>
+              <el-input v-model="scale.scaleScoreAfter" @blur="transformToNum(scale, 'scaleScoreAfter')"></el-input>
             </td>
             <td class="col computed-cell">
               {{ scale.medImproveRatio }}
