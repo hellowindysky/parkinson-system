@@ -286,7 +286,8 @@
           <tr class="row" v-for="medicine in copyInfo.preopsMotorDTO.patientPreopsMedicineList">
             <td class="col">
               <span class="iconfont icon-remove"></span>
-              <el-select v-model="medicine.medicineInfo" @change="selectMedicine(medicine)">
+              <el-select v-model="medicine.medicineInfo" @change="selectMedicine(medicine)"
+                :class="{'warning': !isMedicineValid(medicine)}">
                 <el-option v-for="option in getOptions('medicineName')" :label="option.name"
                   :value="option.code" :key="option.code"></el-option>
               </el-select>
@@ -406,6 +407,8 @@ import {
   getPatientSimpleInfo,
   getPreEvaluation
 } from 'api/patient.js';
+
+const COMT_ALERT_MESSAGE = 'COMT抑制剂类药物需要和多巴胺类制剂类药物联合使用，请检查药物处方是否录入有误';
 
 export default {
   data() {
@@ -800,6 +803,14 @@ export default {
       this.displayModal = false;
     },
     submit() {
+      // 先检查药物方案列表是否符合规则（出现COMT抑制剂就必须要有多巴胺类制剂）
+      for (let medicine of this.copyInfo.preopsMotorDTO.patientPreopsMedicineList) {
+        if (!this.isMedicineValid(medicine)) {
+          alert(COMT_ALERT_MESSAGE);
+          return;
+        }
+      }
+
       // pruneObj(this.copyInfo);  // 调用此函数将值为空的属性去除掉
       console.log(this.copyInfo);
       // this.displayModal = false;
@@ -854,6 +865,30 @@ export default {
     selectMedicine(medicine) {
       // 重新选择药物后，会将规格清空
       medicine.medSpecification = '';
+
+      // 因为 COMT抑制剂类药物（如珂丹）需要配合多巴胺类药物使用，所以每次有药物名字更新，
+      // 就要检查是否出现了只有 COMT 抑制剂而没有 多巴胺类药物的情况
+      if (!this.isMedicineValid(medicine)) {
+        alert(COMT_ALERT_MESSAGE);
+      }
+    },
+    isMedicineValid(medicine) {
+      var targetMedicine = Util.getElement('medicineId', medicine.medicineInfo, this.medicineInfo);
+      var isCOMTInhibitor = targetMedicine.medicalType === 3;
+      if (!isCOMTInhibitor) {
+        // 如果不是 COMT 抑制剂类药物，则直接返回 true，因为只有 COMT 抑制剂类药物才需要检验整个药物列表是否符合规则
+        return true;
+      }
+
+      var medicineList = this.copyInfo.preopsMotorDTO.patientPreopsMedicineList;
+      var hasLevodopa = false;
+      for (let eachMedicine of medicineList) {
+        var medicineOfTableData = Util.getElement('medicineId', eachMedicine.medicineInfo, this.medicineInfo);
+        if (medicineOfTableData.medicalType === 0) {
+          hasLevodopa = true;
+        }
+      }
+      return hasLevodopa;
     },
     selectMedicineSpec(medicine) {
       // 重新选择药物规格后，会将使用量清空
@@ -1335,6 +1370,14 @@ export default {
                   height: 12px;
                   padding: 0 0 18px 10px;
                   color: @alert-color;
+                }
+              }
+            }
+            .el-select {
+              &.warning {
+                .el-input {
+                  margin: -1px;
+                  border: 1px solid red;
                 }
               }
             }
