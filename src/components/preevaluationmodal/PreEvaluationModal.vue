@@ -274,7 +274,7 @@
         <table class="table">
           <tr class="row title-row">
             <td class="col">
-              <span class="iconfont icon-plus"></span>
+              <span class="iconfont icon-plus" @click="addMedicine"></span>
               晨用药物
             </td>
             <td class="col">规格</td>
@@ -283,9 +283,9 @@
             <td class="col">冲击剂量</td>
             <td class="col">等效左旋多巴冲击剂量</td>
           </tr>
-          <tr class="row" v-for="medicine in copyInfo.preopsMotorDTO.patientPreopsMedicineList">
+          <tr class="row" v-for="(medicine, index) in copyInfo.preopsMotorDTO.patientPreopsMedicineList">
             <td class="col">
-              <span class="iconfont icon-remove"></span>
+              <span class="iconfont icon-remove" @click="removeMedicine(index)"></span>
               <el-select v-model="medicine.medicineInfo" @change="selectMedicine(medicine)"
                 :class="{'warning': !isMedicineValid(medicine)}">
                 <el-option v-for="option in getOptions('medicineName')" :label="option.name"
@@ -695,22 +695,7 @@ export default {
         'preopsMotorDTO': {
           'motorTestTime': '',
           'loadingDoseCount': 378,
-          'patientPreopsMedicineList': [
-            {
-              'loadingDose': '',
-              'medSpecification': '',
-              'medUsage': '',
-              'medicineInfo': '',
-              'morningDose': ''
-            },
-            {
-              'loadingDose': '',
-              'medSpecification': '',
-              'medUsage': '',
-              'medicineInfo': '',
-              'morningDose': ''
-            }
-          ],
+          'patientPreopsMedicineList': [],
           'preopsMotorScaleList': [
             {
               'scaleInfo': 1,
@@ -967,6 +952,18 @@ export default {
       var levodopaLoadingDose = levodopaDose * 1.5;
       medicine.levodopaLoadingDose = levodopaLoadingDose > 0 ? levodopaLoadingDose : '';
       return medicine.levodopaLoadingDose;
+    },
+    addMedicine() {
+      var medicineList = this.copyInfo.preopsMotorDTO.patientPreopsMedicineList;
+      var index = medicineList.length;
+      this.$set(medicineList, index, {});
+      let propertyList = ['loadingDose', 'medSpecification', 'medUsage', 'medicineInfo', 'morningDose'];
+      for (let property of propertyList) {
+        this.$set(medicineList[index], property, '');
+      }
+    },
+    removeMedicine(index) {
+      this.copyInfo.preopsMotorDTO.patientPreopsMedicineList.splice(index, 1);
     },
     transformToNum(obj, property) {
       // 如果填写的不是一个数字，则转换成一个空字符串，如果是一个数字，则将这个数字字符串转化为真正的数字
