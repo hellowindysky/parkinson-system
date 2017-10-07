@@ -403,7 +403,7 @@ import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-// import { vueCopy } from 'utils/helper.js';
+import { vueCopy } from 'utils/helper.js';
 
 import {
   getPatientSimpleInfo,
@@ -411,6 +411,299 @@ import {
 } from 'api/patient.js';
 
 const COMT_ALERT_MESSAGE = 'COMT抑制剂类药物需要和多巴胺类制剂类药物联合使用，请检查药物处方是否录入有误';
+
+let dataModel = {
+  'preopsTime': '',
+  'preopsRemark': '',
+  'preopsTerminalDTO': {
+    'terminalTime': '',
+    'terminalScale': '',
+    'terminalExist': '',
+    'terminalIsfirst': '',
+    'terminalFirstTime': '',
+    'terminalDuration': '',
+    'terminalRemark': ''
+  },
+  'preopsDiaryDTO': {
+    'patientPreopsDiaryList': [
+      {
+        'oneDayDiaryHour': '',
+        'oneDayDiaryType': 1,
+        'oneDayTime': '',
+        'twoDayDiaryHour': '',
+        'twoDayDiaryType': 1,
+        'twoDayTime': '',
+        'threeDayDiaryHour': '',
+        'threeDayDiaryType': 1,
+        'threeDayTime': '',
+        'fourDayDiaryHour': '',
+        'fourDayDiaryType': 1,
+        'fourDayTime': '',
+        'fiveDayDiaryHour': '',
+        'fiveDayDiaryType': 1,
+        'fiveDayTime': '',
+        'sixDayDiaryHour': '',
+        'sixDayDiaryType': 1,
+        'sixDayTime': '',
+        'dayCount': '',
+        'hourAverage': ''
+      },
+      {
+        'oneDayDiaryHour': '',
+        'oneDayDiaryType': 2,
+        'oneDayTime': '',
+        'twoDayDiaryHour': '',
+        'twoDayDiaryType': 2,
+        'twoDayTime': '',
+        'threeDayDiaryHour': '',
+        'threeDayDiaryType': 2,
+        'threeDayTime': '',
+        'fourDayDiaryHour': '',
+        'fourDayDiaryType': 2,
+        'fourDayTime': '',
+        'fiveDayDiaryHour': '',
+        'fiveDayDiaryType': 2,
+        'fiveDayTime': '',
+        'sixDayDiaryHour': '',
+        'sixDayDiaryType': 2,
+        'sixDayTime': '',
+        'dayCount': '',
+        'hourAverage': ''
+      },
+      {
+        'oneDayDiaryHour': '',
+        'oneDayDiaryType': 3,
+        'oneDayTime': '',
+        'twoDayDiaryHour': '',
+        'twoDayDiaryType': 3,
+        'twoDayTime': '',
+        'threeDayDiaryHour': '',
+        'threeDayDiaryType': 3,
+        'threeDayTime': '',
+        'fourDayDiaryHour': '',
+        'fourDayDiaryType': 3,
+        'fourDayTime': '',
+        'fiveDayDiaryHour': '',
+        'fiveDayDiaryType': 3,
+        'fiveDayTime': '',
+        'sixDayDiaryHour': '',
+        'sixDayDiaryType': 3,
+        'sixDayTime': '',
+        'dayCount': '',
+        'hourAverage': ''
+      },
+      {
+        'oneDayDiaryHour': '',
+        'oneDayDiaryType': 4,
+        'oneDayTime': '',
+        'twoDayDiaryHour': '',
+        'twoDayDiaryType': 4,
+        'twoDayTime': '',
+        'threeDayDiaryHour': '',
+        'threeDayDiaryType': 4,
+        'threeDayTime': '',
+        'fourDayDiaryHour': '',
+        'fourDayDiaryType': 4,
+        'fourDayTime': '',
+        'fiveDayDiaryHour': '',
+        'fiveDayDiaryType': 4,
+        'fiveDayTime': '',
+        'sixDayDiaryHour': '',
+        'sixDayDiaryType': 4,
+        'sixDayTime': '',
+        'dayCount': '',
+        'hourAverage': ''
+      },
+      {
+        'oneDayDiaryHour': '',
+        'oneDayDiaryType': 5,
+        'oneDayTime': '',
+        'twoDayDiaryHour': '',
+        'twoDayDiaryType': 5,
+        'twoDayTime': '',
+        'threeDayDiaryHour': '',
+        'threeDayDiaryType': 5,
+        'threeDayTime': '',
+        'fourDayDiaryHour': '',
+        'fourDayDiaryType': 5,
+        'fourDayTime': '',
+        'fiveDayDiaryHour': '',
+        'fiveDayDiaryType': 5,
+        'fiveDayTime': '',
+        'sixDayDiaryHour': '',
+        'sixDayDiaryType': 5,
+        'sixDayTime': '',
+        'dayCount': '',
+        'hourAverage': ''
+      },
+      {
+        'oneDayDiaryHour': '',
+        'oneDayDiaryType': 0,
+        'oneDayTime': '',
+        'twoDayDiaryHour': '',
+        'twoDayDiaryType': 0,
+        'twoDayTime': '',
+        'threeDayDiaryHour': '',
+        'threeDayDiaryType': 0,
+        'threeDayTime': '',
+        'fourDayDiaryHour': '',
+        'fourDayDiaryType': 0,
+        'fourDayTime': '',
+        'fiveDayDiaryHour': '',
+        'fiveDayDiaryType': 0,
+        'fiveDayTime': '',
+        'sixDayDiaryHour': '',
+        'sixDayDiaryType': 0,
+        'sixDayTime': '',
+        'dayCount': '',
+        'hourAverage': ''
+      }
+    ],
+    'wakeTime': '',
+    'dyskinesiaTime': '',
+    'closeTime': '',
+    'totalOpenTime': '',
+    'openTime': '',
+    'udysbsOneRatio': '',
+    'updrsFourOneRatio': '',
+    'updrsFourThreeRatio': '',
+    'openRatio': '',
+    'depDyskinesiaOpenRatio': '',
+    'norDyskinesiaOpenRatio': '',
+    'closeRatio': '',
+    'diaryRemark': ''
+  },
+  'preopsDyskinesiaDTO': {
+    'patientPreopsScaleList': [
+      {
+        'ariseTime': '',
+        'bodyStatus': '',
+        'scaleInfo': 1,
+        'scaleScore': '',
+        'scaleType': 2
+      }
+    ],
+    'dyskinesiaRemark': ''
+  },
+  'preopsNonMotorDTO': {
+    'patientPreopsScaleList': [
+      {
+        'ariseTime': '',
+        'scaleInfo': 1,
+        'scaleScore': '',
+        'scaleType': 3,
+        'remarks': ''
+      },
+      {
+        'ariseTime': '',
+        'scaleInfo': 2,
+        'scaleScore': '',
+        'scaleType': 3,
+        'remarks': ''
+      },
+      {
+        'ariseTime': '',
+        'scaleInfo': 3,
+        'scaleScore': '',
+        'scaleType': 3,
+        'remarks': ''
+      },
+      {
+        'ariseTime': '',
+        'scaleInfo': 4,
+        'scaleScore': '',
+        'scaleType': 3,
+        'remarks': ''
+      },
+      {
+        'ariseTime': '',
+        'scaleInfo': 5,
+        'scaleScore': '',
+        'scaleType': 3,
+        'remarks': ''
+      },
+      {
+        'ariseTime': '',
+        'scaleInfo': 6,
+        'scaleScore': '',
+        'scaleType': 3,
+        'remarks': ''
+      },
+      {
+        'ariseTime': '',
+        'scaleInfo': 7,
+        'scaleScore': '',
+        'scaleType': 3,
+        'remarks': ''
+      },
+      {
+        'ariseTime': '',
+        'scaleInfo': 8,
+        'scaleScore': '',
+        'scaleType': 3,
+        'remarks': ''
+      },
+      {
+        'ariseTime': '',
+        'scaleInfo': 9,
+        'scaleScore': '',
+        'scaleType': 3,
+        'remarks': ''
+      },
+      {
+        'ariseTime': '',
+        'scaleInfo': 10,
+        'scaleScore': '',
+        'scaleType': 3,
+        'remarks': ''
+      },
+      {
+        'ariseTime': '',
+        'scaleInfo': 11,
+        'scaleScore': '',
+        'scaleType': 3,
+        'remarks': ''
+      },
+      {
+        'ariseTime': '',
+        'scaleInfo': 12,
+        'scaleScore': '',
+        'scaleType': 3,
+        'remarks': ''
+      },
+      {
+        'ariseTime': '',
+        'scaleInfo': 13,
+        'scaleScore': '',
+        'scaleType': 3,
+        'remarks': ''
+      }
+    ],
+    'nonmotorRemark': ''
+  },
+  'preopsMotorDTO': {
+    'motorTestTime': '',
+    'loadingDoseCount': '',
+    'patientPreopsMedicineList': [],
+    'preopsMotorScaleList': [
+      {
+        'scaleInfo': 1,
+        'scaleType': 4,
+        'scaleScoreBefore': '',
+        'scaleScoreAfter': '',
+        'medImproveRatio': ''
+      }
+    ],
+    'motorRemark': ''
+  },
+  'preopsIntensionDTO': {
+    'intensionAriseTime': '',
+    'operationIntension': '',
+    'deviceId': '',
+    'devicePowerType': '',
+    'intensionRemark': ''
+  }
+};
 
 export default {
   data() {
@@ -420,298 +713,7 @@ export default {
       diaryRowNameList: ['睡眠', '关期', '重异动开', '轻异动开', '无异动开'],
       dayTimeNameList: ['oneDayTime', 'twoDayTime', 'threeDayTime', 'fourDayTime', 'fiveDayTime', 'sixDayTime'],
       hourNameList: ['oneDayDiaryHour', 'twoDayDiaryHour', 'threeDayDiaryHour', 'fourDayDiaryHour', 'fiveDayDiaryHour', 'sixDayDiaryHour'],
-      copyInfo: {
-        'preopsTime': '',
-        'preopsRemark': '',
-        'preopsTerminalDTO': {
-          'terminalTime': '',
-          'terminalScale': '',
-          'terminalExist': '',
-          'terminalIsfirst': '',
-          'terminalFirstTime': '',
-          'terminalDuration': '',
-          'terminalRemark': ''
-        },
-        'preopsDiaryDTO': {
-          'patientPreopsDiaryList': [
-            {
-              'oneDayDiaryHour': '',
-              'oneDayDiaryType': 1,
-              'oneDayTime': '',
-              'twoDayDiaryHour': '',
-              'twoDayDiaryType': 1,
-              'twoDayTime': '',
-              'threeDayDiaryHour': '',
-              'threeDayDiaryType': 1,
-              'threeDayTime': '',
-              'fourDayDiaryHour': '',
-              'fourDayDiaryType': 1,
-              'fourDayTime': '',
-              'fiveDayDiaryHour': '',
-              'fiveDayDiaryType': 1,
-              'fiveDayTime': '',
-              'sixDayDiaryHour': '',
-              'sixDayDiaryType': 1,
-              'sixDayTime': '',
-              'dayCount': '',
-              'hourAverage': ''
-            },
-            {
-              'oneDayDiaryHour': '',
-              'oneDayDiaryType': 2,
-              'oneDayTime': '',
-              'twoDayDiaryHour': '',
-              'twoDayDiaryType': 2,
-              'twoDayTime': '',
-              'threeDayDiaryHour': '',
-              'threeDayDiaryType': 2,
-              'threeDayTime': '',
-              'fourDayDiaryHour': '',
-              'fourDayDiaryType': 2,
-              'fourDayTime': '',
-              'fiveDayDiaryHour': '',
-              'fiveDayDiaryType': 2,
-              'fiveDayTime': '',
-              'sixDayDiaryHour': '',
-              'sixDayDiaryType': 2,
-              'sixDayTime': '',
-              'dayCount': '',
-              'hourAverage': ''
-            },
-            {
-              'oneDayDiaryHour': '',
-              'oneDayDiaryType': 3,
-              'oneDayTime': '',
-              'twoDayDiaryHour': '',
-              'twoDayDiaryType': 3,
-              'twoDayTime': '',
-              'threeDayDiaryHour': '',
-              'threeDayDiaryType': 3,
-              'threeDayTime': '',
-              'fourDayDiaryHour': '',
-              'fourDayDiaryType': 3,
-              'fourDayTime': '',
-              'fiveDayDiaryHour': '',
-              'fiveDayDiaryType': 3,
-              'fiveDayTime': '',
-              'sixDayDiaryHour': '',
-              'sixDayDiaryType': 3,
-              'sixDayTime': '',
-              'dayCount': '',
-              'hourAverage': ''
-            },
-            {
-              'oneDayDiaryHour': '',
-              'oneDayDiaryType': 4,
-              'oneDayTime': '',
-              'twoDayDiaryHour': '',
-              'twoDayDiaryType': 4,
-              'twoDayTime': '',
-              'threeDayDiaryHour': '',
-              'threeDayDiaryType': 4,
-              'threeDayTime': '',
-              'fourDayDiaryHour': '',
-              'fourDayDiaryType': 4,
-              'fourDayTime': '',
-              'fiveDayDiaryHour': '',
-              'fiveDayDiaryType': 4,
-              'fiveDayTime': '',
-              'sixDayDiaryHour': '',
-              'sixDayDiaryType': 4,
-              'sixDayTime': '',
-              'dayCount': '',
-              'hourAverage': ''
-            },
-            {
-              'oneDayDiaryHour': '',
-              'oneDayDiaryType': 5,
-              'oneDayTime': '',
-              'twoDayDiaryHour': '',
-              'twoDayDiaryType': 5,
-              'twoDayTime': '',
-              'threeDayDiaryHour': '',
-              'threeDayDiaryType': 5,
-              'threeDayTime': '',
-              'fourDayDiaryHour': '',
-              'fourDayDiaryType': 5,
-              'fourDayTime': '',
-              'fiveDayDiaryHour': '',
-              'fiveDayDiaryType': 5,
-              'fiveDayTime': '',
-              'sixDayDiaryHour': '',
-              'sixDayDiaryType': 5,
-              'sixDayTime': '',
-              'dayCount': '',
-              'hourAverage': ''
-            },
-            {
-              'oneDayDiaryHour': '',
-              'oneDayDiaryType': 0,
-              'oneDayTime': '',
-              'twoDayDiaryHour': '',
-              'twoDayDiaryType': 0,
-              'twoDayTime': '',
-              'threeDayDiaryHour': '',
-              'threeDayDiaryType': 0,
-              'threeDayTime': '',
-              'fourDayDiaryHour': '',
-              'fourDayDiaryType': 0,
-              'fourDayTime': '',
-              'fiveDayDiaryHour': '',
-              'fiveDayDiaryType': 0,
-              'fiveDayTime': '',
-              'sixDayDiaryHour': '',
-              'sixDayDiaryType': 0,
-              'sixDayTime': '',
-              'dayCount': '',
-              'hourAverage': ''
-            }
-          ],
-          'wakeTime': '',
-          'dyskinesiaTime': '',
-          'closeTime': '',
-          'totalOpenTime': '',
-          'openTime': '',
-          'udysbsOneRatio': '',
-          'updrsFourOneRatio': '',
-          'updrsFourThreeRatio': '',
-          'openRatio': '',
-          'depDyskinesiaOpenRatio': '',
-          'norDyskinesiaOpenRatio': '',
-          'closeRatio': '',
-          'diaryRemark': ''
-        },
-        'preopsDyskinesiaDTO': {
-          'patientPreopsScaleList': [
-            {
-              'ariseTime': '',
-              'bodyStatus': '',
-              'scaleInfo': 1,
-              'scaleScore': '',
-              'scaleType': 2
-            }
-          ],
-          'dyskinesiaRemark': ''
-        },
-        'preopsNonMotorDTO': {
-          'patientPreopsScaleList': [
-            {
-              'ariseTime': '',
-              'scaleInfo': 1,
-              'scaleScore': '',
-              'scaleType': 3,
-              'remarks': ''
-            },
-            {
-              'ariseTime': '',
-              'scaleInfo': 2,
-              'scaleScore': '',
-              'scaleType': 3,
-              'remarks': ''
-            },
-            {
-              'ariseTime': '',
-              'scaleInfo': 3,
-              'scaleScore': '',
-              'scaleType': 3,
-              'remarks': ''
-            },
-            {
-              'ariseTime': '',
-              'scaleInfo': 4,
-              'scaleScore': '',
-              'scaleType': 3,
-              'remarks': ''
-            },
-            {
-              'ariseTime': '',
-              'scaleInfo': 5,
-              'scaleScore': '',
-              'scaleType': 3,
-              'remarks': ''
-            },
-            {
-              'ariseTime': '',
-              'scaleInfo': 6,
-              'scaleScore': '',
-              'scaleType': 3,
-              'remarks': ''
-            },
-            {
-              'ariseTime': '',
-              'scaleInfo': 7,
-              'scaleScore': '',
-              'scaleType': 3,
-              'remarks': ''
-            },
-            {
-              'ariseTime': '',
-              'scaleInfo': 8,
-              'scaleScore': '',
-              'scaleType': 3,
-              'remarks': ''
-            },
-            {
-              'ariseTime': '',
-              'scaleInfo': 9,
-              'scaleScore': '',
-              'scaleType': 3,
-              'remarks': ''
-            },
-            {
-              'ariseTime': '',
-              'scaleInfo': 10,
-              'scaleScore': '',
-              'scaleType': 3,
-              'remarks': ''
-            },
-            {
-              'ariseTime': '',
-              'scaleInfo': 11,
-              'scaleScore': '',
-              'scaleType': 3,
-              'remarks': ''
-            },
-            {
-              'ariseTime': '',
-              'scaleInfo': 12,
-              'scaleScore': '',
-              'scaleType': 3,
-              'remarks': ''
-            },
-            {
-              'ariseTime': '',
-              'scaleInfo': 13,
-              'scaleScore': '',
-              'scaleType': 3,
-              'remarks': ''
-            }
-          ],
-          'nonmotorRemark': ''
-        },
-        'preopsMotorDTO': {
-          'motorTestTime': '',
-          'loadingDoseCount': '',
-          'patientPreopsMedicineList': [],
-          'preopsMotorScaleList': [
-            {
-              'scaleInfo': 1,
-              'scaleType': 4,
-              'scaleScoreBefore': '',
-              'scaleScoreAfter': '',
-              'medImproveRatio': ''
-            }
-          ],
-          'motorRemark': ''
-        },
-        'preopsIntensionDTO': {
-          'intensionAriseTime': '',
-          'operationIntension': '',
-          'deviceId': '',
-          'devicePowerType': '',
-          'intensionRemark': ''
-        }
-      }
+      copyInfo: {}
     };
   },
   computed: {
@@ -742,9 +744,9 @@ export default {
   methods: {
     showModal(changeWay, info) {
       this.mode = changeWay;
+
       console.log(info);
-      // console.log(this.medicineInfo);
-      this.initCopyInfo();
+      // this.initCopyInfo();
       this.updateDiaryDayTime();
       this.updateDiaryHour();
 
@@ -761,7 +763,9 @@ export default {
       if (changeWay === this.EDIT_DATA) {
         var preEvaluationId = info.preopsInfoId ? info.preopsInfoId : -1;
         getPreEvaluation(preEvaluationId).then((data) => {
-          console.log('获取的详细数据', data);
+          vueCopy(data, this.copyInfo);
+        }, (error) => {
+          console.log(error);
         });
       }
 
@@ -769,7 +773,8 @@ export default {
       this.updateScrollbar();
     },
     initCopyInfo() {
-      // this.copyInfo = {};
+      this.copyInfo = {};
+      vueCopy(dataModel, this.copyInfo);
     },
     updateScrollbar() {
       // 如果不写在 $nextTick() 里面，第一次加载的时候也许会不能正确计算高度。估计是因为子组件还没有全部加载所造成的。
@@ -1049,7 +1054,7 @@ export default {
         return;
 
       } else if (fieldName === 'terminalIsfirst') {
-        if (this.copyInfo.preopsTerminalDTO.terminalExist === 1) {
+        if (this.copyInfo.preopsTerminalDTO.terminalIsFirst === 1) {
           // 如果“是否首次出现（剂末现象）”选择了“是”，则将“首次出现时间”和“已出现剂末现象”两个字段值置为空
           this.copyInfo.preopsTerminalDTO.terminalFirstTime = '';
           this.copyInfo.preopsTerminalDTO.terminalDuration = '';
@@ -1217,6 +1222,9 @@ export default {
       var dayTimeName = this.dayTimeNameList[listIndex];
       return Boolean(this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName]);
     }
+  },
+  created() {
+    this.initCopyInfo();
   },
   mounted() {
     this.updateScrollbar();
