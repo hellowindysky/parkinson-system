@@ -27,7 +27,7 @@
              :value="option.typeCode" :key="option.typeCode"></el-option>
           </el-select>
           <el-date-picker v-else-if="getUIType(field.fieldName)===6" v-model="copyInfo[field.fieldName]" type="date"
-           :class="{'warning': warningResults[field.fieldName]}" :picker-options="futureDisabledptions" :placeholder="getMatchedField(field).cnFieldDesc"
+           :class="{'warning': warningResults[field.fieldName]}" :placeholder="getMatchedField(field).cnFieldDesc"
            :editable="false" @change="updateWarning(field)">
           </el-date-picker>
           <el-input v-else-if="getUIType(field.fieldName)===1" v-model="copyInfo[field.fieldName]"
@@ -52,12 +52,7 @@ export default {
     return {
       mutableMode: this.mode,
       copyInfo: {},
-      warningResults: {},
-      futureDisabledptions: {
-        disabledDate(time) {
-          return time.getTime() > Date.now();
-        }
-      }
+      warningResults: {}
     };
   },
   props: {

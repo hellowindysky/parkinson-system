@@ -32,7 +32,7 @@
             </span>
             <span v-else-if="getUIType(field)===6">
               <el-date-picker v-model="copyInfo[field.fieldName]" type="date" :class="{'warning': warningResults[field.fieldName]}"
-                :picker-options="futureDisabledptions" :placeholder="getMatchedField(field).cnFieldDesc"
+                :placeholder="getMatchedField(field).cnFieldDesc"
                 @change="updateWarning(field)">
               </el-date-picker>
             </span>
@@ -69,11 +69,6 @@ export default {
     return {
       mode: this.READING_MODE,
       copyInfo: {},
-      futureDisabledptions: {
-        disabledDate(time) {
-          return time.getTime() > Date.now();
-        }
-      },
       warningResults: {}
     };
   },

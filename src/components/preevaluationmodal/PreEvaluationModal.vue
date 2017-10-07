@@ -12,8 +12,7 @@
         <div class="field">
           <span class="field-name">评估时间</span>
           <span class="field-input">
-            <el-date-picker v-model="copyInfo.preopsTime" :picker-options="dateOptions"
-              :editable="false"></el-date-picker>
+            <el-date-picker v-model="copyInfo.preopsTime" :editable="false"></el-date-picker>
           </span>
         </div>
         <div class="field whole-line">
@@ -32,7 +31,7 @@
           <span class="field-name">剂末现象评估时间</span>
           <span class="field-input">
             <el-date-picker v-model="copyInfo.preopsTerminalDTO.terminalTime" :default-value="copyInfo.preopsTime"
-              :picker-options="dateOptions" :editable="false"></el-date-picker>
+              :editable="false"></el-date-picker>
           </span>
         </div>
         <div class="field">
@@ -66,7 +65,7 @@
         <div class="field" v-show="copyInfo.preopsTerminalDTO.terminalIsfirst===0">
           <span class="field-name">初次出现时间</span>
           <span class="field-input">
-            <el-date-picker v-model="copyInfo.preopsTerminalDTO.terminalFirstTime" :picker-options="dateOptions"
+            <el-date-picker v-model="copyInfo.preopsTerminalDTO.terminalFirstTime"
               @change="updateField('terminalFirstTime')" :editable="false"></el-date-picker>
           </span>
         </div>
@@ -104,8 +103,7 @@
           <tr class="row">
             <td class="col" v-for="(dayTimeName, listIndex) in dayTimeNameList">
               <el-date-picker v-model="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName]"
-                @change="updateDiaryDayTime()" :editable="false" :disabled="!isTimeEditable(listIndex)"
-                :picker-options="dateOptions"></el-date-picker>
+                @change="updateDiaryDayTime()" :editable="false" :disabled="!isTimeEditable(listIndex)"></el-date-picker>
             </td>
           </tr>
           <tr class="row" v-for="(rowName, index) in diaryRowNameList">
@@ -199,8 +197,7 @@
                 :class="{'warning': isNaN(scale.scaleScore)}"></el-input>
             </td>
             <td class="col">
-              <el-date-picker v-model="scale.ariseTime" :picker-options="dateOptions"
-                :editable="false" :default-value="copyInfo.preopsTime"></el-date-picker>
+              <el-date-picker v-model="scale.ariseTime" :editable="false" :default-value="copyInfo.preopsTime"></el-date-picker>
             </td>
           </tr>
         </table>
@@ -233,8 +230,7 @@
                 :class="{'warning': isNaN(scale.scaleScore)}"></el-input>
             </td>
             <td class="col">
-              <el-date-picker v-model="scale.ariseTime" :picker-options="dateOptions"
-               :editable="false" :default-value="copyInfo.preopsTime"></el-date-picker>
+              <el-date-picker v-model="scale.ariseTime" :editable="false" :default-value="copyInfo.preopsTime"></el-date-picker>
             </td>
             <td class="col">
               <el-input v-model="scale.remarks"></el-input>
@@ -255,7 +251,7 @@
         <div class="field">
           <span class="field-name">试验日期时间</span>
           <span class="field-input">
-            <el-date-picker v-model="copyInfo.preopsMotorDTO.motorTestTime" :picker-options="dateOptions"
+            <el-date-picker v-model="copyInfo.preopsMotorDTO.motorTestTime"
               :editable="false" :default-value="copyInfo.preopsTime"></el-date-picker>
           </span>
         </div>
@@ -356,7 +352,7 @@
         <div class="field">
           <span class="field-name">表态时间</span>
           <span class="field-input">
-            <el-date-picker v-model="copyInfo.preopsIntensionDTO.intensionAriseTime" :picker-options="dateOptions"
+            <el-date-picker v-model="copyInfo.preopsIntensionDTO.intensionAriseTime"
               :editable="false" :default-value="copyInfo.preopsTime"></el-date-picker>
           </span>
         </div>
@@ -424,11 +420,6 @@ export default {
       diaryRowNameList: ['睡眠', '关期', '重异动开', '轻异动开', '无异动开'],
       dayTimeNameList: ['oneDayTime', 'twoDayTime', 'threeDayTime', 'fourDayTime', 'fiveDayTime', 'sixDayTime'],
       hourNameList: ['oneDayDiaryHour', 'twoDayDiaryHour', 'threeDayDiaryHour', 'fourDayDiaryHour', 'fiveDayDiaryHour', 'sixDayDiaryHour'],
-      dateOptions: {
-        disabledDate(time) {
-          return time.getTime() > Date.now();
-        }
-      },
       copyInfo: {
         'preopsTime': '',
         'preopsRemark': '',
