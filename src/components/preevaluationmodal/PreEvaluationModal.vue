@@ -261,15 +261,21 @@
         </div>
         <div class="field">
           <span class="field-name">总冲击量</span>
-          <span class="field-input"></span>
+          <span class="field-input">
+            {{ getTotalLoadingDose() }}
+          </span>
         </div>
         <div class="field">
           <span class="field-name">等效美多芭量(片)</span>
-          <span class="field-input"></span>
+          <span class="field-input">
+            {{ getEqualMadoparCount() }}
+          </span>
         </div>
         <div class="field">
           <span class="field-name">LED</span>
-          <span class="field-input"></span>
+          <span class="field-input">
+            {{ getTotalLevodopaLoadingDose() }}
+          </span>
         </div>
         <table class="table">
           <tr class="row title-row">
@@ -694,7 +700,7 @@ export default {
         },
         'preopsMotorDTO': {
           'motorTestTime': '',
-          'loadingDoseCount': 378,
+          'loadingDoseCount': '',
           'patientPreopsMedicineList': [],
           'preopsMotorScaleList': [
             {
@@ -964,6 +970,40 @@ export default {
     },
     removeMedicine(index) {
       this.copyInfo.preopsMotorDTO.patientPreopsMedicineList.splice(index, 1);
+    },
+    getTotalLoadingDose() {
+      var totalLoadingDose = 0;
+      var loadingDose = 0;
+      for (let medicine of this.copyInfo.preopsMotorDTO.patientPreopsMedicineList) {
+        loadingDose = this.getLoadingDose(medicine);
+        if (loadingDose !== '') {
+          totalLoadingDose += loadingDose;
+        }
+      }
+      this.copyInfo.preopsMotorDTO.loadingDoseCount = totalLoadingDose !== 0 ? totalLoadingDose : '';
+      return this.copyInfo.preopsMotorDTO.loadingDoseCount;
+    },
+    getEqualMadoparCount() {
+      var totalMorningDose = 0;
+      var morningDose = 0;
+      for (let medicine of this.copyInfo.preopsMotorDTO.patientPreopsMedicineList) {
+        morningDose = this.getMorningDose(medicine);
+        if (morningDose !== '') {
+          totalMorningDose += morningDose;
+        }
+      }
+      return totalMorningDose !== 0 ? totalMorningDose / 250.0 : '';
+    },
+    getTotalLevodopaLoadingDose() {
+      var totalLevodopaLoadingDose = 0;
+      var levodopaLoadingDose = 0;
+      for (let medicine of this.copyInfo.preopsMotorDTO.patientPreopsMedicineList) {
+        levodopaLoadingDose = this.getLevodopaLoadingDose(medicine);
+        if (levodopaLoadingDose !== '') {
+          totalLevodopaLoadingDose += levodopaLoadingDose;
+        }
+      }
+      return totalLevodopaLoadingDose !== 0 ? totalLevodopaLoadingDose : '';
     },
     transformToNum(obj, property) {
       // 如果填写的不是一个数字，则转换成一个空字符串，如果是一个数字，则将这个数字字符串转化为真正的数字
