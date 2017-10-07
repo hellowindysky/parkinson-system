@@ -364,7 +364,7 @@
         <div class="field">
           <span class="field-name">设备品牌</span>
           <span class="field-input">
-            <el-select v-model="copyInfo.preopsIntensionDTO.operationIntension">
+            <el-select v-model="copyInfo.preopsIntensionDTO.deviceId">
               <el-option v-for="option in getOptions('deviceType')" :label="option.name"
                 :value="option.code" :key="option.code"></el-option>
             </el-select>
@@ -399,16 +399,20 @@ import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import { vueCopy } from 'utils/helper.js';
+import { vueCopy, pruneObj, reviseDateFormat } from 'utils/helper.js';
 
 import {
   getPatientSimpleInfo,
-  getPreEvaluation
+  getPreEvaluation,
+  addPreEvaluation,
+  modifyPreEvaluation
 } from 'api/patient.js';
 
 const COMT_ALERT_MESSAGE = 'COMT抑制剂类药物需要和多巴胺类制剂类药物联合使用，请检查药物处方是否录入有误';
 
+// 本组件没有采用 template 动态生成模版，而是根据一个固定模版来绑定数据
 let dataModel = {
+  'dbsPatientCode': '',
   'preopsTime': '',
   'preopsRemark': '',
   'preopsTerminalDTO': {
@@ -741,8 +745,7 @@ export default {
     showModal(changeWay, info) {
       this.mode = changeWay;
 
-      console.log(info);
-      // this.initCopyInfo();
+      this.initCopyInfo();
       this.updateDiaryDayTime();
       this.updateDiaryHour();
 
@@ -753,13 +756,17 @@ export default {
         } else {
           this.$set(this.copyInfo, 'dbsPatientCode', '');
         }
+      }, (error) => {
+        console.log(error);
       });
 
       // 获取术前评估详情
-      if (changeWay === this.EDIT_DATA) {
+      if (this.mode === this.EDIT_DATA) {
         var preEvaluationId = info.preopsInfoId ? info.preopsInfoId : -1;
         getPreEvaluation(preEvaluationId).then((data) => {
           vueCopy(data, this.copyInfo);
+          this.updateDiaryDayTime();
+          this.updateDiaryHour();
         }, (error) => {
           console.log(error);
         });
@@ -794,9 +801,27 @@ export default {
         }
       }
 
-      // pruneObj(this.copyInfo);  // 调用此函数将值为空的属性去除掉
-      console.log(this.copyInfo);
-      // this.displayModal = false;
+      pruneObj(this.copyInfo);  // 调用此函数将值为空的属性去除掉
+      reviseDateFormat(this.copyInfo);  // 将日期格式调整成符合传输要求的字符串
+
+      this.copyInfo.patientCaseId = this.$route.params.caseId;
+      if (this.mode === this.ADD_DATA) {
+        addPreEvaluation(this.copyInfo).then(() => {
+          this.updateAndClose();
+        }, (error) => {
+          console.log(error);
+        });
+      } else if (this.mode === this.EDIT_DATA) {
+        modifyPreEvaluation(this.copyInfo).then(() => {
+          this.updateAndClose();
+        }, (error) => {
+          console.log(error);
+        });
+      }
+    },
+    updateAndClose() {
+      Bus.$emit(this.UPDATE_CASE_INFO);
+      this.displayModal = false;
     },
     getRealName(code, typeGroupCode) {
       var typesInfo = Util.getElement('typegroupcode', typeGroupCode, this.typeGroup);
