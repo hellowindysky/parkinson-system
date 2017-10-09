@@ -49,7 +49,7 @@
       </li>
     </ul>
     <li class="item" :class="{'current-item': currentItem === 'institutionConfiguration'}" @click="toggleInstitutionList">
-      <div class="menu-icon iconfont icon-configuration"></div>
+      <div class="menu-icon iconfont icon-organization"></div>
       <div class="title">机构配置</div>
       <div class="fold-icon iconfont" :class="showConfigurationList ? 'icon-up' : 'icon-down'"></div>
     </li>
