@@ -4,7 +4,7 @@
     <div class="name">{{patient.name}}</div>
     <div class="date">{{patient.createDate}}</div>
     <div class="age">{{patient.age}}岁</div>
-    <div class="gender iconfont icon-male" :class="genderIcon"></div>
+    <div class="gender iconfont" :class="genderIcon"></div>
     <div class="location">{{patient.homeProvince}}</div>
   </div>
 </template>
@@ -107,6 +107,9 @@ export default {
     top: 35px;
     &.icon-male {
       color: @male-color;
+    }
+    &.icon-female {
+      color: @female-color;
     }
   }
   .date {
