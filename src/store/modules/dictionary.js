@@ -137,6 +137,13 @@ const getters = {
     }
     return state.all.tableData.symptomType;
   },
+  deviceInfo: (state) => {
+    // 主诉的各种症状
+    if (!state.all.tableData || !state.all.tableData.deviceInfo) {
+      return [];
+    }
+    return state.all.tableData.deviceInfo;
+  },
   surgicalTypeList: (state) => {
     // 手术方案
     if (!state.all.tableData || !state.all.tableData.surgicalInfo) {
