@@ -308,10 +308,12 @@ export default {
       }, 1000);
     },
     updateScrollbar() {
-      Ps.destroy(this.$refs.listArea);
-      Ps.initialize(this.$refs.listArea, {
-        wheelSpeed: 1,
-        minScrollbarLength: 40
+      this.$nextTick(() => {
+        Ps.destroy(this.$refs.listArea);
+        Ps.initialize(this.$refs.listArea, {
+          wheelSpeed: 1,
+          minScrollbarLength: 40
+        });
       });
     },
     updatePatientsList(cb) {
