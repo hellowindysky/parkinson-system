@@ -2,7 +2,7 @@
   <div class="item" :class="{'current': selected}" @click="select">
     <div class="name">{{groupName}}</div>
     <div class="number">患者: {{memberNumber}}人</div>
-    <!-- <div class="tag">临床</div> -->
+    <div class="tag">{{groupTypeName}}</div>
   </div>
 </template>
 
@@ -20,6 +20,16 @@ export default {
     },
     groupName() {
       return this.group.groupName ? this.group.groupName : '';
+    },
+    groupType() {
+      return this.group.groupType ? this.group.groupType : '';
+    },
+    groupTypeName() {
+      if (this.groupType === 1) {
+        return '临床';
+      } else if (this.groupType === 2) {
+        return '科研';
+      }
     },
     memberNumber() {
       return this.group.memberNumber ? this.group.memberNumber : '';
@@ -79,7 +89,7 @@ export default {
     width: 100px;
     height: 30px;
     line-height: 30px;
-    background-color: #555;
+    background-color: @theme-color;
     color: #eee;
     transform:rotate(45deg);
   }
