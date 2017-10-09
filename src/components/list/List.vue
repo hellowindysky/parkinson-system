@@ -17,9 +17,7 @@
         <patient-list-item class="item" v-for="patient in myPatientsList" :patient="patient" :key="patient.patientId"></patient-list-item>
       </div>
       <div v-else-if="this.listType === 'groups'">
-        <group-list-item :id="90001"></group-list-item>
-        <group-list-item :id="90002"></group-list-item>
-        <group-list-item :id="90003"></group-list-item>
+        <group-list-item v-for="group in groupList" :group="group" :key="group.groupId"></group-list-item>
       </div>
       <div v-else-if="this.listType === 'otherPatients'">
         <patient-list-item class="item" v-for="patient in myPatientsList" :patient="patient" :key="patient.patientId"></patient-list-item>
@@ -75,7 +73,7 @@
             <el-option label="成都" value="成都"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="病程" class="item">
+        <el-form-item label="病程" class="item" v-show='false'>
           <el-col :span="8">
             <el-form-item prop="minCourseYear">
               <el-input v-model.number="filterPatientsForm.minCourseYear" :min="0" :max="120" placeholder="不限"></el-input>
@@ -186,8 +184,7 @@ import axios from 'axios';
 import Bus from 'utils/bus.js';
 import { vueCopy } from 'utils/helper';
 import { getPatientList } from 'api/patient';
-import { getUserList } from 'api/user';
-import { getRoleList } from 'api/user';
+import { getGroupList, getUserList, getRoleList } from 'api/user';
 
 export default {
   data() {
@@ -212,6 +209,7 @@ export default {
       proviceCity: {},
       searchInput: '',
       myPatientsList: [],
+      groupList: [],
       userList: [],
       roleList: [],
       panelDisplay: false,
@@ -272,7 +270,7 @@ export default {
       if (this.listType === 'myPatients') {
         return '患者：' + this.myPatientsList.length + '人';
       } else if (this.listType === 'groups') {
-        return '分组：19个';
+        return '分组：' + this.groupList.length + '个';
       } else if (this.listType === 'otherPatients') {
         return '患者：2568人';
       } else if (this.listType === 'users') {
@@ -292,12 +290,12 @@ export default {
     this.checkRoute();
 
     // 如果在某个指定了 id 的页面进行刷新，checkRoute函数内的[更新列表数据]不会执行，这个时候就需要手动更新
-    this.updateMyPatientsList();
-    this.updateOtherPatientsList();
+    this.updatePatientsList();
+    this.updateGroupList();
     this.updateUserList();
 
-    Bus.$on(this.UPDATE_MY_PATIENTS_LIST, this.updateMyPatientsList);
-    Bus.$on(this.UPDATE_OTHER_PATIENTS_LIST, this.updateOtherPatientsList);
+    Bus.$on(this.UPDATE_MY_PATIENTS_LIST, this.updatePatientsList);
+    Bus.$on(this.UPDATE_OTHER_PATIENTS_LIST, this.updatePatientsList);
   },
   methods: {
     initProCity() {
@@ -317,17 +315,31 @@ export default {
         minScrollbarLength: 40
       });
     },
-    updateMyPatientsList(cb) {
-      // 更新“我的患者”列表
-      getPatientList().then((data) => {
+    updatePatientsList(cb) {
+      var type = 1;
+      if (this.listType === 'myPatients') {
+        type = 1;
+      } else if (this.listType === 'otherPatients') {
+        type = 2;
+      }
+      // 根据筛选条件更新“我的患者”列表，如果不传入条件参数，则默认不作筛选
+      var condition = {
+        'type': type,
+        'sex': 0
+      };
+      getPatientList(condition).then((data) => {
         this.myPatientsList = data;
         this.updateScrollbar();
         // 如果有回调函数作为参数传递进来了，则执行该函数
         cb && cb();
       });
     },
-    updateOtherPatientsList() {
-      // 更新“科室患者”列表
+    updateGroupList(cb) {
+      getGroupList().then((data) => {
+        this.groupList = data;
+      });
+      this.updateScrollbar();
+      cb && cb();
     },
     updateUserList(cb) {
       getUserList().then((data) => {
@@ -379,7 +391,7 @@ export default {
 
       // 一旦发现路由地址中还没有id，就更新病患列表数据，并默认加载当前列表中的第一项
       if (/^\/patients\/list\/?$/.test(path)) {
-        this.updateMyPatientsList(() => {
+        this.updatePatientsList(() => {
           var firstPatientId = this.myPatientsList.length > 0 ? this.myPatientsList[0].patientId : 0;
           this.$router.replace({
             name: 'patientInfo',
@@ -388,8 +400,14 @@ export default {
         });
 
       } else if (/^\/patients\/groups\/?$/.test(path)) {
-        // TODO 获取分组列表的所有id，然后根据第一个id进行跳转
-        this.$router.replace({ name: 'groupInfo', params: { id: 90001 } });
+        // 获取分组列表的所有id，然后根据第一个id进行跳转
+        this.updateGroupList(() => {
+          var firstGroupId = this.groupList.length > 0 ? this.groupList[0].groupId : 0;
+          this.$router.replace({
+            name: 'groupInfo',
+            params: { id: firstGroupId }
+          });
+        });
 
       } else if (/^\/patients\/otherlist\/?$/.test(path)) {
         // TODO 获取科室患者列表的所有id，然后根据第一个id进行跳转

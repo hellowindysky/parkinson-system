@@ -1,13 +1,52 @@
 <template lang="html">
-  <div class="item">
-    <div class="name">FOG1组</div>
-    <div class="number">患者: 3945人</div>
-    <div class="tag">临床</div>
+  <div class="item" :class="{'current': selected}" @click="select">
+    <div class="name">{{groupName}}</div>
+    <div class="number">患者: {{memberNumber}}人</div>
+    <!-- <div class="tag">临床</div> -->
   </div>
 </template>
 
 <script>
 export default {
+  props: {
+    group: {
+      typs: Object,
+      default: {}
+    }
+  },
+  computed: {
+    groupId() {
+      return this.group.groupId ? this.group.groupId : '';
+    },
+    groupName() {
+      return this.group.groupName ? this.group.groupName : '';
+    },
+    memberNumber() {
+      return this.group.memberNumber ? this.group.memberNumber : '';
+    },
+    remark() {
+      return this.group.remarks ? this.group.remarks : '';
+    },
+    // 根据路由信息对象提供的当前路径，来判断自己是否被选择
+    selected() {
+      var path = this.$route.path;
+      var str = '^\/patients\/groups\/';
+      var re = new RegExp(str + this.groupId);
+      if (re.test(path)) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  },
+  methods: {
+    select() {
+      this.$router.replace({
+        name: 'groupInfo',
+        params: { id: this.groupId }
+      });
+    }
+  }
 };
 </script>
 

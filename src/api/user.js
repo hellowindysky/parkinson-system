@@ -51,6 +51,20 @@ export function getTemplate() {
   return encapsulatePromise(url, request);
 };
 
+// 获取分组信息
+export function getGroupList() {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2
+  };
+  var url = 'http://apitest.gyenno.com/pdms/queryGroupList';
+
+  return encapsulatePromise(url, request);
+};
+
 export function getUserList() {
   var request = {
     "userId": 93242,
