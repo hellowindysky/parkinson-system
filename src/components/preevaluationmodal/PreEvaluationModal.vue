@@ -365,7 +365,7 @@
           <span class="field-name">设备品牌</span>
           <span class="field-input">
             <el-select v-model="copyInfo.preopsIntensionDTO.deviceId">
-              <el-option v-for="option in getOptions('deviceType')" :label="option.name"
+              <el-option v-for="option in getOptions('deviceId')" :label="option.name"
                 :value="option.code" :key="option.code"></el-option>
             </el-select>
           </span>
@@ -719,7 +719,8 @@ export default {
   computed: {
     ...mapGetters([
       'typeGroup',
-      'medicineInfo'
+      'medicineInfo',
+      'deviceInfo'
     ]),
     title() {
       if (this.mode === this.ADD_DATA) {
@@ -834,8 +835,7 @@ export default {
       // 这里的第二个参数不是必须的，在查询药物规格时会用到
       var options = [];
       var typeGroupCodeMap = {
-        'terminalScale': 'eodScale',
-        'deviceType': 'deviceType'
+        'terminalScale': 'eodScale'
       };
       if (typeGroupCodeMap[fieldName]) {
         // 在 typeGroup 中可以查到的
@@ -865,6 +865,13 @@ export default {
             options.push({
               name: spec.specOral,
               code: spec.medicalPec
+            });
+          }
+        } else if (fieldName === 'deviceId') {
+          for (let device of this.deviceInfo) {
+            options.push({
+              name: device.deviceName,
+              code: device.id
             });
           }
         }
