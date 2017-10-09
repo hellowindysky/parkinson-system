@@ -46,31 +46,20 @@
       label-width="20%"  v-show="panelDisplay" v-if="this.listType === 'myPatients' || this.listType === 'otherPatients'">
         <el-form-item label="分组" prop="group" class="item">
           <el-select v-model="filterPatientsForm.group">
-            <el-option label="不限" value="all"></el-option>
-            <el-option label="FOG1组" value="fog1"></el-option>
-            <el-option label="FOG2组" value="fog2"></el-option>
-            <el-option label="帕金森1组" value="parkinson1"></el-option>
-            <el-option label="一个名字很长很长很长很长很长很长很长很长的组" value="longName"></el-option>
+            <el-option label="不限" :value="-1"></el-option>
+            <el-option v-for="option in getOptions('group')" :label="option.name" :value="option.code" :key="option.code"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="性别" prop="gender" class="item">
           <el-select v-model="filterPatientsForm.gender">
-            <el-option label="不限" value="all"></el-option>
-            <el-option label="男" value="male"></el-option>
-            <el-option label="女" value="female"></el-option>
+            <el-option label="不限" :value="-1"></el-option>
+            <el-option v-for="option in getOptions('sex')" :label="option.name" :value="option.code" :key="option.code"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="地区" prop="district" class="item">
-          <el-select v-model="filterPatientsForm.district">
-            <el-option label="不限" value="all"></el-option>
-            <el-option label="北京" value="北京"></el-option>
-            <el-option label="天津" value="天津"></el-option>
-            <el-option label="上海" value="上海"></el-option>
-            <el-option label="深圳" value="深圳"></el-option>
-            <el-option label="武汉" value="武汉"></el-option>
-            <el-option label="杭州" value="杭州"></el-option>
-            <el-option label="广州" value="广州"></el-option>
-            <el-option label="成都" value="成都"></el-option>
+        <el-form-item label="地区" prop="homeProvince" class="item">
+          <el-select v-model="filterPatientsForm.homeProvince">
+            <el-option label="不限" :value="-1"></el-option>
+            <el-option v-for="option in getOptions('homeProvince')" :label="option.name" :value="option.code" :key="option.code"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="病程" class="item" v-show='false'>
@@ -180,9 +169,11 @@ import groupListItem from 'components/groupitem/GroupItem';
 import userListItem from 'components/useritem/UserItem';
 import roleListItem from 'components/roleitem/RoleItem';
 
-import axios from 'axios';
+// import axios from 'axios';
+import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
-import { vueCopy } from 'utils/helper';
+import Util from 'utils/util';
+// import { vueCopy } from 'utils/helper';
 import { getPatientList } from 'api/patient';
 import { getGroupList, getUserList, getRoleList } from 'api/user';
 
@@ -206,7 +197,7 @@ export default {
       }, 0);
     };
     return {
-      proviceCity: {},
+      // proviceCity: {},
       searchInput: '',
       myPatientsList: [],
       groupList: [],
@@ -214,9 +205,9 @@ export default {
       roleList: [],
       panelDisplay: false,
       filterPatientsForm: {
-        group: 'all',
-        gender: 'all',
-        district: 'all',
+        group: -1,
+        gender: -1,
+        homeProvince: -1,
         minAge: '',
         maxAge: '',
         minCourseYear: '',
@@ -251,6 +242,9 @@ export default {
     };
   },
   computed: {
+    ...mapGetters([
+      'typeGroup'
+    ]),
     // 根据路由信息对象提供的当前路径，来判断列表类型
     listType() {
       var path = this.$route.path;
@@ -285,7 +279,7 @@ export default {
   },
   mounted() {
     // 将省市的数据请求过来
-    this.initProCity();
+    // this.initProCity();
 
     this.checkRoute();
 
@@ -298,13 +292,13 @@ export default {
     Bus.$on(this.UPDATE_OTHER_PATIENTS_LIST, this.updatePatientsList);
   },
   methods: {
-    initProCity() {
-      axios.get('../../static/mockData/city.json').then((response) => {
-        vueCopy(response['data'], this.proviceCity);
-      }).catch(function(error) {
-        console.error('请求出错: ', error);
-      });
-    },
+    // initProCity() {
+    //   axios.get('../../static/mockData/city.json').then((response) => {
+    //     vueCopy(response['data'], this.proviceCity);
+    //   }).catch(function(error) {
+    //     console.error('请求出错: ', error);
+    //   });
+    // },
     search() {
       // console.log(this.searchInput);
     },
@@ -316,17 +310,32 @@ export default {
       });
     },
     updatePatientsList(cb) {
-      var type = 1;
-      if (this.listType === 'myPatients') {
-        type = 1;
-      } else if (this.listType === 'otherPatients') {
-        type = 2;
-      }
       // 根据筛选条件更新“我的患者”列表，如果不传入条件参数，则默认不作筛选
       var condition = {
-        'type': type,
-        'sex': 0
+        'type': 1
       };
+      if (this.listType === 'myPatients') {
+        condition.type = 1;
+      } else if (this.listType === 'otherPatients') {
+        condition.type = 2;
+      }
+
+      var filterForm = this.filterPatientsForm;
+      if (filterForm.group !== -1) {
+        condition.groupId = filterForm.group;
+      }
+      if (filterForm.gender !== -1) {
+        condition.sex = filterForm.gender;
+      }
+      if (filterForm.homeProvince !== -1) {
+        condition.birthPlace = filterForm.homeProvince;
+      }
+      if (filterForm.minAge !== '') {
+        condition.ageFrom = filterForm.minAge;
+      }
+      if (filterForm.maxAge !== '') {
+        condition.ageTo = filterForm.maxAge;
+      }
       getPatientList(condition).then((data) => {
         this.myPatientsList = data;
         this.updateScrollbar();
@@ -370,6 +379,31 @@ export default {
     },
     togglePanelDisplay() {
       this.panelDisplay = !this.panelDisplay;
+      if (this.panelDisplay) {
+        // 每次打开筛选面板的时候，都要去更新一次 groupList，因为有一个筛选框是筛选分组的，而分组信息需要经常更新
+        this.updateGroupList();
+      }
+    },
+    getOptions(fieldName) {
+      var options = [];
+      if (fieldName === 'group') {
+        for (let group of this.groupList) {
+          options.push({
+            name: group.groupName,
+            code: group.groupId
+          });
+        }
+      } else if (fieldName === 'sex' || fieldName === 'homeProvince') {
+        var types = Util.getElement('typegroupcode', fieldName, this.typeGroup).types;
+        types = types ? types : [];
+        for (let type of types) {
+          options.push({
+            name: type.typeName,
+            code: type.typeCode
+          });
+        }
+      }
+      return options;
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
@@ -379,6 +413,9 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           // 提交新的筛选条件，发出post请求
+          if (formName === 'filterPatientsForm') {
+            this.updatePatientsList();
+          }
         } else {
           console.log('error submit!!');
           return false;
