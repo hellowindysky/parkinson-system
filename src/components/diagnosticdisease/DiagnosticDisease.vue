@@ -225,7 +225,10 @@ export default {
       this.diagnosticDiseaseMcDictionary, this.diagnosticDiseaseNmsDictionary);
     },
     allSymptom() {
-      return (this.copyInfo && this.copyInfo.patientSymptom) ? this.copyInfo.patientSymptom : [];
+      if (!this.copyInfo.patientSymptom) {
+        this.$set(this.copyInfo, 'patientSymptom', []);
+      }
+      return this.copyInfo.patientSymptom;
     },
     msSymptom() {
       // 运动症状
@@ -515,6 +518,7 @@ export default {
     Bus.$on(this.QUIT_DIAGNOSTIC_DETAIL, this.cancel);
 
     setTimeout(() => {
+      // console.log(this.copyInfo);
       // console.log(this.diagnosticDisease);
       // console.log(this.diagnosticDiseaseTemplate);
       // console.log(this.diagnosticDiseaseDictionary);
