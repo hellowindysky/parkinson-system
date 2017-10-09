@@ -31,18 +31,18 @@
         <span class="field-input">
           <span class="warning-text">{{getWarningText(field.fieldName)}}</span>
           <span v-if="getUIType(field)===1">
-            <el-input v-model="item[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
+            <el-input v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
              :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)"></el-input>
           </span>
           <span v-else-if="getUIType(field)===3">
-            <el-select v-model="item[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
+            <el-select v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
              :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)">
               <el-option v-for="type in getTypes(field)" :label="type.typeName"
                :value="type.typeCode" :key="type.typeName"></el-option>
             </el-select>
           </span>
           <span v-else-if="getUIType(field)===6">
-            <el-date-picker v-model="item[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}" type="date"
+            <el-date-picker v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}" type="date"
              :placeholder="getMatchedField(field).cnFieldDesc" format="yyyy-MM-dd" @change="updateWarning(field)"></el-date-picker>
           </span>
         </span>
@@ -83,7 +83,7 @@ export default {
       subModalType: '',
       disableChangingSubModal: false,
       title: '',
-      item: {},
+      copyInfo: {},
       warningResults: {}
     };
   },
@@ -169,11 +169,11 @@ export default {
     }
   },
   methods: {
-    showPanel(title, item, modalType) {
+    showPanel(title, originalInfo, modalType) {
       this.displayModal = true;
 
-      // 通过检查 item 参数是否为空对象 {}，来决定提交时是新增记录，还是修改记录
-      if (isEmptyObject(item)) {
+      // 通过检查 originalInfo 参数是否为空对象 {}，来决定提交时是新增记录，还是修改记录
+      if (isEmptyObject(originalInfo)) {
         this.mode = ADD_MODE;
       } else {
         this.mode = MODIFY_MODE;
@@ -193,14 +193,14 @@ export default {
       }
 
       this.title = title;
-      this.item = Object.assign({}, item);
+      this.copyInfo = Object.assign({}, originalInfo);
 
-      // 每次打开这个模态框，都会重新初始化 this.item
-      this.initItem();
+      // 每次打开这个模态框，都会重新初始化 this.copyInfo
+      this.initCopyInfo();
 
       // 清空警告信息
-      // 改变 item 的时候会触发 warningResults 的跟踪变化（这里的自动触发是由 el-date-picker 的 v-model造成的）
-      // 因此这一步要等到 item 变化结束之后再执行，我们将其放到下一个事件循环 tick 中
+      // 改变 copyInfo 的时候会触发 warningResults 的跟踪变化（这里的自动触发是由 el-date-picker 的 v-model造成的）
+      // 因此这一步要等到 copyInfo 变化结束之后再执行，我们将其放到下一个事件循环 tick 中
       this.$nextTick(() => {
         this.clearWarning();
       });
@@ -231,87 +231,87 @@ export default {
       // 准备提交之前，需要将日期格式调整成符合服务器传输的字符串
       for (let field of this.template) {
         if (this.getUIType(field) === 6) {
-          var dateStr = this.item[field.fieldName];
-          this.item[field.fieldName] = Util.simplifyDate(dateStr);
+          var dateStr = this.copyInfo[field.fieldName];
+          this.copyInfo[field.fieldName] = Util.simplifyDate(dateStr);
         }
       }
 
-      this.item.patientId = parseInt(this.$route.params.id, 10);
+      this.copyInfo.patientId = parseInt(this.$route.params.id, 10);
       // 到这里，检验合格，准备提交数据了
       if (this.mode === ADD_MODE) {
         if (this.modalType === this.MEDICINE_MODAL) {
-          addPatientMedHistory(this.item).then(() => {
+          addPatientMedHistory(this.copyInfo).then(() => {
             this.updateAndClose();
           });
         } else if (this.modalType === this.DISEASE_MODAL) {
-          addPatientDisease(this.item).then(() => {
+          addPatientDisease(this.copyInfo).then(() => {
             this.updateAndClose();
           });
         } else if (this.modalType === this.FAMILY_MODAL) {
-          addPatientFamily(this.item).then(() => {
+          addPatientFamily(this.copyInfo).then(() => {
             this.updateAndClose();
           });
         } else if (this.modalType === this.TOXIC_MODAL) {
-          addPatientToxicExposure(this.item).then(() => {
+          addPatientToxicExposure(this.copyInfo).then(() => {
             this.updateAndClose();
           });
         } else if (this.subModalType === this.COFFEE_MODAL) {
-          addPatientCoffee(this.item).then(() => {
+          addPatientCoffee(this.copyInfo).then(() => {
             this.updateAndClose();
           });
         } else if (this.subModalType === this.TEA_MODAL) {
-          addPatientTea(this.item).then(() => {
+          addPatientTea(this.copyInfo).then(() => {
             this.updateAndClose();
           });
         } else if (this.subModalType === this.WINE_MODAL) {
-          addPatientWine(this.item).then(() => {
+          addPatientWine(this.copyInfo).then(() => {
             this.updateAndClose();
           });
         } else if (this.subModalType === this.SMOKE_MODAL) {
-          addPatientSmoke(this.item).then(() => {
+          addPatientSmoke(this.copyInfo).then(() => {
             this.updateAndClose();
           });
         } else if (this.subModalType === this.EXERCISE_MODAL) {
-          addPatientExercise(this.item).then(() => {
+          addPatientExercise(this.copyInfo).then(() => {
             this.updateAndClose();
           });
         }
 
       } else if (this.mode === MODIFY_MODE) {
         if (this.modalType === this.MEDICINE_MODAL) {
-          modifyPatientMedHistory(this.item).then(() => {
+          modifyPatientMedHistory(this.copyInfo).then(() => {
             this.updateAndClose();
           });
         } else if (this.modalType === this.DISEASE_MODAL) {
-          modifyPatientDisease(this.item).then(() => {
+          modifyPatientDisease(this.copyInfo).then(() => {
             this.updateAndClose();
           });
         } else if (this.modalType === this.FAMILY_MODAL) {
-          modifyPatientFamily(this.item).then(() => {
+          modifyPatientFamily(this.copyInfo).then(() => {
             this.updateAndClose();
           });
         } else if (this.modalType === this.TOXIC_MODAL) {
-          modifyPatientToxicExposure(this.item).then(() => {
+          modifyPatientToxicExposure(this.copyInfo).then(() => {
             this.updateAndClose();
           });
         } else if (this.subModalType === this.COFFEE_MODAL) {
-          modifyPatientCoffee(this.item).then(() => {
+          modifyPatientCoffee(this.copyInfo).then(() => {
             this.updateAndClose();
           });
         } else if (this.subModalType === this.TEA_MODAL) {
-          modifyPatientTea(this.item).then(() => {
+          modifyPatientTea(this.copyInfo).then(() => {
             this.updateAndClose();
           });
         } else if (this.subModalType === this.WINE_MODAL) {
-          modifyPatientWine(this.item).then(() => {
+          modifyPatientWine(this.copyInfo).then(() => {
             this.updateAndClose();
           });
         } else if (this.subModalType === this.SMOKE_MODAL) {
-          modifyPatientSmoke(this.item).then(() => {
+          modifyPatientSmoke(this.copyInfo).then(() => {
             this.updateAndClose();
           });
         } else if (this.subModalType === this.EXERCISE_MODAL) {
-          modifyPatientExercise(this.item).then(() => {
+          modifyPatientExercise(this.copyInfo).then(() => {
             this.updateAndClose();
           });
         }
@@ -321,13 +321,13 @@ export default {
       Bus.$emit(this.UPDATE_PATIENT_INFO);
       this.displayModal = false;
     },
-    initItem() {
-      // 遍历当前的 template，对其中的每个 field，检查 this.item 下有没有名字对应的属性值，没有的话，就初始化为空字符串
+    initCopyInfo() {
+      // 遍历当前的 template，对其中的每个 field，检查 this.copyInfo 下有没有名字对应的属性值，没有的话，就初始化为空字符串
       // 注意初始化采用 this.$set 方法，使得当前 Vue 实例对象可以跟踪该属性值的变化
       for (let field of this.template) {
         let name = field.fieldName;
-        if (this.item[name] === undefined) {
-          this.$set(this.item, name, '');
+        if (this.copyInfo[name] === undefined) {
+          this.$set(this.copyInfo, name, '');
         }
       }
     },
@@ -348,7 +348,7 @@ export default {
     },
     updateWarning(field) {
       var fieldName = field.fieldName;
-      var fieldValue = this.item[fieldName];
+      var fieldValue = this.copyInfo[fieldName];
       if (this.getUIType(field) === 6) {
         // 日期控件(el-date-picker)给的是一个表示完整日期对象的字符串，我们需要格式化之后再校验
         fieldValue = Util.simplifyDate(fieldValue);
@@ -393,8 +393,8 @@ export default {
   },
   watch: {
     template: function() {
-      // 只有在 template 更新后，才去初始化 this.item 的值
-      this.initItem();
+      // 只有在 template 更新后，才去初始化 this.copyInfo 的值
+      this.initCopyInfo();
     }
   },
   beforeDestroy() {
