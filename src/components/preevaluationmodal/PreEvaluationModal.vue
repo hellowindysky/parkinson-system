@@ -418,7 +418,7 @@ let dataModel = {
   'preopsTerminalDTO': {
     'terminalTime': '',
     'terminalScale': '',
-    'terminalExist': '',
+    'terminalExist': 0,
     'terminalIsfirst': '',
     'terminalFirstTime': '',
     'terminalDuration': '',
