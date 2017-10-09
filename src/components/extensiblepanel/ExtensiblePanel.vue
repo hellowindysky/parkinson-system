@@ -2,7 +2,7 @@
   <div class="extensible-panel-wrapper">
     <div class="header">
       <h4 class="title">{{title}}</h4>
-      <div v-show="mode === EDITING_MODE" class="button add-button" :class="{'vitalsigns':isVitalSigns===true}"  @click="add">添加</div>
+      <div class="button add-button" :class="{'vitalsigns':isVitalSigns===true}"  @click="add">添加</div>
       <div v-show="status === NORMAL_STATUS" class="button extend-button" @click="extend">展开</div>
       <div v-show="status === EXTENDED_STATUS" class="button shrink-button" @click="shrink">收起</div>
     </div>

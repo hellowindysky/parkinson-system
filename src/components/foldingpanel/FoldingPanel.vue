@@ -5,10 +5,10 @@
       <h2 class="title" @click="toggleFoldedPanel">{{title}}</h2>
       <div v-show="mode===READING_MODE" class="button edit-button" @click="edit">编辑</div>
       <div v-show="mode===EDITING_MODE && !isCardsPanel" class="button cancel-button" @click="cancel">取消</div>
-      <div v-show="mode===EDITING_MODE && isCardsPanel" class="button add-button" @click="add">添加</div>
+      <div v-show="isCardsPanel" class="button add-button" @click="add">添加</div>
       <div v-show="mode===EDITING_MODE" class="button submit-button" @click="submit">完成</div>
 
-      <el-select v-show="mode===READING_MODE && isCardsPanel" v-model="filterCondition" size="small" placeholder="筛选" class="button filter-button">
+      <el-select v-show="isCardsPanel" v-model="filterCondition" size="small" placeholder="筛选" class="button filter-button">
         <el-option label="全部" :value="'all'"></el-option>
         <el-option label="已归档" :value="'filed'"></el-option>
         <el-option label="未归档" :value="'notFiled'"></el-option>
@@ -154,7 +154,7 @@ export default {
         background-color: @button-color;
       }
       &.filter-button {
-        right: 30px + @small-button-width;
+        right: 50px + @small-button-width * 2;
         .el-input {
           font-size: @normal-font-size;
           .el-input__inner {
@@ -164,8 +164,9 @@ export default {
             line-height: @small-button-height;
             border: none;
             border-radius: 0;
-            background-color: @secondary-button-color;
-            color: #fff;
+            border-bottom: 1px solid @light-gray-color;
+            // background-color: @secondary-button-color;
+            color: @font-color;
             text-align: center;
           }
           .el-input__icon {
