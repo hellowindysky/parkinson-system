@@ -459,7 +459,7 @@ export default {
           });
         });
 
-      } else if (/^\/patients\/otherlist\/?$/.test(path)) {
+      } else if (/^\/patients\/otherList\/?$/.test(path)) {
         this.updatePatientsList(() => {
           let firstPatientId = this.otherPatientsList.length > 0 ? this.otherPatientsList[0].patientId : 0;
           this.$router.replace({
