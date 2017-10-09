@@ -20,7 +20,7 @@
         <group-list-item v-for="group in groupList" :group="group" :key="group.groupId"></group-list-item>
       </div>
       <div v-else-if="this.listType === 'otherPatients'">
-        <patient-list-item class="item" v-for="patient in myPatientsList" :patient="patient" :key="patient.patientId"></patient-list-item>
+        <patient-list-item class="item" v-for="patient in otherPatientsList" :patient="patient" :key="patient.patientId"></patient-list-item>
       </div>
       <div v-else-if="this.listType === 'users'">
         <user-list-item class="item" v-for="user in userList" :user="user" :key="user.id"></user-list-item>
@@ -199,7 +199,9 @@ export default {
     return {
       // proviceCity: {},
       searchInput: '',
+      timeout: null,
       myPatientsList: [],
+      otherPatientsList: [],
       groupList: [],
       userList: [],
       roleList: [],
@@ -266,7 +268,7 @@ export default {
       } else if (this.listType === 'groups') {
         return '分组：' + this.groupList.length + '个';
       } else if (this.listType === 'otherPatients') {
-        return '患者：2568人';
+        return '患者：' + this.otherPatientsList.length + '人';
       } else if (this.listType === 'users') {
         return '用户：86人';
       } else if (this.listType === 'roles') {
@@ -300,7 +302,10 @@ export default {
     //   });
     // },
     search() {
-      // console.log(this.searchInput);
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        this.updatePatientsList();
+      }, 1000);
     },
     updateScrollbar() {
       Ps.destroy(this.$refs.listArea);
@@ -320,6 +325,10 @@ export default {
         condition.type = 2;
       }
 
+      if (this.searchInput !== '') {
+        condition.keyword = this.searchInput;
+      }
+
       var filterForm = this.filterPatientsForm;
       if (filterForm.group !== -1) {
         condition.groupId = filterForm.group;
@@ -337,7 +346,11 @@ export default {
         condition.ageTo = filterForm.maxAge;
       }
       getPatientList(condition).then((data) => {
-        this.myPatientsList = data;
+        if (this.listType === 'myPatients') {
+          this.myPatientsList = data;
+        } else if (this.listType === 'otherPatients') {
+          this.otherPatientsList = data;
+        }
         this.updateScrollbar();
         // 如果有回调函数作为参数传递进来了，则执行该函数
         cb && cb();
@@ -429,7 +442,7 @@ export default {
       // 一旦发现路由地址中还没有id，就更新病患列表数据，并默认加载当前列表中的第一项
       if (/^\/patients\/list\/?$/.test(path)) {
         this.updatePatientsList(() => {
-          var firstPatientId = this.myPatientsList.length > 0 ? this.myPatientsList[0].patientId : 0;
+          let firstPatientId = this.myPatientsList.length > 0 ? this.myPatientsList[0].patientId : 0;
           this.$router.replace({
             name: 'patientInfo',
             params: { id: firstPatientId }
@@ -439,7 +452,7 @@ export default {
       } else if (/^\/patients\/groups\/?$/.test(path)) {
         // 获取分组列表的所有id，然后根据第一个id进行跳转
         this.updateGroupList(() => {
-          var firstGroupId = this.groupList.length > 0 ? this.groupList[0].groupId : 0;
+          let firstGroupId = this.groupList.length > 0 ? this.groupList[0].groupId : 0;
           this.$router.replace({
             name: 'groupInfo',
             params: { id: firstGroupId }
@@ -447,12 +460,17 @@ export default {
         });
 
       } else if (/^\/patients\/otherlist\/?$/.test(path)) {
-        // TODO 获取科室患者列表的所有id，然后根据第一个id进行跳转
-        this.$router.replace({ name: 'otherPatientInfo', params: { id: 20001 } });
+        this.updatePatientsList(() => {
+          let firstPatientId = this.otherPatientsList.length > 0 ? this.otherPatientsList[0].patientId : 0;
+          this.$router.replace({
+            name: 'otherPatientInfo',
+            params: { id: firstPatientId }
+          });
+        });
 
       } else if (/^\/configuration\/userManagement\/?$/.test(path)) {
         this.updateUserList(() => {
-          var firstUserId = this.userList.length > 0 ? this.userList[0].id : 0;
+          let firstUserId = this.userList.length > 0 ? this.userList[0].id : 0;
           this.$router.replace({
             name: 'userInfo',
             params: { id: firstUserId }
@@ -460,7 +478,7 @@ export default {
         });
       } else if (/^\/configuration\/roleManagement\/?$/.test(path)) {
         this.updateRoleList(() => {
-          var firstRoleId = this.roleList.length > 0 ? this.roleList[0].roleId : 0;
+          let firstRoleId = this.roleList.length > 0 ? this.roleList[0].roleId : 0;
           this.$router.replace({
             name: 'roleInfo',
             params: { id: firstRoleId }
@@ -481,10 +499,16 @@ export default {
       this.panelDisplay = false;
       this.checkRoute();
     },
-    beforeDestroy() {
-      Bus.$off(this.UPDATE_MY_PATIENTS_LIST);
-      Bus.$off(this.UPDATE_OTHER_PATIENTS_LIST);
+    listType() {
+      // 列表类型一旦发生变化，则清空搜索框内容
+      this.searchInput = '';
+      // 同时清空各个筛选面板
+
     }
+  },
+  beforeDestroy() {
+    Bus.$off(this.UPDATE_MY_PATIENTS_LIST);
+    Bus.$off(this.UPDATE_OTHER_PATIENTS_LIST);
   }
 };
 </script>
