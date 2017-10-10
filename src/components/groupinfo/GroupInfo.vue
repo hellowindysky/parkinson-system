@@ -2,9 +2,12 @@
   <div class="group-info">
     <div class="title-bar">
       <h3 class="title">
-        组的名字
-        <span class="iconfont icon-edit"></span>
-        <span class="iconfont icon-explain"></span>
+        <span v-show="titleMode === READING_MODE">{{groupName}}</span>
+        <span v-show="titleMode === EDITING_MODE">
+          <el-input class="title-input" v-model="groupName"></el-input>
+        </span>
+        <span class="iconfont icon-edit" @click="toggleTitleMode"></span>
+        <span class="iconfont icon-explain" :class="{'on': descPanelDisplay}" @click="toggleDescPanelDisplay"></span>
       </h3>
       <div class="button button-operate">批量操作</div>
       <div class="button button-add">添加患者</div>
@@ -24,11 +27,19 @@
         </div>
       </div>
     </div>
+    <div class="group-description" v-show="descPanelDisplay">
+      <p class="description-content" v-show="descriptionMode===READING_MODE">{{remarks}}</p>
+      <el-input type="textarea" v-model="remarks" v-show="descriptionMode===EDITING_MODE" :rows="8"></el-input>
+      <div class="button-wrapper">
+        <div class="button cancel-button" v-show="descriptionMode===EDITING_MODE" @click="cancelDescInput">取消</div>
+        <div class="button submit-button" v-show="descriptionMode===EDITING_MODE" @click="submitDescInput">确定</div>
+        <div class="button edit-button" v-show="descriptionMode===READING_MODE" @click="editDesc">编辑</div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import Card from 'components/card/Card';
 import Bus from 'utils/bus.js';
 import { getGroupPatients } from 'api/group.js';
 
@@ -36,7 +47,12 @@ export default {
   data() {
     return {
       devideWidth: '',
-      groupPatients: []
+      groupName: '',
+      titleMode: this.READING_MODE,
+      descPanelDisplay: false,
+      descriptionMode: this.READING_MODE,
+      groupPatients: [],
+      remarks: ''
     };
   },
   methods: {
@@ -54,10 +70,12 @@ export default {
     seeDetail(item) {
       console.log(item);
     },
-    updateGroupPatients() {
+    updateGroupInfo() {
       getGroupPatients(this.$route.params.id).then((data) => {
-        this.groupPatients = data;
-        console.log(data);
+        this.groupName = data.groupName;
+        this.groupPatients = data.list;
+        this.remarks = data.remarks;
+        // console.log(data);
       }, (error) => {
         console.log(error);
       });
@@ -69,10 +87,26 @@ export default {
       } else if (num === 1) {
         return 'icon-female';
       }
+    },
+    toggleTitleMode() {
+      if (this.titleMode === this.EDITING_MODE) {
+        this.titleMode = this.READING_MODE;
+      } else if (this.titleMode === this.READING_MODE) {
+        this.titleMode = this.EDITING_MODE;
+      }
+    },
+    toggleDescPanelDisplay() {
+      this.descPanelDisplay = !this.descPanelDisplay;
+    },
+    editDesc() {
+      this.descriptionMode = this.EDITING_MODE;
+    },
+    cancelDescInput() {
+      this.descriptionMode = this.READING_MODE;
+    },
+    submitDescInput() {
+      this.descriptionMode = this.READING_MODE;
     }
-  },
-  components: {
-    Card
   },
   mounted() {
     // 如果收到 [确认对话框] 发过来的 “取消” 事件，则解除 “确认” 事件的回调函数
@@ -84,7 +118,7 @@ export default {
     Bus.$on(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
     // 第一次加载的时候，去计算一次卡片宽度
     this.recalculateCardWidth();
-    this.updateGroupPatients();
+    this.updateGroupInfo();
   },
   beforeDestroy() {
     // 还是记得销毁组件前，解除事件绑定
@@ -92,12 +126,6 @@ export default {
     Bus.$off(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
     Bus.$off(this.CONFIRM);
     Bus.$off(this.GIVE_UP);
-  },
-  watch: {
-    $route() {
-      console.log(12345);
-      console.log(this.$route.params.id);
-    }
   }
 };
 </script>
@@ -144,6 +172,20 @@ export default {
         }
         &:active {
           opacity: 0.8;
+        }
+        &.on {
+          color: @font-color;
+        }
+      }
+      .title-input {
+        display: inline-block;
+        width: 150px;
+        .el-input__inner {
+          width: 100%;
+          height: 30px;
+          line-height: 30px;
+          background-color: @screen-color;
+          border: none;
         }
       }
     }
@@ -261,6 +303,65 @@ export default {
             position: absolute;
             right: 0;
           }
+        }
+      }
+    }
+  }
+  .group-description {
+    position: absolute;
+    top: @bar-height;
+    left: 0;
+    width: 400px;
+    height: 250px;
+    background-color: @theme-color;
+    z-index: 100;
+    .description-content {
+      position: absolute;
+      width: 360px;
+      left: 20px;
+      box-sizing: border-box;
+      padding: 5px;
+      // background-color: @font-color;
+      color: #fff;
+      text-align: left;
+    }
+    .el-textarea {
+      position: absolute;
+      width: 360px;
+      left: 20px;
+      top: 15px;
+      .el-textarea__inner {
+        background-color: @font-color;
+        color: #fff;
+      }
+    }
+    .button-wrapper {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      .button {
+        display: inline-block;
+        width: @small-button-width;
+        height: @small-button-height;
+        line-height: @small-button-height;
+        color: #fff;
+        cursor: pointer;
+        &:hover {
+          opacity: 0.8;
+        }
+        &:active {
+          opacity: 0.9;
+        }
+        &.cancel-button {
+          background-color: @secondary-button-color;
+        }
+        &.submit-button {
+          margin-left: 30px;
+          background-color: @button-color;
+        }
+        &.edit-button {
+          background-color: @button-color;
         }
       }
     }

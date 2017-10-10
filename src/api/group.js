@@ -31,7 +31,7 @@ export function getGroupPatients(groupId) {
     "orgType": 2,
     "groupId": groupId
   };
-  var url = 'http://apitest.gyenno.com/pdms/queryGroupPatient';
+  var url = 'http://apitest.gyenno.com/pdms/queryGroupInfo';
 
   return encapsulatePromise(url, request);
 };
