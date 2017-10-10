@@ -838,6 +838,128 @@ export function deleteOperativeCompliation(operativeComplication) {
   return encapsulatePromise(url, request);
 };
 
+// 查看某次程控记录详情
+export function getDbsFirstInfo(dbsFirstId) {
+  dbsFirstId = parseInt(dbsFirstId, 10);
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientDbsFirstId": dbsFirstId
+  };
+  var url = 'http://apitest.gyenno.com/pdms/queryPatientDbsFirstDetail';
+
+  return encapsulatePromise(url, request);
+};
+
+// 新增首次程控记录详情
+export function addDbsFirstInfo(dbsFirstInfo) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientDbsFirst": dbsFirstInfo
+  };
+  var url = 'http://apitest.gyenno.com/pdms/addPatientDbsFirst';
+
+  return encapsulatePromise(url, request);
+};
+
+// 修改首次程控记录详情
+export function modifyDbsFirstInfo(dbsFirstInfo) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientDbsFirst": dbsFirstInfo
+  };
+  var url = 'http://apitest.gyenno.com/pdms/modPatientDbsFirst';
+
+  return encapsulatePromise(url, request);
+};
+
+// 删除首次程控记录详情
+export function deleteDbsFirstInfo(dbsFirstInfo) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientDbsFirst": dbsFirstInfo
+  };
+  var url = 'http://apitest.gyenno.com/pdms/delPatientDbsFirst';
+
+  return encapsulatePromise(url, request);
+};
+
+// 查看非某次程控记录详情
+export function getDbsFollowInfo(dbsFollowId) {
+  dbsFollowId = parseInt(dbsFollowId, 10);
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientDbsFollowId": dbsFollowId
+  };
+  var url = 'http://apitest.gyenno.com/pdms/queryPatientDbsFollowDetail';
+
+  return encapsulatePromise(url, request);
+};
+
+// 新增非首次程控记录详情
+export function addDbsFollowInfo(dbsFollowInfo) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientDbsFollow": dbsFollowInfo
+  };
+  var url = 'http://apitest.gyenno.com/pdms/addPatientDbsFollow';
+
+  return encapsulatePromise(url, request);
+};
+
+// 修改非首次程控记录详情
+export function modifyDbsFollowInfo(dbsFollowInfo) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientDbsFollow": dbsFollowInfo
+  };
+  var url = 'http://apitest.gyenno.com/pdms/modPatientDbsFollow';
+
+  return encapsulatePromise(url, request);
+};
+
+// 删除非首次程控记录详情
+export function deleteDbsFollowInfo(dbsFollowInfo) {
+  var request = {
+    "userId": 93242,
+    "accountNumber": "15527231713",
+    "userType": 2,
+    "orgId": 34,
+    "orgType": 2,
+    "patientFollowInfo": dbsFollowInfo
+  };
+  var url = 'http://apitest.gyenno.com/pdms/delPatientDbsFollow';
+
+  return encapsulatePromise(url, request);
+};
+
 // 查询医学量表
 export function getScaleInfo() {
   var request = {
