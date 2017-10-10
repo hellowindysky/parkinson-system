@@ -9,22 +9,22 @@
             <el-input class="vital-vlaue" v-else-if="mutableMode===EDITING_MODE" v-model="vitalData.breathing" placeholder="请输入检查结果"></el-input>
           </li>
           <li class="vital-item">
-            <span class="vital-name">体温(℃):</span> 
+            <span class="vital-name">体温(℃):</span>
             <div class="vital-vlaue" v-if="mutableMode===READING_MODE">{{VitalSignsData.temperature}}</div>
             <el-input class="vital-vlaue" v-else-if="mutableMode===EDITING_MODE" v-model="vitalData.temperature" placeholder="请输入检查结果"></el-input>
           </li>
           <li class="vital-item">
-            <span class="vital-name">脉搏(次/分):</span> 
+            <span class="vital-name">脉搏(次/分):</span>
             <div class="vital-vlaue" v-if="mutableMode===READING_MODE">{{VitalSignsData.pulse}}</div>
             <el-input class="vital-vlaue" v-else-if="mutableMode===EDITING_MODE" v-model="vitalData.pulse" placeholder="请输入检查结果"></el-input>
           </li>
           <li class="vital-item">
-            <span class="vital-name">心率(次/分):</span> 
+            <span class="vital-name">心率(次/分):</span>
             <div class="vital-vlaue" v-if="mutableMode===READING_MODE">{{VitalSignsData.heartRate}}</div>
             <el-input class="vital-vlaue" v-else-if="mutableMode===EDITING_MODE" v-model="vitalData.heartRate" placeholder="请输入检查结果"></el-input>
           </li>
           <li class="vital-item">
-            <span class="vital-name">心率情况:</span> 
+            <span class="vital-name">心率情况:</span>
             <div class="vital-vlaue" v-if="mutableMode===READING_MODE">{{showVital(VitalSignsData.rhythm)}}</div>
             <el-select class="vital-select" v-else-if="mutableMode===EDITING_MODE" v-model="vitalData.rhythm" placeholder="请选择">
               <el-option v-for="item in heartRate" :key="item.typeCode" :label="item.typeName" :value="item.typeCode">
@@ -32,7 +32,7 @@
             </el-select>
           </li>
           <li class="vital-item">
-            <span class="vital-name">血压 :卧位-左/右(mmHg):</span> 
+            <span class="vital-name">血压 :卧位-左/右(mmHg):</span>
             <div class="vital-vlaue" v-if="mutableMode===READING_MODE">{{VitalSignsData.bpDecubitus}}</div>
             <div class="vital-two-vlaue" v-else-if="mutableMode===EDITING_MODE">
               <el-input class="son-vlaue" v-model="vitalData.bpDecubitusL"></el-input>/&nbsp;
@@ -40,7 +40,7 @@
             </div>
           </li>
           <li class="vital-item">
-            <span class="vital-name">血压 :坐位-左/右(mmHg):</span> 
+            <span class="vital-name">血压 :坐位-左/右(mmHg):</span>
             <div class="vital-vlaue" v-if="mutableMode===READING_MODE">{{VitalSignsData.bpSitting}}</div>
             <div class="vital-two-vlaue" v-else-if="mutableMode===EDITING_MODE">
               <el-input class="son-vlaue" v-model="vitalData.bpSittingL"></el-input>/&nbsp;
@@ -56,20 +56,20 @@
             </div>
           </li>
           <li class="vital-item">
-            <span class="vital-name">智能障碍-MMSE:</span> 
+            <span class="vital-name">智能障碍-MMSE:</span>
             <div class="vital-vlaue" v-if="mutableMode===READING_MODE">{{VitalSignsData.doiMmse}}</div>
             <el-input class="vital-vlaue" v-else-if="mutableMode===EDITING_MODE" v-model="vitalData.doiMmse" placeholder="请输入检查结果"></el-input>
-          </li>   
+          </li>
           <li class="vital-item">
-            <span class="vital-name">智能障碍-MoCA:</span> 
+            <span class="vital-name">智能障碍-MoCA:</span>
             <div class="vital-vlaue" v-if="mutableMode===READING_MODE">{{VitalSignsData.doiMoca}}</div>
             <el-input class="vital-vlaue" v-else-if="mutableMode===EDITING_MODE" v-model="vitalData.doiMoca" placeholder="请输入检查结果"></el-input>
-          </li> 
+          </li>
           <li class="vital-item">
-            <span class="vital-name">智能障碍-CDR:</span> 
+            <span class="vital-name">智能障碍-CDR:</span>
             <div class="vital-vlaue" v-if="mutableMode===READING_MODE">{{VitalSignsData.doiCdr}}</div>
             <el-input class="vital-vlaue" v-else-if="mutableMode===EDITING_MODE" v-model="vitalData.doiCdr" placeholder="请输入检查结果"></el-input>
-          </li>  
+          </li>
         </ul>
       </extensible-panel>
       <extensible-panel class="panel" :mode="mutableMode" :title="neurologicCheckTitle" v-on:addNewCard="addNeurologicCheckRecord">
@@ -308,11 +308,11 @@ export default {
     addNeurologicCheckRecord() {
       // 这里要传递 3 个参数，一个是 title，一个是当前数据对象（新建的时候为空），另一个是模态框的类型
       Bus.$emit(this.SHOW_NERVOU_SYSTEM_MODAL, '新增神经系统检查', {});
-      console.log('add');
+      // console.log('add');
     },
     editNeurologicCheckRecord(item) {
       Bus.$emit(this.SHOW_NERVOU_SYSTEM_MODAL, '神经系统检查', item);
-      console.log('edit', item);
+      // console.log('edit', item);
     },
     deleteNeurologicCheckRecord(item) { // 删除神经检查
       let NeuroId = {
@@ -401,7 +401,7 @@ export default {
     let that = this;
     Util.getDictionaryData('rhythm').then(function(data) {
       vueCopy(data, that.heartRate);
-      console.log(that.heartRate);
+      // console.log(that.heartRate);
     });
   },
   beforeDestroy() {

@@ -11,7 +11,7 @@
           <el-select v-if="mode===ADD_MODE" placeholder="请选择检查类型" v-model="item['spephysicalInfo']">
                <el-option v-for="spephyItem in spephysicalType" :key="spephyItem.spephysicalInfo" :label="spephyItem.spephysicalName" :value="spephyItem.spephysicalInfo"></el-option>
           </el-select>
-          <span v-if="mode===MODIFY_MODE">{{getSpephyName(item['spephysicalInfo'])}}</span> 
+          <span v-if="mode===MODIFY_MODE">{{getSpephyName(item['spephysicalInfo'])}}</span>
         </span>
       </div>
 
@@ -184,7 +184,7 @@ export default {
     item: {
       handler: function(newVal) {
         if (newVal) {
-          console.log(newVal);
+          // console.log(newVal);
         }
       },
       deep: true
