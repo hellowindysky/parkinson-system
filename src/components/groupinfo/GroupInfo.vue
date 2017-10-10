@@ -10,11 +10,95 @@
       <div class="button button-add">添加患者</div>
     </div>
     <!-- <div class="seperate-bar"></div> -->
+    <div class="card-wrapper" ref="cardWrapper">
+      <div class="card" :class="devideWidth" v-for="patient in groupPatients" :title="patient.name" v-on:clickCurrentCard="seeDetail(patient)">
+        <img class="image" src="~img/profile.png" alt="">
+        <div class="text first-line">
+          <span class="name">{{patient.ptname}}</span>
+          <span class="iconfont" :class="getGenderIcon(patient.sex)"></span>
+        </div>
+        <div class="text second-line">
+          <span>年龄</span>
+          <span class="age">{{patient.age}}</span>
+          <span class="date">{{patient.date}}</span>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import Card from 'components/card/Card';
+import Bus from 'utils/bus.js';
+import { getGroupPatients } from 'api/group.js';
+
 export default {
+  data() {
+    return {
+      devideWidth: '',
+      groupPatients: []
+    };
+  },
+  methods: {
+    recalculateCardWidth() {
+      this.$nextTick(() => {
+        var panelWidth = this.$refs.cardWrapper.clientWidth;
+        var cardNum = 1.0;
+        // 20px 是卡片的横向间距，定义在了 varaibles.less 中，200px 是卡片的最小宽度，一排最多显示 10 个卡片
+        while (panelWidth / (cardNum + 1) > 200 + 20 && cardNum < 10) {
+          cardNum += 1.0;
+        }
+        this.devideWidth = 'width-1-' + parseInt(cardNum, 10);
+      });
+    },
+    seeDetail(item) {
+      console.log(item);
+    },
+    updateGroupPatients() {
+      getGroupPatients(this.$route.params.id).then((data) => {
+        this.groupPatients = data;
+        console.log(data);
+      }, (error) => {
+        console.log(error);
+      });
+    },
+    getGenderIcon(num) {
+      num = parseInt(num, 10);
+      if (num === 0) {
+        return 'icon-male';
+      } else if (num === 1) {
+        return 'icon-female';
+      }
+    }
+  },
+  components: {
+    Card
+  },
+  mounted() {
+    // 如果收到 [确认对话框] 发过来的 “取消” 事件，则解除 “确认” 事件的回调函数
+    Bus.$on(this.GIVE_UP, () => {
+      Bus.$off(this.CONFIRM);
+    });
+    // 如果收到屏幕宽度变化，或者内容区域宽度变化的事件，则重新计算卡片的宽度
+    Bus.$on(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
+    Bus.$on(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
+    // 第一次加载的时候，去计算一次卡片宽度
+    this.recalculateCardWidth();
+    this.updateGroupPatients();
+  },
+  beforeDestroy() {
+    // 还是记得销毁组件前，解除事件绑定
+    Bus.$off(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
+    Bus.$off(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
+    Bus.$off(this.CONFIRM);
+    Bus.$off(this.GIVE_UP);
+  },
+  watch: {
+    $route() {
+      console.log(12345);
+      console.log(this.$route.params.id);
+    }
+  }
 };
 </script>
 
@@ -23,6 +107,7 @@ export default {
 
 @margin-right: 15px;
 @bar-height: 40px;
+@this-card-horizontal-margin: 5px;
 
 .group-info {
   background-color: @screen-color;
@@ -93,5 +178,92 @@ export default {
   //   height: 3px;
   //   width: calc(~"100% - @{margin-right}");
   // }
+  .card-wrapper {
+    text-align: left;
+    margin-left: -5px;
+    margin-bottom: 5px;
+    margin-right: @margin-right - 5px;
+    .card {
+      display: inline-block;
+      position: relative;
+      margin: 3px @this-card-horizontal-margin;
+      height: 110px;
+      background-color: @background-color;
+      &.width-1-1, &.width-1-0 {
+        width: calc(~"100% - @{this-card-horizontal-margin} * 2");
+      }
+      &.width-1-2 {
+        width: calc(~"50% - @{this-card-horizontal-margin} * 2");
+      }
+      &.width-1-3 {
+        width: calc(~"33.3333% - @{this-card-horizontal-margin} * 2");
+      }
+      &.width-1-4 {
+        width: calc(~"25% - @{this-card-horizontal-margin} * 2");
+      }
+      &.width-1-5 {
+        width: calc(~"20% - @{this-card-horizontal-margin} * 2");
+      }
+      &.width-1-6 {
+        width: calc(~"16.6666% - @{this-card-horizontal-margin} * 2");
+      }
+      &.width-1-7 {
+        width: calc(~"14.2857% - @{this-card-horizontal-margin} * 2");
+      }
+      &.width-1-8 {
+        width: calc(~"12.5% - @{this-card-horizontal-margin} * 2");
+      }
+      &.width-1-9 {
+        width: calc(~"11.1111% - @{this-card-horizontal-margin} * 2");
+      }
+      &.width-1-10 {
+        width: calc(~"10% - @{this-card-horizontal-margin} * 2");
+      }
+      .title {
+        left: 20px;
+      }
+      .image {
+        position: absolute;
+        width: 35px;
+        left: 20px;
+        top: 10px;
+      }
+      .text {
+        position: absolute;
+        &.first-line {
+          left: 20px;
+          top: 55px;
+          right: 20px;
+          font-size: @large-font-size;
+          color: @font-color;
+          .iconfont {
+            position: static;
+            margin-left: 15px;
+            font-size: @normal-font-size;
+            &.icon-male {
+              color: @male-color;
+            }
+            &.icon-female {
+              color: @female-color;
+            }
+          }
+        }
+        &.second-line {
+          font-size: @small-font-size;
+          left: 20px;
+          top: 85px;
+          right: 20px;
+          color: @light-font-color;
+          .age {
+            margin-left: 5px;
+          }
+          .date {
+            position: absolute;
+            right: 0;
+          }
+        }
+      }
+    }
+  }
 }
 </style>
