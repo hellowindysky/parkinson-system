@@ -51,7 +51,7 @@
     <li class="item" :class="{'current-item': currentItem === 'institutionConfiguration'}" @click="toggleInstitutionList">
       <div class="menu-icon iconfont icon-organization"></div>
       <div class="title">机构配置</div>
-      <div class="fold-icon iconfont" :class="showConfigurationList ? 'icon-up' : 'icon-down'"></div>
+      <div class="fold-icon iconfont" :class="showInstitutionList ? 'icon-up' : 'icon-down'"></div>
     </li>
     <ul class="sub-item-list" :class="{'folded': !showInstitutionList}">
       <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'institutionInfo'}" @click="chooseInstitutionInfo">
@@ -77,7 +77,7 @@
 export default {
   data() {
     return {
-      showPatientsList: false,
+      showPatientsList: true,
       showAnalyticsList: false,
       showConfigurationList: false,
       showInstitutionList: false
