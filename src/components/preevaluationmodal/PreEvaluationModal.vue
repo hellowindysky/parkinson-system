@@ -869,10 +869,12 @@ export default {
           }
         } else if (fieldName === 'deviceId') {
           for (let device of this.deviceInfo) {
-            options.push({
-              name: device.deviceName,
-              code: device.id
-            });
+            if (device.deviceType === 1) {
+              options.push({
+                name: device.deviceName,
+                code: device.id
+              });
+            }
           }
         }
       }
