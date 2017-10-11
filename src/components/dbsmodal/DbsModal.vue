@@ -6,48 +6,50 @@
         <div class="field">
           <span class="field-name">设备品牌</span>
           <span class="field-input">
-            <el-select :value="1">
-              <el-option label="a" :value="1"></el-option>
+            <el-select v-model="copyInfo.deviceId">
+              <el-option v-for="option in getOptions('deviceId')" :label="option.name"
+                :value="option.code" :key="option.code"></el-option>
             </el-select>
           </span>
         </div>
         <div class="field">
           <span class="field-name">设备类型</span>
           <span class="field-input">
-            <el-select :value="1">
-              <el-option label="a" :value="1"></el-option>
+            <el-select v-model="copyInfo.devicePowerType">
+              <el-option label="充电" :value="1"></el-option>
+              <el-option label="不充电" :value="0"></el-option>
             </el-select>
           </span>
         </div>
         <div class="field">
           <span class="field-name">患者编码</span>
           <span class="field-input">
-            <el-input></el-input>
+            {{dbsPatientCode}}
           </span>
         </div>
         <div class="field">
           <span class="field-name">程控时间</span>
           <span class="field-input">
-            <el-date-picker></el-date-picker>
+            <el-date-picker v-model="copyInfo.programDate"></el-date-picker>
           </span>
         </div>
         <div class="field whole-line double-line">
           <span class="field-name">备注</span>
           <span class="field-input">
-            <el-input type="textarea"></el-input>
+            <el-input type="textarea" v-model="copyInfo.remarks"></el-input>
           </span>
         </div>
         <div class="seperate-line"></div>
         <div class="field">
           <span class="field-name">首次开机</span>
           <span class="field-input">
-            <el-select :value="1">
+            <el-select v-model="modelType">
               <el-option label="是" :value="1"></el-option>
-              <el-option label="否" :value="2"></el-option>
+              <el-option label="否" :value="0"></el-option>
             </el-select>
           </span>
         </div>
-        <div class="field">
+        <div class="field" v-show="modelType===0">
           <span class="field-name">上次程控时间</span>
           <span class="field-input">
             <el-date-picker></el-date-picker>
@@ -56,66 +58,63 @@
         <div class="field">
           <span class="field-name">服药情况</span>
           <span class="field-input">
-            <el-select :value="1">
+            <el-select v-model="copyInfo.isTakeMedication">
               <el-option label="有" :value="1"></el-option>
-              <el-option label="否" :value="2"></el-option>
+              <el-option label="否" :value="0"></el-option>
             </el-select>
           </span>
         </div>
         <div class="field">
           <span class="field-name">服用药物</span>
           <span class="field-input">
-            <el-select :value="1">
-              <el-option label="美多芭" :value="1"></el-option>
-              <el-option label="别的" :value="2"></el-option>
-            </el-select>
+            <el-input v-model="copyInfo.medicationStatus"></el-input>
           </span>
         </div>
-        <div class="field">
+        <div class="field" v-show="modelType===1">
           <span class="field-name">微毁损效应</span>
           <span class="field-input">
-            <el-select :value="1">
+            <el-select v-model="copyInfo.damageEffectExist">
               <el-option label="有" :value="1"></el-option>
-              <el-option label="否" :value="2"></el-option>
+              <el-option label="否" :value="0"></el-option>
             </el-select>
           </span>
         </div>
-        <div class="field">
+        <div class="field" v-show="modelType===1">
           <span class="field-name long-field-name">微毁损效应持续时间</span>
           <span class="field-input long-field-name">
-            <el-input></el-input>
+            <el-input v-model="copyInfo.damageEffectDuration"></el-input>
           </span>
         </div>
-        <div class="field">
+        <div class="field" v-show="modelType===1">
           <span class="field-name">术后不良事件</span>
           <span class="field-input">
-            <el-select :value="1">
+            <el-select v-model="copyInfo.adverseEventsExist">
               <el-option label="有" :value="1"></el-option>
-              <el-option label="否" :value="2"></el-option>
+              <el-option label="否" :value="0"></el-option>
             </el-select>
           </span>
         </div>
-        <div class="field whole-line double-line">
+        <div class="field whole-line double-line" v-show="modelType===1">
           <span class="field-name">不良事件描述</span>
           <span class="field-input">
-            <el-input type="textarea"></el-input>
+            <el-input type="textarea" v-model="copyInfo.adverseEventsRemark"></el-input>
           </span>
         </div>
-        <div class="field whole-line double-line">
+        <div class="field whole-line double-line" v-show="modelType===0">
           <span class="field-name">患者主诉</span>
           <span class="field-input">
-            <el-input type="textarea"></el-input>
+            <el-input type="textarea" v-model="copyInfo.complaint"></el-input>
           </span>
         </div>
-        <div class="field whole-line double-line">
+        <div class="field whole-line double-line" v-show="modelType===0">
           <span class="field-name">效果及副作用</span>
           <span class="field-input">
-            <el-input type="textarea"></el-input>
+            <el-input type="textarea" v-model="copyInfo.effectInfo"></el-input>
           </span>
         </div>
       </div>
 
-      <div class="form-wrapper form0-wrapper" ref="form0">
+      <div class="form-wrapper form0-wrapper" ref="form0" v-show="modelType===1">
         <div class="form-left">
           <table class="form form0">
             <tr class="row top-row">
@@ -142,74 +141,40 @@
               <td class="col w1">膝</td>
               <td class="col w1">颈</td>
             </tr>
-            <tr class="row">
-              <td class="col w1" rowspan="6">C+</td>
-              <td class="col w1" rowspan="6">0-</td>
+            <tr class="row" v-for="(group, index) in getDeviceGroups('left')">
+              <td class="col w1" :rowspan="voltageCount" v-show="group.isFirstVoltage">C+</td>
+              <td class="col w1" :rowspan="voltageCount" v-show="group.isFirstVoltage">{{group.contact}}</td>
               <td class="col w1">
-                <el-input></el-input>
+                {{group.voltage}}
               </td>
               <td class="col w1">
-                <el-input></el-input>
+                <el-input v-model="copyInfo.patientDbsFirstDetail[index].elbowTone"></el-input>
               </td>
               <td class="col w1">
-                <el-input></el-input>
+                <el-input v-model="copyInfo.patientDbsFirstDetail[index].wristTone"></el-input>
               </td>
               <td class="col w1">
-                <el-input></el-input>
+                <el-input v-model="copyInfo.patientDbsFirstDetail[index].kneeTone"></el-input>
               </td>
               <td class="col w1">
-                <el-input></el-input>
+                <el-input v-model="copyInfo.patientDbsFirstDetail[index].neckTone"></el-input>
               </td>
               <td class="col w1">
-                <el-input></el-input>
+                <el-input v-model="copyInfo.patientDbsFirstDetail[index].tremor"></el-input>
               </td>
               <td class="col w1">
-                <el-input></el-input>
+                <el-input v-model="copyInfo.patientDbsFirstDetail[index].tensionTone"></el-input>
               </td>
               <td class="col w1">
-                <el-input></el-input>
+                <el-input v-model="copyInfo.patientDbsFirstDetail[index].changeConstantly"></el-input>
               </td>
               <td class="col w4" colspan="4">
-                <el-select :value="1">
-                  <el-option label="a" :value="1"></el-option>
-                </el-select>
+                <el-input v-model="copyInfo.patientDbsFirstDetail[index].sideEffect"></el-input>
               </td>
               <td class="col w2" colspan="2">
-                <el-input></el-input>
-              </td>
-            </tr>
-            <tr class="row">
-              <td class="col w1">
-                <el-input></el-input>
-              </td>
-              <td class="col w1">
-                <el-input></el-input>
-              </td>
-              <td class="col w1">
-                <el-input></el-input>
-              </td>
-              <td class="col w1">
-                <el-input></el-input>
-              </td>
-              <td class="col w1">
-                <el-input></el-input>
-              </td>
-              <td class="col w1">
-                <el-input></el-input>
-              </td>
-              <td class="col w1">
-                <el-input></el-input>
-              </td>
-              <td class="col w1">
-                <el-input></el-input>
-              </td>
-              <td class="col w4" colspan="4">
-                <el-select :value="1">
-                  <el-option label="a" :value="1"></el-option>
+                <el-select v-model="copyInfo.patientDbsFirstDetail[index].sideEffectDuration">
+                  <el-option v-for="option in getOptions('duration')" :label="option.name" :value="option.code" :key="option.code"></el-option>
                 </el-select>
-              </td>
-              <td class="col w2" colspan="2">
-                <el-input></el-input>
               </td>
             </tr>
           </table>
@@ -240,81 +205,47 @@
               <td class="col w1">膝</td>
               <td class="col w1">颈</td>
             </tr>
-            <tr class="row">
-              <td class="col w1" rowspan="6">C+</td>
-              <td class="col w1" rowspan="6">8-</td>
+            <tr class="row" v-for="(group, index) in getDeviceGroups('right')">
+              <td class="col w1" :rowspan="voltageCount" v-show="group.isFirstVoltage">C+</td>
+              <td class="col w1" :rowspan="voltageCount" v-show="group.isFirstVoltage">{{group.contact}}</td>
               <td class="col w1">
-                <el-input></el-input>
+                {{group.voltage}}
               </td>
               <td class="col w1">
-                <el-input></el-input>
+                <el-input v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].elbowTone"></el-input>
               </td>
               <td class="col w1">
-                <el-input></el-input>
+                <el-input v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].wristTone"></el-input>
               </td>
               <td class="col w1">
-                <el-input></el-input>
+                <el-input v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].kneeTone"></el-input>
               </td>
               <td class="col w1">
-                <el-input></el-input>
+                <el-input v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].neckTone"></el-input>
               </td>
               <td class="col w1">
-                <el-input></el-input>
+                <el-input v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].tremor"></el-input>
               </td>
               <td class="col w1">
-                <el-input></el-input>
+                <el-input v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].tensionTone"></el-input>
               </td>
               <td class="col w1">
-                <el-input></el-input>
+                <el-input v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].changeConstantly"></el-input>
               </td>
               <td class="col w4" colspan="4">
-                <el-select :value="1">
-                  <el-option label="a" :value="1"></el-option>
-                </el-select>
+                <el-input v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].sideEffect"></el-input>
               </td>
               <td class="col w2" colspan="2">
-                <el-input></el-input>
-              </td>
-            </tr>
-            <tr class="row">
-              <td class="col w1">
-                <el-input></el-input>
-              </td>
-              <td class="col w1">
-                <el-input></el-input>
-              </td>
-              <td class="col w1">
-                <el-input></el-input>
-              </td>
-              <td class="col w1">
-                <el-input></el-input>
-              </td>
-              <td class="col w1">
-                <el-input></el-input>
-              </td>
-              <td class="col w1">
-                <el-input></el-input>
-              </td>
-              <td class="col w1">
-                <el-input></el-input>
-              </td>
-              <td class="col w1">
-                <el-input></el-input>
-              </td>
-              <td class="col w4" colspan="4">
-                <el-select :value="1">
-                  <el-option label="a" :value="1"></el-option>
+                <el-select v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].sideEffectDuration">
+                  <el-option v-for="option in getOptions('duration')" :label="option.name" :value="option.code" :key="option.code"></el-option>
                 </el-select>
-              </td>
-              <td class="col w2" colspan="2">
-                <el-input></el-input>
               </td>
             </tr>
           </table>
         </div>
       </div>
 
-      <div class="form-wrapper" ref="form1">
+      <div class="form-wrapper" ref="form1" v-show="modelType===0">
         <table class="form form1">
           <tr class="row top-row">
             <td class="col" colspan="22">
@@ -435,7 +366,7 @@
         </table>
       </div>
 
-      <div class="form-wrapper" ref="form2">
+      <div class="form-wrapper" ref="form2" v-show="modelType===0">
         <table class="form form2">
           <tr class="row top-row">
             <td class="col" colspan="22">
@@ -548,7 +479,7 @@
         </table>
       </div>
 
-      <div class="form-wrapper" ref="form3">
+      <div class="form-wrapper" ref="form3" v-show="modelType===0">
         <table class="form form3">
           <tr class="row top-row">
             <td class="col" colspan="22">
@@ -795,14 +726,15 @@
 </template>
 
 <script>
-// import { mapGetters } from 'vuex';
+import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import {vueCopy} from 'utils/helper';
-// import Util from 'utils/util.js';
+import Util from 'utils/util.js';
+import { getPatientSimpleInfo } from 'api/patient.js';
 
 var dbsFirstModel = {
-  'deviceId': '8a9e2d385e27e424015e27e6b3740006',
+  'deviceId': '8a8d9f635dc9f57f015dcba86dea002c',
   'devicePowerType': 1,
   'programDate': '2017-10-05',
   'isTakeMedication': 1,
@@ -1681,10 +1613,21 @@ export default {
     return {
       displayModal: false,
       title: '',
+      dbsPatientCode: '',
+      modelType: 1, // 这个用来控制是否为首次开机，1为首次，0为非首次
       copyInfo: {},
       cl: ['C+', '2+'],
       cl2: ['1-']
     };
+  },
+  computed: {
+    ...mapGetters([
+      'typeGroup',
+      'deviceInfo'
+    ]),
+    voltageCount() {
+      return this.getOptions('dbsVoltage').length;
+    }
   },
   methods: {
     showModal(changeWay, info) {
@@ -1694,6 +1637,14 @@ export default {
         this.title = '程控记录';
       }
       console.log(info);
+      // 获取患者的 DBS 编码
+      getPatientSimpleInfo(this.$route.params.id).then((data) => {
+        if (data && data.patientInfo && data.patientInfo && data.patientInfo.dbsPatientCode) {
+          this.dbsPatientCode = data.patientInfo.dbsPatientCode;
+        }
+      }, (error) => {
+        console.log(error);
+      });
       this.displayModal = true;
       this.updateScrollbar();
     },
@@ -1742,6 +1693,88 @@ export default {
           minScrollbarLength: 40
         });
       });
+    },
+    getOptions(fieldName) {
+      // 这里的第二个参数不是必须的，在查询药物规格时会用到
+      var options = [];
+      var typeGroupCodeMap = {
+        'dbsVoltage': 'dbsVoltage',
+        'duration': 'duration'
+      };
+      if (typeGroupCodeMap[fieldName]) {
+        // 在 typeGroup 中可以查到的
+        var typesInfo = Util.getElement('typegroupcode', typeGroupCodeMap[fieldName], this.typeGroup);
+        var types = typesInfo && typesInfo.types ? typesInfo.types : [];
+        for (let type of types) {
+          options.push({
+            name: type.typeName,
+            code: type.typeCode
+          });
+        }
+      } else {
+        // 在 typeGroup 中查不到要去 tableData 中去查的
+        if (fieldName === 'deviceId') {
+          for (let device of this.deviceInfo) {
+            if (device.deviceType === 1) {
+              options.push({
+                name: device.deviceName,
+                code: device.id
+              });
+            }
+          }
+        }
+      }
+      return options;
+    },
+    getDeviceContact() {
+      var targetDevice = {};
+      for (let device of this.deviceInfo) {
+        if (device.id === this.copyInfo.deviceId) {
+          targetDevice = device;
+        }
+      }
+      var extraInfo = targetDevice.extraInfo ? targetDevice.extraInfo : '';
+      var extraInfoList = extraInfo.split('%');
+      return extraInfoList;
+    },
+    getSideDeviceContact(side) {
+      var contactList = this.getDeviceContact();
+      if (contactList.length < 2) {
+        return [];
+      } else {
+        var index = 0;
+        if (side === 'left') {
+          index = 0;
+        } else if (side === 'right') {
+          index = 1;
+        }
+        var targetContactList = contactList[index].split('#');
+        if (targetContactList[0] === '' && targetContactList.length === 1) {
+          return [];
+        } else {
+          return targetContactList;
+        }
+      }
+    },
+    getDeviceGroups(type) {
+      var groups = [];
+      var group = {};
+      var voltageOptions = this.getOptions('dbsVoltage');
+      for (let contact of this.getSideDeviceContact(type)) {
+        for (var i = 0; i < voltageOptions.length; i++) {
+          group = {};
+          group.contact = contact;
+          group.isFirstVoltage = (i === 0);
+          group.voltage = voltageOptions[i].name;
+          groups.push(group);
+        }
+      }
+      return groups;
+    },
+    getRightIndex(index) {
+      // 由右侧的行数，加上左侧的总行数，得到其在数据列表中的索引位置（因为左右列表所有行在一个数组里面）
+      var leftTotalRows = this.getSideDeviceContact('left').length * this.voltageCount;
+      return index + leftTotalRows;
     }
   },
   created() {
