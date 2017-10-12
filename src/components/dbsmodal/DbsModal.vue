@@ -611,22 +611,11 @@
         </table>
       </div>
 
-      <div class="form-wrapper" ref="form4">
+      <div class="form-wrapper" ref="form4" v-show="modelType===0">
         <table class="form form4">
           <tr class="row top-row">
             <td class="col" colspan="22">
               调整后参数
-            </td>
-          </tr>
-          <tr class="row">
-            <td class="col w2" colspan="2">疗效满意度</td>
-            <td class="col w2" colspan="2">左侧</td>
-            <td class="col w8" colspan="8">
-              <el-input></el-input>
-            </td>
-            <td class="col w2" colspan="2">右侧</td>
-            <td class="col w8" colspan="8">
-              <el-input></el-input>
             </td>
           </tr>
           <tr class="row title-row">
@@ -730,6 +719,69 @@
           </tr>
         </table>
       </div>
+
+      <div class="form-wrapper" ref="form5" v-show="modelType===1">
+        <table class="form form4">
+          <tr class="row top-row">
+            <td class="col" colspan="22">
+              调整后参数
+            </td>
+          </tr>
+          <tr class="row title-row">
+            <td class="col w2" colspan="2">
+              方案
+              <span class="iconfont icon-plus"></span>
+            </td>
+            <td class="col w2" colspan="2">肢体侧</td>
+            <td class="col w3" colspan="3">刺激模式</td>
+            <td class="col w5" colspan="5">正极</td>
+            <td class="col w4" colspan="5">负极</td>
+            <td class="col w1" colspan="1">频率<br></br>(Hz)</td>
+            <td class="col w1" colspan="1">脉宽<br></br>(μs)</td>
+            <td class="col w1" colspan="1">电压<br></br>(V)</td>
+            <td class="col w1" colspan="1">电阻<br></br>(Ω)</td>
+            <td class="col w1" colspan="1">电流<br></br>(mA)</td>
+          </tr>
+          <tr class="row" v-for="(param, index) in copyInfo.firstDbsParams.adjustAfterParameter">
+            <td class="col w2" colspan="2" rowspan="2" v-show="index % 2 === 0">
+              调整1
+              <span class="iconfont icon-remove"></span>
+            </td>
+            <td class="col w2" colspan="2">{{getLimbSide(param.limbSide)}}</td>
+            <td class="col w3" colspan="3">
+              <el-select v-model="param.exciteMod">
+                <el-option v-for="option in getOptions('exciteMod')" :label="option.name"
+                  :value="option.code" :key="option.code"></el-option>
+              </el-select>
+            </td>
+            <td class="col w5" colspan="5">
+              <el-checkbox-group v-model="firstDbsAdjustAfterParamPole[index].positive" @change="updateParamPole('firstDbsAdjustAfter', index)">
+                <el-checkbox v-for="contact in getSidePositiveContact(param.limbSide)" :label="contact" :key="contact"></el-checkbox>
+              </el-checkbox-group>
+            </td>
+            <td class="col w4" colspan="5">
+              <el-checkbox-group v-model="firstDbsAdjustAfterParamPole[index].negative">
+                <el-checkbox v-for="contact in getSideNegativeContact(param.limbSide)" :label="contact" :key="contact"></el-checkbox>
+              </el-checkbox-group>
+            </td>
+            <td class="col w1" colspan="1">
+              <el-input v-model="param.frequency"></el-input>
+            </td>
+            <td class="col w1" colspan="1">
+              <el-input v-model="param.pulseWidth"></el-input>
+            </td>
+            <td class="col w1" colspan="1">
+              <el-input v-model="param.voltage"></el-input>
+            </td>
+            <td class="col w1" colspan="1">
+              <el-input v-model="param.resistance"></el-input>
+            </td>
+            <td class="col w1" colspan="1">
+              <el-input v-model="param.electricity"></el-input>
+            </td>
+          </tr>
+        </table>
+      </div>
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
       <div class="button submit-button" @click="submit">确定</div>
@@ -766,8 +818,8 @@ var dbsFirstModel = {
         'schemeOrder': 1,
         'limbSide': 0,
         'exciteMod': 3,
-        'negativePole': 'C+/8+',
-        'positivePole': '8-/10-',
+        'positivePole': 'C+/8+',
+        'negativePole': '8-/10-',
         'frequency': '133',
         'pulseWidth': '62',
         'voltage': '240',
@@ -783,8 +835,8 @@ var dbsFirstModel = {
         'schemeOrder': 2,
         'limbSide': 1,
         'exciteMod': 2,
-        'negativePole': 'C+/1+',
-        'positivePole': '2-',
+        'positivePole': 'C+/1+',
+        'negativePole': '2-',
         'frequency': '135',
         'pulseWidth': '66',
         'voltage': '253',
@@ -946,6 +998,7 @@ export default {
       copyInfo: {},
       leftContactSortArray: [],
       rightContactSortArray: [],
+      firstDbsAdjustAfterParamPole: [],
       cl: ['C+', '2+'],
       cl2: ['1-']
     };
@@ -1028,6 +1081,12 @@ export default {
           wheelSpeed: 1,
           minScrollbarLength: 40
         });
+
+        Ps.destroy(this.$refs.form5);
+        Ps.initialize(this.$refs.form5, {
+          wheelSpeed: 1,
+          minScrollbarLength: 40
+        });
       });
     },
     initByFirstModel() {
@@ -1040,6 +1099,13 @@ export default {
       }
       for (let i = 0; i < rightContactOrder.length; i++) {
         this.$set(this.rightContactSortArray, i, rightContactOrder[i]);
+      }
+      for (let i = 0; i < this.copyInfo.firstDbsParams.adjustAfterParameter.length; i++) {
+        this.$set(this.firstDbsAdjustAfterParamPole, i, {});
+        let positivePole = this.copyInfo.firstDbsParams.adjustAfterParameter[i].positivePole.split('/');
+        let negativePole = this.copyInfo.firstDbsParams.adjustAfterParameter[i].negativePole.split('/');
+        this.$set(this.firstDbsAdjustAfterParamPole[i], 'positive', positivePole);
+        this.$set(this.firstDbsAdjustAfterParamPole[i], 'negative', negativePole);
       }
     },
     changeDevice() {
@@ -1083,7 +1149,8 @@ export default {
       var options = [];
       var typeGroupCodeMap = {
         'dbsVoltage': 'dbsVoltage',
-        'duration': 'duration'
+        'duration': 'duration',
+        'exciteMod': 'exciteMod'
       };
       if (typeGroupCodeMap[fieldName]) {
         // 在 typeGroup 中可以查到的
@@ -1157,6 +1224,34 @@ export default {
         }
       }
     },
+    getLimbSide(sideNum) {
+      if (sideNum === 0) {
+        return '左侧肢体';
+      } else if (sideNum === 1) {
+        return '右侧肢体';
+      }
+    },
+    getSideNegativeContact(sideNum) {
+      // 根据设备，得到其相应一侧的负极列表
+      // sideNum 为 0 时代表左侧，为 1 时代表右侧
+      var side = sideNum === 1 ? 'right' : 'left';
+      return this.getSideDeviceContact(side);
+    },
+    getSidePositiveContact(sideNum) {
+      // 根据设备，得到其相应一侧的正极列表
+      // 把负极列表每个值取相反，再加上一个 “C+” 即可
+      var negativeContactList = this.getSideNegativeContact(sideNum);
+      if (negativeContactList.length === 0) {
+        return [];
+      }
+      var positiveContactList = ['C+'];
+      for (let contact of negativeContactList) {
+        contact = contact.slice(0, -1);
+        contact += '+';
+        positiveContactList.push(contact);
+      }
+      return positiveContactList;
+    },
     getDeviceGroups(type) {
       // 这个函数返回的数组用来生成触点电压表格（首次开机），供 v-for 使用
       var groups = [];
@@ -1183,6 +1278,13 @@ export default {
       // 由右侧的行数，加上左侧的总行数，得到其在数据列表中的索引位置（因为左右列表所有行在一个数组里面）
       var leftTotalRows = this.getSideDeviceContact('left').length * this.voltageCount;
       return index + leftTotalRows;
+    },
+    updateParamPole(formType, index) {
+      // 每次参数表格内的 checkBox 有变化时，就更新相应的数据对象
+      if (formType === 'firstDbsAdjustAfter') {
+        this.copyInfo.firstDbsParams.adjustAfterParameter[index].positivePole = this.firstDbsAdjustAfterParamPole[index].positive.join('/');
+        this.copyInfo.firstDbsParams.adjustAfterParameter[index].negativePole = this.firstDbsAdjustAfterParamPole[index].negative.join('/');
+      }
     }
   },
   created() {
