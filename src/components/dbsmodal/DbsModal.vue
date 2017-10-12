@@ -118,8 +118,14 @@
         <div class="form-left">
           <table class="form form0">
             <tr class="row top-row">
-              <td class="col" colspan="16">
+              <td class="col sort-info" colspan="16">
                 左侧肢体(右侧STN)触电疗效排序为:
+                <span v-for="(contact, index) in getSideDeviceContact('left')">
+                  <span v-show="index !== 0">&gt;</span>
+                  <el-select class="contact" v-model="leftContactSortArray[index]" @change="updateLeftContactOrder" :clearable="true">
+                    <el-option v-for="option in getOptions('leftContact')" :label="option.name" :value="option.code" :key="option.code"></el-option>
+                  </el-select>
+                </span>
               </td>
             </tr>
             <tr class="row title-row">
@@ -182,8 +188,14 @@
         <div class="form-right">
           <table class="form form0">
             <tr class="row top-row">
-              <td class="col" colspan="16">
+              <td class="col sort-info" colspan="16">
                 右侧肢体(左侧STN)触电疗效排序为:
+                <span v-for="(contact, index) in getSideDeviceContact('right')">
+                  <span v-show="index !== 0">&gt;</span>
+                  <el-select class="contact" v-model="rightContactSortArray[index]" @change="updateRightContactOrder" :clearable="true">
+                    <el-option v-for="option in getOptions('rightContact')" :label="option.name" :value="option.code" :key="option.code"></el-option>
+                  </el-select>
+                </span>
               </td>
             </tr>
             <tr class="row title-row">
@@ -734,7 +746,7 @@ import Util from 'utils/util.js';
 import { getPatientSimpleInfo } from 'api/patient.js';
 
 var dbsFirstModel = {
-  'deviceId': '8a8d9f635dc9f57f015dcba86dea002c',
+  'deviceId': '8a8d9f635dc9f57f015dcba7d615002a',
   'devicePowerType': 1,
   'programDate': '2017-10-05',
   'isTakeMedication': 1,
@@ -1616,6 +1628,8 @@ export default {
       dbsPatientCode: '',
       modelType: 1, // 这个用来控制是否为首次开机，1为首次，0为非首次
       copyInfo: {},
+      leftContactSortArray: [],
+      rightContactSortArray: [],
       cl: ['C+', '2+'],
       cl2: ['1-']
     };
@@ -1627,6 +1641,12 @@ export default {
     ]),
     voltageCount() {
       return this.getOptions('dbsVoltage').length;
+    },
+    leftContactCount() {
+      return this.getSideDeviceContact('left').length;
+    },
+    rightContactCount() {
+      return this.getSideDeviceContact('right').length;
     }
   },
   methods: {
@@ -1694,6 +1714,25 @@ export default {
         });
       });
     },
+    initByFirstModel() {
+      vueCopy(dbsFirstModel, this.copyInfo);
+      var leftContactOrder = this.copyInfo.leftContactEffectOrder.split('>');
+      var rightContactOrder = this.copyInfo.rightContactEffectOrder.split('>');
+      for (let i = 0; i < leftContactOrder.length; i++) {
+        this.$set(this.leftContactSortArray, i, leftContactOrder[i]);
+      }
+      for (let i = 0; i < rightContactOrder.length; i++) {
+        this.$set(this.rightContactSortArray, i, rightContactOrder[i]);
+      }
+    },
+    updateLeftContactOrder() {
+      var filteredArray = this.leftContactSortArray.filter(contact => contact !== '');
+      this.copyInfo.leftContactEffectOrder = filteredArray.join('>');
+    },
+    updateRightContactOrder() {
+      var filteredArray = this.rightContactSortArray.filter(contact => contact !== '');
+      this.copyInfo.rightContactEffectOrder = filteredArray.join('>');
+    },
     getOptions(fieldName) {
       // 这里的第二个参数不是必须的，在查询药物规格时会用到
       var options = [];
@@ -1711,6 +1750,23 @@ export default {
             code: type.typeCode
           });
         }
+      } else if (fieldName === 'leftContact') {
+        let contactList = this.getSideDeviceContact('left');
+        for (let contact of contactList) {
+          options.push({
+            name: contact,
+            code: contact
+          });
+        }
+      } else if (fieldName === 'rightContact') {
+        let contactList = this.getSideDeviceContact('right');
+        for (let contact of contactList) {
+          options.push({
+            name: contact,
+            code: contact
+          });
+        }
+
       } else {
         // 在 typeGroup 中查不到要去 tableData 中去查的
         if (fieldName === 'deviceId') {
@@ -1778,7 +1834,7 @@ export default {
     }
   },
   created() {
-    vueCopy(dbsFirstModel, this.copyInfo);
+    this.initByFirstModel();
     console.log(dbsFollowModel);
   },
   mounted() {
@@ -1996,6 +2052,28 @@ export default {
             }
             &.w8 {
               width: @unit-width * 8;
+            }
+            &.sort-info {
+              padding-left: 20px;
+              text-align: left;
+              .contact {
+                display: inline-block;
+                margin: 0 20px;
+                width: 60px;
+                .el-input {
+                  .el-input__icon {
+                    width: 20px;
+                  }
+                  .el-input__inner {
+                    padding-right: 20px;
+                    height: 30px;
+                    background-color: rgba(0,0,0,0);
+                    border: none;
+                    border-radius: 0;
+                    border-bottom: 1px solid @font-color;
+                  }
+                }
+              }
             }
             .el-checkbox-group {
               .el-checkbox + .el-checkbox {
