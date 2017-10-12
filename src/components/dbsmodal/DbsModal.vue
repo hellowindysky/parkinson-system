@@ -1032,7 +1032,7 @@ export default {
     },
     initByFirstModel() {
       vueCopy(dbsFirstModel, this.copyInfo);
-      this.changeDevice();
+      this.changeDevice();  // 生成表格所对应的数据模型
       var leftContactOrder = this.copyInfo.leftContactEffectOrder.split('>');
       var rightContactOrder = this.copyInfo.rightContactEffectOrder.split('>');
       for (let i = 0; i < leftContactOrder.length; i++) {
@@ -1158,6 +1158,7 @@ export default {
       }
     },
     getDeviceGroups(type) {
+      // 这个函数返回的数组用来生成触点电压表格（首次开机），
       var groups = [];
       var group = {};
       var voltageOptions = this.getOptions('dbsVoltage');
@@ -1169,6 +1170,10 @@ export default {
           group.voltage = voltageOptions[i].name;
           groups.push(group);
         }
+      }
+      this.updateScrollbar();
+      if (this.copyInfo.patientDbsFirstDetail.length !== groups.length * 2) {
+        return [];
       }
       return groups;
     },
@@ -1403,8 +1408,8 @@ export default {
               text-align: left;
               .contact {
                 display: inline-block;
-                margin: 0 20px;
-                width: 60px;
+                margin: 0 15px;
+                width: 65px;
                 .el-input {
                   .el-input__icon {
                     width: 20px;
