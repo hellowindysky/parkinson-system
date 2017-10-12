@@ -1044,7 +1044,7 @@ export default {
     },
     changeDevice() {
       if (this.modelType === 1) {
-        // 如果是首次开机，则选择设备后，会生成触点电压表格（左右两部分）
+        // 如果是首次开机，则选择设备后，会生成触点电压表格（左右两部分），这个函数为其做好数据准备工作
         this.$set(this.copyInfo, 'patientDbsFirstDetail', []);
         let leftContactList = this.getSideDeviceContact('left');
         let rightContactList = this.getSideDeviceContact('right');
@@ -1158,7 +1158,7 @@ export default {
       }
     },
     getDeviceGroups(type) {
-      // 这个函数返回的数组用来生成触点电压表格（首次开机），
+      // 这个函数返回的数组用来生成触点电压表格（首次开机），供 v-for 使用
       var groups = [];
       var group = {};
       var voltageOptions = this.getOptions('dbsVoltage');
@@ -1172,6 +1172,8 @@ export default {
         }
       }
       this.updateScrollbar();
+
+      // 在渲染表格前要先做好数据准备工作，所以在数据模型建立好之前返回空数组
       if (this.copyInfo.patientDbsFirstDetail.length !== groups.length * 2) {
         return [];
       }
