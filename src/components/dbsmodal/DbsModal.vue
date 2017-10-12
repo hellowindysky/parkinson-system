@@ -746,57 +746,56 @@ import Util from 'utils/util.js';
 import { getPatientSimpleInfo } from 'api/patient.js';
 
 var dbsFirstModel = {
-  'deviceId': '8a8d9f635dc9f57f015dcba7d615002a',
-  'devicePowerType': 1,
-  'programDate': '2017-10-05',
-  'isTakeMedication': 1,
-  'medicationStatus': '美多芭（5片）',
-  'damageEffectExist': 1,
-  'damageEffectDuration': '2',
-  'adverseEventsExist': 1,
-  'adverseEventsRemark': '不良症状了。。。',
-  'leftContactEffectOrder': '0->2->1->3-',
-  'rightContactEffectOrder': '8->10->9->11-',
-  'remarks': 'huhu呵呵',
-  'patientCaseId': '8a9e2d385ed3847d015f05c531b900a7',
-  'departId': '8a102a575c200623015c2f9bc2a8008b',
-  'patientDbsFirstId': 9,
-  'firstDbsParams': [
-    {
-      'id': 11,
-      'paramType': 1,
-      'schemeOrder': 1,
-      'limbSide': 0,
-      'exciteMod': 3,
-      'negativePole': 'C+/8+',
-      'positivePole': '8-/10-',
-      'frequency': '133',
-      'pulseWidth': '62',
-      'voltage': '240',
-      'resistance': 455,
-      'electric': 0,
-      'electricity': 0,
-      'effectInfo': '副反应呵呵',
-      'patientDbsFirstId': 9
-    },
-    {
-      'id': 9,
-      'paramType': 1,
-      'schemeOrder': 2,
-      'limbSide': 1,
-      'exciteMod': 2,
-      'negativePole': 'C+/1+',
-      'positivePole': '2-',
-      'frequency': '135',
-      'pulseWidth': '66',
-      'voltage': '253',
-      'resistance': 504,
-      'electric': 0,
-      'electricity': 0,
-      'effectInfo': '哇哈哈！',
-      'patientDbsFirstId': 9
-    }
-  ]
+  'deviceId': '',
+  'devicePowerType': '',
+  'programDate': '',
+  'isTakeMedication': '',
+  'medicationStatus': '',
+  'damageEffectExist': '',
+  'damageEffectDuration': '',
+  'adverseEventsExist': '',
+  'adverseEventsRemark': '',
+  'leftContactEffectOrder': '',
+  'rightContactEffectOrder': '',
+  'remarks': '',
+  'firstDbsParams': {
+    'adjustAfterParameter': [
+      {
+        'id': 11,
+        'paramType': 1,
+        'schemeOrder': 1,
+        'limbSide': 0,
+        'exciteMod': 3,
+        'negativePole': 'C+/8+',
+        'positivePole': '8-/10-',
+        'frequency': '133',
+        'pulseWidth': '62',
+        'voltage': '240',
+        'resistance': 455,
+        'electric': 0,
+        'electricity': 0,
+        'effectInfo': '副反应呵呵',
+        'patientDbsFirstId': 9
+      },
+      {
+        'id': 9,
+        'paramType': 1,
+        'schemeOrder': 2,
+        'limbSide': 1,
+        'exciteMod': 2,
+        'negativePole': 'C+/1+',
+        'positivePole': '2-',
+        'frequency': '135',
+        'pulseWidth': '66',
+        'voltage': '253',
+        'resistance': 504,
+        'electric': 0,
+        'electricity': 0,
+        'effectInfo': '哇哈哈！',
+        'patientDbsFirstId': 9
+      }
+    ]
+  }
 };
 
 var dbsFollowModel = {
