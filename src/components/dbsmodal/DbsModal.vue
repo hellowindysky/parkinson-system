@@ -154,22 +154,27 @@
                 {{group.voltage}}
               </td>
               <td class="col w1">
-                <el-input v-model="copyInfo.patientDbsFirstDetail[index].elbowTone"></el-input>
+                <el-input v-model="copyInfo.patientDbsFirstDetail[index].elbowTone"
+                  @change="updateTensionTone(index)"></el-input>
               </td>
               <td class="col w1">
-                <el-input v-model="copyInfo.patientDbsFirstDetail[index].wristTone"></el-input>
+                <el-input v-model="copyInfo.patientDbsFirstDetail[index].wristTone"
+                  @change="updateTensionTone(index)"></el-input>
               </td>
               <td class="col w1">
-                <el-input v-model="copyInfo.patientDbsFirstDetail[index].kneeTone"></el-input>
+                <el-input v-model="copyInfo.patientDbsFirstDetail[index].kneeTone"
+                  @change="updateTensionTone(index)"></el-input>
               </td>
               <td class="col w1">
-                <el-input v-model="copyInfo.patientDbsFirstDetail[index].neckTone"></el-input>
+                <el-input v-model="copyInfo.patientDbsFirstDetail[index].neckTone"
+                  @change="updateTensionTone(index)"></el-input>
               </td>
               <td class="col w1">
-                <el-input v-model="copyInfo.patientDbsFirstDetail[index].tremor"></el-input>
+                <el-input v-model="copyInfo.patientDbsFirstDetail[index].tremor"
+                  @change="updateTensionTone(index)"></el-input>
               </td>
               <td class="col w1">
-                <el-input v-model="copyInfo.patientDbsFirstDetail[index].tensionTone"></el-input>
+                {{copyInfo.patientDbsFirstDetail[index].tensionTone}}
               </td>
               <td class="col w1">
                 <el-input v-model="copyInfo.patientDbsFirstDetail[index].changeConstantly"></el-input>
@@ -224,22 +229,27 @@
                 {{group.voltage}}
               </td>
               <td class="col w1">
-                <el-input v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].elbowTone"></el-input>
+                <el-input v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].elbowTone"
+                  @change="updateTensionTone(getRightIndex(index))"></el-input>
               </td>
               <td class="col w1">
-                <el-input v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].wristTone"></el-input>
+                <el-input v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].wristTone"
+                  @change="updateTensionTone(getRightIndex(index))"></el-input>
               </td>
               <td class="col w1">
-                <el-input v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].kneeTone"></el-input>
+                <el-input v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].kneeTone"
+                  @change="updateTensionTone(getRightIndex(index))"></el-input>
               </td>
               <td class="col w1">
-                <el-input v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].neckTone"></el-input>
+                <el-input v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].neckTone"
+                  @change="updateTensionTone(getRightIndex(index))"></el-input>
               </td>
               <td class="col w1">
-                <el-input v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].tremor"></el-input>
+                <el-input v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].tremor"
+                  @change="updateTensionTone(getRightIndex(index))"></el-input>
               </td>
               <td class="col w1">
-                <el-input v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].tensionTone"></el-input>
+                {{copyInfo.patientDbsFirstDetail[getRightIndex(index)].tensionTone}}
               </td>
               <td class="col w1">
                 <el-input v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].changeConstantly"></el-input>
@@ -1325,6 +1335,19 @@ export default {
       // 由右侧的行数，加上左侧的总行数，得到其在数据列表中的索引位置（因为左右列表所有行在一个数组里面）
       var leftTotalRows = this.getSideDeviceContact('left').length * this.voltageCount;
       return index + leftTotalRows;
+    },
+    updateTensionTone(index) {
+      var record = this.copyInfo.patientDbsFirstDetail[index];
+      var sum = 0;
+      for (let property of ['elbowTone', 'wristTone', 'kneeTone', 'neckTone', 'tremor']) {
+        if (record[property] === '' || isNaN(record[property])) {
+          record[property] = '';
+        } else {
+          record[property] = Number(record[property]);
+          sum += record[property];
+        }
+      }
+      record.tensionTone = sum;
     },
     updateParamPole(formType, index) {
       // 每次参数表格内的 checkBox 有变化时，就更新相应的数据对象
