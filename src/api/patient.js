@@ -516,7 +516,7 @@ export function deleteOperativeCompliation(operativeComplication) {
   return encapsulatePromise(url, request);
 };
 
-// 查看某次程控记录详情
+// 查看首次程控记录详情
 export function getDbsFirstInfo(dbsFirstId) {
   dbsFirstId = parseInt(dbsFirstId, 10);
   var request = Object.assign({}, commonRequest);
@@ -555,6 +555,7 @@ export function deleteDbsFirstInfo(dbsFirstInfo) {
 
 // 查看非某次程控记录详情
 export function getDbsFollowInfo(patientId, dbsFollowId) {
+  patientId = parseInt(patientId, 10);
   dbsFollowId = parseInt(dbsFollowId, 10);
   var request = Object.assign({}, commonRequest);
   request.patientId = patientId;
