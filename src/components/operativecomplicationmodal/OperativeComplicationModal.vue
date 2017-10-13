@@ -11,7 +11,7 @@
           <span class="field-input">
             <span class="warning-text">{{warningResults[field.fieldName]}}</span>
             <el-select v-if="getUIType(field.fieldName)===3" v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-              :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)">
+              :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
               <el-option v-for="option in getOptions(field.fieldName)" :label="option.name"
                 :value="option.code" :key="option.code"></el-option>
             </el-select>
@@ -139,10 +139,12 @@ export default {
       if (fieldName === 'minorComplicationType') {
         // 并发症细类，需要查 tableData
         for (let type of this.complicationTypeList) {
-          options.push({
-            name: type.minorComplicationName,
-            code: type.id
-          });
+          if (this.copyInfo.majorComplicationType === type.majorComplicationType) {
+            options.push({
+              name: type.minorComplicationName,
+              code: type.id
+            });
+          }
         }
 
       } else {
@@ -171,6 +173,13 @@ export default {
       for (let key in this.warningResults) {
         this.warningResults[key] = null;
       }
+    },
+    updateField(field) {
+      // 这个函数目前就是为了在改变并发症大类的时候，清空并发症细类
+      if (field.fieldName === 'majorComplicationType') {
+        this.copyInfo.minorComplicationType = '';
+      }
+      this.updateWarning(field);
     },
     updateWarning(field) {
       var fieldName = field.fieldName;
