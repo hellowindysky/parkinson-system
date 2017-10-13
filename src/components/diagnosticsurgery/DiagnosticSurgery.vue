@@ -274,7 +274,7 @@ export default {
       console.log('add');
     },
     editDbsRecord(item) {
-      Bus.$emit(this.SHOW_DBS_MODAL, this.ADD_DATA, item);
+      Bus.$emit(this.SHOW_DBS_MODAL, this.EDIT_DATA, item);
       console.log('edit', item);
     },
     deleteDbsRecord(item) {

@@ -793,9 +793,13 @@
 import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
-import {vueCopy} from 'utils/helper';
+import { vueCopy, reviseDateFormat, pruneObj} from 'utils/helper';
 import Util from 'utils/util.js';
-import { getPatientSimpleInfo } from 'api/patient.js';
+import {
+  getPatientSimpleInfo,
+  addDbsFirstInfo,
+  modifyDbsFirstInfo
+} from 'api/patient.js';
 
 var dbsFirstModel = {
   'deviceId': '',
@@ -957,7 +961,7 @@ export default {
   data() {
     return {
       displayModal: false,
-      title: '',
+      mode: '',
       dbsPatientCode: '',
       modelType: 1, // 这个用来控制是否为首次开机，1为首次，0为非首次
       copyInfo: {},
@@ -973,6 +977,15 @@ export default {
       'typeGroup',
       'deviceInfo'
     ]),
+    title() {
+      if (this.mode === this.ADD_DATA) {
+        return '新增程控记录';
+      } else if (this.mode === this.EDIT_DATA) {
+        return '程控记录';
+      } else {
+        return '';
+      }
+    },
     voltageCount() {
       return this.getOptions('dbsVoltage').length;
     },
@@ -985,11 +998,8 @@ export default {
   },
   methods: {
     showModal(changeWay, info) {
-      if (changeWay === this.ADD_DATA) {
-        this.title = '新增程控记录';
-      } else if (changeWay === this.EDIT_DATA) {
-        this.title = '程控记录';
-      }
+      this.mode = changeWay;
+
       console.log(info);
       // 获取患者的 DBS 编码
       getPatientSimpleInfo(this.$route.params.id).then((data) => {
@@ -1006,6 +1016,27 @@ export default {
       this.displayModal = false;
     },
     submit() {
+      this.copyInfo.patientCaseId = this.$route.params.caseId;
+      reviseDateFormat(this.copyInfo);
+      pruneObj(this.copyInfo);
+
+      console.log(this.copyInfo);
+      if (this.modelType === 1 && this.mode === this.ADD_DATA) {
+        addDbsFirstInfo(this.copyInfo).then(() => {
+          this.updateAndClose();
+        }, (error) => {
+          console.log(error);
+        });
+      } else if (this.modelType === 1 && this.mode === this.EDIT_DATA) {
+        modifyDbsFirstInfo(this.copyInfo).then(() => {
+          this.updateAndClose();
+        }, (error) => {
+          console.log(error);
+        });
+      }
+    },
+    updateAndClose() {
+      Bus.$emit(this.UPDATE_CASE_INFO);
       this.displayModal = false;
     },
     updateScrollbar() {
@@ -1100,8 +1131,8 @@ export default {
             index = i * voltageList.length + j;
             this.$set(this.copyInfo.patientDbsFirstDetail, index, {});
             this.$set(this.copyInfo.patientDbsFirstDetail[index], 'dbsCase', 'C+');
-            this.$set(this.copyInfo.patientDbsFirstDetail[index], 'contact', totalContactList[index]);
-            this.$set(this.copyInfo.patientDbsFirstDetail[index], 'dbsVoltage', voltageList[j].name);
+            this.$set(this.copyInfo.patientDbsFirstDetail[index], 'contact', totalContactList[i]);
+            this.$set(this.copyInfo.patientDbsFirstDetail[index], 'dbsVoltage', voltageList[j].code);
             for (let property of propertyList) {
               this.$set(this.copyInfo.patientDbsFirstDetail[index], property, '');
             }
@@ -1298,8 +1329,8 @@ export default {
     updateParamPole(formType, index) {
       // 每次参数表格内的 checkBox 有变化时，就更新相应的数据对象
       if (formType === 'firstDbsAdjustAfter') {
-        this.copyInfo.firstDbsParams.adjustAfterParameter[index].positivePole = this.firstDbsAdjustAfterParamPole[index].positive.join('/');
-        this.copyInfo.firstDbsParams.adjustAfterParameter[index].negativePole = this.firstDbsAdjustAfterParamPole[index].negative.join('/');
+        this.copyInfo.firstDbsParams.adjustAfterParameter[index].positivePole = this.firstDbsAdjustAfterParamPole[index].positive.join('#');
+        this.copyInfo.firstDbsParams.adjustAfterParameter[index].negativePole = this.firstDbsAdjustAfterParamPole[index].negative.join('#');
       }
     }
   },
