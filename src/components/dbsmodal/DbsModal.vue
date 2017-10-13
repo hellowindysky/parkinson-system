@@ -43,7 +43,7 @@
         <div class="field">
           <span class="field-name">首次开机</span>
           <span class="field-input">
-            <el-select v-model="modelType">
+            <el-select v-model="modelType" :disabled="mode === EDIT_DATA" @change="updateModelType">
               <el-option label="是" :value="1"></el-option>
               <el-option label="否" :value="0"></el-option>
             </el-select>
@@ -298,91 +298,45 @@
             <td class="col w1" colspan="1">电流<br></br>(mA)</td>
             <td class="col w1" colspan="1">电量<br></br>(V)</td>
           </tr>
-          <tr class="row">
-            <td class="col w2" colspan="2" rowspan="2">上次方案</td>
-            <td class="col w2" colspan="2">左侧肢体</td>
+          <tr class="row" v-for="(param, index) in copyInfo.followDbsParams.adjustBeforeParameter">
+            <td class="col w2" colspan="2" rowspan="2" v-show="index % 2 === 0">
+              {{getFollowDbsAdjustBeforePlanName(param)}}
+              <span class="iconfont icon-remove" @click="removeParam(index, 'followDbsAdjustBefore')"></span>
+            </td>
+            <td class="col w2" colspan="2">{{getLimbSide(param.limbSide)}}</td>
             <td class="col w3" colspan="3">
-              <el-select :value="1">
-                <el-option label="a" :value="1"></el-option>
+              <el-select v-model="param.exciteMod">
+                <el-option v-for="option in getOptions('exciteMod')" :label="option.name"
+                  :value="option.code" :key="option.code"></el-option>
               </el-select>
             </td>
             <td class="col w5" colspan="5">
-              <el-checkbox-group v-model="cl">
-                <el-checkbox label="C+"></el-checkbox>
-                <el-checkbox label="0+"></el-checkbox>
-                <el-checkbox label="1+"></el-checkbox>
-                <el-checkbox label="2+"></el-checkbox>
-                <el-checkbox label="3+"></el-checkbox>
+              <el-checkbox-group v-model="followDbsAdjustBeforeParamPole[index].positive" @change="updateParamPole('followDbsAdjustBefore', index)">
+                <el-checkbox v-for="contact in getSidePositiveContact(param.limbSide)" :label="contact" :key="contact"></el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w4" colspan="4">
-              <el-checkbox-group v-model="cl2">
-                <el-checkbox label="0-"></el-checkbox>
-                <el-checkbox label="1-"></el-checkbox>
-                <el-checkbox label="2-"></el-checkbox>
-                <el-checkbox label="3-"></el-checkbox>
+              <el-checkbox-group v-model="followDbsAdjustBeforeParamPole[index].negative">
+                <el-checkbox v-for="contact in getSideNegativeContact(param.limbSide)" :label="contact" :key="contact"></el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w1" colspan="1">
-              <el-input></el-input>
+              <el-input v-model="param.frequency"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <el-input></el-input>
+              <el-input v-model="param.pulseWidth"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <el-input></el-input>
+              <el-input v-model="param.voltage"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <el-input></el-input>
+              <el-input v-model="param.resistance"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <el-input></el-input>
+              <el-input v-model="param.electric"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <el-input></el-input>
-            </td>
-          </tr>
-          <tr class="row">
-            <td class="col w2" colspan="2">左侧肢体</td>
-            <td class="col w3" colspan="3">
-              <el-select :value="1">
-                <el-option label="a" :value="1"></el-option>
-              </el-select>
-            </td>
-            <td class="col w5" colspan="5">
-              <el-checkbox-group v-model="cl">
-                <el-checkbox label="C+"></el-checkbox>
-                <el-checkbox label="0+"></el-checkbox>
-                <el-checkbox label="1+"></el-checkbox>
-                <el-checkbox label="2+"></el-checkbox>
-                <el-checkbox label="3+"></el-checkbox>
-              </el-checkbox-group>
-            </td>
-            <td class="col w4" colspan="4">
-              <el-checkbox-group v-model="cl2">
-                <el-checkbox label="0-"></el-checkbox>
-                <el-checkbox label="1-"></el-checkbox>
-                <el-checkbox label="2-"></el-checkbox>
-                <el-checkbox label="3-"></el-checkbox>
-              </el-checkbox-group>
-            </td>
-            <td class="col w1" colspan="1">
-              <el-input></el-input>
-            </td>
-            <td class="col w1" colspan="1">
-              <el-input></el-input>
-            </td>
-            <td class="col w1" colspan="1">
-              <el-input></el-input>
-            </td>
-            <td class="col w1" colspan="1">
-              <el-input></el-input>
-            </td>
-            <td class="col w1" colspan="1">
-              <el-input></el-input>
-            </td>
-            <td class="col w1" colspan="1">
-              <el-input></el-input>
+              <el-input v-model="param.electricity"></el-input>
             </td>
           </tr>
         </table>
@@ -420,82 +374,39 @@
             <td class="col w1" colspan="1">电压<br></br>(V)</td>
             <td class="col w3" colspan="3">效果及副作用</td>
           </tr>
-          <tr class="row">
-            <td class="col w2" colspan="2" rowspan="2">
-              调整1
-              <span class="iconfont icon-remove"></span>
+          <tr class="row" v-for="(param, index) in copyInfo.followDbsParams.adjustBeforeParameter">
+            <td class="col w2" colspan="2" rowspan="2" v-show="index % 2 === 0">
+              {{getFollowDbsAdjustVoltagePlanName(param)}}
+              <span class="iconfont icon-remove" @click="removeParam(index, 'followDbsAdjustVoltage')"></span>
             </td>
-            <td class="col w2" colspan="2">左侧肢体</td>
+            <td class="col w2" colspan="2">{{getLimbSide(param.limbSide)}}</td>
             <td class="col w3" colspan="3">
-              <el-select :value="1">
-                <el-option label="a" :value="1"></el-option>
+              <el-select v-model="param.exciteMod">
+                <el-option v-for="option in getOptions('exciteMod')" :label="option.name"
+                  :value="option.code" :key="option.code"></el-option>
               </el-select>
             </td>
             <td class="col w5" colspan="5">
-              <el-checkbox-group v-model="cl">
-                <el-checkbox label="C+"></el-checkbox>
-                <el-checkbox label="0+"></el-checkbox>
-                <el-checkbox label="1+"></el-checkbox>
-                <el-checkbox label="2+"></el-checkbox>
-                <el-checkbox label="3+"></el-checkbox>
+              <el-checkbox-group v-model="followDbsAdjustVoltageParamPole[index].positive" @change="updateParamPole('followDbsAdjustVoltage', index)">
+                <el-checkbox v-for="contact in getSidePositiveContact(param.limbSide)" :label="contact" :key="contact"></el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w4" colspan="4">
-              <el-checkbox-group v-model="cl2">
-                <el-checkbox label="0-"></el-checkbox>
-                <el-checkbox label="1-"></el-checkbox>
-                <el-checkbox label="2-"></el-checkbox>
-                <el-checkbox label="3-"></el-checkbox>
+              <el-checkbox-group v-model="followDbsAdjustVoltageParamPole[index].negative">
+                <el-checkbox v-for="contact in getSideNegativeContact(param.limbSide)" :label="contact" :key="contact"></el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w1" colspan="1">
-              <el-input></el-input>
+              <el-input v-model="param.frequency"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <el-input></el-input>
+              <el-input v-model="param.pulseWidth"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <el-input></el-input>
+              <el-input v-model="param.voltage"></el-input>
             </td>
             <td class="col w3" colspan="3">
-              <el-input></el-input>
-            </td>
-          </tr>
-          <tr class="row">
-            <td class="col w2" colspan="2">左侧肢体</td>
-            <td class="col w3" colspan="3">
-              <el-select :value="1">
-                <el-option label="a" :value="1"></el-option>
-              </el-select>
-            </td>
-            <td class="col w5" colspan="5">
-              <el-checkbox-group v-model="cl">
-                <el-checkbox label="C+"></el-checkbox>
-                <el-checkbox label="0+"></el-checkbox>
-                <el-checkbox label="1+"></el-checkbox>
-                <el-checkbox label="2+"></el-checkbox>
-                <el-checkbox label="3+"></el-checkbox>
-              </el-checkbox-group>
-            </td>
-            <td class="col w4" colspan="4">
-              <el-checkbox-group v-model="cl2">
-                <el-checkbox label="0-"></el-checkbox>
-                <el-checkbox label="1-"></el-checkbox>
-                <el-checkbox label="2-"></el-checkbox>
-                <el-checkbox label="3-"></el-checkbox>
-              </el-checkbox-group>
-            </td>
-            <td class="col w1" colspan="1">
-              <el-input></el-input>
-            </td>
-            <td class="col w1" colspan="1">
-              <el-input></el-input>
-            </td>
-            <td class="col w1" colspan="1">
-              <el-input></el-input>
-            </td>
-            <td class="col w3" colspan="3">
-              <el-input></el-input>
+              <el-input v-model="param.effectInfo"></el-input>
             </td>
           </tr>
         </table>
@@ -534,88 +445,42 @@
             <td class="col w1" colspan="1">电阻<br></br>(Ω)</td>
             <td class="col w1" colspan="1">电流<br></br>(mA)</td>
           </tr>
-          <tr class="row">
-            <td class="col w2" colspan="2" rowspan="2">
-              调整1
-              <span class="iconfont icon-remove"></span>
+          <tr class="row" v-for="(param, index) in copyInfo.followDbsParams.adjustMoreParameter">
+            <td class="col w2" colspan="2" rowspan="2" v-show="index % 2 === 0">
+              {{getFollowDbsAdjustMorePlanName(param)}}
+              <span class="iconfont icon-remove" @click="removeParam(index, 'followDbsAdjustMore')"></span>
             </td>
-            <td class="col w2" colspan="2">左侧肢体</td>
+            <td class="col w2" colspan="2">{{getLimbSide(param.limbSide)}}</td>
             <td class="col w3" colspan="3">
-              <el-select :value="1">
-                <el-option label="a" :value="1"></el-option>
+              <el-select v-model="param.exciteMod">
+                <el-option v-for="option in getOptions('exciteMod')" :label="option.name"
+                  :value="option.code" :key="option.code"></el-option>
               </el-select>
             </td>
             <td class="col w5" colspan="5">
-              <el-checkbox-group v-model="cl">
-                <el-checkbox label="C+"></el-checkbox>
-                <el-checkbox label="0+"></el-checkbox>
-                <el-checkbox label="1+"></el-checkbox>
-                <el-checkbox label="2+"></el-checkbox>
-                <el-checkbox label="3+"></el-checkbox>
+              <el-checkbox-group v-model="followDbsAdjustMoreParamPole[index].positive" @change="updateParamPole('followDbsAdjustMore', index)">
+                <el-checkbox v-for="contact in getSidePositiveContact(param.limbSide)" :label="contact" :key="contact"></el-checkbox>
               </el-checkbox-group>
-            </td>
-            <td class="col w4" colspan="5">
-              <el-checkbox-group v-model="cl2">
-                <el-checkbox label="0-"></el-checkbox>
-                <el-checkbox label="1-"></el-checkbox>
-                <el-checkbox label="2-"></el-checkbox>
-                <el-checkbox label="3-"></el-checkbox>
-              </el-checkbox-group>
-            </td>
-            <td class="col w1" colspan="1">
-              <el-input></el-input>
-            </td>
-            <td class="col w1" colspan="1">
-              <el-input></el-input>
-            </td>
-            <td class="col w1" colspan="1">
-              <el-input></el-input>
-            </td>
-            <td class="col w1" colspan="1">
-              <el-input></el-input>
-            </td>
-            <td class="col w1" colspan="1">
-              <el-input></el-input>
-            </td>
-          </tr>
-          <tr class="row">
-            <td class="col w2" colspan="2">左侧肢体</td>
-            <td class="col w3" colspan="3">
-              <el-select :value="1">
-                <el-option label="a" :value="1"></el-option>
-              </el-select>
             </td>
             <td class="col w5" colspan="5">
-              <el-checkbox-group v-model="cl">
-                <el-checkbox label="C+"></el-checkbox>
-                <el-checkbox label="0+"></el-checkbox>
-                <el-checkbox label="1+"></el-checkbox>
-                <el-checkbox label="2+"></el-checkbox>
-                <el-checkbox label="3+"></el-checkbox>
-              </el-checkbox-group>
-            </td>
-            <td class="col w4" colspan="5">
-              <el-checkbox-group v-model="cl2">
-                <el-checkbox label="0-"></el-checkbox>
-                <el-checkbox label="1-"></el-checkbox>
-                <el-checkbox label="2-"></el-checkbox>
-                <el-checkbox label="3-"></el-checkbox>
+              <el-checkbox-group v-model="followDbsAdjustMoreParamPole[index].negative">
+                <el-checkbox v-for="contact in getSideNegativeContact(param.limbSide)" :label="contact" :key="contact"></el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w1" colspan="1">
-              <el-input></el-input>
+              <el-input v-model="param.frequency"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <el-input></el-input>
+              <el-input v-model="param.pulseWidth"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <el-input></el-input>
+              <el-input v-model="param.voltage"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <el-input></el-input>
+              <el-input v-model="param.resistance"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <el-input></el-input>
+              <el-input v-model="param.electric"></el-input>
             </td>
           </tr>
         </table>
@@ -636,95 +501,49 @@
             <td class="col w2" colspan="2">肢体侧</td>
             <td class="col w3" colspan="3">刺激模式</td>
             <td class="col w5" colspan="5">正极</td>
-            <td class="col w4" colspan="5">负极</td>
+            <td class="col w5" colspan="5">负极</td>
             <td class="col w1" colspan="1">频率<br></br>(Hz)</td>
             <td class="col w1" colspan="1">脉宽<br></br>(μs)</td>
             <td class="col w1" colspan="1">电压<br></br>(V)</td>
             <td class="col w1" colspan="1">电阻<br></br>(Ω)</td>
             <td class="col w1" colspan="1">电流<br></br>(mA)</td>
           </tr>
-          <tr class="row">
-            <td class="col w2" colspan="2" rowspan="2">
-              调整1
-              <span class="iconfont icon-remove"></span>
+          <tr class="row" v-for="(param, index) in copyInfo.followDbsParams.adjustAfterParameter">
+            <td class="col w2" colspan="2" rowspan="2" v-show="index % 2 === 0">
+              {{getFollowDbsAdjustAfterPlanName(param)}}
+              <span class="iconfont icon-remove" @click="removeParam(index, 'followDbsAdjustAfter')"></span>
             </td>
-            <td class="col w2" colspan="2">左侧肢体</td>
+            <td class="col w2" colspan="2">{{getLimbSide(param.limbSide)}}</td>
             <td class="col w3" colspan="3">
-              <el-select :value="1">
-                <el-option label="a" :value="1"></el-option>
+              <el-select v-model="param.exciteMod">
+                <el-option v-for="option in getOptions('exciteMod')" :label="option.name"
+                  :value="option.code" :key="option.code"></el-option>
               </el-select>
             </td>
             <td class="col w5" colspan="5">
-              <el-checkbox-group v-model="cl">
-                <el-checkbox label="C+"></el-checkbox>
-                <el-checkbox label="0+"></el-checkbox>
-                <el-checkbox label="1+"></el-checkbox>
-                <el-checkbox label="2+"></el-checkbox>
-                <el-checkbox label="3+"></el-checkbox>
+              <el-checkbox-group v-model="followDbsAdjustAfterParamPole[index].positive" @change="updateParamPole('followDbsAdjustAfter', index)">
+                <el-checkbox v-for="contact in getSidePositiveContact(param.limbSide)" :label="contact" :key="contact"></el-checkbox>
               </el-checkbox-group>
-            </td>
-            <td class="col w4" colspan="5">
-              <el-checkbox-group v-model="cl2">
-                <el-checkbox label="0-"></el-checkbox>
-                <el-checkbox label="1-"></el-checkbox>
-                <el-checkbox label="2-"></el-checkbox>
-                <el-checkbox label="3-"></el-checkbox>
-              </el-checkbox-group>
-            </td>
-            <td class="col w1" colspan="1">
-              <el-input></el-input>
-            </td>
-            <td class="col w1" colspan="1">
-              <el-input></el-input>
-            </td>
-            <td class="col w1" colspan="1">
-              <el-input></el-input>
-            </td>
-            <td class="col w1" colspan="1">
-              <el-input></el-input>
-            </td>
-            <td class="col w1" colspan="1">
-              <el-input></el-input>
-            </td>
-          </tr>
-          <tr class="row">
-            <td class="col w2" colspan="2">左侧肢体</td>
-            <td class="col w3" colspan="3">
-              <el-select :value="1">
-                <el-option label="a" :value="1"></el-option>
-              </el-select>
             </td>
             <td class="col w5" colspan="5">
-              <el-checkbox-group v-model="cl">
-                <el-checkbox label="C+"></el-checkbox>
-                <el-checkbox label="0+"></el-checkbox>
-                <el-checkbox label="1+"></el-checkbox>
-                <el-checkbox label="2+"></el-checkbox>
-                <el-checkbox label="3+"></el-checkbox>
-              </el-checkbox-group>
-            </td>
-            <td class="col w4" colspan="5">
-              <el-checkbox-group v-model="cl2">
-                <el-checkbox label="0-"></el-checkbox>
-                <el-checkbox label="1-"></el-checkbox>
-                <el-checkbox label="2-"></el-checkbox>
-                <el-checkbox label="3-"></el-checkbox>
+              <el-checkbox-group v-model="followDbsAdjustAfterParamPole[index].negative">
+                <el-checkbox v-for="contact in getSideNegativeContact(param.limbSide)" :label="contact" :key="contact"></el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w1" colspan="1">
-              <el-input></el-input>
+              <el-input v-model="param.frequency"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <el-input></el-input>
+              <el-input v-model="param.pulseWidth"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <el-input></el-input>
+              <el-input v-model="param.voltage"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <el-input></el-input>
+              <el-input v-model="param.resistance"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <el-input></el-input>
+              <el-input v-model="param.electric"></el-input>
             </td>
           </tr>
         </table>
@@ -745,7 +564,7 @@
             <td class="col w2" colspan="2">肢体侧</td>
             <td class="col w3" colspan="3">刺激模式</td>
             <td class="col w5" colspan="5">正极</td>
-            <td class="col w4" colspan="5">负极</td>
+            <td class="col w5" colspan="5">负极</td>
             <td class="col w1" colspan="1">频率<br></br>(Hz)</td>
             <td class="col w1" colspan="1">脉宽<br></br>(μs)</td>
             <td class="col w1" colspan="1">电压<br></br>(V)</td>
@@ -769,7 +588,7 @@
                 <el-checkbox v-for="contact in getSidePositiveContact(param.limbSide)" :label="contact" :key="contact"></el-checkbox>
               </el-checkbox-group>
             </td>
-            <td class="col w4" colspan="5">
+            <td class="col w5" colspan="5">
               <el-checkbox-group v-model="firstDbsAdjustAfterParamPole[index].negative">
                 <el-checkbox v-for="contact in getSideNegativeContact(param.limbSide)" :label="contact" :key="contact"></el-checkbox>
               </el-checkbox-group>
@@ -807,8 +626,12 @@ import { vueCopy, reviseDateFormat, pruneObj} from 'utils/helper';
 import Util from 'utils/util.js';
 import {
   getPatientSimpleInfo,
+  getDbsFirstInfo,
   addDbsFirstInfo,
-  modifyDbsFirstInfo
+  modifyDbsFirstInfo,
+  getDbsFollowInfo,
+  addDbsFollowInfo,
+  modifyDbsFollowInfo
 } from 'api/patient.js';
 
 var dbsFirstModel = {
@@ -826,11 +649,17 @@ var dbsFirstModel = {
   'remarks': '',
   'firstDbsParams': {
     'adjustAfterParameter': []
+  },
+  'followDbsParams': {
+    'adjustAfterParameter': [],
+    'adjustBeforeParameter': [],
+    'adjustVoltageParameter': [],
+    'adjustMoreParameter': []
   }
 };
 
 var dbsFollowModel = {
-  'deviceId': '8a9e2d385e27e424015e27e6b3740006',
+  'deviceId': '8a8d9f635dc9f57f015dcba7d615002a',
   'devicePowerType': 1,
   'programDate': '2017-09-28',
   'isTakeMedication': 1,
@@ -848,123 +677,186 @@ var dbsFollowModel = {
   'patientDbsFirstId': 7,
   'patientCaseId': '8a9e2d385ed3847d015f05c531b900a7',
   'patientDbsFollowId': 7,
-  'followDbsParams':
-  [
-    {
-      'id': 14,
-      'paramType': 1,
-      'schemeOrder': 1,
-      'limbSide': 1,
-      'exciteMod': 2,
-      'negativePole': '2+',
-      'positivePole': '2-',
-      'frequency': '135',
-      'pulseWidth': '66',
-      'voltage': '250',
-      'resistance': 500,
-      'electric': 0,
-      'electricity': 0,
-      'patientDbsFollowId': 7
-    },
-    {
-      'id': 15,
-      'paramType': 2,
-      'schemeOrder': 1,
-      'limbSide': 1,
-      'exciteMod': 2,
-      'negativePole': '2+',
-      'positivePole': '2-',
-      'frequency': '135',
-      'pulseWidth': '66',
-      'voltage': '250',
-      'resistance': 511,
-      'electric': 0,
-      'electricity': 0,
-      'patientDbsFollowId': 7
-    },
-    {
-      'id': 16,
-      'paramType': 2,
-      'schemeOrder': 2,
-      'limbSide': 0,
-      'exciteMod': 3,
-      'negativePole': 'C+/8+',
-      'positivePole': '8-/10-',
-      'frequency': '133',
-      'pulseWidth': '62',
-      'voltage': '240',
-      'resistance': 455,
-      'electric': 0,
-      'electricity': 0,
-      'patientDbsFollowId': 7
-    },
-    {
-      'id': 17,
-      'paramType': 3,
-      'schemeOrder': 1,
-      'limbSide': 0,
-      'exciteMod': 3,
-      'negativePole': 'C+/7+',
-      'positivePole': '8-/9-',
-      'frequency': '133',
-      'pulseWidth': '62',
-      'voltage': '240',
-      'resistance': 455,
-      'electric': 0,
-      'electricity': 0,
-      'effectInfo': '副反应呵呵',
-      'patientDbsFollowId': 7
-    },
-    {
-      'id': 18,
-      'paramType': 3,
-      'schemeOrder': 2,
-      'limbSide': 0,
-      'exciteMod': 3,
-      'negativePole': '7+',
-      'positivePole': '8-/9-',
-      'frequency': '133',
-      'pulseWidth': '62',
-      'voltage': '240',
-      'resistance': 455,
-      'electric': 0,
-      'electricity': 0,
-      'effectInfo': 'edwd滴滴答',
-      'patientDbsFollowId': 7
-    },
-    {
-      'id': 19,
-      'paramType': 4,
-      'schemeOrder': 1,
-      'limbSide': 0,
-      'exciteMod': 3,
-      'negativePole': '9+',
-      'positivePole': '8-/10-',
-      'frequency': '125',
-      'pulseWidth': '62',
-      'voltage': '250',
-      'resistance': 451,
-      'electric': 98,
-      'electricity': 0,
-      'patientDbsFollowId': 7
-    },
-    {
-      'id': 20,
-      'paramType': 4,
-      'schemeOrder': 2,
-      'limbSide': 0,
-      'exciteMod': 3,
-      'negativePole': '11+',
-      'positivePole': '9-',
-      'frequency': '115',
-      'pulseWidth': '67',
-      'voltage': '250',
-      'resistance': 411,
-      'electric': 77,
-      'electricity': 45,
-      'patientDbsFollowId': 7
-    }
-  ]
+  'firstDbsParams': {
+    'adjustAfterParameter': []
+  },
+  'followDbsParams': {
+    'adjustAfterParameter': [
+      {
+        'id': 14,
+        'paramType': 1,
+        'schemeOrder': 1,
+        'limbSide': 1,
+        'exciteMod': 1,
+        'negativePole': '2-',
+        'positivePole': '2+',
+        'frequency': '135',
+        'pulseWidth': '66',
+        'voltage': '250',
+        'resistance': 500,
+        'electric': 0,
+        'electricity': 0,
+        'effectInfo': '天啦噜',
+        'patientDbsFollowId': 7
+      },
+      {
+        'id': 23,
+        'paramType': 1,
+        'schemeOrder': 1,
+        'limbSide': 2,
+        'exciteMod': 2,
+        'negativePole': '10-',
+        'positivePole': '9+',
+        'frequency': '135',
+        'pulseWidth': '66',
+        'voltage': '250',
+        'resistance': 500,
+        'electric': 0,
+        'electricity': 0,
+        'effectInfo': '',
+        'patientDbsFollowId': 7
+      },
+      {
+        'id': 12,
+        'paramType': 1,
+        'schemeOrder': 2,
+        'limbSide': 1,
+        'exciteMod': 2,
+        'negativePole': '2-#3-',
+        'positivePole': 'C+#3+',
+        'frequency': '128',
+        'pulseWidth': '66',
+        'voltage': '250',
+        'resistance': 500,
+        'electric': 0,
+        'electricity': 0,
+        'patientDbsFollowId': 7
+      },
+      {
+        'id': 13,
+        'paramType': 1,
+        'schemeOrder': 2,
+        'limbSide': 2,
+        'exciteMod': 3,
+        'negativePole': '8-#10-',
+        'positivePole': 'C+#8+',
+        'frequency': '133',
+        'pulseWidth': '62',
+        'voltage': '240',
+        'resistance': 455,
+        'electric': 0,
+        'electricity': 0,
+        'effectInfo': '副反应呵呵',
+        'patientDbsFollowId': 7
+      }
+    ],
+    'adjustBeforeParameter': [
+      {
+        'id': 15,
+        'paramType': 2,
+        'schemeOrder': 1,
+        'limbSide': 1,
+        'exciteMod': 2,
+        'negativePole': '1-#2-',
+        'positivePole': 'C+#1+',
+        'frequency': '135',
+        'pulseWidth': '66',
+        'voltage': '250',
+        'resistance': 511,
+        'electric': 0,
+        'electricity': 0,
+        'effectInfo': '呵呵',
+        'patientDbsFollowId': 7
+      },
+      {
+        'id': 16,
+        'paramType': 2,
+        'schemeOrder': 1,
+        'limbSide': 2,
+        'exciteMod': 3,
+        'negativePole': '8-#10-',
+        'positivePole': 'C+#8+',
+        'frequency': '133',
+        'pulseWidth': '62',
+        'voltage': '240',
+        'resistance': 455,
+        'electric': 0,
+        'electricity': 0,
+        'effectInfo': '啦啦',
+        'patientDbsFollowId': 7
+      }
+    ],
+    'adjustVoltageParameter': [
+      {
+        'id': 17,
+        'paramType': 3,
+        'schemeOrder': 1,
+        'limbSide': 1,
+        'exciteMod': 3,
+        'negativePole': '2-#3-',
+        'positivePole': '3+',
+        'frequency': '133',
+        'pulseWidth': '62',
+        'voltage': '240',
+        'resistance': 455,
+        'electric': 0,
+        'electricity': 0,
+        'effectInfo': '副反应呵呵',
+        'patientDbsFollowId': 7
+      },
+      {
+        'id': 18,
+        'paramType': 3,
+        'schemeOrder': 1,
+        'limbSide': 2,
+        'exciteMod': 3,
+        'negativePole': '11-',
+        'positivePole': '8+#10+',
+        'frequency': '133',
+        'pulseWidth': '62',
+        'voltage': '240',
+        'resistance': 455,
+        'electric': 0,
+        'electricity': 0,
+        'effectInfo': 'edwd滴滴答',
+        'patientDbsFollowId': 7
+      }
+    ],
+    'adjustMoreParameter': [
+      {
+        'id': 19,
+        'paramType': 4,
+        'schemeOrder': 1,
+        'limbSide': 1,
+        'exciteMod': 3,
+        'negativePole': '10-#11-',
+        'positivePole': '9+#11+',
+        'frequency': '125',
+        'pulseWidth': '62',
+        'voltage': '250',
+        'resistance': 451,
+        'electric': 98,
+        'electricity': 0,
+        'patientDbsFollowId': 7
+      },
+      {
+        'id': 20,
+        'paramType': 4,
+        'schemeOrder': 1,
+        'limbSide': 2,
+        'exciteMod': 3,
+        'negativePole': '9-',
+        'positivePole': '1+#3+',
+        'frequency': '115',
+        'pulseWidth': '67',
+        'voltage': '250',
+        'resistance': 411,
+        'electric': 77,
+        'electricity': 45,
+        'patientDbsFollowId': 7
+      }
+    ]
+  }
 };
 
 export default {
@@ -978,6 +870,10 @@ export default {
       leftContactSortArray: [],
       rightContactSortArray: [],
       firstDbsAdjustAfterParamPole: [],
+      followDbsAdjustAfterParamPole: [],
+      followDbsAdjustBeforeParamPole: [],
+      followDbsAdjustVoltageParamPole: [],
+      followDbsAdjustMoreParamPole: [],
       cl: ['C+', '2+'],
       cl2: ['1-']
     };
@@ -1019,6 +915,31 @@ export default {
       }, (error) => {
         console.log(error);
       });
+
+      // 如果是编辑已有的程控记录，就要查询其程控信息的详情
+      if (this.mode === this.EDIT_DATA && info.patientDbsFirstId) {
+        this.modelType = 1;
+        this.initByFirstModel();
+        getDbsFirstInfo(info.patientDbsFirstId).then((data) => {
+          vueCopy(data, this.copyInfo);
+          this.updateContactOrder();
+          this.updateCheckBoxModel('firstDbsAdjustAfter');
+          this.$nextTick(() => {
+            console.log(this.copyInfo, this.copyInfo.patientDbsFirstDetail);
+          });
+
+        });
+      } else if (this.mode === this.EDIT_DATA && info.patientDbsFollowId) {
+        this.modelType = 0;
+        var patientId = this.$route.params.id;
+        getDbsFollowInfo(patientId, info.patientDbsFollowId).then((data) => {
+          vueCopy(data, this.copyInfo);
+          this.updateCheckBoxModel('followDbsAdjustAfter');
+          this.updateCheckBoxModel('followDbsAdjustBefore');
+          this.updateCheckBoxModel('followDbsAdjustVoltage');
+          this.updateCheckBoxModel('followDbsAdjustMore');
+        });
+      }
       this.displayModal = true;
       this.updateScrollbar();
     },
@@ -1032,18 +953,21 @@ export default {
 
       console.log(this.copyInfo);
       if (this.modelType === 1 && this.mode === this.ADD_DATA) {
+        delete this.copyInfo.followDbsParams;
         addDbsFirstInfo(this.copyInfo).then(() => {
           this.updateAndClose();
         }, (error) => {
           console.log(error);
         });
       } else if (this.modelType === 1 && this.mode === this.EDIT_DATA) {
+        delete this.copyInfo.followDbsParams;
         modifyDbsFirstInfo(this.copyInfo).then(() => {
           this.updateAndClose();
         }, (error) => {
           console.log(error);
         });
       }
+      this.updateModelType();   // 因为前面的 delete 砍掉了 copyInfo的完整结构，会导致渲染出问题，所以传完数据后就重新补上
     },
     updateAndClose() {
       Bus.$emit(this.UPDATE_CASE_INFO);
@@ -1058,36 +982,31 @@ export default {
           minScrollbarLength: 40
         });
 
-        Ps.destroy(this.$refs.form0);
-        Ps.initialize(this.$refs.form0, {
-          wheelSpeed: 1,
-          minScrollbarLength: 40
-        });
-
         Ps.destroy(this.$refs.form1);
         Ps.initialize(this.$refs.form1, {
           wheelSpeed: 1,
           minScrollbarLength: 40
         });
-
         Ps.destroy(this.$refs.form2);
         Ps.initialize(this.$refs.form2, {
           wheelSpeed: 1,
           minScrollbarLength: 40
         });
-
         Ps.destroy(this.$refs.form3);
         Ps.initialize(this.$refs.form3, {
           wheelSpeed: 1,
           minScrollbarLength: 40
         });
-
         Ps.destroy(this.$refs.form4);
         Ps.initialize(this.$refs.form4, {
           wheelSpeed: 1,
           minScrollbarLength: 40
         });
-
+        Ps.destroy(this.$refs.form0);
+        Ps.initialize(this.$refs.form0, {
+          wheelSpeed: 1,
+          minScrollbarLength: 40
+        });
         Ps.destroy(this.$refs.form5);
         Ps.initialize(this.$refs.form5, {
           wheelSpeed: 1,
@@ -1095,9 +1014,28 @@ export default {
         });
       });
     },
+    updateModelType() {
+      if (this.modelType === 1) {
+        this.initByFirstModel();
+      } else if (this.modelType === 0) {
+        this.initByFollowModel();
+      }
+    },
     initByFirstModel() {
+      this.copyInfo = {};
       vueCopy(dbsFirstModel, this.copyInfo);
       this.changeDevice();  // 生成表格所对应的数据模型
+      this.updateContactOrder();
+      this.updateCheckBoxModel('firstDbsAdjustAfter');
+    },
+    initByFollowModel() {
+      vueCopy(dbsFollowModel, this.copyInfo);
+      this.updateCheckBoxModel('followDbsAdjustAfter');
+      this.updateCheckBoxModel('followDbsAdjustBefore');
+      this.updateCheckBoxModel('followDbsAdjustVoltage');
+      this.updateCheckBoxModel('followDbsAdjustMore');
+    },
+    updateContactOrder() {
       var leftContactOrder = this.copyInfo.leftContactEffectOrder.split('>');
       var rightContactOrder = this.copyInfo.rightContactEffectOrder.split('>');
       for (let i = 0; i < leftContactOrder.length; i++) {
@@ -1106,7 +1044,6 @@ export default {
       for (let i = 0; i < rightContactOrder.length; i++) {
         this.$set(this.rightContactSortArray, i, rightContactOrder[i]);
       }
-      this.updateCheckBoxModel('firstDbsAdjustAfter');
     },
     updateCheckBoxModel(formType) {
       var checkBoxModelList;
@@ -1114,6 +1051,18 @@ export default {
       if (formType === 'firstDbsAdjustAfter') {
         paramList = this.copyInfo.firstDbsParams.adjustAfterParameter;
         checkBoxModelList = this.firstDbsAdjustAfterParamPole;
+      } else if (formType === 'followDbsAdjustAfter') {
+        paramList = this.copyInfo.followDbsParams.adjustAfterParameter;
+        checkBoxModelList = this.followDbsAdjustAfterParamPole;
+      } else if (formType === 'followDbsAdjustBefore') {
+        paramList = this.copyInfo.followDbsParams.adjustBeforeParameter;
+        checkBoxModelList = this.followDbsAdjustBeforeParamPole;
+      } else if (formType === 'followDbsAdjustVoltage') {
+        paramList = this.copyInfo.followDbsParams.adjustVoltageParameter;
+        checkBoxModelList = this.followDbsAdjustVoltageParamPole;
+      } else if (formType === 'followDbsAdjustMore') {
+        paramList = this.copyInfo.followDbsParams.adjustMoreParameter;
+        checkBoxModelList = this.followDbsAdjustMoreParamPole;
       }
       checkBoxModelList.splice(0, paramList.length);
       for (let i = 0; i < paramList.length; i++) {
@@ -1270,6 +1219,8 @@ export default {
         for (var i = 0; i < paramList.length; i++) {
           paramList[i].schemeOrder = Math.floor(i / 2) + 1;
         }
+      } else if (formType === 'followDbsAdjustBefore') {
+
       }
       this.updateCheckBoxModel(formType);
     },
@@ -1277,6 +1228,38 @@ export default {
       var order = param.schemeOrder;
       if (order === 1) {
         return '开机参数';
+      } else {
+        return '备选参数' + (order - 1);
+      }
+    },
+    getFollowDbsAdjustBeforePlanName(param) {
+      var order = param.schemeOrder;
+      if (order === 1) {
+        return '上次方案';
+      } else {
+        return '备选参数' + (order - 1);
+      }
+    },
+    getFollowDbsAdjustAfterPlanName(param) {
+      var order = param.schemeOrder;
+      if (order === 1) {
+        return '上次方案';
+      } else {
+        return '备选参数' + (order - 1);
+      }
+    },
+    getFollowDbsAdjustVoltagePlanName(param) {
+      var order = param.schemeOrder;
+      if (order === 1) {
+        return '上次方案';
+      } else {
+        return '备选参数' + (order - 1);
+      }
+    },
+    getFollowDbsAdjustMorePlanName(param) {
+      var order = param.schemeOrder;
+      if (order === 1) {
+        return '上次方案';
       } else {
         return '备选参数' + (order - 1);
       }
@@ -1358,8 +1341,7 @@ export default {
     }
   },
   created() {
-    this.initByFirstModel();
-    console.log(dbsFollowModel);
+    this.updateModelType();
   },
   mounted() {
     this.updateScrollbar();
