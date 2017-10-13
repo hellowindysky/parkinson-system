@@ -278,11 +278,19 @@
             <td class="col w2" colspan="2">疗效满意度</td>
             <td class="col w2" colspan="2">左侧</td>
             <td class="col w8" colspan="8">
-              <el-input></el-input>
+              <el-select v-model="copyInfo.adjustBeforeLeftSatisfaction">
+                <el-option label="疗效满意" :value="0"></el-option>
+                <el-option label="疗效一般" :value="1"></el-option>
+                <el-option label="疗效欠佳" :value="2"></el-option>
+              </el-select>
             </td>
             <td class="col w2" colspan="2">右侧</td>
             <td class="col w8" colspan="8">
-              <el-input></el-input>
+              <el-select v-model="copyInfo.adjustBeforeRightSatisfaction">
+                <el-option label="疗效满意" :value="0"></el-option>
+                <el-option label="疗效一般" :value="1"></el-option>
+                <el-option label="疗效欠佳" :value="2"></el-option>
+              </el-select>
             </td>
           </tr>
           <tr class="row title-row">
@@ -352,11 +360,19 @@
             <td class="col w2" colspan="2">疗效满意度</td>
             <td class="col w2" colspan="2">左侧</td>
             <td class="col w8" colspan="8">
-              <el-input></el-input>
+              <el-select v-model="copyInfo.adjustVoltageLeftSatisfaction">
+                <el-option label="疗效满意" :value="0"></el-option>
+                <el-option label="疗效一般" :value="1"></el-option>
+                <el-option label="疗效欠佳" :value="2"></el-option>
+              </el-select>
             </td>
             <td class="col w2" colspan="2">右侧</td>
             <td class="col w8" colspan="8">
-              <el-input></el-input>
+              <el-select v-model="copyInfo.adjustVoltageRightSatisfaction">
+                <el-option label="疗效满意" :value="0"></el-option>
+                <el-option label="疗效一般" :value="1"></el-option>
+                <el-option label="疗效欠佳" :value="2"></el-option>
+              </el-select>
             </td>
           </tr>
           <tr class="row title-row">
@@ -422,11 +438,19 @@
             <td class="col w2" colspan="2">疗效满意度</td>
             <td class="col w2" colspan="2">左侧</td>
             <td class="col w8" colspan="8">
-              <el-input></el-input>
+              <el-select v-model="copyInfo.adjustMoreLeftSatisfaction">
+                <el-option label="疗效满意" :value="0"></el-option>
+                <el-option label="疗效一般" :value="1"></el-option>
+                <el-option label="疗效欠佳" :value="2"></el-option>
+              </el-select>
             </td>
             <td class="col w2" colspan="2">右侧</td>
             <td class="col w8" colspan="8">
-              <el-input></el-input>
+              <el-select v-model="copyInfo.adjustMoreRightSatisfaction">
+                <el-option label="疗效满意" :value="0"></el-option>
+                <el-option label="疗效一般" :value="1"></el-option>
+                <el-option label="疗效欠佳" :value="2"></el-option>
+              </el-select>
             </td>
           </tr>
           <tr class="row title-row">
@@ -658,22 +682,21 @@ var dbsFirstModel = {
 };
 
 var dbsFollowModel = {
-  'deviceId': '8a8d9f635dc9f57f015dcba7d615002a',
-  'devicePowerType': 1,
-  'programDate': '2017-09-28',
-  'isTakeMedication': 1,
-  'medicationStatus': '美多巴',
-  'complaint': '震颤',
-  'effectInfo': '呵呵哒',
-  'stnVoltage': 1.9,
-  'adjustBeforeLeftSatisfaction': 1,
-  'adjustBeforeRightSatisfaction': 0,
-  'adjustVoltageLeftSatisfaction': 0,
-  'adjustVoltageRightSatisfaction': 2,
-  'adjustMoreLeftSatisfaction': 1,
-  'adjustMoreRightSatisfaction': 1,
-  'remarks': 'heheh呵呵哒！',
-  'patientCaseId': '8a9e2d385ed3847d015f05c531b900a7',
+  'deviceId': '',
+  'devicePowerType': '',
+  'programDate': '',
+  'isTakeMedication': '',
+  'medicationStatus': '',
+  'complaint': '',
+  'effectInfo': '',
+  'adjustBeforeLeftSatisfaction': '',
+  'adjustBeforeRightSatisfaction': '',
+  'adjustVoltageLeftSatisfaction': '',
+  'adjustVoltageRightSatisfaction': '',
+  'adjustMoreLeftSatisfaction': '',
+  'adjustMoreRightSatisfaction': '',
+  'remarks': '',
+  'patientCaseId': '',
   'firstDbsParams': {
     'adjustAfterParameter': []
   },
@@ -731,6 +754,9 @@ export default {
   methods: {
     showModal(changeWay, info) {
       this.mode = changeWay;
+      if (this.mode === this.ADD_DATA) {
+        this.modelType = 0;   // 新增程控记录的时候，“首次开机”默认选择“否”
+      }
       this.updateModelType();
       console.log(info);
       // 获取患者的 DBS 编码
