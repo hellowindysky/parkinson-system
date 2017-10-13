@@ -931,7 +931,7 @@ export default {
       if (usage === undefined || usage === '' || isNaN(usage)) {
         medicine.medUsage = '';
       } else {
-        medicine.medUsage = Number(parseInt(usage, 10));
+        medicine.medUsage = Number(usage);
       }
     },
     getLevodopaDose(medicine) {
@@ -974,7 +974,7 @@ export default {
         return 0;  // 如果没找到对应的左旋多巴系数，则返回 0
       }
 
-      return levodopaFactor * usage;
+      return Number((levodopaFactor * usage).toFixed(4));
     },
     getMorningDose(medicine) {
       // 晨剂量，即等效美多芭量。根据当前药物和美多芭各自的等效左旋多巴量，找到两者的等效换算公式
@@ -982,19 +982,19 @@ export default {
       var levodopaDose = this.getLevodopaDose(medicine);
       var morningDose = levodopaDose * (250.0 / 200.0);
       medicine.morningDose = morningDose > 0 ? morningDose : '';
-      return medicine.morningDose;
+      return Number(medicine.morningDose.toFixed(4));
     },
     getLoadingDose(medicine) {
       // 冲击剂量，由晨剂量乘以 1.5 得到
       var morningDose = medicine.morningDose;
       medicine.loadingDose = morningDose !== '' ? morningDose * 1.5 : '';
-      return medicine.loadingDose;
+      return Number(medicine.loadingDose.toFixed(4));
     },
     getLevodopaLoadingDose(medicine) {
       // 等效左旋多巴冲击剂量，由等效左旋多巴剂量，乘以 1.5 得到
       var levodopaDose = this.getLevodopaDose(medicine);
       var levodopaLoadingDose = levodopaDose * 1.5;
-      return levodopaLoadingDose > 0 ? levodopaLoadingDose : '';
+      return levodopaLoadingDose > 0 ? Number(levodopaLoadingDose.toFixed(4)) : '';
     },
     addMedicine() {
       var medicineList = this.copyInfo.preopsMotorDTO.patientPreopsMedicineList;
