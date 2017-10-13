@@ -121,8 +121,16 @@
           </tr>
           <tr class="row">
             <td class="col title-col">总和</td>
-            <td class="col computed-cell" v-for="hourName in hourNameList">
+            <td class="col computed-cell"
+              :class="{'warning': copyInfo.preopsDiaryDTO.patientPreopsDiaryList[5][hourName] !== 24 &&
+              copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][hourName] !== ''}"
+              v-for="hourName in hourNameList">
               {{copyInfo.preopsDiaryDTO.patientPreopsDiaryList[5][hourName]}}
+              <span class="warning-text"
+                v-show="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[5][hourName] !== 24 &&
+                copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][hourName] !== ''">
+                总和必须为24
+              </span>
             </td>
             <td class="col computed-cell"></td>
             <td class="col computed-cell"></td>
@@ -713,7 +721,8 @@ export default {
       diaryRowNameList: ['睡眠', '关期', '重异动开', '轻异动开', '无异动开'],
       dayTimeNameList: ['oneDayTime', 'twoDayTime', 'threeDayTime', 'fourDayTime', 'fiveDayTime', 'sixDayTime'],
       hourNameList: ['oneDayDiaryHour', 'twoDayDiaryHour', 'threeDayDiaryHour', 'fourDayDiaryHour', 'fiveDayDiaryHour', 'sixDayDiaryHour'],
-      copyInfo: {}
+      copyInfo: {},
+      allTotalHourOk: true
     };
   },
   computed: {
@@ -800,6 +809,11 @@ export default {
           alert(COMT_ALERT_MESSAGE);
           return;
         }
+      }
+
+      // 再检查，患者日记里面，是否每天的时间只和都是 24 小时，如果有一列不符合，都不允许通过
+      if (!this.allTotalHourOk) {
+        return;
       }
 
       pruneObj(this.copyInfo);  // 调用此函数将值为空的属性去除掉
@@ -1187,11 +1201,16 @@ export default {
         this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[i].hourAverage = hourAverage;
       }
 
+      var allTotalHourOk = true;
       for (let hourName of this.hourNameList) {
         // 最后一排，即“总和”这一排，填上我们保存的每列各自的数据之和
         colTotalHour[hourName] = Number(colTotalHour[hourName].toFixed(1));
         this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[5][hourName] = colTotalHour[hourName];
+        if (colTotalHour[hourName] !== 24 && this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][hourName] !== '') {
+          allTotalHourOk = false;
+        }
       }
+      this.allTotalHourOk = allTotalHourOk;
 
       // 再根据该表格的数据，更新其它表格的对应数据
       let sleepTime = this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0].hourAverage;
@@ -1425,6 +1444,17 @@ export default {
             }
             &.computed-cell {
               background-color: @computed-cell-color;
+              &.warning {
+                background-color: @alert-color;
+                color: #fff;
+              }
+              .warning-text {
+                position: absolute;
+                top: 35px;
+                left: 0;
+                color: @alert-color;
+                font-size: @small-font-size;
+              }
             }
             &.wide-col {
               width: 30%;
