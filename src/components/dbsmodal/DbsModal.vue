@@ -673,188 +673,15 @@ var dbsFollowModel = {
   'adjustMoreLeftSatisfaction': 1,
   'adjustMoreRightSatisfaction': 1,
   'remarks': 'heheh呵呵哒！',
-  'patientDbsFirstId': 7,
   'patientCaseId': '8a9e2d385ed3847d015f05c531b900a7',
-  'patientDbsFollowId': 7,
   'firstDbsParams': {
     'adjustAfterParameter': []
   },
   'followDbsParams': {
-    'adjustAfterParameter': [
-      {
-        'id': 14,
-        'paramType': 1,
-        'schemeOrder': 1,
-        'limbSide': 1,
-        'exciteMod': 1,
-        'negativePole': '2-',
-        'positivePole': '2+',
-        'frequency': '135',
-        'pulseWidth': '66',
-        'voltage': '250',
-        'resistance': 500,
-        'electric': 0,
-        'electricity': 0,
-        'effectInfo': '天啦噜',
-        'patientDbsFollowId': 7
-      },
-      {
-        'id': 23,
-        'paramType': 1,
-        'schemeOrder': 1,
-        'limbSide': 2,
-        'exciteMod': 2,
-        'negativePole': '10-',
-        'positivePole': '9+',
-        'frequency': '135',
-        'pulseWidth': '66',
-        'voltage': '250',
-        'resistance': 500,
-        'electric': 0,
-        'electricity': 0,
-        'effectInfo': '',
-        'patientDbsFollowId': 7
-      },
-      {
-        'id': 12,
-        'paramType': 1,
-        'schemeOrder': 2,
-        'limbSide': 1,
-        'exciteMod': 2,
-        'negativePole': '2-#3-',
-        'positivePole': 'C+#3+',
-        'frequency': '128',
-        'pulseWidth': '66',
-        'voltage': '250',
-        'resistance': 500,
-        'electric': 0,
-        'electricity': 0,
-        'patientDbsFollowId': 7
-      },
-      {
-        'id': 13,
-        'paramType': 1,
-        'schemeOrder': 2,
-        'limbSide': 2,
-        'exciteMod': 3,
-        'negativePole': '8-#10-',
-        'positivePole': 'C+#8+',
-        'frequency': '133',
-        'pulseWidth': '62',
-        'voltage': '240',
-        'resistance': 455,
-        'electric': 0,
-        'electricity': 0,
-        'effectInfo': '副反应呵呵',
-        'patientDbsFollowId': 7
-      }
-    ],
-    'adjustBeforeParameter': [
-      {
-        'id': 15,
-        'paramType': 2,
-        'schemeOrder': 1,
-        'limbSide': 1,
-        'exciteMod': 2,
-        'negativePole': '1-#2-',
-        'positivePole': 'C+#1+',
-        'frequency': '135',
-        'pulseWidth': '66',
-        'voltage': '250',
-        'resistance': 511,
-        'electric': 0,
-        'electricity': 0,
-        'effectInfo': '呵呵',
-        'patientDbsFollowId': 7
-      },
-      {
-        'id': 16,
-        'paramType': 2,
-        'schemeOrder': 1,
-        'limbSide': 2,
-        'exciteMod': 3,
-        'negativePole': '8-#10-',
-        'positivePole': 'C+#8+',
-        'frequency': '133',
-        'pulseWidth': '62',
-        'voltage': '240',
-        'resistance': 455,
-        'electric': 0,
-        'electricity': 0,
-        'effectInfo': '啦啦',
-        'patientDbsFollowId': 7
-      }
-    ],
-    'adjustVoltageParameter': [
-      {
-        'id': 17,
-        'paramType': 3,
-        'schemeOrder': 1,
-        'limbSide': 1,
-        'exciteMod': 3,
-        'negativePole': '2-#3-',
-        'positivePole': '3+',
-        'frequency': '133',
-        'pulseWidth': '62',
-        'voltage': '240',
-        'resistance': 455,
-        'electric': 0,
-        'electricity': 0,
-        'effectInfo': '副反应呵呵',
-        'patientDbsFollowId': 7
-      },
-      {
-        'id': 18,
-        'paramType': 3,
-        'schemeOrder': 1,
-        'limbSide': 2,
-        'exciteMod': 3,
-        'negativePole': '11-',
-        'positivePole': '8+#10+',
-        'frequency': '133',
-        'pulseWidth': '62',
-        'voltage': '240',
-        'resistance': 455,
-        'electric': 0,
-        'electricity': 0,
-        'effectInfo': 'edwd滴滴答',
-        'patientDbsFollowId': 7
-      }
-    ],
-    'adjustMoreParameter': [
-      {
-        'id': 19,
-        'paramType': 4,
-        'schemeOrder': 1,
-        'limbSide': 1,
-        'exciteMod': 3,
-        'negativePole': '10-#11-',
-        'positivePole': '9+#11+',
-        'frequency': '125',
-        'pulseWidth': '62',
-        'voltage': '250',
-        'resistance': 451,
-        'electric': 98,
-        'electricity': 0,
-        'patientDbsFollowId': 7
-      },
-      {
-        'id': 20,
-        'paramType': 4,
-        'schemeOrder': 1,
-        'limbSide': 2,
-        'exciteMod': 3,
-        'negativePole': '9-',
-        'positivePole': '1+#3+',
-        'frequency': '115',
-        'pulseWidth': '67',
-        'voltage': '250',
-        'resistance': 411,
-        'electric': 77,
-        'electricity': 45,
-        'patientDbsFollowId': 7
-      }
-    ]
+    'adjustAfterParameter': [],
+    'adjustBeforeParameter': [],
+    'adjustVoltageParameter': [],
+    'adjustMoreParameter': []
   }
 };
 
@@ -904,7 +731,7 @@ export default {
   methods: {
     showModal(changeWay, info) {
       this.mode = changeWay;
-
+      this.updateModelType();
       console.log(info);
       // 获取患者的 DBS 编码
       getPatientSimpleInfo(this.$route.params.id).then((data) => {
@@ -965,11 +792,26 @@ export default {
         }, (error) => {
           console.log(error);
         });
+
+      } else if (this.modelType === 0 && this.mode === this.ADD_DATA) {
+        delete this.copyInfo.firstDbsParams;
+        addDbsFollowInfo(this.copyInfo).then(() => {
+          this.updateAndClose();
+        }, (error) => {
+          console.log(error);
+        });
+      } else if (this.modelType === 0 && this.mode === this.EDIT_DATA) {
+        delete this.copyInfo.firstDbsParams;
+        modifyDbsFollowInfo(this.copyInfo).then(() => {
+          this.updateAndClose();
+        }, (error) => {
+          console.log(error);
+        });
       }
-      this.updateModelType();   // 因为前面的 delete 砍掉了 copyInfo的完整结构，会导致渲染出问题，所以传完数据后就重新补上
     },
     updateAndClose() {
       Bus.$emit(this.UPDATE_CASE_INFO);
+      this.updateModelType(); // 因为前面的 delete 砍掉了 copyInfo的完整结构，会导致渲染出问题，所以传完数据后就重新补上
       this.displayModal = false;
     },
     updateScrollbar() {
@@ -1268,12 +1110,18 @@ export default {
       let paramList;
       if (formType === 'firstDbsAdjustAfter') {
         paramList = this.copyInfo.firstDbsParams.adjustAfterParameter;
-        paramList.splice(index, 2);
-        for (var i = 0; i < paramList.length; i++) {
-          paramList[i].schemeOrder = Math.floor(i / 2) + 1;
-        }
       } else if (formType === 'followDbsAdjustBefore') {
-
+        paramList = this.copyInfo.followDbsParams.adjustBeforeParameter;
+      } else if (formType === 'followDbsAdjustAfter') {
+        paramList = this.copyInfo.followDbsParams.adjustAfterParameter;
+      } else if (formType === 'followDbsAdjustVoltage') {
+        paramList = this.copyInfo.followDbsParams.adjustVoltageParameter;
+      } else if (formType === 'followDbsAdjustMore') {
+        paramList = this.copyInfo.followDbsParams.adjustMoreParameter;
+      }
+      paramList.splice(index, 2);
+      for (var i = 0; i < paramList.length; i++) {
+        paramList[i].schemeOrder = Math.floor(i / 2) + 1;
       }
       this.updateCheckBoxModel(formType);
     },
