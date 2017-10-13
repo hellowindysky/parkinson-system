@@ -811,76 +811,7 @@ var dbsFirstModel = {
   'rightContactEffectOrder': '',
   'remarks': '',
   'firstDbsParams': {
-    'adjustAfterParameter': [
-      {
-        'id': 9,
-        'paramType': 1,
-        'schemeOrder': 1,
-        'limbSide': 1,
-        'exciteMod': 2,
-        'negativePole': '2-',
-        'positivePole': 'C+#1+',
-        'frequency': '135',
-        'pulseWidth': '66',
-        'voltage': '253',
-        'resistance': 504,
-        'electric': 0,
-        'electricity': 0,
-        'effectInfo': '哇哈哈！',
-        'patientDbsFirstId': 9
-      },
-      {
-        'id': 11,
-        'paramType': 1,
-        'schemeOrder': 1,
-        'limbSide': 2,
-        'exciteMod': 3,
-        'negativePole': '8-#10-',
-        'positivePole': 'C+#8+',
-        'frequency': '133',
-        'pulseWidth': '62',
-        'voltage': '240',
-        'resistance': 455,
-        'electric': 0,
-        'electricity': 0,
-        'effectInfo': '副反应呵呵',
-        'patientDbsFirstId': 9
-      },
-      {
-        'id': 21,
-        'paramType': 1,
-        'schemeOrder': 2,
-        'limbSide': 1,
-        'exciteMod': 2,
-        'negativePole': '2-#3-',
-        'positivePole': 'C+#3+',
-        'frequency': '135',
-        'pulseWidth': '66',
-        'voltage': '253',
-        'resistance': 504,
-        'electric': 0,
-        'electricity': 0,
-        'effectInfo': '哇哈哈！',
-        'patientDbsFirstId': 9
-      },
-      {
-        'id': 22,
-        'paramType': 1,
-        'schemeOrder': 2,
-        'limbSide': 2,
-        'exciteMod': 2,
-        'negativePole': '11-',
-        'positivePole': '8+#10+',
-        'frequency': '137',
-        'pulseWidth': '70',
-        'voltage': '288',
-        'resistance': 504,
-        'electric': 0,
-        'electricity': 0,
-        'effectInfo': '哇哈哈！',
-        'patientDbsFirstId': 9
-      }
-    ]
+    'adjustAfterParameter': []
   }
 };
 
