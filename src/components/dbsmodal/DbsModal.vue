@@ -52,7 +52,7 @@
         <div class="field" v-show="modelType===0">
           <span class="field-name">上次程控时间</span>
           <span class="field-input">
-            <el-date-picker></el-date-picker>
+            <el-date-picker v-model="lastProgramDate"></el-date-picker>
           </span>
         </div>
         <div class="field">
@@ -654,7 +654,8 @@ import {
   modifyDbsFirstInfo,
   getDbsFollowInfo,
   addDbsFollowInfo,
-  modifyDbsFollowInfo
+  modifyDbsFollowInfo,
+  getLastDbsInfo
 } from 'api/patient.js';
 
 var dbsFirstModel = {
@@ -723,8 +724,8 @@ export default {
       followDbsAdjustBeforeParamPole: [],
       followDbsAdjustVoltageParamPole: [],
       followDbsAdjustMoreParamPole: [],
-      cl: ['C+', '2+'],
-      cl2: ['1-']
+      lastProgramDate: '',
+      lastDbsParameter: []
     };
   },
   computed: {
@@ -759,6 +760,7 @@ export default {
       }
       this.updateModelType();
       console.log(info);
+
       // 获取患者的 DBS 编码
       getPatientSimpleInfo(this.$route.params.id).then((data) => {
         if (data && data.patientInfo && data.patientInfo && data.patientInfo.dbsPatientCode) {
@@ -768,6 +770,15 @@ export default {
         console.log(error);
       });
 
+      // 如果是非首次程控记录，就要去获取额外的上次程控信息
+      if (this.modelType === 0) {
+        getLastDbsInfo(this.$route.params.id).then((data) => {
+          this.lastProgramDate = data.lastProgramDate;
+          vueCopy(data.lastDbsParameter, this.lastDbsParameter);
+          console.log(data);
+        });
+      }
+
       // 如果是编辑已有的程控记录，就要查询其程控信息的详情
       if (this.mode === this.EDIT_DATA && info.patientDbsFirstId) {
         this.modelType = 1;
@@ -776,10 +787,6 @@ export default {
           vueCopy(data, this.copyInfo);
           this.updateContactOrder();
           this.updateCheckBoxModel('firstDbsAdjustAfter');
-          this.$nextTick(() => {
-            console.log(this.copyInfo, this.copyInfo.patientDbsFirstDetail);
-          });
-
         });
       } else if (this.mode === this.EDIT_DATA && info.patientDbsFollowId) {
         this.modelType = 0;
@@ -914,7 +921,7 @@ export default {
     },
     updateCheckBoxModel(formType) {
       var checkBoxModelList;
-      var paramList;
+      var paramList = [];
       if (formType === 'firstDbsAdjustAfter') {
         paramList = this.copyInfo.firstDbsParams.adjustAfterParameter;
         checkBoxModelList = this.firstDbsAdjustAfterParamPole;

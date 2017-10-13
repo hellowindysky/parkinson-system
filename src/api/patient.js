@@ -592,6 +592,16 @@ export function deleteDbsFollowInfo(dbsFollowInfo) {
   return encapsulatePromise(url, request);
 };
 
+// 查看上次程控信息（包括记录时间 和 调整后参数）
+export function getLastDbsInfo(patientId) {
+  patientId = parseInt(patientId, 10);
+  var request = Object.assign({}, commonRequest);
+  request.patientId = patientId;
+  var url = 'http://apitest.gyenno.com/pdms/queryLastPatientDbsParms';
+
+  return encapsulatePromise(url, request);
+};
+
 // 查询医学量表
 export function getScaleInfo() {
   var request = Object.assign({}, commonRequest);
