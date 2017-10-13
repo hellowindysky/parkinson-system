@@ -730,7 +730,7 @@
           <tr class="row title-row">
             <td class="col w2" colspan="2">
               方案
-              <span class="iconfont icon-plus"></span>
+              <span class="iconfont icon-plus" @click="addParam('firstDbsAdjustAfter')"></span>
             </td>
             <td class="col w2" colspan="2">肢体侧</td>
             <td class="col w3" colspan="3">刺激模式</td>
@@ -744,8 +744,8 @@
           </tr>
           <tr class="row" v-for="(param, index) in copyInfo.firstDbsParams.adjustAfterParameter">
             <td class="col w2" colspan="2" rowspan="2" v-show="index % 2 === 0">
-              调整1
-              <span class="iconfont icon-remove"></span>
+              {{getFirstDbsAdjustAfterPlanName(param)}}
+              <span class="iconfont icon-remove" @click="removeParam(index, 'firstDbsAdjustAfter')"></span>
             </td>
             <td class="col w2" colspan="2">{{getLimbSide(param.limbSide)}}</td>
             <td class="col w3" colspan="3">
@@ -777,7 +777,7 @@
               <el-input v-model="param.resistance"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <el-input v-model="param.electricity"></el-input>
+              <el-input v-model="param.electric"></el-input>
             </td>
           </tr>
         </table>
@@ -813,13 +813,30 @@ var dbsFirstModel = {
   'firstDbsParams': {
     'adjustAfterParameter': [
       {
+        'id': 9,
+        'paramType': 1,
+        'schemeOrder': 1,
+        'limbSide': 1,
+        'exciteMod': 2,
+        'negativePole': '2-',
+        'positivePole': 'C+#1+',
+        'frequency': '135',
+        'pulseWidth': '66',
+        'voltage': '253',
+        'resistance': 504,
+        'electric': 0,
+        'electricity': 0,
+        'effectInfo': '哇哈哈！',
+        'patientDbsFirstId': 9
+      },
+      {
         'id': 11,
         'paramType': 1,
         'schemeOrder': 1,
-        'limbSide': 0,
+        'limbSide': 2,
         'exciteMod': 3,
-        'positivePole': 'C+/8+',
-        'negativePole': '8-/10-',
+        'negativePole': '8-#10-',
+        'positivePole': 'C+#8+',
         'frequency': '133',
         'pulseWidth': '62',
         'voltage': '240',
@@ -830,16 +847,33 @@ var dbsFirstModel = {
         'patientDbsFirstId': 9
       },
       {
-        'id': 9,
+        'id': 21,
         'paramType': 1,
         'schemeOrder': 2,
         'limbSide': 1,
         'exciteMod': 2,
-        'positivePole': 'C+/1+',
-        'negativePole': '2-',
+        'negativePole': '2-#3-',
+        'positivePole': 'C+#3+',
         'frequency': '135',
         'pulseWidth': '66',
         'voltage': '253',
+        'resistance': 504,
+        'electric': 0,
+        'electricity': 0,
+        'effectInfo': '哇哈哈！',
+        'patientDbsFirstId': 9
+      },
+      {
+        'id': 22,
+        'paramType': 1,
+        'schemeOrder': 2,
+        'limbSide': 2,
+        'exciteMod': 2,
+        'negativePole': '11-',
+        'positivePole': '8+#10+',
+        'frequency': '137',
+        'pulseWidth': '70',
+        'voltage': '288',
         'resistance': 504,
         'electric': 0,
         'electricity': 0,
@@ -1100,12 +1134,22 @@ export default {
       for (let i = 0; i < rightContactOrder.length; i++) {
         this.$set(this.rightContactSortArray, i, rightContactOrder[i]);
       }
-      for (let i = 0; i < this.copyInfo.firstDbsParams.adjustAfterParameter.length; i++) {
-        this.$set(this.firstDbsAdjustAfterParamPole, i, {});
-        let positivePole = this.copyInfo.firstDbsParams.adjustAfterParameter[i].positivePole.split('/');
-        let negativePole = this.copyInfo.firstDbsParams.adjustAfterParameter[i].negativePole.split('/');
-        this.$set(this.firstDbsAdjustAfterParamPole[i], 'positive', positivePole);
-        this.$set(this.firstDbsAdjustAfterParamPole[i], 'negative', negativePole);
+      this.updateCheckBoxModel('firstDbsAdjustAfter');
+    },
+    updateCheckBoxModel(formType) {
+      var checkBoxModelList;
+      var paramList;
+      if (formType === 'firstDbsAdjustAfter') {
+        paramList = this.copyInfo.firstDbsParams.adjustAfterParameter;
+        checkBoxModelList = this.firstDbsAdjustAfterParamPole;
+      }
+      checkBoxModelList.splice(0, paramList.length);
+      for (let i = 0; i < paramList.length; i++) {
+        this.$set(checkBoxModelList, i, {});
+        let positivePole = paramList[i].positivePole.split('#');
+        let negativePole = paramList[i].negativePole.split('#');
+        this.$set(checkBoxModelList[i], 'positive', positivePole);
+        this.$set(checkBoxModelList[i], 'negative', negativePole);
       }
     },
     changeDevice() {
@@ -1224,17 +1268,58 @@ export default {
         }
       }
     },
+    addParam(formType) {
+      if (formType === 'firstDbsAdjustAfter') {
+        let paramList = this.copyInfo.firstDbsParams.adjustAfterParameter;
+        let count = paramList.length;
+        let order = count / 2 + 1;
+        let propertyList = ['exciteMod', 'negativePole', 'positivePole', 'frequency', 'pulseWidth', 'voltage', 'resistance', 'electric'];
+        for (let limbSideNum of [1, 2]) {
+          var index = count - 1 + limbSideNum;
+          this.$set(paramList, (index), {});
+          this.$set(paramList[index], 'paramType', 1);
+          this.$set(paramList[index], 'schemeOrder', order);
+          this.$set(paramList[index], 'limbSide', limbSideNum);
+          for (let property of propertyList) {
+            this.$set(paramList[index], property, '');
+          }
+          if (this.copyInfo.patientDbsFirstId) {
+            this.$set(paramList[index], 'patientDbsFirstId', this.copyInfo.patientDbsFirstId);
+          }
+        }
+      }
+      this.updateCheckBoxModel(formType);
+    },
+    removeParam(index, formType) {
+      let paramList;
+      if (formType === 'firstDbsAdjustAfter') {
+        paramList = this.copyInfo.firstDbsParams.adjustAfterParameter;
+        paramList.splice(index, 2);
+        for (var i = 0; i < paramList.length; i++) {
+          paramList[i].schemeOrder = Math.floor(i / 2) + 1;
+        }
+      }
+      this.updateCheckBoxModel(formType);
+    },
+    getFirstDbsAdjustAfterPlanName(param) {
+      var order = param.schemeOrder;
+      if (order === 1) {
+        return '开机参数';
+      } else {
+        return '备选参数' + (order - 1);
+      }
+    },
     getLimbSide(sideNum) {
-      if (sideNum === 0) {
+      if (sideNum === 1) {
         return '左侧肢体';
-      } else if (sideNum === 1) {
+      } else if (sideNum === 2) {
         return '右侧肢体';
       }
     },
     getSideNegativeContact(sideNum) {
       // 根据设备，得到其相应一侧的负极列表
-      // sideNum 为 0 时代表左侧，为 1 时代表右侧
-      var side = sideNum === 1 ? 'right' : 'left';
+      // sideNum 为 1 时代表左侧，为 2 时代表右侧
+      var side = sideNum === 1 ? 'left' : 'right';
       return this.getSideDeviceContact(side);
     },
     getSidePositiveContact(sideNum) {
@@ -1477,7 +1562,7 @@ export default {
             border: 1px solid @light-gray-color;
             .iconfont {
               position: absolute;
-              right: 10px;
+              right: 5px;
               cursor: pointer;
               &:hover {
                 opacity: 0.6;
