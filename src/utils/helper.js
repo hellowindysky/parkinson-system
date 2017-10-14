@@ -49,11 +49,32 @@ export function vueCopy(origin, copy) {
       if (typeof origin[i] !== 'object') {
         return;   // 数组内包裹的也只能是对象，如果包裹了其它东西，则直接返回，结束本次复制
       } else if (origin[i] instanceof Array) {
-        Vue.set(copy, i, []);
-        vueCopy(origin[i], copy[i]);
+        if (copy[i] instanceof Array) {
+          vueCopy(origin[i], copy[i]);
+        } else {
+          Vue.set(copy, i, []);
+          vueCopy(origin[i], copy[i]);
+        }
+        // if (copy[i] === undefined) {
+        //   Vue.set(copy, i, []);
+        //   vueCopy(origin[i], copy[i]);
+        // } else {
+        //   vueCopy(origin[i], copy[i]);
+        // }
+
       } else if (!(origin[i] instanceof Array)) {
-        Vue.set(copy, i, {});
-        vueCopy(origin[i], copy[i]);
+        if ((typeof copy[i] === 'object') && !(copy[i] instanceof Array)) {
+          vueCopy(origin[i], copy[i]);
+        } else {
+          Vue.set(copy, i, {});
+          vueCopy(origin[i], copy[i]);
+        }
+        // if (copy[i] === undefined) {
+        //   Vue.set(copy, i, {});
+        //   vueCopy(origin[i], copy[i]);
+        // } else {
+        //   vueCopy(origin[i], copy[i]);
+        // }
       }
     }
 
@@ -63,11 +84,31 @@ export function vueCopy(origin, copy) {
       if (origin.hasOwnProperty(p) && typeof origin[p] !== 'object') {
         Vue.set(copy, p, origin[p]);    // 这里是唯一结束递归的地方
       } else if (origin.hasOwnProperty(p) && (origin[p] instanceof Array)) {
-        Vue.set(copy, p, []);
-        vueCopy(origin[p], copy[p]);
+        if (copy[p] instanceof Array) {
+          vueCopy(origin[p], copy[p]);
+        } else {
+          Vue.set(copy, p, []);
+          vueCopy(origin[p], copy[p]);
+        }
+        // if (copy[p] === undefined) {
+        //   Vue.set(copy, p, []);
+        //   vueCopy(origin[p], copy[p]);
+        // } else {
+        //   vueCopy(origin[p], copy[p]);
+        // }
       } else if (origin.hasOwnProperty(p) && !(origin[p] instanceof Array)) {
-        Vue.set(copy, p, {});
-        vueCopy(origin[p], copy[p]);
+        if ((typeof copy[p] === 'object') && !(copy[p] instanceof Array)) {
+          vueCopy(origin[p], copy[p]);
+        } else {
+          Vue.set(copy, p, {});
+          vueCopy(origin[p], copy[p]);
+        }
+        // if (copy[p] === undefined) {
+        //   Vue.set(copy, p, {});
+        //   vueCopy(origin[p], copy[p]);
+        // } else {
+        //   vueCopy(origin[p], copy[p]);
+        // }
       }
     }
   }
