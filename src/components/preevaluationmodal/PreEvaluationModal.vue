@@ -163,13 +163,13 @@
             <td class="col">关期%</td>
           </tr>
           <tr class="row">
-            <td class="col computed-cell">{{copyInfo.preopsDiaryDTO.udysbsOneRatio}}</td>
-            <td class="col computed-cell">{{copyInfo.preopsDiaryDTO.updrsFourOneRatio}}</td>
-            <td class="col computed-cell">{{copyInfo.preopsDiaryDTO.updrsFourThreeRatio}}</td>
-            <td class="col computed-cell">{{copyInfo.preopsDiaryDTO.openRatio}}</td>
-            <td class="col computed-cell">{{copyInfo.preopsDiaryDTO.depDyskinesiaOpenRatio}}</td>
-            <td class="col computed-cell">{{copyInfo.preopsDiaryDTO.norDyskinesiaOpenRatio}}</td>
-            <td class="col computed-cell">{{copyInfo.preopsDiaryDTO.closeRatio}}</td>
+            <td class="col computed-cell">{{copyInfo.preopsDiaryDTO.udysbsOneRatio}}%</td>
+            <td class="col computed-cell">{{copyInfo.preopsDiaryDTO.updrsFourOneRatio}}%</td>
+            <td class="col computed-cell">{{copyInfo.preopsDiaryDTO.updrsFourThreeRatio}}%</td>
+            <td class="col computed-cell">{{copyInfo.preopsDiaryDTO.openRatio}}%</td>
+            <td class="col computed-cell">{{copyInfo.preopsDiaryDTO.depDyskinesiaOpenRatio}}%</td>
+            <td class="col computed-cell">{{copyInfo.preopsDiaryDTO.norDyskinesiaOpenRatio}}%</td>
+            <td class="col computed-cell">{{copyInfo.preopsDiaryDTO.closeRatio}}%</td>
           </tr>
         </table>
         <div class="field whole-line">
