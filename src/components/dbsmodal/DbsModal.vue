@@ -717,6 +717,7 @@ export default {
       dbsPatientCode: '',
       modelType: 1, // 这个用来控制是否为首次开机，1为首次，0为非首次
       copyInfo: {},
+      completeInit: false,
       leftContactSortArray: [],
       rightContactSortArray: [],
       firstDbsAdjustAfterParamPole: [],
@@ -754,12 +755,13 @@ export default {
   },
   methods: {
     showModal(changeWay, info) {
+      this.completeInit = false;
       this.mode = changeWay;
       if (this.mode === this.ADD_DATA) {
         this.modelType = 0;   // 新增程控记录的时候，“首次开机”默认选择“否”
+        this.completeInit = true;
       }
       this.updateModelType();
-      console.log(info);
 
       // 获取患者的 DBS 编码
       getPatientSimpleInfo(this.$route.params.id).then((data) => {
@@ -775,7 +777,6 @@ export default {
         getLastDbsInfo(this.$route.params.id).then((data) => {
           this.lastProgramDate = data.lastProgramDate;
           vueCopy(data.lastDbsParameter, this.lastDbsParameter);
-          console.log(data);
         });
       }
 
@@ -787,9 +788,13 @@ export default {
           vueCopy(data, this.copyInfo);
           this.updateContactOrder();
           this.updateCheckBoxModel('firstDbsAdjustAfter');
+          this.$nextTick(() => {
+            this.completeInit = true; // 放在 nextTick 中，才不会触发 changeDevice()
+          });
         });
       } else if (this.mode === this.EDIT_DATA && info.patientDbsFollowId) {
         this.modelType = 0;
+        this.initByFollowModel();
         var patientId = this.$route.params.id;
         getDbsFollowInfo(patientId, info.patientDbsFollowId).then((data) => {
           vueCopy(data, this.copyInfo);
@@ -797,6 +802,9 @@ export default {
           this.updateCheckBoxModel('followDbsAdjustBefore');
           this.updateCheckBoxModel('followDbsAdjustVoltage');
           this.updateCheckBoxModel('followDbsAdjustMore');
+          this.$nextTick(() => {
+            this.completeInit = true;
+          });
         });
       }
       this.displayModal = true;
@@ -850,42 +858,26 @@ export default {
     updateScrollbar() {
       // 如果不写在 $nextTick() 里面，第一次加载的时候也许会不能正确计算高度。估计是因为子组件还没有全部加载所造成的。
       this.$nextTick(() => {
-        Ps.destroy(this.$refs.scrollArea);
-        Ps.initialize(this.$refs.scrollArea, {
+        var scrollSettings = {
           wheelSpeed: 1,
           minScrollbarLength: 40
-        });
+        };
+        Ps.destroy(this.$refs.scrollArea);
+        Ps.initialize(this.$refs.scrollArea, scrollSettings);
 
         Ps.destroy(this.$refs.form1);
-        Ps.initialize(this.$refs.form1, {
-          wheelSpeed: 1,
-          minScrollbarLength: 40
-        });
+        Ps.initialize(this.$refs.form1, scrollSettings);
         Ps.destroy(this.$refs.form2);
-        Ps.initialize(this.$refs.form2, {
-          wheelSpeed: 1,
-          minScrollbarLength: 40
-        });
+        Ps.initialize(this.$refs.form2, scrollSettings);
         Ps.destroy(this.$refs.form3);
-        Ps.initialize(this.$refs.form3, {
-          wheelSpeed: 1,
-          minScrollbarLength: 40
-        });
+        Ps.initialize(this.$refs.form3, scrollSettings);
         Ps.destroy(this.$refs.form4);
-        Ps.initialize(this.$refs.form4, {
-          wheelSpeed: 1,
-          minScrollbarLength: 40
-        });
+        Ps.initialize(this.$refs.form4, scrollSettings);
+
         Ps.destroy(this.$refs.form0);
-        Ps.initialize(this.$refs.form0, {
-          wheelSpeed: 1,
-          minScrollbarLength: 40
-        });
+        Ps.initialize(this.$refs.form0, scrollSettings);
         Ps.destroy(this.$refs.form5);
-        Ps.initialize(this.$refs.form5, {
-          wheelSpeed: 1,
-          minScrollbarLength: 40
-        });
+        Ps.initialize(this.$refs.form5, scrollSettings);
       });
     },
     updateModelType() {
@@ -898,7 +890,7 @@ export default {
     initByFirstModel() {
       this.copyInfo = {};
       vueCopy(dbsFirstModel, this.copyInfo);
-      this.changeDevice();  // 生成表格所对应的数据模型
+      this.initContactForm();  // 生成表格所对应的数据模型
       this.updateContactOrder();
       this.updateCheckBoxModel('firstDbsAdjustAfter');
     },
@@ -941,13 +933,21 @@ export default {
       checkBoxModelList.splice(0, paramList.length);
       for (let i = 0; i < paramList.length; i++) {
         this.$set(checkBoxModelList, i, {});
-        let positivePole = paramList[i].positivePole.split('#');
-        let negativePole = paramList[i].negativePole.split('#');
+        let positivePole = paramList[i].positivePole ? paramList[i].positivePole.split('#') : [];
+        let negativePole = paramList[i].negativePole ? paramList[i].negativePole.split('#') : [];
+        positivePole = positivePole.filter(pole => pole !== '');
+        negativePole = negativePole.filter(pole => pole !== '');
         this.$set(checkBoxModelList[i], 'positive', positivePole);
         this.$set(checkBoxModelList[i], 'negative', negativePole);
       }
     },
     changeDevice() {
+      // 改变了设备之后，会重新生成新的 Contact 表格。注意只有当数据初始化完成后才会执行，否则会干扰数据初始化
+      if (this.completeInit) {
+        this.initContactForm();
+      }
+    },
+    initContactForm() {
       if (this.modelType === 1) {
         // 如果是首次开机，则选择设备后，会生成触点电压表格（左右两部分），这个函数为其做好数据准备工作
         this.$set(this.copyInfo, 'patientDbsFirstDetail', []);
