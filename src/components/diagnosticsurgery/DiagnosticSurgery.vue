@@ -266,21 +266,17 @@ export default {
       };
       Bus.$on(this.CONFIRM, () => {
         deleteOperativeCompliation(operativeComplication).then(this._resolveDeletion, this._rejectDeletion);
-        console.log('delete', item);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addDbsRecord() {
       // 这里要传递 2 个参数，一个是模式（新增／修改），一个是当前数据对象（新建的时候为空）
       Bus.$emit(this.SHOW_DBS_MODAL, this.ADD_DATA, {});
-      console.log('add');
     },
     editDbsRecord(item) {
       Bus.$emit(this.SHOW_DBS_MODAL, this.EDIT_DATA, item);
-      console.log('edit', item);
     },
     deleteDbsRecord(item) {
-      console.log(item);
       // 先判断这条程控记录是首次还是非首次，从而决定调用哪个 api
       if (item.patientDbsFirstId) {
         let dbsFirstInfo = {
