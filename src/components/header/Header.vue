@@ -11,7 +11,7 @@
       <span class="iconfont icon-task"></span>
       <span class="account">
         <img src="~img/profile.png" alt="doctor image" class="picture">
-        <span class="name">陈奕迅医生</span>
+        <span class="name">臻络测试</span>
       </span>
     </div>
   </div>

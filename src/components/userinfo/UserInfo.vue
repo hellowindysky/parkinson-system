@@ -29,7 +29,7 @@
         </div>
         <div class="field">
           <span class="field-name">用户名称</span>
-          <span class="field-value" v-show="mode===READING_MODE">陈奕迅</span>
+          <span class="field-value" v-show="mode===READING_MODE">臻络测试</span>
           <span class="field-input" v-show="mode===EDITING_MODE">
             <el-input></el-input>
           </span>
