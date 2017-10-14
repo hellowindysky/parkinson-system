@@ -982,13 +982,21 @@ export default {
       var levodopaDose = this.getLevodopaDose(medicine);
       var morningDose = levodopaDose * (250.0 / 200.0);
       medicine.morningDose = morningDose > 0 ? morningDose : '';
-      return Number(medicine.morningDose.toFixed(4));
+      if (medicine.morningDose === '') {
+        return '';
+      } else {
+        return Number(medicine.morningDose.toFixed(4));
+      }
     },
     getLoadingDose(medicine) {
       // 冲击剂量，由晨剂量乘以 1.5 得到
       var morningDose = medicine.morningDose;
       medicine.loadingDose = morningDose !== '' ? morningDose * 1.5 : '';
-      return Number(medicine.loadingDose.toFixed(4));
+      if (medicine.loadingDose === '') {
+        return '';
+      } else {
+        return Number(medicine.loadingDose.toFixed(4));
+      }
     },
     getLevodopaLoadingDose(medicine) {
       // 等效左旋多巴冲击剂量，由等效左旋多巴剂量，乘以 1.5 得到
