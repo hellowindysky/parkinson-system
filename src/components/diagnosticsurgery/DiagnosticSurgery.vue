@@ -133,7 +133,12 @@
 import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import { deleteSurgicalMethod, deleteOperativeCompliation } from 'api/patient.js';
+import {
+  deletePreEvaluation,
+  deleteSurgicalMethod,
+  deleteOperativeCompliation,
+  deleteDbsFirstInfo,
+  deleteDbsFollowInfo } from 'api/patient.js';
 
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 import ExtensiblePanel from 'components/extensiblepanel/ExtensiblePanel';
@@ -224,14 +229,11 @@ export default {
       Bus.$emit(this.SHOW_PRE_EVALUATION_MODAL, this.EDIT_DATA, item);
     },
     deletePreEvaluationRecord(item) {
-      // var patientMed = {
-      //   patientId: this.id,
-      //   patientMedHistoryId: item.patientMedHistoryId,
-      //   version: item.version
-      // };
+      var preEvaluation = {
+        'preopsInfoId': item.preopsInfoId
+      };
       Bus.$on(this.CONFIRM, () => {
-        // deletePatientMedHistory(patientMed).then(this._resolveDeletion, this._rejectDeletion);
-        console.log('delete', item);
+        deletePreEvaluation(preEvaluation).then(this._resolveDeletion, this._rejectDeletion);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
@@ -278,15 +280,26 @@ export default {
       console.log('edit', item);
     },
     deleteDbsRecord(item) {
-      // var patientMed = {
-      //   patientId: this.id,
-      //   patientMedHistoryId: item.patientMedHistoryId,
-      //   version: item.version
-      // };
-      Bus.$on(this.CONFIRM, () => {
-        // deletePatientMedHistory(patientMed).then(this._resolveDeletion, this._rejectDeletion);
-        console.log('delete', item);
-      });
+      console.log(item);
+      // 先判断这条程控记录是首次还是非首次，从而决定调用哪个 api
+      if (item.patientDbsFirstId) {
+        let dbsFirstInfo = {
+          'patientDbsFirstId': item.patientDbsFirstId
+        };
+        Bus.$on(this.CONFIRM, () => {
+          deleteDbsFirstInfo(dbsFirstInfo).then(this._resolveDeletion, this._rejectDeletion);
+        });
+
+      } else if (item.patientDbsFollowId) {
+        let dbsFollowInfo = {
+          'patientDbsFollowId': item.patientDbsFollowId
+        };
+        Bus.$on(this.CONFIRM, () => {
+          deleteDbsFollowInfo(dbsFollowInfo).then(this._resolveDeletion, this._rejectDeletion);
+        });
+      } else {
+        return;
+      }
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     _resolveDeletion() {

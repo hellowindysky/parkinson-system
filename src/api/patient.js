@@ -586,7 +586,7 @@ export function modifyDbsFollowInfo(dbsFollowInfo) {
 // 删除非首次程控记录详情
 export function deleteDbsFollowInfo(dbsFollowInfo) {
   var request = Object.assign({}, commonRequest);
-  request.patientFollowInfo = dbsFollowInfo;
+  request.patientDbsFollow = dbsFollowInfo;
   var url = 'http://apitest.gyenno.com/pdms/delPatientDbsFollow';
 
   return encapsulatePromise(url, request);
