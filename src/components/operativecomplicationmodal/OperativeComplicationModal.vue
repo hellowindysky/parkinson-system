@@ -179,7 +179,6 @@ export default {
     updateField(field) {
       // 这个函数目前就是为了在改变并发症大类的时候，清空并发症细类
       if (field.fieldName === 'majorComplicationType' && this.completeInit) {
-        console.log('ha');
         this.copyInfo.minorComplicationType = '';
       }
       this.updateWarning(field);

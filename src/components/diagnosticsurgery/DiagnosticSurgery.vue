@@ -29,6 +29,10 @@
             <span class="name">患者手术意愿: </span>
             <span class="value">{{item.intensionDesc}}</span>
           </div>
+          <div class="text line-7">
+            <span class="name">评估时间: </span>
+            <span class="value">{{item.preopsTime}}</span>
+          </div>
         </card>
       </extensible-panel>
       <extensible-panel class="panel" :mode="mutableMode" :title="surgicalMethodTitle" v-on:addNewCard="addSurgicalRecord">
@@ -369,7 +373,7 @@ export default {
 <style lang="less">
 @import "~styles/variables.less";
 
-@pre-evaluation-card-height: 160px;
+@pre-evaluation-card-height: 185px;
 @post-complication-card-height: 120px;
 @dbs-card-height: 185px;
 
