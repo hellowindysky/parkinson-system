@@ -310,15 +310,12 @@
             <td class="col">
               <span class="iconfont icon-plus" @click="addMedicine"></span>
               晨用药物
-              <span class="required-mark">*</span>
             </td>
             <td class="col">
               规格
-            <span class="required-mark">*</span>
-          </td>
+            </td>
             <td class="col">
               使用量(片)
-              <span class="required-mark">*</span>
             </td>
             <td class="col">晨剂量(等效美多芭量)</td>
             <td class="col">冲击剂量</td>
@@ -837,11 +834,17 @@ export default {
           vueCopy(data, this.copyInfo);
           this.updateDiaryDayTime();
           this.updateDiaryHour();
-          this.completeInit = true;
+          if (this.copyInfo.preopsMotorDTO.patientPreopsMedicineList.length === 0) {
+            this.addMedicine();
+          }
+          this.$nextTick(() => {
+            this.completeInit = true;
+          });
         }, (error) => {
           console.log(error);
         });
-      } else {
+      } else if (this.mode === this.ADD_DATA) {
+        this.addMedicine();
         this.$nextTick(() => {
           this.completeInit = true;
         });
