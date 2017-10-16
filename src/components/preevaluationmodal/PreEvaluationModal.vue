@@ -842,7 +842,9 @@ export default {
           console.log(error);
         });
       } else {
-        this.completeInit = true;
+        this.$nextTick(() => {
+          this.completeInit = true;
+        });
       }
 
       this.displayModal = true;
@@ -877,6 +879,24 @@ export default {
       // 再检查，患者日记里面，是否每天的时间只和都是 24 小时，如果有一列不符合，都不允许通过
       if (!this.allTotalHourOk) {
         return;
+      }
+
+      // 然后检查各种必填字段
+      this.checkWarning(['preopsTime'], 'preopsTime');
+      this.checkWarning(['preopsTerminalDTO', 'terminalExist'], 'terminalExist');
+      this.checkWarning(['preopsTerminalDTO', 'terminalIsfirst'], 'terminalIsfirst');
+      this.checkWarning(['preopsTerminalDTO', 'terminalDuration'], 'terminalDuration');
+      this.checkWarning(['preopsDiaryDTO', 'patientPreopsDiaryList', 0, this.dayTimeNameList[0]], 'firstDayTime');
+      this.checkWarning(['preopsDyskinesiaDTO', 'patientPreopsScaleList', 0, 'bodyStatus'], 'dyskinesiaDTOScaleStatus');
+      this.checkWarning(['preopsDyskinesiaDTO', 'patientPreopsScaleList', 0, 'scaleScore'], 'dyskinesiaDTOScaleScore');
+      this.checkWarning(['preopsMotorDTO', 'preopsMotorScaleList', 0, 'scaleScoreBefore'], 'motorDTOScaleScoreBefore');
+      this.checkWarning(['preopsMotorDTO', 'preopsMotorScaleList', 0, 'scaleScoreAfter'], 'motorDTOScaleScoreAfter');
+      this.checkWarning(['preopsIntensionDTO', 'operationIntension'], 'operationIntension');
+      for (var property in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(property) && this.warningResults[property]) {
+          alert('请完成必填字段(带红色星号部分)');
+          return;   // 说明有警告信息没有处理完毕
+        }
       }
 
       pruneObj(this.copyInfo);  // 调用此函数将值为空的属性去除掉
@@ -1174,9 +1194,6 @@ export default {
         if (this.copyInfo.preopsTerminalDTO.terminalExist === 0 || this.copyInfo.preopsTerminalDTO.terminalExist === '') {
           // 如果“是否存在剂末现象”选择了“否”或者清空，则将“是否首次出现”字段值置为空
           this.copyInfo.preopsTerminalDTO.terminalIsfirst = '';
-          this.$nextTick(() => {
-            this.warningResults.terminalIsfirst = null;
-          });
         }
         this.checkWarning(['preopsTerminalDTO', 'terminalExist'], 'terminalExist');
         return;
@@ -1186,9 +1203,6 @@ export default {
           // 如果“是否首次出现（剂末现象）”选择了“是”或者清空，则将“首次出现时间”和“已出现剂末现象”两个字段值置为空
           this.copyInfo.preopsTerminalDTO.terminalFirstTime = '';
           this.copyInfo.preopsTerminalDTO.terminalDuration = '';
-          this.$nextTick(() => {
-            this.warningResults.terminalDuration = null;
-          });
         }
         this.checkWarning(['preopsTerminalDTO', 'terminalIsfirst'], 'terminalIsfirst');
         return;
@@ -1365,6 +1379,21 @@ export default {
       return Boolean(this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName]);
     },
     checkWarning(propList, warningFieldName) {
+      // 前面是特殊逻辑
+      if (warningFieldName === 'terminalIsfirst') {
+        if (this.copyInfo.preopsTerminalDTO.terminalExist === 0 || this.copyInfo.preopsTerminalDTO.terminalExist === '') {
+          this.warningResults[warningFieldName] = null;
+          return;
+        }
+      } else if (warningFieldName === 'terminalDuration') {
+        if (this.copyInfo.preopsTerminalDTO.terminalExist === 0 || this.copyInfo.preopsTerminalDTO.terminalExist === '' ||
+          this.copyInfo.preopsTerminalDTO.terminalIsfirst === 1 || this.copyInfo.preopsTerminalDTO.terminalIsfirst === '') {
+          this.warningResults[warningFieldName] = null;
+          return;
+        }
+      }
+
+      // 下面是通用逻辑
       if (this.completeInit) {
         var value = this.copyInfo;
         for (let prop of propList) {
