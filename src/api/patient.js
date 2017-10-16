@@ -13,6 +13,7 @@ function encapsulatePromise(url, request) {
         reject();
       } else {
         console.log('参数错误或服务器内部错误: ', response.data.msg);
+        console.log('错误代码: ', response.data.code);
         reject();
       }
 

@@ -37,11 +37,7 @@
         <div class="field">
           <span class="field-name">剂末现象评估量表</span>
           <span class="field-input">
-            <el-select v-model="copyInfo.preopsTerminalDTO.terminalScale">
-              <el-option v-for="option in getOptions('terminalScale')"
-                :label="option.name" :value="option.code" :key="option.code">
-              </el-option>
-            </el-select>
+            {{getRealName(copyInfo.preopsTerminalDTO.terminalScale, 'eodScale')}}
           </span>
         </div>
         <div class="field">
