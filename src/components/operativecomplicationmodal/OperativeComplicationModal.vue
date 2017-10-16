@@ -48,7 +48,8 @@ export default {
       mode: '',
       copyInfo: {},
       originalInfo: {},
-      warningResults: {}
+      warningResults: {},
+      completeInit: false
     };
   },
   computed: {
@@ -69,7 +70,6 @@ export default {
   methods: {
     showModal(changeWay, info) {
       this.mode = changeWay;
-
       this.originalInfo = info;
       this.initCopyInfo();
 
@@ -80,6 +80,7 @@ export default {
       this.displayModal = true;
     },
     initCopyInfo() {
+      this.completeInit = false;
       this.copyInfo = {};
       for (let field of this.operativeComplicationTemplate) {
         this.$set(this.copyInfo, field.fieldName, '');
@@ -89,6 +90,7 @@ export default {
       // 重设 copyInfo 之后记得把警告信息对象也一并清空了，记得放在 nextTick 里执行
       this.$nextTick(() => {
         this.clearWarning();
+        this.completeInit = true;   // 这个变量的设置是为了避免初始化数据时，关联变量被意外改变
       });
     },
     cancel() {
@@ -176,7 +178,8 @@ export default {
     },
     updateField(field) {
       // 这个函数目前就是为了在改变并发症大类的时候，清空并发症细类
-      if (field.fieldName === 'majorComplicationType') {
+      if (field.fieldName === 'majorComplicationType' && this.completeInit) {
+        console.log('ha');
         this.copyInfo.minorComplicationType = '';
       }
       this.updateWarning(field);
