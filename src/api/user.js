@@ -21,6 +21,8 @@ function encapsulatePromise(url, request) {
   return promise;
 }
 
+var baseUrl = 'http://apitest.gyenno.com';
+
 export function getDictionary() {
   var request = {
     "userId": 93242,
@@ -31,7 +33,7 @@ export function getDictionary() {
     "version": 43
   };
 
-  var url = 'http://apitest.gyenno.com/pdms/queryDictionary';
+  var url = baseUrl + '/pdms/queryDictionary';
 
   return encapsulatePromise(url, request);
 };
@@ -46,7 +48,7 @@ export function getTemplate() {
     "activeType": 1
   };
 
-  var url = 'http://apitest.gyenno.com/pdms/queryTemplate';
+  var url = baseUrl + '/pdms/queryTemplate';
 
   return encapsulatePromise(url, request);
 };
@@ -60,7 +62,7 @@ export function getGroupList() {
     "orgId": 34,
     "orgType": 2
   };
-  var url = 'http://apitest.gyenno.com/pdms/queryGroupList';
+  var url = baseUrl + '/pdms/queryGroupList';
 
   return encapsulatePromise(url, request);
 };
@@ -74,7 +76,7 @@ export function getUserList() {
     "orgType": 2
   };
 
-  var url = 'http://apitest.gyenno.com/usermgr/queryUserList';
+  var url = baseUrl + '/usermgr/queryUserList';
 
   return encapsulatePromise(url, request);
 };
@@ -100,7 +102,7 @@ export function getRoleList() {
     }
   };
 
-  var url = 'http://apitest.gyenno.com/pdms/queryRoleList';
+  var url = baseUrl + '/pdms/queryRoleList';
 
   return encapsulatePromise(url, request);
 };

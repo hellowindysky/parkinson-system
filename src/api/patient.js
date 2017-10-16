@@ -30,6 +30,8 @@ var commonRequest = {
   "orgType": 2
 };
 
+var baseUrl = 'http://apitest.gyenno.com';
+
 export function getPatientList(condition) {
   // condition 对象包含了查询参数，必须包含 type 属性
   var request = Object.assign({}, commonRequest);
@@ -38,7 +40,7 @@ export function getPatientList(condition) {
   if ((condition instanceof Object) && condition.type) {
     request.patientCond = condition;
   }
-  var url = 'http://apitest.gyenno.com/pdms/queryPatientList';
+  var url = baseUrl + '/pdms/queryPatientList';
   return encapsulatePromise(url, request);
 };
 
@@ -47,7 +49,7 @@ export function getPatientInfo(patientId) {
   var patientIdNum = parseInt(patientId, 10);
   var request = Object.assign({}, commonRequest);
   request.patientId = patientIdNum;
-  var url = 'http://apitest.gyenno.com/pdms/queryPatientPerson';
+  var url = baseUrl + '/pdms/queryPatientPerson';
 
   return encapsulatePromise(url, request);
 };
@@ -55,7 +57,7 @@ export function getPatientInfo(patientId) {
 export function modifyPatientInfo(patientInfo) {
   var request = Object.assign({}, commonRequest);
   request.patientInfo = patientInfo;
-  var url = 'http://apitest.gyenno.com/pdms/modPatientInfo';
+  var url = baseUrl + '/pdms/modPatientInfo';
 
   return encapsulatePromise(url, request);
 };
@@ -64,7 +66,7 @@ export function modifyPatientInfo(patientInfo) {
 export function addPatientInfo(patientInfo) {
   var request = Object.assign({}, commonRequest);
   request.patientInfo = patientInfo;
-  var url = 'http://apitest.gyenno.com/pdms/addPatientInfo';
+  var url = baseUrl + '/pdms/addPatientInfo';
 
   return encapsulatePromise(url, request);
 };
@@ -74,7 +76,7 @@ export function getPatientSimpleInfo(patientId) {
   var patientIdNum = parseInt(patientId, 10);
   var request = Object.assign({}, commonRequest);
   request.patientId = patientIdNum;
-  var url = 'http://apitest.gyenno.com/pdms/queryPatientInfo';
+  var url = baseUrl + '/pdms/queryPatientInfo';
 
   return encapsulatePromise(url, request);
 };
@@ -82,7 +84,7 @@ export function getPatientSimpleInfo(patientId) {
 export function modifyPatientDiseaseInfo(patientDiseaseInfo) {
   var request = Object.assign({}, commonRequest);
   request.patientDiseaseInfo = patientDiseaseInfo;
-  var url = 'http://apitest.gyenno.com/pdms/modPatientDiseaseInfo';
+  var url = baseUrl + '/pdms/modPatientDiseaseInfo';
 
   return encapsulatePromise(url, request);
 };
@@ -92,7 +94,7 @@ export function getPatientMedHistoryList(patientId) {
   var patientIdNum = parseInt(patientId, 10);
   var request = Object.assign({}, commonRequest);
   request.patientId = patientIdNum;
-  var url = 'http://apitest.gyenno.com/pdms/queryPatientMedHistoryList';
+  var url = baseUrl + '/pdms/queryPatientMedHistoryList';
 
   return encapsulatePromise(url, request);
 };
@@ -101,7 +103,7 @@ export function getPatientMedHistoryList(patientId) {
 export function addPatientMedHistory(medHistory) {
   var request = Object.assign({}, commonRequest);
   request.patientMedHistory = medHistory;
-  var url = 'http://apitest.gyenno.com/pdms/addPatientMedHistory';
+  var url = baseUrl + '/pdms/addPatientMedHistory';
 
   return encapsulatePromise(url, request);
 };
@@ -110,7 +112,7 @@ export function addPatientMedHistory(medHistory) {
 export function modifyPatientMedHistory(medHistory) {
   var request = Object.assign({}, commonRequest);
   request.patientMedHistory = medHistory;
-  var url = 'http://apitest.gyenno.com/pdms/modPatientMedHistory';
+  var url = baseUrl + '/pdms/modPatientMedHistory';
 
   return encapsulatePromise(url, request);
 };
@@ -119,7 +121,7 @@ export function modifyPatientMedHistory(medHistory) {
 export function deletePatientMedHistory(medHistory) {
   var request = Object.assign({}, commonRequest);
   request.patientMedHistory = medHistory;
-  var url = 'http://apitest.gyenno.com/pdms/delPatientMedHistory';
+  var url = baseUrl + '/pdms/delPatientMedHistory';
 
   return encapsulatePromise(url, request);
 }
@@ -128,7 +130,7 @@ export function deletePatientMedHistory(medHistory) {
 export function addPatientDisease(patientDisease) {
   var request = Object.assign({}, commonRequest);
   request.patientDisease = patientDisease;
-  var url = 'http://apitest.gyenno.com/pdms/addPatientDisease';
+  var url = baseUrl + '/pdms/addPatientDisease';
 
   return encapsulatePromise(url, request);
 };
@@ -137,7 +139,7 @@ export function addPatientDisease(patientDisease) {
 export function modifyPatientDisease(patientDisease) {
   var request = Object.assign({}, commonRequest);
   request.patientDisease = patientDisease;
-  var url = 'http://apitest.gyenno.com/pdms/modPatientDisease';
+  var url = baseUrl + '/pdms/modPatientDisease';
 
   return encapsulatePromise(url, request);
 };
@@ -146,7 +148,7 @@ export function modifyPatientDisease(patientDisease) {
 export function deletePatientDisease(patientDisease) {
   var request = Object.assign({}, commonRequest);
   request.patientDisease = patientDisease;
-  var url = 'http://apitest.gyenno.com/pdms/delPatientDisease';
+  var url = baseUrl + '/pdms/delPatientDisease';
 
   return encapsulatePromise(url, request);
 };
@@ -155,7 +157,7 @@ export function deletePatientDisease(patientDisease) {
 export function addPatientFamily(patientFamily) {
   var request = Object.assign({}, commonRequest);
   request.patientFamily = patientFamily;
-  var url = 'http://apitest.gyenno.com/pdms/addPatientFamily';
+  var url = baseUrl + '/pdms/addPatientFamily';
 
   return encapsulatePromise(url, request);
 };
@@ -164,7 +166,7 @@ export function addPatientFamily(patientFamily) {
 export function modifyPatientFamily(patientFamily) {
   var request = Object.assign({}, commonRequest);
   request.patientFamily = patientFamily;
-  var url = 'http://apitest.gyenno.com/pdms/modPatientFamily';
+  var url = baseUrl + '/pdms/modPatientFamily';
 
   return encapsulatePromise(url, request);
 };
@@ -173,7 +175,7 @@ export function modifyPatientFamily(patientFamily) {
 export function deletePatientFamily(patientFamily) {
   var request = Object.assign({}, commonRequest);
   request.patientFamily = patientFamily;
-  var url = 'http://apitest.gyenno.com/pdms/delPatientFamily';
+  var url = baseUrl + '/pdms/delPatientFamily';
 
   return encapsulatePromise(url, request);
 };
@@ -182,7 +184,7 @@ export function deletePatientFamily(patientFamily) {
 export function addPatientExercise(patientExercise) {
   var request = Object.assign({}, commonRequest);
   request.patientExercise = patientExercise;
-  var url = 'http://apitest.gyenno.com/pdms/addPatientExercise';
+  var url = baseUrl + '/pdms/addPatientExercise';
 
   return encapsulatePromise(url, request);
 };
@@ -191,7 +193,7 @@ export function addPatientExercise(patientExercise) {
 export function modifyPatientExercise(patientExercise) {
   var request = Object.assign({}, commonRequest);
   request.patientExercise = patientExercise;
-  var url = 'http://apitest.gyenno.com/pdms/modPatientExercise';
+  var url = baseUrl + '/pdms/modPatientExercise';
 
   return encapsulatePromise(url, request);
 };
@@ -200,7 +202,7 @@ export function modifyPatientExercise(patientExercise) {
 export function deletePatientExercise(patientExercise) {
   var request = Object.assign({}, commonRequest);
   request.patientExercise = patientExercise;
-  var url = 'http://apitest.gyenno.com/pdms/delPatientExercise';
+  var url = baseUrl + '/pdms/delPatientExercise';
 
   return encapsulatePromise(url, request);
 };
@@ -209,7 +211,7 @@ export function deletePatientExercise(patientExercise) {
 export function addPatientSmoke(patientSmoke) {
   var request = Object.assign({}, commonRequest);
   request.patientSmoke = patientSmoke;
-  var url = 'http://apitest.gyenno.com/pdms/addPatientSmoke';
+  var url = baseUrl + '/pdms/addPatientSmoke';
 
   return encapsulatePromise(url, request);
 };
@@ -218,7 +220,7 @@ export function addPatientSmoke(patientSmoke) {
 export function modifyPatientSmoke(patientSmoke) {
   var request = Object.assign({}, commonRequest);
   request.patientSmoke = patientSmoke;
-  var url = 'http://apitest.gyenno.com/pdms/modPatientSmoke';
+  var url = baseUrl + '/pdms/modPatientSmoke';
 
   return encapsulatePromise(url, request);
 };
@@ -227,7 +229,7 @@ export function modifyPatientSmoke(patientSmoke) {
 export function deletePatientSmoke(patientSmoke) {
   var request = Object.assign({}, commonRequest);
   request.patientSmoke = patientSmoke;
-  var url = 'http://apitest.gyenno.com/pdms/delPatientSmoke';
+  var url = baseUrl + '/pdms/delPatientSmoke';
 
   return encapsulatePromise(url, request);
 };
@@ -236,7 +238,7 @@ export function deletePatientSmoke(patientSmoke) {
 export function addPatientWine(patientWine) {
   var request = Object.assign({}, commonRequest);
   request.patientWine = patientWine;
-  var url = 'http://apitest.gyenno.com/pdms/addPatientWine';
+  var url = baseUrl + '/pdms/addPatientWine';
 
   return encapsulatePromise(url, request);
 };
@@ -245,7 +247,7 @@ export function addPatientWine(patientWine) {
 export function modifyPatientWine(patientWine) {
   var request = Object.assign({}, commonRequest);
   request.patientWine = patientWine;
-  var url = 'http://apitest.gyenno.com/pdms/modPatientWine';
+  var url = baseUrl + '/pdms/modPatientWine';
 
   return encapsulatePromise(url, request);
 };
@@ -254,7 +256,7 @@ export function modifyPatientWine(patientWine) {
 export function deletePatientWine(patientWine) {
   var request = Object.assign({}, commonRequest);
   request.patientWine = patientWine;
-  var url = 'http://apitest.gyenno.com/pdms/delPatientWine';
+  var url = baseUrl + '/pdms/delPatientWine';
 
   return encapsulatePromise(url, request);
 };
@@ -263,7 +265,7 @@ export function deletePatientWine(patientWine) {
 export function addPatientTea(patientTea) {
   var request = Object.assign({}, commonRequest);
   request.patientTea = patientTea;
-  var url = 'http://apitest.gyenno.com/pdms/addPatientTea';
+  var url = baseUrl + '/pdms/addPatientTea';
 
   return encapsulatePromise(url, request);
 };
@@ -272,7 +274,7 @@ export function addPatientTea(patientTea) {
 export function modifyPatientTea(patientTea) {
   var request = Object.assign({}, commonRequest);
   request.patientTea = patientTea;
-  var url = 'http://apitest.gyenno.com/pdms/modPatientTea';
+  var url = baseUrl + '/pdms/modPatientTea';
 
   return encapsulatePromise(url, request);
 };
@@ -281,7 +283,7 @@ export function modifyPatientTea(patientTea) {
 export function deletePatientTea(patientTea) {
   var request = Object.assign({}, commonRequest);
   request.patientTea = patientTea;
-  var url = 'http://apitest.gyenno.com/pdms/delPatientTea';
+  var url = baseUrl + '/pdms/delPatientTea';
 
   return encapsulatePromise(url, request);
 };
@@ -290,7 +292,7 @@ export function deletePatientTea(patientTea) {
 export function addPatientCoffee(patientCoffee) {
   var request = Object.assign({}, commonRequest);
   request.patientCoffee = patientCoffee;
-  var url = 'http://apitest.gyenno.com/pdms/addPatientCoffee';
+  var url = baseUrl + '/pdms/addPatientCoffee';
 
   return encapsulatePromise(url, request);
 };
@@ -299,7 +301,7 @@ export function addPatientCoffee(patientCoffee) {
 export function modifyPatientCoffee(patientCoffee) {
   var request = Object.assign({}, commonRequest);
   request.patientCoffee = patientCoffee;
-  var url = 'http://apitest.gyenno.com/pdms/modPatientCoffee';
+  var url = baseUrl + '/pdms/modPatientCoffee';
 
   return encapsulatePromise(url, request);
 };
@@ -308,7 +310,7 @@ export function modifyPatientCoffee(patientCoffee) {
 export function deletePatientCoffee(patientCoffee) {
   var request = Object.assign({}, commonRequest);
   request.patientCoffee = patientCoffee;
-  var url = 'http://apitest.gyenno.com/pdms/delPatientCoffee';
+  var url = baseUrl + '/pdms/delPatientCoffee';
 
   return encapsulatePromise(url, request);
 };
@@ -317,7 +319,7 @@ export function deletePatientCoffee(patientCoffee) {
 export function addPatientToxicExposure(toxicExposure) {
   var request = Object.assign({}, commonRequest);
   request.patientCideexposed = toxicExposure;
-  var url = 'http://apitest.gyenno.com/pdms/addPatientCideexposed';
+  var url = baseUrl + '/pdms/addPatientCideexposed';
 
   return encapsulatePromise(url, request);
 };
@@ -326,7 +328,7 @@ export function addPatientToxicExposure(toxicExposure) {
 export function modifyPatientToxicExposure(toxicExposure) {
   var request = Object.assign({}, commonRequest);
   request.patientCideexposed = toxicExposure;
-  var url = 'http://apitest.gyenno.com/pdms/modPatientCideexposed';
+  var url = baseUrl + '/pdms/modPatientCideexposed';
 
   return encapsulatePromise(url, request);
 };
@@ -335,7 +337,7 @@ export function modifyPatientToxicExposure(toxicExposure) {
 export function deletePatientToxicExposure(toxicExposure) {
   var request = Object.assign({}, commonRequest);
   request.patientCideexposed = toxicExposure;
-  var url = 'http://apitest.gyenno.com/pdms/delPatientCideexposed';
+  var url = baseUrl + '/pdms/delPatientCideexposed';
 
   return encapsulatePromise(url, request);
 };
@@ -344,7 +346,7 @@ export function deletePatientToxicExposure(toxicExposure) {
 export function addDiagnosticBasic(diagnosticBasic) {
   var request = Object.assign({}, commonRequest);
   request.patientCase = diagnosticBasic;
-  var url = 'http://apitest.gyenno.com/pdms/addPatientCase';
+  var url = baseUrl + '/pdms/addPatientCase';
 
   return encapsulatePromise(url, request);
 };
@@ -353,7 +355,7 @@ export function addDiagnosticBasic(diagnosticBasic) {
 export function modifyDiagnosticBasic(diagnosticBasic) {
   var request = Object.assign({}, commonRequest);
   request.patientCase = diagnosticBasic;
-  var url = 'http://apitest.gyenno.com/pdms/modPatientCase';
+  var url = baseUrl + '/pdms/modPatientCase';
 
   return encapsulatePromise(url, request);
 };
@@ -362,7 +364,7 @@ export function modifyDiagnosticBasic(diagnosticBasic) {
 export function deleteDiagnosticInfo(diagnosticInfo) {
   var request = Object.assign({}, commonRequest);
   request.patientCase = diagnosticInfo;
-  var url = 'http://apitest.gyenno.com/pdms/delPatientCase';
+  var url = baseUrl + '/pdms/delPatientCase';
   return encapsulatePromise(url, request);
 };
 
@@ -370,7 +372,7 @@ export function deleteDiagnosticInfo(diagnosticInfo) {
 export function modifyDiagnosticDisease(diagnosticDisease) {
   var request = Object.assign({}, commonRequest);
   request.patientDisease = diagnosticDisease;
-  var url = 'http://apitest.gyenno.com/pdms/modPatientSymptom';
+  var url = baseUrl + '/pdms/modPatientSymptom';
 
   return encapsulatePromise(url, request);
 };
@@ -383,7 +385,7 @@ export function getPatientCaseList(patientId) {
   request.patientId = patientIdNum;
   request.pageSize = 0;
   request.pageNo = 1;
-  var url = 'http://apitest.gyenno.com/pdms/queryPatientCaseList';
+  var url = baseUrl + '/pdms/queryPatientCaseList';
   return encapsulatePromise(url, request);
 };
 
@@ -393,7 +395,7 @@ export function getPatientCase(patientId, patientCaseId) {
   var request = Object.assign({}, commonRequest);
   request.patientId = patientIdNum;
   request.patientCaseId = patientCaseId;
-  var url = 'http://apitest.gyenno.com/pdms/queryPatientCase';
+  var url = baseUrl + '/pdms/queryPatientCase';
 
   return encapsulatePromise(url, request);
 };
@@ -402,7 +404,7 @@ export function getPatientCase(patientId, patientCaseId) {
 export function addPatientMedicine(patientMedicine) {
   var request = Object.assign({}, commonRequest);
   request.patientMedicine = patientMedicine;
-  var url = 'http://apitest.gyenno.com/pdms/addPatientMedicine';
+  var url = baseUrl + '/pdms/addPatientMedicine';
 
   return encapsulatePromise(url, request);
 };
@@ -411,7 +413,7 @@ export function addPatientMedicine(patientMedicine) {
 export function modifyPatientMedicine(patientMedicine) {
   var request = Object.assign({}, commonRequest);
   request.patientMedicine = patientMedicine;
-  var url = 'http://apitest.gyenno.com/pdms/modPatientMedicine';
+  var url = baseUrl + '/pdms/modPatientMedicine';
 
   return encapsulatePromise(url, request);
 };
@@ -420,7 +422,7 @@ export function modifyPatientMedicine(patientMedicine) {
 export function deletePatientMedicine(patientMedicine) {
   var request = Object.assign({}, commonRequest);
   request.patientMedicine = patientMedicine;
-  var url = 'http://apitest.gyenno.com/pdms/delPatientMedicine';
+  var url = baseUrl + '/pdms/delPatientMedicine';
 
   return encapsulatePromise(url, request);
 };
@@ -430,7 +432,7 @@ export function getPreEvaluation(preEvaluationId) {
   preEvaluationId = parseInt(preEvaluationId, 10);
   var request = Object.assign({}, commonRequest);
   request.preopsInfoId = preEvaluationId;
-  var url = 'http://apitest.gyenno.com/pdms/queryPatientPreopsDetail';
+  var url = baseUrl + '/pdms/queryPatientPreopsDetail';
 
   return encapsulatePromise(url, request);
 };
@@ -439,7 +441,7 @@ export function getPreEvaluation(preEvaluationId) {
 export function addPreEvaluation(preEvaluation) {
   var request = Object.assign({}, commonRequest);
   request.patientPreops = preEvaluation;
-  var url = 'http://apitest.gyenno.com/pdms/addPatientPreops';
+  var url = baseUrl + '/pdms/addPatientPreops';
 
   return encapsulatePromise(url, request);
 };
@@ -448,7 +450,7 @@ export function addPreEvaluation(preEvaluation) {
 export function modifyPreEvaluation(preEvaluation) {
   var request = Object.assign({}, commonRequest);
   request.patientPreops = preEvaluation;
-  var url = 'http://apitest.gyenno.com/pdms/modPatientPreops';
+  var url = baseUrl + '/pdms/modPatientPreops';
 
   return encapsulatePromise(url, request);
 };
@@ -457,7 +459,7 @@ export function modifyPreEvaluation(preEvaluation) {
 export function deletePreEvaluation(preEvaluation) {
   var request = Object.assign({}, commonRequest);
   request.patientPreops = preEvaluation;
-  var url = 'http://apitest.gyenno.com/pdms/delPatientPreops';
+  var url = baseUrl + '/pdms/delPatientPreops';
 
   return encapsulatePromise(url, request);
 };
@@ -466,7 +468,7 @@ export function deletePreEvaluation(preEvaluation) {
 export function addSurgicalMethod(surgicalMethod) {
   var request = Object.assign({}, commonRequest);
   request.patientTreatment = surgicalMethod;
-  var url = 'http://apitest.gyenno.com/pdms/addPatientTreatment';
+  var url = baseUrl + '/pdms/addPatientTreatment';
 
   return encapsulatePromise(url, request);
 };
@@ -475,7 +477,7 @@ export function addSurgicalMethod(surgicalMethod) {
 export function modifySurgicalMethod(surgicalMethod) {
   var request = Object.assign({}, commonRequest);
   request.patientTreatment = surgicalMethod;
-  var url = 'http://apitest.gyenno.com/pdms/modPatientTreatment';
+  var url = baseUrl + '/pdms/modPatientTreatment';
 
   return encapsulatePromise(url, request);
 };
@@ -484,7 +486,7 @@ export function modifySurgicalMethod(surgicalMethod) {
 export function deleteSurgicalMethod(surgicalMethod) {
   var request = Object.assign({}, commonRequest);
   request.patientTreatment = surgicalMethod;
-  var url = 'http://apitest.gyenno.com/pdms/delPatientTreatment';
+  var url = baseUrl + '/pdms/delPatientTreatment';
 
   return encapsulatePromise(url, request);
 };
@@ -493,7 +495,7 @@ export function deleteSurgicalMethod(surgicalMethod) {
 export function addOperativeCompliation(operativeComplication) {
   var request = Object.assign({}, commonRequest);
   request.patientComplication = operativeComplication;
-  var url = 'http://apitest.gyenno.com/pdms/addPatientComplication';
+  var url = baseUrl + '/pdms/addPatientComplication';
 
   return encapsulatePromise(url, request);
 };
@@ -502,7 +504,7 @@ export function addOperativeCompliation(operativeComplication) {
 export function modifyOperativeCompliation(operativeComplication) {
   var request = Object.assign({}, commonRequest);
   request.patientComplication = operativeComplication;
-  var url = 'http://apitest.gyenno.com/pdms/modPatientComplication';
+  var url = baseUrl + '/pdms/modPatientComplication';
 
   return encapsulatePromise(url, request);
 };
@@ -511,7 +513,7 @@ export function modifyOperativeCompliation(operativeComplication) {
 export function deleteOperativeCompliation(operativeComplication) {
   var request = Object.assign({}, commonRequest);
   request.patientComplication = operativeComplication;
-  var url = 'http://apitest.gyenno.com/pdms/delPatientComplication';
+  var url = baseUrl + '/pdms/delPatientComplication';
 
   return encapsulatePromise(url, request);
 };
@@ -521,7 +523,7 @@ export function getDbsFirstInfo(dbsFirstId) {
   dbsFirstId = parseInt(dbsFirstId, 10);
   var request = Object.assign({}, commonRequest);
   request.patientDbsFirstId = dbsFirstId;
-  var url = 'http://apitest.gyenno.com/pdms/queryPatientDbsFirstDetail';
+  var url = baseUrl + '/pdms/queryPatientDbsFirstDetail';
 
   return encapsulatePromise(url, request);
 };
@@ -530,7 +532,7 @@ export function getDbsFirstInfo(dbsFirstId) {
 export function addDbsFirstInfo(dbsFirstInfo) {
   var request = Object.assign({}, commonRequest);
   request.patientDbsFirst = dbsFirstInfo;
-  var url = 'http://apitest.gyenno.com/pdms/addPatientDbsFirst';
+  var url = baseUrl + '/pdms/addPatientDbsFirst';
 
   return encapsulatePromise(url, request);
 };
@@ -539,7 +541,7 @@ export function addDbsFirstInfo(dbsFirstInfo) {
 export function modifyDbsFirstInfo(dbsFirstInfo) {
   var request = Object.assign({}, commonRequest);
   request.patientDbsFirst = dbsFirstInfo;
-  var url = 'http://apitest.gyenno.com/pdms/modPatientDbsFirst';
+  var url = baseUrl + '/pdms/modPatientDbsFirst';
 
   return encapsulatePromise(url, request);
 };
@@ -548,7 +550,7 @@ export function modifyDbsFirstInfo(dbsFirstInfo) {
 export function deleteDbsFirstInfo(dbsFirstInfo) {
   var request = Object.assign({}, commonRequest);
   request.patientDbsFirst = dbsFirstInfo;
-  var url = 'http://apitest.gyenno.com/pdms/delPatientDbsFirst';
+  var url = baseUrl + '/pdms/delPatientDbsFirst';
 
   return encapsulatePromise(url, request);
 };
@@ -560,7 +562,7 @@ export function getDbsFollowInfo(patientId, dbsFollowId) {
   var request = Object.assign({}, commonRequest);
   request.patientId = patientId;
   request.patientDbsFollowId = dbsFollowId;
-  var url = 'http://apitest.gyenno.com/pdms/queryPatientDbsFollowDetail';
+  var url = baseUrl + '/pdms/queryPatientDbsFollowDetail';
 
   return encapsulatePromise(url, request);
 };
@@ -569,7 +571,7 @@ export function getDbsFollowInfo(patientId, dbsFollowId) {
 export function addDbsFollowInfo(dbsFollowInfo) {
   var request = Object.assign({}, commonRequest);
   request.patientDbsFollow = dbsFollowInfo;
-  var url = 'http://apitest.gyenno.com/pdms/addPatientDbsFollow';
+  var url = baseUrl + '/pdms/addPatientDbsFollow';
 
   return encapsulatePromise(url, request);
 };
@@ -578,7 +580,7 @@ export function addDbsFollowInfo(dbsFollowInfo) {
 export function modifyDbsFollowInfo(dbsFollowInfo) {
   var request = Object.assign({}, commonRequest);
   request.patientDbsFollow = dbsFollowInfo;
-  var url = 'http://apitest.gyenno.com/pdms/modPatientDbsFollow';
+  var url = baseUrl + '/pdms/modPatientDbsFollow';
 
   return encapsulatePromise(url, request);
 };
@@ -587,7 +589,7 @@ export function modifyDbsFollowInfo(dbsFollowInfo) {
 export function deleteDbsFollowInfo(dbsFollowInfo) {
   var request = Object.assign({}, commonRequest);
   request.patientDbsFollow = dbsFollowInfo;
-  var url = 'http://apitest.gyenno.com/pdms/delPatientDbsFollow';
+  var url = baseUrl + '/pdms/delPatientDbsFollow';
 
   return encapsulatePromise(url, request);
 };
@@ -597,7 +599,7 @@ export function getLastDbsInfo(patientId) {
   patientId = parseInt(patientId, 10);
   var request = Object.assign({}, commonRequest);
   request.patientId = patientId;
-  var url = 'http://apitest.gyenno.com/pdms/queryLastPatientDbsParms';
+  var url = baseUrl + '/pdms/queryLastPatientDbsParms';
 
   return encapsulatePromise(url, request);
 };
@@ -605,7 +607,7 @@ export function getLastDbsInfo(patientId) {
 // 查询医学量表
 export function getScaleInfo() {
   var request = Object.assign({}, commonRequest);
-  var url = 'http://apitest.gyenno.com/pdms/queryScaleInfo';
+  var url = baseUrl + '/pdms/queryScaleInfo';
 
   return encapsulatePromise(url, request);
 };
@@ -614,7 +616,7 @@ export function getScaleInfo() {
 export function addScaleInfo(patientScale) {
   var request = Object.assign({}, commonRequest);
   request.patientScale = patientScale;
-  var url = 'http://apitest.gyenno.com/pdms/addPatientScaleInfo';
+  var url = baseUrl + '/pdms/addPatientScaleInfo';
 
   return encapsulatePromise(url, request);
 };
@@ -623,7 +625,7 @@ export function addScaleInfo(patientScale) {
 export function modifyScaleInfo(patientScale) {
   var request = Object.assign({}, commonRequest);
   request.patientScale = patientScale;
-  var url = 'http://apitest.gyenno.com/pdms/modPatientScaleInfo';
+  var url = baseUrl + '/pdms/modPatientScaleInfo';
 
   return encapsulatePromise(url, request);
 };
@@ -631,7 +633,7 @@ export function modifyScaleInfo(patientScale) {
 export function delScaleInfo(patientScale) {
   var request = Object.assign({}, commonRequest);
   request.patientScale = patientScale;
-  var url = 'http://apitest.gyenno.com/pdms/delPatientScaleInfo';
+  var url = baseUrl + '/pdms/delPatientScaleInfo';
 
   return encapsulatePromise(url, request);
 };
@@ -640,7 +642,7 @@ export function delScaleInfo(patientScale) {
 export function modifyNervouSystem(patientSpephysical) {
   var request = Object.assign({}, commonRequest);
   request.patientSpephysical = patientSpephysical;
-  var url = 'http://apitest.gyenno.com/pdms/modPatientSpephysical';
+  var url = baseUrl + '/pdms/modPatientSpephysical';
 
   return encapsulatePromise(url, request);
 };
@@ -649,7 +651,7 @@ export function modifyNervouSystem(patientSpephysical) {
 export function addNervouSystem(patientSpephysical) {
   var request = Object.assign({}, commonRequest);
   request.patientSpephysical = patientSpephysical;
-  var url = 'http://apitest.gyenno.com/pdms/addPatientSpephysical';
+  var url = baseUrl + '/pdms/addPatientSpephysical';
 
   return encapsulatePromise(url, request);
 };
@@ -658,7 +660,7 @@ export function addNervouSystem(patientSpephysical) {
 export function delNervouSystem(patientSpephysical) {
   var request = Object.assign({}, commonRequest);
   request.patientSpephysical = patientSpephysical;
-  var url = 'http://apitest.gyenno.com/pdms/delPatientSpephysical';
+  var url = baseUrl + '/pdms/delPatientSpephysical';
 
   return encapsulatePromise(url, request);
 };
@@ -667,7 +669,7 @@ export function delNervouSystem(patientSpephysical) {
 export function addBiochemical(patientBioexam) {
   var request = Object.assign({}, commonRequest);
   request.patientBioexam = patientBioexam;
-  var url = 'http://apitest.gyenno.com/pdms/addBioexam';
+  var url = baseUrl + '/pdms/addBioexam';
 
   return encapsulatePromise(url, request);
 };
@@ -676,7 +678,7 @@ export function addBiochemical(patientBioexam) {
 export function modBiochemical(patientBioexam) {
   var request = Object.assign({}, commonRequest);
   request.patientBioexam = patientBioexam;
-  var url = 'http://apitest.gyenno.com/pdms/modBioexam';
+  var url = baseUrl + '/pdms/modBioexam';
 
   return encapsulatePromise(url, request);
 };
@@ -685,7 +687,7 @@ export function modBiochemical(patientBioexam) {
 export function delBiochemical(patientBioexam) {
   var request = Object.assign({}, commonRequest);
   request.patientBioexam = patientBioexam;
-  var url = 'http://apitest.gyenno.com/pdms/delBioexam';
+  var url = baseUrl + '/pdms/delBioexam';
 
   return encapsulatePromise(url, request);
 };
@@ -694,7 +696,7 @@ export function delBiochemical(patientBioexam) {
 export function addEmg(patientElecTroGram) {
   var request = Object.assign({}, commonRequest);
   request.patientElecTroGram = patientElecTroGram;
-  var url = 'http://apitest.gyenno.com/pdms/addPatElecTroGram';
+  var url = baseUrl + '/pdms/addPatElecTroGram';
 
   return encapsulatePromise(url, request);
 };
@@ -703,7 +705,7 @@ export function addEmg(patientElecTroGram) {
 export function modEmg(patientElecTroGram) {
   var request = Object.assign({}, commonRequest);
   request.patientElecTroGram = patientElecTroGram;
-  var url = 'http://apitest.gyenno.com/pdms/modPatElecTroGram';
+  var url = baseUrl + '/pdms/modPatElecTroGram';
 
   return encapsulatePromise(url, request);
 };
@@ -712,7 +714,7 @@ export function modEmg(patientElecTroGram) {
 export function delEmg(patientElecTroGram) {
   var request = Object.assign({}, commonRequest);
   request.patientElecTroGram = patientElecTroGram;
-  var url = 'http://apitest.gyenno.com/pdms/delPatElecTroGram';
+  var url = baseUrl + '/pdms/delPatElecTroGram';
 
   return encapsulatePromise(url, request);
 };
@@ -721,7 +723,7 @@ export function delEmg(patientElecTroGram) {
 export function modVitalSigns(patientCase) {
   var request = Object.assign({}, commonRequest);
   request.patientCase = patientCase;
-  var url = 'http://apitest.gyenno.com/pdms/modPatientCase';
+  var url = baseUrl + '/pdms/modPatientCase';
 
   return encapsulatePromise(url, request);
 };
