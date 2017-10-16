@@ -50,7 +50,7 @@
          v-on:deleteCurrentCard="deletePostComplicationRecord(item)">
           <div class="text first-line">
             <span class="name">处理: </span>
-            <span class="value">{{item.process}}</span>
+            <span class="value">{{transformTypeGroupId(item.treatment, 'treatment')}}</span>
           </div>
           <div class="text second-line">
             <span class="name">备注: </span>
@@ -167,7 +167,8 @@ export default {
   computed: {
     ...mapGetters([
       'surgicalTypeList',
-      'complicationTypeList'
+      'complicationTypeList',
+      'typeGroup'
     ]),
     preEvaluationTitle() {
       return '术前评估（' + this.preEvaluationList.length + '条记录）';
@@ -220,6 +221,12 @@ export default {
       var complicationData = Util.getElement('id', typeId, this.complicationTypeList);
       var complicationName = complicationData.minorComplicationName ? complicationData.minorComplicationName : '';
       return complicationName;
+    },
+    transformTypeGroupId(typeId, fieldName) {
+      var types = Util.getElement('typegroupcode', fieldName, this.typeGroup).types;
+      types = types === undefined ? [] : types;
+      var typeName = Util.getElement('typeCode', typeId, types).typeName;
+      return typeName === undefined ? '' : typeName;
     },
     addPreEvaluationRecord() {
       // 这里要传递 2 个参数，一个是模式（新增／修改），一个是当前数据对象（新建的时候为空）
