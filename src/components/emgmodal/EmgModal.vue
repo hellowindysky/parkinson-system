@@ -764,6 +764,11 @@ export default {
           wheelSpeed: 1,
           minScrollbarLength: 40
         });
+        Ps.destroy(this.$refs.medicineModal);
+        Ps.initialize(this.$refs.medicineModal, {
+          wheelSpeed: 1,
+          minScrollbarLength: 40
+        });
       });
     }
   },
@@ -824,10 +829,10 @@ export default {
   .medicine-modal {
     position: relative;
     margin: auto;
-    padding: 0 20px;
+    padding: 0 26px;
     top: 3%;
     width: 80%;
-    max-width: 1100px;
+    max-width: 1090px;
     max-height: 94%;
     background-color: @background-color;
     overflow: hidden;
@@ -930,7 +935,7 @@ export default {
         position: relative;
         max-height: 300px;
         height: auto;
-        width: 100%;
+        width: 99%;
         padding-right: 10px;
         overflow: hidden;
         border: 1px solid @inverse-font-color;

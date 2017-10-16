@@ -161,6 +161,8 @@ export default {
       let bioexamId = this.bioexamTypeData['bioexamId']; // 获取到检查类型的ID
       for (let i = 0; i < this.dictionData.length; i++) {
         if (this.dictionData[i]['id'] === bioexamId) {
+          this.templateData = [];
+          console.log('templateData', this.templateData);
           vueCopy(this.dictionData[i].projects, this.templateData);
           // console.log('template', this.templateData);
         }

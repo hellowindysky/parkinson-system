@@ -56,7 +56,7 @@
       </div>        
       <folding-panel v-if="mode===ADD_PAGE || scaleMode===SCALE_EDITING_MODE" :title="'关联症状'"  class="associated-symptom">
         <div class="symptom-item" v-for="(list, listkey) in patientScale['scaleSympInfoList']" :key="listkey">
-            <el-checkbox class="symptom-item-title" v-model="list.status">{{list.typeName}}</el-checkbox>
+            <el-checkbox class="symptom-item-title" v-model="list.status">{{list.sympName}}</el-checkbox>
             <div class="symptom-item-start">
               <span>出现时间:</span>
               <el-date-picker  type="datetime" format="yyyy-MM-dd" v-model="list['ariseTime']"  placeholder="请输入出现关联症状的时间">
@@ -137,12 +137,15 @@ export default {
           options: '关'
         }
       ],
-      scaleSympInfoName: []
+      scaleSympInfoName: [],
+      switchNum: 0
     };
   },
   methods: {
     firstSelected() {
-      this.isSelected = true;
+      if (this.switchNum % 2 === 0) {
+        this.isSelected = true;
+      }
       for (let key in this.scaleData) {
         let sonData = this.scaleData[key];
         for (let sonkey in sonData) {
@@ -154,7 +157,7 @@ export default {
           }
         }
       }
-      // console.log(this.mode);
+      this.switchNum ++;
     },
     formatReadingScale(switchType) {
       if (switchType === 1) {
@@ -186,7 +189,6 @@ export default {
         this.scaleAnswer = item.scaleOptionIds;
         // 获取页面的类型（到底是添加页面还是修改页面）
         this.mode = this.MODIFY_PAGE;
-
         // 在修改页面的状态下将原来的数据对象给服务器的对象
         vueCopy(item, this.patientScale);
         // 还原关联信息这个对象
@@ -228,6 +230,8 @@ export default {
       this.isSubjectDisabled = true;
       this.scaleAddSonDate = {};
       this.displayUpdateScale = false;
+      this.isSelected = false;
+      // this.switchNum = 0;
       console.log('hasgo');
     },
     editScale() {
@@ -468,7 +472,7 @@ export default {
       handler: function(newVal) {
         if (newVal && this.displayUpdateScale) {
           this.linkAgeScaleType(newVal['scaleInfoId']);
-          console.log(newVal);
+          console.log('patientScale', newVal);
         }
       },
       deep: true
