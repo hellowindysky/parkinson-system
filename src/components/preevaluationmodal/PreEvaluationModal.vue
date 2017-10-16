@@ -10,9 +10,13 @@
           </span>
         </div>
         <div class="field">
-          <span class="field-name">评估时间</span>
+          <span class="field-name">
+            评估时间
+            <span class="required-mark">*</span>
+          </span>
           <span class="field-input">
-            <el-date-picker v-model="copyInfo.preopsTime" :editable="false"></el-date-picker>
+            <el-date-picker v-model="copyInfo.preopsTime" :editable="false" @change="checkWarning(['preopsTime'], 'preopsTime')"
+              :class="{'warning': warningResults['preopsTime']}"></el-date-picker>
           </span>
         </div>
         <div class="field whole-line">
@@ -28,31 +32,39 @@
       <div class="sub-title-bar">剂末现象评估</div>
       <div class="content">
         <div class="field">
-          <span class="field-name">剂末现象评估时间</span>
-          <span class="field-input">
+          <span class="field-name long-field-name">剂末现象评估时间</span>
+          <span class="field-input long-field-name">
             <el-date-picker v-model="copyInfo.preopsTerminalDTO.terminalTime" :default-value="copyInfo.preopsTime"
               :editable="false"></el-date-picker>
           </span>
         </div>
         <div class="field">
-          <span class="field-name">剂末现象评估量表</span>
-          <span class="field-input">
+          <span class="field-name long-field-name">剂末现象评估量表</span>
+          <span class="field-input long-field-name">
             {{getRealName(copyInfo.preopsTerminalDTO.terminalScale, 'eodScale')}}
           </span>
         </div>
         <div class="field">
-          <span class="field-name">是否存在剂末现象</span>
-          <span class="field-input">
-            <el-select v-model="copyInfo.preopsTerminalDTO.terminalExist" @change="updateField('terminalExist')">
+          <span class="field-name long-field-name">
+            是否存在剂末现象
+            <span class="required-mark">*</span>
+          </span>
+          <span class="field-input long-field-name">
+            <el-select v-model="copyInfo.preopsTerminalDTO.terminalExist" @change="updateField('terminalExist')"
+              :class="{'warning': warningResults['terminalExist']}">
               <el-option label="是" :value="1"></el-option>
               <el-option label="否" :value="0"></el-option>
             </el-select>
           </span>
         </div>
         <div class="field" v-show="copyInfo.preopsTerminalDTO.terminalExist===1">
-          <span class="field-name">是否首次出现</span>
-          <span class="field-input">
-            <el-select v-model="copyInfo.preopsTerminalDTO.terminalIsfirst" @change="updateField('terminalIsfirst')">
+          <span class="field-name long-field-name">
+            是否首次出现
+            <span class="required-mark">*</span>
+          </span>
+          <span class="field-input long-field-name">
+            <el-select v-model="copyInfo.preopsTerminalDTO.terminalIsfirst" @change="updateField('terminalIsfirst')"
+              :class="{'warning': warningResults['terminalIsfirst']}">
               <el-option label="是" :value="1"></el-option>
               <el-option label="否" :value="0"></el-option>
             </el-select>
@@ -66,9 +78,14 @@
           </span>
         </div>
         <div class="field" v-show="copyInfo.preopsTerminalDTO.terminalIsfirst===0">
-          <span class="field-name">已出现剂末现象</span>
-          <span class="field-input short-input">
-            <el-input v-model="copyInfo.preopsTerminalDTO.terminalDuration"></el-input>
+          <span class="field-name long-field-name">
+            已出现剂末现象
+            <span class="required-mark">*</span>
+          </span>
+          <span class="field-input short-input long-field-name">
+            <el-input v-model="copyInfo.preopsTerminalDTO.terminalDuration"
+              @change="checkWarning(['preopsTerminalDTO', 'terminalDuration'], 'terminalDuration')"
+              :class="{'warning': warningResults['terminalDuration']}"></el-input>
           </span>
           <span class="end-words">年 {{terminalDurationNote}}</span>
         </div>
@@ -87,7 +104,10 @@
         <table class="table">
           <tr class="row title-row">
             <td class="col" rowspan="2">状态</td>
-            <td class="col">第一天</td>
+            <td class="col">
+              第一天
+              <span class="required-mark">*</span>
+            </td>
             <td class="col">第二天</td>
             <td class="col">第三天</td>
             <td class="col">第四天</td>
@@ -99,7 +119,8 @@
           <tr class="row">
             <td class="col" v-for="(dayTimeName, listIndex) in dayTimeNameList">
               <el-date-picker v-model="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName]"
-                @change="updateDiaryDayTime()" :editable="false" :disabled="!isTimeEditable(listIndex)"></el-date-picker>
+                @change="updateDiaryDayTime()" :editable="false" :disabled="!isTimeEditable(listIndex)"
+                :class="{'warning': listIndex === 0 && warningResults['firstDayTime']}"></el-date-picker>
             </td>
           </tr>
           <tr class="row" v-for="(rowName, index) in diaryRowNameList">
@@ -182,22 +203,31 @@
         <table class="table">
           <tr class="row title-row">
             <td class="col wide-col">量表</td>
-            <td class="col">状态</td>
-            <td class="col">分数</td>
+            <td class="col">
+              状态
+              <span class="required-mark">*</span>
+            </td>
+            <td class="col">
+              分数
+              <span class="required-mark">*</span>
+            </td>
             <td class="col">量表完成日期</td>
           </tr>
-          <tr class="row" v-for="scale in copyInfo.preopsDyskinesiaDTO.patientPreopsScaleList">
+          <tr class="row" v-for="(scale, index) in copyInfo.preopsDyskinesiaDTO.patientPreopsScaleList">
             <td class="col wide-col">
               {{getRealName(scale.scaleInfo, 'unifyScale')}}
             </td>
             <td class="col">
-              <el-select v-model="scale.bodyStatus">
+              <el-select v-model="scale.bodyStatus"
+                @change="checkWarning(['preopsDyskinesiaDTO', 'patientPreopsScaleList', index, 'bodyStatus'], 'dyskinesiaDTOScaleStatus')"
+                :class="{'warning': warningResults['dyskinesiaDTOScaleStatus']}">
                 <el-option label="开期" :value="1"></el-option>
                 <el-option label="关期" :value="0"></el-option>
               </el-select>
             </td>
             <td class="col">
-              <el-input v-model="scale.scaleScore" @blur="transformToNum(scale, 'scaleScore')"></el-input>
+              <el-input v-model="scale.scaleScore" @blur="transformToNum(scale, 'scaleScore', index, 'dyskinesiaDTOScaleScore')"
+                :class="{'warning': warningResults['dyskinesiaDTOScaleScore']}"></el-input>
             </td>
             <td class="col">
               <el-date-picker v-model="scale.ariseTime" :editable="false" :default-value="copyInfo.preopsTime"></el-date-picker>
@@ -264,8 +294,8 @@
           </span>
         </div>
         <div class="field">
-          <span class="field-name">等效美多芭量(片)</span>
-          <span class="field-input">
+          <span class="field-name long-field-name">等效美多芭量(片)</span>
+          <span class="field-input long-field-name">
             {{ getEqualMadoparCount() }}
           </span>
         </div>
@@ -280,9 +310,16 @@
             <td class="col">
               <span class="iconfont icon-plus" @click="addMedicine"></span>
               晨用药物
+              <span class="required-mark">*</span>
             </td>
-            <td class="col">规格</td>
-            <td class="col">使用量(片)</td>
+            <td class="col">
+              规格
+            <span class="required-mark">*</span>
+          </td>
+            <td class="col">
+              使用量(片)
+              <span class="required-mark">*</span>
+            </td>
             <td class="col">晨剂量(等效美多芭量)</td>
             <td class="col">冲击剂量</td>
             <td class="col">等效左旋多巴冲击剂量</td>
@@ -319,19 +356,27 @@
         <table class="table">
           <tr class="row title-row">
             <td class="col wide-col">量表</td>
-            <td class="col">服药前得分</td>
-            <td class="col">服药后最低分</td>
+            <td class="col">
+              服药前得分
+              <span class="required-mark">*</span>
+            </td>
+            <td class="col">
+              服药后最低分
+              <span class="required-mark">*</span>
+            </td>
             <td class="col">改善率%</td>
           </tr>
-          <tr class="row" v-for="scale in copyInfo.preopsMotorDTO.preopsMotorScaleList">
+          <tr class="row" v-for="(scale, index) in copyInfo.preopsMotorDTO.preopsMotorScaleList">
             <td class="col wide-col">
               {{getRealName(scale.scaleInfo, 'mScale')}}
             </td>
             <td class="col">
-              <el-input v-model="scale.scaleScoreBefore" @blur="transformToNum(scale, 'scaleScoreBefore')"></el-input>
+              <el-input v-model="scale.scaleScoreBefore" @blur="transformToNum(scale, 'scaleScoreBefore', index, 'motorDTOScaleScoreBefore')"
+                :class="{'warning': warningResults['motorDTOScaleScoreBefore']}"></el-input>
             </td>
             <td class="col">
-              <el-input v-model="scale.scaleScoreAfter" @blur="transformToNum(scale, 'scaleScoreAfter')"></el-input>
+              <el-input v-model="scale.scaleScoreAfter" @blur="transformToNum(scale, 'scaleScoreAfter', index, 'motorDTOScaleScoreAfter')"
+                :class="{'warning': warningResults['motorDTOScaleScoreAfter']}"></el-input>
             </td>
             <td class="col computed-cell">
               {{ scale.medImproveRatio }}
@@ -357,9 +402,14 @@
           </span>
         </div>
         <div class="field">
-          <span class="field-name">手术意愿</span>
+          <span class="field-name">
+            手术意愿
+            <span class="required-mark">*</span>
+          </span>
           <span class="field-input">
-            <el-select v-model="copyInfo.preopsIntensionDTO.operationIntension">
+            <el-select v-model="copyInfo.preopsIntensionDTO.operationIntension"
+              @change="checkWarning(['preopsIntensionDTO', 'operationIntension'], 'operationIntension')"
+              :class="{'warning': warningResults['operationIntension']}">
               <el-option label="同意" :value="1"></el-option>
               <el-option label="不同意" :value="0"></el-option>
             </el-select>
@@ -717,8 +767,21 @@ export default {
       diaryRowNameList: ['睡眠', '关期', '重异动开', '轻异动开', '无异动开'],
       dayTimeNameList: ['oneDayTime', 'twoDayTime', 'threeDayTime', 'fourDayTime', 'fiveDayTime', 'sixDayTime'],
       hourNameList: ['oneDayDiaryHour', 'twoDayDiaryHour', 'threeDayDiaryHour', 'fourDayDiaryHour', 'fiveDayDiaryHour', 'sixDayDiaryHour'],
+      completeInit: false,
       copyInfo: {},
-      allTotalHourOk: true
+      allTotalHourOk: true,
+      warningResults: {
+        'preopsTime': null,
+        'terminalExist': null,
+        'terminalIsfirst': null,
+        'terminalDuration': null,
+        'firstDayTime': null,
+        'dyskinesiaDTOScaleStatus': null,
+        'dyskinesiaDTOScaleScore': null,
+        'motorDTOScaleScoreBefore': null,
+        'motorDTOScaleScoreAfter': null,
+        'operationIntension': null
+      }
     };
   },
   computed: {
@@ -751,6 +814,7 @@ export default {
     showModal(changeWay, info) {
       this.mode = changeWay;
 
+      this.completeInit = false;
       this.initCopyInfo();
       this.updateDiaryDayTime();
       this.updateDiaryHour();
@@ -773,9 +837,12 @@ export default {
           vueCopy(data, this.copyInfo);
           this.updateDiaryDayTime();
           this.updateDiaryHour();
+          this.completeInit = true;
         }, (error) => {
           console.log(error);
         });
+      } else {
+        this.completeInit = true;
       }
 
       this.displayModal = true;
@@ -1067,7 +1134,7 @@ export default {
       }
       return totalLevodopaLoadingDose !== 0 ? totalLevodopaLoadingDose : '';
     },
-    transformToNum(obj, property) {
+    transformToNum(obj, property, index, fieldName) {
       // 如果填写的不是一个数字，则转换成一个空字符串，如果是一个数字，则将这个数字字符串转化为真正的数字
       var value = obj[property];
       var reg = new RegExp(/^[0-9]+\.{0,1}[0-9]{0,2}$/);
@@ -1079,6 +1146,14 @@ export default {
       // 在这里加一些逻辑，如果是运动症状量表的得分（服药前得分 or 服药后最低分）改变了，则重新计算改善率
       if (property === 'scaleScoreBefore' || property === 'scaleScoreAfter') {
         this.updateMotorScaleMedImproveRatio();
+      }
+
+      if (fieldName === 'dyskinesiaDTOScaleScore') {
+        this.checkWarning(['preopsDyskinesiaDTO', 'patientPreopsScaleList', index, 'scaleScore'], 'dyskinesiaDTOScaleScore');
+      } else if (fieldName === 'motorDTOScaleScoreBefore') {
+        this.checkWarning(['preopsMotorDTO', 'preopsMotorScaleList', index, 'scaleScoreBefore'], 'motorDTOScaleScoreBefore');
+      } else if (fieldName === 'motorDTOScaleScoreAfter') {
+        this.checkWarning(['preopsMotorDTO', 'preopsMotorScaleList', index, 'scaleScoreAfter'], 'motorDTOScaleScoreAfter');
       }
     },
     updateMotorScaleMedImproveRatio() {
@@ -1096,18 +1171,26 @@ export default {
     },
     updateField(fieldName) {
       if (fieldName === 'terminalExist') {
-        if (this.copyInfo.preopsTerminalDTO.terminalExist === 0) {
-          // 如果“是否存在剂末现象”选择了“否”，则将“是否首次出现”字段值置为空
+        if (this.copyInfo.preopsTerminalDTO.terminalExist === 0 || this.copyInfo.preopsTerminalDTO.terminalExist === '') {
+          // 如果“是否存在剂末现象”选择了“否”或者清空，则将“是否首次出现”字段值置为空
           this.copyInfo.preopsTerminalDTO.terminalIsfirst = '';
+          this.$nextTick(() => {
+            this.warningResults.terminalIsfirst = null;
+          });
         }
+        this.checkWarning(['preopsTerminalDTO', 'terminalExist'], 'terminalExist');
         return;
 
       } else if (fieldName === 'terminalIsfirst') {
-        if (this.copyInfo.preopsTerminalDTO.terminalIsFirst === 1) {
-          // 如果“是否首次出现（剂末现象）”选择了“是”，则将“首次出现时间”和“已出现剂末现象”两个字段值置为空
+        if (this.copyInfo.preopsTerminalDTO.terminalIsfirst === 1 || this.copyInfo.preopsTerminalDTO.terminalIsfirst === '') {
+          // 如果“是否首次出现（剂末现象）”选择了“是”或者清空，则将“首次出现时间”和“已出现剂末现象”两个字段值置为空
           this.copyInfo.preopsTerminalDTO.terminalFirstTime = '';
           this.copyInfo.preopsTerminalDTO.terminalDuration = '';
+          this.$nextTick(() => {
+            this.warningResults.terminalDuration = null;
+          });
         }
+        this.checkWarning(['preopsTerminalDTO', 'terminalIsfirst'], 'terminalIsfirst');
         return;
 
       } else if (fieldName === 'terminalFirstTime') {
@@ -1165,6 +1248,11 @@ export default {
 
         }
       });
+
+      // 检查第一列的日期是否已经填写（必填项）
+      var firstDayTimeName = this.dayTimeNameList[0];
+      this.checkWarning(['preopsDiaryDTO', 'patientPreopsDiaryList', 0, firstDayTimeName], 'firstDayTime');
+
       // 更新了日期行后，自动更新后面几排的小时数
       this.updateDiaryHour();
       return;
@@ -1275,6 +1363,21 @@ export default {
     hasDayTime(listIndex) {
       var dayTimeName = this.dayTimeNameList[listIndex];
       return Boolean(this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName]);
+    },
+    checkWarning(propList, warningFieldName) {
+      if (this.completeInit) {
+        var value = this.copyInfo;
+        for (let prop of propList) {
+          if (typeof value === 'object') {
+            value = value[prop];
+          }
+        }
+        if (value === '' || value === undefined) {
+          this.warningResults[warningFieldName] = '必填项';
+          return;
+        }
+      }
+      this.warningResults[warningFieldName] = null;
     }
   },
   created() {
@@ -1294,8 +1397,8 @@ export default {
 @import '~styles/variables.less';
 
 @field-height: 40px;
-@field-name-width: 120px;
-@long-field-name-width: 160px;
+@field-name-width: 100px;
+@long-field-name-width: 140px;
 @end-words-width: 180px;
 
 @computed-cell-color: lighten(@font-color, 55%);
@@ -1337,8 +1440,7 @@ export default {
         width: 50%;
         height: @field-height;
         text-align: left;
-        transform: translateX(10px);
-        // 这一行是为了修补视觉上的偏移
+        transform: translateX(10px);  // 这一行是为了修补视觉上的偏移
         &.whole-line {
           width: 100%;
           .field-input {
@@ -1442,6 +1544,14 @@ export default {
             position: relative;
             width: 10%;
             border: 1px solid @light-gray-color;
+            .required-mark {
+              position: absolute;
+              right: 5px;
+              top: 8px;
+              color: red;
+              font-size: 25px;
+              vertical-align: middle;
+            }
             &.title-col {
               background-color: @font-color;
               color: #fff;
