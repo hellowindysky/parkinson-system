@@ -151,6 +151,14 @@ export default {
         this.copyInfo.patientId = this.$route.params.id;
         modifyPatientInfo(this.copyInfo).then(() => {
           Bus.$emit(this.UPDATE_PATIENT_INFO);
+
+          // 即使是编辑已有记录，也要更新患者列表（因为列表中存在年龄，性别等信息）
+          if (this.listType === 'myPatients') {
+            Bus.$emit(this.UPDATE_MY_PATIENTS_LIST);
+          } else if (this.listType === 'otherPatients') {
+            Bus.$emit(this.UPDATE_OTHER_PATIENTS_LIST);
+          }
+
           this.mode = this.READING_MODE;
         }, (error) => {
           console.log(error);
