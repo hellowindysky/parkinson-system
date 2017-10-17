@@ -103,6 +103,16 @@ export default {
       this.clearWarning();
     },
     cancel() {
+      // 如果是新增患者界面，点击取消按钮，则回到患者列表的第一个患者
+      if (this.$route.params.id === 'newPatient') {
+        if (this.listType === 'myPatients') {
+          this.$router.push({name: 'myPatients'});
+        } else if (this.listType === 'otherPatients') {
+          this.$router.push({name: 'otherPatients'});
+        }
+        return;
+      }
+
       // 点击取消按钮，将我们对 copyInfo 所做的临时修改全部放弃，还原其为 basicInfo 的复制对象
       this.shallowCopy(this.basicInfo);
       this.mode = this.READING_MODE;

@@ -62,7 +62,7 @@ import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 
-const HALF_LINE_FIELD_LIST = ['diseaseType', 'ariTime', 'firTime', 'surTime'];
+const HALF_LINE_FIELD_LIST = ['diseaseType', 'ariTime', 'firTime', 'surTime', 'firMedinfo', 'firMedtime'];
 
 export default {
   props: {
