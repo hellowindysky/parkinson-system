@@ -880,6 +880,7 @@ export default {
 
       // 再检查，患者日记里面，是否每天的时间只和都是 24 小时，如果有一列不符合，都不允许通过
       if (!this.allTotalHourOk) {
+        this.alertForTotalHour();
         return;
       }
 
@@ -945,6 +946,13 @@ export default {
     alertForNotComplete() {
       this.$message({
         message: '请完成必填字段(带红色星号部分)',
+        type: 'warning',
+        duration: 2000
+      });
+    },
+    alertForTotalHour() {
+      this.$message({
+        message: '患者日记的每日时间总和必须为24小时',
         type: 'warning',
         duration: 2000
       });
