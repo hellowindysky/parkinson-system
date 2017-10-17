@@ -87,7 +87,7 @@
             <span class="name">术后不良事件: </span>
             <span class="value">{{item.adverseEvents}}</span>
           </div>
-          <div class="text line-6">
+          <div class="text line-6 single-line-ellipsis">
             <span class="name">备注: </span>
             <span class="value">{{item.remarks}}</span>
           </div>
@@ -119,7 +119,7 @@
             <span class="name">效果及副作用: </span>
             <span class="value">{{item.effectInfo}}</span>
           </div>
-          <div class="text line-6">
+          <div class="text line-6 single-line-ellipsis">
             <span class="name">备注: </span>
             <span class="value">{{item.remarks}}</span>
           </div>
