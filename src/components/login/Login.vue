@@ -103,11 +103,17 @@ export default {
             sessionStorage.setItem('commonRequest', JSON.stringify(commonRequest));
             this.$router.push('/');
           }, (error) => {
-            console.log(error);
+            if (error.code === 21) {
+              this.$message({
+                message: '用户名或密码错误',
+                type: 'warning',
+                duration: 2000
+              });
+            }
           });
         } else {
-          console.log('error submit!!');
-          return false;
+          console.log('input invalid');
+          return;
         }
       });
     }

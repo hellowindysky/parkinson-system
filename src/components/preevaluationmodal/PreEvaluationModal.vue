@@ -912,19 +912,30 @@ export default {
         addPreEvaluation(this.copyInfo).then(() => {
           this.updateAndClose();
         }, (error) => {
-          console.log(error);
+          if (error.code === 28) {
+            this.alertForDuplicatedDbsCode();
+          }
         });
       } else if (this.mode === this.EDIT_DATA) {
         modifyPreEvaluation(this.copyInfo).then(() => {
           this.updateAndClose();
         }, (error) => {
-          console.log(error);
+          if (error.code === 28) {
+            this.alertForDuplicatedDbsCode();
+          }
         });
       }
     },
     updateAndClose() {
       Bus.$emit(this.UPDATE_CASE_INFO);
       this.displayModal = false;
+    },
+    alertForDuplicatedDbsCode() {
+      this.$message({
+        message: 'DBS患者编码已存在，请修改编码后再提交',
+        type: 'error',
+        duration: 2000
+      });
     },
     getRealName(code, typeGroupCode) {
       var typesInfo = Util.getElement('typegroupcode', typeGroupCode, this.typeGroup);

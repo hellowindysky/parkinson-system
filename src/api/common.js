@@ -10,15 +10,16 @@ export function encapsulatePromise(url, request) {
     axios.post(url, request).then((response) => {
       if (response.data.code === 0) {
         resolve(response.data.data);
-      } else if (response.data.code === 28) {
-        alert('DBS患者编码已存在，请使用其它编码提交');
-        reject(response.data.msg);
       } else {
         console.log('参数错误或服务器内部错误: ', response.data.msg);
         console.log('错误代码: ', response.data.code);
         console.log('请求地址: ', url);
         console.log('请求参数: ', request);
-        reject(response.data.msg);
+        let error = {
+          code: response.data.code,
+          message: response.data.msg
+        };
+        reject(error);
       }
 
     }).catch(function(error) {
