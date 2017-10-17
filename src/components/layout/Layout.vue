@@ -51,6 +51,10 @@ export default {
     window.onresize = () => {
       Bus.$emit(this.SCREEN_SIZE_CHANGE);
     };
+
+    if (sessionStorage.getItem('token') === null) {
+      this.$router.push('/login');
+    }
   }
 };
 </script>

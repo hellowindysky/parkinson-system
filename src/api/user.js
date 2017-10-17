@@ -24,29 +24,16 @@ function encapsulatePromise(url, request) {
 var baseUrl = 'http://apitest.gyenno.com';
 
 export function getDictionary() {
-  var request = {
-    "userId": 93242,
-    "accountNumber": "15527231713",
-    "userType": 2,
-    "orgId": 34,
-    "orgType": 2,
-    "version": 43
-  };
-
+  var request = Object.assign({}, JSON.parse(sessionStorage.getItem('commonRequest')));
+  request.version = 43;
   var url = baseUrl + '/pdms/queryDictionary';
 
   return encapsulatePromise(url, request);
 };
 
 export function getTemplate() {
-  var request = {
-    "userId": 93242,
-    "accountNumber": "15527231713",
-    "userType": 2,
-    "orgId": 34,
-    "orgType": 2,
-    "activeType": 1
-  };
+  var request = Object.assign({}, JSON.parse(sessionStorage.getItem('commonRequest')));
+  request.activeType = 1;
 
   var url = baseUrl + '/pdms/queryTemplate';
 
@@ -55,26 +42,14 @@ export function getTemplate() {
 
 // 获取分组信息
 export function getGroupList() {
-  var request = {
-    "userId": 93242,
-    "accountNumber": "15527231713",
-    "userType": 2,
-    "orgId": 34,
-    "orgType": 2
-  };
+  var request = Object.assign({}, JSON.parse(sessionStorage.getItem('commonRequest')));
   var url = baseUrl + '/pdms/queryGroupList';
 
   return encapsulatePromise(url, request);
 };
 
 export function getUserList() {
-  var request = {
-    "userId": 93242,
-    "accountNumber": "15527231713",
-    "userType": 2,
-    "orgId": 34,
-    "orgType": 2
-  };
+  var request = Object.assign({}, JSON.parse(sessionStorage.getItem('commonRequest')));
 
   var url = baseUrl + '/usermgr/queryUserList';
 
@@ -82,12 +57,8 @@ export function getUserList() {
 };
 
 export function getRoleList() {
-  var request = {
-    "userId": 93242,
-    "accountNumber": "15527231713",
-    "userType": 2,
-    "orgId": 34,
-    "orgType": 2,
+  var request = Object.assign({}, JSON.parse(sessionStorage.getItem('commonRequest')));
+  request = Object.assign(request, {
     "pageNo": 1,
     "pageSize": 10,
     "roleIdList": [
@@ -100,7 +71,7 @@ export function getRoleList() {
     "org": {
       "id": "8a9e2d385ea7264f015ea8361036008b"
     }
-  };
+  });
 
   var url = baseUrl + '/pdms/queryRoleList';
 

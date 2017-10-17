@@ -23,14 +23,8 @@ function encapsulatePromise(url, request) {
 
 // 查询某个分组下的病患列表
 export function getGroupPatients(groupId) {
-  var request = {
-    "userId": 93242,
-    "accountNumber": "15527231713",
-    "userType": 2,
-    "orgId": 34,
-    "orgType": 2,
-    "groupId": groupId
-  };
+  var request = Object.assign({}, JSON.parse(sessionStorage.getItem('commonRequest')));
+  request.groupId = groupId;
   var url = 'http://apitest.gyenno.com/pdms/queryGroupInfo';
 
   return encapsulatePromise(url, request);

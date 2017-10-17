@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="header">
     <div class="organization-wrapper" @click="togglePanel">
-      <span class="name">北京市人民医院</span>
+      <span class="name">{{orgName}}</span>
       <span class="iconfont" :class="togglePanelIcon"></span>
     </div>
     <div class="organization-panel" v-show="showPanel"></div>
@@ -11,7 +11,7 @@
       <span class="iconfont icon-task"></span>
       <span class="account">
         <img src="~img/profile.png" alt="doctor image" class="picture">
-        <span class="name">臻络测试</span>
+        <span class="name">{{title}}</span>
       </span>
     </div>
   </div>
@@ -27,6 +27,14 @@ export default {
   computed: {
     togglePanelIcon() {
       return this.showPanel ? 'icon-up' : 'icon-down';
+    },
+    title() {
+      var name = sessionStorage.getItem('name');
+      return name ? name : '';
+    },
+    orgName() {
+      var orgName = sessionStorage.getItem('orgName');
+      return orgName ? orgName : '';
     }
   },
   methods: {
