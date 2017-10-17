@@ -39,7 +39,7 @@
         <card class="card" :class="smallCardWidth" :mode="mutableMode" v-for="item in surgicalMethodList" :key="item.patientCaseId"
          :title="transformSurgicalType(item.surgicalInfoId)" v-on:clickCurrentCard="editSurgicalRecord(item)"
          v-on:deleteCurrentCard="deleteSurgicalRecord(item)">
-          <div class="text first-line">
+          <div class="text first-line single-line-ellipsis">
             <span class="name">备注: </span>
             <span class="value">{{item.remarks}}</span>
           </div>
@@ -56,7 +56,7 @@
             <span class="name">处理: </span>
             <span class="value">{{transformTypeGroupId(item.treatment, 'treatment')}}</span>
           </div>
-          <div class="text second-line">
+          <div class="text second-line single-line-ellipsis">
             <span class="name">备注: </span>
             <span class="value">{{item.remarks}}</span>
           </div>
@@ -448,6 +448,12 @@ export default {
         font-size: @small-font-size;
         color: @light-font-color;
         left: 10px;
+        right: 10px;
+        &.single-line-ellipsis {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space:nowrap;
+        }
         .name {
           color: @font-color;
         }
