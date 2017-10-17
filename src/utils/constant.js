@@ -33,6 +33,9 @@ export default {
   DELETE_CURRENT_CARD: 'deleteCurrentCard',
   RECALCULATE_CARD_WIDTH: 'recalculateCardWidth',
 
+  EDIT_DISEASE_INFO: 'editDiseaseInfo',
+  EDIT_OTHER_INFO: 'editOtherInfo',
+
   UPDATE_MY_PATIENTS_LIST: 'updateMyPatientsList',
   UPDATE_OTHER_PATIENTS_LIST: 'updateOtherPatientsList',
   UPDATE_PATIENT_INFO: 'updatePatientInfo',

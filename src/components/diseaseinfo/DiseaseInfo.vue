@@ -1,5 +1,6 @@
 <template lang="html">
-  <folding-panel :title="'病症信息'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
+  <folding-panel :title="'病症信息'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit"
+    :folded-status="foldedStatus">
     <div class="disease-info">
       <div class="group" v-for="group in diseaseInfoTemplateGroups">
         <div class="field" v-for="field in group" :class="checkField(field)">
@@ -76,6 +77,7 @@ export default {
   data() {
     return {
       mode: this.READING_MODE,
+      foldedStatus: true,
       copyInfo: {},
       warningResults: {}
     };
@@ -101,6 +103,7 @@ export default {
   methods: {
     startEditing() {
       this.mode = this.EDITING_MODE;
+      this.foldedStatus = false;
       this.clearWarning();
     },
     cancel() {
@@ -302,6 +305,12 @@ export default {
       // console.log(this.diseaseInfoTemplateGroups);
       // console.log(this.typeGroup);
     }, 2000);
+  },
+  mounted() {
+    Bus.$on(this.EDIT_DISEASE_INFO, this.startEditing);
+  },
+  beforeDestroy() {
+    Bus.$off(this.EDIT_DISEASE_INFO);
   }
 };
 </script>

@@ -1,5 +1,5 @@
 <template lang="html">
-  <folding-panel :title="'基础信息'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
+  <folding-panel :title="'基础信息'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit" :folded-status="foldedStatus">
     <div class="basic-info">
       <div class="group" v-for="group in basicInfoTemplateGroups">
         <div class="field" v-for="field in group" :class="{'whole-line': checkIfWholeLine(field)}">
@@ -68,6 +68,7 @@ export default {
   data() {
     return {
       mode: this.READING_MODE,
+      foldedStatus: false,
       copyInfo: {},
       warningResults: {}
     };
@@ -142,6 +143,13 @@ export default {
             });
             Bus.$emit(this.UPDATE_OTHER_PATIENTS_LIST);
           }
+
+          // 如果是新增患者，还要在确定之后，将个人信息的病症信息面板与其它信息面板置为编辑状态
+          this.$nextTick(() => {
+            Bus.$emit(this.EDIT_DISEASE_INFO);
+            Bus.$emit(this.EDIT_OTHER_INFO);
+          });
+
         }, (error) => {
           console.log(error);
         });

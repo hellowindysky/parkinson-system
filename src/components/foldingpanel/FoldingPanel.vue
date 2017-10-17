@@ -29,6 +29,11 @@ export default {
       required: true,
       type: String
     },
+    foldedStatus: {
+      required: false,
+      type: Boolean,
+      default: true
+    },
     mode: {
       type: String,
       default: this.READING_MODE
@@ -40,7 +45,7 @@ export default {
   },
   data() {
     return {
-      folded: true,
+      folded: this.foldedStatus,
       filterCondition: 'all'
     };
   },
@@ -71,7 +76,7 @@ export default {
   },
   mounted() {
     // 默认让以下面板呈展开状态（开发过程中随时调整）
-    const DEFAULT_OPEN_LIST = ['基础信息', '看诊记录', '基本情况', '医学量表', '关联症状', '外科手术', '检验检查'];
+    const DEFAULT_OPEN_LIST = ['看诊记录', '基本情况', '医学量表', '关联症状', '外科手术', '检验检查'];
     if (DEFAULT_OPEN_LIST.indexOf(this.title) > -1) {
       this.folded = false;
     }
@@ -83,6 +88,9 @@ export default {
         // 之所以要延时发送事件，是为了等待折叠动画结束
         Bus.$emit(this.SCROLL_AREA_SIZE_CHANGE);
       }, 300);
+    },
+    foldedStatus: function(newFoldedStatus) {
+      this.folded = newFoldedStatus;
     }
   }
 };
