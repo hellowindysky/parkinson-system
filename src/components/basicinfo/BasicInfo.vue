@@ -245,7 +245,7 @@ export default {
           var gender = result[2];
           if (this.copyInfo.birthday) {
             this.copyInfo.birthday = birthday;
-            this.copyInfo.sex = gender;
+            this.copyInfo.sex = gender === '男' ? 0 : 1;
             // this.homeProvince = province;
           }
         }
