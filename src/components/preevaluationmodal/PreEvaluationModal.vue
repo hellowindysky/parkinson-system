@@ -141,12 +141,12 @@
             <td class="col title-col">总和</td>
             <td class="col computed-cell"
               :class="{'warning': copyInfo.preopsDiaryDTO.patientPreopsDiaryList[5][hourName] !== 24 &&
-              copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][hourName] !== ''}"
+              copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][hourName]}"
               v-for="hourName in hourNameList">
               {{copyInfo.preopsDiaryDTO.patientPreopsDiaryList[5][hourName]}}
               <span class="warning-text"
                 v-show="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[5][hourName] !== 24 &&
-                copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][hourName] !== ''">
+                copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][hourName]">
                 总和必须为24
               </span>
             </td>
@@ -459,8 +459,6 @@ import {
   addPreEvaluation,
   modifyPreEvaluation
 } from 'api/patient.js';
-
-const COMT_ALERT_MESSAGE = 'COMT抑制剂类药物需要和多巴胺类制剂类药物联合使用，请检查药物处方是否录入有误';
 
 // 本组件没有采用 template 动态生成模版，而是根据一个固定模版来绑定数据
 let dataModel = {
@@ -875,7 +873,7 @@ export default {
       // 先检查药物方案列表是否符合规则（出现COMT抑制剂就必须要有多巴胺类制剂）
       for (let medicine of this.copyInfo.preopsMotorDTO.patientPreopsMedicineList) {
         if (!this.isMedicineValid(medicine)) {
-          alert(COMT_ALERT_MESSAGE);
+          this.alertForCOMTWithoutLDopa();
           return;
         }
       }
@@ -898,7 +896,7 @@ export default {
       this.checkWarning(['preopsIntensionDTO', 'operationIntension'], 'operationIntension');
       for (var property in this.warningResults) {
         if (this.warningResults.hasOwnProperty(property) && this.warningResults[property]) {
-          alert('请完成必填字段(带红色星号部分)');
+          this.alertForNotComplete();
           return;   // 说明有警告信息没有处理完毕
         }
       }
@@ -933,7 +931,21 @@ export default {
     alertForDuplicatedDbsCode() {
       this.$message({
         message: 'DBS患者编码已存在，请修改编码后再提交',
-        type: 'error',
+        type: 'warning',
+        duration: 2000
+      });
+    },
+    alertForCOMTWithoutLDopa() {
+      this.$message({
+        message: 'COMT抑制剂类药物需要和多巴胺类制剂类药物联合使用，请检查药物处方是否录入有误',
+        type: 'warning',
+        duration: 2000
+      });
+    },
+    alertForNotComplete() {
+      this.$message({
+        message: '请完成必填字段(带红色星号部分)',
+        type: 'warning',
         duration: 2000
       });
     },
@@ -1010,7 +1022,7 @@ export default {
       // 因为 COMT抑制剂类药物（如珂丹）需要配合多巴胺类药物使用，所以每次有药物名字更新，
       // 就要检查是否出现了只有 COMT 抑制剂而没有 多巴胺类药物的情况
       if (!this.isMedicineValid(medicine)) {
-        alert(COMT_ALERT_MESSAGE);
+        this.alertForCOMTWithoutLDopa();
       }
     },
     getMedicalType(medicine) {
@@ -1335,10 +1347,12 @@ export default {
       var allTotalHourOk = true;
       for (let hourName of this.hourNameList) {
         // 最后一排，即“总和”这一排，填上我们保存的每列各自的数据之和
-        colTotalHour[hourName] = Number(colTotalHour[hourName].toFixed(1));
-        this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[5][hourName] = colTotalHour[hourName];
-        if (colTotalHour[hourName] !== 24 && this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][hourName] !== '') {
-          allTotalHourOk = false;
+        if (this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][hourName] !== '') {
+          colTotalHour[hourName] = Number(colTotalHour[hourName].toFixed(1));
+          this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[5][hourName] = colTotalHour[hourName];
+          if (colTotalHour[hourName] !== 24) {
+            allTotalHourOk = false;
+          }
         }
       }
       this.allTotalHourOk = allTotalHourOk;
