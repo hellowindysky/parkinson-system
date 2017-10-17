@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="app-wrapper">
+  <div class="app-wrapper" v-if="display">
     <topbar class="topbar"></topbar>
     <sidebar class="sidebar"></sidebar>
     <router-view class="content"></router-view>
@@ -33,6 +33,11 @@ import biochemicalExam from 'components/biochemicalexammodal/BiochemicalExamModa
 import emgModal from 'components/emgmodal/EmgModal';
 
 export default {
+  data() {
+    return {
+      display: false
+    };
+  },
   components: {
     topbar,
     sidebar,
@@ -54,7 +59,10 @@ export default {
 
     // 如果还未获得 token 信息，则说明还没有登录，所以返回登录界面
     if (sessionStorage.getItem('token') === null) {
+      this.display = false;
       this.$router.push('/login');
+    } else {
+      this.display = true;
     }
   }
 };

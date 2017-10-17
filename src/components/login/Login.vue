@@ -92,13 +92,15 @@ export default {
             sessionStorage.setItem('userType', userType);
             sessionStorage.setItem('orgName', orgName);
 
-            sessionStorage.setItem('commonRequest', JSON.stringify({
+            var commonRequest = {
               'userId': 93242,
               'accountNumber': accountNumber,
               'userType': userType,
               'orgId': 34,
               'orgType': 2
-            }));
+            };
+
+            sessionStorage.setItem('commonRequest', JSON.stringify(commonRequest));
             this.$router.push('/');
           }, (error) => {
             console.log(error);
