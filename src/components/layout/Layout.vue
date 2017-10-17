@@ -52,6 +52,7 @@ export default {
       Bus.$emit(this.SCREEN_SIZE_CHANGE);
     };
 
+    // 如果还未获得 token 信息，则说明还没有登录，所以返回登录界面
     if (sessionStorage.getItem('token') === null) {
       this.$router.push('/login');
     }
