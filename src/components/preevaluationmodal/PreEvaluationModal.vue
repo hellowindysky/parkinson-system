@@ -6,7 +6,7 @@
         <div class="field">
           <span class="field-name">DBS患者编码</span>
           <span class="field-input">
-            <el-input v-model="copyInfo.dbsPatientCode"></el-input>
+            <el-input v-model="copyInfo.dbsPatientCode" placeholder="请输入DBS患者编码"></el-input>
           </span>
         </div>
         <div class="field">
@@ -16,13 +16,13 @@
           </span>
           <span class="field-input">
             <el-date-picker v-model="copyInfo.preopsTime" :editable="false" @change="checkWarning(['preopsTime'], 'preopsTime')"
-              :class="{'warning': warningResults['preopsTime']}"></el-date-picker>
+              :class="{'warning': warningResults['preopsTime']}" placeholder="请输入术前评估时间"></el-date-picker>
           </span>
         </div>
         <div class="field whole-line">
           <span class="field-name">术前评估备注</span>
           <span class="field-input">
-            <el-input v-model="copyInfo.preobsRemark"></el-input>
+            <el-input v-model="copyInfo.preobsRemark" placeholder="请输入该类评估的备注内容"></el-input>
           </span>
         </div>
       </div>
@@ -35,7 +35,7 @@
           <span class="field-name long-field-name">剂末现象评估时间</span>
           <span class="field-input long-field-name">
             <el-date-picker v-model="copyInfo.preopsTerminalDTO.terminalTime" :default-value="copyInfo.preopsTime"
-              :editable="false"></el-date-picker>
+              :editable="false" placeholder="请输入剂末现象评估时间"></el-date-picker>
           </span>
         </div>
         <div class="field">
@@ -73,7 +73,7 @@
         <div class="field" v-show="copyInfo.preopsTerminalDTO.terminalIsfirst===0">
           <span class="field-name">初次出现时间</span>
           <span class="field-input">
-            <el-date-picker v-model="copyInfo.preopsTerminalDTO.terminalFirstTime"
+            <el-date-picker v-model="copyInfo.preopsTerminalDTO.terminalFirstTime" placeholder="请输入初次出现剂末现象时间"
               @change="updateField('terminalFirstTime')" :editable="false"></el-date-picker>
           </span>
         </div>
@@ -92,7 +92,7 @@
         <div class="field whole-line">
           <span class="field-name">备注</span>
           <span class="field-input">
-            <el-input v-model="copyInfo.preopsTerminalDTO.terminalRemark"></el-input>
+            <el-input v-model="copyInfo.preopsTerminalDTO.terminalRemark" placeholder="请输入剂末现象评估相关备注内容"></el-input>
           </span>
         </div>
       </div>
@@ -120,7 +120,8 @@
             <td class="col" v-for="(dayTimeName, listIndex) in dayTimeNameList">
               <el-date-picker v-model="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName]"
                 @change="updateDiaryDayTime()" :editable="false" :disabled="!isTimeEditable(listIndex)"
-                :class="{'warning': listIndex === 0 && warningResults['firstDayTime']}"></el-date-picker>
+                :class="{'warning': listIndex === 0 && warningResults['firstDayTime']}"
+                :placeholder="isTimeEditable(listIndex) ? '请选择日期' : ''"></el-date-picker>
             </td>
           </tr>
           <tr class="row" v-for="(rowName, index) in diaryRowNameList">
@@ -192,7 +193,7 @@
         <div class="field whole-line">
           <span class="field-name">日记备注</span>
           <span class="field-input">
-            <el-input v-model="copyInfo.preopsDiaryDTO.diaryRemark"></el-input>
+            <el-input v-model="copyInfo.preopsDiaryDTO.diaryRemark" placeholder="请输入患者日记相关备注内容"></el-input>
           </span>
         </div>
       </div>
@@ -237,7 +238,7 @@
         <div class="field whole-line">
           <span class="field-name">备注</span>
           <span class="field-input">
-            <el-input v-model="copyInfo.preopsDyskinesiaDTO.dyskinesiaRemark"></el-input>
+            <el-input v-model="copyInfo.preopsDyskinesiaDTO.dyskinesiaRemark" placeholder="请输入统一异动症评估相关备注内容"></el-input>
           </span>
         </div>
       </div>
@@ -272,7 +273,7 @@
         <div class="field whole-line">
           <span class="field-name">备注</span>
           <span class="field-input">
-            <el-input v-model="copyInfo.preopsNonMotorDTO.nonmotorRemark"></el-input>
+            <el-input v-model="copyInfo.preopsNonMotorDTO.nonmotorRemark" placeholder="请输入非运动症状评估相关备注内容"></el-input>
           </span>
         </div>
       </div>
@@ -283,7 +284,7 @@
         <div class="field">
           <span class="field-name">试验日期时间</span>
           <span class="field-input">
-            <el-date-picker v-model="copyInfo.preopsMotorDTO.motorTestTime"
+            <el-date-picker v-model="copyInfo.preopsMotorDTO.motorTestTime" placeholder="请输入冲击试验日期"
               :editable="false" :default-value="copyInfo.preopsTime"></el-date-picker>
           </span>
         </div>
@@ -383,7 +384,7 @@
         <div class="field whole-line">
           <span class="field-name">备注</span>
           <span class="field-input">
-            <el-input v-model="copyInfo.preopsMotorDTO.motorRemark"></el-input>
+            <el-input v-model="copyInfo.preopsMotorDTO.motorRemark" placeholder="请输入运动症状评估相关备注内容"></el-input>
           </span>
         </div>
       </div>
@@ -394,7 +395,7 @@
         <div class="field">
           <span class="field-name">表态时间</span>
           <span class="field-input">
-            <el-date-picker v-model="copyInfo.preopsIntensionDTO.intensionAriseTime"
+            <el-date-picker v-model="copyInfo.preopsIntensionDTO.intensionAriseTime" placeholder="请输入意愿表达时间"
               :editable="false" :default-value="copyInfo.preopsTime"></el-date-picker>
           </span>
         </div>
@@ -433,7 +434,7 @@
         <div class="field whole-line">
           <span class="field-name">备注</span>
           <span class="field-input">
-            <el-input v-model="copyInfo.preopsIntensionDTO.intensionRemark"></el-input>
+            <el-input v-model="copyInfo.preopsIntensionDTO.intensionRemark" placeholder="请输入患者手术意愿相关内容"></el-input>
           </span>
         </div>
       </div>
