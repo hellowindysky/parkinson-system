@@ -48,7 +48,7 @@ import { mapGetters } from 'vuex';
 import { modifyPatientInfo, addPatientInfo } from 'api/patient.js';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import { reviseDateFormat } from 'utils/helper.js';
+import { reviseDateFormat, pruneObj } from 'utils/helper.js';
 
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 
@@ -145,6 +145,7 @@ export default {
 
       // 在提交前，将 copyInfo 中的数据还原成适合服务器传输的格式
       this.restoreCopyInfo();
+      pruneObj(this.copyInfo);
 
       // 判断是新增患者还是修改已有患者
       if (this.$route.params.id === 'newPatient') {
@@ -193,6 +194,12 @@ export default {
           console.log(error);
         });
       }
+
+      // 在数据刷新之前，保证字段显示依然正确。
+      // 不知道为什么，如果没用 setTimeout 包裹，则会覆盖之前的 restoreCopyInfo() 的操作
+      setTimeout(() => {
+        this.handleSpecialField();
+      }, 0);
     },
     shallowCopy(obj) {
       // 进行浅复制之后，修改复制对象的属性，不会影响到原始对象
@@ -208,11 +215,14 @@ export default {
         }
       }
 
-      // 复制过来的 basicInfo 有几个字段的值需要特殊处理一下
+      this.handleSpecialField();
+    },
+    handleSpecialField() {
+      // basicInfo 有几个字段的值需要特殊处理一下
       // 身高和体重的数值，在传输的时候用的是 Int 整型，例如 178.8 cm 在传输的时候用的数值是 1788
       for (let fieldName of CONVERT_TO_DECIMAL_LIST) {
         if (this.copyInfo[fieldName]) {
-          this.$set(this.copyInfo, fieldName, this.copyInfo[fieldName] / 10);
+          this.copyInfo[fieldName] = this.copyInfo[fieldName] / 10;
         }
       }
     },
@@ -224,7 +234,7 @@ export default {
         for (let field of group) {
           var fieldName = field.fieldName;
           // copyInfo 有几个字段的值在取过来的时候进行了特殊处理，这里在传回给服务器的时候要还原成一开始的格式
-          if (CONVERT_TO_DECIMAL_LIST.indexOf(fieldName) > -1) {
+          if (CONVERT_TO_DECIMAL_LIST.indexOf(fieldName) > -1 && this.copyInfo[fieldName] !== '') {
             this.$set(this.copyInfo, fieldName, this.copyInfo[fieldName] * 10);
           }
         }
