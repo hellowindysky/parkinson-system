@@ -105,17 +105,28 @@ export default {
     cancel() {
       // 如果是新增患者界面，点击取消按钮，则回到患者列表的第一个患者
       if (this.$route.params.id === 'newPatient') {
-        if (this.listType === 'myPatients') {
-          this.$router.push({name: 'myPatients'});
-        } else if (this.listType === 'otherPatients') {
-          this.$router.push({name: 'otherPatients'});
-        }
-        return;
-      }
+        Bus.$on(this.CONFIRM, () => {
+          if (this.listType === 'myPatients') {
+            this.$router.push({name: 'myPatients'});
+          } else if (this.listType === 'otherPatients') {
+            this.$router.push({name: 'otherPatients'});
+          }
+          Bus.$off(this.CONFIRM);
+          Bus.$off(this.GIVE_UP);
+          return;
+        });
+        Bus.$on(this.GIVE_UP, () => {
+          Bus.$off(this.CONFIRM);
+          Bus.$off(this.GIVE_UP);
+          return;
+        });
+        Bus.$emit(this.REQUEST_CONFIRMATION, '提示', '确认取消吗？取消将放弃所有更改');
 
-      // 点击取消按钮，将我们对 copyInfo 所做的临时修改全部放弃，还原其为 basicInfo 的复制对象
-      this.shallowCopy(this.basicInfo);
-      this.mode = this.READING_MODE;
+      } else {
+        // 点击取消按钮，将我们对 copyInfo 所做的临时修改全部放弃，还原其为 basicInfo 的复制对象
+        this.shallowCopy(this.basicInfo);
+        this.mode = this.READING_MODE;
+      }
     },
     submit() {
       // 首先检查是否每个字段都合格，检查一遍之后，如果 warningResults 的所有属性值都为空，就证明表单符合要求
@@ -323,6 +334,9 @@ export default {
       // console.log(this.basicInfoTemplateGroups);
       // console.log(this.copyInfo);
     }, 2000);
+  },
+  beforeDestroy() {
+    Bus.$off(this.GIVE_UP);
   }
 };
 </script>
