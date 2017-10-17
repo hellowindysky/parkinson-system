@@ -3,7 +3,7 @@
     <div class="diagnostic-medicine" ref="diagnosticMedicine">
       <extensible-panel class="panel" :mode="mutableMode" :title="subTitle" v-on:addNewCard="addMedicine">
         <card class="card" :class="devideWidth" :mode="mutableMode" v-for="item in diagnosticMedicine" :key="item.medicineId"
-         :title="getTitle(item.medicineId)" v-on:clickCurrentCard="editMedicine(item)"
+         :title="getTitle(item.medicineId)" :disable-delete="item.stopFlag === 0" v-on:clickCurrentCard="editMedicine(item)"
          v-on:deleteCurrentCard="deleteMedicine(item)">
           <div class="text first-line">{{transform(item, 'usages')}}</div>
           <div class="text second-line">{{item.ariseTime}}</div>
@@ -93,6 +93,7 @@ export default {
       Bus.$emit(this.SHOW_MEDICINE_MODAL, '新增药物方案', {});
     },
     editMedicine(item) {
+      console.log(item);
       Bus.$emit(this.SHOW_MEDICINE_MODAL, '药物方案', item);
     },
     deleteMedicine(item) {
