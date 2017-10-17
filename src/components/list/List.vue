@@ -2,7 +2,7 @@
   <div class="list">
     <div class="search-area">
       <span class="iconfont icon-search"></span>
-      <input class="search-input" placeholder="请输入姓名或身份证号" v-model="searchInput" @input="search"></input>
+      <input class="search-input" placeholder="请输入姓名/身份证号/手机号" v-model="searchInput" @input="search"></input>
     </div>
     <div class="control-area">
       <div class="filter-button" @click="togglePanelDisplay">
@@ -554,7 +554,8 @@ export default {
     .search-input {
       float: left;
       width: 180px;
-      padding-left: 10px;
+      padding-left: 5px;
+      padding-right: 5px;
       border-radius: 0;
       border: none;
       border-bottom: 1px solid @light-gray-color;
