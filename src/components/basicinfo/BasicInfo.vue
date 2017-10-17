@@ -230,6 +230,27 @@ export default {
     updateWarning(field) {
       var fieldName = field.fieldName;
       var copyFieldValue = this.copyInfo[fieldName];
+
+      // 如果是身份证信息，先对其进行校验
+      if (fieldName === 'cardId') {
+        let result = Util.checkId(copyFieldValue).split(',');
+        if (copyFieldValue !== '' && result.length <= 1) {
+          this.$set(this.warningResults, fieldName, result[0]);
+          return;
+        } else if (copyFieldValue !== '') {
+          // 这里插入一段逻辑,如果身份证信息变化，而且输入合法，则相应地更新出生日期和性别（应该还加上籍贯信息）
+          this.$set(this.warningResults, fieldName, null);
+          // var province = result[0];
+          var birthday = result[1];
+          var gender = result[2];
+          if (this.copyInfo.birthday) {
+            this.copyInfo.birthday = birthday;
+            this.copyInfo.sex = gender;
+            // this.homeProvince = province;
+          }
+        }
+      }
+
       if (this.getUIType(field) === 6) {
         // 日期控件(el-date-picker)给的是一个表示完整日期对象的字符串，我们需要格式化之后再校验
         copyFieldValue = Util.simplifyDate(copyFieldValue);
