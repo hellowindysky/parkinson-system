@@ -951,21 +951,30 @@ export default {
         // 在 typeGroup 中查不到要去 tableData 中去查的
         if (fieldName === 'medicineName') {
           for (let medicine of this.medicineInfo) {
-            options.push({
-              name: medicine.medicineName,
-              code: medicine.medicineId
-            });
+            // 只有这个药物的药物规格中，存在某一个规格满足其 dbsUsed 属性为 1 的条件时，才把这个药加进来
+            let specGroup = medicine.spec ? medicine.spec : [];
+            for (let spec of specGroup) {
+              if (spec.dbsUsed === 1) {
+                options.push({
+                  name: medicine.medicineName,
+                  code: medicine.medicineId
+                });
+                break;
+              }
+            }
           }
         } else if (fieldName === 'medicineSpec') {
           // 药物规格要根据当前药物去找
           var targetMedicineId = param;
           var targetMedicine = Util.getElement('medicineId', targetMedicineId, this.medicineInfo);
-          var specGroup = targetMedicine.spec ? targetMedicine.spec : [];
+          let specGroup = targetMedicine.spec ? targetMedicine.spec : [];
           for (let spec of specGroup) {
-            options.push({
-              name: spec.specOral,
-              code: spec.medicalPec
-            });
+            if (spec.dbsUsed === 1) {
+              options.push({
+                name: spec.specOral,
+                code: spec.medicalPec
+              });
+            }
           }
         } else if (fieldName === 'deviceId') {
           for (let device of this.deviceInfo) {
@@ -981,9 +990,10 @@ export default {
       return options;
     },
     selectMedicine(medicine) {
-      // 重新选择药物后，会将规格和使用量清空
-      medicine.medSpecification = '';
+      // 重新选择药物后，会将使用量清空，同时因为可选的规格只有一个，所以会自动选上
       medicine.medUsage = '';
+      var medSpecificationOptions = this.getOptions('medicineSpec', medicine.medicineInfo);
+      medicine.medSpecification = medSpecificationOptions[0].code;
 
       // 因为 COMT抑制剂类药物（如珂丹）需要配合多巴胺类药物使用，所以每次有药物名字更新，
       // 就要检查是否出现了只有 COMT 抑制剂而没有 多巴胺类药物的情况
