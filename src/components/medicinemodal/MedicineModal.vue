@@ -49,7 +49,8 @@
               <td class="col col-id">{{i}}</td>
               <td class="col col-time">
                 <el-time-select v-model="medicine.patientMedicineDetail[i - 1].takeTime" @change="updateTime(i - 1)"
-                 :class="{'warning': warningResults.patientMedicineDetail[i - 1].takeTime}" placeholder="具体时间点" :editable="false">
+                 :class="{'warning': warningResults.patientMedicineDetail[i - 1].takeTime}" placeholder="具体时间点"
+                 :editable="false" :picker-options="{start: '00:00', step: '00:30', end: '23:30'}">
                 </el-time-select>
               </td>
               <td class="col col-amount">
