@@ -22,7 +22,7 @@
         <div class="field whole-line">
           <span class="field-name">术前评估备注</span>
           <span class="field-input">
-            <el-input v-model="copyInfo.preobsRemark" placeholder="请输入该类评估的备注内容"></el-input>
+            <el-input v-model="copyInfo.preopsRemark" placeholder="请输入该类评估的备注内容"></el-input>
           </span>
         </div>
       </div>
