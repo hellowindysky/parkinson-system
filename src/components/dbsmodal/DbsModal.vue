@@ -383,7 +383,8 @@
           <tr class="row title-row">
             <td class="col w2" colspan="2">
               方案
-              <span class="iconfont icon-plus" @click="addParam('followDbsAdjustVoltage')"></span>
+              <span class="iconfont icon-plus" @click="addParam('followDbsAdjustVoltage')"
+                v-show="copyInfo.followDbsParams.adjustVoltageParameter.length < 8"></span>
             </td>
             <td class="col w2" colspan="2">肢体侧</td>
             <td class="col w3" colspan="3">刺激模式</td>
@@ -461,7 +462,8 @@
           <tr class="row title-row">
             <td class="col w2" colspan="2">
               方案
-              <span class="iconfont icon-plus" @click="addParam('followDbsAdjustMore')"></span>
+              <span class="iconfont icon-plus" @click="addParam('followDbsAdjustMore')"
+                v-show="copyInfo.followDbsParams.adjustMoreParameter.length < 8"></span>
             </td>
             <td class="col w2" colspan="2">肢体侧</td>
             <td class="col w3" colspan="3">刺激模式</td>
@@ -524,7 +526,8 @@
           <tr class="row title-row">
             <td class="col w2" colspan="2">
               方案
-              <span class="iconfont icon-plus" @click="addParam('followDbsAdjustAfter')"></span>
+              <span class="iconfont icon-plus" @click="addParam('followDbsAdjustAfter')"
+                v-show="copyInfo.followDbsParams.adjustAfterParameter.length < 8"></span>
             </td>
             <td class="col w2" colspan="2">肢体侧</td>
             <td class="col w3" colspan="3">刺激模式</td>
@@ -587,7 +590,8 @@
           <tr class="row title-row">
             <td class="col w2" colspan="2">
               方案
-              <span class="iconfont icon-plus" @click="addParam('firstDbsAdjustAfter')"></span>
+              <span class="iconfont icon-plus" @click="addParam('firstDbsAdjustAfter')"
+                v-show="copyInfo.firstDbsParams.adjustAfterParameter.length < 8"></span>
             </td>
             <td class="col w2" colspan="2">肢体侧</td>
             <td class="col w3" colspan="3">刺激模式</td>
@@ -899,6 +903,7 @@ export default {
             vueCopy(data.lastDbsParameter, this.lastDbsParameter);
             for (let param of this.lastDbsParameter) {
               delete param.id;
+              param.paramType = 2;
             }
             if (this.lastDbsParameter.length > 0) {
               this.$set(this.copyInfo.followDbsParams.adjustBeforeParameter, 0, {});
@@ -1147,7 +1152,7 @@ export default {
       } else if (formType === 'followDbsAdjustAfter') {
         let paramList = this.copyInfo.followDbsParams.adjustAfterParameter;
         let count = paramList.length;
-        let order = count / 2 + 1;
+        let order = Math.floor(count / 2) + 1;
         let propertyList = ['exciteMod', 'negativePole', 'positivePole', 'frequency', 'pulseWidth', 'voltage', 'resistance', 'electric'];
         for (let limbSideNum of [1, 2]) {
           let index = count - 1 + limbSideNum;
