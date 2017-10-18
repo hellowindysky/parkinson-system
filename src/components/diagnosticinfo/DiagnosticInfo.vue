@@ -77,18 +77,16 @@ export default {
     getDiagnosticContent(item) {
       var content = '';
       var diagnosticDictionary = [
-        {fieldName: 'scaleBrief', cnName: '量表信息'},
-        {fieldName: 'sideeffectBrief', cnName: '副作用'},
-        {fieldName: 'spephysicalBrief', cnName: '神经检查'},
-        {fieldName: 'surgicalBrief', cnName: '外科治疗'},
-        {fieldName: 'bioexaBrief', cnName: '生化检查'},
-        {fieldName: 'etgBrief', cnName: '肌电图检查'},
-        {fieldName: 'auxiliaryexamBrief', cnName: '辅助信息'}
+        {fieldName: 'ps_count', cnName: '病症情况'},
+        {fieldName: 'pm_count', cnName: '药物方案'},
+        {fieldName: 'psur_count', cnName: '外科手术'},
+        {fieldName: 'psc_count', cnName: '医学量表'},
+        {fieldName: 'inspect_count', cnName: '检验检查'}
       ];
       for (let field of diagnosticDictionary) {
         if (item[field.fieldName]) {
           // 正因为这里需要加入连续空格，所以我们才使用 v-html 指令来直接解析 html
-          content += field.cnName + ' <span>&nbsp;&nbsp;</span> ';
+          content += field.cnName + '[' + item[field.fieldName] + ']' + ' <span>&nbsp;&nbsp;</span> ';
         }
       }
       // 去掉尾部空格
@@ -237,6 +235,7 @@ export default {
           left: 20px;
           top: 65px;
           right: 20px;
+          line-height: 16px;
           color: @light-font-color;
         }
         &.third-line {
