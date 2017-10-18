@@ -760,6 +760,10 @@ export default {
       if (this.mode === this.ADD_DATA) {
         this.modelType = 0;   // 新增程控记录的时候，“首次开机”默认选择“否”
         this.completeInit = true;
+      } else if (this.mode === this.EDIT_DATA && info.patientDbsFirstId) {
+        this.modelType = 1;
+      } else if (this.mode === this.EDIT_DATA && info.patientDbsFollowId) {
+        this.modelType = 0;
       }
       this.updateModelType();
 
@@ -771,14 +775,6 @@ export default {
       }, (error) => {
         console.log(error);
       });
-
-      // 如果是非首次程控记录，就要去获取额外的上次程控信息
-      if (this.modelType === 0) {
-        getLastDbsInfo(this.$route.params.id).then((data) => {
-          this.lastProgramDate = data.lastProgramDate;
-          vueCopy(data.lastDbsParameter, this.lastDbsParameter);
-        });
-      }
 
       // 如果是编辑已有的程控记录，就要查询其程控信息的详情
       if (this.mode === this.EDIT_DATA && info.patientDbsFirstId) {
@@ -885,6 +881,28 @@ export default {
         this.initByFirstModel();
       } else if (this.modelType === 0) {
         this.initByFollowModel();
+      }
+      // 如果是新增程控记录，就要去获取额外的上次程控信息
+      if (this.mode === this.ADD_DATA) {
+        getLastDbsInfo(this.$route.params.id, this.$route.params.caseId).then((data) => {
+          // console.log(data);
+          // 首先绑定设备和设备类型
+          this.copyInfo.deviceId = data.preopsDeviceId;
+          this.copyInfo.devicePowerType = data.preopsDevicePowerType;
+          if (this.modelType === 0) {
+            // 如果是非首次程控，除了设备和设备类型之外，还要绑定上次程控时间和调整前参数
+            this.lastProgramDate = data.lastProgramDate;
+            vueCopy(data.lastDbsParameter, this.lastDbsParameter);
+            if (this.lastDbsParameter.length > 0) {
+              this.$set(this.copyInfo.followDbsParams.adjustBeforeParameter, 0, {});
+              this.$set(this.copyInfo.followDbsParams.adjustBeforeParameter, 1, {});
+              vueCopy(this.lastDbsParameter[0], this.copyInfo.followDbsParams.adjustBeforeParameter[0]);
+              vueCopy(this.lastDbsParameter[1], this.copyInfo.followDbsParams.adjustBeforeParameter[1]);
+              this.updateCheckBoxModel('followDbsAdjustBefore');
+            }
+          }
+
+        });
       }
     },
     initByFirstModel() {

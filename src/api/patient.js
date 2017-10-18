@@ -564,10 +564,11 @@ export function deleteDbsFollowInfo(dbsFollowInfo) {
 };
 
 // 查看上次程控信息（包括记录时间 和 调整后参数）
-export function getLastDbsInfo(patientId) {
+export function getLastDbsInfo(patientId, patientCaseId) {
   patientId = parseInt(patientId, 10);
   var request = Object.assign({}, getCommonRequest());
   request.patientId = patientId;
+  request.patientCaseId = patientCaseId;
   var url = baseUrl + '/pdms/queryLastPatientDbsParms';
 
   return encapsulatePromise(url, request);
