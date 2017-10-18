@@ -922,6 +922,7 @@ export default {
       this.updateCheckBoxModel('firstDbsAdjustAfter');
     },
     initByFollowModel() {
+      this.copyInfo = {};
       vueCopy(dbsFollowModel, this.copyInfo);
       this.updateCheckBoxModel('followDbsAdjustAfter');
       this.updateCheckBoxModel('followDbsAdjustBefore');
@@ -1262,7 +1263,7 @@ export default {
       this.updateScrollbar();
 
       // 在渲染表格前要先做好数据准备工作，所以在数据模型建立好之前返回空数组
-      if (this.copyInfo.patientDbsFirstDetail.length !== groups.length * 2) {
+      if (!this.copyInfo.patientDbsFirstDetail || this.copyInfo.patientDbsFirstDetail.length !== groups.length * 2) {
         return [];
       }
       return groups;
