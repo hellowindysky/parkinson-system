@@ -899,6 +899,9 @@ export default {
             // 如果是非首次程控，除了设备和设备类型之外，还要绑定上次程控时间和调整前参数
             this.lastProgramDate = data.lastProgramDate;
             vueCopy(data.lastDbsParameter, this.lastDbsParameter);
+            for (let param of this.lastDbsParameter) {
+              delete param.id;
+            }
             if (this.lastDbsParameter.length > 0) {
               this.$set(this.copyInfo.followDbsParams.adjustBeforeParameter, 0, {});
               this.$set(this.copyInfo.followDbsParams.adjustBeforeParameter, 1, {});
