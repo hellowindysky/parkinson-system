@@ -308,7 +308,12 @@
           </tr>
           <tr class="row" v-for="(param, index) in copyInfo.followDbsParams.adjustBeforeParameter">
             <td class="col w2" colspan="2" rowspan="2" v-show="index % 2 === 0">
-              {{getFollowDbsAdjustBeforePlanName(param)}}
+              <span v-if="mode===EDIT_DATA">{{getFollowDbsAdjustBeforePlanName(param)}}</span>
+              <el-select v-else-if="mode===ADD_DATA" v-model="followDbsAdjustBeforeFirstSchemeOrder"
+                @change="selectFollowDbsAdjustBeforeFirstSchemeOrder()">
+                <el-option v-for="(param, index) in lastDbsParameter" v-show="index % 2 === 0"
+                  :label="getFollowDbsAdjustBeforePlanName(param)" :value="param.schemeOrder" :key="param.schemeOrder"></el-option>
+              </el-select>
             </td>
             <td class="col w2" colspan="2">{{getLimbSide(param.limbSide)}}</td>
             <td class="col w3" colspan="3">
@@ -725,6 +730,7 @@ export default {
       followDbsAdjustBeforeParamPole: [],
       followDbsAdjustVoltageParamPole: [],
       followDbsAdjustMoreParamPole: [],
+      followDbsAdjustBeforeFirstSchemeOrder: '',
       lastProgramDate: '',
       lastDbsParameter: []
     };
@@ -885,7 +891,7 @@ export default {
       // 如果是新增程控记录，就要去获取额外的上次程控信息
       if (this.mode === this.ADD_DATA) {
         getLastDbsInfo(this.$route.params.id, this.$route.params.caseId).then((data) => {
-          // console.log(data);
+          console.log(data);
           // 首先绑定设备和设备类型
           this.copyInfo.deviceId = data.preopsDeviceId;
           this.copyInfo.devicePowerType = data.preopsDevicePowerType;
@@ -898,10 +904,10 @@ export default {
               this.$set(this.copyInfo.followDbsParams.adjustBeforeParameter, 1, {});
               vueCopy(this.lastDbsParameter[0], this.copyInfo.followDbsParams.adjustBeforeParameter[0]);
               vueCopy(this.lastDbsParameter[1], this.copyInfo.followDbsParams.adjustBeforeParameter[1]);
+              this.followDbsAdjustBeforeFirstSchemeOrder = this.lastDbsParameter[0].schemeOrder;
               this.updateCheckBoxModel('followDbsAdjustBefore');
             }
           }
-
         });
       }
     },
@@ -1294,6 +1300,21 @@ export default {
         this.copyInfo.followDbsParams.adjustAfterParameter[index].positivePole = this.followDbsAdjustAfterParamPole[index].positive.join('#');
         this.copyInfo.followDbsParams.adjustAfterParameter[index].negativePole = this.followDbsAdjustAfterParamPole[index].negative.join('#');
       }
+    },
+    selectFollowDbsAdjustBeforeFirstSchemeOrder() {
+      // 每次选择了调整前参数的方案，就更新 copyInfo.followDbsParams.adjustBeforeParameter
+      var firstIndex;
+      for (var i = 0; i < this.lastDbsParameter.length; i++) {
+        if (this.lastDbsParameter[i].schemeOrder === this.followDbsAdjustBeforeFirstSchemeOrder) {
+          firstIndex = i;
+          break;
+        }
+      }
+      this.$set(this.copyInfo.followDbsParams.adjustBeforeParameter, 0, {});
+      this.$set(this.copyInfo.followDbsParams.adjustBeforeParameter, 1, {});
+      vueCopy(this.lastDbsParameter[firstIndex], this.copyInfo.followDbsParams.adjustBeforeParameter[0]);
+      vueCopy(this.lastDbsParameter[firstIndex + 1], this.copyInfo.followDbsParams.adjustBeforeParameter[1]);
+      this.updateCheckBoxModel('followDbsAdjustBefore');
     }
   },
   created() {
