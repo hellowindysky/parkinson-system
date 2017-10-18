@@ -518,7 +518,7 @@
         <table class="form form4">
           <tr class="row top-row">
             <td class="col" colspan="22">
-              调整后参数
+              程控完成参数
             </td>
           </tr>
           <tr class="row title-row">
@@ -581,7 +581,7 @@
         <table class="form form4">
           <tr class="row top-row">
             <td class="col" colspan="22">
-              调整后参数
+              开机完成参数
             </td>
           </tr>
           <tr class="row title-row">
@@ -820,7 +820,6 @@ export default {
       reviseDateFormat(this.copyInfo);
       pruneObj(this.copyInfo);
 
-      console.log(this.copyInfo);
       if (this.modelType === 1 && this.mode === this.ADD_DATA) {
         delete this.copyInfo.followDbsParams;
         addDbsFirstInfo(this.copyInfo).then(() => {
@@ -891,7 +890,6 @@ export default {
       // 如果是新增程控记录，就要去获取额外的上次程控信息
       if (this.mode === this.ADD_DATA) {
         getLastDbsInfo(this.$route.params.id, this.$route.params.caseId).then((data) => {
-          console.log(data);
           // 首先绑定设备和设备类型
           this.copyInfo.deviceId = data.preopsDeviceId;
           this.copyInfo.devicePowerType = data.preopsDevicePowerType;
