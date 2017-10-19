@@ -23,7 +23,7 @@
           <span class="info-title">分组情况: </span>
           <span class="info-text">
             <span v-for="group in belongGroups" class="group">{{ group.groupName }}</span>
-            <span class="iconfont icon-plus"></span>
+            <span class="iconfont icon-manage"></span>
           </span>
         </div>
       </div>
@@ -336,9 +336,6 @@ export default {
           color: @light-font-color;
           .iconfont {
             display: inline-block;
-            margin-left: 5px;
-            padding: 5px;
-            font-weight: bold;
             font-size: 16px;
             line-height: @normal-font-size;
             transform: translateY(1px);
