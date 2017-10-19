@@ -6,11 +6,13 @@
         <span v-show="titleMode === EDITING_MODE">
           <el-input class="title-input" v-model="groupName"></el-input>
         </span>
-        <span class="iconfont icon-edit" @click="toggleTitleMode"></span>
-        <span class="iconfont icon-explain" :class="{'on': descPanelDisplay}" @click="toggleDescPanelDisplay"></span>
+        <span class="iconfont icon-edit" v-show="mode===READING_MODE" @click="toggleTitleMode"></span>
+        <span class="iconfont icon-explain" v-show="mode===READING_MODE" :class="{'on': descPanelDisplay}"
+          @click="toggleDescPanelDisplay"></span>
       </h3>
-      <div class="button button-operate">批量操作</div>
-      <div class="button button-add">添加患者</div>
+      <div class="button button-operate" v-show="mode===READING_MODE" @click="switchToEditingMode">批量操作</div>
+      <div class="button button-add" v-show="mode===READING_MODE">添加患者</div>
+      <div class="button button-return" v-show="mode===EDITING_MODE" @click="switchToReadingMode">返回</div>
     </div>
     <!-- <div class="seperate-bar"></div> -->
     <div class="card-wrapper" ref="cardWrapper">
@@ -27,7 +29,7 @@
         </div>
       </div>
     </div>
-    <div class="operate-bar">
+    <div class="operate-bar" v-show="mode===EDITING_MODE">
       <el-checkbox class="select-all">全选</el-checkbox>
       <div class="remove-button">移出分组</div>
     </div>
@@ -53,6 +55,7 @@ export default {
   data() {
     return {
       devideWidth: '',
+      mode: this.READING_MODE,
       groupName: '',
       titleMode: this.READING_MODE,
       descPanelDisplay: false,
@@ -103,6 +106,12 @@ export default {
       } else if (num === 1) {
         return 'icon-female';
       }
+    },
+    switchToEditingMode() {
+      this.mode = this.EDITING_MODE;
+    },
+    switchToReadingMode() {
+      this.mode = this.READING_MODE;
     },
     toggleTitleMode() {
       if (this.titleMode === this.EDITING_MODE) {
@@ -236,6 +245,10 @@ export default {
         right: 10px;
         background-color: @button-color;
       }
+      &.button-return {
+        right: 10px;
+        background-color: @secondary-button-color;
+      }
     }
   }
   // .seperate-bar {
@@ -363,6 +376,7 @@ export default {
     background-color: @background-color;
     text-align: left;
     box-shadow: 0 -1px 10px @light-gray-color;
+    z-index: 100;
     .select-all {
       margin-left: 25px;
       line-height: 45px;
