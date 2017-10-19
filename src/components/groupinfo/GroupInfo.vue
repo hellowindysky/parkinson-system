@@ -28,6 +28,7 @@
       </div>
     </div>
     <div class="group-description" v-show="descPanelDisplay">
+      <div class="iconfont icon-close" @click="closeDescPanel"></div>
       <p class="description-content" v-show="descriptionMode===READING_MODE">{{remarks}}</p>
       <el-input type="textarea" v-model="remarks" v-show="descriptionMode===EDITING_MODE" :rows="8"></el-input>
       <div class="button-wrapper">
@@ -97,6 +98,10 @@ export default {
     },
     toggleDescPanelDisplay() {
       this.descPanelDisplay = !this.descPanelDisplay;
+    },
+    closeDescPanel() {
+      this.cancelDescInput();
+      this.descPanelDisplay = false;
     },
     editDesc() {
       this.descriptionMode = this.EDITING_MODE;
@@ -315,10 +320,26 @@ export default {
     height: 250px;
     background-color: @theme-color;
     z-index: 100;
+    .icon-close {
+      position: absolute;
+      right: 5px;
+      top: 5px;
+      font-size: 22px;
+      color: #fff;
+      cursor: pointer;
+      z-index: 200;
+      &:hover {
+        opacity: 0.6;
+      }
+      &:active {
+        opacity: 0.8;
+      }
+    }
     .description-content {
       position: absolute;
-      width: 360px;
-      left: 20px;
+      width: 350px;
+      left: 25px;
+      top: 5px;
       box-sizing: border-box;
       padding: 5px;
       // background-color: @font-color;
@@ -327,12 +348,13 @@ export default {
     }
     .el-textarea {
       position: absolute;
-      width: 360px;
-      left: 20px;
-      top: 15px;
+      width: 350px;
+      left: 25px;
+      top: 20px;
       .el-textarea__inner {
         background-color: @font-color;
         color: #fff;
+        border: none;
       }
     }
     .button-wrapper {
