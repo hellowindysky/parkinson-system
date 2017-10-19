@@ -41,6 +41,7 @@
 </template>
 
 <script>
+import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import { getGroupPatients } from 'api/group.js';
 
@@ -68,6 +69,15 @@ export default {
         this.devideWidth = 'width-1-' + parseInt(cardNum, 10);
       });
     },
+    updateScrollbar() {
+      this.$nextTick(() => {
+        Ps.destroy(this.$refs.cardWrapper);
+        Ps.initialize(this.$refs.cardWrapper, {
+          wheelSpeed: 1,
+          minScrollbarLength: 40
+        });
+      });
+    },
     seeDetail(item) {
       console.log(item);
     },
@@ -77,6 +87,7 @@ export default {
         this.groupPatients = data.list;
         this.remarks = data.remarks;
         // console.log(data);
+        this.updateScrollbar();
       }, (error) => {
         console.log(error);
       });
@@ -120,15 +131,17 @@ export default {
     });
     // 如果收到屏幕宽度变化，或者内容区域宽度变化的事件，则重新计算卡片的宽度
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
+    Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
     Bus.$on(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
     // 第一次加载的时候，去计算一次卡片宽度
     this.recalculateCardWidth();
     this.updateGroupInfo();
+    this.updateScrollbar();
   },
   beforeDestroy() {
     // 还是记得销毁组件前，解除事件绑定
-    Bus.$off(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
-    Bus.$off(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
+    Bus.$off(this.SCREEN_SIZE_CHANGE);
+    Bus.$off(this.TOGGLE_LIST_DISPLAY);
     Bus.$off(this.CONFIRM);
     Bus.$off(this.GIVE_UP);
   }
@@ -226,10 +239,13 @@ export default {
   //   width: calc(~"100% - @{margin-right}");
   // }
   .card-wrapper {
+    position: relative;
     text-align: left;
     margin-left: -5px;
-    margin-bottom: 5px;
-    margin-right: @margin-right - 5px;
+    // margin-bottom: 5px;
+    padding-right: @margin-right - 5px;
+    height: calc(~"100% - @{bar-height} - @{vertical-spacing}");
+    overflow: hidden;
     .card {
       display: inline-block;
       position: relative;
@@ -308,6 +324,28 @@ export default {
             position: absolute;
             right: 0;
           }
+        }
+      }
+    }
+    .ps__scrollbar-y-rail {
+      position: absolute;
+      width: 15px;
+      right: 0;
+      padding: 0 3px;
+      box-sizing: border-box;
+      opacity: 0.3;
+      transition: opacity 0.3s, padding 0.2s;
+      .ps__scrollbar-y {
+        position: relative;
+        background-color: #aaa;
+        border-radius: 20px;
+      }
+    }
+    &:hover {
+      .ps__scrollbar-y-rail {
+        opacity: 0.6;
+        &:hover {
+          padding: 0;
         }
       }
     }
