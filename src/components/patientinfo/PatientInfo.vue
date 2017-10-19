@@ -23,7 +23,7 @@
           <span class="info-title">分组情况: </span>
           <span class="info-text">
             <span v-for="group in belongGroups" class="group">{{ group.groupName }}</span>
-            <span class="iconfont icon-manage" @click="showGroupPanel"></span>
+            <span class="iconfont icon-manage" @click="toggleGroupPanel"></span>
           </span>
         </div>
       </div>
@@ -160,8 +160,8 @@ export default {
         console.log(error);
       });
     },
-    showGroupPanel() {
-      this.displayGroupPanel = true;
+    toggleGroupPanel() {
+      this.displayGroupPanel = !this.displayGroupPanel;
     },
     hideGroupPanel() {
       this.displayGroupPanel = false;
