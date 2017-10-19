@@ -18,14 +18,6 @@ export function getTemplate() {
   return encapsulatePromise(url, request);
 };
 
-// 获取分组信息
-export function getGroupList() {
-  var request = Object.assign({}, getCommonRequest());
-  var url = baseUrl + '/pdms/queryGroupList';
-
-  return encapsulatePromise(url, request);
-};
-
 export function getUserList() {
   var request = Object.assign({}, getCommonRequest());
 

@@ -9,3 +9,11 @@ export function getGroupPatients(groupId) {
 
   return encapsulatePromise(url, request);
 };
+
+// 获取分组信息
+export function getGroupList() {
+  var request = Object.assign({}, getCommonRequest());
+  var url = baseUrl + '/pdms/queryGroupList';
+
+  return encapsulatePromise(url, request);
+};

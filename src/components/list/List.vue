@@ -175,7 +175,8 @@ import Bus from 'utils/bus.js';
 import Util from 'utils/util';
 // import { vueCopy } from 'utils/helper';
 import { getPatientList } from 'api/patient';
-import { getGroupList, getUserList, getRoleList } from 'api/user';
+import { getUserList, getRoleList } from 'api/user';
+import { getGroupList } from 'api/group';
 
 export default {
   data() {
