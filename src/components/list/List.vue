@@ -30,14 +30,24 @@
       </div>
     </div>
 
-    <div class="function-area">
+    <div class="function-area" v-if="listType === 'myPatients' || listType === 'otherPatients'">
       <div class="function-button left" @click="addNewPatient">
         <span class="iconfont icon-new-patient"></span>
         <span class="text">新增患者</span>
       </div>
-      <div class="function-button right">
+      <div class="function-button right" v-show="false">
         <span class="iconfont icon-import"></span>
         <span class="text">批量导入</span>
+      </div>
+    </div>
+    <div class="function-area" v-else-if="listType === 'groups'">
+      <div class="function-button left" @click="addNewGroup">
+        <span class="iconfont icon-new-group"></span>
+        <span class="text">新增分组</span>
+      </div>
+      <div class="function-button right" @click="deleteGroup">
+        <span class="iconfont icon-delete"></span>
+        <span class="text">删除分组</span>
       </div>
     </div>
 
@@ -393,6 +403,12 @@ export default {
         });
       }
     },
+    addNewGroup() {
+
+    },
+    deleteGroup() {
+
+    },
     togglePanelDisplay() {
       this.panelDisplay = !this.panelDisplay;
       if (this.panelDisplay) {
@@ -649,7 +665,10 @@ export default {
         border-right: 1px solid @light-gray-color;
       }
       &:hover {
-        opacity: 0.8;
+        opacity: 0.7;
+      }
+      &:active {
+        opacity: 0.85;
       }
       .iconfont {
         font-size: 24px;
