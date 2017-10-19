@@ -108,16 +108,16 @@
 
       <el-form class="filter-panel" :model="filterGroupsForm" :rules="rules" ref="filterGroupsForm"
       label-width="20%" v-show="panelDisplay" v-else-if="this.listType === 'groups'">
-        <el-form-item label="分类" prop="category" class="item">
-          <el-select v-model="filterGroupsForm.category">
-            <el-option label="不限" value="all"></el-option>
-            <el-option label="临床" value="clinical"></el-option>
-            <el-option label="科研" value="research"></el-option>
+        <el-form-item label="分类" prop="groupType" class="item">
+          <el-select v-model="filterGroupsForm.groupType">
+            <el-option label="不限" :value="-1"></el-option>
+            <el-option label="临床" :value="1"></el-option>
+            <el-option label="科研" :value="2"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item class="item" label-width="0">
-          <el-button @click="resetForm('filterPatientsForm')" class="button reset">重置</el-button>
-          <el-button type="primary" @click="submitForm('filterPatientsForm')" class="button apply">应用</el-button>
+          <el-button @click="resetForm('filterGroupsForm')" class="button reset">重置</el-button>
+          <el-button type="primary" @click="submitForm('filterGroupsForm')" class="button apply">应用</el-button>
         </el-form-item>
       </el-form>
 
@@ -228,7 +228,7 @@ export default {
         followUp: false
       },
       filterGroupsForm: {
-        category: '不限'
+        groupType: -1
       },
       filterUsersForm: {
         type: 'all',
@@ -370,7 +370,12 @@ export default {
       });
     },
     updateGroupList(cb) {
-      getGroupList().then((data) => {
+      var condition = {};
+      var filterForm = this.filterGroupsForm;
+      if (filterForm.groupType !== -1) {
+        condition.groupType = filterForm.groupType;
+      }
+      getGroupList(condition).then((data) => {
         this.groupList = data;
       });
       this.updateScrollbar();
@@ -439,6 +444,7 @@ export default {
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
+      this.submitForm(formName);
       this.togglePanelDisplay();
     },
     submitForm(formName) {
@@ -447,6 +453,8 @@ export default {
           // 提交新的筛选条件，发出post请求
           if (formName === 'filterPatientsForm') {
             this.updatePatientsList();
+          } else if (formName === 'filterGroupsForm') {
+            this.updateGroupList();
           }
         } else {
           console.log('error submit!!');
