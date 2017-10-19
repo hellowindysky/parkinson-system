@@ -23,7 +23,7 @@
           <span class="info-title">分组情况: </span>
           <span class="info-text">
             <span v-for="group in belongGroups" class="group">{{ group.groupName }}</span>
-            <span class="iconfont icon-manage"></span>
+            <span class="iconfont icon-manage" @click="showGroupPanel"></span>
           </span>
         </div>
       </div>
@@ -32,8 +32,9 @@
         <basic-info v-else ref="newPatientWindow" :basic-info="{}"></basic-info>
       </div>
     </div>
-    <DiagnosticDetail class="diagnostic-detail"></DiagnosticDetail>
-    <DiagnosticHandleScale class="diagnostic-handle-scale"></DiagnosticHandleScale>
+    <diagnostic-detail class="diagnostic-detail"></diagnostic-detail>
+    <diagnostic-handle-scale class="diagnostic-handle-scale"></diagnostic-handle-scale>
+    <group-panel class="group-panel" :class="{'hide': !displayGroupPanel}" @hideGroupPanel="hideGroupPanel"></group-panel>
   </div>
 </template>
 
@@ -46,6 +47,7 @@ import { getPatientInfo, getPatientCaseList } from 'api/patient';
 import DiagnosticDetail from 'components/diagnosticdetail/DiagnosticDetail';
 import DiagnosticHandleScale from 'components/diagnostichandlescale/DiagnosticHandleScale';
 import BasicInfo from 'components/basicinfo/BasicInfo';
+import GroupPanel from 'components/grouppanel/GroupPanel';
 
 export default {
   data() {
@@ -54,7 +56,8 @@ export default {
       patientCaseList: [],
       belongDoctor: '',
       belongGroups: [],
-      createDate: ''
+      createDate: '',
+      displayGroupPanel: false
     };
   },
   computed: {
@@ -155,12 +158,19 @@ export default {
       }, (error) => {
         console.log(error);
       });
+    },
+    showGroupPanel() {
+      this.displayGroupPanel = true;
+    },
+    hideGroupPanel() {
+      this.displayGroupPanel = false;
     }
   },
   components: {
     DiagnosticDetail,
     DiagnosticHandleScale,
-    BasicInfo
+    BasicInfo,
+    GroupPanel
   },
   mounted() {
     this.updatePatientInfo();
@@ -219,6 +229,15 @@ export default {
     top: 0;
     z-index: 400;
     background: @screen-color;
+  }
+  .group-panel {
+    position: absolute;
+    right: 0;
+    top: 0;
+    transition: 0.3s;
+    &.hide {
+      right: -500px;
+    }
   }
   .tabs-wrapper {
     position: relative;

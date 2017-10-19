@@ -42,6 +42,7 @@ export default {
   UPDATE_CASE_INFO: 'updateCaseInfo',
   UPDATE_SCALE_DETAIL: 'updateScaleDetail',
 
+  HIDE_GROUP_PANEL: 'hideGroupPanel',
   SHOW_MODAL_BOX: 'showModalBox',
   SHOW_MEDICINE_MODAL: 'showMedicineModal',
   SHOW_NERVOU_SYSTEM_MODAL: 'showNervouSystemModal',
