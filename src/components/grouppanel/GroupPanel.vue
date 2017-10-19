@@ -13,8 +13,6 @@ export default {
     return {};
   },
   methods: {
-    showPanel() {
-    },
     closePanel() {
       this.$emit(this.HIDE_GROUP_PANEL);
     }
@@ -27,8 +25,8 @@ export default {
 
 .group-panel {
   display: block;
-  width: 500px;
-  height: 400px;
+  width: @group-panel-width;
+  height: @group-panel-height;
   background-color: @theme-color;
   .iconfont {
     position: absolute;

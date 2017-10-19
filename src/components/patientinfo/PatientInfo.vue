@@ -236,7 +236,7 @@ export default {
     top: 0;
     transition: 0.3s;
     &.hide {
-      right: -500px;
+      right: -@group-panel-width;
     }
   }
   .tabs-wrapper {
