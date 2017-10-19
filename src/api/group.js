@@ -11,8 +11,13 @@ export function getGroupPatients(groupId) {
 };
 
 // 获取分组信息
-export function getGroupList() {
+export function getGroupList(groupInfoModel) {
   var request = Object.assign({}, getCommonRequest());
+  if (groupInfoModel === undefined) {
+    request.groupInfoModel = {};
+  } else {
+    request.groupInfoModel = groupInfoModel;
+  }
   var url = baseUrl + '/pdms/queryGroupList';
 
   return encapsulatePromise(url, request);

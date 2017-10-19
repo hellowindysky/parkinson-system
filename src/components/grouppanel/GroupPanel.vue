@@ -1,20 +1,63 @@
 <template lang="html">
   <div class="group-panel">
-    <div class="iconfont icon-close" @click="closePanel">
-
+    <div class="iconfont icon-close" @click="closePanel"></div>
+    <p class="title">添加分组（带颜色的为已加入的组，点击标签即可加入或移出）</p>
+    <div class="group-wrapper" ref="scrollArea">
+      <div class="group-item" :class="{'selected': isSelected(group)}"
+        v-for="group in allGroups">{{group.groupName}}</div>
     </div>
   </div>
 </template>
 
 <script>
+import Ps from 'perfect-scrollbar';
+import { getGroupList } from 'api/group.js';
 
 export default {
-  data() {
-    return {};
+  props: {
+    display: {
+      type: Boolean
+    }
   },
+  data() {
+    return {
+      allGroups: [],
+      belongGroups: []
+    };
+  },
+  computed: {},
   methods: {
     closePanel() {
       this.$emit(this.HIDE_GROUP_PANEL);
+    },
+    isSelected(group) {
+      for (let belongGroup of this.belongGroups) {
+        if (group.groupId === belongGroup.groupId) {
+          return true;
+        }
+      }
+      return false;
+    },
+    updateScrollbar() {
+      this.$nextTick(() => {
+        Ps.destroy(this.$refs.scrollArea);
+        Ps.initialize(this.$refs.scrollArea, {
+          wheelSpeed: 1,
+          minScrollbarLength: 40
+        });
+      });
+    }
+  },
+  watch: {
+    display: function(val) {
+      if (val === true) {
+        getGroupList().then((data) => {
+          this.allGroups = data;
+          this.updateScrollbar();
+        }, (error) => {
+          console.log(error);
+        });
+      }
     }
   }
 };
@@ -25,13 +68,15 @@ export default {
 
 .group-panel {
   display: block;
+  padding: 10px 0;
   width: @group-panel-width;
   height: @group-panel-height;
+  box-sizing: border-box;
   background-color: @theme-color;
   .iconfont {
     position: absolute;
-    right: 10px;
-    top: 10px;
+    right: 15px;
+    top: 15px;
     font-size: 22px;
     color: #fff;
     cursor: pointer;
@@ -40,6 +85,52 @@ export default {
     }
     &:active {
       opacity: 0.8;
+    }
+  }
+  .title {
+    margin: 10px 25px;
+    font-size: @normal-font-size;
+    color: #fff;
+    text-align: left;
+  }
+  .group-wrapper {
+    position: relative;
+    height: 340px;
+    padding: 0 10px;
+    overflow: hidden;
+    .group-item {
+      display: inline-block;
+      margin: 5px 3%;
+      width: 27.33%;
+      height: 30px;
+      line-height: 30px;
+      background-color: #fff;
+      color: @light-font-color;
+      cursor: pointer;
+      &.selected {
+        background-color: @button-color;
+        color: #fff;
+      }
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+    .ps__scrollbar-y-rail {
+      position: absolute;
+      width: 10px;
+      right: 0;
+      box-sizing: border-box;
+      opacity: 0.6;
+      transition: opacity 0.3s;
+      .ps__scrollbar-y {
+        position: relative;
+        background-color: @inverse-font-color;
+      }
+    }
+    &:hover {
+      .ps__scrollbar-y-rail {
+        opacity: 0.8;
+      }
     }
   }
 }

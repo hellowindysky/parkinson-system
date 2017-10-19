@@ -34,7 +34,8 @@
     </div>
     <diagnostic-detail class="diagnostic-detail"></diagnostic-detail>
     <diagnostic-handle-scale class="diagnostic-handle-scale"></diagnostic-handle-scale>
-    <group-panel class="group-panel" :class="{'hide': !displayGroupPanel}" @hideGroupPanel="hideGroupPanel"></group-panel>
+    <group-panel class="group-panel" :class="{'hide': !displayGroupPanel}"
+      :display="displayGroupPanel" @hideGroupPanel="hideGroupPanel"></group-panel>
   </div>
 </template>
 
@@ -191,6 +192,7 @@ export default {
   watch: {
     $route() {
       this.checkRoute();
+      this.displayGroupPanel = false;  // 路由变化时，关闭分组面板
     }
   },
   beforeDestroy() {
@@ -235,6 +237,7 @@ export default {
     right: 0;
     top: 0;
     transition: 0.3s;
+    z-index: 200;
     &.hide {
       right: -@group-panel-width;
     }
