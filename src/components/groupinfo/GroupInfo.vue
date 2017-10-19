@@ -27,6 +27,10 @@
         </div>
       </div>
     </div>
+    <div class="operate-bar">
+      <el-checkbox class="select-all">全选</el-checkbox>
+      <div class="remove-button">移出分组</div>
+    </div>
     <div class="group-description" v-show="descPanelDisplay">
       <div class="iconfont icon-close" @click="closeDescPanel"></div>
       <p class="description-content" v-show="descriptionMode===READING_MODE">{{remarks}}</p>
@@ -347,6 +351,38 @@ export default {
         &:hover {
           padding: 0;
         }
+      }
+    }
+  }
+  .operate-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: @margin-right;
+    height: 45px;
+    background-color: @background-color;
+    text-align: left;
+    box-shadow: 0 -1px 10px @light-gray-color;
+    .select-all {
+      margin-left: 25px;
+      line-height: 45px;
+    }
+    .remove-button {
+      position: absolute;
+      right: 10px;
+      top: 8px;
+      width: @small-button-width;
+      height: @small-button-height;
+      line-height: @small-button-height;
+      text-align: center;
+      color: #fff;
+      background-color: @secondary-button-color;
+      cursor: pointer;
+      &:hover {
+        opacity: 0.6;
+      }
+      &:active {
+        opacity: 0.8;
       }
     }
   }
