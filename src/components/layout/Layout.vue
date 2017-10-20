@@ -3,6 +3,7 @@
     <topbar class="topbar"></topbar>
     <sidebar class="sidebar"></sidebar>
     <router-view class="content"></router-view>
+    <group-modal></group-modal>
     <modal-box></modal-box>
     <medicine-modal></medicine-modal>
     <pre-evaluation-modal></pre-evaluation-modal>
@@ -21,6 +22,7 @@ import Bus from 'utils/bus.js';
 
 import topbar from 'components/header/Header';
 import sidebar from 'components/sidebar/Sidebar';
+import groupModal from 'components/groupmodal/GroupModal';
 import modalBox from 'components/modalbox/ModalBox';
 import medicineModal from 'components/medicinemodal/MedicineModal';
 import preEvaluationModal from 'components/preevaluationmodal/PreEvaluationModal';
@@ -41,6 +43,7 @@ export default {
   components: {
     topbar,
     sidebar,
+    groupModal,
     modalBox,
     medicineModal,
     preEvaluationModal,

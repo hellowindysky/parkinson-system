@@ -31,6 +31,28 @@ export function modifyGroupInfo(groupInfo) {
   return encapsulatePromise(url, request);
 };
 
+// 新增分组
+export function addGroup(groupInfo) {
+  var request = Object.assign({}, getCommonRequest());
+  request.pageNo = 1;
+  request.pageSize = 0;
+  request.group = groupInfo;
+  var url = baseUrl + '/pdms/addGroup';
+
+  return encapsulatePromise(url, request);
+};
+
+// 删除分组
+export function deleteGroup(groupIdList) {
+  var request = Object.assign({}, getCommonRequest());
+  request.pageNo = 1;
+  request.pageSize = 0;
+  request.group = groupIdList;
+  var url = baseUrl + '/pdms/delGroup';
+
+  return encapsulatePromise(url, request);
+};
+
 // 查看某个分组下的病患列表（或者取相反，即不在该分组下的病患列表）
 export function getGroupMembers(groupCondition) {
   var request = Object.assign({}, getCommonRequest());

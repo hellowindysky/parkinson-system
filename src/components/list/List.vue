@@ -425,7 +425,7 @@ export default {
       }
     },
     addNewGroup() {
-
+      Bus.$emit(this.SHOW_GROUP_MODAL);
     },
     deleteGroup() {
 
