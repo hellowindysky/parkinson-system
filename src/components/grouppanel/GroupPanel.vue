@@ -3,8 +3,10 @@
     <div class="iconfont icon-close" @click="closePanel"></div>
     <p class="title">添加分组（带颜色的为已加入的组，点击标签即可加入或移出）</p>
     <div class="group-wrapper" ref="scrollArea">
-      <div class="group-item" :class="{'selected': isSelected(group)}"
-        v-for="group in allGroups">{{group.groupName}}</div>
+      <div class="group-item" v-for="(group, index) in allGroups"
+        :class="{'selected': groupSelectedList[index]}" @click="toggleSelected(index)">
+        {{group.groupName}}
+      </div>
     </div>
   </div>
 </template>
@@ -22,21 +24,14 @@ export default {
   data() {
     return {
       allGroups: [],
-      belongGroups: []
+      belongGroups: [],
+      groupSelectedList: []
     };
   },
   computed: {},
   methods: {
     closePanel() {
       this.$emit(this.HIDE_GROUP_PANEL);
-    },
-    isSelected(group) {
-      for (let belongGroup of this.belongGroups) {
-        if (group.groupId === belongGroup.groupId) {
-          return true;
-        }
-      }
-      return false;
     },
     updateScrollbar() {
       this.$nextTick(() => {
@@ -46,6 +41,10 @@ export default {
           minScrollbarLength: 40
         });
       });
+    },
+    toggleSelected(index) {
+      var value = !this.groupSelectedList[index];
+      this.$set(this.groupSelectedList, index, value);
     }
   },
   watch: {
@@ -53,6 +52,17 @@ export default {
       if (val === true) {
         getGroupList().then((data) => {
           this.allGroups = data;
+          let length = this.allGroups.length;
+          this.groupSelectedList = [];
+          for (var i = 0; i < length; i++) {
+            var value = false;
+            for (let belongGroup of this.belongGroups) {
+              if (this.allGroups[i].groupId === belongGroup.groupId) {
+                value = true;
+              }
+            }
+            this.$set(this.groupSelectedList, i, value);
+          }
           this.updateScrollbar();
         }, (error) => {
           console.log(error);
