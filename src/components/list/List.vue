@@ -2,7 +2,7 @@
   <div class="list">
     <div class="search-area">
       <span class="iconfont icon-search"></span>
-      <input class="search-input" placeholder="请输入姓名/身份证号/手机号" v-model="searchInput" @input="search"></input>
+      <input class="search-input" :placeholder="searchInputPlaceholder" v-model="searchInput" @input="search"></input>
     </div>
     <div class="control-area">
       <div class="filter-button" @click="togglePanelDisplay">
@@ -273,6 +273,13 @@ export default {
         return 'roles';
       }
     },
+    searchInputPlaceholder() {
+      if (this.listType === 'myPatients') {
+        return '请输入姓名/身份证号/手机号';
+      } else if (this.listType === 'groups') {
+        return '请输入组名';
+      }
+    },
     totalNumText() {
       if (this.listType === 'myPatients') {
         return '患者：' + this.myPatientsList.length + '人';
@@ -316,7 +323,11 @@ export default {
     search() {
       clearTimeout(this.timeout);
       this.timeout = setTimeout(() => {
-        this.updatePatientsList();
+        if (this.listType === 'myPatients' || this.listType === 'otherPatients') {
+          this.updatePatientsList();
+        } else if (this.listType === 'groups') {
+          this.updateGroupList();
+        }
       }, 1000);
     },
     updateScrollbar() {
@@ -340,7 +351,7 @@ export default {
       }
 
       if (this.searchInput !== '') {
-        condition.keyword = this.searchInput;
+        condition.keyword = this.searchInput.trim();
       }
 
       var filterForm = this.filterPatientsForm;
@@ -375,6 +386,9 @@ export default {
       var filterForm = this.filterGroupsForm;
       if (filterForm.groupType !== -1) {
         condition.groupType = filterForm.groupType;
+      }
+      if (this.searchInput !== '') {
+        condition.groupeName = this.searchInput.trim();
       }
       getGroupList(condition).then((data) => {
         this.groupList = data;
@@ -446,7 +460,6 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields();
       this.submitForm(formName);
-      this.togglePanelDisplay();
     },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {

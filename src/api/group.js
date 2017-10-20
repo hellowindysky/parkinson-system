@@ -11,12 +11,12 @@ export function getGroupPatients(groupId) {
 };
 
 // 获取分组信息
-export function getGroupList(groupInfoModel) {
+export function getGroupList(groupInfoCondition) {
   var request = Object.assign({}, getCommonRequest());
-  if (groupInfoModel === undefined) {
-    request.groupInfoModel = {};
+  if (groupInfoCondition === undefined) {
+    request.groupInfoCond = {};
   } else {
-    request.groupInfoModel = groupInfoModel;
+    request.groupInfoCond = groupInfoCondition;
   }
   var url = baseUrl + '/pdms/queryGroupList';
 
