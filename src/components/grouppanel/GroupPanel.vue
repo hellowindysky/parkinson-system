@@ -64,6 +64,7 @@ export default {
       if (value) {
         addGroupMembers(groupId, [patientId]).then(() => {
           let listIndex = lockList.indexOf(index);
+          this.$emit(this.UPDATE_PATIENT_GROUP_INFO);
           lockList.splice(listIndex, 1);
         }, (error) => {
           console.log(error);
@@ -71,6 +72,7 @@ export default {
       } else {
         removeGroupMembers(groupId, [this.patientId]).then(() => {
           let listIndex = lockList.indexOf(index);
+          this.$emit(this.UPDATE_PATIENT_GROUP_INFO);
           lockList.splice(listIndex, 1);
         }, (error) => {
           console.log(error);

@@ -37,7 +37,8 @@
     <diagnostic-detail class="diagnostic-detail"></diagnostic-detail>
     <diagnostic-handle-scale class="diagnostic-handle-scale"></diagnostic-handle-scale>
     <group-panel class="group-panel" :class="{'hide': !displayGroupPanel}" :belongGroups="belongGroups"
-      :display="displayGroupPanel" :patientId="Number(patientId)" @hideGroupPanel="hideGroupPanel"></group-panel>
+      :display="displayGroupPanel" :patientId="Number(patientId)" @hideGroupPanel="hideGroupPanel"
+      @updatePatientGroupInfo="updatePatientGroupInfo"></group-panel>
   </div>
 </template>
 
@@ -45,7 +46,7 @@
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 
-import { getPatientInfo, getPatientCaseList } from 'api/patient';
+import { getPatientInfo, getPatientGroupInfo, getPatientCaseList } from 'api/patient';
 
 import DiagnosticDetail from 'components/diagnosticdetail/DiagnosticDetail';
 import DiagnosticHandleScale from 'components/diagnostichandlescale/DiagnosticHandleScale';
@@ -165,6 +166,20 @@ export default {
         console.log(error);
       });
     },
+    updatePatientGroupInfo() {
+      // 如果是新增患者，则不去请求数据
+      if (!this.existed) {
+        return;
+      }
+      var patientInfo = {
+        'patientId': this.patientId
+      };
+      getPatientGroupInfo(patientInfo).then((data) => {
+        this.belongGroups = data;
+      }, (error) => {
+        console.log(error);
+      });
+    },
     toggleGroupPanel() {
       this.displayGroupPanel = !this.displayGroupPanel;
     },
@@ -180,6 +195,7 @@ export default {
   },
   mounted() {
     this.updatePatientInfo();
+    this.updatePatientGroupInfo();
 
     this.checkRoute();
 
