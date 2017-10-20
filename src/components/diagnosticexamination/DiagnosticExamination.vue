@@ -391,17 +391,11 @@ export default {
     Bus.$on(this.RECALCULATE_CARD_WIDTH, this.recalculateCardWidth);
     // 第一次加载的时候，去计算一次卡片宽度
     this.recalculateCardWidth();
-
-    setTimeout(() => {
-      // console.log(this.neurologicCheckList);
-      // console.log(this.biochemicalExamList);
-      // console.log(this.emgList);
-    }, 2000);
     // 取出生命体征中的心率情况数组
     let that = this;
     Util.getDictionaryData('rhythm').then(function(data) {
       vueCopy(data, that.heartRate);
-      // console.log(that.heartRate);
+      console.log('heartRate', data);
     });
   },
   beforeDestroy() {
