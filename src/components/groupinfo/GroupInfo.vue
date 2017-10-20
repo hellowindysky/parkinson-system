@@ -2,7 +2,7 @@
   <div class="group-info">
     <div class="title-bar">
       <h3 class="title">
-        <span v-show="titleMode === READING_MODE">{{groupName}}</span>
+        <span v-show="titleMode === READING_MODE" class="title-text">{{groupName}}</span>
         <span v-show="titleMode === EDITING_MODE">
           <el-input class="title-input" v-model="copyGroupName"></el-input>
         </span>
@@ -323,14 +323,26 @@ export default {
       line-height: 40px;
       text-align: left;
       box-sizing: border-box;
-      font-size: @large-font-size;
+      font-size: 0;
       font-weight: bold;
       color: @font-color;
+      .title-text {
+        display: inline-block;
+        max-width: 350px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: @large-font-size;
+        vertical-align: top;
+      }
       .iconfont {
         display: inline-block;
         margin-left: 10px;
+        font-size: @large-font-size;
+        vertical-align: top;
         cursor: pointer;
         &.icon-edit {
+          margin-left: 20px;
           color: @light-font-color;
         }
         &.icon-cancel {
@@ -359,7 +371,7 @@ export default {
       }
       .title-input {
         display: inline-block;
-        width: 150px;
+        width: 200px;
         .el-input__inner {
           width: 100%;
           height: 30px;
@@ -470,10 +482,24 @@ export default {
           right: 20px;
           font-size: @large-font-size;
           color: @font-color;
+          .name {
+            display: inline-block;
+            max-width: 130px;
+            height: 20px;
+            line-height: 20px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
           .iconfont {
-            position: static;
+            display: inline-block;
+            position: relative;
+            top: 1px;
             margin-left: 15px;
+            height: 20px;
+            line-height: 20px;
             font-size: @normal-font-size;
+            vertical-align: top;
             &.icon-male {
               color: @male-color;
             }

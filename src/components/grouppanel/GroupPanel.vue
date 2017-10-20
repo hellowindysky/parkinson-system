@@ -143,12 +143,17 @@ export default {
     .group-item {
       display: inline-block;
       margin: 5px 3%;
+      padding: 0 5px;
       width: 27.33%;
       height: 30px;
       line-height: 30px;
+      box-sizing: border-box;
       background-color: #fff;
       color: @light-font-color;
       text-align: center;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       cursor: pointer;
       &.selected {
         background-color: @button-color;
