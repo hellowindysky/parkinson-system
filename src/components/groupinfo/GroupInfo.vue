@@ -202,6 +202,7 @@ export default {
       modifyGroupInfo(groupInfo).then(() => {
         this.updateGroupInfo(() => {
           this.titleMode = this.READING_MODE;
+          Bus.$emit(this.UPDATE_GROUP_LIST);
         });
       });
     },
@@ -252,6 +253,7 @@ export default {
       addGroupMembers(this.groupId, memberList).then(() => {
         this.updateGroupMembers();
         this.mode = this.READING_MODE;
+        Bus.$emit(this.UPDATE_GROUP_LIST);
       }, (error) => {
         console.log(error);
       });
@@ -266,6 +268,7 @@ export default {
       removeGroupMembers(this.groupId, memberList).then(() => {
         this.updateGroupMembers();
         this.mode = this.READING_MODE;
+        Bus.$emit(this.UPDATE_GROUP_LIST);
       }, (error) => {
         console.log(error);
       });

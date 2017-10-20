@@ -7,6 +7,7 @@ export default {
   // scale mode
   SCALE_READING_MODE: 'scaleReading',
   SCALE_EDITING_MODE: 'scaleEditing',
+
   // status
   NORMAL_STATUS: 'normal',
   EXTENDED_STATUS: 'extended',
@@ -38,6 +39,7 @@ export default {
 
   UPDATE_MY_PATIENTS_LIST: 'updateMyPatientsList',
   UPDATE_OTHER_PATIENTS_LIST: 'updateOtherPatientsList',
+  UPDATE_GROUP_LIST: 'updateGroupList',
   UPDATE_PATIENT_INFO: 'updatePatientInfo',
   UPDATE_CASE_INFO: 'updateCaseInfo',
   UPDATE_SCALE_DETAIL: 'updateScaleDetail',
