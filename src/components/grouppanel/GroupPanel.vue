@@ -97,6 +97,7 @@ export default {
     position: relative;
     height: 340px;
     padding: 0 10px;
+    text-align: left;
     overflow: hidden;
     .group-item {
       display: inline-block;
@@ -106,6 +107,7 @@ export default {
       line-height: 30px;
       background-color: #fff;
       color: @light-font-color;
+      text-align: center;
       cursor: pointer;
       &.selected {
         background-color: @button-color;

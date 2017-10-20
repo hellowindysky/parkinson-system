@@ -22,3 +22,42 @@ export function getGroupList(groupInfoCondition) {
 
   return encapsulatePromise(url, request);
 };
+
+// 修改组名
+export function modifyGroupName(groupId, name) {
+  var request = Object.assign({}, getCommonRequest());
+  if (groupId !== undefined) {
+    request.groupId = groupId;
+  }
+  if (name !== undefined) {
+    request.groupeName = name;
+  }
+  var url = baseUrl + '/pdms/modGroupName';
+
+  return encapsulatePromise(url, request);
+};
+
+// 查询分组说明
+export function getGroupRemarks(groupId) {
+  var request = Object.assign({}, getCommonRequest());
+  if (groupId !== undefined) {
+    request.groupId = groupId;
+  }
+  var url = baseUrl + '/pdms/groupRemarks';
+
+  return encapsulatePromise(url, request);
+};
+
+// 编辑分组说明
+export function modifyGroupRemarks(groupId, remarks) {
+  var request = Object.assign({}, getCommonRequest());
+  if (groupId !== undefined) {
+    request.groupId = groupId;
+  }
+  if (remarks !== undefined) {
+    request.remarks = remarks;
+  }
+  var url = baseUrl + '/pdms/editGroupRemarks';
+
+  return encapsulatePromise(url, request);
+};

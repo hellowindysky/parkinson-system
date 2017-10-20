@@ -4,15 +4,17 @@
       <h3 class="title">
         <span v-show="titleMode === READING_MODE">{{groupName}}</span>
         <span v-show="titleMode === EDITING_MODE">
-          <el-input class="title-input" v-model="groupName"></el-input>
+          <el-input class="title-input" v-model="copyGroupName"></el-input>
         </span>
-        <span class="iconfont icon-edit" v-show="mode===READING_MODE" @click="toggleTitleMode"></span>
+        <span class="iconfont icon-edit" v-show="mode===READING_MODE && titleMode===READING_MODE" @click="editTitle"></span>
+        <span class="iconfont icon-cancel" v-show="mode===READING_MODE && titleMode===EDITING_MODE" @click="cancelEditingTitle"></span>
+        <span class="iconfont icon-ok" v-show="mode===READING_MODE && titleMode===EDITING_MODE" @click="submitEditedTitle"></span>
         <span class="iconfont icon-explain" v-show="mode===READING_MODE" :class="{'on': descPanelDisplay}"
           @click="toggleDescPanelDisplay"></span>
       </h3>
-      <div class="button button-operate" v-show="mode===READING_MODE" @click="switchToEditingMode">批量操作</div>
-      <div class="button button-add" v-show="mode===READING_MODE">添加患者</div>
-      <div class="button button-return" v-show="mode===EDITING_MODE" @click="switchToReadingMode">返回</div>
+      <div class="button button-operate" v-show="mode===READING_MODE" @click="switchMode(REMOVING_MODE)">移出患者</div>
+      <div class="button button-add" v-show="mode===READING_MODE" @click="switchMode(ADDING_MODE)">添加患者</div>
+      <div class="button button-return" v-show="mode!==READING_MODE" @click="switchToReadingMode">返回</div>
     </div>
     <!-- <div class="seperate-bar"></div> -->
     <div class="card-wrapper" ref="cardWrapper">
@@ -29,14 +31,15 @@
         </div>
       </div>
     </div>
-    <div class="operate-bar" v-show="mode===EDITING_MODE">
+    <div class="operate-bar" v-show="mode!==READING_MODE">
       <el-checkbox class="select-all">全选</el-checkbox>
-      <div class="remove-button">移出分组</div>
+      <div class="button remove-button" v-show="mode===REMOVING_MODE">移出分组</div>
+      <div class="button add-button" v-show="mode===ADDING_MODE">加入分组</div>
     </div>
     <div class="group-description" v-show="descPanelDisplay">
       <div class="iconfont icon-close" @click="closeDescPanel"></div>
       <p class="description-content" v-show="descriptionMode===READING_MODE">{{remarks}}</p>
-      <el-input type="textarea" v-model="remarks" v-show="descriptionMode===EDITING_MODE" :rows="8"></el-input>
+      <el-input type="textarea" v-model="copyRemarks" v-show="descriptionMode===EDITING_MODE" :rows="8"></el-input>
       <div class="button-wrapper">
         <div class="button cancel-button" v-show="descriptionMode===EDITING_MODE" @click="cancelDescInput">取消</div>
         <div class="button submit-button" v-show="descriptionMode===EDITING_MODE" @click="submitDescInput">确定</div>
@@ -49,19 +52,27 @@
 <script>
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
-import { getGroupPatients } from 'api/group.js';
+import { getGroupPatients,
+  modifyGroupName,
+  getGroupRemarks,
+  modifyGroupRemarks
+} from 'api/group.js';
 
 export default {
   data() {
     return {
       devideWidth: '',
       mode: this.READING_MODE,
+      ADDING_MODE: 'addingMode',
+      REMOVING_MODE: 'removingMode',
       groupName: '',
+      copyGroupName: '',
       titleMode: this.READING_MODE,
       descPanelDisplay: false,
       descriptionMode: this.READING_MODE,
       groupPatients: [],
-      remarks: ''
+      remarks: '',
+      copyRemarks: ''
     };
   },
   methods: {
@@ -88,13 +99,16 @@ export default {
     seeDetail(item) {
       console.log(item);
     },
-    updateGroupInfo() {
+    updateGroupInfo(cb) {
       getGroupPatients(this.$route.params.id).then((data) => {
         this.groupName = data.groupName;
+        this.copyGroupName = this.groupName;
         this.groupPatients = data.list;
         this.remarks = data.remarks;
+        this.copyRemarks = this.remarks;
         // console.log(data);
         this.updateScrollbar();
+        cb && cb();
       }, (error) => {
         console.log(error);
       });
@@ -107,18 +121,26 @@ export default {
         return 'icon-female';
       }
     },
-    switchToEditingMode() {
-      this.mode = this.EDITING_MODE;
+    switchMode(mode) {
+      this.mode = mode;
     },
     switchToReadingMode() {
       this.mode = this.READING_MODE;
     },
-    toggleTitleMode() {
-      if (this.titleMode === this.EDITING_MODE) {
-        this.titleMode = this.READING_MODE;
-      } else if (this.titleMode === this.READING_MODE) {
-        this.titleMode = this.EDITING_MODE;
-      }
+    editTitle() {
+      this.titleMode = this.EDITING_MODE;
+    },
+    cancelEditingTitle() {
+      this.copyGroupName = this.groupName;
+      this.titleMode = this.READING_MODE;
+    },
+    submitEditedTitle() {
+      let groupId = this.$route.params.id;
+      modifyGroupName(groupId, this.copyGroupName).then(() => {
+        this.updateGroupInfo(() => {
+          this.titleMode = this.READING_MODE;
+        });
+      });
     },
     toggleDescPanelDisplay() {
       this.descPanelDisplay = !this.descPanelDisplay;
@@ -131,10 +153,21 @@ export default {
       this.descriptionMode = this.EDITING_MODE;
     },
     cancelDescInput() {
+      this.copyRemarks = this.remarks;
       this.descriptionMode = this.READING_MODE;
     },
     submitDescInput() {
-      this.descriptionMode = this.READING_MODE;
+      let groupId = this.$route.params.id;
+      modifyGroupRemarks(groupId, this.copyRemarks).then(() => {
+        getGroupRemarks(groupId).then((data) => {
+          this.remarks = data.remarks;
+          this.copyRemarks = this.remarks;
+          this.descriptionMode = this.READING_MODE;
+        });
+      }, (error) => {
+        console.log(error);
+      });
+
     }
   },
   mounted() {
@@ -191,18 +224,29 @@ export default {
       .iconfont {
         display: inline-block;
         margin-left: 10px;
+        cursor: pointer;
         &.icon-edit {
           color: @light-font-color;
         }
-        &.icon-explain {
-          margin-left: 20px;
+        &.icon-cancel {
           color: @inverse-font-color;
+        }
+        &.icon-ok {
+          color: @button-color;
+          &:hover {
+            color: @button-color;
+            opacity: 0.8;
+          }
         }
         &:hover {
           color: @font-color;
         }
         &:active {
           opacity: 0.8;
+        }
+        &.icon-explain {
+          margin-left: 20px;
+          color: @inverse-font-color;
         }
         &.on {
           color: @font-color;
@@ -381,7 +425,7 @@ export default {
       margin-left: 25px;
       line-height: 45px;
     }
-    .remove-button {
+    .button {
       position: absolute;
       right: 10px;
       top: 8px;
@@ -390,13 +434,18 @@ export default {
       line-height: @small-button-height;
       text-align: center;
       color: #fff;
-      background-color: @secondary-button-color;
       cursor: pointer;
       &:hover {
         opacity: 0.6;
       }
       &:active {
         opacity: 0.8;
+      }
+      &.remove-button {
+        background-color: @secondary-button-color;
+      }
+      &.add-button {
+        background-color: @button-color;
       }
     }
   }
