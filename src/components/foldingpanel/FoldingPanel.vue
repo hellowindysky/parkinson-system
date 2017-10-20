@@ -6,7 +6,7 @@
       <div v-show="mode===READING_MODE" class="button edit-button" @click="edit">编辑</div>
       <div v-show="mode===EDITING_MODE && !isCardsPanel" class="button cancel-button" @click="cancel">取消</div>
       <div v-show="isCardsPanel" class="button add-button" @click="add">添加</div>
-      <div v-show="mode===EDITING_MODE" class="button submit-button" @click="submit">完成</div>
+      <div v-show="mode===EDITING_MODE" class="button submit-button" @click="submit">{{submitText}}</div>
 
       <el-select v-show="isCardsPanel" v-model="filterCondition" size="small" placeholder="筛选" class="button filter-button">
         <el-option label="全部" :value="'all'"></el-option>
@@ -52,6 +52,13 @@ export default {
   computed: {
     iconToggleFolded() {
       return this.folded ? 'icon-down' : 'icon-up';
+    },
+    submitText() {
+      if (this.$route.params.id === 'newPatient') {
+        return '下一步';
+      } else {
+        return '完成';
+      }
     }
   },
   methods: {

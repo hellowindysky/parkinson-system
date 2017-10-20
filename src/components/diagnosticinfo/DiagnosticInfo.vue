@@ -5,7 +5,7 @@
       <card class="card" :class="devideWidth" :mode="mode" v-for="item in patientCaseList" :key="item.caseName"
        :title="item.caseName" v-on:clickCurrentCard="seeDetail(item)" v-on:deleteCurrentCard="deleteRecord(item)">
         <div class="text first-line">诊断内容：</div>
-        <div class="text second-line" v-html="getDiagnosticContent(item)"></div>
+        <div class="text second-line">{{getDiagnosticContent(item)}}</div>
         <div class="text third-line">归档情况：
           <span class="third-line-content">
             {{ getArchiveStatus(item) }}
@@ -85,8 +85,7 @@ export default {
       ];
       for (let field of diagnosticDictionary) {
         if (item[field.fieldName]) {
-          // 正因为这里需要加入连续空格，所以我们才使用 v-html 指令来直接解析 html
-          content += field.cnName + '[' + item[field.fieldName] + ']' + ' <span>&nbsp;&nbsp;</span> ';
+          content += field.cnName + '[' + item[field.fieldName] + ']' + '   ';
         }
       }
       // 去掉尾部空格
@@ -237,6 +236,7 @@ export default {
           right: 20px;
           line-height: 16px;
           color: @light-font-color;
+          white-space: pre-wrap;
         }
         &.third-line {
           left: 20px;
