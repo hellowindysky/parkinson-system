@@ -252,7 +252,7 @@ export default {
       }
       addGroupMembers(this.groupId, memberList).then(() => {
         this.updateGroupMembers();
-        this.mode = this.READING_MODE;
+        this.switchMode(this.READING_MODE);
         Bus.$emit(this.UPDATE_GROUP_LIST);
       }, (error) => {
         console.log(error);
@@ -267,7 +267,7 @@ export default {
       }
       removeGroupMembers(this.groupId, memberList).then(() => {
         this.updateGroupMembers();
-        this.mode = this.READING_MODE;
+        this.switchMode(this.READING_MODE);
         Bus.$emit(this.UPDATE_GROUP_LIST);
       }, (error) => {
         console.log(error);
