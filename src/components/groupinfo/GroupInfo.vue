@@ -14,12 +14,13 @@
       </h3>
       <div class="button button-operate" v-show="mode===READING_MODE" @click="switchMode(REMOVING_MODE)">移出患者</div>
       <div class="button button-add" v-show="mode===READING_MODE" @click="switchMode(ADDING_MODE)">添加患者</div>
-      <div class="button button-return" v-show="mode!==READING_MODE" @click="switchToReadingMode">返回</div>
+      <div class="button button-return" v-show="mode!==READING_MODE" @click="switchMode(READING_MODE)">返回</div>
     </div>
     <!-- <div class="seperate-bar"></div> -->
     <div class="card-wrapper" ref="cardWrapper">
-      <div class="card" :class="devideWidth" v-for="patient in groupPatients" :title="patient.name" v-on:clickCurrentCard="seeDetail(patient)">
+      <div v-show="mode!==ADDING_MODE" class="card" :class="devideWidth" v-for="(patient, i) in groupPatients" :title="patient.name" v-on:clickCurrentCard="seeDetail(patient)">
         <img class="image" src="~img/profile.png" alt="">
+        <el-checkbox class="select" v-model="groupPatientsSelectedList[i]" v-show="mode===REMOVING_MODE"></el-checkbox>
         <div class="text first-line">
           <span class="name">{{patient.ptname}}</span>
           <span class="iconfont" :class="getGenderIcon(patient.sex)"></span>
@@ -30,9 +31,23 @@
           <span class="date">{{patient.date}}</span>
         </div>
       </div>
+
+      <div v-show="mode===ADDING_MODE" class="card" :class="devideWidth" v-for="(patient, i) in nonGroupPatients" :title="patient.name" v-on:clickCurrentCard="seeDetail(patient)">
+        <img class="image" src="~img/profile.png" alt="">
+        <el-checkbox class="select" v-show="mode===ADDING_MODE" v-model="nonGroupPatientsSelectedList[i]"></el-checkbox>
+        <div class="text first-line">
+          <span class="name">{{patient.name}}</span>
+          <span class="iconfont" :class="getGenderIcon(patient.sex)"></span>
+        </div>
+        <div class="text second-line">
+          <span>年龄</span>
+          <span class="age">{{patient.age}}</span>
+          <span class="date">{{patient.createDate}}</span>
+        </div>
+      </div>
     </div>
     <div class="operate-bar" v-show="mode!==READING_MODE">
-      <el-checkbox class="select-all">全选</el-checkbox>
+      <el-checkbox class="select-all" v-model="selectAll" @change="toggleSelectAll">全选</el-checkbox>
       <div class="button remove-button" v-show="mode===REMOVING_MODE">移出分组</div>
       <div class="button add-button" v-show="mode===ADDING_MODE">加入分组</div>
     </div>
@@ -53,6 +68,7 @@
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import { getGroupPatients,
+  getGroupMembers,
   modifyGroupName,
   getGroupRemarks,
   modifyGroupRemarks
@@ -68,11 +84,15 @@ export default {
       groupName: '',
       copyGroupName: '',
       titleMode: this.READING_MODE,
+      remarks: '',
+      copyRemarks: '',
       descPanelDisplay: false,
       descriptionMode: this.READING_MODE,
       groupPatients: [],
-      remarks: '',
-      copyRemarks: ''
+      groupPatientsSelectedList: [],
+      nonGroupPatients: [],
+      nonGroupPatientsSelectedList: [],
+      selectAll: false
     };
   },
   methods: {
@@ -103,9 +123,14 @@ export default {
       getGroupPatients(this.$route.params.id).then((data) => {
         this.groupName = data.groupName;
         this.copyGroupName = this.groupName;
-        this.groupPatients = data.list;
         this.remarks = data.remarks;
         this.copyRemarks = this.remarks;
+        this.groupPatients = data.list;
+        let length = this.groupPatients.length;
+        this.groupPatientsSelectedList = [];
+        for (var i = 0; i < length; i++) {
+          this.$set(this.groupPatientsSelectedList, i, false);
+        }
         // console.log(data);
         this.updateScrollbar();
         cb && cb();
@@ -122,10 +147,30 @@ export default {
       }
     },
     switchMode(mode) {
-      this.mode = mode;
-    },
-    switchToReadingMode() {
-      this.mode = this.READING_MODE;
+      if (mode === this.ADDING_MODE) {
+        let groupCondition = {
+          'patientGroupId': this.$route.params.id,
+          'includeType': 2  // 1代表组内，2代表非组内
+        };
+        getGroupMembers(groupCondition).then((data) => {
+          this.nonGroupPatients = data;
+          let length = this.nonGroupPatients.length;
+          this.nonGroupPatientsSelectedList = [];
+          for (var i = 0; i < length; i++) {
+            this.$set(this.nonGroupPatientsSelectedList, i, false);
+          }
+          this.mode = mode;
+        });
+      } else if (mode === this.REMOVING_MODE) {
+        for (var i = 0; i < this.groupPatientsSelectedList.length; i++) {
+          this.groupPatientsSelectedList[i] = false;
+        }
+        this.mode = mode;
+      } else {
+        // 返回到阅读状态时，将“全部选中”置为 false
+        this.selectAll = false;
+        this.mode = mode;
+      }
     },
     editTitle() {
       this.titleMode = this.EDITING_MODE;
@@ -167,7 +212,18 @@ export default {
       }, (error) => {
         console.log(error);
       });
-
+    },
+    toggleSelectAll() {
+      var value = this.selectAll;
+      if (this.mode === this.ADDING_MODE) {
+        for (let i = 0; i < this.nonGroupPatientsSelectedList.length; i++) {
+          this.$set(this.nonGroupPatientsSelectedList, i, value);
+        }
+      } else if (this.mode === this.REMOVING_MODE) {
+        for (let i = 0; i < this.groupPatientsSelectedList.length; i++) {
+          this.$set(this.groupPatientsSelectedList, i, value);
+        }
+      }
     }
   },
   mounted() {
@@ -350,6 +406,11 @@ export default {
         position: absolute;
         width: 35px;
         left: 20px;
+        top: 10px;
+      }
+      .select {
+        position: absolute;
+        right: 10px;
         top: 10px;
       }
       .text {

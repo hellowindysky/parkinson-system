@@ -61,3 +61,14 @@ export function modifyGroupRemarks(groupId, remarks) {
 
   return encapsulatePromise(url, request);
 };
+
+// 查看某个分组下的病患列表（或者取相反，即不在该分组下的病患列表）
+export function getGroupMembers(groupCondition) {
+  var request = Object.assign({}, getCommonRequest());
+  request.pageSize = 0;
+  request.pageNo = 1;
+  request.patientGroupCond = groupCondition;
+  var url = baseUrl + '/pdms/queryPatientList';
+
+  return encapsulatePromise(url, request);
+}
