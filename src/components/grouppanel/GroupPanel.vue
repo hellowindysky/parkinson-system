@@ -13,18 +13,28 @@
 
 <script>
 import Ps from 'perfect-scrollbar';
-import { getGroupList } from 'api/group.js';
+import { getGroupList, addGroupMembers, removeGroupMembers } from 'api/group.js';
+
+var lockList = [];  // 这个数组用来标记正在发生状态改变的分组
 
 export default {
   props: {
     display: {
-      type: Boolean
+      type: Boolean,
+      default: false
+    },
+    patientId: {
+      type: Number,
+      default: ''
+    },
+    belongGroups: {
+      type: Array,
+      default: []
     }
   },
   data() {
     return {
       allGroups: [],
-      belongGroups: [],
       groupSelectedList: []
     };
   },
@@ -43,8 +53,29 @@ export default {
       });
     },
     toggleSelected(index) {
+      if (lockList.indexOf(index) >= 0) {
+        return;   // 请求在发送过程中时，再次点击没有效果
+      }
+      lockList.push(index);
       var value = !this.groupSelectedList[index];
       this.$set(this.groupSelectedList, index, value);
+      var groupId = this.allGroups[index].groupId;
+      var patientId = Number(this.patientId);
+      if (value) {
+        addGroupMembers(groupId, [patientId]).then(() => {
+          let listIndex = lockList.indexOf(index);
+          lockList.splice(listIndex, 1);
+        }, (error) => {
+          console.log(error);
+        });
+      } else {
+        removeGroupMembers(groupId, [this.patientId]).then(() => {
+          let listIndex = lockList.indexOf(index);
+          lockList.splice(listIndex, 1);
+        }, (error) => {
+          console.log(error);
+        });
+      }
     }
   },
   watch: {

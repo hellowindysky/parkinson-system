@@ -34,8 +34,8 @@
     </div>
     <diagnostic-detail class="diagnostic-detail"></diagnostic-detail>
     <diagnostic-handle-scale class="diagnostic-handle-scale"></diagnostic-handle-scale>
-    <group-panel class="group-panel" :class="{'hide': !displayGroupPanel}"
-      :display="displayGroupPanel" @hideGroupPanel="hideGroupPanel"></group-panel>
+    <group-panel class="group-panel" :class="{'hide': !displayGroupPanel}" :belongGroups="belongGroups"
+      :display="displayGroupPanel" :patientId="Number(patientId)" @hideGroupPanel="hideGroupPanel"></group-panel>
   </div>
 </template>
 
@@ -62,8 +62,11 @@ export default {
     };
   },
   computed: {
+    patientId() {
+      return this.$route.params.id;
+    },
     existed() {
-      return !(this.$route.params.id === 'newPatient');
+      return !(this.patientId === 'newPatient');
     },
     listType() {
       if (this.$route.matched.some(record => record.meta.myPatients)) {
@@ -144,7 +147,7 @@ export default {
       if (!this.existed) {
         return;
       }
-      getPatientInfo(this.$route.params.id).then((data) => {
+      getPatientInfo(this.patientId).then((data) => {
         // console.log('patientInfo: ', data);
         this.patientInfo = data;
         this.belongDoctor = data.belongDoctor;
@@ -153,7 +156,7 @@ export default {
       }, (error) => {
         console.log(error);
       });
-      getPatientCaseList(this.$route.params.id).then((data) => {
+      getPatientCaseList(this.patientId).then((data) => {
         // console.log('patientCaseList: ', data);
         this.patientCaseList = data;
       }, (error) => {
