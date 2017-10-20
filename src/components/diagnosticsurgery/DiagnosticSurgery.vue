@@ -29,13 +29,17 @@
             <span class="name">患者手术意愿: </span>
             <span class="value">{{item.intensionDesc}}</span>
           </div>
+          <div class="text line-7">
+            <span class="name">评估时间: </span>
+            <span class="value">{{item.preopsTime}}</span>
+          </div>
         </card>
       </extensible-panel>
       <extensible-panel class="panel" :mode="mutableMode" :title="surgicalMethodTitle" v-on:addNewCard="addSurgicalRecord">
         <card class="card" :class="smallCardWidth" :mode="mutableMode" v-for="item in surgicalMethodList" :key="item.patientCaseId"
          :title="transformSurgicalType(item.surgicalInfoId)" v-on:clickCurrentCard="editSurgicalRecord(item)"
          v-on:deleteCurrentCard="deleteSurgicalRecord(item)">
-          <div class="text first-line">
+          <div class="text first-line single-line-ellipsis">
             <span class="name">备注: </span>
             <span class="value">{{item.remarks}}</span>
           </div>
@@ -50,9 +54,9 @@
          v-on:deleteCurrentCard="deletePostComplicationRecord(item)">
           <div class="text first-line">
             <span class="name">处理: </span>
-            <span class="value">{{item.process}}</span>
+            <span class="value">{{transformTypeGroupId(item.treatment, 'treatment')}}</span>
           </div>
-          <div class="text second-line">
+          <div class="text second-line single-line-ellipsis">
             <span class="name">备注: </span>
             <span class="value">{{item.remarks}}</span>
           </div>
@@ -83,7 +87,7 @@
             <span class="name">术后不良事件: </span>
             <span class="value">{{item.adverseEvents}}</span>
           </div>
-          <div class="text line-6">
+          <div class="text line-6 single-line-ellipsis">
             <span class="name">备注: </span>
             <span class="value">{{item.remarks}}</span>
           </div>
@@ -115,7 +119,7 @@
             <span class="name">效果及副作用: </span>
             <span class="value">{{item.effectInfo}}</span>
           </div>
-          <div class="text line-6">
+          <div class="text line-6 single-line-ellipsis">
             <span class="name">备注: </span>
             <span class="value">{{item.remarks}}</span>
           </div>
@@ -167,7 +171,8 @@ export default {
   computed: {
     ...mapGetters([
       'surgicalTypeList',
-      'complicationTypeList'
+      'complicationTypeList',
+      'typeGroup'
     ]),
     preEvaluationTitle() {
       return '术前评估（' + this.preEvaluationList.length + '条记录）';
@@ -220,6 +225,12 @@ export default {
       var complicationData = Util.getElement('id', typeId, this.complicationTypeList);
       var complicationName = complicationData.minorComplicationName ? complicationData.minorComplicationName : '';
       return complicationName;
+    },
+    transformTypeGroupId(typeId, fieldName) {
+      var types = Util.getElement('typegroupcode', fieldName, this.typeGroup).types;
+      types = types === undefined ? [] : types;
+      var typeName = Util.getElement('typeCode', typeId, types).typeName;
+      return typeName === undefined ? '' : typeName;
     },
     addPreEvaluationRecord() {
       // 这里要传递 2 个参数，一个是模式（新增／修改），一个是当前数据对象（新建的时候为空）
@@ -362,7 +373,7 @@ export default {
 <style lang="less">
 @import "~styles/variables.less";
 
-@pre-evaluation-card-height: 160px;
+@pre-evaluation-card-height: 185px;
 @post-complication-card-height: 120px;
 @dbs-card-height: 185px;
 
@@ -437,6 +448,12 @@ export default {
         font-size: @small-font-size;
         color: @light-font-color;
         left: 10px;
+        right: 10px;
+        &.single-line-ellipsis {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space:nowrap;
+        }
         .name {
           color: @font-color;
         }

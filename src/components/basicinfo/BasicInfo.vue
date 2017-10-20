@@ -1,5 +1,5 @@
 <template lang="html">
-  <folding-panel :title="'基础信息'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
+  <folding-panel :title="'基础信息'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit" :folded-status="foldedStatus">
     <div class="basic-info">
       <div class="group" v-for="group in basicInfoTemplateGroups">
         <div class="field" v-for="field in group" :class="{'whole-line': checkIfWholeLine(field)}">
@@ -48,7 +48,7 @@ import { mapGetters } from 'vuex';
 import { modifyPatientInfo, addPatientInfo } from 'api/patient.js';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import { reviseDateFormat } from 'utils/helper.js';
+import { reviseDateFormat, pruneObj } from 'utils/helper.js';
 
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 
@@ -68,6 +68,7 @@ export default {
   data() {
     return {
       mode: this.READING_MODE,
+      foldedStatus: false,
       copyInfo: {},
       warningResults: {}
     };
@@ -102,9 +103,30 @@ export default {
       this.clearWarning();
     },
     cancel() {
-      // 点击取消按钮，将我们对 copyInfo 所做的临时修改全部放弃，还原其为 basicInfo 的复制对象
-      this.shallowCopy(this.basicInfo);
-      this.mode = this.READING_MODE;
+      // 如果是新增患者界面，点击取消按钮，则回到患者列表的第一个患者
+      if (this.$route.params.id === 'newPatient') {
+        Bus.$on(this.CONFIRM, () => {
+          if (this.listType === 'myPatients') {
+            this.$router.push({name: 'myPatients'});
+          } else if (this.listType === 'otherPatients') {
+            this.$router.push({name: 'otherPatients'});
+          }
+          Bus.$off(this.CONFIRM);
+          Bus.$off(this.GIVE_UP);
+          return;
+        });
+        Bus.$on(this.GIVE_UP, () => {
+          Bus.$off(this.CONFIRM);
+          Bus.$off(this.GIVE_UP);
+          return;
+        });
+        Bus.$emit(this.REQUEST_CONFIRMATION, '提示', '确认取消吗？取消将放弃所有更改');
+
+      } else {
+        // 点击取消按钮，将我们对 copyInfo 所做的临时修改全部放弃，还原其为 basicInfo 的复制对象
+        this.shallowCopy(this.basicInfo);
+        this.mode = this.READING_MODE;
+      }
     },
     submit() {
       // 首先检查是否每个字段都合格，检查一遍之后，如果 warningResults 的所有属性值都为空，就证明表单符合要求
@@ -123,6 +145,7 @@ export default {
 
       // 在提交前，将 copyInfo 中的数据还原成适合服务器传输的格式
       this.restoreCopyInfo();
+      pruneObj(this.copyInfo);
 
       // 判断是新增患者还是修改已有患者
       if (this.$route.params.id === 'newPatient') {
@@ -142,6 +165,13 @@ export default {
             });
             Bus.$emit(this.UPDATE_OTHER_PATIENTS_LIST);
           }
+
+          // 如果是新增患者，还要在确定之后，将个人信息的病症信息面板与其它信息面板置为编辑状态
+          this.$nextTick(() => {
+            Bus.$emit(this.EDIT_DISEASE_INFO);
+            Bus.$emit(this.EDIT_OTHER_INFO);
+          });
+
         }, (error) => {
           console.log(error);
         });
@@ -151,11 +181,25 @@ export default {
         this.copyInfo.patientId = this.$route.params.id;
         modifyPatientInfo(this.copyInfo).then(() => {
           Bus.$emit(this.UPDATE_PATIENT_INFO);
+
+          // 即使是编辑已有记录，也要更新患者列表（因为列表中存在年龄，性别等信息）
+          if (this.listType === 'myPatients') {
+            Bus.$emit(this.UPDATE_MY_PATIENTS_LIST);
+          } else if (this.listType === 'otherPatients') {
+            Bus.$emit(this.UPDATE_OTHER_PATIENTS_LIST);
+          }
+
           this.mode = this.READING_MODE;
         }, (error) => {
           console.log(error);
         });
       }
+
+      // 在数据刷新之前，保证字段显示依然正确。
+      // 不知道为什么，如果没用 setTimeout 包裹，则会覆盖之前的 restoreCopyInfo() 的操作
+      setTimeout(() => {
+        this.handleSpecialField();
+      }, 0);
     },
     shallowCopy(obj) {
       // 进行浅复制之后，修改复制对象的属性，不会影响到原始对象
@@ -171,11 +215,14 @@ export default {
         }
       }
 
-      // 复制过来的 basicInfo 有几个字段的值需要特殊处理一下
+      this.handleSpecialField();
+    },
+    handleSpecialField() {
+      // basicInfo 有几个字段的值需要特殊处理一下
       // 身高和体重的数值，在传输的时候用的是 Int 整型，例如 178.8 cm 在传输的时候用的数值是 1788
       for (let fieldName of CONVERT_TO_DECIMAL_LIST) {
         if (this.copyInfo[fieldName]) {
-          this.$set(this.copyInfo, fieldName, this.copyInfo[fieldName] / 10);
+          this.copyInfo[fieldName] = this.copyInfo[fieldName] / 10;
         }
       }
     },
@@ -187,7 +234,7 @@ export default {
         for (let field of group) {
           var fieldName = field.fieldName;
           // copyInfo 有几个字段的值在取过来的时候进行了特殊处理，这里在传回给服务器的时候要还原成一开始的格式
-          if (CONVERT_TO_DECIMAL_LIST.indexOf(fieldName) > -1) {
+          if (CONVERT_TO_DECIMAL_LIST.indexOf(fieldName) > -1 && this.copyInfo[fieldName] !== '') {
             this.$set(this.copyInfo, fieldName, this.copyInfo[fieldName] * 10);
           }
         }
@@ -222,6 +269,27 @@ export default {
     updateWarning(field) {
       var fieldName = field.fieldName;
       var copyFieldValue = this.copyInfo[fieldName];
+
+      // 如果是身份证信息，先对其进行校验
+      if (fieldName === 'cardId') {
+        let result = Util.checkId(copyFieldValue).split(',');
+        if (copyFieldValue !== '' && result.length <= 1) {
+          this.$set(this.warningResults, fieldName, result[0]);
+          return;
+        } else if (copyFieldValue !== '') {
+          // 这里插入一段逻辑,如果身份证信息变化，而且输入合法，则相应地更新出生日期和性别（应该还加上籍贯信息）
+          this.$set(this.warningResults, fieldName, null);
+          // var province = result[0];
+          var birthday = result[1];
+          var gender = result[2];
+          if (this.copyInfo.birthday) {
+            this.copyInfo.birthday = birthday;
+            this.copyInfo.sex = gender === '男' ? 0 : 1;
+            // this.homeProvince = province;
+          }
+        }
+      }
+
       if (this.getUIType(field) === 6) {
         // 日期控件(el-date-picker)给的是一个表示完整日期对象的字符串，我们需要格式化之后再校验
         copyFieldValue = Util.simplifyDate(copyFieldValue);
@@ -276,6 +344,9 @@ export default {
       // console.log(this.basicInfoTemplateGroups);
       // console.log(this.copyInfo);
     }, 2000);
+  },
+  beforeDestroy() {
+    Bus.$off(this.GIVE_UP);
   }
 };
 </script>

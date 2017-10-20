@@ -1,11 +1,11 @@
-export function loginByEmail(email, password) {
-  const data = {
-    email,
-    password
+/* eslint-disable quotes */
+import { baseUrl, encapsulatePromise } from 'api/common.js';
+
+export function getLoginInfo(accountNumber, pwd) {
+  var request = {
+    'accountNumber': accountNumber,
+    'pwd': pwd
   };
-  return fetch({
-    url: '/login/loginbyemail',
-    method: 'post',
-    data
-  });
+  var url = baseUrl + '/usermgr/userSignIn';
+  return encapsulatePromise(url, request);
 };

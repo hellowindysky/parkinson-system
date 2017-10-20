@@ -1,5 +1,6 @@
 <template lang="html">
-  <folding-panel :title="'其它信息'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
+  <folding-panel :title="'其它信息'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit"
+    :folded-status="foldedStatus">
     <div class="other-info" ref="otherInfo">
 
       <extensible-panel class="panel" :mode="mode" :title="medHistoryTitle" v-on:addNewCard="addMedRecord">
@@ -137,6 +138,7 @@ export default {
   data() {
     return {
       mode: this.READING_MODE,
+      foldedStatus: true,
       devideWidth: ''
     };
   },
@@ -195,6 +197,7 @@ export default {
   methods: {
     startEditing() {
       this.mode = this.EDITING_MODE;
+      this.foldedStatus = false;
     },
     cancel() {
       this.mode = this.READING_MODE;
@@ -386,6 +389,8 @@ export default {
     // 第一次加载的时候，去计算一次卡片宽度
     this.recalculateCardWidth();
 
+    Bus.$on(this.EDIT_OTHER_INFO, this.startEditing);
+
     setTimeout(() => {
       // console.log(this.toxicExposureHistoryList);
       // console.log(this.medHistoryDictionary);
@@ -398,6 +403,7 @@ export default {
     Bus.$off(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
     Bus.$off(this.CONFIRM);
     Bus.$off(this.GIVE_UP);
+    Bus.$off(this.EDIT_OTHER_INFO);
   }
 };
 </script>

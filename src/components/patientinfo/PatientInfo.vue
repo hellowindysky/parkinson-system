@@ -23,7 +23,7 @@
           <span class="info-title">分组情况: </span>
           <span class="info-text">
             <span v-for="group in belongGroups" class="group">{{ group.groupName }}</span>
-            <span class="iconfont icon-plus"></span>
+            <span class="iconfont icon-manage" @click="toggleGroupPanel"></span>
           </span>
         </div>
       </div>
@@ -32,8 +32,10 @@
         <basic-info v-else ref="newPatientWindow" :basic-info="{}"></basic-info>
       </div>
     </div>
-    <DiagnosticDetail class="diagnostic-detail"></DiagnosticDetail>
-    <DiagnosticHandleScale class="diagnostic-handle-scale"></DiagnosticHandleScale>
+    <diagnostic-detail class="diagnostic-detail"></diagnostic-detail>
+    <diagnostic-handle-scale class="diagnostic-handle-scale"></diagnostic-handle-scale>
+    <group-panel class="group-panel" :class="{'hide': !displayGroupPanel}"
+      :display="displayGroupPanel" @hideGroupPanel="hideGroupPanel"></group-panel>
   </div>
 </template>
 
@@ -46,6 +48,7 @@ import { getPatientInfo, getPatientCaseList } from 'api/patient';
 import DiagnosticDetail from 'components/diagnosticdetail/DiagnosticDetail';
 import DiagnosticHandleScale from 'components/diagnostichandlescale/DiagnosticHandleScale';
 import BasicInfo from 'components/basicinfo/BasicInfo';
+import GroupPanel from 'components/grouppanel/GroupPanel';
 
 export default {
   data() {
@@ -54,7 +57,8 @@ export default {
       patientCaseList: [],
       belongDoctor: '',
       belongGroups: [],
-      createDate: ''
+      createDate: '',
+      displayGroupPanel: false
     };
   },
   computed: {
@@ -155,12 +159,19 @@ export default {
       }, (error) => {
         console.log(error);
       });
+    },
+    toggleGroupPanel() {
+      this.displayGroupPanel = !this.displayGroupPanel;
+    },
+    hideGroupPanel() {
+      this.displayGroupPanel = false;
     }
   },
   components: {
     DiagnosticDetail,
     DiagnosticHandleScale,
-    BasicInfo
+    BasicInfo,
+    GroupPanel
   },
   mounted() {
     this.updatePatientInfo();
@@ -181,6 +192,7 @@ export default {
   watch: {
     $route() {
       this.checkRoute();
+      this.displayGroupPanel = false;  // 路由变化时，关闭分组面板
     }
   },
   beforeDestroy() {
@@ -219,6 +231,16 @@ export default {
     top: 0;
     z-index: 400;
     background: @screen-color;
+  }
+  .group-panel {
+    position: absolute;
+    right: 0;
+    top: 0;
+    transition: 0.3s;
+    z-index: 200;
+    &.hide {
+      right: -@group-panel-width;
+    }
   }
   .tabs-wrapper {
     position: relative;
@@ -336,9 +358,6 @@ export default {
           color: @light-font-color;
           .iconfont {
             display: inline-block;
-            margin-left: 5px;
-            padding: 5px;
-            font-weight: bold;
             font-size: 16px;
             line-height: @normal-font-size;
             transform: translateY(1px);

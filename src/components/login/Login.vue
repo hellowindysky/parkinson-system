@@ -31,7 +31,7 @@
 
 <script>
 import md5 from 'md5';
-// import axios from 'axios';
+import {getLoginInfo} from 'api/login';
 
 // import particles from 'components/particles/Particles';
 
@@ -77,28 +77,43 @@ export default {
       this.loginType = ACCOUNT_LOGIN;
     },
     submitForm() {
-      // axios.post('http://apitest.gyenno.com/pdms/usermgr/userSignIn', {
-      //   'accountNumber': '15012670416',
-      //   'pwd': 'e10adc3949ba59abbe56e057f20f883e',
-      //   'userType': 1
-      // })
-      // .then(function(response) {
-      //   console.log(response);
-      //   self.$router.push('/patients');
-      // })
-      // .catch(function(error) {
-      //   console.log(error);
-      // });
-
       this.$refs['loginForm'].validate((valid) => {
         if (valid) {
-          // 暂时模拟一个延时登录效果
-          setTimeout(() => {
+          getLoginInfo(this.loginForm.account, this.loginForm.password).then((data) => {
+            var token = data.loginToken;
+            var accountNumber = data.user.accountNumber;
+            var name = data.user.name;
+            var userType = data.user.userType;
+            var orgName = data.orgs && data.orgs[0] && data.orgs[0].orgName ? data.orgs[0].orgName : '';
+
+            sessionStorage.setItem('token', token);
+            sessionStorage.setItem('accountNumber', accountNumber);
+            sessionStorage.setItem('name', name);
+            sessionStorage.setItem('userType', userType);
+            sessionStorage.setItem('orgName', orgName);
+
+            var commonRequest = {
+              'userId': 93242,
+              'accountNumber': accountNumber,
+              'userType': userType,
+              'orgId': 34,
+              'orgType': 2
+            };
+
+            sessionStorage.setItem('commonRequest', JSON.stringify(commonRequest));
             this.$router.push('/');
-          }, 1000);
+          }, (error) => {
+            if (error.code === 21) {
+              this.$message({
+                message: '用户名或密码错误',
+                type: 'warning',
+                duration: 2000
+              });
+            }
+          });
         } else {
-          console.log('error submit!!');
-          return false;
+          console.log('input invalid');
+          return;
         }
       });
     }

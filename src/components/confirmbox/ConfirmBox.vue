@@ -15,12 +15,15 @@
 <script>
 import Bus from 'utils/bus.js';
 
+const DEFAULT_TITLE = '提示';
+const DEFAULT_CONTENT = '确定删除该记录吗？删除后将无法恢复';
+
 export default {
   data() {
     return {
       displayConfirmBox: false,
-      title: '提示',
-      content: '确定删除该记录吗？删除后将无法恢复'
+      title: DEFAULT_TITLE,
+      content: DEFAULT_CONTENT
     };
   },
   methods: {
@@ -32,8 +35,10 @@ export default {
       Bus.$emit(this.CONFIRM);
       this.displayConfirmBox = false;
     },
-    showConfirmBox() {
+    showConfirmBox(title, content) {
       this.displayConfirmBox = true;
+      this.title = (title !== undefined && title !== '') ? title : DEFAULT_TITLE;
+      this.content = (content !== undefined && content !== '') ? content : DEFAULT_CONTENT;
     }
   },
   mounted() {

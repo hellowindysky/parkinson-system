@@ -1,37 +1,74 @@
 /* eslint-disable quotes */
-import axios from 'axios';
-
-// axios.post 本身就是个 Promise 对象，这里我们再用 Promise 封装一次，在本文件内对响应数据进行处理，对外只暴露请求成功时的有效数据
-function encapsulatePromise(url, request) {
-
-  var promise = new Promise(function(resolve) {
-
-    axios.post(url, request).then((response) => {
-      if (response.data.code === 0) {
-        resolve(response.data.data);
-      } else {
-        console.log('参数错误: ', response.data.msg);
-      }
-
-    }).catch(function(error) {
-      console.error('请求出错: ', error);
-    });
-  });
-
-  return promise;
-}
+import { baseUrl, encapsulatePromise, getCommonRequest } from 'api/common.js';
 
 // 查询某个分组下的病患列表
 export function getGroupPatients(groupId) {
-  var request = {
-    "userId": 93242,
-    "accountNumber": "15527231713",
-    "userType": 2,
-    "orgId": 34,
-    "orgType": 2,
-    "groupId": groupId
-  };
-  var url = 'http://apitest.gyenno.com/pdms/queryGroupInfo';
+  var request = Object.assign({}, getCommonRequest());
+  request.groupId = groupId;
+  var url = baseUrl + '/pdms/queryGroupInfo';
 
   return encapsulatePromise(url, request);
 };
+
+// 获取分组信息
+export function getGroupList(groupInfoCondition) {
+  var request = Object.assign({}, getCommonRequest());
+  if (groupInfoCondition === undefined) {
+    request.groupInfoCond = {};
+  } else {
+    request.groupInfoCond = groupInfoCondition;
+  }
+  var url = baseUrl + '/pdms/queryGroupList';
+
+  return encapsulatePromise(url, request);
+};
+
+// 修改组名
+export function modifyGroupName(groupId, name) {
+  var request = Object.assign({}, getCommonRequest());
+  if (groupId !== undefined) {
+    request.groupId = groupId;
+  }
+  if (name !== undefined) {
+    request.groupeName = name;
+  }
+  var url = baseUrl + '/pdms/modGroupName';
+
+  return encapsulatePromise(url, request);
+};
+
+// 查询分组说明
+export function getGroupRemarks(groupId) {
+  var request = Object.assign({}, getCommonRequest());
+  if (groupId !== undefined) {
+    request.groupId = groupId;
+  }
+  var url = baseUrl + '/pdms/groupRemarks';
+
+  return encapsulatePromise(url, request);
+};
+
+// 编辑分组说明
+export function modifyGroupRemarks(groupId, remarks) {
+  var request = Object.assign({}, getCommonRequest());
+  if (groupId !== undefined) {
+    request.groupId = groupId;
+  }
+  if (remarks !== undefined) {
+    request.remarks = remarks;
+  }
+  var url = baseUrl + '/pdms/editGroupRemarks';
+
+  return encapsulatePromise(url, request);
+};
+
+// 查看某个分组下的病患列表（或者取相反，即不在该分组下的病患列表）
+export function getGroupMembers(groupCondition) {
+  var request = Object.assign({}, getCommonRequest());
+  request.pageSize = 0;
+  request.pageNo = 1;
+  request.patientGroupCond = groupCondition;
+  var url = baseUrl + '/pdms/queryPatientList';
+
+  return encapsulatePromise(url, request);
+}

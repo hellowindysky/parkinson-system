@@ -4,18 +4,23 @@
       <h3 class="title">
         <span v-show="titleMode === READING_MODE">{{groupName}}</span>
         <span v-show="titleMode === EDITING_MODE">
-          <el-input class="title-input" v-model="groupName"></el-input>
+          <el-input class="title-input" v-model="copyGroupName"></el-input>
         </span>
-        <span class="iconfont icon-edit" @click="toggleTitleMode"></span>
-        <span class="iconfont icon-explain" :class="{'on': descPanelDisplay}" @click="toggleDescPanelDisplay"></span>
+        <span class="iconfont icon-edit" v-show="mode===READING_MODE && titleMode===READING_MODE" @click="editTitle"></span>
+        <span class="iconfont icon-cancel" v-show="mode===READING_MODE && titleMode===EDITING_MODE" @click="cancelEditingTitle"></span>
+        <span class="iconfont icon-ok" v-show="mode===READING_MODE && titleMode===EDITING_MODE" @click="submitEditedTitle"></span>
+        <span class="iconfont icon-explain" v-show="mode===READING_MODE" :class="{'on': descPanelDisplay}"
+          @click="toggleDescPanelDisplay"></span>
       </h3>
-      <div class="button button-operate">批量操作</div>
-      <div class="button button-add">添加患者</div>
+      <div class="button button-operate" v-show="mode===READING_MODE" @click="switchMode(REMOVING_MODE)">移出患者</div>
+      <div class="button button-add" v-show="mode===READING_MODE" @click="switchMode(ADDING_MODE)">添加患者</div>
+      <div class="button button-return" v-show="mode!==READING_MODE" @click="switchMode(READING_MODE)">返回</div>
     </div>
     <!-- <div class="seperate-bar"></div> -->
     <div class="card-wrapper" ref="cardWrapper">
-      <div class="card" :class="devideWidth" v-for="patient in groupPatients" :title="patient.name" v-on:clickCurrentCard="seeDetail(patient)">
+      <div v-show="mode!==ADDING_MODE" class="card" :class="devideWidth" v-for="(patient, i) in groupPatients" :title="patient.name" v-on:clickCurrentCard="seeDetail(patient)">
         <img class="image" src="~img/profile.png" alt="">
+        <el-checkbox class="select" v-model="groupPatientsSelectedList[i]" v-show="mode===REMOVING_MODE"></el-checkbox>
         <div class="text first-line">
           <span class="name">{{patient.ptname}}</span>
           <span class="iconfont" :class="getGenderIcon(patient.sex)"></span>
@@ -26,10 +31,30 @@
           <span class="date">{{patient.date}}</span>
         </div>
       </div>
+
+      <div v-show="mode===ADDING_MODE" class="card" :class="devideWidth" v-for="(patient, i) in nonGroupPatients" :title="patient.name" v-on:clickCurrentCard="seeDetail(patient)">
+        <img class="image" src="~img/profile.png" alt="">
+        <el-checkbox class="select" v-show="mode===ADDING_MODE" v-model="nonGroupPatientsSelectedList[i]"></el-checkbox>
+        <div class="text first-line">
+          <span class="name">{{patient.name}}</span>
+          <span class="iconfont" :class="getGenderIcon(patient.sex)"></span>
+        </div>
+        <div class="text second-line">
+          <span>年龄</span>
+          <span class="age">{{patient.age}}</span>
+          <span class="date">{{patient.createDate}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="operate-bar" v-show="mode!==READING_MODE">
+      <el-checkbox class="select-all" v-model="selectAll" @change="toggleSelectAll">全选</el-checkbox>
+      <div class="button remove-button" v-show="mode===REMOVING_MODE">移出分组</div>
+      <div class="button add-button" v-show="mode===ADDING_MODE">加入分组</div>
     </div>
     <div class="group-description" v-show="descPanelDisplay">
+      <div class="iconfont icon-close" @click="closeDescPanel"></div>
       <p class="description-content" v-show="descriptionMode===READING_MODE">{{remarks}}</p>
-      <el-input type="textarea" v-model="remarks" v-show="descriptionMode===EDITING_MODE" :rows="8"></el-input>
+      <el-input type="textarea" v-model="copyRemarks" v-show="descriptionMode===EDITING_MODE" :rows="8"></el-input>
       <div class="button-wrapper">
         <div class="button cancel-button" v-show="descriptionMode===EDITING_MODE" @click="cancelDescInput">取消</div>
         <div class="button submit-button" v-show="descriptionMode===EDITING_MODE" @click="submitDescInput">确定</div>
@@ -40,19 +65,34 @@
 </template>
 
 <script>
+import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
-import { getGroupPatients } from 'api/group.js';
+import { getGroupPatients,
+  getGroupMembers,
+  modifyGroupName,
+  getGroupRemarks,
+  modifyGroupRemarks
+} from 'api/group.js';
 
 export default {
   data() {
     return {
       devideWidth: '',
+      mode: this.READING_MODE,
+      ADDING_MODE: 'addingMode',
+      REMOVING_MODE: 'removingMode',
       groupName: '',
+      copyGroupName: '',
       titleMode: this.READING_MODE,
+      remarks: '',
+      copyRemarks: '',
       descPanelDisplay: false,
       descriptionMode: this.READING_MODE,
       groupPatients: [],
-      remarks: ''
+      groupPatientsSelectedList: [],
+      nonGroupPatients: [],
+      nonGroupPatientsSelectedList: [],
+      selectAll: false
     };
   },
   methods: {
@@ -67,15 +107,33 @@ export default {
         this.devideWidth = 'width-1-' + parseInt(cardNum, 10);
       });
     },
+    updateScrollbar() {
+      this.$nextTick(() => {
+        Ps.destroy(this.$refs.cardWrapper);
+        Ps.initialize(this.$refs.cardWrapper, {
+          wheelSpeed: 1,
+          minScrollbarLength: 40
+        });
+      });
+    },
     seeDetail(item) {
       console.log(item);
     },
-    updateGroupInfo() {
+    updateGroupInfo(cb) {
       getGroupPatients(this.$route.params.id).then((data) => {
         this.groupName = data.groupName;
-        this.groupPatients = data.list;
+        this.copyGroupName = this.groupName;
         this.remarks = data.remarks;
+        this.copyRemarks = this.remarks;
+        this.groupPatients = data.list;
+        let length = this.groupPatients.length;
+        this.groupPatientsSelectedList = [];
+        for (var i = 0; i < length; i++) {
+          this.$set(this.groupPatientsSelectedList, i, false);
+        }
         // console.log(data);
+        this.updateScrollbar();
+        cb && cb();
       }, (error) => {
         console.log(error);
       });
@@ -88,24 +146,84 @@ export default {
         return 'icon-female';
       }
     },
-    toggleTitleMode() {
-      if (this.titleMode === this.EDITING_MODE) {
-        this.titleMode = this.READING_MODE;
-      } else if (this.titleMode === this.READING_MODE) {
-        this.titleMode = this.EDITING_MODE;
+    switchMode(mode) {
+      if (mode === this.ADDING_MODE) {
+        let groupCondition = {
+          'patientGroupId': this.$route.params.id,
+          'includeType': 2  // 1代表组内，2代表非组内
+        };
+        getGroupMembers(groupCondition).then((data) => {
+          this.nonGroupPatients = data;
+          let length = this.nonGroupPatients.length;
+          this.nonGroupPatientsSelectedList = [];
+          for (var i = 0; i < length; i++) {
+            this.$set(this.nonGroupPatientsSelectedList, i, false);
+          }
+          this.mode = mode;
+        });
+      } else if (mode === this.REMOVING_MODE) {
+        for (var i = 0; i < this.groupPatientsSelectedList.length; i++) {
+          this.groupPatientsSelectedList[i] = false;
+        }
+        this.mode = mode;
+      } else {
+        // 返回到阅读状态时，将“全部选中”置为 false
+        this.selectAll = false;
+        this.mode = mode;
       }
+    },
+    editTitle() {
+      this.titleMode = this.EDITING_MODE;
+    },
+    cancelEditingTitle() {
+      this.copyGroupName = this.groupName;
+      this.titleMode = this.READING_MODE;
+    },
+    submitEditedTitle() {
+      let groupId = this.$route.params.id;
+      modifyGroupName(groupId, this.copyGroupName).then(() => {
+        this.updateGroupInfo(() => {
+          this.titleMode = this.READING_MODE;
+        });
+      });
     },
     toggleDescPanelDisplay() {
       this.descPanelDisplay = !this.descPanelDisplay;
+    },
+    closeDescPanel() {
+      this.cancelDescInput();
+      this.descPanelDisplay = false;
     },
     editDesc() {
       this.descriptionMode = this.EDITING_MODE;
     },
     cancelDescInput() {
+      this.copyRemarks = this.remarks;
       this.descriptionMode = this.READING_MODE;
     },
     submitDescInput() {
-      this.descriptionMode = this.READING_MODE;
+      let groupId = this.$route.params.id;
+      modifyGroupRemarks(groupId, this.copyRemarks).then(() => {
+        getGroupRemarks(groupId).then((data) => {
+          this.remarks = data.remarks;
+          this.copyRemarks = this.remarks;
+          this.descriptionMode = this.READING_MODE;
+        });
+      }, (error) => {
+        console.log(error);
+      });
+    },
+    toggleSelectAll() {
+      var value = this.selectAll;
+      if (this.mode === this.ADDING_MODE) {
+        for (let i = 0; i < this.nonGroupPatientsSelectedList.length; i++) {
+          this.$set(this.nonGroupPatientsSelectedList, i, value);
+        }
+      } else if (this.mode === this.REMOVING_MODE) {
+        for (let i = 0; i < this.groupPatientsSelectedList.length; i++) {
+          this.$set(this.groupPatientsSelectedList, i, value);
+        }
+      }
     }
   },
   mounted() {
@@ -115,15 +233,17 @@ export default {
     });
     // 如果收到屏幕宽度变化，或者内容区域宽度变化的事件，则重新计算卡片的宽度
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
+    Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
     Bus.$on(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
     // 第一次加载的时候，去计算一次卡片宽度
     this.recalculateCardWidth();
     this.updateGroupInfo();
+    this.updateScrollbar();
   },
   beforeDestroy() {
     // 还是记得销毁组件前，解除事件绑定
-    Bus.$off(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
-    Bus.$off(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
+    Bus.$off(this.SCREEN_SIZE_CHANGE);
+    Bus.$off(this.TOGGLE_LIST_DISPLAY);
     Bus.$off(this.CONFIRM);
     Bus.$off(this.GIVE_UP);
   }
@@ -160,18 +280,29 @@ export default {
       .iconfont {
         display: inline-block;
         margin-left: 10px;
+        cursor: pointer;
         &.icon-edit {
           color: @light-font-color;
         }
-        &.icon-explain {
-          margin-left: 20px;
+        &.icon-cancel {
           color: @inverse-font-color;
+        }
+        &.icon-ok {
+          color: @button-color;
+          &:hover {
+            color: @button-color;
+            opacity: 0.8;
+          }
         }
         &:hover {
           color: @font-color;
         }
         &:active {
           opacity: 0.8;
+        }
+        &.icon-explain {
+          margin-left: 20px;
+          color: @inverse-font-color;
         }
         &.on {
           color: @font-color;
@@ -214,6 +345,10 @@ export default {
         right: 10px;
         background-color: @button-color;
       }
+      &.button-return {
+        right: 10px;
+        background-color: @secondary-button-color;
+      }
     }
   }
   // .seperate-bar {
@@ -221,10 +356,13 @@ export default {
   //   width: calc(~"100% - @{margin-right}");
   // }
   .card-wrapper {
+    position: relative;
     text-align: left;
     margin-left: -5px;
-    margin-bottom: 5px;
-    margin-right: @margin-right - 5px;
+    // margin-bottom: 5px;
+    padding-right: @margin-right - 5px;
+    height: calc(~"100% - @{bar-height} - @{vertical-spacing}");
+    overflow: hidden;
     .card {
       display: inline-block;
       position: relative;
@@ -270,6 +408,11 @@ export default {
         left: 20px;
         top: 10px;
       }
+      .select {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+      }
       .text {
         position: absolute;
         &.first-line {
@@ -306,6 +449,66 @@ export default {
         }
       }
     }
+    .ps__scrollbar-y-rail {
+      position: absolute;
+      width: 15px;
+      right: 0;
+      padding: 0 3px;
+      box-sizing: border-box;
+      opacity: 0.3;
+      transition: opacity 0.3s, padding 0.2s;
+      .ps__scrollbar-y {
+        position: relative;
+        background-color: #aaa;
+        border-radius: 20px;
+      }
+    }
+    &:hover {
+      .ps__scrollbar-y-rail {
+        opacity: 0.6;
+        &:hover {
+          padding: 0;
+        }
+      }
+    }
+  }
+  .operate-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: @margin-right;
+    height: 45px;
+    background-color: @background-color;
+    text-align: left;
+    box-shadow: 0 -1px 10px @light-gray-color;
+    z-index: 100;
+    .select-all {
+      margin-left: 25px;
+      line-height: 45px;
+    }
+    .button {
+      position: absolute;
+      right: 10px;
+      top: 8px;
+      width: @small-button-width;
+      height: @small-button-height;
+      line-height: @small-button-height;
+      text-align: center;
+      color: #fff;
+      cursor: pointer;
+      &:hover {
+        opacity: 0.6;
+      }
+      &:active {
+        opacity: 0.8;
+      }
+      &.remove-button {
+        background-color: @secondary-button-color;
+      }
+      &.add-button {
+        background-color: @button-color;
+      }
+    }
   }
   .group-description {
     position: absolute;
@@ -315,10 +518,26 @@ export default {
     height: 250px;
     background-color: @theme-color;
     z-index: 100;
+    .icon-close {
+      position: absolute;
+      right: 5px;
+      top: 5px;
+      font-size: 22px;
+      color: #fff;
+      cursor: pointer;
+      z-index: 200;
+      &:hover {
+        opacity: 0.6;
+      }
+      &:active {
+        opacity: 0.8;
+      }
+    }
     .description-content {
       position: absolute;
-      width: 360px;
-      left: 20px;
+      width: 350px;
+      left: 25px;
+      top: 5px;
       box-sizing: border-box;
       padding: 5px;
       // background-color: @font-color;
@@ -327,12 +546,13 @@ export default {
     }
     .el-textarea {
       position: absolute;
-      width: 360px;
-      left: 20px;
-      top: 15px;
+      width: 350px;
+      left: 25px;
+      top: 20px;
       .el-textarea__inner {
         background-color: @font-color;
         color: #fff;
+        border: none;
       }
     }
     .button-wrapper {

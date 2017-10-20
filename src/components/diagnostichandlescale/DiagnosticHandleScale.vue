@@ -8,29 +8,29 @@
       <div class="button save-button" @click="submit" v-if="scaleMode===SCALE_EDITING_MODE || mode===ADD_PAGE">保存</div>
     </div>
     <div class="scroll-area" ref="scrollArea">
-      
+
       <div class="scale-selecter" v-if="mode===ADD_PAGE || scaleMode===SCALE_EDITING_MODE">
          <div class="choose-scale">
            <span>选择量表:</span>
              <el-select  placeholder="请选择量表" v-model="patientScale['scaleInfoId']" :disabled="mode===MODIFY_PAGE || isSelected" @change="firstSelected">
                <el-option v-for="item in scaleNameArr" :key="item.name" :label="item.name" :value="item.scaleId"></el-option>
-             </el-select> 
+             </el-select>
          </div>
          <div class="choose-scale">
            <span>量表类型:</span>
            <el-select  placeholder="" v-model="scaleType" disabled>
                <el-option v-for="item in scaleTypeData" :key="item.typeName" :label="item.typeName" :value="item.typeCode"></el-option>
-           </el-select>   
+           </el-select>
          </div>
          <div class="choose-time-type">
            <span>量表填写时间:</span>
              <el-date-picker  type="datetime" format="yyyy-MM-dd" v-model="patientScale['inspectTime']"  placeholder="请选择量表填写时间">
-             </el-date-picker>  
+             </el-date-picker>
          </div>
          <div class="choose-time-type">
            <span>末次服药时间:</span>
              <el-date-picker  type="datetime" format="yyyy-MM-dd" v-model="patientScale['lastTakingTime']"  placeholder="请选择末次服药时间">
-             </el-date-picker>  
+             </el-date-picker>
          </div>
          <div class="choose-time-type">
            <span>开关状态:</span>
@@ -53,20 +53,20 @@
          <div class="choose-time-type" v-if="Boolean(String(patientScale['switchType']))!==false">
            <span>开关状态:</span> <span>{{formatReadingScale(patientScale['switchType'])}}</span>
          </div>
-      </div>        
+      </div>
       <folding-panel v-if="mode===ADD_PAGE || scaleMode===SCALE_EDITING_MODE" :title="'关联症状'"  class="associated-symptom">
         <div class="symptom-item" v-for="(list, listkey) in patientScale['scaleSympInfoList']" :key="listkey">
             <el-checkbox class="symptom-item-title" v-model="list.status">{{list.sympName}}</el-checkbox>
             <div class="symptom-item-start">
               <span>出现时间:</span>
               <el-date-picker  type="datetime" format="yyyy-MM-dd" v-model="list['ariseTime']"  placeholder="请输入出现关联症状的时间">
-              </el-date-picker>    
+              </el-date-picker>
             </div>
             <div class="symptom-item-dose">
               <span>服用药物:</span>
-              <el-input v-model="list['scaleMedicine']"  placeholder="请输入复合用药物"></el-input>    
+              <el-input v-model="list['scaleMedicine']"  placeholder="请输入服用药物"></el-input>
             </div>
-        </div>                                 
+        </div>
       </folding-panel>
 
       <div v-for="(item, key) in scaleSonDate['questions']" v-if="mode===MODIFY_PAGE">
@@ -75,7 +75,7 @@
            <el-radio-group  class="question-body"  :key="key" v-model="patientScale['scaleOptionIds'][key]">
                <el-radio class="question-selection" v-for="(sonitem, key1) in item['options']" :label="sonitem.scaleOptionId" :key="key1" :disabled="isSubjectDisabled">{{sonitem.optionName}}</el-radio>
            </el-radio-group>
-         </div> 
+         </div>
       </div>
 
       <div v-for="(item, key) in scaleAddSonDate['questions']" v-if="isSelected">
@@ -84,11 +84,11 @@
            <el-radio-group  class="question-body"  :key="key" v-model="patientScale['scaleOptionIds'][key]">
                <el-radio class="question-selection" v-for="(sonitem, key1) in item['options']" :label="sonitem.scaleOptionId" :key="key1">{{sonitem.optionName}}</el-radio>
            </el-radio-group>
-         </div> 
+         </div>
       </div>
       </div>
     </div>
-  </div>  
+  </div>
 </template>
 
 <script>
