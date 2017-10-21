@@ -187,7 +187,8 @@ export default {
       'neurologicCheckTypeList',
       'bioexamTypeList',
       'emgTypeList',
-      'typeGroup'
+      'typeGroup',
+      'rhythm'
     ]),
     neurologicCheckTitle() {
       return '神经系统检查（' + this.neurologicCheckList.length + '条记录）';
@@ -372,6 +373,21 @@ export default {
         }
         this.cardWidth = 'width-1-' + parseInt(cardNum, 10);
       });
+    },
+    handleDictionary(type) {
+      let flag = false;
+      for (let key in this.typeGroup) {
+        // console.log(this.typeGroup[key]);
+        if (this.typeGroup[key]['typegroupcode'] === type) {
+          // console.log(dictionData[key]['types']);
+          flag = true;
+          console.log(this.typeGroup[key]['types']);
+          return this.typeGroup[key]['types'];
+        }
+      }
+      if (!flag) {
+        return [];
+      }
     }
   },
   components: {
@@ -392,11 +408,7 @@ export default {
     // 第一次加载的时候，去计算一次卡片宽度
     this.recalculateCardWidth();
     // 取出生命体征中的心率情况数组
-    let that = this;
-    Util.getDictionaryData('rhythm').then(function(data) {
-      vueCopy(data, that.heartRate);
-      console.log('heartRate', data);
-    });
+    vueCopy(this.handleDictionary('rhythm'), this.heartRate);
   },
   beforeDestroy() {
     // 还是记得销毁组件前，解除事件绑定

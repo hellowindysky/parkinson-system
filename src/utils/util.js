@@ -1,4 +1,3 @@
-import { getDictionary } from 'api/user.js';
 
 // 这里提供一些用来方便我们操作业务数据的函数
 
@@ -46,27 +45,6 @@ function simplifyTime(dateStr) {
     formatMin = 0;
   }
   return year + '-' + month + '-' + date + ' ' + formatHour + hour + ':' + formatMin + min;
-}
-
-function getDictionaryData(type) {
-  let pro = new Promise(function(resolve) {
-    getDictionary().then((data) => {
-      let dictionData = data['typegroup'];
-      // console.log(dictionData);
-      let flag = false;
-      for (let key in dictionData) {
-        if (dictionData[key]['typegroupcode'] === type) {
-          flag = true;
-          // console.log(dictionData[key]['types']);
-          resolve(dictionData[key]['types']);
-        }
-      }
-      if (!flag) {
-        resolve([]);
-      }
-    });
-  });
-  return pro;
 }
 
 function checkId(ID) {
@@ -137,6 +115,5 @@ export default {
   getElement,
   simplifyDate,
   simplifyTime,
-  getDictionaryData,
   checkId
 };

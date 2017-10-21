@@ -406,7 +406,6 @@ import Ps from 'perfect-scrollbar';
 import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import { vueCopy } from 'utils/helper';
-import Util from 'utils/util.js';
 import { addEmg, modEmg } from 'api/patient.js';
 
 import { isEmptyObject } from 'utils/helper.js';
@@ -469,7 +468,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'emgTypeList'
+      'emgTypeList',
+      'typeGroup'
     ])
   },
   methods: {
@@ -489,10 +489,11 @@ export default {
         }
       }
       // 在肌电图中取出肌电图的类型与类型名
-      let thatO = this;
-      Util.getDictionaryData('eleType').then(function(data) {
-        vueCopy(data, thatO.EmgTypeNameArrs);
-      });
+      vueCopy(this.handleDictionary('eleType'), this.EmgTypeNameArrs);
+      for (let key1 in this.EmgTypeNameArrs) {
+        this.EmgTypeNameArrs[key1]['typeCode'] = this.EmgTypeNameArrs[key1]['typeCode'] + '';
+      }
+      // console.log(this.EmgTypeNameArrs);
       // 通过检查 item 参数是否为空对象 {}，来决定提交时是新增记录，还是修改记录
       if (isEmptyObject(item)) {
         // 如果是新增肌电图那么需要新造一个对象来提交
@@ -521,6 +522,20 @@ export default {
       // 改变 item 的时候会触发 warningResults 的跟踪变化(这里的自动触发是由 el-date-picker 的 v-model造成的)
       // 因此这一步要等到 item 变化结束之后再执行，我们将其放到下一个事件循环 tick 中
     },
+    handleDictionary(type) {
+      let flag = false;
+      for (let key in this.typeGroup) {
+        // console.log(this.typeGroup[key]);
+        if (this.typeGroup[key]['typegroupcode'] === type) {
+          // console.log(dictionData[key]['types']);
+          flag = true;
+          return this.typeGroup[key]['types'];
+        }
+      }
+      if (!flag) {
+        return [];
+      }
+    },
     selectFatherTempData() {
       for (let i = 0; i < this.dictionData.length; i++) {
         if (this.dictionData[i]['id'] === this.EmgTypeData['elecTroGramId']) {
@@ -547,17 +562,14 @@ export default {
         case 'senNerCondItem':
           this.currentTable = this.SENNERCONDITEM;
           this.currentTableName = '感觉神经传导项';
-          let tha = this;
-          Util.getDictionaryData('nervType').then(function(data) {
-            for (let i = 0; i < tha.SonTempData.length; i++) {
-              let sonData = tha.SonTempData[i];
-              for (let key in data) {
-                if (sonData['nerveType'] === data[key]['typeCode']) {
-                  tha.$set(tha.SonTempData[i], 'nervName', data[key]['typeName']);
-                }
+          for (let i = 0; i < this.SonTempData.length; i++) {
+            let sonData = this.SonTempData[i];
+            for (let key in this.handleDictionary('nervType')) {
+              if (sonData['nerveType'] === this.handleDictionary('nervType')[key]['typeCode']) {
+                this.$set(this.SonTempData[i], 'nervName', this.handleDictionary('nervType')[key]['typeName']);
               }
             }
-          });
+          }
           // 在新增的状态下需要把肌电图的子表格造出来
           if (this.mode === this.ADD_MODE) {
             this.addEmgSonData(arrName);
@@ -574,17 +586,14 @@ export default {
         case 'motUniAnaItem':
           this.currentTable = this.MOTUNIANAITEM;
           this.currentTableName = '运动单元分析';
-          let thats = this;
-          Util.getDictionaryData('muscleType').then(function(data) {
-            for (let i = 0; i < thats.SonTempData.length; i++) {
-              let sonData = thats.SonTempData[i];
-              for (let key in data) {
-                if (sonData['muscle'] === data[key]['typeCode']) {
-                  thats.$set(thats.SonTempData[i], 'nervName', data[key]['typeName']);
-                }
+          for (let i = 0; i < this.SonTempData.length; i++) {
+            let sonData = this.SonTempData[i];
+            for (let key in this.handleDictionary('muscleType')) {
+              if (sonData['muscle'] === this.handleDictionary('muscleType')[key]['typeCode']) {
+                this.$set(this.SonTempData[i], 'nervName', this.handleDictionary('muscleType')[key]['typeName']);
               }
             }
-          });
+          }
           // 在新增的状态下需要把肌电图的子表格造出来
           if (this.mode === this.ADD_MODE) {
             this.addEmgSonData(arrName);
@@ -594,17 +603,14 @@ export default {
           this.currentTable = this.MOTNERCONDITEM;
           this.currentTableName = '运动神经传导项';
           // 获取到运动神经传导项的类型
-          let that = this;
-          Util.getDictionaryData('nervType').then(function(data) {
-            for (let i = 0; i < that.SonTempData.length; i++) {
-              let sonData = that.SonTempData[i];
-              for (let key in data) {
-                if (sonData['nerveType'] === data[key]['typeCode']) {
-                  that.$set(that.SonTempData[i], 'nervName', data[key]['typeName']);
-                }
+          for (let i = 0; i < this.SonTempData.length; i++) {
+            let sonData = this.SonTempData[i];
+            for (let key in this.handleDictionary('nervType')) {
+              if (sonData['nerveType'] === this.handleDictionary('nervType')[key]['typeCode']) {
+                this.$set(this.SonTempData[i], 'nervName', this.handleDictionary('nervType')[key]['typeName']);
               }
             }
-          });
+          }
           // 在新增的状态下需要把肌电图的子表格造出来
           if (this.mode === this.ADD_MODE) {
             this.addEmgSonData(arrName);
@@ -780,6 +786,7 @@ export default {
 
     // 如果屏幕高度发生改变，也需要重新计算滚动区域高度
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
+    vueCopy(this.handleDictionary('eleType'), this.EmgTypeNameArrs);
   },
   watch: {
     dictionData: {
