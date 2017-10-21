@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="item" :class="{'current': selected}" @click="select">
     <div class="name">{{groupName}}</div>
-    <div class="number">患者: {{memberNumber}}人</div>
+    <div class="number">患者:  {{memberNumber}}人</div>
     <div class="tag">{{groupTypeName}}</div>
     <div class="bottom-line"></div>
   </div>
@@ -33,7 +33,7 @@ export default {
       }
     },
     memberNumber() {
-      return this.group.memberNumber ? this.group.memberNumber : '';
+      return this.group.memberNumber ? this.group.memberNumber : 0;
     },
     remark() {
       return this.group.remarks ? this.group.remarks : '';
@@ -86,6 +86,7 @@ export default {
     font-size: @small-font-size;
     left: 15px;
     top: 40px;
+    white-space: pre-wrap;
   }
   .tag {
     position: absolute;
