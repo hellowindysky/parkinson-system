@@ -392,10 +392,10 @@ export default {
     updateGroupList(cb) {
       var condition = {};
       var filterForm = this.filterGroupsForm;
-      if (filterForm.groupType !== -1) {
+      if (filterForm.groupType !== -1 && this.listType === 'groups') {
         condition.groupType = filterForm.groupType;
       }
-      if (this.searchInput !== '') {
+      if (this.searchInput !== '' && this.listType === 'groups') {
         condition.groupeName = this.searchInput.trim();
       }
       getGroupList(condition).then((data) => {
@@ -475,8 +475,9 @@ export default {
     },
     togglePanelDisplay() {
       this.panelDisplay = !this.panelDisplay;
-      if (this.panelDisplay) {
-        // 每次打开筛选面板的时候，都要去更新一次 groupList，因为有一个筛选框是筛选分组的，而分组信息需要经常更新
+      if (this.panelDisplay && (this.listType === 'myPatients' || this.listType === 'otherPatients')) {
+        // 在患者管理列表，每次打开筛选面板的时候，都要去更新一次 groupList，
+        // 因为有一个筛选框是筛选分组的，而分组信息需要经常更新
         this.updateGroupList();
       }
     },
@@ -502,8 +503,10 @@ export default {
       return options;
     },
     resetForm(formName) {
-      this.$refs[formName].resetFields();
-      this.submitForm(formName);
+      this.$nextTick(() => {
+        this.$refs[formName].resetFields();
+        this.submitForm(formName);
+      });
     },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
@@ -588,7 +591,15 @@ export default {
       // 列表类型一旦发生变化，则清空搜索框内容
       this.searchInput = '';
       // 同时清空各个筛选面板
-
+      var formDict = {
+        'myPatients': 'filterPatientsForm',
+        'otherPatients': 'filterPatientsForm',
+        'groups': 'filterGroupsForm'
+      };
+      var filterForm = formDict[this.listType];
+      if (filterForm) {
+        this.resetForm(filterForm);
+      }
     }
   },
   beforeDestroy() {
