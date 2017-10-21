@@ -444,8 +444,16 @@ export default {
     deleteSeletedGroupList() {
       Bus.$emit(this.REQUEST_CONFIRMATION, '', '是否确定删除该分组？分组删除后将无法恢复。');
       Bus.$on(this.CONFIRM, () => {
+        // 删除的时候要检查一下，右侧内容区域显示的分组，是否是待删除的分组之一，
+        // 如果是，那么在删除之后跳转到新列表第一个分组
+        var isToDelete = this.selectedGroupList.indexOf(this.$route.params.id) >= 0;
         deleteGroup(this.selectedGroupList).then(() => {
           this.updateGroupList();
+          if (isToDelete) {
+            this.$router.push({
+              name: 'groupsManagement'
+            });
+          }
           this.listMode = this.READING;
           Bus.$off(this.CONFIRM);
         }, (error) => {
