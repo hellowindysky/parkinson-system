@@ -13,14 +13,14 @@
     </div>
 
     <div class="list-area" ref="listArea">
-      <div v-if="this.listType === 'myPatients'">
+      <div v-if="this.listType === MY_PATIENTS_TYPE">
         <patient-list-item class="item" v-for="patient in myPatientsList" :patient="patient" :key="patient.patientId"></patient-list-item>
       </div>
-      <div v-else-if="this.listType === 'groups'">
+      <div v-else-if="this.listType === GROUP_TYPE">
         <group-list-item v-for="group in groupList" :group="group" :mode="listMode" :key="group.groupId"
           @select="addToSelectedGroupList(group.groupId)" @unselect="removeFromSelectedGroupList(group.groupId)"></group-list-item>
       </div>
-      <div v-else-if="this.listType === 'otherPatients'">
+      <div v-else-if="this.listType === OTHER_PATIENTS_TYPE">
         <patient-list-item class="item" v-for="patient in otherPatientsList" :patient="patient" :key="patient.patientId"></patient-list-item>
       </div>
       <div v-else-if="this.listType === 'users'">
@@ -31,7 +31,7 @@
       </div>
     </div>
 
-    <div class="function-area" v-if="listType === 'myPatients' || listType === 'otherPatients'">
+    <div class="function-area" v-if="listType === MY_PATIENTS_TYPE || listType === OTHER_PATIENTS_TYPE">
       <div class="function-button left" @click="addNewPatient">
         <span class="iconfont icon-new-patient"></span>
         <span class="text">新增患者</span>
@@ -41,7 +41,7 @@
         <span class="text">批量导入</span>
       </div>
     </div>
-    <div class="function-area" v-else-if="listType === 'groups'">
+    <div class="function-area" v-else-if="listType === GROUP_TYPE">
       <div class="function-button left" v-show="listMode===READING_MODE" @click="addNewGroup">
         <span class="iconfont icon-new-group"></span>
         <span class="text">新增分组</span>
@@ -62,7 +62,7 @@
 
     <transition name="slide-fade">
       <el-form class="filter-panel" :model="filterPatientsForm" :rules="rules" ref="filterPatientsForm"
-      label-width="20%"  v-show="panelDisplay" v-if="this.listType === 'myPatients' || this.listType === 'otherPatients'">
+      label-width="20%"  v-show="panelDisplay && (this.listType === MY_PATIENTS_TYPE || this.listType === OTHER_PATIENTS_TYPE)">
         <el-form-item label="分组" prop="group" class="item">
           <el-select v-model="filterPatientsForm.group">
             <el-option label="不限" :value="-1"></el-option>
@@ -114,9 +114,10 @@
           <el-button type="primary" @click="submitForm('filterPatientsForm')" class="button apply">应用</el-button>
         </el-form-item>
       </el-form>
-
+    </transition>
+    <transition name="slide-fade">
       <el-form class="filter-panel" :model="filterGroupsForm" :rules="rules" ref="filterGroupsForm"
-      label-width="20%" v-show="panelDisplay" v-else-if="this.listType === 'groups'">
+      label-width="20%" v-show="panelDisplay && this.listType === GROUP_TYPE">
         <el-form-item label="分类" prop="groupType" class="item">
           <el-select v-model="filterGroupsForm.groupType">
             <el-option label="不限" :value="-1"></el-option>
@@ -129,9 +130,10 @@
           <el-button type="primary" @click="submitForm('filterGroupsForm')" class="button apply">应用</el-button>
         </el-form-item>
       </el-form>
-
+    </transition>
+    <transition name="slide-fade">
       <el-form class="filter-panel" :model="filterUsersForm" :rules="rules" ref="filterUsersForm"
-      label-width="20%"  v-show="panelDisplay" v-if="this.listType === 'users'">
+      label-width="20%"  v-show="panelDisplay && this.listType === 'users'">
         <el-form-item label="分组" prop="type" class="item">
           <el-select v-model="filterUsersForm.type">
             <el-option label="全部" value="all"></el-option>
@@ -161,9 +163,10 @@
           <el-button type="primary" @click="submitForm('filterUsersForm')" class="button apply">应用</el-button>
         </el-form-item>
       </el-form>
-
+    </transition>
+    <transition name="slide-fade">
       <el-form class="filter-panel" :model="filterRolesForm" :rules="rules" ref="filterRolesForm"
-      label-width="20%"  v-show="panelDisplay" v-if="this.listType === 'roles'">
+      label-width="20%"  v-show="panelDisplay && this.listType === 'roles'">
         <el-form-item label="分类" prop="type" class="item">
           <el-select v-model="filterUsersForm.type">
             <el-option label="全部" value="all"></el-option>
@@ -227,6 +230,9 @@ export default {
       roleList: [],
       panelDisplay: false,
       listMode: this.READING_MODE,
+      MY_PATIENTS_TYPE: 'myPatients',
+      OTHER_PATIENTS_TYPE: 'otherPatients',
+      GROUP_TYPE: 'groups',
       selectedGroupList: [],
       filterPatientsForm: {
         group: -1,
@@ -273,11 +279,11 @@ export default {
     listType() {
       var path = this.$route.path;
       if (/^\/patients\/list/.test(path)) {
-        return 'myPatients';
+        return this.MY_PATIENTS_TYPE;
       } else if (/^\/patients\/groups/.test(path)) {
-        return 'groups';
+        return this.GROUP_TYPE;
       } else if (/^\/patients\/otherList/.test(path)) {
-        return 'otherPatients';
+        return this.OTHER_PATIENTS_TYPE;
       } else if (/^\/configuration\/userManagement/.test(path)) {
         return 'users';
       } else if (/^\/configuration\/roleManagement/.test(path)) {
@@ -285,18 +291,18 @@ export default {
       }
     },
     searchInputPlaceholder() {
-      if (this.listType === 'myPatients') {
+      if (this.listType === this.MY_PATIENTS_TYPE) {
         return '请输入姓名/身份证号/手机号';
-      } else if (this.listType === 'groups') {
+      } else if (this.listType === this.GROUP_TYPE) {
         return '请输入组名';
       }
     },
     totalNumText() {
-      if (this.listType === 'myPatients') {
+      if (this.listType === this.MY_PATIENTS_TYPE) {
         return '患者：' + this.myPatientsList.length + '人';
-      } else if (this.listType === 'groups') {
+      } else if (this.listType === this.GROUP_TYPE) {
         return '分组：' + this.groupList.length + '个';
-      } else if (this.listType === 'otherPatients') {
+      } else if (this.listType === this.OTHER_PATIENTS_TYPE) {
         return '患者：' + this.otherPatientsList.length + '人';
       } else if (this.listType === 'users') {
         return '用户：86人';
@@ -331,9 +337,9 @@ export default {
     search() {
       clearTimeout(this.timeout);
       this.timeout = setTimeout(() => {
-        if (this.listType === 'myPatients' || this.listType === 'otherPatients') {
+        if (this.listType === this.MY_PATIENTS_TYPE || this.listType === this.OTHER_PATIENTS_TYPE) {
           this.updatePatientsList();
-        } else if (this.listType === 'groups') {
+        } else if (this.listType === this.GROUP_TYPE) {
           this.updateGroupList();
         }
       }, 1000);
@@ -352,9 +358,9 @@ export default {
       var condition = {
         'type': 1
       };
-      if (this.listType === 'myPatients') {
+      if (this.listType === this.MY_PATIENTS_TYPE) {
         condition.type = 1;
-      } else if (this.listType === 'otherPatients') {
+      } else if (this.listType === this.OTHER_PATIENTS_TYPE) {
         condition.type = 2;
       }
 
@@ -379,9 +385,9 @@ export default {
         condition.ageTo = filterForm.maxAge;
       }
       getPatientList(condition).then((data) => {
-        if (this.listType === 'myPatients') {
+        if (this.listType === this.MY_PATIENTS_TYPE) {
           this.myPatientsList = data;
-        } else if (this.listType === 'otherPatients') {
+        } else if (this.listType === this.OTHER_PATIENTS_TYPE) {
           this.otherPatientsList = data;
         }
         this.updateScrollbar();
@@ -392,10 +398,10 @@ export default {
     updateGroupList(cb) {
       var condition = {};
       var filterForm = this.filterGroupsForm;
-      if (filterForm.groupType !== -1 && this.listType === 'groups') {
+      if (filterForm.groupType !== -1 && this.listType === this.GROUP_TYPE) {
         condition.groupType = filterForm.groupType;
       }
-      if (this.searchInput !== '' && this.listType === 'groups') {
+      if (this.searchInput !== '' && this.listType === this.GROUP_TYPE) {
         condition.groupeName = this.searchInput.trim();
       }
       getGroupList(condition).then((data) => {
@@ -421,11 +427,11 @@ export default {
       });
     },
     addNewPatient() {
-      if (this.listType === 'myPatients') {
+      if (this.listType === this.MY_PATIENTS_TYPE) {
         this.$router.push({
           name: 'patientInfo', params: {id: 'newPatient'}
         });
-      } else if (this.listType === 'otherPatients') {
+      } else if (this.listType === this.OTHER_PATIENTS_TYPE) {
         this.$router.push({
           name: 'otherPatientInfo', params: {id: 'newPatient'}
         });
@@ -433,7 +439,7 @@ export default {
     },
     toggleListMode(listMode) {
       this.listMode = listMode;
-      if (this.listMode === this.EDITING_MODE && this.listType === 'groups') {
+      if (this.listMode === this.EDITING_MODE && this.listType === this.GROUP_TYPE) {
         // 在分组列表下，进入删除模式
         this.selectedGroupList = [];
       }
@@ -475,7 +481,7 @@ export default {
     },
     togglePanelDisplay() {
       this.panelDisplay = !this.panelDisplay;
-      if (this.panelDisplay && (this.listType === 'myPatients' || this.listType === 'otherPatients')) {
+      if (this.panelDisplay && (this.listType === this.MY_PATIENTS_TYPE || this.listType === this.OTHER_PATIENTS_TYPE)) {
         // 在患者管理列表，每次打开筛选面板的时候，都要去更新一次 groupList，
         // 因为有一个筛选框是筛选分组的，而分组信息需要经常更新
         this.updateGroupList();
@@ -503,10 +509,8 @@ export default {
       return options;
     },
     resetForm(formName) {
-      this.$nextTick(() => {
-        this.$refs[formName].resetFields();
-        this.submitForm(formName);
-      });
+      this.$refs[formName].resetFields();
+      this.submitForm(formName);
     },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
@@ -591,14 +595,10 @@ export default {
       // 列表类型一旦发生变化，则清空搜索框内容
       this.searchInput = '';
       // 同时清空各个筛选面板
-      var formDict = {
-        'myPatients': 'filterPatientsForm',
-        'otherPatients': 'filterPatientsForm',
-        'groups': 'filterGroupsForm'
-      };
-      var filterForm = formDict[this.listType];
-      if (filterForm) {
-        this.resetForm(filterForm);
+      if (this.listType === this.MY_PATIENTS_TYPE || this.listType === this.OTHER_PATIENTS_TYPE) {
+        this.resetForm('filterPatientsForm');
+      } else if (this.listType === this.GROUP_TYPE) {
+        this.resetForm('filterGroupsForm');
       }
     }
   },
