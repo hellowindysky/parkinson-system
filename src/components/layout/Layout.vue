@@ -3,6 +3,7 @@
     <topbar class="topbar"></topbar>
     <sidebar class="sidebar"></sidebar>
     <router-view class="content"></router-view>
+    <password-modal></password-modal>
     <group-modal></group-modal>
     <modal-box></modal-box>
     <medicine-modal></medicine-modal>
@@ -22,6 +23,7 @@ import Bus from 'utils/bus.js';
 
 import topbar from 'components/header/Header';
 import sidebar from 'components/sidebar/Sidebar';
+import passwordModal from 'components/passwordmodal/PasswordModal';
 import groupModal from 'components/groupmodal/GroupModal';
 import modalBox from 'components/modalbox/ModalBox';
 import medicineModal from 'components/medicinemodal/MedicineModal';
@@ -43,6 +45,7 @@ export default {
   components: {
     topbar,
     sidebar,
+    passwordModal,
     groupModal,
     modalBox,
     medicineModal,

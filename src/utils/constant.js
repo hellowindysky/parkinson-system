@@ -56,6 +56,7 @@ export default {
   SHOW_SURGICAL_METHOD_MODAL: 'showSurgicalMethodModal',
   SHOW_OPERATIVE_COMPLICATION_MODAL: 'showOperativeComplication',
   SHOW_DBS_MODAL: 'showDbsModal',
+  SHOW_PASSWORD_MODAL: 'showPasswordModal',
 
   QUIT_DIAGNOSTIC_DETAIL: 'quitDiagnosticDetail',
 

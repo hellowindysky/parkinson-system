@@ -15,7 +15,7 @@
       </span>
     </div>
     <div class="account-panel" :class="{'hide': !showAccountPanel}" @blur="hideAccountPanel">
-      <p class="operate-item">修改密码</p>
+      <p class="operate-item" @click="resetPassword">修改密码</p>
       <div class="seperate-line"></div>
       <p class="operate-item" @click="logout">退出登录</p>
     </div>
@@ -23,6 +23,8 @@
 </template>
 
 <script>
+import Bus from 'utils/bus.js';
+
 export default {
   data() {
     return {
@@ -52,6 +54,10 @@ export default {
     },
     hideAccountPanel() {
       this.showAccountPanel = false;
+    },
+    resetPassword() {
+      this.hideAccountPanel();
+      Bus.$emit(this.SHOW_PASSWORD_MODAL);
     },
     logout() {
       this.hideAccountPanel();
