@@ -9,10 +9,15 @@
       <span class="iconfont icon-search"></span>
       <span class="iconfont icon-notice"></span>
       <span class="iconfont icon-task"></span>
-      <span class="account">
+      <span class="account" @click="toggleAccountPanelDisplay">
         <img src="~img/profile.png" alt="doctor image" class="picture">
         <span class="name">{{title}}</span>
       </span>
+    </div>
+    <div class="account-panel" :class="{'hide': !showAccountPanel}" @blur="hideAccountPanel">
+      <p class="operate-item">修改密码</p>
+      <div class="seperate-line"></div>
+      <p class="operate-item" @click="logout">退出登录</p>
     </div>
   </div>
 </template>
@@ -21,7 +26,8 @@
 export default {
   data() {
     return {
-      showPanel: false
+      showPanel: false,
+      showAccountPanel: false
     };
   },
   computed: {
@@ -40,6 +46,17 @@ export default {
   methods: {
     togglePanel() {
       this.showPanel = !this.showPanel;
+    },
+    toggleAccountPanelDisplay() {
+      this.showAccountPanel = !this.showAccountPanel;
+    },
+    hideAccountPanel() {
+      this.showAccountPanel = false;
+    },
+    logout() {
+      this.hideAccountPanel();
+      sessionStorage.clear();
+      this.$router.push({name: 'login'});
     }
   },
   mounted() {
@@ -93,8 +110,10 @@ export default {
   }
   .operation-wrapper {
     position: absolute;
-    right: 20px;
+    right: 0;
+    padding-right: 20px;
     height: @header-height;
+    background-color: @background-color;
     font-size: 0;
     .iconfont {
       display: inline-block;
@@ -124,6 +143,50 @@ export default {
         padding-left: 10px;
         font-size: @normal-font-size;
       }
+      &:hover {
+        opacity: 0.8;
+      }
+      &:active {
+        opacity: 0.9;
+      }
+    }
+  }
+  .account-panel {
+    position: absolute;
+    top: @header-height;
+    right: 0;
+    width: 137px;
+    height: 81px;
+    background-color: @theme-color;
+    cursor: pointer;
+    transition: 0.2s;
+    z-index: -1;
+    &.hide {
+      transform: translateY(-85px);
+    }
+    .operate-item {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 40px;
+      line-height: 40px;
+      text-align: center;
+      color: #fff;
+      cursor: pointer;
+      font-size: @normal-font-size;
+      &:hover {
+        background-color: @font-color;
+      }
+      &:active {
+        background-color: lighten(@font-color, 5%);
+      }
+    }
+    .seperate-line {
+      margin-left: 10px;
+      width: 117px;
+      height: 1px;
+      cursor: pointer;
+      background-color: @light-font-color;
     }
   }
 }
