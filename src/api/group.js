@@ -1,15 +1,6 @@
 /* eslint-disable quotes */
 import { baseUrl, encapsulatePromise, getCommonRequest } from 'api/common.js';
 
-// 查询某个分组下的病患列表
-export function getGroupPatients(groupId) {
-  var request = Object.assign({}, getCommonRequest());
-  request.groupId = groupId;
-  var url = baseUrl + '/pdms/queryGroupInfo';
-
-  return encapsulatePromise(url, request);
-};
-
 // 获取分组信息
 export function getGroupList(groupInfoCondition) {
   var request = Object.assign({}, getCommonRequest());
@@ -19,45 +10,45 @@ export function getGroupList(groupInfoCondition) {
     request.groupInfoCond = groupInfoCondition;
   }
   var url = baseUrl + '/pdms/queryGroupList';
+  return encapsulatePromise(url, request);
+};
+
+// 获取分组信息
+export function getGroupInfo(groupInfo) {
+  var request = Object.assign({}, getCommonRequest());
+  request.groupInfo = groupInfo;
+  var url = baseUrl + '/pdms/queryGroupInfo';
 
   return encapsulatePromise(url, request);
 };
 
-// 修改组名
-export function modifyGroupName(groupId, name) {
+// 修改分组信息
+export function modifyGroupInfo(groupInfo) {
   var request = Object.assign({}, getCommonRequest());
-  if (groupId !== undefined) {
-    request.groupId = groupId;
-  }
-  if (name !== undefined) {
-    request.groupeName = name;
-  }
-  var url = baseUrl + '/pdms/modGroupName';
+  request.groupInfo = groupInfo;
+  var url = baseUrl + '/pdms/modGroupInfo';
 
   return encapsulatePromise(url, request);
 };
 
-// 查询分组说明
-export function getGroupRemarks(groupId) {
+// 新增分组
+export function addGroup(groupInfo) {
   var request = Object.assign({}, getCommonRequest());
-  if (groupId !== undefined) {
-    request.groupId = groupId;
-  }
-  var url = baseUrl + '/pdms/groupRemarks';
+  request.pageNo = 1;
+  request.pageSize = 0;
+  request.group = groupInfo;
+  var url = baseUrl + '/pdms/addGroup';
 
   return encapsulatePromise(url, request);
 };
 
-// 编辑分组说明
-export function modifyGroupRemarks(groupId, remarks) {
+// 删除分组
+export function deleteGroup(groupIdList) {
   var request = Object.assign({}, getCommonRequest());
-  if (groupId !== undefined) {
-    request.groupId = groupId;
-  }
-  if (remarks !== undefined) {
-    request.remarks = remarks;
-  }
-  var url = baseUrl + '/pdms/editGroupRemarks';
+  request.pageNo = 1;
+  request.pageSize = 0;
+  request.group = groupIdList;
+  var url = baseUrl + '/pdms/delGroup';
 
   return encapsulatePromise(url, request);
 };
@@ -71,4 +62,28 @@ export function getGroupMembers(groupCondition) {
   var url = baseUrl + '/pdms/queryPatientList';
 
   return encapsulatePromise(url, request);
-}
+};
+
+// 移出分组成员
+export function removeGroupMembers(groupId, memberList) {
+  var request = Object.assign({}, getCommonRequest());
+  request.pageSize = 0;
+  request.pageNo = 1;
+  request.groupId = groupId;
+  request.members = memberList;
+  var url = baseUrl + '/pdms/delGroupMember';
+
+  return encapsulatePromise(url, request);
+};
+
+// 向指定分组添加新成员
+export function addGroupMembers(groupId, memberList) {
+  var request = Object.assign({}, getCommonRequest());
+  request.pageSize = 0;
+  request.pageNo = 1;
+  request.groupId = groupId;
+  request.members = memberList;
+  var url = baseUrl + '/pdms/addGroupMember';
+
+  return encapsulatePromise(url, request);
+};

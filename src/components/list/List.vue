@@ -310,6 +310,7 @@ export default {
 
     Bus.$on(this.UPDATE_MY_PATIENTS_LIST, this.updatePatientsList);
     Bus.$on(this.UPDATE_OTHER_PATIENTS_LIST, this.updatePatientsList);
+    Bus.$on(this.UPDATE_GROUP_LIST, this.updateGroupList);
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
   },
   methods: {
@@ -424,7 +425,7 @@ export default {
       }
     },
     addNewGroup() {
-
+      Bus.$emit(this.SHOW_GROUP_MODAL);
     },
     deleteGroup() {
 
@@ -550,6 +551,7 @@ export default {
   beforeDestroy() {
     Bus.$off(this.UPDATE_MY_PATIENTS_LIST);
     Bus.$off(this.UPDATE_OTHER_PATIENTS_LIST);
+    Bus.$off(this.UPDATE_GROUP_LIST);
     Bus.$off(this.SCREEN_SIZE_CHANGE);
   }
 };

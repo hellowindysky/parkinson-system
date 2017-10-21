@@ -3,40 +3,45 @@
     <div class="iconfont icon-close" @click="closePanel"></div>
     <p class="title">添加分组（带颜色的为已加入的组，点击标签即可加入或移出）</p>
     <div class="group-wrapper" ref="scrollArea">
-      <div class="group-item" :class="{'selected': isSelected(group)}"
-        v-for="group in allGroups">{{group.groupName}}</div>
+      <div class="group-item" v-for="(group, index) in allGroups"
+        :class="{'selected': groupSelectedList[index]}" @click="toggleSelected(index)">
+        {{group.groupName}}
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import Ps from 'perfect-scrollbar';
-import { getGroupList } from 'api/group.js';
+import { getGroupList, addGroupMembers, removeGroupMembers } from 'api/group.js';
+
+var lockList = [];  // 这个数组用来标记正在发生状态改变的分组
 
 export default {
   props: {
     display: {
-      type: Boolean
+      type: Boolean,
+      default: false
+    },
+    patientId: {
+      type: Number,
+      default: ''
+    },
+    belongGroups: {
+      type: Array,
+      default: []
     }
   },
   data() {
     return {
       allGroups: [],
-      belongGroups: []
+      groupSelectedList: []
     };
   },
   computed: {},
   methods: {
     closePanel() {
       this.$emit(this.HIDE_GROUP_PANEL);
-    },
-    isSelected(group) {
-      for (let belongGroup of this.belongGroups) {
-        if (group.groupId === belongGroup.groupId) {
-          return true;
-        }
-      }
-      return false;
     },
     updateScrollbar() {
       this.$nextTick(() => {
@@ -46,6 +51,33 @@ export default {
           minScrollbarLength: 40
         });
       });
+    },
+    toggleSelected(index) {
+      if (lockList.indexOf(index) >= 0) {
+        return;   // 请求在发送过程中时，再次点击没有效果
+      }
+      lockList.push(index);
+      var value = !this.groupSelectedList[index];
+      this.$set(this.groupSelectedList, index, value);
+      var groupId = this.allGroups[index].groupId;
+      var patientId = Number(this.patientId);
+      if (value) {
+        addGroupMembers(groupId, [patientId]).then(() => {
+          let listIndex = lockList.indexOf(index);
+          this.$emit(this.UPDATE_PATIENT_GROUP_INFO);
+          lockList.splice(listIndex, 1);
+        }, (error) => {
+          console.log(error);
+        });
+      } else {
+        removeGroupMembers(groupId, [this.patientId]).then(() => {
+          let listIndex = lockList.indexOf(index);
+          this.$emit(this.UPDATE_PATIENT_GROUP_INFO);
+          lockList.splice(listIndex, 1);
+        }, (error) => {
+          console.log(error);
+        });
+      }
     }
   },
   watch: {
@@ -53,6 +85,17 @@ export default {
       if (val === true) {
         getGroupList().then((data) => {
           this.allGroups = data;
+          let length = this.allGroups.length;
+          this.groupSelectedList = [];
+          for (var i = 0; i < length; i++) {
+            var value = false;
+            for (let belongGroup of this.belongGroups) {
+              if (this.allGroups[i].groupId === belongGroup.groupId) {
+                value = true;
+              }
+            }
+            this.$set(this.groupSelectedList, i, value);
+          }
           this.updateScrollbar();
         }, (error) => {
           console.log(error);
@@ -102,12 +145,17 @@ export default {
     .group-item {
       display: inline-block;
       margin: 5px 3%;
+      padding: 0 5px;
       width: 27.33%;
       height: 30px;
       line-height: 30px;
+      box-sizing: border-box;
       background-color: #fff;
       color: @light-font-color;
       text-align: center;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       cursor: pointer;
       &.selected {
         background-color: @button-color;

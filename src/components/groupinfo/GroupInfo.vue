@@ -2,7 +2,7 @@
   <div class="group-info">
     <div class="title-bar">
       <h3 class="title">
-        <span v-show="titleMode === READING_MODE">{{groupName}}</span>
+        <span v-show="titleMode === READING_MODE" class="title-text">{{groupName}}</span>
         <span v-show="titleMode === EDITING_MODE">
           <el-input class="title-input" v-model="copyGroupName"></el-input>
         </span>
@@ -22,13 +22,13 @@
         <img class="image" src="~img/profile.png" alt="">
         <el-checkbox class="select" v-model="groupPatientsSelectedList[i]" v-show="mode===REMOVING_MODE"></el-checkbox>
         <div class="text first-line">
-          <span class="name">{{patient.ptname}}</span>
+          <span class="name">{{patient.name}}</span>
           <span class="iconfont" :class="getGenderIcon(patient.sex)"></span>
         </div>
         <div class="text second-line">
           <span>年龄</span>
           <span class="age">{{patient.age}}</span>
-          <span class="date">{{patient.date}}</span>
+          <span class="date">{{patient.createDate}}</span>
         </div>
       </div>
 
@@ -48,8 +48,8 @@
     </div>
     <div class="operate-bar" v-show="mode!==READING_MODE">
       <el-checkbox class="select-all" v-model="selectAll" @change="toggleSelectAll">全选</el-checkbox>
-      <div class="button remove-button" v-show="mode===REMOVING_MODE">移出分组</div>
-      <div class="button add-button" v-show="mode===ADDING_MODE">加入分组</div>
+      <div class="button remove-button" v-show="mode===REMOVING_MODE" @click="removeMembers">移出分组</div>
+      <div class="button add-button" v-show="mode===ADDING_MODE" @click="addMembers">加入分组</div>
     </div>
     <div class="group-description" v-show="descPanelDisplay">
       <div class="iconfont icon-close" @click="closeDescPanel"></div>
@@ -67,12 +67,7 @@
 <script>
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
-import { getGroupPatients,
-  getGroupMembers,
-  modifyGroupName,
-  getGroupRemarks,
-  modifyGroupRemarks
-} from 'api/group.js';
+import { getGroupInfo, modifyGroupInfo, getGroupMembers, addGroupMembers, removeGroupMembers } from 'api/group.js';
 
 export default {
   data() {
@@ -94,6 +89,11 @@ export default {
       nonGroupPatientsSelectedList: [],
       selectAll: false
     };
+  },
+  computed: {
+    groupId() {
+      return this.$route.params.id;
+    }
   },
   methods: {
     recalculateCardWidth() {
@@ -120,18 +120,31 @@ export default {
       console.log(item);
     },
     updateGroupInfo(cb) {
-      getGroupPatients(this.$route.params.id).then((data) => {
+      let groupInfo = {
+        'groupId': this.groupId
+      };
+      getGroupInfo(groupInfo).then((data) => {
         this.groupName = data.groupName;
         this.copyGroupName = this.groupName;
         this.remarks = data.remarks;
         this.copyRemarks = this.remarks;
-        this.groupPatients = data.list;
+        cb && cb();
+      }, (error) => {
+        console.log(error);
+      });
+    },
+    updateGroupMembers(cb) {
+      let groupCondition = {
+        'patientGroupId': this.groupId,
+        'includeType': 1  // 1代表组内，2代表非组内
+      };
+      getGroupMembers(groupCondition).then((data) => {
+        this.groupPatients = data;
         let length = this.groupPatients.length;
         this.groupPatientsSelectedList = [];
         for (var i = 0; i < length; i++) {
           this.$set(this.groupPatientsSelectedList, i, false);
         }
-        // console.log(data);
         this.updateScrollbar();
         cb && cb();
       }, (error) => {
@@ -147,19 +160,21 @@ export default {
       }
     },
     switchMode(mode) {
+      this.cancelEditingTitle();
+      this.closeDescPanel();
       if (mode === this.ADDING_MODE) {
+        this.nonGroupPatientsSelectedList = [];
+        this.mode = mode;
         let groupCondition = {
-          'patientGroupId': this.$route.params.id,
+          'patientGroupId': this.groupId,
           'includeType': 2  // 1代表组内，2代表非组内
         };
         getGroupMembers(groupCondition).then((data) => {
           this.nonGroupPatients = data;
           let length = this.nonGroupPatients.length;
-          this.nonGroupPatientsSelectedList = [];
           for (var i = 0; i < length; i++) {
             this.$set(this.nonGroupPatientsSelectedList, i, false);
           }
-          this.mode = mode;
         });
       } else if (mode === this.REMOVING_MODE) {
         for (var i = 0; i < this.groupPatientsSelectedList.length; i++) {
@@ -180,10 +195,14 @@ export default {
       this.titleMode = this.READING_MODE;
     },
     submitEditedTitle() {
-      let groupId = this.$route.params.id;
-      modifyGroupName(groupId, this.copyGroupName).then(() => {
+      var groupInfo = {
+        'groupId': this.groupId,
+        'groupeName': this.copyGroupName
+      };
+      modifyGroupInfo(groupInfo).then(() => {
         this.updateGroupInfo(() => {
           this.titleMode = this.READING_MODE;
+          Bus.$emit(this.UPDATE_GROUP_LIST);
         });
       });
     },
@@ -202,15 +221,14 @@ export default {
       this.descriptionMode = this.READING_MODE;
     },
     submitDescInput() {
-      let groupId = this.$route.params.id;
-      modifyGroupRemarks(groupId, this.copyRemarks).then(() => {
-        getGroupRemarks(groupId).then((data) => {
-          this.remarks = data.remarks;
-          this.copyRemarks = this.remarks;
+      var groupInfo = {
+        'groupId': this.groupId,
+        'remarks': this.copyRemarks
+      };
+      modifyGroupInfo(groupInfo).then(() => {
+        this.updateGroupInfo(() => {
           this.descriptionMode = this.READING_MODE;
         });
-      }, (error) => {
-        console.log(error);
       });
     },
     toggleSelectAll() {
@@ -224,6 +242,36 @@ export default {
           this.$set(this.groupPatientsSelectedList, i, value);
         }
       }
+    },
+    addMembers() {
+      var memberList = [];
+      for (var i = 0; i < this.nonGroupPatients.length; i++) {
+        if (this.nonGroupPatientsSelectedList[i]) {
+          memberList.push(this.nonGroupPatients[i].patientId);
+        }
+      }
+      addGroupMembers(this.groupId, memberList).then(() => {
+        this.updateGroupMembers();
+        this.switchMode(this.READING_MODE);
+        Bus.$emit(this.UPDATE_GROUP_LIST);
+      }, (error) => {
+        console.log(error);
+      });
+    },
+    removeMembers() {
+      var memberList = [];
+      for (var i = 0; i < this.groupPatients.length; i++) {
+        if (this.groupPatientsSelectedList[i]) {
+          memberList.push(this.groupPatients[i].patientId);
+        }
+      }
+      removeGroupMembers(this.groupId, memberList).then(() => {
+        this.updateGroupMembers();
+        this.switchMode(this.READING_MODE);
+        Bus.$emit(this.UPDATE_GROUP_LIST);
+      }, (error) => {
+        console.log(error);
+      });
     }
   },
   mounted() {
@@ -238,6 +286,7 @@ export default {
     // 第一次加载的时候，去计算一次卡片宽度
     this.recalculateCardWidth();
     this.updateGroupInfo();
+    this.updateGroupMembers();
     this.updateScrollbar();
   },
   beforeDestroy() {
@@ -274,14 +323,26 @@ export default {
       line-height: 40px;
       text-align: left;
       box-sizing: border-box;
-      font-size: @large-font-size;
+      font-size: 0;
       font-weight: bold;
       color: @font-color;
+      .title-text {
+        display: inline-block;
+        max-width: 350px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: @large-font-size;
+        vertical-align: top;
+      }
       .iconfont {
         display: inline-block;
         margin-left: 10px;
+        font-size: @large-font-size;
+        vertical-align: top;
         cursor: pointer;
         &.icon-edit {
+          margin-left: 20px;
           color: @light-font-color;
         }
         &.icon-cancel {
@@ -310,7 +371,7 @@ export default {
       }
       .title-input {
         display: inline-block;
-        width: 150px;
+        width: 200px;
         .el-input__inner {
           width: 100%;
           height: 30px;
@@ -421,10 +482,24 @@ export default {
           right: 20px;
           font-size: @large-font-size;
           color: @font-color;
+          .name {
+            display: inline-block;
+            max-width: 130px;
+            height: 20px;
+            line-height: 20px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
           .iconfont {
-            position: static;
+            display: inline-block;
+            position: relative;
+            top: 1px;
             margin-left: 15px;
+            height: 20px;
+            line-height: 20px;
             font-size: @normal-font-size;
+            vertical-align: top;
             &.icon-male {
               color: @male-color;
             }

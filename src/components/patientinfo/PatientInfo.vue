@@ -22,7 +22,9 @@
         <div class="info groups">
           <span class="info-title">分组情况: </span>
           <span class="info-text">
-            <span v-for="group in belongGroups" class="group">{{ group.groupName }}</span>
+            <span class="group-wrapper">
+              <span v-for="group in belongGroups" class="group">{{ group.groupName }}</span>
+            </span>
             <span class="iconfont icon-manage" @click="toggleGroupPanel"></span>
           </span>
         </div>
@@ -34,8 +36,9 @@
     </div>
     <diagnostic-detail class="diagnostic-detail"></diagnostic-detail>
     <diagnostic-handle-scale class="diagnostic-handle-scale"></diagnostic-handle-scale>
-    <group-panel class="group-panel" :class="{'hide': !displayGroupPanel}"
-      :display="displayGroupPanel" @hideGroupPanel="hideGroupPanel"></group-panel>
+    <group-panel class="group-panel" :class="{'hide': !displayGroupPanel}" :belongGroups="belongGroups"
+      :display="displayGroupPanel" :patientId="Number(patientId)" @hideGroupPanel="hideGroupPanel"
+      @updatePatientGroupInfo="updatePatientGroupInfo"></group-panel>
   </div>
 </template>
 
@@ -43,7 +46,7 @@
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 
-import { getPatientInfo, getPatientCaseList } from 'api/patient';
+import { getPatientInfo, getPatientGroupInfo, getPatientCaseList } from 'api/patient';
 
 import DiagnosticDetail from 'components/diagnosticdetail/DiagnosticDetail';
 import DiagnosticHandleScale from 'components/diagnostichandlescale/DiagnosticHandleScale';
@@ -62,8 +65,11 @@ export default {
     };
   },
   computed: {
+    patientId() {
+      return this.$route.params.id;
+    },
     existed() {
-      return !(this.$route.params.id === 'newPatient');
+      return !(this.patientId === 'newPatient');
     },
     listType() {
       if (this.$route.matched.some(record => record.meta.myPatients)) {
@@ -144,7 +150,7 @@ export default {
       if (!this.existed) {
         return;
       }
-      getPatientInfo(this.$route.params.id).then((data) => {
+      getPatientInfo(this.patientId).then((data) => {
         // console.log('patientInfo: ', data);
         this.patientInfo = data;
         this.belongDoctor = data.belongDoctor;
@@ -153,9 +159,23 @@ export default {
       }, (error) => {
         console.log(error);
       });
-      getPatientCaseList(this.$route.params.id).then((data) => {
+      getPatientCaseList(this.patientId).then((data) => {
         // console.log('patientCaseList: ', data);
         this.patientCaseList = data;
+      }, (error) => {
+        console.log(error);
+      });
+    },
+    updatePatientGroupInfo() {
+      // 如果是新增患者，则不去请求数据
+      if (!this.existed) {
+        return;
+      }
+      var patientInfo = {
+        'patientId': this.patientId
+      };
+      getPatientGroupInfo(patientInfo).then((data) => {
+        this.belongGroups = data;
       }, (error) => {
         console.log(error);
       });
@@ -175,6 +195,7 @@ export default {
   },
   mounted() {
     this.updatePatientInfo();
+    this.updatePatientGroupInfo();
 
     this.checkRoute();
 
@@ -333,6 +354,7 @@ export default {
       .info {
         display: inline-block;
         width: 50%;
+        height: 30px;
         line-height: 30px;
         font-size: @normal-font-size;
         &.adscription {
@@ -344,14 +366,22 @@ export default {
         &.groups {
           width: 100%;
           top: 40px;
-          .group {
+          .group-wrapper {
             display: inline-block;
-            padding-right: 10px;
+            max-width: calc(~"100% - 85px - 50px");
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            .group {
+              display: inline-block;
+              padding-right: 10px;
+            }
           }
         }
         .info-title {
           display: inline-block;
           width: 85px;
+          vertical-align: top;
           color: @font-color;
         }
         .info-text {
@@ -359,8 +389,8 @@ export default {
           .iconfont {
             display: inline-block;
             font-size: 16px;
-            line-height: @normal-font-size;
-            transform: translateY(1px);
+            line-height: 30px;
+            vertical-align: top;
             cursor: pointer;
             &:hover {
               color: darken(@light-font-color, 20%);

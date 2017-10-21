@@ -73,8 +73,13 @@ export default {
   .name {
     position: absolute;
     font-size: @normal-font-size;
-    left: 15px;
     top: 10px;
+    left: 15px;
+    right: 60px;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .number {
     position: absolute;
