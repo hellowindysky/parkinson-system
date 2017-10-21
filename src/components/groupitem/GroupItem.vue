@@ -1,7 +1,9 @@
 <template lang="html">
-  <div class="item" :class="{'current': selected}" @click="select">
-    <div class="name">{{groupName}}</div>
-    <div class="number">患者: {{memberNumber}}人</div>
+  <div class="item" :class="{'current': chosen}" @click="choose">
+    <el-checkbox class="checkbox" v-show="mode===EDITING_MODE" v-model="selected"
+      @change="toggleSelected"></el-checkbox>
+    <div class="name" :class="{'right-shift': mode===EDITING_MODE}">{{groupName}}</div>
+    <div class="number" :class="{'right-shift': mode===EDITING_MODE}">患者:  {{memberNumber}}人</div>
     <div class="tag">{{groupTypeName}}</div>
     <div class="bottom-line"></div>
   </div>
@@ -10,10 +12,19 @@
 <script>
 export default {
   props: {
+    mode: {
+      type: String,
+      default: this.READING_MODE
+    },
     group: {
-      typs: Object,
+      type: Object,
       default: {}
     }
+  },
+  data() {
+    return {
+      selected: false
+    };
   },
   computed: {
     groupId() {
@@ -33,13 +44,13 @@ export default {
       }
     },
     memberNumber() {
-      return this.group.memberNumber ? this.group.memberNumber : '';
+      return this.group.memberNumber ? this.group.memberNumber : 0;
     },
     remark() {
       return this.group.remarks ? this.group.remarks : '';
     },
     // 根据路由信息对象提供的当前路径，来判断自己是否被选择
-    selected() {
+    chosen() {
       var path = this.$route.path;
       var str = '^\/patients\/groups\/';
       var re = new RegExp(str + this.groupId);
@@ -51,11 +62,25 @@ export default {
     }
   },
   methods: {
-    select() {
+    choose() {
       this.$router.replace({
         name: 'groupInfo',
         params: { id: this.groupId }
       });
+    },
+    toggleSelected() {
+      if (this.selected) {
+        this.$emit('select');
+      } else {
+        this.$emit('unselect');
+      }
+    }
+  },
+  watch: {
+    mode: function(newValue) {
+      if (newValue === this.EDITING_MODE) {
+        this.selected = false;
+      }
     }
   }
 };
@@ -70,6 +95,11 @@ export default {
   height: 65px;
   padding: 5px;
   overflow: hidden;
+  .checkbox {
+    position: absolute;
+    left: 10px;
+    top: 25px;
+  }
   .name {
     position: absolute;
     font-size: @normal-font-size;
@@ -80,12 +110,21 @@ export default {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    transition: 0.2s;
+    &.right-shift {
+      left: 45px;
+    }
   }
   .number {
     position: absolute;
     font-size: @small-font-size;
     left: 15px;
     top: 40px;
+    white-space: pre-wrap;
+    transition: 0.2s;
+    &.right-shift {
+      left: 45px;
+    }
   }
   .tag {
     position: absolute;

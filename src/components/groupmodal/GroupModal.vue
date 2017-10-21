@@ -91,11 +91,12 @@ export default {
       this.checked = true;
       if (this.groupNameWarning === '' && this.groupTypeWarning === '') {
         var groupInfo = {
-          'groupName': this.groupName,
+          'groupeName': this.groupName,   // 拼写错误是数据库的问题
           'groupType': this.groupType,
           'remarks': this.groupRemarks
         };
         addGroup(groupInfo).then(() => {
+          Bus.$emit(this.UPDATE_GROUP_LIST);
           this.displayModal = false;
         });
       }
