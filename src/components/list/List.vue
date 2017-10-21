@@ -526,7 +526,7 @@ export default {
           return false;
         }
       });
-      this.togglePanelDisplay();
+      this.panelDisplay = false;
     },
     checkRoute() {
       var path = this.$route.path;

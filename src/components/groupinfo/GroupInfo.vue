@@ -18,7 +18,8 @@
     </div>
     <!-- <div class="seperate-bar"></div> -->
     <div class="card-wrapper" ref="cardWrapper">
-      <div v-show="mode!==ADDING_MODE" class="card" :class="devideWidth" v-for="(patient, i) in groupPatients" :title="patient.name" v-on:clickCurrentCard="seeDetail(patient)">
+      <div v-show="mode!==ADDING_MODE" class="card" :class="devideWidth" v-for="(patient, i) in groupPatients"
+        :title="patient.name" @click="clickCard(i)">
         <img class="image" src="~img/profile.png" alt="">
         <el-checkbox class="select" v-model="groupPatientsSelectedList[i]" v-show="mode===REMOVING_MODE"></el-checkbox>
         <div class="text first-line">
@@ -116,8 +117,19 @@ export default {
         });
       });
     },
-    seeDetail(item) {
-      console.log(item);
+    clickCard(i) {
+      if (this.mode === this.READING_MODE) {
+        this.$router.push({
+          name: 'patientInfo',
+          params: {
+            id: this.groupPatients[i].patientId
+          }
+        });
+      } else if (this.mode === this.REMOVING_MODE) {
+        this.$set(this.groupPatientsSelectedList, i, !this.groupPatientsSelectedList[i]);
+      } else if (this.mode === this.ADDING_MODE) {
+        this.$set(this.nonGroupPatientsSelectedList, i, !this.nonGroupPatientsSelectedList[i]);
+      }
     },
     updateGroupInfo(cb) {
       let groupInfo = {
@@ -430,6 +442,7 @@ export default {
       margin: 3px @this-card-horizontal-margin;
       height: 110px;
       background-color: @background-color;
+      cursor: pointer;
       &.width-1-1, &.width-1-0 {
         width: calc(~"100% - @{this-card-horizontal-margin} * 2");
       }
