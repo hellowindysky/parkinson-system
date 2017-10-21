@@ -179,6 +179,13 @@ const getters = {
     }
     return state.all.tableData.elecTroGramInfo;
   },
+  rhythm: (state) => {
+    // 生命体征
+    if (!state.all.tableData || !state.all.tableData.rhythm) {
+      return [];
+    }
+    return state.all.tableData.rhythm;
+  },
   typeGroup: (state) => {
     // 如果 state.all.typegroup 为 undefined，则返回一个空数组
     if (!state.all.typegroup) {
