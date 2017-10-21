@@ -17,7 +17,8 @@
         <patient-list-item class="item" v-for="patient in myPatientsList" :patient="patient" :key="patient.patientId"></patient-list-item>
       </div>
       <div v-else-if="this.listType === 'groups'">
-        <group-list-item v-for="group in groupList" :group="group" :key="group.groupId"></group-list-item>
+        <group-list-item v-for="group in groupList" :group="group" :mode="listMode" :key="group.groupId"
+          @select="addToSelectedGroupList(group.groupId)" @unselect="removeFromSelectedGroupList(group.groupId)"></group-list-item>
       </div>
       <div v-else-if="this.listType === 'otherPatients'">
         <patient-list-item class="item" v-for="patient in otherPatientsList" :patient="patient" :key="patient.patientId"></patient-list-item>
@@ -41,13 +42,21 @@
       </div>
     </div>
     <div class="function-area" v-else-if="listType === 'groups'">
-      <div class="function-button left" @click="addNewGroup">
+      <div class="function-button left" v-show="listMode===READING_MODE" @click="addNewGroup">
         <span class="iconfont icon-new-group"></span>
         <span class="text">新增分组</span>
       </div>
-      <div class="function-button right" @click="deleteGroup">
+      <div class="function-button right" v-show="listMode===READING_MODE" @click="toggleListMode(EDITING_MODE)">
         <span class="iconfont icon-delete"></span>
         <span class="text">删除分组</span>
+      </div>
+      <div class="function-button left" v-show="listMode===EDITING_MODE" @click="toggleListMode(READING_MODE)">
+        <span class="iconfont icon-cancel"></span>
+        <span class="text">取消</span>
+      </div>
+      <div class="function-button right warning" v-show="listMode===EDITING_MODE" @click="deleteSeletedGroupList">
+        <span class="iconfont icon-ok"></span>
+        <span class="text">删除</span>
       </div>
     </div>
 
@@ -186,7 +195,7 @@ import Util from 'utils/util';
 // import { vueCopy } from 'utils/helper';
 import { getPatientList } from 'api/patient';
 import { getUserList, getRoleList } from 'api/user';
-import { getGroupList } from 'api/group';
+import { getGroupList, deleteGroup } from 'api/group';
 
 export default {
   data() {
@@ -217,6 +226,8 @@ export default {
       userList: [],
       roleList: [],
       panelDisplay: false,
+      listMode: this.READING_MODE,
+      selectedGroupList: [],
       filterPatientsForm: {
         group: -1,
         gender: -1,
@@ -312,15 +323,11 @@ export default {
     Bus.$on(this.UPDATE_OTHER_PATIENTS_LIST, this.updatePatientsList);
     Bus.$on(this.UPDATE_GROUP_LIST, this.updateGroupList);
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
+    Bus.$on(this.GIVE_UP, () => {
+      Bus.$off(this.CONFIRM);
+    });
   },
   methods: {
-    // initProCity() {
-    //   axios.get('../../static/mockData/city.json').then((response) => {
-    //     vueCopy(response['data'], this.proviceCity);
-    //   }).catch(function(error) {
-    //     console.error('请求出错: ', error);
-    //   });
-    // },
     search() {
       clearTimeout(this.timeout);
       this.timeout = setTimeout(() => {
@@ -424,11 +431,39 @@ export default {
         });
       }
     },
+    toggleListMode(listMode) {
+      this.listMode = listMode;
+      if (this.listMode === this.EDITING_MODE && this.listType === 'groups') {
+        // 在分组列表下，进入删除模式
+        this.selectedGroupList = [];
+      }
+    },
     addNewGroup() {
       Bus.$emit(this.SHOW_GROUP_MODAL);
     },
-    deleteGroup() {
-
+    deleteSeletedGroupList() {
+      Bus.$emit(this.REQUEST_CONFIRMATION, '', '是否确定删除该分组？分组删除后将无法恢复。');
+      Bus.$on(this.CONFIRM, () => {
+        deleteGroup(this.selectedGroupList).then(() => {
+          this.updateGroupList();
+          this.listMode = this.READING;
+          Bus.$off(this.CONFIRM);
+        }, (error) => {
+          console.log(error);
+          Bus.$off(this.CONFIRM);
+        });
+      });
+    },
+    addToSelectedGroupList(groupId) {
+      if (this.selectedGroupList.indexOf(groupId) < 0) {
+        this.selectedGroupList.push(groupId);
+      }
+    },
+    removeFromSelectedGroupList(groupId) {
+      var index = this.selectedGroupList.indexOf(groupId);
+      if (index >= 0) {
+        this.selectedGroupList.splice(index, 1);
+      }
     },
     togglePanelDisplay() {
       this.panelDisplay = !this.panelDisplay;
@@ -553,6 +588,8 @@ export default {
     Bus.$off(this.UPDATE_OTHER_PATIENTS_LIST);
     Bus.$off(this.UPDATE_GROUP_LIST);
     Bus.$off(this.SCREEN_SIZE_CHANGE);
+    Bus.$off(this.CONFIRM);
+    Bus.$off(this.GIVE_UP);
   }
 };
 </script>
@@ -695,10 +732,19 @@ export default {
       &:active {
         opacity: 0.85;
       }
+      &.warning {
+        color: @alert-color;
+      }
       .iconfont {
         font-size: 24px;
         line-height: 20px;
         vertical-align: middle;
+        &.icon-cancel {
+          font-size: 20px;
+        }
+        &.icon-ok {
+          font-size: 22px;
+        }
       }
     }
   }

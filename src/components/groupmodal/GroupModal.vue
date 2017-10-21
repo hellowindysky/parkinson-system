@@ -96,6 +96,7 @@ export default {
           'remarks': this.groupRemarks
         };
         addGroup(groupInfo).then(() => {
+          Bus.$emit(this.UPDATE_GROUP_LIST);
           this.displayModal = false;
         });
       }
