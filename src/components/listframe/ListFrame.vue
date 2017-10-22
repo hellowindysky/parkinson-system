@@ -1,10 +1,10 @@
 <template lang="html">
   <div class="content-wrapper">
     <list></list>
-    <div class="toggle-list-button" :class="{'hide-list-state': !listDisplay}" @click="toggleList">
+    <div class="toggle-list-button" :class="{'hide-list-status': !listDisplay}" @click="toggleList">
       <div class="iconfont" :class="toggleIconClass"></div>
     </div>
-    <router-view class="content-area" :class="{'hide-list-state': !listDisplay}" name="content" :key="key"></router-view>
+    <router-view class="content-area" :class="{'hide-list-status': !listDisplay}" name="content" :key="key"></router-view>
   </div>
 </template>
 
@@ -69,7 +69,7 @@ export default {
     cursor: pointer;
     transition: 0.3s;
     z-index: 200;
-    &.hide-list-state {
+    &.hide-list-status {
       left: 0;
     }
     .iconfont {
@@ -89,7 +89,7 @@ export default {
     height: 100%;
     transition: 0.3s;
     z-index: 200;
-    &.hide-list-state {
+    &.hide-list-status {
       left: @bar-width;
       width: calc(~"100% - @{bar-width}");
     }
