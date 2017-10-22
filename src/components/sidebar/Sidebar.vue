@@ -25,7 +25,8 @@
       <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'basicAnalytics'}" @click="chooseBasicAnalytics">
         基础统计
       </li>
-      <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'advancedAnalytics'}" @click="chooseAdvancedAnalytics">
+      <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'advancedAnalytics'}"
+        @click="chooseAdvancedAnalytics" v-show="false">
         高级统计
       </li>
     </ul>
@@ -102,6 +103,10 @@ export default {
         return 'groupsManagement';
       } else if (/^\/patients\/otherList/.test(path)) {
         return 'otherPatients';
+      } else if (/^\/analytics\/basic/.test(path)) {
+        return 'basicAnalytics';
+      } else if (/^\/analytics\/advanced/.test(path)) {
+        return 'advancedAnalytics';
       } else if (/^\/configuration\/featureConfiguration/.test(path)) {
         return 'featureConfiguration';
       } else if (/^\/configuration\/userManagement/.test(path)) {
@@ -144,7 +149,12 @@ export default {
         this.$router.push({name: 'otherPatients'});
       }
     },
-    chooseBasicAnalytics() {},
+    chooseBasicAnalytics() {
+      // 如果当前路径不是以“/analytics”开头了，才发生跳转
+      if (!/^\/analytics/.test(this.$route.path)) {
+        this.$router.push({name: 'analytics'});
+      }
+    },
     chooseAdvancedAnalytics() {},
     chooseFeatureConfiguration() {
       // 如果当前路径不是以“/configuration/featureConfiguration”开头了，才发生跳转

@@ -15,6 +15,8 @@ import GroupInfo from 'components/groupinfo/GroupInfo';
 import PersonalInfo from 'components/personalinfo/PersonalInfo';
 import DiagnosticInfo from 'components/diagnosticinfo/DiagnosticInfo';
 
+import BasicAnalytics from 'components/basicanalytics/BasicAnalytics';
+
 import FeatureConfiguration from 'components/featureconfiguration/FeatureConfiguration';
 import SecondBar from 'components/configurationbar/SecondBar';
 import GroupConfiguration from 'components/groupconfiguration/GroupConfiguration';
@@ -164,7 +166,14 @@ export default new Router({
         {
           path: 'analytics',
           component: Analytics,
-          name: 'analytics'
+          name: 'analytics',
+          children: [
+            {
+              path: 'basic',
+              component: BasicAnalytics,
+              name: 'basicAnalytics'
+            }
+          ]
         },
         {
           path: 'configuration',
