@@ -8,26 +8,122 @@
           @click="chooseDiagnosticInfo">诊断信息</span>
         <div class="tab-bottom-bar" :class="currentTabBottomBar"></div>
       </div>
-      <div class="folding-box">
-        <div class="title">
-          基本情况
-          <span class="iconfont icon-down"></span>
-        </div>
-        <div class="content">
-
+      <div class="scroll-area" ref="scrollList">
+        <div class="folding-box">
+          <div class="title" @click="toggleBasicInfoDisplay">
+            基本情况
+            <span class="iconfont" :class="{'icon-up': displayBasicInfoCondition, 'icon-down': !displayBasicInfoCondition}"></span>
+          </div>
+          <div class="content" :class="{'folded': !displayBasicInfoCondition}">
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="basicInfoSelectedStatus.ageFrom"></el-checkbox>
+              <span class="item-name">患者年龄</span>
+              <span class="item-value">
+                <el-input class="left-input" v-model="basicInfoCondition.ageFrom" placeholder="最小年龄"
+                  :disabled="!basicInfoSelectedStatus.ageFrom"></el-input>
+                <span class="middle-text">~</span>
+                <el-input class="right-input" v-model="basicInfoCondition.ageTo" placeholder="最大年龄"
+                  :disabled="!basicInfoSelectedStatus.ageFrom"></el-input>
+              </span>
+            </div>
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="basicInfoSelectedStatus.birthDateFrom"></el-checkbox>
+              <span class="item-name">出生日期</span>
+              <span class="item-value">
+                <el-date-picker class="left-input" v-model="basicInfoCondition.birthDateFrom" placeholder="最早日期"
+                  :disabled="!basicInfoSelectedStatus.birthDateFrom"></el-date-picker>
+                <span class="middle-text">~</span>
+                <el-date-picker class="right-input" v-model="basicInfoCondition.birthDateTo" placeholder="最晚日期"
+                  :disabled="!basicInfoSelectedStatus.birthDateFrom"></el-date-picker>
+              </span>
+            </div>
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="basicInfoSelectedStatus.nation"></el-checkbox>
+              <span class="item-name">民族</span>
+              <span class="item-value">
+                <el-input class="normal-input" v-model="basicInfoCondition.nation" placeholder="请输入民族"
+                  :disabled="!basicInfoSelectedStatus.nation"></el-input>
+              </span>
+            </div>
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="basicInfoSelectedStatus.sex"></el-checkbox>
+              <span class="item-name">性别</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="basicInfoCondition.sex" placeholder="请输入性别"
+                  :disabled="!basicInfoSelectedStatus.sex"></el-select>
+              </span>
+            </div>
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="basicInfoSelectedStatus.marryType"></el-checkbox>
+              <span class="item-name">婚姻状况</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="basicInfoCondition.marryType"
+                  :disabled="!basicInfoSelectedStatus.marryType"></el-select>
+              </span>
+            </div>
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="basicInfoSelectedStatus.qualification"></el-checkbox>
+              <span class="item-name">学历</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="basicInfoCondition.qualification"
+                  :disabled="!basicInfoSelectedStatus.qualification"></el-select>
+              </span>
+            </div>
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="basicInfoSelectedStatus.career"></el-checkbox>
+              <span class="item-name">职业</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="basicInfoCondition.career"
+                  :disabled="!basicInfoSelectedStatus.career"></el-select>
+              </span>
+            </div>
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="basicInfoSelectedStatus.bloodType"></el-checkbox>
+              <span class="item-name">血型</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="basicInfoCondition.bloodType"
+                  :disabled="!basicInfoSelectedStatus.bloodType"></el-select>
+              </span>
+            </div>
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="basicInfoSelectedStatus.econType"></el-checkbox>
+              <span class="item-name">经济现状</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="basicInfoCondition.econType"
+                  :disabled="!basicInfoSelectedStatus.econType"></el-select>
+              </span>
+            </div>
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="basicInfoSelectedStatus.liveType"></el-checkbox>
+              <span class="item-name">居住现状</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="basicInfoCondition.liveType"
+                  :disabled="!basicInfoSelectedStatus.liveType"></el-select>
+              </span>
+            </div>
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="basicInfoSelectedStatus.homeProvince"></el-checkbox>
+              <span class="item-name">籍贯</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="basicInfoCondition.homeProvince"
+                  :disabled="!basicInfoSelectedStatus.homeProvince"></el-select>
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    <div class="toggle-condition-button" :class="{'hide-condition-status': !conditionDisplay}" @click="toggleConditonDisplay">
+    <div class="toggle-condition-button" :class="{'hide-condition-status': !displayCondition}" @click="toggleConditonDisplay">
       <div class="iconfont" :class="toggleIconClass"></div>
     </div>
-    <div class="content-area" :class="{'hide-condition-status': !conditionDisplay}">
+    <div class="content-area" :class="{'hide-condition-status': !displayCondition}">
 
     </div>
   </div>
 </template>
 
 <script>
+import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 
 const PERSONAL_INFO = 'personalInfo';
@@ -45,7 +141,10 @@ export default {
       currentTab: PERSONAL_INFO,
       PERSONAL_INFO: PERSONAL_INFO,
       DIAGNOSTIC_INFO: DIAGNOSTIC_INFO,
-      conditionDisplay: true
+      displayCondition: true,
+      displayBasicInfoCondition: true,
+      basicInfoCondition: {},
+      basicInfoSelectedStatus: {}
     };
   },
   computed: {
@@ -59,7 +158,7 @@ export default {
       }
     },
     toggleIconClass() {
-      return this.conditionDisplay ? 'icon-arrow-left' : 'icon-arrow-right';
+      return this.displayCondition ? 'icon-arrow-left' : 'icon-arrow-right';
     }
   },
   methods: {
@@ -70,8 +169,38 @@ export default {
       this.currentTab = DIAGNOSTIC_INFO;
     },
     toggleConditonDisplay() {
-      this.conditionDisplay = !this.conditionDisplay;
+      this.displayCondition = !this.displayCondition;
+    },
+    updateScrollList() {
+      this.$nextTick(() => {
+        Ps.destroy(this.$refs.scrollList);
+        Ps.initialize(this.$refs.scrollList, {
+          wheelSpeed: 1,
+          minScrollbarLength: 40
+        });
+      });
+    },
+    toggleBasicInfoDisplay() {
+      this.displayBasicInfoCondition = !this.displayBasicInfoCondition;
+      setTimeout(() => {
+        this.updateScrollList();  // 等动画结束后再刷新列表滚动条
+      }, 300);
+    },
+    initCondition() {
+      let basicInfoFieldNames = ['ageFrom', 'ageTo', 'birthDateFrom', 'birthDateTo',
+        'nation', 'sex', 'marryType', 'qualification', 'career', 'bloodType', 'econType',
+        'liveType', 'homeProvince'];
+      basicInfoFieldNames.forEach((fieldName) => {
+        this.$set(this.basicInfoCondition, fieldName, '');
+        this.$set(this.basicInfoSelectedStatus, fieldName, false);
+      });
     }
+  },
+  created() {
+    this.initCondition();
+  },
+  mounted() {
+    this.updateScrollList();
   },
   watch: {
     $route() {
@@ -87,7 +216,9 @@ export default {
 <style lang="less">
 @import "~styles/variables.less";
 
-@condition-area-width: 300px;
+@condition-area-width: 350px;
+@tabs-wrapper-height: 35px;
+@tabs-wrapper-margin-bottom: 2px;
 
 .filter-panel {
   position: absolute;
@@ -105,18 +236,20 @@ export default {
     position: absolute;
     left: 0;
     top: 0;
-    width: 300px;
+    width: @condition-area-width;
     height: 100%;
     .tabs-wrapper  {
       position: relative;
       width: 100%;
-      height: 35px;
+      height: @tabs-wrapper-height;
+      margin-bottom: @tabs-wrapper-margin-bottom;
+      box-shadow: 0 2px 3px @light-gray-color;
       font-size: 0;
       .tab {
         display: inline-block;
         width: 50%;
         height: 100%;
-        line-height: 35px;
+        line-height: @tabs-wrapper-height;
         font-size: @normal-font-size;
         font-weight: bold;
         color: @light-font-color;
@@ -134,31 +267,137 @@ export default {
         background-color: @button-color;
         transition: 0.2s;
         &.first-tab {
-          transform: translateX(40px);
+          transform: translateX(52px);
         }
         &.second-tab {
-          transform: translateX(40px + @condition-area-width * 0.5);
+          transform: translateX(52px + @condition-area-width * 0.5);
         }
       }
     }
-    .folding-box {
+    .scroll-area {
+      position: relative;
       width: 100%;
-      .title {
-        padding-left: 15px;
+      height: calc(~"100% - @{tabs-wrapper-height} - @{tabs-wrapper-margin-bottom}");
+      box-sizing: border-box;
+      overflow: hidden;
+      .folding-box {
         width: 100%;
-        height: 30px;
-        line-height: 30px;
-        box-sizing: border-box;
-        text-align: left;
-        font-size: @normal-font-size;
-        cursor: pointer;
-        .iconfont {
-          font-size: @small-font-size;
-          color: @button-color;
+        margin-bottom: 10px;
+        .title {
+          padding-left: 15px;
+          width: 100%;
+          height: 30px;
+          line-height: 30px;
+          box-sizing: border-box;
+          text-align: left;
+          font-size: @normal-font-size;
+          font-weight: bold;
+          background-color: @light-font-color;
+          color: #fff;
+          cursor: pointer;
+          .iconfont {
+            padding-left: 5px;
+            font-size: @small-font-size;
+            color: #fff;
+          }
+          &:hover {
+            opacity: 0.8;
+          }
+          &:active {
+            opacity: 0.9;
+          }
+        }
+        .content {
+          position: relative;
+          padding: 5px 0;
+          box-sizing: border-box;
+          height: auto;
+          font-size: @normal-font-size;
+          transition: 0.3s;
+          overflow: hidden;
+          &.folded {
+            padding: 0;
+            height: 0;
+            opacity: 0.3;
+          }
+          .item {
+            width: 100%;
+            height: 40px;
+            line-height: 40px;
+            text-align: left;
+            .item-checkbox {
+              position: absolute;
+              left: 10px;
+            }
+            .item-name {
+              display: inline-block;
+              position: absolute;
+              left: 40px;
+            }
+            .item-value {
+              display: inline-block;
+              position: absolute;
+              left: 110px;
+              right: 15px;
+              .left-input, .right-input {
+                display: inline-block;
+                position: absolute;
+                width: 100px;
+                .el-input__icon {
+                  display: none;
+                }
+                .el-input__inner {
+                  padding: 3px 10px;
+                }
+              }
+              .left-input {
+                left: 0;
+              }
+              .right-input {
+                right: 0;
+              }
+              .middle-text {
+                position: absolute;
+                left: 110px;
+              }
+              .normal-input {
+                display: inline-block;
+              }
+              .el-input {
+                .el-input__inner {
+                  height: 30px;
+                  border: none;
+                  background-color: @screen-color;
+                }
+              }
+              .el-select {
+                width: 100%;
+              }
+            }
+          }
         }
       }
-      .content {
-        font-size: @normal-font-size;
+      .ps__scrollbar-y-rail {
+        position: absolute;
+        width: 15px;
+        right: 0;
+        padding: 0 3px;
+        box-sizing: border-box;
+        opacity: 0.3;
+        transition: opacity 0.3s, padding 0.2s;
+        .ps__scrollbar-y {
+          position: relative;
+          background-color: #aaa;
+          border-radius: 20px;
+        }
+      }
+      &:hover {
+        .ps__scrollbar-y-rail {
+          opacity: 0.6;
+          &:hover {
+            padding: 0;
+          }
+        }
       }
     }
   }
