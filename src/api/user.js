@@ -1,6 +1,15 @@
 /* eslint-disable quotes */
 import { baseUrl, encapsulatePromise, getCommonRequest } from 'api/common.js';
 
+export function resetPassword(oldPassword, newPassword) {
+  var request = Object.assign({}, getCommonRequest());
+  request.oldPassword = oldPassword;
+  request.newPassword = newPassword;
+  var url = baseUrl + '/usermgr/modPassword';
+
+  return encapsulatePromise(url, request);
+};
+
 export function getDictionary() {
   var request = Object.assign({}, getCommonRequest());
   request.version = 43;

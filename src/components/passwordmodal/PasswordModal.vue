@@ -47,6 +47,7 @@
 
 <script>
 import Bus from 'utils/bus.js';
+import { resetPassword } from 'api/user.js';
 
 export default {
   data() {
@@ -73,16 +74,16 @@ export default {
   },
   methods: {
     showModal() {
-      this.displayModal = true;
-    },
-    cancel() {
-      this.displayModal = false;
       this.originalPassword = '';
       this.newPassword = '';
       this.repeatedNewPassword = '';
       this.originalPasswordWarning = '';
       this.newPasswordWarning = '';
       this.repeatedNewPasswordWarning = '';
+      this.displayModal = true;
+    },
+    cancel() {
+      this.displayModal = false;
     },
     submit() {
       if (this.originalPasswordWarning !== '' ||
@@ -101,7 +102,23 @@ export default {
       }
       if (this.repeatedNewPassword !== this.newPassword) {
         this.repeatedNewPasswordWarning = '两次输入的密码不一致';
+        return;
       }
+
+      // 运行到这里，说明满足所有条件，可以更新代码了
+      resetPassword(this.originalPassword, this.newPassword).then((data) => {
+        console.log(data);
+        this.$message({
+          message: '已成功修改密码',
+          type: 'success',
+          duration: 2000
+        });
+        this.displayModal = false;
+      }, (error) => {
+        if (error.code === 25) {
+          this.originalPasswordWarning = '当前密码不正确，请重新输入';
+        }
+      });
     },
     clearOriginalPasswordWarning() {
       if (this.originalPasswordWarning === '请输入当前密码') {
