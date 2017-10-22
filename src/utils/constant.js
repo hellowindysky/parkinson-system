@@ -45,6 +45,8 @@ export default {
   UPDATE_CASE_INFO: 'updateCaseInfo',
   UPDATE_SCALE_DETAIL: 'updateScaleDetail',
 
+  BLUR_ON_SCREEN: 'blurOnScreen',
+
   HIDE_GROUP_PANEL: 'hideGroupPanel',
   SHOW_GROUP_MODAL: 'showGroupModal',
   SHOW_MODAL_BOX: 'showModalBox',

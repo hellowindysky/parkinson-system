@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="app-wrapper" v-if="display">
+  <div class="app-wrapper" v-if="display" @click="blurOnScreen">
     <topbar class="topbar"></topbar>
     <sidebar class="sidebar"></sidebar>
     <router-view class="content"></router-view>
@@ -57,6 +57,11 @@ export default {
     nervousSystem,
     biochemicalExam,
     emgModal
+  },
+  methods: {
+    blurOnScreen() {
+      Bus.$emit(this.BLUR_ON_SCREEN);
+    }
   },
   mounted() {
     window.onresize = () => {

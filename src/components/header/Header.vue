@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="header">
-    <div class="organization-wrapper" @click="togglePanel">
+    <div class="organization-wrapper" v-on:click.stop="togglePanel">
       <span class="name">{{orgName}}</span>
       <span class="iconfont" :class="togglePanelIcon"></span>
     </div>
@@ -14,7 +14,7 @@
         <span class="name">{{title}}</span>
       </span>
     </div>
-    <div class="account-panel" :class="{'hide': !showAccountPanel}" @blur="hideAccountPanel">
+    <div class="account-panel" :class="{'hide': !showAccountPanel}">
       <p class="operate-item" @click="resetPassword">修改密码</p>
       <div class="seperate-line"></div>
       <p class="operate-item" @click="logout">退出登录</p>
@@ -49,7 +49,10 @@ export default {
     togglePanel() {
       this.showPanel = !this.showPanel;
     },
-    toggleAccountPanelDisplay() {
+    toggleAccountPanelDisplay(event) {
+      // 按官网的说法，最好不在 methods 里面处理事件，而应该使用 v-on 的事件修饰符
+      // 但是不知道为什么，我的 @click.stop 并没有阻止事件的冒泡传递
+      event.stopPropagation();
       this.showAccountPanel = !this.showAccountPanel;
     },
     hideAccountPanel() {
@@ -70,6 +73,11 @@ export default {
     // TODO 如果在header中改变了所属机构，就需要重新获取这些信息
     this.$store.dispatch('getWholeDictionary');
     this.$store.dispatch('getWholeTemplate');
+
+    Bus.$on(this.BLUR_ON_SCREEN, this.hideAccountPanel);
+  },
+  beforeDestroy() {
+    Bus.$off(this.BLUR_ON_SCREEN);
   }
 };
 </script>
