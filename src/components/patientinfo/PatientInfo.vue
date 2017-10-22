@@ -378,7 +378,7 @@ export default {
               margin-right: 8px;
               background-color: @light-font-color;
               border-radius: 5px;
-              color: #FFFFFF;
+              color: #fff;
             }
           }
         }
