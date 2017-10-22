@@ -374,7 +374,11 @@ export default {
             white-space: nowrap;
             .group {
               display: inline-block;
-              padding-right: 10px;
+              padding: 0 5px;
+              margin-right: 8px;
+              background-color: @light-font-color;
+              border-radius: 5px;
+              color: #FFFFFF;
             }
           }
         }
