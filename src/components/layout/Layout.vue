@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="app-wrapper" v-if="display" @click="blurOnScreen">
-    <topbar class="topbar"></topbar>
+    <topbar class="topbar" :showFilterPanel="showFilterPanel"></topbar>
     <sidebar class="sidebar"></sidebar>
     <router-view class="content"></router-view>
     <password-modal></password-modal>
@@ -15,6 +15,7 @@
     <nervous-system></nervous-system>
     <biochemical-exam></biochemical-exam>
     <emg-modal></emg-modal>
+    <filter-panel :showFilterPanel="showFilterPanel"></filter-panel>
   </div>
 </template>
 
@@ -23,6 +24,7 @@ import Bus from 'utils/bus.js';
 
 import topbar from 'components/header/Header';
 import sidebar from 'components/sidebar/Sidebar';
+
 import passwordModal from 'components/passwordmodal/PasswordModal';
 import groupModal from 'components/groupmodal/GroupModal';
 import modalBox from 'components/modalbox/ModalBox';
@@ -32,6 +34,7 @@ import surgicalMethodModal from 'components/surgicalmethodmodal/SurgicalMethodMo
 import operativeComplicationModal from 'components/operativecomplicationmodal/OperativeComplicationModal';
 import dbsModal from 'components/dbsmodal/DbsModal';
 import confirmBox from 'components/confirmbox/ConfirmBox';
+import filterPanel from 'components/filterpanel/FilterPanel';
 import nervousSystem from 'components/nervousystemmodal/NervouSystemModal';
 import biochemicalExam from 'components/biochemicalexammodal/BiochemicalExamModal';
 import emgModal from 'components/emgmodal/EmgModal';
@@ -39,7 +42,8 @@ import emgModal from 'components/emgmodal/EmgModal';
 export default {
   data() {
     return {
-      display: false
+      display: false,
+      showFilterPanel: false
     };
   },
   components: {
@@ -54,6 +58,7 @@ export default {
     operativeComplicationModal,
     dbsModal,
     confirmBox,
+    filterPanel,
     nervousSystem,
     biochemicalExam,
     emgModal
@@ -61,6 +66,11 @@ export default {
   methods: {
     blurOnScreen() {
       Bus.$emit(this.BLUR_ON_SCREEN);
+    },
+    toggleFilterPanelDisplay() {
+      // 为什么 FilterPanel 的状态需要由 Layout 来控制呢？
+      // 因为 Header 组件需要知道它的开关情况，所以由 Header 的父组件 Layout 来控制，会方便一些
+      this.showFilterPanel = !this.showFilterPanel;
     }
   },
   mounted() {
@@ -75,6 +85,11 @@ export default {
     } else {
       this.display = true;
     }
+
+    Bus.$on(this.TOGGLE_FILTER_PANEL_DISPLAY, this.toggleFilterPanelDisplay);
+  },
+  beforeDestroy() {
+    Bus.$off(this.TOGGLE_FILTER_PANEL_DISPLAY);
   }
 };
 </script>

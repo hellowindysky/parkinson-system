@@ -1,19 +1,21 @@
 <template lang="html">
   <div class="header">
-    <div class="organization-wrapper" v-on:click.stop="togglePanel">
+    <div class="organization-wrapper" v-on:click.stop="toggleOranizationPanel">
       <span class="name">{{orgName}}</span>
-      <span class="iconfont" :class="togglePanelIcon"></span>
+      <span class="iconfont" :class="toggleOranizationPanelIcon"></span>
     </div>
-    <div class="organization-panel" v-show="showPanel"></div>
     <div class="operation-wrapper">
-      <span class="iconfont icon-search"></span>
+      <span class="iconfont icon-search" :class="{'on': showFilterPanel}" @click="toggleFilterPanel"></span>
       <span class="iconfont icon-notice"></span>
       <span class="iconfont icon-task"></span>
       <span class="account" @click="toggleAccountPanelDisplay">
         <img src="~img/profile.png" alt="doctor image" class="picture">
-        <span class="name">{{title}}</span>
+        <span class="name" :class="{'on': showAccountPanel}">{{title}}</span>
       </span>
     </div>
+    <div class="shadow-border"></div>
+
+    <div class="organization-panel" v-show="showOranizationPanel"></div>
     <div class="account-panel" :class="{'hide': !showAccountPanel}">
       <p class="operate-item" @click="resetPassword">修改密码</p>
       <div class="seperate-line"></div>
@@ -26,15 +28,21 @@
 import Bus from 'utils/bus.js';
 
 export default {
+  props: {
+    showFilterPanel: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
-      showPanel: false,
+      showOranizationPanel: false,
       showAccountPanel: false
     };
   },
   computed: {
-    togglePanelIcon() {
-      return this.showPanel ? 'icon-up' : 'icon-down';
+    toggleOranizationPanelIcon() {
+      return this.showOranizationPanel ? 'icon-up' : 'icon-down';
     },
     title() {
       var name = sessionStorage.getItem('name');
@@ -46,8 +54,11 @@ export default {
     }
   },
   methods: {
-    togglePanel() {
-      this.showPanel = !this.showPanel;
+    toggleOranizationPanel() {
+      this.showOranizationPanel = !this.showOranizationPanel;
+    },
+    toggleFilterPanel() {
+      Bus.$emit(this.TOGGLE_FILTER_PANEL_DISPLAY);
     },
     toggleAccountPanelDisplay(event) {
       // 按官网的说法，最好不在 methods 里面处理事件，而应该使用 v-on 的事件修饰符
@@ -91,9 +102,18 @@ export default {
   line-height: @header-height;
   background-color: @background-color;
   box-sizing: border-box;
-  box-shadow: 0 2px 3px @light-gray-color;
   color: @font-color;
   z-index: 400;
+  .shadow-border {
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(0,0,0,0);
+    box-shadow: 0 2px 3px @light-gray-color;
+    z-index: 10;  // 之所以单独设定这个 shadow-border，就是为了优化阴影和弹出面板的遮挡关系
+  }
   .organization-wrapper {
     position: absolute;
     display: inline-block;
@@ -143,6 +163,18 @@ export default {
       &:first-child {
         border-left: 1px solid lighten(@inverse-font-color, 20%);
       }
+      &:hover {
+        opacity: 0.6;
+      }
+      &:active {
+        opacity: 0.8;
+      }
+      &.on {
+        color: @font-color;
+        &:hover {
+          opacity: 1;
+        }
+      }
     }
     .account {
       margin-left: 20px;
@@ -156,12 +188,19 @@ export default {
       .name {
         padding-left: 10px;
         font-size: @normal-font-size;
-      }
-      &:hover {
-        opacity: 0.8;
-      }
-      &:active {
-        opacity: 0.9;
+        color: @light-font-color;
+        &:hover {
+          opacity: 0.8;
+        }
+        &:active {
+          opacity: 0.9;
+        }
+        &.on {
+          color: @font-color;
+          &:hover {
+            opacity: 1;
+          }
+        }
       }
     }
   }
