@@ -29,7 +29,9 @@ export default {
     },
     belongGroups: {
       type: Array,
-      default: []
+      default: () => {
+        return [];
+      }
     }
   },
   data() {
