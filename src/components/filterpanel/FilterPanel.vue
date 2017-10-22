@@ -8,6 +8,15 @@
           @click="chooseDiagnosticInfo">诊断信息</span>
         <div class="tab-bottom-bar" :class="currentTabBottomBar"></div>
       </div>
+      <div class="folding-box">
+        <div class="title">
+          基本情况
+          <span class="iconfont icon-down"></span>
+        </div>
+        <div class="content">
+
+        </div>
+      </div>
     </div>
     <div class="toggle-condition-button" :class="{'hide-condition-status': !conditionDisplay}" @click="toggleConditonDisplay">
       <div class="iconfont" :class="toggleIconClass"></div>
@@ -130,6 +139,26 @@ export default {
         &.second-tab {
           transform: translateX(40px + @condition-area-width * 0.5);
         }
+      }
+    }
+    .folding-box {
+      width: 100%;
+      .title {
+        padding-left: 15px;
+        width: 100%;
+        height: 30px;
+        line-height: 30px;
+        box-sizing: border-box;
+        text-align: left;
+        font-size: @normal-font-size;
+        cursor: pointer;
+        .iconfont {
+          font-size: @small-font-size;
+          color: @button-color;
+        }
+      }
+      .content {
+        font-size: @normal-font-size;
       }
     }
   }
