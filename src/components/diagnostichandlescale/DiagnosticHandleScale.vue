@@ -190,23 +190,32 @@ export default {
         // 获取页面的类型（到底是添加页面还是修改页面）
         this.mode = this.MODIFY_PAGE;
         // 在修改页面的状态下将原来的数据对象给服务器的对象
+        this.patientScale = {};
+        console.log('item', item);
         vueCopy(item, this.patientScale);
-        // 还原关联信息这个对象
-
-        for (let i = 0; i < this.scaleSympInfoName.length; i++) {
-          let sympKey = this.scaleSympInfoName[i];
-          for (let j = 0; j < this.patientScale['scaleSympInfoList'].length; j++) {
-            let patientKey = this.patientScale['scaleSympInfoList'][j];
-            // console.log(patientKey);
-            if (sympKey['sympName'] === patientKey['sympName']) {
-              this.$set(this.scaleSympInfoName, i, this.patientScale['scaleSympInfoList'][j]);
-              this.$set(this.scaleSympInfoName[i], 'status', true);
+        if (this.patientScale['scaleSympInfoList']) {
+          for (let i = 0; i < this.scaleSympInfoName.length; i++) {
+            let sympKey = this.scaleSympInfoName[i];
+            if (this.patientScale['scaleSympInfoList']) {
+              for (let j = 0; j < this.patientScale['scaleSympInfoList'].length; j++) {
+                let patientKey = this.patientScale['scaleSympInfoList'][j];
+                if (sympKey['sympName'] === patientKey['sympName']) {
+                  this.$set(this.scaleSympInfoName, i, this.patientScale['scaleSympInfoList'][j]);
+                  this.$set(this.scaleSympInfoName[i], 'status', true);
+                }
+              }
             }
           }
+          vueCopy(this.scaleSympInfoName, this.patientScale['scaleSympInfoList']);
+        } else {
+          this.$set(this.patientScale, 'scaleSympInfoList', []);
+          vueCopy(this.scaleSympInfoName, this.patientScale['scaleSympInfoList']);
+          for (let j = 0; j < this.patientScale['scaleSympInfoList'].length; j++) {
+            this.$set(this.patientScale['scaleSympInfoList'][j], 'status', false);
+          }
+          console.log('error', this.scaleSympInfoName);
         }
-        // console.log(this.scaleSympInfoName);
         // 把关联症状那个数组赋值给这个提交的对象
-        vueCopy(this.scaleSympInfoName, this.patientScale['scaleSympInfoList']);
         this.isSelected = false;
       } else {
         // 这是在新添加页面的状态下就自己新建一个服务器的对象

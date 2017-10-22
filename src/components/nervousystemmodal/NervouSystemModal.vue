@@ -20,7 +20,7 @@
           检查时间&nbsp;:
         </span>
         <span class="field-input">
-          <el-date-picker v-model="item['ariseTime']" type="date" format="yyyy-MM-dd"></el-date-picker>
+          <el-date-picker v-model="item['ariseTime']" placeholder="请输入检查时间" type="date" format="yyyy-MM-dd"></el-date-picker>
         </span>
       </div>
       <div class="field" v-if="showItem['spephysicalResult'] || mode===ADD_MODE">
@@ -28,7 +28,7 @@
           检查结果&nbsp;:
         </span>
         <span class="field-input">
-          <el-input v-model="item['spephysicalResult']"></el-input>
+          <el-input placeholder="请输入检查结果" v-model="item['spephysicalResult']"></el-input>
         </span>
       </div>
       <div class="field" v-if="showItem['remarks'] || mode===ADD_MODE">
@@ -36,7 +36,7 @@
           备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注&nbsp;:
         </span>
         <span class="field-input">
-          <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="item['remarks']"></el-input>
+          <el-input type="textarea" :rows="2" placeholder="请输入备注内容" v-model="item['remarks']"></el-input>
         </span>
       </div>
 
