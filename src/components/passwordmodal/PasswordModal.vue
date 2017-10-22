@@ -106,8 +106,7 @@ export default {
       }
 
       // 运行到这里，说明满足所有条件，可以更新代码了
-      resetPassword(this.originalPassword, this.newPassword).then((data) => {
-        console.log(data);
+      resetPassword(this.originalPassword, this.newPassword).then(() => {
         this.$message({
           message: '已成功修改密码',
           type: 'success',
