@@ -4,7 +4,9 @@
       <extensible-panel class="panel" :mode="mutableMode" :title="subTitle" v-on:addNewCard="addScale">
          <card class="card" :class="devideWidth" :mode="mutableMode" v-for="item in patientScale" :key="item.id" :title="getTitle(item.scaleInfoId)" v-on:deleteCurrentCard="deleteScaleRecord(item)" v-on:clickCurrentCard="updateScaleDetail(item, 'update')">
            <div class="text first-line">量表得分: {{item.scalePoint}}</div>
-           <div class="text second-line"></div>
+           <div class="text second-line">填写时间: {{item['inspectTime']}}</div>
+           <div class="text third-line">末次服药: {{item['lastTakingTime']}}</div>
+           <div class="text fourth-line">开关状态: {{switchType(item['switchType'])}}</div>
         </card>
       </extensible-panel>
     </div>
@@ -107,6 +109,13 @@ export default {
     _rejectDeletion() {
       // 即使删除不成功，也要解除 [确认对话框] 的 “确认” 回调函数
       Bus.$off(this.CONFIRM);
+    },
+    switchType(type) {
+      if (String(type) === '1') {
+        return '开';
+      } else {
+        return '关';
+      }
     }
   },
   computed: {
@@ -158,7 +167,11 @@ export default {
   position: relative;
   .panel {
     text-align: left;
+    .content {
+      height: 200px !important;
+    }
     .card {
+      height: 170px;
       display: inline-block;
       margin: @card-vertical-margin @card-horizontal-margin;
       &.width-1-1, &.width-1-0 {
@@ -203,6 +216,14 @@ export default {
       .second-line {
         left: 10px;
         top: 75px;
+      }
+      .third-line {
+        left: 10px;
+        top: 100px;
+      }
+      .fourth-line {
+        left: 10px;
+        top: 125px;
       }
     }
   }

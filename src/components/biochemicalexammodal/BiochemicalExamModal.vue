@@ -136,6 +136,7 @@ export default {
       } else {
         // 修改生化指标那么直接拷贝它
         vueCopy(item, this.bioexamTypeData);
+        console.log('item', item);
         let bioexamId = this.bioexamTypeData['bioexamId']; // 获取到检查类型的ID
         for (let i = 0; i < this.dictionData.length; i++) {
           if (this.dictionData[i]['id'] === bioexamId) {
