@@ -352,7 +352,8 @@ export default {
       }
       &.multiple-select {
         transform: translateY(@field-height * 0.4);
-        height: @field-height * 1.0;
+        height: auto;
+        min-height: @field-height * 1.0;
         .field-name {
           line-height: @field-height * 0.3;
         }
@@ -360,7 +361,15 @@ export default {
           line-height: @field-height * 0.3;
         }
         .field-input {
+          position: relative;
+          padding-bottom: 10px;
+          width: calc(~"100% - @{field-name-width}");
           line-height: @field-height * 0.3;
+        }
+        &.long-label-field {
+          .field-input {
+            width: calc(~"100% - @{long-field-name-width}");
+          }
         }
       }
       .field-name {
@@ -417,6 +426,10 @@ export default {
           width: 100%;
         }
         .el-checkbox-group {
+          .el-checkbox {
+            margin-left: 0;
+            margin-right: 15px;
+          }
           .el-checkbox__input {
             line-height: 18px;
           }
