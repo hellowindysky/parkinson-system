@@ -239,7 +239,12 @@ export default {
       this.areaChart = echarts.init(document.getElementById(id));
       this.areaChart.setOption({
         color: ['#3398DB'],
-        tooltip: {},
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow'
+          }
+        },
         xAxis: {
           data: ['北京', '天津', '重庆', '福建', '广东', '湖南', '湖北', '广西', '上海', '海南']
         },
@@ -255,7 +260,11 @@ export default {
       this.areaChart = echarts.init(document.getElementById(id));
       this.areaChart.setOption({
         color: ['#3398DB'],
-        tooltip: {},
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow'
+          }},
         xAxis: {
           data: ['25岁以下', '26-35岁', '36-45岁', '46-55岁', '56-65岁', '65岁以上']
         },
@@ -271,7 +280,12 @@ export default {
       this.areaChart = echarts.init(document.getElementById(id));
       this.areaChart.setOption({
         color: ['#3398DB'],
-        tooltip: {},
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow'
+          }
+        },
         xAxis: {
           data: ['工人', '农名', '教师', '科技人员', '医务人员', '服务人员', '军人', '文体人员', '家务', '不详']
         },
