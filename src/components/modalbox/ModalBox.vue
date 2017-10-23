@@ -84,7 +84,8 @@ export default {
       disableChangingSubModal: false,
       title: '',
       copyInfo: {},
-      warningResults: {}
+      warningResults: {},
+      lockSubmitButton: false   // 这个变量用来锁住确定按钮，避免短时间内多次点击造成重复提交
     };
   },
   computed: {
@@ -213,6 +214,11 @@ export default {
       this.displayModal = false;
     },
     submit() {
+      // 如果确定按钮被锁住了，则不执行下面的逻辑，防止重复点击
+      if (this.lockSubmitButton) {
+        return;
+      }
+
       // 对于特殊的个人史，检查 subModal 字段是否有被选择
       if (this.modalType === this.PERSON_MODAL && this.subModalType === '') {
         this.$set(this.warningResults, 'subModal', '请选择');
@@ -238,88 +244,91 @@ export default {
 
       this.copyInfo.patientId = parseInt(this.$route.params.id, 10);
       // 到这里，检验合格，准备提交数据了
+      // 发出请求之前，先将“确定”按钮锁住
+      this.lockSubmitButton = true;
       if (this.mode === ADD_MODE) {
         if (this.modalType === this.MEDICINE_MODAL) {
           addPatientMedHistory(this.copyInfo).then(() => {
             this.updateAndClose();
-          });
+          }, this._handleError);
         } else if (this.modalType === this.DISEASE_MODAL) {
           addPatientDisease(this.copyInfo).then(() => {
             this.updateAndClose();
-          });
+          }, this._handleError);
         } else if (this.modalType === this.FAMILY_MODAL) {
           addPatientFamily(this.copyInfo).then(() => {
             this.updateAndClose();
-          });
+          }, this._handleError);
         } else if (this.modalType === this.TOXIC_MODAL) {
           addPatientToxicExposure(this.copyInfo).then(() => {
             this.updateAndClose();
-          });
+          }, this._handleError);
         } else if (this.subModalType === this.COFFEE_MODAL) {
           addPatientCoffee(this.copyInfo).then(() => {
             this.updateAndClose();
-          });
+          }, this._handleError);
         } else if (this.subModalType === this.TEA_MODAL) {
           addPatientTea(this.copyInfo).then(() => {
             this.updateAndClose();
-          });
+          }, this._handleError);
         } else if (this.subModalType === this.WINE_MODAL) {
           addPatientWine(this.copyInfo).then(() => {
             this.updateAndClose();
-          });
+          }, this._handleError);
         } else if (this.subModalType === this.SMOKE_MODAL) {
           addPatientSmoke(this.copyInfo).then(() => {
             this.updateAndClose();
-          });
+          }, this._handleError);
         } else if (this.subModalType === this.EXERCISE_MODAL) {
           addPatientExercise(this.copyInfo).then(() => {
             this.updateAndClose();
-          });
+          }, this._handleError);
         }
 
       } else if (this.mode === MODIFY_MODE) {
         if (this.modalType === this.MEDICINE_MODAL) {
           modifyPatientMedHistory(this.copyInfo).then(() => {
             this.updateAndClose();
-          });
+          }, this._handleError);
         } else if (this.modalType === this.DISEASE_MODAL) {
           modifyPatientDisease(this.copyInfo).then(() => {
             this.updateAndClose();
-          });
+          }, this._handleError);
         } else if (this.modalType === this.FAMILY_MODAL) {
           modifyPatientFamily(this.copyInfo).then(() => {
             this.updateAndClose();
-          });
+          }, this._handleError);
         } else if (this.modalType === this.TOXIC_MODAL) {
           modifyPatientToxicExposure(this.copyInfo).then(() => {
             this.updateAndClose();
-          });
+          }, this._handleError);
         } else if (this.subModalType === this.COFFEE_MODAL) {
           modifyPatientCoffee(this.copyInfo).then(() => {
             this.updateAndClose();
-          });
+          }, this._handleError);
         } else if (this.subModalType === this.TEA_MODAL) {
           modifyPatientTea(this.copyInfo).then(() => {
             this.updateAndClose();
-          });
+          }, this._handleError);
         } else if (this.subModalType === this.WINE_MODAL) {
           modifyPatientWine(this.copyInfo).then(() => {
             this.updateAndClose();
-          });
+          }, this._handleError);
         } else if (this.subModalType === this.SMOKE_MODAL) {
           modifyPatientSmoke(this.copyInfo).then(() => {
             this.updateAndClose();
-          });
+          }, this._handleError);
         } else if (this.subModalType === this.EXERCISE_MODAL) {
           modifyPatientExercise(this.copyInfo).then(() => {
             this.updateAndClose();
-          });
+          }, this._handleError);
         }
       }
     },
     updateAndClose() {
       Bus.$emit(this.UPDATE_PATIENT_INFO);
       this.displayModal = false;
+      this.lockSubmitButton = false;  // 为按钮解锁
     },
     initCopyInfo() {
       // 遍历当前的 template，对其中的每个 field，检查 this.copyInfo 下有没有名字对应的属性值，没有的话，就初始化为空字符串
@@ -386,6 +395,11 @@ export default {
       if (this.subModalType !== '') {
         this.warningResults['subModal'] = null;
       }
+    },
+    _handleError(error) {
+      // 当调用 api 发生错误时，执行此函数，注意在此时需要为“确定”按钮解锁
+      console.log(error);
+      this.lockSubmitButton = false;
     }
   },
   mounted() {
