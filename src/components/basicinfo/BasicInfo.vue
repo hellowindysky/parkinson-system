@@ -283,6 +283,7 @@ export default {
           // var province = result[0];
           var birthday = result[1];
           var gender = result[2];
+          // 只有在相应的字段没有初始值的时候才会去覆盖它们
           if (this.copyInfo.birthday === '') {
             this.copyInfo.birthday = birthday;
             // this.homeProvince = province;
