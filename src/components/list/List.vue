@@ -32,7 +32,7 @@
     </div>
 
     <div class="function-area" v-if="listType === MY_PATIENTS_TYPE || listType === OTHER_PATIENTS_TYPE">
-      <div class="function-button left" @click="addNewPatient">
+      <div class="function-button whole-line" @click="addNewPatient">
         <span class="iconfont icon-new-patient"></span>
         <span class="text">新增患者</span>
       </div>
@@ -744,6 +744,9 @@ export default {
       cursor: pointer;
       &.left {
         border-right: 1px solid @light-gray-color;
+      }
+      &.whole-line {
+        width: 100%;
       }
       &:hover {
         opacity: 0.7;
