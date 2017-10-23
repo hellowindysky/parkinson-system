@@ -25,7 +25,7 @@
             <span class="group-wrapper">
               <span v-for="group in belongGroups" class="group">{{ group.groupName }}</span>
             </span>
-            <span class="iconfont icon-manage" @click="toggleGroupPanel"></span>
+            <span class="iconfont icon-group" @click="toggleGroupPanel"></span>
           </span>
         </div>
       </div>
@@ -392,7 +392,7 @@ export default {
           color: @light-font-color;
           .iconfont {
             display: inline-block;
-            font-size: 16px;
+            font-size: 20px;
             line-height: 30px;
             vertical-align: top;
             cursor: pointer;
