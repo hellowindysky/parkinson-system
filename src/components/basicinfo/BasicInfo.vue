@@ -70,7 +70,8 @@ export default {
       mode: this.READING_MODE,
       foldedStatus: false,
       copyInfo: {},
-      warningResults: {}
+      warningResults: {},
+      lockSubmitButton: false
     };
   },
   computed: {
@@ -129,6 +130,10 @@ export default {
       }
     },
     submit() {
+      if (this.lockSubmitButton) {
+        return;
+      }
+
       // 首先检查是否每个字段都合格，检查一遍之后，如果 warningResults 的所有属性值都为空，就证明表单符合要求
       for (let group of this.basicInfoTemplateGroups) {
         for (let field of group) {
@@ -143,9 +148,10 @@ export default {
         }
       }
 
-      // 在提交前，将 copyInfo 中的数据还原成适合服务器传输的格式
+      // 在提交前，将 copyInfo 中的数据还原成适合服务器传输的格式，并将提交按钮锁定
       this.restoreCopyInfo();
       pruneObj(this.copyInfo);
+      this.lockSubmitButton = true;
 
       // 判断是新增患者还是修改已有患者
       if (this.$route.params.id === 'newPatient') {
@@ -172,9 +178,11 @@ export default {
             Bus.$emit(this.EDIT_DISEASE_INFO);
             // Bus.$emit(this.EDIT_OTHER_INFO);
           });
+          this.lockSubmitButton = false;
 
         }, (error) => {
           console.log(error);
+          this.lockSubmitButton = false;
         });
 
       } else {
@@ -191,8 +199,10 @@ export default {
           }
 
           this.mode = this.READING_MODE;
+          this.lockSubmitButton = false;
         }, (error) => {
           console.log(error);
+          this.lockSubmitButton = false;
         });
       }
 
