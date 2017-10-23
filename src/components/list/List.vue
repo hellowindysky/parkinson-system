@@ -54,7 +54,8 @@
         <span class="iconfont icon-cancel"></span>
         <span class="text">取消</span>
       </div>
-      <div class="function-button right warning" v-show="listMode===EDITING_MODE" @click="deleteSeletedGroupList">
+      <div class="function-button right warning" :class="{'disabled': selectedGroupList.length===0}"
+        v-show="listMode===EDITING_MODE" @click="deleteSeletedGroupList">
         <span class="iconfont icon-ok"></span>
         <span class="text">删除</span>
       </div>
@@ -406,9 +407,9 @@ export default {
       }
       getGroupList(condition).then((data) => {
         this.groupList = data;
+        cb && cb();
       });
       this.updateScrollbar();
-      cb && cb();
     },
     updateUserList(cb) {
       getUserList().then((data) => {
@@ -448,18 +449,24 @@ export default {
       Bus.$emit(this.SHOW_GROUP_MODAL);
     },
     deleteSeletedGroupList() {
+      // 首先检查是否有选择分组，假如一个都没选，那么点击删除是不会有效果的
+      if (this.selectedGroupList.length === 0) {
+        return;
+      }
+
       Bus.$emit(this.REQUEST_CONFIRMATION, '', '是否确定删除该分组？分组删除后将无法恢复。');
       Bus.$on(this.CONFIRM, () => {
         // 删除的时候要检查一下，右侧内容区域显示的分组，是否是待删除的分组之一，
         // 如果是，那么在删除之后跳转到新列表第一个分组
         var isToDelete = this.selectedGroupList.indexOf(this.$route.params.id) >= 0;
         deleteGroup(this.selectedGroupList).then(() => {
-          this.updateGroupList();
-          if (isToDelete) {
-            this.$router.push({
-              name: 'groupsManagement'
-            });
-          }
+          this.updateGroupList(() => {
+            if (isToDelete) {
+              this.$router.push({
+                name: 'groupsManagement'
+              });
+            }
+          });
           this.listMode = this.READING;
           Bus.$off(this.CONFIRM);
         }, (error) => {
@@ -741,6 +748,7 @@ export default {
       height: 70%;
       box-sizing: border-box;
       line-height: @function-area-height * 0.7;
+      transition: color 0.3s;
       cursor: pointer;
       &.left {
         border-right: 1px solid @light-gray-color;
@@ -756,6 +764,9 @@ export default {
       }
       &.warning {
         color: @alert-color;
+      }
+      &.disabled {
+        color: @gray-color;
       }
       .iconfont {
         font-size: 24px;
