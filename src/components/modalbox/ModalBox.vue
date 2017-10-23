@@ -1,10 +1,10 @@
 <template lang="html">
   <div class="modal-box-wrapper" v-show="displayModal">
-    <div class="modal-box">
+    <div class="modal-box" :class="{'high-box': modalType === DISEASE_MODAL}">
       <h3 class="title">{{title}}</h3>
 
       <!-- 这个 field 是专门为个人史准备的，用来确定最终的 template 到底是哪个子类 -->
-      <div class="field" v-show="this.modalType === this.PERSON_MODAL">
+      <div class="field" v-show="modalType === PERSON_MODAL">
         <span class="field-name">
           个人史类型
           <span class="required-mark">*</span>
@@ -425,13 +425,15 @@ export default {
     top: 10%;
     width: 600px;
     background-color: @background-color;
+    &.high-box {
+      top: 6%;
+    }
     .title {
       padding: 30px 0 10px;
       font-size: @large-font-size;
     }
     .field {
-      padding: 10px 0;
-      text-align: left;
+      padding: 5px 0;
       display: inline-block;
       position: relative;
       width: 100%;
