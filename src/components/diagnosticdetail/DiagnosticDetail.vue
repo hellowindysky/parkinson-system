@@ -224,11 +224,11 @@ export default {
       }
       &.back-button {
         background-color: @secondary-button-color;
-        right: 30px + @small-button-width;
+        right: 10px;
       }
       &.file-button {
-        background-color: @button-color;
-        right: 10px;
+        background-color: @font-color;
+        right: 30px + @small-button-width;
         &.disabled {
           background-color: @light-gray-color;
           &:hover, &:active {
