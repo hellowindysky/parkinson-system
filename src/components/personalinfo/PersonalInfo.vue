@@ -6,6 +6,7 @@
       :family-history-list="familyHistoryList" :coffee-history-list="coffeeHistoryList" :tea-history-list="teaHistoryList"
       :wine-history-list="wineHistoryList" :smoke-history-list="smokeHistoryList" :exercise-history-list="exerciseHistoryList"
       :toxic-exposure-history-list="toxicExposureHistoryList"></other-info>
+    <div class="blank-area"></div>
   </div>
 </template>
 
@@ -82,6 +83,9 @@ export default {
   background-color: @screen-color;
   .component {
     margin-bottom: @vertical-spacing;
+  }
+  .blank-area {
+    height: 300px;
   }
 }
 </style>
