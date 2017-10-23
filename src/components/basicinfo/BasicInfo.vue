@@ -274,10 +274,13 @@ export default {
       // 如果是身份证信息，先对其进行校验
       if (fieldName === 'cardId') {
         let result = Util.checkId(copyFieldValue).split(',');
-        if (copyFieldValue !== '' && result.length <= 1) {
+        if (copyFieldValue === '' || copyFieldValue === undefined) {
+          this.$set(this.warningResults, fieldName, null);
+          return;
+        } else if (result.length <= 1) {
           this.$set(this.warningResults, fieldName, result[0]);
           return;
-        } else if (copyFieldValue !== '') {
+        } else {
           // 这里插入一段逻辑,如果身份证信息变化，而且输入合法，则相应地更新出生日期和性别（应该还加上籍贯信息）
           this.$set(this.warningResults, fieldName, null);
           // var province = result[0];
