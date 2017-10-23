@@ -378,6 +378,15 @@ export function getPatientCase(patientId, patientCaseId) {
   return encapsulatePromise(url, request);
 };
 
+// 将诊断信息进行归档
+export function archivePatientCase(patientCaseId) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientCaseId = patientCaseId;
+  var url = baseUrl + '/pdms/archivePatientCase';
+
+  return encapsulatePromise(url, request);
+};
+
 // 新增药物方案
 export function addPatientMedicine(patientMedicine) {
   var request = Object.assign({}, getCommonRequest());
