@@ -121,7 +121,7 @@
               <el-checkbox class="item-checkbox" v-model="diseaseInfoSelectedStatus.diseaseType"></el-checkbox>
               <span class="item-name">疾病类型</span>
               <span class="item-value">
-                <el-select class="normal-input" v-model="basicInfoCondition.diseaseType" placeholder="请选择"
+                <el-select class="normal-input" v-model="diseaseInfoCondition.diseaseType"
                   :disabled="!diseaseInfoSelectedStatus.diseaseType"></el-select>
               </span>
             </div>
@@ -229,11 +229,11 @@
               </span>
             </div>
             <div class="item auto-resize">
-              <el-checkbox class="item-checkbox" v-model="diseaseInfoSelectedStatus.getDiscFac"></el-checkbox>
+              <el-checkbox class="item-checkbox" v-model="diseaseInfoSelectedStatus.getDisFac"></el-checkbox>
               <span class="item-name long-name">初获信息途径</span>
               <span class="item-value">
-                <el-select class="normal-input" v-model="diseaseInfoCondition.getDiscFac" multiple
-                  :disabled="!diseaseInfoSelectedStatus.getDiscFac">
+                <el-select class="normal-input" v-model="diseaseInfoCondition.getDisFac" multiple
+                  :disabled="!diseaseInfoSelectedStatus.getDisFac">
                   <el-option :label="'就想试一试'" :value="0"></el-option>
                   <el-option :label="'就想试一试'" :value="1"></el-option>
                   <el-option :label="'就想试一试'" :value="2"></el-option>
@@ -243,11 +243,11 @@
               </span>
             </div>
             <div class="item auto-resize">
-              <el-checkbox class="item-checkbox" v-model="diseaseInfoSelectedStatus.getDiscFac0"></el-checkbox>
+              <el-checkbox class="item-checkbox" v-model="diseaseInfoSelectedStatus.getDisFac0"></el-checkbox>
               <span class="item-name long-name">不断获取途径</span>
               <span class="item-value">
-                <el-select class="normal-input" v-model="diseaseInfoCondition.getDiscFac0" multiple
-                  :disabled="!diseaseInfoSelectedStatus.getDiscFac0">
+                <el-select class="normal-input" v-model="diseaseInfoCondition.getDisFac0" multiple
+                  :disabled="!diseaseInfoSelectedStatus.getDisFac0">
                   <el-option :label="'就想试一试'" :value="0"></el-option>
                   <el-option :label="'就想试一试'" :value="1"></el-option>
                   <el-option :label="'就想试一试'" :value="2"></el-option>
