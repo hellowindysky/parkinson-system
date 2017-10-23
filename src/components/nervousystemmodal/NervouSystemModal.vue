@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="modal-box-wrapper" v-show="displayModal">
+  <div class="nervous-modal-box-wrapper" v-show="displayModal">
     <div class="modal-box">
       <h3 class="title">{{title}}</h3>
 
@@ -31,7 +31,7 @@
           <el-input placeholder="请输入检查结果" v-model="item['spephysicalResult']"></el-input>
         </span>
       </div>
-      <div class="field" v-if="showItem['remarks'] || mode===ADD_MODE">
+      <div class="field multi-line" v-if="showItem['remarks'] || mode===ADD_MODE">
         <span class="field-name">
           备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注&nbsp;:
         </span>
@@ -202,7 +202,7 @@ export default {
 @field-height: 40px;
 @field-name-width: 125px;
 
-.modal-box-wrapper {
+.nervous-modal-box-wrapper {
   position: absolute;
   left: 0;
   top: 0;
@@ -222,13 +222,15 @@ export default {
       font-size: @large-font-size;
     }
     .field {
-      padding: 10px 0;
-      text-align: left;
+      padding: 5px 0;
       display: inline-block;
       position: relative;
       width: 100%;
       height: @field-height;
       text-align: left;
+      &.multi-line {
+        height: @field-height * 1.6;
+      }
       .field-name {
         display: inline-block;
         position: absolute;
@@ -266,6 +268,17 @@ export default {
             height: 30px;
             border: none;
             background-color: @screen-color;
+          }
+        }
+        .el-textarea {
+          vertical-align: middle;
+          transform: translateY(10px);
+          .el-textarea__inner {
+            border: none;
+            background-color: @screen-color;
+          }
+          &.warning {
+            border: 1px solid red;
           }
         }
         .el-select {
