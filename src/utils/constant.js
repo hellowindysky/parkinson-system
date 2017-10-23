@@ -35,6 +35,7 @@ export default {
   DELETE_CURRENT_CARD: 'deleteCurrentCard',
   RECALCULATE_CARD_WIDTH: 'recalculateCardWidth',
 
+  FOLD_BASIC_INFO: 'foldBasicInfo',
   EDIT_DISEASE_INFO: 'editDiseaseInfo',
   EDIT_OTHER_INFO: 'editOtherInfo',
 
