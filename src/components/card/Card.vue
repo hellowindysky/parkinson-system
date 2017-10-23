@@ -65,7 +65,7 @@ export default {
       opacity: 0.8;
     }
     &.disable-delete {
-      color: #999;
+      color: @gray-color;
       &:hover, &:active {
         opacity: 1;
       }
