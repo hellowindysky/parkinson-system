@@ -467,10 +467,20 @@ export default {
               });
             }
           });
-          this.listMode = this.READING;
+          this.toggleListMode(this.READING_MODE);
+          this.$message({
+            message: '成功删除分组',
+            type: 'success',
+            duration: 2000
+          });
           Bus.$off(this.CONFIRM);
         }, (error) => {
           console.log(error);
+          this.$message({
+            message: '发生错误，请稍后再试',
+            type: 'error',
+            duration: 2000
+          });
           Bus.$off(this.CONFIRM);
         });
       });
