@@ -7,7 +7,7 @@
         <div class="text first-line">诊断内容：</div>
         <div class="text second-line">{{getDiagnosticContent(item)}}</div>
         <div class="text third-line">归档情况：
-          <span class="third-line-content">
+          <span class="third-line-content" :class="{'unarchived': item.archiveStatus===2}">
             {{ getArchiveStatus(item) }}
           </span>
         </div>
@@ -95,7 +95,7 @@ export default {
     getArchiveStatus(item) {
       if (item.archiveStatus === 1) {
         return '已归档';
-      } else {
+      } else if (item.archiveStatus === 2) {
         return '未归档';
       }
     },
@@ -244,6 +244,9 @@ export default {
           right: 20px;
           .third-line-content {
             color: @light-font-color;
+            &.unarchived {
+              color: @button-color;
+            }
           }
         }
       }
