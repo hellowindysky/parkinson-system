@@ -1155,7 +1155,13 @@ export default {
           this.$set(paramList[index], 'schemeOrder', order);
           this.$set(paramList[index], 'limbSide', limbSideNum);
           for (let property of propertyList) {
-            this.$set(paramList[index], property, '');
+            let defaultValue = '';
+            if (property === 'frequency') {
+              defaultValue = 130;
+            } else if (property === 'pulseWidth') {
+              defaultValue = 60;
+            }
+            this.$set(paramList[index], property, defaultValue);
           }
           if (this.copyInfo.patientDbsFirstId) {
             this.$set(paramList[index], 'patientDbsFirstId', this.copyInfo.patientDbsFirstId);
@@ -1209,7 +1215,13 @@ export default {
           this.$set(paramList[index], 'schemeOrder', order);
           this.$set(paramList[index], 'limbSide', limbSideNum);
           for (let property of propertyList) {
-            this.$set(paramList[index], property, '');
+            let defaultValue = '';
+            if (property === 'frequency') {
+              defaultValue = 130;
+            } else if (property === 'pulseWidth') {
+              defaultValue = 60;
+            }
+            this.$set(paramList[index], property, defaultValue);
           }
           if (this.copyInfo.patientDbsFollowId) {
             this.$set(paramList[index], 'patientDbsFollowId', this.copyInfo.patientDbsFollowId);
