@@ -1,11 +1,12 @@
 <template lang="html">
   <ul class="sidebar">
-    <li class="item" :class="{'current-item': currentItem === 'patients'}" @click="togglePatientsList">
+    <li class="item" :class="{'current-item': currentItem === 'patients'}" @click="togglePatientsList"
+      v-show="showPatientsManagement">
       <div class="menu-icon iconfont icon-patients-management"></div>
       <div class="title">患者管理</div>
       <div class="fold-icon iconfont" :class="showPatientsList ? 'icon-up' : 'icon-down'"></div>
     </li>
-    <ul class="sub-item-list" :class="{'folded': !showPatientsList}">
+    <ul class="sub-item-list" :class="{'folded': !showPatientsList}" v-show="showPatientsManagement">
       <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'myPatients'}" @click="chooseMyPatients">
         我的患者
       </li>
@@ -16,12 +17,12 @@
         科室患者
       </li>
     </ul>
-    <li class="item" :class="{'current': currentItem === 'analytics'}" @click="toggleAnalyticsList">
+    <li class="item" :class="{'current': currentItem === 'analytics'}" @click="toggleAnalyticsList" v-show="showAnalytics">
       <div class="menu-icon iconfont icon-analytics"></div>
       <div class="title">统计分析</div>
       <div class="fold-icon iconfont" :class="showAnalyticsList ? 'icon-up' : 'icon-down'"></div>
     </li>
-    <ul class="sub-item-list" :class="{'folded': !showAnalyticsList}">
+    <ul class="sub-item-list" :class="{'folded': !showAnalyticsList}" v-show="showAnalytics">
       <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'basicAnalytics'}" @click="chooseBasicAnalytics">
         基础统计
       </li>
@@ -30,12 +31,13 @@
         高级统计
       </li>
     </ul>
-    <li class="item" :class="{'current-item': currentItem === 'configuration'}" @click="toggleConfigurationList">
+    <li class="item" :class="{'current-item': currentItem === 'configuration'}" @click="toggleConfigurationList"
+      v-show="showConfiguration">
       <div class="menu-icon iconfont icon-configuration"></div>
       <div class="title">系统配置</div>
       <div class="fold-icon iconfont" :class="showConfigurationList ? 'icon-up' : 'icon-down'"></div>
     </li>
-    <ul class="sub-item-list" :class="{'folded': !showConfigurationList}">
+    <ul class="sub-item-list" :class="{'folded': !showConfigurationList}" v-show="showConfiguration">
       <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'featureConfiguration'}" @click="chooseFeatureConfiguration">
         功能配置
       </li>
@@ -49,12 +51,13 @@
         档案管理
       </li>
     </ul>
-    <li class="item" :class="{'current-item': currentItem === 'institutionConfiguration'}" @click="toggleInstitutionList">
+    <li class="item" :class="{'current-item': currentItem === 'institutionConfiguration'}" @click="toggleInstitutionList"
+      v-show="showInstitutionConfiguration">
       <div class="menu-icon iconfont icon-organization"></div>
       <div class="title">机构配置</div>
       <div class="fold-icon iconfont" :class="showInstitutionList ? 'icon-up' : 'icon-down'"></div>
     </li>
-    <ul class="sub-item-list" :class="{'folded': !showInstitutionList}">
+    <ul class="sub-item-list" :class="{'folded': !showInstitutionList}" v-show="showInstitutionConfiguration">
       <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'institutionInfo'}" @click="chooseInstitutionInfo">
         机构信息
       </li>
@@ -116,6 +119,22 @@ export default {
       } else if (/^\/configuration\/dictionaryManagement/.test(path)) {
         return 'dictionaryManagement';
       }
+    },
+    showPatientsManagement() {
+      var userType = Number(sessionStorage.getItem('userType'));
+      return (userType === 2 || userType === 4);
+    },
+    showAnalytics() {
+      var userType = Number(sessionStorage.getItem('userType'));
+      return (userType === 2 || userType === 4);
+    },
+    showConfiguration() {
+      var userType = Number(sessionStorage.getItem('userType'));
+      return userType === 4;
+    },
+    showInstitutionConfiguration() {
+      var userType = Number(sessionStorage.getItem('userType'));
+      return userType === 3;
     }
   },
   methods: {
