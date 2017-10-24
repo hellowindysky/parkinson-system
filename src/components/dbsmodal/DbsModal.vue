@@ -4,9 +4,13 @@
       <h3 class="title">{{title}}</h3>
       <div class="content">
         <div class="field">
-          <span class="field-name">设备品牌</span>
+          <span class="field-name">
+            设备品牌
+            <span class="required-mark">*</span>
+          </span>
           <span class="field-input">
-            <el-select v-model="copyInfo.deviceId" @change="changeDevice">
+            <span class="warning-text">{{warningResults.deviceId}}</span>
+            <el-select v-model="copyInfo.deviceId" @change="changeDevice" :class="{'warning': warningResults.deviceId}">
               <el-option v-for="option in getOptions('deviceId')" :label="option.name"
                 :value="option.code" :key="option.code"></el-option>
             </el-select>
@@ -28,9 +32,14 @@
           </span>
         </div>
         <div class="field">
-          <span class="field-name">程控时间</span>
+          <span class="field-name">
+            程控时间
+            <span class="required-mark">*</span>
+          </span>
           <span class="field-input">
-            <el-date-picker v-model="copyInfo.programDate"></el-date-picker>
+            <span class="warning-text">{{warningResults.programDate}}</span>
+            <el-date-picker v-model="copyInfo.programDate" @change="updateWarning('programDate')"
+              :class="{'warning': warningResults.programDate}"></el-date-picker>
           </span>
         </div>
         <div class="field whole-line double-line">
@@ -725,6 +734,10 @@ export default {
       modelType: 1, // 这个用来控制是否为首次开机，1为首次，0为非首次
       copyInfo: {},
       completeInit: false,
+      warningResults: {
+        deviceId: '',
+        programDate: ''
+      },
       leftContactSortArray: [],
       rightContactSortArray: [],
       firstDbsAdjustAfterParamPole: [],
@@ -815,12 +828,27 @@ export default {
         });
       }
       this.displayModal = true;
+      this.clearWarning();
       this.updateScrollbar();
     },
     cancel() {
       this.displayModal = false;
     },
     submit() {
+      // 提交前检查一下必填字段是否都有填写，即警告信息是否都为空
+      this.updateWarning('deviceId');
+      this.updateWarning('programDate');
+      for (var fieldName in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(fieldName) && this.warningResults[fieldName] !== '') {
+          this.$message({
+            message: '请完成必填项',
+            type: 'warning',
+            duration: 2000
+          });
+          return;
+        }
+      }
+
       this.copyInfo.patientCaseId = this.$route.params.caseId;
       reviseDateFormat(this.copyInfo);
       pruneObj(this.copyInfo);
@@ -905,9 +933,21 @@ export default {
         });
       }
     },
+    updateWarning(fieldName) {
+      if (this.copyInfo[fieldName] === '') {
+        this.$set(this.warningResults, fieldName, '必填项');
+      } else {
+        this.$set(this.warningResults, fieldName, '');
+      }
+    },
+    clearWarning() {
+      this.$set(this.warningResults, 'deviceId', '');
+      this.$set(this.warningResults, 'programDate', '');
+    },
     initByFirstModel() {
       this.copyInfo = {};
       vueCopy(dbsFirstModel, this.copyInfo);
+
       this.initContactForm();  // 生成表格所对应的数据模型
       this.updateContactOrder();
       this.updateCheckBoxModel('firstDbsAdjustAfter');
@@ -982,6 +1022,7 @@ export default {
       if (this.completeInit) {
         this.initContactForm();
       }
+      this.updateWarning('deviceId');
     },
     initContactForm() {
       if (this.modelType === 1) {
