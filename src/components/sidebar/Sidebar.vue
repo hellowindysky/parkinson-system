@@ -130,7 +130,7 @@ export default {
     },
     showConfiguration() {
       var userType = Number(sessionStorage.getItem('userType'));
-      return userType === 4;
+      return (userType === 2 || userType === 4);
     },
     showInstitutionConfiguration() {
       var userType = Number(sessionStorage.getItem('userType'));
