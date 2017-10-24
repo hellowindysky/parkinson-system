@@ -3,7 +3,7 @@
     <div class="title-bar">
       <h2 class="title">{{title}}</h2>
       <div class="button back-button" @click="goBack">返回</div>
-      <div class="button file-button" :class="{'disabled': !existed}" @click="fileCase">归档</div>
+      <div class="button archive-button" :class="{'disabled': !existed}" @click="archiveCase">归档</div>
     </div>
     <div class="scroll-area" ref="scrollArea">
       <diagnostic-basic class="folding-panel" :mode="mode" ref="diagnosticBasic"
@@ -29,7 +29,7 @@
 <script>
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
-import { getPatientCase } from 'api/patient.js';
+import { getPatientCase, archivePatientCase } from 'api/patient.js';
 
 import DiagnosticBasic from 'components/diagnosticbasic/DiagnosticBasic';
 import DiagnosticDisease from 'components/diagnosticdisease/DiagnosticDisease';
@@ -145,8 +145,33 @@ export default {
       this.displayDetail = false;
       this.caseDetail = {};
     },
-    fileCase() {
-      console.log('要归档了');
+    archiveCase() {
+      Bus.$on(this.CONFIRM, () => {
+        archivePatientCase(this.$route.params.caseId).then(() => {
+          this.$message({
+            message: '归档成功',
+            type: 'success',
+            duration: 2000
+          });
+          Bus.$off(this.CONFIRM);
+          // 通知“诊断信息”下的卡片列表进行更新
+          Bus.$emit(this.UPDATE_PATIENT_CASE_LIST);
+        }, (error) => {
+          console.log(error);
+          this.$message({
+            message: '归档失败，请稍后再试',
+            type: 'error',
+            duration: 2000
+          });
+          Bus.$off(this.CONFIRM);
+        });
+      });
+
+      Bus.$on(this.GIVE_UP, () => {
+        Bus.$off(this.CONFIRM);
+      });
+
+      Bus.$emit(this.REQUEST_CONFIRMATION, '', '诊断记录归档后将无法编辑修改，是否继续？');
     }
   },
   components: {
@@ -167,6 +192,8 @@ export default {
     Bus.$off(this.SCROLL_AREA_SIZE_CHANGE);
     Bus.$off(this.SCREEN_SIZE_CHANGE);
     Bus.$off(this.UPDATE_CASE_INFO);
+    Bus.$off(this.GIVE_UP);
+    Bus.$off(this.CONFIRM);
   },
   watch: {
     $route() {
@@ -226,7 +253,7 @@ export default {
         background-color: @secondary-button-color;
         right: 10px;
       }
-      &.file-button {
+      &.archive-button {
         background-color: @font-color;
         right: 30px + @small-button-width;
         &.disabled {

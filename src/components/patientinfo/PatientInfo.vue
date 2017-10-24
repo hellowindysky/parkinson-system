@@ -159,6 +159,14 @@ export default {
       }, (error) => {
         console.log(error);
       });
+
+      this.updatePatientCaseList();
+    },
+    updatePatientCaseList() {
+      // 如果是新增患者，则不去请求数据
+      if (!this.existed) {
+        return;
+      }
       getPatientCaseList(this.patientId).then((data) => {
         // console.log('patientCaseList: ', data);
         this.patientCaseList = data;
@@ -209,6 +217,9 @@ export default {
 
     // 监听子组件是否要求刷新病患数据
     Bus.$on(this.UPDATE_PATIENT_INFO, this.updatePatientInfo);
+
+    // 监听组件是否要求更新诊断卡片列表
+    Bus.$on(this.UPDATE_PATIENT_CASE_LIST, this.updatePatientCaseList);
   },
   watch: {
     $route() {
@@ -221,6 +232,7 @@ export default {
     Bus.$off(this.SCROLL_AREA_SIZE_CHANGE, this.updateScrollbar);
     Bus.$off(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
     Bus.$off(this.UPDATE_PATIENT_INFO, this.updatePatientInfo);
+    Bus.$off(this.UPDATE_PATIENT_CASE_LIST, this.updatePatientCaseList);
   }
 };
 </script>
