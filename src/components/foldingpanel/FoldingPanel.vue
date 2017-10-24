@@ -8,10 +8,11 @@
       <div v-show="isCardsPanel" class="button add-button" @click="add">添加</div>
       <div v-show="mode===EDITING_MODE" class="button submit-button" @click="submit">{{submitText}}</div>
 
-      <el-select v-show="isCardsPanel" v-model="filterCondition" size="small" placeholder="筛选" class="button filter-button">
-        <el-option label="全部" :value="'all'"></el-option>
-        <el-option label="已归档" :value="'filed'"></el-option>
-        <el-option label="未归档" :value="'notFiled'"></el-option>
+      <el-select v-show="isCardsPanel" v-model="filterCondition" size="small" placeholder="筛选" class="button filter-button"
+        @change="filterCards">
+        <el-option label="全部" :value="FILTER_ALL"></el-option>
+        <el-option label="已归档" :value="FILTER_ARCHIVED"></el-option>
+        <el-option label="未归档" :value="FILTER_UNARCHIVED"></el-option>
       </el-select>
     </div>
     <div class="content" :class="{'folded': folded}">
@@ -46,7 +47,7 @@ export default {
   data() {
     return {
       folded: this.foldedStatus,
-      filterCondition: 'all'
+      filterCondition: this.FILTER_ALL
     };
   },
   computed: {
@@ -79,6 +80,9 @@ export default {
     },
     add() {
       this.$emit(this.ADD_NEW_CARD);
+    },
+    filterCards() {
+      this.$emit(this.UPDATE_FILTER_CONDITION, this.filterCondition);
     }
   },
   mounted() {

@@ -18,6 +18,11 @@ export default {
   TOGGLE_FILTER_PANEL_DISPLAY: 'toggleFilterPanelDisplay',
   TOGGLE_FOLDED_PANEL: 'toggleFoldedPanel',
 
+  FILTER_ALL: 'filterAll',
+  FILTER_ARCHIVED: 'filterArchived',
+  FILTER_UNARCHIVED: 'filterUnarchived',
+  UPDATE_FILTER_CONDITION: 'updateFilterCondition',
+
   EDIT: 'edit',
   CANCEL: 'cancel',
   SUBMIT: 'submit',
