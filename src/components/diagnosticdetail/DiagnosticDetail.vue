@@ -23,6 +23,7 @@
         :emgList="caseDetail.patientElecTroGram"
         :VitalSignsData="VitalSignsData">
       </diagnostic-examination>
+      <div class="blank-area"></div>
     </div>
   </div>
 </template>
@@ -282,7 +283,9 @@ export default {
       margin-right: @margin-right;
       margin-bottom: @vertical-spacing;
     }
-
+    .blank-area {
+      height: 300px;
+    }
     .ps__scrollbar-y-rail {
       position: absolute;
       width: 15px;
