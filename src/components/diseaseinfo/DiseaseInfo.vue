@@ -22,13 +22,9 @@
           </div>
 
           <div class="field-input" v-show="mode===EDITING_MODE">
-            <span class="warning-text">{{getWarningText(field.fieldName)}}</span>
             <span v-if="getUIType(field)===1">
               <el-input v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
                :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)"></el-input>
-            </span>
-            <span v-else-if="getUIType(field)===2">
-              2
             </span>
             <span v-else-if="getUIType(field)===3">
               <el-select v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
@@ -48,6 +44,7 @@
               <el-date-picker v-model="copyInfo[field.fieldName]" type="date" :class="{'warning': warningResults[field.fieldName]}"
                :placeholder="getMatchedField(field).cnFieldDesc" format="yyyy-MM-dd" @change="updateWarning(field)"></el-date-picker>
             </span>
+            <span class="warning-text">{{getWarningText(field.fieldName)}}</span>
           </div>
         </div>
       </div>
@@ -366,6 +363,15 @@ export default {
           padding-bottom: 10px;
           width: calc(~"100% - @{field-name-width}");
           line-height: @field-height * 0.3;
+          .warning-text {
+            position: relative;
+            top: -8px;
+            left: 0;
+            height: 15px;
+            line-height: 15px;
+            color: red;
+            font-size: @small-font-size;
+          }
         }
         &.long-label-field {
           .field-input {
