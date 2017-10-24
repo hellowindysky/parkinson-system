@@ -33,7 +33,7 @@ export default {
     foldedStatus: {
       required: false,
       type: Boolean,
-      default: true
+      default: true   // 如果没有传入这个参数，默认状态下面板是折叠的
     },
     mode: {
       type: String,
@@ -87,7 +87,7 @@ export default {
   },
   mounted() {
     // 默认让以下面板呈展开状态（开发过程中随时调整）
-    const DEFAULT_OPEN_LIST = ['看诊记录', '基本情况', '关联症状'];
+    const DEFAULT_OPEN_LIST = [];
     if (DEFAULT_OPEN_LIST.indexOf(this.title) > -1) {
       this.folded = false;
     }

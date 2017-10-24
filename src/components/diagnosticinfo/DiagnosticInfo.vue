@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="diagnostic-info-wrapper" ref="diagnosticInfo">
-    <folding-panel class="panel" :title="'看诊记录'" :mode="mode" :isCardsPanel="true" v-on:edit="startEditing" v-on:cancel="cancel"
+    <folding-panel class="panel" :title="'看诊记录'" :mode="mode" :isCardsPanel="true" :folded-status="foldedStatus" v-on:edit="startEditing" v-on:cancel="cancel"
      v-on:submit="submit" v-on:addNewCard="addRecord" v-on:updateFilterCondition="changeFilterCondition">
       <card class="card" :class="devideWidth" :mode="mode" v-for="item in patientCaseList" :key="item.caseName"
        :title="item.caseName" v-on:clickCurrentCard="seeDetail(item)" v-on:deleteCurrentCard="deleteRecord(item)"
@@ -39,7 +39,8 @@ export default {
     return {
       mode: this.READING_MODE,
       devideWidth: '',
-      filterCondition: this.FILTER_ALL
+      filterCondition: this.FILTER_ALL,
+      foldedStatus: false
     };
   },
   computed: {

@@ -54,7 +54,7 @@
            <span>开关状态:</span> <span>{{formatReadingScale(patientScale['switchType'])}}</span>
          </div>
       </div>
-      <folding-panel v-if="mode===ADD_PAGE || scaleMode===SCALE_EDITING_MODE" :title="'关联症状'"  class="associated-symptom">
+      <folding-panel v-if="mode===ADD_PAGE || scaleMode===SCALE_EDITING_MODE" :title="'关联症状'" :folded-status="foldedStatus" class="associated-symptom">
         <div class="symptom-item" v-for="(list, listkey) in patientScale['scaleSympInfoList']" :key="listkey">
             <el-checkbox class="symptom-item-title" v-model="list.status">{{list.sympName}}</el-checkbox>
             <div class="symptom-item-start">
@@ -109,6 +109,7 @@ export default {
     return {
       ADD_PAGE: 'addPage',
       MODIFY_PAGE: 'modifyPage',
+      foldedStatus: false,
       mode: '',
       useless: {},
       isSelected: false, // 在新增的时候选了一次就改变状态

@@ -1,5 +1,6 @@
 <template lang="html">
-  <folding-panel :title="'基本情况'" :mode="mutableMode"  v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
+  <folding-panel :title="'基本情况'" :mode="mutableMode" :folded-status="foldedStatus"
+    v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
     <div class="diagnostic-basic">
       <div v-for="field in diagnosticBasicTemplate" class="field"
        :class="{'whole-line': field.fieldName === 'remarks', 'multi-line': field.fieldName === 'remarks'}">
@@ -51,6 +52,7 @@ export default {
   data() {
     return {
       mutableMode: this.mode,
+      foldedStatus: true,
       copyInfo: {},
       warningResults: {}
     };
