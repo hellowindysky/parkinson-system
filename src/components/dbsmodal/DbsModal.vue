@@ -951,6 +951,7 @@ export default {
       this.initContactForm();  // 生成表格所对应的数据模型
       this.updateContactOrder();
       this.updateCheckBoxModel('firstDbsAdjustAfter');
+      this.clearWarning();
     },
     initByFollowModel() {
       this.copyInfo = {};
@@ -959,6 +960,7 @@ export default {
       this.updateCheckBoxModel('followDbsAdjustBefore');
       this.updateCheckBoxModel('followDbsAdjustVoltage');
       this.updateCheckBoxModel('followDbsAdjustMore');
+      this.clearWarning();
     },
     prepareLastDbsInfo(data) {
       // 绑定上次程控时间和调整前参数
