@@ -3,7 +3,8 @@
     <div class="title-bar">
       <h2 class="title">{{title}}</h2>
       <div class="button back-button" @click="goBack">返回</div>
-      <div class="button archive-button" :class="{'disabled': !existed}" @click="archiveCase">归档</div>
+      <div class="button archive-button" :class="{'disabled': !existed}" @click="archiveCase"
+        v-show="hasBeenArchived===false">归档</div>
     </div>
     <div class="scroll-area" ref="scrollArea">
       <diagnostic-basic class="folding-panel" :mode="mode" ref="diagnosticBasic"
@@ -45,6 +46,7 @@ export default {
       caseId: 0,
       caseDetail: {},
       mode: this.READING_MODE,
+      hasBeenArchived: true,
       existed: true  // 用来标记当前诊断信息是否存在，新增诊断时该变量为 false
     };
   },
@@ -130,6 +132,11 @@ export default {
           this.existed = true;
           this.caseDetail = Object.assign({}, data.patientCase);
           this.mode = this.READING_MODE;
+          if (data.patientCase.archiveStatus === 1) {
+            this.hasBeenArchived = true;
+          } else if (data.patientCase.archiveStatus === 2) {
+            this.hasBeenArchived = false;
+          }
         });
       }
       this.updateScrollbar();
@@ -153,6 +160,7 @@ export default {
             type: 'success',
             duration: 2000
           });
+          this.hasBeenArchived = true;
           Bus.$off(this.CONFIRM);
           // 通知“诊断信息”下的卡片列表进行更新
           Bus.$emit(this.UPDATE_PATIENT_CASE_LIST);
