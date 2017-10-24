@@ -77,6 +77,33 @@ export function getPatientMedHistoryList(patientId) {
   return encapsulatePromise(url, request);
 };
 
+// 新增现病史
+export function addPatientPresentHistory(presentHistory) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientHistory = presentHistory;
+  var url = baseUrl + '/pdms/addPatientHistory';
+
+  return encapsulatePromise(url, request);
+};
+
+// 修改现病史
+export function modifyPatientPresentHistory(presentHistory) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientHistory = presentHistory;
+  var url = baseUrl + '/pdms/modPatientHistory';
+
+  return encapsulatePromise(url, request);
+};
+
+// 删除现病史
+export function deletePatientPresentHistory(presentHistory) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientHistory = presentHistory;
+  var url = baseUrl + '/pdms/delPatientHistory';
+
+  return encapsulatePromise(url, request);
+};
+
 // 新增用药史
 export function addPatientMedHistory(medHistory) {
   var request = Object.assign({}, getCommonRequest());
@@ -102,7 +129,7 @@ export function deletePatientMedHistory(medHistory) {
   var url = baseUrl + '/pdms/delPatientMedHistory';
 
   return encapsulatePromise(url, request);
-}
+};
 
 // 新增既往史
 export function addPatientDisease(patientDisease) {

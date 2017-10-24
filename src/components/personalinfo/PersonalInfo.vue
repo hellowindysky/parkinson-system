@@ -5,7 +5,7 @@
     <other-info class="component" :med-history-list="medHistoryList" :disease-history-list="diseaseHistoryList"
       :family-history-list="familyHistoryList" :coffee-history-list="coffeeHistoryList" :tea-history-list="teaHistoryList"
       :wine-history-list="wineHistoryList" :smoke-history-list="smokeHistoryList" :exercise-history-list="exerciseHistoryList"
-      :toxic-exposure-history-list="toxicExposureHistoryList"></other-info>
+      :toxic-exposure-history-list="toxicExposureHistoryList" :present-history-list="presentHistoryList"></other-info>
     <div class="blank-area"></div>
   </div>
 </template>
@@ -28,8 +28,12 @@ export default {
       return this.patientInfo.patientInfo ? this.patientInfo.patientInfo : {};
     },
     diseaseInfo() {
-      // 急症信息
+      // 病症信息
       return this.patientInfo.patientDiseaseInfo ? this.patientInfo.patientDiseaseInfo : {};
+    },
+    presentHistoryList() {
+      // 现病史
+      return this.patientInfo.patientHistoryList ? this.patientInfo.patientHistoryList : [];
     },
     medHistoryList() {
       // 用药史

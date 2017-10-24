@@ -3,6 +3,15 @@
     :folded-status="foldedStatus">
     <div class="other-info" ref="otherInfo">
 
+      <extensible-panel class="panel" :mode="mode" :title="presentHistoryTitle" v-on:addNewCard="addPresentRecord">
+        <card class="card" :class="devideWidth" :mode="mode" v-for="item in presentHistoryList" :key="item.medName"
+         :title="'待定'" v-on:clickCurrentCard="editPresentRecord(item)"
+         v-on:deleteCurrentCard="deletePresentRecord(item)">
+          <div class="text first-line">{{item.chiefComplaint}}</div>
+          <div class="text start-time">{{item.ariseTime}}</div>
+        </card>
+      </extensible-panel>
+
       <extensible-panel class="panel" :mode="mode" :title="medHistoryTitle" v-on:addNewCard="addMedRecord">
         <card class="card" :class="devideWidth" :mode="mode" v-for="item in medHistoryList" :key="item.medName"
          :title="item.medName" v-on:clickCurrentCard="editMedRecord(item)"
@@ -87,8 +96,8 @@ import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 
-import { deletePatientMedHistory, deletePatientDisease, deletePatientFamily,
-         deletePatientCoffee, deletePatientTea, deletePatientSmoke,
+import { deletePatientPresentHistory, deletePatientMedHistory, deletePatientDisease,
+         deletePatientFamily, deletePatientCoffee, deletePatientTea, deletePatientSmoke,
          deletePatientWine, deletePatientExercise, deletePatientToxicExposure
        } from 'api/patient.js';
 
@@ -98,6 +107,10 @@ import Card from 'components/card/Card';
 
 export default {
   props: {
+    presentHistoryList: {
+      type: Array,
+      default: () => []
+    },
     medHistoryList: {
       type: Array,
       default: () => []
@@ -144,6 +157,7 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'presentHistoryDictionary',
       'medHistoryDictionary',
       'diseaseHistoryDictionary',
       'familyHistoryDictionary',
@@ -157,6 +171,9 @@ export default {
     ]),
     id() {
       return parseInt(this.$route.params.id, 10);
+    },
+    presentHistoryTitle() {
+      return '现病史（' + this.presentHistoryList.length + '条记录）';
     },
     medHistoryTitle() {
       return '其它用药史（' + this.medHistoryList.length + '条记录）';
@@ -222,8 +239,25 @@ export default {
       var matchedType = Util.getElement('typeCode', item[fieldName], types);
       return matchedType.typeName ? matchedType.typeName : '';
     },
-    addMedRecord() {
+    addPresentRecord() {
       // 这里要传递 3 个参数，一个是 title，一个是当前数据对象（新建的时候为空），另一个是模态框的类型
+      Bus.$emit(this.SHOW_MODAL_BOX, '新增现病史', {}, this.PRESENT_MODAL);
+    },
+    editPresentRecord(item) {
+      Bus.$emit(this.SHOW_MODAL_BOX, '现病史', item, this.PRESENT_MODAL);
+    },
+    deletePresentRecord(item) {
+      var presentHistory = {
+        patientId: this.id,
+        patientHistoryId: item.patientHistoryId,
+        version: item.version
+      };
+      Bus.$on(this.CONFIRM, () => {
+        deletePatientPresentHistory(presentHistory).then(this._resolveDeletion, this._rejectDeletion);
+      });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
+    },
+    addMedRecord() {
       Bus.$emit(this.SHOW_MODAL_BOX, '新增用药史', {}, this.MEDICINE_MODAL);
     },
     editMedRecord(item) {

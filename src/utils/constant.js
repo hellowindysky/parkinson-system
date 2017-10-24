@@ -71,6 +71,7 @@ export default {
   QUIT_DIAGNOSTIC_DETAIL: 'quitDiagnosticDetail',
 
   // modal
+  PRESENT_MODAL: 'presentModal',
   MEDICINE_MODAL: 'medcineModal',
   DISEASE_MODAL: 'diseaseModal',
   FAMILY_MODAL: 'familyModal',

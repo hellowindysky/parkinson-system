@@ -48,6 +48,10 @@ const getters = {
     // 病症信息
     return getGroups(state, 'tc_patient_disease_info');
   },
+  presentHistoryDictionary: (state) => {
+    // 现病史只有一个 group
+    return getFirstGroup(state, 'tc_patient_history');
+  },
   medHistoryDictionary: (state) => {
     // 其它用药史只有一个 group
     return getFirstGroup(state, 'tc_patient_medhistory');

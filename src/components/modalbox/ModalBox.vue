@@ -60,7 +60,8 @@ import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 
 import { isEmptyObject } from 'utils/helper.js';
-import { addPatientMedHistory, modifyPatientMedHistory,
+import { addPatientPresentHistory, modifyPatientPresentHistory,
+         addPatientMedHistory, modifyPatientMedHistory,
          addPatientDisease, modifyPatientDisease,
          addPatientFamily, modifyPatientFamily,
          addPatientToxicExposure, modifyPatientToxicExposure,
@@ -90,6 +91,7 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'presentHistoryTemplate',
       'medHistoryTemplate',
       'diseaseHistoryTemplate',
       'familyHistoryTemplate',
@@ -100,6 +102,7 @@ export default {
       'exerciseHistoryTemplate',
       'toxicExposureHistoryTemplate',
 
+      'presentHistoryDictionary',
       'medHistoryDictionary',
       'diseaseHistoryDictionary',
       'familyHistoryDictionary',
@@ -113,7 +116,9 @@ export default {
       'typeGroup'
     ]),
     dictionary() {
-      if (this.modalType === this.MEDICINE_MODAL) {
+      if (this.modalType === this.PRESENT_MODAL) {
+        return this.presentHistoryDictionary;
+      } else if (this.modalType === this.MEDICINE_MODAL) {
         return this.medHistoryDictionary;
       } else if (this.modalType === this.DISEASE_MODAL) {
         return this.diseaseHistoryDictionary;
@@ -141,7 +146,9 @@ export default {
       }
     },
     template() {
-      if (this.modalType === this.MEDICINE_MODAL) {
+      if (this.modalType === this.PRESENT_MODAL) {
+        return this.presentHistoryTemplate;
+      } else if (this.modalType === this.MEDICINE_MODAL) {
         return this.medHistoryTemplate;
       } else if (this.modalType === this.DISEASE_MODAL) {
         return this.diseaseHistoryTemplate;
@@ -247,7 +254,11 @@ export default {
       // 发出请求之前，先将“确定”按钮锁住
       this.lockSubmitButton = true;
       if (this.mode === ADD_MODE) {
-        if (this.modalType === this.MEDICINE_MODAL) {
+        if (this.modalType === this.PRESENT_MODAL) {
+          addPatientPresentHistory(this.copyInfo).then(() => {
+            this.updateAndClose();
+          }, this._handleError);
+        } else if (this.modalType === this.MEDICINE_MODAL) {
           addPatientMedHistory(this.copyInfo).then(() => {
             this.updateAndClose();
           }, this._handleError);
@@ -286,7 +297,11 @@ export default {
         }
 
       } else if (this.mode === MODIFY_MODE) {
-        if (this.modalType === this.MEDICINE_MODAL) {
+        if (this.modalType === this.PRESENT_MODAL) {
+          modifyPatientPresentHistory(this.copyInfo).then(() => {
+            this.updateAndClose();
+          }, this._handleError);
+        } else if (this.modalType === this.MEDICINE_MODAL) {
           modifyPatientMedHistory(this.copyInfo).then(() => {
             this.updateAndClose();
           }, this._handleError);

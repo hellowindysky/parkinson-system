@@ -41,6 +41,10 @@ const getters = {
     // 病症信息
     return getGroups(state, 'tc_patient_disease_info');
   },
+  presentHistoryTemplate: (state) => {
+    // 现病史
+    return getFirstGroup(state, 'tc_patient_history');
+  },
   medHistoryTemplate: (state) => {
     // 其它用药史
     return getFirstGroup(state, 'tc_patient_medhistory');
