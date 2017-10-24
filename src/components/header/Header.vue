@@ -6,8 +6,8 @@
     </div>
     <div class="operation-wrapper">
       <span class="iconfont icon-search" :class="{'on': showFilterPanel}" @click="toggleFilterPanel"></span>
-      <span class="iconfont icon-notice"></span>
-      <span class="iconfont icon-task"></span>
+      <span class="iconfont icon-notice" v-show="false"></span>
+      <span class="iconfont icon-task" v-show="false"></span>
       <span class="account" @click="toggleAccountPanelDisplay">
         <img src="~img/profile.png" alt="doctor image" class="picture">
         <span class="name" :class="{'on': showAccountPanel}">{{title}}</span>
