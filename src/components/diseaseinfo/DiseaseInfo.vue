@@ -60,6 +60,8 @@ import { mapGetters } from 'vuex';
 import { modifyPatientDiseaseInfo } from 'api/patient.js';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
+import { reviseDateFormat } from 'utils/helper.js';
+
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 
 const HALF_LINE_FIELD_LIST = ['diseaseType', 'ariTime', 'firTime', 'surTime', 'firMedinfo',
@@ -175,11 +177,9 @@ export default {
           var codesString = this.copyInfo[name].join(',');
           this.copyInfo[name] = codesString;
 
-        } else if (nameList.indexOf(name) > -1 && field.uiType === 6) {
-          // 日期控件(el-date-picker)给的是一个表示完整日期对象的字符串，我们需要格式化之后再提交
-          var dateStr = this.copyInfo[name];
-          this.copyInfo[name] = Util.simplifyDate(dateStr);
         }
+        // 日期控件(el-date-picker)给的是一个表示完整日期对象的字符串，我们需要格式化之后再提交
+        reviseDateFormat(this.copyInfo);
       }
     },
     getMatchedField(field) {
