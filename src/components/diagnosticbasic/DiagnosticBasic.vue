@@ -54,7 +54,8 @@ export default {
       mutableMode: this.mode,
       foldedStatus: false,
       copyInfo: {},
-      warningResults: {}
+      warningResults: {},
+      lockSubmitButton: false
     };
   },
   props: {
@@ -91,6 +92,7 @@ export default {
       this.copyInfo = Object.assign({}, this.diagnosticBasic);
       this.warningResults = {};
       this.mutableMode = this.EDITING_MODE;
+      this.foldedStatus = false;
     },
     cancel() {
       // 如果是新增患者界面，点击取消按钮，则回到诊断列表页面
@@ -122,6 +124,9 @@ export default {
       }
     },
     submit() {
+      if (this.lockSubmitButton) {
+        return;
+      }
       // 先手动执行一遍 updateWarning()，因为有的字段在初始化的时候并没有经过校验
       for (let field of this.diagnosticBasicTemplate) {
         this.updateWarning(field);
@@ -143,19 +148,36 @@ export default {
       if (caseId === 'newCase') {
         this.copyInfo.patientId = this.$route.params.id;
         addDiagnosticBasic(this.copyInfo).then((data) => {
+          var routeName;
+          if (this.listType === 'myPatients') {
+            routeName = 'diagnosticDetail';
+          } else if (this.listType === 'otherPatients') {
+            routeName = 'otherDiagnosticDetail';
+          }
           this.$router.push({
-            name: 'diagnosticDetail',
+            name: routeName,
             params: { caseId: data.patientCaseId }
           });
           this.updateAndClose();
 
           // 更新个人信息是为了更新所有诊断卡片 ——— 卡片列表信息在个人信息对象里面
           Bus.$emit(this.UPDATE_PATIENT_INFO);
+          Bus.$emit(this.FOLD_DIAGNOSTIC_BASIC);
+          Bus.$emit(this.EDIT_DIAGNOSTIC_DISEASE);
+          this.lockSubmitButton = false;
+        }, (error) => {
+          console.log(error);
+          this.lockSubmitButton = false;
         });
+
       } else {
         this.copyInfo.patientCaseId = caseId;
         modifyDiagnosticBasic(this.copyInfo).then(() => {
           this.updateAndClose();
+          this.lockSubmitButton = false;
+        }, (error) => {
+          console.log(error);
+          this.lockSubmitButton = false;
         });
       }
     },
@@ -199,6 +221,10 @@ export default {
 
     // 添加新的诊断记录时，父组件会传递 EDIT 事件给本组件（子组件），因此需要对此进行监听
     this.$on(this.EDIT, this.startEditing);
+
+    Bus.$on(this.FOLD_DIAGNOSTIC_BASIC, () => {
+      this.foldedStatus = true;
+    });
 
     Bus.$on(this.QUIT_DIAGNOSTIC_DETAIL, this.cancel);
   },

@@ -4,7 +4,7 @@
       <h2 class="title">{{title}}</h2>
       <div class="button back-button" @click="goBack" v-show="!isNewCase">返回</div>
       <div class="button archive-button" :class="{'disabled': !existed}" @click="archiveCase"
-        v-show="hasBeenArchived===false">归档</div>
+        v-show="hasBeenArchived===false && !isNewCase">归档</div>
     </div>
     <div class="scroll-area" ref="scrollArea">
       <diagnostic-basic class="folding-panel" :mode="mode" ref="diagnosticBasic"

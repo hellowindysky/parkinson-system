@@ -1,10 +1,10 @@
 <template lang="html">
   <div class="diagnostic-info-wrapper" ref="diagnosticInfo">
     <folding-panel class="panel" :title="'看诊记录'" :mode="mode" :isCardsPanel="true" :folded-status="foldedStatus" v-on:edit="startEditing" v-on:cancel="cancel"
-     v-on:submit="submit" v-on:addNewCard="addRecord" v-on:updateFilterCondition="changeFilterCondition">
+      v-on:submit="submit" v-on:addNewCard="addRecord" v-on:updateFilterCondition="changeFilterCondition">
       <card class="card" :class="devideWidth" :mode="mode" v-for="item in patientCaseList" :key="item.caseName"
-       :title="item.caseName" v-on:clickCurrentCard="seeDetail(item)" v-on:deleteCurrentCard="deleteRecord(item)"
-       v-show="passFilter(item)">
+        :title="item.caseName" v-on:clickCurrentCard="seeDetail(item)" v-on:deleteCurrentCard="deleteRecord(item)"
+        v-show="passFilter(item)">
         <div class="text first-line">诊断内容：</div>
         <div class="text second-line">{{getDiagnosticContent(item)}}</div>
         <div class="text third-line">归档情况：

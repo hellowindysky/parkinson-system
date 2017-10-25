@@ -1,5 +1,5 @@
 <template lang="html">
-  <folding-panel :title="'病症情况'" :mode="mutableMode"  v-on:edit="startEditing"
+  <folding-panel :title="'病症情况'" :mode="mutableMode" :folded-status="foldedStatus" v-on:edit="startEditing"
     v-on:cancel="cancel" v-on:submit="submit" v-on:toggleFoldedPanel="updateScrollbar">
     <div class="diagnostic-disease">
       <div v-for="field in diagnosticDiseaseTemplate" class="field"
@@ -200,6 +200,7 @@ export default {
   data() {
     return {
       mutableMode: this.mode,
+      foldedStatus: true,
       copyInfo: {},
       warningResults: {},
       MS_SYMPTOM: '运动症状',
@@ -281,6 +282,7 @@ export default {
   methods: {
     startEditing() {
       this.mutableMode = this.EDITING_MODE;
+      this.foldedStatus = false;
     },
     cancel() {
       this.copyInfo = {};
@@ -516,6 +518,7 @@ export default {
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
     Bus.$on(this.TOGGLE_LIST_DISPLAY, this.updateScrollbar);
     Bus.$on(this.QUIT_DIAGNOSTIC_DETAIL, this.cancel);
+    Bus.$on(this.EDIT_DIAGNOSTIC_DISEASE, this.startEditing);
 
     setTimeout(() => {
       // console.log(this.copyInfo);

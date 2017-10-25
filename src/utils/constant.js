@@ -44,6 +44,9 @@ export default {
   EDIT_DISEASE_INFO: 'editDiseaseInfo',
   EDIT_OTHER_INFO: 'editOtherInfo',
 
+  FOLD_DIAGNOSTIC_BASIC: 'foldDiagnosticBasic',
+  EDIT_DIAGNOSTIC_DISEASE: 'editDiagnosticDisease',
+
   UPDATE_MY_PATIENTS_LIST: 'updateMyPatientsList',
   UPDATE_OTHER_PATIENTS_LIST: 'updateOtherPatientsList',
   UPDATE_GROUP_LIST: 'updateGroupList',
