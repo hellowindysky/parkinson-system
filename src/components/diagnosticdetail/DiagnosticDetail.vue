@@ -2,9 +2,9 @@
   <div class="diagnostic-detail-wrapper" v-show="displayDetail">
     <div class="title-bar">
       <h2 class="title">{{title}}</h2>
-      <div class="button back-button" @click="goBack">返回</div>
+      <div class="button back-button" @click="goBack" v-show="!isNewCase">返回</div>
       <div class="button archive-button" :class="{'disabled': !existed}" @click="archiveCase"
-        v-show="hasBeenArchived===false">归档</div>
+        v-show="hasBeenArchived===false && !isNewCase">归档</div>
     </div>
     <div class="scroll-area" ref="scrollArea">
       <diagnostic-basic class="folding-panel" :mode="mode" ref="diagnosticBasic"
@@ -54,6 +54,22 @@ export default {
   computed: {
     title() {
       return this.existed === true ? this.caseDetail.caseName : '新增诊断信息';
+    },
+    listType() {
+      if (this.$route.matched.some(record => record.meta.myPatients)) {
+        return 'myPatients';
+      } else if (this.$route.matched.some(record => record.meta.otherPatients)) {
+        return 'otherPatients';
+      } else {
+        return 'unknown';
+      }
+    },
+    isNewCase() {
+      if (this.$route.params.caseId && this.$route.params.caseId === 'newCase') {
+        return true;
+      } else {
+        return false;
+      }
     },
     diagnosticBasic() {
       var obj = {};
@@ -144,7 +160,11 @@ export default {
     },
     goBack() {
       // 按下返回按钮，实际上是修改的路由地址 ———— 因为我们是监控路由地址来决定这个详情窗口是否显示的
-      this.$router.push({name: 'diagnosticInfo'});
+      if (this.listType === 'myPatients') {
+        this.$router.push({name: 'diagnosticInfo'});
+      } else if (this.listType === 'otherPatients') {
+        this.$router.push({name: 'otherDiagnosticInfo'});
+      }
 
       // 同时，告诉它的子页面，放弃当前修改
       Bus.$emit(this.QUIT_DIAGNOSTIC_DETAIL);
@@ -209,6 +229,10 @@ export default {
       this.checkRoute();
     },
     displayDetail: function() {
+      Bus.$emit(this.RECALCULATE_CARD_WIDTH);
+    },
+    existed() {
+      // 因为 existed 这个变量变化时会导致几个子面板的 显示／隐藏，所以需要它们重新计算各自内部的卡片宽度
       Bus.$emit(this.RECALCULATE_CARD_WIDTH);
     }
   }

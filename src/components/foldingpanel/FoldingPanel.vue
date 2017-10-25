@@ -55,7 +55,7 @@ export default {
       return this.folded ? 'icon-down' : 'icon-up';
     },
     submitText() {
-      if (this.$route.params.id === 'newPatient') {
+      if (this.$route.params.id === 'newPatient' || this.$route.params.caseId === 'newCase') {
         return '下一步';
       } else {
         return '完成';

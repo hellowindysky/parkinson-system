@@ -12,10 +12,12 @@
       </div>
       <el-form class="input-wrapper" :model="loginForm" :rules="rules" ref="loginForm" label-width="0">
         <el-form-item prop="account">
-          <el-input class="round-input" v-model="loginForm.account" auto-complete="off" :placeholder="holderText"></el-input>
+          <el-input class="round-input" v-model="loginForm.account" auto-complete="off" :placeholder="holderText"
+            @keyup.enter.native="submitForm" autofocus="autofocus"></el-input>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input class="round-input" v-model="loginForm.password" type="password" auto-complete="off" placeholder="请输入6-10位数字和字母的密码"></el-input>
+          <el-input class="round-input" v-model="loginForm.password" type="password" auto-complete="off"
+            placeholder="请输入6-10位数字和字母的密码" @keyup.enter.native="submitForm"></el-input>
         </el-form-item>
         <el-form-item prop="remember">
           <el-checkbox v-model="loginForm.remember" class="checkbox" label="记住用户名" name="type"></el-checkbox>
@@ -50,11 +52,11 @@ export default {
       rules: {
         account: [
           { required: true, message: '请输入账号', trigger: 'change' },
-          { min: 3, max: 15, message: '长度在 3 到 15 个字符', trigger: 'change' }
+          { min: 3, max: 15, message: '长度在 3 到 15 个字符', trigger: 'blur' }
         ],
         password: [
           { required: true, message: '请输入密码', trigger: 'change' },
-          { min: 6, message: '长度至少为 6 个字符', trigger: 'change' }
+          { min: 6, message: '长度至少为 6 个字符', trigger: 'blur' }
         ]
       }
     };

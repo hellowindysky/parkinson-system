@@ -52,9 +52,10 @@ export default {
   data() {
     return {
       mutableMode: this.mode,
-      foldedStatus: true,
+      foldedStatus: false,
       copyInfo: {},
-      warningResults: {}
+      warningResults: {},
+      lockSubmitButton: false
     };
   },
   props: {
@@ -75,6 +76,15 @@ export default {
     ]),
     diagnosticBasicTemplate() {
       return this.patientCaseTemplateGroups[0] ? this.patientCaseTemplateGroups[0] : [];
+    },
+    listType() {
+      if (this.$route.matched.some(record => record.meta.myPatients)) {
+        return 'myPatients';
+      } else if (this.$route.matched.some(record => record.meta.otherPatients)) {
+        return 'otherPatients';
+      } else {
+        return 'unknown';
+      }
     }
   },
   methods: {
@@ -82,13 +92,41 @@ export default {
       this.copyInfo = Object.assign({}, this.diagnosticBasic);
       this.warningResults = {};
       this.mutableMode = this.EDITING_MODE;
+      this.foldedStatus = false;
     },
     cancel() {
-      this.copyInfo = Object.assign({}, this.diagnosticBasic);
-      this.warningResults = {};
-      this.mutableMode = this.READING_MODE;
+      // 如果是新增患者界面，点击取消按钮，则回到诊断列表页面
+      if (this.$route.params.caseId === 'newCase') {
+        Bus.$on(this.CONFIRM, () => {
+          this.copyInfo = Object.assign({}, this.diagnosticBasic);
+          this.warningResults = {};
+          this.mutableMode = this.READING_MODE;
+          if (this.listType === 'myPatients') {
+            this.$router.push({name: 'diagnosticInfo'});
+          } else if (this.listType === 'otherPatients') {
+            this.$router.push({name: 'otherDiagnosticInfo'});
+          }
+          Bus.$off(this.CONFIRM);
+          Bus.$off(this.GIVE_UP);
+          return;
+        });
+        Bus.$on(this.GIVE_UP, () => {
+          Bus.$off(this.CONFIRM);
+          Bus.$off(this.GIVE_UP);
+          return;
+        });
+        Bus.$emit(this.REQUEST_CONFIRMATION, '提示', '确认取消吗？取消将放弃所有更改');
+
+      } else {
+        this.copyInfo = Object.assign({}, this.diagnosticBasic);
+        this.warningResults = {};
+        this.mutableMode = this.READING_MODE;
+      }
     },
     submit() {
+      if (this.lockSubmitButton) {
+        return;
+      }
       // 先手动执行一遍 updateWarning()，因为有的字段在初始化的时候并没有经过校验
       for (let field of this.diagnosticBasicTemplate) {
         this.updateWarning(field);
@@ -110,19 +148,36 @@ export default {
       if (caseId === 'newCase') {
         this.copyInfo.patientId = this.$route.params.id;
         addDiagnosticBasic(this.copyInfo).then((data) => {
+          var routeName;
+          if (this.listType === 'myPatients') {
+            routeName = 'diagnosticDetail';
+          } else if (this.listType === 'otherPatients') {
+            routeName = 'otherDiagnosticDetail';
+          }
           this.$router.push({
-            name: 'diagnosticDetail',
+            name: routeName,
             params: { caseId: data.patientCaseId }
           });
           this.updateAndClose();
 
           // 更新个人信息是为了更新所有诊断卡片 ——— 卡片列表信息在个人信息对象里面
           Bus.$emit(this.UPDATE_PATIENT_INFO);
+          Bus.$emit(this.FOLD_DIAGNOSTIC_BASIC);
+          Bus.$emit(this.EDIT_DIAGNOSTIC_DISEASE);
+          this.lockSubmitButton = false;
+        }, (error) => {
+          console.log(error);
+          this.lockSubmitButton = false;
         });
+
       } else {
         this.copyInfo.patientCaseId = caseId;
         modifyDiagnosticBasic(this.copyInfo).then(() => {
           this.updateAndClose();
+          this.lockSubmitButton = false;
+        }, (error) => {
+          console.log(error);
+          this.lockSubmitButton = false;
         });
       }
     },
@@ -166,11 +221,20 @@ export default {
 
     // 添加新的诊断记录时，父组件会传递 EDIT 事件给本组件（子组件），因此需要对此进行监听
     this.$on(this.EDIT, this.startEditing);
+
+    Bus.$on(this.FOLD_DIAGNOSTIC_BASIC, () => {
+      this.foldedStatus = true;
+    });
+
+    Bus.$on(this.QUIT_DIAGNOSTIC_DETAIL, this.cancel);
   },
   watch: {
     diagnosticBasic: function() {
       this.copyInfo = Object.assign({}, this.diagnosticBasic);
     }
+  },
+  beforeDestroy() {
+    Bus.$off(this.QUIT_DIAGNOSTIC_DETAIL);
   }
 };
 </script>
