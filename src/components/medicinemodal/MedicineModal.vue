@@ -20,8 +20,8 @@
              :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)">
             </el-input> -->
             <el-select v-else-if="getUIType(field.fieldName)===3" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-             :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
-             <el-option v-for="option in getOptions(field.fieldName)" :label="option.name"
+              :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
+              <el-option v-for="option in getOptions(field.fieldName)" :label="option.name"
               :value="option.code" :key="option.code"></el-option>
             </el-select>
           </span>
@@ -558,9 +558,9 @@ export default {
       let dose = this.medicine.patientMedicineDetail[index].takeDose;
       if (!dose) {
         this.warningResults.patientMedicineDetail[index].takeDose = '必填'; // 实际上，这个值并不显示
-      } else if (!/^\+?[1-9][0-9]*$/.test(dose)) {
-        // 检查非零的正整数
-        this.warningResults.patientMedicineDetail[index].takeDose = '应填写正整数';
+      } else if (!/^[0-9]+(\.[0-9]{1,5})?$/.test(dose) || Number(dose) === 0) {
+        // 检查是否为小数部分至多为5位的正数（整数亦可）
+        this.warningResults.patientMedicineDetail[index].takeDose = '应填写正数，小数部分不能超过5位';
       } else {
         this.warningResults.patientMedicineDetail[index].takeDose = null;
       }
