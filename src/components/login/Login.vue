@@ -52,11 +52,11 @@ export default {
       rules: {
         account: [
           { required: true, message: '请输入账号', trigger: 'change' },
-          { min: 3, max: 15, message: '长度在 3 到 15 个字符', trigger: 'change' }
+          { min: 3, max: 15, message: '长度在 3 到 15 个字符', trigger: 'blur' }
         ],
         password: [
           { required: true, message: '请输入密码', trigger: 'change' },
-          { min: 6, message: '长度至少为 6 个字符', trigger: 'change' }
+          { min: 6, message: '长度至少为 6 个字符', trigger: 'blur' }
         ]
       }
     };
