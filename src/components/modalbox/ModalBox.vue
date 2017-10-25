@@ -1,10 +1,10 @@
 <template lang="html">
   <div class="modal-box-wrapper" v-show="displayModal">
-    <div class="modal-box" :class="{'high-box': modalType === DISEASE_MODAL}">
+    <div class="modal-box" :class="{'high-box': modalType === DISEASE_HISTORY_MODAL}">
       <h3 class="title">{{title}}</h3>
 
       <!-- 这个 field 是专门为个人史准备的，用来确定最终的 template 到底是哪个子类 -->
-      <div class="field" v-show="modalType === PERSON_MODAL">
+      <div class="field" v-show="modalType === PERSON_HISTORY_MODAL">
         <span class="field-name">
           个人史类型
           <span class="required-mark">*</span>
@@ -13,15 +13,15 @@
           <span class="warning-text">{{getWarningText('subModal')}}</span>
           <el-select v-model="subModalType" :class="{'warning': warningResults['subModal']}"
            placeholder="请输入个人史类型" @change="chooseSubModal" :disabled="disableChangingSubModal">
-            <el-option label="饮酒史" :value="WINE_MODAL"></el-option>
-            <el-option label="吸烟史" :value="SMOKE_MODAL"></el-option>
-            <el-option label="喝茶史" :value="TEA_MODAL"></el-option>
-            <el-option label="咖啡史" :value="COFFEE_MODAL"></el-option>
-            <el-option label="锻炼史" :value="EXERCISE_MODAL"></el-option>
+            <el-option label="饮酒史" :value="WINE_HISTORY_MODAL"></el-option>
+            <el-option label="吸烟史" :value="SMOKE_HISTORY_MODAL"></el-option>
+            <el-option label="喝茶史" :value="TEA_HISTORY_MODAL"></el-option>
+            <el-option label="咖啡史" :value="COFFEE_HISTORY_MODAL"></el-option>
+            <el-option label="锻炼史" :value="EXERCISE_HISTORY_MODAL"></el-option>
           </el-select>
         </span>
       </div>
-      <div class="seperate-line" v-show="this.modalType === this.PERSON_MODAL && this.subModalType !== ''"></div>
+      <div class="seperate-line" v-show="this.modalType === this.PERSON_HISTORY_MODAL && this.subModalType !== ''"></div>
 
       <div class="field" v-for="field in template">
         <span class="field-name">
@@ -116,60 +116,60 @@ export default {
       'typeGroup'
     ]),
     dictionary() {
-      if (this.modalType === this.PRESENT_MODAL) {
+      if (this.modalType === this.PRESENT_HISTORY_MODAL) {
         return this.presentHistoryDictionary;
-      } else if (this.modalType === this.MEDICINE_MODAL) {
+      } else if (this.modalType === this.MEDICINE_HISTORY_MODAL) {
         return this.medHistoryDictionary;
-      } else if (this.modalType === this.DISEASE_MODAL) {
+      } else if (this.modalType === this.DISEASE_HISTORY_MODAL) {
         return this.diseaseHistoryDictionary;
-      } else if (this.modalType === this.FAMILY_MODAL) {
+      } else if (this.modalType === this.FAMILY_HISTORY_MODAL) {
         return this.familyHistoryDictionary;
-      } else if (this.modalType === this.PERSON_MODAL) {
+      } else if (this.modalType === this.PERSON_HISTORY_MODAL) {
         // 如果是个人史面板，则有几个子模版，需要在选择个人史子类型后，自动确定新的 dictionary
-        if (this.subModalType === this.WINE_MODAL) {
+        if (this.subModalType === this.WINE_HISTORY_MODAL) {
           return this.wineHistoryDictionary;
-        } else if (this.subModalType === this.TEA_MODAL) {
+        } else if (this.subModalType === this.TEA_HISTORY_MODAL) {
           return this.teaHistoryDictionary;
-        } else if (this.subModalType === this.COFFEE_MODAL) {
+        } else if (this.subModalType === this.COFFEE_HISTORY_MODAL) {
           return this.coffeeHistoryDictionary;
-        } else if (this.subModalType === this.SMOKE_MODAL) {
+        } else if (this.subModalType === this.SMOKE_HISTORY_MODAL) {
           return this.smokeHistoryDictionary;
-        } else if (this.subModalType === this.EXERCISE_MODAL) {
+        } else if (this.subModalType === this.EXERCISE_HISTORY_MODAL) {
           return this.exerciseHistoryDictionary;
         } else {
           return [];
         }
-      } else if (this.modalType === this.TOXIC_MODAL) {
+      } else if (this.modalType === this.TOXIC_HISTORY_MODAL) {
         return this.toxicExposureHistoryDictionary;
       } else {
         return [];
       }
     },
     template() {
-      if (this.modalType === this.PRESENT_MODAL) {
+      if (this.modalType === this.PRESENT_HISTORY_MODAL) {
         return this.presentHistoryTemplate;
-      } else if (this.modalType === this.MEDICINE_MODAL) {
+      } else if (this.modalType === this.MEDICINE_HISTORY_MODAL) {
         return this.medHistoryTemplate;
-      } else if (this.modalType === this.DISEASE_MODAL) {
+      } else if (this.modalType === this.DISEASE_HISTORY_MODAL) {
         return this.diseaseHistoryTemplate;
-      } else if (this.modalType === this.FAMILY_MODAL) {
+      } else if (this.modalType === this.FAMILY_HISTORY_MODAL) {
         return this.familyHistoryTemplate;
-      } else if (this.modalType === this.PERSON_MODAL) {
+      } else if (this.modalType === this.PERSON_HISTORY_MODAL) {
         // 如果是个人史面板，则有几个子模版，需要在选择个人史类型后，自动确定新的模版
-        if (this.subModalType === this.WINE_MODAL) {
+        if (this.subModalType === this.WINE_HISTORY_MODAL) {
           return this.wineHistoryTemplate;
-        } else if (this.subModalType === this.TEA_MODAL) {
+        } else if (this.subModalType === this.TEA_HISTORY_MODAL) {
           return this.teaHistoryTemplate;
-        } else if (this.subModalType === this.COFFEE_MODAL) {
+        } else if (this.subModalType === this.COFFEE_HISTORY_MODAL) {
           return this.coffeeHistoryTemplate;
-        } else if (this.subModalType === this.SMOKE_MODAL) {
+        } else if (this.subModalType === this.SMOKE_HISTORY_MODAL) {
           return this.smokeHistoryTemplate;
-        } else if (this.subModalType === this.EXERCISE_MODAL) {
+        } else if (this.subModalType === this.EXERCISE_HISTORY_MODAL) {
           return this.exerciseHistoryTemplate;
         } else {
           return [];
         }
-      } else if (this.modalType === this.TOXIC_MODAL) {
+      } else if (this.modalType === this.TOXIC_HISTORY_MODAL) {
         return this.toxicExposureHistoryTemplate;
       } else {
         return [];
@@ -189,10 +189,10 @@ export default {
 
       // 如果传过来的 modalType 是个人史下的子类，则将其赋值为 this.subModalType，而 this.modalType 还是个人史
       // 同时，还要禁止个人史下子类的选择，因为此时子类不可更换
-      const SUB_MODAL_LIST = [this.TEA_MODAL, this.COFFEE_MODAL, this.WINE_MODAL, this.SMOKE_MODAL, this.EXERCISE_MODAL];
+      const SUB_MODAL_LIST = [this.TEA_HISTORY_MODAL, this.COFFEE_HISTORY_MODAL, this.WINE_HISTORY_MODAL, this.SMOKE_HISTORY_MODAL, this.EXERCISE_HISTORY_MODAL];
       if (SUB_MODAL_LIST.indexOf(modalType) > -1) {
         this.subModalType = modalType;
-        this.modalType = this.PERSON_MODAL;
+        this.modalType = this.PERSON_HISTORY_MODAL;
         this.disableChangingSubModal = true;
       } else {
         this.subModalType = '';
@@ -227,7 +227,7 @@ export default {
       }
 
       // 对于特殊的个人史，检查 subModal 字段是否有被选择
-      if (this.modalType === this.PERSON_MODAL && this.subModalType === '') {
+      if (this.modalType === this.PERSON_HISTORY_MODAL && this.subModalType === '') {
         this.$set(this.warningResults, 'subModal', '请选择');
       }
 
@@ -254,86 +254,86 @@ export default {
       // 发出请求之前，先将“确定”按钮锁住
       this.lockSubmitButton = true;
       if (this.mode === ADD_MODE) {
-        if (this.modalType === this.PRESENT_MODAL) {
+        if (this.modalType === this.PRESENT_HISTORY_MODAL) {
           addPatientPresentHistory(this.copyInfo).then(() => {
             this.updateAndClose();
           }, this._handleError);
-        } else if (this.modalType === this.MEDICINE_MODAL) {
+        } else if (this.modalType === this.MEDICINE_HISTORY_MODAL) {
           addPatientMedHistory(this.copyInfo).then(() => {
             this.updateAndClose();
           }, this._handleError);
-        } else if (this.modalType === this.DISEASE_MODAL) {
+        } else if (this.modalType === this.DISEASE_HISTORY_MODAL) {
           addPatientDisease(this.copyInfo).then(() => {
             this.updateAndClose();
           }, this._handleError);
-        } else if (this.modalType === this.FAMILY_MODAL) {
+        } else if (this.modalType === this.FAMILY_HISTORY_MODAL) {
           addPatientFamily(this.copyInfo).then(() => {
             this.updateAndClose();
           }, this._handleError);
-        } else if (this.modalType === this.TOXIC_MODAL) {
+        } else if (this.modalType === this.TOXIC_HISTORY_MODAL) {
           addPatientToxicExposure(this.copyInfo).then(() => {
             this.updateAndClose();
           }, this._handleError);
-        } else if (this.subModalType === this.COFFEE_MODAL) {
+        } else if (this.subModalType === this.COFFEE_HISTORY_MODAL) {
           addPatientCoffee(this.copyInfo).then(() => {
             this.updateAndClose();
           }, this._handleError);
-        } else if (this.subModalType === this.TEA_MODAL) {
+        } else if (this.subModalType === this.TEA_HISTORY_MODAL) {
           addPatientTea(this.copyInfo).then(() => {
             this.updateAndClose();
           }, this._handleError);
-        } else if (this.subModalType === this.WINE_MODAL) {
+        } else if (this.subModalType === this.WINE_HISTORY_MODAL) {
           addPatientWine(this.copyInfo).then(() => {
             this.updateAndClose();
           }, this._handleError);
-        } else if (this.subModalType === this.SMOKE_MODAL) {
+        } else if (this.subModalType === this.SMOKE_HISTORY_MODAL) {
           addPatientSmoke(this.copyInfo).then(() => {
             this.updateAndClose();
           }, this._handleError);
-        } else if (this.subModalType === this.EXERCISE_MODAL) {
+        } else if (this.subModalType === this.EXERCISE_HISTORY_MODAL) {
           addPatientExercise(this.copyInfo).then(() => {
             this.updateAndClose();
           }, this._handleError);
         }
 
       } else if (this.mode === MODIFY_MODE) {
-        if (this.modalType === this.PRESENT_MODAL) {
+        if (this.modalType === this.PRESENT_HISTORY_MODAL) {
           modifyPatientPresentHistory(this.copyInfo).then(() => {
             this.updateAndClose();
           }, this._handleError);
-        } else if (this.modalType === this.MEDICINE_MODAL) {
+        } else if (this.modalType === this.MEDICINE_HISTORY_MODAL) {
           modifyPatientMedHistory(this.copyInfo).then(() => {
             this.updateAndClose();
           }, this._handleError);
-        } else if (this.modalType === this.DISEASE_MODAL) {
+        } else if (this.modalType === this.DISEASE_HISTORY_MODAL) {
           modifyPatientDisease(this.copyInfo).then(() => {
             this.updateAndClose();
           }, this._handleError);
-        } else if (this.modalType === this.FAMILY_MODAL) {
+        } else if (this.modalType === this.FAMILY_HISTORY_MODAL) {
           modifyPatientFamily(this.copyInfo).then(() => {
             this.updateAndClose();
           }, this._handleError);
-        } else if (this.modalType === this.TOXIC_MODAL) {
+        } else if (this.modalType === this.TOXIC_HISTORY_MODAL) {
           modifyPatientToxicExposure(this.copyInfo).then(() => {
             this.updateAndClose();
           }, this._handleError);
-        } else if (this.subModalType === this.COFFEE_MODAL) {
+        } else if (this.subModalType === this.COFFEE_HISTORY_MODAL) {
           modifyPatientCoffee(this.copyInfo).then(() => {
             this.updateAndClose();
           }, this._handleError);
-        } else if (this.subModalType === this.TEA_MODAL) {
+        } else if (this.subModalType === this.TEA_HISTORY_MODAL) {
           modifyPatientTea(this.copyInfo).then(() => {
             this.updateAndClose();
           }, this._handleError);
-        } else if (this.subModalType === this.WINE_MODAL) {
+        } else if (this.subModalType === this.WINE_HISTORY_MODAL) {
           modifyPatientWine(this.copyInfo).then(() => {
             this.updateAndClose();
           }, this._handleError);
-        } else if (this.subModalType === this.SMOKE_MODAL) {
+        } else if (this.subModalType === this.SMOKE_HISTORY_MODAL) {
           modifyPatientSmoke(this.copyInfo).then(() => {
             this.updateAndClose();
           }, this._handleError);
-        } else if (this.subModalType === this.EXERCISE_MODAL) {
+        } else if (this.subModalType === this.EXERCISE_HISTORY_MODAL) {
           modifyPatientExercise(this.copyInfo).then(() => {
             this.updateAndClose();
           }, this._handleError);

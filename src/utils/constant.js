@@ -74,17 +74,16 @@ export default {
   QUIT_DIAGNOSTIC_DETAIL: 'quitDiagnosticDetail',
 
   // modal
-  PRESENT_MODAL: 'presentModal',
-  MEDICINE_MODAL: 'medcineModal',
-  DISEASE_MODAL: 'diseaseModal',
-  FAMILY_MODAL: 'familyModal',
-  PERSON_MODAL: 'personModal',
-  TOXIC_MODAL: 'toxicModal',
+  PRESENT_HISTORY_MODAL: 'presentHistoryModal',
+  MEDICINE_HISTORY_MODAL: 'medicineHistoryModal',
+  DISEASE_HISTORY_MODAL: 'diseaseHistoryModal',
+  FAMILY_HISTORY_MODAL: 'familyHistoryModal',
+  PERSON_HISTORY_MODAL: 'personHistoryModal',
+  TOXIC_HISTORY_MODAL: 'toxicHistoryModal',
 
-  TEA_MODAL: 'teaModal',
-  COFFEE_MODAL: 'coffeeModal',
-  WINE_MODAL: 'wineModal',
-  SMOKE_MODAL: 'smokeModal',
-  EXERCISE_MODAL: 'exerciseModal',
-  NERVOUSYSTOMMODAL: 'nervouSystemModal'
+  TEA_HISTORY_MODAL: 'teaHistoryModal',
+  COFFEE_HISTORY_MODAL: 'coffeeHistoryModal',
+  WINE_HISTORY_MODAL: 'wineHistoryModal',
+  SMOKE_HISTORY_MODAL: 'smokeHistoryModal',
+  EXERCISE_HISTORY_MODAL: 'exerciseHistoryModal'
 };
