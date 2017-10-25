@@ -52,7 +52,7 @@
         <div class="field">
           <span class="field-name">首次开机</span>
           <span class="field-input">
-            <el-select v-model="modelType" :disabled="mode === EDIT_DATA" @change="updateModelType">
+            <el-select v-model="modelType" :disabled="mode === EDIT_DATA" @change="selectFirstOrFollow">
               <el-option label="是" :value="1"></el-option>
               <el-option label="否" :value="0"></el-option>
             </el-select>
@@ -734,6 +734,7 @@ export default {
       modelType: 1, // 这个用来控制是否为首次开机，1为首次，0为非首次
       copyInfo: {},
       completeInit: false,
+      duringTogglingModelType: false,
       warningResults: {
         deviceId: '',
         programDate: ''
@@ -886,8 +887,10 @@ export default {
     },
     updateAndClose() {
       Bus.$emit(this.UPDATE_CASE_INFO);
-      this.updateModelType(); // 因为前面的 delete 砍掉了 copyInfo的完整结构，会导致渲染出问题，所以传完数据后就重新补上
       this.displayModal = false;
+
+      // 因为前面的 delete 砍掉了 copyInfo的完整结构，会导致渲染出问题，所以传完数据后就重新补上
+      this.initByModelType();
     },
     updateScrollbar() {
       // 如果不写在 $nextTick() 里面，第一次加载的时候也许会不能正确计算高度。估计是因为子组件还没有全部加载所造成的。
@@ -914,12 +917,33 @@ export default {
         Ps.initialize(this.$refs.form5, scrollSettings);
       });
     },
-    updateModelType() {
-      if (this.modelType === 1) {
-        this.initByFirstModel();
-      } else if (this.modelType === 0) {
-        this.initByFollowModel();
-      }
+    selectFirstOrFollow() {
+      // 当用户选择了“是否为首次开机”这个下拉框的时候，执行此函数
+      // 首先需要检查一下第一部分的字段是否有填写，如果有，则暂存下来，等重新构建数据格式之后，再填上去
+      // 这些字段包括设备品牌、设备类型、程控时间和备注
+      var deviceId = this.copyInfo.deviceId;
+      var devicePowerType = this.copyInfo.devicePowerType;
+      var programDate = this.copyInfo.programDate;
+      var remarks = this.copyInfo.remarks;
+      this.updateModelType(() => {
+        if (deviceId) {
+          this.copyInfo.deviceId = deviceId;
+        }
+        if (devicePowerType) {
+          this.copyInfo.devicePowerType = devicePowerType;
+        }
+        if (programDate) {
+          this.copyInfo.programDate = programDate;
+        }
+        if (remarks) {
+          this.copyInfo.remarks = remarks;
+        }
+      });
+    },
+    updateModelType(cb) {
+      this.duringTogglingModelType = true;
+      this.initByModelType();
+
       // 如果是新增程控记录，就要去获取额外的上次程控信息
       if (this.mode === this.ADD_DATA) {
         getLastDbsInfo(this.$route.params.id, this.$route.params.caseId).then((data) => {
@@ -930,10 +954,18 @@ export default {
             // 如果是非首次程控，除了设备和设备类型之外，还要绑定上次程控时间和调整前参数
             this.prepareLastDbsInfo(data);
           }
+          this.duringTogglingModelType = false;
+          cb && cb();
         });
+      } else {
+        this.duringTogglingModelType = false;
+        cb && cb();
       }
     },
     updateWarning(fieldName) {
+      if (!this.completeInit || this.duringTogglingModelType) {
+        return;
+      }
       if (this.copyInfo[fieldName] === '') {
         this.$set(this.warningResults, fieldName, '必填项');
       } else {
@@ -943,6 +975,13 @@ export default {
     clearWarning() {
       this.$set(this.warningResults, 'deviceId', '');
       this.$set(this.warningResults, 'programDate', '');
+    },
+    initByModelType() {
+      if (this.modelType === 1) {
+        this.initByFirstModel();
+      } else if (this.modelType === 0) {
+        this.initByFollowModel();
+      }
     },
     initByFirstModel() {
       this.copyInfo = {};
@@ -1385,7 +1424,7 @@ export default {
     }
   },
   created() {
-    this.updateModelType();
+    this.initByModelType();
   },
   mounted() {
     this.updateScrollbar();
