@@ -144,10 +144,17 @@ export default {
       Bus.$off(this.CONFIRM);
     },
     addRecord() {
-      this.$router.push({
-        name: 'diagnosticDetail',
-        params: {'caseId': 'newCase'}
-      });
+      if (this.listType === 'myPatients') {
+        this.$router.push({
+          name: 'diagnosticDetail',
+          params: {'caseId': 'newCase'}
+        });
+      } else if (this.listType === 'otherPatients') {
+        this.$router.push({
+          name: 'otherDiagnosticDetail',
+          params: {'caseId': 'newCase'}
+        });
+      }
     }
   },
   components: {

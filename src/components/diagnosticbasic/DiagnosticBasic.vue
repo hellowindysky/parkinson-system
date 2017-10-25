@@ -52,7 +52,7 @@ export default {
   data() {
     return {
       mutableMode: this.mode,
-      foldedStatus: true,
+      foldedStatus: false,
       copyInfo: {},
       warningResults: {}
     };
@@ -75,6 +75,15 @@ export default {
     ]),
     diagnosticBasicTemplate() {
       return this.patientCaseTemplateGroups[0] ? this.patientCaseTemplateGroups[0] : [];
+    },
+    listType() {
+      if (this.$route.matched.some(record => record.meta.myPatients)) {
+        return 'myPatients';
+      } else if (this.$route.matched.some(record => record.meta.otherPatients)) {
+        return 'otherPatients';
+      } else {
+        return 'unknown';
+      }
     }
   },
   methods: {
@@ -84,9 +93,33 @@ export default {
       this.mutableMode = this.EDITING_MODE;
     },
     cancel() {
-      this.copyInfo = Object.assign({}, this.diagnosticBasic);
-      this.warningResults = {};
-      this.mutableMode = this.READING_MODE;
+      // 如果是新增患者界面，点击取消按钮，则回到诊断列表页面
+      if (this.$route.params.caseId === 'newCase') {
+        Bus.$on(this.CONFIRM, () => {
+          this.copyInfo = Object.assign({}, this.diagnosticBasic);
+          this.warningResults = {};
+          this.mutableMode = this.READING_MODE;
+          if (this.listType === 'myPatients') {
+            this.$router.push({name: 'diagnosticInfo'});
+          } else if (this.listType === 'otherPatients') {
+            this.$router.push({name: 'otherDiagnosticInfo'});
+          }
+          Bus.$off(this.CONFIRM);
+          Bus.$off(this.GIVE_UP);
+          return;
+        });
+        Bus.$on(this.GIVE_UP, () => {
+          Bus.$off(this.CONFIRM);
+          Bus.$off(this.GIVE_UP);
+          return;
+        });
+        Bus.$emit(this.REQUEST_CONFIRMATION, '提示', '确认取消吗？取消将放弃所有更改');
+
+      } else {
+        this.copyInfo = Object.assign({}, this.diagnosticBasic);
+        this.warningResults = {};
+        this.mutableMode = this.READING_MODE;
+      }
     },
     submit() {
       // 先手动执行一遍 updateWarning()，因为有的字段在初始化的时候并没有经过校验
@@ -166,11 +199,16 @@ export default {
 
     // 添加新的诊断记录时，父组件会传递 EDIT 事件给本组件（子组件），因此需要对此进行监听
     this.$on(this.EDIT, this.startEditing);
+
+    Bus.$on(this.QUIT_DIAGNOSTIC_DETAIL, this.cancel);
   },
   watch: {
     diagnosticBasic: function() {
       this.copyInfo = Object.assign({}, this.diagnosticBasic);
     }
+  },
+  beforeDestroy() {
+    Bus.$off(this.QUIT_DIAGNOSTIC_DETAIL);
   }
 };
 </script>
