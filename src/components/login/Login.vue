@@ -13,7 +13,7 @@
       <el-form class="input-wrapper" :model="loginForm" :rules="rules" ref="loginForm" label-width="0">
         <el-form-item prop="account">
           <el-input class="round-input" v-model="loginForm.account" auto-complete="off" :placeholder="holderText"
-            @keyup.enter.native="submitForm"></el-input>
+            @keyup.enter.native="submitForm" autofocus="autofocus"></el-input>
         </el-form-item>
         <el-form-item prop="password">
           <el-input class="round-input" v-model="loginForm.password" type="password" auto-complete="off"
