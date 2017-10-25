@@ -5,9 +5,9 @@
 
       <extensible-panel class="panel" :mode="mode" :title="presentHistoryTitle" v-on:addNewCard="addPresentRecord">
         <card class="card" :class="devideWidth" :mode="mode" v-for="item in presentHistoryList" :key="item.medName"
-         :title="'待定'" v-on:clickCurrentCard="editPresentRecord(item)"
-         v-on:deleteCurrentCard="deletePresentRecord(item)">
-          <div class="text first-line">{{item.chiefComplaint}}</div>
+          :title="item.chiefComplaint" v-on:clickCurrentCard="editPresentRecord(item)"
+          v-on:deleteCurrentCard="deletePresentRecord(item)">
+          <div class="text first-line">{{item.hospName}}</div>
           <div class="text start-time">{{item.ariseTime}}</div>
         </card>
       </extensible-panel>
