@@ -230,6 +230,10 @@ export default {
     },
     displayDetail: function() {
       Bus.$emit(this.RECALCULATE_CARD_WIDTH);
+    },
+    existed() {
+      // 因为 existed 这个变量变化时会导致几个子面板的 显示／隐藏，所以需要它们重新计算各自内部的卡片宽度
+      Bus.$emit(this.RECALCULATE_CARD_WIDTH);
     }
   }
 };
