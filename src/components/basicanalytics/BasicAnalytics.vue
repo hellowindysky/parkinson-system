@@ -604,7 +604,7 @@ export default {
       display: inline-block;
       position: relative;
       height: 600px;
-      width: 84.5%;
+      width: 84.2%;
       background-color: @background-color;
       cursor: pointer;
       margin-right: 20px;
