@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="basic-analytics">
+  <div class="basic-analytics" ref="scrollArea">
     <div class="analytics-card-wrapper">
       <div class="titleName">数据概况</div>
       <div class="card-list">
@@ -171,6 +171,7 @@ import echarts from 'echarts';
 import {queryStatDataBrief, queryStatPatientProvince, queryStatPatientAge, queryStatPatientCareer} from 'api/analytics.js';
 import {getGroupList} from 'api/group.js';
 import {pruneObj} from 'utils/helper.js';
+import Ps from 'perfect-scrollbar';
 export default {
   data() {
     return {
@@ -445,9 +446,9 @@ export default {
         obj.proviceData = proviceData;
         obj.countData = countData;
         this.drawAreaChart('areaChart', obj);
-        }, (error) => {
-          console.log(error);
-        });
+      }, (error) => {
+        console.log(error);
+      });
     },
     getAgeChartData() {
       var para = {};
@@ -486,6 +487,20 @@ export default {
       }, (error) => {
         console.log(error);
       });
+    },
+    updateScrollbar() {
+      // 如果不写在 $nextTick() 里面，第一次加载的时候也许会不能正确计算高度。估计是因为子组件还没有全部加载所造成的。
+      this.$nextTick(() => {
+        // 之所以弃用 update 方法，是因为它在某些情况下会出现问题，导致滚动条不能有效刷新
+        // Ps.update(this.$refs.scrollArea);
+
+        // 如果之前有绑定滚动条的话，先进行解除
+        Ps.destroy(this.$refs.scrollArea);
+      Ps.initialize(this.$refs.scrollArea, {
+        wheelSpeed: 1,
+        minScrollbarLength: 40
+      });
+    });
     }
   },
   mounted() {
@@ -493,7 +508,9 @@ export default {
       this.getProvinceChartData();
       this.getAgeChartData();
       this.getCareerChartData();
+      this.updateScrollbar();
     });
+
     queryStatDataBrief().then((data) => {
       this.dataBrief = data;
     }, (error) => {
@@ -556,7 +573,7 @@ export default {
 
 .basic-analytics {
   position: relative;
-  overflow: scroll;
+  overflow: hidden;
   width: 100%;
   height: 100%;
   background-color: @screen-color;
@@ -630,5 +647,19 @@ export default {
 }
 .value-class{
   margin-top: 6px;
+}
+.ps__scrollbar-y-rail {
+  position: absolute;
+  width: 15px;
+  right: 0;
+  padding: 0 3px;
+  box-sizing: border-box;
+  opacity: 0.3;
+  transition: opacity 0.3s, padding 0.2s;
+.ps__scrollbar-y {
+  position: relative;
+  background-color: #aaa;
+  border-radius: 20px;
+}
 }
 </style>
