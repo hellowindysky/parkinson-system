@@ -12,7 +12,7 @@
               <div class="value-class">{{dataBrief.myPatient.increaseWeek}}人</div></div>
             <div class="compare-right">
               <div>周环比</div>
-              <div class="value-class"><i class="icon iconfont" :class="myPatientClass"/>{{(dataBrief.myPatient.increaseRate*100).toFixed(2)}}%</div>
+              <div class="value-class"><i class="icon iconfont" :class="myPatientClass"/>{{(dataBrief.myPatient.increaseRate) >= 1000000 ?'—':(dataBrief.myPatient.increaseRate*100).toFixed(2)}}%</div>
             </div>
           </div>
         </div>
@@ -26,7 +26,7 @@
             </div>
             <div class="compare-right">
               <div>周环比</div>
-              <div class="value-class"><i class="icon iconfont" :class="myGroupClass"/>{{(dataBrief.myGroup.increaseRate*100).toFixed(2)}}%</div>
+              <div class="value-class"><i class="icon iconfont" :class="myGroupClass"/>{{(dataBrief.myGroup.increaseRate) >= 1000000 ?'—':(dataBrief.myGroup.increaseRate*100).toFixed(2)}}%</div>
             </div>
           </div>
         </div>
@@ -40,7 +40,7 @@
             </div>
             <div class="compare-right">
               <div>周环比</div>
-              <div class="value-class"><i class="icon iconfont" :class="firAgeClass"/>{{(dataBrief.firAge.increateRase*100).toFixed(2)}}%</div></div>
+              <div class="value-class"><i class="icon iconfont" :class="firAgeClass"/>{{(dataBrief.firAge.increateRase) >= 1000000 ?'—':(dataBrief.firAge.increateRase*100).toFixed(2)}}%</div></div>
           </div>
         </div>
         <div class="avg-sick-year card">
@@ -52,7 +52,7 @@
               <div class="value-class">{{dataBrief.diseaseAge.averDiseaseAgeLastWeek.toFixed(2)}}年</div></div>
             <div class="compare-right">
               <div>周环比</div>
-              <div class="value-class"><i class="icon iconfont" :class="diseaseClass"/>{{dataBrief.diseaseAge.increateRase*100}}%</div></div>
+              <div class="value-class"><i class="icon iconfont" :class="diseaseClass"/>{{(dataBrief.diseaseAge.increateRase*100) >= 100000?'—':(dataBrief.diseaseAge.increateRase*100).toFixed(2)}}%</div></div>
           </div>
         </div>
       </div>
