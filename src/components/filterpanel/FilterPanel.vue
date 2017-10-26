@@ -527,7 +527,7 @@ export default {
   transition: 0.5s;
   z-index: 300;
   &.hide {
-    transform: translateY(calc(~"-100% - @{header-margin-bottom}"));
+    transform: translateY(-100%);
   }
   .condition-area {
     position: absolute;
