@@ -9,7 +9,7 @@
         <div class="tab-bottom-bar" :class="currentTabBottomBar"></div>
       </div>
       <div class="scroll-area" ref="scrollList">
-        <div class="folding-box">
+        <div class="folding-box" v-show="currentTab===PERSONAL_INFO">
           <div class="title" @click="toggleBasicInfoDisplay">
             基本情况
             <span class="iconfont" :class="{'icon-up': displayBasicInfoCondition, 'icon-down': !displayBasicInfoCondition}"></span>
@@ -111,7 +111,8 @@
             </div>
           </div>
         </div>
-        <div class="folding-box">
+
+        <div class="folding-box" v-show="currentTab===PERSONAL_INFO">
           <div class="title" @click="toggleDiseaseInfoDisplay">
             病症信息
             <span class="iconfont" :class="{'icon-up': displayDiseaseInfoCondition, 'icon-down': !displayDiseaseInfoCondition}"></span>
@@ -258,6 +259,15 @@
             </div>
           </div>
 
+          <div class="folding-box" v-show="currentTab===PERSONAL_INFO">
+            <div class="title" @click="toggleOtherInfoDisplay">
+              其它信息
+              <span class="iconfont" :class="{'icon-up': displayOtherInfoCondition, 'icon-down': !displayOtherInfoCondition}"></span>
+            </div>
+            <div class="content" :class="{'folded': !displayOtherInfoCondition}">
+            </div>
+          </div>
+
           <div class="blank-area"></div>
         </div>
       </div>
@@ -295,9 +305,38 @@ export default {
       displayBasicInfoCondition: true,
       basicInfoCondition: {},
       basicInfoSelectedStatus: {},
+
       displayDiseaseInfoCondition: true,
       diseaseInfoCondition: {},
-      diseaseInfoSelectedStatus: {}
+      diseaseInfoSelectedStatus: {},
+
+      displayOtherInfoCondition: true,
+      otherInfoCondition: {},
+      otherInfoSelectedStatus: {},
+
+      displayDiagnosticBasicCondition: true,
+      diagnosticBasicCondition: {},
+      diagnosticBasicSelectedStatus: {},
+
+      displayDiagnosticDiseaseCondition: true,
+      diagnosticDiseaseCondition: {},
+      diagnosticDiseaseSelectedStatus: {},
+
+      displayDiagnosticMedicineCondition: true,
+      diagnosticMedicineCondition: {},
+      diagnosticMedicineSelectedStatus: {},
+
+      displayDiagnosticSurgeryCondition: true,
+      diagnosticSurgeryCondition: {},
+      diagnosticSurgerySelectedStatus: {},
+
+      displayDiagnosticScaleCondition: true,
+      diagnosticScaleCondition: {},
+      diagnosticScaleSelectedStatus: {},
+
+      displayDiagnosticExaminationCondition: true,
+      diagnosticExaminationCondition: {},
+      diagnosticExaminationSelectedStatus: {}
     };
   },
   computed: {
@@ -342,7 +381,49 @@ export default {
     toggleDiseaseInfoDisplay() {
       this.displayDiseaseInfoCondition = !this.displayDiseaseInfoCondition;
       setTimeout(() => {
-        this.updateScrollList();  // 等动画结束后再刷新列表滚动条
+        this.updateScrollList();
+      }, 300);
+    },
+    toggleOtherInfoDisplay() {
+      this.displayOtherInfoCondition = !this.displayOtherInfoCondition;
+      setTimeout(() => {
+        this.updateScrollList();
+      }, 300);
+    },
+    toggleDiagnosticBasicDisplay() {
+      this.displayDiagnosticBasicCondition = !this.displayDiagnosticBasicCondition;
+      setTimeout(() => {
+        this.updateScrollList();
+      }, 300);
+    },
+    toggleDiagnosticDiseaseDisplay() {
+      this.displayDiagnosticDiseaseCondition = !this.displayDiagnosticDiseaseCondition;
+      setTimeout(() => {
+        this.updateScrollList();
+      }, 300);
+    },
+    toggleDiagnosticMedicineDisplay() {
+      this.displayDiagnosticMedicineCondition = !this.displayDiagnosticMedicineCondition;
+      setTimeout(() => {
+        this.updateScrollList();
+      }, 300);
+    },
+    toggleDiagnosticSurgeryDisplay() {
+      this.displayDiagnosticSurgeryCondition = !this.displayDiagnosticSurgeryCondition;
+      setTimeout(() => {
+        this.updateScrollList();
+      }, 300);
+    },
+    toggleDiagnosticScaleDisplay() {
+      this.displayDiagnosticScaleCondition = !this.displayDiagnosticScaleCondition;
+      setTimeout(() => {
+        this.updateScrollList();
+      }, 300);
+    },
+    toggleDiagnosticExaminationDisplay() {
+      this.displayDiagnosticExaminationCondition = !this.displayDiagnosticExaminationCondition;
+      setTimeout(() => {
+        this.updateScrollList();
       }, 300);
     },
     initCondition() {
@@ -353,12 +434,62 @@ export default {
         this.$set(this.basicInfoCondition, fieldName, '');
         this.$set(this.basicInfoSelectedStatus, fieldName, false);
       });
+
       let diseaseInfoFieldNames = ['diseaseType', 'ariAgeFrom', 'ariAgeTo', 'firSym',
         'firBody', 'firTimeFrom', 'firTimeTo', 'surTimeFrom', 'surTimeTo',
         'diagMode', 'treatPro', 'firMed', 'getDisFac', 'getDisFac0'];
       diseaseInfoFieldNames.forEach((fieldName) => {
         this.$set(this.diseaseInfoCondition, fieldName, '');
         this.$set(this.diseaseInfoSelectedStatus, fieldName, false);
+      });
+
+      let otherInfoFieldNames = ['medType', 'diseaseRelationId', 'similarRole', 'patientSmokeId',
+        'patientWineId', 'patientTeaId', 'patientCoffeeId', 'grade', 'exposedType'];
+      otherInfoFieldNames.forEach((fieldName) => {
+        this.$set(this.otherInfoCondition, fieldName, '');
+        this.$set(this.otherInfoSelectedStatus, fieldName, false);
+      });
+
+      let diagnosticBasicFieldNames = ['caseType', 'diagTimeFrom', 'diagTimeTo'];
+      diagnosticBasicFieldNames.forEach((fieldName) => {
+        this.$set(this.diagnosticBasicCondition, fieldName, '');
+        this.$set(this.diagnosticBasicSelectedStatus, fieldName, false);
+      });
+
+      let diagnosticDiseaseFieldNames = ['diseaseType', 'motorSymptomTypeId',
+        'motorComplicationsSymptomTypeId', 'nonMotorSymptomTypeId'];
+      diagnosticDiseaseFieldNames.forEach((fieldName) => {
+        this.$set(this.diagnosticDiseaseCondition, fieldName, '');
+        this.$set(this.diagnosticDiseaseSelectedStatus, fieldName, false);
+      });
+
+      let diagnosticMedicineFieldNames = ['medicineType', 'medicineId', 'medicineSpecId',
+        'levodopaSingleIntakeFrom', 'levodopaSingleIntakeTo', 'levodopaTotalIntakeFrom', 'levodopaTotalIntakeTo'];
+      diagnosticMedicineFieldNames.forEach((fieldName) => {
+        this.$set(this.diagnosticMedicineCondition, fieldName, '');
+        this.$set(this.diagnosticMedicineSelectedStatus, fieldName, false);
+      });
+
+      let diagnosticSurgeryFieldNames = ['preopsTimeFrom', 'preopsTimeTo', 'deviceId', 'devicePowerType',
+        'operationIntension', 'intensionTimeFrom', 'intensionTimeTo', 'surgicalInfoId', 'surgicalDateFrom',
+        'surgicalDateTo', 'dbsDateFrom', 'dbsDateTo', 'occurrenceTimeFrom', 'occurrenceTimeTo', 'majorComplicationType',
+        'minorComplicationType', 'treatment', 'result'];
+      diagnosticSurgeryFieldNames.forEach((fieldName) => {
+        this.$set(this.diagnosticSurgeryCondition, fieldName, '');
+        this.$set(this.diagnosticSurgerySelectedStatus, fieldName, false);
+      });
+
+      let diagnosticScaleFieldNames = ['inspectTimeFrom', 'inspectTimeTo', 'scaleType', 'scaleName',
+        'scaleQuestionFrom', 'scaleQuestionTo', 'scalePointFrom', 'scalePointTo', 'switchType'];
+      diagnosticScaleFieldNames.forEach((fieldName) => {
+        this.$set(this.diagnosticScaleCondition, fieldName, '');
+        this.$set(this.diagnosticScaleSelectedStatus, fieldName, false);
+      });
+
+      let diagnosticExaminationFieldNames = ['spephysicalInfoId', 'bioexamId', 'emgType', 'examType'];
+      diagnosticExaminationFieldNames.forEach((fieldName) => {
+        this.$set(this.diagnosticExaminationCondition, fieldName, '');
+        this.$set(this.diagnosticExaminationSelectedStatus, fieldName, false);
       });
     }
   },
@@ -384,7 +515,7 @@ export default {
 
 @condition-area-width: 350px;
 @tabs-wrapper-height: 35px;
-@tabs-wrapper-margin-bottom: 2px;
+@tabs-wrapper-margin-bottom: 8px;
 
 .filter-panel {
   position: absolute;
@@ -404,13 +535,14 @@ export default {
     top: 0;
     width: @condition-area-width;
     height: 100%;
+    background-color: @screen-color;
     .tabs-wrapper  {
       position: relative;
       width: 100%;
       height: @tabs-wrapper-height;
       margin-bottom: @tabs-wrapper-margin-bottom;
-      box-shadow: 0 2px 3px @light-gray-color;
       font-size: 0;
+      background-color: @background-color;
       .tab {
         display: inline-block;
         width: 50%;
@@ -445,6 +577,7 @@ export default {
       width: 100%;
       height: calc(~"100% - @{tabs-wrapper-height} - @{tabs-wrapper-margin-bottom}");
       box-sizing: border-box;
+      background-color: @background-color;
       overflow: hidden;
       .folding-box {
         width: 100%;
