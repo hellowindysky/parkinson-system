@@ -258,18 +258,72 @@
               </span>
             </div>
           </div>
-
-          <div class="folding-box" v-show="currentTab===PERSONAL_INFO">
-            <div class="title" @click="toggleOtherInfoDisplay">
-              其它信息
-              <span class="iconfont" :class="{'icon-up': displayOtherInfoCondition, 'icon-down': !displayOtherInfoCondition}"></span>
-            </div>
-            <div class="content" :class="{'folded': !displayOtherInfoCondition}">
-            </div>
-          </div>
-
-          <div class="blank-area"></div>
         </div>
+
+        <div class="folding-box" v-show="currentTab===PERSONAL_INFO">
+          <div class="title" @click="toggleOtherInfoDisplay">
+            其它信息
+            <span class="iconfont" :class="{'icon-up': displayOtherInfoCondition, 'icon-down': !displayOtherInfoCondition}"></span>
+          </div>
+          <div class="content" :class="{'folded': !displayOtherInfoCondition}">
+          </div>
+        </div>
+
+        <div class="folding-box" v-show="currentTab===DIAGNOSTIC_INFO">
+          <div class="title" @click="toggleDiagnosticBasicDisplay">
+            基本情况
+            <span class="iconfont" :class="{'icon-up': displayDiagnosticBasicCondition, 'icon-down': !displayDiagnosticBasicCondition}"></span>
+          </div>
+          <div class="content" :class="{'folded': !displayDiagnosticBasicCondition}">
+          </div>
+        </div>
+
+        <div class="folding-box" v-show="currentTab===DIAGNOSTIC_INFO">
+          <div class="title" @click="toggleDiagnosticDiseaseDisplay">
+            病症情况
+            <span class="iconfont" :class="{'icon-up': displayDiagnosticDiseaseCondition, 'icon-down': !displayDiagnosticDiseaseCondition}"></span>
+          </div>
+          <div class="content" :class="{'folded': !displayDiagnosticDiseaseCondition}">
+          </div>
+        </div>
+
+        <div class="folding-box" v-show="currentTab===DIAGNOSTIC_INFO">
+          <div class="title" @click="toggleDiagnosticMedicineDisplay">
+            药物方案
+            <span class="iconfont" :class="{'icon-up': displayDiagnosticMedicineCondition, 'icon-down': !displayDiagnosticMedicineCondition}"></span>
+          </div>
+          <div class="content" :class="{'folded': !displayDiagnosticMedicineCondition}">
+          </div>
+        </div>
+
+        <div class="folding-box" v-show="currentTab===DIAGNOSTIC_INFO">
+          <div class="title" @click="toggleDiagnosticSurgeryDisplay">
+            外壳手术
+            <span class="iconfont" :class="{'icon-up': displayDiagnosticSurgeryCondition, 'icon-down': !displayDiagnosticSurgeryCondition}"></span>
+          </div>
+          <div class="content" :class="{'folded': !displayDiagnosticSurgeryCondition}">
+          </div>
+        </div>
+
+        <div class="folding-box" v-show="currentTab===DIAGNOSTIC_INFO">
+          <div class="title" @click="toggleDiagnosticScaleDisplay">
+            医学量表
+            <span class="iconfont" :class="{'icon-up': displayDiagnosticScaleCondition, 'icon-down': !displayDiagnosticScaleCondition}"></span>
+          </div>
+          <div class="content" :class="{'folded': !displayDiagnosticScaleCondition}">
+          </div>
+        </div>
+
+        <div class="folding-box" v-show="currentTab===DIAGNOSTIC_INFO">
+          <div class="title" @click="toggleDiagnosticExaminationDisplay">
+            检验检查
+            <span class="iconfont" :class="{'icon-up': displayDiagnosticExaminationCondition, 'icon-down': !displayDiagnosticExaminationCondition}"></span>
+          </div>
+          <div class="content" :class="{'folded': !displayDiagnosticExaminationCondition}">
+          </div>
+        </div>
+
+        <div class="blank-area"></div>
       </div>
     </div>
     <div class="toggle-condition-button" :class="{'hide-condition-status': !displayCondition}" @click="toggleConditonDisplay">
