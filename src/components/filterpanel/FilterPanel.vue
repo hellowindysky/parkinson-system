@@ -359,10 +359,10 @@
               <el-checkbox class="item-checkbox" v-model="diagnosticBasicSelectedStatus.diagTimeFrom"></el-checkbox>
               <span class="item-name">诊断时间</span>
               <span class="item-value">
-                <el-date-picker class="left-input" v-model="diagnosticBasicCondition.diagTimeFrom" placeholder="最早日期"
+                <el-date-picker class="left-input" v-model="diagnosticBasicCondition.diagTimeFrom" placeholder="最早时间"
                   :disabled="!diagnosticBasicSelectedStatus.diagTimeFrom"></el-date-picker>
                 <span class="middle-text">~</span>
-                <el-date-picker class="right-input" v-model="diagnosticBasicCondition.diagTimeTo" placeholder="最晚日期"
+                <el-date-picker class="right-input" v-model="diagnosticBasicCondition.diagTimeTo" placeholder="最晚时间"
                   :disabled="!diagnosticBasicSelectedStatus.diagTimeFrom"></el-date-picker>
               </span>
             </div>
@@ -434,15 +434,115 @@
             <span class="iconfont" :class="{'icon-up': displayDiagnosticMedicineCondition, 'icon-down': !displayDiagnosticMedicineCondition}"></span>
           </div>
           <div class="content" :class="{'folded': !displayDiagnosticMedicineCondition}">
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="diagnosticMedicineSelectedStatus.medicineType"></el-checkbox>
+              <span class="item-name">药物类型</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="diagnosticMedicineCondition.medicineType"
+                  :disabled="!diagnosticMedicineSelectedStatus.medicineType"></el-select>
+              </span>
+            </div>
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="diagnosticMedicineSelectedStatus.medicineId"></el-checkbox>
+              <span class="item-name">使用药物</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="diagnosticMedicineCondition.medicineId"
+                  :disabled="!diagnosticMedicineSelectedStatus.medicineId"></el-select>
+              </span>
+            </div>
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="diagnosticMedicineSelectedStatus.medicineSpecId"></el-checkbox>
+              <span class="item-name">药物规格</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="diagnosticMedicineCondition.medicineSpecId"
+                  :disabled="!diagnosticMedicineSelectedStatus.medicineSpecId"></el-select>
+              </span>
+            </div>
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="diagnosticMedicineSelectedStatus.levodopaSingleIntakeFrom"></el-checkbox>
+              <span class="item-name long-name double-line">左旋多巴单次摄入量</span>
+              <span class="item-value">
+                <el-input class="left-input" v-model="diagnosticMedicineCondition.levodopaSingleIntakeFrom" placeholder="最小值"
+                  :disabled="!diagnosticMedicineSelectedStatus.levodopaSingleIntakeFrom"></el-input>
+                <span class="middle-text">~</span>
+                <el-input class="right-input" v-model="diagnosticMedicineCondition.levodopaSingleIntakeTo" placeholder="最大值"
+                  :disabled="!diagnosticMedicineSelectedStatus.levodopaSingleIntakeFrom"></el-input>
+              </span>
+            </div>
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="diagnosticMedicineSelectedStatus.levodopaTotalIntakeFrom"></el-checkbox>
+              <span class="item-name long-name double-line">左旋多巴累计摄入量</span>
+              <span class="item-value">
+                <el-input class="left-input" v-model="diagnosticMedicineCondition.levodopaTotalIntakeFrom" placeholder="最小值"
+                  :disabled="!diagnosticMedicineSelectedStatus.levodopaTotalIntakeFrom"></el-input>
+                <span class="middle-text">~</span>
+                <el-input class="right-input" v-model="diagnosticMedicineCondition.levodopaTotalIntakeTo" placeholder="最大值"
+                  :disabled="!diagnosticMedicineSelectedStatus.levodopaTotalIntakeFrom"></el-input>
+              </span>
+            </div>
           </div>
         </div>
 
         <div class="folding-box" v-show="currentTab===DIAGNOSTIC_INFO">
           <div class="title" @click="toggleDiagnosticSurgeryDisplay">
-            外壳手术
+            外科手术
             <span class="iconfont" :class="{'icon-up': displayDiagnosticSurgeryCondition, 'icon-down': !displayDiagnosticSurgeryCondition}"></span>
           </div>
           <div class="content" :class="{'folded': !displayDiagnosticSurgeryCondition}">
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="diagnosticSurgerySelectedStatus.preopsTimeFrom"></el-checkbox>
+              <span class="item-name">评估时间</span>
+              <span class="item-value">
+                <el-date-picker class="left-input" v-model="diagnosticSurgeryCondition.preopsTimeFrom" placeholder="开始时间"
+                  :disabled="!diagnosticSurgerySelectedStatus.preopsTimeFrom"></el-date-picker>
+                <span class="middle-text">~</span>
+                <el-date-picker class="right-input" v-model="diagnosticSurgeryCondition.preopsTimeTo" placeholder="结束时间"
+                  :disabled="!diagnosticSurgerySelectedStatus.preopsTimeFrom"></el-date-picker>
+              </span>
+            </div>
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="diagnosticSurgerySelectedStatus.deviceId"></el-checkbox>
+              <span class="item-name">设备品牌</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="diagnosticSurgeryCondition.deviceId"
+                  :disabled="!diagnosticSurgerySelectedStatus.deviceId"></el-select>
+              </span>
+            </div>
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="diagnosticSurgerySelectedStatus.devicePowerType"></el-checkbox>
+              <span class="item-name">设备类型</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="diagnosticSurgeryCondition.devicePowerType"
+                  :disabled="!diagnosticSurgerySelectedStatus.devicePowerType"></el-select>
+              </span>
+            </div>
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="diagnosticSurgerySelectedStatus.operationIntension"></el-checkbox>
+              <span class="item-name">患者意愿</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="diagnosticSurgeryCondition.operationIntension"
+                  :disabled="!diagnosticSurgerySelectedStatus.operationIntension"></el-select>
+              </span>
+            </div>
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="diagnosticSurgerySelectedStatus.intensionTimeFrom"></el-checkbox>
+              <span class="item-name">同意时间</span>
+              <span class="item-value">
+                <el-date-picker class="left-input" v-model="diagnosticSurgeryCondition.intensionTimeFrom" placeholder="开始时间"
+                  :disabled="!diagnosticSurgerySelectedStatus.intensionTimeFrom"></el-date-picker>
+                <span class="middle-text">~</span>
+                <el-date-picker class="right-input" v-model="diagnosticSurgeryCondition.intensionTimeTo" placeholder="结束时间"
+                  :disabled="!diagnosticSurgerySelectedStatus.intensionTimeFrom"></el-date-picker>
+              </span>
+            </div>
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="diagnosticSurgerySelectedStatus.surgicalInfoId"></el-checkbox>
+              <span class="item-name">手术方案</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="diagnosticSurgeryCondition.surgicalInfoId"
+                  :disabled="!diagnosticSurgerySelectedStatus.surgicalInfoId"></el-select>
+              </span>
+            </div>
           </div>
         </div>
 
@@ -722,7 +822,7 @@ export default {
   transition: 0.5s;
   z-index: 300;
   &.hide {
-    transform: translateY(-100%);
+    transform: translateY(-150%);
   }
   .condition-area {
     position: absolute;
@@ -843,6 +943,14 @@ export default {
               &.long-name {
                 left: 35px;
                 font-size: @small-font-size;
+                &.double-line {
+                  display: -webkit-box;
+                  -webkit-box-orient: vertical;
+                  -webkit-line-clamp: 2;
+                  width: 75px;
+                  padding-top: 5px;
+                  line-height: @normal-font-size;
+                }
               }
             }
             .item-value {
