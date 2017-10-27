@@ -21,6 +21,7 @@
         :neurologicCheckList="caseDetail.patientSpephysical"
         :biochemicalExamList="caseDetail.patientBioexam"
         :emgList="caseDetail.patientElecTroGram"
+        :medicalImagingList="caseDetail.patientVideoList"
         :VitalSignsData="VitalSignsData">
       </diagnostic-examination>
       <div class="blank-area"></div>
@@ -148,6 +149,7 @@ export default {
         getPatientCase(patientId, this.caseId).then((data) => {
           this.existed = true;
           this.caseDetail = Object.assign({}, data.patientCase);
+          console.log(this.caseDetail);
           this.mode = this.READING_MODE;
           if (data.patientCase.archiveStatus === 1) {
             this.hasBeenArchived = true;

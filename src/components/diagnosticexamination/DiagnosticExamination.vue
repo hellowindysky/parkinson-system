@@ -99,6 +99,7 @@
           </div>
         </card>
       </extensible-panel>
+      
       <extensible-panel class="panel" :mode="mutableMode" :title="emgTitle" v-on:addNewCard="addEmgRecord">
         <card class="card" :class="cardWidth" :mode="mutableMode" v-for="item in emgList" :key="item.patientCaseId"
          :title="item.etgName" v-on:clickCurrentCard="editEmgRecord(item)"
@@ -113,6 +114,27 @@
           </div>
         </card>
       </extensible-panel>
+<!-- 医学影像 -->
+      <extensible-panel class="panel image-panel" :mode="mutableMode" :title="medicalImagingTitle" v-on:addNewCard="addEmgRecord">
+        <card class="card image-card" :class="cardWidth" :mode="mutableMode" v-for="(item,idx) in medicalImagingList" :key="idx"
+         :title="item.name" v-on:clickCurrentCard="editEmgRecord(item)"
+         v-on:deleteCurrentCard="deleteEmgRecord(item)">
+          <div class="text first-line">
+            <span class="name">{{item.time}}</span>
+            <!-- <span class="value">{{transformEmgType(item.etgType)}}</span> -->
+            <!-- <span class="value">{{item.time}}</span> -->
+          </div>
+          <div class="text second-line">
+            <span class="name">{{transformMedicalImagingType(item.patientImageReq.imageType)}}</span>
+            <!-- <span class="value">{{item.patientImageReq.imageType}}</span> -->
+          </div>
+          <div class="text third-line">
+            <span class="name">{{item.patientImageReq.checkNum}}</span>
+          </div>
+          
+        </card>
+      </extensible-panel>
+
     </div>
   </folding-panel>
 </template>
@@ -173,6 +195,12 @@ export default {
         return [];
       }
     },
+    medicalImagingList: {
+      type: Array,
+      default: () => {
+        return [];
+      }
+    },
     VitalSignsData: {
       type: Object,
       default: () => {
@@ -198,6 +226,9 @@ export default {
     },
     emgTitle() {
       return '肌电图（' + this.emgList.length + '条记录）';
+    },
+    medicalImagingTitle() {
+      return '医学影像（' + this.medicalImagingList.length + '条记录）';
     }
   },
   methods: {
@@ -305,6 +336,16 @@ export default {
       var types = emgInfo.types ? emgInfo.types : [];
       var name = Util.getElement('typeCode', parseInt(typeId, 10), types).typeName;
       return name;
+    },
+    transformMedicalImagingType(typeId) {
+      // 在 tableData 中找到对应的值
+      var imageInfo = Util.getElement('typegroupcode', 'examType', this.typeGroup);
+      console.log(imageInfo);
+      var types = imageInfo.types ? imageInfo.types : [];
+      typeId = 8;
+      var name = Util.getElement('typeCode', parseInt(typeId, 10), types).typeName;
+      return name;
+      // return typeId;
     },
     addNeurologicCheckRecord() {
       // 这里要传递 3 个参数，一个是 title，一个是当前数据对象（新建的时候为空），另一个是模态框的类型
@@ -432,19 +473,26 @@ export default {
 <style lang="less">
 @import "~styles/variables.less";
 
-@pre-evaluation-card-height: 160px;
-@post-complication-card-height: 120px;
-@dbs-card-height: 185px;
+@image-card-height: 130px;
 
 @vital-item-width: 158px;
 .diagnostic-examination {
   .panel {
     text-align: left;
+    &.image-panel .content {
+      height: @image-card-height + @card-vertical-margin * 2 + 5px * 2;
+      &.extended {
+        height: auto;
+      }
+    }
     .card {
       display: inline-block;
       position: relative;
       margin: @card-vertical-margin @card-horizontal-margin; // min-width: 200px;
       // max-width: 250px;
+      &.image-card{
+        height: @image-card-height;
+      }
       &.width-1-1,
       &.width-1-0 {
         width: calc(~"100% - @{card-horizontal-margin} * 2");
