@@ -496,11 +496,11 @@ export default {
 
         // 如果之前有绑定滚动条的话，先进行解除
         Ps.destroy(this.$refs.scrollArea);
-      Ps.initialize(this.$refs.scrollArea, {
-        wheelSpeed: 1,
-        minScrollbarLength: 40
+        Ps.initialize(this.$refs.scrollArea, {
+          wheelSpeed: 1,
+          minScrollbarLength: 40
+        });
       });
-    });
     }
   },
   mounted() {
