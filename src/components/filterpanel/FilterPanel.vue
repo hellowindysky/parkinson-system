@@ -710,10 +710,10 @@
         <div class="blank-area"></div>
       </div>
       <div class="function-area">
-        <div class="function-button left">
+        <div class="function-button left" @click="queryPatients">
           重置条件
         </div>
-        <div class="function-button right">
+        <div class="function-button right" @click="queryPatients({})">
           应用条件
         </div>
       </div>
@@ -738,14 +738,17 @@
         </div>
         <div class="form-body" ref="formBody">
           <table class="form">
-            <tr class="row" v-for="i in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]">
+            <tr class="row" v-for="(patient, i) in patientList">
               <td class="col col-num">{{i}}</td>
-              <td class="col col-id">患者ID</td>
-              <td class="col col-gender">性别</td>
-              <td class="col col-age">年龄(岁)</td>
-              <td class="col col-disease">病症类型</td>
-              <td class="col col-symptom">首发症状</td>
-              <td class="col col-operation">操作</td>
+              <td class="col col-id">{{patient.patientId}}</td>
+              <td class="col col-gender">{{getNameByCode(patient.sex, 'sex')}}</td>
+              <td class="col col-age">{{patient.age}}</td>
+              <td class="col col-disease">{{getNameByCode(patient.diseaseType, 'diseType')}}</td>
+              <td class="col col-symptom">{{getNameByCodeListString(patient.firSym, 'firSym')}}</td>
+              <td class="col col-operation">
+                <span class="text-button" @click="seePatientDetail(patient.patientId)">查看</span>
+                <span class="text-button" @click="manageGroup(patient.patientId)">分组</span>
+              </td>
             </tr>
           </table>
         </div>
@@ -755,8 +758,12 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
+import { queryPatientsByCondition } from 'api/patient.js';
+import { vueCopy } from 'utils/helper.js';
+import Util from 'utils/util.js';
 
 const PERSONAL_INFO = 'personalInfo';
 const DIAGNOSTIC_INFO = 'diagnosticInfo';
@@ -809,10 +816,15 @@ export default {
 
       displayDiagnosticExaminationCondition: true,
       diagnosticExaminationCondition: {},
-      diagnosticExaminationSelectedStatus: {}
+      diagnosticExaminationSelectedStatus: {},
+
+      patientList: []
     };
   },
   computed: {
+    ...mapGetters([
+      'typeGroup'
+    ]),
     currentTabBottomBar() {
       if (this.currentTab === PERSONAL_INFO) {
         return 'first-tab';
@@ -984,6 +996,50 @@ export default {
         this.$set(this.diagnosticExaminationCondition, fieldName, '');
         this.$set(this.diagnosticExaminationSelectedStatus, fieldName, false);
       });
+    },
+    queryPatients(condition) {
+      if (!condition) {
+        condition = {};
+      }
+      queryPatientsByCondition(condition).then((data) => {
+        vueCopy(data, this.patientList);
+        this.updateScrollContent();
+      }, (error) => {
+        console.log(error);
+      });
+    },
+    getNameByCode(code, typeGroupCode) {
+      var types = Util.getElement('typegroupcode', typeGroupCode, this.typeGroup).types;
+      types = types ? types : [];
+      var matchedType = Util.getElement('typeCode', code, types);
+      return matchedType.typeName ? matchedType.typeName : '';
+    },
+    getNameByCodeListString(codeListString, typeGroupCode) {
+      // 传过来的参数是一个字符串
+      if (typeof codeListString === 'string') {
+        var codeList = codeListString.split(',');
+        var result = '';
+        for (let code of codeList) {
+          code = parseInt(code, 10);
+          result += this.getNameByCode(code, typeGroupCode) + '  ';
+        }
+        return result;
+      } else {
+        return '';
+      }
+    },
+    seePatientDetail(patientId) {
+      patientId = parseInt(patientId, 10);
+      this.$router.push({
+        name: 'patientInfo',
+        params: {
+          id: patientId
+        }
+      });
+    },
+    manageGroup(patientId) {
+      patientId = parseInt(patientId, 10);
+
     }
   },
   created() {
@@ -994,6 +1050,7 @@ export default {
     this.updateScrollContent();
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollList);
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollContent);
+    this.queryPatients();
   },
   watch: {
     $route() {
@@ -1331,6 +1388,7 @@ export default {
             position: relative;
             border: 1px solid @light-gray-color;
             box-sizing: border-box;
+            white-space: pre-wrap;
             &.col-num {
               width: @col-num-width;
             }
@@ -1351,6 +1409,18 @@ export default {
             }
             &.col-operation {
               width: @col-operation-width;
+            }
+            .text-button {
+              padding: 0 5px;
+              cursor: pointer;
+              &:hover {
+                color: @light-font-color;
+                border-bottom: 1px solid @light-font-color;
+              }
+              &:active {
+                color: @theme-color;
+                border-bottom: 1px solid @theme-color;
+              }
             }
           }
         }

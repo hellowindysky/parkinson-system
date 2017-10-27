@@ -742,3 +742,13 @@ export function modVitalSigns(patientCase) {
 
   return encapsulatePromise(url, request);
 };
+
+// 综合查询
+export function queryPatientsByCondition(condition) {
+  var request = Object.assign({}, getCommonRequest());
+  var url = baseUrl + '/pdms/integratedQuery';
+  if (condition) {
+    request.integratedQueryCond = condition;
+  }
+  return encapsulatePromise(url, request);
+};
