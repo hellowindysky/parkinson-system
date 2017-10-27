@@ -266,6 +266,78 @@
             <span class="iconfont" :class="{'icon-up': displayOtherInfoCondition, 'icon-down': !displayOtherInfoCondition}"></span>
           </div>
           <div class="content" :class="{'folded': !displayOtherInfoCondition}">
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="otherInfoSelectedStatus.medType"></el-checkbox>
+              <span class="item-name long-name">其它用药史</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="otherInfoCondition.medType"
+                  :disabled="!otherInfoSelectedStatus.medType"></el-select>
+              </span>
+            </div>
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="otherInfoSelectedStatus.diseaseRelationId"></el-checkbox>
+              <span class="item-name">既往病史</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="otherInfoCondition.diseaseRelationId"
+                  :disabled="!otherInfoSelectedStatus.diseaseRelationId"></el-select>
+              </span>
+            </div>
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="otherInfoSelectedStatus.similarRole"></el-checkbox>
+              <span class="item-name">家族病史</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="otherInfoCondition.similarRole"
+                  :disabled="!otherInfoSelectedStatus.similarRole"></el-select>
+              </span>
+            </div>
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="otherInfoSelectedStatus.patientSmokeId"></el-checkbox>
+              <span class="item-name">吸烟史</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="otherInfoCondition.patientSmokeId"
+                  :disabled="!otherInfoSelectedStatus.patientSmokeId"></el-select>
+              </span>
+            </div>
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="otherInfoSelectedStatus.patientWineId"></el-checkbox>
+              <span class="item-name">饮酒史</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="otherInfoCondition.patientWineId"
+                  :disabled="!otherInfoSelectedStatus.patientWineId"></el-select>
+              </span>
+            </div>
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="otherInfoSelectedStatus.patientTeaId"></el-checkbox>
+              <span class="item-name">喝茶史</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="otherInfoCondition.patientTeaId"
+                  :disabled="!otherInfoSelectedStatus.patientTeaId"></el-select>
+              </span>
+            </div>
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="otherInfoSelectedStatus.patientCoffeeId"></el-checkbox>
+              <span class="item-name">咖啡史</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="otherInfoCondition.patientCoffeeId"
+                  :disabled="!otherInfoSelectedStatus.patientCoffeeId"></el-select>
+              </span>
+            </div>
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="otherInfoSelectedStatus.grade"></el-checkbox>
+              <span class="item-name">锻炼史</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="otherInfoCondition.grade"
+                  :disabled="!otherInfoSelectedStatus.grade"></el-select>
+              </span>
+            </div>
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="otherInfoSelectedStatus.exposedType"></el-checkbox>
+              <span class="item-name long-name">毒物接触史</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="otherInfoCondition.exposedType"
+                  :disabled="!otherInfoSelectedStatus.exposedType"></el-select>
+              </span>
+            </div>
           </div>
         </div>
 
@@ -275,6 +347,25 @@
             <span class="iconfont" :class="{'icon-up': displayDiagnosticBasicCondition, 'icon-down': !displayDiagnosticBasicCondition}"></span>
           </div>
           <div class="content" :class="{'folded': !displayDiagnosticBasicCondition}">
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="diagnosticBasicSelectedStatus.caseType"></el-checkbox>
+              <span class="item-name">诊断类型</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="diagnosticBasicCondition.caseType"
+                  :disabled="!diagnosticBasicSelectedStatus.caseType"></el-select>
+              </span>
+            </div>
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="diagnosticBasicSelectedStatus.diagTimeFrom"></el-checkbox>
+              <span class="item-name">诊断时间</span>
+              <span class="item-value">
+                <el-date-picker class="left-input" v-model="diagnosticBasicCondition.diagTimeFrom" placeholder="最早日期"
+                  :disabled="!diagnosticBasicSelectedStatus.diagTimeFrom"></el-date-picker>
+                <span class="middle-text">~</span>
+                <el-date-picker class="right-input" v-model="diagnosticBasicCondition.diagTimeTo" placeholder="最晚日期"
+                  :disabled="!diagnosticBasicSelectedStatus.diagTimeFrom"></el-date-picker>
+              </span>
+            </div>
           </div>
         </div>
 
@@ -284,6 +375,56 @@
             <span class="iconfont" :class="{'icon-up': displayDiagnosticDiseaseCondition, 'icon-down': !displayDiagnosticDiseaseCondition}"></span>
           </div>
           <div class="content" :class="{'folded': !displayDiagnosticDiseaseCondition}">
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="diagnosticDiseaseSelectedStatus.diseaseType"></el-checkbox>
+              <span class="item-name">病症类型</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="diagnosticDiseaseCondition.diseaseType"
+                  :disabled="!diagnosticDiseaseSelectedStatus.diseaseType"></el-select>
+              </span>
+            </div>
+            <div class="item auto-resize">
+              <el-checkbox class="item-checkbox" v-model="diagnosticDiseaseSelectedStatus.motorSymptomTypeId"></el-checkbox>
+              <span class="item-name long-name">运动症状</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="diagnosticDiseaseCondition.motorSymptomTypeId" multiple
+                  :disabled="!diagnosticDiseaseSelectedStatus.motorSymptomTypeId">
+                  <el-option :label="'就想试一试'" :value="0"></el-option>
+                  <el-option :label="'就想试一试'" :value="1"></el-option>
+                  <el-option :label="'就想试一试'" :value="2"></el-option>
+                  <el-option :label="'就想试一试'" :value="3"></el-option>
+                  <el-option :label="'就想试一试'" :value="4"></el-option>
+                </el-select>
+              </span>
+            </div>
+            <div class="item auto-resize">
+              <el-checkbox class="item-checkbox" v-model="diagnosticDiseaseSelectedStatus.motorComplicationsSymptomTypeId"></el-checkbox>
+              <span class="item-name long-name">运动并发症</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="diagnosticDiseaseCondition.motorComplicationsSymptomTypeId" multiple
+                  :disabled="!diagnosticDiseaseSelectedStatus.motorComplicationsSymptomTypeId">
+                  <el-option :label="'就想试一试'" :value="0"></el-option>
+                  <el-option :label="'就想试一试'" :value="1"></el-option>
+                  <el-option :label="'就想试一试'" :value="2"></el-option>
+                  <el-option :label="'就想试一试'" :value="3"></el-option>
+                  <el-option :label="'就想试一试'" :value="4"></el-option>
+                </el-select>
+              </span>
+            </div>
+            <div class="item auto-resize">
+              <el-checkbox class="item-checkbox" v-model="diagnosticDiseaseSelectedStatus.nonMotorSymptomTypeId"></el-checkbox>
+              <span class="item-name long-name">非运动症状</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="diagnosticDiseaseCondition.nonMotorSymptomTypeId" multiple
+                  :disabled="!diagnosticDiseaseSelectedStatus.nonMotorSymptomTypeId">
+                  <el-option :label="'就想试一试'" :value="0"></el-option>
+                  <el-option :label="'就想试一试'" :value="1"></el-option>
+                  <el-option :label="'就想试一试'" :value="2"></el-option>
+                  <el-option :label="'就想试一试'" :value="3"></el-option>
+                  <el-option :label="'就想试一试'" :value="4"></el-option>
+                </el-select>
+              </span>
+            </div>
           </div>
         </div>
 
