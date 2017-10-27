@@ -709,6 +709,14 @@
 
         <div class="blank-area"></div>
       </div>
+      <div class="function-area">
+        <div class="function-button left">
+          重置条件
+        </div>
+        <div class="function-button right">
+          应用条件
+        </div>
+      </div>
     </div>
     <div class="toggle-condition-button" :class="{'hide-condition-status': !displayCondition}" @click="toggleConditonDisplay">
       <div class="iconfont" :class="toggleIconClass"></div>
@@ -957,7 +965,8 @@ export default {
 
 @condition-area-width: 350px;
 @tabs-wrapper-height: 35px;
-@tabs-wrapper-margin-bottom: 8px;
+@tabs-wrapper-margin-bottom: 5px;
+@function-area-height: 45px;
 
 .filter-panel {
   position: absolute;
@@ -1017,7 +1026,7 @@ export default {
     .scroll-area {
       position: relative;
       width: 100%;
-      height: calc(~"100% - @{tabs-wrapper-height} - @{tabs-wrapper-margin-bottom}");
+      height: calc(~"100% - @{tabs-wrapper-height} - @{tabs-wrapper-margin-bottom} - @{vertical-spacing} - @{function-area-height}");
       box-sizing: border-box;
       background-color: @background-color;
       overflow: hidden;
@@ -1164,6 +1173,41 @@ export default {
             padding: 0;
           }
         }
+      }
+    }
+  }
+  .function-area {
+    position: relative;
+    bottom: 0;
+    margin-top: @vertical-spacing;
+    width: 100%;
+    height: @function-area-height;
+    background-color: @light-font-color;
+    color: #fff;
+    box-sizing: border-box;
+    font-size: @normal-font-size;
+    vertical-align: middle;
+    .function-button {
+      float: left;
+      margin-top: @function-area-height * 0.15;
+      margin-bottom: @function-area-height * 0.15;
+      width: 50%;
+      height: 70%;
+      box-sizing: border-box;
+      line-height: @function-area-height * 0.7;
+      transition: color 0.3s;
+      cursor: pointer;
+      &.left {
+        border-right: 1px solid @light-gray-color;
+      }
+      &.whole-line {
+        width: 100%;
+      }
+      &:hover {
+        opacity: 0.7;
+      }
+      &:active {
+        opacity: 0.85;
       }
     }
   }
