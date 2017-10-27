@@ -1697,7 +1697,7 @@ export default {
         .ps__scrollbar-x {
           position: relative;
           height: @scroll-bar-height;
-          background-color: #aaa;
+          background-color: @gray-color;
           border-radius: 20px;
         }
       }
@@ -1744,7 +1744,7 @@ export default {
       transition: opacity 0.3s, padding 0.2s;
       .ps__scrollbar-y {
         position: relative;
-        background-color: #aaa;
+        background-color: @gray-color;
         border-radius: 20px;
       }
     }

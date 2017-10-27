@@ -722,7 +722,34 @@
       <div class="iconfont" :class="toggleIconClass"></div>
     </div>
     <div class="content-area" :class="{'hide-condition-status': !displayCondition}">
-
+      <div class="content-scroll-area" ref="scrollContent">
+        <div class="form-head">
+          <table class="form form-head">
+            <tr class="row top-row">
+              <td class="col col-num">序号</td>
+              <td class="col col-id">患者ID</td>
+              <td class="col col-gender">性别</td>
+              <td class="col col-age">年龄(岁)</td>
+              <td class="col col-disease">病症类型</td>
+              <td class="col col-symptom">首发症状</td>
+              <td class="col col-operation">操作</td>
+            </tr>
+          </table>
+        </div>
+        <div class="form-body" ref="formBody">
+          <table class="form">
+            <tr class="row" v-for="i in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]">
+              <td class="col col-num">{{i}}</td>
+              <td class="col col-id">患者ID</td>
+              <td class="col col-gender">性别</td>
+              <td class="col col-age">年龄(岁)</td>
+              <td class="col col-disease">病症类型</td>
+              <td class="col col-symptom">首发症状</td>
+              <td class="col col-operation">操作</td>
+            </tr>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -812,11 +839,27 @@ export default {
     },
     toggleConditonDisplay() {
       this.displayCondition = !this.displayCondition;
+      this.updateScrollList();
+      this.updateScrollContent();
     },
     updateScrollList() {
       this.$nextTick(() => {
         Ps.destroy(this.$refs.scrollList);
         Ps.initialize(this.$refs.scrollList, {
+          wheelSpeed: 1,
+          minScrollbarLength: 40
+        });
+      });
+    },
+    updateScrollContent() {
+      this.$nextTick(() => {
+        Ps.destroy(this.$refs.scrollContent);
+        Ps.initialize(this.$refs.scrollContent, {
+          wheelSpeed: 1,
+          minScrollbarLength: 40
+        });
+        Ps.destroy(this.$refs.formBody);
+        Ps.initialize(this.$refs.formBody, {
           wheelSpeed: 1,
           minScrollbarLength: 40
         });
@@ -948,6 +991,9 @@ export default {
   },
   mounted() {
     this.updateScrollList();
+    this.updateScrollContent();
+    Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollList);
+    Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollContent);
   },
   watch: {
     $route() {
@@ -956,6 +1002,9 @@ export default {
         Bus.$emit(this.TOGGLE_FILTER_PANEL_DISPLAY);
       }
     }
+  },
+  beforeDestroy() {
+    Bus.$off(this.SCREEN_SIZE_CHANGE);
   }
 };
 </script>
@@ -967,6 +1016,18 @@ export default {
 @tabs-wrapper-height: 35px;
 @tabs-wrapper-margin-bottom: 5px;
 @function-area-height: 45px;
+@scroll-bar-thickness: 10px;
+@top-row-height: 40px;
+
+@col-num-width: 50px;
+@col-id-width: 150px;
+@col-gender-width: 80px;
+@col-age-width: 80px;
+@col-disease-width: 200px;
+@col-symptom-width: 300px;
+@col-operation-width: 100px;
+@table-width: @col-num-width + @col-id-width + @col-gender-width + @col-age-width +
+  @col-disease-width + @col-symptom-width + @col-operation-width;
 
 .filter-panel {
   position: absolute;
@@ -1240,8 +1301,115 @@ export default {
     right: 0;
     background-color: @background-color;
     transition: 0.3s;
+    z-index: 10;
     &.hide-condition-status {
-      left: 0;
+      left: @bar-width;
+    }
+    .content-scroll-area {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      .form {
+        width: 100%;
+        min-width: @table-width;
+        border-spacing: 0;
+        table-layout: fixed;
+        border: 1px solid @light-gray-color;
+        border-collapse:collapse;
+        text-align: center;
+        .row {
+          height: 30px;
+          line-height: 30px;
+          &.top-row {
+            height: @top-row-height;
+            line-height: @top-row-height;
+            background-color: @light-font-color;
+            color: #fff;
+          }
+          .col {
+            position: relative;
+            border: 1px solid @light-gray-color;
+            box-sizing: border-box;
+            &.col-num {
+              width: @col-num-width;
+            }
+            &.col-id {
+              width: @col-id-width;
+            }
+            &.col-gender {
+              width: @col-gender-width;
+            }
+            &.col-age {
+              width: @col-age-width;
+            }
+            &.col-disease {
+              width: @col-disease-width;
+            }
+            &.col-symptom {
+              width: @col-symptom-width;
+            }
+            &.col-operation {
+              width: @col-operation-width;
+            }
+          }
+        }
+      }
+      .ps__scrollbar-x-rail {
+        position: absolute;
+        height: @scroll-bar-thickness;
+        width: 100%;
+        bottom: 0;
+        box-sizing: border-box;
+        opacity: 0.3;
+        transition: opacity 0.3s;
+        .ps__scrollbar-x {
+          position: relative;
+          height: @scroll-bar-thickness;
+          background-color: @gray-color;
+          border-radius: 20px;
+        }
+      }
+      .ps__scrollbar-y-rail {
+        display: none;
+      }
+      &:hover {
+        .ps__scrollbar-x-rail {
+          opacity: 0.6;
+        }
+      }
+      .form-body {
+        position: relative;
+        overflow-y: hidden;
+        overflow-x: hidden;
+        width: 100%;
+        min-width: @table-width;
+        height: calc(~"100% - @{top-row-height}");
+        .ps__scrollbar-y-rail {
+          display: block;
+          position: absolute;
+          width: @scroll-bar-thickness;
+          height: 100%;
+          right: 0;
+          box-sizing: border-box;
+          opacity: 0.3;
+          transition: opacity 0.3s;
+          .ps__scrollbar-y {
+            position: relative;
+            height: 100%;
+            background-color: @gray-color;
+            border-radius: 20px;
+          }
+          &:hover {
+            .ps__scrollbar-y-rail {
+              opacity: 0.6;
+            }
+          }
+        }
+        .ps__scrollbar-x-rail {
+          display: none;
+        }
+      }
     }
   }
 }
