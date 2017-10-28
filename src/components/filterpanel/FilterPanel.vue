@@ -794,10 +794,10 @@
         <div class="blank-area"></div>
       </div>
       <div class="function-area">
-        <div class="function-button left" @click="queryPatients">
+        <div class="function-button left" @click="resetCondition">
           重置条件
         </div>
-        <div class="function-button right" @click="queryPatients({})">
+        <div class="function-button right" @click="applyCondition">
           应用条件
         </div>
       </div>
@@ -846,11 +846,60 @@ import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import { queryPatientsByCondition } from 'api/patient.js';
-import { vueCopy } from 'utils/helper.js';
+import { vueCopy, pruneObj, reviseDateFormat } from 'utils/helper.js';
 import Util from 'utils/util.js';
 
 const PERSONAL_INFO = 'personalInfo';
 const DIAGNOSTIC_INFO = 'diagnosticInfo';
+
+let basicInfoFieldNames = ['ageFrom', 'ageTo', 'birthDateFrom', 'birthDateTo',
+  'nation', 'sex', 'marryType', 'qualification', 'career', 'bloodType', 'econType',
+  'liveType', 'homeProvince'];
+let basicInfoSelectedFieldNames = ['ageFrom', 'ageFrom', 'birthDateFrom', 'birthDateFrom',
+  'nation', 'sex', 'marryType', 'qualification', 'career', 'bloodType', 'econType',
+  'liveType', 'homeProvince'];
+
+let diseaseInfoFieldNames = ['diseaseType', 'ariAgeFrom', 'ariAgeTo', 'firSym',
+  'firBody', 'firTimeFrom', 'firTimeTo', 'surTimeFrom', 'surTimeTo',
+  'diagMode', 'treatPro', 'firMed', 'getDisFac', 'getDisFac0'];
+let diseaseInfoSelectedFieldNames = ['diseaseType', 'ariAgeFrom', 'ariAgeFrom', 'firSym',
+  'firBody', 'firTimeFrom', 'firTimeFrom', 'surTimeFrom', 'surTimeFrom',
+  'diagMode', 'treatPro', 'firMed', 'getDisFac', 'getDisFac0'];
+
+let otherInfoFieldNames = ['medType', 'diseaseRelationId', 'similarRole', 'patientSmokeId',
+  'patientWineId', 'patientTeaId', 'patientCoffeeId', 'grade', 'exposedType'];
+let otherInfoSelectedFieldNames = ['medType', 'diseaseRelationId', 'similarRole', 'patientSmokeId',
+  'patientWineId', 'patientTeaId', 'patientCoffeeId', 'grade', 'exposedType'];
+
+let diagnosticBasicFieldNames = ['caseType', 'diagTimeFrom', 'diagTimeTo'];
+let diagnosticBasicSelectedFieldNames = ['caseType', 'diagTimeFrom', 'diagTimeFrom'];
+
+let diagnosticDiseaseFieldNames = ['diseaseType', 'motorSymptomTypeId',
+  'motorComplicationsSymptomTypeId', 'nonMotorSymptomTypeId'];
+let diagnosticDiseaseSelectedFieldNames = ['diseaseType', 'motorSymptomTypeId',
+  'motorComplicationsSymptomTypeId', 'nonMotorSymptomTypeId'];
+
+let diagnosticMedicineFieldNames = ['medicineType', 'medicineId', 'medicineSpecId',
+  'levodopaSingleIntakeFrom', 'levodopaSingleIntakeTo', 'levodopaTotalIntakeFrom', 'levodopaTotalIntakeTo'];
+let diagnosticMedicineSelectedFieldNames = ['medicineType', 'medicineId', 'medicineSpecId',
+  'levodopaSingleIntakeFrom', 'levodopaSingleIntakeFrom', 'levodopaTotalIntakeFrom', 'levodopaTotalIntakeFrom'];
+
+let diagnosticSurgeryFieldNames = ['preopsTimeFrom', 'preopsTimeTo', 'deviceId', 'devicePowerType',
+  'operationIntension', 'intensionTimeFrom', 'intensionTimeTo', 'surgicalInfoId', 'surgicalDateFrom',
+  'surgicalDateTo', 'dbsDateFrom', 'dbsDateTo', 'occurrenceTimeFrom', 'occurrenceTimeTo', 'majorComplicationType',
+  'minorComplicationType', 'treatment', 'result'];
+let diagnosticSurgerySelectedFieldNames = ['preopsTimeFrom', 'preopsTimeFrom', 'deviceId', 'devicePowerType',
+  'operationIntension', 'intensionTimeFrom', 'intensionTimeFrom', 'surgicalInfoId', 'surgicalDateFrom',
+  'surgicalDateFrom', 'dbsDateFrom', 'dbsDateFrom', 'occurrenceTimeFrom', 'occurrenceTimeFrom', 'majorComplicationType',
+  'minorComplicationType', 'treatment', 'result'];
+
+let diagnosticScaleFieldNames = ['inspectTimeFrom', 'inspectTimeTo', 'scaleType', 'scaleName',
+  'scaleQuestionFrom', 'scaleQuestionTo', 'scalePointFrom', 'scalePointTo', 'switchType'];
+let diagnosticScaleSelectedFieldNames = ['inspectTimeFrom', 'inspectTimeFrom', 'scaleType', 'scaleName',
+  'scaleQuestionFrom', 'scaleQuestionFrom', 'scalePointFrom', 'scalePointFrom', 'switchType'];
+
+let diagnosticExaminationFieldNames = ['spephysicalInfoId', 'bioexamId', 'emgType', 'examType'];
+let diagnosticExaminationSelectedFieldNames = ['spephysicalInfoId', 'bioexamId', 'emgType', 'examType'];
 
 export default {
   props: {
@@ -1038,68 +1087,58 @@ export default {
       }, 300);
     },
     initCondition() {
-      let basicInfoFieldNames = ['ageFrom', 'ageTo', 'birthDateFrom', 'birthDateTo',
-        'nation', 'sex', 'marryType', 'qualification', 'career', 'bloodType', 'econType',
-        'liveType', 'homeProvince'];
       basicInfoFieldNames.forEach((fieldName) => {
         this.$set(this.basicInfoCondition, fieldName, '');
+      });
+      basicInfoSelectedFieldNames.forEach((fieldName) => {
         this.$set(this.basicInfoSelectedStatus, fieldName, false);
       });
-
-      let diseaseInfoFieldNames = ['diseaseType', 'ariAgeFrom', 'ariAgeTo', 'firSym',
-        'firBody', 'firTimeFrom', 'firTimeTo', 'surTimeFrom', 'surTimeTo',
-        'diagMode', 'treatPro', 'firMed', 'getDisFac', 'getDisFac0'];
       diseaseInfoFieldNames.forEach((fieldName) => {
         this.$set(this.diseaseInfoCondition, fieldName, '');
+      });
+      diseaseInfoSelectedFieldNames.forEach((fieldName) => {
         this.$set(this.diseaseInfoSelectedStatus, fieldName, false);
       });
-
-      let otherInfoFieldNames = ['medType', 'diseaseRelationId', 'similarRole', 'patientSmokeId',
-        'patientWineId', 'patientTeaId', 'patientCoffeeId', 'grade', 'exposedType'];
       otherInfoFieldNames.forEach((fieldName) => {
         this.$set(this.otherInfoCondition, fieldName, '');
+      });
+      otherInfoSelectedFieldNames.forEach((fieldName) => {
         this.$set(this.otherInfoSelectedStatus, fieldName, false);
       });
-
-      let diagnosticBasicFieldNames = ['caseType', 'diagTimeFrom', 'diagTimeTo'];
       diagnosticBasicFieldNames.forEach((fieldName) => {
         this.$set(this.diagnosticBasicCondition, fieldName, '');
+      });
+      diagnosticBasicSelectedFieldNames.forEach((fieldName) => {
         this.$set(this.diagnosticBasicSelectedStatus, fieldName, false);
       });
-
-      let diagnosticDiseaseFieldNames = ['diseaseType', 'motorSymptomTypeId',
-        'motorComplicationsSymptomTypeId', 'nonMotorSymptomTypeId'];
       diagnosticDiseaseFieldNames.forEach((fieldName) => {
         this.$set(this.diagnosticDiseaseCondition, fieldName, '');
+      });
+      diagnosticDiseaseSelectedFieldNames.forEach((fieldName) => {
         this.$set(this.diagnosticDiseaseSelectedStatus, fieldName, false);
       });
-
-      let diagnosticMedicineFieldNames = ['medicineType', 'medicineId', 'medicineSpecId',
-        'levodopaSingleIntakeFrom', 'levodopaSingleIntakeTo', 'levodopaTotalIntakeFrom', 'levodopaTotalIntakeTo'];
       diagnosticMedicineFieldNames.forEach((fieldName) => {
         this.$set(this.diagnosticMedicineCondition, fieldName, '');
+      });
+      diagnosticMedicineSelectedFieldNames.forEach((fieldName) => {
         this.$set(this.diagnosticMedicineSelectedStatus, fieldName, false);
       });
-
-      let diagnosticSurgeryFieldNames = ['preopsTimeFrom', 'preopsTimeTo', 'deviceId', 'devicePowerType',
-        'operationIntension', 'intensionTimeFrom', 'intensionTimeTo', 'surgicalInfoId', 'surgicalDateFrom',
-        'surgicalDateTo', 'dbsDateFrom', 'dbsDateTo', 'occurrenceTimeFrom', 'occurrenceTimeTo', 'majorComplicationType',
-        'minorComplicationType', 'treatment', 'result'];
       diagnosticSurgeryFieldNames.forEach((fieldName) => {
         this.$set(this.diagnosticSurgeryCondition, fieldName, '');
+      });
+      diagnosticSurgerySelectedFieldNames.forEach((fieldName) => {
         this.$set(this.diagnosticSurgerySelectedStatus, fieldName, false);
       });
-
-      let diagnosticScaleFieldNames = ['inspectTimeFrom', 'inspectTimeTo', 'scaleType', 'scaleName',
-        'scaleQuestionFrom', 'scaleQuestionTo', 'scalePointFrom', 'scalePointTo', 'switchType'];
       diagnosticScaleFieldNames.forEach((fieldName) => {
         this.$set(this.diagnosticScaleCondition, fieldName, '');
+      });
+      diagnosticScaleSelectedFieldNames.forEach((fieldName) => {
         this.$set(this.diagnosticScaleSelectedStatus, fieldName, false);
       });
-
-      let diagnosticExaminationFieldNames = ['spephysicalInfoId', 'bioexamId', 'emgType', 'examType'];
       diagnosticExaminationFieldNames.forEach((fieldName) => {
         this.$set(this.diagnosticExaminationCondition, fieldName, '');
+      });
+      diagnosticExaminationSelectedFieldNames.forEach((fieldName) => {
         this.$set(this.diagnosticExaminationSelectedStatus, fieldName, false);
       });
     },
@@ -1199,6 +1238,171 @@ export default {
         }
       }
       return options;
+    },
+    resetCondition() {
+      this.initCondition();
+      this.queryPatients({});
+    },
+    applyCondition() {
+      // 根据表单数据生成一个 condition 对象
+      var condition = {};
+
+      // 只有当项目前面当确认框被选中，且该栏目的字段不为空的时候，才把所填的值加到 condition 的对应位置
+      condition.patientInfo = {};
+      for (let i = 0; i < basicInfoSelectedFieldNames.length; i++) {
+        let selectedFieldName = basicInfoSelectedFieldNames[i];
+        let fieldName = basicInfoFieldNames[i];
+        if (this.basicInfoSelectedStatus[selectedFieldName] && fieldName &&
+          this.basicInfoCondition[fieldName] !== undefined &&
+          this.basicInfoCondition[fieldName] !== '') {
+          let value = this.basicInfoCondition[fieldName];
+          if (value instanceof Array) {
+            value = value.join(',');
+          }
+          condition.patientInfo[fieldName] = value;
+        }
+      }
+
+      condition.patientDiseaseInfo = {};
+      for (let i = 0; i < diseaseInfoSelectedFieldNames.length; i++) {
+        let selectedFieldName = diseaseInfoSelectedFieldNames[i];
+        let fieldName = diseaseInfoFieldNames[i];
+        if (this.diseaseInfoSelectedStatus[selectedFieldName] && fieldName &&
+          this.diseaseInfoCondition[fieldName] !== undefined &&
+          this.diseaseInfoCondition[fieldName] !== '') {
+          let value = this.diseaseInfoCondition[fieldName];
+          if (value instanceof Array) {
+            value = value.join(',');
+          }
+          condition.patientDiseaseInfo[fieldName] = value;
+        }
+      }
+
+      condition.otherPatientInfo = {};
+      for (let i = 0; i < otherInfoSelectedFieldNames.length; i++) {
+        let selectedFieldName = otherInfoSelectedFieldNames[i];
+        let fieldName = otherInfoFieldNames[i];
+        if (this.otherInfoSelectedStatus[selectedFieldName] && fieldName &&
+          this.otherInfoCondition[fieldName] !== undefined &&
+          this.otherInfoCondition[fieldName] !== '') {
+          let value = this.otherInfoCondition[fieldName];
+          if (value instanceof Array) {
+            value = value.join(',');
+          }
+          condition.otherPatientInfo[fieldName] = value;
+        }
+      }
+
+      condition.otherPatientInfo = {};
+      for (let i = 0; i < otherInfoSelectedFieldNames.length; i++) {
+        let selectedFieldName = otherInfoSelectedFieldNames[i];
+        let fieldName = otherInfoFieldNames[i];
+        if (this.otherInfoSelectedStatus[selectedFieldName] && fieldName &&
+          this.otherInfoCondition[fieldName] !== undefined &&
+          this.otherInfoCondition[fieldName] !== '') {
+          let value = this.otherInfoCondition[fieldName];
+          if (value instanceof Array) {
+            value = value.join(',');
+          }
+          condition.otherPatientInfo[fieldName] = value;
+        }
+      }
+
+      condition.caseInfo = {};
+      for (let i = 0; i < diagnosticBasicSelectedFieldNames.length; i++) {
+        let selectedFieldName = diagnosticBasicSelectedFieldNames[i];
+        let fieldName = diagnosticBasicFieldNames[i];
+        if (this.diagnosticBasicSelectedStatus[selectedFieldName] && fieldName &&
+          this.diagnosticBasicCondition[fieldName] !== undefined &&
+          this.diagnosticBasicCondition[fieldName] !== '') {
+          let value = this.diagnosticBasicCondition[fieldName];
+          if (value instanceof Array) {
+            value = value.join(',');
+          }
+          condition.caseInfo[fieldName] = value;
+        }
+      }
+
+      condition.caseSymptom = {};
+      for (let i = 0; i < diagnosticDiseaseSelectedFieldNames.length; i++) {
+        let selectedFieldName = diagnosticDiseaseSelectedFieldNames[i];
+        let fieldName = diagnosticDiseaseFieldNames[i];
+        if (this.diagnosticDiseaseSelectedStatus[selectedFieldName] && fieldName &&
+          this.diagnosticDiseaseCondition[fieldName] !== undefined &&
+          this.diagnosticDiseaseCondition[fieldName] !== '') {
+          let value = this.diagnosticDiseaseCondition[fieldName];
+          if (value instanceof Array) {
+            value = value.join(',');
+          }
+          condition.caseSymptom[fieldName] = value;
+        }
+      }
+
+      condition.caseMedicine = {};
+      for (let i = 0; i < diagnosticMedicineSelectedFieldNames.length; i++) {
+        let selectedFieldName = diagnosticMedicineSelectedFieldNames[i];
+        let fieldName = diagnosticMedicineFieldNames[i];
+        if (this.diagnosticMedicineSelectedStatus[selectedFieldName] && fieldName &&
+          this.diagnosticMedicineCondition[fieldName] !== undefined &&
+          this.diagnosticMedicineCondition[fieldName] !== '') {
+          let value = this.diagnosticMedicineCondition[fieldName];
+          if (value instanceof Array) {
+            value = value.join(',');
+          }
+          condition.caseMedicine[fieldName] = value;
+        }
+      }
+
+      condition.caseSurgical = {};
+      for (let i = 0; i < diagnosticSurgerySelectedFieldNames.length; i++) {
+        let selectedFieldName = diagnosticSurgerySelectedFieldNames[i];
+        let fieldName = diagnosticSurgeryFieldNames[i];
+        if (this.diagnosticSurgerySelectedStatus[selectedFieldName] && fieldName &&
+          this.diagnosticSurgeryCondition[fieldName] !== undefined &&
+          this.diagnosticSurgeryCondition[fieldName] !== '') {
+          let value = this.diagnosticSurgeryCondition[fieldName];
+          if (value instanceof Array) {
+            value = value.join(',');
+          }
+          condition.caseSurgical[fieldName] = value;
+        }
+      }
+
+      condition.caseScale = {};
+      for (let i = 0; i < diagnosticScaleSelectedFieldNames.length; i++) {
+        let selectedFieldName = diagnosticScaleSelectedFieldNames[i];
+        let fieldName = diagnosticScaleFieldNames[i];
+        if (this.diagnosticScaleSelectedStatus[selectedFieldName] && fieldName &&
+          this.diagnosticScaleCondition[fieldName] !== undefined &&
+          this.diagnosticScaleCondition[fieldName] !== '') {
+          let value = this.diagnosticScaleCondition[fieldName];
+          if (value instanceof Array) {
+            value = value.join(',');
+          }
+          condition.caseScale[fieldName] = value;
+        }
+      }
+
+      condition.caseInspect = {};
+      for (let i = 0; i < diagnosticExaminationSelectedFieldNames.length; i++) {
+        let selectedFieldName = diagnosticExaminationSelectedFieldNames[i];
+        let fieldName = diagnosticExaminationFieldNames[i];
+        if (this.diagnosticExaminationSelectedStatus[selectedFieldName] && fieldName &&
+          this.diagnosticExaminationCondition[fieldName] !== undefined &&
+          this.diagnosticExaminationCondition[fieldName] !== '') {
+          let value = this.diagnosticExaminationCondition[fieldName];
+          if (value instanceof Array) {
+            value = value.join(',');
+          }
+          condition.caseInspect[fieldName] = value;
+        }
+      }
+
+      reviseDateFormat(condition);
+      pruneObj(condition);
+
+      // console.log(condition);
+      this.queryPatients(condition);
     },
     queryPatients(condition) {
       if (!condition) {
