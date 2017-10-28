@@ -50,7 +50,10 @@
               <span class="item-name">性别</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="basicInfoCondition.sex" placeholder="请输入性别"
-                  :disabled="!basicInfoSelectedStatus.sex"></el-select>
+                  :disabled="!basicInfoSelectedStatus.sex">
+                  <el-option v-for="option in getOptions('sex')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
               </span>
             </div>
             <div class="item">
@@ -58,7 +61,10 @@
               <span class="item-name">婚姻状况</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="basicInfoCondition.marryType"
-                  :disabled="!basicInfoSelectedStatus.marryType"></el-select>
+                  :disabled="!basicInfoSelectedStatus.marryType">
+                  <el-option v-for="option in getOptions('maryType')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
               </span>
             </div>
             <div class="item">
@@ -66,7 +72,10 @@
               <span class="item-name">学历</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="basicInfoCondition.qualification"
-                  :disabled="!basicInfoSelectedStatus.qualification"></el-select>
+                  :disabled="!basicInfoSelectedStatus.qualification">
+                  <el-option v-for="option in getOptions('qualifica')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
               </span>
             </div>
             <div class="item">
@@ -74,7 +83,10 @@
               <span class="item-name">职业</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="basicInfoCondition.career"
-                  :disabled="!basicInfoSelectedStatus.career"></el-select>
+                  :disabled="!basicInfoSelectedStatus.career">
+                  <el-option v-for="option in getOptions('career')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
               </span>
             </div>
             <div class="item">
@@ -82,7 +94,10 @@
               <span class="item-name">血型</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="basicInfoCondition.bloodType"
-                  :disabled="!basicInfoSelectedStatus.bloodType"></el-select>
+                  :disabled="!basicInfoSelectedStatus.bloodType">
+                  <el-option v-for="option in getOptions('bloodType')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
               </span>
             </div>
             <div class="item">
@@ -90,7 +105,10 @@
               <span class="item-name">经济现状</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="basicInfoCondition.econType"
-                  :disabled="!basicInfoSelectedStatus.econType"></el-select>
+                  :disabled="!basicInfoSelectedStatus.econType">
+                  <el-option v-for="option in getOptions('econeType')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
               </span>
             </div>
             <div class="item">
@@ -98,7 +116,10 @@
               <span class="item-name">居住现状</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="basicInfoCondition.liveType"
-                  :disabled="!basicInfoSelectedStatus.liveType"></el-select>
+                  :disabled="!basicInfoSelectedStatus.liveType">
+                  <el-option v-for="option in getOptions('liveType')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
               </span>
             </div>
             <div class="item">
@@ -106,7 +127,10 @@
               <span class="item-name">籍贯</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="basicInfoCondition.homeProvince"
-                  :disabled="!basicInfoSelectedStatus.homeProvince"></el-select>
+                  :disabled="!basicInfoSelectedStatus.homeProvince">
+                  <el-option v-for="option in getOptions('homeProvince')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
               </span>
             </div>
           </div>
@@ -997,6 +1021,22 @@ export default {
         this.$set(this.diagnosticExaminationSelectedStatus, fieldName, false);
       });
     },
+    getOptions(fieldName) {
+      var options = [];
+      let fieldNameListInTypeGroup = ['sex', 'maryType', 'qualifica', 'career', 'bloodType',
+        'econeType', 'liveType', 'homeProvince'];
+      if (fieldNameListInTypeGroup.indexOf(fieldName) >= 0) {
+        var types = Util.getElement('typegroupcode', fieldName, this.typeGroup).types;
+        types = types ? types : [];
+        for (let type of types) {
+          options.push({
+            name: type.typeName,
+            code: type.typeCode
+          });
+        }
+      }
+      return options;
+    },
     queryPatients(condition) {
       if (!condition) {
         condition = {};
@@ -1039,7 +1079,7 @@ export default {
     },
     manageGroup(patientId) {
       patientId = parseInt(patientId, 10);
-
+      console.log(patientId);
     }
   },
   created() {
