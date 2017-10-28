@@ -696,7 +696,10 @@
               <span class="item-name">量表类型</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="diagnosticScaleCondition.scaleType"
-                  :disabled="!diagnosticScaleSelectedStatus.scaleType"></el-select>
+                  :disabled="!diagnosticScaleSelectedStatus.scaleType">
+                  <el-option v-for="option in getOptions('gaugeType')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
               </span>
             </div>
             <div class="item">
@@ -704,7 +707,10 @@
               <span class="item-name">量表名称</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="diagnosticScaleCondition.scaleName"
-                  :disabled="!diagnosticScaleSelectedStatus.scaleName"></el-select>
+                  :disabled="!diagnosticScaleSelectedStatus.scaleName">
+                  <el-option v-for="option in getOptions('scaleName')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+              </el-select>
               </span>
             </div>
             <div class="item">
@@ -723,7 +729,10 @@
               <span class="item-name">填写状态</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="diagnosticScaleCondition.switchType"
-                  :disabled="!diagnosticScaleSelectedStatus.switchType"></el-select>
+                  :disabled="!diagnosticScaleSelectedStatus.switchType">
+                  <el-option v-for="option in getOptions('switchType')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
               </span>
             </div>
           </div>
@@ -891,7 +900,8 @@ export default {
       'medicineInfo',
       'deviceInfo',
       'surgicalTypeList',
-      'complicationTypeList'
+      'complicationTypeList',
+      'scaleList'
     ]),
     currentTabBottomBar() {
       if (this.currentTab === PERSONAL_INFO) {
@@ -1087,7 +1097,7 @@ export default {
         'econeType', 'liveType', 'homeProvince', 'diseaseType', 'firSym', 'firBody', 'diagMode',
         'treatPro', 'firMed', 'getDisFac', 'getDisFac0', 'medType', 'diseaseRelationId',
         'sameRole', 'habitSmoke', 'habitWine', 'habitTea', 'habitCoffee', 'exeGrade', 'expType',
-        'diseType', 'durgType', 'majorType', 'treatment', 'result'];
+        'diseType', 'durgType', 'majorType', 'treatment', 'result', 'gaugeType', 'switchType'];
       if (fieldNameListInTypeGroup.indexOf(fieldName) >= 0) {
         var types = Util.getElement('typegroupcode', fieldName, this.typeGroup).types;
         types = types ? types : [];
@@ -1151,7 +1161,13 @@ export default {
             });
           }
         }
-
+      } else if (fieldName === 'scaleName') {
+        for (let scale of this.scaleList) {
+          options.push({
+            code: scale.id,
+            name: scale.gaugeName
+          });
+        }
       }
       return options;
     },

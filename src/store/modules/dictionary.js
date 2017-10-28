@@ -162,6 +162,13 @@ const getters = {
     }
     return state.all.tableData.patientComplicationType;
   },
+  scaleList: (state) => {
+    // 术后并发症
+    if (!state.all.tableData || !state.all.tableData.scaleInfo) {
+      return [];
+    }
+    return state.all.tableData.scaleInfo;
+  },
   neurologicCheckTypeList: (state) => {
     // 神经系统检查
     if (!state.all.tableData || !state.all.tableData.spephysicalInfo) {
