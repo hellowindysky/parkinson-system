@@ -749,7 +749,10 @@
               <span class="item-name long-name">神经系统检查</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="diagnosticExaminationCondition.spephysicalInfoId"
-                  :disabled="!diagnosticExaminationSelectedStatus.spephysicalInfoId"></el-select>
+                  :disabled="!diagnosticExaminationSelectedStatus.spephysicalInfoId">
+                  <el-option v-for="option in getOptions('spephysicalInfoId')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
               </span>
             </div>
             <div class="item">
@@ -757,23 +760,32 @@
               <span class="item-name long-name">生化指标检查</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="diagnosticExaminationCondition.bioexamId"
-                  :disabled="!diagnosticExaminationSelectedStatus.bioexamId"></el-select>
+                  :disabled="!diagnosticExaminationSelectedStatus.bioexamId">
+                  <el-option v-for="option in getOptions('bioexamId')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
               </span>
             </div>
             <div class="item">
               <el-checkbox class="item-checkbox" v-model="diagnosticExaminationSelectedStatus.emgType"></el-checkbox>
-              <span class="item-name long-name">肌电图</span>
+              <span class="item-name">肌电图</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="diagnosticExaminationCondition.emgType"
-                  :disabled="!diagnosticExaminationSelectedStatus.emgType"></el-select>
+                  :disabled="!diagnosticExaminationSelectedStatus.emgType">
+                  <el-option v-for="option in getOptions('eleType')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
               </span>
             </div>
             <div class="item">
               <el-checkbox class="item-checkbox" v-model="diagnosticExaminationSelectedStatus.examType"></el-checkbox>
-              <span class="item-name long-name">医学影像</span>
+              <span class="item-name">医学影像</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="diagnosticExaminationCondition.examType"
-                  :disabled="!diagnosticExaminationSelectedStatus.examType"></el-select>
+                  :disabled="!diagnosticExaminationSelectedStatus.examType">
+                  <el-option v-for="option in getOptions('examType')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
               </span>
             </div>
           </div>
@@ -901,7 +913,9 @@ export default {
       'deviceInfo',
       'surgicalTypeList',
       'complicationTypeList',
-      'scaleList'
+      'scaleList',
+      'neurologicCheckTypeList',
+      'bioexamTypeList'
     ]),
     currentTabBottomBar() {
       if (this.currentTab === PERSONAL_INFO) {
@@ -1097,7 +1111,8 @@ export default {
         'econeType', 'liveType', 'homeProvince', 'diseaseType', 'firSym', 'firBody', 'diagMode',
         'treatPro', 'firMed', 'getDisFac', 'getDisFac0', 'medType', 'diseaseRelationId',
         'sameRole', 'habitSmoke', 'habitWine', 'habitTea', 'habitCoffee', 'exeGrade', 'expType',
-        'diseType', 'durgType', 'majorType', 'treatment', 'result', 'gaugeType', 'switchType'];
+        'diseType', 'durgType', 'majorType', 'treatment', 'result', 'gaugeType', 'switchType',
+        'eleType', 'examType'];
       if (fieldNameListInTypeGroup.indexOf(fieldName) >= 0) {
         var types = Util.getElement('typegroupcode', fieldName, this.typeGroup).types;
         types = types ? types : [];
@@ -1166,6 +1181,20 @@ export default {
           options.push({
             code: scale.id,
             name: scale.gaugeName
+          });
+        }
+      } else if (fieldName === 'spephysicalInfoId') {
+        for (let neurologicCheck of this.neurologicCheckTypeList) {
+          options.push({
+            code: neurologicCheck.id,
+            name: neurologicCheck.spephysicalName
+          });
+        }
+      } else if (fieldName === 'bioexamId') {
+        for (let bioexam of this.bioexamTypeList) {
+          options.push({
+            code: bioexam.id,
+            name: bioexam.examName
           });
         }
       }

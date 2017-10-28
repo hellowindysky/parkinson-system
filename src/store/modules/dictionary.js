@@ -163,7 +163,7 @@ const getters = {
     return state.all.tableData.patientComplicationType;
   },
   scaleList: (state) => {
-    // 术后并发症
+    // 量表
     if (!state.all.tableData || !state.all.tableData.scaleInfo) {
       return [];
     }
