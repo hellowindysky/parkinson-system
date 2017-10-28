@@ -147,7 +147,10 @@
               <span class="item-name">疾病类型</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="diseaseInfoCondition.diseaseType"
-                  :disabled="!diseaseInfoSelectedStatus.diseaseType"></el-select>
+                  :disabled="!diseaseInfoSelectedStatus.diseaseType">
+                  <el-option v-for="option in getOptions('diseaseType')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
               </span>
             </div>
             <div class="item">
@@ -167,11 +170,8 @@
               <span class="item-value">
                 <el-select class="normal-input" v-model="diseaseInfoCondition.firSym" multiple
                   :disabled="!diseaseInfoSelectedStatus.firSym">
-                  <el-option :label="'就想试一试'" :value="0"></el-option>
-                  <el-option :label="'就想试一试'" :value="1"></el-option>
-                  <el-option :label="'就想试一试'" :value="2"></el-option>
-                  <el-option :label="'就想试一试'" :value="3"></el-option>
-                  <el-option :label="'就想试一试'" :value="4"></el-option>
+                  <el-option v-for="option in getOptions('firSym')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
                 </el-select>
               </span>
             </div>
@@ -181,11 +181,8 @@
               <span class="item-value">
                 <el-select class="normal-input" v-model="diseaseInfoCondition.firBody" multiple
                   :disabled="!diseaseInfoSelectedStatus.firBody">
-                  <el-option :label="'就想试一试'" :value="0"></el-option>
-                  <el-option :label="'就想试一试'" :value="1"></el-option>
-                  <el-option :label="'就想试一试'" :value="2"></el-option>
-                  <el-option :label="'就想试一试'" :value="3"></el-option>
-                  <el-option :label="'就想试一试'" :value="4"></el-option>
+                  <el-option v-for="option in getOptions('firBody')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
                 </el-select>
               </span>
             </div>
@@ -217,11 +214,8 @@
               <span class="item-value">
                 <el-select class="normal-input" v-model="diseaseInfoCondition.diagMode" multiple
                   :disabled="!diseaseInfoSelectedStatus.diagMode">
-                  <el-option :label="'就想试一试'" :value="0"></el-option>
-                  <el-option :label="'就想试一试'" :value="1"></el-option>
-                  <el-option :label="'就想试一试'" :value="2"></el-option>
-                  <el-option :label="'就想试一试'" :value="3"></el-option>
-                  <el-option :label="'就想试一试'" :value="4"></el-option>
+                  <el-option v-for="option in getOptions('diagMode')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
                 </el-select>
               </span>
             </div>
@@ -231,11 +225,8 @@
               <span class="item-value">
                 <el-select class="normal-input" v-model="diseaseInfoCondition.treatPro" multiple
                   :disabled="!diseaseInfoSelectedStatus.treatPro">
-                  <el-option :label="'就想试一试'" :value="0"></el-option>
-                  <el-option :label="'就想试一试'" :value="1"></el-option>
-                  <el-option :label="'就想试一试'" :value="2"></el-option>
-                  <el-option :label="'就想试一试'" :value="3"></el-option>
-                  <el-option :label="'就想试一试'" :value="4"></el-option>
+                  <el-option v-for="option in getOptions('treatPro')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
                 </el-select>
               </span>
             </div>
@@ -245,11 +236,8 @@
               <span class="item-value">
                 <el-select class="normal-input" v-model="diseaseInfoCondition.firMed" multiple
                   :disabled="!diseaseInfoSelectedStatus.firMed">
-                  <el-option :label="'就想试一试'" :value="0"></el-option>
-                  <el-option :label="'就想试一试'" :value="1"></el-option>
-                  <el-option :label="'就想试一试'" :value="2"></el-option>
-                  <el-option :label="'就想试一试'" :value="3"></el-option>
-                  <el-option :label="'就想试一试'" :value="4"></el-option>
+                  <el-option v-for="option in getOptions('firMed')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
                 </el-select>
               </span>
             </div>
@@ -259,11 +247,8 @@
               <span class="item-value">
                 <el-select class="normal-input" v-model="diseaseInfoCondition.getDisFac" multiple
                   :disabled="!diseaseInfoSelectedStatus.getDisFac">
-                  <el-option :label="'就想试一试'" :value="0"></el-option>
-                  <el-option :label="'就想试一试'" :value="1"></el-option>
-                  <el-option :label="'就想试一试'" :value="2"></el-option>
-                  <el-option :label="'就想试一试'" :value="3"></el-option>
-                  <el-option :label="'就想试一试'" :value="4"></el-option>
+                  <el-option v-for="option in getOptions('getDisFac')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
                 </el-select>
               </span>
             </div>
@@ -273,11 +258,8 @@
               <span class="item-value">
                 <el-select class="normal-input" v-model="diseaseInfoCondition.getDisFac0" multiple
                   :disabled="!diseaseInfoSelectedStatus.getDisFac0">
-                  <el-option :label="'就想试一试'" :value="0"></el-option>
-                  <el-option :label="'就想试一试'" :value="1"></el-option>
-                  <el-option :label="'就想试一试'" :value="2"></el-option>
-                  <el-option :label="'就想试一试'" :value="3"></el-option>
-                  <el-option :label="'就想试一试'" :value="4"></el-option>
+                  <el-option v-for="option in getOptions('getDisFac')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
                 </el-select>
               </span>
             </div>
@@ -292,10 +274,13 @@
           <div class="content" :class="{'folded': !displayOtherInfoCondition}">
             <div class="item">
               <el-checkbox class="item-checkbox" v-model="otherInfoSelectedStatus.medType"></el-checkbox>
-              <span class="item-name long-name">其它用药史</span>
+              <span class="item-name">其它用药史</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="otherInfoCondition.medType"
-                  :disabled="!otherInfoSelectedStatus.medType"></el-select>
+                  :disabled="!otherInfoSelectedStatus.medType">
+                  <el-option v-for="option in getOptions('medType')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
               </span>
             </div>
             <div class="item">
@@ -303,7 +288,10 @@
               <span class="item-name">既往病史</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="otherInfoCondition.diseaseRelationId"
-                  :disabled="!otherInfoSelectedStatus.diseaseRelationId"></el-select>
+                  :disabled="!otherInfoSelectedStatus.diseaseRelationId">
+                  <el-option v-for="option in getOptions('diseaseRelationId')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
               </span>
             </div>
             <div class="item">
@@ -311,7 +299,10 @@
               <span class="item-name">家族病史</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="otherInfoCondition.similarRole"
-                  :disabled="!otherInfoSelectedStatus.similarRole"></el-select>
+                  :disabled="!otherInfoSelectedStatus.similarRole">
+                  <el-option v-for="option in getOptions('sameRole')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
               </span>
             </div>
             <div class="item">
@@ -319,7 +310,10 @@
               <span class="item-name">吸烟史</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="otherInfoCondition.patientSmokeId"
-                  :disabled="!otherInfoSelectedStatus.patientSmokeId"></el-select>
+                  :disabled="!otherInfoSelectedStatus.patientSmokeId">
+                  <el-option v-for="option in getOptions('habitSmoke')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
               </span>
             </div>
             <div class="item">
@@ -327,7 +321,10 @@
               <span class="item-name">饮酒史</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="otherInfoCondition.patientWineId"
-                  :disabled="!otherInfoSelectedStatus.patientWineId"></el-select>
+                  :disabled="!otherInfoSelectedStatus.patientWineId">
+                  <el-option v-for="option in getOptions('habitWine')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
               </span>
             </div>
             <div class="item">
@@ -335,7 +332,10 @@
               <span class="item-name">喝茶史</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="otherInfoCondition.patientTeaId"
-                  :disabled="!otherInfoSelectedStatus.patientTeaId"></el-select>
+                  :disabled="!otherInfoSelectedStatus.patientTeaId">
+                  <el-option v-for="option in getOptions('habitTea')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
               </span>
             </div>
             <div class="item">
@@ -343,7 +343,10 @@
               <span class="item-name">咖啡史</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="otherInfoCondition.patientCoffeeId"
-                  :disabled="!otherInfoSelectedStatus.patientCoffeeId"></el-select>
+                  :disabled="!otherInfoSelectedStatus.patientCoffeeId">
+                  <el-option v-for="option in getOptions('habitCoffee')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
               </span>
             </div>
             <div class="item">
@@ -351,15 +354,21 @@
               <span class="item-name">锻炼史</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="otherInfoCondition.grade"
-                  :disabled="!otherInfoSelectedStatus.grade"></el-select>
+                  :disabled="!otherInfoSelectedStatus.grade">
+                  <el-option v-for="option in getOptions('exeGrade')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
               </span>
             </div>
             <div class="item">
               <el-checkbox class="item-checkbox" v-model="otherInfoSelectedStatus.exposedType"></el-checkbox>
-              <span class="item-name long-name">毒物接触史</span>
+              <span class="item-name">毒物接触史</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="otherInfoCondition.exposedType"
-                  :disabled="!otherInfoSelectedStatus.exposedType"></el-select>
+                  :disabled="!otherInfoSelectedStatus.exposedType">
+                  <el-option v-for="option in getOptions('expType')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
               </span>
             </div>
           </div>
@@ -376,7 +385,10 @@
               <span class="item-name">诊断类型</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="diagnosticBasicCondition.caseType"
-                  :disabled="!diagnosticBasicSelectedStatus.caseType"></el-select>
+                  :disabled="!diagnosticBasicSelectedStatus.caseType">
+                  <el-option label="看诊" :value="1"></el-option>
+                  <el-option label="随诊" :value="2"></el-option>
+                </el-select>
               </span>
             </div>
             <div class="item">
@@ -404,7 +416,10 @@
               <span class="item-name">病症类型</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="diagnosticDiseaseCondition.diseaseType"
-                  :disabled="!diagnosticDiseaseSelectedStatus.diseaseType"></el-select>
+                  :disabled="!diagnosticDiseaseSelectedStatus.diseaseType">
+                  <el-option v-for="option in getOptions('diseType')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
               </span>
             </div>
             <div class="item auto-resize">
@@ -413,11 +428,8 @@
               <span class="item-value">
                 <el-select class="normal-input" v-model="diagnosticDiseaseCondition.motorSymptomTypeId" multiple
                   :disabled="!diagnosticDiseaseSelectedStatus.motorSymptomTypeId">
-                  <el-option :label="'就想试一试'" :value="0"></el-option>
-                  <el-option :label="'就想试一试'" :value="1"></el-option>
-                  <el-option :label="'就想试一试'" :value="2"></el-option>
-                  <el-option :label="'就想试一试'" :value="3"></el-option>
-                  <el-option :label="'就想试一试'" :value="4"></el-option>
+                  <el-option v-for="option in getOptions('symptomTypeId', 'ms')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
                 </el-select>
               </span>
             </div>
@@ -427,11 +439,8 @@
               <span class="item-value">
                 <el-select class="normal-input" v-model="diagnosticDiseaseCondition.motorComplicationsSymptomTypeId" multiple
                   :disabled="!diagnosticDiseaseSelectedStatus.motorComplicationsSymptomTypeId">
-                  <el-option :label="'就想试一试'" :value="0"></el-option>
-                  <el-option :label="'就想试一试'" :value="1"></el-option>
-                  <el-option :label="'就想试一试'" :value="2"></el-option>
-                  <el-option :label="'就想试一试'" :value="3"></el-option>
-                  <el-option :label="'就想试一试'" :value="4"></el-option>
+                  <el-option v-for="option in getOptions('symptomTypeId', 'mc')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
                 </el-select>
               </span>
             </div>
@@ -441,11 +450,8 @@
               <span class="item-value">
                 <el-select class="normal-input" v-model="diagnosticDiseaseCondition.nonMotorSymptomTypeId" multiple
                   :disabled="!diagnosticDiseaseSelectedStatus.nonMotorSymptomTypeId">
-                  <el-option :label="'就想试一试'" :value="0"></el-option>
-                  <el-option :label="'就想试一试'" :value="1"></el-option>
-                  <el-option :label="'就想试一试'" :value="2"></el-option>
-                  <el-option :label="'就想试一试'" :value="3"></el-option>
-                  <el-option :label="'就想试一试'" :value="4"></el-option>
+                  <el-option v-for="option in getOptions('symptomTypeId', 'nms')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
                 </el-select>
               </span>
             </div>
@@ -463,7 +469,10 @@
               <span class="item-name">药物类型</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="diagnosticMedicineCondition.medicineType"
-                  :disabled="!diagnosticMedicineSelectedStatus.medicineType"></el-select>
+                  :disabled="!diagnosticMedicineSelectedStatus.medicineType">
+                  <el-option v-for="option in getOptions('durgType')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
               </span>
             </div>
             <div class="item">
@@ -471,7 +480,10 @@
               <span class="item-name">使用药物</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="diagnosticMedicineCondition.medicineId"
-                  :disabled="!diagnosticMedicineSelectedStatus.medicineId"></el-select>
+                  :disabled="!diagnosticMedicineSelectedStatus.medicineId">
+                  <el-option v-for="option in getOptions('medicineId')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
               </span>
             </div>
             <div class="item">
@@ -479,7 +491,10 @@
               <span class="item-name">药物规格</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="diagnosticMedicineCondition.medicineSpecId"
-                  :disabled="!diagnosticMedicineSelectedStatus.medicineSpecId"></el-select>
+                  :disabled="!diagnosticMedicineSelectedStatus.medicineSpecId">
+                  <el-option v-for="option in getOptions('medicineSpecId')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
               </span>
             </div>
             <div class="item">
@@ -847,7 +862,9 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'typeGroup'
+      'typeGroup',
+      'symptomType',
+      'medicineInfo'
     ]),
     currentTabBottomBar() {
       if (this.currentTab === PERSONAL_INFO) {
@@ -860,6 +877,19 @@ export default {
     },
     toggleIconClass() {
       return this.displayCondition ? 'icon-arrow-left' : 'icon-arrow-right';
+    },
+    medicineInfoObj() {
+      // 如果 this.diagnosticMedicineCondition 还没有初始化，则返回空对象
+      if (!this.diagnosticMedicineCondition) {
+        return {};
+      }
+
+      // 根据最新的 diagnosticMedicineCondition.medicineId，
+      // 去 this.medicineInfo 里面获取相应的对象，从而获得该类型药物的详细参考信息
+      let medicineId = this.diagnosticMedicineCondition.medicineId;
+      // 注意，如果 medicineId 发生改变，那么也需要清空 medicineSpecId
+      this.diagnosticMedicineCondition.medicineSpecId = '';
+      return Util.getElement('medicineId', medicineId, this.medicineInfo);
     }
   },
   methods: {
@@ -1021,10 +1051,15 @@ export default {
         this.$set(this.diagnosticExaminationSelectedStatus, fieldName, false);
       });
     },
-    getOptions(fieldName) {
+    getOptions(fieldName, type) {
+      // 第二个参数代表主诉的类型（'ms', 'mc', 'nms' 分别代表运动症状，运动并发症，非运动症状）
+      // 第二个参数只有在 诊断信息 -> 病症情况 内才需要使用
       var options = [];
       let fieldNameListInTypeGroup = ['sex', 'maryType', 'qualifica', 'career', 'bloodType',
-        'econeType', 'liveType', 'homeProvince'];
+        'econeType', 'liveType', 'homeProvince', 'diseaseType', 'firSym', 'firBody', 'diagMode',
+        'treatPro', 'firMed', 'getDisFac', 'getDisFac0', 'medType', 'diseaseRelationId',
+        'sameRole', 'habitSmoke', 'habitWine', 'habitTea', 'habitCoffee', 'exeGrade', 'expType',
+        'diseType', 'durgType'];
       if (fieldNameListInTypeGroup.indexOf(fieldName) >= 0) {
         var types = Util.getElement('typegroupcode', fieldName, this.typeGroup).types;
         types = types ? types : [];
@@ -1032,6 +1067,35 @@ export default {
           options.push({
             name: type.typeName,
             code: type.typeCode
+          });
+        }
+      } else if (fieldName === 'symptomTypeId') {
+        const typeDict = {
+          'ms': 0,
+          'mc': 1,
+          'nms': 2
+        };
+        for (let symptomTypeItem of this.symptomType) {
+          if (symptomTypeItem.symptomtype === typeDict[type]) {
+            options.push({
+              name: symptomTypeItem.sympName,
+              code: symptomTypeItem.id
+            });
+          }
+        }
+      } else if (fieldName === 'medicineId') {
+        for (let medicineItem of this.medicineInfo) {
+          options.push({
+            name: medicineItem.medicineName,
+            code: medicineItem.medicineId
+          });
+        }
+      } else if (fieldName === 'medicineSpecId') {
+        let specGroups = this.medicineInfoObj.spec ? this.medicineInfoObj.spec : [];
+        for (let spec of specGroups) {
+          options.push({
+            name: spec.specOral,
+            code: spec.specOral
           });
         }
       }
@@ -1253,7 +1317,7 @@ export default {
             .item-name {
               display: inline-block;
               position: absolute;
-              left: 40px;
+              left: 35px;
               &.long-name {
                 left: 35px;
                 font-size: @small-font-size;
