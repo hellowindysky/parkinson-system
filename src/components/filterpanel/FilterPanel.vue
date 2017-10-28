@@ -544,7 +544,10 @@
               <span class="item-name">设备品牌</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="diagnosticSurgeryCondition.deviceId"
-                  :disabled="!diagnosticSurgerySelectedStatus.deviceId"></el-select>
+                  :disabled="!diagnosticSurgerySelectedStatus.deviceId">
+                  <el-option v-for="option in getOptions('deviceId')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
               </span>
             </div>
             <div class="item">
@@ -552,7 +555,10 @@
               <span class="item-name">设备类型</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="diagnosticSurgeryCondition.devicePowerType"
-                  :disabled="!diagnosticSurgerySelectedStatus.devicePowerType"></el-select>
+                  :disabled="!diagnosticSurgerySelectedStatus.devicePowerType">
+                  <el-option label="充电" :value="0"></el-option>
+                  <el-option label="不充电" :value="1"></el-option>
+                </el-select>
               </span>
             </div>
             <div class="item">
@@ -560,7 +566,10 @@
               <span class="item-name">患者意愿</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="diagnosticSurgeryCondition.operationIntension"
-                  :disabled="!diagnosticSurgerySelectedStatus.operationIntension"></el-select>
+                  :disabled="!diagnosticSurgerySelectedStatus.operationIntension">
+                  <el-option label="否" :value="0"></el-option>
+                  <el-option label="是" :value="1"></el-option>
+                </el-select>
               </span>
             </div>
             <div class="item">
@@ -579,7 +588,10 @@
               <span class="item-name">手术方案</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="diagnosticSurgeryCondition.surgicalInfoId"
-                  :disabled="!diagnosticSurgerySelectedStatus.surgicalInfoId"></el-select>
+                  :disabled="!diagnosticSurgerySelectedStatus.surgicalInfoId">
+                  <el-option v-for="option in getOptions('surgicalInfoId')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
               </span>
             </div>
             <div class="item">
@@ -620,7 +632,10 @@
               <span class="item-name">并发症大类</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="diagnosticSurgeryCondition.majorComplicationType"
-                  :disabled="!diagnosticSurgerySelectedStatus.majorComplicationType"></el-select>
+                  :disabled="!diagnosticSurgerySelectedStatus.majorComplicationType">
+                  <el-option v-for="option in getOptions('majorType')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
               </span>
             </div>
             <div class="item">
@@ -628,7 +643,10 @@
               <span class="item-name">并发症小类</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="diagnosticSurgeryCondition.minorComplicationType"
-                  :disabled="!diagnosticSurgerySelectedStatus.minorComplicationType"></el-select>
+                  :disabled="!diagnosticSurgerySelectedStatus.minorComplicationType">
+                  <el-option v-for="option in getOptions('minorComplicationType')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
               </span>
             </div>
             <div class="item">
@@ -636,7 +654,10 @@
               <span class="item-name">处理方案</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="diagnosticSurgeryCondition.treatment"
-                  :disabled="!diagnosticSurgerySelectedStatus.treatment"></el-select>
+                  :disabled="!diagnosticSurgerySelectedStatus.treatment">
+                  <el-option v-for="option in getOptions('treatment')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
               </span>
             </div>
             <div class="item">
@@ -644,7 +665,10 @@
               <span class="item-name">处理结果</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="diagnosticSurgeryCondition.result"
-                  :disabled="!diagnosticSurgerySelectedStatus.result"></el-select>
+                  :disabled="!diagnosticSurgerySelectedStatus.result">
+                  <el-option v-for="option in getOptions('result')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
               </span>
             </div>
           </div>
@@ -864,7 +888,10 @@ export default {
     ...mapGetters([
       'typeGroup',
       'symptomType',
-      'medicineInfo'
+      'medicineInfo',
+      'deviceInfo',
+      'surgicalTypeList',
+      'complicationTypeList'
     ]),
     currentTabBottomBar() {
       if (this.currentTab === PERSONAL_INFO) {
@@ -879,17 +906,18 @@ export default {
       return this.displayCondition ? 'icon-arrow-left' : 'icon-arrow-right';
     },
     medicineInfoObj() {
-      // 如果 this.diagnosticMedicineCondition 还没有初始化，则返回空对象
-      if (!this.diagnosticMedicineCondition) {
-        return {};
-      }
-
       // 根据最新的 diagnosticMedicineCondition.medicineId，
       // 去 this.medicineInfo 里面获取相应的对象，从而获得该类型药物的详细参考信息
       let medicineId = this.diagnosticMedicineCondition.medicineId;
       // 注意，如果 medicineId 发生改变，那么也需要清空 medicineSpecId
       this.diagnosticMedicineCondition.medicineSpecId = '';
       return Util.getElement('medicineId', medicineId, this.medicineInfo);
+    },
+    majorComplicationType() {
+      // 这个计算属性存在的主要意义在于，当切换了术后并发症的大类时，要及时清空并发症小类
+      let majorComplicationType = this.diagnosticSurgeryCondition.majorComplicationType;
+      this.diagnosticSurgeryCondition.minorComplicationType = '';
+      return majorComplicationType;
     }
   },
   methods: {
@@ -1059,7 +1087,7 @@ export default {
         'econeType', 'liveType', 'homeProvince', 'diseaseType', 'firSym', 'firBody', 'diagMode',
         'treatPro', 'firMed', 'getDisFac', 'getDisFac0', 'medType', 'diseaseRelationId',
         'sameRole', 'habitSmoke', 'habitWine', 'habitTea', 'habitCoffee', 'exeGrade', 'expType',
-        'diseType', 'durgType'];
+        'diseType', 'durgType', 'majorType', 'treatment', 'result'];
       if (fieldNameListInTypeGroup.indexOf(fieldName) >= 0) {
         var types = Util.getElement('typegroupcode', fieldName, this.typeGroup).types;
         types = types ? types : [];
@@ -1098,6 +1126,32 @@ export default {
             code: spec.specOral
           });
         }
+      } else if (fieldName === 'deviceId') {
+        for (let device of this.deviceInfo) {
+          if (device.deviceType === 1) {
+            options.push({
+              name: device.deviceName,
+              code: device.id
+            });
+          }
+        }
+      } else if (fieldName === 'surgicalInfoId') {
+        for (let surgicalMethod of this.surgicalTypeList) {
+          options.push({
+            code: surgicalMethod.id,
+            name: surgicalMethod.surgicaName  // 数据库拼写错误，掉了一个 l
+          });
+        }
+      } else if (fieldName === 'minorComplicationType') {
+        for (let type of this.complicationTypeList) {
+          if (this.majorComplicationType === type.majorComplicationType) {
+            options.push({
+              name: type.minorComplicationName,
+              code: type.id
+            });
+          }
+        }
+
       }
       return options;
     },
