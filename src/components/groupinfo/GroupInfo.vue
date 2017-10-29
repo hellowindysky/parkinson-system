@@ -19,7 +19,7 @@
     <!-- <div class="seperate-bar"></div> -->
     <div class="card-wrapper" ref="cardWrapper">
       <div v-show="mode!==ADDING_MODE" class="card" :class="devideWidth" v-for="(patient, i) in groupPatients"
-        :title="patient.name" @click="clickCard(i)">
+        @click="clickCard(i)">
         <img class="image" src="~img/profile.png" alt="">
         <el-checkbox class="select" v-model="groupPatientsSelectedList[i]" v-show="mode===REMOVING_MODE"></el-checkbox>
         <div class="text first-line">
@@ -33,7 +33,8 @@
         </div>
       </div>
 
-      <div v-show="mode===ADDING_MODE" class="card" :class="devideWidth" v-for="(patient, i) in nonGroupPatients" :title="patient.name" v-on:clickCurrentCard="seeDetail(patient)">
+      <div v-show="mode===ADDING_MODE" class="card" :class="devideWidth" v-for="(patient, i) in nonGroupPatients"
+        @click="clickCard(i)">
         <img class="image" src="~img/profile.png" alt="">
         <el-checkbox class="select" v-show="mode===ADDING_MODE" v-model="nonGroupPatientsSelectedList[i]"></el-checkbox>
         <div class="text first-line">
