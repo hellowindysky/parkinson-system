@@ -1484,11 +1484,11 @@ export default {
 @top-row-height: 40px;
 
 @col-num-width: 50px;
-@col-id-width: 150px;
-@col-gender-width: 80px;
-@col-age-width: 80px;
-@col-disease-width: 200px;
-@col-symptom-width: 300px;
+@col-id-width: 80px;
+@col-gender-width: 60px;
+@col-age-width: 60px;
+@col-disease-width: 120px;
+@col-symptom-width: 400px;
 @col-operation-width: 100px;
 @table-width: @col-num-width + @col-id-width + @col-gender-width + @col-age-width +
   @col-disease-width + @col-symptom-width + @col-operation-width;
