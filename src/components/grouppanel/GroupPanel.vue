@@ -158,6 +158,7 @@ export default {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      transition: color 0.1s;
       cursor: pointer;
       &.selected {
         background-color: @button-color;

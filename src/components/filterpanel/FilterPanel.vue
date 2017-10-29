@@ -837,6 +837,8 @@
           </table>
         </div>
       </div>
+      <group-panel class="group-panel" :class="{'hide': !displayGroupPanel}" :belongGroups="belongGroups"
+        :display="displayGroupPanel" :patientId="Number(patientId)" @hideGroupPanel="hideGroupPanel"></group-panel>
     </div>
   </div>
 </template>
@@ -845,9 +847,11 @@
 import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
-import { queryPatientsByCondition } from 'api/patient.js';
+import { queryPatientsByCondition, getPatientGroupInfo } from 'api/patient.js';
 import { vueCopy, pruneObj, reviseDateFormat } from 'utils/helper.js';
 import Util from 'utils/util.js';
+
+import GroupPanel from 'components/grouppanel/GroupPanel';
 
 const PERSONAL_INFO = 'personalInfo';
 const DIAGNOSTIC_INFO = 'diagnosticInfo';
@@ -951,7 +955,10 @@ export default {
       diagnosticExaminationCondition: {},
       diagnosticExaminationSelectedStatus: {},
 
-      patientList: []
+      patientList: [],
+      displayGroupPanel: false,
+      belongGroups: [],
+      patientId: ''
     };
   },
   computed: {
@@ -1446,8 +1453,43 @@ export default {
     },
     manageGroup(patientId) {
       patientId = parseInt(patientId, 10);
-      console.log(patientId);
+      // 如果分组面板已是打开状态，那么会给出提示，需要先关闭分组面板
+      if (this.displayGroupPanel) {
+        if (this.patientId !== patientId) {
+          this.$message({
+            message: '请先关闭其他患者的分组面板',
+            type: 'warning',
+            duration: 2000
+          });
+        }
+        return;
+      }
+
+      this.patientId = patientId;
+      let patientInfo = {
+        'patientId': this.patientId
+      };
+      this.belongGroups = [];
+      getPatientGroupInfo(patientInfo).then((data) => {
+        this.belongGroups = data;
+        this.$nextTick(() => {
+          this.displayGroupPanel = true;
+        });
+      }, (error) => {
+        this.$message({
+          message: '获取该患者分组信息失败，请稍后再点击',
+          type: 'warning',
+          duration: 2000
+        });
+        console.log(error);
+      });
+    },
+    hideGroupPanel() {
+      this.displayGroupPanel = false;
     }
+  },
+  components: {
+    GroupPanel
   },
   created() {
     this.initCondition();
@@ -1501,6 +1543,7 @@ export default {
   height: calc(~"100% - @{header-height} - @{header-margin-bottom}");
   background-color: @background-color;
   transition: 0.5s;
+  overflow: hidden;
   z-index: 300;
   &.hide {
     transform: translateY(-150%);
@@ -1886,6 +1929,16 @@ export default {
         .ps__scrollbar-x-rail {
           display: none;
         }
+      }
+    }
+    .group-panel {
+      position: absolute;
+      right: 0;
+      top: 0;
+      transition: 0.3s;
+      z-index: 200;
+      &.hide {
+        right: -@group-panel-width;
       }
     }
   }
