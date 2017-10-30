@@ -58,7 +58,10 @@
       </div>
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
-      <div class="button submit-button" @click="submit">确定</div>
+      <div v-show="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD"
+        class="button submit-button" @click="submit">确定</div>
+      <div v-show="mode===VIEW_CURRENT_CARD && canEdit"
+        class="button edit-button" @click="switchToEditingMode">编辑</div>
     </div>
   </div>
 </template>
@@ -179,6 +182,13 @@ export default {
       } else {
         return [];
       }
+    },
+    canEdit() {
+      if (this.$route.matched.some(record => record.meta.myPatients)) {
+        return true;
+      } else {
+        return false;
+      }
     }
   },
   methods: {
@@ -218,6 +228,9 @@ export default {
       for (var i = 0; i < this.template.length; i++) {
         // console.log(this.template[i].fieldName);
       }
+    },
+    switchToEditingMode() {
+      this.mode = this.EDIT_CURRENT_CARD;
     },
     cancel() {
       this.displayModal = false;
@@ -451,6 +464,10 @@ export default {
     template: function() {
       // 只有在 template 更新后，才去初始化 this.copyInfo 的值
       this.initCopyInfo();
+    },
+    $route: function() {
+      // 路由被手动变化之后，自动关闭模态框
+      this.cancel();
     }
   },
   beforeDestroy() {
@@ -562,7 +579,7 @@ export default {
       &.cancel-button {
         background-color: @light-font-color;
       }
-      &.submit-button {
+      &.submit-button, &.edit-button {
         background-color: @button-color;
       }
       &:hover {
