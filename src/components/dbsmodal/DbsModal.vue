@@ -8,7 +8,7 @@
             设备品牌
             <span class="required-mark">*</span>
           </span>
-          <span class="field-input" v-if="cardOperationMode===VIEW_CURRENT_CARD">
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             {{getFieldValue(copyInfo.deviceId, 'deviceId')}}
           </span>
           <span class="field-input" v-else>
@@ -21,7 +21,7 @@
         </div>
         <div class="field">
           <span class="field-name">设备类型</span>
-          <span class="field-input" v-if="cardOperationMode===VIEW_CURRENT_CARD">
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             {{getFieldValue(copyInfo.devicePowerType, 'devicePowerType')}}
           </span>
           <span class="field-input" v-else>
@@ -42,7 +42,7 @@
             程控时间
             <span class="required-mark">*</span>
           </span>
-          <span class="field-input" v-if="cardOperationMode===VIEW_CURRENT_CARD">
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             {{copyInfo.programDate}}
           </span>
           <span class="field-input" v-else>
@@ -53,7 +53,7 @@
         </div>
         <div class="field whole-line double-line">
           <span class="field-name">备注</span>
-          <span class="field-input" v-if="cardOperationMode===VIEW_CURRENT_CARD">
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             {{copyInfo.remarks}}
           </span>
           <span class="field-input" v-else>
@@ -64,7 +64,7 @@
         <div class="field">
           <span class="field-name">首次开机</span>
           <span class="field-input">
-            <el-select v-model="modelType" :disabled="mode === EDIT_DATA" @change="selectFirstOrFollow">
+            <el-select v-model="modelType" :disabled="mode !== ADD_NEW_CARD" @change="selectFirstOrFollow">
               <el-option label="是" :value="1"></el-option>
               <el-option label="否" :value="0"></el-option>
             </el-select>
@@ -742,7 +742,6 @@ export default {
     return {
       displayModal: false,
       mode: '',
-      cardOperationMode: '',
       dbsPatientCode: '',
       modelType: 1, // 这个用来控制是否为首次开机，1为首次，0为非首次
       copyInfo: {},
@@ -770,9 +769,9 @@ export default {
       'deviceInfo'
     ]),
     title() {
-      if (this.mode === this.ADD_DATA) {
+      if (this.mode === this.ADD_NEW_CARD) {
         return '新增程控记录';
-      } else if (this.mode === this.EDIT_DATA) {
+      } else if (this.mode === this.EDIT_CURRENT_CARD || this.mode === this.VIEW_CURRENT_CARD) {
         return '程控记录';
       } else {
         return '';
@@ -789,16 +788,15 @@ export default {
     }
   },
   methods: {
-    showModal(cardOperation, changeWay, info) {
-      this.cardOperationMode = cardOperation;
+    showModal(cardOperation, info) {
+      this.mode = cardOperation;
       this.completeInit = false;
-      this.mode = changeWay;
-      if (this.mode === this.ADD_DATA) {
+      if (this.mode === this.ADD_NEW_CARD) {
         this.modelType = 0;   // 新增程控记录的时候，“首次开机”默认选择“否”
         this.completeInit = true;
-      } else if (this.mode === this.EDIT_DATA && info.patientDbsFirstId) {
+      } else if (info.patientDbsFirstId) {
         this.modelType = 1;
-      } else if (this.mode === this.EDIT_DATA && info.patientDbsFollowId) {
+      } else if (info.patientDbsFollowId) {
         this.modelType = 0;
       }
       this.updateModelType();
@@ -814,8 +812,9 @@ export default {
         console.log(error);
       });
 
-      // 如果是编辑已有的程控记录，就要查询其程控信息的详情
-      if (this.mode === this.EDIT_DATA && info.patientDbsFirstId) {
+      // 如果是阅读或编辑已有的程控记录，就要查询其程控信息的详情
+      if ((this.mode === this.EDIT_CURRENT_CARD || this.mode === this.VIEW_CURRENT_CARD) &&
+        info.patientDbsFirstId) {
         this.modelType = 1;
         this.initByFirstModel();
         getDbsFirstInfo(info.patientDbsFirstId).then((data) => {
@@ -826,7 +825,8 @@ export default {
             this.completeInit = true; // 放在 nextTick 中，才不会触发 changeDevice()
           });
         });
-      } else if (this.mode === this.EDIT_DATA && info.patientDbsFollowId) {
+      } else if ((this.mode === this.EDIT_CURRENT_CARD || this.mode === this.VIEW_CURRENT_CARD) &&
+        info.patientDbsFollowId) {
         this.modelType = 0;
         this.initByFollowModel();
         var patientId = this.$route.params.id;
@@ -845,6 +845,9 @@ export default {
       this.displayModal = true;
       this.clearWarning();
       this.updateScrollbar();
+    },
+    switchToEditingMode() {
+      this.mode = this.EDIT_CURRENT_CARD;
     },
     cancel() {
       this.displayModal = false;
@@ -868,14 +871,14 @@ export default {
       reviseDateFormat(this.copyInfo);
       pruneObj(this.copyInfo);
 
-      if (this.modelType === 1 && this.mode === this.ADD_DATA) {
+      if (this.modelType === 1 && this.mode === this.ADD_NEW_CARD) {
         delete this.copyInfo.followDbsParams;
         addDbsFirstInfo(this.copyInfo).then(() => {
           this.updateAndClose();
         }, (error) => {
           console.log(error);
         });
-      } else if (this.modelType === 1 && this.mode === this.EDIT_DATA) {
+      } else if (this.modelType === 1 && this.mode === this.EDIT_CURRENT_CARD) {
         delete this.copyInfo.followDbsParams;
         modifyDbsFirstInfo(this.copyInfo).then(() => {
           this.updateAndClose();
@@ -883,14 +886,14 @@ export default {
           console.log(error);
         });
 
-      } else if (this.modelType === 0 && this.mode === this.ADD_DATA) {
+      } else if (this.modelType === 0 && this.mode === this.ADD_NEW_CARD) {
         delete this.copyInfo.firstDbsParams;
         addDbsFollowInfo(this.copyInfo).then(() => {
           this.updateAndClose();
         }, (error) => {
           console.log(error);
         });
-      } else if (this.modelType === 0 && this.mode === this.EDIT_DATA) {
+      } else if (this.modelType === 0 && this.mode === this.EDIT_CURRENT_CARD) {
         delete this.copyInfo.firstDbsParams;
         modifyDbsFollowInfo(this.copyInfo).then(() => {
           this.updateAndClose();
@@ -959,7 +962,7 @@ export default {
       this.initByModelType();
 
       // 如果是新增程控记录，就要去获取额外的上次程控信息
-      if (this.mode === this.ADD_DATA) {
+      if (this.mode === this.ADD_NEW_CARD) {
         getLastDbsInfo(this.$route.params.id, this.$route.params.caseId).then((data) => {
           // 首先绑定设备和设备类型
           this.copyInfo.deviceId = data.preopsDeviceId;
