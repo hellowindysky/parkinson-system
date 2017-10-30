@@ -3,7 +3,7 @@
     <div class="diagnostic-surgery" ref="diagnosticSurgery">
       <extensible-panel class="panel pre-evaluation-panel" :mode="mutableMode" :title="preEvaluationTitle" v-on:addNewCard="addPreEvaluationRecord">
         <card class="card pre-evaluation-card" :class="bigCardWidth" :mode="mutableMode" v-for="item in preEvaluationList" :key="item.preopsInfoId"
-         :title="''" v-on:clickCurrentCard="editPreEvaluationRecord(item)"
+         :title="''" v-on:editCurrentCard="editPreEvaluationRecord(item)"
          v-on:deleteCurrentCard="deletePreEvaluationRecord(item)">
           <div class="text line-1">
             <span class="name">剂末现象: </span>
@@ -37,7 +37,7 @@
       </extensible-panel>
       <extensible-panel class="panel" :mode="mutableMode" :title="surgicalMethodTitle" v-on:addNewCard="addSurgicalRecord">
         <card class="card" :class="smallCardWidth" :mode="mutableMode" v-for="item in surgicalMethodList" :key="item.patientCaseId"
-         :title="transformSurgicalType(item.surgicalInfoId)" v-on:clickCurrentCard="editSurgicalRecord(item)"
+         :title="transformSurgicalType(item.surgicalInfoId)" v-on:editCurrentCard="editSurgicalRecord(item)"
          v-on:deleteCurrentCard="deleteSurgicalRecord(item)">
           <div class="text first-line single-line-ellipsis">
             <span class="name">备注: </span>
@@ -50,7 +50,7 @@
       </extensible-panel>
       <extensible-panel class="panel post-complication-panel" :mode="mutableMode" :title="postComplicationTitle" v-on:addNewCard="addPostComplicationRecord">
         <card class="card post-complication-card" :class="smallCardWidth" :mode="mutableMode" v-for="item in postComplicationList" :key="item.patientCaseId"
-         :title="transformComplicationType(item.minorComplicationType)" v-on:clickCurrentCard="editPostComplicationRecord(item)"
+         :title="transformComplicationType(item.minorComplicationType)" v-on:editCurrentCard="editPostComplicationRecord(item)"
          v-on:deleteCurrentCard="deletePostComplicationRecord(item)">
           <div class="text first-line">
             <span class="name">处理: </span>
@@ -65,7 +65,7 @@
       </extensible-panel>
       <extensible-panel class="panel dbs-panel" :mode="mutableMode" :title="dbsTitle" v-on:addNewCard="addDbsRecord">
         <card class="card dbs-card" :class="bigCardWidth" :mode="mutableMode" v-for="item in dbsFirstList" :key="item.patientDbsFirstId"
-         :title="''" v-on:clickCurrentCard="editDbsRecord(item)"
+         :title="''" v-on:editCurrentCard="editDbsRecord(item)"
          v-on:deleteCurrentCard="deleteDbsRecord(item)">
           <div class="text line-1">
             <span class="name">手术中心: </span>
@@ -97,7 +97,7 @@
           </div>
         </card>
         <card class="card dbs-card" :class="bigCardWidth" :mode="mutableMode" v-for="item in dbsFollowList" :key="item.patientDbsFollowId"
-         :title="''" v-on:clickCurrentCard="editDbsRecord(item)"
+         :title="''" v-on:editCurrentCard="editDbsRecord(item)"
          v-on:deleteCurrentCard="deleteDbsRecord(item)">
           <div class="text line-1">
             <span class="name">手术中心: </span>

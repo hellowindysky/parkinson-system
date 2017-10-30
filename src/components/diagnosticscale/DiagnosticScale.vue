@@ -2,7 +2,7 @@
   <folding-panel :title="'医学量表'" :mode="mutableMode"  v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
     <div class="diagnostic-scale" ref="diagnosticscale">
       <extensible-panel class="panel" :mode="mutableMode" :title="subTitle" v-on:addNewCard="addScale">
-         <card class="card" :class="devideWidth" :mode="mutableMode" v-for="item in patientScale" :key="item.id" :title="getTitle(item.scaleInfoId)" v-on:deleteCurrentCard="deleteScaleRecord(item)" v-on:clickCurrentCard="updateScaleDetail(item, 'update')">
+         <card class="card" :class="devideWidth" :mode="mutableMode" v-for="item in patientScale" :key="item.id" :title="getTitle(item.scaleInfoId)" v-on:deleteCurrentCard="deleteScaleRecord(item)" v-on:editCurrentCard="updateScaleDetail(item, 'update')">
            <div class="text first-line">量表得分: {{item.scalePoint}}</div>
            <div class="text second-line">填写时间: {{item['inspectTime']}}</div>
            <div class="text third-line">末次服药: {{item['lastTakingTime']}}</div>

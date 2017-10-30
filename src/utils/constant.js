@@ -36,7 +36,8 @@ export default {
 
   SCROLL_AREA_SIZE_CHANGE: 'scrollAreaSizeChange',
   ADD_NEW_CARD: 'addNewCard',
-  CLICK_CURRENT_CARD: 'clickCurrentCard',
+  VIEW_CURRENT_CARD: 'viewCurrentCard',
+  EDIT_CURRENT_CARD: 'editCurrentCard',
   DELETE_CURRENT_CARD: 'deleteCurrentCard',
   RECALCULATE_CARD_WIDTH: 'recalculateCardWidth',
 

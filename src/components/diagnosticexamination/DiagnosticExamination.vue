@@ -74,7 +74,7 @@
       </extensible-panel>
       <extensible-panel class="panel" :mode="mutableMode" :title="neurologicCheckTitle" v-on:addNewCard="addNeurologicCheckRecord">
         <card class="card" :class="cardWidth" :mode="mutableMode" v-for="item in neurologicCheckList" :key="item.preopsInfoId"
-         :title="transformNeurologicCheckType(item.spephysicalInfo)" v-on:clickCurrentCard="editNeurologicCheckRecord(item)"
+         :title="transformNeurologicCheckType(item.spephysicalInfo)" v-on:editCurrentCard="editNeurologicCheckRecord(item)"
          v-on:deleteCurrentCard="deleteNeurologicCheckRecord(item)">
           <div class="text first-line">
             <span class="name">诊断结果: </span>
@@ -87,7 +87,7 @@
       </extensible-panel>
       <extensible-panel class="panel" :mode="mutableMode" :title="biochemicalExamTitle" v-on:addNewCard="addBiochemicalExamRecord">
         <card class="card" :class="cardWidth" :mode="mutableMode" v-for="item in biochemicalExamList" :key="item.patientCaseId"
-         :title="transformBiochemicalExamType(item.bioexamId)" v-on:clickCurrentCard="editBiochemicalExamRecord(item)"
+         :title="transformBiochemicalExamType(item.bioexamId)" v-on:editCurrentCard="editBiochemicalExamRecord(item)"
          v-on:deleteCurrentCard="deleteBiochemicalExamRecord(item)">
           <div class="text first-line">
             <span class="name"></span>
@@ -102,7 +102,7 @@
       
       <extensible-panel class="panel" :mode="mutableMode" :title="emgTitle" v-on:addNewCard="addEmgRecord">
         <card class="card" :class="cardWidth" :mode="mutableMode" v-for="item in emgList" :key="item.patientCaseId"
-         :title="item.etgName" v-on:clickCurrentCard="editEmgRecord(item)"
+         :title="item.etgName" v-on:editCurrentCard="editEmgRecord(item)"
          v-on:deleteCurrentCard="deleteEmgRecord(item)">
           <div class="text first-line">
             <span class="name">类型</span>
@@ -117,7 +117,7 @@
 <!-- 医学影像 -->
       <extensible-panel class="panel image-panel" :mode="mutableMode" :title="medicalImagingTitle" v-on:addNewCard="addEmgRecord">
         <card class="card image-card" :class="cardWidth" :mode="mutableMode" v-for="(item,idx) in medicalImagingList" :key="idx"
-         :title="item.name" v-on:clickCurrentCard="editEmgRecord(item)"
+         :title="item.name" v-on:editCurrentCard="editEmgRecord(item)"
          v-on:deleteCurrentCard="deleteEmgRecord(item)">
           <div class="text first-line">
             <span class="name">{{item.time}}</span>
