@@ -7,6 +7,7 @@
         <card class="card pre-evaluation-card" :class="bigCardWidth" :mode="mutableMode"
           v-for="item in preEvaluationList" :key="item.preopsInfoId"
           :title="''" v-on:editCurrentCard="editPreEvaluationRecord(item)"
+          v-on:viewCurrentCard="viewPreEvaluationRecord(item)"
           v-on:deleteCurrentCard="deletePreEvaluationRecord(item)">
           <div class="text line-1">
             <span class="name">剂末现象: </span>
@@ -42,7 +43,7 @@
         v-on:addNewCard="addSurgicalRecord" :editable="canEdit">
         <card class="card" :class="smallCardWidth" :mode="mutableMode" v-for="item in surgicalMethodList" :key="item.patientCaseId"
           :title="transformSurgicalType(item.surgicalInfoId)" v-on:editCurrentCard="editSurgicalRecord(item)"
-          v-on:deleteCurrentCard="deleteSurgicalRecord(item)">
+          v-on:deleteCurrentCard="deleteSurgicalRecord(item)" v-on:viewCurrentCard="viewSurgicalRecord(item)">
           <div class="text first-line single-line-ellipsis">
             <span class="name">备注: </span>
             <span class="value">{{item.remarks}}</span>
@@ -56,7 +57,7 @@
         :title="postComplicationTitle" v-on:addNewCard="addPostComplicationRecord" :editable="canEdit">
         <card class="card post-complication-card" :class="smallCardWidth" :mode="mutableMode" v-for="item in postComplicationList" :key="item.patientCaseId"
          :title="transformComplicationType(item.minorComplicationType)" v-on:editCurrentCard="editPostComplicationRecord(item)"
-         v-on:deleteCurrentCard="deletePostComplicationRecord(item)">
+         v-on:deleteCurrentCard="deletePostComplicationRecord(item)" v-on:viewCurrentCard="viewPostComplicationRecord(item)">
           <div class="text first-line">
             <span class="name">处理: </span>
             <span class="value">{{transformTypeGroupId(item.treatment, 'treatment')}}</span>
@@ -73,7 +74,7 @@
         <card class="card dbs-card" :class="bigCardWidth" :mode="mutableMode"
           v-for="item in dbsFirstList" :key="item.patientDbsFirstId"
           :title="''" v-on:editCurrentCard="editDbsRecord(item)"
-          v-on:deleteCurrentCard="deleteDbsRecord(item)">
+          v-on:deleteCurrentCard="deleteDbsRecord(item)" v-on:viewCurrentCard="viewDbsRecord(item)">
           <div class="text line-1">
             <span class="name">手术中心: </span>
             <span class="value">{{item.surgiCenter}}</span>
@@ -104,7 +105,7 @@
           </div>
         </card>
         <card class="card dbs-card" :class="bigCardWidth" :mode="mutableMode" v-for="item in dbsFollowList" :key="item.patientDbsFollowId"
-         :title="''" v-on:editCurrentCard="editDbsRecord(item)"
+         :title="''" v-on:editCurrentCard="editDbsRecord(item)" v-on:viewCurrentCard="viewDbsRecord(item)"
          v-on:deleteCurrentCard="deleteDbsRecord(item)">
           <div class="text line-1">
             <span class="name">手术中心: </span>
@@ -248,10 +249,13 @@ export default {
     },
     addPreEvaluationRecord() {
       // 这里要传递 2 个参数，一个是模式（新增／修改），一个是当前数据对象（新建的时候为空）
-      Bus.$emit(this.SHOW_PRE_EVALUATION_MODAL, this.ADD_DATA, {});
+      Bus.$emit(this.SHOW_PRE_EVALUATION_MODAL, this.ADD_NEW_CARD, this.ADD_DATA, {});
+    },
+    viewPreEvaluationRecord(item) {
+      Bus.$emit(this.SHOW_PRE_EVALUATION_MODAL, this.VIEW_CURRENT_CARD, this.EDIT_DATA, item);
     },
     editPreEvaluationRecord(item) {
-      Bus.$emit(this.SHOW_PRE_EVALUATION_MODAL, this.EDIT_DATA, item);
+      Bus.$emit(this.SHOW_PRE_EVALUATION_MODAL, this.EDIT_CURRENT_CARD, this.EDIT_DATA, item);
     },
     deletePreEvaluationRecord(item) {
       var preEvaluation = {
@@ -264,10 +268,13 @@ export default {
     },
     addSurgicalRecord() {
       // 这里要传递 2 个参数，一个是模式（新增／修改），一个是当前数据对象（新建的时候为空）
-      Bus.$emit(this.SHOW_SURGICAL_METHOD_MODAL, this.ADD_DATA, {});
+      Bus.$emit(this.SHOW_SURGICAL_METHOD_MODAL, this.ADD_NEW_CARD, this.ADD_DATA, {});
+    },
+    viewSurgicalRecord(item) {
+      Bus.$emit(this.SHOW_SURGICAL_METHOD_MODAL, this.VIEW_CURRENT_CARD, this.EDIT_DATA, item);
     },
     editSurgicalRecord(item) {
-      Bus.$emit(this.SHOW_SURGICAL_METHOD_MODAL, this.EDIT_DATA, item);
+      Bus.$emit(this.SHOW_SURGICAL_METHOD_MODAL, this.EDIT_CURRENT_CARD, this.EDIT_DATA, item);
     },
     deleteSurgicalRecord(item) {
       var surgicalMethod = {
@@ -280,10 +287,13 @@ export default {
     },
     addPostComplicationRecord() {
       // 这里要传递 2 个参数，一个是模式（新增／修改），一个是当前数据对象（新建的时候为空）
-      Bus.$emit(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.ADD_DATA, {});
+      Bus.$emit(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.ADD_NEW_CARD, this.ADD_DATA, {});
+    },
+    viewPostComplicationRecord(item) {
+      Bus.$emit(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.VIEW_CURRENT_CARD, this.EDIT_DATA, item);
     },
     editPostComplicationRecord(item) {
-      Bus.$emit(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.EDIT_DATA, item);
+      Bus.$emit(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.EDIT_CURRENT_CARD, this.EDIT_DATA, item);
     },
     deletePostComplicationRecord(item) {
       var operativeComplication = {
@@ -296,10 +306,13 @@ export default {
     },
     addDbsRecord() {
       // 这里要传递 2 个参数，一个是模式（新增／修改），一个是当前数据对象（新建的时候为空）
-      Bus.$emit(this.SHOW_DBS_MODAL, this.ADD_DATA, {});
+      Bus.$emit(this.SHOW_DBS_MODAL, this.ADD_NEW_CARD, this.ADD_DATA, {});
+    },
+    viewDbsRecord(item) {
+      Bus.$emit(this.SHOW_DBS_MODAL, this.VIEW_CURRENT_CARD, this.EDIT_DATA, item);
     },
     editDbsRecord(item) {
-      Bus.$emit(this.SHOW_DBS_MODAL, this.EDIT_DATA, item);
+      Bus.$emit(this.SHOW_DBS_MODAL, this.EDIT_CURRENT_CARD, this.EDIT_DATA, item);
     },
     deleteDbsRecord(item) {
       // 先判断这条程控记录是首次还是非首次，从而决定调用哪个 api

@@ -8,7 +8,10 @@
             设备品牌
             <span class="required-mark">*</span>
           </span>
-          <span class="field-input">
+          <span class="field-input" v-if="cardOperationMode===VIEW_CURRENT_CARD">
+            {{getFieldValue(copyInfo.deviceId, 'deviceId')}}
+          </span>
+          <span class="field-input" v-else>
             <span class="warning-text">{{warningResults.deviceId}}</span>
             <el-select v-model="copyInfo.deviceId" @change="changeDevice" :class="{'warning': warningResults.deviceId}">
               <el-option v-for="option in getOptions('deviceId')" :label="option.name"
@@ -18,7 +21,10 @@
         </div>
         <div class="field">
           <span class="field-name">设备类型</span>
-          <span class="field-input">
+          <span class="field-input" v-if="cardOperationMode===VIEW_CURRENT_CARD">
+            {{getFieldValue(copyInfo.devicePowerType, 'devicePowerType')}}
+          </span>
+          <span class="field-input" v-else>
             <el-select v-model="copyInfo.devicePowerType">
               <el-option label="充电" :value="1"></el-option>
               <el-option label="不充电" :value="0"></el-option>
@@ -36,7 +42,10 @@
             程控时间
             <span class="required-mark">*</span>
           </span>
-          <span class="field-input">
+          <span class="field-input" v-if="cardOperationMode===VIEW_CURRENT_CARD">
+            {{copyInfo.programDate}}
+          </span>
+          <span class="field-input" v-else>
             <span class="warning-text">{{warningResults.programDate}}</span>
             <el-date-picker v-model="copyInfo.programDate" @change="updateWarning('programDate')"
               :class="{'warning': warningResults.programDate}"></el-date-picker>
@@ -44,7 +53,10 @@
         </div>
         <div class="field whole-line double-line">
           <span class="field-name">备注</span>
-          <span class="field-input">
+          <span class="field-input" v-if="cardOperationMode===VIEW_CURRENT_CARD">
+            {{copyInfo.remarks}}
+          </span>
+          <span class="field-input" v-else>
             <el-input type="textarea" v-model="copyInfo.remarks"></el-input>
           </span>
         </div>
@@ -730,6 +742,7 @@ export default {
     return {
       displayModal: false,
       mode: '',
+      cardOperationMode: '',
       dbsPatientCode: '',
       modelType: 1, // 这个用来控制是否为首次开机，1为首次，0为非首次
       copyInfo: {},
@@ -776,7 +789,8 @@ export default {
     }
   },
   methods: {
-    showModal(changeWay, info) {
+    showModal(cardOperation, changeWay, info) {
+      this.cardOperationMode = cardOperation;
       this.completeInit = false;
       this.mode = changeWay;
       if (this.mode === this.ADD_DATA) {
@@ -1100,6 +1114,17 @@ export default {
     updateRightContactOrder() {
       var filteredArray = this.rightContactSortArray.filter(contact => contact !== '');
       this.copyInfo.rightContactEffectOrder = filteredArray.join('>');
+    },
+    getFieldValue(code, fieldName) {
+      var options = this.getOptions(fieldName);
+      if (fieldName === 'devicePowerType') {
+        options = [
+          {code: 1, name: '充电'},
+          {code: 0, name: '不充电'}
+        ];
+      }
+      var value = Util.getElement('code', code, options).name;
+      return value ? value : '';
     },
     getOptions(fieldName) {
       // 这里的第二个参数不是必须的，在查询药物规格时会用到
