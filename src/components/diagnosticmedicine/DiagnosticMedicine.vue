@@ -1,7 +1,9 @@
 <template lang="html">
-  <folding-panel :title="title" :mode="mutableMode"  v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
+  <folding-panel :title="title" :mode="mutableMode"  v-on:edit="startEditing" v-on:cancel="cancel"
+    v-on:submit="submit" :editable="canEdit">
     <div class="diagnostic-medicine" ref="diagnosticMedicine">
-      <extensible-panel class="panel" :mode="mutableMode" :title="subTitle" v-on:addNewCard="addMedicine">
+      <extensible-panel class="panel" :mode="mutableMode" :title="subTitle" v-on:addNewCard="addMedicine"
+        :editable="canEdit">
         <card class="card" :class="devideWidth" :mode="mutableMode" v-for="item in diagnosticMedicine" :key="item.medicineId"
          :title="getTitle(item.medicineId)" :disable-delete="item.statusFlag===0" v-on:editCurrentCard="editMedicine(item)"
          v-on:deleteCurrentCard="deleteMedicine(item)">
@@ -52,6 +54,13 @@ export default {
     subTitle() {
       var count = this.diagnosticMedicine.length;
       return this.title + '（' + count + '条记录）';
+    },
+    canEdit() {
+      if (this.$route.matched.some(record => record.meta.myPatients)) {
+        return true;
+      } else {
+        return false;
+      }
     }
   },
   methods: {

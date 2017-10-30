@@ -1,7 +1,7 @@
 <template lang="html">
-  <folding-panel :title="'检验检查'" :mode="mutableMode"  v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
+  <folding-panel :title="'检验检查'" :mode="mutableMode"  v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit" :editable="canEdit">
     <div class="diagnostic-examination" ref="diagnosticExamination">
-      <extensible-panel class="panel" :mode="mutableMode" :title="vitalSigns" :isVitalSigns="true">
+      <extensible-panel class="panel" :mode="mutableMode" :title="vitalSigns" :isVitalSigns="true" :editable="canEdit">
         <ul class="vitalsigns">
           <li class="vital-item">
             <span class="vital-name">呼吸(次/分):</span>
@@ -72,7 +72,7 @@
           </li>
         </ul>
       </extensible-panel>
-      <extensible-panel class="panel" :mode="mutableMode" :title="neurologicCheckTitle" v-on:addNewCard="addNeurologicCheckRecord">
+      <extensible-panel class="panel" :mode="mutableMode" :title="neurologicCheckTitle" v-on:addNewCard="addNeurologicCheckRecord" :editable="canEdit">
         <card class="card" :class="cardWidth" :mode="mutableMode" v-for="item in neurologicCheckList" :key="item.preopsInfoId"
          :title="transformNeurologicCheckType(item.spephysicalInfo)" v-on:editCurrentCard="editNeurologicCheckRecord(item)"
          v-on:deleteCurrentCard="deleteNeurologicCheckRecord(item)">
@@ -85,7 +85,7 @@
           </div>
          </card>
       </extensible-panel>
-      <extensible-panel class="panel" :mode="mutableMode" :title="biochemicalExamTitle" v-on:addNewCard="addBiochemicalExamRecord">
+      <extensible-panel class="panel" :mode="mutableMode" :title="biochemicalExamTitle" v-on:addNewCard="addBiochemicalExamRecord" :editable="canEdit">
         <card class="card" :class="cardWidth" :mode="mutableMode" v-for="item in biochemicalExamList" :key="item.patientCaseId"
          :title="transformBiochemicalExamType(item.bioexamId)" v-on:editCurrentCard="editBiochemicalExamRecord(item)"
          v-on:deleteCurrentCard="deleteBiochemicalExamRecord(item)">
@@ -99,8 +99,8 @@
           </div>
         </card>
       </extensible-panel>
-      
-      <extensible-panel class="panel" :mode="mutableMode" :title="emgTitle" v-on:addNewCard="addEmgRecord">
+
+      <extensible-panel class="panel" :mode="mutableMode" :title="emgTitle" v-on:addNewCard="addEmgRecord" :editable="canEdit">
         <card class="card" :class="cardWidth" :mode="mutableMode" v-for="item in emgList" :key="item.patientCaseId"
          :title="item.etgName" v-on:editCurrentCard="editEmgRecord(item)"
          v-on:deleteCurrentCard="deleteEmgRecord(item)">
@@ -115,7 +115,7 @@
         </card>
       </extensible-panel>
 <!-- 医学影像 -->
-      <extensible-panel class="panel image-panel" :mode="mutableMode" :title="medicalImagingTitle" v-on:addNewCard="addEmgRecord">
+      <extensible-panel class="panel image-panel" :mode="mutableMode" :title="medicalImagingTitle" v-on:addNewCard="addEmgRecord" :editable="canEdit">
         <card class="card image-card" :class="cardWidth" :mode="mutableMode" v-for="(item,idx) in medicalImagingList" :key="idx"
          :title="item.name" v-on:editCurrentCard="editEmgRecord(item)"
          v-on:deleteCurrentCard="deleteEmgRecord(item)">
@@ -131,7 +131,7 @@
           <div class="text third-line">
             <span class="name">{{item.patientImageReq.checkNum}}</span>
           </div>
-          
+
         </card>
       </extensible-panel>
 
@@ -229,6 +229,13 @@ export default {
     },
     medicalImagingTitle() {
       return '医学影像（' + this.medicalImagingList.length + '条记录）';
+    },
+    canEdit() {
+      if (this.$route.matched.some(record => record.meta.myPatients)) {
+        return true;
+      } else {
+        return false;
+      }
     }
   },
   methods: {

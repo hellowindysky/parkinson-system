@@ -99,8 +99,7 @@ export default {
       }
     },
     canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients) ||
-        this.$route.params.id === 'newPatient') {
+      if (this.$route.matched.some(record => record.meta.myPatients)) {
         return true;
       } else {
         return false;

@@ -1,10 +1,13 @@
 <template lang="html">
-  <folding-panel :title="'外科手术'" :mode="mutableMode"  v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
+  <folding-panel :title="'外科手术'" :mode="mutableMode"  v-on:edit="startEditing"
+    v-on:cancel="cancel" v-on:submit="submit" :editable="canEdit">
     <div class="diagnostic-surgery" ref="diagnosticSurgery">
-      <extensible-panel class="panel pre-evaluation-panel" :mode="mutableMode" :title="preEvaluationTitle" v-on:addNewCard="addPreEvaluationRecord">
-        <card class="card pre-evaluation-card" :class="bigCardWidth" :mode="mutableMode" v-for="item in preEvaluationList" :key="item.preopsInfoId"
-         :title="''" v-on:editCurrentCard="editPreEvaluationRecord(item)"
-         v-on:deleteCurrentCard="deletePreEvaluationRecord(item)">
+      <extensible-panel class="panel pre-evaluation-panel" :mode="mutableMode"
+        :title="preEvaluationTitle" v-on:addNewCard="addPreEvaluationRecord" :editable="canEdit">
+        <card class="card pre-evaluation-card" :class="bigCardWidth" :mode="mutableMode"
+          v-for="item in preEvaluationList" :key="item.preopsInfoId"
+          :title="''" v-on:editCurrentCard="editPreEvaluationRecord(item)"
+          v-on:deleteCurrentCard="deletePreEvaluationRecord(item)">
           <div class="text line-1">
             <span class="name">剂末现象: </span>
             <span class="value">{{item.terminalDesc}}</span>
@@ -35,10 +38,11 @@
           </div>
         </card>
       </extensible-panel>
-      <extensible-panel class="panel" :mode="mutableMode" :title="surgicalMethodTitle" v-on:addNewCard="addSurgicalRecord">
+      <extensible-panel class="panel" :mode="mutableMode" :title="surgicalMethodTitle"
+        v-on:addNewCard="addSurgicalRecord" :editable="canEdit">
         <card class="card" :class="smallCardWidth" :mode="mutableMode" v-for="item in surgicalMethodList" :key="item.patientCaseId"
-         :title="transformSurgicalType(item.surgicalInfoId)" v-on:editCurrentCard="editSurgicalRecord(item)"
-         v-on:deleteCurrentCard="deleteSurgicalRecord(item)">
+          :title="transformSurgicalType(item.surgicalInfoId)" v-on:editCurrentCard="editSurgicalRecord(item)"
+          v-on:deleteCurrentCard="deleteSurgicalRecord(item)">
           <div class="text first-line single-line-ellipsis">
             <span class="name">备注: </span>
             <span class="value">{{item.remarks}}</span>
@@ -48,7 +52,8 @@
           </div>
         </card>
       </extensible-panel>
-      <extensible-panel class="panel post-complication-panel" :mode="mutableMode" :title="postComplicationTitle" v-on:addNewCard="addPostComplicationRecord">
+      <extensible-panel class="panel post-complication-panel" :mode="mutableMode"
+        :title="postComplicationTitle" v-on:addNewCard="addPostComplicationRecord" :editable="canEdit">
         <card class="card post-complication-card" :class="smallCardWidth" :mode="mutableMode" v-for="item in postComplicationList" :key="item.patientCaseId"
          :title="transformComplicationType(item.minorComplicationType)" v-on:editCurrentCard="editPostComplicationRecord(item)"
          v-on:deleteCurrentCard="deletePostComplicationRecord(item)">
@@ -63,10 +68,12 @@
           <div class="text third-line">{{item.occurrenceTime}}</div>
         </card>
       </extensible-panel>
-      <extensible-panel class="panel dbs-panel" :mode="mutableMode" :title="dbsTitle" v-on:addNewCard="addDbsRecord">
-        <card class="card dbs-card" :class="bigCardWidth" :mode="mutableMode" v-for="item in dbsFirstList" :key="item.patientDbsFirstId"
-         :title="''" v-on:editCurrentCard="editDbsRecord(item)"
-         v-on:deleteCurrentCard="deleteDbsRecord(item)">
+      <extensible-panel class="panel dbs-panel" :mode="mutableMode" :title="dbsTitle"
+        v-on:addNewCard="addDbsRecord" :editable="canEdit">
+        <card class="card dbs-card" :class="bigCardWidth" :mode="mutableMode"
+          v-for="item in dbsFirstList" :key="item.patientDbsFirstId"
+          :title="''" v-on:editCurrentCard="editDbsRecord(item)"
+          v-on:deleteCurrentCard="deleteDbsRecord(item)">
           <div class="text line-1">
             <span class="name">手术中心: </span>
             <span class="value">{{item.surgiCenter}}</span>
@@ -201,6 +208,13 @@ export default {
     },
     dbsFollowList() {
       return this.diagnosticSurgery.patientDbsFollowList ? this.diagnosticSurgery.patientDbsFollowList : [];
+    },
+    canEdit() {
+      if (this.$route.matched.some(record => record.meta.myPatients)) {
+        return true;
+      } else {
+        return false;
+      }
     }
   },
   methods: {

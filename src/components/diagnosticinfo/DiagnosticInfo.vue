@@ -1,7 +1,8 @@
 <template lang="html">
   <div class="diagnostic-info-wrapper" ref="diagnosticInfo">
-    <folding-panel class="panel" :title="'看诊记录'" :mode="mode" :isCardsPanel="true" :folded-status="foldedStatus" v-on:edit="startEditing" v-on:cancel="cancel"
-      v-on:submit="submit" v-on:addNewCard="addRecord" v-on:updateFilterCondition="changeFilterCondition">
+    <folding-panel class="panel" :title="'看诊记录'" :mode="mode" :isCardsPanel="true" :folded-status="foldedStatus"
+      v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit" v-on:addNewCard="addRecord"
+      v-on:updateFilterCondition="changeFilterCondition" :editable="canEdit">
       <card class="card" :class="devideWidth" :mode="mode" v-for="item in patientCaseList" :key="item.caseName"
         :title="item.caseName" v-on:editCurrentCard="seeDetail(item)" v-on:deleteCurrentCard="deleteRecord(item)"
         v-show="passFilter(item)">
@@ -51,6 +52,13 @@ export default {
         return 'otherPatients';
       } else {
         return 'unknown';
+      }
+    },
+    canEdit() {
+      if (this.$route.matched.some(record => record.meta.myPatients)) {
+        return true;
+      } else {
+        return false;
       }
     }
   },

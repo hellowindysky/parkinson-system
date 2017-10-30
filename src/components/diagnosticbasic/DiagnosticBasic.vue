@@ -1,6 +1,6 @@
 <template lang="html">
   <folding-panel :title="'基本情况'" :mode="mutableMode" :folded-status="foldedStatus"
-    v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
+    v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit" :editable="canEdit">
     <div class="diagnostic-basic">
       <div v-for="field in diagnosticBasicTemplate" class="field"
        :class="{'whole-line': field.fieldName === 'remarks', 'multi-line': field.fieldName === 'remarks'}">
@@ -84,6 +84,13 @@ export default {
         return 'otherPatients';
       } else {
         return 'unknown';
+      }
+    },
+    canEdit() {
+      if (this.$route.matched.some(record => record.meta.myPatients)) {
+        return true;
+      } else {
+        return false;
       }
     }
   },

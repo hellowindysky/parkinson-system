@@ -9,7 +9,7 @@
       <div v-show="editable && mode===EDITING_MODE" class="button submit-button" @click="submit">{{submitText}}</div>
 
       <el-select v-show="isCardsPanel" v-model="filterCondition" size="small" placeholder="筛选" class="button filter-button"
-        @change="filterCards">
+        @change="filterCards" :class="{'without-other-button': !editable}">
         <el-option label="全部" :value="FILTER_ALL"></el-option>
         <el-option label="已归档" :value="FILTER_ARCHIVED"></el-option>
         <el-option label="未归档" :value="FILTER_UNARCHIVED"></el-option>
@@ -178,6 +178,9 @@ export default {
       }
       &.filter-button {
         right: 50px + @small-button-width * 2;
+        &.without-other-button {
+          right: 10px;
+        }
         .el-input {
           font-size: @normal-font-size;
           .el-input__inner {

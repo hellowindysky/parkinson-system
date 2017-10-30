@@ -1,6 +1,6 @@
 <template lang="html">
   <folding-panel :title="'病症情况'" :mode="mutableMode" :folded-status="foldedStatus" v-on:edit="startEditing"
-    v-on:cancel="cancel" v-on:submit="submit" v-on:toggleFoldedPanel="updateScrollbar">
+    v-on:cancel="cancel" v-on:submit="submit" v-on:toggleFoldedPanel="updateScrollbar" :editable="canEdit">
     <div class="diagnostic-disease">
       <div v-for="field in diagnosticDiseaseTemplate" class="field"
         :class="{'whole-line': field.fieldName === 'caseSymptom', 'multi-line': field.fieldName === 'caseSymptom'}">
@@ -267,6 +267,13 @@ export default {
       var t2 = this.diagnosticDiseaseMcTemplate ? this.diagnosticDiseaseMcTemplate : [];
       var t3 = this.diagnosticDiseaseNmsTemplate ? this.diagnosticDiseaseNmsTemplate : [];
       return [t1.length, t2.length, t3.length];  // 这个值并没有意义
+    },
+    canEdit() {
+      if (this.$route.matched.some(record => record.meta.myPatients)) {
+        return true;
+      } else {
+        return false;
+      }
     }
   },
   props: {

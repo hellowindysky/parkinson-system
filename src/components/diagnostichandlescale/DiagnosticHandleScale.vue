@@ -54,7 +54,8 @@
            <span>开关状态:</span> <span>{{formatReadingScale(patientScale['switchType'])}}</span>
          </div>
       </div>
-      <folding-panel v-if="mode===ADD_PAGE || scaleMode===SCALE_EDITING_MODE" :title="'关联症状'" :folded-status="foldedStatus" class="associated-symptom">
+      <folding-panel v-if="mode===ADD_PAGE || scaleMode===SCALE_EDITING_MODE" :title="'关联症状'" :folded-status="foldedStatus"
+        class="associated-symptom" :editable="canEdit">
         <div class="symptom-item" v-for="(list, listkey) in patientScale['scaleSympInfoList']" :key="listkey">
             <el-checkbox class="symptom-item-title" v-model="list.status">{{list.sympName}}</el-checkbox>
             <div class="symptom-item-start">
@@ -448,7 +449,14 @@ export default {
   computed: {
     ...mapGetters([
       'scaleTemplateGroups'
-    ])
+    ]),
+    canEdit() {
+      if (this.$route.matched.some(record => record.meta.myPatients)) {
+        return true;
+      } else {
+        return false;
+      }
+    }
   },
   watch: {
     scaleSonDate: {
