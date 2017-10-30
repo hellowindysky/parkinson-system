@@ -144,11 +144,11 @@
           <div class="content" :class="{'folded': !displayDiseaseInfoCondition}">
             <div class="item">
               <el-checkbox class="item-checkbox" v-model="diseaseInfoSelectedStatus.diseaseType"></el-checkbox>
-              <span class="item-name">疾病类型</span>
+              <span class="item-name">病症类型</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="diseaseInfoCondition.diseaseType"
                   :disabled="!diseaseInfoSelectedStatus.diseaseType">
-                  <el-option v-for="option in getOptions('diseaseType')" :label="option.name" :value="option.code"
+                  <el-option v-for="option in getOptions('diseType')" :label="option.name" :value="option.code"
                     :key="option.code"></el-option>
                 </el-select>
               </span>
@@ -1154,7 +1154,7 @@ export default {
       // 第二个参数只有在 诊断信息 -> 病症情况 内才需要使用
       var options = [];
       let fieldNameListInTypeGroup = ['sex', 'maryType', 'qualifica', 'career', 'bloodType',
-        'econeType', 'liveType', 'homeProvince', 'diseaseType', 'firSym', 'firBody', 'diagMode',
+        'econeType', 'liveType', 'homeProvince', 'diseType', 'firSym', 'firBody', 'diagMode',
         'treatPro', 'firMed', 'getDisFac', 'getDisFac0', 'medType', 'diseaseRelationId',
         'sameRole', 'habitSmoke', 'habitWine', 'habitTea', 'habitCoffee', 'exeGrade', 'expType',
         'diseType', 'durgType', 'majorType', 'treatment', 'result', 'gaugeType', 'switchType',
