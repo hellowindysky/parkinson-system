@@ -25,7 +25,11 @@ export default {
   },
   methods: {
     clickSelf() {
-      this.$emit(this.CLICK_CURRENT_CARD);
+      if (this.mode === this.READING_MODE) {
+        this.$emit(this.VIEW_CURRENT_CARD);
+      } else if (this.mode === this.EDITING_MODE) {
+        this.$emit(this.EDIT_CURRENT_CARD);
+      }
     },
     deleteSelf() {
       if (!this.disableDelete) {
