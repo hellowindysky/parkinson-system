@@ -1415,6 +1415,7 @@ export default {
       if (!condition) {
         condition = {};
       }
+      this.patientList = [];
       queryPatientsByCondition(condition).then((data) => {
         vueCopy(data, this.patientList);
         this.updateScrollContent();
