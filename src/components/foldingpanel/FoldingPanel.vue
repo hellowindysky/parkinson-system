@@ -3,10 +3,10 @@
     <div class="header">
       <div class="iconfont" :class="iconToggleFolded"></div>
       <h2 class="title" @click="toggleFoldedPanel">{{title}}</h2>
-      <div v-show="mode===READING_MODE" class="button edit-button" @click="edit">编辑</div>
-      <div v-show="mode===EDITING_MODE && !isCardsPanel" class="button cancel-button" @click="cancel">取消</div>
-      <div v-show="isCardsPanel" class="button add-button" @click="add">添加</div>
-      <div v-show="mode===EDITING_MODE" class="button submit-button" @click="submit">{{submitText}}</div>
+      <div v-show="editable && mode===READING_MODE" class="button edit-button" @click="edit">编辑</div>
+      <div v-show="editable && mode===EDITING_MODE && !isCardsPanel" class="button cancel-button" @click="cancel">取消</div>
+      <div v-show="editable && isCardsPanel" class="button add-button" @click="add">添加</div>
+      <div v-show="editable && mode===EDITING_MODE" class="button submit-button" @click="submit">{{submitText}}</div>
 
       <el-select v-show="isCardsPanel" v-model="filterCondition" size="small" placeholder="筛选" class="button filter-button"
         @change="filterCards">
@@ -42,6 +42,10 @@ export default {
     isCardsPanel: {
       type: Boolean,
       default: false
+    },
+    editable: {
+      type: Boolean,
+      default: true
     }
   },
   data() {

@@ -1,5 +1,6 @@
 <template lang="html">
-  <folding-panel :title="'基础信息'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit" :folded-status="foldedStatus">
+  <folding-panel :title="'基础信息'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit"
+    :folded-status="foldedStatus" :editable="canEdit">
     <div class="basic-info">
       <div class="group" v-for="group in basicInfoTemplateGroups">
         <div class="field" v-for="field in group" :class="{'whole-line': checkIfWholeLine(field)}">
@@ -95,6 +96,14 @@ export default {
         return 'otherPatients';
       } else {
         return 'unknown';
+      }
+    },
+    canEdit() {
+      if (this.$route.matched.some(record => record.meta.myPatients) ||
+        this.$route.params.id === 'newPatient') {
+        return true;
+      } else {
+        return false;
       }
     }
   },

@@ -1,6 +1,6 @@
 <template lang="html">
   <folding-panel :title="'病症信息'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit"
-    :folded-status="foldedStatus">
+    :folded-status="foldedStatus" :editable="canEdit">
     <div class="disease-info">
       <div class="group" v-for="group in diseaseInfoTemplateGroups">
         <div class="field" v-for="field in group" :class="checkField(field)">
@@ -95,6 +95,13 @@ export default {
         flattenedGroup = flattenedGroup.concat(group);
       }
       return flattenedGroup;
+    },
+    canEdit() {
+      if (this.$route.matched.some(record => record.meta.myPatients)) {
+        return true;
+      } else {
+        return false;
+      }
     }
   },
   components: {

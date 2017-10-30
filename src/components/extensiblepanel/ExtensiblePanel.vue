@@ -2,7 +2,7 @@
   <div class="extensible-panel-wrapper">
     <div class="header">
       <h4 class="title">{{title}}</h4>
-      <div class="button add-button" :class="{'vitalsigns':isVitalSigns===true}"  @click="add">添加</div>
+      <div v-show="editable" class="button add-button" :class="{'vitalsigns':isVitalSigns===true}"  @click="add">添加</div>
       <div v-show="status === NORMAL_STATUS" class="button extend-button" @click="extend">展开</div>
       <div v-show="status === EXTENDED_STATUS" class="button shrink-button" @click="shrink">收起</div>
     </div>
@@ -28,6 +28,10 @@ export default {
     isVitalSigns: { // 如果是生命体征那么就将添加按钮隐藏
       type: Boolean,
       default: false
+    },
+    editable: {
+      type: Boolean,
+      default: true
     }
   },
   data() {

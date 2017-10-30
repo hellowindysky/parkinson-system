@@ -1,9 +1,9 @@
 <template lang="html">
   <folding-panel :title="'其它信息'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit"
-    :folded-status="foldedStatus">
+    :folded-status="foldedStatus" :editable="canEdit">
     <div class="other-info" ref="otherInfo">
 
-      <extensible-panel class="panel" :mode="mode" :title="presentHistoryTitle" v-on:addNewCard="addPresentRecord">
+      <extensible-panel class="panel" :mode="mode" :title="presentHistoryTitle" v-on:addNewCard="addPresentRecord" :editable="canEdit">
         <card class="card" :class="devideWidth" :mode="mode" v-for="item in presentHistoryList" :key="item.medName"
           :title="item.chiefComplaint" v-on:editCurrentCard="editPresentRecord(item)" v-on:viewCurrentCard="viewPresentRecord(item)"
           v-on:deleteCurrentCard="deletePresentRecord(item)">
@@ -12,7 +12,7 @@
         </card>
       </extensible-panel>
 
-      <extensible-panel class="panel" :mode="mode" :title="medHistoryTitle" v-on:addNewCard="addMedRecord">
+      <extensible-panel class="panel" :mode="mode" :title="medHistoryTitle" v-on:addNewCard="addMedRecord" :editable="canEdit">
         <card class="card" :class="devideWidth" :mode="mode" v-for="item in medHistoryList" :key="item.medName"
           :title="item.medName" v-on:editCurrentCard="editMedRecord(item)"
           v-on:viewCurrentCard="viewMedRecord(item)"
@@ -23,7 +23,7 @@
         </card>
       </extensible-panel>
 
-      <extensible-panel class="panel" :mode="mode" :title="diseaseHistoryTitle" v-on:addNewCard="addDiseaseRecord">
+      <extensible-panel class="panel" :mode="mode" :title="diseaseHistoryTitle" v-on:addNewCard="addDiseaseRecord" :editable="canEdit">
         <card class="card" :class="devideWidth" :mode="mode" v-for="item in diseaseHistoryList" :key="item.diseaseRelationId"
           :title="transform(item, 'diseaseRelationId', diseaseHistoryDictionary)" v-on:editCurrentCard="editDiseaseRecord(item)"
           v-on:viewCurrentCard="viewDiseaseRecord(item)" v-on:deleteCurrentCard="deleteDiseaseRecord(item)">
@@ -33,7 +33,7 @@
         </card>
       </extensible-panel>
 
-      <extensible-panel class="panel" :mode="mode" :title="familyHistoryTitle" v-on:addNewCard="addFamilyRecord">
+      <extensible-panel class="panel" :mode="mode" :title="familyHistoryTitle" v-on:addNewCard="addFamilyRecord" :editable="canEdit">
         <card class="card" :class="devideWidth" :mode="mode" v-for="item in familyHistoryList" :key="item.patientFamilyId"
           :title="item.diseaseName" v-on:editCurrentCard="editFamilyRecord(item)" v-on:viewCurrentCard="viewFamilyRecord(item)"
           v-on:deleteCurrentCard="deleteFamilyRecord(item)">
@@ -42,7 +42,7 @@
         </card>
       </extensible-panel>
 
-      <extensible-panel class="panel" :mode="mode" :title="personHistoryTitle" v-on:addNewCard="addPersonRecord">
+      <extensible-panel class="panel" :mode="mode" :title="personHistoryTitle" v-on:addNewCard="addPersonRecord" :editable="canEdit">
         <card class="card" :class="devideWidth" :mode="mode" v-for="item in coffeeHistoryList" :key="item.patientHabitId"
           :title="transform(item, 'patientHabitId', coffeeHistoryDictionary)"
           v-on:editCurrentCard="editPersonRecord(item, COFFEE_HISTORY_MODAL)"
@@ -84,7 +84,7 @@
         </card>
       </extensible-panel>
 
-      <extensible-panel class="panel" :mode="mode" :title="toxicHistoryTitle" v-on:addNewCard="addToxicRecord">
+      <extensible-panel class="panel" :mode="mode" :title="toxicHistoryTitle" v-on:addNewCard="addToxicRecord" :editable="canEdit">
         <card class="card" :class="devideWidth" :mode="mode" v-for="item in processedToxicList" :key="item.expmaterialName"
           :title="item.expmaterialName" v-on:editCurrentCard="editToxicRecord(item)"
           v-on:viewCurrentCard="viewToxicRecord(item)"
@@ -210,6 +210,13 @@ export default {
           processedList = processedList.concat(item.list);
         });
         return processedList;
+      }
+    },
+    canEdit() {
+      if (this.$route.matched.some(record => record.meta.myPatients)) {
+        return true;
+      } else {
+        return false;
       }
     }
   },
