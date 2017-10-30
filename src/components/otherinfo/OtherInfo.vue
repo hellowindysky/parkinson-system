@@ -5,7 +5,7 @@
 
       <extensible-panel class="panel" :mode="mode" :title="presentHistoryTitle" v-on:addNewCard="addPresentRecord">
         <card class="card" :class="devideWidth" :mode="mode" v-for="item in presentHistoryList" :key="item.medName"
-          :title="item.chiefComplaint" v-on:editCurrentCard="editPresentRecord(item)"
+          :title="item.chiefComplaint" v-on:editCurrentCard="editPresentRecord(item)" v-on:viewCurrentCard="viewPresentRecord(item)"
           v-on:deleteCurrentCard="deletePresentRecord(item)">
           <div class="text first-line">{{item.hospName}}</div>
           <div class="text start-time">{{item.ariseTime}}</div>
@@ -15,6 +15,7 @@
       <extensible-panel class="panel" :mode="mode" :title="medHistoryTitle" v-on:addNewCard="addMedRecord">
         <card class="card" :class="devideWidth" :mode="mode" v-for="item in medHistoryList" :key="item.medName"
           :title="item.medName" v-on:editCurrentCard="editMedRecord(item)"
+          v-on:viewCurrentCard="viewMedRecord(item)"
           v-on:deleteCurrentCard="deleteMedRecord(item)">
           <div class="text first-line">一天{{item.medDose}}次</div>
           <div class="text start-time">{{item.medStart}} ~</div>
@@ -25,7 +26,7 @@
       <extensible-panel class="panel" :mode="mode" :title="diseaseHistoryTitle" v-on:addNewCard="addDiseaseRecord">
         <card class="card" :class="devideWidth" :mode="mode" v-for="item in diseaseHistoryList" :key="item.diseaseRelationId"
           :title="transform(item, 'diseaseRelationId', diseaseHistoryDictionary)" v-on:editCurrentCard="editDiseaseRecord(item)"
-          v-on:deleteCurrentCard="deleteDiseaseRecord(item)">
+          v-on:viewCurrentCard="viewDiseaseRecord(item)" v-on:deleteCurrentCard="deleteDiseaseRecord(item)">
           <div class="text first-line">是否住院： {{transform(item, 'isHospitalization', diseaseHistoryDictionary)}}</div>
           <div class="text start-time">{{item.beginTime}} ~</div>
           <div class="text end-time">{{item.endTime}}</div>
@@ -34,7 +35,7 @@
 
       <extensible-panel class="panel" :mode="mode" :title="familyHistoryTitle" v-on:addNewCard="addFamilyRecord">
         <card class="card" :class="devideWidth" :mode="mode" v-for="item in familyHistoryList" :key="item.patientFamilyId"
-          :title="item.diseaseName" v-on:editCurrentCard="editFamilyRecord(item)"
+          :title="item.diseaseName" v-on:editCurrentCard="editFamilyRecord(item)" v-on:viewCurrentCard="viewFamilyRecord(item)"
           v-on:deleteCurrentCard="deleteFamilyRecord(item)">
           <div class="text first-line">{{transform(item, 'similarRole', familyHistoryDictionary)}}</div>
           <div class="text start-time">{{transform(item, 'diseaseType', familyHistoryDictionary)}}</div>
@@ -45,6 +46,7 @@
         <card class="card" :class="devideWidth" :mode="mode" v-for="item in coffeeHistoryList" :key="item.patientHabitId"
           :title="transform(item, 'patientHabitId', coffeeHistoryDictionary)"
           v-on:editCurrentCard="editPersonRecord(item, COFFEE_HISTORY_MODAL)"
+          v-on:viewCurrentCard="viewPersonRecord(item, COFFEE_HISTORY_MODAL)"
           v-on:deleteCurrentCard="deleteCoffeeRecord(item)">
           <div class="text first-line">{{item.doseInfo}} 杯/周</div>
           <div class="text start-time">{{item.startTime}}</div>
@@ -52,6 +54,7 @@
         <card class="card" :class="devideWidth" :mode="mode" v-for="item in teaHistoryList" :key="item.patientHabitId"
           :title="transform(item, 'patientHabitId', teaHistoryDictionary)"
           v-on:editCurrentCard="editPersonRecord(item, TEA_HISTORY_MODAL)"
+          v-on:viewCurrentCard="viewPersonRecord(item, TEA_HISTORY_MODAL)"
           v-on:deleteCurrentCard="deleteTeaRecord(item)">
           <div class="text first-line">{{item.doseInfo}} 杯/周</div>
           <div class="text start-time">{{item.startTime}}</div>
@@ -59,6 +62,7 @@
         <card class="card" :class="devideWidth" :mode="mode" v-for="item in smokeHistoryList" :key="item.patientHabitId"
           :title="transform(item, 'patientHabitId', smokeHistoryDictionary)"
           v-on:editCurrentCard="editPersonRecord(item, SMOKE_HISTORY_MODAL)"
+          v-on:viewCurrentCard="viewPersonRecord(item, SMOKE_HISTORY_MODAL)"
           v-on:deleteCurrentCard="deleteSmokeRecord(item)">
           <div class="text first-line">{{item.doseInfo}} 支/天</div>
           <div class="text start-time">{{item.startTime}}</div>
@@ -66,12 +70,14 @@
         <card class="card" :class="devideWidth" :mode="mode" v-for="item in wineHistoryList" :key="item.patientHabitId"
           :title="transform(item, 'patientHabitId', wineHistoryDictionary)"
           v-on:editCurrentCard="editPersonRecord(item, WINE_HISTORY_MODAL)"
+          v-on:viewCurrentCard="viewPersonRecord(item, WINE_HISTORY_MODAL)"
           v-on:deleteCurrentCard="deleteWineRecord(item)">
           <div class="text first-line">{{item.doseInfo}} mL/周</div>
           <div class="text start-time">{{item.startTime}}</div>
         </card>
         <card class="card" :class="devideWidth" :mode="mode" v-for="item in exerciseHistoryList" :key="item.patientExerciseId"
           :title="item.exeName" v-on:editCurrentCard="editPersonRecord(item, EXERCISE_HISTORY_MODAL)"
+          v-on:viewCurrentCard="viewPersonRecord(item, EXERCISE_HISTORY_MODAL)"
           v-on:deleteCurrentCard="deleteExerciseRecord(item)">
           <div class="text first-line">{{transform(item, 'grade', exerciseHistoryDictionary)}}</div>
           <div class="text second-line">{{transform(item, 'ageStage', exerciseHistoryDictionary)}}</div>
@@ -81,6 +87,7 @@
       <extensible-panel class="panel" :mode="mode" :title="toxicHistoryTitle" v-on:addNewCard="addToxicRecord">
         <card class="card" :class="devideWidth" :mode="mode" v-for="item in processedToxicList" :key="item.expmaterialName"
           :title="item.expmaterialName" v-on:editCurrentCard="editToxicRecord(item)"
+          v-on:viewCurrentCard="viewToxicRecord(item)"
           v-on:deleteCurrentCard="deleteToxicRecord(item)">
           <div class="text first-line">{{item.exposedFrquency}}</div>
           <div class="text second-line">{{transform(item, 'lifeStage', toxicExposureHistoryDictionary)}}</div>
@@ -240,11 +247,14 @@ export default {
       return matchedType.typeName ? matchedType.typeName : '';
     },
     addPresentRecord() {
-      // 这里要传递 3 个参数，一个是 title，一个是当前数据对象（新建的时候为空），另一个是模态框的类型
-      Bus.$emit(this.SHOW_MODAL_BOX, '新增现病史', {}, this.PRESENT_HISTORY_MODAL);
+      // 这里要传递 4 个参数，一个是卡片打开方式，一个是 title，一个是当前数据对象（新建的时候为空），另一个是模态框的类型
+      Bus.$emit(this.SHOW_MODAL_BOX, this.ADD_NEW_CARD, '新增现病史', {}, this.PRESENT_HISTORY_MODAL);
+    },
+    viewPresentRecord(item) {
+      Bus.$emit(this.SHOW_MODAL_BOX, this.VIEW_CURRENT_CARD, '现病史', item, this.PRESENT_HISTORY_MODAL);
     },
     editPresentRecord(item) {
-      Bus.$emit(this.SHOW_MODAL_BOX, '现病史', item, this.PRESENT_HISTORY_MODAL);
+      Bus.$emit(this.SHOW_MODAL_BOX, this.EDIT_CURRENT_CARD, '现病史', item, this.PRESENT_HISTORY_MODAL);
     },
     deletePresentRecord(item) {
       var presentHistory = {
@@ -258,10 +268,13 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addMedRecord() {
-      Bus.$emit(this.SHOW_MODAL_BOX, '新增用药史', {}, this.MEDICINE_HISTORY_MODAL);
+      Bus.$emit(this.SHOW_MODAL_BOX, this.ADD_NEW_CARD, '新增用药史', {}, this.MEDICINE_HISTORY_MODAL);
+    },
+    viewMedRecord(item) {
+      Bus.$emit(this.SHOW_MODAL_BOX, this.VIEW_CURRENT_CARD, '用药史', item, this.MEDICINE_HISTORY_MODAL);
     },
     editMedRecord(item) {
-      Bus.$emit(this.SHOW_MODAL_BOX, '用药史', item, this.MEDICINE_HISTORY_MODAL);
+      Bus.$emit(this.SHOW_MODAL_BOX, this.EDIT_CURRENT_CARD, '用药史', item, this.MEDICINE_HISTORY_MODAL);
     },
     deleteMedRecord(item) {
       var patientMed = {
@@ -275,10 +288,13 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addDiseaseRecord() {
-      Bus.$emit(this.SHOW_MODAL_BOX, '新增既往史', {}, this.DISEASE_HISTORY_MODAL);
+      Bus.$emit(this.SHOW_MODAL_BOX, this.ADD_NEW_CARD, '新增既往史', {}, this.DISEASE_HISTORY_MODAL);
+    },
+    viewDiseaseRecord(item) {
+      Bus.$emit(this.SHOW_MODAL_BOX, this.VIEW_CURRENT_CARD, '既往史', item, this.DISEASE_HISTORY_MODAL);
     },
     editDiseaseRecord(item) {
-      Bus.$emit(this.SHOW_MODAL_BOX, '既往史', item, this.DISEASE_HISTORY_MODAL);
+      Bus.$emit(this.SHOW_MODAL_BOX, this.EDIT_CURRENT_CARD, '既往史', item, this.DISEASE_HISTORY_MODAL);
     },
     deleteDiseaseRecord(item) {
       var patientDisease = {
@@ -292,10 +308,13 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addFamilyRecord() {
-      Bus.$emit(this.SHOW_MODAL_BOX, '新增家族史', {}, this.FAMILY_HISTORY_MODAL);
+      Bus.$emit(this.SHOW_MODAL_BOX, this.ADD_NEW_CARD, '新增家族史', {}, this.FAMILY_HISTORY_MODAL);
+    },
+    viewFamilyRecord(item) {
+      Bus.$emit(this.SHOW_MODAL_BOX, this.VIEW_CURRENT_CARD, '家族史', item, this.FAMILY_HISTORY_MODAL);
     },
     editFamilyRecord(item) {
-      Bus.$emit(this.SHOW_MODAL_BOX, '家族史', item, this.FAMILY_HISTORY_MODAL);
+      Bus.$emit(this.SHOW_MODAL_BOX, this.EDIT_CURRENT_CARD, '家族史', item, this.FAMILY_HISTORY_MODAL);
     },
     deleteFamilyRecord(item) {
       var patientFamily = {
@@ -309,11 +328,15 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addPersonRecord() {
-      Bus.$emit(this.SHOW_MODAL_BOX, '新增个人史', {}, this.PERSON_HISTORY_MODAL);
+      Bus.$emit(this.SHOW_MODAL_BOX, this.ADD_NEW_CARD, '新增个人史', {}, this.PERSON_HISTORY_MODAL);
+    },
+    viewPersonRecord(item, modal) {
+      // 个人史下面有几个子类（咖啡史，喝茶史，饮酒史，吸烟史，锻炼史），作为第二个参数传进来
+      Bus.$emit(this.SHOW_MODAL_BOX, this.VIEW_CURRENT_CARD, '个人史', item, modal);
     },
     editPersonRecord(item, modal) {
       // 个人史下面有几个子类（咖啡史，喝茶史，饮酒史，吸烟史，锻炼史），作为第二个参数传进来
-      Bus.$emit(this.SHOW_MODAL_BOX, '个人史', item, modal);
+      Bus.$emit(this.SHOW_MODAL_BOX, this.EDIT_CURRENT_CARD, '个人史', item, modal);
     },
     deleteCoffeeRecord(item) {
       var patientCoffee = {
@@ -371,10 +394,13 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addToxicRecord() {
-      Bus.$emit(this.SHOW_MODAL_BOX, '新增毒物接触史', {}, this.TOXIC_HISTORY_MODAL);
+      Bus.$emit(this.SHOW_MODAL_BOX, this.ADD_NEW_CARD, '新增毒物接触史', {}, this.TOXIC_HISTORY_MODAL);
+    },
+    viewToxicRecord(item) {
+      Bus.$emit(this.SHOW_MODAL_BOX, this.VIEW_CURRENT_CARD, '毒物接触史', item, this.TOXIC_HISTORY_MODAL);
     },
     editToxicRecord(item) {
-      Bus.$emit(this.SHOW_MODAL_BOX, '毒物接触史', item, this.TOXIC_HISTORY_MODAL);
+      Bus.$emit(this.SHOW_MODAL_BOX, this.EDIT_CURRENT_CARD, '毒物接触史', item, this.TOXIC_HISTORY_MODAL);
     },
     deleteToxicRecord(item) {
       var patientToxicExposure = {

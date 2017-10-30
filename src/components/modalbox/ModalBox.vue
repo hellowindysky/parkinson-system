@@ -9,7 +9,10 @@
           个人史类型
           <span class="required-mark">*</span>
         </span>
-        <span class="field-input">
+        <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+          {{getSubModalVal(subModalType)}}
+        </span>
+        <span class="field-input" v-else>
           <span class="warning-text">{{getWarningText('subModal')}}</span>
           <el-select v-model="subModalType" :class="{'warning': warningResults['subModal']}"
            placeholder="请输入个人史类型" @change="chooseSubModal" :disabled="disableChangingSubModal">
@@ -28,7 +31,13 @@
           {{field.cnfieldName}}
           <span class="required-mark" v-show="field.must===1">*</span>
         </span>
-        <span class="field-input">
+        <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+          <span v-if="getUIType(field)===3">
+            {{getFieldValue(field)}}
+          </span>
+          <span v-else>{{copyInfo[field.fieldName]}}</span>
+        </span>
+        <span class="field-input" v-else>
           <span class="warning-text">{{getWarningText(field.fieldName)}}</span>
           <span v-if="getUIType(field)===1">
             <el-input v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
@@ -59,7 +68,6 @@ import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 
-import { isEmptyObject } from 'utils/helper.js';
 import { addPatientPresentHistory, modifyPatientPresentHistory,
          addPatientMedHistory, modifyPatientMedHistory,
          addPatientDisease, modifyPatientDisease,
@@ -71,9 +79,6 @@ import { addPatientPresentHistory, modifyPatientPresentHistory,
          addPatientSmoke, modifyPatientSmoke,
          addPatientExercise, modifyPatientExercise
        } from 'api/patient.js';
-
-const ADD_MODE = 'add';
-const MODIFY_MODE = 'modify';
 
 export default {
   data() {
@@ -177,15 +182,12 @@ export default {
     }
   },
   methods: {
-    showPanel(title, originalInfo, modalType) {
+    showPanel(cardOperation, title, originalInfo, modalType) {
       this.displayModal = true;
 
-      // 通过检查 originalInfo 参数是否为空对象 {}，来决定提交时是新增记录，还是修改记录
-      if (isEmptyObject(originalInfo)) {
-        this.mode = ADD_MODE;
-      } else {
-        this.mode = MODIFY_MODE;
-      }
+      // 由 cardOperation 来决定，到底是新增记录，浏览记录，还是修改记录
+      // 这三个值分别为 this.ADD_NEW_CARD, this.VIEW_CURRENT_CARD, this.EDIT_CURRENT_CARD
+      this.mode = cardOperation;
 
       // 如果传过来的 modalType 是个人史下的子类，则将其赋值为 this.subModalType，而 this.modalType 还是个人史
       // 同时，还要禁止个人史下子类的选择，因为此时子类不可更换
@@ -253,7 +255,7 @@ export default {
       // 到这里，检验合格，准备提交数据了
       // 发出请求之前，先将“确定”按钮锁住
       this.lockSubmitButton = true;
-      if (this.mode === ADD_MODE) {
+      if (this.mode === this.ADD_NEW_CARD) {
         if (this.modalType === this.PRESENT_HISTORY_MODAL) {
           addPatientPresentHistory(this.copyInfo).then(() => {
             this.updateAndClose();
@@ -296,7 +298,7 @@ export default {
           }, this._handleError);
         }
 
-      } else if (this.mode === MODIFY_MODE) {
+      } else if (this.mode === this.EDIT_CURRENT_CARD) {
         if (this.modalType === this.PRESENT_HISTORY_MODAL) {
           modifyPatientPresentHistory(this.copyInfo).then(() => {
             this.updateAndClose();
@@ -338,6 +340,9 @@ export default {
             this.updateAndClose();
           }, this._handleError);
         }
+      } else if (this.mode === this.VIEW_CURRENT_CARD) {
+        this.displayModal = false;
+        this.lockSubmitButton = false;
       }
     },
     updateAndClose() {
@@ -369,6 +374,28 @@ export default {
       var value = dictionaryField.fieldEnumId;
       var typeInfo = Util.getElement('typegroupcode', value, this.typeGroup);
       return typeInfo.types ? typeInfo.types : [];
+    },
+    getFieldValue(field) {
+      var code = this.copyInfo[field.fieldName];
+      if (code === undefined || code === '') {
+        return '';
+      }
+      var types = this.getTypes(field);
+      var targetType = Util.getElement('typeCode', code, types);
+      return targetType.typeName ? targetType.typeName : '';
+    },
+    getSubModalVal(subModalType) {
+      if (subModalType === this.COFFEE_HISTORY_MODAL) {
+        return '咖啡史';
+      } else if (subModalType === this.WINE_HISTORY_MODAL) {
+        return '饮酒史';
+      } else if (subModalType === this.SMOKE_HISTORY_MODAL) {
+        return '吸烟史';
+      } else if (subModalType === this.TEA_HISTORY_MODAL) {
+        return '喝茶史';
+      } else if (subModalType === this.EXERCISE_HISTORY_MODAL) {
+        return '锻炼史';
+      }
     },
     updateWarning(field) {
       var fieldName = field.fieldName;
