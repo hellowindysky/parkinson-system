@@ -8,7 +8,18 @@
             {{field.cnfieldName}}
             <span class="required-mark" v-show="field.must===1">*</span>
           </span>
-          <span class="field-input">
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span v-if="getMatchedField(field.fieldName).readOnlyType===2">
+              <span v-if="field.fieldName==='commonName'">{{commonName}}</span>
+              <span v-else-if="field.fieldName==='medicalType'">{{medicalType}}</span>
+              <span v-else-if="field.fieldName==='totalMeasure'">{{totalMeasure}} mg</span>
+              <span v-else>{{medicine[field.fieldName]}}</span>
+            </span>
+            <span v-else-if="getUIType(field.fieldName)===3">
+              {{getFieldValue(field)}}
+            </span>
+          </span>
+          <span class="field-input" v-else>
             <span class="warning-text">{{warningResults[field.fieldName]}}</span>
             <span v-if="getMatchedField(field.fieldName).readOnlyType===2">
               <span v-if="field.fieldName==='commonName'">{{commonName}}</span>
@@ -16,9 +27,6 @@
               <span v-else-if="field.fieldName==='totalMeasure'">{{totalMeasure}} mg</span>
               <span v-else>{{medicine[field.fieldName]}}</span>
             </span>
-            <!-- <el-input v-else-if="getUIType(field.fieldName)===1" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-             :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)">
-            </el-input> -->
             <el-select v-else-if="getUIType(field.fieldName)===3" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
               :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
               <el-option v-for="option in getOptions(field.fieldName)" :label="option.name"
@@ -48,13 +56,15 @@
             <tr v-for="i in rowArray" class="row">
               <td class="col col-id">{{i}}</td>
               <td class="col col-time">
-                <el-time-select v-model="medicine.patientMedicineDetail[i - 1].takeTime" @change="updateTime(i - 1)"
+                <span v-if="mode===VIEW_CURRENT_CARD">{{medicine.patientMedicineDetail[i - 1].takeTime}}</span>
+                <el-time-select v-else v-model="medicine.patientMedicineDetail[i - 1].takeTime" @change="updateTime(i - 1)"
                  :class="{'warning': warningResults.patientMedicineDetail[i - 1].takeTime}" placeholder="具体时间点"
                  :editable="false" :picker-options="{start: '00:00', step: '00:30', end: '23:30'}">
                 </el-time-select>
               </td>
               <td class="col col-amount">
-                <el-input v-model="medicine.patientMedicineDetail[i - 1].takeDose" @change="updateDose(i - 1)"
+                <span v-if="mode===VIEW_CURRENT_CARD">{{medicine.patientMedicineDetail[i - 1].takeDose}}</span>
+                <el-input v-else v-model="medicine.patientMedicineDetail[i - 1].takeDose" @change="updateDose(i - 1)"
                  :class="{'warning': warningResults.patientMedicineDetail[i - 1].takeDose}" placeholder="单次服用量"></el-input>
               </td>
               <td class="col col-unit">{{medicineUnit}}</td>
@@ -67,8 +77,15 @@
             {{field.cnfieldName}}
             <span class="required-mark" v-show="field.must===1">*</span>
           </span>
-          <span class="field-input"
-          :class="{'long-field-name': isLongName(field.fieldName)}">
+          <span v-if="mode===VIEW_CURRENT_CARD" class="field-input" :class="{'long-field-name': isLongName(field.fieldName)}">
+            <span v-if="getMatchedField(field.fieldName).readOnlyType===2">
+              <span v-if="field.fieldName==='levodopaDose'">{{levodopaDose}}</span>
+              <span v-else-if="field.fieldName==='levodopaFactorUsed'">{{levodopaFactor}}</span>
+              <span v-else>{{medicine[field.fieldName]}}</span>
+            </span>
+            <span v-else>{{medicine[field.fieldName]}}</span>
+          </span>
+          <span v-else class="field-input" :class="{'long-field-name': isLongName(field.fieldName)}">
             <span class="warning-text">{{warningResults[field.fieldName]}}</span>
             <span v-if="getMatchedField(field.fieldName).readOnlyType===2">
               <span v-if="field.fieldName==='levodopaDose'">{{levodopaDose}}</span>
@@ -76,8 +93,8 @@
               <span v-else>{{medicine[field.fieldName]}}</span>
             </span>
             <el-input v-else-if="getUIType(field.fieldName)===1" v-model="medicine[field.fieldName]"
-             :class="{'warning': warningResults[field.fieldName]}" :type="getInputType(field.fieldName)"
-             :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)">
+              :class="{'warning': warningResults[field.fieldName]}" :type="getInputType(field.fieldName)"
+              :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)">
             </el-input>
           </span>
         </div>
@@ -88,20 +105,23 @@
             {{field.cnfieldName}}
             <span class="required-mark" v-show="field.must===1">*</span>
           </span>
-          <span class="field-input"
-          :class="{'long-field-name': isLongName(field.fieldName)}">
+          <span v-if="mode===VIEW_CURRENT_CARD" class="field-input" :class="{'long-field-name': isLongName(field.fieldName)}">
+            <span v-if="getUIType(field.fieldName)===3">{{getFieldValue(field)}}</span>
+            <span v-else>{{medicine[field.fieldName]}}</span>
+          </span>
+          <span v-else class="field-input" :class="{'long-field-name': isLongName(field.fieldName)}">
             <span class="warning-text">{{warningResults[field.fieldName]}}</span>
             <el-input v-if="getUIType(field.fieldName)===1" v-model="medicine[field.fieldName]"
              :class="{'warning': warningResults[field.fieldName]}" :type="getInputType(field.fieldName)"
              :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)">
             </el-input>
             <el-select v-else-if="getUIType(field.fieldName)===3" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-             :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
-             <el-option v-for="option in getOptions(field.fieldName)" :label="option.name"
-              :value="option.code" :key="option.code"></el-option>
+              :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
+              <el-option v-for="option in getOptions(field.fieldName)" :label="option.name"
+                :value="option.code" :key="option.code"></el-option>
             </el-select>
             <el-date-picker v-else-if="getUIType(field.fieldName)===6" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-             :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
+              :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
            </el-date-picker>
           </span>
         </div>
@@ -112,7 +132,11 @@
             {{field.cnfieldName}}
             <span class="required-mark" v-show="field.must===1 || hasSideEffect">*</span>
           </span>
-          <span class="field-input" :class="{'long-field-name': isLongName(field.fieldName)}">
+          <span v-if="mode===VIEW_CURRENT_CARD" class="field-input" :class="{'long-field-name': isLongName(field.fieldName)}">
+            <span v-if="getUIType(field.fieldName)===3">{{getFieldValue(field)}}</span>
+            <span v-else>{{medicine[field.fieldName]}}</span>
+          </span>
+          <span v-else class="field-input" :class="{'long-field-name': isLongName(field.fieldName)}">
             <span class="warning-text">{{warningResults[field.fieldName]}}</span>
             <el-input v-if="getUIType(field.fieldName)===1" v-model="medicine[field.fieldName]"
              :class="{'warning': warningResults[field.fieldName]}" :type="getInputType(field.fieldName)"
@@ -131,7 +155,10 @@
       </div>
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
-      <div class="button submit-button" @click="submit">确定</div>
+      <div v-show="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD"
+        class="button submit-button" @click="submit">确定</div>
+      <div v-show="mode===VIEW_CURRENT_CARD && canEdit"
+        class="button edit-button" @click="switchToEditingMode">编辑</div>
     </div>
   </div>
 </template>
@@ -147,6 +174,7 @@ export default {
   data() {
     return {
       displayModal: false,
+      mode: '',
       title: '',
       medicine: {},
       originalMedicine: {},
@@ -163,6 +191,13 @@ export default {
       'medicineStopReason',
       'typeGroup'
     ]),
+    canEdit() {
+      if (this.$route.matched.some(record => record.meta.myPatients)) {
+        return true;
+      } else {
+        return false;
+      }
+    },
     firstTemplateGroup() {
       return this.medicineTemplateGroups[0] ? this.medicineTemplateGroups[0] : [];
     },
@@ -302,7 +337,8 @@ export default {
     }
   },
   methods: {
-    showModal(title, item) {
+    showModal(cardOperation, title, item) {
+      this.mode = cardOperation;
       this.title = title;
       this.displayModal = true;
       this.completeInit = false;
@@ -335,6 +371,9 @@ export default {
     },
     cancel() {
       this.displayModal = false;
+    },
+    switchToEditingMode() {
+      this.mode = this.EDIT_CURRENT_CARD;
     },
     submit() {
       // console.log(this.medicine);
@@ -412,6 +451,13 @@ export default {
     getMatchedField(fieldName) {
       // 在字典项中查询该名字所对应的字段，从而方便我们得到该字段的详细信息
       return Util.getElement('fieldName', fieldName, this.medicineDictionary);
+    },
+    getFieldValue(field) {
+      var fieldName = field.fieldName;
+      var code = this.medicine[fieldName];
+      var options = this.getOptions(fieldName);
+      var value = Util.getElement('code', code, options).name;
+      return value ? value : '';
     },
     getUIType(fieldName) {
       return this.getMatchedField(fieldName).uiType;
@@ -786,7 +832,7 @@ export default {
       &.cancel-button {
         background-color: @light-font-color;
       }
-      &.submit-button {
+      &.submit-button, &.edit-button {
         background-color: @button-color;
       }
       &:hover {

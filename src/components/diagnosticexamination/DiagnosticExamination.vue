@@ -347,7 +347,6 @@ export default {
     transformMedicalImagingType(typeId) {
       // 在 tableData 中找到对应的值
       var imageInfo = Util.getElement('typegroupcode', 'examType', this.typeGroup);
-      console.log(imageInfo);
       var types = imageInfo.types ? imageInfo.types : [];
       typeId = 8;
       var name = Util.getElement('typeCode', parseInt(typeId, 10), types).typeName;
@@ -429,7 +428,6 @@ export default {
         if (this.typeGroup[key]['typegroupcode'] === type) {
           // console.log(dictionData[key]['types']);
           flag = true;
-          console.log(this.typeGroup[key]['types']);
           return this.typeGroup[key]['types'];
         }
       }

@@ -5,8 +5,8 @@
       <extensible-panel class="panel" :mode="mutableMode" :title="subTitle" v-on:addNewCard="addMedicine"
         :editable="canEdit">
         <card class="card" :class="devideWidth" :mode="mutableMode" v-for="item in diagnosticMedicine" :key="item.medicineId"
-         :title="getTitle(item.medicineId)" :disable-delete="item.statusFlag===0" v-on:editCurrentCard="editMedicine(item)"
-         v-on:deleteCurrentCard="deleteMedicine(item)">
+          :title="getTitle(item.medicineId)" :disable-delete="item.statusFlag===0" v-on:editCurrentCard="editMedicine(item)"
+          v-on:deleteCurrentCard="deleteMedicine(item)" v-on:viewCurrentCard="viewMedicine(item)">
           <div class="text first-line">{{transform(item, 'usages')}}</div>
           <div class="text second-line">{{item.ariseTime}}</div>
         </card>
@@ -99,10 +99,13 @@ export default {
       return medicine.medicineName + '(' + medicine.commonName + ')';
     },
     addMedicine() {
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, '新增药物方案', {});
+      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.ADD_NEW_CARD, '新增药物方案', {});
+    },
+    viewMedicine(item) {
+      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.VIEW_CURRENT_CARD, '药物方案', item);
     },
     editMedicine(item) {
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, '药物方案', item);
+      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.EDIT_CURRENT_CARD, '药物方案', item);
     },
     deleteMedicine(item) {
       var patientMedicine = {

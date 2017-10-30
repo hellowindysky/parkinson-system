@@ -353,9 +353,6 @@ export default {
             this.updateAndClose();
           }, this._handleError);
         }
-      } else if (this.mode === this.VIEW_CURRENT_CARD) {
-        this.displayModal = false;
-        this.lockSubmitButton = false;
       }
     },
     updateAndClose() {
