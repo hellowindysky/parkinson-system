@@ -32,11 +32,11 @@
         </div>
         <div class="avg-arise-age card">
           <div class="title">平均起病年龄</div>
-          <div class="analy-value">{{dataBrief.firAge.averFirAge.toFixed(2) }}</div>
+          <div class="analy-value">{{dataBrief.firAge.averFirAge == null?'—':dataBrief.firAge.averFirAge.toFixed(2) }}</div>
           <div class="compare">
             <div class="compare-left">
                 <div>上周值</div>
-                <div class="value-class">{{dataBrief.firAge.averFirAgeLastWeek.toFixed(2)}}岁</div>
+                <div class="value-class">{{dataBrief.firAge.averFirAgeLastWeek == null?'—':dataBrief.firAge.averFirAgeLastWeek.toFixed(2)}}岁</div>
             </div>
             <div class="compare-right">
               <div>周环比</div>
@@ -45,11 +45,11 @@
         </div>
         <div class="avg-sick-year card">
           <div class="title">平均患病年限</div>
-          <div class="analy-value">{{dataBrief.diseaseAge.averDiseaseAge.toFixed(2)}}</div>
+          <div class="analy-value">{{dataBrief.diseaseAge.averDiseaseAge == null?'—':dataBrief.diseaseAge.averDiseaseAge.toFixed(2)}}</div>
           <div class="compare">
             <div class="compare-left">
               <div>上周值</div>
-              <div class="value-class">{{dataBrief.diseaseAge.averDiseaseAgeLastWeek.toFixed(2)}}年</div></div>
+              <div class="value-class">{{dataBrief.diseaseAge.averDiseaseAgeLastWeek == null?'—':dataBrief.diseaseAge.averDiseaseAgeLastWeek.toFixed(2)}}年</div></div>
             <div class="compare-right">
               <div>周环比</div>
               <div class="value-class"><i class="icon iconfont" :class="diseaseClass"/>{{(dataBrief.diseaseAge.increateRase*100) >= 100000?'—':(dataBrief.diseaseAge.increateRase*100).toFixed(2)}}%</div></div>
@@ -184,7 +184,7 @@ export default {
         },
         'myGroup':
         {
-          'totalCount': 0,
+          'totalCount': 1,
           'increaseWeek': 0,
           'increaseRate': 0
         },
