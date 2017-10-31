@@ -6,7 +6,8 @@
         <div class="field">
           <span class="field-name">DBS患者编码</span>
           <span class="field-input">
-            <el-input v-model="copyInfo.dbsPatientCode" placeholder="请输入DBS患者编码"></el-input>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.dbsPatientCode}}</span>
+            <el-input v-else v-model="copyInfo.dbsPatientCode" placeholder="请输入DBS患者编码"></el-input>
           </span>
         </div>
         <div class="field">
@@ -15,14 +16,16 @@
             <span class="required-mark">*</span>
           </span>
           <span class="field-input">
-            <el-date-picker v-model="copyInfo.preopsTime" :editable="false" @change="checkWarning(['preopsTime'], 'preopsTime')"
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.preopsTime}}</span>
+            <el-date-picker v-else v-model="copyInfo.preopsTime" :editable="false" @change="checkWarning(['preopsTime'], 'preopsTime')"
               :class="{'warning': warningResults['preopsTime']}" placeholder="请输入术前评估时间"></el-date-picker>
           </span>
         </div>
         <div class="field whole-line">
           <span class="field-name">术前评估备注</span>
           <span class="field-input">
-            <el-input v-model="copyInfo.preopsRemark" placeholder="请输入该类评估的备注内容"></el-input>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.preopsRemark}}</span>
+            <el-input v-else v-model="copyInfo.preopsRemark" placeholder="请输入该类评估的备注内容"></el-input>
           </span>
         </div>
       </div>
@@ -34,7 +37,8 @@
         <div class="field">
           <span class="field-name long-field-name">剂末现象评估时间</span>
           <span class="field-input long-field-name">
-            <el-date-picker v-model="copyInfo.preopsTerminalDTO.terminalTime" :default-value="copyInfo.preopsTime"
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.preopsTerminalDTO.terminalTime}}</span>
+            <el-date-picker v-else v-model="copyInfo.preopsTerminalDTO.terminalTime" :default-value="copyInfo.preopsTime"
               :editable="false" placeholder="请输入剂末现象评估时间"></el-date-picker>
           </span>
         </div>
@@ -50,7 +54,8 @@
             <span class="required-mark">*</span>
           </span>
           <span class="field-input long-field-name">
-            <el-select v-model="copyInfo.preopsTerminalDTO.terminalExist" @change="updateField('terminalExist')"
+            <span v-if="mode===VIEW_CURRENT_CARD">{{getFieldValue(copyInfo.preopsTerminalDTO.terminalExist, 'terminalExist')}}</span>
+            <el-select v-else v-model="copyInfo.preopsTerminalDTO.terminalExist" @change="updateField('terminalExist')"
               :class="{'warning': warningResults['terminalExist']}">
               <el-option label="是" :value="1"></el-option>
               <el-option label="否" :value="0"></el-option>
@@ -63,7 +68,8 @@
             <span class="required-mark">*</span>
           </span>
           <span class="field-input long-field-name">
-            <el-select v-model="copyInfo.preopsTerminalDTO.terminalIsfirst" @change="updateField('terminalIsfirst')"
+            <span v-if="mode===VIEW_CURRENT_CARD">{{getFieldValue(copyInfo.preopsTerminalDTO.terminalIsfirst, 'terminalIsfirst')}}</span>
+            <el-select v-else v-model="copyInfo.preopsTerminalDTO.terminalIsfirst" @change="updateField('terminalIsfirst')"
               :class="{'warning': warningResults['terminalIsfirst']}">
               <el-option label="是" :value="1"></el-option>
               <el-option label="否" :value="0"></el-option>
@@ -92,7 +98,8 @@
         <div class="field whole-line">
           <span class="field-name">备注</span>
           <span class="field-input">
-            <el-input v-model="copyInfo.preopsTerminalDTO.terminalRemark" placeholder="请输入剂末现象评估相关备注内容"></el-input>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.preopsTerminalDTO.terminalRemark}}</span>
+            <el-input v-else v-model="copyInfo.preopsTerminalDTO.terminalRemark" placeholder="请输入剂末现象评估相关备注内容"></el-input>
           </span>
         </div>
       </div>
@@ -118,7 +125,10 @@
           </tr>
           <tr class="row">
             <td class="col" v-for="(dayTimeName, listIndex) in dayTimeNameList">
-              <el-date-picker v-model="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName]"
+              <span v-if="mode===VIEW_CURRENT_CARD && isTimeEditable(listIndex)">
+                {{copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName]}}
+              </span>
+              <el-date-picker v-else v-model="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName]"
                 @change="updateDiaryDayTime()" :editable="false" :disabled="!isTimeEditable(listIndex)"
                 :class="{'warning': listIndex === 0 && warningResults['firstDayTime']}"
                 :placeholder="isTimeEditable(listIndex) ? '请选择日期' : ''"></el-date-picker>
@@ -127,7 +137,10 @@
           <tr class="row" v-for="(rowName, index) in diaryRowNameList">
             <td class="col title-col">{{rowName}}</td>
             <td class="col" v-for="(hourName, listIndex) in hourNameList">
-              <el-input v-model="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[index][hourName]"
+              <span v-if="mode===VIEW_CURRENT_CARD && hasDayTime(listIndex)">
+                {{copyInfo.preopsDiaryDTO.patientPreopsDiaryList[index][hourName]}}
+              </span>
+              <el-input v-else v-model="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[index][hourName]"
                 @blur="updateDiaryHour()" :disabled="!hasDayTime(listIndex)"></el-input>
             </td>
             <td class="col computed-cell">
@@ -193,7 +206,8 @@
         <div class="field whole-line">
           <span class="field-name">日记备注</span>
           <span class="field-input">
-            <el-input v-model="copyInfo.preopsDiaryDTO.diaryRemark" placeholder="请输入患者日记相关备注内容"></el-input>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.preopsDiaryDTO.diaryRemark}}</span>
+            <el-input v-else v-model="copyInfo.preopsDiaryDTO.diaryRemark" placeholder="请输入患者日记相关备注内容"></el-input>
           </span>
         </div>
       </div>
@@ -219,7 +233,8 @@
               {{getRealName(scale.scaleInfo, 'unifyScale')}}
             </td>
             <td class="col">
-              <el-select v-model="scale.bodyStatus"
+              <span v-if="mode===VIEW_CURRENT_CARD">{{getFieldValue(scale.bodyStatus, 'bodyStatus')}}</span>
+              <el-select v-else v-model="scale.bodyStatus"
                 @change="checkWarning(['preopsDyskinesiaDTO', 'patientPreopsScaleList', index, 'bodyStatus'], 'dyskinesiaDTOScaleStatus')"
                 :class="{'warning': warningResults['dyskinesiaDTOScaleStatus']}">
                 <el-option label="开期" :value="1"></el-option>
@@ -227,18 +242,21 @@
               </el-select>
             </td>
             <td class="col">
-              <el-input v-model="scale.scaleScore" @blur="transformToNum(scale, 'scaleScore', index, 'dyskinesiaDTOScaleScore')"
+              <span v-if="mode===VIEW_CURRENT_CARD">{{scale.scaleScore}}</span>
+              <el-input v-else v-model="scale.scaleScore" @blur="transformToNum(scale, 'scaleScore', index, 'dyskinesiaDTOScaleScore')"
                 :class="{'warning': warningResults['dyskinesiaDTOScaleScore']}"></el-input>
             </td>
             <td class="col">
-              <el-date-picker v-model="scale.ariseTime" :editable="false" :default-value="copyInfo.preopsTime"></el-date-picker>
+              <span v-if="mode===VIEW_CURRENT_CARD">{{scale.ariseTime}}</span>
+              <el-date-picker v-else v-model="scale.ariseTime" :editable="false" :default-value="copyInfo.preopsTime"></el-date-picker>
             </td>
           </tr>
         </table>
         <div class="field whole-line">
           <span class="field-name">备注</span>
           <span class="field-input">
-            <el-input v-model="copyInfo.preopsDyskinesiaDTO.dyskinesiaRemark" placeholder="请输入统一异动症评估相关备注内容"></el-input>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.preopsDyskinesiaDTO.dyskinesiaRemark}}</span>
+            <el-input v-else v-model="copyInfo.preopsDyskinesiaDTO.dyskinesiaRemark" placeholder="请输入统一异动症评估相关备注内容"></el-input>
           </span>
         </div>
       </div>
@@ -260,20 +278,24 @@
               {{getRealName(scale.scaleInfo, 'nmScale')}}
             </td>
             <td class="col narrow-col">
-              <el-input v-model="scale.scaleScore" @blur="transformToNum(scale, 'scaleScore')"></el-input>
+              <span v-if="mode===VIEW_CURRENT_CARD">{{scale.scaleScore}}</span>
+              <el-input v-else v-model="scale.scaleScore" @blur="transformToNum(scale, 'scaleScore')"></el-input>
             </td>
             <td class="col">
-              <el-date-picker v-model="scale.ariseTime" :editable="false" :default-value="copyInfo.preopsTime"></el-date-picker>
+              <span v-if="mode===VIEW_CURRENT_CARD">{{scale.ariseTime}}</span>
+              <el-date-picker v-else v-model="scale.ariseTime" :editable="false" :default-value="copyInfo.preopsTime"></el-date-picker>
             </td>
             <td class="col">
-              <el-input v-model="scale.remarks"></el-input>
+              <span v-if="mode===VIEW_CURRENT_CARD">{{scale.remarks}}</span>
+              <el-input v-else v-model="scale.remarks"></el-input>
             </td>
           </tr>
         </table>
         <div class="field whole-line">
           <span class="field-name">备注</span>
           <span class="field-input">
-            <el-input v-model="copyInfo.preopsNonMotorDTO.nonmotorRemark" placeholder="请输入非运动症状评估相关备注内容"></el-input>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.preopsNonMotorDTO.nonmotorRemark}}</span>
+            <el-input v-else v-model="copyInfo.preopsNonMotorDTO.nonmotorRemark" placeholder="请输入非运动症状评估相关备注内容"></el-input>
           </span>
         </div>
       </div>
@@ -284,7 +306,8 @@
         <div class="field">
           <span class="field-name">试验日期时间</span>
           <span class="field-input">
-            <el-date-picker v-model="copyInfo.preopsMotorDTO.motorTestTime" placeholder="请输入冲击试验日期"
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.preopsMotorDTO.motorTestTime}}</span>
+            <el-date-picker v-else v-model="copyInfo.preopsMotorDTO.motorTestTime" placeholder="请输入冲击试验日期"
               :editable="false" :default-value="copyInfo.preopsTime"></el-date-picker>
           </span>
         </div>
@@ -309,7 +332,7 @@
         <table class="table">
           <tr class="row title-row">
             <td class="col">
-              <span class="iconfont icon-plus" @click="addMedicine"></span>
+              <span v-show="mode!==VIEW_CURRENT_CARD" class="iconfont icon-plus" @click="addMedicine"></span>
               晨用药物
             </td>
             <td class="col">
@@ -324,21 +347,22 @@
           </tr>
           <tr class="row" v-for="(medicine, index) in copyInfo.preopsMotorDTO.patientPreopsMedicineList">
             <td class="col">
-              <span class="iconfont icon-remove" @click="removeMedicine(index)"></span>
+              <span v-show="mode!==VIEW_CURRENT_CARD" class="iconfont icon-remove" @click="removeMedicine(index)"></span>
               <el-select v-model="medicine.medicineInfo" @change="selectMedicine(medicine)"
-                :class="{'warning': !isMedicineValid(medicine)}">
+                :class="{'warning': !isMedicineValid(medicine)}" :disabled="mode===VIEW_CURRENT_CARD">
                 <el-option v-for="option in getOptions('medicineName')" :label="option.name"
                   :value="option.code" :key="option.code"></el-option>
               </el-select>
             </td>
             <td class="col">
-              <el-select v-model="medicine.medSpecification">
+              <el-select v-model="medicine.medSpecification" :disabled="mode===VIEW_CURRENT_CARD">
                 <el-option v-for="option in getOptions('medicineSpec', medicine.medicineInfo)" :label="option.name"
                   :value="option.code" :key="option.code"></el-option>
               </el-select>
             </td>
             <td class="col">
-              <el-input v-model="medicine.medUsage" @blur="updateMedicineUsage(medicine)"></el-input>
+              <span v-if="mode===VIEW_CURRENT_CARD">{{medicine.medUsage}}</span>
+              <el-input v-else v-model="medicine.medUsage" @blur="updateMedicineUsage(medicine)"></el-input>
             </td>
             <td class="col computed-cell">
               {{ getMorningDose(medicine) }}
@@ -369,11 +393,13 @@
               {{getRealName(scale.scaleInfo, 'mScale')}}
             </td>
             <td class="col">
-              <el-input v-model="scale.scaleScoreBefore" @blur="transformToNum(scale, 'scaleScoreBefore', index, 'motorDTOScaleScoreBefore')"
+              <span v-if="mode===VIEW_CURRENT_CARD">{{scale.scaleScoreBefore}}</span>
+              <el-input v-else v-model="scale.scaleScoreBefore" @blur="transformToNum(scale, 'scaleScoreBefore', index, 'motorDTOScaleScoreBefore')"
                 :class="{'warning': warningResults['motorDTOScaleScoreBefore']}"></el-input>
             </td>
             <td class="col">
-              <el-input v-model="scale.scaleScoreAfter" @blur="transformToNum(scale, 'scaleScoreAfter', index, 'motorDTOScaleScoreAfter')"
+              <span v-if="mode===VIEW_CURRENT_CARD">{{scale.scaleScoreAfter}}</span>
+              <el-input v-else v-model="scale.scaleScoreAfter" @blur="transformToNum(scale, 'scaleScoreAfter', index, 'motorDTOScaleScoreAfter')"
                 :class="{'warning': warningResults['motorDTOScaleScoreAfter']}"></el-input>
             </td>
             <td class="col computed-cell">
@@ -384,7 +410,8 @@
         <div class="field whole-line">
           <span class="field-name">备注</span>
           <span class="field-input">
-            <el-input v-model="copyInfo.preopsMotorDTO.motorRemark" placeholder="请输入运动症状评估相关备注内容"></el-input>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.preopsMotorDTO.motorRemark}}</span>
+            <el-input v-else v-model="copyInfo.preopsMotorDTO.motorRemark" placeholder="请输入运动症状评估相关备注内容"></el-input>
           </span>
         </div>
       </div>
@@ -395,7 +422,8 @@
         <div class="field">
           <span class="field-name">表态时间</span>
           <span class="field-input">
-            <el-date-picker v-model="copyInfo.preopsIntensionDTO.intensionAriseTime" placeholder="请输入意愿表达时间"
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.preopsIntensionDTO.intensionAriseTime}}</span>
+            <el-date-picker v-else v-model="copyInfo.preopsIntensionDTO.intensionAriseTime" placeholder="请输入意愿表达时间"
               :editable="false" :default-value="copyInfo.preopsTime"></el-date-picker>
           </span>
         </div>
@@ -405,7 +433,8 @@
             <span class="required-mark">*</span>
           </span>
           <span class="field-input">
-            <el-select v-model="copyInfo.preopsIntensionDTO.operationIntension"
+            <span v-if="mode===VIEW_CURRENT_CARD">{{getFieldValue(copyInfo.preopsIntensionDTO.operationIntension, 'operationIntension')}}</span>
+            <el-select v-else v-model="copyInfo.preopsIntensionDTO.operationIntension"
               @change="checkWarning(['preopsIntensionDTO', 'operationIntension'], 'operationIntension')"
               :class="{'warning': warningResults['operationIntension']}">
               <el-option label="同意" :value="1"></el-option>
@@ -416,7 +445,8 @@
         <div class="field">
           <span class="field-name">设备品牌</span>
           <span class="field-input">
-            <el-select v-model="copyInfo.preopsIntensionDTO.deviceId">
+            <span v-if="mode===VIEW_CURRENT_CARD">{{getFieldValue(copyInfo.preopsIntensionDTO.deviceId, 'deviceId')}}</span>
+            <el-select v-else v-model="copyInfo.preopsIntensionDTO.deviceId">
               <el-option v-for="option in getOptions('deviceId')" :label="option.name"
                 :value="option.code" :key="option.code"></el-option>
             </el-select>
@@ -425,7 +455,8 @@
         <div class="field">
           <span class="field-name">设备类型</span>
           <span class="field-input">
-            <el-select v-model="copyInfo.preopsIntensionDTO.devicePowerType">
+            <span v-if="mode===VIEW_CURRENT_CARD">{{getFieldValue(copyInfo.preopsIntensionDTO.devicePowerType, 'devicePowerType')}}</span>
+            <el-select v-else v-model="copyInfo.preopsIntensionDTO.devicePowerType">
               <el-option label="充电" :value="1"></el-option>
               <el-option label="不充电" :value="0"></el-option>
             </el-select>
@@ -434,14 +465,16 @@
         <div class="field whole-line">
           <span class="field-name">备注</span>
           <span class="field-input">
-            <el-input v-model="copyInfo.preopsIntensionDTO.intensionRemark" placeholder="请输入患者手术意愿相关内容"></el-input>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.preopsIntensionDTO.intensionRemark}}</span>
+            <el-input v-else v-model="copyInfo.preopsIntensionDTO.intensionRemark" placeholder="请输入患者手术意愿相关内容"></el-input>
           </span>
         </div>
       </div>
 
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
-      <div class="button submit-button" @click="submit">确定</div>
+      <div class="button edit-button" v-show="mode===VIEW_CURRENT_CARD" @click="switchToEditingMode">编辑</div>
+      <div class="button submit-button" v-show="mode===EDIT_CURRENT_CARD" @click="submit">确定</div>
     </div>
   </div>
 </template>
@@ -787,9 +820,9 @@ export default {
       'deviceInfo'
     ]),
     title() {
-      if (this.mode === this.ADD_DATA) {
+      if (this.mode === this.ADD_NEW_CARD) {
         return '新增术前评估';
-      } else if (this.mode === this.EDIT_DATA) {
+      } else {
         return '术前评估';
       }
     },
@@ -807,8 +840,8 @@ export default {
     }
   },
   methods: {
-    showModal(changeWay, info) {
-      this.mode = changeWay;
+    showModal(cardOperation, info) {
+      this.mode = cardOperation;
 
       this.completeInit = false;
       this.initCopyInfo();
@@ -827,7 +860,7 @@ export default {
       });
 
       // 获取术前评估详情
-      if (this.mode === this.EDIT_DATA) {
+      if (this.mode === this.EDIT_CURRENT_CARD || this.mode === this.VIEW_CURRENT_CARD) {
         var preEvaluationId = info.preopsInfoId ? info.preopsInfoId : -1;
         getPreEvaluation(preEvaluationId).then((data) => {
           vueCopy(data, this.copyInfo);
@@ -842,7 +875,7 @@ export default {
         }, (error) => {
           console.log(error);
         });
-      } else if (this.mode === this.ADD_DATA) {
+      } else if (this.mode === this.ADD_NEW_CARD) {
         this.addMedicine();
         this.$nextTick(() => {
           this.completeInit = true;
@@ -868,6 +901,9 @@ export default {
     },
     cancel() {
       this.displayModal = false;
+    },
+    switchToEditingMode() {
+      this.mode = this.EDIT_CURRENT_CARD;
     },
     submit() {
       // 先检查药物方案列表是否符合规则（出现COMT抑制剂就必须要有多巴胺类制剂）
@@ -907,7 +943,7 @@ export default {
 
       this.copyInfo.patientId = this.$route.params.id;
       this.copyInfo.patientCaseId = this.$route.params.caseId;
-      if (this.mode === this.ADD_DATA) {
+      if (this.mode === this.ADD_NEW_CARD) {
         addPreEvaluation(this.copyInfo).then(() => {
           this.updateAndClose();
         }, (error) => {
@@ -915,7 +951,7 @@ export default {
             this.alertForDuplicatedDbsCode();
           }
         });
-      } else if (this.mode === this.EDIT_DATA) {
+      } else if (this.mode === this.EDIT_CURRENT_CARD) {
         modifyPreEvaluation(this.copyInfo).then(() => {
           this.updateAndClose();
         }, (error) => {
@@ -962,6 +998,33 @@ export default {
       var types = typesInfo && typesInfo.types ? typesInfo.types : [];
       var type = Util.getElement('typeCode', code, types);
       return type.typeName ? type.typeName : '';
+    },
+    getFieldValue(code, fieldName) {
+      var options = this.getOptions(fieldName);
+      if (fieldName === 'terminalExist' || fieldName === 'terminalIsfirst') {
+        options = [
+          {code: 1, name: '是'},
+          {code: 0, name: '否'}
+        ];
+      } else if (fieldName === 'bodyStatus') {
+        options = [
+          {code: 1, name: '开期'},
+          {code: 0, name: '关期'}
+        ];
+      } else if (fieldName === 'operationIntension') {
+        options = [
+          {code: 1, name: '同意'},
+          {code: 0, name: '不同意'}
+        ];
+      } else if (fieldName === 'devicePowerType') {
+        options = [
+          {code: 1, name: '充电'},
+          {code: 0, name: '不充电'}
+        ];
+      } else {
+        options = this.getOptions(fieldName);
+      }
+      return Util.getElement('code', code, options).name;
     },
     getOptions(fieldName, param) {
       // 这里的第二个参数不是必须的，在查询药物规格时会用到
@@ -1693,6 +1756,15 @@ export default {
                   color: @alert-color;
                 }
               }
+              &.is-disabled {
+                .el-input__inner {
+                  background-color: rgba(0,0,0,0);
+                  color: @font-color;
+                }
+                .el-input__icon {
+                  display: none;
+                }
+              }
             }
             .el-select {
               &.warning {
@@ -1723,7 +1795,7 @@ export default {
       &.cancel-button {
         background-color: @light-font-color;
       }
-      &.submit-button {
+      &.submit-button, &.edit-button {
         background-color: @button-color;
       }
       &:hover {
