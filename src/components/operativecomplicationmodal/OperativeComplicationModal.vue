@@ -8,7 +8,15 @@
             {{field.cnfieldName}}
             <span class="required-mark" v-show="field.must===1">*</span>
           </span>
-          <span class="field-input">
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span v-if="getUIType(field.fieldName)===3">
+              {{getFieldValue(field)}}
+            </span>
+            <span v-else :class="{'multi-line': getType(field.fieldName)==='textarea'}">
+              {{copyInfo[field.fieldName]}}
+            </span>
+          </span>
+          <span class="field-input" v-else>
             <span class="warning-text">{{warningResults[field.fieldName]}}</span>
             <el-select v-if="getUIType(field.fieldName)===3" v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
               :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
@@ -138,6 +146,11 @@ export default {
     },
     getUIType(fieldName) {
       return this.getMatchedField(fieldName).uiType;
+    },
+    getFieldValue(field) {
+      var options = this.getOptions(field.fieldName);
+      var code = this.copyInfo[field.fieldName];
+      return Util.getElement('code', code, options).name;
     },
     getOptions(fieldName) {
       // 为下拉框准备列表
@@ -288,6 +301,14 @@ export default {
           color: @light-font-color;
           &.long-field-name {
             left: @long-field-name-width;
+          }
+          .multi-line {
+            display: inline-block;
+            width: 100%;
+            line-height: 25px;
+            vertical-align: top;
+            transform: translateY(7px);
+            word-break: break-all;
           }
           .warning-text {
             position: absolute;

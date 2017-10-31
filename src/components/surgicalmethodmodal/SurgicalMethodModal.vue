@@ -146,7 +146,6 @@ export default {
     getFieldValue(field) {
       var options = this.getOptions(field.fieldName);
       var code = this.copyInfo[field.fieldName];
-      console.log(options, code);
       return Util.getElement('code', code, options).name;
     },
     getOptions(fieldName) {
@@ -277,6 +276,7 @@ export default {
             line-height: 25px;
             vertical-align: top;
             transform: translateY(7px);
+            word-break: break-all;
           }
           .warning-text {
             position: absolute;
