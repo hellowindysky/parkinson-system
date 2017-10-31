@@ -1,57 +1,57 @@
 <template lang="html">
   <div class="basic-analytics" ref="scrollArea">
     <div class="analytics-card-wrapper">
-      <div class="titleName">Data Profiling</div>
+      <div class="titleName">数据概况</div>
       <div class="card-list">
         <div class="my-patients card">
-          <div class="title">My Patients</div>
+          <div class="title">我的患者</div>
           <div class="analy-value">{{dataBrief.myPatient.totalCount}}</div>
           <div class="compare">
             <div class="compare-left">
-              <div>New Additions This Week</div>
-              <div class="value-class">{{dataBrief.myPatient.increaseWeek}}People</div></div>
+              <div>本周新增</div>
+              <div class="value-class">{{dataBrief.myPatient.increaseWeek}}人</div></div>
             <div class="compare-right">
-              <div>Week-On-Week</div>
+              <div>周环比</div>
               <div class="value-class"><i class="icon iconfont" :class="myPatientClass"/>{{(dataBrief.myPatient.increaseRate) >= 1000000 ?'—':(dataBrief.myPatient.increaseRate*100).toFixed(2)}}%</div>
             </div>
           </div>
         </div>
         <div class="my-groups card">
-          <div class="title">My Group</div>
+          <div class="title">我的分组</div>
           <div class="analy-value">{{dataBrief.myGroup.totalCount-1}}</div>
           <div class="compare">
             <div class="compare-left">
-              <div>New Additions This Week</div>
+              <div>本周新增</div>
               <div class="value-class">{{dataBrief.myGroup.increaseWeek}}个</div>
             </div>
             <div class="compare-right">
-              <div>Week-On-Week</div>
+              <div>周环比</div>
               <div class="value-class"><i class="icon iconfont" :class="myGroupClass"/>{{(dataBrief.myGroup.increaseRate) >= 1000000 ?'—':(dataBrief.myGroup.increaseRate*100).toFixed(2)}}%</div>
             </div>
           </div>
         </div>
         <div class="avg-arise-age card">
-          <div class="title">Average Age of Onset</div>
+          <div class="title">平均起病年龄</div>
           <div class="analy-value">{{dataBrief.firAge.averFirAge == null?'—':dataBrief.firAge.averFirAge.toFixed(2) }}</div>
           <div class="compare">
             <div class="compare-left">
-                <div>Last Week</div>
-                <div class="value-class">{{dataBrief.firAge.averFirAgeLastWeek == null?'—':dataBrief.firAge.averFirAgeLastWeek.toFixed(2)}}year-old</div>
+                <div>上周值</div>
+                <div class="value-class">{{dataBrief.firAge.averFirAgeLastWeek == null?'—':dataBrief.firAge.averFirAgeLastWeek.toFixed(2)}}岁</div>
             </div>
             <div class="compare-right">
-              <div>Week-On-Week</div>
+              <div>周环比</div>
               <div class="value-class"><i class="icon iconfont" :class="firAgeClass"/>{{(dataBrief.firAge.increateRase) >= 1000000 ?'—':(dataBrief.firAge.increateRase*100).toFixed(2)}}%</div></div>
           </div>
         </div>
         <div class="avg-sick-year card">
-          <div class="title">Mean time of illness</div>
+          <div class="title">平均患病年限</div>
           <div class="analy-value">{{dataBrief.diseaseAge.averDiseaseAge == null?'—':dataBrief.diseaseAge.averDiseaseAge.toFixed(2)}}</div>
           <div class="compare">
             <div class="compare-left">
-              <div>Last Week</div>
-              <div class="value-class">{{dataBrief.diseaseAge.averDiseaseAgeLastWeek == null?'—':dataBrief.diseaseAge.averDiseaseAgeLastWeek.toFixed(2)}}year</div></div>
+              <div>上周值</div>
+              <div class="value-class">{{dataBrief.diseaseAge.averDiseaseAgeLastWeek == null?'—':dataBrief.diseaseAge.averDiseaseAgeLastWeek.toFixed(2)}}年</div></div>
             <div class="compare-right">
-              <div>Week-On-Week</div>
+              <div>周环比</div>
               <div class="value-class"><i class="icon iconfont" :class="diseaseClass"/>{{(dataBrief.diseaseAge.increateRase*100) >= 100000?'—':(dataBrief.diseaseAge.increateRase*100).toFixed(2)}}%</div></div>
           </div>
         </div>
@@ -59,7 +59,7 @@
     </div>
     <div class="analytics-chart-wrapper">
       <div class="area card">
-        <div class="titleName">Area</div>
+        <div class="titleName">地区</div>
         <div class="para-area">
           <el-select v-model="statPatientProvince.para.topValue" placeholder="Top" @change="getProvinceChartData">
             <el-option
@@ -69,7 +69,7 @@
               :value="item.value">
             </el-option>
           </el-select>
-          <el-select v-model="statPatientProvince.para.timeSpanValue" clearable placeholder="Total Time" @change="getProvinceChartData">
+          <el-select v-model="statPatientProvince.para.timeSpanValue" clearable placeholder="全部时间" @change="getProvinceChartData">
             <el-option
               v-for="item in statPatientProvince.para.timeSpan"
               :key="item.value"
@@ -77,7 +77,7 @@
               :value="item.value">
             </el-option>
           </el-select>
-          <el-select v-model="statPatientProvince.para.groupValue" clearable placeholder="Grouping" @change="getProvinceChartData">
+          <el-select v-model="statPatientProvince.para.groupValue" clearable placeholder="全部分组" @change="getProvinceChartData">
             <el-option
               v-for="item in statPatientProvince.para.group"
               :key="item.value"
@@ -85,7 +85,7 @@
               :value="item.value">
             </el-option>
           </el-select>
-          <el-select v-model="statPatientProvince.para.sourceDeviceTypeValue" clearable placeholder="Sources" @change="getProvinceChartData">
+          <el-select v-model="statPatientProvince.para.sourceDeviceTypeValue" clearable placeholder="全部来源" @change="getProvinceChartData">
             <el-option
               v-for="item in statPatientProvince.para.sourceDeviceType"
               :key="item.value"
@@ -99,9 +99,9 @@
         </div>
       </div>
       <div class="age card">
-        <div class="titleName">Age</div>
+        <div class="titleName">年龄</div>
         <div class="para-area">
-          <el-select v-model="statPatientAge.para.timeSpanValue" clearable placeholder="Total Time" @change="getAgeChartData">
+          <el-select v-model="statPatientAge.para.timeSpanValue" clearable placeholder="全部时间" @change="getAgeChartData">
             <el-option
               v-for="item in statPatientAge.para.timeSpan"
               :key="item.value"
@@ -109,7 +109,7 @@
               :value="item.value">
             </el-option>
           </el-select>
-          <el-select v-model="statPatientAge.para.groupValue" clearable placeholder="Grouping" @change="getAgeChartData">
+          <el-select v-model="statPatientAge.para.groupValue" clearable placeholder="全部分组" @change="getAgeChartData">
             <el-option
               v-for="item in statPatientAge.para.group"
               :key="item.value"
@@ -117,7 +117,7 @@
               :value="item.value">
             </el-option>
           </el-select>
-          <el-select v-model="statPatientAge.para.sourceDeviceTypeValue" clearable placeholder="Sources" @change="getAgeChartData">
+          <el-select v-model="statPatientAge.para.sourceDeviceTypeValue" clearable placeholder="全部来源" @change="getAgeChartData">
             <el-option
               v-for="item in statPatientAge.para.sourceDeviceType"
               :key="item.value"
@@ -131,9 +131,9 @@
         </div>
       </div>
       <div class="career card">
-        <div class="titleName">Profession</div>
+        <div class="titleName">职业</div>
         <div class="para-area">
-          <el-select v-model="statPatientCareer.para.timeSpanValue" clearable placeholder="Total Time" @change="getCareerChartData">
+          <el-select v-model="statPatientCareer.para.timeSpanValue" clearable placeholder="全部时间" @change="getCareerChartData">
             <el-option
               v-for="item in statPatientCareer.para.timeSpan"
               :key="item.value"
@@ -141,7 +141,7 @@
               :value="item.value">
             </el-option>
           </el-select>
-          <el-select v-model="statPatientCareer.para.groupValue" clearable placeholder="Grouping"  @change="getCareerChartData">
+          <el-select v-model="statPatientCareer.para.groupValue" clearable placeholder="全部分组"  @change="getCareerChartData">
             <el-option
               v-for="item in statPatientCareer.para.group"
               :key="item.value"
@@ -149,7 +149,7 @@
               :value="item.value">
             </el-option>
           </el-select>
-          <el-select v-model="statPatientCareer.para.sourceDeviceTypeValue" clearable placeholder="Sources"  @change="getCareerChartData">
+          <el-select v-model="statPatientCareer.para.sourceDeviceTypeValue" clearable placeholder="全部来源"  @change="getCareerChartData">
             <el-option
               v-for="item in statPatientCareer.para.sourceDeviceType"
               :key="item.value"
@@ -221,23 +221,23 @@ export default {
           timeSpan: [
             {
               value: '0',
-              label: 'This Week'
+              label: '本周'
             },
             {
               value: '1',
-              label: 'This Month'
+              label: '本月'
             },
             {
               value: '2',
-              label: '3 Months'
+              label: '近3个月'
             },
             {
               value: '3',
-              label: 'Half-Year'
+              label: '近半年'
             },
             {
               value: '4',
-              label: 'One-Year'
+              label: '近1年'
             }
           ],
           timeSpanValue: '',
@@ -255,11 +255,11 @@ export default {
           sourceDeviceType: [
             {
               value: '0',
-              label: 'PC'
+              label: 'PC端'
             },
             {
               value: '1',
-              label: 'PAD'
+              label: 'PAD端'
             }
           ],
           sourceDeviceTypeValue: ''
@@ -270,23 +270,23 @@ export default {
           timeSpan: [
             {
               value: '0',
-              label: 'This Week'
+              label: '本周'
             },
             {
               value: '1',
-              label: 'This Month'
+              label: '本月'
             },
             {
               value: '2',
-              label: '3 Months'
+              label: '近3个月'
             },
             {
               value: '3',
-              label: 'Half-Year'
+              label: '近半年'
             },
             {
               value: '4',
-              label: 'One-Year'
+              label: '近1年'
             }
           ],
           timeSpanValue: '',
@@ -304,11 +304,11 @@ export default {
           sourceDeviceType: [
             {
               value: '0',
-              label: 'PC'
+              label: 'PC端'
             },
             {
               value: '1',
-              label: 'PAD'
+              label: 'PAD端'
             }
           ],
           sourceDeviceTypeValue: ''
@@ -319,23 +319,23 @@ export default {
           timeSpan: [
             {
               value: '0',
-              label: 'This Week'
+              label: '本周'
             },
             {
               value: '1',
-              label: 'This Month'
+              label: '本月'
             },
             {
               value: '2',
-              label: '3 Months'
+              label: '近3个月'
             },
             {
               value: '3',
-              label: 'Half-Year'
+              label: '近半年'
             },
             {
               value: '4',
-              label: 'One-Year'
+              label: '近1年'
             }
           ],
           timeSpanValue: '',
@@ -353,11 +353,11 @@ export default {
           sourceDeviceType: [
             {
               value: '0',
-              label: 'PC'
+              label: 'PC端'
             },
             {
               value: '1',
-              label: 'PAD'
+              label: 'PAD端'
             }
           ],
           sourceDeviceTypeValue: ''
@@ -381,7 +381,7 @@ export default {
         },
         yAxis: {},
         series: [{
-          name: 'BirthPlace',
+          name: '籍贯',
           type: 'bar',
           data: dataValue.countData
         }]
@@ -397,11 +397,11 @@ export default {
             type: 'shadow'
           }},
         xAxis: {
-          data: ['Below 25 years old', '26-35 years old', '36-45 years old', '46-55 years old', '56-65 years old', 'More Than 65 years old']
+          data: ['25岁以下', '26-35岁', '36-45岁', '46-55岁', '56-65岁', '65岁以上']
         },
         yAxis: {},
         series: [{
-          name: 'Age',
+          name: '年龄',
           type: 'bar',
           data: dataValue
         }]
@@ -422,7 +422,7 @@ export default {
         },
         yAxis: {},
         series: [{
-          name: 'Profession',
+          name: '职业',
           type: 'bar',
           data: dataValue.countData
         }]
