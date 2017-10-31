@@ -28,7 +28,8 @@
       </div>
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
-      <div class="button submit-button" @click="submit">确定</div>
+      <div class="button edit-button" v-show="mode===VIEW_CURRENT_CARD" @click="switchToEditingMode">编辑</div>
+      <div class="button submit-button" v-show="mode!==VIEW_CURRENT_CARD" @click="submit">确定</div>
     </div>
   </div>
 </template>
@@ -60,16 +61,16 @@ export default {
       'typeGroup'
     ]),
     title() {
-      if (this.mode === this.ADD_DATA) {
+      if (this.mode === this.ADD_NEW_CARD) {
         return '新增术后并发症';
-      } else if (this.mode === this.EDIT_DATA) {
+      } else {
         return '术后并发症';
       }
     }
   },
   methods: {
-    showModal(changeWay, info) {
-      this.mode = changeWay;
+    showModal(cardOperation, info) {
+      this.mode = cardOperation;
       this.originalInfo = info;
       this.initCopyInfo();
 
@@ -96,6 +97,9 @@ export default {
     cancel() {
       this.displayModal = false;
     },
+    switchToEditingMode() {
+      this.mode = this.EDIT_CURRENT_CARD;
+    },
     submit() {
       // 先将日期格式改成符合服务器传输的格式
       this.copyInfo.occurrenceTime = Util.simplifyDate(this.copyInfo.occurrenceTime);
@@ -113,12 +117,12 @@ export default {
       }
 
       // 到这里，就可以提交了
-      if (this.mode === this.ADD_DATA) {
+      if (this.mode === this.ADD_NEW_CARD) {
         this.copyInfo.patientCaseId = this.$route.params.caseId;  // 补充诊断 id 这个属性
         addOperativeCompliation(this.copyInfo).then(() => {
           this.updateAndClose();
         });
-      } else if (this.mode === this.EDIT_DATA) {
+      } else if (this.mode === this.EDIT_CURRENT_CARD) {
         modifyOperativeCompliation(this.copyInfo).then(() => {
           this.updateAndClose();
         });
@@ -338,7 +342,7 @@ export default {
       &.cancel-button {
         background-color: @light-font-color;
       }
-      &.submit-button {
+      &.submit-button, &.edit-button {
         background-color: @button-color;
       }
       &:hover {

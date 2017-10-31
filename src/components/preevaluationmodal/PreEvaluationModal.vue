@@ -474,7 +474,7 @@
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
       <div class="button edit-button" v-show="mode===VIEW_CURRENT_CARD" @click="switchToEditingMode">编辑</div>
-      <div class="button submit-button" v-show="mode===EDIT_CURRENT_CARD" @click="submit">确定</div>
+      <div class="button submit-button" v-show="mode!==VIEW_CURRENT_CARD" @click="submit">确定</div>
     </div>
   </div>
 </template>
