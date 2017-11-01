@@ -396,13 +396,18 @@
         </div>
       </div>
       <div class="seperate-line"></div>
-      <div class="button cancel-button" v-if="tableMode===FATHER_OPEN && mode!==EDIT_CURRENT_CARD" @click="cancel">取消</div>
+      <div class="button cancel-button" v-show="tableMode===FATHER_OPEN" @click="cancel">取消</div>
+      <div class="button son-submit-button" v-show="tableMode===FATHER_OPEN && mode===VIEW_CURRENT_CARD" @click="switchToEditingMode">编辑</div>
+      <div class="button son-submit-button" v-show="tableMode===FATHER_OPEN && mode!==VIEW_CURRENT_CARD" @click="submit">确认</div>
+      <div class="button son-submit-button" v-show="tableMode===SON_OPEN && mode===VIEW_CURRENT_CARD" @click="editEnd">返回</div>
+      <div class="button son-submit-button" v-show="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD" @click="editEnd">编辑完成</div>
+      <!-- <div class="button cancel-button" v-if="tableMode===FATHER_OPEN && mode!==EDIT_CURRENT_CARD" @click="cancel">取消</div>
       <div class="button son-submit-button" v-if="tableMode===FATHER_OPEN && mode!==EDIT_CURRENT_CARD" @click="submit">确认</div>
       <div class="button son-submit-button" v-if="tableMode===SON_OPEN && mode!==EDIT_CURRENT_CARD" @click="editEnd">编辑完成</div>
 
       <div class="button cancel-button" v-if="mode===ADD_NEW_CARD && tableMode!==SON_OPEN" @click="cancel">取消</div>
       <div class="button son-submit-button" v-if="mode===ADD_NEW_CARD && tableMode!==SON_OPEN" @click="submit">确认</div>
-      <div class="button son-submit-button" v-if="mode===ADD_NEW_CARD && tableMode===SON_OPEN" @click="editEnd">编辑完成</div>
+      <div class="button son-submit-button" v-if="mode===ADD_NEW_CARD && tableMode===SON_OPEN" @click="editEnd">编辑完成</div> -->
     </div>
   </div>
 </template>
@@ -734,6 +739,9 @@ export default {
       this.displayModal = false;
       this.EmgTypeData = {};
       this.tableMode = '';
+    },
+    switchToEditingMode() {
+      this.mode = this.EDIT_CURRENT_CARD;
     },
     submit() {
       let submitData = this.EmgTypeData;
