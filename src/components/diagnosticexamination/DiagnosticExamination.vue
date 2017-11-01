@@ -390,16 +390,16 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addEmgRecord() {
-      Bus.$emit(this.SHOW_EMG_MODAL, '新增肌电图', {});
+      Bus.$emit(this.SHOW_EMG_MODAL, this.ADD_NEW_CARD, {});
     },
     viewEmgRecord(item) {
-      Bus.$emit(this.SHOW_EMG_MODAL, '肌电图', item);
+      Bus.$emit(this.SHOW_EMG_MODAL, this.VIEW_CURRENT_CARD, item);
     },
     editEmgRecord(item) {
-      Bus.$emit(this.SHOW_EMG_MODAL, '肌电图', item);
+      Bus.$emit(this.SHOW_EMG_MODAL, this.EDIT_CURRENT_CARD, item);
     },
     addImgRecord() {
-      // Bus.$emit(this.SHOW_IMG_MODAL, '医学影像', {});
+      Bus.$emit(this.SHOW_IMG_MODAL, '医学影像', {});
     },
     viewImgRecord(item) {
       Bus.$emit(this.SHOW_IMG_MODAL, '医学影像', item);

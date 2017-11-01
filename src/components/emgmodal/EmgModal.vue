@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="emg-modal-wrapper" v-show="displayModal">
-    <div class="medicine-modal" ref="medicineModal">
+    <div class="medicine-modal" ref="emgModal">
       <h3 class="title">{{title}}</h3>
       <div class="content">
         <div class="field">
@@ -10,8 +10,10 @@
           </span>
           <span class="field-input">
             <span class="warning-text"></span>
-            <el-select  placeholder="请肌电图名称" v-model="EmgTypeData['elecTroGramId']"  :disabled="mode===MODIFY_MODE" @change="selectFatherTempData">
-               <el-option v-for="bioexItem in EmgNameArr" :key="bioexItem.id" :label="bioexItem.emgName" :value="bioexItem.id" ></el-option>
+            <span v-if='mode===VIEW_CURRENT_CARD'>{{getFieldValue(EmgTypeData.elecTroGramId, 'emgName')}}</span>
+            <el-select v-else placeholder="请选择肌电图名称" v-model="EmgTypeData.elecTroGramId"
+              :disabled="mode!==ADD_NEW_CARD" @change="selectFatherTempData">
+              <el-option v-for="emgItem in EmgNameArr" :key="emgItem.id" :label="emgItem.emgName" :value="emgItem.id" ></el-option>
             </el-select>
           </span>
         </div>
@@ -22,7 +24,8 @@
           </span>
           <span class="field-input">
             <span class="warning-text"></span>
-            <el-select v-model="EmgTypeData['etgType']"  disabled>
+            <span v-if='mode===VIEW_CURRENT_CARD'>{{getFieldValue(EmgTypeData.etgType, 'emgType')}}</span>
+            <el-select v-else v-model="EmgTypeData['etgType']"  disabled>
                <el-option v-for="item in EmgTypeNameArrs" :key="item.typeCode" :label="item.typeName" :value="item.typeCode" ></el-option>
             </el-select>
           </span>
@@ -34,7 +37,8 @@
           </span>
           <span class="field-input">
             <span class="warning-text"></span>
-            <el-input type="textarea" :rows="2" v-model="EmgTypeData['patEleResule']" placeholder="请输入检查结果"></el-input>    
+            <span v-if="mode===VIEW_CURRENT_CARD">{{EmgTypeData.patEleResult}}</span>
+            <el-input v-else type="textarea" :rows="2" v-model="EmgTypeData['patEleResult']" placeholder="请输入检查结果"></el-input>
           </span>
         </div>
         <div class="field">
@@ -44,11 +48,12 @@
           </span>
           <span class="field-input">
             <span class="warning-text"></span>
-            <el-input type="textarea" :rows="2" v-model="EmgTypeData['patEleHint']" placeholder="请输入提示信息"></el-input> 
+            <span v-if="mode===VIEW_CURRENT_CARD">{{EmgTypeData.patEleHint}}</span>
+            <el-input v-else type="textarea" :rows="2" v-model="EmgTypeData['patEleHint']" placeholder="请输入提示信息"></el-input>
           </span>
         </div>
         <h3 class="form-title" v-if="tableMode===SON_OPEN">{{currentTableName}}</h3>
-        <div class="form-wrapper" :class="{'father-open':tableMode==='' && mode===ADD_MODE}"  ref="formWrapper">
+        <div class="form-wrapper" :class="{'father-open':tableMode==='' && mode===ADD_NEW_CARD}" ref="formWrapper">
           <table class="form" v-if="tableMode===FATHER_OPEN">
             <tr class="row first-row">
               <td class="col col-width5">
@@ -69,8 +74,9 @@
                 {{item.tableName}}
               </td>
               <td class="col col-width30">
-                <span @click="selectSonTemp(item.arr)">编辑</span>
-                <span>重置</span>
+                <span v-show="mode===VIEW_CURRENT_CARD" @click="viewSonTemp(item.arr)">查看</span>
+                <span v-show="mode!==VIEW_CURRENT_CARD" @click="selectSonTemp(item.arr)">编辑</span>
+                <span v-show="mode!==VIEW_CURRENT_CARD">重置</span>
               </td>
             </tr>
           </table>
@@ -80,7 +86,7 @@
                 序号
               </td>
               <td class="col col-width10">
-                神经类型                  
+                神经类型
               </td>
               <td class="col col-width20">
                 Nerve and Site
@@ -104,7 +110,7 @@
                 Conduction Velocity(m/s)
               </td>
             </tr>
-              
+
              <tr class="row" v-for="(item, key) in SonTempData">
               <td class="col col-width5">
                 {{key+1}}
@@ -144,7 +150,7 @@
                 Nerve
               </td>
               <td class="col col-width25">
-                M-Latency 
+                M-Latency
               </td>
               <td class="col col-width25">
                 F-Latency
@@ -390,13 +396,13 @@
         </div>
       </div>
       <div class="seperate-line"></div>
-      <div class="button cancel-button" v-if="tableMode===FATHER_OPEN && mode===MODIFY_MODE" @click="cancel">取消</div>
-      <div class="button son-submit-button" v-if="tableMode===FATHER_OPEN && mode===MODIFY_MODE" @click="submit">确认</div>
-      <div class="button son-submit-button" v-if="tableMode===SON_OPEN && mode===MODIFY_MODE" @click="editEnd">编辑完成</div>
+      <div class="button cancel-button" v-if="tableMode===FATHER_OPEN && mode!==EDIT_CURRENT_CARD" @click="cancel">取消</div>
+      <div class="button son-submit-button" v-if="tableMode===FATHER_OPEN && mode!==EDIT_CURRENT_CARD" @click="submit">确认</div>
+      <div class="button son-submit-button" v-if="tableMode===SON_OPEN && mode!==EDIT_CURRENT_CARD" @click="editEnd">编辑完成</div>
 
-      <div class="button cancel-button" v-if="mode===ADD_MODE && tableMode!==SON_OPEN" @click="cancel">取消</div>
-      <div class="button son-submit-button" v-if="mode===ADD_MODE && tableMode!==SON_OPEN" @click="submit">确认</div>
-      <div class="button son-submit-button" v-if="mode===ADD_MODE && tableMode===SON_OPEN" @click="editEnd">编辑完成</div>
+      <div class="button cancel-button" v-if="mode===ADD_NEW_CARD && tableMode!==SON_OPEN" @click="cancel">取消</div>
+      <div class="button son-submit-button" v-if="mode===ADD_NEW_CARD && tableMode!==SON_OPEN" @click="submit">确认</div>
+      <div class="button son-submit-button" v-if="mode===ADD_NEW_CARD && tableMode===SON_OPEN" @click="editEnd">编辑完成</div>
     </div>
   </div>
 </template>
@@ -407,8 +413,8 @@ import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import { vueCopy } from 'utils/helper';
 import { addEmg, modEmg } from 'api/patient.js';
+import Util from 'utils/util.js';
 
-import { isEmptyObject } from 'utils/helper.js';
 export default {
   data() {
     return {
@@ -416,8 +422,6 @@ export default {
       FATHER_OPEN: 'fatheropen',
       SON_OPEN: 'sonopen',
       tableMode: '',
-      ADD_MODE: 'addMode',
-      MODIFY_MODE: 'modifymode',
       displayModal: false,
       mode: '',
       currentTable: '',
@@ -428,7 +432,6 @@ export default {
       MOTUNIANAITEM: 'motUniAnaItem',
       NEEDEXAMITEM: 'needExamItem',
       SENNERCONDITEM: 'senNerCondItem',
-      title: '',
       item: {},
       warningResults: {},
       dictionData: [],
@@ -470,11 +473,19 @@ export default {
     ...mapGetters([
       'emgTypeList',
       'typeGroup'
-    ])
+    ]),
+    title() {
+      if (this.mode === this.ADD_NEW_CARD) {
+        return '新增肌电图';
+      } else {
+        return '肌电图';
+      }
+    }
   },
   methods: {
-    showPanel(title, item) {
+    showPanel(cardOperation, item) {
       this.displayModal = true;
+      this.mode = cardOperation;
       // 拷贝dictionary的数据
       vueCopy(this.emgTypeList, this.dictionData);
       // 在dictionary中取出肌电图的名字和ID
@@ -495,14 +506,13 @@ export default {
       }
       // console.log(this.EmgTypeNameArrs);
       // 通过检查 item 参数是否为空对象 {}，来决定提交时是新增记录，还是修改记录
-      if (isEmptyObject(item)) {
+      if (this.mode === this.ADD_NEW_CARD) {
         // 如果是新增肌电图那么需要新造一个对象来提交
-        this.mode = this.ADD_MODE;
         this.$set(this.EmgTypeData, 'etgName', '');
         this.$set(this.EmgTypeData, 'elecTroGramId', '');
         this.$set(this.EmgTypeData, 'etgType', '0');
         this.$set(this.EmgTypeData, 'patEleHint', '');
-        this.$set(this.EmgTypeData, 'patEleResule', '');
+        this.$set(this.EmgTypeData, 'patEleResult', '');
         this.$set(this.EmgTypeData, 'pcaseId', this.$route.params.caseId);
         this.$set(this.EmgTypeData, 'pinfoId', this.$route.params.id);
         this.$set(this.EmgTypeData, 'patientMotNerCondResu', []);
@@ -516,11 +526,8 @@ export default {
         this.tableMode = this.FATHER_OPEN;
         // 修改生化指标那么直接拷贝它
         vueCopy(item, this.EmgTypeData);
-        this.mode = this.MODIFY_MODE;
       }
-      this.title = title;
-      // 改变 item 的时候会触发 warningResults 的跟踪变化(这里的自动触发是由 el-date-picker 的 v-model造成的)
-      // 因此这一步要等到 item 变化结束之后再执行，我们将其放到下一个事件循环 tick 中
+      this.updateScrollbar();
     },
     handleDictionary(type) {
       let flag = false;
@@ -541,7 +548,7 @@ export default {
         if (this.dictionData[i]['id'] === this.EmgTypeData['elecTroGramId']) {
           vueCopy(this.dictionData[i], this.FatherTempData);
           this.$set(this.EmgTypeData, 'etgName', this.FatherTempData['emgName']);
-          if (this.mode === this.ADD_MODE) {
+          if (this.mode === this.ADD_NEW_CARD) {
             this.tableMode = this.FATHER_OPEN;
           }
         }
@@ -571,7 +578,7 @@ export default {
             }
           }
           // 在新增的状态下需要把肌电图的子表格造出来
-          if (this.mode === this.ADD_MODE) {
+          if (this.mode === this.ADD_NEW_CARD) {
             this.addEmgSonData(arrName);
           }
           break;
@@ -579,7 +586,7 @@ export default {
           this.currentTable = this.NEEDEXAMITEM;
           this.currentTableName = '针刺肌电图检查';
           // 在新增的状态下需要把肌电图的子表格造出来
-          if (this.mode === this.ADD_MODE) {
+          if (this.mode === this.ADD_NEW_CARD) {
             this.addEmgSonData(arrName);
           }
           break;
@@ -595,7 +602,7 @@ export default {
             }
           }
           // 在新增的状态下需要把肌电图的子表格造出来
-          if (this.mode === this.ADD_MODE) {
+          if (this.mode === this.ADD_NEW_CARD) {
             this.addEmgSonData(arrName);
           }
           break;
@@ -612,7 +619,7 @@ export default {
             }
           }
           // 在新增的状态下需要把肌电图的子表格造出来
-          if (this.mode === this.ADD_MODE) {
+          if (this.mode === this.ADD_NEW_CARD) {
             this.addEmgSonData(arrName);
           }
           break;
@@ -620,7 +627,7 @@ export default {
           this.currentTable = this.INTPATANAITEM;
           this.currentTableName = '干扰项分析';
           // 在新增的状态下需要把肌电图的子表格造出来
-          if (this.mode === this.ADD_MODE) {
+          if (this.mode === this.ADD_NEW_CARD) {
             this.addEmgSonData(arrName);
           }
           break;
@@ -628,11 +635,14 @@ export default {
           this.currentTable = this.fWAVSTUITEM;
           this.currentTableName = 'F波研究';
           // 在新增的状态下需要把肌电图的子表格造出来
-          if (this.mode === this.ADD_MODE) {
+          if (this.mode === this.ADD_NEW_CARD) {
             this.addEmgSonData(arrName);
           }
           break;
       }
+    },
+    viewSonTemp(arrName) {
+      this.selectSonTemp(arrName);
     },
     addEmgSonData(Name) {
       switch (Name) {
@@ -727,13 +737,13 @@ export default {
     },
     submit() {
       let submitData = this.EmgTypeData;
-      if (this.mode === this.ADD_MODE) {
+      if (this.mode === this.ADD_NEW_CARD) {
         // 新增肌电图
         addEmg(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
           this.cancel();
         });
-      } else if (this.mode === this.MODIFY_MODE) {
+      } else if (this.mode === this.EDIT_CURRENT_CARD) {
         // 修改肌电图
         modEmg(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
@@ -758,20 +768,26 @@ export default {
         this.warningResults['subModal'] = null;
       }
     },
+    getFieldValue(code, fieldName) {
+      if (fieldName === 'emgName') {
+        let info = Util.getElement('id', code, this.EmgNameArr);
+        return info.emgName;
+      } else if (fieldName === 'emgType') {
+        let info = Util.getElement('typeCode', code, this.EmgTypeNameArrs);
+        return info.typeName;
+      } else {
+        return '';
+      }
+    },
     updateScrollbar() {
-      // 如果不写在 $nextTick() 里面，第一次加载的时候也许会不能正确计算高度。估计是因为子组件还没有全部加载所造成的。
       this.$nextTick(() => {
-        // 之所以弃用 update 方法，是因为它在某些情况下会出现问题，导致滚动条不能有效刷新
-        // Ps.update(this.$refs.scrollArea);
-
-        // 如果之前有绑定滚动条的话，先进行解除
         Ps.destroy(this.$refs.formWrapper);
         Ps.initialize(this.$refs.formWrapper, {
           wheelSpeed: 1,
           minScrollbarLength: 40
         });
-        Ps.destroy(this.$refs.medicineModal);
-        Ps.initialize(this.$refs.medicineModal, {
+        Ps.destroy(this.$refs.emgModal);
+        Ps.initialize(this.$refs.emgModal, {
           wheelSpeed: 1,
           minScrollbarLength: 40
         });
