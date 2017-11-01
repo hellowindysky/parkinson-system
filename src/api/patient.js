@@ -734,6 +734,13 @@ export function delEmg(patientElecTroGram) {
   return encapsulatePromise(url, request);
 };
 
+// 新增医学影像
+// 修改医学影像
+// export function modImg(patientElecTroGram) {
+//   var request = Object.assign({}, getCommonRequest());
+// }
+// 删除医学影像
+
 // 修改生命体征
 export function modVitalSigns(patientCase) {
   var request = Object.assign({}, getCommonRequest());
