@@ -24,12 +24,12 @@
         </div>
         <div class="choose-time-type">
           <span>量表填写时间:</span>
-          <el-date-picker  type="datetime" format="yyyy-MM-dd" v-model="patientScale['inspectTime']"  placeholder="请选择量表填写时间">
+          <el-date-picker  type="datetime" v-model="patientScale['inspectTime']"  placeholder="请选择量表填写时间">
           </el-date-picker>
         </div>
         <div class="choose-time-type">
           <span>末次服药时间:</span>
-          <el-date-picker type="datetime" format="yyyy-MM-dd" v-model="patientScale['lastTakingTime']"  placeholder="请选择末次服药时间">
+          <el-date-picker type="datetime" v-model="patientScale['lastTakingTime']"  placeholder="请选择末次服药时间">
           </el-date-picker>
         </div>
         <div class="choose-time-type">
@@ -41,22 +41,25 @@
       </div>
 
       <div class="scale-selecter" v-if="mode===VIEW_CURRENT_CARD">
-         <div class="choose-time-type">
-           <span>量表类型:</span>  <span>{{readingScaleType}}</span>
-         </div>
-         <div class="choose-time-type" v-if="Boolean(String(patientScale['inspectTime']))!==false">
-           <span>量表填写时间:</span> <span>{{patientScale['inspectTime']}}</span>
-         </div>
-         <div class="choose-time-type" v-if="Boolean(String(patientScale['lastTakingTime']))!==false">
-           <span>末次服药时间:</span> <span>{{patientScale['lastTakingTime']}}</span>
-         </div>
-         <div class="choose-time-type" v-if="Boolean(String(patientScale['switchType']))!==false">
-           <span>开关状态:</span> <span>{{formatReadingScale(patientScale['switchType'])}}</span>
-         </div>
+        <div class="choose-time-type">
+          <span>量表类型:</span>
+          <span>{{readingScaleType}}</span>
+        </div>
+        <div class="choose-time-type" v-if="Boolean(String(patientScale['inspectTime']))!==false">
+          <span>量表填写时间:</span>
+          <span>{{patientScale['inspectTime']}}</span>
+        </div>
+        <div class="choose-time-type" v-if="Boolean(String(patientScale['lastTakingTime']))!==false">
+          <span>末次服药时间:</span>
+          <span>{{patientScale['lastTakingTime']}}</span>
+        </div>
+        <div class="choose-time-type" v-if="Boolean(String(patientScale['switchType']))!==false">
+          <span>开关状态:</span>
+          <span>{{formatReadingScale(patientScale['switchType'])}}</span>
+        </div>
       </div>
 
-      <folding-panel :title="'关联症状'" :folded-status="mode===VIEW_CURRENT_CARD"
-        class="associated-symptom" :editable="canEdit">
+      <folding-panel :title="'关联症状'" :folded-status="mode===VIEW_CURRENT_CARD" class="associated-symptom" :editable="canEdit">
         <div class="symptom-item" v-for="(list, listkey) in patientScale['scaleSympInfoList']" :key="listkey">
           <el-checkbox class="symptom-item-title" v-model="list.status" :disabled="isSubjectDisabled">
             {{list.sympName}}
@@ -75,27 +78,30 @@
         </div>
       </folding-panel>
 
-      <div v-for="(item, key) in scaleSonDate['questions']" v-if="mode!==ADD_NEW_CARD">
+      <div v-for="(item, key) in scaleSonData['questions']" v-if="mode!==ADD_NEW_CARD">
         <div class="scale-questions">
           <p class="question-title">题目名称:
             <span>{{item.subjectName}}</span>
           </p>
           <el-radio-group class="question-body" :key="key" v-model="patientScale['scaleOptionIds'][key]">
-            <el-radio class="question-selection" v-for="(sonitem, key1) in item['options']"
-              :label="sonitem.scaleOptionId" :key="key1" :disabled="isSubjectDisabled">
+            <el-radio class="question-selection" v-for="(sonitem, i) in item['options']"
+              :label="sonitem.scaleOptionId" :key="i" :disabled="isSubjectDisabled">
                 {{sonitem.optionName}}
             </el-radio>
           </el-radio-group>
         </div>
       </div>
 
-      <div v-for="(item, key) in scaleAddSonDate['questions']" v-if="isSelected">
+      <div v-for="(item, key) in scaleAddSonData['questions']" v-if="isSelected">
         <div class="scale-questions">
           <p class="question-title">题目名称:
             <span>{{item.subjectName}}</span>
           </p>
           <el-radio-group class="question-body" :key="key" v-model="patientScale['scaleOptionIds'][key]">
-            <el-radio class="question-selection" v-for="(sonitem, key1) in item['options']" :label="sonitem.scaleOptionId" :key="key1">{{sonitem.optionName}}</el-radio>
+            <el-radio class="question-selection" v-for="(sonitem, i) in item['options']"
+              :label="sonitem.scaleOptionId" :key="i">
+              {{sonitem.optionName}}
+            </el-radio>
           </el-radio-group>
         </div>
       </div>
@@ -113,7 +119,6 @@ import { vueCopy } from 'utils/helper';
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 import Util from 'utils/util.js';
 import { deepCopy } from 'utils/helper';
-// import { isEmptyObject } from 'utils/helper.js';
 import { modifyScaleInfo, addScaleInfo } from 'api/patient.js';
 
 export default {
@@ -127,8 +132,8 @@ export default {
       patientScale: {},  // 需要向服务器提交的对象
       displayUpdateScale: false,  // 此组件是否显示
       scaleData: {},  // 获取到所有的量表数据
-      scaleSonDate: {}, // 这是通过量表的ID筛选出的其中一个量表
-      scaleAddSonDate: {}, // 新增量表的时候选中量表后的题目数据
+      scaleSonData: {}, // 这是通过量表的ID筛选出的其中一个量表
+      scaleAddSonData: {}, // 新增量表的时候选中量表后的题目数据
       scaleName: '',  // 筛选出来的量表的名字
       scaleAnswer: [],  // 放筛选出来的量表病人填写答案的数组
       correctanswer: [], // 通过函数处理后得出的对应答案选项数组
@@ -161,7 +166,7 @@ export default {
           if (sonkey === 'scaleInfoId') {
             // 获取对应量表的数据
             if (sonData[sonkey] === this.patientScale['scaleInfoId']) {
-              vueCopy(sonData, this.scaleAddSonDate);
+              vueCopy(sonData, this.scaleAddSonData);
             }
           }
         }
@@ -196,9 +201,9 @@ export default {
         // 通过bus传递过来量表ID来获取量表的信息
         this.getTitleAndScale(item.scaleInfoId);
         this.scaleAnswer = item.scaleOptionIds;
-        if (this.scaleSonDate) {
-          console.log(this.scaleSonDate);
-          // this.getCorrectAnswer(this.scaleSonDate['questions']);
+        if (this.scaleSonData) {
+          console.log(this.scaleSonData);
+          // this.getCorrectAnswer(this.scaleSonData['questions']);
         }
         this.isSubjectDisabled = this.mode === this.VIEW_CURRENT_CARD;
         // 在修改页面的状态下将原来的数据对象给服务器的对象
@@ -248,7 +253,7 @@ export default {
       this.dictionaryData = [];
       this.scaleType = '';
       this.isSubjectDisabled = true;
-      this.scaleAddSonDate = {};
+      this.scaleAddSonData = {};
       this.displayUpdateScale = false;
       this.isSelected = false;
       this.switchNum = 0;
@@ -352,7 +357,7 @@ export default {
           if (sonkey === 'scaleInfoId') {
             // 获取对应量表的数据
             if (sonData[sonkey] === scaleInfoId) {
-              vueCopy(sonData, this.scaleSonDate);
+              vueCopy(sonData, this.scaleSonData);
               this.scaleName = sonData['gaugeName'];
               for (let key in this.scaleTypeData) {
                 if (this.scaleTypeData[key]['typeCode'] === String(sonData['gaugeType'])) {
@@ -467,7 +472,7 @@ export default {
     }
   },
   watch: {
-    scaleSonDate: {
+    scaleSonData: {
       handler: function(newVal) {
         if (newVal) {
           this.getCorrectAnswer(newVal['questions']);
