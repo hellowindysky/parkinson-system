@@ -372,13 +372,13 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addBiochemicalExamRecord() {
-      Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, '新增生化指标', {});
+      Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.ADD_NEW_CARD, {});
     },
     editBiochemicalExamRecord(item) {
-      Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, '生化指标', item);
+      Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.EDIT_CURRENT_CARD, item);
     },
     viewBiochemicalExamRecord(item) {
-      Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, '生化指标', item);
+      Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.VIEW_CURRENT_CARD, item);
     },
     deleteBiochemicalExamRecord(item) { // 删除生化指标
       let BiochemicalId = {

@@ -10,8 +10,11 @@
           </span>
           <span class="field-input">
             <span class="warning-text"></span>
-            <el-select  placeholder="请选择检查名称" v-model="bioexamTypeData['bioexamId']" @change="changeTemplate(mode)" :disabled="mode===MODIFY_MODE">
-               <el-option v-for="bioexItem in bioexamNameArr" :key="bioexItem.bioexamId" :label="bioexItem.examName" :value="bioexItem.bioexamId" ></el-option>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{getFieldValue(bioexamTypeData.bioexamId, 'bioexamName')}}</span>
+            <el-select v-else placeholder="请选择检查名称" v-model="bioexamTypeData.bioexamId"
+              @change="changeTemplate(mode)" :disabled="mode===EDIT_CURRENT_CARD">
+              <el-option v-for="bioexItem in bioexamNameArr" :key="bioexItem.bioexamId"
+                :label="bioexItem.examName" :value="bioexItem.bioexamId" ></el-option>
             </el-select>
           </span>
         </div>
@@ -49,7 +52,9 @@
                 {{item.englishAbbreviation}}
               </td>
               <td class="col col-result">
-                <el-input v-model="bioexamTypeData['bioexamResult'][key]['result']" placeholder="请输入检查结果"></el-input>                
+                <span v-if="mode===VIEW_CURRENT_CARD">{{bioexamTypeData.bioexamResult[key].result}}</span>
+                <el-input v-else v-model="bioexamTypeData['bioexamResult'][key]['result']"
+                  placeholder="请输入检查结果"></el-input>
               </td>
               <td class="col col-danwei">
                 {{item.projectUnit}}
@@ -58,15 +63,18 @@
                 {{item.referenceRanges}}
               </td>
               <td class="col col-beizhu">
-                <el-input v-model="bioexamTypeData['bioexamResult'][key]['remarks']" placeholder="请输入备注"></el-input>
-              </td>              
+                <span v-if="mode===VIEW_CURRENT_CARD">{{bioexamTypeData.bioexamResult[key].remarks}}</span>
+                <el-input v-else v-model="bioexamTypeData['bioexamResult'][key]['remarks']"
+                  placeholder="请输入备注"></el-input>
+              </td>
             </tr>
           </table>
         </div>
       </div>
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
-      <div class="button submit-button" @click="submit">确定</div>
+      <div class="button edit-button" @click="switchToEditingMode" v-show="mode===VIEW_CURRENT_CARD">编辑</div>
+      <div class="button submit-button" @click="submit" v-show="mode===EDIT_CURRENT_CARD">确定</div>
     </div>
   </div>
 </template>
@@ -76,22 +84,17 @@ import Ps from 'perfect-scrollbar';
 import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import { vueCopy } from 'utils/helper';
-// import Util from 'utils/util.js';
+import Util from 'utils/util.js';
 import { deepCopy } from 'utils/helper';
 import { addBiochemical, modBiochemical } from 'api/patient.js';
-import { isEmptyObject } from 'utils/helper.js';
 export default {
   data() {
     return {
-      ADD_MODE: 'addMode',
-      MODIFY_MODE: 'modifymode',
       displayModal: false,
       mode: '',
       modalType: '',
       subModalType: '',
       disableChangingSubModal: false,
-      title: '',
-      item: {},
       warningResults: {},
       dictionData: [],
       bioexamTypeData: {},
@@ -102,11 +105,19 @@ export default {
   computed: {
     ...mapGetters([
       'bioexamTypeList'
-    ])
+    ]),
+    title() {
+      if (this.mode === this.ADD_NEW_CARD) {
+        return '新增生化指标';
+      } else {
+        return '生化指标';
+      }
+    }
   },
   methods: {
-    showPanel(title, item) {
+    showPanel(cardOperation, item) {
       this.displayModal = true;
+      this.mode = cardOperation;
       // 拷贝dictionary的数据
       vueCopy(this.bioexamTypeList, this.dictionData);
       // 将检查的名字从dictionary中取出来
@@ -122,9 +133,8 @@ export default {
       }
       // 通过检查 item 参数是否为空对象 {}，来决定提交时是新增记录，还是修改记录
 
-      if (isEmptyObject(item)) {
+      if (this.mode === this.ADD_NEW_CARD) {
         // 如果是新增生化指标那么需要新造一个对象来提交
-        this.mode = this.ADD_MODE;
         this.$set(this.bioexamTypeData, 'bioexamId', '');
         this.$set(this.bioexamTypeData, 'bioexamResult', []);
         this.$set(this.bioexamTypeData, 'patientBioexamId', '');
@@ -144,9 +154,7 @@ export default {
             // console.log('projects', this.templateData);
           }
         }
-        this.mode = this.MODIFY_MODE;
       }
-      this.title = title;
       this.item = Object.assign({}, item);
       // 每次打开这个模态框，都会重新初始化 this.item
       // this.initItem();
@@ -169,8 +177,10 @@ export default {
         }
       }
       // 接下来要把检查结果和备注信息还原成原来的样子
-      if (mode === this.MODIFY_MODE) { // 要在用户编辑生化检查的时候执行
-      } else if (mode === this.ADD_MODE) { // 在新增生化检查的时候要根据检查类型的长度来生成监听的数据对象
+      if (mode === this.EDIT_CURRENT_CARD) {
+        // 要在用户编辑生化检查的时候执行
+      } else if (mode === this.ADD_NEW_CARD) {
+        // 在新增生化检查的时候要根据检查类型的长度来生成监听的数据对象
         for (let i = 0; i < this.templateData.length; i++) {
           this.$set(this.bioexamTypeData['bioexamResult'], i, {});
           for (let key in this.templateData[i]) {
@@ -190,14 +200,17 @@ export default {
       this.displayModal = false;
       this.templateData = [];
     },
+    switchToEditingMode() {
+      this.mode = this.EDIT_CURRENT_CARD;
+    },
     submit() {
       let submitData = deepCopy(this.bioexamTypeData);
-      if (this.mode === this.MODIFY_MODE) {
+      if (this.mode === this.EDIT_CURRENT_CARD) {
         modBiochemical(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
           this.updateAndClose();
         });
-      } else if (this.mode === this.ADD_MODE) {
+      } else if (this.mode === this.ADD_NEW_CARD) {
         addBiochemical(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
           this.updateAndClose();
@@ -222,18 +235,21 @@ export default {
       }
     },
     updateScrollbar() {
-      // 如果不写在 $nextTick() 里面，第一次加载的时候也许会不能正确计算高度。估计是因为子组件还没有全部加载所造成的。
       this.$nextTick(() => {
-        // 之所以弃用 update 方法，是因为它在某些情况下会出现问题，导致滚动条不能有效刷新
-        // Ps.update(this.$refs.scrollArea);
-
-        // 如果之前有绑定滚动条的话，先进行解除
         Ps.destroy(this.$refs.formWrapper);
         Ps.initialize(this.$refs.formWrapper, {
           wheelSpeed: 1,
           minScrollbarLength: 40
         });
       });
+    },
+    getFieldValue(code, fieldName) {
+      if (fieldName === 'bioexamName') {
+        let info = Util.getElement('bioexamId', code, this.bioexamNameArr);
+        return info.examName;
+      } else {
+        return '';
+      }
     }
   },
   mounted() {
@@ -400,7 +416,7 @@ export default {
               background-color: @screen-color;
               height: 30px;
             }
-            
+
             .col {
               font-size: @normal-font-size;
               text-align: center;
@@ -485,7 +501,7 @@ export default {
       &.cancel-button {
         background-color: @light-font-color;
       }
-      &.submit-button {
+      &.submit-button, &.edit-button {
         background-color: @button-color;
       }
       &:hover {
