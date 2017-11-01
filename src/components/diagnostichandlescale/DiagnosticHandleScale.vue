@@ -113,7 +113,6 @@
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import { getScaleInfo } from 'api/patient';
-import { getDictionary } from 'api/user.js';
 import { mapGetters } from 'vuex';
 import { vueCopy } from 'utils/helper';
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
@@ -195,15 +194,16 @@ export default {
       this.mode = cardOperation;
       this.displayUpdateScale = true;
       this.switchNum = 0;
-      // console.log(item);
+      console.log('item', item);
       if (this.mode !== this.ADD_NEW_CARD) {
         // 如果不是新增量表
         // 通过bus传递过来量表ID来获取量表的信息
         this.getTitleAndScale(item.scaleInfoId);
-        this.scaleAnswer = item.scaleOptionIds;
+        vueCopy(item.scaleOptionIds, this.scaleAnswer);
         if (this.scaleSonData) {
-          console.log(this.scaleSonData);
-          // this.getCorrectAnswer(this.scaleSonData['questions']);
+          console.log('scaleSonData: ', this.scaleSonData);
+          console.log('scaleAnswer', item.scaleOptionIds);
+          this.getCorrectAnswer(this.scaleSonData['questions']);
         }
         this.isSubjectDisabled = this.mode === this.VIEW_CURRENT_CARD;
         // 在修改页面的状态下将原来的数据对象给服务器的对象
@@ -241,7 +241,8 @@ export default {
         vueCopy(this.scaleSympInfoName, this.patientScale['scaleSympInfoList']);
         this.isSelected = false;
       }
-      console.log(this.patientScale);
+      this.$refs.scrollArea.scrollTop = 0;
+      console.log('patientScale: ', this.patientScale);
     },
     goBack() {
       // 按下返回按钮，把所有的数据都初始化一遍
@@ -331,23 +332,18 @@ export default {
       });
     },
     getDictionaryData() {
-      getDictionary().then((data) => {
-        this.dictionaryData = data['typegroup'];
-        for (let key in this.dictionaryData) {
-          if (this.dictionaryData[key]['typegroupcode'] === 'scaleSymp') {
-            vueCopy(this.dictionaryData[key]['types'], this.scaleSympInfoName);
-            for (let i = 0; i < this.scaleSympInfoName.length; i++) {
-              this.$set(this.scaleSympInfoName[i], 'status', false);
-              this.$set(this.scaleSympInfoName[i], 'ariseTime', '');
-              this.$set(this.scaleSympInfoName[i], 'scaleMedicine', '');
-              this.$set(this.scaleSympInfoName[i], 'sympName', this.scaleSympInfoName[i]['typeName']);
-              this.$set(this.scaleSympInfoName[i], 'sympCode', this.scaleSympInfoName[i]['typeCode']);
-              delete this.scaleSympInfoName[i]['typeName'];
-              delete this.scaleSympInfoName[i]['typeCode'];
-            }
-          }
-        }
-      });
+      var typesInfo = Util.getElement('typegroupcode', 'scaleSymp', this.typeGroup);
+      var types = typesInfo.types ? typesInfo.types : [];
+      vueCopy(types, this.scaleSympInfoName);
+      for (let i = 0; i < this.scaleSympInfoName.length; i++) {
+        this.$set(this.scaleSympInfoName[i], 'status', false);
+        this.$set(this.scaleSympInfoName[i], 'ariseTime', '');
+        this.$set(this.scaleSympInfoName[i], 'scaleMedicine', '');
+        this.$set(this.scaleSympInfoName[i], 'sympName', this.scaleSympInfoName[i]['typeName']);
+        this.$set(this.scaleSympInfoName[i], 'sympCode', this.scaleSympInfoName[i]['typeCode']);
+        delete this.scaleSympInfoName[i]['typeName'];
+        delete this.scaleSympInfoName[i]['typeCode'];
+      }
     },
     getTitleAndScale(scaleInfoId) {
       // 通过量表的ID来找到量表的名字
@@ -371,6 +367,7 @@ export default {
     },
     getCorrectAnswer(data) {
       // 取出量表的选中答案以及对应的分数
+      this.$set(this.patientScale, 'scaleOptionIds', []);
       for (let j = 0; j < data.length; j++) {
         let sondata = data[j]['options'];
         let isNull = true;
@@ -461,7 +458,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'scaleTemplateGroups'
+      'scaleTemplateGroups',
+      'typeGroup'
     ]),
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients)) {
@@ -526,9 +524,6 @@ export default {
 
 .diagnostic-update-wrapper {
   width: 100%;
-  p {
-    margin: 0;
-  }
   background-color: @screen-color;
   .title-bar {
     position: relative;
@@ -594,6 +589,7 @@ export default {
       padding-left: @title-left-padding; // padding-bottom: @title-bottom-padding;
       box-sizing: border-box;
       .question-title {
+        margin: 0;
         line-height: 62px;
         font-weight: bold;
         span {
