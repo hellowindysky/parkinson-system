@@ -12,14 +12,16 @@
       <div class="scale-selecter" v-if="mode!==VIEW_CURRENT_CARD">
         <div class="choose-scale">
           <span>选择量表:</span>
-          <el-select  placeholder="请选择量表" v-model="patientScale['scaleInfoId']" :disabled="mode===EDIT_CURRENT_CARD || isSelected" @change="selectScale">
+          <el-select placeholder="请选择量表" v-model="patientScale.scaleInfoId"
+            :disabled="mode===EDIT_CURRENT_CARD || isSelected" @change="selectScale">
             <el-option v-for="item in scaleNameArr" :key="item.name" :label="item.name" :value="item.scaleId"></el-option>
           </el-select>
         </div>
         <div class="choose-scale">
           <span>量表类型:</span>
-          <el-select  placeholder="" v-model="scaleType" disabled>
-            <el-option v-for="item in scaleTypeData" :key="item.typeName" :label="item.typeName" :value="item.typeCode"></el-option>
+          <el-select v-model="scaleType" disabled>
+            <el-option v-for="item in getOptions('gaugeType')" :key="item.code"
+              :label="item.name" :value="item.code"></el-option>
           </el-select>
         </div>
         <div class="choose-time-type">
@@ -137,8 +139,6 @@ export default {
       scaleAnswer: [],  // 放筛选出来的量表病人填写答案的数组
       correctanswer: [], // 通过函数处理后得出的对应答案选项数组
       scaleNameArr: [], // 获取到所有量表的名字,类型,和量表ID
-      dictionaryData: [], // 获取到量表的字典项
-      scaleTypeData: [], // 这是从量表的字典项中查到的量表类型具体信息
       scaleType: '',   // 这个值是量表类型下拉框绑定的变量改变它可以随时改变量表类型下拉框
       switchScaleArr: [
         {
@@ -211,20 +211,20 @@ export default {
       // console.log('item', item);
       if (this.mode !== this.ADD_NEW_CARD) {
         // 如果不是新增量表
-        // 通过bus传递过来量表ID来获取量表的信息
+        // 通过量表ID来获取量表的信息
         this.getTitleAndScale(item.scaleInfoId);
-        vueCopy(item.scaleOptionIds, this.scaleAnswer);
-        if (this.scaleSonData) {
-          console.log('scaleSonData: ', this.scaleSonData);
-          console.log('scaleAnswer', item.scaleOptionIds);
+
+        this.scaleAnswer = [];
+        for (let i = 0; i < item.scaleOptionIds.length; i++) {
+          let answer = item.scaleOptionIds[i];
+          this.$set(this.scaleAnswer, i, answer);
         }
+
         this.isSubjectDisabled = this.mode === this.VIEW_CURRENT_CARD;
+
         // 在修改页面的状态下将原来的数据对象给服务器的对象
         this.patientScale = {};
         vueCopy(item, this.patientScale);
-        this.$set(this.patientScale, 'scaleOptionIds', []);
-        vueCopy(item.scaleOptionIds, this.patientScale.scaleOptionIds);
-        console.log(item, this.patientScale);
 
         if (this.patientScale['scaleSympInfoList']) {
           for (let i = 0; i < this.scaleSympInfoName.length; i++) {
@@ -257,7 +257,7 @@ export default {
         this.isSelected = false;
       }
       this.$refs.scrollArea.scrollTop = 0;
-      console.log('patientScale: ', this.patientScale);
+      // console.log('patientScale: ', this.patientScale);
     },
     goBack() {
       // 按下返回按钮，把所有的数据都初始化一遍
@@ -266,7 +266,6 @@ export default {
       this.scaleName = '';
       this.scaleAnswer = [];
       this.scaleNameArr = [];
-      this.dictionaryData = [];
       this.scaleType = '';
       this.isSubjectDisabled = true;
       this.scaleAddSonData = {};
@@ -369,20 +368,18 @@ export default {
             // 获取对应量表的数据
             vueCopy(sonData, this.scaleSonData);
             this.scaleName = sonData['gaugeName'];
-            for (let key in this.scaleTypeData) {
-              if (this.scaleTypeData[key]['typeCode'] === String(sonData['gaugeType'])) {
-                this.readingScaleType = this.scaleTypeData[key]['typeName'];
-              }
-            }
+            var options = this.getOptions('gaugeType');
+            var option = Util.getElement('code', sonData.gaugeType, options);
+            this.readingScaleType = option.name;
           }
         }
       }
     },
-    getCorrectAnswer(data) {
+    getCorrectAnswer(questions) {
       // 取出量表的选中答案以及对应的分数
       this.$set(this.patientScale, 'scaleOptionIds', []);
-      for (let j = 0; j < data.length; j++) {
-        let sondata = data[j]['options'];
+      for (let j = 0; j < questions.length; j++) {
+        let sondata = questions[j]['options'];
         let isNull = true;
         let answer = '';
         for (let sonkey in sondata) {
@@ -401,6 +398,18 @@ export default {
         }
       }
     },
+    getOptions(fieldName) {
+      var options = [];
+      var typesInfo = Util.getElement('typegroupcode', fieldName, this.typeGroup);
+      var types = typesInfo.types ? typesInfo.types : [];
+      for (let type of types) {
+        options.push({
+          code: type.typeCode,
+          name: type.typeName
+        });
+      }
+      return options;
+    },
     getScaleNameArr(scaledata) {
       for (let i = 0; i < scaledata.length; i++) {
         let data = scaledata[i];
@@ -413,19 +422,6 @@ export default {
         }
       }
     },
-    getScaleTypeData(data) {
-      // 获取到dictionary的数据之后再取出对应的量表类型数据
-      for (let i = 0; i < data.length; i++) {
-        if (data[i]['typegroupcode'] === 'gaugeType') {
-          let typeData = data[i]['types'];
-          for (let j = 0; j < typeData.length; j++) {
-            this.scaleTypeData.push({});
-            this.$set(this.scaleTypeData[j], 'typeCode', typeData[j]['typeCode']);
-            this.$set(this.scaleTypeData[j], 'typeName', typeData[j]['typeName']);
-          }
-        }
-      }
-    },
     linkAgeScaleType(scaleId) {
       // 通过量表的ID查询到量表的类型并且改变量表类型选择框
       for (let key in this.scaleData) {
@@ -433,7 +429,7 @@ export default {
         for (let sonkey in sonData) {
           if (sonkey === 'scaleInfoId') {
             if (sonData[sonkey] === scaleId) {
-              this.scaleType = String(sonData['gaugeType']);
+              this.scaleType = sonData['gaugeType'];
             }
           }
         }
@@ -491,11 +487,6 @@ export default {
         }
       },
       deep: true
-    },
-    dictionaryData: {
-      handler: function(newVal) {
-        this.getScaleTypeData(newVal);
-      }
     },
     patientScale: {
       handler: function(newVal) {
