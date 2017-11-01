@@ -6,7 +6,7 @@
         v-on:addNewCard="addScale" :editable="canEdit">
         <card class="card" :class="devideWidth" :mode="mutableMode" v-for="item in patientScale"
           :key="item.id" :title="getTitle(item.scaleInfoId)" v-on:deleteCurrentCard="deleteScaleRecord(item)"
-          v-on:editCurrentCard="updateScaleDetail(item, 'update')">
+          v-on:editCurrentCard="editScale(item)" v-on:viewCurrentCard="viewScale(item)">
           <div class="text first-line">量表得分: {{item.scalePoint}}</div>
           <div class="text second-line">填写时间: {{item['inspectTime']}}</div>
           <div class="text third-line">末次服药: {{item['lastTakingTime']}}</div>
@@ -89,11 +89,14 @@ export default {
         }
       }
     },
-    updateScaleDetail(item) {
-      Bus.$emit(this.UPDATE_SCALE_DETAIL, item);
+    editScale(item) {
+      Bus.$emit(this.UPDATE_SCALE_DETAIL, this.EDIT_CURRENT_CARD, item);
+    },
+    viewScale(item) {
+      Bus.$emit(this.UPDATE_SCALE_DETAIL, this.VIEW_CURRENT_CARD, item);
     },
     addScale() {
-      Bus.$emit(this.UPDATE_SCALE_DETAIL, {});
+      Bus.$emit(this.UPDATE_SCALE_DETAIL, this.ADD_NEW_CARD, {});
     },
     deleteScaleRecord(item) { // 删除肌电图
       // console.log(item);
