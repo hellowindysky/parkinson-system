@@ -154,6 +154,19 @@ export default {
       switchNum: 0
     };
   },
+  computed: {
+    ...mapGetters([
+      'scaleTemplateGroups',
+      'typeGroup'
+    ]),
+    canEdit() {
+      if (this.$route.matched.some(record => record.meta.myPatients)) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  },
   methods: {
     selectScale() {
       if (this.switchNum > 0) {
@@ -185,7 +198,8 @@ export default {
         Ps.destroy(this.$refs.scrollArea);
         Ps.initialize(this.$refs.scrollArea, {
           wheelSpeed: 1,
-          minScrollbarLength: 40
+          minScrollbarLength: 40,
+          suppressScrollX: true
         });
       });
     },
@@ -194,7 +208,7 @@ export default {
       this.mode = cardOperation;
       this.displayUpdateScale = true;
       this.switchNum = 0;
-      console.log('item', item);
+      // console.log('item', item);
       if (this.mode !== this.ADD_NEW_CARD) {
         // 如果不是新增量表
         // 通过bus传递过来量表ID来获取量表的信息
@@ -203,13 +217,14 @@ export default {
         if (this.scaleSonData) {
           console.log('scaleSonData: ', this.scaleSonData);
           console.log('scaleAnswer', item.scaleOptionIds);
-          this.getCorrectAnswer(this.scaleSonData['questions']);
         }
         this.isSubjectDisabled = this.mode === this.VIEW_CURRENT_CARD;
         // 在修改页面的状态下将原来的数据对象给服务器的对象
         this.patientScale = {};
-        // console.log('item', item);
         vueCopy(item, this.patientScale);
+        this.$set(this.patientScale, 'scaleOptionIds', []);
+        vueCopy(item.scaleOptionIds, this.patientScale.scaleOptionIds);
+        console.log(item, this.patientScale);
 
         if (this.patientScale['scaleSympInfoList']) {
           for (let i = 0; i < this.scaleSympInfoName.length; i++) {
@@ -350,15 +365,13 @@ export default {
       for (let key in this.scaleData) {
         let sonData = this.scaleData[key];
         for (let sonkey in sonData) {
-          if (sonkey === 'scaleInfoId') {
+          if (sonkey === 'scaleInfoId' && sonData[sonkey] === scaleInfoId) {
             // 获取对应量表的数据
-            if (sonData[sonkey] === scaleInfoId) {
-              vueCopy(sonData, this.scaleSonData);
-              this.scaleName = sonData['gaugeName'];
-              for (let key in this.scaleTypeData) {
-                if (this.scaleTypeData[key]['typeCode'] === String(sonData['gaugeType'])) {
-                  this.readingScaleType = this.scaleTypeData[key]['typeName'];
-                }
+            vueCopy(sonData, this.scaleSonData);
+            this.scaleName = sonData['gaugeName'];
+            for (let key in this.scaleTypeData) {
+              if (this.scaleTypeData[key]['typeCode'] === String(sonData['gaugeType'])) {
+                this.readingScaleType = this.scaleTypeData[key]['typeName'];
               }
             }
           }
@@ -455,19 +468,6 @@ export default {
   },
   components: {
     FoldingPanel
-  },
-  computed: {
-    ...mapGetters([
-      'scaleTemplateGroups',
-      'typeGroup'
-    ]),
-    canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients)) {
-        return true;
-      } else {
-        return false;
-      }
-    }
   },
   watch: {
     scaleSonData: {
