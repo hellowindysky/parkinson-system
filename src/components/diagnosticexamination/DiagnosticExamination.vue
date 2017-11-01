@@ -75,7 +75,7 @@
       <extensible-panel class="panel" :mode="mutableMode" :title="neurologicCheckTitle" v-on:addNewCard="addNeurologicCheckRecord" :editable="canEdit">
         <card class="card" :class="cardWidth" :mode="mutableMode" v-for="item in neurologicCheckList" :key="item.preopsInfoId"
          :title="transformNeurologicCheckType(item.spephysicalInfo)" v-on:editCurrentCard="editNeurologicCheckRecord(item)"
-         v-on:deleteCurrentCard="deleteNeurologicCheckRecord(item)">
+         v-on:deleteCurrentCard="deleteNeurologicCheckRecord(item)" v-on:viewCurrentCard="viewNeurologicCheckRecored(item)">
           <div class="text first-line">
             <span class="name">诊断结果: </span>
             <span class="value">{{item.spephysicalResult}}</span>
@@ -88,7 +88,7 @@
       <extensible-panel class="panel" :mode="mutableMode" :title="biochemicalExamTitle" v-on:addNewCard="addBiochemicalExamRecord" :editable="canEdit">
         <card class="card" :class="cardWidth" :mode="mutableMode" v-for="item in biochemicalExamList" :key="item.patientCaseId"
          :title="transformBiochemicalExamType(item.bioexamId)" v-on:editCurrentCard="editBiochemicalExamRecord(item)"
-         v-on:deleteCurrentCard="deleteBiochemicalExamRecord(item)">
+         v-on:deleteCurrentCard="deleteBiochemicalExamRecord(item)" v-on:viewCurrentCard="viewBiochemicalExamRecord(item)">
           <div class="text first-line">
             <span class="name"></span>
             <span class="value"></span>
@@ -102,7 +102,7 @@
 
       <extensible-panel class="panel" :mode="mutableMode" :title="emgTitle" v-on:addNewCard="addEmgRecord" :editable="canEdit">
         <card class="card" :class="cardWidth" :mode="mutableMode" v-for="item in emgList" :key="item.patientCaseId"
-         :title="item.etgName" v-on:editCurrentCard="editEmgRecord(item)"
+         :title="item.etgName" v-on:editCurrentCard="editEmgRecord(item)" v-on:viewCurrentCard="viewEmgRecord(item)"
          v-on:deleteCurrentCard="deleteEmgRecord(item)">
           <div class="text first-line">
             <span class="name">类型</span>
@@ -115,9 +115,9 @@
         </card>
       </extensible-panel>
 <!-- 医学影像 -->
-      <extensible-panel class="panel image-panel" :mode="mutableMode" :title="medicalImagingTitle" v-on:addNewCard="addEmgRecord" :editable="canEdit">
+      <extensible-panel class="panel image-panel" :mode="mutableMode" :title="medicalImagingTitle" v-on:addNewCard="addImgRecord" :editable="canEdit">
         <card class="card image-card" :class="cardWidth" :mode="mutableMode" v-for="(item,idx) in medicalImagingList" :key="idx"
-         :title="item.name" v-on:editCurrentCard="editImgRecord(item)"
+         :title="item.name" v-on:editCurrentCard="editImgRecord(item)" v-on:viewCurrentCard="viewImgRecord(item)"
          v-on:deleteCurrentCard="deleteEmgRecord(item)">
           <div class="text first-line">
             <span class="name">{{item.time}}</span>
@@ -362,6 +362,10 @@ export default {
       Bus.$emit(this.SHOW_NERVOU_SYSTEM_MODAL, '神经系统检查', item);
       // console.log('edit', item);
     },
+    viewNeurologicCheckRecord(item) {
+      Bus.$emit(this.SHOW_NERVOU_SYSTEM_MODAL, '神经系统检查', item);
+      // console.log('edit', item);
+    },
     deleteNeurologicCheckRecord(item) { // 删除神经检查
       let NeuroId = {
         patientSpephysicalId: item.patientSpephysicalId
@@ -377,6 +381,9 @@ export default {
     editBiochemicalExamRecord(item) {
       Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, '生化指标', item);
     },
+    viewBiochemicalExamRecord(item) {
+      Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, '生化指标', item);
+    },
     deleteBiochemicalExamRecord(item) { // 删除生化指标
       let BiochemicalId = {
         patientBioexamId: item.patientBioexamId
@@ -389,8 +396,17 @@ export default {
     addEmgRecord() {
       Bus.$emit(this.SHOW_EMG_MODAL, '新增肌电图', {});
     },
+    viewEmgRecord(item) {
+      Bus.$emit(this.SHOW_EMG_MODAL, '肌电图', item);
+    },
     editEmgRecord(item) {
       Bus.$emit(this.SHOW_EMG_MODAL, '肌电图', item);
+    },
+    addImgRecord() {
+      // Bus.$emit(this.SHOW_IMG_MODAL, '医学影像', {});
+    },
+    viewImgRecord(item) {
+      Bus.$emit(this.SHOW_IMG_MODAL, '医学影像', item);
     },
     editImgRecord(item) {
       Bus.$emit(this.SHOW_IMG_MODAL, '医学影像', item);

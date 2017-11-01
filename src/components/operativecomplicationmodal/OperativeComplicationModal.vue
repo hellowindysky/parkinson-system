@@ -8,7 +8,15 @@
             {{field.cnfieldName}}
             <span class="required-mark" v-show="field.must===1">*</span>
           </span>
-          <span class="field-input">
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span v-if="getUIType(field.fieldName)===3">
+              {{getFieldValue(field)}}
+            </span>
+            <span v-else :class="{'multi-line': getType(field.fieldName)==='textarea'}">
+              {{copyInfo[field.fieldName]}}
+            </span>
+          </span>
+          <span class="field-input" v-else>
             <span class="warning-text">{{warningResults[field.fieldName]}}</span>
             <el-select v-if="getUIType(field.fieldName)===3" v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
               :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
@@ -28,7 +36,8 @@
       </div>
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
-      <div class="button submit-button" @click="submit">确定</div>
+      <div class="button edit-button" v-show="mode===VIEW_CURRENT_CARD" @click="switchToEditingMode">编辑</div>
+      <div class="button submit-button" v-show="mode!==VIEW_CURRENT_CARD" @click="submit">确定</div>
     </div>
   </div>
 </template>
@@ -60,16 +69,16 @@ export default {
       'typeGroup'
     ]),
     title() {
-      if (this.mode === this.ADD_DATA) {
+      if (this.mode === this.ADD_NEW_CARD) {
         return '新增术后并发症';
-      } else if (this.mode === this.EDIT_DATA) {
+      } else {
         return '术后并发症';
       }
     }
   },
   methods: {
-    showModal(changeWay, info) {
-      this.mode = changeWay;
+    showModal(cardOperation, info) {
+      this.mode = cardOperation;
       this.originalInfo = info;
       this.initCopyInfo();
 
@@ -96,6 +105,9 @@ export default {
     cancel() {
       this.displayModal = false;
     },
+    switchToEditingMode() {
+      this.mode = this.EDIT_CURRENT_CARD;
+    },
     submit() {
       // 先将日期格式改成符合服务器传输的格式
       this.copyInfo.occurrenceTime = Util.simplifyDate(this.copyInfo.occurrenceTime);
@@ -113,12 +125,12 @@ export default {
       }
 
       // 到这里，就可以提交了
-      if (this.mode === this.ADD_DATA) {
+      if (this.mode === this.ADD_NEW_CARD) {
         this.copyInfo.patientCaseId = this.$route.params.caseId;  // 补充诊断 id 这个属性
         addOperativeCompliation(this.copyInfo).then(() => {
           this.updateAndClose();
         });
-      } else if (this.mode === this.EDIT_DATA) {
+      } else if (this.mode === this.EDIT_CURRENT_CARD) {
         modifyOperativeCompliation(this.copyInfo).then(() => {
           this.updateAndClose();
         });
@@ -134,6 +146,11 @@ export default {
     },
     getUIType(fieldName) {
       return this.getMatchedField(fieldName).uiType;
+    },
+    getFieldValue(field) {
+      var options = this.getOptions(field.fieldName);
+      var code = this.copyInfo[field.fieldName];
+      return Util.getElement('code', code, options).name;
     },
     getOptions(fieldName) {
       // 为下拉框准备列表
@@ -285,6 +302,14 @@ export default {
           &.long-field-name {
             left: @long-field-name-width;
           }
+          .multi-line {
+            display: inline-block;
+            width: 100%;
+            line-height: 25px;
+            vertical-align: top;
+            transform: translateY(7px);
+            word-break: break-all;
+          }
           .warning-text {
             position: absolute;
             top: 25px;
@@ -338,7 +363,7 @@ export default {
       &.cancel-button {
         background-color: @light-font-color;
       }
-      &.submit-button {
+      &.submit-button, &.edit-button {
         background-color: @button-color;
       }
       &:hover {

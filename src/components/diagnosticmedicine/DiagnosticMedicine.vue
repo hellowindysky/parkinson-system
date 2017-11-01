@@ -99,13 +99,13 @@ export default {
       return medicine.medicineName + '(' + medicine.commonName + ')';
     },
     addMedicine() {
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.ADD_NEW_CARD, '新增药物方案', {});
+      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.ADD_NEW_CARD, {});
     },
     viewMedicine(item) {
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.VIEW_CURRENT_CARD, '药物方案', item);
+      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.VIEW_CURRENT_CARD, item);
     },
     editMedicine(item) {
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.EDIT_CURRENT_CARD, '药物方案', item);
+      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.EDIT_CURRENT_CARD, item);
     },
     deleteMedicine(item) {
       var patientMedicine = {

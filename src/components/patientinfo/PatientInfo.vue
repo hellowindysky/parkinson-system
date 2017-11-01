@@ -5,6 +5,7 @@
         @click="choosePersonal" v-show="this.existed">个人信息</div>
       <div class="tab right-tab" :class="{'current-tab': currentTab === 'diagnosticInfo'}"
         @click="chooseDiagnostic" v-show="this.existed">诊断信息</div>
+      <div class="patient-id" v-show="this.existed">患者ID: {{patientId}}</div>
       <div class="button" v-show="this.existed">导出病历</div>
       <div class="tab-bottom-bar" :class="currentTabBottomBar" v-show="this.existed"></div>
       <div class="title" v-show="!this.existed">新增患者</div>
@@ -289,7 +290,7 @@ export default {
       position: absolute;
       width: @tab-width;
       height: 100%;
-      line-height: 40px;
+      line-height: @tabs-wrapper-height;
       box-sizing: border-box;
       font-size: @large-font-size;
       font-weight: bold;
@@ -322,6 +323,14 @@ export default {
       &.second-tab {
         transform: translate3d(@second-tab-x - @first-tab-x, 0, 0);
       }
+    }
+    .patient-id {
+      position: absolute;
+      right: @small-button-width + 30px;
+      line-height: @tabs-wrapper-height;
+      font-size: @normal-font-size;
+      font-weight: bold;
+      color: @light-font-color;
     }
     .button {
       position: absolute;

@@ -175,7 +175,6 @@ export default {
     return {
       displayModal: false,
       mode: '',
-      title: '',
       medicine: {},
       originalMedicine: {},
       warningResults: {},
@@ -196,6 +195,13 @@ export default {
         return true;
       } else {
         return false;
+      }
+    },
+    title() {
+      if (this.mode === this.ADD_NEW_CARD) {
+        return '新增药物方案';
+      } else {
+        return '药物方案';
       }
     },
     firstTemplateGroup() {
@@ -337,9 +343,8 @@ export default {
     }
   },
   methods: {
-    showModal(cardOperation, title, item) {
+    showModal(cardOperation, item) {
       this.mode = cardOperation;
-      this.title = title;
       this.displayModal = true;
       this.completeInit = false;
 

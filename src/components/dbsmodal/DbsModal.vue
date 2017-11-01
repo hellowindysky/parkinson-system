@@ -8,7 +8,7 @@
             设备品牌
             <span class="required-mark">*</span>
           </span>
-          <span class="field-input" v-if="cardOperationMode===VIEW_CURRENT_CARD">
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             {{getFieldValue(copyInfo.deviceId, 'deviceId')}}
           </span>
           <span class="field-input" v-else>
@@ -21,7 +21,7 @@
         </div>
         <div class="field">
           <span class="field-name">设备类型</span>
-          <span class="field-input" v-if="cardOperationMode===VIEW_CURRENT_CARD">
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             {{getFieldValue(copyInfo.devicePowerType, 'devicePowerType')}}
           </span>
           <span class="field-input" v-else>
@@ -42,7 +42,7 @@
             程控时间
             <span class="required-mark">*</span>
           </span>
-          <span class="field-input" v-if="cardOperationMode===VIEW_CURRENT_CARD">
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             {{copyInfo.programDate}}
           </span>
           <span class="field-input" v-else>
@@ -53,7 +53,7 @@
         </div>
         <div class="field whole-line double-line">
           <span class="field-name">备注</span>
-          <span class="field-input" v-if="cardOperationMode===VIEW_CURRENT_CARD">
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             {{copyInfo.remarks}}
           </span>
           <span class="field-input" v-else>
@@ -63,8 +63,11 @@
         <div class="seperate-line"></div>
         <div class="field">
           <span class="field-name">首次开机</span>
-          <span class="field-input">
-            <el-select v-model="modelType" :disabled="mode === EDIT_DATA" @change="selectFirstOrFollow">
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            {{modelType === 1 ? '是' : '否'}}
+          </span>
+          <span class="field-input" v-else>
+            <el-select v-model="modelType" :disabled="mode !== ADD_NEW_CARD" @change="selectFirstOrFollow">
               <el-option label="是" :value="1"></el-option>
               <el-option label="否" :value="0"></el-option>
             </el-select>
@@ -72,64 +75,91 @@
         </div>
         <div class="field" v-show="modelType===0">
           <span class="field-name">上次程控时间</span>
-          <span class="field-input">
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            {{lastProgramDate}}
+          </span>
+          <span class="field-input" v-else>
             <el-date-picker v-model="lastProgramDate"></el-date-picker>
           </span>
         </div>
         <div class="field">
           <span class="field-name">服药情况</span>
-          <span class="field-input">
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            {{getFieldValue(copyInfo.isTakeMedication, 'isTakeMedication')}}
+          </span>
+          <span class="field-input" v-else>
             <el-select v-model="copyInfo.isTakeMedication">
               <el-option label="有" :value="1"></el-option>
-              <el-option label="否" :value="0"></el-option>
+              <el-option label="无" :value="0"></el-option>
             </el-select>
           </span>
         </div>
         <div class="field">
           <span class="field-name">服用药物</span>
-          <span class="field-input">
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            {{copyInfo.medicationStatus}}
+          </span>
+          <span class="field-input" v-else>
             <el-input v-model="copyInfo.medicationStatus"></el-input>
           </span>
         </div>
         <div class="field" v-show="modelType===1">
           <span class="field-name">微毁损效应</span>
-          <span class="field-input">
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            {{getFieldValue(copyInfo.damageEffectExist, 'damageEffectExist')}}
+          </span>
+          <span class="field-input" v-else>
             <el-select v-model="copyInfo.damageEffectExist">
               <el-option label="有" :value="1"></el-option>
-              <el-option label="否" :value="0"></el-option>
+              <el-option label="无" :value="0"></el-option>
             </el-select>
           </span>
         </div>
         <div class="field" v-show="modelType===1">
           <span class="field-name long-field-name">微毁损效应持续时间</span>
-          <span class="field-input long-field-name">
+          <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
+            {{copyInfo.damageEffectDuration}}
+          </span>
+          <span class="field-input long-field-name" v-else>
             <el-input v-model="copyInfo.damageEffectDuration"></el-input>
           </span>
         </div>
         <div class="field" v-show="modelType===1">
           <span class="field-name">术后不良事件</span>
-          <span class="field-input">
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            {{getFieldValue(copyInfo.adverseEventsExist, 'adverseEventsExist')}}
+          </span>
+          <span class="field-input" v-else>
             <el-select v-model="copyInfo.adverseEventsExist">
               <el-option label="有" :value="1"></el-option>
-              <el-option label="否" :value="0"></el-option>
+              <el-option label="无" :value="0"></el-option>
             </el-select>
           </span>
         </div>
         <div class="field whole-line double-line" v-show="modelType===1">
           <span class="field-name">不良事件描述</span>
-          <span class="field-input">
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            {{copyInfo.adverseEventsRemark}}
+          </span>
+          <span class="field-input" v-else>
             <el-input type="textarea" v-model="copyInfo.adverseEventsRemark"></el-input>
           </span>
         </div>
         <div class="field whole-line double-line" v-show="modelType===0">
           <span class="field-name">患者主诉</span>
-          <span class="field-input">
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            {{copyInfo.complaint}}
+          </span>
+          <span class="field-input" v-else>
             <el-input type="textarea" v-model="copyInfo.complaint"></el-input>
           </span>
         </div>
         <div class="field whole-line double-line" v-show="modelType===0">
           <span class="field-name">效果及副作用</span>
-          <span class="field-input">
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            {{copyInfo.effectInfo}}
+          </span>
+          <span class="field-input" v-else>
             <el-input type="textarea" v-model="copyInfo.effectInfo"></el-input>
           </span>
         </div>
@@ -143,7 +173,10 @@
                 左侧肢体(右侧STN)触电疗效排序为:
                 <span v-for="(contact, index) in getSideDeviceContact('left')">
                   <span v-show="index !== 0">&gt;</span>
-                  <el-select class="contact" v-model="leftContactSortArray[index]" @change="updateLeftContactOrder" :clearable="true">
+                  <span class="contact narrow" v-if="mode===VIEW_CURRENT_CARD">
+                    {{getFieldValue(leftContactSortArray[index], 'leftContact')}}
+                  </span>
+                  <el-select class="contact" v-else v-model="leftContactSortArray[index]" @change="updateLeftContactOrder" :clearable="true">
                     <el-option v-for="option in getOptions('leftContact')" :label="option.name" :value="option.code" :key="option.code"></el-option>
                   </el-select>
                 </span>
@@ -175,36 +208,60 @@
                 {{group.voltage}}
               </td>
               <td class="col w1">
-                <el-input v-model="copyInfo.patientDbsFirstDetail[index].elbowTone"
+                <span v-if="mode===VIEW_CURRENT_CARD">
+                  {{copyInfo.patientDbsFirstDetail[index].elbowTone}}
+                </span>
+                <el-input v-else v-model="copyInfo.patientDbsFirstDetail[index].elbowTone"
                   @change="updateTensionTone(index)"></el-input>
               </td>
               <td class="col w1">
-                <el-input v-model="copyInfo.patientDbsFirstDetail[index].wristTone"
+                <span v-if="mode===VIEW_CURRENT_CARD">
+                  {{copyInfo.patientDbsFirstDetail[index].wristTone}}
+                </span>
+                <el-input v-else v-model="copyInfo.patientDbsFirstDetail[index].wristTone"
                   @change="updateTensionTone(index)"></el-input>
               </td>
               <td class="col w1">
-                <el-input v-model="copyInfo.patientDbsFirstDetail[index].kneeTone"
+                <span v-if="mode===VIEW_CURRENT_CARD">
+                  {{copyInfo.patientDbsFirstDetail[index].kneeTone}}
+                </span>
+                <el-input v-else v-model="copyInfo.patientDbsFirstDetail[index].kneeTone"
                   @change="updateTensionTone(index)"></el-input>
               </td>
               <td class="col w1">
-                <el-input v-model="copyInfo.patientDbsFirstDetail[index].neckTone"
+                <span v-if="mode===VIEW_CURRENT_CARD">
+                  {{copyInfo.patientDbsFirstDetail[index].neckTone}}
+                </span>
+                <el-input v-else v-model="copyInfo.patientDbsFirstDetail[index].neckTone"
                   @change="updateTensionTone(index)"></el-input>
               </td>
               <td class="col w1">
-                <el-input v-model="copyInfo.patientDbsFirstDetail[index].tremor"
+                <span v-if="mode===VIEW_CURRENT_CARD">
+                  {{copyInfo.patientDbsFirstDetail[index].tremor}}
+                </span>
+                <el-input v-else v-model="copyInfo.patientDbsFirstDetail[index].tremor"
                   @change="updateTensionTone(index)"></el-input>
               </td>
               <td class="col w1">
                 {{copyInfo.patientDbsFirstDetail[index].tensionTone}}
               </td>
               <td class="col w1">
-                <el-input v-model="copyInfo.patientDbsFirstDetail[index].changeConstantly"></el-input>
+                <span v-if="mode===VIEW_CURRENT_CARD">
+                  {{copyInfo.patientDbsFirstDetail[index].changeConstantly}}
+                </span>
+                <el-input v-else v-model="copyInfo.patientDbsFirstDetail[index].changeConstantly"></el-input>
               </td>
               <td class="col w4" colspan="4">
-                <el-input v-model="copyInfo.patientDbsFirstDetail[index].sideEffect"></el-input>
+                <span v-if="mode===VIEW_CURRENT_CARD">
+                  {{copyInfo.patientDbsFirstDetail[index].sideEffect}}
+                </span>
+                <el-input v-else v-model="copyInfo.patientDbsFirstDetail[index].sideEffect"></el-input>
               </td>
               <td class="col w2" colspan="2">
-                <el-select v-model="copyInfo.patientDbsFirstDetail[index].sideEffectDuration">
+                <span v-if="mode===VIEW_CURRENT_CARD">
+                  {{getFieldValue(copyInfo.patientDbsFirstDetail[index].sideEffectDuration, 'duration')}}
+                </span>
+                <el-select v-else v-model="copyInfo.patientDbsFirstDetail[index].sideEffectDuration">
                   <el-option v-for="option in getOptions('duration')" :label="option.name" :value="option.code" :key="option.code"></el-option>
                 </el-select>
               </td>
@@ -218,7 +275,10 @@
                 右侧肢体(左侧STN)触电疗效排序为:
                 <span v-for="(contact, index) in getSideDeviceContact('right')">
                   <span v-show="index !== 0">&gt;</span>
-                  <el-select class="contact" v-model="rightContactSortArray[index]" @change="updateRightContactOrder" :clearable="true">
+                  <span class="contact narrow" v-if="mode===VIEW_CURRENT_CARD">
+                    {{getFieldValue(rightContactSortArray[index], 'rightContact')}}
+                  </span>
+                  <el-select class="contact" v-else v-model="rightContactSortArray[index]" @change="updateRightContactOrder" :clearable="true">
                     <el-option v-for="option in getOptions('rightContact')" :label="option.name" :value="option.code" :key="option.code"></el-option>
                   </el-select>
                 </span>
@@ -250,36 +310,60 @@
                 {{group.voltage}}
               </td>
               <td class="col w1">
-                <el-input v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].elbowTone"
+                <span v-if="mode===VIEW_CURRENT_CARD">
+                  {{copyInfo.patientDbsFirstDetail[getRightIndex(index)].elbowTone}}
+                </span>
+                <el-input v-else v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].elbowTone"
                   @change="updateTensionTone(getRightIndex(index))"></el-input>
               </td>
               <td class="col w1">
-                <el-input v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].wristTone"
+                <span v-if="mode===VIEW_CURRENT_CARD">
+                  {{copyInfo.patientDbsFirstDetail[getRightIndex(index)].wristTone}}
+                </span>
+                <el-input v-else v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].wristTone"
                   @change="updateTensionTone(getRightIndex(index))"></el-input>
               </td>
               <td class="col w1">
-                <el-input v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].kneeTone"
+                <span v-if="mode===VIEW_CURRENT_CARD">
+                  {{copyInfo.patientDbsFirstDetail[getRightIndex(index)].kneeTone}}
+                </span>
+                <el-input v-else v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].kneeTone"
                   @change="updateTensionTone(getRightIndex(index))"></el-input>
               </td>
               <td class="col w1">
-                <el-input v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].neckTone"
+                <span v-if="mode===VIEW_CURRENT_CARD">
+                  {{copyInfo.patientDbsFirstDetail[getRightIndex(index)].neckTone}}
+                </span>
+                <el-input v-else v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].neckTone"
                   @change="updateTensionTone(getRightIndex(index))"></el-input>
               </td>
               <td class="col w1">
-                <el-input v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].tremor"
+                <span v-if="mode===VIEW_CURRENT_CARD">
+                  {{copyInfo.patientDbsFirstDetail[getRightIndex(index)].tremor}}
+                </span>
+                <el-input v-else v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].tremor"
                   @change="updateTensionTone(getRightIndex(index))"></el-input>
               </td>
               <td class="col w1">
                 {{copyInfo.patientDbsFirstDetail[getRightIndex(index)].tensionTone}}
               </td>
               <td class="col w1">
-                <el-input v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].changeConstantly"></el-input>
+                <span v-if="mode===VIEW_CURRENT_CARD">
+                  {{copyInfo.patientDbsFirstDetail[getRightIndex(index)].changeConstantly}}
+                </span>
+                <el-input v-else v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].changeConstantly"></el-input>
               </td>
               <td class="col w4" colspan="4">
-                <el-input v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].sideEffect"></el-input>
+                <span v-if="mode===VIEW_CURRENT_CARD">
+                  {{copyInfo.patientDbsFirstDetail[getRightIndex(index)].sideEffect}}
+                </span>
+                <el-input v-else v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].sideEffect"></el-input>
               </td>
               <td class="col w2" colspan="2">
-                <el-select v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].sideEffectDuration">
+                <span v-if="mode===VIEW_CURRENT_CARD">
+                  {{copyInfo.patientDbsFirstDetail[getRightIndex(index)].sideEffectDuration}}
+                </span>
+                <el-select v-else v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].sideEffectDuration">
                   <el-option v-for="option in getOptions('duration')" :label="option.name" :value="option.code" :key="option.code"></el-option>
                 </el-select>
               </td>
@@ -299,7 +383,10 @@
             <td class="col w2" colspan="2">疗效满意度</td>
             <td class="col w2" colspan="2">左侧</td>
             <td class="col w8" colspan="8">
-              <el-select v-model="copyInfo.adjustBeforeLeftSatisfaction">
+              <span v-if="mode===VIEW_CURRENT_CARD">
+                {{getFieldValue(copyInfo.adjustBeforeLeftSatisfaction, 'satisfaction')}}
+              </span>
+              <el-select v-else v-model="copyInfo.adjustBeforeLeftSatisfaction">
                 <el-option label="疗效满意" :value="0"></el-option>
                 <el-option label="疗效一般" :value="1"></el-option>
                 <el-option label="疗效欠佳" :value="2"></el-option>
@@ -307,7 +394,10 @@
             </td>
             <td class="col w2" colspan="2">右侧</td>
             <td class="col w8" colspan="8">
-              <el-select v-model="copyInfo.adjustBeforeRightSatisfaction">
+              <span v-if="mode===VIEW_CURRENT_CARD">
+                {{getFieldValue(copyInfo.adjustBeforeRightSatisfaction, 'satisfaction')}}
+              </span>
+              <el-select v-else v-model="copyInfo.adjustBeforeRightSatisfaction">
                 <el-option label="疗效满意" :value="0"></el-option>
                 <el-option label="疗效一般" :value="1"></el-option>
                 <el-option label="疗效欠佳" :value="2"></el-option>
@@ -329,45 +419,54 @@
           </tr>
           <tr class="row" v-for="(param, index) in copyInfo.followDbsParams.adjustBeforeParameter">
             <td class="col w2" colspan="2" rowspan="2" v-show="index % 2 === 0">
-              <el-select v-model="followDbsAdjustBeforeFirstSchemeOrder" @change="selectFollowDbsAdjustBeforeFirstSchemeOrder()">
-                <el-option v-for="(param, index) in lastDbsParameter" v-show="index % 2 === 0"
-                  :label="getFollowDbsAdjustBeforePlanName(param)" :value="param.schemeOrder" :key="param.schemeOrder"></el-option>
+              <el-select v-model="followDbsAdjustBeforeFirstSchemeOrder" @change="selectFollowDbsAdjustBeforeFirstSchemeOrder()"
+                :disabled="mode===VIEW_CURRENT_CARD">
+                <el-option v-for="(p, i) in lastDbsParameter" v-show="index % 2 === 0"
+                  :label="getFollowDbsAdjustBeforePlanName(p)" :value="p.schemeOrder" :key="p.schemeOrder"></el-option>
               </el-select>
             </td>
             <td class="col w2" colspan="2">{{getLimbSide(param.limbSide)}}</td>
             <td class="col w3" colspan="3">
-              <el-select v-model="param.exciteMod">
+              <el-select v-model="param.exciteMod":disabled="mode===VIEW_CURRENT_CARD">
                 <el-option v-for="option in getOptions('exciteMod')" :label="option.name"
                   :value="option.code" :key="option.code"></el-option>
               </el-select>
             </td>
             <td class="col w5" colspan="5">
               <el-checkbox-group v-model="followDbsAdjustBeforeParamPole[index].positive" @change="updateParamPole('followDbsAdjustBefore', index)">
-                <el-checkbox v-for="contact in getSidePositiveContact(param.limbSide)" :label="contact" :key="contact"></el-checkbox>
+                <el-checkbox v-for="contact in getSidePositiveContact(param.limbSide)" :label="contact" :key="contact"
+                  :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w4" colspan="4">
               <el-checkbox-group v-model="followDbsAdjustBeforeParamPole[index].negative" @change="updateParamPole('followDbsAdjustBefore', index)">
-                <el-checkbox v-for="contact in getSideNegativeContact(param.limbSide)" :label="contact" :key="contact"></el-checkbox>
+                <el-checkbox v-for="contact in getSideNegativeContact(param.limbSide)" :label="contact" :key="contact"
+                  :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w1" colspan="1">
-              <el-input v-model="param.frequency"></el-input>
+              <span v-if="mode===VIEW_CURRENT_CARD">{{param.frequency}}</span>
+              <el-input v-else v-model="param.frequency"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <el-input v-model="param.pulseWidth"></el-input>
+              <span v-if="mode===VIEW_CURRENT_CARD">{{param.pulseWidth}}</span>
+              <el-input v-else v-model="param.pulseWidth"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <el-input v-model="param.voltage"></el-input>
+              <span v-if="mode===VIEW_CURRENT_CARD">{{param.voltage}}</span>
+              <el-input v-else v-model="param.voltage"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <el-input v-model="param.resistance"></el-input>
+              <span v-if="mode===VIEW_CURRENT_CARD">{{param.resistance}}</span>
+              <el-input v-else v-model="param.resistance"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <el-input v-model="param.electric"></el-input>
+              <span v-if="mode===VIEW_CURRENT_CARD">{{param.electric}}</span>
+              <el-input v-else v-model="param.electric"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <el-input v-model="param.electricity"></el-input>
+              <span v-if="mode===VIEW_CURRENT_CARD">{{param.electricity}}</span>
+              <el-input v-else v-model="param.electricity"></el-input>
             </td>
           </tr>
         </table>
@@ -384,7 +483,10 @@
             <td class="col w2" colspan="2">疗效满意度</td>
             <td class="col w2" colspan="2">左侧</td>
             <td class="col w8" colspan="8">
-              <el-select v-model="copyInfo.adjustVoltageLeftSatisfaction">
+              <span v-if="mode===VIEW_CURRENT_CARD">
+                {{getFieldValue(copyInfo.adjustVoltageLeftSatisfaction, 'satisfaction')}}
+              </span>
+              <el-select v-else v-model="copyInfo.adjustVoltageLeftSatisfaction">
                 <el-option label="疗效满意" :value="0"></el-option>
                 <el-option label="疗效一般" :value="1"></el-option>
                 <el-option label="疗效欠佳" :value="2"></el-option>
@@ -392,7 +494,10 @@
             </td>
             <td class="col w2" colspan="2">右侧</td>
             <td class="col w8" colspan="8">
-              <el-select v-model="copyInfo.adjustVoltageRightSatisfaction">
+              <span v-if="mode===VIEW_CURRENT_CARD">
+                {{getFieldValue(copyInfo.adjustVoltageRightSatisfaction, 'satisfaction')}}
+              </span>
+              <el-select v-else v-model="copyInfo.adjustVoltageRightSatisfaction">
                 <el-option label="疗效满意" :value="0"></el-option>
                 <el-option label="疗效一般" :value="1"></el-option>
                 <el-option label="疗效欠佳" :value="2"></el-option>
@@ -403,7 +508,7 @@
             <td class="col w2" colspan="2">
               方案
               <span class="iconfont icon-plus" @click="addParam('followDbsAdjustVoltage')"
-                v-show="copyInfo.followDbsParams.adjustVoltageParameter.length < 8"></span>
+                v-show="copyInfo.followDbsParams.adjustVoltageParameter.length < 8 && mode!==VIEW_CURRENT_CARD"></span>
             </td>
             <td class="col w2" colspan="2">肢体侧</td>
             <td class="col w3" colspan="3">刺激模式</td>
@@ -417,36 +522,42 @@
           <tr class="row" v-for="(param, index) in copyInfo.followDbsParams.adjustVoltageParameter">
             <td class="col w2" colspan="2" rowspan="2" v-show="index % 2 === 0">
               {{getFollowDbsAdjustVoltagePlanName(param)}}
-              <span class="iconfont icon-remove" @click="removeParam(index, 'followDbsAdjustVoltage')"></span>
+              <span class="iconfont icon-remove" v-show="mode!==VIEW_CURRENT_CARD" @click="removeParam(index, 'followDbsAdjustVoltage')"></span>
             </td>
             <td class="col w2" colspan="2">{{getLimbSide(param.limbSide)}}</td>
             <td class="col w3" colspan="3">
-              <el-select v-model="param.exciteMod">
+              <el-select v-model="param.exciteMod" :disabled="mode===VIEW_CURRENT_CARD">
                 <el-option v-for="option in getOptions('exciteMod')" :label="option.name"
                   :value="option.code" :key="option.code"></el-option>
               </el-select>
             </td>
             <td class="col w5" colspan="5">
               <el-checkbox-group v-model="followDbsAdjustVoltageParamPole[index].positive" @change="updateParamPole('followDbsAdjustVoltage', index)">
-                <el-checkbox v-for="contact in getSidePositiveContact(param.limbSide)" :label="contact" :key="contact"></el-checkbox>
+                <el-checkbox v-for="contact in getSidePositiveContact(param.limbSide)" :label="contact" :key="contact"
+                  :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w4" colspan="4">
               <el-checkbox-group v-model="followDbsAdjustVoltageParamPole[index].negative" @change="updateParamPole('followDbsAdjustVoltage', index)">
-                <el-checkbox v-for="contact in getSideNegativeContact(param.limbSide)" :label="contact" :key="contact"></el-checkbox>
+                <el-checkbox v-for="contact in getSideNegativeContact(param.limbSide)" :label="contact" :key="contact"
+                  :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w1" colspan="1">
-              <el-input v-model="param.frequency"></el-input>
+              <span v-if="mode===VIEW_CURRENT_CARD">{{param.frequency}}</span>
+              <el-input v-else v-model="param.frequency"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <el-input v-model="param.pulseWidth"></el-input>
+              <span v-if="mode===VIEW_CURRENT_CARD">{{param.pulseWidth}}</span>
+              <el-input v-else v-model="param.pulseWidth"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <el-input v-model="param.voltage"></el-input>
+              <span v-if="mode===VIEW_CURRENT_CARD">{{param.voltage}}</span>
+              <el-input v-else v-model="param.voltage"></el-input>
             </td>
             <td class="col w3" colspan="3">
-              <el-input v-model="param.effectInfo"></el-input>
+              <span v-if="mode===VIEW_CURRENT_CARD">{{param.effectInfo}}</span>
+              <el-input v-else v-model="param.effectInfo"></el-input>
             </td>
           </tr>
         </table>
@@ -463,7 +574,10 @@
             <td class="col w2" colspan="2">疗效满意度</td>
             <td class="col w2" colspan="2">左侧</td>
             <td class="col w8" colspan="8">
-              <el-select v-model="copyInfo.adjustMoreLeftSatisfaction">
+              <span v-if="mode===VIEW_CURRENT_CARD">
+                {{getFieldValue(copyInfo.adjustMoreLeftSatisfactionRightSatisfaction, 'satisfaction')}}
+              </span>
+              <el-select v-else v-model="copyInfo.adjustMoreLeftSatisfaction">
                 <el-option label="疗效满意" :value="0"></el-option>
                 <el-option label="疗效一般" :value="1"></el-option>
                 <el-option label="疗效欠佳" :value="2"></el-option>
@@ -471,7 +585,10 @@
             </td>
             <td class="col w2" colspan="2">右侧</td>
             <td class="col w8" colspan="8">
-              <el-select v-model="copyInfo.adjustMoreRightSatisfaction">
+              <span v-if="mode===VIEW_CURRENT_CARD">
+                {{getFieldValue(copyInfo.adjustMoreRightSatisfaction, 'satisfaction')}}
+              </span>
+              <el-select v-else v-model="copyInfo.adjustMoreRightSatisfaction">
                 <el-option label="疗效满意" :value="0"></el-option>
                 <el-option label="疗效一般" :value="1"></el-option>
                 <el-option label="疗效欠佳" :value="2"></el-option>
@@ -482,7 +599,7 @@
             <td class="col w2" colspan="2">
               方案
               <span class="iconfont icon-plus" @click="addParam('followDbsAdjustMore')"
-                v-show="copyInfo.followDbsParams.adjustMoreParameter.length < 8"></span>
+                v-show="copyInfo.followDbsParams.adjustMoreParameter.length < 8 && mode!==VIEW_CURRENT_CARD"></span>
             </td>
             <td class="col w2" colspan="2">肢体侧</td>
             <td class="col w3" colspan="3">刺激模式</td>
@@ -497,39 +614,47 @@
           <tr class="row" v-for="(param, index) in copyInfo.followDbsParams.adjustMoreParameter">
             <td class="col w2" colspan="2" rowspan="2" v-show="index % 2 === 0">
               {{getFollowDbsAdjustMorePlanName(param)}}
-              <span class="iconfont icon-remove" @click="removeParam(index, 'followDbsAdjustMore')"></span>
+              <span class="iconfont icon-remove" v-show="mode!==VIEW_CURRENT_CARD"
+                @click="removeParam(index, 'followDbsAdjustMore')"></span>
             </td>
             <td class="col w2" colspan="2">{{getLimbSide(param.limbSide)}}</td>
             <td class="col w3" colspan="3">
-              <el-select v-model="param.exciteMod">
+              <el-select v-model="param.exciteMod" :disabled="mode===VIEW_CURRENT_CARD">
                 <el-option v-for="option in getOptions('exciteMod')" :label="option.name"
                   :value="option.code" :key="option.code"></el-option>
               </el-select>
             </td>
             <td class="col w5" colspan="5">
               <el-checkbox-group v-model="followDbsAdjustMoreParamPole[index].positive" @change="updateParamPole('followDbsAdjustMore', index)">
-                <el-checkbox v-for="contact in getSidePositiveContact(param.limbSide)" :label="contact" :key="contact"></el-checkbox>
+                <el-checkbox v-for="contact in getSidePositiveContact(param.limbSide)" :label="contact"
+                  :key="contact" :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w5" colspan="5">
               <el-checkbox-group v-model="followDbsAdjustMoreParamPole[index].negative" @change="updateParamPole('followDbsAdjustMore', index)">
-                <el-checkbox v-for="contact in getSideNegativeContact(param.limbSide)" :label="contact" :key="contact"></el-checkbox>
+                <el-checkbox v-for="contact in getSideNegativeContact(param.limbSide)" :label="contact"
+                  :key="contact" :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w1" colspan="1">
-              <el-input v-model="param.frequency"></el-input>
+              <span v-if="mode===VIEW_CURRENT_CARD">{{param.frequency}}</span>
+              <el-input v-else v-model="param.frequency"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <el-input v-model="param.pulseWidth"></el-input>
+              <span v-if="mode===VIEW_CURRENT_CARD">{{param.pulseWidth}}</span>
+              <el-input v-else v-model="param.pulseWidth"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <el-input v-model="param.voltage"></el-input>
+              <span v-if="mode===VIEW_CURRENT_CARD">{{param.voltage}}</span>
+              <el-input v-else v-model="param.voltage"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <el-input v-model="param.resistance"></el-input>
+              <span v-if="mode===VIEW_CURRENT_CARD">{{param.resistance}}</span>
+              <el-input v-else v-model="param.resistance"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <el-input v-model="param.electric"></el-input>
+              <span v-if="mode===VIEW_CURRENT_CARD">{{param.electric}}</span>
+              <el-input v-else v-model="param.electric"></el-input>
             </td>
           </tr>
         </table>
@@ -546,7 +671,7 @@
             <td class="col w2" colspan="2">
               方案
               <span class="iconfont icon-plus" @click="addParam('followDbsAdjustAfter')"
-                v-show="copyInfo.followDbsParams.adjustAfterParameter.length < 8"></span>
+                v-show="copyInfo.followDbsParams.adjustAfterParameter.length < 8 && mode!==VIEW_CURRENT_CARD"></span>
             </td>
             <td class="col w2" colspan="2">肢体侧</td>
             <td class="col w3" colspan="3">刺激模式</td>
@@ -561,39 +686,44 @@
           <tr class="row" v-for="(param, index) in copyInfo.followDbsParams.adjustAfterParameter">
             <td class="col w2" colspan="2" rowspan="2" v-show="index % 2 === 0">
               {{getFollowDbsAdjustAfterPlanName(param)}}
-              <span class="iconfont icon-remove" @click="removeParam(index, 'followDbsAdjustAfter')"></span>
+              <span class="iconfont icon-remove" v-show="mode!==VIEW_CURRENT_CARD" @click="removeParam(index, 'followDbsAdjustAfter')"></span>
             </td>
             <td class="col w2" colspan="2">{{getLimbSide(param.limbSide)}}</td>
             <td class="col w3" colspan="3">
-              <el-select v-model="param.exciteMod">
+              <el-select v-model="param.exciteMod" :disabled="mode===VIEW_CURRENT_CARD">
                 <el-option v-for="option in getOptions('exciteMod')" :label="option.name"
                   :value="option.code" :key="option.code"></el-option>
               </el-select>
             </td>
             <td class="col w5" colspan="5">
               <el-checkbox-group v-model="followDbsAdjustAfterParamPole[index].positive" @change="updateParamPole('followDbsAdjustAfter', index)">
-                <el-checkbox v-for="contact in getSidePositiveContact(param.limbSide)" :label="contact" :key="contact"></el-checkbox>
+                <el-checkbox v-for="contact in getSidePositiveContact(param.limbSide)" :label="contact" :key="contact" :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w5" colspan="5">
               <el-checkbox-group v-model="followDbsAdjustAfterParamPole[index].negative" @change="updateParamPole('followDbsAdjustAfter', index)">
-                <el-checkbox v-for="contact in getSideNegativeContact(param.limbSide)" :label="contact" :key="contact"></el-checkbox>
+                <el-checkbox v-for="contact in getSideNegativeContact(param.limbSide)" :label="contact" :key="contact" :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w1" colspan="1">
-              <el-input v-model="param.frequency"></el-input>
+              <span v-if="mode===VIEW_CURRENT_CARD">{{param.frequency}}</span>
+              <el-input v-else v-model="param.frequency"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <el-input v-model="param.pulseWidth"></el-input>
+              <span v-if="mode===VIEW_CURRENT_CARD">{{param.pulseWidth}}</span>
+              <el-input v-else v-model="param.pulseWidth"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <el-input v-model="param.voltage"></el-input>
+              <span v-if="mode===VIEW_CURRENT_CARD">{{param.voltage}}</span>
+              <el-input v-else v-model="param.voltage"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <el-input v-model="param.resistance"></el-input>
+              <span v-if="mode===VIEW_CURRENT_CARD">{{param.resistance}}</span>
+              <el-input v-else v-model="param.resistance"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <el-input v-model="param.electric"></el-input>
+              <span v-if="mode===VIEW_CURRENT_CARD">{{param.electric}}</span>
+              <el-input v-else v-model="param.electric"></el-input>
             </td>
           </tr>
         </table>
@@ -610,7 +740,7 @@
             <td class="col w2" colspan="2">
               方案
               <span class="iconfont icon-plus" @click="addParam('firstDbsAdjustAfter')"
-                v-show="copyInfo.firstDbsParams.adjustAfterParameter.length < 8"></span>
+                v-show="copyInfo.firstDbsParams.adjustAfterParameter.length < 8 && mode !== VIEW_CURRENT_CARD"></span>
             </td>
             <td class="col w2" colspan="2">肢体侧</td>
             <td class="col w3" colspan="3">刺激模式</td>
@@ -625,46 +755,54 @@
           <tr class="row" v-for="(param, index) in copyInfo.firstDbsParams.adjustAfterParameter">
             <td class="col w2" colspan="2" rowspan="2" v-show="index % 2 === 0">
               {{getFirstDbsAdjustAfterPlanName(param)}}
-              <span class="iconfont icon-remove" @click="removeParam(index, 'firstDbsAdjustAfter')"></span>
+              <span class="iconfont icon-remove" v-show="mode !== VIEW_CURRENT_CARD" @click="removeParam(index, 'firstDbsAdjustAfter')"></span>
             </td>
             <td class="col w2" colspan="2">{{getLimbSide(param.limbSide)}}</td>
             <td class="col w3" colspan="3">
-              <el-select v-model="param.exciteMod">
+              <el-select v-model="param.exciteMod" :disabled="mode === VIEW_CURRENT_CARD">
                 <el-option v-for="option in getOptions('exciteMod')" :label="option.name"
                   :value="option.code" :key="option.code"></el-option>
               </el-select>
             </td>
             <td class="col w5" colspan="5">
               <el-checkbox-group v-model="firstDbsAdjustAfterParamPole[index].positive" @change="updateParamPole('firstDbsAdjustAfter', index)">
-                <el-checkbox v-for="contact in getSidePositiveContact(param.limbSide)" :label="contact" :key="contact"></el-checkbox>
+                <el-checkbox v-for="contact in getSidePositiveContact(param.limbSide)" :label="contact" :key="contact"
+                  :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w5" colspan="5">
               <el-checkbox-group v-model="firstDbsAdjustAfterParamPole[index].negative" @change="updateParamPole('firstDbsAdjustAfter', index)">
-                <el-checkbox v-for="contact in getSideNegativeContact(param.limbSide)" :label="contact" :key="contact"></el-checkbox>
+                <el-checkbox v-for="contact in getSideNegativeContact(param.limbSide)" :label="contact" :key="contact"
+                  :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w1" colspan="1">
-              <el-input v-model="param.frequency"></el-input>
+              <span v-if="mode===VIEW_CURRENT_CARD">{{param.frequency}}</span>
+              <el-input v-else v-model="param.frequency"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <el-input v-model="param.pulseWidth"></el-input>
+              <span v-if="mode===VIEW_CURRENT_CARD">{{param.pulseWidth}}</span>
+              <el-input v-else v-model="param.pulseWidth"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <el-input v-model="param.voltage"></el-input>
+              <span v-if="mode===VIEW_CURRENT_CARD">{{param.voltage}}</span>
+              <el-input v-else v-model="param.voltage"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <el-input v-model="param.resistance"></el-input>
+              <span v-if="mode===VIEW_CURRENT_CARD">{{param.resistance}}</span>
+              <el-input v-else v-model="param.resistance"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <el-input v-model="param.electric"></el-input>
+              <span v-if="mode===VIEW_CURRENT_CARD">{{param.electric}}</span>
+              <el-input v-else v-model="param.electric"></el-input>
             </td>
           </tr>
         </table>
       </div>
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
-      <div class="button submit-button" @click="submit">确定</div>
+      <div class="button submit-button" @click="submit" v-show="mode!==VIEW_CURRENT_CARD">确定</div>
+      <div class="button edit-button" @click="switchToEditingMode" v-show="mode===VIEW_CURRENT_CARD">编辑</div>
     </div>
   </div>
 </template>
@@ -742,7 +880,6 @@ export default {
     return {
       displayModal: false,
       mode: '',
-      cardOperationMode: '',
       dbsPatientCode: '',
       modelType: 1, // 这个用来控制是否为首次开机，1为首次，0为非首次
       copyInfo: {},
@@ -770,9 +907,9 @@ export default {
       'deviceInfo'
     ]),
     title() {
-      if (this.mode === this.ADD_DATA) {
+      if (this.mode === this.ADD_NEW_CARD) {
         return '新增程控记录';
-      } else if (this.mode === this.EDIT_DATA) {
+      } else if (this.mode === this.EDIT_CURRENT_CARD || this.mode === this.VIEW_CURRENT_CARD) {
         return '程控记录';
       } else {
         return '';
@@ -789,16 +926,15 @@ export default {
     }
   },
   methods: {
-    showModal(cardOperation, changeWay, info) {
-      this.cardOperationMode = cardOperation;
+    showModal(cardOperation, info) {
+      this.mode = cardOperation;
       this.completeInit = false;
-      this.mode = changeWay;
-      if (this.mode === this.ADD_DATA) {
+      if (this.mode === this.ADD_NEW_CARD) {
         this.modelType = 0;   // 新增程控记录的时候，“首次开机”默认选择“否”
         this.completeInit = true;
-      } else if (this.mode === this.EDIT_DATA && info.patientDbsFirstId) {
+      } else if (info.patientDbsFirstId) {
         this.modelType = 1;
-      } else if (this.mode === this.EDIT_DATA && info.patientDbsFollowId) {
+      } else if (info.patientDbsFollowId) {
         this.modelType = 0;
       }
       this.updateModelType();
@@ -814,8 +950,9 @@ export default {
         console.log(error);
       });
 
-      // 如果是编辑已有的程控记录，就要查询其程控信息的详情
-      if (this.mode === this.EDIT_DATA && info.patientDbsFirstId) {
+      // 如果是阅读或编辑已有的程控记录，就要查询其程控信息的详情
+      if ((this.mode === this.EDIT_CURRENT_CARD || this.mode === this.VIEW_CURRENT_CARD) &&
+        info.patientDbsFirstId) {
         this.modelType = 1;
         this.initByFirstModel();
         getDbsFirstInfo(info.patientDbsFirstId).then((data) => {
@@ -826,7 +963,8 @@ export default {
             this.completeInit = true; // 放在 nextTick 中，才不会触发 changeDevice()
           });
         });
-      } else if (this.mode === this.EDIT_DATA && info.patientDbsFollowId) {
+      } else if ((this.mode === this.EDIT_CURRENT_CARD || this.mode === this.VIEW_CURRENT_CARD) &&
+        info.patientDbsFollowId) {
         this.modelType = 0;
         this.initByFollowModel();
         var patientId = this.$route.params.id;
@@ -845,6 +983,9 @@ export default {
       this.displayModal = true;
       this.clearWarning();
       this.updateScrollbar();
+    },
+    switchToEditingMode() {
+      this.mode = this.EDIT_CURRENT_CARD;
     },
     cancel() {
       this.displayModal = false;
@@ -868,14 +1009,14 @@ export default {
       reviseDateFormat(this.copyInfo);
       pruneObj(this.copyInfo);
 
-      if (this.modelType === 1 && this.mode === this.ADD_DATA) {
+      if (this.modelType === 1 && this.mode === this.ADD_NEW_CARD) {
         delete this.copyInfo.followDbsParams;
         addDbsFirstInfo(this.copyInfo).then(() => {
           this.updateAndClose();
         }, (error) => {
           console.log(error);
         });
-      } else if (this.modelType === 1 && this.mode === this.EDIT_DATA) {
+      } else if (this.modelType === 1 && this.mode === this.EDIT_CURRENT_CARD) {
         delete this.copyInfo.followDbsParams;
         modifyDbsFirstInfo(this.copyInfo).then(() => {
           this.updateAndClose();
@@ -883,14 +1024,14 @@ export default {
           console.log(error);
         });
 
-      } else if (this.modelType === 0 && this.mode === this.ADD_DATA) {
+      } else if (this.modelType === 0 && this.mode === this.ADD_NEW_CARD) {
         delete this.copyInfo.firstDbsParams;
         addDbsFollowInfo(this.copyInfo).then(() => {
           this.updateAndClose();
         }, (error) => {
           console.log(error);
         });
-      } else if (this.modelType === 0 && this.mode === this.EDIT_DATA) {
+      } else if (this.modelType === 0 && this.mode === this.EDIT_CURRENT_CARD) {
         delete this.copyInfo.firstDbsParams;
         modifyDbsFollowInfo(this.copyInfo).then(() => {
           this.updateAndClose();
@@ -959,7 +1100,7 @@ export default {
       this.initByModelType();
 
       // 如果是新增程控记录，就要去获取额外的上次程控信息
-      if (this.mode === this.ADD_DATA) {
+      if (this.mode === this.ADD_NEW_CARD) {
         getLastDbsInfo(this.$route.params.id, this.$route.params.caseId).then((data) => {
           // 首先绑定设备和设备类型
           this.copyInfo.deviceId = data.preopsDeviceId;
@@ -1121,6 +1262,18 @@ export default {
         options = [
           {code: 1, name: '充电'},
           {code: 0, name: '不充电'}
+        ];
+      } else if (fieldName === 'isTakeMedication' || fieldName === 'damageEffectExist' ||
+        fieldName === 'adverseEventsExist') {
+        options = [
+          {code: 1, name: '有'},
+          {code: 0, name: '无'}
+        ];
+      } else if (fieldName === 'satisfaction') {
+        options = [
+          {code: 0, name: '疗效满意'},
+          {code: 1, name: '疗效一般'},
+          {code: 2, name: '疗效欠佳'}
         ];
       }
       var value = Util.getElement('code', code, options).name;
@@ -1674,6 +1827,9 @@ export default {
                 display: inline-block;
                 margin: 0 15px;
                 width: 65px;
+                &.narrow {
+                  width: 15px;
+                }
                 .el-input {
                   .el-input__icon {
                     width: 20px;
@@ -1693,6 +1849,12 @@ export default {
               .el-checkbox + .el-checkbox {
                 margin-left: 5px;
               }
+              .is-disabled {
+                .el-checkbox__inner {
+                  background-color: @light-font-color;
+                  border-color: @light-font-color;
+                }
+              }
             }
             .el-input {
               width: 100%;
@@ -1703,6 +1865,15 @@ export default {
               }
               .el-icon-date {
                 display: none;
+              }
+              &.is-disabled {
+                .el-input__inner {
+                  background-color: rgba(0,0,0,0);
+                  color: @font-color;
+                }
+                .el-input__icon {
+                  display: none;
+                }
               }
             }
             .el-select {
@@ -1750,6 +1921,9 @@ export default {
         background-color: @light-font-color;
       }
       &.submit-button {
+        background-color: @button-color;
+      }
+      &.edit-button {
         background-color: @button-color;
       }
       &:hover {

@@ -17,7 +17,7 @@
         科室患者
       </li>
     </ul>
-    <li class="item" :class="{'current': currentItem === 'analytics'}" @click="toggleAnalyticsList" v-show="showAnalytics">
+    <li class="item" :class="{'current-item': currentItem === 'analytics'}" @click="toggleAnalyticsList" v-show="showAnalytics">
       <div class="menu-icon iconfont icon-analytics"></div>
       <div class="title">统计分析</div>
       <div class="fold-icon iconfont" :class="showAnalyticsList ? 'icon-up' : 'icon-down'"></div>
@@ -130,7 +130,7 @@ export default {
     },
     showConfiguration() {
       var userType = Number(sessionStorage.getItem('userType'));
-      return (userType === 2 || userType === 4);
+      return userType === 4;
     },
     showInstitutionConfiguration() {
       var userType = Number(sessionStorage.getItem('userType'));

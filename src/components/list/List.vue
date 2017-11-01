@@ -134,7 +134,7 @@
     </transition>
     <transition name="slide-fade">
       <el-form class="filter-panel" :model="filterUsersForm" :rules="rules" ref="filterUsersForm"
-      label-width="20%"  v-show="panelDisplay && this.listType === 'users'">
+        label-width="20%" v-show="panelDisplay && this.listType === 'users'">
         <el-form-item label="分组" prop="type" class="item">
           <el-select v-model="filterUsersForm.type">
             <el-option label="全部" value="all"></el-option>

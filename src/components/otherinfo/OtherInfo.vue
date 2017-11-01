@@ -431,6 +431,9 @@ export default {
     },
     recalculateCardWidth() {
       this.$nextTick(() => {
+        if (!this.$refs.otherInfo) {
+          return;
+        }
         var panelWidth = this.$refs.otherInfo.clientWidth;
         var devideNum = 1.0;
         // 20px 是卡片的横向间距，定义在了 varaibles.less 中，200px 是卡片的最小宽度
