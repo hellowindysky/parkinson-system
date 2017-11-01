@@ -170,7 +170,7 @@ import { baseUrl, getCommonRequest } from 'api/common.js';
 export default {
   data() {
     return {
-      displayModal: true,
+      displayModal: false,
       title: '',
       uploadUrl: baseUrl + '/fileUpload/uploadPatientAttachment',
       pickerOptions0: {
@@ -456,7 +456,7 @@ export default {
       }
     }
   }
-  
+
 }
 
 </style>
