@@ -8,10 +8,13 @@
           检查类型&nbsp;:
         </span>
         <span class="field-input">
-          <el-select v-if="mode===ADD_MODE" placeholder="请选择检查类型" v-model="item['spephysicalInfo']">
-               <el-option v-for="spephyItem in spephysicalType" :key="spephyItem.spephysicalInfo" :label="spephyItem.spephysicalName" :value="spephyItem.spephysicalInfo"></el-option>
+          <el-select v-if="mode===ADD_NEW_CARD" placeholder="请选择检查类型" v-model="item.spephysicalInfo">
+            <el-option v-for="spephyItem in spephysicalType" :key="spephyItem.spephysicalInfo"
+              :label="spephyItem.spephysicalName" :value="spephyItem.spephysicalInfo"></el-option>
           </el-select>
-          <span v-if="mode===MODIFY_MODE">{{getSpephyName(item['spephysicalInfo'])}}</span>
+          <span v-else>
+            {{getSpephyName(item.spephysicalInfo)}}
+          </span>
         </span>
       </div>
 
@@ -20,29 +23,33 @@
           检查时间&nbsp;:
         </span>
         <span class="field-input">
-          <el-date-picker v-model="item['ariseTime']" placeholder="请输入检查时间" type="date" format="yyyy-MM-dd"></el-date-picker>
+          <span v-if="mode===VIEW_CURRENT_CARD">{{item.ariseTime}}</span>
+          <el-date-picker v-else v-model="item.ariseTime" placeholder="请输入检查时间" type="date" format="yyyy-MM-dd"></el-date-picker>
         </span>
       </div>
-      <div class="field" v-if="showItem['spephysicalResult'] || mode===ADD_MODE">
+      <div class="field" v-if="showItem.spephysicalResult || mode===ADD_NEW_CARD">
         <span class="field-name">
           检查结果&nbsp;:
         </span>
         <span class="field-input">
-          <el-input placeholder="请输入检查结果" v-model="item['spephysicalResult']"></el-input>
+          <span v-if="mode===VIEW_CURRENT_CARD">{{item.spephysicalResult}}</span>
+          <el-input v-else placeholder="请输入检查结果" v-model="item.spephysicalResult"></el-input>
         </span>
       </div>
-      <div class="field multi-line" v-if="showItem['remarks'] || mode===ADD_MODE">
+      <div class="field multi-line" v-if="showItem.remarks || mode===ADD_NEW_CARD">
         <span class="field-name">
           备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注&nbsp;:
         </span>
         <span class="field-input">
-          <el-input type="textarea" :rows="2" placeholder="请输入备注内容" v-model="item['remarks']"></el-input>
+          <span v-if="mode===VIEW_CURRENT_CARD">{{item.spephysicalResult}}</span>
+          <el-input v-else type="textarea" :rows="2" placeholder="请输入备注内容" v-model="item.remarks"></el-input>
         </span>
       </div>
 
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
-      <div class="button submit-button" @click="submit">确定</div>
+      <div class="button edit-button" @click="switchToEditingMode" v-show="mode===VIEW_CURRENT_CARD">编辑</div>
+      <div class="button submit-button" @click="submit" v-show="mode===EDIT_CURRENT_CARD">确定</div>
     </div>
   </div>
 </template>
@@ -55,19 +62,14 @@ import { deepCopy } from 'utils/helper';
 import Util from 'utils/util.js';
 import { modifyNervouSystem, addNervouSystem } from 'api/patient.js';
 
-import { isEmptyObject } from 'utils/helper.js';
-
 export default {
   data() {
     return {
       displayModal: false,
-      ADD_MODE: 'add',
-      MODIFY_MODE: 'modify',
       mode: '',
       modalType: '',
       subModalType: '',
       disableChangingSubModal: false,
-      title: '',
       item: {},
       showItem: {},
       warningResults: {},
@@ -77,7 +79,14 @@ export default {
   computed: {
     ...mapGetters([
       'neurologicCheckTypeList'
-    ])
+    ]),
+    title() {
+      if (this.mode === this.ADD_NEW_CARD) {
+        return '新增神经系统检查';
+      } else {
+        return '神经系统检查';
+      }
+    }
   },
   methods: {
     getSpephyName(code) {
@@ -92,12 +101,10 @@ export default {
         }
       }
     },
-    showPanel(title, item) {
+    showPanel(cardOperation, item) {
       this.displayModal = true;
-      // console.log(item);
-      // 通过检查 item 参数是否为空对象 {}，来决定提交时是新增记录，还是修改记录
-      if (isEmptyObject(item)) {
-        this.mode = this.ADD_MODE;
+      this.mode = cardOperation;
+      if (this.mode === this.ADD_NEW_CARD) {
         // 如果是新增卡片那么需要造一个对象
         this.$set(this.item, 'ariseTime', '');
         this.$set(this.item, 'patientCaseId', this.$route.params.caseId);
@@ -106,12 +113,10 @@ export default {
         this.$set(this.item, 'spephysicalInfo', '');
         this.$set(this.item, 'spephysicalResult', '');
       } else {
-        this.mode = this.MODIFY_MODE;
-        // 如果是修改卡片内容，那么直接渲染传进来的数据
+        // 如果是阅读或修改卡片内容，那么直接渲染传进来的数据
         vueCopy(item, this.item);
         vueCopy(item, this.showItem);
       }
-      this.title = title;
       // this.$nextTick(() => {
       //   this.clearWarning();
       // });
@@ -131,13 +136,13 @@ export default {
     submit() {
       let submitData = deepCopy(this.item);
       submitData.ariseTime = Util.simplifyDate(submitData.ariseTime);
-      if (this.mode === this.MODIFY_MODE) {
+      if (this.mode === this.EDIT_CURRENT_CARD) {
         // 修改的状态
         modifyNervouSystem(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
           this.updateAndClose();
         });
-      } else if (this.mode === this.ADD_MODE) {
+      } else if (this.mode === this.ADD_NEW_CARD) {
         // 新增的状态
         delete submitData.patientSpephysicalId;
         addNervouSystem(submitData).then(() => {
@@ -148,6 +153,9 @@ export default {
     },
     updateAndClose() {
       this.displayModal = false;
+    },
+    switchToEditingMode() {
+      this.mode = this.EDIT_CURRENT_CARD;
     },
     cancel() {
       this.displayModal = false;
@@ -309,7 +317,7 @@ export default {
       &.cancel-button {
         background-color: @light-font-color;
       }
-      &.submit-button {
+      &.submit-button, &.edit-button {
         background-color: @button-color;
       }
       &:hover {

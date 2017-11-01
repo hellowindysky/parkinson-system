@@ -75,7 +75,7 @@
       <extensible-panel class="panel" :mode="mutableMode" :title="neurologicCheckTitle" v-on:addNewCard="addNeurologicCheckRecord" :editable="canEdit">
         <card class="card" :class="cardWidth" :mode="mutableMode" v-for="item in neurologicCheckList" :key="item.preopsInfoId"
          :title="transformNeurologicCheckType(item.spephysicalInfo)" v-on:editCurrentCard="editNeurologicCheckRecord(item)"
-         v-on:deleteCurrentCard="deleteNeurologicCheckRecord(item)" v-on:viewCurrentCard="viewNeurologicCheckRecored(item)">
+         v-on:deleteCurrentCard="deleteNeurologicCheckRecord(item)" v-on:viewCurrentCard="viewNeurologicCheckRecord(item)">
           <div class="text first-line">
             <span class="name">诊断结果: </span>
             <span class="value">{{item.spephysicalResult}}</span>
@@ -354,17 +354,13 @@ export default {
       // return typeId;
     },
     addNeurologicCheckRecord() {
-      // 这里要传递 3 个参数，一个是 title，一个是当前数据对象（新建的时候为空），另一个是模态框的类型
-      Bus.$emit(this.SHOW_NERVOU_SYSTEM_MODAL, '新增神经系统检查', {});
-      // console.log('add');
+      Bus.$emit(this.SHOW_NERVOU_SYSTEM_MODAL, this.ADD_NEW_CARD, {});
     },
     editNeurologicCheckRecord(item) {
-      Bus.$emit(this.SHOW_NERVOU_SYSTEM_MODAL, '神经系统检查', item);
-      // console.log('edit', item);
+      Bus.$emit(this.SHOW_NERVOU_SYSTEM_MODAL, this.EDIT_CURRENT_CARD, item);
     },
     viewNeurologicCheckRecord(item) {
-      Bus.$emit(this.SHOW_NERVOU_SYSTEM_MODAL, '神经系统检查', item);
-      // console.log('edit', item);
+      Bus.$emit(this.SHOW_NERVOU_SYSTEM_MODAL, this.VIEW_CURRENT_CARD, item);
     },
     deleteNeurologicCheckRecord(item) { // 删除神经检查
       let NeuroId = {
