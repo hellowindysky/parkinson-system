@@ -225,6 +225,8 @@ export default {
         // 在修改页面的状态下将原来的数据对象给服务器的对象
         this.patientScale = {};
         vueCopy(item, this.patientScale);
+        // console.log(this.scaleSonData.questions);
+        this.getCorrectAnswer(this.scaleSonData.questions);
 
         if (this.patientScale['scaleSympInfoList']) {
           for (let i = 0; i < this.scaleSympInfoName.length; i++) {
@@ -240,6 +242,7 @@ export default {
             }
           }
           vueCopy(this.scaleSympInfoName, this.patientScale['scaleSympInfoList']);
+
         } else {
           this.$set(this.patientScale, 'scaleSympInfoList', []);
           vueCopy(this.scaleSympInfoName, this.patientScale['scaleSympInfoList']);
@@ -345,7 +348,7 @@ export default {
         this.scaleData = data['scales'];
       });
     },
-    getDictionaryData() {
+    initScaleSympInfoName() {
       var typesInfo = Util.getElement('typegroupcode', 'scaleSymp', this.typeGroup);
       var types = typesInfo.types ? typesInfo.types : [];
       vueCopy(types, this.scaleSympInfoName);
@@ -379,7 +382,7 @@ export default {
       // 取出量表的选中答案以及对应的分数
       this.$set(this.patientScale, 'scaleOptionIds', []);
       for (let j = 0; j < questions.length; j++) {
-        let sondata = questions[j]['options'];
+        let sondata = questions[j].options;
         let isNull = true;
         let answer = '';
         for (let sonkey in sondata) {
@@ -450,8 +453,8 @@ export default {
   mounted() {
     // 获取到量表的数据
     this.getPatientScaleInfo();
-    // 获取到字典项的所有数据
-    this.getDictionaryData();
+    // 初始化关联症状的字段
+    this.initScaleSympInfoName();
     // 初始化提交到服务器的对象
     Bus.$on(this.UPDATE_SCALE_DETAIL, this.showDetailPanel);
     Bus.$on(this.SCROLL_AREA_SIZE_CHANGE, this.updateScrollbar);
