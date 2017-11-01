@@ -115,9 +115,9 @@
         </card>
       </extensible-panel>
 <!-- 医学影像 -->
-      <extensible-panel class="panel image-panel" :mode="mutableMode" :title="medicalImagingTitle" v-on:addNewCard="addEmgRecord" :editable="canEdit">
+      <extensible-panel class="panel image-panel" :mode="mutableMode" :title="medicalImagingTitle" v-on:addNewCard="addImgRecord" :editable="canEdit">
         <card class="card image-card" :class="cardWidth" :mode="mutableMode" v-for="(item,idx) in medicalImagingList" :key="idx"
-         :title="item.name" v-on:editCurrentCard="editEmgRecord(item)"
+         :title="item.name" v-on:editCurrentCard="editImgRecord(item)" v-on:viewCurrentCard="viewImgRecord(item)"
          v-on:deleteCurrentCard="deleteEmgRecord(item)">
           <div class="text first-line">
             <span class="name">{{item.time}}</span>
@@ -396,11 +396,20 @@ export default {
     addEmgRecord() {
       Bus.$emit(this.SHOW_EMG_MODAL, '新增肌电图', {});
     },
+    viewEmgRecord(item) {
+      Bus.$emit(this.SHOW_EMG_MODAL, '肌电图', item);
+    },
     editEmgRecord(item) {
       Bus.$emit(this.SHOW_EMG_MODAL, '肌电图', item);
     },
-    viewEmgRecord(item) {
-      Bus.$emit(this.SHOW_EMG_MODAL, '肌电图', item);
+    addImgRecord() {
+      // Bus.$emit(this.SHOW_IMG_MODAL, '医学影像', {});
+    },
+    viewImgRecord(item) {
+      Bus.$emit(this.SHOW_IMG_MODAL, '医学影像', item);
+    },
+    editImgRecord(item) {
+      Bus.$emit(this.SHOW_IMG_MODAL, '医学影像', item);
     },
     deleteEmgRecord(item) { // 删除肌电图
       let EmgId = {

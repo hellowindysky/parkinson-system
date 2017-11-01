@@ -15,6 +15,7 @@
     <nervous-system></nervous-system>
     <biochemical-exam></biochemical-exam>
     <emg-modal></emg-modal>
+    <img-modal></img-modal>
     <filter-panel :showFilterPanel="showFilterPanel"></filter-panel>
   </div>
 </template>
@@ -38,6 +39,7 @@ import filterPanel from 'components/filterpanel/FilterPanel';
 import nervousSystem from 'components/nervousystemmodal/NervouSystemModal';
 import biochemicalExam from 'components/biochemicalexammodal/BiochemicalExamModal';
 import emgModal from 'components/emgmodal/EmgModal';
+import imgModal from 'components/imagemodal/ImageModal';
 
 export default {
   data() {
@@ -61,7 +63,8 @@ export default {
     filterPanel,
     nervousSystem,
     biochemicalExam,
-    emgModal
+    emgModal,
+    imgModal
   },
   methods: {
     blurOnScreen() {

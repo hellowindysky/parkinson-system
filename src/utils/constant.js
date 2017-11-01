@@ -66,6 +66,7 @@ export default {
   SHOW_NERVOU_SYSTEM_MODAL: 'showNervouSystemModal',
   SHOW_BIOCHEMICAL_EXAM_MODAL: 'showBiochemicalExamModal',
   SHOW_EMG_MODAL: 'showEmgModal',
+  SHOW_IMG_MODAL: 'showImgModal',
   SHOW_PRE_EVALUATION_MODAL: 'showPreEvaluationModal',
   SHOW_SURGICAL_METHOD_MODAL: 'showSurgicalMethodModal',
   SHOW_OPERATIVE_COMPLICATION_MODAL: 'showOperativeComplication',
