@@ -142,7 +142,7 @@ export default {
       isSubjectDisabled: true,
       patientScale: {},  // 需要向服务器提交的对象
       displayScaleModal: false,  // 此组件是否显示
-      scaleData: {},  // 获取到所有的量表数据
+      scaleList: {},  // 获取到所有的量表数据
       targetScale: {}, // 这是通过量表的ID筛选出的其中一个量表
       scaleToAdd: {}, // 新增量表的时候选中量表后的题目数据
       scaleName: '',  // 筛选出来的量表的名字
@@ -182,13 +182,12 @@ export default {
       if (this.switchNum > 0) {
         this.isSelected = true;
       }
-      for (let key in this.scaleData) {
-        let sonData = this.scaleData[key];
-        for (let sonkey in sonData) {
+      for (let scale of this.scaleList) {
+        for (let sonkey in scale) {
           if (sonkey === 'scaleInfoId') {
             // 获取对应量表的数据
-            if (sonData[sonkey] === this.patientScale['scaleInfoId']) {
-              vueCopy(sonData, this.scaleToAdd);
+            if (scale[sonkey] === this.patientScale['scaleInfoId']) {
+              vueCopy(scale, this.scaleToAdd);
             }
           }
         }
@@ -218,7 +217,6 @@ export default {
       });
     },
     showDetailPanel(cardOperation, item) {
-      // 接收到相应的消息之后，打开诊断详情窗口
       this.mode = cardOperation;
       this.displayScaleModal = true;
       this.switchNum = 0;
@@ -279,7 +277,7 @@ export default {
     goBack() {
       // 按下返回按钮，把所有的数据都初始化一遍
       this.correctanswer = [];
-      this.scaleData = {};
+      this.scaleList = {};
       this.scaleName = '';
       this.scaleAnswer = [];
       this.scaleNameArr = [];
@@ -359,7 +357,7 @@ export default {
     },
     getPatientScaleInfo() {
       getScaleInfo().then((data) => {
-        this.scaleData = data['scales'];
+        this.scaleList = data.scales;
       });
     },
     initScaleSympInfoName() {
@@ -377,20 +375,12 @@ export default {
       }
     },
     getTitleAndScale(scaleInfoId) {
-      // 通过量表的ID来找到量表的名字
-      for (let key in this.scaleData) {
-        let sonData = this.scaleData[key];
-        for (let sonkey in sonData) {
-          if (sonkey === 'scaleInfoId' && sonData[sonkey] === scaleInfoId) {
-            // 获取对应量表的数据
-            vueCopy(sonData, this.targetScale);
-            this.scaleName = sonData['gaugeName'];
-            var options = this.getOptions('gaugeType');
-            var option = Util.getElement('code', sonData.gaugeType, options);
-            this.readingScaleType = option.name;
-          }
-        }
-      }
+      var targetScale = Util.getElement('scaleInfoId', scaleInfoId, this.scaleList);
+      vueCopy(targetScale, this.targetScale);
+      this.scaleName = targetScale.gaugeName;
+      var options = this.getOptions('gaugeType');
+      var option = Util.getElement('code', targetScale.gaugeType, options);
+      this.readingScaleType = option.name;
     },
     getCorrectAnswer(questions) {
       // 取出量表的选中答案以及对应的分数
@@ -441,8 +431,8 @@ export default {
     },
     linkAgeScaleType(scaleId) {
       // 通过量表的ID查询到量表的类型并且改变量表类型选择框
-      for (let key in this.scaleData) {
-        let sonData = this.scaleData[key];
+      for (let key in this.scaleList) {
+        let sonData = this.scaleList[key];
         for (let sonkey in sonData) {
           if (sonkey === 'scaleInfoId') {
             if (sonData[sonkey] === scaleId) {
@@ -497,7 +487,7 @@ export default {
       },
       deep: true
     },
-    scaleData: {
+    scaleList: {
       handler: function(newVal) {
         if (newVal && this.displayScaleModal) {
           this.getScaleNameArr(newVal);
