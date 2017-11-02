@@ -905,6 +905,9 @@ let diagnosticScaleSelectedFieldNames = ['inspectTimeFrom', 'inspectTimeFrom', '
 let diagnosticExaminationFieldNames = ['spephysicalInfoId', 'bioexamId', 'emgType', 'examType'];
 let diagnosticExaminationSelectedFieldNames = ['spephysicalInfoId', 'bioexamId', 'emgType', 'examType'];
 
+let multiSelectFieldList = ['firSym', 'firBody', 'diagMode', 'treatPro', 'firMed', 'getDisFac', 'getDisFac0',
+  'motorSymptomTypeId', 'motorComplicationsSymptomTypeId', 'nonMotorSymptomTypeId'];
+
 export default {
   props: {
     showFilterPanel: {
@@ -1101,7 +1104,11 @@ export default {
         this.$set(this.basicInfoSelectedStatus, fieldName, false);
       });
       diseaseInfoFieldNames.forEach((fieldName) => {
-        this.$set(this.diseaseInfoCondition, fieldName, '');
+        if (multiSelectFieldList.indexOf(fieldName) >= 0) {
+          this.$set(this.diseaseInfoCondition, fieldName, []);
+        } else {
+          this.$set(this.diseaseInfoCondition, fieldName, '');
+        }
       });
       diseaseInfoSelectedFieldNames.forEach((fieldName) => {
         this.$set(this.diseaseInfoSelectedStatus, fieldName, false);
@@ -1120,6 +1127,11 @@ export default {
       });
       diagnosticDiseaseFieldNames.forEach((fieldName) => {
         this.$set(this.diagnosticDiseaseCondition, fieldName, '');
+        if (multiSelectFieldList.indexOf(fieldName) >= 0) {
+          this.$set(this.diagnosticDiseaseCondition, fieldName, []);
+        } else {
+          this.$set(this.diagnosticDiseaseCondition, fieldName, '');
+        }
       });
       diagnosticDiseaseSelectedFieldNames.forEach((fieldName) => {
         this.$set(this.diagnosticDiseaseSelectedStatus, fieldName, false);
