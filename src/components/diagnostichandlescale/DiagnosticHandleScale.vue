@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="diagnostic-update-wrapper" v-show="displayUpdateScale">
+  <div class="diagnostic-update-wrapper" v-show="displayScaleModal">
     <div class="title-bar">
       <h2 class="title" v-if="mode!==ADD_NEW_CARD">{{scaleName}}</h2>
       <h2 class="title" v-else>新增量表信息</h2>
@@ -90,7 +90,7 @@
         </div>
       </folding-panel>
 
-      <div v-for="(item, key) in scaleSonData.questions" v-if="mode!==ADD_NEW_CARD">
+      <div v-for="(item, key) in targetScale.questions" v-if="mode!==ADD_NEW_CARD">
         <div class="scale-questions">
           <p class="question-title">
             <span>{{item.subjectName}}</span>
@@ -104,7 +104,7 @@
         </div>
       </div>
 
-      <div v-for="(item, key) in scaleAddSonData.questions" v-if="isSelected">
+      <div v-for="(item, key) in scaleToAdd.questions" v-if="mode===ADD_NEW_CARD && isSelected">
         <div class="scale-questions">
           <p class="question-title">
             <span>{{item.subjectName}}</span>
@@ -141,10 +141,10 @@ export default {
       readingScaleType: '',
       isSubjectDisabled: true,
       patientScale: {},  // 需要向服务器提交的对象
-      displayUpdateScale: false,  // 此组件是否显示
+      displayScaleModal: false,  // 此组件是否显示
       scaleData: {},  // 获取到所有的量表数据
-      scaleSonData: {}, // 这是通过量表的ID筛选出的其中一个量表
-      scaleAddSonData: {}, // 新增量表的时候选中量表后的题目数据
+      targetScale: {}, // 这是通过量表的ID筛选出的其中一个量表
+      scaleToAdd: {}, // 新增量表的时候选中量表后的题目数据
       scaleName: '',  // 筛选出来的量表的名字
       scaleAnswer: [],  // 放筛选出来的量表病人填写答案的数组
       correctanswer: [], // 通过函数处理后得出的对应答案选项数组
@@ -188,7 +188,7 @@ export default {
           if (sonkey === 'scaleInfoId') {
             // 获取对应量表的数据
             if (sonData[sonkey] === this.patientScale['scaleInfoId']) {
-              vueCopy(sonData, this.scaleAddSonData);
+              vueCopy(sonData, this.scaleToAdd);
             }
           }
         }
@@ -216,7 +216,7 @@ export default {
     showDetailPanel(cardOperation, item) {
       // 接收到相应的消息之后，打开诊断详情窗口
       this.mode = cardOperation;
-      this.displayUpdateScale = true;
+      this.displayScaleModal = true;
       this.switchNum = 0;
       // console.log('item', item);
       if (this.mode !== this.ADD_NEW_CARD) {
@@ -235,8 +235,8 @@ export default {
         // 在修改页面的状态下将原来的数据对象给服务器的对象
         this.patientScale = {};
         vueCopy(item, this.patientScale);
-        // console.log(this.scaleSonData.questions);
-        this.getCorrectAnswer(this.scaleSonData.questions);
+        // console.log(this.targetScale.questions);
+        this.getCorrectAnswer(this.targetScale.questions);
 
         if (this.patientScale['scaleSympInfoList']) {
           for (let i = 0; i < this.scaleSympInfoName.length; i++) {
@@ -281,8 +281,8 @@ export default {
       this.scaleNameArr = [];
       this.scaleType = '';
       this.isSubjectDisabled = true;
-      this.scaleAddSonData = {};
-      this.displayUpdateScale = false;
+      this.scaleToAdd = {};
+      this.displayScaleModal = false;
       this.isSelected = false;
       this.switchNum = 0;
     },
@@ -350,7 +350,7 @@ export default {
       }
     },
     closePanel() {
-      this.displayUpdateScale = false;
+      this.displayScaleModal = false;
       // this.scaleDetail = {};
     },
     getPatientScaleInfo() {
@@ -379,7 +379,7 @@ export default {
         for (let sonkey in sonData) {
           if (sonkey === 'scaleInfoId' && sonData[sonkey] === scaleInfoId) {
             // 获取对应量表的数据
-            vueCopy(sonData, this.scaleSonData);
+            vueCopy(sonData, this.targetScale);
             this.scaleName = sonData['gaugeName'];
             var options = this.getOptions('gaugeType');
             var option = Util.getElement('code', sonData.gaugeType, options);
@@ -479,7 +479,7 @@ export default {
     FoldingPanel
   },
   watch: {
-    scaleSonData: {
+    targetScale: {
       handler: function(newVal) {
         if (newVal) {
           this.getCorrectAnswer(newVal['questions']);
@@ -487,7 +487,7 @@ export default {
       },
       deep: true
     },
-    displayUpdateScale: {
+    displayScaleModal: {
       handler: function() {
         this.getPatientScaleInfo();
       },
@@ -495,7 +495,7 @@ export default {
     },
     scaleData: {
       handler: function(newVal) {
-        if (newVal && this.displayUpdateScale) {
+        if (newVal && this.displayScaleModal) {
           this.getScaleNameArr(newVal);
         }
       },
@@ -503,7 +503,7 @@ export default {
     },
     patientScale: {
       handler: function(newVal) {
-        if (newVal && this.displayUpdateScale) {
+        if (newVal && this.displayScaleModal) {
           this.linkAgeScaleType(newVal['scaleInfoId']);
           // console.log('patientScale', newVal);
         }
