@@ -386,8 +386,8 @@
               <span class="item-value">
                 <el-select class="normal-input" v-model="diagnosticBasicCondition.caseType"
                   :disabled="!diagnosticBasicSelectedStatus.caseType">
-                  <el-option label="看诊" :value="1"></el-option>
-                  <el-option label="随诊" :value="2"></el-option>
+                  <el-option v-for="option in getOptions('caseType')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
                 </el-select>
               </span>
             </div>
@@ -1169,8 +1169,8 @@ export default {
         'econeType', 'liveType', 'homeProvince', 'diseType', 'firSym', 'firBody', 'diagMode',
         'treatPro', 'firMed', 'getDisFac', 'getDisFac0', 'medType', 'diseaseRelationId',
         'sameRole', 'habitSmoke', 'habitWine', 'habitTea', 'habitCoffee', 'exeGrade', 'expType',
-        'diseType', 'durgType', 'majorType', 'treatment', 'result', 'gaugeType', 'switchType',
-        'eleType', 'examType'];
+        'caseType', 'diseType', 'durgType', 'majorType', 'treatment', 'result', 'gaugeType',
+        'switchType', 'eleType', 'examType'];
       if (fieldNameListInTypeGroup.indexOf(fieldName) >= 0) {
         var types = Util.getElement('typegroupcode', fieldName, this.typeGroup).types;
         types = types ? types : [];
