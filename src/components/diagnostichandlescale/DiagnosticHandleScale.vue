@@ -59,7 +59,7 @@
         </div>
         <div class="field" v-if="Boolean(String(patientScale.switchType))!==false">
           <span class="field-name">开关状态:</span>
-          <span class="field-value">{{formatReadingScale(patientScale.switchType)}}</span>
+          <span class="field-value">{{getFieldValue(patientScale.switchType, 'switchType')}}</span>
         </div>
         <div class="field" v-if="Boolean(String(patientScale.inspectTime))!==false">
           <span class="field-name">量表填写时间:</span>
@@ -196,11 +196,15 @@ export default {
       this.switchNum += 1;
       this.updateScrollbar();
     },
-    formatReadingScale(switchType) {
-      if (switchType === 1) {
-        return '开';
+    getFieldValue(code, fieldName) {
+      if (fieldName === 'switchType') {
+        if (code === 1) {
+          return '开';
+        } else {
+          return '关';
+        }
       } else {
-        return '关';
+        return '';
       }
     },
     updateScrollbar() {
