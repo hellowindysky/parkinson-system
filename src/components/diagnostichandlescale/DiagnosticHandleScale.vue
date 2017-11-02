@@ -135,17 +135,17 @@ import { modifyScaleInfo, addScaleInfo } from 'api/patient.js';
 export default {
   data() {
     return {
+      displayScaleModal: false,
       mode: '',
+
+      scaleInfoId: '',
       useless: {},
       isSelected: false, // 在新增的时候选了一次就改变状态
-      readingScaleType: '',
       isSubjectDisabled: true,
       patientScale: {},  // 需要向服务器提交的对象
-      displayScaleModal: false,  // 此组件是否显示
       scaleList: {},  // 获取到所有的量表数据
-      targetScale: {}, // 这是通过量表的ID筛选出的其中一个量表
+
       scaleToAdd: {}, // 新增量表的时候选中量表后的题目数据
-      scaleName: '',  // 筛选出来的量表的名字
       scaleAnswer: [],  // 放筛选出来的量表病人填写答案的数组
       correctanswer: [], // 通过函数处理后得出的对应答案选项数组
       scaleNameArr: [], // 获取到所有量表的名字,类型,和量表ID
@@ -169,6 +169,17 @@ export default {
       'scaleTemplateGroups',
       'typeGroup'
     ]),
+    targetScale() {
+      return Util.getElement('scaleInfoId', this.scaleInfoId, this.scaleList);
+    },
+    scaleName() {
+      return this.targetScale.gaugeName ? this.targetScale.gaugeName : '';
+    },
+    readingScaleType() {
+      var options = this.getOptions('gaugeType');
+      var option = Util.getElement('code', this.targetScale.gaugeType, options);
+      return option.name;
+    },
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients)) {
         return true;
@@ -220,27 +231,25 @@ export default {
       this.mode = cardOperation;
       this.displayScaleModal = true;
       this.switchNum = 0;
-      // console.log('item', item);
+      console.log('item', item);
       if (this.mode !== this.ADD_NEW_CARD) {
-        // 如果不是新增量表
-        // 通过量表ID来获取量表的信息
-        this.getTitleAndScale(item.scaleInfoId);
+        this.scaleInfoId = item.scaleInfoId;
 
         this.scaleAnswer = [];
-        for (let i = 0; i < item.scaleOptionIds.length; i++) {
-          let answer = item.scaleOptionIds[i];
-          this.$set(this.scaleAnswer, i, answer);
+        if (item.scaleOptionIds) {
+          for (let i = 0; i < item.scaleOptionIds.length; i++) {
+            let answer = item.scaleOptionIds[i];
+            this.$set(this.scaleAnswer, i, answer);
+          }
         }
 
         this.isSubjectDisabled = this.mode === this.VIEW_CURRENT_CARD;
 
-        // 在修改页面的状态下将原来的数据对象给服务器的对象
         this.patientScale = {};
         vueCopy(item, this.patientScale);
-        // console.log(this.targetScale.questions);
         this.getCorrectAnswer(this.targetScale.questions);
 
-        if (this.patientScale['scaleSympInfoList']) {
+        if (this.scaleSympInfoName && this.patientScale.scaleSympInfoList) {
           for (let i = 0; i < this.scaleSympInfoName.length; i++) {
             let sympKey = this.scaleSympInfoName[i];
             if (this.patientScale['scaleSympInfoList']) {
@@ -278,7 +287,7 @@ export default {
       // 按下返回按钮，把所有的数据都初始化一遍
       this.correctanswer = [];
       this.scaleList = {};
-      this.scaleName = '';
+      this.scaleInfoId = '';
       this.scaleAnswer = [];
       this.scaleNameArr = [];
       this.scaleType = '';
@@ -374,34 +383,29 @@ export default {
         delete this.scaleSympInfoName[i]['typeCode'];
       }
     },
-    getTitleAndScale(scaleInfoId) {
-      var targetScale = Util.getElement('scaleInfoId', scaleInfoId, this.scaleList);
-      vueCopy(targetScale, this.targetScale);
-      this.scaleName = targetScale.gaugeName;
-      var options = this.getOptions('gaugeType');
-      var option = Util.getElement('code', targetScale.gaugeType, options);
-      this.readingScaleType = option.name;
-    },
     getCorrectAnswer(questions) {
       // 取出量表的选中答案以及对应的分数
+      if (!questions) {
+        return;
+      }
+      console.log(questions);
       this.$set(this.patientScale, 'scaleOptionIds', []);
-      for (let j = 0; j < questions.length; j++) {
-        let sondata = questions[j].options;
+      for (var j = 0; j < questions.length; j++) {
+        let options = questions[j].options;
         let isNull = true;
         let answer = '';
-        for (let sonkey in sondata) {
-          let sondata1 = sondata[sonkey];
+        for (let option of options) {
           for (let i = 0; i < this.scaleAnswer.length; i++) {
-            if (sondata1['scaleOptionId'] === this.scaleAnswer[i]) {
+            if (option.scaleOptionId === this.scaleAnswer[i]) {
               isNull = false;
-              answer = sondata1['scaleOptionId'];
+              answer = option.scaleOptionId;
             }
           }
         }
         if (isNull) {
-          this.$set(this.patientScale['scaleOptionIds'], j, null);
+          this.$set(this.patientScale.scaleOptionIds, j, null);
         } else {
-          this.$set(this.patientScale['scaleOptionIds'], j, answer);
+          this.$set(this.patientScale.scaleOptionIds, j, answer);
         }
       }
     },
