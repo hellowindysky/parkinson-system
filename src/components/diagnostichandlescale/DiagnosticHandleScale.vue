@@ -231,13 +231,9 @@ export default {
       this.mode = cardOperation;
       this.displayScaleModal = true;
       this.switchNum = 0;
-<<<<<<< HEAD
       this.isSubjectDisabled = this.mode === this.VIEW_CURRENT_CARD;
 
       // console.log('item', item);
-=======
-      console.log('item', item);
->>>>>>> scale
       if (this.mode !== this.ADD_NEW_CARD) {
         this.scaleInfoId = item.scaleInfoId;
 
@@ -249,12 +245,8 @@ export default {
           }
         }
 
-<<<<<<< HEAD
-        // 在修改页面的状态下将原来的数据对象给服务器的对象
-=======
         this.isSubjectDisabled = this.mode === this.VIEW_CURRENT_CARD;
 
->>>>>>> scale
         this.patientScale = {};
         vueCopy(item, this.patientScale);
         this.getCorrectAnswer(this.targetScale.questions);
