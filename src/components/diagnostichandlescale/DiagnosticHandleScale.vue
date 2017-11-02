@@ -10,54 +10,64 @@
 
     <div class="scroll-area" ref="scrollArea">
       <div class="scale-selecter" v-if="mode!==VIEW_CURRENT_CARD">
-        <div class="choose-scale">
-          <span>选择量表:</span>
-          <el-select placeholder="请选择量表" v-model="patientScale.scaleInfoId"
-            :disabled="mode===EDIT_CURRENT_CARD || isSelected" @change="selectScale">
-            <el-option v-for="item in scaleNameArr" :key="item.name" :label="item.name" :value="item.scaleId"></el-option>
-          </el-select>
+        <div class="field whole-line">
+          <span class="field-name">选择量表:</span>
+          <span class="field-value">
+            <el-select placeholder="请选择量表" v-model="patientScale.scaleInfoId"
+              :disabled="mode===EDIT_CURRENT_CARD || isSelected" @change="selectScale">
+              <el-option v-for="item in scaleNameArr" :key="item.name" :label="item.name" :value="item.scaleId"></el-option>
+            </el-select>
+          </span>
         </div>
-        <div class="choose-scale">
-          <span>量表类型:</span>
-          <el-select v-model="scaleType" disabled>
-            <el-option v-for="item in getOptions('gaugeType')" :key="item.code"
-              :label="item.name" :value="item.code"></el-option>
-          </el-select>
+        <div class="field">
+          <span class="field-name">量表类型:</span>
+          <span class="field-value">
+            <el-select v-model="scaleType" disabled>
+              <el-option v-for="item in getOptions('gaugeType')" :key="item.code"
+                :label="item.name" :value="item.code"></el-option>
+            </el-select>
+          </span>
         </div>
-        <div class="choose-time-type">
-          <span>量表填写时间:</span>
-          <el-date-picker  type="datetime" v-model="patientScale['inspectTime']"  placeholder="请选择量表填写时间">
-          </el-date-picker>
+        <div class="field">
+          <span class="field-name">开关状态:</span>
+          <span class="field-value">
+            <el-select v-model="patientScale['switchType']" placeholder="请选择量表开关状态">
+              <el-option v-for="item in switchScaleArr" :key="item.status" :value="item.status" :label="item.options"></el-option>
+            </el-select>
+          </span>
         </div>
-        <div class="choose-time-type">
-          <span>末次服药时间:</span>
-          <el-date-picker type="datetime" v-model="patientScale['lastTakingTime']"  placeholder="请选择末次服药时间">
-          </el-date-picker>
+        <div class="field">
+          <span class="field-name">量表填写时间:</span>
+          <span class="field-value">
+            <el-date-picker type="datetime" v-model="patientScale['inspectTime']"  placeholder="请选择量表填写时间">
+            </el-date-picker>
+          </span>
         </div>
-        <div class="choose-time-type">
-          <span>开关状态:</span>
-          <el-select v-model="patientScale['switchType']" placeholder="请选择量表开关状态">
-            <el-option v-for="item in switchScaleArr" :key="item.status" :value="item.status" :label="item.options"></el-option>
-          </el-select>
+        <div class="field">
+          <span class="field-name">末次服药时间:</span>
+          <span class="field-value">
+            <el-date-picker type="datetime" v-model="patientScale['lastTakingTime']"  placeholder="请选择末次服药时间">
+            </el-date-picker>
+          </span>
         </div>
       </div>
 
       <div class="scale-selecter" v-if="mode===VIEW_CURRENT_CARD">
-        <div class="choose-time-type">
-          <span>量表类型:</span>
-          <span>{{readingScaleType}}</span>
+        <div class="field">
+          <span class="field-name">量表类型:</span>
+          <span class="field-value">{{readingScaleType}}</span>
         </div>
-        <div class="choose-time-type" v-if="Boolean(String(patientScale['inspectTime']))!==false">
-          <span>量表填写时间:</span>
-          <span>{{patientScale['inspectTime']}}</span>
+        <div class="field" v-if="Boolean(String(patientScale['switchType']))!==false">
+          <span class="field-name">开关状态:</span>
+          <span class="field-value">{{formatReadingScale(patientScale['switchType'])}}</span>
         </div>
-        <div class="choose-time-type" v-if="Boolean(String(patientScale['lastTakingTime']))!==false">
-          <span>末次服药时间:</span>
-          <span>{{patientScale['lastTakingTime']}}</span>
+        <div class="field" v-if="Boolean(String(patientScale['inspectTime']))!==false">
+          <span class="field-name">量表填写时间:</span>
+          <span class="field-value">{{patientScale['inspectTime']}}</span>
         </div>
-        <div class="choose-time-type" v-if="Boolean(String(patientScale['switchType']))!==false">
-          <span>开关状态:</span>
-          <span>{{formatReadingScale(patientScale['switchType'])}}</span>
+        <div class="field" v-if="Boolean(String(patientScale['lastTakingTime']))!==false">
+          <span class="field-name">末次服药时间:</span>
+          <span class="field-value">{{patientScale['lastTakingTime']}}</span>
         </div>
       </div>
 
@@ -67,13 +77,13 @@
             {{list.sympName}}
           </el-checkbox>
           <div class="symptom-item-start">
-            <span>出现时间:</span>
-            <el-date-picker  type="datetime" format="yyyy-MM-dd" v-model="list['ariseTime']"
+            <span class="field-name">出现时间:</span>
+            <el-date-picker type="datetime" format="yyyy-MM-dd" v-model="list['ariseTime']"
               placeholder="请输入出现关联症状的时间" :disabled="isSubjectDisabled || !list.status">
             </el-date-picker>
           </div>
           <div class="symptom-item-dose">
-            <span>服用药物:</span>
+            <span class="field-name">服用药物:</span>
             <el-input v-model="list['scaleMedicine']"  placeholder="请输入服用药物"
               :disabled="isSubjectDisabled || !list.status"></el-input>
           </div>
@@ -82,7 +92,7 @@
 
       <div v-for="(item, key) in scaleSonData['questions']" v-if="mode!==ADD_NEW_CARD">
         <div class="scale-questions">
-          <p class="question-title">题目名称:
+          <p class="question-title">
             <span>{{item.subjectName}}</span>
           </p>
           <el-radio-group class="question-body" :key="key" v-model="patientScale['scaleOptionIds'][key]">
@@ -96,7 +106,7 @@
 
       <div v-for="(item, key) in scaleAddSonData['questions']" v-if="isSelected">
         <div class="scale-questions">
-          <p class="question-title">题目名称:
+          <p class="question-title">
             <span>{{item.subjectName}}</span>
           </p>
           <el-radio-group class="question-body" :key="key" v-model="patientScale['scaleOptionIds'][key]">
@@ -509,12 +519,14 @@ export default {
 @title-bar-height: 40px;
 @title-bar-margin-bottom: 10px;
 @margin-right: 15px;
-@title-left-padding: 40px;
+@title-left-padding: 30px;
 @title-bottom-padding: 10px;
-@select-topbottom-padding: 12px;
+@select-top-padding: 12px;
 
-@symptom-item-title-padding: 40px;
-@symptom-item-title-width: 150px;
+@symptom-item-title-padding: 30px;
+@symptom-item-title-width: 130px;
+
+@field-name-width: 95px;
 
 .diagnostic-update-wrapper {
   width: 100%;
@@ -584,7 +596,8 @@ export default {
       box-sizing: border-box;
       .question-title {
         margin: 0;
-        line-height: 62px;
+        padding: 15px 0;
+        line-height: 25px;
         font-weight: bold;
         span {
           color: @secondary-button-color;
@@ -621,63 +634,44 @@ export default {
       font-size: 0px;
       margin-right: @margin-right;
       margin-bottom: @vertical-spacing;
-      padding-left: @title-left-padding;
-      padding-bottom: @title-bottom-padding;
-      padding-top: @select-topbottom-padding;
-      padding-bottom: @select-topbottom-padding;
+      padding: @select-top-padding @title-left-padding;
       box-sizing: border-box; // overflow: hidden;
-      .choose-scale {
-        position: relative;
-        font-size: 14px;
-        padding: 24px 0;
-        span {
-          font-weight: bold;
-          display: inline-block;
-          width: 90px;
-        }
-        .el-select {
-          position: absolute;
-          min-width: 190px;
-          left: 100px;
-          top: 14px;
-          right: 2%;
-        }
-      }
-      .choose-scale:nth-of-type(2) {
-        margin-bottom: @title-bar-margin-bottom;
-      }
-      .choose-time-type {
-        position: relative;
+      .field {
         display: inline-block;
-        font-size: 14px;
+        position: relative;
         width: 50%;
-        padding: 24px 0;
-        span {
-          font-weight: bold;
-          display: inline-block;
-          width: 90px;
-        }
-        span:nth-of-type(2) {
-          font-weight: normal;
-          width: auto;
-        }
-        .el-select {
-          position: absolute;
-          left: 100px;
-          min-width: 190px;
-          top: 14px;
-          right: 4%;
-          .el-input {
-            // width: 100%;
+        height: 45px;
+        line-height: 45px;
+        &.whole-line {
+          width: 100%;
+          .field-value {
+            right: 2%;
           }
         }
+        .field-name {
+          display: inline-block;
+          width: @field-name-width;
+          font-weight: bold;
+          font-size: @normal-font-size;
+        }
+        .field-value {
+          position: absolute;
+          left: @field-name-width;
+          right: 4%;
+          font-size: @normal-font-size;
+        }
+        .el-input {
+          .el-input__inner {
+            height: 30px;
+            border: none;
+            background-color: @screen-color;
+          }
+        }
+        .el-select {
+          width: 100%;
+        }
         .el-date-editor {
-          position: absolute !important;
-          left: 100px !important;
-          min-width: 190px !important;
-          top: 14px !important;
-          right: 4% !important;
-          width: auto !important;
+          width: 100%;
         }
       }
     }
@@ -687,60 +681,49 @@ export default {
       text-align: left;
       .symptom-item {
         // 这是一个关联症状的外层盒子
+        display: inline-block;
         position: relative;
         width: 100%;
-        display: inline-block;
+        box-sizing: border-box;
+        padding: 0 @symptom-item-title-padding;
         font-size: 0;
-        line-height: 60px;
-        height: 60px;
+        line-height: 50px;
+        height: 50px;
+        .el-input {
+          .el-input__inner {
+            height: 30px;
+            border: none;
+            background-color: @screen-color;
+          }
+          &.is-disabled {
+            .el-input__inner {
+              // background-color: @light-gray-color;
+            }
+          }
+        }
         .symptom-item-title {
-          // 标题固定一个宽度
           display: inline-block;
-          box-sizing: border-box;
-          padding-left: @symptom-item-title-padding;
           width: @symptom-item-title-width;
-          display: inline-block;
           .el-checkbox__input {
             position: relative;
-            top: -4px !important;
+            top: -5px;
           }
         }
-        .symptom-item-start {
+        .symptom-item-start, .symptom-item-dose {
+          display: inline-block;
           position: relative;
           width: calc(~"50% - @{symptom-item-title-width}/2");
-          height: 60px;
-          line-height: 60px;
-          display: inline-block;
           font-size: 0;
-          span {
+          .field-name {
             display: inline-block;
             width: 90px;
             text-align: center;
-            font-size: 14px;
-          }
-          .el-date-editor {
-            position: absolute;
-            left: 100px;
-            right: 4%;
-            width: auto;
-          }
-        }
-        .symptom-item-dose {
-          width: calc(~"50% - @{symptom-item-title-width}/2");
-          height: 60px;
-          line-height: 60px;
-          position: relative;
-          display: inline-block;
-          font-size: 0;
-          span {
-            display: inline-block;
-            width: 90px;
-            text-align: center;
-            font-size: 14px;
+            font-size: @normal-font-size;
+            color: @light-font-color;
           }
           .el-input {
             position: absolute;
-            left: 100px;
+            left: 85px;
             right: 4%;
             width: auto;
           }
