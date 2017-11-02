@@ -666,6 +666,12 @@ export default {
             border: none;
             background-color: @screen-color;
           }
+          &.is-disabled {
+            .el-input__inner {
+              background-color: #f0f1f2;
+              color: @gray-color;
+            }
+          }
         }
         .el-select {
           width: 100%;
@@ -697,7 +703,8 @@ export default {
           }
           &.is-disabled {
             .el-input__inner {
-              // background-color: @light-gray-color;
+              background-color: #f0f1f2;
+              color: @gray-color;
             }
           }
         }
