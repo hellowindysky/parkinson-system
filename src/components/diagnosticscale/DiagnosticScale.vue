@@ -7,10 +7,22 @@
         <card class="card" :class="devideWidth" :mode="mutableMode" v-for="item in patientScale"
           :key="item.id" :title="getTitle(item.scaleInfoId)" v-on:deleteCurrentCard="deleteScaleRecord(item)"
           v-on:editCurrentCard="editScale(item)" v-on:viewCurrentCard="viewScale(item)">
-          <div class="text first-line">量表得分: {{item.scalePoint}}</div>
-          <div class="text second-line">填写时间: {{item['inspectTime']}}</div>
-          <div class="text third-line">末次服药: {{item['lastTakingTime']}}</div>
-          <div class="text fourth-line">开关状态: {{switchType(item['switchType'])}}</div>
+          <div class="text first-line">
+            <span class="name">量表得分:</span>
+            <span class="value">{{item.scalePoint}}</span>
+          </div>
+          <div class="text second-line">
+            <span class="name">填写时间:</span>
+            <span class="value">{{item.inspectTime}}</span>
+          </div>
+          <div class="text third-line">
+            <span class="name">末次服药:</span>
+            <span class="value">{{item.lastTakingTime}}</span>
+          </div>
+          <div class="text fourth-line">
+            <span class="name">开关状态:</span>
+            <span class="value">{{switchType(item.switchType)}}</span>
+          </div>
         </card>
       </extensible-panel>
     </div>
@@ -228,6 +240,13 @@ export default {
         position: absolute;
         font-size: @small-font-size;
         color: @light-font-color;
+        .name {
+          color: @font-color;
+        }
+        .value {
+          padding-left: 10px;
+          color: @light-font-color;
+        }
       }
       .first-line {
         left: 10px;
