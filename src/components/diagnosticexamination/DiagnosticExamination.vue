@@ -399,13 +399,13 @@ export default {
       Bus.$emit(this.SHOW_EMG_MODAL, this.EDIT_CURRENT_CARD, item);
     },
     addImgRecord() {
-      Bus.$emit(this.SHOW_IMG_MODAL, '医学影像', {});
+      Bus.$emit(this.SHOW_IMG_MODAL, this.ADD_NEW_CARD, {});
     },
     viewImgRecord(item) {
-      Bus.$emit(this.SHOW_IMG_MODAL, '医学影像', item);
+      Bus.$emit(this.SHOW_IMG_MODAL, this.VIEW_CURRENT_CARD, item);
     },
     editImgRecord(item) {
-      Bus.$emit(this.SHOW_IMG_MODAL, '医学影像', item);
+      Bus.$emit(this.SHOW_IMG_MODAL, this.EDIT_CURRENT_CARD, item);
     },
     deleteEmgRecord(item) { // 删除肌电图
       let EmgId = {
