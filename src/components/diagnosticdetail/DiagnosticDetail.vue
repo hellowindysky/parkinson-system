@@ -107,11 +107,7 @@ export default {
   },
   methods: {
     updateScrollbar() {
-      // 如果不写在 $nextTick() 里面，第一次加载的时候也许会不能正确计算高度。估计是因为子组件还没有全部加载所造成的。
       this.$nextTick(() => {
-        // 之所以弃用 update 方法，是因为它在某些情况下会出现问题，导致滚动条不能有效刷新
-        // Ps.update(this.$refs.scrollArea);
-        // 如果之前有绑定滚动条的话，先进行解除
         Ps.destroy(this.$refs.scrollArea);
         Ps.initialize(this.$refs.scrollArea, {
           wheelSpeed: 1,
@@ -143,6 +139,9 @@ export default {
       // 接收到相应的消息之后，打开诊断详情窗口，然后再向服务器请求数据
       this.updatePatientCase();
       this.displayDetail = true;
+      this.$nextTick(() => {
+        this.$refs.scrollArea.scrollTop = 0;
+      });
     },
     updatePatientCase() {
       // this.caseId 这里有两种情况，一种是正常的诊断 id，
