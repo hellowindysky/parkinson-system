@@ -98,6 +98,14 @@ export default {
         addGroup(groupInfo).then(() => {
           Bus.$emit(this.UPDATE_GROUP_LIST);
           this.displayModal = false;
+        }, (error) => {
+          if (error.code === 8) {
+            this.$message({
+              message: '新增分组失败，当前组名已存在！',
+              type: 'error',
+              duration: 2000
+            });
+          }
         });
       }
     },
