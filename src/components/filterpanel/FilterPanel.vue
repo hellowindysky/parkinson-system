@@ -823,7 +823,7 @@
         <div class="form-body" ref="formBody">
           <table class="form">
             <tr class="row" v-for="(patient, i) in patientList">
-              <td class="col col-num">{{i}}</td>
+              <td class="col col-num">{{i + 1}}</td>
               <td class="col col-id">{{patient.patientId}}</td>
               <td class="col col-gender">{{getNameByCode(patient.sex, 'sex')}}</td>
               <td class="col col-age">{{patient.age}}</td>
