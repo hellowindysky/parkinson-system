@@ -9,7 +9,7 @@
     </div>
 
     <div class="scroll-area" ref="scrollArea">
-      <div class="scale-selecter" v-if="mode!==VIEW_CURRENT_CARD">
+      <div class="scale-selector" v-if="mode!==VIEW_CURRENT_CARD">
         <div class="field whole-line">
           <span class="field-name">选择量表:</span>
           <span class="field-value">
@@ -31,7 +31,7 @@
         <div class="field">
           <span class="field-name">开关状态:</span>
           <span class="field-value">
-            <el-select v-model="patientScale['switchType']" placeholder="请选择量表开关状态">
+            <el-select v-model="patientScale.switchType" placeholder="请选择量表开关状态">
               <el-option v-for="item in switchScaleArr" :key="item.status" :value="item.status" :label="item.options"></el-option>
             </el-select>
           </span>
@@ -39,64 +39,64 @@
         <div class="field">
           <span class="field-name">量表填写时间:</span>
           <span class="field-value">
-            <el-date-picker type="datetime" v-model="patientScale['inspectTime']"  placeholder="请选择量表填写时间">
+            <el-date-picker type="datetime" v-model="patientScale.inspectTime"  placeholder="请选择量表填写时间">
             </el-date-picker>
           </span>
         </div>
         <div class="field">
           <span class="field-name">末次服药时间:</span>
           <span class="field-value">
-            <el-date-picker type="datetime" v-model="patientScale['lastTakingTime']"  placeholder="请选择末次服药时间">
+            <el-date-picker type="datetime" v-model="patientScale.lastTakingTime"  placeholder="请选择末次服药时间">
             </el-date-picker>
           </span>
         </div>
       </div>
 
-      <div class="scale-selecter" v-if="mode===VIEW_CURRENT_CARD">
+      <div class="scale-selector" v-if="mode===VIEW_CURRENT_CARD">
         <div class="field">
           <span class="field-name">量表类型:</span>
           <span class="field-value">{{readingScaleType}}</span>
         </div>
-        <div class="field" v-if="Boolean(String(patientScale['switchType']))!==false">
+        <div class="field" v-if="Boolean(String(patientScale.switchType))!==false">
           <span class="field-name">开关状态:</span>
-          <span class="field-value">{{formatReadingScale(patientScale['switchType'])}}</span>
+          <span class="field-value">{{formatReadingScale(patientScale.switchType)}}</span>
         </div>
-        <div class="field" v-if="Boolean(String(patientScale['inspectTime']))!==false">
+        <div class="field" v-if="Boolean(String(patientScale.inspectTime))!==false">
           <span class="field-name">量表填写时间:</span>
-          <span class="field-value">{{patientScale['inspectTime']}}</span>
+          <span class="field-value">{{patientScale.inspectTime}}</span>
         </div>
-        <div class="field" v-if="Boolean(String(patientScale['lastTakingTime']))!==false">
+        <div class="field" v-if="Boolean(String(patientScale.lastTakingTime))!==false">
           <span class="field-name">末次服药时间:</span>
-          <span class="field-value">{{patientScale['lastTakingTime']}}</span>
+          <span class="field-value">{{patientScale.lastTakingTime}}</span>
         </div>
       </div>
 
       <folding-panel :title="'关联症状'" :folded-status="mode===VIEW_CURRENT_CARD" class="associated-symptom" :editable="canEdit">
-        <div class="symptom-item" v-for="(list, listkey) in patientScale['scaleSympInfoList']" :key="listkey">
+        <div class="symptom-item" v-for="(list, listkey) in patientScale.scaleSympInfoList" :key="listkey">
           <el-checkbox class="symptom-item-title" v-model="list.status" :disabled="isSubjectDisabled">
             {{list.sympName}}
           </el-checkbox>
           <div class="symptom-item-start">
             <span class="field-name">出现时间:</span>
-            <el-date-picker type="datetime" format="yyyy-MM-dd" v-model="list['ariseTime']"
+            <el-date-picker type="datetime" format="yyyy-MM-dd" v-model="list.ariseTime"
               placeholder="请输入出现关联症状的时间" :disabled="isSubjectDisabled || !list.status">
             </el-date-picker>
           </div>
           <div class="symptom-item-dose">
             <span class="field-name">服用药物:</span>
-            <el-input v-model="list['scaleMedicine']"  placeholder="请输入服用药物"
+            <el-input v-model="list.scaleMedicine"  placeholder="请输入服用药物"
               :disabled="isSubjectDisabled || !list.status"></el-input>
           </div>
         </div>
       </folding-panel>
 
-      <div v-for="(item, key) in scaleSonData['questions']" v-if="mode!==ADD_NEW_CARD">
+      <div v-for="(item, key) in scaleSonData.questions" v-if="mode!==ADD_NEW_CARD">
         <div class="scale-questions">
           <p class="question-title">
             <span>{{item.subjectName}}</span>
           </p>
-          <el-radio-group class="question-body" :key="key" v-model="patientScale['scaleOptionIds'][key]">
-            <el-radio class="question-selection" v-for="(sonitem, i) in item['options']"
+          <el-radio-group class="question-body" :key="key" v-model="patientScale.scaleOptionIds[key]">
+            <el-radio class="question-selection" v-for="(sonitem, i) in item.options"
               :label="sonitem.scaleOptionId" :key="i" :disabled="isSubjectDisabled">
                 {{sonitem.optionName}}
             </el-radio>
@@ -104,13 +104,13 @@
         </div>
       </div>
 
-      <div v-for="(item, key) in scaleAddSonData['questions']" v-if="isSelected">
+      <div v-for="(item, key) in scaleAddSonData.questions" v-if="isSelected">
         <div class="scale-questions">
           <p class="question-title">
             <span>{{item.subjectName}}</span>
           </p>
-          <el-radio-group class="question-body" :key="key" v-model="patientScale['scaleOptionIds'][key]">
-            <el-radio class="question-selection" v-for="(sonitem, i) in item['options']"
+          <el-radio-group class="question-body" :key="key" v-model="patientScale.scaleOptionIds[key]">
+            <el-radio class="question-selection" v-for="(sonitem, i) in item.options"
               :label="sonitem.scaleOptionId" :key="i">
               {{sonitem.optionName}}
             </el-radio>
@@ -588,11 +588,11 @@ export default {
     overflow: hidden;
     .scale-questions {
       position: relative;
+      margin-bottom: @vertical-spacing;
+      padding: 0 @title-left-padding 10px;
       text-align: left;
       background: white;
-      font-size: 14px;
-      margin-bottom: @vertical-spacing;
-      padding-left: @title-left-padding; // padding-bottom: @title-bottom-padding;
+      font-size: 14px;;
       box-sizing: border-box;
       .question-title {
         margin: 0;
@@ -627,7 +627,7 @@ export default {
         }
       }
     }
-    .scale-selecter {
+    .scale-selector {
       text-align: left;
       width: 100%;
       background: white;
