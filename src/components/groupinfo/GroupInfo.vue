@@ -47,6 +47,8 @@
           <span class="date">{{patient.createDate}}</span>
         </div>
       </div>
+
+      <div class="blank-area"></div>
     </div>
     <div class="operate-bar" v-show="mode!==READING_MODE">
       <el-checkbox class="select-all" v-model="selectAll" @change="toggleSelectAll">全选</el-checkbox>
@@ -537,6 +539,10 @@ export default {
           }
         }
       }
+    }
+    .blank-area {
+      width: 100%;
+      height: 100px;
     }
     .ps__scrollbar-y-rail {
       position: absolute;
