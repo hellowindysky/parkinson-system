@@ -421,7 +421,7 @@
             <td class="col w2" colspan="2" rowspan="2" v-show="index % 2 === 0">
               <el-select v-model="followDbsAdjustBeforeFirstSchemeOrder" @change="selectFollowDbsAdjustBeforeFirstSchemeOrder()"
                 :disabled="mode===VIEW_CURRENT_CARD">
-                <el-option v-for="(p, i) in lastDbsParameter" v-show="index % 2 === 0"
+                <el-option v-for="(p, i) in lastDbsParameter" v-show="i % 2 === 0"
                   :label="getFollowDbsAdjustBeforePlanName(p)" :value="p.schemeOrder" :key="p.schemeOrder"></el-option>
               </el-select>
             </td>
@@ -802,7 +802,7 @@
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
       <div class="button submit-button" @click="submit" v-show="mode!==VIEW_CURRENT_CARD">确定</div>
-      <div class="button edit-button" @click="switchToEditingMode" v-show="mode===VIEW_CURRENT_CARD">编辑</div>
+      <div class="button edit-button" @click="switchToEditingMode" v-show="mode===VIEW_CURRENT_CARD && canEdit">编辑</div>
     </div>
   </div>
 </template>
@@ -923,6 +923,13 @@ export default {
     },
     rightContactCount() {
       return this.getSideDeviceContact('right').length;
+    },
+    canEdit() {
+      if (this.$route.matched.some(record => record.meta.myPatients)) {
+        return true;
+      } else {
+        return false;
+      }
     }
   },
   methods: {

@@ -34,7 +34,7 @@
       </div>
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
-      <div class="button edit-button" v-show="mode===VIEW_CURRENT_CARD" @click="switchToEditingMode">编辑</div>
+      <div class="button edit-button" v-show="mode===VIEW_CURRENT_CARD && canEdit" @click="switchToEditingMode">编辑</div>
       <div class="button submit-button" v-show="mode!==VIEW_CURRENT_CARD" @click="submit">确定</div>
     </div>
   </div>
@@ -69,6 +69,13 @@ export default {
         return '新增手术方案';
       } else {
         return '手术方案';
+      }
+    },
+    canEdit() {
+      if (this.$route.matched.some(record => record.meta.myPatients)) {
+        return true;
+      } else {
+        return false;
       }
     }
   },

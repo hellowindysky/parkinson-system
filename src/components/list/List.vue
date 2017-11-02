@@ -292,7 +292,7 @@ export default {
       }
     },
     searchInputPlaceholder() {
-      if (this.listType === this.MY_PATIENTS_TYPE) {
+      if (this.listType === this.MY_PATIENTS_TYPE || this.listType === this.OTHER_PATIENTS_TYPE) {
         return '请输入姓名/身份证号/手机号';
       } else if (this.listType === this.GROUP_TYPE) {
         return '请输入组名';
