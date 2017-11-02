@@ -8,28 +8,28 @@
             <span class="field-name">呼吸(次/分):</span>
             <div class="field-value" v-if="mutableMode===READING_MODE">{{VitalSignsData.breathing}}</div>
             <div class="field-value" v-else-if="mutableMode===EDITING_MODE">
-              <el-input v-model="vitalData.breathing" placeholder="请输入检查结果"></el-input>
+              <el-input v-model="vitalData.breathing" placeholder="请输入每分钟呼吸频率"></el-input>
             </div>
           </li>
           <li class="field-item">
             <span class="field-name">体温(℃):</span>
             <div class="field-value" v-if="mutableMode===READING_MODE">{{VitalSignsData.temperature}}</div>
             <div class="field-value" v-else-if="mutableMode===EDITING_MODE">
-              <el-input v-model="vitalData.temperature" placeholder="请输入检查结果"></el-input>
+              <el-input v-model="vitalData.temperature" placeholder="请输入体温"></el-input>
             </div>
           </li>
           <li class="field-item">
             <span class="field-name">脉搏(次/分):</span>
             <div class="field-value" v-if="mutableMode===READING_MODE">{{VitalSignsData.pulse}}</div>
             <div class="field-value" v-else-if="mutableMode===EDITING_MODE">
-              <el-input v-model="vitalData.pulse" placeholder="请输入检查结果"></el-input>
+              <el-input v-model="vitalData.pulse" placeholder="请输入每分钟脉搏频率"></el-input>
             </div>
           </li>
           <li class="field-item">
             <span class="field-name">心率(次/分):</span>
             <div class="field-value" v-if="mutableMode===READING_MODE">{{VitalSignsData.heartRate}}</div>
             <div class="field-value" v-else-if="mutableMode===EDITING_MODE">
-              <el-input v-model="vitalData.heartRate" placeholder="请输入检查结果"></el-input>
+              <el-input v-model="vitalData.heartRate" placeholder="请输入心率"></el-input>
             </div>
           </li>
           <li class="field-item">
@@ -46,27 +46,27 @@
             <span class="field-name long-field-name">血压:卧位-左/右(mmHg):</span>
             <div class="field-value" v-if="mutableMode===READING_MODE">{{VitalSignsData.bpDecubitus}}</div>
             <div class="field-value" v-else-if="mutableMode===EDITING_MODE">
-              <el-input class="half-input left" v-model="vitalData.bpDecubitusL"></el-input>
+              <el-input class="half-input left" v-model="vitalData.bpDecubitusL" placeholder="左"></el-input>
               <span class="middle-text">/</span>
-              <el-input class="half-input right" v-model="vitalData.bpDecubitusR"></el-input>
+              <el-input class="half-input right" v-model="vitalData.bpDecubitusR" placeholder="右"></el-input>
             </div>
           </li>
           <li class="field-item">
             <span class="field-name long-field-name">血压:坐位-左/右(mmHg):</span>
             <div class="field-value" v-if="mutableMode===READING_MODE">{{VitalSignsData.bpSitting}}</div>
             <div class="field-value" v-else-if="mutableMode===EDITING_MODE">
-              <el-input class="half-input left" v-model="vitalData.bpSittingL"></el-input>
+              <el-input class="half-input left" v-model="vitalData.bpSittingL" placeholder="左"></el-input>
               <span class="middle-text">/</span>
-              <el-input class="half-input right" v-model="vitalData.bpSittingR"></el-input>
+              <el-input class="half-input right" v-model="vitalData.bpSittingR" placeholder="右"></el-input>
             </div>
           </li>
           <li class="field-item">
             <span class="field-name long-field-name">血压:立位-左/右(mmHg):</span>
             <div class="field-value" v-if="mutableMode===READING_MODE">{{VitalSignsData.bpOrthostatic}}</div>
             <div class="field-value" v-else-if="mutableMode===EDITING_MODE">
-              <el-input class="half-input left" v-model="vitalData.bpOrthostaticL"></el-input>
+              <el-input class="half-input left" v-model="vitalData.bpOrthostaticL" placeholder="左"></el-input>
               <span class="middle-text">/</span>
-              <el-input class="half-input right" v-model="vitalData.bpOrthostaticR"></el-input>
+              <el-input class="half-input right" v-model="vitalData.bpOrthostaticR" placeholder="右"></el-input>
             </div>
           </li>
           <li class="field-item">
