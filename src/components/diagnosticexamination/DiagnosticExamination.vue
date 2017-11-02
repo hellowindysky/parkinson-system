@@ -1,7 +1,8 @@
 <template lang="html">
   <folding-panel :title="'检验检查'" :mode="mutableMode"  v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit" :editable="canEdit">
     <div class="diagnostic-examination" ref="diagnosticExamination">
-      <extensible-panel class="panel" :mode="mutableMode" :title="vitalSigns" :isVitalSigns="true" :editable="canEdit">
+      <extensible-panel class="panel" :mode="mutableMode" :title="vitalSigns" :hideButtons="true"
+        :editable="canEdit" :shrinkable="false">
         <ul class="vital-signs">
           <li class="field-item">
             <span class="field-name">呼吸(次/分):</span>
