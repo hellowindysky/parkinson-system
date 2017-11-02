@@ -397,7 +397,7 @@
       </div>
       <div class="seperate-line"></div>
       <div class="button cancel-button" v-show="tableMode!==SON_OPEN" @click="cancel">取消</div>
-      <div class="button son-submit-button" v-show="tableMode===FATHER_OPEN && mode===VIEW_CURRENT_CARD" @click="switchToEditingMode">编辑</div>
+      <div class="button son-submit-button" v-show="tableMode===FATHER_OPEN && mode===VIEW_CURRENT_CARD && canEdit" @click="switchToEditingMode">编辑</div>
       <div class="button son-submit-button" v-show="tableMode===FATHER_OPEN && mode!==VIEW_CURRENT_CARD" @click="submit">确认</div>
       <div class="button son-submit-button" v-show="tableMode===SON_OPEN && mode===VIEW_CURRENT_CARD" @click="editEnd">返回</div>
       <div class="button son-submit-button" v-show="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD" @click="editEnd">编辑完成</div>
@@ -484,6 +484,13 @@ export default {
         return '新增肌电图';
       } else {
         return '肌电图';
+      }
+    },
+    canEdit() {
+      if (this.$route.matched.some(record => record.meta.myPatients)) {
+        return true;
+      } else {
+        return false;
       }
     }
   },
