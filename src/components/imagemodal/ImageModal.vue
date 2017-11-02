@@ -8,7 +8,11 @@
             记录名称:
             <span class="required-mark">*</span>
           </span>
-          <span class="field-input">
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span class="warning-text"></span>
+            <span>view状态下影像名称</span>
+          </span>
+          <span class="field-input" v-else>
             <span class="warning-text"></span>
             <el-input placeholder="请输入本次影像记录的名称"></el-input>
           </span>
@@ -18,7 +22,11 @@
             影像类型:
             <span class="required-mark">*</span>
           </span>
-          <span class="field-input">
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span class="warning-text"></span>
+            <span>view状态下影像类型</span>
+          </span>
+          <span class="field-input" v-else>
             <span class="warning-text"></span>
             <el-select v-model="value" placeholder="请选择">
               <el-option
@@ -35,7 +43,11 @@
             检查时间:
             <span class="required-mark">*</span>
           </span>
-          <span class="field-input">
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span class="warning-text"></span>
+            <span>view状态下检查时间</span>
+          </span>
+          <span class="field-input" v-else>
             <span class="warning-text"></span>
             <el-date-picker
               v-model="value1"
@@ -50,7 +62,11 @@
             检查编号:
             <span class="required-mark">*</span>
           </span>
-          <span class="field-input">
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span class="warning-text"></span>
+            <span>view状态下检查编号</span>
+          </span>
+          <span class="field-input" v-else>
             <span class="warning-text"></span>
             <el-input placeholder="请输入患者检查编号"></el-input>
           </span>
@@ -60,7 +76,11 @@
             检查设备:
             <span class="required-mark">*</span>
           </span>
-          <span class="field-input">
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span class="warning-text"></span>
+            <span>view状态下设备编号</span>
+          </span>
+          <span class="field-input" v-else>
             <span class="warning-text"></span>
             <el-input placeholder="请输入检查设备编号"></el-input>
           </span>
@@ -70,7 +90,11 @@
             检查结论:
             <span class="required-mark">*</span>
           </span>
-          <span class="field-input">
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span class="warning-text"></span>
+            <span>view状态下检查结论</span>
+          </span>
+          <span class="field-input" v-else>
             <span class="warning-text"></span>
             <el-input placeholder="请输入检查结论"></el-input>
           </span>
@@ -80,7 +104,11 @@
             备注:
             <span class="required-mark">*</span>
           </span>
-          <span class="field-input">
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span class="warning-text"></span>
+            <span>view状态下备注</span>
+          </span>
+          <span class="field-input" v-else>
             <span class="warning-text"></span>
             <el-input placeholder="请输入备注信息"></el-input>
           </span>
@@ -98,6 +126,7 @@
               :action="uploadUrl"
               :headers="header"
               ref="upload"
+              :disabled="mode == VIEW_CURRENT_CARD ? true : false"
               :data="fileParam"
               :multiple="true"
               :auto-upload="true"
@@ -107,7 +136,7 @@
               :on-success="uploadSuccess"
               :on-error="uploadErr"
               :file-list="fileList1">
-              <el-button slot="trigger" size="small" type="text">点击上传T1压缩文件/源文件</el-button>
+              <el-button slot="trigger" size="small" type="text" :class="{'btnDisabled': mode ==VIEW_CURRENT_CARD ? true : false}">点击上传T1压缩文件/源文件</el-button>
               <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
               <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
             </el-upload>
@@ -124,11 +153,12 @@
               class="upload-demo"
               action="https://jsonplaceholder.typicode.com/posts/"
               ref="upload2"
+              :disabled="mode == VIEW_CURRENT_CARD ? true : false"
               :auto-upload="false"
               :on-preview="handlePreview"
               :on-remove="handleRemove"
               :file-list="fileList2">
-              <el-button size="small" type="text ">点击上传T2压缩文件/源文件</el-button>
+              <el-button size="small" type="text" :class="{'btnDisabled': mode ==VIEW_CURRENT_CARD ? true : false}">点击上传T2压缩文件/源文件</el-button>
               <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
             </el-upload>
           </span>
@@ -144,18 +174,20 @@
               class="upload-demo"
               action="https://jsonplaceholder.typicode.com/posts/"
               ref="upload3"
+              :disabled="mode == VIEW_CURRENT_CARD ? true : false"
               :auto-upload="false"
               :on-preview="handlePreview"
               :on-remove="handleRemove"
               :file-list="fileList3">
-              <el-button size="small" type="text ">点击上传T2Flair压缩文件/源文件</el-button>
+              <el-button size="small" type="text " :class="{'btnDisabled': mode ==VIEW_CURRENT_CARD ? true : false}">点击上传T2Flair压缩文件/源文件</el-button>
               <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
             </el-upload>
           </span>
         </div>
       </div>
       <div class="button cancel-button btn-margin" @click="cancel">取消</div>
-      <div class="button submit-button btn-margin" @click="submit">确定</div>
+      <div v-show="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD" class="button submit-button btn-margin" @click="submit">确定</div>
+      <div v-show="mode===VIEW_CURRENT_CARD && canEdit" class="button submit-button btn-margin" @click="switchToEditingMode">编辑</div>
     </div>
   </div>
 </template>
@@ -172,6 +204,7 @@ export default {
     return {
       displayModal: false,
       title: '',
+      mode: '',
       uploadUrl: baseUrl + '/fileUpload/uploadPatientAttachment',
       pickerOptions0: {
         disabledDate(time) {
@@ -184,7 +217,7 @@ export default {
       fileList2: [],
       fileList3: [],
       header: {
-        'Access-Control-Allow-Origin': '*'
+        'Content-Type': 'multipart/form-data'
       },
       fileParam: getCommonRequest(),
       ImgTypeData: {}
@@ -192,8 +225,16 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'typeGroup'
-    ])
+      'typeGroup',
+      'medicineTemplateGroups'
+    ]),
+    canEdit() {
+      if (this.$route.matched.some(record => record.meta.myPatients)) {
+        return true;
+      } else {
+        return false;
+      }
+    }
   },
   methods: {
     getOptions(fieldName) {
@@ -210,6 +251,9 @@ export default {
     },
     cancel() {
       this.displayModal = false;
+    },
+    switchToEditingMode() {
+      this.mode = this.EDIT_CURRENT_CARD;
     },
     submit() {
       // let submitData = this.ImgTypeData;
@@ -234,9 +278,9 @@ export default {
       console.log(file);
       console.log(this.fileList1);
     },
-    showPanel(title, item) {
-      this.title = title;
+    showPanel(cardOperation, item) {
       this.displayModal = true;
+      this.mode = cardOperation;
       console.log(item);
     },
     uploadSuccess(response, file, fileList) {
@@ -259,6 +303,7 @@ export default {
   },
   mounted() {
     Bus.$on(this.SHOW_IMG_MODAL, this.showPanel);
+    // console.log(this.medicineTemplateGroups);
   }
 };
 </script>
@@ -274,6 +319,11 @@ export default {
 @col-time-width: 200px;
 @col-amount-width: 150px;
 @col-unit-width: 150px;
+
+.btnDisabled {
+  background-color: lightgray !important;
+  cursor: not-allowed;
+}
 
 .img-modal-wrapper {
   position: absolute;
@@ -416,6 +466,10 @@ export default {
                 &.el-button--text {
                   background-color:@font-color;
                   color:#fff;
+                  &:disabled {
+                    background-color:lightgray;
+                    cursor:not-allowed;
+                  }
                 }
               }
             }
