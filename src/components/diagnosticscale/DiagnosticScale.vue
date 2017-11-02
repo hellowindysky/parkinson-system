@@ -177,15 +177,21 @@ export default {
 
 <style lang="less">
 @import "~styles/variables.less";
+
+@scale-card-height: 150px;
+
 .diagnostic-scale {
   position: relative;
   .panel {
     text-align: left;
     .content {
-      height: 200px !important;
+      height: @scale-card-height + @card-vertical-margin * 2 + 5px * 2;
+      &.extended {
+        height: auto;
+      }
     }
     .card {
-      height: 170px;
+      height: @scale-card-height;
       display: inline-block;
       margin: @card-vertical-margin @card-horizontal-margin;
       &.width-1-1, &.width-1-0 {
