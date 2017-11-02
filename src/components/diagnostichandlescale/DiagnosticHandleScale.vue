@@ -208,6 +208,8 @@ export default {
       this.mode = cardOperation;
       this.displayUpdateScale = true;
       this.switchNum = 0;
+      this.isSubjectDisabled = this.mode === this.VIEW_CURRENT_CARD;
+
       // console.log('item', item);
       if (this.mode !== this.ADD_NEW_CARD) {
         // 如果不是新增量表
@@ -219,8 +221,6 @@ export default {
           let answer = item.scaleOptionIds[i];
           this.$set(this.scaleAnswer, i, answer);
         }
-
-        this.isSubjectDisabled = this.mode === this.VIEW_CURRENT_CARD;
 
         // 在修改页面的状态下将原来的数据对象给服务器的对象
         this.patientScale = {};
