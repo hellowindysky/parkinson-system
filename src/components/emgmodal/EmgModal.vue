@@ -396,7 +396,7 @@
         </div>
       </div>
       <div class="seperate-line"></div>
-      <div class="button cancel-button" v-show="tableMode===FATHER_OPEN" @click="cancel">取消</div>
+      <div class="button cancel-button" v-show="tableMode!==SON_OPEN" @click="cancel">取消</div>
       <div class="button son-submit-button" v-show="tableMode===FATHER_OPEN && mode===VIEW_CURRENT_CARD" @click="switchToEditingMode">编辑</div>
       <div class="button son-submit-button" v-show="tableMode===FATHER_OPEN && mode!==VIEW_CURRENT_CARD" @click="submit">确认</div>
       <div class="button son-submit-button" v-show="tableMode===SON_OPEN && mode===VIEW_CURRENT_CARD" @click="editEnd">返回</div>
@@ -556,6 +556,7 @@ export default {
           if (this.mode === this.ADD_NEW_CARD) {
             this.tableMode = this.FATHER_OPEN;
           }
+          this.updateScrollbar();
         }
       }
     },
