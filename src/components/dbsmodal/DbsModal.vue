@@ -421,7 +421,7 @@
             <td class="col w2" colspan="2" rowspan="2" v-show="index % 2 === 0">
               <el-select v-model="followDbsAdjustBeforeFirstSchemeOrder" @change="selectFollowDbsAdjustBeforeFirstSchemeOrder()"
                 :disabled="mode===VIEW_CURRENT_CARD">
-                <el-option v-for="(p, i) in lastDbsParameter" v-show="index % 2 === 0"
+                <el-option v-for="(p, i) in lastDbsParameter" v-show="i % 2 === 0"
                   :label="getFollowDbsAdjustBeforePlanName(p)" :value="p.schemeOrder" :key="p.schemeOrder"></el-option>
               </el-select>
             </td>
