@@ -21,12 +21,7 @@
         </div>
         <div class="field">
           <span class="field-name">量表类型:</span>
-          <span class="field-value">
-            <el-select v-model="scaleType" disabled>
-              <el-option v-for="item in getOptions('gaugeType')" :key="item.code"
-                :label="item.name" :value="item.code"></el-option>
-            </el-select>
-          </span>
+          <span class="field-value">{{scaleType}}</span>
         </div>
         <div class="field">
           <span class="field-name">开关状态:</span>
@@ -39,14 +34,14 @@
         <div class="field">
           <span class="field-name">量表填写时间:</span>
           <span class="field-value">
-            <el-date-picker type="datetime" v-model="patientScale.inspectTime"  placeholder="请选择量表填写时间">
+            <el-date-picker type="datetime" v-model="patientScale.inspectTime" placeholder="请选择量表填写时间">
             </el-date-picker>
           </span>
         </div>
         <div class="field">
           <span class="field-name">末次服药时间:</span>
           <span class="field-value">
-            <el-date-picker type="datetime" v-model="patientScale.lastTakingTime"  placeholder="请选择末次服药时间">
+            <el-date-picker type="datetime" v-model="patientScale.lastTakingTime" placeholder="请选择末次服药时间">
             </el-date-picker>
           </span>
         </div>
@@ -55,7 +50,7 @@
       <div class="scale-selector" v-if="mode===VIEW_CURRENT_CARD">
         <div class="field">
           <span class="field-name">量表类型:</span>
-          <span class="field-value">{{readingScaleType}}</span>
+          <span class="field-value">{{scaleType}}</span>
         </div>
         <div class="field" v-if="Boolean(String(patientScale.switchType))!==false">
           <span class="field-name">开关状态:</span>
@@ -90,33 +85,18 @@
         </div>
       </folding-panel>
 
-      <div v-for="(item, key) in targetScale.questions" v-if="mode!==ADD_NEW_CARD">
-        <div class="scale-questions">
-          <p class="question-title">
-            <span>{{item.subjectName}}</span>
-          </p>
-          <el-radio-group class="question-body" :key="key" v-model="patientScale.scaleOptionIds[key]">
-            <el-radio class="question-selection" v-for="(sonitem, i) in item.options"
-              :label="sonitem.scaleOptionId" :key="i" :disabled="isSubjectDisabled">
-                {{sonitem.optionName}}
-            </el-radio>
-          </el-radio-group>
-        </div>
+      <div v-for="(item, key) in targetScale.questions" class="scale-questions">
+        <p class="question-title">
+          <span>{{item.subjectName}}</span>
+        </p>
+        <el-radio-group class="question-body" :key="key" v-model="patientScale.scaleOptionIds[key]">
+          <el-radio class="question-selection" v-for="(sonitem, i) in item.options"
+            :label="sonitem.scaleOptionId" :key="i" :disabled="isSubjectDisabled">
+              {{sonitem.optionName}}
+          </el-radio>
+        </el-radio-group>
       </div>
 
-      <div v-for="(item, key) in scaleToAdd.questions" v-if="mode===ADD_NEW_CARD && isSelected">
-        <div class="scale-questions">
-          <p class="question-title">
-            <span>{{item.subjectName}}</span>
-          </p>
-          <el-radio-group class="question-body" :key="key" v-model="patientScale.scaleOptionIds[key]">
-            <el-radio class="question-selection" v-for="(sonitem, i) in item.options"
-              :label="sonitem.scaleOptionId" :key="i">
-              {{sonitem.optionName}}
-            </el-radio>
-          </el-radio-group>
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -124,13 +104,12 @@
 <script>
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
-import { getScaleInfo } from 'api/patient';
-import { mapGetters } from 'vuex';
-import { vueCopy } from 'utils/helper';
-import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 import Util from 'utils/util.js';
-import { deepCopy } from 'utils/helper';
-import { modifyScaleInfo, addScaleInfo } from 'api/patient.js';
+import { getScaleInfo, modifyScaleInfo, addScaleInfo } from 'api/patient';
+import { mapGetters } from 'vuex';
+import { vueCopy, deepCopy } from 'utils/helper';
+
+import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 
 export default {
   data() {
@@ -145,11 +124,9 @@ export default {
       patientScale: {},  // 需要向服务器提交的对象
       scaleList: {},  // 获取到所有的量表数据
 
-      scaleToAdd: {}, // 新增量表的时候选中量表后的题目数据
       scaleAnswer: [],  // 放筛选出来的量表病人填写答案的数组
       correctanswer: [], // 通过函数处理后得出的对应答案选项数组
       scaleNameArr: [], // 获取到所有量表的名字,类型,和量表ID
-      scaleType: '',   // 这个值是量表类型下拉框绑定的变量改变它可以随时改变量表类型下拉框
       switchScaleArr: [
         {
           status: 1,
@@ -175,7 +152,7 @@ export default {
     scaleName() {
       return this.targetScale.gaugeName ? this.targetScale.gaugeName : '';
     },
-    readingScaleType() {
+    scaleType() {
       var options = this.getOptions('gaugeType');
       var option = Util.getElement('code', this.targetScale.gaugeType, options);
       return option.name;
@@ -193,16 +170,7 @@ export default {
       if (this.switchNum > 0) {
         this.isSelected = true;
       }
-      for (let scale of this.scaleList) {
-        for (let sonkey in scale) {
-          if (sonkey === 'scaleInfoId') {
-            // 获取对应量表的数据
-            if (scale[sonkey] === this.patientScale['scaleInfoId']) {
-              vueCopy(scale, this.scaleToAdd);
-            }
-          }
-        }
-      }
+      this.scaleInfoId = this.patientScale.scaleInfoId;
       this.switchNum += 1;
       this.updateScrollbar();
     },
@@ -275,7 +243,6 @@ export default {
           }
           console.log('error', this.scaleSympInfoName);
         }
-        // 把关联症状那个数组赋值给这个提交的对象
         this.isSelected = false;
       } else {
         // 新增量表模式
@@ -298,9 +265,7 @@ export default {
       this.scaleInfoId = '';
       this.scaleAnswer = [];
       this.scaleNameArr = [];
-      this.scaleType = '';
       this.isSubjectDisabled = true;
-      this.scaleToAdd = {};
       this.displayScaleModal = false;
       this.isSelected = false;
       this.switchNum = 0;
@@ -441,19 +406,6 @@ export default {
         }
       }
     },
-    linkAgeScaleType(scaleId) {
-      // 通过量表的ID查询到量表的类型并且改变量表类型选择框
-      for (let key in this.scaleList) {
-        let sonData = this.scaleList[key];
-        for (let sonkey in sonData) {
-          if (sonkey === 'scaleInfoId') {
-            if (sonData[sonkey] === scaleId) {
-              this.scaleType = sonData['gaugeType'];
-            }
-          }
-        }
-      }
-    },
     initPatientScale() {
       // 初始化patientScale对象
       this.patientScale = {};
@@ -504,15 +456,6 @@ export default {
       handler: function(newVal) {
         if (newVal && this.displayScaleModal) {
           this.getScaleNameArr(newVal);
-        }
-      },
-      deep: true
-    },
-    patientScale: {
-      handler: function(newVal) {
-        if (newVal && this.displayScaleModal) {
-          this.linkAgeScaleType(newVal['scaleInfoId']);
-          // console.log('patientScale', newVal);
         }
       },
       deep: true
