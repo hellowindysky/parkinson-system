@@ -120,14 +120,13 @@ export default {
       mode: '',
 
       scaleInfoId: '',
-      useless: {},
       isSubjectDisabled: true,
       patientScale: {},  // 需要向服务器提交的对象
       scaleList: {},  // 获取到所有的量表数据
 
       scaleAnswer: [],  // 放筛选出来的量表病人填写答案的数组
       correctanswer: [], // 通过函数处理后得出的对应答案选项数组
-      scaleSympInfoName: []
+      scaleSympInfoList: []
     };
   },
   computed: {
@@ -207,33 +206,33 @@ export default {
         vueCopy(item, this.patientScale);
         this.getCorrectAnswer(this.targetScale.questions);
 
-        if (this.scaleSympInfoName && this.patientScale.scaleSympInfoList) {
-          for (let i = 0; i < this.scaleSympInfoName.length; i++) {
-            let sympKey = this.scaleSympInfoName[i];
+        if (this.scaleSympInfoList && this.patientScale.scaleSympInfoList) {
+          for (let i = 0; i < this.scaleSympInfoList.length; i++) {
+            let scaleSymp = this.scaleSympInfoList[i];
             if (this.patientScale.scaleSympInfoList) {
               for (let j = 0; j < this.patientScale.scaleSympInfoList.length; j++) {
                 let patientKey = this.patientScale.scaleSympInfoList[j];
-                if (sympKey.sympName === patientKey.sympName) {
-                  this.$set(this.scaleSympInfoName, i, this.patientScale.scaleSympInfoList[j]);
-                  this.$set(this.scaleSympInfoName[i], 'status', true);
+                if (scaleSymp.sympName === patientKey.sympName) {
+                  this.$set(this.scaleSympInfoList, i, this.patientScale.scaleSympInfoList[j]);
+                  this.$set(this.scaleSympInfoList[i], 'status', true);
                 }
               }
             }
           }
-          vueCopy(this.scaleSympInfoName, this.patientScale.scaleSympInfoList);
+          vueCopy(this.scaleSympInfoList, this.patientScale.scaleSympInfoList);
 
         } else {
           this.scaleInfoId = '';
           this.$set(this.patientScale, 'scaleSympInfoList', []);
-          vueCopy(this.scaleSympInfoName, this.patientScale.scaleSympInfoList);
+          vueCopy(this.scaleSympInfoList, this.patientScale.scaleSympInfoList);
           for (let j = 0; j < this.patientScale.scaleSympInfoList.length; j++) {
             this.$set(this.patientScale.scaleSympInfoList[j], 'status', false);
           }
-          console.log('error', this.scaleSympInfoName);
+          console.log('error', this.scaleSympInfoList);
         }
       } else {
         // 新增量表模式
-        vueCopy(this.scaleSympInfoName, this.patientScale.scaleSympInfoList);
+        vueCopy(this.scaleSympInfoList, this.patientScale.scaleSympInfoList);
         for (let sympInfo of this.patientScale.scaleSympInfoList) {
           sympInfo.status = false;
           sympInfo.ariseTime = '';
@@ -274,14 +273,11 @@ export default {
               let flag = false;
               for (let j = 0; j < sympInfo.length; j++) {
                 let sonSympInfo = sympInfo[j];
-                for (let sonSympKey in sonSympInfo) {
-                  this.useless = sonSympKey;
-                  if (sonSympInfo['status'] === false) {
-                    sympInfo.splice(j, 1);
-                  } else {
-                    flag = true;
-                    delete sonSympInfo.status;
-                  }
+                if (sonSympInfo.status === false) {
+                  sympInfo.splice(j, 1);
+                } else {
+                  flag = true;
+                  delete sonSympInfo.status;
                 }
               }
               if (!flag) {
@@ -326,15 +322,14 @@ export default {
     initScaleSympInfoName() {
       var typesInfo = Util.getElement('typegroupcode', 'scaleSymp', this.typeGroup);
       var types = typesInfo.types ? typesInfo.types : [];
-      vueCopy(types, this.scaleSympInfoName);
-      for (let i = 0; i < this.scaleSympInfoName.length; i++) {
-        this.$set(this.scaleSympInfoName[i], 'status', false);
-        this.$set(this.scaleSympInfoName[i], 'ariseTime', '');
-        this.$set(this.scaleSympInfoName[i], 'scaleMedicine', '');
-        this.$set(this.scaleSympInfoName[i], 'sympName', this.scaleSympInfoName[i]['typeName']);
-        this.$set(this.scaleSympInfoName[i], 'sympCode', this.scaleSympInfoName[i]['typeCode']);
-        delete this.scaleSympInfoName[i]['typeName'];
-        delete this.scaleSympInfoName[i]['typeCode'];
+      this.scaleSympInfoList = [];
+      for (let i = 0; i < types.length; i++) {
+        this.$set(this.scaleSympInfoList, i, {});
+        this.$set(this.scaleSympInfoList[i], 'status', false);
+        this.$set(this.scaleSympInfoList[i], 'ariseTime', '');
+        this.$set(this.scaleSympInfoList[i], 'scaleMedicine', '');
+        this.$set(this.scaleSympInfoList[i], 'sympName', types[i].typeName);
+        this.$set(this.scaleSympInfoList[i], 'sympCode', types[i].typeCode);
       }
     },
     getCorrectAnswer(questions) {
