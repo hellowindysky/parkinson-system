@@ -14,8 +14,9 @@
           <span class="field-name">选择量表:</span>
           <span class="field-value">
             <el-select placeholder="请选择量表" v-model="patientScale.scaleInfoId"
-              :disabled="mode===EDIT_CURRENT_CARD || isSelected" @change="selectScale">
-              <el-option v-for="item in scaleNameArr" :key="item.name" :label="item.name" :value="item.scaleId"></el-option>
+              :disabled="scaleInfoId!==''" @change="selectScale">
+              <el-option v-for="scale in scaleList" :key="scale.scaleInfoId" :label="scale.gaugeName"
+                :value="scale.scaleInfoId"></el-option>
             </el-select>
           </span>
         </div>
@@ -27,7 +28,8 @@
           <span class="field-name">开关状态:</span>
           <span class="field-value">
             <el-select v-model="patientScale.switchType" placeholder="请选择量表开关状态">
-              <el-option v-for="item in switchScaleArr" :key="item.status" :value="item.status" :label="item.options"></el-option>
+              <el-option value="1" label="开"></el-option>
+              <el-option value="0" label="关"></el-option>
             </el-select>
           </span>
         </div>
@@ -119,26 +121,13 @@ export default {
 
       scaleInfoId: '',
       useless: {},
-      isSelected: false, // 在新增的时候选了一次就改变状态
       isSubjectDisabled: true,
       patientScale: {},  // 需要向服务器提交的对象
       scaleList: {},  // 获取到所有的量表数据
 
       scaleAnswer: [],  // 放筛选出来的量表病人填写答案的数组
       correctanswer: [], // 通过函数处理后得出的对应答案选项数组
-      scaleNameArr: [], // 获取到所有量表的名字,类型,和量表ID
-      switchScaleArr: [
-        {
-          status: 1,
-          options: '开'
-        },
-        {
-          status: 0,
-          options: '关'
-        }
-      ],
-      scaleSympInfoName: [],
-      switchNum: 0
+      scaleSympInfoName: []
     };
   },
   computed: {
@@ -147,7 +136,9 @@ export default {
       'typeGroup'
     ]),
     targetScale() {
-      return Util.getElement('scaleInfoId', this.scaleInfoId, this.scaleList);
+      let scale = Util.getElement('scaleInfoId', this.scaleInfoId, this.scaleList);
+      this.getCorrectAnswer(scale.questions);
+      return scale;
     },
     scaleName() {
       return this.targetScale.gaugeName ? this.targetScale.gaugeName : '';
@@ -155,7 +146,7 @@ export default {
     scaleType() {
       var options = this.getOptions('gaugeType');
       var option = Util.getElement('code', this.targetScale.gaugeType, options);
-      return option.name;
+      return option.name ? option.name : '';
     },
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients)) {
@@ -167,11 +158,7 @@ export default {
   },
   methods: {
     selectScale() {
-      if (this.switchNum > 0) {
-        this.isSelected = true;
-      }
       this.scaleInfoId = this.patientScale.scaleInfoId;
-      this.switchNum += 1;
       this.updateScrollbar();
     },
     getFieldValue(code, fieldName) {
@@ -198,8 +185,8 @@ export default {
     showDetailPanel(cardOperation, item) {
       this.mode = cardOperation;
       this.displayScaleModal = true;
+      this.getPatientScaleInfo();
       this.initPatientScale();
-      this.switchNum = 0;
       this.isSubjectDisabled = this.mode === this.VIEW_CURRENT_CARD;
 
       // console.log('item', item);
@@ -236,6 +223,7 @@ export default {
           vueCopy(this.scaleSympInfoName, this.patientScale.scaleSympInfoList);
 
         } else {
+          this.scaleInfoId = '';
           this.$set(this.patientScale, 'scaleSympInfoList', []);
           vueCopy(this.scaleSympInfoName, this.patientScale.scaleSympInfoList);
           for (let j = 0; j < this.patientScale.scaleSympInfoList.length; j++) {
@@ -243,7 +231,6 @@ export default {
           }
           console.log('error', this.scaleSympInfoName);
         }
-        this.isSelected = false;
       } else {
         // 新增量表模式
         vueCopy(this.scaleSympInfoName, this.patientScale.scaleSympInfoList);
@@ -252,8 +239,6 @@ export default {
           sympInfo.ariseTime = '';
           sympInfo.scaleMedicine = '';
         }
-
-        this.isSelected = false;
       }
       this.$refs.scrollArea.scrollTop = 0;
       // console.log('patientScale: ', this.patientScale);
@@ -264,11 +249,8 @@ export default {
       this.scaleList = {};
       this.scaleInfoId = '';
       this.scaleAnswer = [];
-      this.scaleNameArr = [];
       this.isSubjectDisabled = true;
       this.displayScaleModal = false;
-      this.isSelected = false;
-      this.switchNum = 0;
     },
     edit() {
       this.mode = this.EDIT_CURRENT_CARD;
@@ -335,7 +317,6 @@ export default {
     },
     closePanel() {
       this.displayScaleModal = false;
-      // this.scaleDetail = {};
     },
     getPatientScaleInfo() {
       getScaleInfo().then((data) => {
@@ -361,7 +342,6 @@ export default {
       if (!questions) {
         return;
       }
-      console.log(questions);
       this.$set(this.patientScale, 'scaleOptionIds', []);
       for (var j = 0; j < questions.length; j++) {
         let options = questions[j].options;
@@ -394,18 +374,6 @@ export default {
       }
       return options;
     },
-    getScaleNameArr(scaledata) {
-      for (let i = 0; i < scaledata.length; i++) {
-        let data = scaledata[i];
-        if (data['gaugeName']) {
-          // this.scaleNameArr.push(data['gaugeName']);
-          this.scaleNameArr.push({});
-          this.$set(this.scaleNameArr[i], 'name', data['gaugeName']);
-          this.$set(this.scaleNameArr[i], 'type', data['gaugeType']);
-          this.$set(this.scaleNameArr[i], 'scaleId', data['scaleInfoId']);
-        }
-      }
-    },
     initPatientScale() {
       // 初始化patientScale对象
       this.patientScale = {};
@@ -436,30 +404,6 @@ export default {
   },
   components: {
     FoldingPanel
-  },
-  watch: {
-    targetScale: {
-      handler: function(newVal) {
-        if (newVal) {
-          this.getCorrectAnswer(newVal['questions']);
-        }
-      },
-      deep: true
-    },
-    displayScaleModal: {
-      handler: function() {
-        this.getPatientScaleInfo();
-      },
-      deep: true
-    },
-    scaleList: {
-      handler: function(newVal) {
-        if (newVal && this.displayScaleModal) {
-          this.getScaleNameArr(newVal);
-        }
-      },
-      deep: true
-    }
   }
 };
 </script>
