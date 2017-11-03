@@ -230,6 +230,7 @@ export default {
     showDetailPanel(cardOperation, item) {
       this.mode = cardOperation;
       this.displayScaleModal = true;
+      this.initPatientScale();
       this.switchNum = 0;
       this.isSubjectDisabled = this.mode === this.VIEW_CURRENT_CARD;
 
@@ -254,23 +255,23 @@ export default {
         if (this.scaleSympInfoName && this.patientScale.scaleSympInfoList) {
           for (let i = 0; i < this.scaleSympInfoName.length; i++) {
             let sympKey = this.scaleSympInfoName[i];
-            if (this.patientScale['scaleSympInfoList']) {
-              for (let j = 0; j < this.patientScale['scaleSympInfoList'].length; j++) {
-                let patientKey = this.patientScale['scaleSympInfoList'][j];
-                if (sympKey['sympName'] === patientKey['sympName']) {
-                  this.$set(this.scaleSympInfoName, i, this.patientScale['scaleSympInfoList'][j]);
+            if (this.patientScale.scaleSympInfoList) {
+              for (let j = 0; j < this.patientScale.scaleSympInfoList.length; j++) {
+                let patientKey = this.patientScale.scaleSympInfoList[j];
+                if (sympKey.sympName === patientKey.sympName) {
+                  this.$set(this.scaleSympInfoName, i, this.patientScale.scaleSympInfoList[j]);
                   this.$set(this.scaleSympInfoName[i], 'status', true);
                 }
               }
             }
           }
-          vueCopy(this.scaleSympInfoName, this.patientScale['scaleSympInfoList']);
+          vueCopy(this.scaleSympInfoName, this.patientScale.scaleSympInfoList);
 
         } else {
           this.$set(this.patientScale, 'scaleSympInfoList', []);
-          vueCopy(this.scaleSympInfoName, this.patientScale['scaleSympInfoList']);
-          for (let j = 0; j < this.patientScale['scaleSympInfoList'].length; j++) {
-            this.$set(this.patientScale['scaleSympInfoList'][j], 'status', false);
+          vueCopy(this.scaleSympInfoName, this.patientScale.scaleSympInfoList);
+          for (let j = 0; j < this.patientScale.scaleSympInfoList.length; j++) {
+            this.$set(this.patientScale.scaleSympInfoList[j], 'status', false);
           }
           console.log('error', this.scaleSympInfoName);
         }
@@ -278,8 +279,13 @@ export default {
         this.isSelected = false;
       } else {
         // 新增量表模式
-        this.initPatientScale();
-        vueCopy(this.scaleSympInfoName, this.patientScale['scaleSympInfoList']);
+        vueCopy(this.scaleSympInfoName, this.patientScale.scaleSympInfoList);
+        for (let sympInfo of this.patientScale.scaleSympInfoList) {
+          sympInfo.status = false;
+          sympInfo.ariseTime = '';
+          sympInfo.scaleMedicine = '';
+        }
+
         this.isSelected = false;
       }
       this.$refs.scrollArea.scrollTop = 0;
@@ -450,6 +456,7 @@ export default {
     },
     initPatientScale() {
       // 初始化patientScale对象
+      this.patientScale = {};
       this.$set(this.patientScale, 'inspectTime', '');
       this.$set(this.patientScale, 'lastTakingTime', '');
       this.$set(this.patientScale, 'scaleOptionIds', []);
