@@ -106,13 +106,13 @@ export default {
       return targetScale.gaugeName;
     },
     editScale(item) {
-      Bus.$emit(this.UPDATE_SCALE_DETAIL, this.EDIT_CURRENT_CARD, item);
+      Bus.$emit(this.SHOW_SCALE_MODAL, this.EDIT_CURRENT_CARD, item);
     },
     viewScale(item) {
-      Bus.$emit(this.UPDATE_SCALE_DETAIL, this.VIEW_CURRENT_CARD, item);
+      Bus.$emit(this.SHOW_SCALE_MODAL, this.VIEW_CURRENT_CARD, item);
     },
     addScale() {
-      Bus.$emit(this.UPDATE_SCALE_DETAIL, this.ADD_NEW_CARD, {});
+      Bus.$emit(this.SHOW_SCALE_MODAL, this.ADD_NEW_CARD, {});
     },
     deleteScaleRecord(item) {
       // console.log(item);

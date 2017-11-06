@@ -55,7 +55,7 @@ export default {
   UPDATE_PATIENT_GROUP_INFO: 'updatePatientGroupInfo',
   UPDATE_CASE_INFO: 'updateCaseInfo',
   UPDATE_PATIENT_CASE_LIST: 'updatePatientCase',
-  UPDATE_SCALE_DETAIL: 'updateScaleDetail',
+  SHOW_SCALE_MODAL: 'showScaleModal',
 
   BLUR_ON_SCREEN: 'blurOnScreen',
 

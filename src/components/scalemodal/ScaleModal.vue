@@ -379,12 +379,12 @@ export default {
     // 初始化关联症状的字段
     this.initScaleSympInfoName();
     // 初始化提交到服务器的对象
-    Bus.$on(this.UPDATE_SCALE_DETAIL, this.showDetailPanel);
+    Bus.$on(this.SHOW_SCALE_MODAL, this.showDetailPanel);
     Bus.$on(this.SCROLL_AREA_SIZE_CHANGE, this.updateScrollbar);
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
   },
   beforeDestroy() {
-    Bus.$off(this.UPDATE_SCALE_DETAIL, this.showDetailPanel);
+    Bus.$off(this.SHOW_SCALE_MODAL, this.showDetailPanel);
     Bus.$off(this.SCROLL_AREA_SIZE_CHANGE);
     Bus.$off(this.SCREEN_SIZE_CHANGE);
   },
