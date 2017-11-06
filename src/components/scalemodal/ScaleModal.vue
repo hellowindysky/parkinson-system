@@ -70,19 +70,19 @@
 
       <folding-panel :title="'关联症状'" :folded-status="mode===VIEW_CURRENT_CARD" class="associated-symptom" :editable="canEdit">
         <div class="symptom-item" v-for="(list, listkey) in copyInfo.scaleSympInfoList" :key="listkey">
-          <el-checkbox class="symptom-item-title" v-model="list.status" :disabled="isSubjectDisabled">
+          <el-checkbox class="symptom-item-title" v-model="list.status" :disabled="mode===VIEW_CURRENT_CARD">
             {{list.sympName}}
           </el-checkbox>
           <div class="symptom-item-start">
             <span class="field-name">出现时间:</span>
             <el-date-picker type="datetime" format="yyyy-MM-dd" v-model="list.ariseTime"
-              placeholder="请输入出现关联症状的时间" :disabled="isSubjectDisabled || !list.status">
+              placeholder="请输入出现关联症状的时间" :disabled="mode===VIEW_CURRENT_CARD || !list.status">
             </el-date-picker>
           </div>
           <div class="symptom-item-dose">
             <span class="field-name">服用药物:</span>
             <el-input v-model="list.scaleMedicine"  placeholder="请输入服用药物"
-              :disabled="isSubjectDisabled || !list.status"></el-input>
+              :disabled="mode===VIEW_CURRENT_CARD || !list.status"></el-input>
           </div>
         </div>
       </folding-panel>
@@ -93,7 +93,7 @@
         </p>
         <el-radio-group class="question-body" :key="key" v-model="copyInfo.scaleOptionIds[key]">
           <el-radio class="question-selection" v-for="(sonitem, i) in item.options"
-            :label="sonitem.scaleOptionId" :key="i" :disabled="isSubjectDisabled">
+            :label="sonitem.scaleOptionId" :key="i" :disabled="mode===VIEW_CURRENT_CARD">
               {{sonitem.optionName}}
           </el-radio>
         </el-radio-group>
@@ -118,9 +118,7 @@ export default {
     return {
       displayScaleModal: false,
       mode: '',
-
-      isSubjectDisabled: true,
-      copyInfo: {},  // 需要向服务器提交的对象
+      copyInfo: {},
 
       scaleAnswer: [],  // 放筛选出来的量表病人填写答案的数组
       correctanswer: [], // 通过函数处理后得出的对应答案选项数组
@@ -182,7 +180,6 @@ export default {
     showDetailPanel(cardOperation, item) {
       this.mode = cardOperation;
       this.initPatientScale(item);
-      this.isSubjectDisabled = this.mode === this.VIEW_CURRENT_CARD;
 
       // console.log('item', item);
       if (this.mode === this.EDIT_CURRENT_CARD || this.mode === this.VIEW_CURRENT_CARD) {
@@ -194,10 +191,6 @@ export default {
             this.$set(this.scaleAnswer, i, answer);
           }
         }
-
-        this.isSubjectDisabled = this.mode === this.VIEW_CURRENT_CARD;
-
-        this.copyInfo = {};
 
         this.getCorrectAnswer(this.targetScale.questions);
 
@@ -241,15 +234,12 @@ export default {
       // 按下返回按钮，把所有的数据都初始化一遍
       this.correctanswer = [];
       this.scaleAnswer = [];
-      this.isSubjectDisabled = true;
       this.displayScaleModal = false;
     },
     edit() {
       this.mode = this.EDIT_CURRENT_CARD;
-      this.isSubjectDisabled = false;
     },
     submit() {
-      this.isSubjectDisabled = true;
       let submitData = deepCopy(this.copyInfo);
       // 删除不需要的字段
       delete submitData.scaleSympName;
