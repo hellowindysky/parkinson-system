@@ -21,7 +21,7 @@
           </div>
           <div class="text fourth-line">
             <span class="name">开关状态:</span>
-            <span class="value">{{switchType(item.switchType)}}</span>
+            <span class="value">{{getSwitchType(item.switchType)}}</span>
           </div>
         </card>
       </extensible-panel>
@@ -133,7 +133,7 @@ export default {
       // 即使删除不成功，也要解除 [确认对话框] 的 “确认” 回调函数
       Bus.$off(this.CONFIRM);
     },
-    switchType(type) {
+    getSwitchType(type) {
       if (String(type) === '1') {
         return '开';
       } else {
