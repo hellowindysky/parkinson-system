@@ -124,7 +124,6 @@
             <el-upload
               class="upload-demo"
               :action="uploadUrl"
-              :headers="header"
               ref="upload"
               :disabled="mode == VIEW_CURRENT_CARD ? true : false"
               :data="fileParam"
