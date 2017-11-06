@@ -28,8 +28,8 @@
           <span class="field-name">开关状态:</span>
           <span class="field-value">
             <el-select v-model="copyInfo.switchType" placeholder="请选择量表开关状态">
-              <el-option value="1" label="开"></el-option>
-              <el-option value="0" label="关"></el-option>
+              <el-option :value="1" label="开"></el-option>
+              <el-option :value="0" label="关"></el-option>
             </el-select>
           </span>
         </div>
@@ -69,20 +69,20 @@
       </div>
 
       <folding-panel :title="'关联症状'" :folded-status="mode===VIEW_CURRENT_CARD" class="associated-symptom" :editable="canEdit">
-        <div class="symptom-item" v-for="(list, listkey) in copyInfo.scaleSympInfoList" :key="listkey">
-          <el-checkbox class="symptom-item-title" v-model="list.status" :disabled="mode===VIEW_CURRENT_CARD">
-            {{list.sympName}}
+        <div class="symptom-item" v-for="(symptom, index) in scaleSymptomList">
+          <el-checkbox class="symptom-item-title" v-model="symptom.status" :disabled="mode===VIEW_CURRENT_CARD">
+            {{symptom.sympName}}
           </el-checkbox>
           <div class="symptom-item-start">
             <span class="field-name">出现时间:</span>
-            <el-date-picker type="datetime" format="yyyy-MM-dd" v-model="list.ariseTime"
-              placeholder="请输入出现关联症状的时间" :disabled="mode===VIEW_CURRENT_CARD || !list.status">
+            <el-date-picker type="datetime" format="yyyy-MM-dd" v-model="symptom.ariseTime"
+              placeholder="请输入出现关联症状的时间" :disabled="mode===VIEW_CURRENT_CARD || !symptom.status">
             </el-date-picker>
           </div>
           <div class="symptom-item-dose">
             <span class="field-name">服用药物:</span>
-            <el-input v-model="list.scaleMedicine"  placeholder="请输入服用药物"
-              :disabled="mode===VIEW_CURRENT_CARD || !list.status"></el-input>
+            <el-input v-model="symptom.scaleMedicine"  placeholder="请输入服用药物"
+              :disabled="mode===VIEW_CURRENT_CARD || !symptom.status"></el-input>
           </div>
         </div>
       </folding-panel>
@@ -120,9 +120,10 @@ export default {
       mode: '',
       copyInfo: {},
 
-      scaleAnswer: [],  // 放筛选出来的量表病人填写答案的数组
-      correctanswer: [], // 通过函数处理后得出的对应答案选项数组
-      scaleSympInfoList: []
+      scaleSymptomList: [], // 关联症状列表，长度由 typeGroup 决定
+      scaleAnswer: [],      // 放筛选出来的量表病人填写答案的数组
+      correctanswer: []    // 通过函数处理后得出的对应答案选项数组
+
     };
   },
   computed: {
@@ -179,9 +180,11 @@ export default {
     },
     showDetailPanel(cardOperation, item) {
       this.mode = cardOperation;
-      this.initPatientScale(item);
 
-      // console.log('item', item);
+      this.initPatientScale(item);
+      this.initSymptomList();
+
+      console.log('item', item);
       if (this.mode === this.EDIT_CURRENT_CARD || this.mode === this.VIEW_CURRENT_CARD) {
 
         this.scaleAnswer = [];
@@ -193,42 +196,11 @@ export default {
         }
 
         this.getCorrectAnswer(this.targetScale.questions);
-
-        if (this.scaleSympInfoList && this.copyInfo.scaleSympInfoList) {
-          for (let i = 0; i < this.scaleSympInfoList.length; i++) {
-            let scaleSymp = this.scaleSympInfoList[i];
-            if (this.copyInfo.scaleSympInfoList) {
-              for (let j = 0; j < this.copyInfo.scaleSympInfoList.length; j++) {
-                let patientKey = this.copyInfo.scaleSympInfoList[j];
-                if (scaleSymp.sympName === patientKey.sympName) {
-                  this.$set(this.scaleSympInfoList, i, this.copyInfo.scaleSympInfoList[j]);
-                  this.$set(this.scaleSympInfoList[i], 'status', true);
-                }
-              }
-            }
-          }
-          vueCopy(this.scaleSympInfoList, this.copyInfo.scaleSympInfoList);
-
-        } else {
-          this.$set(this.copyInfo, 'scaleSympInfoList', []);
-          vueCopy(this.scaleSympInfoList, this.copyInfo.scaleSympInfoList);
-          for (let j = 0; j < this.copyInfo.scaleSympInfoList.length; j++) {
-            this.$set(this.copyInfo.scaleSympInfoList[j], 'status', false);
-          }
-          console.log('error', this.scaleSympInfoList);
-        }
-      } else {
-        // 新增量表模式
-        vueCopy(this.scaleSympInfoList, this.copyInfo.scaleSympInfoList);
-        for (let sympInfo of this.copyInfo.scaleSympInfoList) {
-          sympInfo.status = false;
-          sympInfo.ariseTime = '';
-          sympInfo.scaleMedicine = '';
-        }
       }
+
       this.displayScaleModal = true;
       this.$refs.scrollArea.scrollTop = 0;
-      // console.log('copyInfo: ', this.copyInfo);
+      console.log('copyInfo: ', this.copyInfo);
     },
     goBack() {
       // 按下返回按钮，把所有的数据都初始化一遍
@@ -244,40 +216,19 @@ export default {
       // 删除不需要的字段
       delete submitData.scaleSympName;
       delete submitData.scaleSympTip;
-      for (let key in submitData) {
-        switch (key) {
-          case 'inspectTime' :
-          case 'lastTakingTime' :
-            submitData[key] = Util.simplifyTime(submitData[key]);
-            break;
-          case 'scaleSympInfoList' :
-            if (submitData[key].length) {
-              let sympInfo = submitData[key];
-              let flag = false;
-              for (let j = 0; j < sympInfo.length; j++) {
-                let sonSympInfo = sympInfo[j];
-                if (sonSympInfo.status === false) {
-                  sympInfo.splice(j, 1);
-                } else {
-                  flag = true;
-                  delete sonSympInfo.status;
-                }
-              }
-              if (!flag) {
-                submitData[key] = [];
-              }
-            }
-            for (let i = 0; i < submitData[key].length; i++) {
-              for (let sonkey in submitData[key][i]) {
-                // console.log(submitData[key][i]);
-                if (sonkey === 'ariseTime') {
-                  submitData[key][i][sonkey] = Util.simplifyTime(submitData[key][i][sonkey]);
-                  console.log('succ');
-                }
-              }
-            }
+
+      submitData.lastTakingTime = Util.simplifyTime(submitData.lastTakingTime);
+
+      var scaleSympInfoList = deepCopy(this.scaleSymptomList);
+      submitData.scaleSympInfoList = [];
+      for (let symptom of scaleSympInfoList) {
+        if (symptom.status) {
+          symptom.ariseTime = Util.simplifyTime(symptom.ariseTime);
+          delete symptom.status;
+          submitData.scaleSympInfoList.push(symptom);
         }
       }
+
       if (this.mode === this.ADD_NEW_CARD) {
         // console.log('add', submitData);
         // 新增量表的接口
@@ -287,7 +238,7 @@ export default {
         });
       } else if (this.mode === this.EDIT_CURRENT_CARD) {
         // 修改量表的接口
-        console.log(submitData);
+        console.log('modify', submitData);
         modifyScaleInfo(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
           this.goBack();
@@ -296,19 +247,6 @@ export default {
     },
     closePanel() {
       this.displayScaleModal = false;
-    },
-    initScaleSympInfoName() {
-      var typesInfo = Util.getElement('typegroupcode', 'scaleSymp', this.typeGroup);
-      var types = typesInfo.types ? typesInfo.types : [];
-      this.scaleSympInfoList = [];
-      for (let i = 0; i < types.length; i++) {
-        this.$set(this.scaleSympInfoList, i, {});
-        this.$set(this.scaleSympInfoList[i], 'status', false);
-        this.$set(this.scaleSympInfoList[i], 'ariseTime', '');
-        this.$set(this.scaleSympInfoList[i], 'scaleMedicine', '');
-        this.$set(this.scaleSympInfoList[i], 'sympName', types[i].typeName);
-        this.$set(this.scaleSympInfoList[i], 'sympCode', types[i].typeCode);
-      }
     },
     getCorrectAnswer(questions) {
       // 取出量表的选中答案以及对应的分数
@@ -359,11 +297,32 @@ export default {
       this.$set(this.copyInfo, 'patientCaseId', this.$route.params.caseId);
       this.$set(this.copyInfo, 'patientId', this.$route.params.id);
       vueCopy(item, this.copyInfo);
+    },
+    initSymptomList() {
+      var typesInfo = Util.getElement('typegroupcode', 'scaleSymp', this.typeGroup);
+      var types = typesInfo.types ? typesInfo.types : [];
+
+      this.scaleSymptomList = [];
+      for (let i = 0; i < types.length; i++) {
+        this.$set(this.scaleSymptomList, i, {});
+        this.$set(this.scaleSymptomList[i], 'status', false);
+        this.$set(this.scaleSymptomList[i], 'ariseTime', '');
+        this.$set(this.scaleSymptomList[i], 'scaleMedicine', '');
+        this.$set(this.scaleSymptomList[i], 'sympName', types[i].typeName);
+        this.$set(this.scaleSymptomList[i], 'sympCode', types[i].typeCode);
+
+        if (this.copyInfo.scaleSympInfoList) {
+          for (let patientScaleSymptom of this.copyInfo.scaleSympInfoList) {
+            if (patientScaleSymptom.sympName === types[i].typeName) {
+              this.$set(this.scaleSymptomList, i, patientScaleSymptom);
+              this.$set(this.scaleSymptomList[i], 'status', true);
+            }
+          }
+        }
+      }
     }
   },
   mounted() {
-    // 初始化关联症状的字段
-    this.initScaleSympInfoName();
     // 初始化提交到服务器的对象
     Bus.$on(this.SHOW_SCALE_MODAL, this.showDetailPanel);
     Bus.$on(this.SCROLL_AREA_SIZE_CHANGE, this.updateScrollbar);
@@ -380,6 +339,9 @@ export default {
   watch: {
     $route() {
       this.displayScaleModal = false;
+    },
+    typeGroup: function() {
+      this.initSymptomList();
     }
   }
 };
