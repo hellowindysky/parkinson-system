@@ -3,7 +3,7 @@
     <div class="title-bar">
       <h2 class="title" v-if="mode!==ADD_NEW_CARD">{{scaleName}}</h2>
       <h2 class="title" v-else>新增量表信息</h2>
-      <div class="button back-button" @click="goBack">返回</div>
+      <div class="button back-button" @click="closePanel">返回</div>
       <div class="button edit-button" @click="edit" v-if="mode===VIEW_CURRENT_CARD">编辑</div>
       <div class="button save-button" @click="submit" v-if="mode!==VIEW_CURRENT_CARD">保存</div>
     </div>
@@ -87,14 +87,14 @@
         </div>
       </folding-panel>
 
-      <div v-for="(item, key) in targetScale.questions" class="scale-questions">
+      <div v-for="(item, index) in targetScale.questions" class="scale-questions">
         <p class="question-title">
           <span>{{item.subjectName}}</span>
         </p>
-        <el-radio-group class="question-body" :key="key" v-model="copyInfo.scaleOptionIds[key]">
-          <el-radio class="question-selection" v-for="(sonitem, i) in item.options"
-            :label="sonitem.scaleOptionId" :key="i" :disabled="mode===VIEW_CURRENT_CARD">
-              {{sonitem.optionName}}
+        <el-radio-group class="question-body" :key="index" v-model="copyInfo.scaleOptionIds[index]">
+          <el-radio class="question-selection" v-for="(option, i) in item.options"
+            :label="option.scaleOptionId" :key="i" :disabled="mode===VIEW_CURRENT_CARD">
+              {{option.optionName}}
           </el-radio>
         </el-radio-group>
       </div>
@@ -121,9 +121,7 @@ export default {
       copyInfo: {},
 
       scaleSymptomList: [], // 关联症状列表，长度由 typeGroup 决定
-      scaleAnswer: [],      // 放筛选出来的量表病人填写答案的数组
-      correctanswer: []    // 通过函数处理后得出的对应答案选项数组
-
+      scaleAnswer: []       // 放筛选出来的量表病人填写答案的数组
     };
   },
   computed: {
@@ -183,30 +181,23 @@ export default {
 
       this.initPatientScale(item);
       this.initSymptomList();
+      this.scaleAnswer = [];
 
       console.log('item', item);
-      if (this.mode === this.EDIT_CURRENT_CARD || this.mode === this.VIEW_CURRENT_CARD) {
 
-        this.scaleAnswer = [];
-        if (item.scaleOptionIds) {
-          for (let i = 0; i < item.scaleOptionIds.length; i++) {
-            let answer = item.scaleOptionIds[i];
-            this.$set(this.scaleAnswer, i, answer);
-          }
+      // 只有阅读和修改的状态下，item.scaleOptionIds 才可能不为空
+      if (item.scaleOptionIds) {
+        for (let i = 0; i < item.scaleOptionIds.length; i++) {
+          let answer = item.scaleOptionIds[i];
+          this.$set(this.scaleAnswer, i, answer);
         }
-
-        this.getCorrectAnswer(this.targetScale.questions);
       }
+
+      this.getCorrectAnswer(this.targetScale.questions);
 
       this.displayScaleModal = true;
       this.$refs.scrollArea.scrollTop = 0;
       console.log('copyInfo: ', this.copyInfo);
-    },
-    goBack() {
-      // 按下返回按钮，把所有的数据都初始化一遍
-      this.correctanswer = [];
-      this.scaleAnswer = [];
-      this.displayScaleModal = false;
     },
     edit() {
       this.mode = this.EDIT_CURRENT_CARD;
@@ -230,18 +221,18 @@ export default {
       }
 
       if (this.mode === this.ADD_NEW_CARD) {
-        // console.log('add', submitData);
         // 新增量表的接口
+        // console.log('add', submitData);
         addScaleInfo(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
-          this.goBack();
+          this.closePanel();
         });
       } else if (this.mode === this.EDIT_CURRENT_CARD) {
         // 修改量表的接口
-        console.log('modify', submitData);
+        // console.log('modify', submitData);
         modifyScaleInfo(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
-          this.goBack();
+          this.closePanel();
         });
       }
     },
@@ -254,22 +245,22 @@ export default {
         return;
       }
       this.$set(this.copyInfo, 'scaleOptionIds', []);
-      for (var j = 0; j < questions.length; j++) {
-        let options = questions[j].options;
+      for (var i = 0; i < questions.length; i++) {
+        let options = questions[i].options;
         let isNull = true;
-        let answer = '';
+        let targetAnswer = '';
         for (let option of options) {
-          for (let i = 0; i < this.scaleAnswer.length; i++) {
-            if (option.scaleOptionId === this.scaleAnswer[i]) {
+          for (let answer of this.scaleAnswer) {
+            if (option.scaleOptionId === answer) {
               isNull = false;
-              answer = option.scaleOptionId;
+              targetAnswer = option.scaleOptionId;
             }
           }
         }
         if (isNull) {
-          this.$set(this.copyInfo.scaleOptionIds, j, null);
+          this.$set(this.copyInfo.scaleOptionIds, i, null);
         } else {
-          this.$set(this.copyInfo.scaleOptionIds, j, answer);
+          this.$set(this.copyInfo.scaleOptionIds, i, targetAnswer);
         }
       }
     },
