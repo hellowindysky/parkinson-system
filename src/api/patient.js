@@ -637,7 +637,7 @@ export function modifyScaleInfo(patientScale) {
   return encapsulatePromise(url, request);
 };
 // 删除医学量表
-export function delScaleInfo(patientScale) {
+export function deleteScaleInfo(patientScale) {
   var request = Object.assign({}, getCommonRequest());
   request.patientScale = patientScale;
   var url = baseUrl + '/pdms/delPatientScaleInfo';

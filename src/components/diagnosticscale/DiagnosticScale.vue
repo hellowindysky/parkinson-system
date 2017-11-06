@@ -31,20 +31,20 @@
 
 <script>
 import Bus from 'utils/bus.js';
+import Util from 'utils/util.js';
 import { mapGetters } from 'vuex';
+import { deleteScaleInfo } from 'api/patient.js';
+
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 import ExtensiblePanel from 'components/extensiblepanel/ExtensiblePanel';
 import Card from 'components/card/Card';
-import { delScaleInfo } from 'api/patient.js';
 
 export default {
   data() {
     return {
       mutableMode: this.mode,
-      titles: '医学量表',
+      title: '医学量表',
       devideWidth: '',
-      scaleData: [],
-      count: 0,
       scaleId: ''
     };
   },
@@ -54,7 +54,26 @@ export default {
       default: this.READING_MODE
     },
     patientScale: {
-      type: Array
+      type: Array,
+      default: () => []
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'allScale'
+    ]),
+    subTitle() {
+      return this.title + '（' + this.count + '条记录）';
+    },
+    count() {
+      return this.patientScale.length;
+    },
+    canEdit() {
+      if (this.$route.matched.some(record => record.meta.myPatients)) {
+        return true;
+      } else {
+        return false;
+      }
     }
   },
   methods: {
@@ -81,21 +100,10 @@ export default {
         this.devideWidth = 'width-1-' + parseInt(devideNum, 10);
       });
     },
-    getPatientScaleInfo() {
-      this.scaleData = this.allScale;
-    },
     getTitle(scaleInfoId) {
       // 通过量表的ID来找到量表的名字
-      for (let key in this.scaleData) {
-        let sonData = this.scaleData[key];
-        for (let sonkey in sonData) {
-          if (sonkey === 'scaleInfoId') {
-            if (sonData[sonkey] === scaleInfoId) {
-              return sonData['gaugeName'];
-            }
-          }
-        }
-      }
+      var targetScale = Util.getElement('scaleInfoId', scaleInfoId, this.allScale);
+      return targetScale.gaugeName;
     },
     editScale(item) {
       Bus.$emit(this.UPDATE_SCALE_DETAIL, this.EDIT_CURRENT_CARD, item);
@@ -106,13 +114,13 @@ export default {
     addScale() {
       Bus.$emit(this.UPDATE_SCALE_DETAIL, this.ADD_NEW_CARD, {});
     },
-    deleteScaleRecord(item) { // 删除肌电图
+    deleteScaleRecord(item) {
       // console.log(item);
-      let ScaleId = {
+      let scaleInfo = {
         id: item.id
       };
       Bus.$on(this.CONFIRM, () => {
-        delScaleInfo(ScaleId).then(this._resolveDeletion, this._rejectDeletion);
+        deleteScaleInfo(scaleInfo).then(this._resolveDeletion, this._rejectDeletion);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
@@ -133,55 +141,25 @@ export default {
       }
     }
   },
-  computed: {
-    ...mapGetters([
-      'allScale'
-    ]),
-    subTitle() {
-      return this.titles + '（' + this.count + '条记录）';
-    },
-    canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients)) {
-        return true;
-      } else {
-        return false;
-      }
-    }
-  },
   components: {
     FoldingPanel,
     ExtensiblePanel,
     Card
   },
   mounted() {
-    this.getPatientScaleInfo();
     this.recalculateCardWidth();
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
     Bus.$on(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
     Bus.$on(this.RECALCULATE_CARD_WIDTH, this.recalculateCardWidth);
+    Bus.$on(this.GIVE_UP, () => {
+      Bus.$off(this.CONFIRM);
+    });
   },
   beforeDestroy() {
     Bus.$off(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
     Bus.$off(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
     Bus.$off(this.RECALCULATE_CARD_WIDTH, this.recalculateCardWidth);
-  },
-  watch: {
-    patientScale: {
-      handler: function(newVal) {
-        if (newVal) {
-          this.count = this.patientScale.length;
-        }
-      },
-      deep: true
-    },
-    scaleData: {
-      handler: function(newVal) {
-        if (newVal) {
-          this.scaleData = newVal;
-        }
-      },
-      deep: true
-    }
+    Bus.$off(this.GIVE_UP);
   }
 };
 </script>
