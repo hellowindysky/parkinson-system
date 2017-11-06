@@ -433,22 +433,24 @@ export default {
         }
       }
       .question-body {
+        display: block;
         margin: 0;
         padding: 0;
         color: @secondary-button-color;
         font-weight: normal;
-        display: block; // display: none;
-        &.absolu {
-          position: absolute;
-          height: auto;
-          background: @button-color;
-          z-index: 1000;
-          width: 600px;
-        }
         .question-selection {
           margin: 0;
           line-height: 38px;
           display: block;
+          .is-disabled {
+            .el-radio__inner {
+              background-color: @inverse-font-color;
+              border-color: @inverse-font-color;
+            }
+            &+.el-radio__label {
+              color: @inverse-font-color;
+            }
+          }
         }
       }
     }
@@ -539,6 +541,15 @@ export default {
           .el-checkbox__input {
             position: relative;
             top: -5px;
+            &.is-disabled {
+              .el-checkbox__inner {
+                background-color: @inverse-font-color;
+                border-color: @inverse-font-color;
+              }
+              &+.el-checkbox__label {
+                color: @inverse-font-color;
+              }
+            }
           }
         }
         .symptom-item-start, .symptom-item-dose {
