@@ -132,7 +132,6 @@ export default {
     ]),
     targetScale() {
       let scale = Util.getElement('scaleInfoId', this.copyInfo.scaleInfoId, this.allScale);
-      this.getCorrectAnswer(scale.questions);
       return scale;
     },
     scaleName() {
@@ -183,7 +182,7 @@ export default {
       this.initSymptomList();
       this.scaleAnswer = [];
 
-      console.log('item', item);
+      // console.log('item', item);
 
       // 只有阅读和修改的状态下，item.scaleOptionIds 才可能不为空
       if (item.scaleOptionIds) {
@@ -193,21 +192,20 @@ export default {
         }
       }
 
-      this.getCorrectAnswer(this.targetScale.questions);
+      this.getCorrectAnswer();
 
       this.displayScaleModal = true;
       this.$refs.scrollArea.scrollTop = 0;
-      console.log('copyInfo: ', this.copyInfo);
+      // console.log('copyInfo: ', this.copyInfo);
     },
     edit() {
       this.mode = this.EDIT_CURRENT_CARD;
     },
     submit() {
       let submitData = deepCopy(this.copyInfo);
-      // 删除不需要的字段
-      delete submitData.scaleSympName;
-      delete submitData.scaleSympTip;
+      // console.log('submitData', submitData);
 
+      submitData.inspectTime = Util.simplifyTime(submitData.inspectTime);
       submitData.lastTakingTime = Util.simplifyTime(submitData.lastTakingTime);
 
       var scaleSympInfoList = deepCopy(this.scaleSymptomList);
@@ -239,14 +237,14 @@ export default {
     closePanel() {
       this.displayScaleModal = false;
     },
-    getCorrectAnswer(questions) {
+    getCorrectAnswer() {
       // 取出量表的选中答案以及对应的分数
-      if (!questions) {
+      if (!this.targetScale.questions) {
         return;
       }
       this.$set(this.copyInfo, 'scaleOptionIds', []);
-      for (var i = 0; i < questions.length; i++) {
-        let options = questions[i].options;
+      for (var i = 0; i < this.targetScale.questions.length; i++) {
+        let options = this.targetScale.questions[i].options;
         let isNull = true;
         let targetAnswer = '';
         for (let option of options) {
@@ -333,6 +331,9 @@ export default {
     },
     typeGroup: function() {
       this.initSymptomList();
+    },
+    targetScale: function() {
+      this.getCorrectAnswer();
     }
   }
 };
