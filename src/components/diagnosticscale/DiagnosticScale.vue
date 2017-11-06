@@ -90,8 +90,8 @@ export default {
       this.$nextTick(() => {
         var panelWidth = this.$refs.diagnosticscale.clientWidth;
         var devideNum = 1.0;
-        // 20px 是卡片的横向间距，定义在了 varaibles.less 中，300px 是卡片的最小宽度
-        while (panelWidth / devideNum > 300 + 20) {
+        // 20px 是卡片的横向间距，定义在了 varaibles.less 中，250px 是卡片的最小宽度
+        while (panelWidth / devideNum > 250 + 20) {
           devideNum += 1.0;
         }
         devideNum -= 1;

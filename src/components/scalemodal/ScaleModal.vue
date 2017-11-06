@@ -390,6 +390,11 @@ export default {
   },
   components: {
     FoldingPanel
+  },
+  watch: {
+    $route() {
+      this.displayScaleModal = false;
+    }
   }
 };
 </script>
