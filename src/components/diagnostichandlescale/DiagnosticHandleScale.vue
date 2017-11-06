@@ -15,7 +15,7 @@
           <span class="field-value">
             <el-select placeholder="请选择量表" v-model="patientScale.scaleInfoId"
               :disabled="scaleInfoId!==''" @change="selectScale">
-              <el-option v-for="scale in scaleList" :key="scale.scaleInfoId" :label="scale.gaugeName"
+              <el-option v-for="scale in allScale" :key="scale.scaleInfoId" :label="scale.gaugeName"
                 :value="scale.scaleInfoId"></el-option>
             </el-select>
           </span>
@@ -122,7 +122,6 @@ export default {
       scaleInfoId: '',
       isSubjectDisabled: true,
       patientScale: {},  // 需要向服务器提交的对象
-      scaleList: {},  // 获取到所有的量表数据
 
       scaleAnswer: [],  // 放筛选出来的量表病人填写答案的数组
       correctanswer: [], // 通过函数处理后得出的对应答案选项数组
@@ -136,7 +135,7 @@ export default {
       'allScale'
     ]),
     targetScale() {
-      let scale = Util.getElement('scaleInfoId', this.scaleInfoId, this.scaleList);
+      let scale = Util.getElement('scaleInfoId', this.scaleInfoId, this.allScale);
       this.getCorrectAnswer(scale.questions);
       return scale;
     },
@@ -185,7 +184,6 @@ export default {
     showDetailPanel(cardOperation, item) {
       this.mode = cardOperation;
       this.displayScaleModal = true;
-      this.getPatientScaleInfo();
       this.initPatientScale();
       this.isSubjectDisabled = this.mode === this.VIEW_CURRENT_CARD;
 
@@ -246,7 +244,6 @@ export default {
     goBack() {
       // 按下返回按钮，把所有的数据都初始化一遍
       this.correctanswer = [];
-      this.scaleList = {};
       this.scaleInfoId = '';
       this.scaleAnswer = [];
       this.isSubjectDisabled = true;
@@ -315,9 +312,6 @@ export default {
     closePanel() {
       this.displayScaleModal = false;
     },
-    getPatientScaleInfo() {
-      this.scaleList = this.allScale;
-    },
     initScaleSympInfoName() {
       var typesInfo = Util.getElement('typegroupcode', 'scaleSymp', this.typeGroup);
       var types = typesInfo.types ? typesInfo.types : [];
@@ -382,8 +376,6 @@ export default {
     }
   },
   mounted() {
-    // 获取到量表的数据
-    this.getPatientScaleInfo();
     // 初始化关联症状的字段
     this.initScaleSympInfoName();
     // 初始化提交到服务器的对象

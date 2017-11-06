@@ -1,8 +1,6 @@
 import {getScaleInfo} from 'api/user.js';
 import * as types from '../mutation_types';
 
-// import { deepCopy } from 'utils/helper.js';
-
 // initial state
 const state = {
   all: {}
@@ -11,7 +9,7 @@ const state = {
 const getters = {
   allScale: (state) => {
     // 基础信息
-    return state.scales ? state.scales : [];
+    return state.all.scales ? state.all.scales : [];
   }
 };
 
