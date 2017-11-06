@@ -107,7 +107,7 @@
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import { getScaleInfo, modifyScaleInfo, addScaleInfo } from 'api/patient';
+import { modifyScaleInfo, addScaleInfo } from 'api/patient';
 import { mapGetters } from 'vuex';
 import { vueCopy, deepCopy } from 'utils/helper';
 
@@ -132,7 +132,8 @@ export default {
   computed: {
     ...mapGetters([
       'scaleTemplateGroups',
-      'typeGroup'
+      'typeGroup',
+      'allScale'
     ]),
     targetScale() {
       let scale = Util.getElement('scaleInfoId', this.scaleInfoId, this.scaleList);
@@ -315,9 +316,7 @@ export default {
       this.displayScaleModal = false;
     },
     getPatientScaleInfo() {
-      getScaleInfo().then((data) => {
-        this.scaleList = data.scales;
-      });
+      this.scaleList = this.allScale;
     },
     initScaleSympInfoName() {
       var typesInfo = Util.getElement('typegroupcode', 'scaleSymp', this.typeGroup);

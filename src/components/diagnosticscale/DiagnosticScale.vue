@@ -31,12 +31,11 @@
 
 <script>
 import Bus from 'utils/bus.js';
+import { mapGetters } from 'vuex';
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 import ExtensiblePanel from 'components/extensiblepanel/ExtensiblePanel';
 import Card from 'components/card/Card';
 import { delScaleInfo } from 'api/patient.js';
-
-import { getScaleInfo } from 'api/patient';
 
 export default {
   data() {
@@ -83,10 +82,7 @@ export default {
       });
     },
     getPatientScaleInfo() {
-      getScaleInfo().then((data) => {
-        this.scaleData = data['scales'];
-        // console.log(this.scaleData);
-      });
+      this.scaleData = this.allScale;
     },
     getTitle(scaleInfoId) {
       // 通过量表的ID来找到量表的名字
@@ -138,6 +134,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters([
+      'allScale'
+    ]),
     subTitle() {
       return this.titles + '（' + this.count + '条记录）';
     },

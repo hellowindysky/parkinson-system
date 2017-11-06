@@ -619,14 +619,6 @@ export function getLastDbsInfo(patientId, patientCaseId) {
   return encapsulatePromise(url, request);
 };
 
-// 查询医学量表
-export function getScaleInfo() {
-  var request = Object.assign({}, getCommonRequest());
-  var url = baseUrl + '/pdms/queryScaleInfo';
-
-  return encapsulatePromise(url, request);
-};
-
 // 新增医学量表
 export function addScaleInfo(patientScale) {
   var request = Object.assign({}, getCommonRequest());
