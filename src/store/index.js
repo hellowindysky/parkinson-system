@@ -5,6 +5,7 @@ import * as getters from './getters';
 import * as mutations from './mutations';
 import dictionary from './modules/dictionary';
 import template from './modules/template';
+import scale from './modules/scale';
 
 Vue.use(Vuex);
 
@@ -16,7 +17,8 @@ export default new Vuex.Store({
   mutations,
   modules: {
     dictionary,
-    template
+    template,
+    scale
   },
   strict: debug
 });

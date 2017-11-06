@@ -84,6 +84,7 @@ export default {
     // TODO 如果在header中改变了所属机构，就需要重新获取这些信息
     this.$store.dispatch('getWholeDictionary');
     this.$store.dispatch('getWholeTemplate');
+    this.$store.dispatch('getScaleList');
 
     Bus.$on(this.BLUR_ON_SCREEN, this.hideAccountPanel);
   },

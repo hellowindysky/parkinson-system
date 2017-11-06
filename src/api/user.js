@@ -27,6 +27,14 @@ export function getTemplate() {
   return encapsulatePromise(url, request);
 };
 
+// 获得所有量表信息
+export function getScaleInfo() {
+  var request = Object.assign({}, getCommonRequest());
+  var url = baseUrl + '/pdms/queryScaleInfo';
+
+  return encapsulatePromise(url, request);
+};
+
 export function getUserList() {
   var request = Object.assign({}, getCommonRequest());
 
