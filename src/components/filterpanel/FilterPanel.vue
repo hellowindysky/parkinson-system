@@ -556,8 +556,8 @@
               <span class="item-value">
                 <el-select class="normal-input" v-model="diagnosticSurgeryCondition.devicePowerType"
                   :disabled="!diagnosticSurgerySelectedStatus.devicePowerType">
-                  <el-option label="充电" :value="0"></el-option>
-                  <el-option label="不充电" :value="1"></el-option>
+                  <el-option label="充电" :value="1"></el-option>
+                  <el-option label="不充电" :value="0"></el-option>
                 </el-select>
               </span>
             </div>
