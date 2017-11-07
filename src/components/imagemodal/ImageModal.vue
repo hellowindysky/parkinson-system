@@ -117,14 +117,14 @@
               class="upload-demo"
               :action="uploadUrl"
               ref="upload"
-              :disabled="mode == VIEW_CURRENT_CARD ? true : false"
+              :disabled="mode === VIEW_CURRENT_CARD"
               :data="fileParam"
               :multiple="true"
               :auto-upload="false"
               :on-success="uploadSuccess"
               :on-error="uploadErr"
               :file-list="fileList1">
-              <el-button slot="trigger" size="small" type="text" :class="{'btnDisabled': mode ==VIEW_CURRENT_CARD ? true : false}">点击上传T1压缩文件/源文件</el-button>
+              <el-button slot="trigger" size="small" type="text" :class="{'btnDisabled': mode ==VIEW_CURRENT_CARD ? true : false}">点击上传 T1 压缩文件/源文件</el-button>
               <!-- <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button> -->
               <div slot="tip" class="el-upload__tip"></div>
             </el-upload>
@@ -141,14 +141,14 @@
               class="upload-demo"
               :action="uploadUrl"
               ref="upload2"
-              :disabled="mode == VIEW_CURRENT_CARD ? true : false"
+              :disabled="mode === VIEW_CURRENT_CARD"
               :data="fileParam"
               :multiple="true"
               :auto-upload="false"
               :on-success="uploadSuccess"
               :on-error="uploadErr"
               :file-list="fileList2">
-              <el-button slot="trigger" size="small" type="text" :class="{'btnDisabled': mode ==VIEW_CURRENT_CARD ? true : false}">点击上传T2压缩文件/源文件</el-button>
+              <el-button slot="trigger" size="small" type="text" :class="{'btnDisabled': mode ==VIEW_CURRENT_CARD ? true : false}">点击上传 T2 压缩文件/源文件</el-button>
               <!-- <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button> -->
               <div slot="tip" class="el-upload__tip"></div>
             </el-upload>
@@ -165,14 +165,14 @@
               class="upload-demo"
               :action="uploadUrl"
               ref="upload3"
-              :disabled="mode == VIEW_CURRENT_CARD ? true : false"
+              :disabled="mode === VIEW_CURRENT_CARD"
               :data="fileParam"
               :multiple="true"
               :auto-upload="false"
               :on-success="uploadSuccess"
               :on-error="uploadErr"
               :file-list="fileList3">
-              <el-button slot="trigger" size="small" type="text " :class="{'btnDisabled': mode ==VIEW_CURRENT_CARD ? true : false}">点击上传T2Flair压缩文件/源文件</el-button>
+              <el-button slot="trigger" size="small" type="text " :class="{'btnDisabled': mode ==VIEW_CURRENT_CARD ? true : false}">点击上传 T2 Flair 压缩文件/源文件</el-button>
               <div slot="tip" class="el-upload__tip"></div>
             </el-upload>
           </span>
@@ -189,7 +189,6 @@
 import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-// import { baseUrl, encapsulatePromise, getCommonRequest } from 'api/common.js';
 import { baseUrl, getCommonRequest } from 'api/common.js';
 
 export default {
@@ -225,8 +224,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'typeGroup',
-      'medicineTemplateGroups'
+      'typeGroup'
     ]),
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
@@ -323,7 +321,6 @@ export default {
   },
   mounted() {
     Bus.$on(this.SHOW_IMG_MODAL, this.showPanel);
-    // console.log(this.medicineTemplateGroups);
   }
 };
 </script>
@@ -370,7 +367,7 @@ export default {
       text-align: left;
       hr {
         border-style: none;
-        border-top:1px solid #e6e6e6;
+        border-top: 1px solid @light-gray-color;
       }
       .field {
         padding: 5px 0;
@@ -456,14 +453,14 @@ export default {
               .el-button {
                 width: 100%;
                 &.el-button--text {
-                  background-color:@font-color;
-                  color:#fff;
+                  background-color: @font-color;
+                  color: #fff;
                 }
               }
             }
             .el-upload__tip {
               line-height: normal;
-              margin-top:0;
+              margin-top: 0;
             }
           }
         }
@@ -475,6 +472,7 @@ export default {
         margin-bottom:10px;
         .field-name {
           flex:2;
+          line-height: 26px;
         }
         .field-input {
           flex:10;
