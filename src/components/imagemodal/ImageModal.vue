@@ -108,15 +108,13 @@
         <hr>
         <div class="field-file">
           <span class="field-name">
-            T1文件:
-            <span class="required-mark"></span>
+            T1 文件:
           </span>
           <span class="field-input">
-            <span class="warning-text"></span>
             <el-upload
               class="upload-demo"
               :action="uploadUrl"
-              ref="upload"
+              ref="upload1"
               :disabled="mode === VIEW_CURRENT_CARD"
               :data="fileParam"
               :multiple="true"
@@ -124,19 +122,16 @@
               :on-success="uploadSuccess"
               :on-error="uploadErr"
               :file-list="fileList1">
-              <el-button slot="trigger" size="small" type="text" :class="{'btnDisabled': mode ==VIEW_CURRENT_CARD ? true : false}">点击上传 T1 压缩文件/源文件</el-button>
-              <!-- <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button> -->
+              <el-button slot="trigger" size="small" type="text" :class="{'button-disabled': mode ==VIEW_CURRENT_CARD ? true : false}">点击上传 T1 压缩文件/源文件</el-button>
               <div slot="tip" class="el-upload__tip"></div>
             </el-upload>
           </span>
         </div>
         <div class="field-file">
           <span class="field-name">
-            T2文件:
-            <span class="required-mark"></span>
+            T2 文件:
           </span>
           <span class="field-input">
-            <span class="warning-text"></span>
             <el-upload
               class="upload-demo"
               :action="uploadUrl"
@@ -148,19 +143,16 @@
               :on-success="uploadSuccess"
               :on-error="uploadErr"
               :file-list="fileList2">
-              <el-button slot="trigger" size="small" type="text" :class="{'btnDisabled': mode ==VIEW_CURRENT_CARD ? true : false}">点击上传 T2 压缩文件/源文件</el-button>
-              <!-- <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button> -->
+              <el-button slot="trigger" size="small" type="text" :class="{'button-disabled': mode ==VIEW_CURRENT_CARD ? true : false}">点击上传 T2 压缩文件/源文件</el-button>
               <div slot="tip" class="el-upload__tip"></div>
             </el-upload>
           </span>
         </div>
         <div class="field-file">
           <span class="field-name">
-            T2Flair文件:
-            <span class="required-mark"></span>
+            T2 Flair 文件:
           </span>
           <span class="field-input">
-            <span class="warning-text"></span>
             <el-upload
               class="upload-demo"
               :action="uploadUrl"
@@ -172,7 +164,7 @@
               :on-success="uploadSuccess"
               :on-error="uploadErr"
               :file-list="fileList3">
-              <el-button slot="trigger" size="small" type="text " :class="{'btnDisabled': mode ==VIEW_CURRENT_CARD ? true : false}">点击上传 T2 Flair 压缩文件/源文件</el-button>
+              <el-button slot="trigger" size="small" type="text " :class="{'button-disabled': mode ==VIEW_CURRENT_CARD ? true : false}">点击上传 T2 Flair 压缩文件/源文件</el-button>
               <div slot="tip" class="el-upload__tip"></div>
             </el-upload>
           </span>
@@ -316,7 +308,7 @@ export default {
       console.log(fileList);
       // this.fileList1 = fileList;
       console.log(this.fileList1);
-      console.log(this.$refs.upload);
+      console.log(this.$refs.upload1);
     }
   },
   mounted() {
@@ -337,7 +329,7 @@ export default {
 @col-amount-width: 150px;
 @col-unit-width: 150px;
 
-.btnDisabled {
+.button-disabled {
   background-color: lightgray !important;
   cursor: not-allowed;
 }
@@ -368,6 +360,7 @@ export default {
       hr {
         border-style: none;
         border-top: 1px solid @light-gray-color;
+        margin-bottom: 15px;
       }
       .field {
         padding: 5px 0;
