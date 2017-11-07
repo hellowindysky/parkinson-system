@@ -21,7 +21,7 @@
           </div>
           <div class="text fourth-line">
             <span class="name">开关状态:</span>
-            <span class="value">{{switchType(item.switchType)}}</span>
+            <span class="value">{{getSwitchType(item.switchType)}}</span>
           </div>
         </card>
       </extensible-panel>
@@ -31,20 +31,20 @@
 
 <script>
 import Bus from 'utils/bus.js';
+import Util from 'utils/util.js';
 import { mapGetters } from 'vuex';
+import { deleteScaleInfo } from 'api/patient.js';
+
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 import ExtensiblePanel from 'components/extensiblepanel/ExtensiblePanel';
 import Card from 'components/card/Card';
-import { delScaleInfo } from 'api/patient.js';
 
 export default {
   data() {
     return {
       mutableMode: this.mode,
-      titles: '医学量表',
+      title: '医学量表',
       devideWidth: '',
-      scaleData: [],
-      count: 0,
       scaleId: ''
     };
   },
@@ -54,7 +54,26 @@ export default {
       default: this.READING_MODE
     },
     patientScale: {
-      type: Array
+      type: Array,
+      default: () => []
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'allScale'
+    ]),
+    subTitle() {
+      return this.title + '（' + this.count + '条记录）';
+    },
+    count() {
+      return this.patientScale.length;
+    },
+    canEdit() {
+      if (this.$route.matched.some(record => record.meta.myPatients)) {
+        return true;
+      } else {
+        return false;
+      }
     }
   },
   methods: {
@@ -71,8 +90,8 @@ export default {
       this.$nextTick(() => {
         var panelWidth = this.$refs.diagnosticscale.clientWidth;
         var devideNum = 1.0;
-        // 20px 是卡片的横向间距，定义在了 varaibles.less 中，300px 是卡片的最小宽度
-        while (panelWidth / devideNum > 300 + 20) {
+        // 20px 是卡片的横向间距，定义在了 varaibles.less 中，250px 是卡片的最小宽度
+        while (panelWidth / devideNum > 250 + 20) {
           devideNum += 1.0;
         }
         devideNum -= 1;
@@ -81,38 +100,27 @@ export default {
         this.devideWidth = 'width-1-' + parseInt(devideNum, 10);
       });
     },
-    getPatientScaleInfo() {
-      this.scaleData = this.allScale;
-    },
     getTitle(scaleInfoId) {
       // 通过量表的ID来找到量表的名字
-      for (let key in this.scaleData) {
-        let sonData = this.scaleData[key];
-        for (let sonkey in sonData) {
-          if (sonkey === 'scaleInfoId') {
-            if (sonData[sonkey] === scaleInfoId) {
-              return sonData['gaugeName'];
-            }
-          }
-        }
-      }
+      var targetScale = Util.getElement('scaleInfoId', scaleInfoId, this.allScale);
+      return targetScale.gaugeName;
     },
     editScale(item) {
-      Bus.$emit(this.UPDATE_SCALE_DETAIL, this.EDIT_CURRENT_CARD, item);
+      Bus.$emit(this.SHOW_SCALE_MODAL, this.EDIT_CURRENT_CARD, item);
     },
     viewScale(item) {
-      Bus.$emit(this.UPDATE_SCALE_DETAIL, this.VIEW_CURRENT_CARD, item);
+      Bus.$emit(this.SHOW_SCALE_MODAL, this.VIEW_CURRENT_CARD, item);
     },
     addScale() {
-      Bus.$emit(this.UPDATE_SCALE_DETAIL, this.ADD_NEW_CARD, {});
+      Bus.$emit(this.SHOW_SCALE_MODAL, this.ADD_NEW_CARD, {});
     },
-    deleteScaleRecord(item) { // 删除肌电图
+    deleteScaleRecord(item) {
       // console.log(item);
-      let ScaleId = {
+      let scaleInfo = {
         id: item.id
       };
       Bus.$on(this.CONFIRM, () => {
-        delScaleInfo(ScaleId).then(this._resolveDeletion, this._rejectDeletion);
+        deleteScaleInfo(scaleInfo).then(this._resolveDeletion, this._rejectDeletion);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
@@ -125,26 +133,11 @@ export default {
       // 即使删除不成功，也要解除 [确认对话框] 的 “确认” 回调函数
       Bus.$off(this.CONFIRM);
     },
-    switchType(type) {
+    getSwitchType(type) {
       if (String(type) === '1') {
         return '开';
       } else {
         return '关';
-      }
-    }
-  },
-  computed: {
-    ...mapGetters([
-      'allScale'
-    ]),
-    subTitle() {
-      return this.titles + '（' + this.count + '条记录）';
-    },
-    canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients)) {
-        return true;
-      } else {
-        return false;
       }
     }
   },
@@ -154,34 +147,19 @@ export default {
     Card
   },
   mounted() {
-    this.getPatientScaleInfo();
     this.recalculateCardWidth();
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
     Bus.$on(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
     Bus.$on(this.RECALCULATE_CARD_WIDTH, this.recalculateCardWidth);
+    Bus.$on(this.GIVE_UP, () => {
+      Bus.$off(this.CONFIRM);
+    });
   },
   beforeDestroy() {
     Bus.$off(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
     Bus.$off(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
     Bus.$off(this.RECALCULATE_CARD_WIDTH, this.recalculateCardWidth);
-  },
-  watch: {
-    patientScale: {
-      handler: function(newVal) {
-        if (newVal) {
-          this.count = this.patientScale.length;
-        }
-      },
-      deep: true
-    },
-    scaleData: {
-      handler: function(newVal) {
-        if (newVal) {
-          this.scaleData = newVal;
-        }
-      },
-      deep: true
-    }
+    Bus.$off(this.GIVE_UP);
   }
 };
 </script>

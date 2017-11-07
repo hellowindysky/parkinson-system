@@ -36,7 +36,7 @@
       </div>
     </div>
     <diagnostic-detail class="diagnostic-detail"></diagnostic-detail>
-    <diagnostic-handle-scale class="diagnostic-handle-scale"></diagnostic-handle-scale>
+    <scale-modal class="diagnostic-handle-scale"></scale-modal>
     <group-panel class="group-panel" :class="{'hide': !displayGroupPanel}" :belongGroups="belongGroups"
       :display="displayGroupPanel" :patientId="Number(patientId)" @hideGroupPanel="hideGroupPanel"
       @updatePatientGroupInfo="updatePatientGroupInfo"></group-panel>
@@ -50,7 +50,7 @@ import Bus from 'utils/bus.js';
 import { getPatientInfo, getPatientGroupInfo, getPatientCaseList } from 'api/patient';
 
 import DiagnosticDetail from 'components/diagnosticdetail/DiagnosticDetail';
-import DiagnosticHandleScale from 'components/diagnostichandlescale/DiagnosticHandleScale';
+import ScaleModal from 'components/scalemodal/ScaleModal';
 import BasicInfo from 'components/basicinfo/BasicInfo';
 import GroupPanel from 'components/grouppanel/GroupPanel';
 
@@ -198,7 +198,7 @@ export default {
   },
   components: {
     DiagnosticDetail,
-    DiagnosticHandleScale,
+    ScaleModal,
     BasicInfo,
     GroupPanel
   },
