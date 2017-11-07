@@ -10,7 +10,7 @@
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span class="warning-text"></span>
-            <span>view状态下影像名称</span>
+            <span>{{name}}</span>
           </span>
           <span class="field-input" v-else>
             <span class="warning-text"></span>
@@ -24,7 +24,7 @@
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span class="warning-text"></span>
-            <span>view状态下影像类型</span>
+            <span>{{getImagetype(imageType)}}</span>
           </span>
           <span class="field-input" v-else>
             <span class="warning-text"></span>
@@ -45,7 +45,7 @@
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span class="warning-text"></span>
-            <span>view状态下检查时间</span>
+            <span>{{time}}</span>
           </span>
           <span class="field-input" v-else>
             <span class="warning-text"></span>
@@ -60,11 +60,9 @@
         <div class="field">
           <span class="field-name">
             检查编号:
-            <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span class="warning-text"></span>
-            <span>view状态下检查编号</span>
+            <span>{{checkNum}}</span>
           </span>
           <span class="field-input" v-else>
             <span class="warning-text"></span>
@@ -74,42 +72,36 @@
         <div class="field">
           <span class="field-name">
             检查设备:
-            <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span class="warning-text"></span>
-            <span>view状态下设备编号</span>
+            <span>{{checkDevice}}</span>
           </span>
           <span class="field-input" v-else>
-            <span class="warning-text"></span>
             <el-input placeholder="请输入检查设备编号"></el-input>
           </span>
         </div>
         <div class="field whole-line">
           <span class="field-name">
             检查结论:
-            <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span class="warning-text"></span>
-            <span>view状态下检查结论</span>
+            <span>{{checkConclusion}}</span>
           </span>
           <span class="field-input" v-else>
-            <span class="warning-text"></span>
             <el-input placeholder="请输入检查结论"></el-input>
           </span>
         </div>
         <div class="field whole-line">
           <span class="field-name">
             备注:
-            <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span class="warning-text"></span>
-            <span>view状态下备注</span>
+            <span>{{remark}}</span>
           </span>
           <span class="field-input" v-else>
-            <span class="warning-text"></span>
             <el-input placeholder="请输入备注信息"></el-input>
           </span>
         </div>
@@ -204,8 +196,15 @@ export default {
   data() {
     return {
       displayModal: false,
-      title: '',
       mode: '',
+      name: '',
+      patientAttachmentId: '',
+      imageType: '',
+      time: '',
+      checkNum: '',
+      checkDevice: '',
+      checkConclusion: '',
+      remark: '',
       uploadUrl: baseUrl + '/fileUpload/uploadPatientAttachment',
       pickerOptions0: {
         disabledDate(time) {
@@ -229,6 +228,13 @@ export default {
       'typeGroup',
       'medicineTemplateGroups'
     ]),
+    title() {
+      if (this.mode === this.ADD_NEW_CARD) {
+        return '新增医学影像';
+      } else {
+        return '医学影像';
+      }
+    },
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients)) {
         return true;
@@ -250,6 +256,11 @@ export default {
       };
       return options;
     },
+    getImagetype(imageType) {
+      var options = this.getOptions('examType');
+      var targetOption = Util.getElement('code', imageType, options);
+      return targetOption.name;
+    },
     cancel() {
       this.displayModal = false;
     },
@@ -261,7 +272,7 @@ export default {
 
     },
     submitUpload() {
-      
+
     },
     handleRemove(file, fileList) {
       console.log(file);
@@ -277,11 +288,21 @@ export default {
       this.displayModal = true;
       this.mode = cardOperation;
       console.log(item);
+      if (this.mode !== this.ADD_NEW_CARD) {
+        this.name = item.name ? item.name : '';
+        this.patientAttachmentId = item.patientAttachmentId ? item.patientAttachmentId : '';
+        this.time = item.time ? item.time : '';
+        this.imageType = (item.patientImageReq && item.patientImageReq.imageType) ? item.patientImageReq.imageType : '';
+        this.checkNum = (item.patientImageReq && item.patientImageReq.checkNum) ? item.patientImageReq.checkNum : '';
+        this.checkDevice = (item.patientImageReq && item.patientImageReq.checkDevice) ? item.patientImageReq.checkDevice : '';
+        this.checkConclusion = (item.patientImageReq && item.patientImageReq.checkConclusion) ? item.patientImageReq.checkConclusion : '';
+        this.remark = item.remark ? item.remark : '';
+      }
     },
     uploadSuccess(response, file, fileList) {
       console.log(response);
       if (response.code === 0) {
-
+        console.log(fileList);
       } else {
         alert('文件上传出错');
       }
