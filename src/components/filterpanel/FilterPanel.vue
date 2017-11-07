@@ -49,7 +49,7 @@
               <el-checkbox class="item-checkbox" v-model="basicInfoSelectedStatus.sex"></el-checkbox>
               <span class="item-name">性别</span>
               <span class="item-value">
-                <el-select class="normal-input" v-model="basicInfoCondition.sex" placeholder="请输入性别"
+                <el-select class="normal-input" v-model="basicInfoCondition.sex" placeholder="请选择"
                   :disabled="!basicInfoSelectedStatus.sex">
                   <el-option v-for="option in getOptions('sex')" :label="option.name" :value="option.code"
                     :key="option.code"></el-option>
@@ -617,14 +617,14 @@
               </span>
             </div>
             <div class="item">
-              <el-checkbox class="item-checkbox" v-model="diagnosticSurgerySelectedStatus.occurenceTimeFrom"></el-checkbox>
+              <el-checkbox class="item-checkbox" v-model="diagnosticSurgerySelectedStatus.occurrenceTimeFrom"></el-checkbox>
               <span class="item-name">并发症时间</span>
               <span class="item-value">
-                <el-date-picker class="left-input" v-model="diagnosticSurgeryCondition.occurenceTimeFrom" placeholder="开始时间"
-                  :disabled="!diagnosticSurgerySelectedStatus.occurenceTimeFrom"></el-date-picker>
+                <el-date-picker class="left-input" v-model="diagnosticSurgeryCondition.occurrenceTimeFrom" placeholder="开始时间"
+                  :disabled="!diagnosticSurgerySelectedStatus.occurrenceTimeFrom"></el-date-picker>
                 <span class="middle-text">~</span>
-                <el-date-picker class="right-input" v-model="diagnosticSurgeryCondition.occurenceTimeTo" placeholder="结束时间"
-                  :disabled="!diagnosticSurgerySelectedStatus.occurenceTimeFrom"></el-date-picker>
+                <el-date-picker class="right-input" v-model="diagnosticSurgeryCondition.occurrenceTimeTo" placeholder="结束时间"
+                  :disabled="!diagnosticSurgerySelectedStatus.occurrenceTimeFrom"></el-date-picker>
               </span>
             </div>
             <div class="item">
@@ -972,7 +972,7 @@ export default {
       'deviceInfo',
       'surgicalTypeList',
       'complicationTypeList',
-      'scaleList',
+      'allScale',
       'neurologicCheckTypeList',
       'bioexamTypeList'
     ]),
@@ -1235,9 +1235,9 @@ export default {
           }
         }
       } else if (fieldName === 'scaleName') {
-        for (let scale of this.scaleList) {
+        for (let scale of this.allScale) {
           options.push({
-            code: scale.id,
+            code: scale.scaleInfoId,
             name: scale.gaugeName
           });
         }
