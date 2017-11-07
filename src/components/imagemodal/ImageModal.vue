@@ -128,16 +128,13 @@
               :disabled="mode == VIEW_CURRENT_CARD ? true : false"
               :data="fileParam"
               :multiple="true"
-              :auto-upload="true"
-              :on-preview="handlePreview"
-              :on-remove="handleRemove"
-              :on-change="fileChange"
+              :auto-upload="false"
               :on-success="uploadSuccess"
               :on-error="uploadErr"
               :file-list="fileList1">
               <el-button slot="trigger" size="small" type="text" :class="{'btnDisabled': mode ==VIEW_CURRENT_CARD ? true : false}">点击上传T1压缩文件/源文件</el-button>
-              <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
-              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+              <!-- <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button> -->
+              <div slot="tip" class="el-upload__tip"></div>
             </el-upload>
           </span>
         </div>
@@ -150,15 +147,18 @@
             <span class="warning-text"></span>
             <el-upload
               class="upload-demo"
-              action="https://jsonplaceholder.typicode.com/posts/"
+              :action="uploadUrl"
               ref="upload2"
               :disabled="mode == VIEW_CURRENT_CARD ? true : false"
+              :data="fileParam"
+              :multiple="true"
               :auto-upload="false"
-              :on-preview="handlePreview"
-              :on-remove="handleRemove"
+              :on-success="uploadSuccess"
+              :on-error="uploadErr"
               :file-list="fileList2">
-              <el-button size="small" type="text" :class="{'btnDisabled': mode ==VIEW_CURRENT_CARD ? true : false}">点击上传T2压缩文件/源文件</el-button>
-              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+              <el-button slot="trigger" size="small" type="text" :class="{'btnDisabled': mode ==VIEW_CURRENT_CARD ? true : false}">点击上传T2压缩文件/源文件</el-button>
+              <!-- <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button> -->
+              <div slot="tip" class="el-upload__tip"></div>
             </el-upload>
           </span>
         </div>
@@ -171,15 +171,17 @@
             <span class="warning-text"></span>
             <el-upload
               class="upload-demo"
-              action="https://jsonplaceholder.typicode.com/posts/"
+              :action="uploadUrl"
               ref="upload3"
               :disabled="mode == VIEW_CURRENT_CARD ? true : false"
+              :data="fileParam"
+              :multiple="true"
               :auto-upload="false"
-              :on-preview="handlePreview"
-              :on-remove="handleRemove"
+              :on-success="uploadSuccess"
+              :on-error="uploadErr"
               :file-list="fileList3">
-              <el-button size="small" type="text " :class="{'btnDisabled': mode ==VIEW_CURRENT_CARD ? true : false}">点击上传T2Flair压缩文件/源文件</el-button>
-              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+              <el-button slot="trigger" size="small" type="text " :class="{'btnDisabled': mode ==VIEW_CURRENT_CARD ? true : false}">点击上传T2Flair压缩文件/源文件</el-button>
+              <div slot="tip" class="el-upload__tip"></div>
             </el-upload>
           </span>
         </div>
@@ -255,22 +257,16 @@ export default {
       this.mode = this.EDIT_CURRENT_CARD;
     },
     submit() {
-      // let submitData = this.ImgTypeData;
+      this.$refs.upload2.submit();
 
     },
     submitUpload() {
-      this.$refs.upload.submit();
-      // encapsulatePromise(this.uploadUrl, this.fileParam).then(function(res) {
-      //   console.log(res);
-      // }, function(err) {
-      //   console.log(err);
-      // });
-      // this.$refs.upload.submit();
+      
     },
     handleRemove(file, fileList) {
       console.log(file);
       console.log(fileList);
-      this.fileList1 = fileList;
+      // this.fileList1 = fileList;
       console.log(this.fileList1);
     },
     handlePreview(file) {
@@ -284,8 +280,12 @@ export default {
     },
     uploadSuccess(response, file, fileList) {
       console.log(response);
-      console.log(file);
-      console.log(fileList);
+      if (response.code === 0) {
+
+      } else {
+        alert('文件上传出错');
+      }
+      this.$refs.upload2.clearFiles();
     },
     uploadErr(err, file, fileList) {
       console.log(err);
@@ -295,7 +295,7 @@ export default {
     fileChange(file, fileList) {
       console.log(file);
       console.log(fileList);
-      this.fileList1 = fileList;
+      // this.fileList1 = fileList;
       console.log(this.fileList1);
       console.log(this.$refs.upload);
     }
