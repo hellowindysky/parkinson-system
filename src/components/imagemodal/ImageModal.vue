@@ -10,7 +10,7 @@
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span class="warning-text"></span>
-            <span>view状态下影像名称</span>
+            <span>{{name}}</span>
           </span>
           <span class="field-input" v-else>
             <span class="warning-text"></span>
@@ -24,7 +24,7 @@
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span class="warning-text"></span>
-            <span>view状态下影像类型</span>
+            <span>{{getImagetype(imageType)}}</span>
           </span>
           <span class="field-input" v-else>
             <span class="warning-text"></span>
@@ -45,7 +45,7 @@
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span class="warning-text"></span>
-            <span>view状态下检查时间</span>
+            <span>{{time}}</span>
           </span>
           <span class="field-input" v-else>
             <span class="warning-text"></span>
@@ -60,11 +60,9 @@
         <div class="field">
           <span class="field-name">
             检查编号:
-            <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span class="warning-text"></span>
-            <span>view状态下检查编号</span>
+            <span>{{checkNum}}</span>
           </span>
           <span class="field-input" v-else>
             <span class="warning-text"></span>
@@ -74,113 +72,99 @@
         <div class="field">
           <span class="field-name">
             检查设备:
-            <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span class="warning-text"></span>
-            <span>view状态下设备编号</span>
+            <span>{{checkDevice}}</span>
           </span>
           <span class="field-input" v-else>
-            <span class="warning-text"></span>
             <el-input placeholder="请输入检查设备编号"></el-input>
           </span>
         </div>
         <div class="field whole-line">
           <span class="field-name">
             检查结论:
-            <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span class="warning-text"></span>
-            <span>view状态下检查结论</span>
+            <span>{{checkConclusion}}</span>
           </span>
           <span class="field-input" v-else>
-            <span class="warning-text"></span>
             <el-input placeholder="请输入检查结论"></el-input>
           </span>
         </div>
         <div class="field whole-line">
           <span class="field-name">
             备注:
-            <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span class="warning-text"></span>
-            <span>view状态下备注</span>
+            <span>{{remark}}</span>
           </span>
           <span class="field-input" v-else>
-            <span class="warning-text"></span>
             <el-input placeholder="请输入备注信息"></el-input>
           </span>
         </div>
         <hr>
         <div class="field-file">
           <span class="field-name">
-            T1文件:
-            <span class="required-mark"></span>
+            T1 文件:
           </span>
           <span class="field-input">
-            <span class="warning-text"></span>
             <el-upload
               class="upload-demo"
               :action="uploadUrl"
-              ref="upload"
-              :disabled="mode == VIEW_CURRENT_CARD ? true : false"
+              ref="upload1"
+              :disabled="mode === VIEW_CURRENT_CARD"
               :data="fileParam"
               :multiple="true"
               :auto-upload="false"
               :on-success="uploadSuccess"
               :on-error="uploadErr"
               :file-list="fileList1">
-              <el-button slot="trigger" size="small" type="text" :class="{'btnDisabled': mode ==VIEW_CURRENT_CARD ? true : false}">点击上传T1压缩文件/源文件</el-button>
-              <!-- <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button> -->
+              <el-button slot="trigger" size="small" type="text" :class="{'button-disabled': mode ==VIEW_CURRENT_CARD ? true : false}">点击上传 T1 压缩文件/源文件</el-button>
               <div slot="tip" class="el-upload__tip"></div>
             </el-upload>
           </span>
         </div>
         <div class="field-file">
           <span class="field-name">
-            T2文件:
-            <span class="required-mark"></span>
+            T2 文件:
           </span>
           <span class="field-input">
-            <span class="warning-text"></span>
             <el-upload
               class="upload-demo"
               :action="uploadUrl"
               ref="upload2"
-              :disabled="mode == VIEW_CURRENT_CARD ? true : false"
+              :disabled="mode === VIEW_CURRENT_CARD"
               :data="fileParam"
               :multiple="true"
               :auto-upload="false"
               :on-success="uploadSuccess"
               :on-error="uploadErr"
               :file-list="fileList2">
-              <el-button slot="trigger" size="small" type="text" :class="{'btnDisabled': mode ==VIEW_CURRENT_CARD ? true : false}">点击上传T2压缩文件/源文件</el-button>
-              <!-- <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button> -->
+              <el-button slot="trigger" size="small" type="text" :class="{'button-disabled': mode ==VIEW_CURRENT_CARD ? true : false}">点击上传 T2 压缩文件/源文件</el-button>
               <div slot="tip" class="el-upload__tip"></div>
             </el-upload>
           </span>
         </div>
         <div class="field-file">
           <span class="field-name">
-            T2Flair文件:
-            <span class="required-mark"></span>
+            T2 Flair 文件:
           </span>
           <span class="field-input">
-            <span class="warning-text"></span>
             <el-upload
               class="upload-demo"
               :action="uploadUrl"
               ref="upload3"
-              :disabled="mode == VIEW_CURRENT_CARD ? true : false"
+              :disabled="mode === VIEW_CURRENT_CARD"
               :data="fileParam"
               :multiple="true"
               :auto-upload="false"
               :on-success="uploadSuccess"
               :on-error="uploadErr"
               :file-list="fileList3">
-              <el-button slot="trigger" size="small" type="text " :class="{'btnDisabled': mode ==VIEW_CURRENT_CARD ? true : false}">点击上传T2Flair压缩文件/源文件</el-button>
+              <el-button slot="trigger" size="small" type="text " :class="{'button-disabled': mode ==VIEW_CURRENT_CARD ? true : false}">点击上传 T2 Flair 压缩文件/源文件</el-button>
               <div slot="tip" class="el-upload__tip"></div>
             </el-upload>
           </span>
@@ -197,15 +181,21 @@
 import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-// import { baseUrl, encapsulatePromise, getCommonRequest } from 'api/common.js';
 import { baseUrl, getCommonRequest } from 'api/common.js';
 
 export default {
   data() {
     return {
       displayModal: false,
-      title: '',
       mode: '',
+      name: '',
+      patientAttachmentId: '',
+      imageType: '',
+      time: '',
+      checkNum: '',
+      checkDevice: '',
+      checkConclusion: '',
+      remark: '',
       uploadUrl: baseUrl + '/fileUpload/uploadPatientAttachment',
       pickerOptions0: {
         disabledDate(time) {
@@ -226,9 +216,15 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'typeGroup',
-      'medicineTemplateGroups'
+      'typeGroup'
     ]),
+    title() {
+      if (this.mode === this.ADD_NEW_CARD) {
+        return '新增医学影像';
+      } else {
+        return '医学影像';
+      }
+    },
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients)) {
         return true;
@@ -250,6 +246,11 @@ export default {
       };
       return options;
     },
+    getImagetype(imageType) {
+      var options = this.getOptions('examType');
+      var targetOption = Util.getElement('code', imageType, options);
+      return targetOption.name;
+    },
     cancel() {
       this.displayModal = false;
     },
@@ -261,7 +262,7 @@ export default {
 
     },
     submitUpload() {
-      
+
     },
     handleRemove(file, fileList) {
       console.log(file);
@@ -277,11 +278,21 @@ export default {
       this.displayModal = true;
       this.mode = cardOperation;
       console.log(item);
+      if (this.mode !== this.ADD_NEW_CARD) {
+        this.name = item.name ? item.name : '';
+        this.patientAttachmentId = item.patientAttachmentId ? item.patientAttachmentId : '';
+        this.time = item.time ? item.time : '';
+        this.imageType = (item.patientImageReq && item.patientImageReq.imageType) ? item.patientImageReq.imageType : '';
+        this.checkNum = (item.patientImageReq && item.patientImageReq.checkNum) ? item.patientImageReq.checkNum : '';
+        this.checkDevice = (item.patientImageReq && item.patientImageReq.checkDevice) ? item.patientImageReq.checkDevice : '';
+        this.checkConclusion = (item.patientImageReq && item.patientImageReq.checkConclusion) ? item.patientImageReq.checkConclusion : '';
+        this.remark = item.remark ? item.remark : '';
+      }
     },
     uploadSuccess(response, file, fileList) {
       console.log(response);
       if (response.code === 0) {
-
+        console.log(fileList);
       } else {
         alert('文件上传出错');
       }
@@ -297,12 +308,11 @@ export default {
       console.log(fileList);
       // this.fileList1 = fileList;
       console.log(this.fileList1);
-      console.log(this.$refs.upload);
+      console.log(this.$refs.upload1);
     }
   },
   mounted() {
     Bus.$on(this.SHOW_IMG_MODAL, this.showPanel);
-    // console.log(this.medicineTemplateGroups);
   }
 };
 </script>
@@ -319,7 +329,7 @@ export default {
 @col-amount-width: 150px;
 @col-unit-width: 150px;
 
-.btnDisabled {
+.button-disabled {
   background-color: lightgray !important;
   cursor: not-allowed;
 }
@@ -349,7 +359,8 @@ export default {
       text-align: left;
       hr {
         border-style: none;
-        border-top:1px solid #e6e6e6;
+        border-top: 1px solid @light-gray-color;
+        margin-bottom: 15px;
       }
       .field {
         padding: 5px 0;
@@ -435,14 +446,14 @@ export default {
               .el-button {
                 width: 100%;
                 &.el-button--text {
-                  background-color:@font-color;
-                  color:#fff;
+                  background-color: @font-color;
+                  color: #fff;
                 }
               }
             }
             .el-upload__tip {
               line-height: normal;
-              margin-top:0;
+              margin-top: 0;
             }
           }
         }
@@ -454,6 +465,7 @@ export default {
         margin-bottom:10px;
         .field-name {
           flex:2;
+          line-height: 26px;
         }
         .field-input {
           flex:10;
