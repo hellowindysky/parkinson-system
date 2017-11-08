@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="img-modal-wrapper" v-show="displayModal">
-    <div class="img-modal">
+    <div class="img-modal" ref="scrollArea">
       <h3 class="title">{{title}}</h3>
       <div class="content">
         <div class="field whole-line">
@@ -107,17 +107,6 @@
         </div>
         <hr>
         <div class="field-file">
-          <el-upload
-            v-show="false"
-            :action="uploadUrl"
-            ref="upload"
-            :data="fileParam"
-            :multiple="true"
-            :auto-upload="false"
-            :on-success="uploadSuccess"
-            :on-error="uploadErr"
-            :file-list="totalFileList">
-          </el-upload>
           <span class="field-name">
             T1 文件:
           </span>
@@ -126,15 +115,19 @@
               class="upload-demo"
               :action="uploadUrl"
               ref="upload1"
-              :disabled="mode === VIEW_CURRENT_CARD"
+              :disabled="mode===VIEW_CURRENT_CARD"
               :data="fileParam"
               :multiple="true"
               :auto-upload="false"
               :on-change="fileChange"
               :on-preview="handlePreview"
               :on-remove="handleRemove"
+              :on-success="uploadSuccess"
+              :on-error="uploadErr"
               :file-list="fileList1">
-              <el-button slot="trigger" size="small" type="text" :class="{'button-disabled': mode ==VIEW_CURRENT_CARD ? true : false}">点击上传 T1 压缩文件/源文件</el-button>
+              <el-button slot="trigger" size="small" type="text" :disabled="mode===VIEW_CURRENT_CARD">
+                点击上传 T1 压缩文件/源文件
+              </el-button>
               <div slot="tip" class="el-upload__tip"></div>
             </el-upload>
           </span>
@@ -148,15 +141,19 @@
               class="upload-demo"
               :action="uploadUrl"
               ref="upload2"
-              :disabled="mode === VIEW_CURRENT_CARD"
+              :disabled="mode===VIEW_CURRENT_CARD"
               :data="fileParam"
               :multiple="true"
               :auto-upload="false"
               :on-change="fileChange"
               :on-preview="handlePreview"
               :on-remove="handleRemove"
+              :on-success="uploadSuccess"
+              :on-error="uploadErr"
               :file-list="fileList2">
-              <el-button slot="trigger" size="small" type="text" :class="{'button-disabled': mode ==VIEW_CURRENT_CARD ? true : false}">点击上传 T2 压缩文件/源文件</el-button>
+              <el-button slot="trigger" size="small" type="text" :disabled="mode===VIEW_CURRENT_CARD">
+                点击上传 T2 压缩文件/源文件
+              </el-button>
               <div slot="tip" class="el-upload__tip"></div>
             </el-upload>
           </span>
@@ -170,15 +167,19 @@
               class="upload-demo"
               :action="uploadUrl"
               ref="upload3"
-              :disabled="mode === VIEW_CURRENT_CARD"
+              :disabled="mode===VIEW_CURRENT_CARD"
               :data="fileParam"
               :multiple="true"
               :auto-upload="false"
               :on-change="fileChange"
               :on-preview="handlePreview"
               :on-remove="handleRemove"
+              :on-success="uploadSuccess"
+              :on-error="uploadErr"
               :file-list="fileList3">
-              <el-button slot="trigger" size="small" type="text " :class="{'button-disabled': mode ==VIEW_CURRENT_CARD ? true : false}">点击上传 T2 Flair 压缩文件/源文件</el-button>
+              <el-button slot="trigger" size="small" type="text" :disabled="mode===VIEW_CURRENT_CARD">
+                点击上传 T2 Flair 压缩文件/源文件
+              </el-button>
               <div slot="tip" class="el-upload__tip"></div>
             </el-upload>
           </span>
@@ -193,6 +194,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import { baseUrl, getCommonRequest } from 'api/common.js';
@@ -216,8 +218,12 @@ export default {
           return time.getTime() > Date.now();
         }
       },
-      totalFileList: [],
-      fileList1: [],
+      fileList1: [
+        {
+          name: 'resumable.zip',
+          url: 'https://github.com/23/resumable.js/archive/master.zip'
+        }
+      ],
       fileList2: [],
       fileList3: [],
       header: {
@@ -270,27 +276,18 @@ export default {
       this.mode = this.EDIT_CURRENT_CARD;
     },
     submit() {
-      this.$refs.upload.submit();
       this.$refs.upload1.submit();
-      // console.log(this.$refs.upload);
-      console.log('totalFileList:', this.totalFileList);
-    },
-    submitUpload() {
-      console.log('success');
+      this.$refs.upload2.submit();
+      this.$refs.upload3.submit();
     },
     handleRemove(file, fileList) {
       console.log(file);
       console.log(fileList);
-      for (var i = 0; i < this.totalFileList.length; i++) {
-        if (this.totalFileList[i].uid === file.uid) {
-          this.totalFileList.splice(i, 1);
-          break;
-        }
-      }
+      this.updateScrollbar();
     },
     handlePreview(file) {
       console.log(file);
-      console.log(this.fileList1);
+      window.location.href = file.url;
     },
     showPanel(cardOperation, item) {
       this.displayModal = true;
@@ -324,11 +321,22 @@ export default {
     fileChange(file, fileList) {
       console.log(file);
       console.log(fileList);
-      this.totalFileList.push(file);
+      this.updateScrollbar();
+    },
+    updateScrollbar() {
+      this.$nextTick(() => {
+        Ps.destroy(this.$refs.scrollArea);
+        Ps.initialize(this.$refs.scrollArea, {
+          wheelSpeed: 1,
+          minScrollbarLength: 40,
+          suppressScrollX: true
+        });
+      });
     }
   },
   mounted() {
     Bus.$on(this.SHOW_IMG_MODAL, this.showPanel);
+    this.updateScrollbar();
   },
   beforeDestroy() {
     Bus.$off(this.SHOW_IMG_MODAL);
@@ -339,7 +347,7 @@ export default {
 <style lang="less">
 @import "~styles/variables.less";
 
-@field-height: 40px;
+@field-height: 45px;
 @field-name-width: 110px;
 @long-field-name-width: 160px;
 
@@ -347,11 +355,6 @@ export default {
 @col-time-width: 200px;
 @col-amount-width: 150px;
 @col-unit-width: 150px;
-
-.button-disabled {
-  background-color: lightgray !important;
-  cursor: not-allowed;
-}
 
 .img-modal-wrapper {
   position: absolute;
@@ -376,18 +379,19 @@ export default {
     }
     .content {
       text-align: left;
+      font-size: 0;
       hr {
         border-style: none;
         border-top: 1px solid @light-gray-color;
         margin-bottom: 15px;
       }
       .field {
-        padding: 5px 0;
-        text-align: left;
         display: inline-block;
         position: relative;
-        width: 49%;
+        padding: 5px 0;
+        width: 50%;
         height: @field-height;
+        box-sizing: border-box;
         text-align: left;
         transform: translateX(10px); // 这一行是为了修补视觉上的偏移
         &.whole-line {
@@ -478,16 +482,26 @@ export default {
         }
       }
       .field-file {
-        display: flex;
+        margin-bottom: 20px;
         transform: translateX(10px);
-        padding-right:24px;
-        margin-bottom:10px;
         .field-name {
-          flex:2;
-          line-height: 26px;
+          display: inline-block;
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: @field-name-width;
+          line-height: 30px;
+          font-size: @normal-font-size;
+          color: @font-color;
         }
         .field-input {
-          flex:10;
+          display: block;
+          position: relative;
+          left: @field-name-width;
+          width: 96%;
+          padding-right: @field-name-width;
+          box-sizing: border-box;
+          font-size: @normal-font-size;
           .upload-demo {
             .el-upload {
               width: 100%;
@@ -539,8 +553,29 @@ export default {
         margin-top: 30px;
       }
     }
+    .ps__scrollbar-y-rail {
+      position: absolute;
+      width: 15px;
+      right: 0;
+      padding: 0 3px;
+      box-sizing: border-box;
+      opacity: 0.3;
+      transition: opacity 0.3s, padding 0.2s;
+      .ps__scrollbar-y {
+        position: relative;
+        background-color: #aaa;
+        border-radius: 20px;
+      }
+    }
+    &:hover {
+      .ps__scrollbar-y-rail {
+        opacity: 0.6;
+        &:hover {
+          padding: 0;
+        }
+      }
+    }
   }
-
 }
 
 </style>
