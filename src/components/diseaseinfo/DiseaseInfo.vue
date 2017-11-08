@@ -57,7 +57,7 @@ import { mapGetters } from 'vuex';
 import { modifyPatientDiseaseInfo } from 'api/patient.js';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import { reviseDateFormat } from 'utils/helper.js';
+import { reviseDateFormat, pruneObj } from 'utils/helper.js';
 
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 
@@ -135,6 +135,7 @@ export default {
 
       // 点击提交按钮，将修改后的 copyInfo 提交到服务器，一旦提交成功，diseaseInfo也会更新，这个时候再切换回阅读状态
       this.copyInfo.patientId = this.$route.params.id;
+      pruneObj(this.copyInfo);
       modifyPatientDiseaseInfo(this.copyInfo).then(() => {
         Bus.$emit(this.UPDATE_PATIENT_INFO);
         this.mode = this.READING_MODE;
