@@ -14,7 +14,7 @@
           </span>
           <span class="field-input" v-else>
             <span class="warning-text"></span>
-            <el-input placeholder="请输入本次影像记录的名称"></el-input>
+            <el-input v-model="name" placeholder="请输入本次影像记录的名称"></el-input>
           </span>
         </div>
         <div class="field">
@@ -28,7 +28,7 @@
           </span>
           <span class="field-input" v-else>
             <span class="warning-text"></span>
-            <el-select v-model="value" placeholder="请选择">
+            <el-select v-model="imageType" placeholder="请选择">
               <el-option
                 v-for="item in getOptions('examType')"
                 :key="item.code"
@@ -50,10 +50,10 @@
           <span class="field-input" v-else>
             <span class="warning-text"></span>
             <el-date-picker
-              v-model="value1"
+              v-model="time"
               type="date"
               placeholder="选择日期"
-              :picker-options="pickerOptions0">
+              :picker-options="pickerOptions">
             </el-date-picker>
           </span>
         </div>
@@ -66,7 +66,7 @@
           </span>
           <span class="field-input" v-else>
             <span class="warning-text"></span>
-            <el-input placeholder="请输入患者检查编号"></el-input>
+            <el-input v-model="checkNum" placeholder="请输入患者检查编号"></el-input>
           </span>
         </div>
         <div class="field">
@@ -78,7 +78,7 @@
             <span>{{checkDevice}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-input placeholder="请输入检查设备编号"></el-input>
+            <el-input v-model="checkDevice" placeholder="请输入检查设备编号"></el-input>
           </span>
         </div>
         <div class="field whole-line">
@@ -90,7 +90,7 @@
             <span>{{checkConclusion}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-input placeholder="请输入检查结论"></el-input>
+            <el-input v-model="checkConclusion" placeholder="请输入检查结论"></el-input>
           </span>
         </div>
         <div class="field whole-line">
@@ -102,11 +102,22 @@
             <span>{{remark}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-input placeholder="请输入备注信息"></el-input>
+            <el-input v-model="remark" placeholder="请输入备注信息"></el-input>
           </span>
         </div>
         <hr>
         <div class="field-file">
+          <el-upload
+            v-show="false"
+            :action="uploadUrl"
+            ref="upload"
+            :data="fileParam"
+            :multiple="true"
+            :auto-upload="false"
+            :on-success="uploadSuccess"
+            :on-error="uploadErr"
+            :file-list="totalFileList">
+          </el-upload>
           <span class="field-name">
             T1 文件:
           </span>
@@ -119,8 +130,9 @@
               :data="fileParam"
               :multiple="true"
               :auto-upload="false"
-              :on-success="uploadSuccess"
-              :on-error="uploadErr"
+              :on-change="fileChange"
+              :on-preview="handlePreview"
+              :on-remove="handleRemove"
               :file-list="fileList1">
               <el-button slot="trigger" size="small" type="text" :class="{'button-disabled': mode ==VIEW_CURRENT_CARD ? true : false}">点击上传 T1 压缩文件/源文件</el-button>
               <div slot="tip" class="el-upload__tip"></div>
@@ -140,8 +152,9 @@
               :data="fileParam"
               :multiple="true"
               :auto-upload="false"
-              :on-success="uploadSuccess"
-              :on-error="uploadErr"
+              :on-change="fileChange"
+              :on-preview="handlePreview"
+              :on-remove="handleRemove"
               :file-list="fileList2">
               <el-button slot="trigger" size="small" type="text" :class="{'button-disabled': mode ==VIEW_CURRENT_CARD ? true : false}">点击上传 T2 压缩文件/源文件</el-button>
               <div slot="tip" class="el-upload__tip"></div>
@@ -161,8 +174,9 @@
               :data="fileParam"
               :multiple="true"
               :auto-upload="false"
-              :on-success="uploadSuccess"
-              :on-error="uploadErr"
+              :on-change="fileChange"
+              :on-preview="handlePreview"
+              :on-remove="handleRemove"
               :file-list="fileList3">
               <el-button slot="trigger" size="small" type="text " :class="{'button-disabled': mode ==VIEW_CURRENT_CARD ? true : false}">点击上传 T2 Flair 压缩文件/源文件</el-button>
               <div slot="tip" class="el-upload__tip"></div>
@@ -197,21 +211,19 @@ export default {
       checkConclusion: '',
       remark: '',
       uploadUrl: baseUrl + '/fileUpload/uploadPatientAttachment',
-      pickerOptions0: {
+      pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now();
         }
       },
-      value: '',
-      value1: '',
+      totalFileList: [],
       fileList1: [],
       fileList2: [],
       fileList3: [],
       header: {
         'Content-Type': 'multipart/form-data'
       },
-      fileParam: getCommonRequest(),
-      ImgTypeData: {}
+      fileParam: getCommonRequest()
     };
   },
   computed: {
@@ -258,17 +270,23 @@ export default {
       this.mode = this.EDIT_CURRENT_CARD;
     },
     submit() {
-      this.$refs.upload2.submit();
-
+      this.$refs.upload.submit();
+      this.$refs.upload1.submit();
+      // console.log(this.$refs.upload);
+      console.log('totalFileList:', this.totalFileList);
     },
     submitUpload() {
-
+      console.log('success');
     },
     handleRemove(file, fileList) {
       console.log(file);
       console.log(fileList);
-      // this.fileList1 = fileList;
-      console.log(this.fileList1);
+      for (var i = 0; i < this.totalFileList.length; i++) {
+        if (this.totalFileList[i].uid === file.uid) {
+          this.totalFileList.splice(i, 1);
+          break;
+        }
+      }
     },
     handlePreview(file) {
       console.log(file);
@@ -296,7 +314,7 @@ export default {
       } else {
         alert('文件上传出错');
       }
-      this.$refs.upload2.clearFiles();
+      // this.$refs.upload2.clearFiles();
     },
     uploadErr(err, file, fileList) {
       console.log(err);
@@ -306,13 +324,14 @@ export default {
     fileChange(file, fileList) {
       console.log(file);
       console.log(fileList);
-      // this.fileList1 = fileList;
-      console.log(this.fileList1);
-      console.log(this.$refs.upload1);
+      this.totalFileList.push(file);
     }
   },
   mounted() {
     Bus.$on(this.SHOW_IMG_MODAL, this.showPanel);
+  },
+  beforeDestroy() {
+    Bus.$off(this.SHOW_IMG_MODAL);
   }
 };
 </script>
