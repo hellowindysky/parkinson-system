@@ -107,17 +107,6 @@
         </div>
         <hr>
         <div class="field-file">
-          <el-upload
-            v-show="false"
-            :action="uploadUrl"
-            ref="upload"
-            :data="fileParam"
-            :multiple="true"
-            :auto-upload="false"
-            :on-success="uploadSuccess"
-            :on-error="uploadErr"
-            :file-list="totalFileList">
-          </el-upload>
           <span class="field-name">
             T1 文件:
           </span>
@@ -126,15 +115,19 @@
               class="upload-demo"
               :action="uploadUrl"
               ref="upload1"
-              :disabled="mode === VIEW_CURRENT_CARD"
+              :disabled="mode===VIEW_CURRENT_CARD"
               :data="fileParam"
               :multiple="true"
               :auto-upload="false"
               :on-change="fileChange"
               :on-preview="handlePreview"
               :on-remove="handleRemove"
+              :on-success="uploadSuccess"
+              :on-error="uploadErr"
               :file-list="fileList1">
-              <el-button slot="trigger" size="small" type="text" :class="{'button-disabled': mode ==VIEW_CURRENT_CARD ? true : false}">点击上传 T1 压缩文件/源文件</el-button>
+              <el-button slot="trigger" size="small" type="text" :disabled="mode===VIEW_CURRENT_CARD">
+                点击上传 T1 压缩文件/源文件
+              </el-button>
               <div slot="tip" class="el-upload__tip"></div>
             </el-upload>
           </span>
@@ -148,15 +141,19 @@
               class="upload-demo"
               :action="uploadUrl"
               ref="upload2"
-              :disabled="mode === VIEW_CURRENT_CARD"
+              :disabled="mode===VIEW_CURRENT_CARD"
               :data="fileParam"
               :multiple="true"
               :auto-upload="false"
               :on-change="fileChange"
               :on-preview="handlePreview"
               :on-remove="handleRemove"
+              :on-success="uploadSuccess"
+              :on-error="uploadErr"
               :file-list="fileList2">
-              <el-button slot="trigger" size="small" type="text" :class="{'button-disabled': mode ==VIEW_CURRENT_CARD ? true : false}">点击上传 T2 压缩文件/源文件</el-button>
+              <el-button slot="trigger" size="small" type="text" :disabled="mode===VIEW_CURRENT_CARD">
+                点击上传 T2 压缩文件/源文件
+              </el-button>
               <div slot="tip" class="el-upload__tip"></div>
             </el-upload>
           </span>
@@ -170,15 +167,19 @@
               class="upload-demo"
               :action="uploadUrl"
               ref="upload3"
-              :disabled="mode === VIEW_CURRENT_CARD"
+              :disabled="mode===VIEW_CURRENT_CARD"
               :data="fileParam"
               :multiple="true"
               :auto-upload="false"
               :on-change="fileChange"
               :on-preview="handlePreview"
               :on-remove="handleRemove"
+              :on-success="uploadSuccess"
+              :on-error="uploadErr"
               :file-list="fileList3">
-              <el-button slot="trigger" size="small" type="text " :class="{'button-disabled': mode ==VIEW_CURRENT_CARD ? true : false}">点击上传 T2 Flair 压缩文件/源文件</el-button>
+              <el-button slot="trigger" size="small" type="text" :disabled="mode===VIEW_CURRENT_CARD">
+                点击上传 T2 Flair 压缩文件/源文件
+              </el-button>
               <div slot="tip" class="el-upload__tip"></div>
             </el-upload>
           </span>
@@ -216,8 +217,12 @@ export default {
           return time.getTime() > Date.now();
         }
       },
-      totalFileList: [],
-      fileList1: [],
+      fileList1: [
+        {
+          name: 'resumable.zip',
+          url: 'https://github.com/23/resumable.js/archive/master.zip'
+        }
+      ],
       fileList2: [],
       fileList3: [],
       header: {
@@ -270,27 +275,17 @@ export default {
       this.mode = this.EDIT_CURRENT_CARD;
     },
     submit() {
-      this.$refs.upload.submit();
       this.$refs.upload1.submit();
-      // console.log(this.$refs.upload);
-      console.log('totalFileList:', this.totalFileList);
-    },
-    submitUpload() {
-      console.log('success');
+      this.$refs.upload2.submit();
+      this.$refs.upload3.submit();
     },
     handleRemove(file, fileList) {
       console.log(file);
       console.log(fileList);
-      for (var i = 0; i < this.totalFileList.length; i++) {
-        if (this.totalFileList[i].uid === file.uid) {
-          this.totalFileList.splice(i, 1);
-          break;
-        }
-      }
     },
     handlePreview(file) {
       console.log(file);
-      console.log(this.fileList1);
+      window.location.href = file.url;
     },
     showPanel(cardOperation, item) {
       this.displayModal = true;
@@ -324,7 +319,6 @@ export default {
     fileChange(file, fileList) {
       console.log(file);
       console.log(fileList);
-      this.totalFileList.push(file);
     }
   },
   mounted() {
@@ -347,11 +341,6 @@ export default {
 @col-time-width: 200px;
 @col-amount-width: 150px;
 @col-unit-width: 150px;
-
-.button-disabled {
-  background-color: lightgray !important;
-  cursor: not-allowed;
-}
 
 .img-modal-wrapper {
   position: absolute;
