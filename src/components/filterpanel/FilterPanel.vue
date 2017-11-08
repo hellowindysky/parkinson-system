@@ -1463,6 +1463,7 @@ export default {
           id: patientId
         }
       });
+      Bus.$emit(this.UPDATE_ITEM_POSITION);
     },
     manageGroup(patientId) {
       patientId = parseInt(patientId, 10);
