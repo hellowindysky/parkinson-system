@@ -318,7 +318,6 @@ export default {
   mounted() {
     // 将省市的数据请求过来
     // this.initProCity();
-
     this.checkRoute();
 
     // 如果在某个指定了 id 的页面进行刷新，checkRoute函数内的[更新列表数据]不会执行，这个时候就需要手动更新
@@ -333,6 +332,7 @@ export default {
     Bus.$on(this.GIVE_UP, () => {
       Bus.$off(this.CONFIRM);
     });
+    Bus.$on(this.UPDATE_ITEM_POSITION, this.setScrollbarPosition);
   },
   methods: {
     search() {
@@ -352,6 +352,20 @@ export default {
           wheelSpeed: 1,
           minScrollbarLength: 40
         });
+      });
+    },
+    setScrollbarPosition() {
+      this.$nextTick(() => {
+        var patientId = this.$route.params.id;
+        var patientIdx;
+        this.myPatientsList.map(function(obj, i) {
+          if (obj.patientId === parseInt(patientId, 10)) {
+            patientIdx = i;
+            console.log(obj.patientId, parseInt(patientId, 10));
+          }
+        });
+        console.log(patientIdx);
+        this.$refs.listArea.scrollTop = patientIdx * 60;
       });
     },
     updatePatientsList(cb) {
@@ -392,6 +406,7 @@ export default {
           this.otherPatientsList = data;
         }
         this.updateScrollbar();
+        this.setScrollbarPosition();
         // 如果有回调函数作为参数传递进来了，则执行该函数
         cb && cb();
       });
