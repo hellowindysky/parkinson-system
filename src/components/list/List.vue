@@ -361,10 +361,8 @@ export default {
         this.myPatientsList.map(function(obj, i) {
           if (obj.patientId === parseInt(patientId, 10)) {
             patientIdx = i;
-            console.log(obj.patientId, parseInt(patientId, 10));
           }
         });
-        console.log(patientIdx);
         this.$refs.listArea.scrollTop = patientIdx * 60;
       });
     },
