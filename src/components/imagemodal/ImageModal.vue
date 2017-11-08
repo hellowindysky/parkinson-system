@@ -328,7 +328,8 @@ export default {
         Ps.destroy(this.$refs.scrollArea);
         Ps.initialize(this.$refs.scrollArea, {
           wheelSpeed: 1,
-          minScrollbarLength: 40
+          minScrollbarLength: 40,
+          suppressScrollX: true
         });
       });
     }
@@ -346,7 +347,7 @@ export default {
 <style lang="less">
 @import "~styles/variables.less";
 
-@field-height: 40px;
+@field-height: 45px;
 @field-name-width: 110px;
 @long-field-name-width: 160px;
 
@@ -378,18 +379,19 @@ export default {
     }
     .content {
       text-align: left;
+      font-size: 0;
       hr {
         border-style: none;
         border-top: 1px solid @light-gray-color;
         margin-bottom: 15px;
       }
       .field {
-        padding: 5px 0;
-        text-align: left;
         display: inline-block;
         position: relative;
-        width: 49%;
+        padding: 5px 0;
+        width: 50%;
         height: @field-height;
+        box-sizing: border-box;
         text-align: left;
         transform: translateX(10px); // 这一行是为了修补视觉上的偏移
         &.whole-line {
@@ -480,16 +482,26 @@ export default {
         }
       }
       .field-file {
-        display: flex;
+        margin-bottom: 20px;
         transform: translateX(10px);
-        padding-right:24px;
-        margin-bottom:10px;
         .field-name {
-          flex:2;
-          line-height: 26px;
+          display: inline-block;
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: @field-name-width;
+          line-height: 30px;
+          font-size: @normal-font-size;
+          color: @font-color;
         }
         .field-input {
-          flex:10;
+          display: block;
+          position: relative;
+          left: @field-name-width;
+          width: 96%;
+          padding-right: @field-name-width;
+          box-sizing: border-box;
+          font-size: @normal-font-size;
           .upload-demo {
             .el-upload {
               width: 100%;
