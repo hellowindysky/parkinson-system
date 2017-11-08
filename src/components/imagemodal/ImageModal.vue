@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="img-modal-wrapper" v-show="displayModal">
-    <div class="img-modal">
+    <div class="img-modal" ref="scrollArea">
       <h3 class="title">{{title}}</h3>
       <div class="content">
         <div class="field whole-line">
@@ -194,6 +194,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import { baseUrl, getCommonRequest } from 'api/common.js';
@@ -282,6 +283,7 @@ export default {
     handleRemove(file, fileList) {
       console.log(file);
       console.log(fileList);
+      this.updateScrollbar();
     },
     handlePreview(file) {
       console.log(file);
@@ -319,10 +321,21 @@ export default {
     fileChange(file, fileList) {
       console.log(file);
       console.log(fileList);
+      this.updateScrollbar();
+    },
+    updateScrollbar() {
+      this.$nextTick(() => {
+        Ps.destroy(this.$refs.scrollArea);
+        Ps.initialize(this.$refs.scrollArea, {
+          wheelSpeed: 1,
+          minScrollbarLength: 40
+        });
+      });
     }
   },
   mounted() {
     Bus.$on(this.SHOW_IMG_MODAL, this.showPanel);
+    this.updateScrollbar();
   },
   beforeDestroy() {
     Bus.$off(this.SHOW_IMG_MODAL);
@@ -528,8 +541,29 @@ export default {
         margin-top: 30px;
       }
     }
+    .ps__scrollbar-y-rail {
+      position: absolute;
+      width: 15px;
+      right: 0;
+      padding: 0 3px;
+      box-sizing: border-box;
+      opacity: 0.3;
+      transition: opacity 0.3s, padding 0.2s;
+      .ps__scrollbar-y {
+        position: relative;
+        background-color: #aaa;
+        border-radius: 20px;
+      }
+    }
+    &:hover {
+      .ps__scrollbar-y-rail {
+        opacity: 0.6;
+        &:hover {
+          padding: 0;
+        }
+      }
+    }
   }
-
 }
 
 </style>
