@@ -972,7 +972,7 @@ export default {
       'deviceInfo',
       'surgicalTypeList',
       'complicationTypeList',
-      'scaleList',
+      'allScale',
       'neurologicCheckTypeList',
       'bioexamTypeList'
     ]),
@@ -1235,9 +1235,9 @@ export default {
           }
         }
       } else if (fieldName === 'scaleName') {
-        for (let scale of this.scaleList) {
+        for (let scale of this.allScale) {
           options.push({
-            code: scale.id,
+            code: scale.scaleInfoId,
             name: scale.gaugeName
           });
         }
