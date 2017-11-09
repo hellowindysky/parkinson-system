@@ -13,20 +13,20 @@
     </div>
 
     <div class="list-area" ref="listArea">
-      <div v-if="this.listType === MY_PATIENTS_TYPE">
+      <div v-if="listType === MY_PATIENTS_TYPE">
         <patient-list-item class="item" v-for="patient in myPatientsList" :patient="patient" :key="patient.patientId"></patient-list-item>
       </div>
-      <div v-else-if="this.listType === GROUP_TYPE">
+      <div v-else-if="listType === GROUP_TYPE">
         <group-list-item v-for="group in groupList" :group="group" :mode="listMode" :key="group.groupId"
           @select="addToSelectedGroupList(group.groupId)" @unselect="removeFromSelectedGroupList(group.groupId)"></group-list-item>
       </div>
-      <div v-else-if="this.listType === OTHER_PATIENTS_TYPE">
+      <div v-else-if="listType === OTHER_PATIENTS_TYPE">
         <patient-list-item class="item" v-for="patient in otherPatientsList" :patient="patient" :key="patient.patientId"></patient-list-item>
       </div>
-      <div v-else-if="this.listType === 'users'">
+      <div v-else-if="listType === 'users'">
         <user-list-item class="item" v-for="user in userList" :user="user" :key="user.id"></user-list-item>
       </div>
-      <div v-else-if="this.listType === 'roles'">
+      <div v-else-if="listType === 'roles'">
         <role-list-item class="item" v-for="role in roleList" :role="role" :key="role.id"></role-list-item>
       </div>
     </div>
@@ -63,7 +63,7 @@
 
     <transition name="slide-fade">
       <el-form class="filter-panel" :model="filterPatientsForm" :rules="rules" ref="filterPatientsForm"
-      label-width="20%"  v-show="panelDisplay && (this.listType === MY_PATIENTS_TYPE || this.listType === OTHER_PATIENTS_TYPE)">
+      label-width="20%"  v-show="panelDisplay && (listType === MY_PATIENTS_TYPE || listType === OTHER_PATIENTS_TYPE)">
         <el-form-item label="分组" prop="group" class="item">
           <el-select v-model="filterPatientsForm.group">
             <el-option label="不限" :value="-1"></el-option>
@@ -118,7 +118,7 @@
     </transition>
     <transition name="slide-fade">
       <el-form class="filter-panel" :model="filterGroupsForm" :rules="rules" ref="filterGroupsForm"
-      label-width="20%" v-show="panelDisplay && this.listType === GROUP_TYPE">
+      label-width="20%" v-show="panelDisplay && listType === GROUP_TYPE">
         <el-form-item label="分类" prop="groupType" class="item">
           <el-select v-model="filterGroupsForm.groupType">
             <el-option label="不限" :value="-1"></el-option>
@@ -134,7 +134,7 @@
     </transition>
     <transition name="slide-fade">
       <el-form class="filter-panel" :model="filterUsersForm" :rules="rules" ref="filterUsersForm"
-        label-width="20%" v-show="panelDisplay && this.listType === 'users'">
+        label-width="20%" v-show="panelDisplay && listType === 'users'">
         <el-form-item label="分组" prop="type" class="item">
           <el-select v-model="filterUsersForm.type">
             <el-option label="全部" value="all"></el-option>
@@ -167,7 +167,7 @@
     </transition>
     <transition name="slide-fade">
       <el-form class="filter-panel" :model="filterRolesForm" :rules="rules" ref="filterRolesForm"
-      label-width="20%"  v-show="panelDisplay && this.listType === 'roles'">
+      label-width="20%"  v-show="panelDisplay && listType === 'roles'">
         <el-form-item label="分类" prop="type" class="item">
           <el-select v-model="filterUsersForm.type">
             <el-option label="全部" value="all"></el-option>
