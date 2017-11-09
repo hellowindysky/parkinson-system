@@ -112,7 +112,13 @@
           </span>
           <span class="field-input">
             <div class="last-files">
-
+              <div class="last-files-title">已上传的 T1 文件</div>
+              <div class="file" :class="{'editing': mode!==VIEW_CURRENT_CARD}" v-for="file in t1"
+                @click="downloadFile(file)">
+                <i class="el-icon-document icon"></i>
+                <span class="file-name">{{file.attachmenTtitle}}</span>
+                <i class="close-button iconfont icon-cancel" @click="removeFile(file)"></i>
+              </div>
             </div>
             <el-upload
               class="upload-area"
@@ -141,6 +147,15 @@
             T2 文件:
           </span>
           <span class="field-input">
+            <div class="last-files">
+              <div class="last-files-title">已上传的 T2 文件</div>
+              <div class="file" :class="{'editing': mode!==VIEW_CURRENT_CARD}" v-for="file in t2"
+                @click="downloadFile(file)">
+                <i class="el-icon-document icon"></i>
+                <span class="file-name">{{file.attachmenTtitle}}</span>
+                <i class="close-button iconfont icon-cancel" @click="removeFile(file)"></i>
+              </div>
+            </div>
             <el-upload
               class="upload-area"
               :action="uploadUrl"
@@ -168,6 +183,15 @@
             T2 Flair 文件:
           </span>
           <span class="field-input">
+            <div class="last-files">
+              <div class="last-files-title">已上传的 T2 Flair 文件</div>
+              <div class="file" :class="{'editing': mode!==VIEW_CURRENT_CARD}" v-for="file in t2Flair"
+                @click="downloadFile(file)">
+                <i class="el-icon-document icon"></i>
+                <span class="file-name">{{file.attachmenTtitle}}</span>
+                <i class="close-button iconfont icon-cancel" @click="removeFile(file)"></i>
+              </div>
+            </div>
             <el-upload
               class="upload-area"
               :action="uploadUrl"
@@ -288,6 +312,14 @@ export default {
       this.$refs.upload2.submit();
       this.$refs.upload3.submit();
       this.displayModal = false;
+    },
+    removeFile(file) {
+      console.log(file);
+      this.updateScrollbar();
+    },
+    downloadFile(file) {
+      console.log(file.realPath);
+      // window.location.href = file.realPath;
     },
     handleRemove(file, fileList) {
       console.log(file);
@@ -486,7 +518,7 @@ export default {
           left: 0;
           top: 0;
           width: @field-name-width;
-          line-height: 30px;
+          line-height: 20px;
           font-size: @normal-font-size;
           color: @font-color;
         }
@@ -498,17 +530,67 @@ export default {
           padding-right: @field-name-width;
           box-sizing: border-box;
           font-size: @normal-font-size;
+          .last-files {
+            margin-bottom: 10px;
+            width: 100%;
+            .last-files-title {
+              margin-bottom: 5px;
+              height: 30px;
+              line-height: 30px;
+              border-radius: 5px;
+              background-color: @light-font-color;
+              color: #fff;
+              text-align: center;
+              cursor: default;
+            }
+            .file {
+              position: relative;
+              padding-left: 5px;
+              height: 30px;
+              line-height: 30px;
+              transition: 0.2s;
+              cursor: default;
+              .icon {
+                display: inline-block;
+                width: 20px;
+              }
+              .file-name {
+                display: inline-block;
+              }
+              .close-button {
+                display: none;
+                position: absolute;
+                right: 0;
+                width: 22px;
+                text-align: center;
+                color: @light-font-color;
+                font-size: 13px;
+              }
+              &.editing {
+                cursor: pointer;
+                &:hover {
+                  background-color: @screen-color;
+                  .close-button {
+                    display: inline-block;
+                    &:hover {
+                      color: @font-color;
+                    }
+                  }
+                }
+              }
+            }
+          }
           .upload-area {
             .el-upload {
               width: 100%;
               .el-button {
                 width: 100%;
                 &.el-button--text {
-                  background-color:@font-color;
-                  color:#fff;
+                  background-color: @font-color;
+                  color: #fff;
                   &:disabled {
-                    background-color:lightgray;
-                    cursor:not-allowed;
+                    background-color: @gray-color;
+                    cursor: not-allowed;
                   }
                 }
               }
