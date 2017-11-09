@@ -398,9 +398,9 @@ export default {
         condition.ageTo = filterForm.maxAge;
       }
       getPatientList(condition).then((data) => {
-        if (this.listType === this.MY_PATIENTS_TYPE) {
+        if (this.listType === this.MY_PATIENTS_TYPE && data) {
           this.myPatientsList = data;
-        } else if (this.listType === this.OTHER_PATIENTS_TYPE) {
+        } else if (this.listType === this.OTHER_PATIENTS_TYPE && data) {
           this.otherPatientsList = data;
         }
         this.updateScrollbar();
@@ -861,6 +861,7 @@ export default {
   .filter-panel {
     position: absolute;
     top: @search-area-height + @control-area-height + @vertical-spacing;
+    left: @list-left-padding;
     margin-right: @list-right-padding;
     width: calc(~"100% - @{list-left-padding} - @{list-right-padding}");
     height: calc(~"100% - @{search-area-height} - @{control-area-height} - @{vertical-spacing}");
