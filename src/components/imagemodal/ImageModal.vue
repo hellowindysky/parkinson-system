@@ -279,6 +279,7 @@ export default {
       this.$refs.upload1.submit();
       this.$refs.upload2.submit();
       this.$refs.upload3.submit();
+      this.displayModal = false;
     },
     handleRemove(file, fileList) {
       console.log(file);
