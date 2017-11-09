@@ -45,12 +45,12 @@
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span class="warning-text"></span>
-            <span>{{time}}</span>
+            <span>{{checkDate}}</span>
           </span>
           <span class="field-input" v-else>
             <span class="warning-text"></span>
             <el-date-picker
-              v-model="time"
+              v-model="checkDate"
               type="date"
               placeholder="选择日期"
               :picker-options="pickerOptions">
@@ -99,20 +99,23 @@
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span class="warning-text"></span>
-            <span>{{remark}}</span>
+            <span>{{remarks}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-input v-model="remark" placeholder="请输入备注信息"></el-input>
+            <el-input v-model="remarks" placeholder="请输入备注信息"></el-input>
           </span>
         </div>
-        <hr>
+        <hr class="seperate-line">
         <div class="field-file">
           <span class="field-name">
             T1 文件:
           </span>
           <span class="field-input">
+            <div class="last-files">
+
+            </div>
             <el-upload
-              class="upload-demo"
+              class="upload-area"
               :action="uploadUrl"
               ref="upload1"
               :disabled="mode===VIEW_CURRENT_CARD"
@@ -132,13 +135,14 @@
             </el-upload>
           </span>
         </div>
+        <hr class="seperate-line">
         <div class="field-file">
           <span class="field-name">
             T2 文件:
           </span>
           <span class="field-input">
             <el-upload
-              class="upload-demo"
+              class="upload-area"
               :action="uploadUrl"
               ref="upload2"
               :disabled="mode===VIEW_CURRENT_CARD"
@@ -158,13 +162,14 @@
             </el-upload>
           </span>
         </div>
+        <hr class="seperate-line">
         <div class="field-file">
           <span class="field-name">
             T2 Flair 文件:
           </span>
           <span class="field-input">
             <el-upload
-              class="upload-demo"
+              class="upload-area"
               :action="uploadUrl"
               ref="upload3"
               :disabled="mode===VIEW_CURRENT_CARD"
@@ -207,11 +212,14 @@ export default {
       name: '',
       patientAttachmentId: '',
       imageType: '',
-      time: '',
+      checkDate: '',
       checkNum: '',
       checkDevice: '',
       checkConclusion: '',
-      remark: '',
+      remarks: '',
+      t1: [],
+      t2: [],
+      t2Flair: [],
       uploadUrl: baseUrl + '/fileUpload/uploadPatientAttachment',
       pickerOptions: {
         disabledDate(time) {
@@ -295,14 +303,17 @@ export default {
       this.mode = cardOperation;
       console.log(item);
       if (this.mode !== this.ADD_NEW_CARD) {
-        this.name = item.name ? item.name : '';
+        this.name = item.title ? item.title : '';
         this.patientAttachmentId = item.patientAttachmentId ? item.patientAttachmentId : '';
-        this.time = item.time ? item.time : '';
-        this.imageType = (item.patientImageReq && item.patientImageReq.imageType) ? item.patientImageReq.imageType : '';
-        this.checkNum = (item.patientImageReq && item.patientImageReq.checkNum) ? item.patientImageReq.checkNum : '';
-        this.checkDevice = (item.patientImageReq && item.patientImageReq.checkDevice) ? item.patientImageReq.checkDevice : '';
-        this.checkConclusion = (item.patientImageReq && item.patientImageReq.checkConclusion) ? item.patientImageReq.checkConclusion : '';
-        this.remark = item.remark ? item.remark : '';
+        this.checkDate = item.checkDate ? item.checkDate : '';
+        this.imageType = item.imageType ? item.imageType : '';
+        this.checkNum = item.checkNum ? item.checkNum : '';
+        this.checkDevice = item.checkDevice ? item.checkDevice : '';
+        this.checkConclusion = item.checkConclusion ? item.checkConclusion : '';
+        this.remarks = item.remarks ? item.remarks : '';
+        this.t1 = item.t1 ? item.t1 : [];
+        this.t2 = item.t2 ? item.t2 : [];
+        this.t2Flair = item.t2Flair ? item.t2Flair : [];
       }
     },
     uploadSuccess(response, file, fileList) {
@@ -381,7 +392,7 @@ export default {
     .content {
       text-align: left;
       font-size: 0;
-      hr {
+      .seperate-line {
         border-style: none;
         border-top: 1px solid @light-gray-color;
         margin-bottom: 15px;
@@ -464,22 +475,6 @@ export default {
           .warning .el-textarea__inner {
             border: 1px solid red;
           }
-          .upload-demo {
-            .el-upload {
-              width: 100%;
-              .el-button {
-                width: 100%;
-                &.el-button--text {
-                  background-color: @font-color;
-                  color: #fff;
-                }
-              }
-            }
-            .el-upload__tip {
-              line-height: normal;
-              margin-top: 0;
-            }
-          }
         }
       }
       .field-file {
@@ -503,7 +498,7 @@ export default {
           padding-right: @field-name-width;
           box-sizing: border-box;
           font-size: @normal-font-size;
-          .upload-demo {
+          .upload-area {
             .el-upload {
               width: 100%;
               .el-button {
@@ -523,8 +518,8 @@ export default {
               margin-top:0;
             }
             .el-upload-list {
-              max-height: 80px;
-              overflow-y: scroll;
+              // max-height: 80px;
+              // overflow-y: scroll;
             }
           }
         }

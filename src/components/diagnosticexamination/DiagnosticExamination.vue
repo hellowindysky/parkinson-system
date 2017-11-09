@@ -137,19 +137,19 @@
 <!-- 医学影像 -->
       <extensible-panel class="panel image-panel" :mode="mutableMode" :title="medicalImagingTitle" v-on:addNewCard="addImgRecord" :editable="canEdit">
         <card class="card image-card" :class="cardWidth" :mode="mutableMode" v-for="(item,idx) in medicalImagingList" :key="idx"
-         :title="item.name" v-on:editCurrentCard="editImgRecord(item)" v-on:viewCurrentCard="viewImgRecord(item)"
+         :title="item.title" v-on:editCurrentCard="editImgRecord(item)" v-on:viewCurrentCard="viewImgRecord(item)"
          v-on:deleteCurrentCard="deleteEmgRecord(item)">
           <div class="text first-line">
-            <span class="name">{{item.time}}</span>
-            <!-- <span class="value">{{transformEmgType(item.etgType)}}</span> -->
-            <!-- <span class="value">{{item.time}}</span> -->
+            <span class="name">类型</span>
+            <span class="value">{{transformMedicalImagingType(item.imageType)}}</span>
           </div>
           <div class="text second-line">
-            <span class="name">{{transformMedicalImagingType(item.patientImageReq.imageType)}}</span>
-            <!-- <span class="value">{{item.patientImageReq.imageType}}</span> -->
+            <span class="name">编号</span>
+            <span class="value">{{item.checkNum}}</span>
           </div>
           <div class="text third-line">
-            <span class="name">{{item.patientImageReq.checkNum}}</span>
+            <span class="name">日期</span>
+            <span class="value">{{item.checkDate}}</span>
           </div>
 
         </card>
@@ -368,7 +368,6 @@ export default {
       // 在 tableData 中找到对应的值
       var imageInfo = Util.getElement('typegroupcode', 'examType', this.typeGroup);
       var types = imageInfo.types ? imageInfo.types : [];
-      typeId = 8;
       var name = Util.getElement('typeCode', parseInt(typeId, 10), types).typeName;
       return name;
       // return typeId;
