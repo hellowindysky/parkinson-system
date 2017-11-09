@@ -398,10 +398,10 @@ export default {
         condition.ageTo = filterForm.maxAge;
       }
       getPatientList(condition).then((data) => {
-        if (this.listType === this.MY_PATIENTS_TYPE && data) {
+        if (this.listType === this.MY_PATIENTS_TYPE) {
           this.myPatientsList = data;
-        } else if (this.listType === this.OTHER_PATIENTS_TYPE && data) {
-          this.otherPatientsList = data;
+        } else if (this.listType === this.OTHER_PATIENTS_TYPE) {
+          this.otherPatientsList = data ? data : [];
         }
         this.updateScrollbar();
         this.setScrollbarPosition();
@@ -419,7 +419,7 @@ export default {
         condition.groupeName = this.searchInput.trim();
       }
       getGroupList(condition).then((data) => {
-        this.groupList = data;
+        this.groupList = data ? data : [];
         cb && cb();
       });
       this.updateScrollbar();
