@@ -227,6 +227,7 @@ export default {
       this.checkRoute();
       this.displayGroupPanel = false;  // 路由变化时，关闭分组面板
       this.$refs.scrollArea.scrollTop = 0;  // 切换自组件时，滚动条还原到顶部
+      this.updateScrollbar();
     }
   },
   beforeDestroy() {

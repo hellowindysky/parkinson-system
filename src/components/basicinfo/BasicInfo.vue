@@ -355,6 +355,9 @@ export default {
       // 这样一来，编辑状态下修改 copyInfo 对象的属性时，就不会影响到 basicInfo 对象本身。
       // 如果组件的 basicInfo 属性发生变化，copyInfo 对象就会重置，而我们对 copyInfo 所做的还未提交的修改则会丢失。
       this.shallowCopy(newBasicInfo);
+    },
+    basicInfoTemplateGroups: function() {
+      Bus.$emit(this.SCREEN_SIZE_CHANGE);
     }
   },
   mounted() {
