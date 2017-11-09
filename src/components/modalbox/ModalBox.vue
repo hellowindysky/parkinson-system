@@ -52,7 +52,7 @@
           </span>
           <span v-else-if="getUIType(field)===6">
             <el-date-picker v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}" type="date"
-             :placeholder="getMatchedField(field).cnFieldDesc" format="yyyy-MM-dd" @change="updateWarning(field)"></el-date-picker>
+             :placeholder="getMatchedField(field).cnFieldDesc" :picker-options="pickerOptions0" format="yyyy-MM-dd" @change="updateWarning(field)"></el-date-picker>
           </span>
         </span>
       </div>
@@ -94,7 +94,12 @@ export default {
       title: '',
       copyInfo: {},
       warningResults: {},
-      lockSubmitButton: false   // 这个变量用来锁住确定按钮，避免短时间内多次点击造成重复提交
+      lockSubmitButton: false,   // 这个变量用来锁住确定按钮，避免短时间内多次点击造成重复提交
+      pickerOptions0: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        }
+      }
     };
   },
   computed: {
@@ -194,7 +199,6 @@ export default {
   methods: {
     showPanel(cardOperation, title, originalInfo, modalType) {
       this.displayModal = true;
-
       // 由 cardOperation 来决定，到底是新增记录，浏览记录，还是修改记录
       // 这三个值分别为 this.ADD_NEW_CARD, this.VIEW_CURRENT_CARD, this.EDIT_CURRENT_CARD
       this.mode = cardOperation;
@@ -254,8 +258,29 @@ export default {
         if (this.warningResults[fieldName]) {
           return false;
         }
+      };
+      var startTime;
+      var endTime;
+      if (this.modalType === this.PERSON_HISTORY_MODAL) {
+        startTime = this.copyInfo.startTime;
+        endTime = this.copyInfo.endTime;
+      };
+      if (this.modalType === this.DISEASE_HISTORY_MODAL) {
+        startTime = this.copyInfo.beginTime;
+        endTime = this.copyInfo.endTime;
+      };
+      if (this.modalType === this.MEDICINE_HISTORY_MODAL) {
+        startTime = this.copyInfo.medStart;
+        endTime = this.copyInfo.medEnd;
+      };
+      if (startTime >= endTime) {
+        this.$message({
+          message: '结束日期必须大于开始日期',
+          type: 'warning',
+          duration: 2000
+        });
+        return;
       }
-
       // 准备提交之前，需要将日期格式调整成符合服务器传输的字符串
       for (let field of this.template) {
         if (this.getUIType(field) === 6) {
@@ -263,7 +288,6 @@ export default {
           this.copyInfo[field.fieldName] = Util.simplifyDate(dateStr);
         }
       }
-
       this.copyInfo.patientId = parseInt(this.$route.params.id, 10);
       // 到这里，检验合格，准备提交数据了
       // 发出请求之前，先将“确定”按钮锁住

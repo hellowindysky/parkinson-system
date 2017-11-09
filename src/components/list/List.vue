@@ -682,12 +682,12 @@ export default {
     .search-input {
       float: left;
       width: 180px;
-      padding-left: 5px;
-      padding-right: 5px;
+      padding: 5px;
+      // padding-right: 5px;
       border-radius: 0;
       border: none;
       border-bottom: 1px solid @light-gray-color;
-      line-height: 1.6 * @normal-font-size;
+      // line-height: 1.6 * @normal-font-size;
       vertical-align: middle;
       color: @light-font-color;
       outline: none;
