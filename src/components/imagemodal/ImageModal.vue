@@ -116,7 +116,7 @@
               <div class="file" :class="{'editing': mode!==VIEW_CURRENT_CARD}" v-for="file in t1">
                 <i class="el-icon-document icon"></i>
                 <span class="file-name" @click="downloadFile(file)">{{file.fileName}}</span>
-                <i class="close-button iconfont icon-cancel" @click="removeFile(file, newT1)"></i>
+                <i class="close-button iconfont icon-cancel" @click="removeFile(file, t1, newT1)"></i>
               </div>
             </div>
             <el-upload
@@ -151,7 +151,7 @@
               <div class="file" :class="{'editing': mode!==VIEW_CURRENT_CARD}" v-for="file in t2">
                 <i class="el-icon-document icon"></i>
                 <span class="file-name" @click="downloadFile(file)">{{file.fileName}}</span>
-                <i class="close-button iconfont icon-cancel" @click="removeFile(file, newT2)"></i>
+                <i class="close-button iconfont icon-cancel" @click="removeFile(file, t2, newT2)"></i>
               </div>
             </div>
             <el-upload
@@ -186,7 +186,7 @@
               <div class="file" :class="{'editing': mode!==VIEW_CURRENT_CARD}" v-for="file in t2Flair">
                 <i class="el-icon-document icon"></i>
                 <span class="file-name" @click="downloadFile(file)">{{file.fileName}}</span>
-                <i class="close-button iconfont icon-cancel" @click="removeFile(file, newT2Flair)"></i>
+                <i class="close-button iconfont icon-cancel" @click="removeFile(file, t2Flair, newT2Flair)"></i>
               </div>
             </div>
             <el-upload
@@ -390,11 +390,17 @@ export default {
       Bus.$emit(this.UPDATE_CASE_INFO);
       this.displayModal = false;
     },
-    removeFile(file, list) {
-      console.log(file);
-      for (var i = 0; i < list.length; i++) {
-        if (file.id === list[i].id) {
-          list.splice(i, 1);
+    removeFile(file, showingList, transferringList) {
+      // console.log(file);
+      for (let i = 0; i < showingList.length; i++) {
+        if (file.id === showingList[i].id) {
+          showingList.splice(i, 1);
+          break;
+        }
+      }
+      for (let i = 0; i < transferringList.length; i++) {
+        if (file.id === transferringList[i].id) {
+          transferringList.splice(i, 1);
           break;
         }
       }
@@ -425,7 +431,7 @@ export default {
     },
     handlePreview(file) {
       console.log(file);
-      window.location.href = file.url;
+      // window.location.href = file.url;
     },
     uploadT1Success(response, file, fileList) {
       this.uploadSuccess(response, file, fileList, this.newT1);
@@ -631,8 +637,7 @@ export default {
               margin-bottom: 5px;
               height: 30px;
               line-height: 30px;
-              border-radius: 5px;
-              background-color: @light-font-color;
+              background-color: @font-color;
               color: #fff;
               text-align: center;
               cursor: default;
@@ -684,10 +689,19 @@ export default {
           .upload-area {
             .el-upload {
               width: 100%;
+              text-align: left;
               .el-button {
                 width: 100%;
+                height: 30px;
+                border-radius: 10px;
+                &:hover {
+                  opacity: 0.7;
+                }
+                &:active {
+                  opacity: 0.85;
+                }
                 &.el-button--text {
-                  background-color: @font-color;
+                  background-color: @light-font-color;
                   color: #fff;
                   &:disabled {
                     background-color: @gray-color;
