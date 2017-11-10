@@ -116,7 +116,7 @@
               <div class="file" :class="{'editing': mode!==VIEW_CURRENT_CARD}" v-for="file in t1"
                 @click="downloadFile(file)">
                 <i class="el-icon-document icon"></i>
-                <span class="file-name">{{file.attachmenTtitle}}</span>
+                <span class="file-name">{{file.fileName}}</span>
                 <i class="close-button iconfont icon-cancel" @click="removeFile(file)"></i>
               </div>
             </div>
@@ -127,7 +127,7 @@
               :disabled="mode===VIEW_CURRENT_CARD"
               :data="fileParam"
               :multiple="true"
-              :auto-upload="false"
+              :auto-upload="true"
               :on-change="fileChange"
               :on-preview="handlePreview"
               :on-remove="handleRemove"
@@ -152,7 +152,7 @@
               <div class="file" :class="{'editing': mode!==VIEW_CURRENT_CARD}" v-for="file in t2"
                 @click="downloadFile(file)">
                 <i class="el-icon-document icon"></i>
-                <span class="file-name">{{file.attachmenTtitle}}</span>
+                <span class="file-name">{{file.fileName}}</span>
                 <i class="close-button iconfont icon-cancel" @click="removeFile(file)"></i>
               </div>
             </div>
@@ -163,7 +163,7 @@
               :disabled="mode===VIEW_CURRENT_CARD"
               :data="fileParam"
               :multiple="true"
-              :auto-upload="false"
+              :auto-upload="true"
               :on-change="fileChange"
               :on-preview="handlePreview"
               :on-remove="handleRemove"
@@ -188,7 +188,7 @@
               <div class="file" :class="{'editing': mode!==VIEW_CURRENT_CARD}" v-for="file in t2Flair"
                 @click="downloadFile(file)">
                 <i class="el-icon-document icon"></i>
-                <span class="file-name">{{file.attachmenTtitle}}</span>
+                <span class="file-name">{{file.fileName}}</span>
                 <i class="close-button iconfont icon-cancel" @click="removeFile(file)"></i>
               </div>
             </div>
@@ -199,7 +199,7 @@
               :disabled="mode===VIEW_CURRENT_CARD"
               :data="fileParam"
               :multiple="true"
-              :auto-upload="false"
+              :auto-upload="true"
               :on-change="fileChange"
               :on-preview="handlePreview"
               :on-remove="handleRemove"
@@ -244,7 +244,7 @@ export default {
       t1: [],
       t2: [],
       t2Flair: [],
-      uploadUrl: baseUrl + '/fileUpload/uploadPatientAttachment',
+      uploadUrl: baseUrl + '/upload/uploadAttachment',
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now();
