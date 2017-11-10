@@ -113,11 +113,10 @@
           <span class="field-input">
             <div class="last-files">
               <div class="last-files-title">已上传的 T1 文件</div>
-              <div class="file" :class="{'editing': mode!==VIEW_CURRENT_CARD}" v-for="file in t1"
-                @click="downloadFile(file)">
+              <div class="file" :class="{'editing': mode!==VIEW_CURRENT_CARD}" v-for="file in t1">
                 <i class="el-icon-document icon"></i>
-                <span class="file-name">{{file.fileName}}</span>
-                <i class="close-button iconfont icon-cancel" @click="removeFile(file)"></i>
+                <span class="file-name" @click="downloadFile(file)">{{file.fileName}}</span>
+                <i class="close-button iconfont icon-cancel" @click="removeFile(file, t1, newT1)"></i>
               </div>
             </div>
             <el-upload
@@ -130,11 +129,11 @@
               :auto-upload="true"
               :on-change="fileChange"
               :on-preview="handlePreview"
-              :on-remove="handleRemove"
-              :on-success="uploadSuccess"
+              :on-remove="handleT1Remove"
+              :on-success="uploadT1Success"
               :on-error="uploadErr"
               :file-list="fileList1">
-              <el-button slot="trigger" size="small" type="text" :disabled="mode===VIEW_CURRENT_CARD">
+              <el-button slot="trigger" size="small" type="text" :disabled="mode===VIEW_CURRENT_CARD" v-show="mode!==VIEW_CURRENT_CARD">
                 点击上传 T1 压缩文件/源文件
               </el-button>
               <div slot="tip" class="el-upload__tip"></div>
@@ -149,11 +148,10 @@
           <span class="field-input">
             <div class="last-files">
               <div class="last-files-title">已上传的 T2 文件</div>
-              <div class="file" :class="{'editing': mode!==VIEW_CURRENT_CARD}" v-for="file in t2"
-                @click="downloadFile(file)">
+              <div class="file" :class="{'editing': mode!==VIEW_CURRENT_CARD}" v-for="file in t2">
                 <i class="el-icon-document icon"></i>
-                <span class="file-name">{{file.fileName}}</span>
-                <i class="close-button iconfont icon-cancel" @click="removeFile(file)"></i>
+                <span class="file-name" @click="downloadFile(file)">{{file.fileName}}</span>
+                <i class="close-button iconfont icon-cancel" @click="removeFile(file, t2, newT2)"></i>
               </div>
             </div>
             <el-upload
@@ -166,11 +164,11 @@
               :auto-upload="true"
               :on-change="fileChange"
               :on-preview="handlePreview"
-              :on-remove="handleRemove"
-              :on-success="uploadSuccess"
+              :on-remove="handleT2Remove"
+              :on-success="uploadT2Success"
               :on-error="uploadErr"
               :file-list="fileList2">
-              <el-button slot="trigger" size="small" type="text" :disabled="mode===VIEW_CURRENT_CARD">
+              <el-button slot="trigger" size="small" type="text" :disabled="mode===VIEW_CURRENT_CARD" v-show="mode!==VIEW_CURRENT_CARD">
                 点击上传 T2 压缩文件/源文件
               </el-button>
               <div slot="tip" class="el-upload__tip"></div>
@@ -185,11 +183,10 @@
           <span class="field-input">
             <div class="last-files">
               <div class="last-files-title">已上传的 T2 Flair 文件</div>
-              <div class="file" :class="{'editing': mode!==VIEW_CURRENT_CARD}" v-for="file in t2Flair"
-                @click="downloadFile(file)">
+              <div class="file" :class="{'editing': mode!==VIEW_CURRENT_CARD}" v-for="file in t2Flair">
                 <i class="el-icon-document icon"></i>
-                <span class="file-name">{{file.fileName}}</span>
-                <i class="close-button iconfont icon-cancel" @click="removeFile(file)"></i>
+                <span class="file-name" @click="downloadFile(file)">{{file.fileName}}</span>
+                <i class="close-button iconfont icon-cancel" @click="removeFile(file, t2Flair, newT2Flair)"></i>
               </div>
             </div>
             <el-upload
@@ -202,11 +199,11 @@
               :auto-upload="true"
               :on-change="fileChange"
               :on-preview="handlePreview"
-              :on-remove="handleRemove"
-              :on-success="uploadSuccess"
+              :on-remove="handleT2FlairRemove"
+              :on-success="uploadT2FlairSuccess"
               :on-error="uploadErr"
               :file-list="fileList3">
-              <el-button slot="trigger" size="small" type="text" :disabled="mode===VIEW_CURRENT_CARD">
+              <el-button slot="trigger" size="small" type="text" :disabled="mode===VIEW_CURRENT_CARD" v-show="mode!==VIEW_CURRENT_CARD">
                 点击上传 T2 Flair 压缩文件/源文件
               </el-button>
               <div slot="tip" class="el-upload__tip"></div>
@@ -226,7 +223,9 @@ import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
+import { reviseDateFormat, pruneObj } from 'utils/helper.js';
 import { baseUrl, getCommonRequest } from 'api/common.js';
+import { addImage, modifyImage } from 'api/patient.js';
 
 export default {
   data() {
@@ -244,18 +243,16 @@ export default {
       t1: [],
       t2: [],
       t2Flair: [],
+      newT1: [],
+      newT2: [],
+      newT2Flair: [],
       uploadUrl: baseUrl + '/upload/uploadAttachment',
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now();
         }
       },
-      fileList1: [
-        {
-          name: 'resumable.zip',
-          url: 'https://github.com/23/resumable.js/archive/master.zip'
-        }
-      ],
+      fileList1: [],
       fileList2: [],
       fileList3: [],
       header: {
@@ -284,6 +281,54 @@ export default {
     }
   },
   methods: {
+    showPanel(cardOperation, item) {
+      this.displayModal = true;
+      this.mode = cardOperation;
+      this.newT1 = [];
+      this.newT2 = [];
+      this.newT2Flair = [];
+      console.log('item: ', item);
+      if (this.mode !== this.ADD_NEW_CARD) {
+        this.id = item.id ? item.id : '';
+        this.name = item.title ? item.title : '';
+        this.checkDate = item.checkDate ? item.checkDate : '';
+        this.imageType = item.imageType ? item.imageType : '';
+        this.checkNum = item.checkNum ? item.checkNum : '';
+        this.checkDevice = item.checkDevice ? item.checkDevice : '';
+        this.checkConclusion = item.checkConclusion ? item.checkConclusion : '';
+        this.remarks = item.remarks ? item.remarks : '';
+        this.t1 = item.t1 ? item.t1 : [];
+        this.t2 = item.t2 ? item.t2 : [];
+        this.t2Flair = item.t2Flair ? item.t2Flair : [];
+      } else {
+        this.id = '';
+        this.name = '';
+        this.checkDate = '';
+        this.imageType = '';
+        this.checkNum = '';
+        this.checkDevice = '';
+        this.checkConclusion = '';
+        this.remarks = '';
+        this.t1 = [];
+        this.t2 = [];
+        this.t2Flair = [];
+      }
+      for (let fileItem of this.t1) {
+        this.newT1.push({
+          id: fileItem.id
+        });
+      }
+      for (let fileItem of this.t2) {
+        this.newT2.push({
+          id: fileItem.id
+        });
+      }
+      for (let fileItem of this.t2Flair) {
+        this.newT2Flair.push({
+          id: fileItem.id
+        });
+      }
+    },
     getOptions(fieldName) {
       var options = [];
       var types = Util.getElement('typegroupcode', fieldName, this.typeGroup).types;
@@ -302,69 +347,124 @@ export default {
       return targetOption.name;
     },
     cancel() {
+      this.$refs.upload1.clearFiles();
+      this.$refs.upload2.clearFiles();
+      this.$refs.upload3.clearFiles();
       this.displayModal = false;
     },
     switchToEditingMode() {
       this.mode = this.EDIT_CURRENT_CARD;
     },
     submit() {
-      this.$refs.upload1.submit();
-      this.$refs.upload2.submit();
-      this.$refs.upload3.submit();
+      var imageInfo = {};
+      imageInfo.patientCaseId = this.$route.params.caseId;
+      imageInfo.title = this.name;
+      imageInfo.imageType = this.imageType;
+      imageInfo.checkDate = this.checkDate;
+      imageInfo.checkNum = this.checkNum;
+      imageInfo.checkDevice = this.checkDevice;
+      imageInfo.checkConclusion = this.checkConclusion;
+      imageInfo.remarks = this.remarks;
+      reviseDateFormat(imageInfo);
+      pruneObj(imageInfo);
+
+      imageInfo.t1 = this.newT1;
+      imageInfo.t2 = this.newT2;
+      imageInfo.t2Flair = this.newT2Flair;
+
+      if (this.mode === this.ADD_NEW_CARD) {
+        addImage(imageInfo).then(() => {
+          this.updateAndClose();
+        });
+      } else if (this.mode === this.EDIT_CURRENT_CARD) {
+        imageInfo.id = this.id;
+        modifyImage(imageInfo).then(() => {
+          this.updateAndClose();
+        });
+      }
+    },
+    updateAndClose() {
+      this.$refs.upload1.clearFiles();
+      this.$refs.upload2.clearFiles();
+      this.$refs.upload3.clearFiles();
+      Bus.$emit(this.UPDATE_CASE_INFO);
       this.displayModal = false;
     },
-    removeFile(file) {
-      console.log(file);
+    removeFile(file, showingList, transferringList) {
+      // console.log(file);
+      for (let i = 0; i < showingList.length; i++) {
+        if (file.id === showingList[i].id) {
+          showingList.splice(i, 1);
+          break;
+        }
+      }
+      for (let i = 0; i < transferringList.length; i++) {
+        if (file.id === transferringList[i].id) {
+          transferringList.splice(i, 1);
+          break;
+        }
+      }
       this.updateScrollbar();
     },
     downloadFile(file) {
       console.log(file.realPath);
       // window.location.href = file.realPath;
     },
-    handleRemove(file, fileList) {
+    handleT1Remove(file) {
+      this.handleRemove(file, this.newT1);
+    },
+    handleT2Remove(file) {
+      this.handleRemove(file, this.newT2);
+    },
+    handleT2FlairRemove(file) {
+      this.handleRemove(file, this.newT2Flair);
+    },
+    handleRemove(file, list) {
       console.log(file);
-      console.log(fileList);
+      for (var i = 0; i < list.length; i++) {
+        if (file.response.data.attachmentId === list[i].id) {
+          list.splice(i, 1);
+          break;
+        }
+      }
       this.updateScrollbar();
     },
     handlePreview(file) {
       console.log(file);
-      window.location.href = file.url;
+      // window.location.href = file.url;
     },
-    showPanel(cardOperation, item) {
-      this.displayModal = true;
-      this.mode = cardOperation;
-      console.log(item);
-      if (this.mode !== this.ADD_NEW_CARD) {
-        this.name = item.title ? item.title : '';
-        this.patientAttachmentId = item.patientAttachmentId ? item.patientAttachmentId : '';
-        this.checkDate = item.checkDate ? item.checkDate : '';
-        this.imageType = item.imageType ? item.imageType : '';
-        this.checkNum = item.checkNum ? item.checkNum : '';
-        this.checkDevice = item.checkDevice ? item.checkDevice : '';
-        this.checkConclusion = item.checkConclusion ? item.checkConclusion : '';
-        this.remarks = item.remarks ? item.remarks : '';
-        this.t1 = item.t1 ? item.t1 : [];
-        this.t2 = item.t2 ? item.t2 : [];
-        this.t2Flair = item.t2Flair ? item.t2Flair : [];
-      }
+    uploadT1Success(response, file, fileList) {
+      this.uploadSuccess(response, file, fileList, this.newT1);
     },
-    uploadSuccess(response, file, fileList) {
-      console.log(response);
+    uploadT2Success(response, file, fileList) {
+      this.uploadSuccess(response, file, fileList, this.newT2);
+    },
+    uploadT2FlairSuccess(response, file, fileList) {
+      this.uploadSuccess(response, file, fileList, this.newT2Flair);
+    },
+    uploadSuccess(response, file, fileList, list) {
       if (response.code === 0) {
-        console.log(fileList);
+        let id = response.data.patientAttachmentId;
+        list.push({
+          'id': id
+        });
       } else {
-        alert('文件上传出错');
+        this.$message({
+          message: '文件上传出错',
+          type: 'warning',
+          duration: 2000
+        });
+        console.log('response: ', response);
+        console.log('file: ', file);
+        console.log('fileList', fileList);
       }
-      // this.$refs.upload2.clearFiles();
     },
     uploadErr(err, file, fileList) {
-      console.log(err);
-      console.log(file);
-      console.log(fileList);
+      console.log('upload error: ', err);
+      console.log('file: ', file);
+      console.log('fileList', fileList);
     },
-    fileChange(file, fileList) {
-      console.log(file);
-      console.log(fileList);
+    fileChange() {
       this.updateScrollbar();
     },
     updateScrollbar() {
@@ -510,7 +610,7 @@ export default {
         }
       }
       .field-file {
-        margin-bottom: 20px;
+        margin-bottom: 10px;
         transform: translateX(10px);
         .field-name {
           display: inline-block;
@@ -537,8 +637,7 @@ export default {
               margin-bottom: 5px;
               height: 30px;
               line-height: 30px;
-              border-radius: 5px;
-              background-color: @light-font-color;
+              background-color: @font-color;
               color: #fff;
               text-align: center;
               cursor: default;
@@ -556,6 +655,13 @@ export default {
               }
               .file-name {
                 display: inline-block;
+                padding: 0 3px;
+                line-height: 20px;
+                transform: translateX(-3px);
+                cursor: pointer;
+                &:hover {
+                  border-bottom: 1px solid @font-color;
+                }
               }
               .close-button {
                 display: none;
@@ -583,10 +689,19 @@ export default {
           .upload-area {
             .el-upload {
               width: 100%;
+              text-align: left;
               .el-button {
                 width: 100%;
+                height: 30px;
+                border-radius: 10px;
+                &:hover {
+                  opacity: 0.7;
+                }
+                &:active {
+                  opacity: 0.85;
+                }
                 &.el-button--text {
-                  background-color: @font-color;
+                  background-color: @light-font-color;
                   color: #fff;
                   &:disabled {
                     background-color: @gray-color;
