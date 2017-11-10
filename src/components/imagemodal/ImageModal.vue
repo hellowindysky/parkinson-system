@@ -133,6 +133,7 @@
               :on-remove="handleT1Remove"
               :on-success="uploadT1Success"
               :on-error="uploadErr"
+              :before-upload="beforeUpload"
               :file-list="fileList1">
               <el-button slot="trigger" size="small" type="text" :disabled="mode===VIEW_CURRENT_CARD" v-show="mode!==VIEW_CURRENT_CARD">
                 点击上传 T1 压缩文件/源文件
@@ -168,6 +169,7 @@
               :on-remove="handleT2Remove"
               :on-success="uploadT2Success"
               :on-error="uploadErr"
+              :before-upload="beforeUpload"
               :file-list="fileList2">
               <el-button slot="trigger" size="small" type="text" :disabled="mode===VIEW_CURRENT_CARD" v-show="mode!==VIEW_CURRENT_CARD">
                 点击上传 T2 压缩文件/源文件
@@ -203,6 +205,7 @@
               :on-remove="handleT2FlairRemove"
               :on-success="uploadT2FlairSuccess"
               :on-error="uploadErr"
+              :before-upload="beforeUpload"
               :file-list="fileList3">
               <el-button slot="trigger" size="small" type="text" :disabled="mode===VIEW_CURRENT_CARD" v-show="mode!==VIEW_CURRENT_CARD">
                 点击上传 T2 Flair 压缩文件/源文件
@@ -486,6 +489,17 @@ export default {
       console.log('upload error: ', err);
       console.log('file: ', file);
       console.log('fileList', fileList);
+    },
+    beforeUpload(file) {
+      const isUnderLimit = file.size / 1024 / 1024 < 300;
+      if (!isUnderLimit) {
+        this.$message({
+          message: '上传文件大小不能超过 300MB',
+          type: 'error',
+          duration: 2000
+        });
+        }
+        return isUnderLimit;
     },
     fileChange() {
       this.updateScrollbar();
