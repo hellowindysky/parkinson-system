@@ -302,7 +302,7 @@ export default {
       this.newT2 = [];
       this.newT2Flair = [];
 
-      console.log('item: ', item);
+      // console.log('item: ', item);
       this.id = item.id ? item.id : '';
       this.name = item.title ? item.title : '';
       this.checkDate = item.checkDate ? item.checkDate : '';
@@ -352,7 +352,6 @@ export default {
       return targetOption.name;
     },
     updateWarning(fieldName) {
-      console.log(fieldName, this[fieldName]);
       if (this.completeInit && this[fieldName] === '') {
         this.warningResults[fieldName] = '必填项';
       } else {
@@ -379,7 +378,6 @@ export default {
           return;
         }
       }
-
 
       var imageInfo = {};
       imageInfo.patientCaseId = this.$route.params.caseId;
