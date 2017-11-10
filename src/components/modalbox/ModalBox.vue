@@ -259,6 +259,7 @@ export default {
           return false;
         }
       };
+      // console.log(this.copyInfo);
       var startTime;
       var endTime;
       if (this.modalType === this.PERSON_HISTORY_MODAL) {
@@ -273,7 +274,7 @@ export default {
         startTime = this.copyInfo.medStart;
         endTime = this.copyInfo.medEnd;
       };
-      if (startTime >= endTime) {
+      if (new Date(startTime) >= new Date(endTime)) {
         this.$message({
           message: '结束日期必须大于开始日期',
           type: 'warning',
