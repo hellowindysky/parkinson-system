@@ -138,7 +138,7 @@
       <extensible-panel class="panel image-panel" :mode="mutableMode" :title="medicalImagingTitle" v-on:addNewCard="addImgRecord" :editable="canEdit">
         <card class="card image-card" :class="cardWidth" :mode="mutableMode" v-for="(item,idx) in medicalImagingList" :key="idx"
          :title="item.title" v-on:editCurrentCard="editImgRecord(item)" v-on:viewCurrentCard="viewImgRecord(item)"
-         v-on:deleteCurrentCard="deleteEmgRecord(item)">
+         v-on:deleteCurrentCard="deleteImgRecord(item)">
           <div class="text first-line">
             <span class="name">类型</span>
             <span class="value">{{transformMedicalImagingType(item.imageType)}}</span>
@@ -163,7 +163,7 @@
 import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import { delEmg, delBiochemical, delNervouSystem, modVitalSigns } from 'api/patient.js';
+import { delEmg, delBiochemical, delNervouSystem, deleteImage, modVitalSigns } from 'api/patient.js';
 import { vueCopy } from 'utils/helper';
 
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
@@ -417,6 +417,15 @@ export default {
     editEmgRecord(item) {
       Bus.$emit(this.SHOW_EMG_MODAL, this.EDIT_CURRENT_CARD, item);
     },
+    deleteEmgRecord(item) { // 删除肌电图
+      let EmgId = {
+        id: item.id
+      };
+      Bus.$on(this.CONFIRM, () => {
+        delEmg(EmgId).then(this._resolveDeletion, this._rejectDeletion);
+      });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
+    },
     addImgRecord() {
       Bus.$emit(this.SHOW_IMG_MODAL, this.ADD_NEW_CARD, {});
     },
@@ -426,12 +435,12 @@ export default {
     editImgRecord(item) {
       Bus.$emit(this.SHOW_IMG_MODAL, this.EDIT_CURRENT_CARD, item);
     },
-    deleteEmgRecord(item) { // 删除肌电图
-      let EmgId = {
+    deleteImgRecord(item) {
+      let imageInfo = {
         id: item.id
       };
       Bus.$on(this.CONFIRM, () => {
-        delEmg(EmgId).then(this._resolveDeletion, this._rejectDeletion);
+        deleteImage(imageInfo).then(this._resolveDeletion, this._rejectDeletion);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
