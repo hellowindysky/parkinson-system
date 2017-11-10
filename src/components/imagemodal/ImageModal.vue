@@ -9,12 +9,12 @@
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span class="warning-text"></span>
             <span>{{name}}</span>
           </span>
           <span class="field-input" v-else>
-            <span class="warning-text"></span>
-            <el-input v-model="name" placeholder="请输入本次影像记录的名称"></el-input>
+            <span class="warning-text">{{warningResults.name}}</span>
+            <el-input v-model="name" placeholder="请输入本次影像记录的名称" @change="updateWarning('name')"
+              :class="{'warning': warningResults.name}"></el-input>
           </span>
         </div>
         <div class="field">
@@ -23,12 +23,12 @@
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span class="warning-text"></span>
             <span>{{getImagetype(imageType)}}</span>
           </span>
           <span class="field-input" v-else>
-            <span class="warning-text"></span>
-            <el-select v-model="imageType" placeholder="请选择">
+            <span class="warning-text">{{warningResults.imageType}}</span>
+            <el-select v-model="imageType" placeholder="请选择" @change="updateWarning('imageType')"
+              :class="{'warning': warningResults.imageType}">
               <el-option
                 v-for="item in getOptions('examType')"
                 :key="item.code"
@@ -44,16 +44,17 @@
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span class="warning-text"></span>
             <span>{{checkDate}}</span>
           </span>
           <span class="field-input" v-else>
-            <span class="warning-text"></span>
+            <span class="warning-text">{{warningResults.checkDate}}</span>
             <el-date-picker
               v-model="checkDate"
+              :class="{'warning': warningResults.checkDate}"
               type="date"
               placeholder="选择日期"
-              :picker-options="pickerOptions">
+              :picker-options="pickerOptions"
+              @change="updateWarning('checkDate')">
             </el-date-picker>
           </span>
         </div>
@@ -232,6 +233,7 @@ export default {
     return {
       displayModal: false,
       mode: '',
+      completeInit: false,
       name: '',
       patientAttachmentId: '',
       imageType: '',
@@ -240,6 +242,11 @@ export default {
       checkDevice: '',
       checkConclusion: '',
       remarks: '',
+      warningResults: {
+        name: '',
+        imageType: '',
+        checkDate: ''
+      },
       t1: [],
       t2: [],
       t2Flair: [],
@@ -282,37 +289,32 @@ export default {
   },
   methods: {
     showPanel(cardOperation, item) {
-      this.displayModal = true;
+      this.completeInit = false;
       this.mode = cardOperation;
+
+      for (var property in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(property)) {
+          this.warningResults[property] = '';
+        }
+      }
+
       this.newT1 = [];
       this.newT2 = [];
       this.newT2Flair = [];
+
       console.log('item: ', item);
-      if (this.mode !== this.ADD_NEW_CARD) {
-        this.id = item.id ? item.id : '';
-        this.name = item.title ? item.title : '';
-        this.checkDate = item.checkDate ? item.checkDate : '';
-        this.imageType = item.imageType ? item.imageType : '';
-        this.checkNum = item.checkNum ? item.checkNum : '';
-        this.checkDevice = item.checkDevice ? item.checkDevice : '';
-        this.checkConclusion = item.checkConclusion ? item.checkConclusion : '';
-        this.remarks = item.remarks ? item.remarks : '';
-        this.t1 = item.t1 ? item.t1 : [];
-        this.t2 = item.t2 ? item.t2 : [];
-        this.t2Flair = item.t2Flair ? item.t2Flair : [];
-      } else {
-        this.id = '';
-        this.name = '';
-        this.checkDate = '';
-        this.imageType = '';
-        this.checkNum = '';
-        this.checkDevice = '';
-        this.checkConclusion = '';
-        this.remarks = '';
-        this.t1 = [];
-        this.t2 = [];
-        this.t2Flair = [];
-      }
+      this.id = item.id ? item.id : '';
+      this.name = item.title ? item.title : '';
+      this.checkDate = item.checkDate ? item.checkDate : '';
+      this.imageType = item.imageType ? item.imageType : '';
+      this.checkNum = item.checkNum ? item.checkNum : '';
+      this.checkDevice = item.checkDevice ? item.checkDevice : '';
+      this.checkConclusion = item.checkConclusion ? item.checkConclusion : '';
+      this.remarks = item.remarks ? item.remarks : '';
+      this.t1 = item.t1 ? item.t1 : [];
+      this.t2 = item.t2 ? item.t2 : [];
+      this.t2Flair = item.t2Flair ? item.t2Flair : [];
+
       for (let fileItem of this.t1) {
         this.newT1.push({
           id: fileItem.id
@@ -328,6 +330,9 @@ export default {
           id: fileItem.id
         });
       }
+
+      this.completeInit = true;
+      this.displayModal = true;
     },
     getOptions(fieldName) {
       var options = [];
@@ -346,6 +351,14 @@ export default {
       var targetOption = Util.getElement('code', imageType, options);
       return targetOption.name;
     },
+    updateWarning(fieldName) {
+      console.log(fieldName, this[fieldName]);
+      if (this.completeInit && this[fieldName] === '') {
+        this.warningResults[fieldName] = '必填项';
+      } else {
+        this.warningResults[fieldName] = '';
+      }
+    },
     cancel() {
       this.$refs.upload1.clearFiles();
       this.$refs.upload2.clearFiles();
@@ -356,6 +369,18 @@ export default {
       this.mode = this.EDIT_CURRENT_CARD;
     },
     submit() {
+      for (let property in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(property)) {
+          this.updateWarning(property);
+        }
+      }
+      for (let property in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(property) && this.warningResults[property]) {
+          return;
+        }
+      }
+
+
       var imageInfo = {};
       imageInfo.patientCaseId = this.$route.params.caseId;
       imageInfo.title = this.name;
@@ -576,7 +601,7 @@ export default {
           // }
           .warning-text {
             position: absolute;
-            top: 25px;
+            top: 22px;
             left: 10px;
             height: 15px;
             color: red;
