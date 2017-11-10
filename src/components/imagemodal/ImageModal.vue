@@ -498,8 +498,8 @@ export default {
           type: 'error',
           duration: 2000
         });
-        }
-        return isUnderLimit;
+      }
+      return isUnderLimit;
     },
     fileChange() {
       this.updateScrollbar();
