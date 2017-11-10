@@ -260,6 +260,13 @@ export default {
         }
       };
       // console.log(this.copyInfo);
+      // 准备提交之前，需要将日期格式调整成符合服务器传输的字符串
+      for (let field of this.template) {
+        if (this.getUIType(field) === 6) {
+          var dateStr = this.copyInfo[field.fieldName];
+          this.copyInfo[field.fieldName] = Util.simplifyDate(dateStr);
+        }
+      };
       var startTime;
       var endTime;
       if (this.modalType === this.PERSON_HISTORY_MODAL) {
@@ -274,21 +281,14 @@ export default {
         startTime = this.copyInfo.medStart;
         endTime = this.copyInfo.medEnd;
       };
-      if (new Date(startTime) >= new Date(endTime)) {
+      if (new Date(startTime).getTime() >= new Date(endTime).getTime()) {
         this.$message({
           message: '结束日期必须大于开始日期',
           type: 'warning',
           duration: 2000
         });
         return;
-      }
-      // 准备提交之前，需要将日期格式调整成符合服务器传输的字符串
-      for (let field of this.template) {
-        if (this.getUIType(field) === 6) {
-          var dateStr = this.copyInfo[field.fieldName];
-          this.copyInfo[field.fieldName] = Util.simplifyDate(dateStr);
-        }
-      }
+      };
       this.copyInfo.patientId = parseInt(this.$route.params.id, 10);
       // 到这里，检验合格，准备提交数据了
       // 发出请求之前，先将“确定”按钮锁住
