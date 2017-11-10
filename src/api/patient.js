@@ -727,11 +727,31 @@ export function delEmg(patientElecTroGram) {
 };
 
 // 新增医学影像
+export function addImage(imageInfo) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientImageReq = imageInfo;
+  var url = baseUrl + '/pdms/addPatientImage';
+
+  return encapsulatePromise(url, request);
+};
+
 // 修改医学影像
-// export function modImg(patientElecTroGram) {
-//   var request = Object.assign({}, getCommonRequest());
-// }
+export function modifyImage(imageInfo) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientImageReq = imageInfo;
+  var url = baseUrl + '/pdms/modPatientImage';
+
+  return encapsulatePromise(url, request);
+};
+
 // 删除医学影像
+export function deleteImage(imageInfo) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientImageReq = imageInfo;
+  var url = baseUrl + '/pdms/delPatientImage';
+
+  return encapsulatePromise(url, request);
+};
 
 // 修改生命体征
 export function modVitalSigns(patientCase) {
