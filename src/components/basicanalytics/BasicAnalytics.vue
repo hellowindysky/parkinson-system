@@ -11,7 +11,7 @@
               <div>本周新增</div>
               <div class="value-class">{{dataBrief.myPatient.increaseWeek}}人</div></div>
             <div class="compare-right">
-              <div>周环比</div>
+              <div>周环比增长率</div>
               <div class="value-class"><i class="icon iconfont" :class="myPatientClass"/>{{(dataBrief.myPatient.increaseRate) >= 1000000 ?'—':(dataBrief.myPatient.increaseRate*100).toFixed(2)}}%</div>
             </div>
           </div>
@@ -25,7 +25,7 @@
               <div class="value-class">{{dataBrief.myGroup.increaseWeek}}个</div>
             </div>
             <div class="compare-right">
-              <div>周环比</div>
+              <div>周环比增长率</div>
               <div class="value-class"><i class="icon iconfont" :class="myGroupClass"/>{{(dataBrief.myGroup.increaseRate) >= 1000000 ?'—':(dataBrief.myGroup.increaseRate*100).toFixed(2)}}%</div>
             </div>
           </div>
@@ -39,7 +39,7 @@
                 <div class="value-class">{{dataBrief.firAge.averFirAgeLastWeek == null?'—':dataBrief.firAge.averFirAgeLastWeek.toFixed(2)}}岁</div>
             </div>
             <div class="compare-right">
-              <div>周环比</div>
+              <div>周环比增长率</div>
               <div class="value-class"><i class="icon iconfont" :class="firAgeClass"/>{{(dataBrief.firAge.increateRase) >= 1000000 ?'—':(dataBrief.firAge.increateRase*100).toFixed(2)}}%</div></div>
           </div>
         </div>
@@ -51,7 +51,7 @@
               <div>上周值</div>
               <div class="value-class">{{dataBrief.diseaseAge.averDiseaseAgeLastWeek == null?'—':dataBrief.diseaseAge.averDiseaseAgeLastWeek.toFixed(2)}}年</div></div>
             <div class="compare-right">
-              <div>周环比</div>
+              <div>周环比增长率</div>
               <div class="value-class"><i class="icon iconfont" :class="diseaseClass"/>{{(dataBrief.diseaseAge.increateRase*100) >= 100000?'—':(dataBrief.diseaseAge.increateRase*100).toFixed(2)}}%</div></div>
           </div>
         </div>
