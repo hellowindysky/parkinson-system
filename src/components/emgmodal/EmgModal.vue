@@ -576,6 +576,7 @@ export default {
           vueCopy(this.FatherTempData[key], this.SonTempData);
         }
       }
+      console.log(this.SonTempData);
       // 取到这个值之后就要关闭父表格，打开子表格
       this.tableMode = this.SON_OPEN;
       switch (arrName) {
@@ -585,7 +586,7 @@ export default {
           for (let i = 0; i < this.SonTempData.length; i++) {
             let sonData = this.SonTempData[i];
             for (let key in this.handleDictionary('nervType')) {
-              if (sonData['nerveType'] === this.handleDictionary('nervType')[key]['typeCode']) {
+              if (parseInt(sonData['nerveType'], 10) === this.handleDictionary('nervType')[key]['typeCode']) {
                 this.$set(this.SonTempData[i], 'nervName', this.handleDictionary('nervType')[key]['typeName']);
               }
             }
@@ -609,7 +610,7 @@ export default {
           for (let i = 0; i < this.SonTempData.length; i++) {
             let sonData = this.SonTempData[i];
             for (let key in this.handleDictionary('muscleType')) {
-              if (sonData['muscle'] === this.handleDictionary('muscleType')[key]['typeCode']) {
+              if (parseInt(sonData['muscle'], 10) === this.handleDictionary('muscleType')[key]['typeCode']) {
                 this.$set(this.SonTempData[i], 'nervName', this.handleDictionary('muscleType')[key]['typeName']);
               }
             }
@@ -626,7 +627,7 @@ export default {
           for (let i = 0; i < this.SonTempData.length; i++) {
             let sonData = this.SonTempData[i];
             for (let key in this.handleDictionary('nervType')) {
-              if (sonData['nerveType'] === this.handleDictionary('nervType')[key]['typeCode']) {
+              if (parseInt(sonData['nerveType'], 10) === this.handleDictionary('nervType')[key]['typeCode']) {
                 this.$set(this.SonTempData[i], 'nervName', this.handleDictionary('nervType')[key]['typeName']);
               }
             }
