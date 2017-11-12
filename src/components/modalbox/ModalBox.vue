@@ -244,7 +244,6 @@ export default {
       if (this.lockSubmitButton) {
         return;
       }
-
       // 对于特殊的个人史，检查 subModal 字段是否有被选择
       if (this.modalType === this.PERSON_HISTORY_MODAL && this.subModalType === '') {
         this.$set(this.warningResults, 'subModal', '请选择');
@@ -297,86 +296,86 @@ export default {
         if (this.modalType === this.PRESENT_HISTORY_MODAL) {
           addPatientPresentHistory(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError);
+          }, this._handleError());
         } else if (this.modalType === this.MEDICINE_HISTORY_MODAL) {
           addPatientMedHistory(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError);
+          }, this._handleError());
         } else if (this.modalType === this.DISEASE_HISTORY_MODAL) {
           addPatientDisease(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError);
+          }, this._handleError());
         } else if (this.modalType === this.FAMILY_HISTORY_MODAL) {
           addPatientFamily(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError);
+          }, this._handleError());
         } else if (this.modalType === this.TOXIC_HISTORY_MODAL) {
           addPatientToxicExposure(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError);
+          }, this._handleError());
         } else if (this.subModalType === this.COFFEE_HISTORY_MODAL) {
           addPatientCoffee(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError);
+          }, this._handleError());
         } else if (this.subModalType === this.TEA_HISTORY_MODAL) {
           addPatientTea(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError);
+          }, this._handleError());
         } else if (this.subModalType === this.WINE_HISTORY_MODAL) {
           addPatientWine(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError);
+          }, this._handleError());
         } else if (this.subModalType === this.SMOKE_HISTORY_MODAL) {
           addPatientSmoke(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError);
+          }, this._handleError());
         } else if (this.subModalType === this.EXERCISE_HISTORY_MODAL) {
           addPatientExercise(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError);
+          }, this._handleError());
         }
 
       } else if (this.mode === this.EDIT_CURRENT_CARD) {
         if (this.modalType === this.PRESENT_HISTORY_MODAL) {
           modifyPatientPresentHistory(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError);
+          }, this._handleError());
         } else if (this.modalType === this.MEDICINE_HISTORY_MODAL) {
           modifyPatientMedHistory(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError);
+          }, this._handleError());
         } else if (this.modalType === this.DISEASE_HISTORY_MODAL) {
           modifyPatientDisease(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError);
+          }, this._handleError());
         } else if (this.modalType === this.FAMILY_HISTORY_MODAL) {
           modifyPatientFamily(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError);
+          }, this._handleError());
         } else if (this.modalType === this.TOXIC_HISTORY_MODAL) {
           modifyPatientToxicExposure(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError);
+          }, this._handleError());
         } else if (this.subModalType === this.COFFEE_HISTORY_MODAL) {
           modifyPatientCoffee(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError);
+          }, this._handleError());
         } else if (this.subModalType === this.TEA_HISTORY_MODAL) {
           modifyPatientTea(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError);
+          }, this._handleError());
         } else if (this.subModalType === this.WINE_HISTORY_MODAL) {
           modifyPatientWine(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError);
+          }, this._handleError());
         } else if (this.subModalType === this.SMOKE_HISTORY_MODAL) {
           modifyPatientSmoke(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError);
+          }, this._handleError());
         } else if (this.subModalType === this.EXERCISE_HISTORY_MODAL) {
           modifyPatientExercise(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError);
+          }, this._handleError());
         }
       }
     },
@@ -534,6 +533,7 @@ export default {
       width: 100%;
       height: @field-height;
       text-align: left;
+      overflow: hidden;
       .field-name {
         display: inline-block;
         position: absolute;
