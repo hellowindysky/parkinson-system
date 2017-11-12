@@ -2,9 +2,10 @@
   <folding-panel :title="'医学量表'" :mode="mutableMode"  v-on:edit="startEditing"
     v-on:cancel="cancel" v-on:submit="submit" :editable="canEdit">
     <div class="diagnostic-scale" ref="diagnosticscale">
-      <extensible-panel class="panel" :mode="mutableMode" :title="subTitle"
-        v-on:addNewCard="addScale" :editable="canEdit">
+      <extensible-panel v-for="type in allScaleTypes" class="panel" :mode="mutableMode" :title="getTypeTitle(type.typeName)"
+        v-on:addNewCard="addScale" :editable="canEdit" :key="type.typeCode">
         <card class="card" :class="devideWidth" :mode="mutableMode" v-for="item in patientScale"
+          v-if="getScaleTypeName(item.scaleInfoId) === type.typeName"
           :key="item.id" :title="getTitle(item.scaleInfoId)" v-on:deleteCurrentCard="deleteScaleRecord(item)"
           v-on:editCurrentCard="editScale(item)" v-on:viewCurrentCard="viewScale(item)">
           <div class="text first-line">
@@ -60,20 +61,19 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'allScale'
+      'allScale',
+      'typeGroup'
     ]),
-    subTitle() {
-      return this.title + '（' + this.count + '条记录）';
-    },
-    count() {
-      return this.patientScale.length;
-    },
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients)) {
         return true;
       } else {
         return false;
       }
+    },
+    allScaleTypes() {
+      var typesInfo = Util.getElement('typegroupcode', 'gaugeType', this.typeGroup);
+      return typesInfo.types ? typesInfo.types : [];
     }
   },
   methods: {
@@ -104,6 +104,12 @@ export default {
       // 通过量表的ID来找到量表的名字
       var targetScale = Util.getElement('scaleInfoId', scaleInfoId, this.allScale);
       return targetScale.gaugeName;
+    },
+    getTypeTitle(typeName) {
+      var count = this.patientScale.filter((scale) => {
+        return this.getScaleTypeName(scale.scaleInfoId) === typeName;
+      }).length;
+      return typeName + ' (' + count + '条记录 )';
     },
     editScale(item) {
       Bus.$emit(this.SHOW_SCALE_MODAL, this.EDIT_CURRENT_CARD, item);
@@ -139,6 +145,10 @@ export default {
       } else {
         return '关';
       }
+    },
+    getScaleTypeName(scaleInfoId) {
+      var scale = Util.getElement('scaleInfoId', scaleInfoId, this.allScale);
+      return Util.getElement('typeCode', scale.gaugeType, this.allScaleTypes).typeName;
     }
   },
   components: {
