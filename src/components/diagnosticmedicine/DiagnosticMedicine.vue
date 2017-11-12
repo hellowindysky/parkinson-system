@@ -110,7 +110,7 @@ export default {
     deleteMedicine(item) {
       var patientMedicine = {
         patientId: parseInt(this.$route.params.id, 10),
-        patientCaseId: parseInt(this.$route.params.caseId, 10),
+        patientCaseId: this.$route.params.caseId,
         patientMedicineId: item.patientMedicineId
       };
       Bus.$on(this.CONFIRM, () => {
