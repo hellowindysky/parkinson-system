@@ -489,9 +489,13 @@ export default {
       } else if (dictionaryField.fieldName === 'medicalSpecUsed') {
         let specGroups = this.medicineInfoObj.spec ? this.medicineInfoObj.spec : [];
         for (let spec of specGroups) {
+          let specOral = spec.specOral;
+          if (spec.medicalPec === 0) {
+            specOral = '其它规格(在备注中注明)';
+          }
           options.push({
-            name: spec.specOral,
-            code: spec.specOral
+            name: specOral,
+            code: specOral
           });
         }
 
