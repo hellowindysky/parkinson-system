@@ -43,30 +43,30 @@
             </div>
           </li>
           <li class="field-item">
-            <span class="field-name long-field-name">血压:卧位-左/右(mmHg):</span>
+            <span class="field-name">血压:卧位(mmHg):</span>
             <div class="field-value" v-if="mutableMode===READING_MODE">{{VitalSignsData.bpDecubitus}}</div>
             <div class="field-value" v-else-if="mutableMode===EDITING_MODE">
-              <el-input class="half-input left" v-model="vitalData.bpDecubitusL" placeholder="左"></el-input>
+              <el-input class="half-input left" v-model="vitalData.bpDecubitusL" placeholder="收缩压"></el-input>
               <span class="middle-text">/</span>
-              <el-input class="half-input right" v-model="vitalData.bpDecubitusR" placeholder="右"></el-input>
+              <el-input class="half-input right" v-model="vitalData.bpDecubitusR" placeholder="舒张压"></el-input>
             </div>
           </li>
           <li class="field-item">
-            <span class="field-name long-field-name">血压:坐位-左/右(mmHg):</span>
+            <span class="field-name">血压:坐位(mmHg):</span>
             <div class="field-value" v-if="mutableMode===READING_MODE">{{VitalSignsData.bpSitting}}</div>
             <div class="field-value" v-else-if="mutableMode===EDITING_MODE">
-              <el-input class="half-input left" v-model="vitalData.bpSittingL" placeholder="左"></el-input>
+              <el-input class="half-input left" v-model="vitalData.bpSittingL" placeholder="收缩压"></el-input>
               <span class="middle-text">/</span>
-              <el-input class="half-input right" v-model="vitalData.bpSittingR" placeholder="右"></el-input>
+              <el-input class="half-input right" v-model="vitalData.bpSittingR" placeholder="舒张压"></el-input>
             </div>
           </li>
           <li class="field-item">
-            <span class="field-name long-field-name">血压:立位-左/右(mmHg):</span>
+            <span class="field-name">血压:立位(mmHg):</span>
             <div class="field-value" v-if="mutableMode===READING_MODE">{{VitalSignsData.bpOrthostatic}}</div>
             <div class="field-value" v-else-if="mutableMode===EDITING_MODE">
-              <el-input class="half-input left" v-model="vitalData.bpOrthostaticL" placeholder="左"></el-input>
+              <el-input class="half-input left" v-model="vitalData.bpOrthostaticL" placeholder="收缩压"></el-input>
               <span class="middle-text">/</span>
-              <el-input class="half-input right" v-model="vitalData.bpOrthostaticR" placeholder="右"></el-input>
+              <el-input class="half-input right" v-model="vitalData.bpOrthostaticR" placeholder="舒张压"></el-input>
             </div>
           </li>
           <li class="field-item">
