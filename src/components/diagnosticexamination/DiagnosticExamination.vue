@@ -101,7 +101,8 @@
             <span class="value">{{item.spephysicalResult}}</span>
           </div>
           <div class="text second-line">
-            {{item.ariseTime}}
+            <span class="name">诊断时间: </span>
+            <span class="value">{{item.ariseTime}}</span>
           </div>
          </card>
       </extensible-panel>
@@ -397,6 +398,7 @@ export default {
       Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.EDIT_CURRENT_CARD, item);
     },
     viewBiochemicalExamRecord(item) {
+      console.log(item);
       Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.VIEW_CURRENT_CARD, item);
     },
     deleteBiochemicalExamRecord(item) { // 删除生化指标

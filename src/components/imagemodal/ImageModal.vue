@@ -257,6 +257,7 @@ export default {
       newT2: [],
       newT2Flair: [],
       uploadUrl: baseUrl + '/upload/uploadAttachment',
+      downloadUrl: baseUrl + '/download/',
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now();

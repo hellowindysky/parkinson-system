@@ -13,8 +13,8 @@
             <span v-if="mode===VIEW_CURRENT_CARD">{{getFieldValue(bioexamTypeData.bioexamId, 'bioexamName')}}</span>
             <el-select v-else placeholder="请选择检查名称" v-model="bioexamTypeData.bioexamId"
               @change="changeTemplate(mode)" :disabled="mode===EDIT_CURRENT_CARD">
-              <el-option v-for="bioexItem in bioexamNameArr" :key="bioexItem.bioexamId"
-                :label="bioexItem.examName" :value="bioexItem.bioexamId" ></el-option>
+              <el-option v-for="bioexItem in bioexamTypeList" :key="bioexItem.bioexamId"
+                :label="bioexItem.examName" :value="bioexItem.id" ></el-option>
             </el-select>
           </span>
         </div>
@@ -96,7 +96,6 @@ export default {
       subModalType: '',
       disableChangingSubModal: false,
       warningResults: {},
-      dictionData: [],
       bioexamTypeData: {},
       templateData: [],
       bioexamNameArr: []
@@ -125,20 +124,6 @@ export default {
     showPanel(cardOperation, item) {
       this.displayModal = true;
       this.mode = cardOperation;
-      // 拷贝dictionary的数据
-      vueCopy(this.bioexamTypeList, this.dictionData);
-      // 将检查的名字从dictionary中取出来
-      for (let i = 0; i < this.dictionData.length; i++) {
-        this.$set(this.bioexamNameArr, i, {});
-        for (let key in this.dictionData[i]) {
-          if (key === 'id') {
-            this.$set(this.bioexamNameArr[i], 'bioexamId', this.dictionData[i][key]);
-          } else if (key === 'examName') {
-            this.$set(this.bioexamNameArr[i], 'examName', this.dictionData[i][key]);
-          }
-        }
-      }
-      // 通过检查 item 参数是否为空对象 {}，来决定提交时是新增记录，还是修改记录
 
       if (this.mode === this.ADD_NEW_CARD) {
         // 如果是新增生化指标那么需要新造一个对象来提交
@@ -155,9 +140,9 @@ export default {
         vueCopy(item, this.bioexamTypeData);
         console.log('item', item);
         let bioexamId = this.bioexamTypeData['bioexamId']; // 获取到检查类型的ID
-        for (let i = 0; i < this.dictionData.length; i++) {
-          if (this.dictionData[i]['id'] === bioexamId) {
-            vueCopy(this.dictionData[i].projects, this.templateData);
+        for (let i = 0; i < this.bioexamTypeList.length; i++) {
+          if (this.bioexamTypeList[i]['id'] === bioexamId) {
+            vueCopy(this.bioexamTypeList[i].projects, this.templateData);
             // console.log('projects', this.templateData);
           }
         }
@@ -175,11 +160,11 @@ export default {
     changeTemplate(mode) {
       // 每当改变检查名字下拉框就重新给template赋对应的值
       let bioexamId = this.bioexamTypeData['bioexamId']; // 获取到检查类型的ID
-      for (let i = 0; i < this.dictionData.length; i++) {
-        if (this.dictionData[i]['id'] === bioexamId) {
+      for (let i = 0; i < this.bioexamTypeList.length; i++) {
+        if (this.bioexamTypeList[i]['id'] === bioexamId) {
           this.templateData = [];
           console.log('templateData', this.templateData);
-          vueCopy(this.dictionData[i].projects, this.templateData);
+          vueCopy(this.bioexamTypeList[i].projects, this.templateData);
           // console.log('template', this.templateData);
         }
       }
@@ -252,7 +237,7 @@ export default {
     },
     getFieldValue(code, fieldName) {
       if (fieldName === 'bioexamName') {
-        let info = Util.getElement('bioexamId', code, this.bioexamNameArr);
+        let info = Util.getElement('id', code, this.bioexamTypeList);
         return info.examName;
       } else {
         return '';
