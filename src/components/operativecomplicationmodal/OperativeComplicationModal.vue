@@ -29,7 +29,7 @@
             </el-date-picker>
             <el-input v-else-if="getUIType(field.fieldName)===1" v-model="copyInfo[field.fieldName]"
               :class="{'warning': warningResults[field.fieldName]}" :type="getType(field.fieldName)"
-              :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)">
+              :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)" :maxlength="500">
             </el-input>
           </span>
         </div>

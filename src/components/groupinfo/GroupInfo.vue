@@ -4,7 +4,7 @@
       <h3 class="title">
         <span v-show="titleMode === READING_MODE" class="title-text">{{groupName}}</span>
         <span v-show="titleMode === EDITING_MODE">
-          <el-input class="title-input" v-model="copyGroupName"></el-input>
+          <el-input class="title-input" v-model="copyGroupName" :maxlength="50"></el-input>
         </span>
         <span class="iconfont icon-edit" v-show="mode===READING_MODE && titleMode===READING_MODE" @click="editTitle"></span>
         <span class="iconfont icon-cancel" v-show="mode===READING_MODE && titleMode===EDITING_MODE" @click="cancelEditingTitle"></span>
@@ -58,7 +58,7 @@
     <div class="group-description" v-show="descPanelDisplay">
       <div class="iconfont icon-close" @click="closeDescPanel"></div>
       <p class="description-content" v-show="descriptionMode===READING_MODE">{{remarks}}</p>
-      <el-input type="textarea" v-model="copyRemarks" v-show="descriptionMode===EDITING_MODE" :rows="8"></el-input>
+      <el-input type="textarea" v-model="copyRemarks" v-show="descriptionMode===EDITING_MODE" :rows="8" :maxlength="500"></el-input>
       <div class="button-wrapper">
         <div class="button cancel-button" v-show="descriptionMode===EDITING_MODE" @click="cancelDescInput">取消</div>
         <div class="button submit-button" v-show="descriptionMode===EDITING_MODE" @click="submitDescInput">确定</div>

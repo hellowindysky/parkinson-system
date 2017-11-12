@@ -81,8 +81,8 @@
           </div>
           <div class="symptom-item-dose">
             <span class="field-name">服用药物:</span>
-            <el-input v-model="symptom.scaleMedicine"  placeholder="请输入服用药物"
-              :disabled="mode===VIEW_CURRENT_CARD || !symptom.status"></el-input>
+            <el-input v-model="symptom.scaleMedicine" placeholder="请输入服用药物"
+              :disabled="mode===VIEW_CURRENT_CARD || !symptom.status" :maxlength="500"></el-input>
           </div>
         </div>
       </folding-panel>

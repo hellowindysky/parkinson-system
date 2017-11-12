@@ -97,7 +97,8 @@
             </span>
             <el-input v-else-if="getUIType(field.fieldName)===1" v-model="medicine[field.fieldName]"
               :class="{'warning': warningResults[field.fieldName]}" :type="getInputType(field.fieldName)"
-              :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)">
+              :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)"
+              :maxlength="500">
             </el-input>
           </span>
         </div>
@@ -115,8 +116,9 @@
           <span v-else class="field-input" :class="{'long-field-name': isLongName(field.fieldName)}">
             <span class="warning-text">{{warningResults[field.fieldName]}}</span>
             <el-input v-if="getUIType(field.fieldName)===1" v-model="medicine[field.fieldName]"
-             :class="{'warning': warningResults[field.fieldName]}" :type="getInputType(field.fieldName)"
-             :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)">
+              :class="{'warning': warningResults[field.fieldName]}" :type="getInputType(field.fieldName)"
+              :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)"
+              :maxlength="500">
             </el-input>
             <el-select v-else-if="getUIType(field.fieldName)===3" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
               :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
@@ -142,16 +144,16 @@
           <span v-else class="field-input" :class="{'long-field-name': isLongName(field.fieldName)}">
             <span class="warning-text">{{warningResults[field.fieldName]}}</span>
             <el-input v-if="getUIType(field.fieldName)===1" v-model="medicine[field.fieldName]"
-             :class="{'warning': warningResults[field.fieldName]}" :type="getInputType(field.fieldName)"
-             :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)">
+              :class="{'warning': warningResults[field.fieldName]}" :type="getInputType(field.fieldName)"
+              :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)" :maxlength="500">
             </el-input>
             <el-select v-else-if="getUIType(field.fieldName)===3" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-             :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
-             <el-option v-for="option in getOptions(field.fieldName)" :label="option.name"
-              :value="option.code" :key="option.code"></el-option>
+              :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
+              <el-option v-for="option in getOptions(field.fieldName)" :label="option.name"
+                :value="option.code" :key="option.code"></el-option>
             </el-select>
             <el-date-picker v-else-if="getUIType(field.fieldName)===6" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-             :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
+              :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
            </el-date-picker>
           </span>
         </div>
