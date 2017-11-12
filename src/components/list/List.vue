@@ -32,7 +32,7 @@
     </div>
 
     <div class="function-area" v-if="listType === MY_PATIENTS_TYPE || listType === OTHER_PATIENTS_TYPE">
-      <div class="function-button whole-line" @click="addNewPatient">
+      <div class="function-button whole-line" @click="addNewPatient" v-show="showAdd">
         <span class="iconfont icon-new-patient"></span>
         <span class="text">新增患者</span>
       </div>
@@ -276,6 +276,13 @@ export default {
     ...mapGetters([
       'typeGroup'
     ]),
+    showAdd() {
+      if (this.listType === this.OTHER_PATIENTS_TYPE) {
+        return false;
+      } else {
+        return true;
+      }
+    },
     // 根据路由信息对象提供的当前路径，来判断列表类型
     listType() {
       var path = this.$route.path;
