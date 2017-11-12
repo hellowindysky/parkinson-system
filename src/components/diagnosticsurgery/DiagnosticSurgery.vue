@@ -76,24 +76,24 @@
           :title="''" v-on:editCurrentCard="editDbsRecord(item)"
           v-on:deleteCurrentCard="deleteDbsRecord(item)" v-on:viewCurrentCard="viewDbsRecord(item)">
           <div class="text line-1">
-            <span class="name">手术中心: </span>
-            <span class="value">{{item.surgiCenter}}</span>
-          </div>
-          <div class="text line-2">
             <span class="name">首次开机: </span>
             <span class="value">{{item.dbsTimes}}</span>
           </div>
-          <div class="text line-3">
+          <div class="text line-2">
             <span class="name">服药情况: </span>
             <span class="value">{{item.medicationStatus}}</span>
           </div>
-          <div class="text line-4">
+          <div class="text line-3">
             <span class="name">微毁损效应: </span>
             <span class="value">{{item.damageEffect}}</span>
           </div>
-          <div class="text line-5">
+          <div class="text line-4">
             <span class="name">术后不良事件: </span>
             <span class="value">{{item.adverseEvents}}</span>
+          </div>
+          <div class="text line-5">
+            <span class="name">开机参数: </span>
+            <span class="value">{{item.dbsParam}}</span>
           </div>
           <div class="text line-6 single-line-ellipsis">
             <span class="name">备注: </span>
@@ -108,24 +108,24 @@
          :title="''" v-on:editCurrentCard="editDbsRecord(item)" v-on:viewCurrentCard="viewDbsRecord(item)"
          v-on:deleteCurrentCard="deleteDbsRecord(item)">
           <div class="text line-1">
-            <span class="name">手术中心: </span>
-            <span class="value">{{item.surgiCenter}}</span>
-          </div>
-          <div class="text line-2">
             <span class="name">首次开机: </span>
             <span class="value">{{item.dbsTimes}}</span>
           </div>
-          <div class="text line-3">
+          <div class="text line-2">
             <span class="name">服药情况: </span>
             <span class="value">{{item.medicationStatus}}</span>
           </div>
-          <div class="text line-4">
+          <div class="text line-3">
             <span class="name">患者主诉: </span>
             <span class="value">{{item.complaint}}</span>
           </div>
-          <div class="text line-5">
+          <div class="text line-4">
             <span class="name">效果及副作用: </span>
             <span class="value">{{item.effectInfo}}</span>
+          </div>
+          <div class="text line-5">
+            <span class="name">开机参数: </span>
+            <span class="value">{{item.dbsParam}}</span>
           </div>
           <div class="text line-6 single-line-ellipsis">
             <span class="name">备注: </span>
