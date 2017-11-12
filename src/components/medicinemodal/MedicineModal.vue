@@ -184,7 +184,8 @@ export default {
       originalMedicine: {},
       warningResults: {},
       completeInit: false,
-      hasSideEffect: false  // 这个变量用来控制是否有副反应
+      hasSideEffect: false,  // 这个变量用来控制是否有副反应
+      totalLevodopaDoseOfAllOtherMedicine: 0  // 用来供 COMT 抑制剂药物(如珂丹) 计算左旋多巴等效剂量
     };
   },
   computed: {
@@ -297,8 +298,15 @@ export default {
     },
     levodopaDose() {
       // 单日左旋多巴等效剂量，更新这个计算属性的同时也更新 this.medicine.levodopaDose
-      let levodopaFactor = this.medicine.levodopaFactorUsed;
-      var levodopaDose = Math.round(this.totalAmount * levodopaFactor * 100000) / 100000.0;
+      // 注意 COMT 抑制剂类药物（如珂丹），其左旋多巴等效系数为 0，它们的左旋多巴等效剂量，依赖于该次诊断的其它药物
+      let levodopaDose = 0;
+      if (this.medicineInfoObj.medicalType === 3) {
+        levodopaDose = Math.round(this.totalLevodopaDoseOfAllOtherMedicine * 100000 * 0.33) / 100000.0;
+      } else {
+        let levodopaFactor = this.medicine.levodopaFactorUsed;
+        levodopaDose = Math.round(this.totalAmount * levodopaFactor * 100000) / 100000.0;
+      }
+
       this.medicine.levodopaDose = levodopaDose;
       return levodopaDose;
     },
@@ -350,10 +358,11 @@ export default {
     }
   },
   methods: {
-    showModal(cardOperation, item) {
+    showModal(cardOperation, item, totalLevodopaDoseOfAllOtherMedicine) {
       this.mode = cardOperation;
       this.displayModal = true;
       this.completeInit = false;
+      this.totalLevodopaDoseOfAllOtherMedicine = totalLevodopaDoseOfAllOtherMedicine;
 
       setTimeout(() => {
         // console.log('firstTemplate', this.firstTemplateGroup);

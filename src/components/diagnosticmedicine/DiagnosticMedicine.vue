@@ -98,14 +98,28 @@ export default {
       var medicine = this.getMedicine(medicineId);
       return medicine.medicineName + '(' + medicine.commonName + ')';
     },
+    calcTotalLevodopaDoseOfAllOtherMedicine(targetMedicine) {
+      var totalLevodopaDose = 0;
+      for (let item of this.diagnosticMedicine) {
+        var medicineInfoObj = Util.getElement('medicineId', item.medicineId, this.medicineInfo);
+        // 用来计算的药物要满足 3 个条件：未停药，不是当前药物，属于多巴胺类制剂
+        if (item.stopFlag === 1 && item.medicineId !== targetMedicine.medicineId && medicineInfoObj.medicalType === 0) {
+          totalLevodopaDose += item.levodopaDose;
+        }
+      }
+      return totalLevodopaDose;
+    },
     addMedicine() {
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.ADD_NEW_CARD, {});
+      var totalLevodopaDoseOfAllOtherMedicine = this.calcTotalLevodopaDoseOfAllOtherMedicine({});
+      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.ADD_NEW_CARD, {}, totalLevodopaDoseOfAllOtherMedicine);
     },
     viewMedicine(item) {
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.VIEW_CURRENT_CARD, item);
+      var totalLevodopaDoseOfAllOtherMedicine = this.calcTotalLevodopaDoseOfAllOtherMedicine(item);
+      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.VIEW_CURRENT_CARD, item, totalLevodopaDoseOfAllOtherMedicine);
     },
     editMedicine(item) {
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.EDIT_CURRENT_CARD, item);
+      var totalLevodopaDoseOfAllOtherMedicine = this.calcTotalLevodopaDoseOfAllOtherMedicine(item);
+      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.EDIT_CURRENT_CARD, item, totalLevodopaDoseOfAllOtherMedicine);
     },
     deleteMedicine(item) {
       var patientMedicine = {
