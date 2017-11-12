@@ -205,6 +205,15 @@ export default {
       let submitData = deepCopy(this.copyInfo);
       // console.log('submitData', submitData);
 
+      // 去掉空答案
+      var optionIds = [];
+      for (let i = 0; i < submitData.scaleOptionIds.length; i++) {
+        if (submitData.scaleOptionIds[i] !== '') {
+          optionIds.push(submitData.scaleOptionIds[i]);
+        }
+      }
+      submitData.scaleOptionIds = optionIds;
+
       submitData.inspectTime = Util.simplifyTime(submitData.inspectTime);
       submitData.lastTakingTime = Util.simplifyTime(submitData.lastTakingTime);
 
@@ -256,7 +265,7 @@ export default {
           }
         }
         if (isNull) {
-          this.$set(this.copyInfo.scaleOptionIds, i, null);
+          this.$set(this.copyInfo.scaleOptionIds, i, '');
         } else {
           this.$set(this.copyInfo.scaleOptionIds, i, targetAnswer);
         }
