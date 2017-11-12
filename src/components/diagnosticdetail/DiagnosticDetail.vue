@@ -194,8 +194,12 @@ export default {
           Bus.$emit(this.UPDATE_PATIENT_CASE_LIST);
         }, (error) => {
           console.log(error);
+          var message = '归档失败，请稍后再试';
+          if (error.code === 2005) {
+            message = '归档前请完成所有的量表题目';
+          }
           this.$message({
-            message: '归档失败，请稍后再试',
+            message: message,
             type: 'error',
             duration: 2000
           });
