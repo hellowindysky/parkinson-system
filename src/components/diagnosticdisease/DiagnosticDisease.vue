@@ -24,7 +24,7 @@
           </span>
           <el-input v-if="getUIType(field.fieldName)===1" v-model="copyInfo[field.fieldName]"
             type="textarea" :autosize="{ minRows: 2, maxRows: 4}" :class="{'warning': warningResults[field.fieldName]}"
-            :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)">
+            :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)" :maxlength="500">
           </el-input>
           <el-select v-else-if="getUIType(field.fieldName)===3" v-model="copyInfo[field.fieldName]"
             :class="{'warning': warningResults[field.fieldName]}" :placeholder="getMatchedField(field).cnFieldDesc"
@@ -63,7 +63,7 @@
                     </el-select>
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===1">
-                    <el-input v-model="symptom[field.fieldName]" :placeholder="getMatchedField(field.fieldName).cnFieldDesc"></el-input>
+                    <el-input v-model="symptom[field.fieldName]" :placeholder="getMatchedField(field.fieldName).cnFieldDesc" :maxlength="500"></el-input>
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===3">
                     <el-select v-model="symptom[field.fieldName]"
@@ -112,8 +112,8 @@
                     </el-select>
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===1">
-                    <el-input v-model="symptom[field.fieldName]"
-                     :placeholder="getMatchedField(field.fieldName).cnFieldDesc"></el-input>
+                    <el-input v-model="symptom[field.fieldName]" :placeholder="getMatchedField(field.fieldName).cnFieldDesc"
+                      :maxlength="500"></el-input>
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===3">
                     <el-select v-model="symptom[field.fieldName]"
@@ -162,7 +162,7 @@
                     </el-select>
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===1">
-                    <el-input v-model="symptom[field.fieldName]" :placeholder="getMatchedField(field.fieldName).cnFieldDesc"></el-input>
+                    <el-input v-model="symptom[field.fieldName]" :placeholder="getMatchedField(field.fieldName).cnFieldDesc" :maxlength="500"></el-input>
                   </span>
                   <span v-else-if="getUIType(field.fieldName)===3">
                     <el-select v-model="symptom[field.fieldName]" :placeholder="getMatchedField(field.fieldName).cnFieldDesc">

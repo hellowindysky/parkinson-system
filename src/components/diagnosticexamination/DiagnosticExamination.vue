@@ -73,21 +73,21 @@
             <span class="field-name">智能障碍-MMSE:</span>
             <div class="field-value" v-if="mutableMode===READING_MODE">{{VitalSignsData.doiMmse}}</div>
             <div class="field-value" v-else-if="mutableMode===EDITING_MODE">
-              <el-input v-model="vitalData.doiMmse" placeholder="请输入检查结果"></el-input>
+              <el-input v-model="vitalData.doiMmse" placeholder="请输入检查结果" :maxlength="500"></el-input>
             </div>
           </li>
           <li class="field-item">
             <span class="field-name">智能障碍-MoCA:</span>
             <div class="field-value" v-if="mutableMode===READING_MODE">{{VitalSignsData.doiMoca}}</div>
             <div class="field-value" v-else-if="mutableMode===EDITING_MODE">
-              <el-input v-model="vitalData.doiMoca" placeholder="请输入检查结果"></el-input>
+              <el-input v-model="vitalData.doiMoca" placeholder="请输入检查结果" :maxlength="500"></el-input>
             </div>
           </li>
           <li class="field-item">
             <span class="field-name">智能障碍-CDR:</span>
             <div class="field-value" v-if="mutableMode===READING_MODE">{{VitalSignsData.doiCdr}}</div>
             <div class="field-value" v-else-if="mutableMode===EDITING_MODE">
-              <el-input v-model="vitalData.doiCdr" placeholder="请输入检查结果"></el-input>
+              <el-input v-model="vitalData.doiCdr" placeholder="请输入检查结果" :maxlength="500"></el-input>
             </div>
           </li>
         </ul>

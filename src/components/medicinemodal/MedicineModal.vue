@@ -43,7 +43,7 @@
               </td>
               <td class="col col-time">
                 时间
-                <span class="required-mark">*</span>
+                <!-- <span class="required-mark">*</span> -->
               </td>
               <td class="col col-amount">
                 服用量
@@ -58,7 +58,7 @@
               <td class="col col-time">
                 <span v-if="mode===VIEW_CURRENT_CARD">{{medicine.patientMedicineDetail[i - 1].takeTime}}</span>
                 <el-time-select v-else v-model="medicine.patientMedicineDetail[i - 1].takeTime" @change="updateTime(i - 1)"
-                 :class="{'warning': warningResults.patientMedicineDetail[i - 1].takeTime}" placeholder="具体时间点"
+                 :class="{'warning': false}" placeholder="具体时间点"
                  :editable="false" :picker-options="{start: '00:00', step: '00:30', end: '23:30'}">
                 </el-time-select>
               </td>
@@ -66,6 +66,9 @@
                 <span v-if="mode===VIEW_CURRENT_CARD">{{medicine.patientMedicineDetail[i - 1].takeDose}}</span>
                 <el-input v-else v-model="medicine.patientMedicineDetail[i - 1].takeDose" @change="updateDose(i - 1)"
                  :class="{'warning': warningResults.patientMedicineDetail[i - 1].takeDose}" placeholder="单次服用量"></el-input>
+                <div class="warning-text-wrapper">
+                  <span class="warning-text">{{warningResults.patientMedicineDetail[i - 1].takeDose}}</span>
+                </div>
               </td>
               <td class="col col-unit">{{medicineUnit}}</td>
             </tr>
@@ -94,7 +97,8 @@
             </span>
             <el-input v-else-if="getUIType(field.fieldName)===1" v-model="medicine[field.fieldName]"
               :class="{'warning': warningResults[field.fieldName]}" :type="getInputType(field.fieldName)"
-              :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)">
+              :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)"
+              :maxlength="500">
             </el-input>
           </span>
         </div>
@@ -112,8 +116,9 @@
           <span v-else class="field-input" :class="{'long-field-name': isLongName(field.fieldName)}">
             <span class="warning-text">{{warningResults[field.fieldName]}}</span>
             <el-input v-if="getUIType(field.fieldName)===1" v-model="medicine[field.fieldName]"
-             :class="{'warning': warningResults[field.fieldName]}" :type="getInputType(field.fieldName)"
-             :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)">
+              :class="{'warning': warningResults[field.fieldName]}" :type="getInputType(field.fieldName)"
+              :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)"
+              :maxlength="500">
             </el-input>
             <el-select v-else-if="getUIType(field.fieldName)===3" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
               :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
@@ -139,16 +144,16 @@
           <span v-else class="field-input" :class="{'long-field-name': isLongName(field.fieldName)}">
             <span class="warning-text">{{warningResults[field.fieldName]}}</span>
             <el-input v-if="getUIType(field.fieldName)===1" v-model="medicine[field.fieldName]"
-             :class="{'warning': warningResults[field.fieldName]}" :type="getInputType(field.fieldName)"
-             :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)">
+              :class="{'warning': warningResults[field.fieldName]}" :type="getInputType(field.fieldName)"
+              :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)" :maxlength="500">
             </el-input>
             <el-select v-else-if="getUIType(field.fieldName)===3" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-             :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
-             <el-option v-for="option in getOptions(field.fieldName)" :label="option.name"
-              :value="option.code" :key="option.code"></el-option>
+              :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
+              <el-option v-for="option in getOptions(field.fieldName)" :label="option.name"
+                :value="option.code" :key="option.code"></el-option>
             </el-select>
             <el-date-picker v-else-if="getUIType(field.fieldName)===6" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-             :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
+              :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
            </el-date-picker>
           </span>
         </div>
@@ -249,7 +254,7 @@ export default {
         return 0;
       }
       for (let item of this.medicine.patientMedicineDetail) {
-        let dose = parseInt(item.takeDose, 10);
+        let dose = Number(item.takeDose);
         dose = isNaN(dose) ? 0 : dose;  // 如果上一步算出来的为 NaN，那么就取 0
         amount += dose;
       }
@@ -259,8 +264,9 @@ export default {
       // 日总剂量，由药物规格和每日总服用量相乘得到。同时，每次更新这个计算属性的时候，同时更新 this.medicine 下的相应属性值
       let spec = this.medicalSpec;
       spec = isNaN(spec) ? 0 : spec;
-      this.medicine.totalMeasure = this.totalAmount * spec;
-      return this.totalAmount * spec;
+      var totalMeasure = Math.round(this.totalAmount * spec * 100000) / 100000.0;
+      this.medicine.totalMeasure = totalMeasure;
+      return totalMeasure;
     },
     computeUnit() {
       // 计算单位，是一个数字，这个计算属性是在和服务器进行数据交互时使用的，在 rowArray() 中有用到
@@ -292,8 +298,9 @@ export default {
     levodopaDose() {
       // 单日左旋多巴等效剂量，更新这个计算属性的同时也更新 this.medicine.levodopaDose
       let levodopaFactor = this.medicine.levodopaFactorUsed;
-      this.medicine.levodopaDose = this.totalAmount * levodopaFactor;
-      return this.totalAmount * levodopaFactor;
+      var levodopaDose = Math.round(this.totalAmount * levodopaFactor * 100000) / 100000.0;
+      this.medicine.levodopaDose = levodopaDose;
+      return levodopaDose;
     },
     rowArray() {
       var arr = [];   // 这个数组用来帮助生成表格，其中的元素就是每行的序号
@@ -408,7 +415,7 @@ export default {
             formList = formList ? formList : [];
             for (let formItem of formList) {
               for (let p in formItem) {
-                if (formItem.hasOwnProperty(p) && formItem[p]) {
+                if (formItem.hasOwnProperty(p) && formItem[p] && p === 'takeDose') {
                   console.log('表格填写不规范，不允许提交');
                   return;
                 }
@@ -482,9 +489,13 @@ export default {
       } else if (dictionaryField.fieldName === 'medicalSpecUsed') {
         let specGroups = this.medicineInfoObj.spec ? this.medicineInfoObj.spec : [];
         for (let spec of specGroups) {
+          let specOral = spec.specOral;
+          if (spec.medicalPec === 0) {
+            specOral = '其它规格(在备注中注明)';
+          }
           options.push({
-            name: spec.specOral,
-            code: spec.specOral
+            name: specOral,
+            code: specOral
           });
         }
 
@@ -599,7 +610,8 @@ export default {
       // el-time-picker 会将其重置为 undefined (我也不知道为什么)
       let time = this.medicine.patientMedicineDetail[index].takeTime;
       if (time === '') {
-        this.warningResults.patientMedicineDetail[index].takeTime = '必填'; // 实际上，这个值并不显示
+        // this.warningResults.patientMedicineDetail[index].takeTime = '必填'; // 实际上，这个值并不显示
+        this.warningResults.patientMedicineDetail[index].takeTime = null; // 原来要做校验的，现在不做了
       } else {
         this.warningResults.patientMedicineDetail[index].takeTime = null;
       }
@@ -611,7 +623,7 @@ export default {
         this.warningResults.patientMedicineDetail[index].takeDose = '必填'; // 实际上，这个值并不显示
       } else if (!/^[0-9]+(\.[0-9]{1,5})?$/.test(dose) || Number(dose) === 0) {
         // 检查是否为小数部分至多为5位的正数（整数亦可）
-        this.warningResults.patientMedicineDetail[index].takeDose = '应填写正数，小数部分不能超过5位';
+        this.warningResults.patientMedicineDetail[index].takeDose = '应填写正数, 不超过5位小数';
       } else {
         this.warningResults.patientMedicineDetail[index].takeDose = null;
       }
@@ -781,6 +793,16 @@ export default {
                 color: red;
                 font-size: 20px;
                 vertical-align: middle;
+              }
+              .warning-text-wrapper {
+                position: relative;
+                .warning-text {
+                  position: absolute;
+                  top: 1px;
+                  left: 10px;
+                  color: red;
+                  font-size: @small-font-size;
+                }
               }
               .el-input {
                 margin-left: 2%;

@@ -9,7 +9,8 @@
         </span>
         <span class="field-input">
           <span class="warning-text">{{groupNameWarning}}</span>
-          <el-input :class="{'warning': groupNameWarning}" v-model="groupName" placeholder="请输入分组名称"></el-input>
+          <el-input :class="{'warning': groupNameWarning}" v-model="groupName"
+            placeholder="请输入分组名称" :maxlength="50"></el-input>
         </span>
       </div>
 
@@ -32,7 +33,8 @@
           分组说明
         </span>
         <span class="field-input">
-          <el-input class="" :class="{'warning': true}" v-model="groupRemarks" type="textarea" placeholder="请输入备注信息"></el-input>
+          <el-input class="" :class="{'warning': true}" v-model="groupRemarks" type="textarea"
+            placeholder="请输入备注信息" :maxlength="500"></el-input>
         </span>
       </div>
 

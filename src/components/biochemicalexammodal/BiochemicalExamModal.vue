@@ -54,7 +54,7 @@
               <td class="col col-result">
                 <span v-if="mode===VIEW_CURRENT_CARD">{{bioexamTypeData.bioexamResult[key].result}}</span>
                 <el-input v-else v-model="bioexamTypeData['bioexamResult'][key]['result']"
-                  placeholder="请输入检查结果"></el-input>
+                  placeholder="请输入检查结果" :maxlength="500"></el-input>
               </td>
               <td class="col col-danwei">
                 {{item.projectUnit}}
@@ -65,7 +65,7 @@
               <td class="col col-beizhu">
                 <span v-if="mode===VIEW_CURRENT_CARD">{{bioexamTypeData.bioexamResult[key].remarks}}</span>
                 <el-input v-else v-model="bioexamTypeData['bioexamResult'][key]['remarks']"
-                  placeholder="请输入备注"></el-input>
+                  placeholder="请输入备注" :maxlength="500"></el-input>
               </td>
             </tr>
           </table>

@@ -32,7 +32,7 @@
            :editable="false" @change="updateWarning(field)">
           </el-date-picker>
           <el-input v-else-if="getUIType(field.fieldName)===1" v-model="copyInfo[field.fieldName]"
-           type="textarea" :rows="2" :placeholder="getMatchedField(field.fieldName).cnFieldDesc"></el-input>
+           type="textarea" :rows="2" :placeholder="getMatchedField(field.fieldName).cnFieldDesc" :maxlength="500"></el-input>
         </div>
       </div>
     </div>

@@ -14,7 +14,7 @@
           <span class="field-input" v-else>
             <span class="warning-text">{{warningResults.name}}</span>
             <el-input v-model="name" placeholder="请输入本次影像记录的名称" @change="updateWarning('name')"
-              :class="{'warning': warningResults.name}"></el-input>
+              :class="{'warning': warningResults.name}" :maxlength="50"></el-input>
           </span>
         </div>
         <div class="field">
@@ -91,7 +91,7 @@
             <span>{{checkConclusion}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-input v-model="checkConclusion" placeholder="请输入检查结论"></el-input>
+            <el-input v-model="checkConclusion" placeholder="请输入检查结论" :maxlength="500"></el-input>
           </span>
         </div>
         <div class="field whole-line">
@@ -103,7 +103,7 @@
             <span>{{remarks}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-input v-model="remarks" placeholder="请输入备注信息"></el-input>
+            <el-input v-model="remarks" placeholder="请输入备注信息" :maxlength="500"></el-input>
           </span>
         </div>
         <hr class="seperate-line">

@@ -55,12 +55,6 @@ export function vueCopy(origin, copy) {
           Vue.set(copy, i, []);
           vueCopy(origin[i], copy[i]);
         }
-        // if (copy[i] === undefined) {
-        //   Vue.set(copy, i, []);
-        //   vueCopy(origin[i], copy[i]);
-        // } else {
-        //   vueCopy(origin[i], copy[i]);
-        // }
 
       } else if (!(origin[i] instanceof Array)) {
         if ((typeof copy[i] === 'object') && !(copy[i] instanceof Array)) {
@@ -69,12 +63,6 @@ export function vueCopy(origin, copy) {
           Vue.set(copy, i, {});
           vueCopy(origin[i], copy[i]);
         }
-        // if (copy[i] === undefined) {
-        //   Vue.set(copy, i, {});
-        //   vueCopy(origin[i], copy[i]);
-        // } else {
-        //   vueCopy(origin[i], copy[i]);
-        // }
       }
     }
 
@@ -90,12 +78,6 @@ export function vueCopy(origin, copy) {
           Vue.set(copy, p, []);
           vueCopy(origin[p], copy[p]);
         }
-        // if (copy[p] === undefined) {
-        //   Vue.set(copy, p, []);
-        //   vueCopy(origin[p], copy[p]);
-        // } else {
-        //   vueCopy(origin[p], copy[p]);
-        // }
       } else if (origin.hasOwnProperty(p) && !(origin[p] instanceof Array)) {
         if ((typeof copy[p] === 'object') && !(copy[p] instanceof Array)) {
           vueCopy(origin[p], copy[p]);
@@ -103,12 +85,6 @@ export function vueCopy(origin, copy) {
           Vue.set(copy, p, {});
           vueCopy(origin[p], copy[p]);
         }
-        // if (copy[p] === undefined) {
-        //   Vue.set(copy, p, {});
-        //   vueCopy(origin[p], copy[p]);
-        // } else {
-        //   vueCopy(origin[p], copy[p]);
-        // }
       }
     }
   }

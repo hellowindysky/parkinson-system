@@ -33,7 +33,7 @@
         </span>
         <span class="field-input">
           <span v-if="mode===VIEW_CURRENT_CARD">{{item.spephysicalResult}}</span>
-          <el-input v-else placeholder="请输入检查结果" v-model="item.spephysicalResult"></el-input>
+          <el-input v-else placeholder="请输入检查结果" v-model="item.spephysicalResult" :maxlength="500"></el-input>
         </span>
       </div>
       <div class="field multi-line" v-if="showItem.remarks || mode===ADD_NEW_CARD">
@@ -42,7 +42,7 @@
         </span>
         <span class="field-input">
           <span v-if="mode===VIEW_CURRENT_CARD">{{item.spephysicalResult}}</span>
-          <el-input v-else type="textarea" :rows="2" placeholder="请输入备注内容" v-model="item.remarks"></el-input>
+          <el-input v-else type="textarea" :rows="2" placeholder="请输入备注内容" v-model="item.remarks" :maxlength="500"></el-input>
         </span>
       </div>
 

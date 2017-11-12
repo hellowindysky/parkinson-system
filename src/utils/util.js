@@ -47,6 +47,29 @@ function simplifyTime(dateStr) {
   return year + '-' + month + '-' + date + ' ' + formatHour + hour + ':' + formatMin + min;
 }
 
+function calculateYearsFromDate(time) {
+  // 计算参数日期到今天，所经历的完整的年数
+  var formatDate = simplifyDate(time);
+  var dateList = formatDate.split('-');
+  var year = Number(dateList[0]);
+  var month = Number(dateList[1]);
+  var date = Number(dateList[2]);
+
+  var formatTodayDate = simplifyDate(new Date());
+  var todayList = formatTodayDate.split('-');
+  var currentYear = Number(todayList[0]);
+  var currentMonth = Number(todayList[1]);
+  var currentDate = Number(todayList[2]);
+
+  if (date > currentDate) {
+    month += 1;
+  }
+  if (month > currentMonth) {
+    year += 1;
+  }
+  return currentYear - year > 0 ? currentYear - year : 0;
+}
+
 function checkId(ID) {
   if (typeof ID !== 'string') {
     return '非法字符串';
@@ -115,5 +138,6 @@ export default {
   getElement,
   simplifyDate,
   simplifyTime,
+  calculateYearsFromDate,
   checkId
 };

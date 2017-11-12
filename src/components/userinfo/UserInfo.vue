@@ -115,7 +115,7 @@
           <span class="field-name">曾获荣誉</span>
           <span class="field-value" v-show="mode===READING_MODE">XXX领域的领军人物</span>
           <span class="field-input" v-show="mode===EDITING_MODE">
-            <el-input type="textarea"></el-input>
+            <el-input type="textarea" :maxlength="500"></el-input>
           </span>
         </div>
       </div>

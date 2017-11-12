@@ -22,7 +22,7 @@
             <span class="warning-text">{{getWarningText(field.fieldName)}}</span>
             <span v-if="getUIType(field)===1">
               <el-input v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-                :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)"></el-input>
+                :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)" :maxlength="500"></el-input>
             </span>
             <span v-else-if="getUIType(field)===3">
               <el-select v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"

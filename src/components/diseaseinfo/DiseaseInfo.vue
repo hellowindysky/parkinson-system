@@ -22,7 +22,8 @@
           </div>
 
           <div class="field-input" v-show="mode===EDITING_MODE">
-            <span v-if="getUIType(field)===1">
+            <span v-if="field.fieldName==='ariAge'">{{ariAge}}</span>
+            <span v-else-if="getUIType(field)===1">
               <el-input v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
                :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)"></el-input>
             </span>
@@ -100,6 +101,15 @@ export default {
         flattenedGroup = flattenedGroup.concat(group);
       }
       return flattenedGroup;
+    },
+    ariAge() {
+      if (this.copyInfo.ariTime) {
+        var years = Util.calculateYearsFromDate(this.copyInfo.ariTime);
+        this.$set(this.copyInfo, 'ariAge', years);
+        return years;
+      } else {
+        return '';
+      }
     },
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients)) {
@@ -422,6 +432,7 @@ export default {
         top: 0;
         left: @field-name-width;
         right: 2%;
+        font-size: @normal-font-size;
         line-height: @field-height;
         overflow: visible;
         .warning-text {
