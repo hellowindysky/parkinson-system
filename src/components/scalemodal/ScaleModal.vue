@@ -68,7 +68,7 @@
         </div>
       </div>
 
-      <folding-panel :title="'关联症状'" :folded-status="mode===VIEW_CURRENT_CARD" class="associated-symptom" :editable="canEdit">
+      <folding-panel :title="'关联症状'" :folded-status="true" class="associated-symptom" :editable="canEdit">
         <div class="symptom-item" v-for="(symptom, index) in scaleSymptomList">
           <el-checkbox class="symptom-item-title" v-model="symptom.status" :disabled="mode===VIEW_CURRENT_CARD">
             {{symptom.sympName}}
