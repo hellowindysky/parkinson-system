@@ -43,7 +43,7 @@
               </td>
               <td class="col col-time">
                 时间
-                <span class="required-mark">*</span>
+                <!-- <span class="required-mark">*</span> -->
               </td>
               <td class="col col-amount">
                 服用量
@@ -58,7 +58,7 @@
               <td class="col col-time">
                 <span v-if="mode===VIEW_CURRENT_CARD">{{medicine.patientMedicineDetail[i - 1].takeTime}}</span>
                 <el-time-select v-else v-model="medicine.patientMedicineDetail[i - 1].takeTime" @change="updateTime(i - 1)"
-                 :class="{'warning': warningResults.patientMedicineDetail[i - 1].takeTime}" placeholder="具体时间点"
+                 :class="{'warning': false}" placeholder="具体时间点"
                  :editable="false" :picker-options="{start: '00:00', step: '00:30', end: '23:30'}">
                 </el-time-select>
               </td>
@@ -408,7 +408,7 @@ export default {
             formList = formList ? formList : [];
             for (let formItem of formList) {
               for (let p in formItem) {
-                if (formItem.hasOwnProperty(p) && formItem[p]) {
+                if (formItem.hasOwnProperty(p) && formItem[p] && p === 'takeDose') {
                   console.log('表格填写不规范，不允许提交');
                   return;
                 }
@@ -599,7 +599,8 @@ export default {
       // el-time-picker 会将其重置为 undefined (我也不知道为什么)
       let time = this.medicine.patientMedicineDetail[index].takeTime;
       if (time === '') {
-        this.warningResults.patientMedicineDetail[index].takeTime = '必填'; // 实际上，这个值并不显示
+        // this.warningResults.patientMedicineDetail[index].takeTime = '必填'; // 实际上，这个值并不显示
+        this.warningResults.patientMedicineDetail[index].takeTime = null; // 原来要做校验的，现在不做了
       } else {
         this.warningResults.patientMedicineDetail[index].takeTime = null;
       }
