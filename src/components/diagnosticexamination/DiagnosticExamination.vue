@@ -398,7 +398,6 @@ export default {
       Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.EDIT_CURRENT_CARD, item);
     },
     viewBiochemicalExamRecord(item) {
-      console.log(item);
       Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.VIEW_CURRENT_CARD, item);
     },
     deleteBiochemicalExamRecord(item) { // 删除生化指标
