@@ -25,18 +25,18 @@
             <span v-if="field.fieldName==='ariAge'">{{ariAge}}</span>
             <span v-else-if="getUIType(field)===1">
               <el-input v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-               :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)"></el-input>
+                :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)"></el-input>
             </span>
             <span v-else-if="getUIType(field)===3">
               <el-select v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-               :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)">
+                :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)">
                 <el-option v-for="type in getTypes(field)" :label="type.typeName"
-                 :value="type.typeCode" :key="type.typeCode"></el-option>
+                  :value="type.typeCode" :key="type.typeCode"></el-option>
               </el-select>
             </span>
             <span v-else-if="getUIType(field)===5">
               <el-checkbox-group v-model="copyInfo[field.fieldName]" @change="updateWarning(field)"
-               :placeholder="getMatchedField(field).cnFieldDesc">
+                :placeholder="getMatchedField(field).cnFieldDesc">
                 <el-checkbox v-for="type in getTypes(field)" :label="type.typeCode"
                  :key="type.typeCode">{{type.typeName}}</el-checkbox>
               </el-checkbox-group>
@@ -73,6 +73,10 @@ export default {
       default: () => {
         return {};
       }
+    },
+    birthday: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -104,7 +108,7 @@ export default {
     },
     ariAge() {
       if (this.copyInfo.ariTime) {
-        var years = Util.calculateYearsFromDate(this.copyInfo.ariTime);
+        var years = Util.calculateYearsBetween(this.birthday, this.copyInfo.ariTime);
         this.$set(this.copyInfo, 'ariAge', years);
         return years;
       } else {
