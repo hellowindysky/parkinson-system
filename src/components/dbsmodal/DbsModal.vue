@@ -419,15 +419,18 @@
           </tr>
           <tr class="row" v-for="(param, index) in copyInfo.followDbsParams.adjustBeforeParameter">
             <td class="col w2" colspan="2" rowspan="2" v-show="index % 2 === 0">
-              <el-select v-model="followDbsAdjustBeforeFirstSchemeOrder" @change="selectFollowDbsAdjustBeforeFirstSchemeOrder()"
+              <el-select v-model="followDbsAdjustBeforeFirstSchemeOrder" @change="selectFollowDbsAdjustBeforeFirstSchemeOrder"
                 :disabled="mode===VIEW_CURRENT_CARD">
                 <el-option v-for="(p, i) in lastDbsParameter" v-show="i % 2 === 0"
-                  :label="getFollowDbsAdjustBeforePlanName(p)" :value="p.schemeOrder" :key="p.schemeOrder"></el-option>
+                  :label="getFollowDbsAdjustBeforePlanName(p)" :value="p.schemeOrder" :key="p.schemeOrder">
+                </el-option>
+                <el-option label="自定义" :value="0">
+                </el-option>
               </el-select>
             </td>
             <td class="col w2" colspan="2">{{getLimbSide(param.limbSide)}}</td>
             <td class="col w3" colspan="3">
-              <el-select v-model="param.exciteMod":disabled="mode===VIEW_CURRENT_CARD">
+              <el-select v-model="param.exciteMod" :disabled="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">
                 <el-option v-for="option in getOptions('exciteMod')" :label="option.name"
                   :value="option.code" :key="option.code"></el-option>
               </el-select>
@@ -435,33 +438,33 @@
             <td class="col w5" colspan="5">
               <el-checkbox-group v-model="followDbsAdjustBeforeParamPole[index].positive" @change="updateParamPole('followDbsAdjustBefore', index)">
                 <el-checkbox v-for="contact in getSidePositiveContact(param.limbSide)" :label="contact" :key="contact"
-                  :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
+                  :disabled="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0"></el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w4" colspan="4">
               <el-checkbox-group v-model="followDbsAdjustBeforeParamPole[index].negative" @change="updateParamPole('followDbsAdjustBefore', index)">
                 <el-checkbox v-for="contact in getSideNegativeContact(param.limbSide)" :label="contact" :key="contact"
-                  :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
+                  :disabled="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0"></el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w1" colspan="1">
-              <span v-if="mode===VIEW_CURRENT_CARD">{{param.frequency}}</span>
+              <span v-if="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">{{param.frequency}}</span>
               <el-input v-else v-model="param.frequency"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <span v-if="mode===VIEW_CURRENT_CARD">{{param.pulseWidth}}</span>
+              <span v-if="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">{{param.pulseWidth}}</span>
               <el-input v-else v-model="param.pulseWidth"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <span v-if="mode===VIEW_CURRENT_CARD">{{param.voltage}}</span>
+              <span v-if="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">{{param.voltage}}</span>
               <el-input v-else v-model="param.voltage"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <span v-if="mode===VIEW_CURRENT_CARD">{{param.resistance}}</span>
+              <span v-if="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">{{param.resistance}}</span>
               <el-input v-else v-model="param.resistance"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <span v-if="mode===VIEW_CURRENT_CARD">{{param.electric}}</span>
+              <span v-if="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">{{param.electric}}</span>
               <el-input v-else v-model="param.electric"></el-input>
             </td>
             <td class="col w1" colspan="1">
@@ -1594,17 +1597,41 @@ export default {
     },
     selectFollowDbsAdjustBeforeFirstSchemeOrder() {
       // 每次选择了调整前参数的方案，就更新 copyInfo.followDbsParams.adjustBeforeParameter
-      var firstIndex;
+      var firstIndex = -1;
       for (var i = 0; i < this.lastDbsParameter.length; i++) {
         if (this.lastDbsParameter[i].schemeOrder === this.followDbsAdjustBeforeFirstSchemeOrder) {
           firstIndex = i;
           break;
         }
       }
+
       this.$set(this.copyInfo.followDbsParams.adjustBeforeParameter, 0, {});
       this.$set(this.copyInfo.followDbsParams.adjustBeforeParameter, 1, {});
-      vueCopy(this.lastDbsParameter[firstIndex], this.copyInfo.followDbsParams.adjustBeforeParameter[0]);
-      vueCopy(this.lastDbsParameter[firstIndex + 1], this.copyInfo.followDbsParams.adjustBeforeParameter[1]);
+
+      // 如果选择了自定义方案，则 this.followDbsAdjustBeforeFirstSchemeOrder 值为 0，
+      // 与 this.lastDbsParameter 数组中的任意一项的 schemeOrder 都对应不上，那么 firstIndex 的值就还是 -1
+      if (firstIndex === -1) {
+        let emptyParam = {
+          schemeOrder: 0,
+          exciteMod: '',
+          limbSide: 1,
+          positivePole: '',
+          negativePole: '',
+          frequency: '',
+          pulseWidth: '',
+          voltage: '',
+          resistance: '',
+          electric: '',
+          electricity: ''
+        };
+        emptyParam.limbSide = 1;
+        vueCopy(emptyParam, this.copyInfo.followDbsParams.adjustBeforeParameter[0]);
+        emptyParam.limbSide = 2;
+        vueCopy(emptyParam, this.copyInfo.followDbsParams.adjustBeforeParameter[1]);
+      } else {
+        vueCopy(this.lastDbsParameter[firstIndex], this.copyInfo.followDbsParams.adjustBeforeParameter[0]);
+        vueCopy(this.lastDbsParameter[firstIndex + 1], this.copyInfo.followDbsParams.adjustBeforeParameter[1]);
+      }
       this.updateCheckBoxModel('followDbsAdjustBefore');
     }
   },
