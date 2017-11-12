@@ -10,7 +10,10 @@
           v-on:editCurrentCard="editScale(item)" v-on:viewCurrentCard="viewScale(item)">
           <div class="text first-line">
             <span class="name">量表得分:</span>
-            <span class="value">{{item.scalePoint}}</span>
+            <span class="value">
+              {{item.scalePoint}}
+              <span class="mark">{{getCompleteStatus(item)}}</span>
+            </span>
           </div>
           <div class="text second-line">
             <span class="name">填写时间:</span>
@@ -110,6 +113,14 @@ export default {
         return this.getScaleTypeName(scale.scaleInfoId) === typeName;
       }).length;
       return typeName + ' (' + count + '条记录 )';
+    },
+    getCompleteStatus(item) {
+      var hasComplete = item.unCompleteCount === 0;
+      if (!hasComplete) {
+        return '未完成';
+      } else {
+        return '';
+      }
     },
     editScale(item) {
       Bus.$emit(this.SHOW_SCALE_MODAL, this.EDIT_CURRENT_CARD, item);
@@ -233,6 +244,10 @@ export default {
         .value {
           padding-left: 10px;
           color: @light-font-color;
+          .mark {
+            padding-left: 10px;
+            color: @button-color;
+          }
         }
       }
       .first-line {
