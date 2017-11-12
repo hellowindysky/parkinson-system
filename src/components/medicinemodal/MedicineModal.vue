@@ -66,6 +66,9 @@
                 <span v-if="mode===VIEW_CURRENT_CARD">{{medicine.patientMedicineDetail[i - 1].takeDose}}</span>
                 <el-input v-else v-model="medicine.patientMedicineDetail[i - 1].takeDose" @change="updateDose(i - 1)"
                  :class="{'warning': warningResults.patientMedicineDetail[i - 1].takeDose}" placeholder="单次服用量"></el-input>
+                <div class="warning-text-wrapper">
+                  <span class="warning-text">{{warningResults.patientMedicineDetail[i - 1].takeDose}}</span>
+                </div>
               </td>
               <td class="col col-unit">{{medicineUnit}}</td>
             </tr>
@@ -249,7 +252,7 @@ export default {
         return 0;
       }
       for (let item of this.medicine.patientMedicineDetail) {
-        let dose = parseInt(item.takeDose, 10);
+        let dose = Number(item.takeDose);
         dose = isNaN(dose) ? 0 : dose;  // 如果上一步算出来的为 NaN，那么就取 0
         amount += dose;
       }
@@ -259,8 +262,9 @@ export default {
       // 日总剂量，由药物规格和每日总服用量相乘得到。同时，每次更新这个计算属性的时候，同时更新 this.medicine 下的相应属性值
       let spec = this.medicalSpec;
       spec = isNaN(spec) ? 0 : spec;
-      this.medicine.totalMeasure = this.totalAmount * spec;
-      return this.totalAmount * spec;
+      var totalMeasure = Math.round(this.totalAmount * spec * 100000) / 100000.0;
+      this.medicine.totalMeasure = totalMeasure;
+      return totalMeasure;
     },
     computeUnit() {
       // 计算单位，是一个数字，这个计算属性是在和服务器进行数据交互时使用的，在 rowArray() 中有用到
@@ -292,8 +296,9 @@ export default {
     levodopaDose() {
       // 单日左旋多巴等效剂量，更新这个计算属性的同时也更新 this.medicine.levodopaDose
       let levodopaFactor = this.medicine.levodopaFactorUsed;
-      this.medicine.levodopaDose = this.totalAmount * levodopaFactor;
-      return this.totalAmount * levodopaFactor;
+      var levodopaDose = Math.round(this.totalAmount * levodopaFactor * 100000) / 100000.0;
+      this.medicine.levodopaDose = levodopaDose;
+      return levodopaDose;
     },
     rowArray() {
       var arr = [];   // 这个数组用来帮助生成表格，其中的元素就是每行的序号
@@ -612,7 +617,7 @@ export default {
         this.warningResults.patientMedicineDetail[index].takeDose = '必填'; // 实际上，这个值并不显示
       } else if (!/^[0-9]+(\.[0-9]{1,5})?$/.test(dose) || Number(dose) === 0) {
         // 检查是否为小数部分至多为5位的正数（整数亦可）
-        this.warningResults.patientMedicineDetail[index].takeDose = '应填写正数，小数部分不能超过5位';
+        this.warningResults.patientMedicineDetail[index].takeDose = '应填写正数, 不超过5位小数';
       } else {
         this.warningResults.patientMedicineDetail[index].takeDose = null;
       }
@@ -782,6 +787,16 @@ export default {
                 color: red;
                 font-size: 20px;
                 vertical-align: middle;
+              }
+              .warning-text-wrapper {
+                position: relative;
+                .warning-text {
+                  position: absolute;
+                  top: 1px;
+                  left: 10px;
+                  color: red;
+                  font-size: @small-font-size;
+                }
               }
               .el-input {
                 margin-left: 2%;
