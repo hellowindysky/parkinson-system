@@ -88,13 +88,13 @@
             {{getFieldValue(copyInfo.isTakeMedication, 'isTakeMedication')}}
           </span>
           <span class="field-input" v-else>
-            <el-select v-model="copyInfo.isTakeMedication">
+            <el-select v-model="copyInfo.isTakeMedication" @change="updateField('isTakeMedication')">
               <el-option label="有" :value="1"></el-option>
               <el-option label="无" :value="0"></el-option>
             </el-select>
           </span>
         </div>
-        <div class="field">
+        <div class="field" v-show="copyInfo.isTakeMedication===1">
           <span class="field-name">服用药物</span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             {{copyInfo.medicationStatus}}
@@ -109,13 +109,13 @@
             {{getFieldValue(copyInfo.damageEffectExist, 'damageEffectExist')}}
           </span>
           <span class="field-input" v-else>
-            <el-select v-model="copyInfo.damageEffectExist">
+            <el-select v-model="copyInfo.damageEffectExist" @change="updateField('damageEffectExist')">
               <el-option label="有" :value="1"></el-option>
               <el-option label="无" :value="0"></el-option>
             </el-select>
           </span>
         </div>
-        <div class="field" v-show="modelType===1">
+        <div class="field" v-show="modelType===1 && copyInfo.damageEffectExist===1">
           <span class="field-name long-field-name">微毁损效应持续时间</span>
           <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
             {{copyInfo.damageEffectDuration}}
@@ -130,13 +130,13 @@
             {{getFieldValue(copyInfo.adverseEventsExist, 'adverseEventsExist')}}
           </span>
           <span class="field-input" v-else>
-            <el-select v-model="copyInfo.adverseEventsExist">
+            <el-select v-model="copyInfo.adverseEventsExist" @change="updateField('adverseEventsExist')">
               <el-option label="有" :value="1"></el-option>
               <el-option label="无" :value="0"></el-option>
             </el-select>
           </span>
         </div>
-        <div class="field whole-line double-line" v-show="modelType===1">
+        <div class="field whole-line double-line" v-show="modelType===1 && copyInfo.adverseEventsExist===1">
           <span class="field-name">不良事件描述</span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             {{copyInfo.adverseEventsRemark}}
@@ -1174,7 +1174,9 @@ export default {
         delete param.id;
         param.paramType = 2;
       }
-      this.followDbsAdjustBeforeFirstSchemeOrder = this.copyInfo.followDbsParams.adjustBeforeParameter[0].schemeOrder;
+      if (this.copyInfo.followDbsParams.adjustBeforeParameter && this.copyInfo.followDbsParams.adjustBeforeParameter[0]) {
+        this.followDbsAdjustBeforeFirstSchemeOrder = this.copyInfo.followDbsParams.adjustBeforeParameter[0].schemeOrder;
+      }
       this.updateCheckBoxModel('followDbsAdjustBefore');
     },
     updateContactOrder() {
@@ -1223,6 +1225,19 @@ export default {
         this.initContactForm();
       }
       this.updateWarning('deviceId');
+    },
+    updateField(fieldName) {
+      var influencedFieldName = '';
+      if (fieldName === 'isTakeMedication') {
+        influencedFieldName = 'medicationStatus';
+      } else if (fieldName === 'damageEffectExist') {
+        influencedFieldName = 'damageEffectDuration';
+      } else if (fieldName === 'adverseEventsExist') {
+        influencedFieldName = 'adverseEventsRemark';
+      }
+      if (this.copyInfo[fieldName] !== 1 && influencedFieldName !== '') {
+        this.$set(this.copyInfo, influencedFieldName, '');
+      }
     },
     initContactForm() {
       if (this.modelType === 1) {
