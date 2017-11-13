@@ -445,6 +445,7 @@ export default {
       EmgTypeNameArrs: [],
       FatherTempData: {},
       SonTempData: [],
+      lockSubmitButton: false,
       emgTableName: [
         {
           arr: 'fwavStuItem',
@@ -753,18 +754,24 @@ export default {
       this.mode = this.EDIT_CURRENT_CARD;
     },
     submit() {
+      if (this.lockSubmitButton) {
+        return;
+      }
       let submitData = this.EmgTypeData;
+      this.lockSubmitButton = true;
       if (this.mode === this.ADD_NEW_CARD) {
         // 新增肌电图
         addEmg(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
           this.cancel();
+          this.lockSubmitButton = false;
         });
       } else if (this.mode === this.EDIT_CURRENT_CARD) {
         // 修改肌电图
         modEmg(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
           this.cancel();
+          this.lockSubmitButton = false;
         });
       }
     },

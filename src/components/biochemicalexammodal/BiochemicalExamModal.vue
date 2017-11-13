@@ -97,7 +97,8 @@ export default {
       disableChangingSubModal: false,
       warningResults: {},
       bioexamTypeData: {},
-      templateData: []
+      templateData: [],
+      lockSubmitButton: false
     };
   },
   computed: {
@@ -195,16 +196,22 @@ export default {
       this.mode = this.EDIT_CURRENT_CARD;
     },
     submit() {
+      if (this.lockSubmitButton) {
+        return;
+      }
       let submitData = deepCopy(this.bioexamTypeData);
+      this.lockSubmitButton = true;
       if (this.mode === this.EDIT_CURRENT_CARD) {
         modBiochemical(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
           this.updateAndClose();
+          this.lockSubmitButton = false;
         });
       } else if (this.mode === this.ADD_NEW_CARD) {
         addBiochemical(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
           this.updateAndClose();
+          this.lockSubmitButton = false;
         });
       }
     },

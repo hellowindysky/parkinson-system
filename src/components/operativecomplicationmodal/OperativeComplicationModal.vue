@@ -58,7 +58,8 @@ export default {
       copyInfo: {},
       originalInfo: {},
       warningResults: {},
-      completeInit: false
+      completeInit: false,
+      lockSubmitButton: false
     };
   },
   computed: {
@@ -116,6 +117,9 @@ export default {
       this.mode = this.EDIT_CURRENT_CARD;
     },
     submit() {
+      if (this.lockSubmitButton) {
+        return;
+      }
       // 先将日期格式改成符合服务器传输的格式
       this.copyInfo.occurrenceTime = Util.simplifyDate(this.copyInfo.occurrenceTime);
 
@@ -130,16 +134,18 @@ export default {
           return;
         }
       }
-
+      this.lockSubmitButton = true;
       // 到这里，就可以提交了
       if (this.mode === this.ADD_NEW_CARD) {
         this.copyInfo.patientCaseId = this.$route.params.caseId;  // 补充诊断 id 这个属性
         addOperativeCompliation(this.copyInfo).then(() => {
           this.updateAndClose();
+          this.lockSubmitButton = false;
         });
       } else if (this.mode === this.EDIT_CURRENT_CARD) {
         modifyOperativeCompliation(this.copyInfo).then(() => {
           this.updateAndClose();
+          this.lockSubmitButton = false;
         });
       }
     },

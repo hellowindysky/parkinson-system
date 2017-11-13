@@ -73,7 +73,8 @@ export default {
       item: {},
       showItem: {},
       warningResults: {},
-      spephysicalType: []
+      spephysicalType: [],
+      lockSubmitButton: false
     };
   },
   computed: {
@@ -141,6 +142,10 @@ export default {
       }
     },
     submit() {
+      if (this.lockSubmitButton) {
+        return;
+      }
+      this.lockSubmitButton = true;
       let submitData = deepCopy(this.item);
       submitData.ariseTime = Util.simplifyDate(submitData.ariseTime);
       if (this.mode === this.EDIT_CURRENT_CARD) {
@@ -148,6 +153,7 @@ export default {
         modifyNervouSystem(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
           this.updateAndClose();
+          this.lockSubmitButton = false;
         });
       } else if (this.mode === this.ADD_NEW_CARD) {
         // 新增的状态
@@ -155,6 +161,7 @@ export default {
         addNervouSystem(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
           this.updateAndClose();
+          this.lockSubmitButton = false;
         });
       }
     },

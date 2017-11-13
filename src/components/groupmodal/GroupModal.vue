@@ -58,7 +58,8 @@ export default {
       groupName: '',
       groupType: '',
       groupRemarks: '',
-      checked: false
+      checked: false,
+      lockSubmitButton: false
     };
   },
   computed: {
@@ -90,7 +91,11 @@ export default {
       this.displayModal = false;
     },
     submit() {
+      if (this.lockSubmitButton) {
+        return;
+      }
       this.checked = true;
+      this.lockSubmitButton = true;
       if (this.groupNameWarning === '' && this.groupTypeWarning === '') {
         var groupInfo = {
           'groupeName': this.groupName,   // 拼写错误是数据库的问题
@@ -100,6 +105,7 @@ export default {
         addGroup(groupInfo).then(() => {
           Bus.$emit(this.UPDATE_GROUP_LIST);
           this.displayModal = false;
+          this.lockSubmitButton = false;
         }, (error) => {
           if (error.code === 8) {
             this.$message({
@@ -108,6 +114,7 @@ export default {
               duration: 2000
             });
           }
+          this.lockSubmitButton = false;
         });
       }
     },
