@@ -12,8 +12,8 @@
             <span class="warning-text"></span>
             <span v-if="mode===VIEW_CURRENT_CARD">{{getFieldValue(copyInfo.bioexamId, 'bioexamName')}}</span>
             <el-select v-else placeholder="请选择检查名称" v-model="copyInfo.bioexamId"
-              @change="changeTemplate" :disabled="mode===EDIT_CURRENT_CARD">
-              <el-option v-for="bioexItem in bioexamTypeList" :key="bioexItem.bioexamId"
+              @change="updateTemplate" :disabled="mode===EDIT_CURRENT_CARD">
+              <el-option v-for="bioexItem in bioexamList" :key="bioexItem.bioexamId"
                 :label="bioexItem.examName" :value="bioexItem.id" ></el-option>
             </el-select>
           </span>
@@ -103,7 +103,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'bioexamTypeList'
+      'bioexamList'
     ]),
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
@@ -111,6 +111,12 @@ export default {
       } else {
         return '生化指标';
       }
+    },
+    patientId() {
+      return this.$route.params.id;
+    },
+    patientCaseId() {
+      return this.$route.params.caseId;
     },
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients)) {
@@ -124,27 +130,29 @@ export default {
     showPanel(cardOperation, item) {
       this.displayModal = true;
       this.mode = cardOperation;
+      console.log('item', item);
 
+      this.copyInfo = {};
       if (this.mode === this.ADD_NEW_CARD) {
         // 如果是新增生化指标那么需要新造一个对象来提交
         this.$set(this.copyInfo, 'bioexamId', '');
         this.$set(this.copyInfo, 'bioexamResult', []);
-        this.$set(this.copyInfo, 'patientBioexamId', '');
         this.$set(this.copyInfo, 'projectResults', '');
+        this.$set(this.copyInfo, 'checkDate', '');
         this.$set(this.copyInfo, 'remarks', '');
-        this.$set(this.copyInfo, 'patientCaseId', this.$route.params.caseId);
-        this.$set(this.copyInfo, 'patientId', this.$route.params.id);
+        this.$set(this.copyInfo, 'patientCaseId', this.patientCaseId);
+        this.$set(this.copyInfo, 'patientId', this.patientId);
 
       } else {
-        // 修改生化指标那么直接拷贝它
         vueCopy(item, this.copyInfo);
-        console.log('item', item);
-        let bioexamId = this.copyInfo.bioexamId; // 获取到检查类型的ID
-        for (let i = 0; i < this.bioexamTypeList.length; i++) {
-          if (this.bioexamTypeList[i].id === bioexamId) {
-            vueCopy(this.bioexamTypeList[i].projects, this.templateData);
-            // console.log('projects', this.templateData);
-          }
+      }
+
+      console.log(this.bioexamList);
+      for (let bioexam of this.bioexamList) {
+        if (bioexam.id === this.copyInfo.bioexamId) {
+          this.templateData = [];
+          vueCopy(bioexam.projects, this.templateData);
+          // console.log('template', this.templateData);
         }
       }
 
@@ -152,37 +160,30 @@ export default {
         this.clearWarning();
       });
     },
-    changeTemplate() {
-      // 每当改变检查名字下拉框就重新给template赋对应的值
-      let bioexamId = this.copyInfo.bioexamId; // 获取到检查类型的ID
-      for (let i = 0; i < this.bioexamTypeList.length; i++) {
-        if (this.bioexamTypeList[i].id === bioexamId) {
+    updateTemplate() {
+      // 每当改变检查名字下拉框就重新给 template 赋对应的值
+      for (let bioexam of this.bioexamList) {
+        if (bioexam.id === this.copyInfo.bioexamId) {
           this.templateData = [];
-          console.log('templateData', this.templateData);
-          vueCopy(this.bioexamTypeList[i].projects, this.templateData);
+          vueCopy(bioexam.projects, this.templateData);
           // console.log('template', this.templateData);
         }
       }
       // 接下来要把检查结果和备注信息还原成原来的样子
-      if (this.mode !== this.VIEW_CURRENT_CARD) {
-        // 在新增生化检查的时候要根据检查类型的长度来生成监听的数据对象
-        for (let i = 0; i < this.templateData.length; i++) {
-          this.$set(this.copyInfo['bioexamResult'], i, {});
-          for (let key in this.templateData[i]) {
-            if (key === 'id') {
-              this.$set(this.copyInfo['bioexamResult'][i], 'bioexamProjectId', this.templateData[i][key]);
-            }
-          }
+      // 在新增生化检查的时候要根据检查类型的长度来生成监听的数据对象
+      this.$set(this.copyInfo, 'bioexamResult', []);
+      for (let i = 0; i < this.templateData.length; i++) {
+        this.$set(this.copyInfo.bioexamResult, i, {});
+        this.$set(this.copyInfo.bioexamResult[i], 'bioexamProjectId', this.templateData[i].id);
 
-          if (this.mode === this.ADD_NEW_CARD) {
-            this.$set(this.copyInfo.bioexamResult[i], 'patientCaseId', this.$route.params.caseId);
-            this.$set(this.copyInfo.bioexamResult[i], 'patientId', this.$route.params.id);
-          }
-          this.$set(this.copyInfo.bioexamResult[i], 'remarks', '');
-          this.$set(this.copyInfo.bioexamResult[i], 'result', '');
+        if (this.mode === this.ADD_NEW_CARD) {
+          this.$set(this.copyInfo.bioexamResult[i], 'patientCaseId', this.patientCaseId);
+          this.$set(this.copyInfo.bioexamResult[i], 'patientId', this.patientId);
         }
-        // console.log('current', this.copyInfo['bioexamResult']);
+        this.$set(this.copyInfo.bioexamResult[i], 'remarks', '');
+        this.$set(this.copyInfo.bioexamResult[i], 'result', '');
       }
+      // console.log('current', this.copyInfo['bioexamResult']);
     },
     cancel() {
       this.displayModal = false;
@@ -243,7 +244,7 @@ export default {
     },
     getFieldValue(code, fieldName) {
       if (fieldName === 'bioexamName') {
-        let info = Util.getElement('id', code, this.bioexamTypeList);
+        let info = Util.getElement('id', code, this.bioexamList);
         return info.examName;
       } else {
         return '';
