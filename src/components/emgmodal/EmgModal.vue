@@ -10,8 +10,8 @@
           </span>
           <span class="field-input">
             <span class="warning-text"></span>
-            <span v-if='mode===VIEW_CURRENT_CARD'>{{getFieldValue(EmgTypeData.elecTroGramId, 'emgName')}}</span>
-            <el-select v-else placeholder="请选择肌电图名称" v-model="EmgTypeData.elecTroGramId"
+            <span v-if='mode===VIEW_CURRENT_CARD'>{{getFieldValue(copyInfo.elecTroGramId, 'emgName')}}</span>
+            <el-select v-else placeholder="请选择肌电图名称" v-model="copyInfo.elecTroGramId"
               :disabled="mode!==ADD_NEW_CARD" @change="selectFatherTempData">
               <el-option v-for="emgItem in EmgNameArr" :key="emgItem.id" :label="emgItem.emgName" :value="emgItem.id" ></el-option>
             </el-select>
@@ -24,8 +24,8 @@
           </span>
           <span class="field-input">
             <span class="warning-text"></span>
-            <span v-if='mode===VIEW_CURRENT_CARD'>{{getFieldValue(EmgTypeData.etgType, 'emgType')}}</span>
-            <el-select v-else v-model="EmgTypeData['etgType']" disabled>
+            <span v-if='mode===VIEW_CURRENT_CARD'>{{getFieldValue(copyInfo.etgType, 'emgType')}}</span>
+            <el-select v-else v-model="copyInfo['etgType']" disabled>
                <el-option v-for="item in EmgTypeNameArrs" :key="item.typeCode" :label="item.typeName" :value="item.typeCode" ></el-option>
             </el-select>
           </span>
@@ -37,8 +37,8 @@
           </span>
           <span class="field-input">
             <span class="warning-text"></span>
-            <span v-if="mode===VIEW_CURRENT_CARD">{{EmgTypeData.patEleResult}}</span>
-            <el-input v-else type="textarea" :rows="2" v-model="EmgTypeData['patEleResult']" placeholder="请输入检查结果"></el-input>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patEleResult}}</span>
+            <el-input v-else type="textarea" :rows="2" v-model="copyInfo['patEleResult']" placeholder="请输入检查结果"></el-input>
           </span>
         </div>
         <div class="field whole-line multi-line">
@@ -48,8 +48,8 @@
           </span>
           <span class="field-input">
             <span class="warning-text"></span>
-            <span v-if="mode===VIEW_CURRENT_CARD">{{EmgTypeData.patEleHint}}</span>
-            <el-input v-else type="textarea" :rows="2" v-model="EmgTypeData['patEleHint']" placeholder="请输入提示信息"></el-input>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patEleHint}}</span>
+            <el-input v-else type="textarea" :rows="2" v-model="copyInfo['patEleHint']" placeholder="请输入提示信息"></el-input>
           </span>
         </div>
         <h3 class="form-title" v-if="tableMode===SON_OPEN">{{currentTableName}}</h3>
@@ -122,22 +122,22 @@
                 <el-input v-model="item['nerveAndSite']" disabled></el-input>
               </td>
               <td class="col col-width10">
-                <el-input v-model="EmgTypeData['patientMotNerCondResu'][key]['latency']"></el-input>
+                <el-input v-model="copyInfo['patientMotNerCondResu'][key]['latency']"></el-input>
               </td>
               <td class="col col-width10">
-                <el-input v-model="EmgTypeData['patientMotNerCondResu'][key]['amplitude']"></el-input>
+                <el-input v-model="copyInfo['patientMotNerCondResu'][key]['amplitude']"></el-input>
               </td>
               <td class="col col-width15">
                 <el-input v-model="item['segment']"></el-input>
               </td>
               <td class="col col-width10">
-                <el-input v-model="EmgTypeData['patientMotNerCondResu'][key]['latencyDifference']"></el-input>
+                <el-input v-model="copyInfo['patientMotNerCondResu'][key]['latencyDifference']"></el-input>
               </td>
               <td class="col col-width10">
-                <el-input v-model="EmgTypeData['patientMotNerCondResu'][key]['distance']"></el-input>
+                <el-input v-model="copyInfo['patientMotNerCondResu'][key]['distance']"></el-input>
               </td>
               <td class="col col-width10">
-                <el-input v-model="EmgTypeData['patientMotNerCondResu'][key]['conductionVelocity']"></el-input>
+                <el-input v-model="copyInfo['patientMotNerCondResu'][key]['conductionVelocity']"></el-input>
               </td>
             </tr>
           </table>
@@ -167,13 +167,13 @@
                 <el-input v-model="item['nerve']" disabled></el-input>
               </td>
               <td class="col col-width25">
-                <el-input v-model="EmgTypeData['patienFWaStuResu'][key]['mLatency']"></el-input>
+                <el-input v-model="copyInfo['patienFWaStuResu'][key]['mLatency']"></el-input>
               </td>
               <td class="col col-width25">
-                <el-input v-model="EmgTypeData['patienFWaStuResu'][key]['fLatency']"></el-input>
+                <el-input v-model="copyInfo['patienFWaStuResu'][key]['fLatency']"></el-input>
               </td>
               <td class="col col-width20">
-                <el-input v-model="EmgTypeData['patienFWaStuResu'][key]['fProportion']"></el-input>
+                <el-input v-model="copyInfo['patienFWaStuResu'][key]['fProportion']"></el-input>
               </td>
             </tr>
           </table>
@@ -221,25 +221,25 @@
                  <el-input v-model="item.nerveAndSite" disabled></el-input>
               </td>
               <td class="col col-width10">
-                 <el-input v-model="EmgTypeData['patientSenNerCondResu'][key]['onsetLatency']"></el-input>
+                 <el-input v-model="copyInfo['patientSenNerCondResu'][key]['onsetLatency']"></el-input>
               </td>
               <td class="col col-width10">
-                 <el-input v-model="EmgTypeData['patientSenNerCondResu'][key]['peakLatency']"></el-input>
+                 <el-input v-model="copyInfo['patientSenNerCondResu'][key]['peakLatency']"></el-input>
               </td>
               <td class="col col-width10">
-                 <el-input v-model="EmgTypeData['patientSenNerCondResu'][key]['amplitude']"></el-input>
+                 <el-input v-model="copyInfo['patientSenNerCondResu'][key]['amplitude']"></el-input>
               </td>
               <td class="col col-width18">
                  <el-input v-model="item.segment" disabled></el-input>
               </td>
               <td class="col col-width10">
-                 <el-input v-model="EmgTypeData['patientSenNerCondResu'][key]['latencyDifference']"></el-input>
+                 <el-input v-model="copyInfo['patientSenNerCondResu'][key]['latencyDifference']"></el-input>
               </td>
               <td class="col col-width5">
-                 <el-input v-model="EmgTypeData['patientSenNerCondResu'][key]['distance']"></el-input>
+                 <el-input v-model="copyInfo['patientSenNerCondResu'][key]['distance']"></el-input>
               </td>
               <td class="col col-width7">
-                 <el-input v-model="EmgTypeData['patientSenNerCondResu'][key]['conductionVelocity']"></el-input>
+                 <el-input v-model="copyInfo['patientSenNerCondResu'][key]['conductionVelocity']"></el-input>
               </td>
             </tr>
           </table>
@@ -281,25 +281,25 @@
                 <el-input v-model="item.muscle"></el-input>
               </td>
               <td class="col col-width10">
-                <el-input v-model="EmgTypeData['patientNeedExamItemResu'][key]['insertional']"></el-input>
+                <el-input v-model="copyInfo['patientNeedExamItemResu'][key]['insertional']"></el-input>
               </td>
               <td class="col col-width7">
-                <el-input v-model="EmgTypeData['patientNeedExamItemResu'][key]['spoActFib']"></el-input>
+                <el-input v-model="copyInfo['patientNeedExamItemResu'][key]['spoActFib']"></el-input>
               </td>
               <td class="col col-width7">
-                <el-input v-model="EmgTypeData['patientNeedExamItemResu'][key]['spoActWave']"></el-input>
+                <el-input v-model="copyInfo['patientNeedExamItemResu'][key]['spoActWave']"></el-input>
               </td>
               <td class="col col-width7">
-                <el-input v-model="EmgTypeData['patientNeedExamItemResu'][key]['spoActFasc']"></el-input>
+                <el-input v-model="copyInfo['patientNeedExamItemResu'][key]['spoActFasc']"></el-input>
               </td>
               <td class="col col-width7">
-                <el-input v-model="EmgTypeData['patientNeedExamItemResu'][key]['volMuapdur']"></el-input>
+                <el-input v-model="copyInfo['patientNeedExamItemResu'][key]['volMuapdur']"></el-input>
               </td>
               <td class="col col-width7">
-                <el-input v-model="EmgTypeData['patientNeedExamItemResu'][key]['volmuapamp']"></el-input>
+                <el-input v-model="copyInfo['patientNeedExamItemResu'][key]['volmuapamp']"></el-input>
               </td>
               <td class="col col-width7">
-                <el-input v-model="EmgTypeData['patientNeedExamItemResu'][key]['volmuappoly']"></el-input>
+                <el-input v-model="copyInfo['patientNeedExamItemResu'][key]['volmuappoly']"></el-input>
               </td>
             </tr>
           </table>
@@ -341,19 +341,19 @@
                 <el-input v-model="item['examItemName']" disabled></el-input>
               </td>
               <td class="col col-width7">
-                <el-input v-model="EmgTypeData['patientMotUniAnaResu'][key]['duration']"></el-input>
+                <el-input v-model="copyInfo['patientMotUniAnaResu'][key]['duration']"></el-input>
               </td>
               <td class="col col-width7">
-                <el-input v-model="EmgTypeData['patientMotUniAnaResu'][key]['amplitude']"></el-input>
+                <el-input v-model="copyInfo['patientMotUniAnaResu'][key]['amplitude']"></el-input>
               </td>
               <td class="col col-width7">
-                <el-input v-model="EmgTypeData['patientMotUniAnaResu'][key]['phases']"></el-input>
+                <el-input v-model="copyInfo['patientMotUniAnaResu'][key]['phases']"></el-input>
               </td>
               <td class="col col-width7">
-                <el-input v-model="EmgTypeData['patientMotUniAnaResu'][key]['spikeDuration']"></el-input>
+                <el-input v-model="copyInfo['patientMotUniAnaResu'][key]['spikeDuration']"></el-input>
               </td>
               <td class="col col-width10">
-                <el-input v-model="EmgTypeData['patientMotUniAnaResu'][key]['remarks']"></el-input>
+                <el-input v-model="copyInfo['patientMotUniAnaResu'][key]['remarks']"></el-input>
               </td>
             </tr>
           </table>
@@ -383,13 +383,13 @@
                 <el-input v-model="item['muscle']" disabled></el-input>
               </td>
               <td class="col col-width25">
-                <el-input v-model="EmgTypeData['patientIntPatAnaItem'][key]['turn']"></el-input>
+                <el-input v-model="copyInfo['patientIntPatAnaItem'][key]['turn']"></el-input>
               </td>
               <td class="col col-width20">
-                <el-input v-model="EmgTypeData['patientIntPatAnaItem'][key]['amplitude']" ></el-input>
+                <el-input v-model="copyInfo['patientIntPatAnaItem'][key]['amplitude']" ></el-input>
               </td>
               <td class="col col-width20">
-                <el-input v-model="EmgTypeData['patientIntPatAnaItem'][key]['ratio']"></el-input>
+                <el-input v-model="copyInfo['patientIntPatAnaItem'][key]['ratio']"></el-input>
               </td>
             </tr>
           </table>
@@ -439,7 +439,7 @@ export default {
       item: {},
       warningResults: {},
       dictionData: [],
-      EmgTypeData: {},
+      copyInfo: {},
       EmgNameArr: [],
       EmgTypeNameArrs: [],
       FatherTempData: {},
@@ -520,24 +520,24 @@ export default {
       // 通过检查 item 参数是否为空对象 {}，来决定提交时是新增记录，还是修改记录
       if (this.mode === this.ADD_NEW_CARD) {
         // 如果是新增肌电图那么需要新造一个对象来提交
-        this.$set(this.EmgTypeData, 'etgName', '');
-        this.$set(this.EmgTypeData, 'elecTroGramId', '');
-        this.$set(this.EmgTypeData, 'etgType', '0');
-        this.$set(this.EmgTypeData, 'patEleHint', '');
-        this.$set(this.EmgTypeData, 'patEleResult', '');
-        this.$set(this.EmgTypeData, 'pcaseId', this.$route.params.caseId);
-        this.$set(this.EmgTypeData, 'pinfoId', this.$route.params.id);
-        this.$set(this.EmgTypeData, 'patientMotNerCondResu', []);
-        this.$set(this.EmgTypeData, 'patienFWaStuResu', []);
-        this.$set(this.EmgTypeData, 'patientNeedExamItemResu', []);
-        this.$set(this.EmgTypeData, 'patientMotUniAnaResu', []);
-        this.$set(this.EmgTypeData, 'patientIntPatAnaItem', []);
-        this.$set(this.EmgTypeData, 'patientSenNerCondResu', []);
+        this.$set(this.copyInfo, 'etgName', '');
+        this.$set(this.copyInfo, 'elecTroGramId', '');
+        this.$set(this.copyInfo, 'etgType', '0');
+        this.$set(this.copyInfo, 'patEleHint', '');
+        this.$set(this.copyInfo, 'patEleResult', '');
+        this.$set(this.copyInfo, 'pcaseId', this.$route.params.caseId);
+        this.$set(this.copyInfo, 'pinfoId', this.$route.params.id);
+        this.$set(this.copyInfo, 'patientMotNerCondResu', []);
+        this.$set(this.copyInfo, 'patienFWaStuResu', []);
+        this.$set(this.copyInfo, 'patientNeedExamItemResu', []);
+        this.$set(this.copyInfo, 'patientMotUniAnaResu', []);
+        this.$set(this.copyInfo, 'patientIntPatAnaItem', []);
+        this.$set(this.copyInfo, 'patientSenNerCondResu', []);
       } else {
         // 刚进入模态框的时候父表格打开
         this.tableMode = this.FATHER_OPEN;
         // 修改生化指标那么直接拷贝它
-        vueCopy(item, this.EmgTypeData);
+        vueCopy(item, this.copyInfo);
       }
       this.updateScrollbar();
     },
@@ -557,9 +557,9 @@ export default {
     },
     selectFatherTempData() {
       for (let i = 0; i < this.dictionData.length; i++) {
-        if (this.dictionData[i]['id'] === this.EmgTypeData['elecTroGramId']) {
+        if (this.dictionData[i]['id'] === this.copyInfo['elecTroGramId']) {
           vueCopy(this.dictionData[i], this.FatherTempData);
-          this.$set(this.EmgTypeData, 'etgName', this.FatherTempData['emgName']);
+          this.$set(this.copyInfo, 'etgName', this.FatherTempData['emgName']);
           if (this.mode === this.ADD_NEW_CARD) {
             this.tableMode = this.FATHER_OPEN;
           }
@@ -662,81 +662,81 @@ export default {
       switch (Name) {
         case 'senNerCondItem':
           for (let i = 0; i < this.SonTempData.length; i++) {
-            this.$set(this.EmgTypeData['patientSenNerCondResu'], i, {});
-            this.$set(this.EmgTypeData['patientSenNerCondResu'][i], 'amplitude', '');
-            this.$set(this.EmgTypeData['patientSenNerCondResu'][i], 'conductionVelocity', '');
-            this.$set(this.EmgTypeData['patientSenNerCondResu'][i], 'distance', '');
-            this.$set(this.EmgTypeData['patientSenNerCondResu'][i], 'latencyDifference', '');
-            this.$set(this.EmgTypeData['patientSenNerCondResu'][i], 'onsetLatency', '');
-            this.$set(this.EmgTypeData['patientSenNerCondResu'][i], 'peakLatency', '');
+            this.$set(this.copyInfo['patientSenNerCondResu'], i, {});
+            this.$set(this.copyInfo['patientSenNerCondResu'][i], 'amplitude', '');
+            this.$set(this.copyInfo['patientSenNerCondResu'][i], 'conductionVelocity', '');
+            this.$set(this.copyInfo['patientSenNerCondResu'][i], 'distance', '');
+            this.$set(this.copyInfo['patientSenNerCondResu'][i], 'latencyDifference', '');
+            this.$set(this.copyInfo['patientSenNerCondResu'][i], 'onsetLatency', '');
+            this.$set(this.copyInfo['patientSenNerCondResu'][i], 'peakLatency', '');
           }
           break;
         case 'needExamItem':
           for (let i = 0; i < this.SonTempData.length; i++) {
-            this.$set(this.EmgTypeData['patientNeedExamItemResu'], i, {});
+            this.$set(this.copyInfo['patientNeedExamItemResu'], i, {});
             for (let key in this.SonTempData[i]) {
               if (key === 'id') {
-                this.$set(this.EmgTypeData['patientNeedExamItemResu'][i], 'needExamItemId', this.SonTempData[i][key]);
+                this.$set(this.copyInfo['patientNeedExamItemResu'][i], 'needExamItemId', this.SonTempData[i][key]);
               }
             }
-            this.$set(this.EmgTypeData['patientNeedExamItemResu'][i], 'insertional', '');
-            this.$set(this.EmgTypeData['patientNeedExamItemResu'][i], 'spoActFasc', '');
-            this.$set(this.EmgTypeData['patientNeedExamItemResu'][i], 'spoActFib', '');
-            this.$set(this.EmgTypeData['patientNeedExamItemResu'][i], 'spoActWave', '');
-            this.$set(this.EmgTypeData['patientNeedExamItemResu'][i], 'volmuapamp', '');
-            this.$set(this.EmgTypeData['patientNeedExamItemResu'][i], 'volMuapdur', '');
-            this.$set(this.EmgTypeData['patientNeedExamItemResu'][i], 'volmuappoly', '');
+            this.$set(this.copyInfo['patientNeedExamItemResu'][i], 'insertional', '');
+            this.$set(this.copyInfo['patientNeedExamItemResu'][i], 'spoActFasc', '');
+            this.$set(this.copyInfo['patientNeedExamItemResu'][i], 'spoActFib', '');
+            this.$set(this.copyInfo['patientNeedExamItemResu'][i], 'spoActWave', '');
+            this.$set(this.copyInfo['patientNeedExamItemResu'][i], 'volmuapamp', '');
+            this.$set(this.copyInfo['patientNeedExamItemResu'][i], 'volMuapdur', '');
+            this.$set(this.copyInfo['patientNeedExamItemResu'][i], 'volmuappoly', '');
           }
           break;
         case 'motUniAnaItem':
           for (let i = 0; i < this.SonTempData.length; i++) {
-            this.$set(this.EmgTypeData['patientMotUniAnaResu'], i, {});
-            this.$set(this.EmgTypeData['patientMotUniAnaResu'][i], 'amplitude', '');
-            this.$set(this.EmgTypeData['patientMotUniAnaResu'][i], 'conductionVelocity', '');
-            this.$set(this.EmgTypeData['patientMotUniAnaResu'][i], 'distance', '');
-            this.$set(this.EmgTypeData['patientMotUniAnaResu'][i], 'latency', '');
-            this.$set(this.EmgTypeData['patientMotUniAnaResu'][i], 'latencyDifference', '');
-            this.$set(this.EmgTypeData['patientMotUniAnaResu'][i], 'motNerItemId', '');
+            this.$set(this.copyInfo['patientMotUniAnaResu'], i, {});
+            this.$set(this.copyInfo['patientMotUniAnaResu'][i], 'amplitude', '');
+            this.$set(this.copyInfo['patientMotUniAnaResu'][i], 'conductionVelocity', '');
+            this.$set(this.copyInfo['patientMotUniAnaResu'][i], 'distance', '');
+            this.$set(this.copyInfo['patientMotUniAnaResu'][i], 'latency', '');
+            this.$set(this.copyInfo['patientMotUniAnaResu'][i], 'latencyDifference', '');
+            this.$set(this.copyInfo['patientMotUniAnaResu'][i], 'motNerItemId', '');
           }
           break;
         case 'motNerCondItem':
           for (let i = 0; i < this.SonTempData.length; i++) {
-            this.$set(this.EmgTypeData['patientMotNerCondResu'], i, {});
+            this.$set(this.copyInfo['patientMotNerCondResu'], i, {});
             for (let key in this.SonTempData[i]) {
               if (key === 'id') {
-                this.$set(this.EmgTypeData['patientMotNerCondResu'][i], 'motNerItemId', this.SonTempData[i][key]);
+                this.$set(this.copyInfo['patientMotNerCondResu'][i], 'motNerItemId', this.SonTempData[i][key]);
               }
             }
-            this.$set(this.EmgTypeData['patientMotNerCondResu'][i], 'amplitude', '');
-            this.$set(this.EmgTypeData['patientMotNerCondResu'][i], 'duration', '');
-            this.$set(this.EmgTypeData['patientMotNerCondResu'][i], 'phases', '');
-            this.$set(this.EmgTypeData['patientMotNerCondResu'][i], 'spikeDuration', '');
+            this.$set(this.copyInfo['patientMotNerCondResu'][i], 'amplitude', '');
+            this.$set(this.copyInfo['patientMotNerCondResu'][i], 'duration', '');
+            this.$set(this.copyInfo['patientMotNerCondResu'][i], 'phases', '');
+            this.$set(this.copyInfo['patientMotNerCondResu'][i], 'spikeDuration', '');
           }
           break;
         case 'intPatAnaItem':
           for (let i = 0; i < this.SonTempData.length; i++) {
-            this.$set(this.EmgTypeData['patientIntPatAnaItem'], i, {});
+            this.$set(this.copyInfo['patientIntPatAnaItem'], i, {});
             for (let key in this.SonTempData[i]) {
               if (key === 'id') {
-                this.$set(this.EmgTypeData['patientIntPatAnaItem'][i], 'intPatAnaId', this.SonTempData[i][key]);
+                this.$set(this.copyInfo['patientIntPatAnaItem'][i], 'intPatAnaId', this.SonTempData[i][key]);
               }
             }
-            this.$set(this.EmgTypeData['patientIntPatAnaItem'][i], 'amplitude', '');
-            this.$set(this.EmgTypeData['patientIntPatAnaItem'][i], 'ratio', '');
-            this.$set(this.EmgTypeData['patientIntPatAnaItem'][i], 'turn', '');
+            this.$set(this.copyInfo['patientIntPatAnaItem'][i], 'amplitude', '');
+            this.$set(this.copyInfo['patientIntPatAnaItem'][i], 'ratio', '');
+            this.$set(this.copyInfo['patientIntPatAnaItem'][i], 'turn', '');
           }
           break;
         case 'fwavStuItem':
           for (let i = 0; i < this.SonTempData.length; i++) {
-            this.$set(this.EmgTypeData['patienFWaStuResu'], i, {});
+            this.$set(this.copyInfo['patienFWaStuResu'], i, {});
             for (let key in this.SonTempData[i]) {
               if (key === 'id') {
-                this.$set(this.EmgTypeData['patienFWaStuResu'][i], 'fWavStuItemId', this.SonTempData[i][key]);
+                this.$set(this.copyInfo['patienFWaStuResu'][i], 'fWavStuItemId', this.SonTempData[i][key]);
               }
             }
-            this.$set(this.EmgTypeData['patienFWaStuResu'][i], 'fLatency', '');
-            this.$set(this.EmgTypeData['patienFWaStuResu'][i], 'fProportion', '');
-            this.$set(this.EmgTypeData['patienFWaStuResu'][i], 'mLatency', '');
+            this.$set(this.copyInfo['patienFWaStuResu'][i], 'fLatency', '');
+            this.$set(this.copyInfo['patienFWaStuResu'][i], 'fProportion', '');
+            this.$set(this.copyInfo['patienFWaStuResu'][i], 'mLatency', '');
           }
           break;
       }
@@ -747,7 +747,7 @@ export default {
     cancel() {
       this.lockSubmitButton = false;
       this.displayModal = false;
-      this.EmgTypeData = {};
+      this.copyInfo = {};
       this.tableMode = '';
     },
     switchToEditingMode() {
@@ -759,7 +759,7 @@ export default {
       }
       this.lockSubmitButton = true;
 
-      let submitData = this.EmgTypeData;
+      let submitData = this.copyInfo;
       if (this.mode === this.ADD_NEW_CARD) {
         // 新增肌电图
         addEmg(submitData).then(() => {
@@ -837,7 +837,7 @@ export default {
       handler: function(newVal) {
         if (newVal) {
           for (let i = 0; i < this.dictionData.length; i++) {
-            if (this.dictionData[i]['id'] === this.EmgTypeData['elecTroGramId']) {
+            if (this.dictionData[i]['id'] === this.copyInfo['elecTroGramId']) {
               vueCopy(this.dictionData[i], this.FatherTempData);
             }
           }
