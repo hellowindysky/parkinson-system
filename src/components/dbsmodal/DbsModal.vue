@@ -1174,7 +1174,13 @@ export default {
         delete param.id;
         param.paramType = 2;
       }
-      if (this.copyInfo.followDbsParams.adjustBeforeParameter && this.copyInfo.followDbsParams.adjustBeforeParameter[0]) {
+      if (this.lastDbsParameter.length > 0 && this.mode === this.ADD_NEW_CARD) {
+        this.$set(this.copyInfo.followDbsParams.adjustBeforeParameter, 0, {});
+        this.$set(this.copyInfo.followDbsParams.adjustBeforeParameter, 1, {});
+        vueCopy(this.lastDbsParameter[0], this.copyInfo.followDbsParams.adjustBeforeParameter[0]);
+        vueCopy(this.lastDbsParameter[1], this.copyInfo.followDbsParams.adjustBeforeParameter[1]);
+        this.followDbsAdjustBeforeFirstSchemeOrder = this.lastDbsParameter[0].schemeOrder;
+      } else if (this.copyInfo.followDbsParams.adjustBeforeParameter && this.copyInfo.followDbsParams.adjustBeforeParameter[0]) {
         this.followDbsAdjustBeforeFirstSchemeOrder = this.copyInfo.followDbsParams.adjustBeforeParameter[0].schemeOrder;
       }
       this.updateCheckBoxModel('followDbsAdjustBefore');
