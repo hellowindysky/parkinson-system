@@ -84,7 +84,7 @@ import Ps from 'perfect-scrollbar';
 import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import { deepCopy, vueCopy } fromg 'utils/helper';
+import { deepCopy, vueCopy } from 'utils/helper';
 import { addBiochemical, modifyBiochemical } from 'api/patient.js';
 export default {
   data() {
