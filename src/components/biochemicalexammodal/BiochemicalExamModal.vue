@@ -83,10 +83,9 @@
 import Ps from 'perfect-scrollbar';
 import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
-import { vueCopy } from 'utils/helper';
 import Util from 'utils/util.js';
-import { deepCopy } from 'utils/helper';
-import { addBiochemical, modBiochemical } from 'api/patient.js';
+import { deepCopy, vueCopy } from 'utils/helper';
+import { addBiochemical, modifyBiochemical } from 'api/patient.js';
 export default {
   data() {
     return {
@@ -195,7 +194,7 @@ export default {
       let submitData = deepCopy(this.copyInfo);
       this.lockSubmitButton = true;
       if (this.mode === this.EDIT_CURRENT_CARD) {
-        modBiochemical(submitData).then(() => {
+        modifyBiochemical(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
           this.updateAndClose();
           this.lockSubmitButton = false;

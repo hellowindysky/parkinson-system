@@ -682,7 +682,7 @@ export function addBiochemical(patientBioexam) {
 };
 
 // 修改生化指标
-export function modBiochemical(patientBioexam) {
+export function modifyBiochemical(patientBioexam) {
   var request = Object.assign({}, getCommonRequest());
   request.patientBioexam = patientBioexam;
   var url = baseUrl + '/pdms/modBioexam';
@@ -691,7 +691,7 @@ export function modBiochemical(patientBioexam) {
 };
 
 // 删除生化指标
-export function delBiochemical(patientBioexam) {
+export function deleteBiochemical(patientBioexam) {
   var request = Object.assign({}, getCommonRequest());
   request.patientBioexam = patientBioexam;
   var url = baseUrl + '/pdms/delBioexam';
