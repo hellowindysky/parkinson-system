@@ -340,6 +340,7 @@ export default {
 
       this.completeInit = true;
       this.displayModal = true;
+      this.updateScrollbar();
     },
     getOptions(fieldName) {
       var options = [];
