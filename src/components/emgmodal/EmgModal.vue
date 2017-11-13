@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="emg-modal-wrapper" v-show="displayModal">
-    <div class="medicine-modal" ref="emgModal">
+    <div class="emg-modal" ref="emgModal">
       <h3 class="title">{{title}}</h3>
       <div class="content">
         <div class="field">
@@ -25,12 +25,12 @@
           <span class="field-input">
             <span class="warning-text"></span>
             <span v-if='mode===VIEW_CURRENT_CARD'>{{getFieldValue(EmgTypeData.etgType, 'emgType')}}</span>
-            <el-select v-else v-model="EmgTypeData['etgType']"  disabled>
+            <el-select v-else v-model="EmgTypeData['etgType']" disabled>
                <el-option v-for="item in EmgTypeNameArrs" :key="item.typeCode" :label="item.typeName" :value="item.typeCode" ></el-option>
             </el-select>
           </span>
         </div>
-        <div class="field">
+        <div class="field whole-line multi-line">
           <span class="field-name">
             检查结果:
             <span class="required-mark"></span>
@@ -41,7 +41,7 @@
             <el-input v-else type="textarea" :rows="2" v-model="EmgTypeData['patEleResult']" placeholder="请输入检查结果"></el-input>
           </span>
         </div>
-        <div class="field">
+        <div class="field whole-line multi-line">
           <span class="field-name">
             提示内容:
             <span class="required-mark"></span>
@@ -858,7 +858,8 @@ export default {
 <style lang="less">
 @import "~styles/variables.less";
 
-@field-height: 52px;
+@field-height: 40px;
+@multi-line-field-height: 60px;
 @field-name-width: 110px;
 @long-field-name-width: 160px;
 
@@ -878,10 +879,10 @@ export default {
   height: 100%;
   background-color: fadeout(@light-font-color, 30%);
   z-index: 500;
-  .medicine-modal {
+  .emg-modal {
     position: relative;
     margin: auto;
-    padding: 0 26px;
+    padding: 0 40px;
     top: 3%;
     width: 80%;
     max-width: 1090px;
@@ -894,13 +895,13 @@ export default {
     }
     .content {
       text-align: left;
+      font-size: 0;
       .field {
-        padding: 5px 0;
-        text-align: left;
         display: inline-block;
         position: relative;
-        width: 90%;
+        width: 50%;
         height: @field-height;
+        padding: 5px 0;
         text-align: left;
         transform: translateX(10px); // 这一行是为了修补视觉上的偏移
         &.whole-line {
@@ -908,6 +909,9 @@ export default {
           .field-input {
             right: 4%;
           }
+        }
+        &.multi-line {
+          height: @multi-line-field-height;
         }
         .field-name {
           display: inline-block;
@@ -975,21 +979,21 @@ export default {
         }
       }
       .form-title {
-        padding: 0;
+        padding: 5px 0 0 0;
         line-height: 40px;
         font-size: @normal-font-size;
         color: @font-color;
         margin: 0;
         text-align: center;
-        padding-top: 20px;
       }
       .form-wrapper {
         position: relative;
-        max-height: 300px;
+        margin-top: 5px;
+        max-height: 320px;
         height: auto;
-        width: 99%;
-        padding-right: 10px;
+        width: 100%;
         overflow: hidden;
+        box-sizing: border-box;
         border: 1px solid @inverse-font-color;
         &.father-open {
           border: none;
@@ -1004,7 +1008,7 @@ export default {
             font-size: 12px !important;
           }
           .row {
-            height: 45px;
+            height: 40px;
             &.first-row {
               background-color: @screen-color;
               height: 30px;
