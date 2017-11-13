@@ -12,8 +12,8 @@
             <span class="warning-text"></span>
             <span v-if='mode===VIEW_CURRENT_CARD'>{{getFieldValue(copyInfo.elecTroGramId, 'emgName')}}</span>
             <el-select v-else placeholder="请选择肌电图名称" v-model="copyInfo.elecTroGramId"
-              :disabled="mode!==ADD_NEW_CARD" @change="selectFatherTempData">
-              <el-option v-for="emgItem in EmgNameArr" :key="emgItem.id" :label="emgItem.emgName" :value="emgItem.id" ></el-option>
+              :disabled="mode!==ADD_NEW_CARD" @change="selectEmg">
+              <el-option v-for="emg in emgTypeList" :key="emg.id" :label="emg.emgName" :value="emg.id" ></el-option>
             </el-select>
           </span>
         </div>
@@ -26,7 +26,7 @@
             <span class="warning-text"></span>
             <span v-if='mode===VIEW_CURRENT_CARD'>{{getFieldValue(copyInfo.etgType, 'emgType')}}</span>
             <el-select v-else v-model="copyInfo['etgType']" disabled>
-               <el-option v-for="item in EmgTypeNameArrs" :key="item.typeCode" :label="item.typeName" :value="item.typeCode" ></el-option>
+               <el-option v-for="item in getTypes('eleType')" :key="item.typeCode" :label="item.typeName" :value="item.typeCode" ></el-option>
             </el-select>
           </span>
         </div>
@@ -438,11 +438,7 @@ export default {
       SENNERCONDITEM: 'senNerCondItem',
       item: {},
       warningResults: {},
-      dictionData: [],
       copyInfo: {},
-      EmgNameArr: [],
-      EmgTypeNameArrs: [],
-      FatherTempData: {},
       SonTempData: [],
       lockSubmitButton: false,
       emgTableName: [
@@ -486,6 +482,17 @@ export default {
         return '肌电图';
       }
     },
+    targetEmg() {
+      for (let emg of this.emgTypeList) {
+        if (emg.id === this.copyInfo.elecTroGramId) {
+          this.$set(this.copyInfo, 'etgName', emg.emgName);
+          if (this.mode === this.ADD_NEW_CARD) {
+            this.tableMode = this.FATHER_OPEN;
+          }
+          return emg;
+        }
+      }
+    },
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients)) {
         return true;
@@ -498,26 +505,7 @@ export default {
     showPanel(cardOperation, item) {
       this.displayModal = true;
       this.mode = cardOperation;
-      // 拷贝dictionary的数据
-      vueCopy(this.emgTypeList, this.dictionData);
-      // 在dictionary中取出肌电图的名字和ID
-      for (let i = 0; i < this.dictionData.length; i++) {
-        this.$set(this.EmgNameArr, i, {});
-        for (let key in this.dictionData[i]) {
-          if (key === 'emgName') {
-            this.$set(this.EmgNameArr[i], key, this.dictionData[i][key]);
-          } else if (key === 'id') {
-            this.$set(this.EmgNameArr[i], key, this.dictionData[i][key]);
-          }
-        }
-      }
-      // 在肌电图中取出肌电图的类型与类型名
-      vueCopy(this.handleDictionary('eleType'), this.EmgTypeNameArrs);
-      for (let key1 in this.EmgTypeNameArrs) {
-        this.EmgTypeNameArrs[key1]['typeCode'] = this.EmgTypeNameArrs[key1]['typeCode'] + '';
-      }
-      // console.log(this.EmgTypeNameArrs);
-      // 通过检查 item 参数是否为空对象 {}，来决定提交时是新增记录，还是修改记录
+
       if (this.mode === this.ADD_NEW_CARD) {
         // 如果是新增肌电图那么需要新造一个对象来提交
         this.$set(this.copyInfo, 'etgName', '');
@@ -541,41 +529,21 @@ export default {
       }
       this.updateScrollbar();
     },
-    handleDictionary(type) {
-      let flag = false;
-      for (let key in this.typeGroup) {
-        // console.log(this.typeGroup[key]);
-        if (this.typeGroup[key]['typegroupcode'] === type) {
-          // console.log(dictionData[key]['types']);
-          flag = true;
-          return this.typeGroup[key]['types'];
-        }
-      }
-      if (!flag) {
-        return [];
-      }
+    getTypes(name) {
+      var typeInfo = Util.getElement('typegroupcode', name, this.typeGroup);
+      return typeInfo.types ? typeInfo.types : [];
     },
-    selectFatherTempData() {
-      for (let i = 0; i < this.dictionData.length; i++) {
-        if (this.dictionData[i]['id'] === this.copyInfo['elecTroGramId']) {
-          vueCopy(this.dictionData[i], this.FatherTempData);
-          this.$set(this.copyInfo, 'etgName', this.FatherTempData['emgName']);
-          if (this.mode === this.ADD_NEW_CARD) {
-            this.tableMode = this.FATHER_OPEN;
-          }
-          this.updateScrollbar();
-        }
-      }
+    selectEmg() {
+      this.updateScrollbar();
     },
     selectSonTemp(arrName) {
       // 点击编辑按钮之后就通过arr的名字来生成一个肌电图的子表格
       // 在dictionary中找到这个数组
       this.SonTempData = [];
-      for (let key in this.FatherTempData) {
-        if (key === arrName) {
-          vueCopy(this.FatherTempData[key], this.SonTempData);
-        }
+      if (this.targetEmg[arrName]) {
+        vueCopy(this.targetEmg[arrName], this.SonTempData);
       }
+
       console.log(this.SonTempData);
       // 取到这个值之后就要关闭父表格，打开子表格
       this.tableMode = this.SON_OPEN;
@@ -585,9 +553,9 @@ export default {
           this.currentTableName = '感觉神经传导项';
           for (let i = 0; i < this.SonTempData.length; i++) {
             let sonData = this.SonTempData[i];
-            for (let key in this.handleDictionary('nervType')) {
-              if (parseInt(sonData['nerveType'], 10) === this.handleDictionary('nervType')[key]['typeCode']) {
-                this.$set(this.SonTempData[i], 'nervName', this.handleDictionary('nervType')[key]['typeName']);
+            for (let key in this.getTypes('nervType')) {
+              if (parseInt(sonData['nerveType'], 10) === this.getTypes('nervType')[key]['typeCode']) {
+                this.$set(this.SonTempData[i], 'nervName', this.getTypes('nervType')[key]['typeName']);
               }
             }
           }
@@ -609,9 +577,9 @@ export default {
           this.currentTableName = '运动单元分析';
           for (let i = 0; i < this.SonTempData.length; i++) {
             let sonData = this.SonTempData[i];
-            for (let key in this.handleDictionary('muscleType')) {
-              if (parseInt(sonData['muscle'], 10) === this.handleDictionary('muscleType')[key]['typeCode']) {
-                this.$set(this.SonTempData[i], 'nervName', this.handleDictionary('muscleType')[key]['typeName']);
+            for (let key in this.getTypes('muscleType')) {
+              if (parseInt(sonData['muscle'], 10) === this.getTypes('muscleType')[key]['typeCode']) {
+                this.$set(this.SonTempData[i], 'nervName', this.getTypes('muscleType')[key]['typeName']);
               }
             }
           }
@@ -626,9 +594,9 @@ export default {
           // 获取到运动神经传导项的类型
           for (let i = 0; i < this.SonTempData.length; i++) {
             let sonData = this.SonTempData[i];
-            for (let key in this.handleDictionary('nervType')) {
-              if (parseInt(sonData['nerveType'], 10) === this.handleDictionary('nervType')[key]['typeCode']) {
-                this.$set(this.SonTempData[i], 'nervName', this.handleDictionary('nervType')[key]['typeName']);
+            for (let key in this.getTypes('nervType')) {
+              if (parseInt(sonData['nerveType'], 10) === this.getTypes('nervType')[key]['typeCode']) {
+                this.$set(this.SonTempData[i], 'nervName', this.getTypes('nervType')[key]['typeName']);
               }
             }
           }
@@ -798,10 +766,10 @@ export default {
     },
     getFieldValue(code, fieldName) {
       if (fieldName === 'emgName') {
-        let info = Util.getElement('id', code, this.EmgNameArr);
+        let info = Util.getElement('id', code, this.emgTypeList);
         return info.emgName;
       } else if (fieldName === 'emgType') {
-        let info = Util.getElement('typeCode', code, this.EmgTypeNameArrs);
+        let info = Util.getElement('typeCode', code, this.getTypes('eleType'));
         return info.typeName;
       } else {
         return '';
@@ -830,21 +798,6 @@ export default {
 
     // 如果屏幕高度发生改变，也需要重新计算滚动区域高度
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
-    vueCopy(this.handleDictionary('eleType'), this.EmgTypeNameArrs);
-  },
-  watch: {
-    dictionData: {
-      handler: function(newVal) {
-        if (newVal) {
-          for (let i = 0; i < this.dictionData.length; i++) {
-            if (this.dictionData[i]['id'] === this.copyInfo['elecTroGramId']) {
-              vueCopy(this.dictionData[i], this.FatherTempData);
-            }
-          }
-        }
-      },
-      deep: true
-    }
   },
   beforeDestroy() {
     Bus.$off(this.SHOW_EMG_MODAL, this.showPanel);
