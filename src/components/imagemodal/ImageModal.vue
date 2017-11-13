@@ -330,11 +330,13 @@ export default {
         });
       }
 
-      for (var property in this.warningResults) {
-        if (this.warningResults.hasOwnProperty(property)) {
-          this.updateWarning(property);
+      this.$nextTick(() => {
+        for (var property in this.warningResults) {
+          if (this.warningResults.hasOwnProperty(property)) {
+            this.warningResults[property] = '';
+          }
         }
-      }
+      });
 
       this.completeInit = true;
       this.displayModal = true;
@@ -357,8 +359,7 @@ export default {
       return targetOption.name;
     },
     updateWarning(fieldName) {
-      console.log(fieldName, this[fieldName], this.completeInit);
-      if (this.completeInit && this[fieldName] === '') {
+      if (this.completeInit && !this[fieldName]) {
         this.warningResults[fieldName] = '必填项';
       } else {
         this.warningResults[fieldName] = '';
@@ -385,6 +386,7 @@ export default {
       }
       for (let property in this.warningResults) {
         if (this.warningResults.hasOwnProperty(property) && this.warningResults[property]) {
+          this.lockSubmitButton = false;
           return;
         }
       }
