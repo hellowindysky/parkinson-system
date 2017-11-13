@@ -164,6 +164,17 @@
                   :disabled="!diseaseInfoSelectedStatus.ariAgeFrom"></el-input>
               </span>
             </div>
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="diseaseInfoSelectedStatus.diseaseProcessFrom"></el-checkbox>
+              <span class="item-name">患者病程</span>
+              <span class="item-value">
+                <el-input class="left-input" v-model="diseaseInfoCondition.diseaseProcessFrom" placeholder="最小值"
+                  :disabled="!diseaseInfoSelectedStatus.diseaseProcessFrom"></el-input>
+                <span class="middle-text">~</span>
+                <el-input class="right-input" v-model="diseaseInfoCondition.diseaseProcessTo" placeholder="最大值"
+                  :disabled="!diseaseInfoSelectedStatus.diseaseProcessFrom"></el-input>
+              </span>
+            </div>
             <div class="item auto-resize">
               <el-checkbox class="item-checkbox" v-model="diseaseInfoSelectedStatus.firSym"></el-checkbox>
               <span class="item-name">首发症状</span>
@@ -184,6 +195,28 @@
                   <el-option v-for="option in getOptions('firBody')" :label="option.name" :value="option.code"
                     :key="option.code"></el-option>
                 </el-select>
+              </span>
+            </div>
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="diseaseInfoSelectedStatus.symmetries"></el-checkbox>
+              <span class="item-name">对称性起病</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="diseaseInfoCondition.symmetries"
+                  :disabled="!diseaseInfoSelectedStatus.symmetries">
+                  <el-option v-for="option in getOptions('symmetries')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
+              </span>
+            </div>
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="diseaseInfoSelectedStatus.symmetriesTimeFrom"></el-checkbox>
+              <span class="item-name long-name double-line">对称性起病时间</span>
+              <span class="item-value">
+                <el-date-picker class="left-input" v-model="diseaseInfoCondition.symmetriesTimeFrom" placeholder="开始日期"
+                  :disabled="!diseaseInfoSelectedStatus.symmetriesTimeFrom"></el-date-picker>
+                <span class="middle-text">~</span>
+                <el-date-picker class="right-input" v-model="diseaseInfoCondition.symmetriesTimeTo" placeholder="结束日期"
+                  :disabled="!diseaseInfoSelectedStatus.symmetriesTimeFrom"></el-date-picker>
               </span>
             </div>
             <div class="item">
@@ -863,11 +896,13 @@ let basicInfoSelectedFieldNames = ['ageFrom', 'ageFrom', 'birthDateFrom', 'birth
   'nation', 'sex', 'marryType', 'qualification', 'career', 'bloodType', 'econType',
   'liveType', 'homeProvince'];
 
-let diseaseInfoFieldNames = ['diseaseType', 'ariAgeFrom', 'ariAgeTo', 'firSym',
-  'firBody', 'firTimeFrom', 'firTimeTo', 'surTimeFrom', 'surTimeTo',
+let diseaseInfoFieldNames = ['diseaseType', 'ariAgeFrom', 'ariAgeTo', 'diseaseProcessFrom',
+  'diseaseProcessTo', 'firSym', 'firBody', 'symmetries', 'symmetriesTimeFrom',
+  'symmetriesTimeTo', 'firTimeFrom', 'firTimeTo', 'surTimeFrom', 'surTimeTo',
   'diagMode', 'treatPro', 'firMed', 'getDisFac', 'getDisFac0'];
-let diseaseInfoSelectedFieldNames = ['diseaseType', 'ariAgeFrom', 'ariAgeFrom', 'firSym',
-  'firBody', 'firTimeFrom', 'firTimeFrom', 'surTimeFrom', 'surTimeFrom',
+let diseaseInfoSelectedFieldNames = ['diseaseType', 'ariAgeFrom', 'ariAgeFrom', 'diseaseProcessFrom',
+  'diseaseProcessFrom', 'firSym', 'firBody', 'symmetries', 'symmetriesTimeFrom',
+  'symmetriesTimeFrom', 'firTimeFrom', 'firTimeFrom', 'surTimeFrom', 'surTimeFrom',
   'diagMode', 'treatPro', 'firMed', 'getDisFac', 'getDisFac0'];
 
 let otherInfoFieldNames = ['medType', 'diseaseRelationId', 'similarRole', 'patientSmokeId',
@@ -1166,8 +1201,8 @@ export default {
       // 第二个参数只有在 诊断信息 -> 病症情况 内才需要使用
       var options = [];
       let fieldNameListInTypeGroup = ['sex', 'maryType', 'qualifica', 'career', 'bloodType',
-        'econeType', 'liveType', 'homeProvince', 'diseType', 'firSym', 'firBody', 'diagMode',
-        'treatPro', 'firMed', 'getDisFac', 'getDisFac0', 'medType', 'diseaseRelationId',
+        'econeType', 'liveType', 'homeProvince', 'diseType', 'firSym', 'firBody', 'symmetries',
+        'diagMode', 'treatPro', 'firMed', 'getDisFac', 'getDisFac0', 'medType', 'diseaseRelationId',
         'sameRole', 'habitSmoke', 'habitWine', 'habitTea', 'habitCoffee', 'exeGrade', 'expType',
         'caseType', 'diseType', 'durgType', 'majorType', 'treatment', 'result', 'gaugeType',
         'switchType', 'eleType', 'examType'];
