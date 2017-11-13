@@ -164,17 +164,6 @@
                   :disabled="!diseaseInfoSelectedStatus.ariAgeFrom"></el-input>
               </span>
             </div>
-            <div class="item">
-              <el-checkbox class="item-checkbox" v-model="diseaseInfoSelectedStatus.diseaseYearFrom"></el-checkbox>
-              <span class="item-name">患者病程</span>
-              <span class="item-value">
-                <el-input class="left-input" v-model="diseaseInfoCondition.diseaseYearFrom" placeholder="最小值"
-                  :disabled="!diseaseInfoSelectedStatus.diseaseYearFrom"></el-input>
-                <span class="middle-text">~</span>
-                <el-input class="right-input" v-model="diseaseInfoCondition.diseaseYearTo" placeholder="最大值"
-                  :disabled="!diseaseInfoSelectedStatus.diseaseYearFrom"></el-input>
-              </span>
-            </div>
             <div class="item auto-resize">
               <el-checkbox class="item-checkbox" v-model="diseaseInfoSelectedStatus.firSym"></el-checkbox>
               <span class="item-name">首发症状</span>
@@ -433,6 +422,17 @@
                 <span class="middle-text">~</span>
                 <el-date-picker class="right-input" v-model="diagnosticBasicCondition.diagTimeTo" placeholder="最晚时间"
                   :disabled="!diagnosticBasicSelectedStatus.diagTimeFrom"></el-date-picker>
+              </span>
+            </div>
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="diagnosticBasicSelectedStatus.diseaseYearFrom"></el-checkbox>
+              <span class="item-name">患者病程</span>
+              <span class="item-value">
+                <el-input class="left-input" v-model="diagnosticBasicCondition.diseaseYearFrom" placeholder="最小值"
+                  :disabled="!diagnosticBasicSelectedStatus.diseaseYearFrom"></el-input>
+                <span class="middle-text">~</span>
+                <el-input class="right-input" v-model="diagnosticBasicCondition.diseaseYearTo" placeholder="最大值"
+                  :disabled="!diagnosticBasicSelectedStatus.diseaseYearFrom"></el-input>
               </span>
             </div>
           </div>
@@ -896,13 +896,13 @@ let basicInfoSelectedFieldNames = ['ageFrom', 'ageFrom', 'birthDateFrom', 'birth
   'nation', 'sex', 'marryType', 'qualification', 'career', 'bloodType', 'econType',
   'liveType', 'homeProvince'];
 
-let diseaseInfoFieldNames = ['diseaseType', 'ariAgeFrom', 'ariAgeTo', 'diseaseYearFrom',
-  'diseaseYearTo', 'firSym', 'firBody', 'symmetries', 'symmetriesTimeFrom',
-  'symmetriesTimeTo', 'firTimeFrom', 'firTimeTo', 'surTimeFrom', 'surTimeTo',
-  'diagMode', 'treatPro', 'firMed', 'getDisFac', 'getDisFac0'];
-let diseaseInfoSelectedFieldNames = ['diseaseType', 'ariAgeFrom', 'ariAgeFrom', 'diseaseYearFrom',
-  'diseaseYearFrom', 'firSym', 'firBody', 'symmetries', 'symmetriesTimeFrom',
-  'symmetriesTimeFrom', 'firTimeFrom', 'firTimeFrom', 'surTimeFrom', 'surTimeFrom',
+let diseaseInfoFieldNames = ['diseaseType', 'ariAgeFrom', 'ariAgeTo', 'firSym',
+  'firBody', 'symmetries', 'symmetriesTimeFrom', 'symmetriesTimeTo', 'firTimeFrom',
+  'firTimeTo', 'surTimeFrom', 'surTimeTo', 'diagMode', 'treatPro', 'firMed',
+  'getDisFac', 'getDisFac0'];
+let diseaseInfoSelectedFieldNames = ['diseaseType', 'ariAgeFrom', 'ariAgeFrom',
+  'firSym', 'firBody', 'symmetries', 'symmetriesTimeFrom', 'symmetriesTimeFrom',
+  'firTimeFrom', 'firTimeFrom', 'surTimeFrom', 'surTimeFrom',
   'diagMode', 'treatPro', 'firMed', 'getDisFac', 'getDisFac0'];
 
 let otherInfoFieldNames = ['medType', 'diseaseRelationId', 'similarRole', 'patientSmokeId',
@@ -910,8 +910,10 @@ let otherInfoFieldNames = ['medType', 'diseaseRelationId', 'similarRole', 'patie
 let otherInfoSelectedFieldNames = ['medType', 'diseaseRelationId', 'similarRole', 'patientSmokeId',
   'patientWineId', 'patientTeaId', 'patientCoffeeId', 'grade', 'exposedType'];
 
-let diagnosticBasicFieldNames = ['caseType', 'diagTimeFrom', 'diagTimeTo'];
-let diagnosticBasicSelectedFieldNames = ['caseType', 'diagTimeFrom', 'diagTimeFrom'];
+let diagnosticBasicFieldNames = ['caseType', 'diagTimeFrom', 'diagTimeTo',
+  'diseaseYearFrom', 'diseaseYearTo'];
+let diagnosticBasicSelectedFieldNames = ['caseType', 'diagTimeFrom', 'diagTimeFrom',
+  'diseaseYearFrom', 'diseaseYearFrom'];
 
 let diagnosticDiseaseFieldNames = ['diseaseType', 'motorSymptomTypeId',
   'motorComplicationsSymptomTypeId', 'nonMotorSymptomTypeId'];
