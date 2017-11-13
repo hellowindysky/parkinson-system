@@ -881,7 +881,7 @@ import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import { queryPatientsByCondition, getPatientGroupInfo } from 'api/patient.js';
-import { vueCopy, pruneObj, reviseDateFormat } from 'utils/helper.js';
+import { vueCopy, pruneObj, reviseDateFormat, isEmptyObject } from 'utils/helper.js';
 import Util from 'utils/util.js';
 
 import GroupPanel from 'components/grouppanel/GroupPanel';
@@ -1449,6 +1449,13 @@ export default {
             value = value.join(',');
           }
           condition.caseInspect[fieldName] = value;
+        }
+      }
+
+      // 将 condition 下的空对象属性切除
+      for (var property in condition) {
+        if (condition.hasOwnProperty(property) && isEmptyObject(condition[property])) {
+          delete condition[property];
         }
       }
 
