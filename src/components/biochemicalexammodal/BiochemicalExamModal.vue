@@ -43,7 +43,7 @@
                 备注
               </td>
             </tr>
-             <tr v-for="(item, index) in templateData" class="row">
+             <tr v-for="(item, index) in targetBioexam" class="row">
               <td class="col col-id">{{index + 1}}</td>
               <td class="col col-name">
                 {{item.projectName}}
@@ -97,7 +97,7 @@ export default {
       disableChangingSubModal: false,
       warningResults: {},
       copyInfo: {},
-      templateData: [],
+      targetBioexam: [],
       lockSubmitButton: false
     };
   },
@@ -154,11 +154,11 @@ export default {
       });
     },
     updateTemplate() {
-      this.templateData = [];
+      this.targetBioexam = [];
       for (let bioexam of this.bioexamList) {
         if (bioexam.id === this.copyInfo.bioexamId) {
-          vueCopy(bioexam.projects, this.templateData);
-          // console.log('template', this.templateData);
+          vueCopy(bioexam.projects, this.targetBioexam);
+          // console.log('targetBioexam', this.targetBioexam);
         }
       }
       this.updateScrollbar();
@@ -166,11 +166,11 @@ export default {
     changeBioexam() {
       this.updateTemplate();
 
-      // 接下来要根据新的 templateData 重置 this.copyInfo.bioexamResult
+      // 接下来要根据新的 targetBioexam 重置 this.copyInfo.bioexamResult
       this.$set(this.copyInfo, 'bioexamResult', []);
-      for (let i = 0; i < this.templateData.length; i++) {
+      for (let i = 0; i < this.targetBioexam.length; i++) {
         this.$set(this.copyInfo.bioexamResult, i, {});
-        this.$set(this.copyInfo.bioexamResult[i], 'bioexamProjectId', this.templateData[i].id);
+        this.$set(this.copyInfo.bioexamResult[i], 'bioexamProjectId', this.targetBioexam[i].id);
 
         if (this.mode === this.ADD_NEW_CARD) {
           this.$set(this.copyInfo.bioexamResult[i], 'patientCaseId', this.patientCaseId);
@@ -183,7 +183,7 @@ export default {
     },
     cancel() {
       this.displayModal = false;
-      this.templateData = [];
+      this.targetBioexam = [];
     },
     switchToEditingMode() {
       this.mode = this.EDIT_CURRENT_CARD;
