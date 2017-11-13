@@ -165,14 +165,14 @@
               </span>
             </div>
             <div class="item">
-              <el-checkbox class="item-checkbox" v-model="diseaseInfoSelectedStatus.diseaseProcessFrom"></el-checkbox>
+              <el-checkbox class="item-checkbox" v-model="diseaseInfoSelectedStatus.diseaseYearFrom"></el-checkbox>
               <span class="item-name">患者病程</span>
               <span class="item-value">
-                <el-input class="left-input" v-model="diseaseInfoCondition.diseaseProcessFrom" placeholder="最小值"
-                  :disabled="!diseaseInfoSelectedStatus.diseaseProcessFrom"></el-input>
+                <el-input class="left-input" v-model="diseaseInfoCondition.diseaseYearFrom" placeholder="最小值"
+                  :disabled="!diseaseInfoSelectedStatus.diseaseYearFrom"></el-input>
                 <span class="middle-text">~</span>
-                <el-input class="right-input" v-model="diseaseInfoCondition.diseaseProcessTo" placeholder="最大值"
-                  :disabled="!diseaseInfoSelectedStatus.diseaseProcessFrom"></el-input>
+                <el-input class="right-input" v-model="diseaseInfoCondition.diseaseYearTo" placeholder="最大值"
+                  :disabled="!diseaseInfoSelectedStatus.diseaseYearFrom"></el-input>
               </span>
             </div>
             <div class="item auto-resize">
@@ -896,12 +896,12 @@ let basicInfoSelectedFieldNames = ['ageFrom', 'ageFrom', 'birthDateFrom', 'birth
   'nation', 'sex', 'marryType', 'qualification', 'career', 'bloodType', 'econType',
   'liveType', 'homeProvince'];
 
-let diseaseInfoFieldNames = ['diseaseType', 'ariAgeFrom', 'ariAgeTo', 'diseaseProcessFrom',
-  'diseaseProcessTo', 'firSym', 'firBody', 'symmetries', 'symmetriesTimeFrom',
+let diseaseInfoFieldNames = ['diseaseType', 'ariAgeFrom', 'ariAgeTo', 'diseaseYearFrom',
+  'diseaseYearTo', 'firSym', 'firBody', 'symmetries', 'symmetriesTimeFrom',
   'symmetriesTimeTo', 'firTimeFrom', 'firTimeTo', 'surTimeFrom', 'surTimeTo',
   'diagMode', 'treatPro', 'firMed', 'getDisFac', 'getDisFac0'];
-let diseaseInfoSelectedFieldNames = ['diseaseType', 'ariAgeFrom', 'ariAgeFrom', 'diseaseProcessFrom',
-  'diseaseProcessFrom', 'firSym', 'firBody', 'symmetries', 'symmetriesTimeFrom',
+let diseaseInfoSelectedFieldNames = ['diseaseType', 'ariAgeFrom', 'ariAgeFrom', 'diseaseYearFrom',
+  'diseaseYearFrom', 'firSym', 'firBody', 'symmetries', 'symmetriesTimeFrom',
   'symmetriesTimeFrom', 'firTimeFrom', 'firTimeFrom', 'surTimeFrom', 'surTimeFrom',
   'diagMode', 'treatPro', 'firMed', 'getDisFac', 'getDisFac0'];
 
