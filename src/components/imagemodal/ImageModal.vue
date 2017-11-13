@@ -269,7 +269,8 @@ export default {
       header: {
         'Content-Type': 'multipart/form-data'
       },
-      fileParam: getCommonRequest()
+      fileParam: getCommonRequest(),
+      lockSubmitButton: false
     };
   },
   computed: {
@@ -373,6 +374,10 @@ export default {
       this.mode = this.EDIT_CURRENT_CARD;
     },
     submit() {
+      if (this.lockSubmitButton) {
+        return;
+      }
+      this.lockSubmitButton = true;
       for (let property in this.warningResults) {
         if (this.warningResults.hasOwnProperty(property)) {
           this.updateWarning(property);
@@ -403,11 +408,13 @@ export default {
       if (this.mode === this.ADD_NEW_CARD) {
         addImage(imageInfo).then(() => {
           this.updateAndClose();
+          this.lockSubmitButton = false;
         });
       } else if (this.mode === this.EDIT_CURRENT_CARD) {
         imageInfo.id = this.id;
         modifyImage(imageInfo).then(() => {
           this.updateAndClose();
+          this.lockSubmitButton = false;
         });
       }
     },

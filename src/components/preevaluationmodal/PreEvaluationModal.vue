@@ -816,7 +816,8 @@ export default {
         'motorDTOScaleScoreBefore': null,
         'motorDTOScaleScoreAfter': null,
         'operationIntension': null
-      }
+      },
+      lockSubmitButton: false
     };
   },
   computed: {
@@ -919,6 +920,10 @@ export default {
       this.mode = this.EDIT_CURRENT_CARD;
     },
     submit() {
+      if (this.lockSubmitButton) {
+        return;
+      }
+      this.lockSubmitButton = true;
       // 先检查药物方案列表是否符合规则（出现COMT抑制剂就必须要有多巴胺类制剂）
       for (let medicine of this.copyInfo.preopsMotorDTO.patientPreopsMedicineList) {
         if (!this.isMedicineValid(medicine)) {
@@ -959,18 +964,22 @@ export default {
       if (this.mode === this.ADD_NEW_CARD) {
         addPreEvaluation(this.copyInfo).then(() => {
           this.updateAndClose();
+          this.lockSubmitButton = false;
         }, (error) => {
           if (error.code === 28) {
             this.alertForDuplicatedDbsCode();
           }
+          this.lockSubmitButton = false;
         });
       } else if (this.mode === this.EDIT_CURRENT_CARD) {
         modifyPreEvaluation(this.copyInfo).then(() => {
           this.updateAndClose();
+          this.lockSubmitButton = false;
         }, (error) => {
           if (error.code === 28) {
             this.alertForDuplicatedDbsCode();
           }
+          this.lockSubmitButton = false;
         });
       }
     },

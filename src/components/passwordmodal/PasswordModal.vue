@@ -59,7 +59,8 @@ export default {
       newPasswordWarning: '',
       repeatedNewPassword: '',
       repeatedNewPasswordWarning: '',
-      newPasswordNote: ''
+      newPasswordNote: '',
+      lockSubmitButton: false
     };
   },
   computed: {
@@ -86,6 +87,9 @@ export default {
       this.displayModal = false;
     },
     submit() {
+      if (this.lockSubmitButton) {
+        return;
+      }
       if (this.originalPasswordWarning !== '' ||
         this.newPasswordWarning !== '' ||
         this.repeatedNewPasswordWarning !== '') {
@@ -104,7 +108,7 @@ export default {
         this.repeatedNewPasswordWarning = '两次输入的密码不一致';
         return;
       }
-
+      this.lockSubmitButton = true;
       // 运行到这里，说明满足所有条件，可以更新代码了
       resetPassword(this.originalPassword, this.newPassword).then(() => {
         this.$message({
@@ -113,10 +117,12 @@ export default {
           duration: 2000
         });
         this.displayModal = false;
+        this.lockSubmitButton = false;
       }, (error) => {
         if (error.code === 25) {
           this.originalPasswordWarning = '当前密码不正确，请重新输入';
         }
+        this.lockSubmitButton = false;
       });
     },
     clearOriginalPasswordWarning() {
