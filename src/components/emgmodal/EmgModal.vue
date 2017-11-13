@@ -395,7 +395,6 @@
           </table>
         </div>
       </div>
-      <div class="seperate-line"></div>
       <div class="button cancel-button" v-show="tableMode!==SON_OPEN" @click="cancel">取消</div>
       <div class="button son-submit-button" v-show="tableMode===FATHER_OPEN && mode===VIEW_CURRENT_CARD && canEdit" @click="switchToEditingMode">编辑</div>
       <div class="button son-submit-button" v-show="tableMode===FATHER_OPEN && mode!==VIEW_CURRENT_CARD" @click="submit">确认</div>

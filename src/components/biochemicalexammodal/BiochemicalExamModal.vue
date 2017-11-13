@@ -13,7 +13,7 @@
             <span v-if="mode===VIEW_CURRENT_CARD">{{getFieldValue(copyInfo.bioexamId, 'bioexamName')}}</span>
             <el-select v-else :class="{'warning': warningResults.bioexamId}" placeholder="请选择检查名称" v-model="copyInfo.bioexamId"
               @change="changeBioexam" :disabled="mode===EDIT_CURRENT_CARD">
-              <el-option v-for="bioexItem in bioexamList" :key="bioexItem.bioexamId"
+              <el-option v-for="bioexItem in bioexamTypeList" :key="bioexItem.bioexamId"
                 :label="bioexItem.examName" :value="bioexItem.id" ></el-option>
             </el-select>
           </span>
@@ -117,7 +117,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'bioexamList'
+      'bioexamTypeList'
     ]),
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
@@ -168,7 +168,7 @@ export default {
     },
     updateTemplate() {
       this.targetBioexam = [];
-      for (let bioexam of this.bioexamList) {
+      for (let bioexam of this.bioexamTypeList) {
         if (bioexam.id === this.copyInfo.bioexamId) {
           vueCopy(bioexam.projects, this.targetBioexam);
           // console.log('targetBioexam', this.targetBioexam);
@@ -271,7 +271,7 @@ export default {
     },
     getFieldValue(code, fieldName) {
       if (fieldName === 'bioexamName') {
-        let info = Util.getElement('id', code, this.bioexamList);
+        let info = Util.getElement('id', code, this.bioexamTypeList);
         return info.examName;
       } else {
         return '';

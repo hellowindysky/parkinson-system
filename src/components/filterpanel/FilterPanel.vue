@@ -1011,7 +1011,7 @@ export default {
       'complicationTypeList',
       'allScale',
       'neurologicCheckTypeList',
-      'bioexamList'
+      'bioexamTypeList'
     ]),
     currentTabBottomBar() {
       if (this.currentTab === PERSONAL_INFO) {
@@ -1286,7 +1286,7 @@ export default {
           });
         }
       } else if (fieldName === 'bioexamId') {
-        for (let bioexam of this.bioexamList) {
+        for (let bioexam of this.bioexamTypeList) {
           options.push({
             code: bioexam.id,
             name: bioexam.examName
