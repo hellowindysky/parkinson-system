@@ -234,7 +234,7 @@ export default {
       'surgicalTypeList',
       'complicationTypeList',
       'neurologicCheckTypeList',
-      'bioexamTypeList',
+      'bioexamList',
       'emgTypeList',
       'typeGroup',
       'rhythm'
@@ -354,7 +354,7 @@ export default {
     },
     transformBiochemicalExamType(typeId) {
       // 在 tableData 中找到对应的值
-      var data = Util.getElement('id', typeId, this.bioexamTypeList);
+      var data = Util.getElement('id', typeId, this.bioexamList);
       var name = data.examName ? data.examName : '';
       return name;
     },
