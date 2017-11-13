@@ -12,7 +12,7 @@
             <span class="warning-text"></span>
             <span v-if="mode===VIEW_CURRENT_CARD">{{getFieldValue(copyInfo.bioexamId, 'bioexamName')}}</span>
             <el-select v-else placeholder="请选择检查名称" v-model="copyInfo.bioexamId"
-              @change="updateTemplate" :disabled="mode===EDIT_CURRENT_CARD">
+              @change="changeBioexam" :disabled="mode===EDIT_CURRENT_CARD">
               <el-option v-for="bioexItem in bioexamList" :key="bioexItem.bioexamId"
                 :label="bioexItem.examName" :value="bioexItem.id" ></el-option>
             </el-select>
@@ -130,7 +130,7 @@ export default {
     showPanel(cardOperation, item) {
       this.displayModal = true;
       this.mode = cardOperation;
-      console.log('item', item);
+      // console.log('item', item);
 
       this.copyInfo = {};
       if (this.mode === this.ADD_NEW_CARD) {
@@ -147,30 +147,26 @@ export default {
         vueCopy(item, this.copyInfo);
       }
 
-      console.log(this.bioexamList);
-      for (let bioexam of this.bioexamList) {
-        if (bioexam.id === this.copyInfo.bioexamId) {
-          this.templateData = [];
-          vueCopy(bioexam.projects, this.templateData);
-          // console.log('template', this.templateData);
-        }
-      }
+      this.updateTemplate();
 
       this.$nextTick(() => {
         this.clearWarning();
       });
     },
     updateTemplate() {
-      // 每当改变检查名字下拉框就重新给 template 赋对应的值
+      this.templateData = [];
       for (let bioexam of this.bioexamList) {
         if (bioexam.id === this.copyInfo.bioexamId) {
-          this.templateData = [];
           vueCopy(bioexam.projects, this.templateData);
           // console.log('template', this.templateData);
         }
       }
-      // 接下来要把检查结果和备注信息还原成原来的样子
-      // 在新增生化检查的时候要根据检查类型的长度来生成监听的数据对象
+      this.updateScrollbar();
+    },
+    changeBioexam() {
+      this.updateTemplate();
+
+      // 接下来要根据新的 templateData 重置 this.copyInfo.bioexamResult
       this.$set(this.copyInfo, 'bioexamResult', []);
       for (let i = 0; i < this.templateData.length; i++) {
         this.$set(this.copyInfo.bioexamResult, i, {});
@@ -254,25 +250,10 @@ export default {
   mounted() {
     this.updateScrollbar();
     Bus.$on(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.showPanel);
-    // 监听折叠面板，如果发生状态的改变，就需要重新计算滚动区域的高度
-    Bus.$on(this.SCROLL_AREA_SIZE_CHANGE, this.updateScrollbar);
-
-    // 如果屏幕高度发生改变，也需要重新计算滚动区域高度
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
-  },
-  watch: {
-    copyInfo: {
-      handler: function(newVal) {
-        if (newVal) {
-          // console.log('copyInfo', newVal);
-        }
-      },
-      deep: true
-    }
   },
   beforeDestroy() {
     Bus.$off(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.showPanel);
-    Bus.$off(this.SCROLL_AREA_SIZE_CHANGE, this.updateScrollbar);
     Bus.$off(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
   }
 };
@@ -400,7 +381,7 @@ export default {
         max-height: 250px;
         height: auto;
         width: 100%;
-        padding-right: 10px;
+        // padding-right: 10px;
         border: 1px solid @inverse-font-color;
         overflow: hidden;
         .form {
