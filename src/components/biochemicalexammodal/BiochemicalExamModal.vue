@@ -18,6 +18,17 @@
             </el-select>
           </span>
         </div>
+        <div class="field">
+          <span class="field-name">
+            检查时间:
+            <span class="required-mark">*</span>
+          </span>
+          <span class="field-input">
+            <span class="warning-text"></span>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.checkDate}}</span>
+            <el-date-picker v-else placeholder="请输入检查时间" v-model="copyInfo.checkDate"></el-date-picker>
+          </span>
+        </div>
         <div class="form-wrapper" ref="formWrapper">
           <table class="form">
             <tr class="row first-row">
@@ -132,13 +143,12 @@ export default {
       // console.log('item', item);
 
       this.copyInfo = {};
+      this.$set(this.copyInfo, 'bioexamId', '');
+      this.$set(this.copyInfo, 'bioexamResult', []);
+      this.$set(this.copyInfo, 'checkDate', '');
+      this.$set(this.copyInfo, 'remarks', '');
+
       if (this.mode === this.ADD_NEW_CARD) {
-        // 如果是新增生化指标那么需要新造一个对象来提交
-        this.$set(this.copyInfo, 'bioexamId', '');
-        this.$set(this.copyInfo, 'bioexamResult', []);
-        this.$set(this.copyInfo, 'projectResults', '');
-        this.$set(this.copyInfo, 'checkDate', '');
-        this.$set(this.copyInfo, 'remarks', '');
         this.$set(this.copyInfo, 'patientCaseId', this.patientCaseId);
         this.$set(this.copyInfo, 'patientId', this.patientId);
 
@@ -191,8 +201,12 @@ export default {
       if (this.lockSubmitButton) {
         return;
       }
-      let submitData = deepCopy(this.copyInfo);
       this.lockSubmitButton = true;
+
+      let submitData = deepCopy(this.copyInfo);
+      submitData.checkDate = Util.simplifyDate(submitData.checkDate);
+      // console.log(submitData.checkDate instanceof Date);
+
       if (this.mode === this.EDIT_CURRENT_CARD) {
         modifyBiochemical(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
@@ -296,6 +310,7 @@ export default {
     }
     .content {
       text-align: left;
+      font-size: 0;
       .field {
         padding: 5px 0;
         text-align: left;
@@ -303,6 +318,7 @@ export default {
         position: relative;
         width: 50%;
         height: @field-height;
+        font-size: @normal-font-size;
         text-align: left;
         transform: translateX(10px);  // 这一行是为了修补视觉上的偏移
         &.whole-line {

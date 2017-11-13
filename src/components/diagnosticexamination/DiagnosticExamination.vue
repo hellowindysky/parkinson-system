@@ -115,8 +115,8 @@
             <span class="value"></span>
           </div>
           <div class="text second-line">
-            <span class="name"></span>
-            <span class="value"></span>
+            <span class="name">检查时间: </span>
+            <span class="value">{{item.checkDate}}</span>
           </div>
         </card>
       </extensible-panel>
