@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="biochemical-modal-wrapper" v-show="displayModal">
-    <div class="medicine-modal" ref="medicineModal">
+    <div class="biochemical-modal" ref="biochemicalModal">
       <h3 class="title">{{title}}</h3>
       <div class="content">
         <div class="field">
@@ -10,9 +10,9 @@
           </span>
           <span class="field-input">
             <span class="warning-text"></span>
-            <span v-if="mode===VIEW_CURRENT_CARD">{{getFieldValue(bioexamTypeData.bioexamId, 'bioexamName')}}</span>
-            <el-select v-else placeholder="请选择检查名称" v-model="bioexamTypeData.bioexamId"
-              @change="changeTemplate(mode)" :disabled="mode===EDIT_CURRENT_CARD">
+            <span v-if="mode===VIEW_CURRENT_CARD">{{getFieldValue(copyInfo.bioexamId, 'bioexamName')}}</span>
+            <el-select v-else placeholder="请选择检查名称" v-model="copyInfo.bioexamId"
+              @change="changeTemplate" :disabled="mode===EDIT_CURRENT_CARD">
               <el-option v-for="bioexItem in bioexamTypeList" :key="bioexItem.bioexamId"
                 :label="bioexItem.examName" :value="bioexItem.id" ></el-option>
             </el-select>
@@ -43,8 +43,8 @@
                 备注
               </td>
             </tr>
-             <tr v-for="(item, key) in templateData" class="row">
-              <td class="col col-id">{{key+1}}</td>
+             <tr v-for="(item, index) in templateData" class="row">
+              <td class="col col-id">{{index + 1}}</td>
               <td class="col col-name">
                 {{item.projectName}}
               </td>
@@ -52,8 +52,8 @@
                 {{item.englishAbbreviation}}
               </td>
               <td class="col col-result">
-                <span v-if="mode===VIEW_CURRENT_CARD">{{bioexamTypeData.bioexamResult[key].result}}</span>
-                <el-input v-else v-model="bioexamTypeData['bioexamResult'][key]['result']"
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.bioexamResult[index].result}}</span>
+                <el-input v-else v-model="copyInfo.bioexamResult[index].result"
                   placeholder="请输入检查结果" :maxlength="500"></el-input>
               </td>
               <td class="col col-danwei">
@@ -63,8 +63,8 @@
                 {{item.referenceRanges}}
               </td>
               <td class="col col-beizhu">
-                <span v-if="mode===VIEW_CURRENT_CARD">{{bioexamTypeData.bioexamResult[key].remarks}}</span>
-                <el-input v-else v-model="bioexamTypeData['bioexamResult'][key]['remarks']"
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.bioexamResult[index].remarks}}</span>
+                <el-input v-else v-model="copyInfo.bioexamResult[index].remarks"
                   placeholder="请输入备注" :maxlength="500"></el-input>
               </td>
             </tr>
@@ -96,7 +96,7 @@ export default {
       subModalType: '',
       disableChangingSubModal: false,
       warningResults: {},
-      bioexamTypeData: {},
+      copyInfo: {},
       templateData: []
     };
   },
@@ -126,41 +126,36 @@ export default {
 
       if (this.mode === this.ADD_NEW_CARD) {
         // 如果是新增生化指标那么需要新造一个对象来提交
-        this.$set(this.bioexamTypeData, 'bioexamId', '');
-        this.$set(this.bioexamTypeData, 'bioexamResult', []);
-        this.$set(this.bioexamTypeData, 'patientBioexamId', '');
-        this.$set(this.bioexamTypeData, 'projectResults', '');
-        this.$set(this.bioexamTypeData, 'remarks', '');
-        this.$set(this.bioexamTypeData, 'patientCaseId', this.$route.params.caseId);
-        this.$set(this.bioexamTypeData, 'patientId', this.$route.params.id);
+        this.$set(this.copyInfo, 'bioexamId', '');
+        this.$set(this.copyInfo, 'bioexamResult', []);
+        this.$set(this.copyInfo, 'patientBioexamId', '');
+        this.$set(this.copyInfo, 'projectResults', '');
+        this.$set(this.copyInfo, 'remarks', '');
+        this.$set(this.copyInfo, 'patientCaseId', this.$route.params.caseId);
+        this.$set(this.copyInfo, 'patientId', this.$route.params.id);
 
       } else {
         // 修改生化指标那么直接拷贝它
-        vueCopy(item, this.bioexamTypeData);
+        vueCopy(item, this.copyInfo);
         console.log('item', item);
-        let bioexamId = this.bioexamTypeData['bioexamId']; // 获取到检查类型的ID
+        let bioexamId = this.copyInfo.bioexamId; // 获取到检查类型的ID
         for (let i = 0; i < this.bioexamTypeList.length; i++) {
-          if (this.bioexamTypeList[i]['id'] === bioexamId) {
+          if (this.bioexamTypeList[i].id === bioexamId) {
             vueCopy(this.bioexamTypeList[i].projects, this.templateData);
             // console.log('projects', this.templateData);
           }
         }
       }
-      this.item = Object.assign({}, item);
-      // 每次打开这个模态框，都会重新初始化 this.item
-      // this.initItem();
-      // 清空警告信息
-      // 改变 item 的时候会触发 warningResults 的跟踪变化（这里的自动触发是由 el-date-picker 的 v-model造成的）
-      // 因此这一步要等到 item 变化结束之后再执行，我们将其放到下一个事件循环 tick 中
+
       this.$nextTick(() => {
         this.clearWarning();
       });
     },
-    changeTemplate(mode) {
+    changeTemplate() {
       // 每当改变检查名字下拉框就重新给template赋对应的值
-      let bioexamId = this.bioexamTypeData['bioexamId']; // 获取到检查类型的ID
+      let bioexamId = this.copyInfo.bioexamId; // 获取到检查类型的ID
       for (let i = 0; i < this.bioexamTypeList.length; i++) {
-        if (this.bioexamTypeList[i]['id'] === bioexamId) {
+        if (this.bioexamTypeList[i].id === bioexamId) {
           this.templateData = [];
           console.log('templateData', this.templateData);
           vueCopy(this.bioexamTypeList[i].projects, this.templateData);
@@ -168,23 +163,24 @@ export default {
         }
       }
       // 接下来要把检查结果和备注信息还原成原来的样子
-      if (mode === this.EDIT_CURRENT_CARD) {
-        // 要在用户编辑生化检查的时候执行
-      } else if (mode === this.ADD_NEW_CARD) {
+      if (this.mode !== this.VIEW_CURRENT_CARD) {
         // 在新增生化检查的时候要根据检查类型的长度来生成监听的数据对象
         for (let i = 0; i < this.templateData.length; i++) {
-          this.$set(this.bioexamTypeData['bioexamResult'], i, {});
+          this.$set(this.copyInfo['bioexamResult'], i, {});
           for (let key in this.templateData[i]) {
             if (key === 'id') {
-              this.$set(this.bioexamTypeData['bioexamResult'][i], 'bioexamProjectId', this.templateData[i][key]);
+              this.$set(this.copyInfo['bioexamResult'][i], 'bioexamProjectId', this.templateData[i][key]);
             }
           }
-          this.$set(this.bioexamTypeData['bioexamResult'][i], 'patientCaseId', this.$route.params.caseId);
-          this.$set(this.bioexamTypeData['bioexamResult'][i], 'patientId', this.$route.params.id);
-          this.$set(this.bioexamTypeData['bioexamResult'][i], 'remarks', '');
-          this.$set(this.bioexamTypeData['bioexamResult'][i], 'result', '');
+
+          if (this.mode === this.ADD_NEW_CARD) {
+            this.$set(this.copyInfo.bioexamResult[i], 'patientCaseId', this.$route.params.caseId);
+            this.$set(this.copyInfo.bioexamResult[i], 'patientId', this.$route.params.id);
+          }
+          this.$set(this.copyInfo.bioexamResult[i], 'remarks', '');
+          this.$set(this.copyInfo.bioexamResult[i], 'result', '');
         }
-        // console.log('current', this.bioexamTypeData['bioexamResult']);
+        // console.log('current', this.copyInfo['bioexamResult']);
       }
     },
     cancel() {
@@ -195,7 +191,7 @@ export default {
       this.mode = this.EDIT_CURRENT_CARD;
     },
     submit() {
-      let submitData = deepCopy(this.bioexamTypeData);
+      let submitData = deepCopy(this.copyInfo);
       if (this.mode === this.EDIT_CURRENT_CARD) {
         modBiochemical(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
@@ -253,10 +249,10 @@ export default {
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
   },
   watch: {
-    bioexamTypeData: {
+    copyInfo: {
       handler: function(newVal) {
         if (newVal) {
-          // console.log('bioexamTypeData', newVal);
+          // console.log('copyInfo', newVal);
         }
       },
       deep: true
@@ -293,7 +289,7 @@ export default {
   height: 100%;
   background-color: fadeout(@light-font-color, 30%);
   z-index: 500;
-  .medicine-modal {
+  .biochemical-modal {
     position: relative;
     margin: auto;
     padding: 0 40px;
