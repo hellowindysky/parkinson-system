@@ -266,7 +266,7 @@ export default {
 @field-name-width: 110px;
 @long-field-name-width: 160px;
 
-@col-id-width: 60px;
+@col-id-width: 40px;
 @col-name-width: 180px;
 @col-english-width: 70px;
 @col-result-width: 160px;
@@ -396,7 +396,6 @@ export default {
               background-color: @screen-color;
               height: 30px;
             }
-
             .col {
               font-size: @normal-font-size;
               text-align: center;
@@ -419,6 +418,7 @@ export default {
                 width: @col-range-width;
               }
               &.col-remarks {
+                padding-right: 5px;
                 width: @col-remarks-width;
               }
               .required-mark {
