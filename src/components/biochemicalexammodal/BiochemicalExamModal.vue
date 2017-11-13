@@ -9,9 +9,9 @@
             <span class="required-mark">*</span>
           </span>
           <span class="field-input">
-            <span class="warning-text"></span>
+            <span class="warning-text">{{warningResults.bioexamId}}</span>
             <span v-if="mode===VIEW_CURRENT_CARD">{{getFieldValue(copyInfo.bioexamId, 'bioexamName')}}</span>
-            <el-select v-else placeholder="请选择检查名称" v-model="copyInfo.bioexamId"
+            <el-select v-else :class="{'warning': warningResults.bioexamId}" placeholder="请选择检查名称" v-model="copyInfo.bioexamId"
               @change="changeBioexam" :disabled="mode===EDIT_CURRENT_CARD">
               <el-option v-for="bioexItem in bioexamList" :key="bioexItem.bioexamId"
                 :label="bioexItem.examName" :value="bioexItem.id" ></el-option>
@@ -24,9 +24,10 @@
             <span class="required-mark">*</span>
           </span>
           <span class="field-input">
-            <span class="warning-text"></span>
+            <span class="warning-text">{{warningResults.checkDate}}</span>
             <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.checkDate}}</span>
-            <el-date-picker v-else placeholder="请输入检查时间" v-model="copyInfo.checkDate"></el-date-picker>
+            <el-date-picker v-else :class="{'warning': warningResults.checkDate}" @change="updateWarning('checkDate')"
+              placeholder="请输入检查时间" v-model="copyInfo.checkDate"></el-date-picker>
           </span>
         </div>
         <div class="form-wrapper" ref="formWrapper">
@@ -105,7 +106,10 @@ export default {
       modalType: '',
       subModalType: '',
       disableChangingSubModal: false,
-      warningResults: {},
+      warningResults: {
+        bioexamId: '',
+        checkDate: ''
+      },
       copyInfo: {},
       targetBioexam: [],
       lockSubmitButton: false
@@ -173,6 +177,7 @@ export default {
       this.updateScrollbar();
     },
     changeBioexam() {
+      this.updateWarning('bioexamId');
       this.updateTemplate();
 
       // 接下来要根据新的 targetBioexam 重置 this.copyInfo.bioexamResult
@@ -203,6 +208,16 @@ export default {
       }
       this.lockSubmitButton = true;
 
+      for (var fieldName in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(fieldName)) {
+          this.updateWarning(fieldName);
+          if (this.warningResults[fieldName] !== '') {
+            this.lockSubmitButton = false;
+            return;
+          }
+        }
+      }
+
       let submitData = deepCopy(this.copyInfo);
       submitData.checkDate = Util.simplifyDate(submitData.checkDate);
       // console.log(submitData.checkDate instanceof Date);
@@ -228,9 +243,12 @@ export default {
     updateAndClose() {
       this.displayModal = false;
     },
-    getWarningText(fieldName) {
-      var warningResult = this.warningResults[fieldName];
-      return warningResult ? warningResult : '';
+    updateWarning(fieldName) {
+      if (this.copyInfo[fieldName]) {
+        this.$set(this.warningResults, fieldName, '');
+      } else {
+        this.$set(this.warningResults, fieldName, '必填项');
+      }
     },
     clearWarning() {
       for (let key in this.warningResults) {
@@ -359,7 +377,7 @@ export default {
           }
           .warning-text {
             position: absolute;
-            top: 25px;
+            top: 22px;
             left: 10px;
             height: 15px;
             color: red;
