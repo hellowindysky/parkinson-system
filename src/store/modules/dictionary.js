@@ -176,7 +176,7 @@ const getters = {
     }
     return state.all.tableData.spephysicalInfo;
   },
-  bioexamTypeList: (state) => {
+  bioexamList: (state) => {
     // 生化指标检查
     if (!state.all.tableData || !state.all.tableData.bioexamInfo) {
       return [];
