@@ -33,13 +33,13 @@
               <td class="col col-result">
                 检查结果
               </td>
-              <td class="col col-danwei">
+              <td class="col col-unit">
                 单位名称
               </td>
-              <td class="col col-cankao">
+              <td class="col col-range">
                 参考范围
               </td>
-              <td class="col col-beizhu">
+              <td class="col col-remarks">
                 备注
               </td>
             </tr>
@@ -56,13 +56,13 @@
                 <el-input v-else v-model="copyInfo.bioexamResult[index].result"
                   placeholder="请输入检查结果" :maxlength="500"></el-input>
               </td>
-              <td class="col col-danwei">
+              <td class="col col-unit">
                 {{item.projectUnit}}
               </td>
-              <td class="col col-cankao">
+              <td class="col col-range">
                 {{item.referenceRanges}}
               </td>
-              <td class="col col-beizhu">
+              <td class="col col-remarks">
                 <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.bioexamResult[index].remarks}}</span>
                 <el-input v-else v-model="copyInfo.bioexamResult[index].remarks"
                   placeholder="请输入备注" :maxlength="500"></el-input>
@@ -277,9 +277,9 @@ export default {
 @col-name-width: 180px;
 @col-english-width: 70px;
 @col-result-width: 160px;
-@col-danwei-width: 70px;
-@col-cankao-width: 70px;
-@col-beizhu-width: 180px;
+@col-unit-width: 70px;
+@col-range-width: 70px;
+@col-remarks-width: 180px;
 
 .biochemical-modal-wrapper {
   position: absolute;
@@ -419,14 +419,14 @@ export default {
               &.col-result {
                 width: @col-result-width;
               }
-              &.col-danwei {
-                width: @col-danwei-width;
+              &.col-unit {
+                width: @col-unit-width;
               }
-              &.col-cankao {
-                width: @col-cankao-width;
+              &.col-range {
+                width: @col-range-width;
               }
-              &.col-beizhu {
-                width: @col-beizhu-width;
+              &.col-remarks {
+                width: @col-remarks-width;
               }
               .required-mark {
                 color: red;
