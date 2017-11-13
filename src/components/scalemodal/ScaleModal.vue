@@ -16,7 +16,7 @@
             <el-select placeholder="请选择量表" v-model="copyInfo.scaleInfoId"
               :disabled="copyInfo.scaleInfoId!==''" @change="selectScale">
               <el-option v-for="scale in allScale" :key="scale.scaleInfoId" :label="scale.gaugeName"
-                :value="scale.scaleInfoId"></el-option>
+                :value="scale.scaleInfoId" v-show="getScaleTypeCode(scale.scaleInfoId)===scaleTypeCode"></el-option>
             </el-select>
           </span>
         </div>
@@ -119,6 +119,7 @@ export default {
       displayScaleModal: false,
       mode: '',
       copyInfo: {},
+      scaleTypeCode: '',
 
       scaleSymptomList: [], // 关联症状列表，长度由 typeGroup 决定
       scaleAnswer: []       // 放筛选出来的量表病人填写答案的数组
@@ -139,7 +140,7 @@ export default {
     },
     scaleType() {
       var options = this.getOptions('gaugeType');
-      var option = Util.getElement('code', this.targetScale.gaugeType, options);
+      var option = Util.getElement('code', this.scaleTypeCode, options);
       return option.name ? option.name : '';
     },
     canEdit() {
@@ -175,10 +176,11 @@ export default {
         });
       });
     },
-    showDetailPanel(cardOperation, item) {
+    showDetailPanel(cardOperation, item, scaleTypeCode) {
       this.mode = cardOperation;
 
       this.initPatientScale(item);
+      this.scaleTypeCode = scaleTypeCode;
       this.initSymptomList();
       this.scaleAnswer = [];
 
@@ -270,6 +272,10 @@ export default {
           this.$set(this.copyInfo.scaleOptionIds, i, targetAnswer);
         }
       }
+    },
+    getScaleTypeCode(scaleInfoId) {
+      var scale = Util.getElement('scaleInfoId', scaleInfoId, this.allScale);
+      return scale.gaugeType;
     },
     getOptions(fieldName) {
       var options = [];

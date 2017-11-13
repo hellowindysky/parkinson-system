@@ -3,7 +3,7 @@
     v-on:cancel="cancel" v-on:submit="submit" :editable="canEdit">
     <div class="diagnostic-scale" ref="diagnosticscale">
       <extensible-panel v-for="type in allScaleTypes" class="panel" :mode="mutableMode" :title="getTypeTitle(type.typeName)"
-        v-on:addNewCard="addScale" :editable="canEdit" :key="type.typeCode">
+        v-on:addNewCard="addScale(type.typeCode)" :editable="canEdit" :key="type.typeCode">
         <card class="card" :class="devideWidth" :mode="mutableMode" v-for="item in patientScale"
           v-if="getScaleTypeName(item.scaleInfoId) === type.typeName"
           :key="item.id" :title="getTitle(item.scaleInfoId)" v-on:deleteCurrentCard="deleteScaleRecord(item)"
@@ -123,13 +123,15 @@ export default {
       }
     },
     editScale(item) {
-      Bus.$emit(this.SHOW_SCALE_MODAL, this.EDIT_CURRENT_CARD, item);
+      var scaleTypeCode = this.getScaleTypeCode(item.scaleInfoId);
+      Bus.$emit(this.SHOW_SCALE_MODAL, this.EDIT_CURRENT_CARD, item, scaleTypeCode);
     },
     viewScale(item) {
-      Bus.$emit(this.SHOW_SCALE_MODAL, this.VIEW_CURRENT_CARD, item);
+      var scaleTypeCode = this.getScaleTypeCode(item.scaleInfoId);
+      Bus.$emit(this.SHOW_SCALE_MODAL, this.VIEW_CURRENT_CARD, item, scaleTypeCode);
     },
-    addScale() {
-      Bus.$emit(this.SHOW_SCALE_MODAL, this.ADD_NEW_CARD, {});
+    addScale(scaleTypeCode) {
+      Bus.$emit(this.SHOW_SCALE_MODAL, this.ADD_NEW_CARD, {}, scaleTypeCode);
     },
     deleteScaleRecord(item) {
       // console.log(item);
@@ -156,6 +158,10 @@ export default {
       } else {
         return '关';
       }
+    },
+    getScaleTypeCode(scaleInfoId) {
+      var scale = Util.getElement('scaleInfoId', scaleInfoId, this.allScale);
+      return scale.gaugeType;
     },
     getScaleTypeName(scaleInfoId) {
       var scale = Util.getElement('scaleInfoId', scaleInfoId, this.allScale);

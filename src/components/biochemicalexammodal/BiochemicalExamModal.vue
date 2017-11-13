@@ -97,8 +97,7 @@ export default {
       disableChangingSubModal: false,
       warningResults: {},
       bioexamTypeData: {},
-      templateData: [],
-      bioexamNameArr: []
+      templateData: []
     };
   },
   computed: {

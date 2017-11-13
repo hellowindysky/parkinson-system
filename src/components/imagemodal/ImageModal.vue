@@ -296,12 +296,6 @@ export default {
       this.completeInit = false;
       this.mode = cardOperation;
 
-      for (var property in this.warningResults) {
-        if (this.warningResults.hasOwnProperty(property)) {
-          this.warningResults[property] = '';
-        }
-      }
-
       this.newT1 = [];
       this.newT2 = [];
       this.newT2Flair = [];
@@ -335,6 +329,12 @@ export default {
         });
       }
 
+      for (var property in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(property)) {
+          this.updateWarning(property);
+        }
+      }
+
       this.completeInit = true;
       this.displayModal = true;
     },
@@ -356,6 +356,7 @@ export default {
       return targetOption.name;
     },
     updateWarning(fieldName) {
+      console.log(fieldName, this[fieldName], this.completeInit);
       if (this.completeInit && this[fieldName] === '') {
         this.warningResults[fieldName] = '必填项';
       } else {
@@ -434,8 +435,7 @@ export default {
       this.updateScrollbar();
     },
     downloadFile(file) {
-      console.log(file.realPath);
-      // window.location.href = file.realPath;
+      window.location.href = this.downloadUrl + file.realPath;
     },
     handleT1Remove(file) {
       this.handleRemove(file, this.newT1);
