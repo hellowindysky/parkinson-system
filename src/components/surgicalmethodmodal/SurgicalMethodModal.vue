@@ -117,6 +117,8 @@ export default {
       if (this.lockSubmitButton) {
         return;
       }
+      this.lockSubmitButton = true;
+
       // 先将日期格式改成符合服务器传输的格式
       this.copyInfo.surgicalDate = Util.simplifyDate(this.copyInfo.surgicalDate);
 
@@ -131,20 +133,23 @@ export default {
           return;
         }
       }
-      this.lockSubmitButton = true;
       // 到这里，就可以提交了
       if (this.mode === this.ADD_NEW_CARD) {
         this.copyInfo.patientCaseId = this.$route.params.caseId;  // 补充诊断 id 这个属性
         addSurgicalMethod(this.copyInfo).then(() => {
           this.updateAndClose();
           this.lockSubmitButton = false;
-        });
+        }, this._handleError);
       } else if (this.mode === this.EDIT_CURRENT_CARD) {
         modifySurgicalMethod(this.copyInfo).then(() => {
           this.updateAndClose();
           this.lockSubmitButton = false;
-        });
+        }, this._handleError);
       }
+    },
+    _handleError(error) {
+      console.log(error);
+      this.lockSubmitButton = false;
     },
     updateAndClose() {
       Bus.$emit(this.UPDATE_CASE_INFO);

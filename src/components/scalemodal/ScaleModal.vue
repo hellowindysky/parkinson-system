@@ -118,6 +118,7 @@ export default {
     return {
       displayScaleModal: false,
       mode: '',
+      lockSubmitButton: false,
       copyInfo: {},
       scaleTypeCode: '',
 
@@ -204,6 +205,10 @@ export default {
       this.mode = this.EDIT_CURRENT_CARD;
     },
     submit() {
+      if (this.lockSubmitButton) {
+        return;
+      }
+      this.lockSubmitButton = true;
       let submitData = deepCopy(this.copyInfo);
       // console.log('submitData', submitData);
 
@@ -235,18 +240,23 @@ export default {
         addScaleInfo(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
           this.closePanel();
-        });
+        }, this._handleError);
       } else if (this.mode === this.EDIT_CURRENT_CARD) {
         // 修改量表的接口
         // console.log('modify', submitData);
         modifyScaleInfo(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
           this.closePanel();
-        });
+        }, this._handleError);
       }
+    },
+    _handleError(error) {
+      console.log(error);
+      this.lockSubmitButton = false;
     },
     closePanel() {
       this.displayScaleModal = false;
+      this.lockSubmitButton = false;
     },
     getCorrectAnswer() {
       // 取出量表的选中答案以及对应的分数

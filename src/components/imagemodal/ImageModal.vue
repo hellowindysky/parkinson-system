@@ -409,14 +409,18 @@ export default {
         addImage(imageInfo).then(() => {
           this.updateAndClose();
           this.lockSubmitButton = false;
-        });
+        }, this._handleError);
       } else if (this.mode === this.EDIT_CURRENT_CARD) {
         imageInfo.id = this.id;
         modifyImage(imageInfo).then(() => {
           this.updateAndClose();
           this.lockSubmitButton = false;
-        });
+        }, this._handleError);
       }
+    },
+    _handleError(error) {
+      console.log(error);
+      this.lockSubmitButton = false;
     },
     updateAndClose() {
       this.$refs.upload1.clearFiles();

@@ -94,8 +94,8 @@ export default {
       if (this.lockSubmitButton) {
         return;
       }
-      this.checked = true;
       this.lockSubmitButton = true;
+      this.checked = true;
       if (this.groupNameWarning === '' && this.groupTypeWarning === '') {
         var groupInfo = {
           'groupeName': this.groupName,   // 拼写错误是数据库的问题

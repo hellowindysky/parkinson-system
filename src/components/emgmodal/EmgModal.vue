@@ -757,23 +757,27 @@ export default {
       if (this.lockSubmitButton) {
         return;
       }
-      let submitData = this.EmgTypeData;
       this.lockSubmitButton = true;
+      let submitData = this.EmgTypeData;
       if (this.mode === this.ADD_NEW_CARD) {
         // 新增肌电图
         addEmg(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
           this.cancel();
           this.lockSubmitButton = false;
-        });
+        }, this._handleError);
       } else if (this.mode === this.EDIT_CURRENT_CARD) {
         // 修改肌电图
         modEmg(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
           this.cancel();
           this.lockSubmitButton = false;
-        });
+        }, this._handleError);
       }
+    },
+    _handleError(error) {
+      console.log(error);
+      this.lockSubmitButton = false;
     },
     updateAndClose() {
       this.displayModal = false;

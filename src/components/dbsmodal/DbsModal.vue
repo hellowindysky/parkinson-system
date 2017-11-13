@@ -1005,6 +1005,7 @@ export default {
       if (this.lockSubmitButton) {
         return;
       }
+      this.lockSubmitButton = true;
       // 提交前检查一下必填字段是否都有填写，即警告信息是否都为空
       this.updateWarning('deviceId');
       this.updateWarning('programDate');
@@ -1022,7 +1023,6 @@ export default {
       this.copyInfo.patientCaseId = this.$route.params.caseId;
       reviseDateFormat(this.copyInfo);
       pruneObj(this.copyInfo);
-      this.lockSubmitButton = true;
       if (this.modelType === 1 && this.mode === this.ADD_NEW_CARD) {
         delete this.copyInfo.followDbsParams;
         addDbsFirstInfo(this.copyInfo).then(() => {

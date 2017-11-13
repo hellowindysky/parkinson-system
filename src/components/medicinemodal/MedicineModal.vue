@@ -450,13 +450,17 @@ export default {
         addPatientMedicine(this.medicine).then(() => {
           this.updateAndClose();
           this.lockSubmitButton = false;
-        });
+        }, this_handleError);
       } else if (this.title === '药物方案') {
         modifyPatientMedicine(this.medicine).then(() => {
           this.updateAndClose();
           this.lockSubmitButton = false;
-        });
+        }, this_handleError);
       }
+    },
+    _handleError(error) {
+      console.log(error);
+      this.lockSubmitButton = false;
     },
     updateAndClose() {
       Bus.$emit(this.UPDATE_CASE_INFO);

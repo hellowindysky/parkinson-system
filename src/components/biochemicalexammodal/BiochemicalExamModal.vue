@@ -202,14 +202,18 @@ export default {
           Bus.$emit(this.UPDATE_CASE_INFO);
           this.updateAndClose();
           this.lockSubmitButton = false;
-        });
+        }, this._handleError);
       } else if (this.mode === this.ADD_NEW_CARD) {
         addBiochemical(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
           this.updateAndClose();
           this.lockSubmitButton = false;
-        });
+        }, this._handleError);
       }
+    },
+    _handleError(error) {
+      console.log(error);
+      this.lockSubmitButton = false;
     },
     updateAndClose() {
       this.displayModal = false;

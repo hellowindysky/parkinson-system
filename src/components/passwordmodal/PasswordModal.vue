@@ -90,6 +90,8 @@ export default {
       if (this.lockSubmitButton) {
         return;
       }
+      this.lockSubmitButton = true;
+
       if (this.originalPasswordWarning !== '' ||
         this.newPasswordWarning !== '' ||
         this.repeatedNewPasswordWarning !== '') {
@@ -108,7 +110,6 @@ export default {
         this.repeatedNewPasswordWarning = '两次输入的密码不一致';
         return;
       }
-      this.lockSubmitButton = true;
       // 运行到这里，说明满足所有条件，可以更新代码了
       resetPassword(this.originalPassword, this.newPassword).then(() => {
         this.$message({
