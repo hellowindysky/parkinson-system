@@ -130,6 +130,7 @@ export default {
       // 然后检查 warningResults，看填写的数据是否合规
       for (var p in this.warningResults) {
         if (this.warningResults.hasOwnProperty(p) && this.warningResults[p]) {
+          this.lockSubmitButton = false;
           return;
         }
       }
@@ -138,12 +139,11 @@ export default {
         this.copyInfo.patientCaseId = this.$route.params.caseId;  // 补充诊断 id 这个属性
         addSurgicalMethod(this.copyInfo).then(() => {
           this.updateAndClose();
-          this.lockSubmitButton = false;
         }, this._handleError);
+
       } else if (this.mode === this.EDIT_CURRENT_CARD) {
         modifySurgicalMethod(this.copyInfo).then(() => {
           this.updateAndClose();
-          this.lockSubmitButton = false;
         }, this._handleError);
       }
     },
@@ -153,6 +153,7 @@ export default {
     },
     updateAndClose() {
       Bus.$emit(this.UPDATE_CASE_INFO);
+      this.lockSubmitButton = false;
       this.displayModal = false;
     },
     getMatchedField(fieldName) {

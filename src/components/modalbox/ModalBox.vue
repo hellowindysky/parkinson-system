@@ -244,6 +244,8 @@ export default {
       if (this.lockSubmitButton) {
         return;
       }
+      this.lockSubmitButton = true;
+
       // 对于特殊的个人史，检查 subModal 字段是否有被选择
       if (this.modalType === this.PERSON_HISTORY_MODAL && this.subModalType === '') {
         this.$set(this.warningResults, 'subModal', '请选择');
@@ -255,6 +257,7 @@ export default {
       }
       for (let fieldName in this.warningResults) {
         if (this.warningResults[fieldName]) {
+          this.lockSubmitButton = false;
           return false;
         }
       };
@@ -286,12 +289,11 @@ export default {
           type: 'warning',
           duration: 2000
         });
+        this.lockSubmitButton = false;
         return;
       };
       this.copyInfo.patientId = parseInt(this.$route.params.id, 10);
       // 到这里，检验合格，准备提交数据了
-      // 发出请求之前，先将“确定”按钮锁住
-      this.lockSubmitButton = true;
       if (this.mode === this.ADD_NEW_CARD) {
         if (this.modalType === this.PRESENT_HISTORY_MODAL) {
           addPatientPresentHistory(this.copyInfo).then(() => {

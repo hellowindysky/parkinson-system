@@ -924,10 +924,12 @@ export default {
         return;
       }
       this.lockSubmitButton = true;
+
       // 先检查药物方案列表是否符合规则（出现COMT抑制剂就必须要有多巴胺类制剂）
       for (let medicine of this.copyInfo.preopsMotorDTO.patientPreopsMedicineList) {
         if (!this.isMedicineValid(medicine)) {
           this.alertForCOMTWithoutLDopa();
+          this.lockSubmitButton = false;
           return;
         }
       }
@@ -935,6 +937,7 @@ export default {
       // 再检查，患者日记里面，是否每天的时间只和都是 24 小时，如果有一列不符合，都不允许通过
       if (!this.allTotalHourOk) {
         this.alertForTotalHour();
+        this.lockSubmitButton = false;
         return;
       }
 
@@ -952,6 +955,7 @@ export default {
       for (var property in this.warningResults) {
         if (this.warningResults.hasOwnProperty(property) && this.warningResults[property]) {
           this.alertForNotComplete();
+          this.lockSubmitButton = false;
           return;   // 说明有警告信息没有处理完毕
         }
       }
@@ -964,7 +968,6 @@ export default {
       if (this.mode === this.ADD_NEW_CARD) {
         addPreEvaluation(this.copyInfo).then(() => {
           this.updateAndClose();
-          this.lockSubmitButton = false;
         }, (error) => {
           if (error.code === 28) {
             this.alertForDuplicatedDbsCode();
@@ -974,7 +977,6 @@ export default {
       } else if (this.mode === this.EDIT_CURRENT_CARD) {
         modifyPreEvaluation(this.copyInfo).then(() => {
           this.updateAndClose();
-          this.lockSubmitButton = false;
         }, (error) => {
           if (error.code === 28) {
             this.alertForDuplicatedDbsCode();
@@ -985,6 +987,7 @@ export default {
     },
     updateAndClose() {
       Bus.$emit(this.UPDATE_CASE_INFO);
+      this.lockSubmitButton = false;
       this.displayModal = false;
     },
     alertForDuplicatedDbsCode() {

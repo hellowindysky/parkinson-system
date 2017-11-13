@@ -95,6 +95,7 @@ export default {
         return;
       }
       this.lockSubmitButton = true;
+
       this.checked = true;
       if (this.groupNameWarning === '' && this.groupTypeWarning === '') {
         var groupInfo = {

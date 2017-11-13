@@ -431,6 +431,7 @@ export default {
               for (let p in formItem) {
                 if (formItem.hasOwnProperty(p) && formItem[p] && p === 'takeDose') {
                   console.log('表格填写不规范，不允许提交');
+                  this.lockSubmitButton = false;
                   return;
                 }
               }
@@ -438,6 +439,7 @@ export default {
           } else {
             if (this.warningResults[propertyName]) {
               console.log('填写不合规范，不允许提交');
+              this.lockSubmitButton = false;
               return;
             }
           }
@@ -449,12 +451,11 @@ export default {
       if (this.title === '新增药物方案') {
         addPatientMedicine(this.medicine).then(() => {
           this.updateAndClose();
-          this.lockSubmitButton = false;
         }, this._handleError);
+
       } else if (this.title === '药物方案') {
         modifyPatientMedicine(this.medicine).then(() => {
           this.updateAndClose();
-          this.lockSubmitButton = false;
         }, this._handleError);
       }
     },
@@ -464,6 +465,7 @@ export default {
     },
     updateAndClose() {
       Bus.$emit(this.UPDATE_CASE_INFO);
+      this.lockSubmitButton = false;
       this.displayModal = false;
     },
     initMedicine(item) {

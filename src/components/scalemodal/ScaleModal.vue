@@ -209,6 +209,7 @@ export default {
         return;
       }
       this.lockSubmitButton = true;
+
       let submitData = deepCopy(this.copyInfo);
       // console.log('submitData', submitData);
 
@@ -255,8 +256,8 @@ export default {
       this.lockSubmitButton = false;
     },
     closePanel() {
-      this.displayScaleModal = false;
       this.lockSubmitButton = false;
+      this.displayScaleModal = false;
     },
     getCorrectAnswer() {
       // 取出量表的选中答案以及对应的分数

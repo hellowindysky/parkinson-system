@@ -146,22 +146,23 @@ export default {
         return;
       }
       this.lockSubmitButton = true;
+
       let submitData = deepCopy(this.item);
       submitData.ariseTime = Util.simplifyDate(submitData.ariseTime);
+
       if (this.mode === this.EDIT_CURRENT_CARD) {
         // 修改的状态
         modifyNervouSystem(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
           this.updateAndClose();
-          this.lockSubmitButton = false;
         }, this._handleError);
+
       } else if (this.mode === this.ADD_NEW_CARD) {
         // 新增的状态
         delete submitData.patientSpephysicalId;
         addNervouSystem(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
           this.updateAndClose();
-          this.lockSubmitButton = false;
         }, this._handleError);
       }
     },
@@ -170,6 +171,7 @@ export default {
       this.lockSubmitButton = false;
     },
     updateAndClose() {
+      this.lockSubmitButton = false;
       this.displayModal = false;
     },
     switchToEditingMode() {

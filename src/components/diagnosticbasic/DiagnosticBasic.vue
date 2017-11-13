@@ -134,6 +134,8 @@ export default {
       if (this.lockSubmitButton) {
         return;
       }
+      this.lockSubmitButton = true;
+
       // 先手动执行一遍 updateWarning()，因为有的字段在初始化的时候并没有经过校验
       for (let field of this.diagnosticBasicTemplate) {
         this.updateWarning(field);
@@ -143,6 +145,7 @@ export default {
       for (var p in this.warningResults) {
         if (this.warningResults.hasOwnProperty(p)) {
           if (this.warningResults[p]) {
+            this.lockSubmitButton = false;
             return;
           }
         }
@@ -171,25 +174,22 @@ export default {
           Bus.$emit(this.UPDATE_PATIENT_INFO);
           Bus.$emit(this.FOLD_DIAGNOSTIC_BASIC);
           Bus.$emit(this.EDIT_DIAGNOSTIC_DISEASE);
-          this.lockSubmitButton = false;
-        }, (error) => {
-          console.log(error);
-          this.lockSubmitButton = false;
-        });
+        }, this._handleError);
 
       } else {
         this.copyInfo.patientCaseId = caseId;
         modifyDiagnosticBasic(this.copyInfo).then(() => {
           this.updateAndClose();
-          this.lockSubmitButton = false;
-        }, (error) => {
-          console.log(error);
-          this.lockSubmitButton = false;
-        });
+        }, this._handleError);
       }
+    },
+    _handleError(error) {
+      console.log(error);
+      this.lockSubmitButton = false;
     },
     updateAndClose() {
       Bus.$emit(this.UPDATE_CASE_INFO);
+      this.lockSubmitButton = false;
       this.mutableMode = this.READING_MODE;
     },
     getMatchedField(fieldName) {

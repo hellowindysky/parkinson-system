@@ -141,6 +141,7 @@ export default {
       if (this.lockSubmitButton) {
         return;
       }
+      this.lockSubmitButton = true;
 
       // 首先检查是否每个字段都合格，检查一遍之后，如果 warningResults 的所有属性值都为空，就证明表单符合要求
       for (let group of this.basicInfoTemplateGroups) {
@@ -151,6 +152,7 @@ export default {
       for (let group of this.basicInfoTemplateGroups) {
         for (let field of group) {
           if (this.warningResults[field.fieldName]) {
+            this.lockSubmitButton = false;
             return;
           }
         }
@@ -159,7 +161,6 @@ export default {
       // 在提交前，将 copyInfo 中的数据还原成适合服务器传输的格式，并将提交按钮锁定
       this.restoreCopyInfo();
       pruneObj(this.copyInfo);
-      this.lockSubmitButton = true;
 
       // 判断是新增患者还是修改已有患者
       if (this.$route.params.id === 'newPatient') {

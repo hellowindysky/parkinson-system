@@ -1016,6 +1016,7 @@ export default {
             type: 'warning',
             duration: 2000
           });
+          this.lockSubmitButton = false;
           return;
         }
       }
@@ -1027,43 +1028,32 @@ export default {
         delete this.copyInfo.followDbsParams;
         addDbsFirstInfo(this.copyInfo).then(() => {
           this.updateAndClose();
-          this.lockSubmitButton = false;
-        }, (error) => {
-          console.log(error);
-          this.lockSubmitButton = false;
-        });
+        }, this._handleError);
       } else if (this.modelType === 1 && this.mode === this.EDIT_CURRENT_CARD) {
         delete this.copyInfo.followDbsParams;
         modifyDbsFirstInfo(this.copyInfo).then(() => {
           this.updateAndClose();
-          this.lockSubmitButton = false;
-        }, (error) => {
-          console.log(error);
-          this.lockSubmitButton = false;
-        });
+        }, this._handleError);
 
       } else if (this.modelType === 0 && this.mode === this.ADD_NEW_CARD) {
         delete this.copyInfo.firstDbsParams;
         addDbsFollowInfo(this.copyInfo).then(() => {
           this.updateAndClose();
-          this.lockSubmitButton = false;
-        }, (error) => {
-          console.log(error);
-          this.lockSubmitButton = false;
-        });
+        }, this._handleError);
       } else if (this.modelType === 0 && this.mode === this.EDIT_CURRENT_CARD) {
         delete this.copyInfo.firstDbsParams;
         modifyDbsFollowInfo(this.copyInfo).then(() => {
           this.updateAndClose();
-          this.lockSubmitButton = false;
-        }, (error) => {
-          console.log(error);
-          this.lockSubmitButton = false;
-        });
+        }, this._handleError);
       }
+    },
+    _handleError(error) {
+      console.log(error);
+      this.lockSubmitButton = false;
     },
     updateAndClose() {
       Bus.$emit(this.UPDATE_CASE_INFO);
+      this.lockSubmitButton = false;
       this.displayModal = false;
 
       // 因为前面的 delete 砍掉了 copyInfo的完整结构，会导致渲染出问题，所以传完数据后就重新补上

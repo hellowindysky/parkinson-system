@@ -746,6 +746,7 @@ export default {
       this.tableMode = this.FATHER_OPEN;
     },
     cancel() {
+      this.lockSubmitButton = false;
       this.displayModal = false;
       this.EmgTypeData = {};
       this.tableMode = '';
@@ -758,20 +759,19 @@ export default {
         return;
       }
       this.lockSubmitButton = true;
+
       let submitData = this.EmgTypeData;
       if (this.mode === this.ADD_NEW_CARD) {
         // 新增肌电图
         addEmg(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
           this.cancel();
-          this.lockSubmitButton = false;
         }, this._handleError);
       } else if (this.mode === this.EDIT_CURRENT_CARD) {
         // 修改肌电图
         modEmg(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
           this.cancel();
-          this.lockSubmitButton = false;
         }, this._handleError);
       }
     },
@@ -780,6 +780,7 @@ export default {
       this.lockSubmitButton = false;
     },
     updateAndClose() {
+      this.lockSubmitButton = false;
       this.displayModal = false;
     },
     getWarningText(fieldName) {

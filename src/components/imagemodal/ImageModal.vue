@@ -379,6 +379,7 @@ export default {
         return;
       }
       this.lockSubmitButton = true;
+
       for (let property in this.warningResults) {
         if (this.warningResults.hasOwnProperty(property)) {
           this.updateWarning(property);
