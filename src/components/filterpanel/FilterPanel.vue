@@ -188,7 +188,7 @@
             </div>
             <div class="item">
               <el-checkbox class="item-checkbox" v-model="diseaseInfoSelectedStatus.symmetries"></el-checkbox>
-              <span class="item-name">对称性起病</span>
+              <span class="item-name">对称起病</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="diseaseInfoCondition.symmetries"
                   :disabled="!diseaseInfoSelectedStatus.symmetries">
@@ -199,7 +199,7 @@
             </div>
             <div class="item">
               <el-checkbox class="item-checkbox" v-model="diseaseInfoSelectedStatus.symmetriesTimeFrom"></el-checkbox>
-              <span class="item-name long-name double-line">对称性起病时间</span>
+              <span class="item-name long-name">对称起病时间</span>
               <span class="item-value">
                 <el-date-picker class="left-input" v-model="diseaseInfoCondition.symmetriesTimeFrom" placeholder="开始日期"
                   :disabled="!diseaseInfoSelectedStatus.symmetriesTimeFrom"></el-date-picker>
