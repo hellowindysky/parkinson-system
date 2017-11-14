@@ -527,6 +527,7 @@ export default {
         // 修改生化指标那么直接拷贝它
         vueCopy(item, this.copyInfo);
       }
+      this.selectEmg();
       this.updateScrollbar();
     },
     getTypes(name) {
@@ -551,8 +552,6 @@ export default {
         vueCopy(this.targetEmg[tableName], this.emgTable);
       }
 
-      console.log(this.emgTable);
-
       // 取到这个值之后就要关闭父表格，打开子表格
       this.tableMode = this.SON_OPEN;
       switch (tableName) {
@@ -568,14 +567,14 @@ export default {
           }
           // 在新增的状态下需要把肌电图的子表格造出来
           if (this.mode === this.ADD_NEW_CARD) {
-            this.addEmgSonData(tableName);
+            this.initEmgTableData(tableName);
           }
           break;
         case 'needExamItem':
           this.currentTable = this.NEED_EXAM_ITEM;
           // 在新增的状态下需要把肌电图的子表格造出来
           if (this.mode === this.ADD_NEW_CARD) {
-            this.addEmgSonData(tableName);
+            this.initEmgTableData(tableName);
           }
           break;
         case 'motUniAnaItem':
@@ -590,7 +589,7 @@ export default {
           }
           // 在新增的状态下需要把肌电图的子表格造出来
           if (this.mode === this.ADD_NEW_CARD) {
-            this.addEmgSonData(tableName);
+            this.initEmgTableData(tableName);
           }
           break;
         case 'motNerCondItem':
@@ -606,27 +605,27 @@ export default {
           }
           // 在新增的状态下需要把肌电图的子表格造出来
           if (this.mode === this.ADD_NEW_CARD) {
-            this.addEmgSonData(tableName);
+            this.initEmgTableData(tableName);
           }
           break;
         case 'intPatAnaItem':
           this.currentTable = this.INT_PAT_ANA_ITEM;
           // 在新增的状态下需要把肌电图的子表格造出来
           if (this.mode === this.ADD_NEW_CARD) {
-            this.addEmgSonData(tableName);
+            this.initEmgTableData(tableName);
           }
           break;
         case 'fwavStuItem':
           this.currentTable = this.F_WAV_STU_ITEM;
           // 在新增的状态下需要把肌电图的子表格造出来
           if (this.mode === this.ADD_NEW_CARD) {
-            this.addEmgSonData(tableName);
+            this.initEmgTableData(tableName);
           }
           break;
       }
     },
-    addEmgSonData(Name) {
-      switch (Name) {
+    initEmgTableData(tableName) {
+      switch (tableName) {
         case 'senNerCondItem':
           for (let i = 0; i < this.emgTable.length; i++) {
             this.$set(this.copyInfo.patientSenNerCondResu, i, {});
@@ -824,7 +823,7 @@ export default {
     padding: 0 40px;
     top: 3%;
     width: 80%;
-    max-width: 1090px;
+    max-width: 1100px;
     max-height: 94%;
     background-color: @background-color;
     overflow: hidden;
