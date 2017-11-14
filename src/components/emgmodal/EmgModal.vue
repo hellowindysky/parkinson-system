@@ -76,7 +76,7 @@
               </td>
             </tr>
           </table>
-          <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-if="tableMode===SON_OPEN && currentTable===MOT_NER_COND_ITEM">
+          <table class="form" :class="{'small-font':tableMode===SON_OPEN}" v-if="tableMode===SON_OPEN && currentTable===MOT_NER_COND_ITEM">
              <tr class="row first-row">
               <td class="col col-width5">
                 序号
@@ -137,7 +137,7 @@
               </td>
             </tr>
           </table>
-          <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-else-if="tableMode===SON_OPEN && currentTable===F_WAV_STU_ITEM">
+          <table class="form" :class="{'small-font':tableMode===SON_OPEN}" v-else-if="tableMode===SON_OPEN && currentTable===F_WAV_STU_ITEM">
              <tr class="row first-row">
               <td class="col col-width5">
                 序号
@@ -173,7 +173,7 @@
               </td>
             </tr>
           </table>
-          <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-else-if="tableMode===SON_OPEN && currentTable===SEN_NER_COND_ITEM">
+          <table class="form" :class="{'small-font':tableMode===SON_OPEN}" v-else-if="tableMode===SON_OPEN && currentTable===SEN_NER_COND_ITEM">
              <tr class="row first-row">
               <td class="col col-width5">
                 序号
@@ -239,7 +239,7 @@
               </td>
             </tr>
           </table>
-           <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-else-if="tableMode===SON_OPEN && currentTable===NEED_EXAM_ITEM">
+           <table class="form" :class="{'small-font':tableMode===SON_OPEN}" v-else-if="tableMode===SON_OPEN && currentTable===NEED_EXAM_ITEM">
              <tr class="row first-row">
               <td class="col col-width5">
                 序号
@@ -299,7 +299,7 @@
               </td>
             </tr>
           </table>
-           <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-else-if="tableMode===SON_OPEN && currentTable===MOT_UNI_ANA_ITEM">
+           <table class="form" :class="{'small-font':tableMode===SON_OPEN}" v-else-if="tableMode===SON_OPEN && currentTable===MOT_UNI_ANA_ITEM">
              <tr class="row first-row">
               <td class="col col-width5">
                 序号
@@ -353,7 +353,7 @@
               </td>
             </tr>
           </table>
-          <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-else-if="tableMode===SON_OPEN && currentTable===INT_PAT_ANA_ITEM">
+          <table class="form" :class="{'small-font':tableMode===SON_OPEN}" v-else-if="tableMode===SON_OPEN && currentTable===INT_PAT_ANA_ITEM">
              <tr class="row first-row">
               <td class="col col-width5">
                 序号
@@ -940,8 +940,8 @@ export default {
           width: 100%; // left: calc(~"50% - (@{col-id-width} + @{col-time-width} + @{col-amount-width} + @{col-unit-width}) / 2");
           border-spacing: 0;
           font-size: 14px;
-          &.font-change {
-            font-size: 12px !important;
+          &.small-font {
+            font-size: @small-font-size !important;
           }
           .row {
             height: 40px;
