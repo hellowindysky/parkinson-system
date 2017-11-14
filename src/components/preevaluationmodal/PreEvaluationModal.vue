@@ -914,6 +914,7 @@ export default {
       });
     },
     cancel() {
+      this.lockSubmitButton = false;
       this.displayModal = false;
     },
     switchToEditingMode() {

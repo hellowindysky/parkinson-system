@@ -84,6 +84,7 @@ export default {
       this.displayModal = true;
     },
     cancel() {
+      this.lockSubmitButton = false;
       this.displayModal = false;
     },
     submit() {

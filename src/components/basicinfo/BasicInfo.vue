@@ -22,7 +22,7 @@
             <span class="warning-text">{{getWarningText(field.fieldName)}}</span>
             <span v-if="getUIType(field)===1">
               <el-input v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-                :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)" :maxlength="500"></el-input>
+                :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)" :maxlength="50" @input="inputing(field)"></el-input>
             </span>
             <span v-else-if="getUIType(field)===3">
               <el-select v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
@@ -112,6 +112,7 @@ export default {
       this.clearWarning();
     },
     cancel() {
+      this.lockSubmitButton = false;
       // 如果是新增患者界面，点击取消按钮，则回到患者列表的第一个患者
       if (this.$route.params.id === 'newPatient') {
         Bus.$on(this.CONFIRM, () => {
@@ -286,10 +287,20 @@ export default {
       var matchedType = Util.getElement('typeCode', typeCode, types);
       return matchedType.typeName ? matchedType.typeName : '';
     },
+    inputing(field) {
+      var fieldName = field.fieldName;
+      var copyFieldValue = this.copyInfo[fieldName];
+      if (copyFieldValue.length === 50) {
+        this.$message({
+          message: '不能超过50个字',
+          type: 'warning',
+          duration: 2000
+        });
+      }
+    },
     updateWarning(field) {
       var fieldName = field.fieldName;
       var copyFieldValue = this.copyInfo[fieldName];
-
       // 如果是身份证信息，先对其进行校验
       if (fieldName === 'cardId') {
         let result = Util.checkId(copyFieldValue).split(',');

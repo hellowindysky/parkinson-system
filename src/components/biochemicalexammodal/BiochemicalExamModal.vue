@@ -196,6 +196,7 @@ export default {
       // console.log('current', this.copyInfo['bioexamResult']);
     },
     cancel() {
+      this.lockSubmitButton = false;
       this.displayModal = false;
       this.targetBioexam = [];
     },

@@ -367,6 +367,7 @@ export default {
       }
     },
     cancel() {
+      this.lockSubmitButton = false;
       this.$refs.upload1.clearFiles();
       this.$refs.upload2.clearFiles();
       this.$refs.upload3.clearFiles();
