@@ -111,35 +111,35 @@
                 {{index+1}}
               </td>
               <td class="col col-width-10">
-                <span v-if="VIEW_CURRENT_CARD">{{item.nervName}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{item.nervName}}</span>
                 <el-input v-else v-model="item.nervName" disabled></el-input>
               </td>
               <td class="col col-width-20">
-                <span v-if="VIEW_CURRENT_CARD">{{item.nerveAndSite}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{item.nerveAndSite}}</span>
                 <el-input v-else v-model="item.nerveAndSite" disabled></el-input>
               </td>
               <td class="col col-width-10">
-                <span v-if="VIEW_CURRENT_CARD">{{copyInfo.patientMotNerCondResu[index].latency}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientMotNerCondResu[index].latency}}</span>
                 <el-input v-else v-model="copyInfo.patientMotNerCondResu[index].latency"></el-input>
               </td>
               <td class="col col-width-10">
-                <span v-if="VIEW_CURRENT_CARD">{{copyInfo.patientMotNerCondResu[index].amplitude}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientMotNerCondResu[index].amplitude}}</span>
                 <el-input v-else v-model="copyInfo.patientMotNerCondResu[index].amplitude"></el-input>
               </td>
               <td class="col col-width-15">
-                <span v-if="VIEW_CURRENT_CARD">{{item.segment}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{item.segment}}</span>
                 <el-input v-else v-model="item.segment"></el-input>
               </td>
               <td class="col col-width-10">
-                <span v-if="VIEW_CURRENT_CARD">{{copyInfo.patientMotNerCondResu[index].latencyDifference}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientMotNerCondResu[index].latencyDifference}}</span>
                 <el-input v-else v-model="copyInfo.patientMotNerCondResu[index].latencyDifference"></el-input>
               </td>
               <td class="col col-width-10">
-                <span v-if="VIEW_CURRENT_CARD">{{copyInfo.patientMotNerCondResu[index].distance}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientMotNerCondResu[index].distance}}</span>
                 <el-input v-else v-model="copyInfo.patientMotNerCondResu[index].distance"></el-input>
               </td>
               <td class="col col-width-10">
-                <span v-if="VIEW_CURRENT_CARD">{{copyInfo.patientMotNerCondResu[index].conductionVelocity}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientMotNerCondResu[index].conductionVelocity}}</span>
                 <el-input v-else v-model="copyInfo.patientMotNerCondResu[index].conductionVelocity"></el-input>
               </td>
             </tr>
@@ -167,19 +167,19 @@
                 {{index+1}}
               </td>
               <td class="col col-width-25">
-                <span v-if="VIEW_CURRENT_CARD">{{item.nerve}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{item.nerve}}</span>
                 <el-input v-else v-model="item.nerve" disabled></el-input>
               </td>
               <td class="col col-width-25">
-                <span v-if="VIEW_CURRENT_CARD">{{copyInfo.patienFWaStuResu[index].mLatency}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patienFWaStuResu[index].mLatency}}</span>
                 <el-input v-else v-model="copyInfo.patienFWaStuResu[index].mLatency"></el-input>
               </td>
               <td class="col col-width-25">
-                <span v-if="VIEW_CURRENT_CARD">{{copyInfo.patienFWaStuResu[index].fLatency}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patienFWaStuResu[index].fLatency}}</span>
                 <el-input v-else v-model="copyInfo.patienFWaStuResu[index].fLatency"></el-input>
               </td>
               <td class="col col-width-20">
-                <span v-if="VIEW_CURRENT_CARD">{{copyInfo.patienFWaStuResu[index].fProportion}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patienFWaStuResu[index].fProportion}}</span>
                 <el-input v-else v-model="copyInfo.patienFWaStuResu[index].fProportion"></el-input>
               </td>
             </tr>
@@ -222,39 +222,39 @@
                 {{index+1}}
               </td>
               <td class="col col-width-10">
-                <span v-if="VIEW_CURRENT_CARD">{{item.nervName}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{item.nervName}}</span>
                 <el-input v-else v-else v-model="item.nervName" disabled></el-input>
               </td>
               <td class="col col-width-15">
-                <span v-if="VIEW_CURRENT_CARD">{{item.nerveAndSite}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{item.nerveAndSite}}</span>
                 <el-input v-else v-else v-model="item.nerveAndSite" disabled></el-input>
               </td>
               <td class="col col-width-10">
-                <span v-if="VIEW_CURRENT_CARD">{{copyInfo.patientSenNerCondResu[index].onsetLatency}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientSenNerCondResu[index].onsetLatency}}</span>
                 <el-input v-else v-else v-model="copyInfo.patientSenNerCondResu[index].onsetLatency"></el-input>
               </td>
               <td class="col col-width-10">
-                <span v-if="VIEW_CURRENT_CARD">{{copyInfo.patientSenNerCondResu[index].peakLatency}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientSenNerCondResu[index].peakLatency}}</span>
                 <el-input v-else v-model="copyInfo.patientSenNerCondResu[index].peakLatency"></el-input>
               </td>
               <td class="col col-width-10">
-                <span v-if="VIEW_CURRENT_CARD">{{copyInfo.patientSenNerCondResu[index].amplitude}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientSenNerCondResu[index].amplitude}}</span>
                 <el-input v-else v-model="copyInfo.patientSenNerCondResu[index].amplitude"></el-input>
               </td>
               <td class="col col-width18">
-                <span v-if="VIEW_CURRENT_CARD">{{item.segment}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{item.segment}}</span>
                 <el-input v-else v-model="item.segment" disabled></el-input>
               </td>
               <td class="col col-width-10">
-                <span v-if="VIEW_CURRENT_CARD">{{copyInfo.patientSenNerCondResu[index].latencyDifference}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientSenNerCondResu[index].latencyDifference}}</span>
                 <el-input v-else v-model="copyInfo.patientSenNerCondResu[index].latencyDifference"></el-input>
               </td>
               <td class="col col-width-5">
-                <span v-if="VIEW_CURRENT_CARD">{{copyInfo.patientSenNerCondResu[index].distance}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientSenNerCondResu[index].distance}}</span>
                 <el-input v-else v-model="copyInfo.patientSenNerCondResu[index].distance"></el-input>
               </td>
               <td class="col col-width-7">
-                <span v-if="VIEW_CURRENT_CARD">{{copyInfo.patientSenNerCondResu[index].conductionVelocity}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientSenNerCondResu[index].conductionVelocity}}</span>
                 <el-input v-else v-model="copyInfo.patientSenNerCondResu[index].conductionVelocity"></el-input>
               </td>
             </tr>
@@ -294,35 +294,35 @@
                 {{index+1}}
               </td>
               <td class="col col-width-25">
-                <span v-if="VIEW_CURRENT_CARD">{{item.muscle}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{item.muscle}}</span>
                 <el-input v-else v-model="item.muscle"></el-input>
               </td>
               <td class="col col-width-10">
-                <span v-if="VIEW_CURRENT_CARD">{{copyInfo.patientNeedExamItemResu[index].insertional}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientNeedExamItemResu[index].insertional}}</span>
                 <el-input v-else v-model="copyInfo.patientNeedExamItemResu[index].insertional"></el-input>
               </td>
               <td class="col col-width-7">
-                <span v-if="VIEW_CURRENT_CARD">{{copyInfo.patientNeedExamItemResu[index].spoActFib}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientNeedExamItemResu[index].spoActFib}}</span>
                 <el-input v-else v-model="copyInfo.patientNeedExamItemResu[index].spoActFib"></el-input>
               </td>
               <td class="col col-width-7">
-                <span v-if="VIEW_CURRENT_CARD">{{copyInfo.patientNeedExamItemResu[index].spoActWave}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientNeedExamItemResu[index].spoActWave}}</span>
                 <el-input v-else v-model="copyInfo.patientNeedExamItemResu[index].spoActWave"></el-input>
               </td>
               <td class="col col-width-7">
-                <span v-if="VIEW_CURRENT_CARD">{{copyInfo.patientNeedExamItemResu[index].spoActFasc}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientNeedExamItemResu[index].spoActFasc}}</span>
                 <el-input v-else v-model="copyInfo.patientNeedExamItemResu[index].spoActFasc"></el-input>
               </td>
               <td class="col col-width-7">
-                <span v-if="VIEW_CURRENT_CARD">{{copyInfo.patientNeedExamItemResu[index].volMuapdur}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientNeedExamItemResu[index].volMuapdur}}</span>
                 <el-input v-else v-model="copyInfo.patientNeedExamItemResu[index].volMuapdur"></el-input>
               </td>
               <td class="col col-width-7">
-                <span v-if="VIEW_CURRENT_CARD">{{copyInfo.patientNeedExamItemResu[index].volmuapamp}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientNeedExamItemResu[index].volmuapamp}}</span>
                 <el-input v-else v-model="copyInfo.patientNeedExamItemResu[index].volmuapamp"></el-input>
               </td>
               <td class="col col-width-7">
-                <span v-if="VIEW_CURRENT_CARD">{{copyInfo.patientNeedExamItemResu[index].volmuappoly}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientNeedExamItemResu[index].volmuappoly}}</span>
                 <el-input v-else v-model="copyInfo.patientNeedExamItemResu[index].volmuappoly"></el-input>
               </td>
             </tr>
@@ -359,31 +359,31 @@
                 {{index+1}}
               </td>
               <td class="col col-width-25">
-                <span v-if="VIEW_CURRENT_CARD">{{item.nervName}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{item.nervName}}</span>
                 <el-input v-else v-model="item.nervName" disabled></el-input>
               </td>
               <td class="col col-width-30">
-                <span v-if="VIEW_CURRENT_CARD">{{item.examItemName}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{item.examItemName}}</span>
                 <el-input v-else v-model="item.examItemName" disabled></el-input>
               </td>
               <td class="col col-width-7">
-                <span v-if="VIEW_CURRENT_CARD">{{copyInfo.patientMotUniAnaResu[index].duration}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientMotUniAnaResu[index].duration}}</span>
                 <el-input v-else v-model="copyInfo.patientMotUniAnaResu[index].duration"></el-input>
               </td>
               <td class="col col-width-7">
-                <span v-if="VIEW_CURRENT_CARD">{{copyInfo.patientMotUniAnaResu[index].amplitude}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientMotUniAnaResu[index].amplitude}}</span>
                 <el-input v-else v-model="copyInfo.patientMotUniAnaResu[index].amplitude"></el-input>
               </td>
               <td class="col col-width-7">
-                <span v-if="VIEW_CURRENT_CARD">{{copyInfo.patientMotUniAnaResu[index].phases}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientMotUniAnaResu[index].phases}}</span>
                 <el-input v-else v-model="copyInfo.patientMotUniAnaResu[index].phases"></el-input>
               </td>
               <td class="col col-width-7">
-                <span v-if="VIEW_CURRENT_CARD">{{copyInfo.patientMotUniAnaResu[index].spikeDuration}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientMotUniAnaResu[index].spikeDuration}}</span>
                 <el-input v-else v-model="copyInfo.patientMotUniAnaResu[index].spikeDuration"></el-input>
               </td>
               <td class="col col-width-10">
-                <span v-if="VIEW_CURRENT_CARD">{{copyInfo.patientMotUniAnaResu[index].remarks}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientMotUniAnaResu[index].remarks}}</span>
                 <el-input v-else v-model="copyInfo.patientMotUniAnaResu[index].remarks"></el-input>
               </td>
             </tr>
@@ -411,19 +411,19 @@
                 {{index+1}}
               </td>
               <td class="col col-width-30">
-                <span v-if="VIEW_CURRENT_CARD">{{item.muscle}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{item.muscle}}</span>
                 <el-input v-else v-model="item.muscle" disabled></el-input>
               </td>
               <td class="col col-width-25">
-                <span v-if="VIEW_CURRENT_CARD">{{copyInfo.patientIntPatAnaItem[index].turn}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientIntPatAnaItem[index].turn}}</span>
                 <el-input v-else v-model="copyInfo.patientIntPatAnaItem[index].turn"></el-input>
               </td>
               <td class="col col-width-20">
-                <span v-if="VIEW_CURRENT_CARD">{{copyInfo.patientIntPatAnaItem[index].amplitude}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientIntPatAnaItem[index].amplitude}}</span>
                 <el-input v-else v-model="copyInfo.patientIntPatAnaItem[index].amplitude" ></el-input>
               </td>
               <td class="col col-width-20">
-                <span v-if="VIEW_CURRENT_CARD">{{copyInfo.patientIntPatAnaItem[index].ratio}}</span>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientIntPatAnaItem[index].ratio}}</span>
                 <el-input v-else v-model="copyInfo.patientIntPatAnaItem[index].ratio"></el-input>
               </td>
             </tr>
