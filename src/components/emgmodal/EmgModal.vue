@@ -431,10 +431,11 @@
         </div>
       </div>
       <div class="button cancel-button" v-show="tableMode!==SON_OPEN" @click="cancel">取消</div>
-      <div class="button son-submit-button" v-show="tableMode===FATHER_OPEN && mode===VIEW_CURRENT_CARD && canEdit" @click="switchToEditingMode">编辑</div>
-      <div class="button son-submit-button" v-show="tableMode===FATHER_OPEN && mode!==VIEW_CURRENT_CARD" @click="submit">确认</div>
-      <div class="button son-submit-button" v-show="tableMode===SON_OPEN && mode===VIEW_CURRENT_CARD" @click="closeEmgTable">返回</div>
-      <div class="button son-submit-button" v-show="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD" @click="closeEmgTable">编辑完成</div>
+      <div class="button cancel-button" v-show="tableMode===SON_OPEN && mode===VIEW_CURRENT_CARD" @click="closeEmgTable">返回</div>
+      <div class="button submit-button" v-show="mode===VIEW_CURRENT_CARD && canEdit" @click="switchToEditingMode">编辑</div>
+      <div class="button submit-button" v-show="tableMode===FATHER_OPEN && mode!==VIEW_CURRENT_CARD" @click="submit">确认</div>
+      <div class="button reset-button" v-show="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD" @click="resetEmgTableData">重置</div>
+      <div class="button submit-button" v-show="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD" @click="closeEmgTable">完成</div>
     </div>
   </div>
 </template>
@@ -657,6 +658,31 @@ export default {
       }
       this.updateScrollbar();
       this.$refs.formWrapper.scrollTop = 0;
+    },
+    resetEmgTableData() {
+      switch (this.currentTable) {
+        case this.SEN_NER_COND_ITEM:
+          this.copyInfo.patientSenNerCondResu = [];
+          break;
+        case this.NEED_EXAM_ITEM:
+          this.copyInfo.patientNeedExamItemResu = [];
+          break;
+        case this.MOT_UNI_ANA_ITEM:
+          this.copyInfo.patientMotUniAnaResu = [];
+          break;
+        case this.MOT_NER_COND_ITEM:
+          this.copyInfo.patientMotNerCondResu = [];
+          break;
+        case this.INT_PAT_ANA_ITEM:
+          this.copyInfo.patientIntPatAnaItem = [];
+          break;
+        case this.F_WAV_STU_ITEM:
+          this.copyInfo.patienFWaStuResu = [];
+          break;
+        default:
+          break;
+      }
+      this.initEmgTableData(this.currentTable);
     },
     initEmgTableData(tableName) {
       switch (tableName) {
@@ -1111,8 +1137,8 @@ export default {
       &.submit-button {
         background-color: @button-color;
       }
-      &.son-submit-button {
-        background-color: @button-color;
+      &.reset-button {
+        background-color: @font-color;
       }
       &:hover {
         opacity: 0.8;
