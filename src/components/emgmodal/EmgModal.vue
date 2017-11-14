@@ -34,8 +34,8 @@
           </span>
           <span class="field-input">
             <span class="warning-text"></span>
-            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patEleResult}}</span>
-            <el-input v-else type="textarea" :rows="2" v-model="copyInfo.patEleResult" placeholder="请输入检查结果"></el-input>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patEleResule}}</span>
+            <el-input v-else type="textarea" :rows="2" v-model="copyInfo.patEleResule" placeholder="请输入检查结果"></el-input>
           </span>
         </div>
         <div class="field whole-line multi-line">
@@ -544,7 +544,7 @@ export default {
         this.$set(this.copyInfo, 'elecTroGramId', '');
         this.$set(this.copyInfo, 'etgType', '');
         this.$set(this.copyInfo, 'patEleHint', '');
-        this.$set(this.copyInfo, 'patEleResult', '');
+        this.$set(this.copyInfo, 'patEleResule', '');
         this.$set(this.copyInfo, 'pcaseId', this.$route.params.caseId);
         this.$set(this.copyInfo, 'pinfoId', this.$route.params.id);
         this.$set(this.copyInfo, 'patientMotNerCondResu', []);
@@ -649,7 +649,6 @@ export default {
           break;
         case this.F_WAV_STU_ITEM:
           this.currentTable = this.F_WAV_STU_ITEM;
-          console.log('here', this.currentTable);
           // 在新增的状态下需要把肌电图的子表格造出来
           if (this.mode === this.ADD_NEW_CARD) {
             this.initEmgTableData(tableName);
