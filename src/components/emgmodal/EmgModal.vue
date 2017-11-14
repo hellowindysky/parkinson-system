@@ -439,6 +439,7 @@ export default {
       item: {},
       warningResults: {},
       copyInfo: {},
+      targetEmg: {},
       SonTempData: [],
       lockSubmitButton: false,
       emgTableName: [
@@ -482,17 +483,6 @@ export default {
         return '肌电图';
       }
     },
-    targetEmg() {
-      for (let emg of this.emgTypeList) {
-        if (emg.id === this.copyInfo.elecTroGramId) {
-          this.$set(this.copyInfo, 'etgName', emg.emgName);
-          if (this.mode === this.ADD_NEW_CARD) {
-            this.tableMode = this.FATHER_OPEN;
-          }
-          return emg;
-        }
-      }
-    },
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients)) {
         return true;
@@ -534,6 +524,12 @@ export default {
       return typeInfo.types ? typeInfo.types : [];
     },
     selectEmg() {
+      var emg = Util.getElement('id', this.copyInfo.elecTroGramId, this.emgTypeList);
+      this.$set(this.copyInfo, 'etgName', emg.emgName);
+      if (this.mode === this.ADD_NEW_CARD) {
+        this.tableMode = this.FATHER_OPEN;
+      }
+      vueCopy(emg, this.targetEmg);
       this.updateScrollbar();
     },
     selectSonTemp(arrName) {
@@ -779,6 +775,11 @@ export default {
     // 如果屏幕高度发生改变，也需要重新计算滚动区域高度
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
   },
+  watch: {
+    emgTypeList: function() {
+      this.selectEmg();
+    }
+  },
   beforeDestroy() {
     Bus.$off(this.SHOW_EMG_MODAL, this.showPanel);
     Bus.$off(this.SCROLL_AREA_SIZE_CHANGE, this.updateScrollbar);
@@ -792,7 +793,7 @@ export default {
 
 @field-height: 40px;
 @multi-line-field-height: 60px;
-@field-name-width: 110px;
+@field-name-width: 100px;
 @long-field-name-width: 160px;
 
 @col-id-width: 40px;
