@@ -63,9 +63,9 @@
                 操作
               </td>
             </tr>
-            <tr class="row" v-for="(item, key) in emgTableName">
+            <tr class="row" v-for="(item, index) in emgTableName">
               <td class="col col-width5">
-                {{key+1}}
+                {{index+1}}
               </td>
               <td class="col col-width30">
                 {{item.tableName}}
@@ -108,9 +108,9 @@
               </td>
             </tr>
 
-             <tr class="row" v-for="(item, key) in SonTempData">
+             <tr class="row" v-for="(item, index) in SonTempData">
               <td class="col col-width5">
-                {{key+1}}
+                {{index+1}}
               </td>
               <td class="col col-width10">
                 <el-input v-model="item.nervName" disabled></el-input>
@@ -119,22 +119,22 @@
                 <el-input v-model="item.nerveAndSite" disabled></el-input>
               </td>
               <td class="col col-width10">
-                <el-input v-model="copyInfo.patientMotNerCondResu[key].latency"></el-input>
+                <el-input v-model="copyInfo.patientMotNerCondResu[index].latency"></el-input>
               </td>
               <td class="col col-width10">
-                <el-input v-model="copyInfo.patientMotNerCondResu[key].amplitude"></el-input>
+                <el-input v-model="copyInfo.patientMotNerCondResu[index].amplitude"></el-input>
               </td>
               <td class="col col-width15">
                 <el-input v-model="item.segment"></el-input>
               </td>
               <td class="col col-width10">
-                <el-input v-model="copyInfo.patientMotNerCondResu[key].latencyDifference"></el-input>
+                <el-input v-model="copyInfo.patientMotNerCondResu[index].latencyDifference"></el-input>
               </td>
               <td class="col col-width10">
-                <el-input v-model="copyInfo.patientMotNerCondResu[key].distance"></el-input>
+                <el-input v-model="copyInfo.patientMotNerCondResu[index].distance"></el-input>
               </td>
               <td class="col col-width10">
-                <el-input v-model="copyInfo.patientMotNerCondResu[key].conductionVelocity"></el-input>
+                <el-input v-model="copyInfo.patientMotNerCondResu[index].conductionVelocity"></el-input>
               </td>
             </tr>
           </table>
@@ -156,21 +156,21 @@
                 F%
               </td>
             </tr>
-            <tr class="row" v-for="(item, key) in SonTempData">
+            <tr class="row" v-for="(item, index) in SonTempData">
               <td class="col col-width5">
-                {{key+1}}
+                {{index+1}}
               </td>
               <td class="col col-width25">
                 <el-input v-model="item.nerve" disabled></el-input>
               </td>
               <td class="col col-width25">
-                <el-input v-model="copyInfo.patienFWaStuResu[key].mLatency"></el-input>
+                <el-input v-model="copyInfo.patienFWaStuResu[index].mLatency"></el-input>
               </td>
               <td class="col col-width25">
-                <el-input v-model="copyInfo.patienFWaStuResu[key].fLatency"></el-input>
+                <el-input v-model="copyInfo.patienFWaStuResu[index].fLatency"></el-input>
               </td>
               <td class="col col-width20">
-                <el-input v-model="copyInfo.patienFWaStuResu[key].fProportion"></el-input>
+                <el-input v-model="copyInfo.patienFWaStuResu[index].fProportion"></el-input>
               </td>
             </tr>
           </table>
@@ -207,9 +207,9 @@
                 Conduction Velocity(m/s)
               </td>
             </tr>
-             <tr class="row" v-for="(item, key) in SonTempData">
+             <tr class="row" v-for="(item, index) in SonTempData">
               <td class="col col-width5">
-                {{key+1}}
+                {{index+1}}
               </td>
               <td class="col col-width10">
                  <el-input v-model="item.nervName" disabled></el-input>
@@ -218,25 +218,25 @@
                  <el-input v-model="item.nerveAndSite" disabled></el-input>
               </td>
               <td class="col col-width10">
-                 <el-input v-model="copyInfo.patientSenNerCondResu[key].onsetLatency"></el-input>
+                 <el-input v-model="copyInfo.patientSenNerCondResu[index].onsetLatency"></el-input>
               </td>
               <td class="col col-width10">
-                 <el-input v-model="copyInfo.patientSenNerCondResu[key].peakLatency"></el-input>
+                 <el-input v-model="copyInfo.patientSenNerCondResu[index].peakLatency"></el-input>
               </td>
               <td class="col col-width10">
-                 <el-input v-model="copyInfo.patientSenNerCondResu[key].amplitude"></el-input>
+                 <el-input v-model="copyInfo.patientSenNerCondResu[index].amplitude"></el-input>
               </td>
               <td class="col col-width18">
                  <el-input v-model="item.segment" disabled></el-input>
               </td>
               <td class="col col-width10">
-                 <el-input v-model="copyInfo.patientSenNerCondResu[key].latencyDifference"></el-input>
+                 <el-input v-model="copyInfo.patientSenNerCondResu[index].latencyDifference"></el-input>
               </td>
               <td class="col col-width5">
-                 <el-input v-model="copyInfo.patientSenNerCondResu[key].distance"></el-input>
+                 <el-input v-model="copyInfo.patientSenNerCondResu[index].distance"></el-input>
               </td>
               <td class="col col-width7">
-                 <el-input v-model="copyInfo.patientSenNerCondResu[key].conductionVelocity"></el-input>
+                 <el-input v-model="copyInfo.patientSenNerCondResu[index].conductionVelocity"></el-input>
               </td>
             </tr>
           </table>
@@ -270,33 +270,33 @@
                 Poly(Volitional MUAPs)
               </td>
             </tr>
-            <tr class="row" v-for="(item, key) in SonTempData">
+            <tr class="row" v-for="(item, index) in SonTempData">
               <td class="col col-width5">
-                {{key+1}}
+                {{index+1}}
               </td>
               <td class="col col-width25">
                 <el-input v-model="item.muscle"></el-input>
               </td>
               <td class="col col-width10">
-                <el-input v-model="copyInfo.patientNeedExamItemResu[key].insertional"></el-input>
+                <el-input v-model="copyInfo.patientNeedExamItemResu[index].insertional"></el-input>
               </td>
               <td class="col col-width7">
-                <el-input v-model="copyInfo.patientNeedExamItemResu[key].spoActFib"></el-input>
+                <el-input v-model="copyInfo.patientNeedExamItemResu[index].spoActFib"></el-input>
               </td>
               <td class="col col-width7">
-                <el-input v-model="copyInfo.patientNeedExamItemResu[key].spoActWave"></el-input>
+                <el-input v-model="copyInfo.patientNeedExamItemResu[index].spoActWave"></el-input>
               </td>
               <td class="col col-width7">
-                <el-input v-model="copyInfo.patientNeedExamItemResu[key].spoActFasc"></el-input>
+                <el-input v-model="copyInfo.patientNeedExamItemResu[index].spoActFasc"></el-input>
               </td>
               <td class="col col-width7">
-                <el-input v-model="copyInfo.patientNeedExamItemResu[key].volMuapdur"></el-input>
+                <el-input v-model="copyInfo.patientNeedExamItemResu[index].volMuapdur"></el-input>
               </td>
               <td class="col col-width7">
-                <el-input v-model="copyInfo.patientNeedExamItemResu[key].volmuapamp"></el-input>
+                <el-input v-model="copyInfo.patientNeedExamItemResu[index].volmuapamp"></el-input>
               </td>
               <td class="col col-width7">
-                <el-input v-model="copyInfo.patientNeedExamItemResu[key].volmuappoly"></el-input>
+                <el-input v-model="copyInfo.patientNeedExamItemResu[index].volmuappoly"></el-input>
               </td>
             </tr>
           </table>
@@ -327,9 +327,9 @@
                 备注
               </td>
             </tr>
-            <tr class="row" v-for="(item, key) in SonTempData">
+            <tr class="row" v-for="(item, index) in SonTempData">
               <td class="col col-width5">
-                {{key+1}}
+                {{index+1}}
               </td>
               <td class="col col-width25">
                 <el-input v-model="item.nervName" disabled></el-input>
@@ -338,19 +338,19 @@
                 <el-input v-model="item.examItemName" disabled></el-input>
               </td>
               <td class="col col-width7">
-                <el-input v-model="copyInfo.patientMotUniAnaResu[key].duration"></el-input>
+                <el-input v-model="copyInfo.patientMotUniAnaResu[index].duration"></el-input>
               </td>
               <td class="col col-width7">
-                <el-input v-model="copyInfo.patientMotUniAnaResu[key].amplitude"></el-input>
+                <el-input v-model="copyInfo.patientMotUniAnaResu[index].amplitude"></el-input>
               </td>
               <td class="col col-width7">
-                <el-input v-model="copyInfo.patientMotUniAnaResu[key].phases"></el-input>
+                <el-input v-model="copyInfo.patientMotUniAnaResu[index].phases"></el-input>
               </td>
               <td class="col col-width7">
-                <el-input v-model="copyInfo.patientMotUniAnaResu[key].spikeDuration"></el-input>
+                <el-input v-model="copyInfo.patientMotUniAnaResu[index].spikeDuration"></el-input>
               </td>
               <td class="col col-width10">
-                <el-input v-model="copyInfo.patientMotUniAnaResu[key].remarks"></el-input>
+                <el-input v-model="copyInfo.patientMotUniAnaResu[index].remarks"></el-input>
               </td>
             </tr>
           </table>
@@ -372,21 +372,21 @@
                 Ratio(M/T)(%)
               </td>
             </tr>
-            <tr class="row" v-for="(item, key) in SonTempData">
+            <tr class="row" v-for="(item, index) in SonTempData">
               <td class="col col-width5">
-                {{key+1}}
+                {{index+1}}
               </td>
               <td class="col col-width30">
                 <el-input v-model="item.muscle" disabled></el-input>
               </td>
               <td class="col col-width25">
-                <el-input v-model="copyInfo.patientIntPatAnaItem[key].turn"></el-input>
+                <el-input v-model="copyInfo.patientIntPatAnaItem[index].turn"></el-input>
               </td>
               <td class="col col-width20">
-                <el-input v-model="copyInfo.patientIntPatAnaItem[key].amplitude" ></el-input>
+                <el-input v-model="copyInfo.patientIntPatAnaItem[index].amplitude" ></el-input>
               </td>
               <td class="col col-width20">
-                <el-input v-model="copyInfo.patientIntPatAnaItem[key].ratio"></el-input>
+                <el-input v-model="copyInfo.patientIntPatAnaItem[index].ratio"></el-input>
               </td>
             </tr>
           </table>
@@ -731,8 +731,8 @@ export default {
       this.displayModal = false;
     },
     clearWarning() {
-      for (let key in this.warningResults) {
-        this.warningResults[key] = null;
+      for (let property in this.warningResults) {
+        this.warningResults[property] = null;
       }
     },
     chooseSubModal() {
