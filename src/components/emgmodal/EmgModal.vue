@@ -25,7 +25,7 @@
           <span class="field-input">
             <span class="warning-text"></span>
             <span v-if='mode===VIEW_CURRENT_CARD'>{{getFieldValue(copyInfo.etgType, 'emgType')}}</span>
-            <el-select v-else v-model="copyInfo['etgType']" disabled>
+            <el-select v-else v-model="copyInfo.etgType" disabled>
                <el-option v-for="item in getTypes('eleType')" :key="item.typeCode" :label="item.typeName" :value="item.typeCode" ></el-option>
             </el-select>
           </span>
@@ -38,7 +38,7 @@
           <span class="field-input">
             <span class="warning-text"></span>
             <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patEleResult}}</span>
-            <el-input v-else type="textarea" :rows="2" v-model="copyInfo['patEleResult']" placeholder="请输入检查结果"></el-input>
+            <el-input v-else type="textarea" :rows="2" v-model="copyInfo.patEleResult" placeholder="请输入检查结果"></el-input>
           </span>
         </div>
         <div class="field whole-line multi-line">
@@ -49,7 +49,7 @@
           <span class="field-input">
             <span class="warning-text"></span>
             <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patEleHint}}</span>
-            <el-input v-else type="textarea" :rows="2" v-model="copyInfo['patEleHint']" placeholder="请输入提示信息"></el-input>
+            <el-input v-else type="textarea" :rows="2" v-model="copyInfo.patEleHint" placeholder="请输入提示信息"></el-input>
           </span>
         </div>
         <h3 class="form-title" v-if="tableMode===SON_OPEN">{{currentTableName}}</h3>
@@ -116,28 +116,28 @@
                 {{key+1}}
               </td>
               <td class="col col-width10">
-                <el-input v-model="item['nervName']" disabled></el-input>
+                <el-input v-model="item.nervName" disabled></el-input>
               </td>
               <td class="col col-width20">
-                <el-input v-model="item['nerveAndSite']" disabled></el-input>
+                <el-input v-model="item.nerveAndSite" disabled></el-input>
               </td>
               <td class="col col-width10">
-                <el-input v-model="copyInfo['patientMotNerCondResu'][key]['latency']"></el-input>
+                <el-input v-model="copyInfo.patientMotNerCondResu[key].latency"></el-input>
               </td>
               <td class="col col-width10">
-                <el-input v-model="copyInfo['patientMotNerCondResu'][key]['amplitude']"></el-input>
+                <el-input v-model="copyInfo.patientMotNerCondResu[key].amplitude"></el-input>
               </td>
               <td class="col col-width15">
-                <el-input v-model="item['segment']"></el-input>
+                <el-input v-model="item.segment"></el-input>
               </td>
               <td class="col col-width10">
-                <el-input v-model="copyInfo['patientMotNerCondResu'][key]['latencyDifference']"></el-input>
+                <el-input v-model="copyInfo.patientMotNerCondResu[key].latencyDifference"></el-input>
               </td>
               <td class="col col-width10">
-                <el-input v-model="copyInfo['patientMotNerCondResu'][key]['distance']"></el-input>
+                <el-input v-model="copyInfo.patientMotNerCondResu[key].distance"></el-input>
               </td>
               <td class="col col-width10">
-                <el-input v-model="copyInfo['patientMotNerCondResu'][key]['conductionVelocity']"></el-input>
+                <el-input v-model="copyInfo.patientMotNerCondResu[key].conductionVelocity"></el-input>
               </td>
             </tr>
           </table>
@@ -164,16 +164,16 @@
                 {{key+1}}
               </td>
               <td class="col col-width25">
-                <el-input v-model="item['nerve']" disabled></el-input>
+                <el-input v-model="item.nerve" disabled></el-input>
               </td>
               <td class="col col-width25">
-                <el-input v-model="copyInfo['patienFWaStuResu'][key]['mLatency']"></el-input>
+                <el-input v-model="copyInfo.patienFWaStuResu[key].mLatency"></el-input>
               </td>
               <td class="col col-width25">
-                <el-input v-model="copyInfo['patienFWaStuResu'][key]['fLatency']"></el-input>
+                <el-input v-model="copyInfo.patienFWaStuResu[key].fLatency"></el-input>
               </td>
               <td class="col col-width20">
-                <el-input v-model="copyInfo['patienFWaStuResu'][key]['fProportion']"></el-input>
+                <el-input v-model="copyInfo.patienFWaStuResu[key].fProportion"></el-input>
               </td>
             </tr>
           </table>
@@ -221,25 +221,25 @@
                  <el-input v-model="item.nerveAndSite" disabled></el-input>
               </td>
               <td class="col col-width10">
-                 <el-input v-model="copyInfo['patientSenNerCondResu'][key]['onsetLatency']"></el-input>
+                 <el-input v-model="copyInfo.patientSenNerCondResu[key].onsetLatency"></el-input>
               </td>
               <td class="col col-width10">
-                 <el-input v-model="copyInfo['patientSenNerCondResu'][key]['peakLatency']"></el-input>
+                 <el-input v-model="copyInfo.patientSenNerCondResu[key].peakLatency"></el-input>
               </td>
               <td class="col col-width10">
-                 <el-input v-model="copyInfo['patientSenNerCondResu'][key]['amplitude']"></el-input>
+                 <el-input v-model="copyInfo.patientSenNerCondResu[key].amplitude"></el-input>
               </td>
               <td class="col col-width18">
                  <el-input v-model="item.segment" disabled></el-input>
               </td>
               <td class="col col-width10">
-                 <el-input v-model="copyInfo['patientSenNerCondResu'][key]['latencyDifference']"></el-input>
+                 <el-input v-model="copyInfo.patientSenNerCondResu[key].latencyDifference"></el-input>
               </td>
               <td class="col col-width5">
-                 <el-input v-model="copyInfo['patientSenNerCondResu'][key]['distance']"></el-input>
+                 <el-input v-model="copyInfo.patientSenNerCondResu[key].distance"></el-input>
               </td>
               <td class="col col-width7">
-                 <el-input v-model="copyInfo['patientSenNerCondResu'][key]['conductionVelocity']"></el-input>
+                 <el-input v-model="copyInfo.patientSenNerCondResu[key].conductionVelocity"></el-input>
               </td>
             </tr>
           </table>
@@ -281,25 +281,25 @@
                 <el-input v-model="item.muscle"></el-input>
               </td>
               <td class="col col-width10">
-                <el-input v-model="copyInfo['patientNeedExamItemResu'][key]['insertional']"></el-input>
+                <el-input v-model="copyInfo.patientNeedExamItemResu[key].insertional"></el-input>
               </td>
               <td class="col col-width7">
-                <el-input v-model="copyInfo['patientNeedExamItemResu'][key]['spoActFib']"></el-input>
+                <el-input v-model="copyInfo.patientNeedExamItemResu[key].spoActFib"></el-input>
               </td>
               <td class="col col-width7">
-                <el-input v-model="copyInfo['patientNeedExamItemResu'][key]['spoActWave']"></el-input>
+                <el-input v-model="copyInfo.patientNeedExamItemResu[key].spoActWave"></el-input>
               </td>
               <td class="col col-width7">
-                <el-input v-model="copyInfo['patientNeedExamItemResu'][key]['spoActFasc']"></el-input>
+                <el-input v-model="copyInfo.patientNeedExamItemResu[key].spoActFasc"></el-input>
               </td>
               <td class="col col-width7">
-                <el-input v-model="copyInfo['patientNeedExamItemResu'][key]['volMuapdur']"></el-input>
+                <el-input v-model="copyInfo.patientNeedExamItemResu[key].volMuapdur"></el-input>
               </td>
               <td class="col col-width7">
-                <el-input v-model="copyInfo['patientNeedExamItemResu'][key]['volmuapamp']"></el-input>
+                <el-input v-model="copyInfo.patientNeedExamItemResu[key].volmuapamp"></el-input>
               </td>
               <td class="col col-width7">
-                <el-input v-model="copyInfo['patientNeedExamItemResu'][key]['volmuappoly']"></el-input>
+                <el-input v-model="copyInfo.patientNeedExamItemResu[key].volmuappoly"></el-input>
               </td>
             </tr>
           </table>
@@ -335,25 +335,25 @@
                 {{key+1}}
               </td>
               <td class="col col-width25">
-                <el-input v-model="item['nervName']" disabled></el-input>
+                <el-input v-model="item.nervName" disabled></el-input>
               </td>
               <td class="col col-width30">
-                <el-input v-model="item['examItemName']" disabled></el-input>
+                <el-input v-model="item.examItemName" disabled></el-input>
               </td>
               <td class="col col-width7">
-                <el-input v-model="copyInfo['patientMotUniAnaResu'][key]['duration']"></el-input>
+                <el-input v-model="copyInfo.patientMotUniAnaResu[key].duration"></el-input>
               </td>
               <td class="col col-width7">
-                <el-input v-model="copyInfo['patientMotUniAnaResu'][key]['amplitude']"></el-input>
+                <el-input v-model="copyInfo.patientMotUniAnaResu[key].amplitude"></el-input>
               </td>
               <td class="col col-width7">
-                <el-input v-model="copyInfo['patientMotUniAnaResu'][key]['phases']"></el-input>
+                <el-input v-model="copyInfo.patientMotUniAnaResu[key].phases"></el-input>
               </td>
               <td class="col col-width7">
-                <el-input v-model="copyInfo['patientMotUniAnaResu'][key]['spikeDuration']"></el-input>
+                <el-input v-model="copyInfo.patientMotUniAnaResu[key].spikeDuration"></el-input>
               </td>
               <td class="col col-width10">
-                <el-input v-model="copyInfo['patientMotUniAnaResu'][key]['remarks']"></el-input>
+                <el-input v-model="copyInfo.patientMotUniAnaResu[key].remarks"></el-input>
               </td>
             </tr>
           </table>
@@ -380,16 +380,16 @@
                 {{key+1}}
               </td>
               <td class="col col-width30">
-                <el-input v-model="item['muscle']" disabled></el-input>
+                <el-input v-model="item.muscle" disabled></el-input>
               </td>
               <td class="col col-width25">
-                <el-input v-model="copyInfo['patientIntPatAnaItem'][key]['turn']"></el-input>
+                <el-input v-model="copyInfo.patientIntPatAnaItem[key].turn"></el-input>
               </td>
               <td class="col col-width20">
-                <el-input v-model="copyInfo['patientIntPatAnaItem'][key]['amplitude']" ></el-input>
+                <el-input v-model="copyInfo.patientIntPatAnaItem[key].amplitude" ></el-input>
               </td>
               <td class="col col-width20">
-                <el-input v-model="copyInfo['patientIntPatAnaItem'][key]['ratio']"></el-input>
+                <el-input v-model="copyInfo.patientIntPatAnaItem[key].ratio"></el-input>
               </td>
             </tr>
           </table>
@@ -552,10 +552,10 @@ export default {
           this.currentTable = this.SENNERCONDITEM;
           this.currentTableName = '感觉神经传导项';
           for (let i = 0; i < this.SonTempData.length; i++) {
-            let sonData = this.SonTempData[i];
-            for (let key in this.getTypes('nervType')) {
-              if (parseInt(sonData['nerveType'], 10) === this.getTypes('nervType')[key]['typeCode']) {
-                this.$set(this.SonTempData[i], 'nervName', this.getTypes('nervType')[key]['typeName']);
+            let nervTypes = this.getTypes('nervTypes');
+            for (let nerv of nervTypes) {
+              if (parseInt(this.SonTempData[i].nerveType, 10) === nerv.typeCode) {
+                this.$set(this.SonTempData[i], 'nervName', nerv.typeName);
               }
             }
           }
@@ -576,10 +576,10 @@ export default {
           this.currentTable = this.MOTUNIANAITEM;
           this.currentTableName = '运动单元分析';
           for (let i = 0; i < this.SonTempData.length; i++) {
-            let sonData = this.SonTempData[i];
-            for (let key in this.getTypes('muscleType')) {
-              if (parseInt(sonData['muscle'], 10) === this.getTypes('muscleType')[key]['typeCode']) {
-                this.$set(this.SonTempData[i], 'nervName', this.getTypes('muscleType')[key]['typeName']);
+            let muscleTypes = this.getTypes('muscleTypes');
+            for (let muscle of muscleTypes) {
+              if (parseInt(this.SonTempData[i].muscleType, 10) === muscle.typeCode) {
+                this.$set(this.SonTempData[i], 'nervName', muscle.typeName);
               }
             }
           }
@@ -593,10 +593,10 @@ export default {
           this.currentTableName = '运动神经传导项';
           // 获取到运动神经传导项的类型
           for (let i = 0; i < this.SonTempData.length; i++) {
-            let sonData = this.SonTempData[i];
-            for (let key in this.getTypes('nervType')) {
-              if (parseInt(sonData['nerveType'], 10) === this.getTypes('nervType')[key]['typeCode']) {
-                this.$set(this.SonTempData[i], 'nervName', this.getTypes('nervType')[key]['typeName']);
+            let nervTypes = this.getTypes('nervTypes');
+            for (let nerv of nervTypes) {
+              if (parseInt(this.SonTempData[i].nerveType, 10) === nerv.typeCode) {
+                this.$set(this.SonTempData[i], 'nervName', nerv.typeName);
               }
             }
           }
@@ -630,51 +630,43 @@ export default {
       switch (Name) {
         case 'senNerCondItem':
           for (let i = 0; i < this.SonTempData.length; i++) {
-            this.$set(this.copyInfo['patientSenNerCondResu'], i, {});
-            this.$set(this.copyInfo['patientSenNerCondResu'][i], 'amplitude', '');
-            this.$set(this.copyInfo['patientSenNerCondResu'][i], 'conductionVelocity', '');
-            this.$set(this.copyInfo['patientSenNerCondResu'][i], 'distance', '');
-            this.$set(this.copyInfo['patientSenNerCondResu'][i], 'latencyDifference', '');
-            this.$set(this.copyInfo['patientSenNerCondResu'][i], 'onsetLatency', '');
-            this.$set(this.copyInfo['patientSenNerCondResu'][i], 'peakLatency', '');
+            this.$set(this.copyInfo.patientSenNerCondResu, i, {});
+            this.$set(this.copyInfo.patientSenNerCondResu[i], 'amplitude', '');
+            this.$set(this.copyInfo.patientSenNerCondResu[i], 'conductionVelocity', '');
+            this.$set(this.copyInfo.patientSenNerCondResu[i], 'distance', '');
+            this.$set(this.copyInfo.patientSenNerCondResu[i], 'latencyDifference', '');
+            this.$set(this.copyInfo.patientSenNerCondResu[i], 'onsetLatency', '');
+            this.$set(this.copyInfo.patientSenNerCondResu[i], 'peakLatency', '');
           }
           break;
         case 'needExamItem':
           for (let i = 0; i < this.SonTempData.length; i++) {
-            this.$set(this.copyInfo['patientNeedExamItemResu'], i, {});
-            for (let key in this.SonTempData[i]) {
-              if (key === 'id') {
-                this.$set(this.copyInfo['patientNeedExamItemResu'][i], 'needExamItemId', this.SonTempData[i][key]);
-              }
-            }
-            this.$set(this.copyInfo['patientNeedExamItemResu'][i], 'insertional', '');
-            this.$set(this.copyInfo['patientNeedExamItemResu'][i], 'spoActFasc', '');
-            this.$set(this.copyInfo['patientNeedExamItemResu'][i], 'spoActFib', '');
-            this.$set(this.copyInfo['patientNeedExamItemResu'][i], 'spoActWave', '');
-            this.$set(this.copyInfo['patientNeedExamItemResu'][i], 'volmuapamp', '');
-            this.$set(this.copyInfo['patientNeedExamItemResu'][i], 'volMuapdur', '');
-            this.$set(this.copyInfo['patientNeedExamItemResu'][i], 'volmuappoly', '');
+            this.$set(this.copyInfo.patientNeedExamItemResu, i, {});
+            this.$set(this.copyInfo.patientNeedExamItemResu[i], 'needExamItemId', this.SonTempData[i].id);
+            this.$set(this.copyInfo.patientNeedExamItemResu[i], 'insertional', '');
+            this.$set(this.copyInfo.patientNeedExamItemResu[i], 'spoActFasc', '');
+            this.$set(this.copyInfo.patientNeedExamItemResu[i], 'spoActFib', '');
+            this.$set(this.copyInfo.patientNeedExamItemResu[i], 'spoActWave', '');
+            this.$set(this.copyInfo.patientNeedExamItemResu[i], 'volmuapamp', '');
+            this.$set(this.copyInfo.patientNeedExamItemResu[i], 'volMuapdur', '');
+            this.$set(this.copyInfo.patientNeedExamItemResu[i], 'volmuappoly', '');
           }
           break;
         case 'motUniAnaItem':
           for (let i = 0; i < this.SonTempData.length; i++) {
-            this.$set(this.copyInfo['patientMotUniAnaResu'], i, {});
-            this.$set(this.copyInfo['patientMotUniAnaResu'][i], 'amplitude', '');
-            this.$set(this.copyInfo['patientMotUniAnaResu'][i], 'conductionVelocity', '');
-            this.$set(this.copyInfo['patientMotUniAnaResu'][i], 'distance', '');
-            this.$set(this.copyInfo['patientMotUniAnaResu'][i], 'latency', '');
-            this.$set(this.copyInfo['patientMotUniAnaResu'][i], 'latencyDifference', '');
-            this.$set(this.copyInfo['patientMotUniAnaResu'][i], 'motNerItemId', '');
+            this.$set(this.copyInfo.patientMotUniAnaResu, i, {});
+            this.$set(this.copyInfo.patientMotUniAnaResu[i], 'amplitude', '');
+            this.$set(this.copyInfo.patientMotUniAnaResu[i], 'conductionVelocity', '');
+            this.$set(this.copyInfo.patientMotUniAnaResu[i], 'distance', '');
+            this.$set(this.copyInfo.patientMotUniAnaResu[i], 'latency', '');
+            this.$set(this.copyInfo.patientMotUniAnaResu[i], 'latencyDifference', '');
+            this.$set(this.copyInfo.patientMotUniAnaResu[i], 'motNerItemId', '');
           }
           break;
         case 'motNerCondItem':
           for (let i = 0; i < this.SonTempData.length; i++) {
-            this.$set(this.copyInfo['patientMotNerCondResu'], i, {});
-            for (let key in this.SonTempData[i]) {
-              if (key === 'id') {
-                this.$set(this.copyInfo['patientMotNerCondResu'][i], 'motNerItemId', this.SonTempData[i][key]);
-              }
-            }
+            this.$set(this.copyInfo.patientMotNerCondResu, i, {});
+            this.$set(this.copyInfo.patientMotNerCondResu[i], 'motNerItemId', this.SonTempData[i].id);
             this.$set(this.copyInfo['patientMotNerCondResu'][i], 'amplitude', '');
             this.$set(this.copyInfo['patientMotNerCondResu'][i], 'duration', '');
             this.$set(this.copyInfo['patientMotNerCondResu'][i], 'phases', '');
@@ -683,28 +675,20 @@ export default {
           break;
         case 'intPatAnaItem':
           for (let i = 0; i < this.SonTempData.length; i++) {
-            this.$set(this.copyInfo['patientIntPatAnaItem'], i, {});
-            for (let key in this.SonTempData[i]) {
-              if (key === 'id') {
-                this.$set(this.copyInfo['patientIntPatAnaItem'][i], 'intPatAnaId', this.SonTempData[i][key]);
-              }
-            }
-            this.$set(this.copyInfo['patientIntPatAnaItem'][i], 'amplitude', '');
-            this.$set(this.copyInfo['patientIntPatAnaItem'][i], 'ratio', '');
-            this.$set(this.copyInfo['patientIntPatAnaItem'][i], 'turn', '');
+            this.$set(this.copyInfo.patientIntPatAnaItem, i, {});
+            this.$set(this.copyInfo.patientIntPatAnaItem[i], 'intPatAnaId', this.SonTempData[i].id);
+            this.$set(this.copyInfo.patientIntPatAnaItem[i], 'amplitude', '');
+            this.$set(this.copyInfo.patientIntPatAnaItem[i], 'ratio', '');
+            this.$set(this.copyInfo.patientIntPatAnaItem[i], 'turn', '');
           }
           break;
         case 'fwavStuItem':
           for (let i = 0; i < this.SonTempData.length; i++) {
-            this.$set(this.copyInfo['patienFWaStuResu'], i, {});
-            for (let key in this.SonTempData[i]) {
-              if (key === 'id') {
-                this.$set(this.copyInfo['patienFWaStuResu'][i], 'fWavStuItemId', this.SonTempData[i][key]);
-              }
-            }
-            this.$set(this.copyInfo['patienFWaStuResu'][i], 'fLatency', '');
-            this.$set(this.copyInfo['patienFWaStuResu'][i], 'fProportion', '');
-            this.$set(this.copyInfo['patienFWaStuResu'][i], 'mLatency', '');
+            this.$set(this.copyInfo.patienFWaStuResu, i, {});
+            this.$set(this.copyInfo.patienFWaStuResu[i], 'fWavStuItemId', this.SonTempData[i].id);
+            this.$set(this.copyInfo.patienFWaStuResu[i], 'fLatency', '');
+            this.$set(this.copyInfo.patienFWaStuResu[i], 'fProportion', '');
+            this.$set(this.copyInfo.patienFWaStuResu[i], 'mLatency', '');
           }
           break;
       }
@@ -750,10 +734,6 @@ export default {
       this.lockSubmitButton = false;
       this.displayModal = false;
     },
-    getWarningText(fieldName) {
-      var warningResult = this.warningResults[fieldName];
-      return warningResult ? warningResult : '';
-    },
     clearWarning() {
       for (let key in this.warningResults) {
         this.warningResults[key] = null;
@@ -761,7 +741,7 @@ export default {
     },
     chooseSubModal() {
       if (this.subModalType !== '') {
-        this.warningResults['subModal'] = null;
+        this.warningResults.subModal = null;
       }
     },
     getFieldValue(code, fieldName) {
