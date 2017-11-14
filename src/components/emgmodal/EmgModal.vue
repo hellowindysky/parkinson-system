@@ -204,7 +204,7 @@
               <td class="col col-width-10">
                 Amplitude(μV)
               </td>
-              <td class="col col-width18">
+              <td class="col col-width-18">
                 Segment
               </td>
               <td class="col col-width-10">
@@ -223,15 +223,15 @@
               </td>
               <td class="col col-width-10">
                 <span v-if="mode===VIEW_CURRENT_CARD">{{item.nervName}}</span>
-                <el-input v-else v-else v-model="item.nervName" disabled></el-input>
+                <el-input v-else v-model="item.nervName" disabled></el-input>
               </td>
               <td class="col col-width-15">
                 <span v-if="mode===VIEW_CURRENT_CARD">{{item.nerveAndSite}}</span>
-                <el-input v-else v-else v-model="item.nerveAndSite" disabled></el-input>
+                <el-input v-else v-model="item.nerveAndSite" disabled></el-input>
               </td>
               <td class="col col-width-10">
                 <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientSenNerCondResu[index].onsetLatency}}</span>
-                <el-input v-else v-else v-model="copyInfo.patientSenNerCondResu[index].onsetLatency"></el-input>
+                <el-input v-else v-model="copyInfo.patientSenNerCondResu[index].onsetLatency"></el-input>
               </td>
               <td class="col col-width-10">
                 <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientSenNerCondResu[index].peakLatency}}</span>
@@ -241,7 +241,7 @@
                 <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientSenNerCondResu[index].amplitude}}</span>
                 <el-input v-else v-model="copyInfo.patientSenNerCondResu[index].amplitude"></el-input>
               </td>
-              <td class="col col-width18">
+              <td class="col col-width-18">
                 <span v-if="mode===VIEW_CURRENT_CARD">{{item.segment}}</span>
                 <el-input v-else v-model="item.segment" disabled></el-input>
               </td>
@@ -456,7 +456,6 @@ export default {
       displayModal: false,
       mode: '',
       lockSubmitButton: false,
-      currentTable: '',
       F_WAV_STU_ITEM: 'fwavStuItem',
       INT_PAT_ANA_ITEM: 'intPatAnaItem',
       MOT_NER_COND_ITEM: 'motNerCondItem',
@@ -466,6 +465,7 @@ export default {
       warningResults: {},
       copyInfo: {},
       targetEmg: {},
+      currentTable: '',
       emgTable: [],
       emgTableList: [
         {
@@ -573,7 +573,7 @@ export default {
       if (this.mode === this.ADD_NEW_CARD) {
         this.tableMode = this.FATHER_OPEN;
       }
-      console.log('emgTypeList:', this.emgTypeList);
+      // console.log('emgTypeList:', this.emgTypeList);
       vueCopy(emg, this.targetEmg);
       this.updateScrollbar();
     },
@@ -661,6 +661,9 @@ export default {
     initEmgTableData(tableName) {
       switch (tableName) {
         case this.SEN_NER_COND_ITEM:
+          if (this.copyInfo.patientSenNerCondResu.length !== 0) {
+            return;
+          }
           for (let i = 0; i < this.emgTable.length; i++) {
             this.$set(this.copyInfo.patientSenNerCondResu, i, {});
             this.$set(this.copyInfo.patientSenNerCondResu[i], 'amplitude', '');
@@ -672,6 +675,9 @@ export default {
           }
           break;
         case this.NEED_EXAM_ITEM:
+          if (this.copyInfo.patientNeedExamItemResu.length !== 0) {
+            return;
+          }
           for (let i = 0; i < this.emgTable.length; i++) {
             this.$set(this.copyInfo.patientNeedExamItemResu, i, {});
             this.$set(this.copyInfo.patientNeedExamItemResu[i], 'needExamItemId', this.emgTable[i].id);
@@ -685,6 +691,9 @@ export default {
           }
           break;
         case this.MOT_UNI_ANA_ITEM:
+          if (this.copyInfo.patientMotUniAnaResu.length !== 0) {
+            return;
+          }
           for (let i = 0; i < this.emgTable.length; i++) {
             this.$set(this.copyInfo.patientMotUniAnaResu, i, {});
             this.$set(this.copyInfo.patientMotUniAnaResu[i], 'amplitude', '');
@@ -696,6 +705,9 @@ export default {
           }
           break;
         case this.MOT_NER_COND_ITEM:
+          if (this.copyInfo.patientMotNerCondResu.length !== 0) {
+            return;
+          }
           for (let i = 0; i < this.emgTable.length; i++) {
             this.$set(this.copyInfo.patientMotNerCondResu, i, {});
             this.$set(this.copyInfo.patientMotNerCondResu[i], 'motNerItemId', this.emgTable[i].id);
@@ -706,6 +718,9 @@ export default {
           }
           break;
         case this.INT_PAT_ANA_ITEM:
+          if (this.copyInfo.patientIntPatAnaItem.length !== 0) {
+            return;
+          }
           for (let i = 0; i < this.emgTable.length; i++) {
             this.$set(this.copyInfo.patientIntPatAnaItem, i, {});
             this.$set(this.copyInfo.patientIntPatAnaItem[i], 'intPatAnaId', this.emgTable[i].id);
@@ -715,6 +730,9 @@ export default {
           }
           break;
         case this.F_WAV_STU_ITEM:
+          if (this.copyInfo.patienFWaStuResu.length !== 0) {
+            return;
+          }
           for (let i = 0; i < this.emgTable.length; i++) {
             this.$set(this.copyInfo.patienFWaStuResu, i, {});
             this.$set(this.copyInfo.patienFWaStuResu[i], 'fWavStuItemId', this.emgTable[i].id);
@@ -1024,7 +1042,7 @@ export default {
               &.col-width-30 {
                 width: 30%;
               }
-              &.col-width18 {
+              &.col-width-18 {
                 width: 18%;
               }
               &.col-width-7 {
