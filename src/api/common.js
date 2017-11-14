@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Message } from 'element-ui';
 
 export var baseUrl = 'http://apitest.gyenno.com';
 
@@ -24,6 +25,11 @@ export function encapsulatePromise(url, request) {
 
     }).catch(function(error) {
       console.error('请求出错: ', error);
+      Message({
+        message: '请求失败，请稍后再试',
+        type: 'error',
+        duration: 2000
+      });
     });
   });
 
