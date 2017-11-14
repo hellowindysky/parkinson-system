@@ -396,13 +396,6 @@
       <div class="button son-submit-button" v-show="tableMode===FATHER_OPEN && mode!==VIEW_CURRENT_CARD" @click="submit">确认</div>
       <div class="button son-submit-button" v-show="tableMode===SON_OPEN && mode===VIEW_CURRENT_CARD" @click="editEnd">返回</div>
       <div class="button son-submit-button" v-show="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD" @click="editEnd">编辑完成</div>
-      <!-- <div class="button cancel-button" v-if="tableMode===FATHER_OPEN && mode!==EDIT_CURRENT_CARD" @click="cancel">取消</div>
-      <div class="button son-submit-button" v-if="tableMode===FATHER_OPEN && mode!==EDIT_CURRENT_CARD" @click="submit">确认</div>
-      <div class="button son-submit-button" v-if="tableMode===SON_OPEN && mode!==EDIT_CURRENT_CARD" @click="editEnd">编辑完成</div>
-
-      <div class="button cancel-button" v-if="mode===ADD_NEW_CARD && tableMode!==SON_OPEN" @click="cancel">取消</div>
-      <div class="button son-submit-button" v-if="mode===ADD_NEW_CARD && tableMode!==SON_OPEN" @click="submit">确认</div>
-      <div class="button son-submit-button" v-if="mode===ADD_NEW_CARD && tableMode===SON_OPEN" @click="editEnd">编辑完成</div> -->
     </div>
   </div>
 </template>
@@ -623,6 +616,8 @@ export default {
           }
           break;
       }
+      this.updateScrollbar();
+      this.$refs.formWrapper.scrollTop = 0;
     },
     initEmgTableData(tableName) {
       switch (tableName) {
@@ -693,6 +688,8 @@ export default {
     },
     editEnd() {
       this.tableMode = this.FATHER_OPEN;
+      this.updateScrollbar();
+      this.$refs.formWrapper.scrollTop = 0;
     },
     cancel() {
       this.lockSubmitButton = false;
@@ -823,7 +820,8 @@ export default {
     padding: 0 40px;
     top: 3%;
     width: 80%;
-    max-width: 1100px;
+    min-width: 800px;
+    max-width: 1000px;
     max-height: 94%;
     background-color: @background-color;
     overflow: hidden;
