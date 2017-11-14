@@ -27,7 +27,7 @@
           <el-date-picker v-else v-model="item.ariseTime" placeholder="请输入检查时间" type="date" format="yyyy-MM-dd"></el-date-picker>
         </span>
       </div>
-      <div class="field" v-if="showItem.spephysicalResult || mode===ADD_NEW_CARD">
+      <div class="field">
         <span class="field-name">
           检查结果&nbsp;:
         </span>
@@ -36,7 +36,7 @@
           <el-input v-else placeholder="请输入检查结果" v-model="item.spephysicalResult" :maxlength="500"></el-input>
         </span>
       </div>
-      <div class="field multi-line" v-if="showItem.remarks || mode===ADD_NEW_CARD">
+      <div class="field multi-line">
         <span class="field-name">
           备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注&nbsp;:
         </span>
