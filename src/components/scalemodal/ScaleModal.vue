@@ -198,7 +198,10 @@ export default {
       this.getCorrectAnswer();
 
       this.displayScaleModal = true;
-      this.$refs.scrollArea.scrollTop = 0;
+      this.updateScrollbar();
+      this.$nextTick(() => {
+        this.$refs.scrollArea.scrollTop = 0;
+      });
       // console.log('copyInfo: ', this.copyInfo);
     },
     edit() {
