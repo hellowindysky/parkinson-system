@@ -88,6 +88,7 @@ export default {
   },
   methods: {
     cancel() {
+      this.lockSubmitButton = false;
       this.displayModal = false;
     },
     submit() {

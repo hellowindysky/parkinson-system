@@ -178,6 +178,7 @@ export default {
       this.mode = this.EDIT_CURRENT_CARD;
     },
     cancel() {
+      this.lockSubmitButton = false;
       this.displayModal = false;
     },
     initItem() {

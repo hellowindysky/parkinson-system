@@ -102,6 +102,7 @@ export default {
       this.foldedStatus = false;
     },
     cancel() {
+      this.lockSubmitButton = false;
       // 如果是新增患者界面，点击取消按钮，则回到诊断列表页面
       if (this.$route.params.caseId === 'newCase') {
         Bus.$on(this.CONFIRM, () => {
