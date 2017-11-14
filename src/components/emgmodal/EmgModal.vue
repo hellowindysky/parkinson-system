@@ -24,10 +24,7 @@
           </span>
           <span class="field-input">
             <span class="warning-text"></span>
-            <span v-if='mode===VIEW_CURRENT_CARD'>{{getFieldValue(copyInfo.etgType, 'emgType')}}</span>
-            <el-select v-else v-model="copyInfo.etgType" disabled>
-               <el-option v-for="item in getTypes('eleType')" :key="item.typeCode" :label="item.typeName" :value="item.typeCode" ></el-option>
-            </el-select>
+            <span>{{getFieldValue(copyInfo.etgType, 'emgType')}}</span>
           </span>
         </div>
         <div class="field whole-line multi-line">
@@ -495,12 +492,13 @@ export default {
     showPanel(cardOperation, item) {
       this.displayModal = true;
       this.mode = cardOperation;
+      console.log('item: ', item);
 
       if (this.mode === this.ADD_NEW_CARD) {
         // 如果是新增肌电图那么需要新造一个对象来提交
         this.$set(this.copyInfo, 'etgName', '');
         this.$set(this.copyInfo, 'elecTroGramId', '');
-        this.$set(this.copyInfo, 'etgType', '0');
+        this.$set(this.copyInfo, 'etgType', '');
         this.$set(this.copyInfo, 'patEleHint', '');
         this.$set(this.copyInfo, 'patEleResult', '');
         this.$set(this.copyInfo, 'pcaseId', this.$route.params.caseId);
@@ -526,9 +524,11 @@ export default {
     selectEmg() {
       var emg = Util.getElement('id', this.copyInfo.elecTroGramId, this.emgTypeList);
       this.$set(this.copyInfo, 'etgName', emg.emgName);
+      this.$set(this.copyInfo, 'etgType', emg.emgType);
       if (this.mode === this.ADD_NEW_CARD) {
         this.tableMode = this.FATHER_OPEN;
       }
+      console.log('emgTypeList:', this.emgTypeList);
       vueCopy(emg, this.targetEmg);
       this.updateScrollbar();
     },
@@ -741,10 +741,13 @@ export default {
       }
     },
     getFieldValue(code, fieldName) {
-      if (fieldName === 'emgName') {
+      if (code === '' || code === undefined) {
+        return '';
+      } else if (fieldName === 'emgName') {
         let info = Util.getElement('id', code, this.emgTypeList);
         return info.emgName;
       } else if (fieldName === 'emgType') {
+        code = parseInt(code, 10);
         let info = Util.getElement('typeCode', code, this.getTypes('eleType'));
         return info.typeName;
       } else {
@@ -954,10 +957,10 @@ export default {
               padding: 0;
               margin: 0;
               span {
+                margin: 0 5px;
                 color: @theme-color;
                 text-decoration: underline;
                 cursor: pointer;
-                margin-right: 8px;
               }
               &.col-width5 {
                 width: 5%;
