@@ -37,7 +37,8 @@
             <div class="field-value" v-if="mutableMode===READING_MODE">{{showVital(VitalSignsData.rhythm)}}</div>
             <div class="field-value" v-else-if="mutableMode===EDITING_MODE">
               <el-select v-model="vitalData.rhythm" placeholder="请选择">
-                <el-option v-for="item in heartRate" :key="item.typeCode" :label="item.typeName" :value="item.typeCode">
+                <el-option v-for="item in heartRate" :key="item.typeCode" :label="item.typeName"
+                  :value="String(item.typeCode)">
                 </el-option>
               </el-select>
             </div>
@@ -176,7 +177,6 @@ export default {
     return {
       mutableMode: this.mode,
       vitalSigns: '生命体征',
-      heartRate: [],
       vitalData: {
         breathing: '',
         temperature: '',
@@ -237,7 +237,8 @@ export default {
       'bioexamTypeList',
       'emgTypeList',
       'typeGroup',
-      'rhythm'
+      'rhythm',
+      'typeGroup'
     ]),
     neurologicCheckTitle() {
       return '神经系统检查（' + this.neurologicCheckList.length + '条记录）';
@@ -250,6 +251,10 @@ export default {
     },
     medicalImagingTitle() {
       return '医学影像（' + this.medicalImagingList.length + '条记录）';
+    },
+    heartRate() {
+      var info = Util.getElement('typegroupcode', 'rhythm', this.typeGroup);
+      return info.types ? info.types : [];
     },
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients)) {
@@ -272,11 +277,13 @@ export default {
       // 在此页面点击完成要提交生命体征
       this.submitVitalData(); // 提交生命体征
     },
-    showVital(data) {
-      if (data === '0') {
+    showVital(code) {
+      if (code === '0' || code === 0) {
         return '不齐';
-      } else {
+      } else if (code === '1' || code === 1) {
         return '齐';
+      } else {
+        return '';
       }
     },
     submitVitalData() {
@@ -464,20 +471,6 @@ export default {
         }
         this.cardWidth = 'width-1-' + parseInt(cardNum, 10);
       });
-    },
-    handleDictionary(type) {
-      let flag = false;
-      for (let key in this.typeGroup) {
-        // console.log(this.typeGroup[key]);
-        if (this.typeGroup[key]['typegroupcode'] === type) {
-          // console.log(dictionData[key]['types']);
-          flag = true;
-          return this.typeGroup[key]['types'];
-        }
-      }
-      if (!flag) {
-        return [];
-      }
     }
   },
   components: {
@@ -497,8 +490,6 @@ export default {
     Bus.$on(this.RECALCULATE_CARD_WIDTH, this.recalculateCardWidth);
     // 第一次加载的时候，去计算一次卡片宽度
     this.recalculateCardWidth();
-    // 取出生命体征中的心率情况数组
-    vueCopy(this.handleDictionary('rhythm'), this.heartRate);
   },
   beforeDestroy() {
     // 还是记得销毁组件前，解除事件绑定
