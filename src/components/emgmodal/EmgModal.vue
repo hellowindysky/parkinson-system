@@ -77,7 +77,7 @@
               </td>
             </tr>
           </table>
-          <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-if="tableMode===SON_OPEN && currentTable===MOTNERCONDITEM">
+          <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-if="tableMode===SON_OPEN && currentTable===MOT_NER_COND_ITEM">
              <tr class="row first-row">
               <td class="col col-width5">
                 序号
@@ -138,7 +138,7 @@
               </td>
             </tr>
           </table>
-          <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-if="tableMode===SON_OPEN && currentTable===fWAVSTUITEM">
+          <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-if="tableMode===SON_OPEN && currentTable===F_WAV_STU_ITEM">
              <tr class="row first-row">
               <td class="col col-width5">
                 序号
@@ -174,7 +174,7 @@
               </td>
             </tr>
           </table>
-          <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-if="tableMode===SON_OPEN && currentTable===SENNERCONDITEM">
+          <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-if="tableMode===SON_OPEN && currentTable===SEN_NER_COND_ITEM">
              <tr class="row first-row">
               <td class="col col-width5">
                 序号
@@ -240,7 +240,7 @@
               </td>
             </tr>
           </table>
-           <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-if="tableMode===SON_OPEN && currentTable===NEEDEXAMITEM">
+           <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-if="tableMode===SON_OPEN && currentTable===NEED_EXAM_ITEM">
              <tr class="row first-row">
               <td class="col col-width5">
                 序号
@@ -300,7 +300,7 @@
               </td>
             </tr>
           </table>
-           <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-if="tableMode===SON_OPEN && currentTable===MOTUNIANAITEM">
+           <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-if="tableMode===SON_OPEN && currentTable===MOT_UNI_ANA_ITEM">
              <tr class="row first-row">
               <td class="col col-width5">
                 序号
@@ -354,7 +354,7 @@
               </td>
             </tr>
           </table>
-          <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-if="tableMode===SON_OPEN && currentTable===INTPATANAITEM">
+          <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-if="tableMode===SON_OPEN && currentTable===INT_PAT_ANA_ITEM">
              <tr class="row first-row">
               <td class="col col-width5">
                 序号
@@ -420,20 +420,19 @@ export default {
   data() {
     return {
       motNerCondType: [],
-      FATHER_OPEN: 'fatheropen',
-      SON_OPEN: 'sonopen',
+      FATHER_OPEN: 'fatherOpen',
+      SON_OPEN: 'sonOpen',
       tableMode: '',
       displayModal: false,
       mode: '',
       currentTable: '',
       currentTableName: '',
-      fWAVSTUITEM: 'fwavStuItem',
-      INTPATANAITEM: 'intPatAnaItem',
-      MOTNERCONDITEM: 'motNerCondItem',
-      MOTUNIANAITEM: 'motUniAnaItem',
-      NEEDEXAMITEM: 'needExamItem',
-      SENNERCONDITEM: 'senNerCondItem',
-      item: {},
+      F_WAV_STU_ITEM: 'fwavStuItem',
+      INT_PAT_ANA_ITEM: 'intPatAnaItem',
+      MOT_NER_COND_ITEM: 'motNerCondItem',
+      MOT_UNI_ANA_ITEM: 'motUniAnaItem',
+      NEED_EXAM_ITEM: 'needExamItem',
+      SEN_NER_COND_ITEM: 'senNerCondItem',
       warningResults: {},
       copyInfo: {},
       targetEmg: {},
@@ -545,7 +544,7 @@ export default {
       this.tableMode = this.SON_OPEN;
       switch (arrName) {
         case 'senNerCondItem':
-          this.currentTable = this.SENNERCONDITEM;
+          this.currentTable = this.SEN_NER_COND_ITEM;
           this.currentTableName = '感觉神经传导项';
           for (let i = 0; i < this.SonTempData.length; i++) {
             let nervTypes = this.getTypes('nervTypes');
@@ -561,7 +560,7 @@ export default {
           }
           break;
         case 'needExamItem':
-          this.currentTable = this.NEEDEXAMITEM;
+          this.currentTable = this.NEED_EXAM_ITEM;
           this.currentTableName = '针刺肌电图检查';
           // 在新增的状态下需要把肌电图的子表格造出来
           if (this.mode === this.ADD_NEW_CARD) {
@@ -569,7 +568,7 @@ export default {
           }
           break;
         case 'motUniAnaItem':
-          this.currentTable = this.MOTUNIANAITEM;
+          this.currentTable = this.MOT_UNI_ANA_ITEM;
           this.currentTableName = '运动单元分析';
           for (let i = 0; i < this.SonTempData.length; i++) {
             let muscleTypes = this.getTypes('muscleTypes');
@@ -585,7 +584,7 @@ export default {
           }
           break;
         case 'motNerCondItem':
-          this.currentTable = this.MOTNERCONDITEM;
+          this.currentTable = this.MOT_NER_COND_ITEM;
           this.currentTableName = '运动神经传导项';
           // 获取到运动神经传导项的类型
           for (let i = 0; i < this.SonTempData.length; i++) {
@@ -602,7 +601,7 @@ export default {
           }
           break;
         case 'intPatAnaItem':
-          this.currentTable = this.INTPATANAITEM;
+          this.currentTable = this.INT_PAT_ANA_ITEM;
           this.currentTableName = '干扰项分析';
           // 在新增的状态下需要把肌电图的子表格造出来
           if (this.mode === this.ADD_NEW_CARD) {
@@ -610,7 +609,7 @@ export default {
           }
           break;
         case 'fwavStuItem':
-          this.currentTable = this.fWAVSTUITEM;
+          this.currentTable = this.F_WAV_STU_ITEM;
           this.currentTableName = 'F波研究';
           // 在新增的状态下需要把肌电图的子表格造出来
           if (this.mode === this.ADD_NEW_CARD) {
