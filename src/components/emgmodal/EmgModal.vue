@@ -53,27 +53,26 @@
         <div class="form-wrapper" :class="{'father-open':tableMode==='' && mode===ADD_NEW_CARD}" ref="formWrapper">
           <table class="form" v-if="tableMode===FATHER_OPEN">
             <tr class="row first-row">
-              <td class="col col-width5">
+              <td class="col col-width10">
                 序号
               </td>
               <td class="col col-width30">
                 检查项
               </td>
-              <td class="col col-width30">
+              <td class="col col-width15">
                 操作
               </td>
             </tr>
             <tr class="row" v-for="(table, index) in emgTableList">
-              <td class="col col-width5">
+              <td class="col col-width10">
                 {{index+1}}
               </td>
               <td class="col col-width30">
                 {{table.cnName}}
               </td>
-              <td class="col col-width30">
+              <td class="col col-width15">
                 <span v-show="mode===VIEW_CURRENT_CARD" @click="selectTable(table.name)">查看</span>
                 <span v-show="mode!==VIEW_CURRENT_CARD" @click="selectTable(table.name)">编辑</span>
-                <span v-show="mode!==VIEW_CURRENT_CARD">重置</span>
               </td>
             </tr>
           </table>
@@ -138,7 +137,7 @@
               </td>
             </tr>
           </table>
-          <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-if="tableMode===SON_OPEN && currentTable===F_WAV_STU_ITEM">
+          <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-else-if="tableMode===SON_OPEN && currentTable===F_WAV_STU_ITEM">
              <tr class="row first-row">
               <td class="col col-width5">
                 序号
@@ -174,7 +173,7 @@
               </td>
             </tr>
           </table>
-          <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-if="tableMode===SON_OPEN && currentTable===SEN_NER_COND_ITEM">
+          <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-else-if="tableMode===SON_OPEN && currentTable===SEN_NER_COND_ITEM">
              <tr class="row first-row">
               <td class="col col-width5">
                 序号
@@ -240,7 +239,7 @@
               </td>
             </tr>
           </table>
-           <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-if="tableMode===SON_OPEN && currentTable===NEED_EXAM_ITEM">
+           <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-else-if="tableMode===SON_OPEN && currentTable===NEED_EXAM_ITEM">
              <tr class="row first-row">
               <td class="col col-width5">
                 序号
@@ -300,7 +299,7 @@
               </td>
             </tr>
           </table>
-           <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-if="tableMode===SON_OPEN && currentTable===MOT_UNI_ANA_ITEM">
+           <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-else-if="tableMode===SON_OPEN && currentTable===MOT_UNI_ANA_ITEM">
              <tr class="row first-row">
               <td class="col col-width5">
                 序号
@@ -354,7 +353,7 @@
               </td>
             </tr>
           </table>
-          <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-if="tableMode===SON_OPEN && currentTable===INT_PAT_ANA_ITEM">
+          <table class="form" :class="{'font-change':tableMode===SON_OPEN}" v-else-if="tableMode===SON_OPEN && currentTable===INT_PAT_ANA_ITEM">
              <tr class="row first-row">
               <td class="col col-width5">
                 序号
@@ -426,7 +425,6 @@ export default {
       mode: '',
       lockSubmitButton: false,
       currentTable: '',
-      currentTableName: '',
       F_WAV_STU_ITEM: 'fwavStuItem',
       INT_PAT_ANA_ITEM: 'intPatAnaItem',
       MOT_NER_COND_ITEM: 'motNerCondItem',
@@ -475,6 +473,23 @@ export default {
         return '新增肌电图';
       } else {
         return '肌电图';
+      }
+    },
+    currentTableName() {
+      if (this.currentTable === this.F_WAV_STU_ITEM) {
+        return 'F波研究';
+      } else if (this.currentTable === this.INT_PAT_ANA_ITEM) {
+        return '干扰项分析';
+      } else if (this.currentTable === this.MOT_NER_COND_ITEM) {
+        return '运动神经传导项';
+      } else if (this.currentTable === this.MOT_UNI_ANA_ITEM) {
+        return '运动单元分析';
+      } else if (this.currentTable === this.NEED_EXAM_ITEM) {
+        return '针刺肌电图检查';
+      } else if (this.currentTable === this.SEN_NER_COND_ITEM) {
+        return '感觉神经传导项';
+      } else {
+        return '';
       }
     },
     canEdit() {
@@ -537,12 +552,12 @@ export default {
       }
 
       console.log(this.emgTable);
+
       // 取到这个值之后就要关闭父表格，打开子表格
       this.tableMode = this.SON_OPEN;
       switch (tableName) {
         case 'senNerCondItem':
           this.currentTable = this.SEN_NER_COND_ITEM;
-          this.currentTableName = '感觉神经传导项';
           for (let i = 0; i < this.emgTable.length; i++) {
             let nervTypes = this.getTypes('nervTypes');
             for (let nerv of nervTypes) {
@@ -558,7 +573,6 @@ export default {
           break;
         case 'needExamItem':
           this.currentTable = this.NEED_EXAM_ITEM;
-          this.currentTableName = '针刺肌电图检查';
           // 在新增的状态下需要把肌电图的子表格造出来
           if (this.mode === this.ADD_NEW_CARD) {
             this.addEmgSonData(tableName);
@@ -566,7 +580,6 @@ export default {
           break;
         case 'motUniAnaItem':
           this.currentTable = this.MOT_UNI_ANA_ITEM;
-          this.currentTableName = '运动单元分析';
           for (let i = 0; i < this.emgTable.length; i++) {
             let muscleTypes = this.getTypes('muscleTypes');
             for (let muscle of muscleTypes) {
@@ -582,7 +595,6 @@ export default {
           break;
         case 'motNerCondItem':
           this.currentTable = this.MOT_NER_COND_ITEM;
-          this.currentTableName = '运动神经传导项';
           // 获取到运动神经传导项的类型
           for (let i = 0; i < this.emgTable.length; i++) {
             let nervTypes = this.getTypes('nervTypes');
@@ -599,7 +611,6 @@ export default {
           break;
         case 'intPatAnaItem':
           this.currentTable = this.INT_PAT_ANA_ITEM;
-          this.currentTableName = '干扰项分析';
           // 在新增的状态下需要把肌电图的子表格造出来
           if (this.mode === this.ADD_NEW_CARD) {
             this.addEmgSonData(tableName);
@@ -607,7 +618,6 @@ export default {
           break;
         case 'fwavStuItem':
           this.currentTable = this.F_WAV_STU_ITEM;
-          this.currentTableName = 'F波研究';
           // 在新增的状态下需要把肌电图的子表格造出来
           if (this.mode === this.ADD_NEW_CARD) {
             this.addEmgSonData(tableName);
