@@ -63,16 +63,16 @@
                 操作
               </td>
             </tr>
-            <tr class="row" v-for="(item, index) in emgTableName">
+            <tr class="row" v-for="(table, index) in emgTableList">
               <td class="col col-width5">
                 {{index+1}}
               </td>
               <td class="col col-width30">
-                {{item.tableName}}
+                {{table.cnName}}
               </td>
               <td class="col col-width30">
-                <span v-show="mode===VIEW_CURRENT_CARD" @click="viewSonTemp(item.arr)">查看</span>
-                <span v-show="mode!==VIEW_CURRENT_CARD" @click="selectSonTemp(item.arr)">编辑</span>
+                <span v-show="mode===VIEW_CURRENT_CARD" @click="selectTable(table.name)">查看</span>
+                <span v-show="mode!==VIEW_CURRENT_CARD" @click="selectTable(table.name)">编辑</span>
                 <span v-show="mode!==VIEW_CURRENT_CARD">重置</span>
               </td>
             </tr>
@@ -108,7 +108,7 @@
               </td>
             </tr>
 
-             <tr class="row" v-for="(item, index) in SonTempData">
+             <tr class="row" v-for="(item, index) in emgTable">
               <td class="col col-width5">
                 {{index+1}}
               </td>
@@ -156,7 +156,7 @@
                 F%
               </td>
             </tr>
-            <tr class="row" v-for="(item, index) in SonTempData">
+            <tr class="row" v-for="(item, index) in emgTable">
               <td class="col col-width5">
                 {{index+1}}
               </td>
@@ -207,7 +207,7 @@
                 Conduction Velocity(m/s)
               </td>
             </tr>
-             <tr class="row" v-for="(item, index) in SonTempData">
+             <tr class="row" v-for="(item, index) in emgTable">
               <td class="col col-width5">
                 {{index+1}}
               </td>
@@ -270,7 +270,7 @@
                 Poly(Volitional MUAPs)
               </td>
             </tr>
-            <tr class="row" v-for="(item, index) in SonTempData">
+            <tr class="row" v-for="(item, index) in emgTable">
               <td class="col col-width5">
                 {{index+1}}
               </td>
@@ -327,7 +327,7 @@
                 备注
               </td>
             </tr>
-            <tr class="row" v-for="(item, index) in SonTempData">
+            <tr class="row" v-for="(item, index) in emgTable">
               <td class="col col-width5">
                 {{index+1}}
               </td>
@@ -372,7 +372,7 @@
                 Ratio(M/T)(%)
               </td>
             </tr>
-            <tr class="row" v-for="(item, index) in SonTempData">
+            <tr class="row" v-for="(item, index) in emgTable">
               <td class="col col-width5">
                 {{index+1}}
               </td>
@@ -410,8 +410,8 @@
 
 <script>
 import Ps from 'perfect-scrollbar';
-import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
+import { mapGetters } from 'vuex';
 import { vueCopy } from 'utils/helper';
 import { addEmg, modEmg } from 'api/patient.js';
 import Util from 'utils/util.js';
@@ -419,12 +419,12 @@ import Util from 'utils/util.js';
 export default {
   data() {
     return {
-      motNerCondType: [],
       FATHER_OPEN: 'fatherOpen',
       SON_OPEN: 'sonOpen',
       tableMode: '',
       displayModal: false,
       mode: '',
+      lockSubmitButton: false,
       currentTable: '',
       currentTableName: '',
       F_WAV_STU_ITEM: 'fwavStuItem',
@@ -436,35 +436,33 @@ export default {
       warningResults: {},
       copyInfo: {},
       targetEmg: {},
-      SonTempData: [],
-      lockSubmitButton: false,
-      emgTableName: [
+      emgTable: [],
+      emgTableList: [
         {
-          arr: 'fwavStuItem',
-          tableName: 'F波研究'
+          name: 'fwavStuItem',
+          cnName: 'F波研究'
         },
         {
-          arr: 'intPatAnaItem',
-          tableName: '干扰项分析'
+          name: 'intPatAnaItem',
+          cnName: '干扰项分析'
         },
         {
-          arr: 'motNerCondItem',
-          tableName: '运动神经传导项'
+          name: 'motNerCondItem',
+          cnName: '运动神经传导项'
         },
         {
-          arr: 'motUniAnaItem',
-          tableName: '运动单元分析'
+          name: 'motUniAnaItem',
+          cnName: '运动单元分析'
         },
         {
-          arr: 'needExamItem',
-          tableName: '针刺肌电图检查'
+          name: 'needExamItem',
+          cnName: '针刺肌电图检查'
         },
         {
-          arr: 'senNerCondItem',
-          tableName: '感觉神经传导项'
+          name: 'senNerCondItem',
+          cnName: '感觉神经传导项'
         }
-      ],
-      sonTableList: []
+      ]
     };
   },
   computed: {
@@ -531,32 +529,31 @@ export default {
       vueCopy(emg, this.targetEmg);
       this.updateScrollbar();
     },
-    selectSonTemp(arrName) {
-      // 点击编辑按钮之后就通过arr的名字来生成一个肌电图的子表格
-      // 在dictionary中找到这个数组
-      this.SonTempData = [];
-      if (this.targetEmg[arrName]) {
-        vueCopy(this.targetEmg[arrName], this.SonTempData);
+    selectTable(tableName) {
+      // 点击 查看／编辑 按钮之后，通过 tableName 来生成一个肌电图的子表格
+      this.emgTable = [];
+      if (this.targetEmg[tableName]) {
+        vueCopy(this.targetEmg[tableName], this.emgTable);
       }
 
-      console.log(this.SonTempData);
+      console.log(this.emgTable);
       // 取到这个值之后就要关闭父表格，打开子表格
       this.tableMode = this.SON_OPEN;
-      switch (arrName) {
+      switch (tableName) {
         case 'senNerCondItem':
           this.currentTable = this.SEN_NER_COND_ITEM;
           this.currentTableName = '感觉神经传导项';
-          for (let i = 0; i < this.SonTempData.length; i++) {
+          for (let i = 0; i < this.emgTable.length; i++) {
             let nervTypes = this.getTypes('nervTypes');
             for (let nerv of nervTypes) {
-              if (parseInt(this.SonTempData[i].nerveType, 10) === nerv.typeCode) {
-                this.$set(this.SonTempData[i], 'nervName', nerv.typeName);
+              if (parseInt(this.emgTable[i].nerveType, 10) === nerv.typeCode) {
+                this.$set(this.emgTable[i], 'nervName', nerv.typeName);
               }
             }
           }
           // 在新增的状态下需要把肌电图的子表格造出来
           if (this.mode === this.ADD_NEW_CARD) {
-            this.addEmgSonData(arrName);
+            this.addEmgSonData(tableName);
           }
           break;
         case 'needExamItem':
@@ -564,40 +561,40 @@ export default {
           this.currentTableName = '针刺肌电图检查';
           // 在新增的状态下需要把肌电图的子表格造出来
           if (this.mode === this.ADD_NEW_CARD) {
-            this.addEmgSonData(arrName);
+            this.addEmgSonData(tableName);
           }
           break;
         case 'motUniAnaItem':
           this.currentTable = this.MOT_UNI_ANA_ITEM;
           this.currentTableName = '运动单元分析';
-          for (let i = 0; i < this.SonTempData.length; i++) {
+          for (let i = 0; i < this.emgTable.length; i++) {
             let muscleTypes = this.getTypes('muscleTypes');
             for (let muscle of muscleTypes) {
-              if (parseInt(this.SonTempData[i].muscleType, 10) === muscle.typeCode) {
-                this.$set(this.SonTempData[i], 'nervName', muscle.typeName);
+              if (parseInt(this.emgTable[i].muscleType, 10) === muscle.typeCode) {
+                this.$set(this.emgTable[i], 'nervName', muscle.typeName);
               }
             }
           }
           // 在新增的状态下需要把肌电图的子表格造出来
           if (this.mode === this.ADD_NEW_CARD) {
-            this.addEmgSonData(arrName);
+            this.addEmgSonData(tableName);
           }
           break;
         case 'motNerCondItem':
           this.currentTable = this.MOT_NER_COND_ITEM;
           this.currentTableName = '运动神经传导项';
           // 获取到运动神经传导项的类型
-          for (let i = 0; i < this.SonTempData.length; i++) {
+          for (let i = 0; i < this.emgTable.length; i++) {
             let nervTypes = this.getTypes('nervTypes');
             for (let nerv of nervTypes) {
-              if (parseInt(this.SonTempData[i].nerveType, 10) === nerv.typeCode) {
-                this.$set(this.SonTempData[i], 'nervName', nerv.typeName);
+              if (parseInt(this.emgTable[i].nerveType, 10) === nerv.typeCode) {
+                this.$set(this.emgTable[i], 'nervName', nerv.typeName);
               }
             }
           }
           // 在新增的状态下需要把肌电图的子表格造出来
           if (this.mode === this.ADD_NEW_CARD) {
-            this.addEmgSonData(arrName);
+            this.addEmgSonData(tableName);
           }
           break;
         case 'intPatAnaItem':
@@ -605,7 +602,7 @@ export default {
           this.currentTableName = '干扰项分析';
           // 在新增的状态下需要把肌电图的子表格造出来
           if (this.mode === this.ADD_NEW_CARD) {
-            this.addEmgSonData(arrName);
+            this.addEmgSonData(tableName);
           }
           break;
         case 'fwavStuItem':
@@ -613,18 +610,15 @@ export default {
           this.currentTableName = 'F波研究';
           // 在新增的状态下需要把肌电图的子表格造出来
           if (this.mode === this.ADD_NEW_CARD) {
-            this.addEmgSonData(arrName);
+            this.addEmgSonData(tableName);
           }
           break;
       }
     },
-    viewSonTemp(arrName) {
-      this.selectSonTemp(arrName);
-    },
     addEmgSonData(Name) {
       switch (Name) {
         case 'senNerCondItem':
-          for (let i = 0; i < this.SonTempData.length; i++) {
+          for (let i = 0; i < this.emgTable.length; i++) {
             this.$set(this.copyInfo.patientSenNerCondResu, i, {});
             this.$set(this.copyInfo.patientSenNerCondResu[i], 'amplitude', '');
             this.$set(this.copyInfo.patientSenNerCondResu[i], 'conductionVelocity', '');
@@ -635,9 +629,9 @@ export default {
           }
           break;
         case 'needExamItem':
-          for (let i = 0; i < this.SonTempData.length; i++) {
+          for (let i = 0; i < this.emgTable.length; i++) {
             this.$set(this.copyInfo.patientNeedExamItemResu, i, {});
-            this.$set(this.copyInfo.patientNeedExamItemResu[i], 'needExamItemId', this.SonTempData[i].id);
+            this.$set(this.copyInfo.patientNeedExamItemResu[i], 'needExamItemId', this.emgTable[i].id);
             this.$set(this.copyInfo.patientNeedExamItemResu[i], 'insertional', '');
             this.$set(this.copyInfo.patientNeedExamItemResu[i], 'spoActFasc', '');
             this.$set(this.copyInfo.patientNeedExamItemResu[i], 'spoActFib', '');
@@ -648,7 +642,7 @@ export default {
           }
           break;
         case 'motUniAnaItem':
-          for (let i = 0; i < this.SonTempData.length; i++) {
+          for (let i = 0; i < this.emgTable.length; i++) {
             this.$set(this.copyInfo.patientMotUniAnaResu, i, {});
             this.$set(this.copyInfo.patientMotUniAnaResu[i], 'amplitude', '');
             this.$set(this.copyInfo.patientMotUniAnaResu[i], 'conductionVelocity', '');
@@ -659,9 +653,9 @@ export default {
           }
           break;
         case 'motNerCondItem':
-          for (let i = 0; i < this.SonTempData.length; i++) {
+          for (let i = 0; i < this.emgTable.length; i++) {
             this.$set(this.copyInfo.patientMotNerCondResu, i, {});
-            this.$set(this.copyInfo.patientMotNerCondResu[i], 'motNerItemId', this.SonTempData[i].id);
+            this.$set(this.copyInfo.patientMotNerCondResu[i], 'motNerItemId', this.emgTable[i].id);
             this.$set(this.copyInfo['patientMotNerCondResu'][i], 'amplitude', '');
             this.$set(this.copyInfo['patientMotNerCondResu'][i], 'duration', '');
             this.$set(this.copyInfo['patientMotNerCondResu'][i], 'phases', '');
@@ -669,18 +663,18 @@ export default {
           }
           break;
         case 'intPatAnaItem':
-          for (let i = 0; i < this.SonTempData.length; i++) {
+          for (let i = 0; i < this.emgTable.length; i++) {
             this.$set(this.copyInfo.patientIntPatAnaItem, i, {});
-            this.$set(this.copyInfo.patientIntPatAnaItem[i], 'intPatAnaId', this.SonTempData[i].id);
+            this.$set(this.copyInfo.patientIntPatAnaItem[i], 'intPatAnaId', this.emgTable[i].id);
             this.$set(this.copyInfo.patientIntPatAnaItem[i], 'amplitude', '');
             this.$set(this.copyInfo.patientIntPatAnaItem[i], 'ratio', '');
             this.$set(this.copyInfo.patientIntPatAnaItem[i], 'turn', '');
           }
           break;
         case 'fwavStuItem':
-          for (let i = 0; i < this.SonTempData.length; i++) {
+          for (let i = 0; i < this.emgTable.length; i++) {
             this.$set(this.copyInfo.patienFWaStuResu, i, {});
-            this.$set(this.copyInfo.patienFWaStuResu[i], 'fWavStuItemId', this.SonTempData[i].id);
+            this.$set(this.copyInfo.patienFWaStuResu[i], 'fWavStuItemId', this.emgTable[i].id);
             this.$set(this.copyInfo.patienFWaStuResu[i], 'fLatency', '');
             this.$set(this.copyInfo.patienFWaStuResu[i], 'fProportion', '');
             this.$set(this.copyInfo.patienFWaStuResu[i], 'mLatency', '');
