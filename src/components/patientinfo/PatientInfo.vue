@@ -6,7 +6,7 @@
       <div class="tab right-tab" :class="{'current-tab': currentTab === 'diagnosticInfo'}"
         @click="chooseDiagnostic" v-show="existed">诊断信息</div>
       <div class="patient-id" v-show="existed">患者ID: {{patientId}}</div>
-      <div class="button" v-show="existed && listType==='myPatients'">导出病历</div>
+      <!-- <div class="button" v-show="existed && listType==='myPatients'">导出病历</div> -->
       <div class="tab-bottom-bar" :class="currentTabBottomBar" v-show="this.existed"></div>
       <div class="title" v-show="!existed">新增患者</div>
     </div>
