@@ -537,27 +537,25 @@ export default {
     showPanel(cardOperation, item) {
       this.displayModal = true;
       this.mode = cardOperation;
-      console.log('item: ', item);
+      this.tableMode = this.FATHER_OPEN;
+      // console.log('item: ', item);
+
+      this.$set(this.copyInfo, 'etgName', '');
+      this.$set(this.copyInfo, 'elecTroGramId', '');
+      this.$set(this.copyInfo, 'etgType', '');
+      this.$set(this.copyInfo, 'patEleHint', '');
+      this.$set(this.copyInfo, 'patEleResule', '');
+      this.$set(this.copyInfo, 'patientMotNerCondResu', []);
+      this.$set(this.copyInfo, 'patienFWaStuResu', []);
+      this.$set(this.copyInfo, 'patientNeedExamItemResu', []);
+      this.$set(this.copyInfo, 'patientMotUniAnaResu', []);
+      this.$set(this.copyInfo, 'patientIntPatAnaItem', []);
+      this.$set(this.copyInfo, 'patientSenNerCondResu', []);
 
       if (this.mode === this.ADD_NEW_CARD) {
-        // 如果是新增肌电图那么需要新造一个对象来提交
-        this.$set(this.copyInfo, 'etgName', '');
-        this.$set(this.copyInfo, 'elecTroGramId', '');
-        this.$set(this.copyInfo, 'etgType', '');
-        this.$set(this.copyInfo, 'patEleHint', '');
-        this.$set(this.copyInfo, 'patEleResule', '');
         this.$set(this.copyInfo, 'pcaseId', this.$route.params.caseId);
         this.$set(this.copyInfo, 'pinfoId', this.$route.params.id);
-        this.$set(this.copyInfo, 'patientMotNerCondResu', []);
-        this.$set(this.copyInfo, 'patienFWaStuResu', []);
-        this.$set(this.copyInfo, 'patientNeedExamItemResu', []);
-        this.$set(this.copyInfo, 'patientMotUniAnaResu', []);
-        this.$set(this.copyInfo, 'patientIntPatAnaItem', []);
-        this.$set(this.copyInfo, 'patientSenNerCondResu', []);
       } else {
-        // 刚进入模态框的时候父表格打开
-        this.tableMode = this.FATHER_OPEN;
-        // 修改生化指标那么直接拷贝它
         vueCopy(item, this.copyInfo);
       }
       this.selectEmg();
@@ -598,17 +596,11 @@ export default {
               }
             }
           }
-          // 在新增的状态下需要把肌电图的子表格造出来
-          if (this.mode === this.ADD_NEW_CARD) {
-            this.initEmgTableData(tableName);
-          }
+          this.initEmgTableData(tableName);
           break;
         case this.NEED_EXAM_ITEM:
           this.currentTable = this.NEED_EXAM_ITEM;
-          // 在新增的状态下需要把肌电图的子表格造出来
-          if (this.mode === this.ADD_NEW_CARD) {
-            this.initEmgTableData(tableName);
-          }
+          this.initEmgTableData(tableName);
           break;
         case this.MOT_UNI_ANA_ITEM:
           this.currentTable = this.MOT_UNI_ANA_ITEM;
@@ -620,10 +612,7 @@ export default {
               }
             }
           }
-          // 在新增的状态下需要把肌电图的子表格造出来
-          if (this.mode === this.ADD_NEW_CARD) {
-            this.initEmgTableData(tableName);
-          }
+          this.initEmgTableData(tableName);
           break;
         case this.MOT_NER_COND_ITEM:
           this.currentTable = this.MOT_NER_COND_ITEM;
@@ -636,24 +625,15 @@ export default {
               }
             }
           }
-          // 在新增的状态下需要把肌电图的子表格造出来
-          if (this.mode === this.ADD_NEW_CARD) {
-            this.initEmgTableData(tableName);
-          }
+          this.initEmgTableData(tableName);
           break;
         case this.INT_PAT_ANA_ITEM:
           this.currentTable = this.INT_PAT_ANA_ITEM;
-          // 在新增的状态下需要把肌电图的子表格造出来
-          if (this.mode === this.ADD_NEW_CARD) {
-            this.initEmgTableData(tableName);
-          }
+          this.initEmgTableData(tableName);
           break;
         case this.F_WAV_STU_ITEM:
           this.currentTable = this.F_WAV_STU_ITEM;
-          // 在新增的状态下需要把肌电图的子表格造出来
-          if (this.mode === this.ADD_NEW_CARD) {
-            this.initEmgTableData(tableName);
-          }
+          this.initEmgTableData(tableName);
           break;
       }
       this.updateScrollbar();
@@ -688,6 +668,7 @@ export default {
       switch (tableName) {
         case this.SEN_NER_COND_ITEM:
           if (this.copyInfo.patientSenNerCondResu.length !== 0) {
+            // 如果当前子表格数据已经存在，则不去初始化，否则会将原来的数据覆盖
             return;
           }
           for (let i = 0; i < this.emgTable.length; i++) {
@@ -998,11 +979,11 @@ export default {
         }
       }
       .form-title {
-        padding: 5px 0 0 0;
+        margin: 0;
+        padding: 0;
         line-height: 40px;
         font-size: @normal-font-size;
         color: @font-color;
-        margin: 0;
         text-align: center;
       }
       .form-wrapper {
