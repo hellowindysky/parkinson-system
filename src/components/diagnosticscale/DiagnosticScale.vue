@@ -159,8 +159,10 @@ export default {
     getSwitchType(type) {
       if (String(type) === '1') {
         return '开';
-      } else {
+      } else if (String(type) === '0') {
         return '关';
+      } else {
+        return '';
       }
     },
     getScaleTypeCode(scaleInfoId) {
