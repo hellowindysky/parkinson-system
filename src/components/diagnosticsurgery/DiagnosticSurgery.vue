@@ -1,5 +1,5 @@
 <template lang="html">
-  <folding-panel :title="'外科手术'" :mode="mutableMode"  v-on:edit="startEditing"
+  <folding-panel :title="'外科手术'" :archived="archived" :mode="mutableMode"  v-on:edit="startEditing"
     v-on:cancel="cancel" v-on:submit="submit" :editable="canEdit">
     <div class="diagnostic-surgery" ref="diagnosticSurgery">
       <extensible-panel class="panel pre-evaluation-panel" :mode="mutableMode"
@@ -174,6 +174,10 @@ export default {
       default: () => {
         return {};
       }
+    },
+    archived: {
+      type: Boolean,
+      default: true
     }
   },
   computed: {
@@ -211,7 +215,7 @@ export default {
       return this.diagnosticSurgery.patientDbsFollowList ? this.diagnosticSurgery.patientDbsFollowList : [];
     },
     canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients)) {
+      if (this.$route.matched.some(record => record.meta.myPatients) && this.archived) {
         return true;
       } else {
         return false;

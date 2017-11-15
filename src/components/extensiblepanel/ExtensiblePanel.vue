@@ -66,7 +66,9 @@ export default {
 
 <style lang="less" scoped>
 @import "~styles/variables.less";
-
+.showedit{
+  display: none !important;
+}
 .extensible-panel-wrapper {
   background-color: @background-color;
   font-size: 0;

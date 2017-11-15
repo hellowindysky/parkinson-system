@@ -3,7 +3,7 @@
     <div class="header">
       <div class="iconfont" :class="iconToggleFolded"></div>
       <h2 class="title" @click="toggleFoldedPanel">{{title}}</h2>
-      <div v-show="editable && mode===READING_MODE" class="button edit-button" @click="edit">编辑</div>
+      <div v-show="editable && mode===READING_MODE" class="button edit-button" :class="{showedit: !archived}" @click="edit">编辑</div>
       <div v-show="editable && mode===EDITING_MODE && !isCardsPanel" class="button cancel-button" @click="cancel">取消</div>
       <div v-show="editable && isCardsPanel" class="button add-button" @click="add">添加</div>
       <div v-show="editable && mode===EDITING_MODE" class="button submit-button" @click="submit">{{submitText}}</div>
@@ -44,6 +44,10 @@ export default {
       default: false
     },
     editable: {
+      type: Boolean,
+      default: true
+    },
+    archived: {
       type: Boolean,
       default: true
     }
@@ -114,6 +118,10 @@ export default {
 <style lang="less">
 @import "~styles/variables.less";
 @panel-header-height: 40px;
+
+.showedit{
+  display: none !important;
+}
 
 .folding-panel-wrapper {
   background-color: @background-color;

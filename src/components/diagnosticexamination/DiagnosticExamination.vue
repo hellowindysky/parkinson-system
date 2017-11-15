@@ -1,5 +1,5 @@
 <template lang="html">
-  <folding-panel :title="'检验检查'" :mode="mutableMode"  v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit" :editable="canEdit">
+  <folding-panel :title="'检验检查'" :archived="archived" :mode="mutableMode"  v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit" :editable="canEdit">
     <div class="diagnostic-examination" ref="diagnosticExamination">
       <extensible-panel class="panel" :mode="mutableMode" :title="vitalSigns" :hideButtons="true"
         :editable="canEdit" :shrinkable="false">
@@ -227,6 +227,10 @@ export default {
       default: () => {
         return {};
       }
+    },
+    archived: {
+      type: Boolean,
+      default: true
     }
   },
   computed: {
@@ -257,7 +261,7 @@ export default {
       return info.types ? info.types : [];
     },
     canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients)) {
+      if (this.$route.matched.some(record => record.meta.myPatients) && this.archived) {
         return true;
       } else {
         return false;
