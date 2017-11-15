@@ -5,10 +5,13 @@
 
       <div class="field">
         <span class="field-name">
-          检查类型&nbsp;:
+          检查类型:
+          <span class="required-mark">*</span>
         </span>
         <span class="field-input">
-          <el-select v-if="mode===ADD_NEW_CARD" placeholder="请选择检查类型" v-model="item.spephysicalInfo">
+          <span class="warning-text">{{warningResults.spephysicalInfo}}</span>
+          <el-select v-if="mode===ADD_NEW_CARD" placeholder="请选择检查类型" v-model="item.spephysicalInfo"
+            :class="{'warning': warningResults.spephysicalInfo}" @change="updateWarning('spephysicalInfo')">
             <el-option v-for="spephyItem in spephysicalType" :key="spephyItem.spephysicalInfo"
               :label="spephyItem.spephysicalName" :value="spephyItem.spephysicalInfo"></el-option>
           </el-select>
@@ -20,7 +23,7 @@
 
       <div class="field">
         <span class="field-name">
-          检查时间&nbsp;:
+          检查时间:
         </span>
         <span class="field-input">
           <span v-if="mode===VIEW_CURRENT_CARD">{{item.ariseTime}}</span>
@@ -29,7 +32,7 @@
       </div>
       <div class="field">
         <span class="field-name">
-          检查结果&nbsp;:
+          检查结果:
         </span>
         <span class="field-input">
           <span v-if="mode===VIEW_CURRENT_CARD">{{item.spephysicalResult}}</span>
@@ -38,7 +41,7 @@
       </div>
       <div class="field multi-line">
         <span class="field-name">
-          备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注&nbsp;:
+          备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注:
         </span>
         <span class="field-input">
           <span v-if="mode===VIEW_CURRENT_CARD">{{item.spephysicalResult}}</span>
@@ -72,7 +75,9 @@ export default {
       disableChangingSubModal: false,
       item: {},
       showItem: {},
-      warningResults: {},
+      warningResults: {
+        spephysicalInfo: ''
+      },
       spephysicalType: [],
       lockSubmitButton: false
     };
@@ -125,9 +130,7 @@ export default {
         vueCopy(item, this.item);
         vueCopy(item, this.showItem);
       }
-      // this.$nextTick(() => {
-      //   this.clearWarning();
-      // });
+
       // 处理一下检查类型
       let typeDiction = deepCopy(this.neurologicCheckTypeList);
       for (let j = 0; j < typeDiction.length; j++) {
@@ -140,12 +143,22 @@ export default {
           }
         }
       }
+
+      this.$nextTick(() => {
+        this.clearWarning();
+      });
     },
     submit() {
       if (this.lockSubmitButton) {
         return;
       }
       this.lockSubmitButton = true;
+
+      this.updateWarning('spephysicalInfo');
+      if (this.warningResults.spephysicalInfo !== '') {
+        this.lockSubmitButton = false;
+        return;
+      }
 
       let submitData = deepCopy(this.item);
       submitData.ariseTime = Util.simplifyDate(submitData.ariseTime);
@@ -191,9 +204,12 @@ export default {
         }
       }
     },
-    getWarningText(fieldName) {
-      var warningResult = this.warningResults[fieldName];
-      return warningResult ? warningResult : '';
+    updateWarning(fieldName) {
+      if (this.item[fieldName] === undefined || this.item[fieldName] === '') {
+        this.$set(this.warningResults, fieldName, '必填项');
+      } else {
+        this.$set(this.warningResults, fieldName, '');
+      }
     },
     clearWarning() {
       for (let key in this.warningResults) {
@@ -208,16 +224,6 @@ export default {
   },
   mounted() {
     Bus.$on(this.SHOW_NERVOU_SYSTEM_MODAL, this.showPanel);
-  },
-  watch: {
-    item: {
-      handler: function(newVal) {
-        if (newVal) {
-          // console.log(newVal);
-        }
-      },
-      deep: true
-    }
   },
   beforeDestroy() {
     Bus.$off(this.SHOW_NERVOU_SYSTEM_MODAL, this.showPanel);
