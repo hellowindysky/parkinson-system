@@ -44,7 +44,7 @@
           备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注:
         </span>
         <span class="field-input">
-          <span v-if="mode===VIEW_CURRENT_CARD">{{item.spephysicalResult}}</span>
+          <span v-if="mode===VIEW_CURRENT_CARD">{{item.remarks}}</span>
           <el-input v-else type="textarea" :rows="2" placeholder="请输入备注内容" v-model="item.remarks" :maxlength="500"></el-input>
         </span>
       </div>
