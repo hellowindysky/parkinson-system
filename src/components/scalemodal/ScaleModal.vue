@@ -11,9 +11,15 @@
     <div class="scroll-area" ref="scrollArea">
       <div class="scale-selector" v-if="mode!==VIEW_CURRENT_CARD">
         <div class="field whole-line" v-show="mode===ADD_NEW_CARD">
-          <span class="field-name">选择量表:</span>
+          <span class="field-name">
+            选择量表:
+            <span class="required-mark">*</span>
+          </span>
           <span class="field-value">
-            <el-select placeholder="请选择量表" v-model="copyInfo.scaleInfoId"
+            <span class="warning-text">
+              {{warningResults.scaleInfoId}}
+            </span>
+            <el-select placeholder="请选择量表" v-model="copyInfo.scaleInfoId" :class="{'warning': warningResults.scaleInfoId}"
               :disabled="copyInfo.scaleInfoId!==''" @change="selectScale">
               <el-option v-for="scale in allScale" :key="scale.scaleInfoId" :label="scale.gaugeName"
                 :value="scale.scaleInfoId" v-show="getScaleTypeCode(scale.scaleInfoId)===scaleTypeCode"></el-option>
@@ -120,6 +126,9 @@ export default {
       mode: '',
       lockSubmitButton: false,
       copyInfo: {},
+      warningResults: {
+        scaleInfoId: ''
+      },
       scaleTypeCode: '',
 
       scaleSymptomList: [], // 关联症状列表，长度由 typeGroup 决定
@@ -154,7 +163,20 @@ export default {
   },
   methods: {
     selectScale() {
+      this.updateWarning('scaleInfoId');
       this.updateScrollbar();
+    },
+    updateWarning(fieldName) {
+      if (this.copyInfo[fieldName] === undefined || this.copyInfo[fieldName] === '') {
+        this.$set(this.warningResults, fieldName, '必填项');
+      } else {
+        this.$set(this.warningResults, fieldName, '');
+      }
+    },
+    clearWarning() {
+      for (let key in this.warningResults) {
+        this.warningResults[key] = null;
+      }
     },
     getFieldValue(code, fieldName) {
       if (fieldName === 'switchType') {
@@ -202,6 +224,10 @@ export default {
       this.$nextTick(() => {
         this.$refs.scrollArea.scrollTop = 0;
       });
+
+      this.$nextTick(() => {
+        this.clearWarning();
+      });
       // console.log('copyInfo: ', this.copyInfo);
     },
     edit() {
@@ -212,6 +238,14 @@ export default {
         return;
       }
       this.lockSubmitButton = true;
+
+      this.updateWarning('scaleInfoId');
+      for (var p in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(p) && this.warningResults[p]) {
+          this.lockSubmitButton = false;
+          return;
+        }
+      }
 
       let submitData = deepCopy(this.copyInfo);
       // console.log('submitData', submitData);
@@ -507,14 +541,29 @@ export default {
         .field-name {
           display: inline-block;
           width: @field-name-width;
-          font-weight: bold;
           font-size: @normal-font-size;
+          .required-mark {
+            color: red;
+            font-size: 20px;
+            vertical-align: middle;
+          }
         }
         .field-value {
           position: absolute;
           left: @field-name-width;
           right: 4%;
           font-size: @normal-font-size;
+          .warning-text {
+            position: absolute;
+            top: 25px;
+            left: 10px;
+            height: 15px;
+            color: red;
+            font-size: @small-font-size;
+          }
+          .warning .el-input__inner, .warning .el-textarea__inner {
+            border: 1px solid red;
+          }
         }
         .el-input {
           .el-input__inner {
