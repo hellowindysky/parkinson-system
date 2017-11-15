@@ -218,6 +218,15 @@ export default {
         this.updateGroupInfo(() => {
           this.titleMode = this.READING_MODE;
           Bus.$emit(this.UPDATE_GROUP_LIST);
+        }, (error) => {
+          if (error.code === 8) {
+            this.$message({
+              message: '新增分组失败，当前组名已存在！',
+              type: 'error',
+              duration: 2000
+            });
+          }
+          this.copyGroupName = this.groupName;
         });
       });
     },
