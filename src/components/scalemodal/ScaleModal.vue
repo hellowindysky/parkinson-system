@@ -10,7 +10,7 @@
 
     <div class="scroll-area" ref="scrollArea">
       <div class="scale-selector" v-if="mode!==VIEW_CURRENT_CARD">
-        <div class="field whole-line">
+        <div class="field whole-line" v-show="mode===ADD_NEW_CARD">
           <span class="field-name">选择量表:</span>
           <span class="field-value">
             <el-select placeholder="请选择量表" v-model="copyInfo.scaleInfoId"
@@ -54,15 +54,15 @@
           <span class="field-name">量表类型:</span>
           <span class="field-value">{{scaleType}}</span>
         </div>
-        <div class="field" v-if="Boolean(String(copyInfo.switchType))!==false">
+        <div class="field">
           <span class="field-name">开关状态:</span>
           <span class="field-value">{{getFieldValue(copyInfo.switchType, 'switchType')}}</span>
         </div>
-        <div class="field" v-if="Boolean(String(copyInfo.inspectTime))!==false">
+        <div class="field">
           <span class="field-name">量表填写时间:</span>
           <span class="field-value">{{copyInfo.inspectTime}}</span>
         </div>
-        <div class="field" v-if="Boolean(String(copyInfo.lastTakingTime))!==false">
+        <div class="field">
           <span class="field-name">末次服药时间:</span>
           <span class="field-value">{{copyInfo.lastTakingTime}}</span>
         </div>
