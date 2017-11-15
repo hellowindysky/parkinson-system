@@ -1,5 +1,5 @@
 <template lang="html">
-  <folding-panel :title="'医学量表'" :mode="mutableMode"  v-on:edit="startEditing"
+  <folding-panel :title="'医学量表'" :archived="archived" :mode="mutableMode"  v-on:edit="startEditing"
     v-on:cancel="cancel" v-on:submit="submit" :editable="canEdit">
     <div class="diagnostic-scale" ref="diagnosticscale">
       <extensible-panel v-for="type in allScaleTypes" class="panel" :mode="mutableMode" :title="getTypeTitle(type.typeName)"
@@ -60,6 +60,10 @@ export default {
     patientScale: {
       type: Array,
       default: () => []
+    },
+    archived: {
+      type: Boolean,
+      default: true
     }
   },
   computed: {
@@ -68,7 +72,7 @@ export default {
       'typeGroup'
     ]),
     canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients)) {
+      if (this.$route.matched.some(record => record.meta.myPatients) && this.archived) {
         return true;
       } else {
         return false;
@@ -155,8 +159,10 @@ export default {
     getSwitchType(type) {
       if (String(type) === '1') {
         return '开';
-      } else {
+      } else if (String(type) === '0') {
         return '关';
+      } else {
+        return '';
       }
     },
     getScaleTypeCode(scaleInfoId) {
