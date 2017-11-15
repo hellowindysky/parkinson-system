@@ -1,5 +1,5 @@
 <template lang="html">
-  <folding-panel :title="title" :mode="mutableMode"  v-on:edit="startEditing" v-on:cancel="cancel"
+  <folding-panel :title="title" :archived="archived" :mode="mutableMode"  v-on:edit="startEditing" v-on:cancel="cancel"
     v-on:submit="submit" :editable="canEdit">
     <div class="diagnostic-medicine" ref="diagnosticMedicine">
       <extensible-panel class="panel" :mode="mutableMode" :title="subTitle" v-on:addNewCard="addMedicine"
@@ -43,6 +43,10 @@ export default {
       default: () => {
         return [];
       }
+    },
+    archived: {
+      type: Boolean,
+      default: true
     }
   },
   computed: {
@@ -56,7 +60,7 @@ export default {
       return this.title + '（' + count + '条记录）';
     },
     canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients)) {
+      if (this.$route.matched.some(record => record.meta.myPatients) && this.archived) {
         return true;
       } else {
         return false;

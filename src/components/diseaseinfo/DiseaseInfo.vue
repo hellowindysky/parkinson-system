@@ -28,7 +28,7 @@
                 :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)"></el-input>
             </span>
             <span v-else-if="getUIType(field)===3">
-              <el-select v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
+              <el-select v-model="copyInfo[field.fieldName]" clearable :class="{'warning': warningResults[field.fieldName]}"
                 :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)">
                 <el-option v-for="type in getTypes(field)" :label="type.typeName"
                   :value="type.typeCode" :key="type.typeCode"></el-option>
