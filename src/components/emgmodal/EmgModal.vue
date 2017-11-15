@@ -567,7 +567,6 @@ export default {
       this.emgTable = [];
       if (this.targetEmg[tableName]) {
         vueCopy(this.targetEmg[tableName], this.emgTable);
-        console.log(this.emgTable);
       }
 
       // 取到这个值之后就要关闭父表格，打开子表格
