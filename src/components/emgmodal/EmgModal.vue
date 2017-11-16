@@ -108,15 +108,13 @@
             </tr>
             <tr class="row" v-for="(item, index) in emgTable">
               <td class="col col-width-5">
-                {{index+1}}
+                {{index + 1}}
               </td>
               <td class="col col-width-10">
-                <span v-if="mode===VIEW_CURRENT_CARD">{{item.nervName}}</span>
-                <el-input v-else v-model="item.nervName" disabled></el-input>
+                {{getFieldValue(item.nerveType, 'nerveType')}}
               </td>
               <td class="col col-width-20">
-                <span v-if="mode===VIEW_CURRENT_CARD">{{item.nerveAndSite}}</span>
-                <el-input v-else v-model="item.nerveAndSite" disabled></el-input>
+                {{item.nerveAndSite}}
               </td>
               <td class="col col-width-10">
                 <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientMotNerCondResu[index].latency}}</span>
@@ -127,8 +125,7 @@
                 <el-input v-else v-model="copyInfo.patientMotNerCondResu[index].amplitude"></el-input>
               </td>
               <td class="col col-width-15">
-                <span v-if="mode===VIEW_CURRENT_CARD">{{item.segment}}</span>
-                <el-input v-else v-model="item.segment"></el-input>
+                {{item.segment}}
               </td>
               <td class="col col-width-10">
                 <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientMotNerCondResu[index].latencyDifference}}</span>
@@ -145,7 +142,7 @@
             </tr>
           </table>
           <table class="form" :class="{'small-font':tableMode===SON_OPEN}" v-else-if="tableMode===SON_OPEN && currentTable===F_WAV_STU_ITEM">
-             <tr class="row first-row">
+            <tr class="row first-row">
               <td class="col col-width-5">
                 序号
               </td>
@@ -167,8 +164,7 @@
                 {{index+1}}
               </td>
               <td class="col col-width-25">
-                <span v-if="mode===VIEW_CURRENT_CARD">{{item.nerve}}</span>
-                <el-input v-else v-model="item.nerve" disabled></el-input>
+                {{item.nerve}}
               </td>
               <td class="col col-width-25">
                 <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patienFWaStuResu[index].mLatency}}</span>
@@ -222,12 +218,10 @@
                 {{index+1}}
               </td>
               <td class="col col-width-10">
-                <span v-if="mode===VIEW_CURRENT_CARD">{{item.nervName}}</span>
-                <el-input v-else v-model="item.nervName" disabled></el-input>
+                {{getFieldValue(item.nerveType, 'nerveType')}}
               </td>
               <td class="col col-width-15">
-                <span v-if="mode===VIEW_CURRENT_CARD">{{item.nerveAndSite}}</span>
-                <el-input v-else v-model="item.nerveAndSite" disabled></el-input>
+                {{item.nerveAndSite}}
               </td>
               <td class="col col-width-10">
                 <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientSenNerCondResu[index].onsetLatency}}</span>
@@ -242,8 +236,7 @@
                 <el-input v-else v-model="copyInfo.patientSenNerCondResu[index].amplitude"></el-input>
               </td>
               <td class="col col-width-18">
-                <span v-if="mode===VIEW_CURRENT_CARD">{{item.segment}}</span>
-                <el-input v-else v-model="item.segment" disabled></el-input>
+                {{item.segment}}
               </td>
               <td class="col col-width-10">
                 <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientSenNerCondResu[index].latencyDifference}}</span>
@@ -294,8 +287,7 @@
                 {{index+1}}
               </td>
               <td class="col col-width-25">
-                <span v-if="mode===VIEW_CURRENT_CARD">{{item.muscle}}</span>
-                <el-input v-else v-model="item.muscle"></el-input>
+                {{item.muscle}}
               </td>
               <td class="col col-width-10">
                 <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientNeedExamItemResu[index].insertional}}</span>
@@ -327,8 +319,8 @@
               </td>
             </tr>
           </table>
-           <table class="form" :class="{'small-font':tableMode===SON_OPEN}" v-else-if="tableMode===SON_OPEN && currentTable===MOT_UNI_ANA_ITEM">
-             <tr class="row first-row">
+          <table class="form" :class="{'small-font':tableMode===SON_OPEN}" v-else-if="tableMode===SON_OPEN && currentTable===MOT_UNI_ANA_ITEM">
+            <tr class="row first-row">
               <td class="col col-width-5">
                 序号
               </td>
@@ -359,12 +351,10 @@
                 {{index+1}}
               </td>
               <td class="col col-width-25">
-                <span v-if="mode===VIEW_CURRENT_CARD">{{item.nervName}}</span>
-                <el-input v-else v-model="item.nervName" disabled></el-input>
+                {{getFieldValue(item.muscle, 'muscle')}}
               </td>
               <td class="col col-width-30">
-                <span v-if="mode===VIEW_CURRENT_CARD">{{item.examItemName}}</span>
-                <el-input v-else v-model="item.examItemName" disabled></el-input>
+                {{item.examItemName}}
               </td>
               <td class="col col-width-7">
                 <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientMotUniAnaResu[index].duration}}</span>
@@ -560,10 +550,6 @@ export default {
       }
       this.selectEmg();
       this.updateScrollbar();
-    },
-    getTypes(name) {
-      var typeInfo = Util.getElement('typegroupcode', name, this.typeGroup);
-      return typeInfo.types ? typeInfo.types : [];
     },
     selectEmg() {
       var emg = Util.getElement('id', this.copyInfo.elecTroGramId, this.emgTypeList);
@@ -804,18 +790,28 @@ export default {
       }
     },
     getFieldValue(code, fieldName) {
+      let mapObj = {
+        'emgType': 'eleType',
+        'nerveType': 'nervType',
+        'muscle': 'muscleType'
+      };
       if (code === '' || code === undefined) {
         return '';
       } else if (fieldName === 'emgName') {
         let info = Util.getElement('id', code, this.emgTypeList);
         return info.emgName;
-      } else if (fieldName === 'emgType') {
+      } else if (mapObj[fieldName] !== undefined) {
         code = parseInt(code, 10);
-        let info = Util.getElement('typeCode', code, this.getTypes('eleType'));
+        let types = this.getTypes(mapObj[fieldName]);
+        let info = Util.getElement('typeCode', code, types);
         return info.typeName;
       } else {
         return '';
       }
+    },
+    getTypes(name) {
+      var typeInfo = Util.getElement('typegroupcode', name, this.typeGroup);
+      return typeInfo.types ? typeInfo.types : [];
     },
     updateScrollbar() {
       this.$nextTick(() => {
@@ -884,7 +880,7 @@ export default {
     padding: 0 40px;
     top: 3%;
     width: 80%;
-    min-width: 800px;
+    min-width: 830px;
     max-width: 1000px;
     max-height: 94%;
     background-color: @background-color;

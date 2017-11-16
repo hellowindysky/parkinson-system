@@ -1450,6 +1450,8 @@ export default {
           if (colTotalHour[hourName] !== 24) {
             allTotalHourOk = false;
           }
+        } else {
+          this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[5][hourName] = 0;
         }
       }
       this.allTotalHourOk = allTotalHourOk;
