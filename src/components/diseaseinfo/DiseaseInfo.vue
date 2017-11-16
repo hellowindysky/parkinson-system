@@ -149,7 +149,60 @@ export default {
             return false;
           }
         }
-      }
+      };
+      console.log(this.copyInfo);
+      // ariTime 发病时间
+      // firTime 初诊时间
+      // surTime 确诊时间
+      var ariTime = new Date(this.copyInfo.ariTime).getTime();
+      var firTime = this.copyInfo.firTime ? new Date(this.copyInfo.firTime).getTime() : '';
+      var surTime = this.copyInfo.surTime ? new Date(this.copyInfo.surTime).getTime() : '';
+      if (firTime && surTime) {
+        if (ariTime > firTime) {
+          this.$message({
+            message: '发病时间不能大于初诊时间',
+            type: 'warning',
+            duration: 2000
+          });
+          return;
+        };
+        if (firTime > surTime) {
+          this.$message({
+            message: '初诊时间不能大于确诊时间',
+            type: 'warning',
+            duration: 2000
+          });
+          return;
+        };
+        if (ariTime > surTime) {
+          this.$message({
+            message: '发病时间不能大于确诊时间',
+            type: 'warning',
+            duration: 2000
+          });
+          return;
+        }
+      };
+      if (firTime && !surTime) {
+        if (ariTime > firTime) {
+          this.$message({
+            message: '发病时间不能大于初诊时间',
+            type: 'warning',
+            duration: 2000
+          });
+          return;
+        };
+      };
+      if (!firTime && surTime) {
+        if (ariTime > surTime) {
+          this.$message({
+            message: '发病时间不能大于确诊时间',
+            type: 'warning',
+            duration: 2000
+          });
+          return;
+        }
+      };
 
       this.restoreCopyInfo();
 
