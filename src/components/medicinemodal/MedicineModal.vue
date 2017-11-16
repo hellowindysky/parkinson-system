@@ -510,16 +510,24 @@ export default {
         }
 
       } else if (dictionaryField.fieldName === 'medicalSpecUsed') {
+        let unknownSpec = '其它规格(在备注中注明)';
         let specGroups = this.medicineInfoObj.spec ? this.medicineInfoObj.spec : [];
         for (let spec of specGroups) {
           let specOral = spec.specOral;
           if (spec.medicalPec === 0) {
-            specOral = '其它规格(在备注中注明)';
+            specOral = unknownSpec;
           }
           options.push({
             name: specOral,
             code: specOral
           });
+        }
+        if (this.medicineInfoObj.medicalType === 6) {
+          // 如果药物的类型是“其它类型”，那么它的规格下拉框会特殊处理
+          options = [{
+            name: unknownSpec,
+            code: unknownSpec
+          }];
         }
 
       } else if (dictionaryField.fieldName === 'stopReason') {
