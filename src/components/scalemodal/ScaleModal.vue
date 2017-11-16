@@ -81,7 +81,7 @@
           </el-checkbox>
           <div class="symptom-item-start">
             <span class="field-name">出现时间:</span>
-            <el-date-picker type="datetime" format="yyyy-MM-dd" v-model="symptom.ariseTime"
+            <el-date-picker format="yyyy-MM-dd" v-model="symptom.ariseTime"
               placeholder="请输入出现关联症状的时间" :disabled="mode===VIEW_CURRENT_CARD || !symptom.status">
             </el-date-picker>
           </div>
