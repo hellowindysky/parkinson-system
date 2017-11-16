@@ -970,6 +970,15 @@ export default {
         this.initByFirstModel();
         getDbsFirstInfo(info.patientDbsFirstId).then((data) => {
           vueCopy(data, this.copyInfo);
+
+          // 不知道什么原因，在执行上面的 vueCopy 之后，会切掉一些空的字段，影响了【副作用持续时间】的数据绑定
+          // 因此这里给没有值的【副作用持续时间】重新设为空字符串
+          for (let record of this.copyInfo.patientDbsFirstDetail) {
+            if (record.sideEffectDuration === undefined) {
+              this.$set(record, 'sideEffectDuration', '');
+            }
+          }
+
           this.updateContactOrder();
           this.updateCheckBoxModel('firstDbsAdjustAfter');
           this.$nextTick(() => {
@@ -1588,13 +1597,13 @@ export default {
       var sum = 0;
       for (let property of ['elbowTone', 'wristTone', 'kneeTone', 'neckTone', 'tremor']) {
         if (record[property] === '' || isNaN(record[property])) {
-          record[property] = '';
+          this.$set(record, property, '');
         } else {
           record[property] = Number(record[property]);
           sum += record[property];
         }
       }
-      record.tensionTone = sum;
+      this.$set(record, 'tensionTone', sum);
     },
     updateParamPole(formType, index) {
       // 每次参数表格内的 checkBox 有变化时，就更新相应的数据对象

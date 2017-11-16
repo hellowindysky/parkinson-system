@@ -34,8 +34,8 @@
           <span class="field-name">开关状态:</span>
           <span class="field-value">
             <el-select v-model="copyInfo.switchType" placeholder="请选择量表开关状态">
-              <el-option :value="1" label="开"></el-option>
-              <el-option :value="0" label="关"></el-option>
+              <el-option v-for="option in getOptions('switchType')" :label="option.name"
+                :value="option.code" :key="option.code"></el-option>
             </el-select>
           </span>
         </div>
@@ -180,11 +180,10 @@ export default {
     },
     getFieldValue(code, fieldName) {
       if (fieldName === 'switchType') {
-        if (code === 1) {
-          return '开';
-        } else {
-          return '关';
-        }
+        code = parseInt(code, 10);
+        var options = this.getOptions(fieldName);
+        var targetOption = Util.getElement('code', code, options);
+        return targetOption.name ? targetOption.name : '';
       } else {
         return '';
       }
