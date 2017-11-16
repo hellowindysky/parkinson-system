@@ -79,7 +79,8 @@ export default {
         spephysicalInfo: ''
       },
       spephysicalType: [],
-      lockSubmitButton: false
+      lockSubmitButton: false,
+      showEdit: true
     };
   },
   computed: {
@@ -94,7 +95,7 @@ export default {
       }
     },
     canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients)) {
+      if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
         return true;
       } else {
         return false;
@@ -114,9 +115,10 @@ export default {
         }
       }
     },
-    showPanel(cardOperation, item) {
+    showPanel(cardOperation, item, showEdit) {
       this.displayModal = true;
       this.mode = cardOperation;
+      this.showEdit = showEdit;
       if (this.mode === this.ADD_NEW_CARD) {
         // 如果是新增卡片那么需要造一个对象
         this.$set(this.item, 'ariseTime', '');

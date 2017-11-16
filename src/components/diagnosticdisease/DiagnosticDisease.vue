@@ -269,7 +269,7 @@ export default {
       return [t1.length, t2.length, t3.length];  // 这个值并没有意义
     },
     canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients)) {
+      if (this.$route.matched.some(record => record.meta.myPatients) && this.archived) {
         return true;
       } else {
         return false;

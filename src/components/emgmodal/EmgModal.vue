@@ -483,7 +483,8 @@ export default {
           name: 'senNerCondItem',
           cnName: '感觉神经传导项'
         }
-      ]
+      ],
+      showEdit: true
     };
   },
   computed: {
@@ -516,7 +517,7 @@ export default {
       }
     },
     canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients)) {
+      if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
         return true;
       } else {
         return false;
@@ -524,12 +525,12 @@ export default {
     }
   },
   methods: {
-    showPanel(cardOperation, item) {
+    showPanel(cardOperation, item, showEdit) {
       this.displayModal = true;
       this.mode = cardOperation;
       this.tableMode = this.FATHER_OPEN;
       // console.log('item: ', item);
-
+      this.showEdit = showEdit;
       this.$set(this.copyInfo, 'etgName', '');
       this.$set(this.copyInfo, 'elecTroGramId', '');
       this.$set(this.copyInfo, 'etgType', '');

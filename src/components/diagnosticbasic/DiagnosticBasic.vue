@@ -91,7 +91,7 @@ export default {
       }
     },
     canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients) && !this.archived) {
+      if (this.$route.matched.some(record => record.meta.myPatients) && this.archived) {
         return true;
       } else {
         return false;

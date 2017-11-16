@@ -112,7 +112,8 @@ export default {
       },
       copyInfo: {},
       targetBioexam: [],
-      lockSubmitButton: false
+      lockSubmitButton: false,
+      showEdit: true
     };
   },
   computed: {
@@ -133,7 +134,7 @@ export default {
       return this.$route.params.caseId;
     },
     canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients)) {
+      if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
         return true;
       } else {
         return false;
@@ -141,11 +142,11 @@ export default {
     }
   },
   methods: {
-    showPanel(cardOperation, item) {
+    showPanel(cardOperation, item, showEdit) {
       this.displayModal = true;
       this.mode = cardOperation;
       // console.log('item', item);
-
+      this.showEdit = showEdit;
       this.copyInfo = {};
       this.$set(this.copyInfo, 'bioexamId', '');
       this.$set(this.copyInfo, 'bioexamResult', []);

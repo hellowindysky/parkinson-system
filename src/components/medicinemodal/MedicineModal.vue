@@ -186,7 +186,8 @@ export default {
       completeInit: false,
       hasSideEffect: false,  // 这个变量用来控制是否有副反应
       totalLevodopaDoseOfAllOtherMedicine: 0,  // 用来供 COMT 抑制剂药物(如珂丹) 计算左旋多巴等效剂量
-      lockSubmitButton: false
+      lockSubmitButton: false,
+      showEdit: true
     };
   },
   computed: {
@@ -198,7 +199,7 @@ export default {
       'typeGroup'
     ]),
     canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients)) {
+      if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
         return true;
       } else {
         return false;
@@ -359,10 +360,11 @@ export default {
     }
   },
   methods: {
-    showModal(cardOperation, item, totalLevodopaDoseOfAllOtherMedicine) {
+    showModal(cardOperation, item, showEdit, totalLevodopaDoseOfAllOtherMedicine) {
       this.mode = cardOperation;
       this.displayModal = true;
       this.completeInit = false;
+      this.showEdit = showEdit;
       this.totalLevodopaDoseOfAllOtherMedicine = totalLevodopaDoseOfAllOtherMedicine;
 
       setTimeout(() => {

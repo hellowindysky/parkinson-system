@@ -115,15 +115,15 @@ export default {
     },
     addMedicine() {
       var totalLevodopaDoseOfAllOtherMedicine = this.calcTotalLevodopaDoseOfAllOtherMedicine({});
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.ADD_NEW_CARD, {}, totalLevodopaDoseOfAllOtherMedicine);
+      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.ADD_NEW_CARD, {}, this.archived, totalLevodopaDoseOfAllOtherMedicine);
     },
     viewMedicine(item) {
       var totalLevodopaDoseOfAllOtherMedicine = this.calcTotalLevodopaDoseOfAllOtherMedicine(item);
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.VIEW_CURRENT_CARD, item, totalLevodopaDoseOfAllOtherMedicine);
+      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.VIEW_CURRENT_CARD, item, this.archived, totalLevodopaDoseOfAllOtherMedicine);
     },
     editMedicine(item) {
       var totalLevodopaDoseOfAllOtherMedicine = this.calcTotalLevodopaDoseOfAllOtherMedicine(item);
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.EDIT_CURRENT_CARD, item, totalLevodopaDoseOfAllOtherMedicine);
+      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.EDIT_CURRENT_CARD, item, this.archived, totalLevodopaDoseOfAllOtherMedicine);
     },
     deleteMedicine(item) {
       var patientMedicine = {

@@ -385,13 +385,13 @@ export default {
       // return typeId;
     },
     addNeurologicCheckRecord() {
-      Bus.$emit(this.SHOW_NERVOU_SYSTEM_MODAL, this.ADD_NEW_CARD, {});
+      Bus.$emit(this.SHOW_NERVOU_SYSTEM_MODAL, this.ADD_NEW_CARD, {}, this.archived);
     },
     editNeurologicCheckRecord(item) {
-      Bus.$emit(this.SHOW_NERVOU_SYSTEM_MODAL, this.EDIT_CURRENT_CARD, item);
+      Bus.$emit(this.SHOW_NERVOU_SYSTEM_MODAL, this.EDIT_CURRENT_CARD, item, this.archived);
     },
     viewNeurologicCheckRecord(item) {
-      Bus.$emit(this.SHOW_NERVOU_SYSTEM_MODAL, this.VIEW_CURRENT_CARD, item);
+      Bus.$emit(this.SHOW_NERVOU_SYSTEM_MODAL, this.VIEW_CURRENT_CARD, item, this.archived);
     },
     deleteNeurologicCheckRecord(item) { // 删除神经检查
       let NeuroId = {
@@ -403,13 +403,13 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addBiochemicalExamRecord() {
-      Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.ADD_NEW_CARD, {});
+      Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.ADD_NEW_CARD, {}, this.archived);
     },
     editBiochemicalExamRecord(item) {
-      Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.EDIT_CURRENT_CARD, item);
+      Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.EDIT_CURRENT_CARD, item, this.archived);
     },
     viewBiochemicalExamRecord(item) {
-      Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.VIEW_CURRENT_CARD, item);
+      Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.VIEW_CURRENT_CARD, item, this.archived);
     },
     deleteBiochemicalExamRecord(item) { // 删除生化指标
       let BiochemicalId = {
@@ -421,13 +421,13 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addEmgRecord() {
-      Bus.$emit(this.SHOW_EMG_MODAL, this.ADD_NEW_CARD, {});
+      Bus.$emit(this.SHOW_EMG_MODAL, this.ADD_NEW_CARD, {}, this.archived);
     },
     viewEmgRecord(item) {
-      Bus.$emit(this.SHOW_EMG_MODAL, this.VIEW_CURRENT_CARD, item);
+      Bus.$emit(this.SHOW_EMG_MODAL, this.VIEW_CURRENT_CARD, item, this.archived);
     },
     editEmgRecord(item) {
-      Bus.$emit(this.SHOW_EMG_MODAL, this.EDIT_CURRENT_CARD, item);
+      Bus.$emit(this.SHOW_EMG_MODAL, this.EDIT_CURRENT_CARD, item, this.archived);
     },
     deleteEmgRecord(item) { // 删除肌电图
       let EmgId = {
@@ -439,13 +439,13 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addImgRecord() {
-      Bus.$emit(this.SHOW_IMG_MODAL, this.ADD_NEW_CARD, {});
+      Bus.$emit(this.SHOW_IMG_MODAL, this.ADD_NEW_CARD, {}, this.archived);
     },
     viewImgRecord(item) {
-      Bus.$emit(this.SHOW_IMG_MODAL, this.VIEW_CURRENT_CARD, item);
+      Bus.$emit(this.SHOW_IMG_MODAL, this.VIEW_CURRENT_CARD, item, this.archived);
     },
     editImgRecord(item) {
-      Bus.$emit(this.SHOW_IMG_MODAL, this.EDIT_CURRENT_CARD, item);
+      Bus.$emit(this.SHOW_IMG_MODAL, this.EDIT_CURRENT_CARD, item, this.archived);
     },
     deleteImgRecord(item) {
       let imageInfo = {

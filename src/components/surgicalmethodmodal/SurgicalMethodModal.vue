@@ -57,7 +57,8 @@ export default {
       warningResults: {},
       copyInfo: {},
       originalInfo: {},
-      lockSubmitButton: false
+      lockSubmitButton: false,
+      showEdit: true
     };
   },
   computed: {
@@ -74,7 +75,7 @@ export default {
       }
     },
     canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients)) {
+      if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
         return true;
       } else {
         return false;
@@ -82,10 +83,10 @@ export default {
     }
   },
   methods: {
-    showModal(cardOperation, info) {
+    showModal(cardOperation, info, showEdit) {
       this.mode = cardOperation;
       this.originalInfo = info;
-
+      this.showEdit = showEdit;
       this.initCopyInfo();
       // console.log(this.copyInfo);
       setTimeout(() => {

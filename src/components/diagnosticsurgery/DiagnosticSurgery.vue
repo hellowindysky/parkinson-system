@@ -253,13 +253,13 @@ export default {
     },
     addPreEvaluationRecord() {
       // 这里要传递 2 个参数，一个是模式（新增／阅读／修改），一个是当前数据对象（新建的时候为空）
-      Bus.$emit(this.SHOW_PRE_EVALUATION_MODAL, this.ADD_NEW_CARD, {});
+      Bus.$emit(this.SHOW_PRE_EVALUATION_MODAL, this.ADD_NEW_CARD, {}, this.archived);
     },
     viewPreEvaluationRecord(item) {
-      Bus.$emit(this.SHOW_PRE_EVALUATION_MODAL, this.VIEW_CURRENT_CARD, item);
+      Bus.$emit(this.SHOW_PRE_EVALUATION_MODAL, this.VIEW_CURRENT_CARD, item, this.archived);
     },
     editPreEvaluationRecord(item) {
-      Bus.$emit(this.SHOW_PRE_EVALUATION_MODAL, this.EDIT_CURRENT_CARD, item);
+      Bus.$emit(this.SHOW_PRE_EVALUATION_MODAL, this.EDIT_CURRENT_CARD, item, this.archived);
     },
     deletePreEvaluationRecord(item) {
       var preEvaluation = {
@@ -272,13 +272,13 @@ export default {
     },
     addSurgicalRecord() {
       // 这里要传递 2 个参数，一个是模式（新增／阅读／修改），一个是当前数据对象（新建的时候为空）
-      Bus.$emit(this.SHOW_SURGICAL_METHOD_MODAL, this.ADD_NEW_CARD, {});
+      Bus.$emit(this.SHOW_SURGICAL_METHOD_MODAL, this.ADD_NEW_CARD, {}, this.archived);
     },
     viewSurgicalRecord(item) {
-      Bus.$emit(this.SHOW_SURGICAL_METHOD_MODAL, this.VIEW_CURRENT_CARD, item);
+      Bus.$emit(this.SHOW_SURGICAL_METHOD_MODAL, this.VIEW_CURRENT_CARD, item, this.archived);
     },
     editSurgicalRecord(item) {
-      Bus.$emit(this.SHOW_SURGICAL_METHOD_MODAL, this.EDIT_CURRENT_CARD, item);
+      Bus.$emit(this.SHOW_SURGICAL_METHOD_MODAL, this.EDIT_CURRENT_CARD, item, this.archived);
     },
     deleteSurgicalRecord(item) {
       var surgicalMethod = {
@@ -291,13 +291,13 @@ export default {
     },
     addPostComplicationRecord() {
       // 这里要传递 2 个参数，一个是模式（新增／阅读／修改），一个是当前数据对象（新建的时候为空）
-      Bus.$emit(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.ADD_NEW_CARD, {});
+      Bus.$emit(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.ADD_NEW_CARD, {}, this.archived);
     },
     viewPostComplicationRecord(item) {
-      Bus.$emit(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.VIEW_CURRENT_CARD, item);
+      Bus.$emit(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.VIEW_CURRENT_CARD, item, this.archived);
     },
     editPostComplicationRecord(item) {
-      Bus.$emit(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.EDIT_CURRENT_CARD, item);
+      Bus.$emit(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.EDIT_CURRENT_CARD, item, this.archived);
     },
     deletePostComplicationRecord(item) {
       var operativeComplication = {
@@ -310,13 +310,13 @@ export default {
     },
     addDbsRecord() {
       // 这里要传递 2 个参数，一个是模式（新增／阅读／修改），一个是当前数据对象（新建的时候为空）
-      Bus.$emit(this.SHOW_DBS_MODAL, this.ADD_NEW_CARD, {});
+      Bus.$emit(this.SHOW_DBS_MODAL, this.ADD_NEW_CARD, {}, this.archived);
     },
     viewDbsRecord(item) {
-      Bus.$emit(this.SHOW_DBS_MODAL, this.VIEW_CURRENT_CARD, item);
+      Bus.$emit(this.SHOW_DBS_MODAL, this.VIEW_CURRENT_CARD, item, this.archived);
     },
     editDbsRecord(item) {
-      Bus.$emit(this.SHOW_DBS_MODAL, this.EDIT_CURRENT_CARD, item);
+      Bus.$emit(this.SHOW_DBS_MODAL, this.EDIT_CURRENT_CARD, item, this.archived);
     },
     deleteDbsRecord(item) {
       // 先判断这条程控记录是首次还是非首次，从而决定调用哪个 api
