@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="modal-box-wrapper" v-show="displayModal">
-    <div class="modal-box" :class="{'high-box': modalType === DISEASE_HISTORY_MODAL}">
+    <div class="modal-box" :class="{'high-box': modalType === DISEASE_HISTORY_MODAL}" ref="scrollArea">
       <h3 class="title">{{title}}</h3>
 
       <!-- 这个 field 是专门为个人史准备的，用来确定最终的 template 到底是哪个子类 -->
@@ -67,6 +67,7 @@
 </template>
 
 <script>
+import Ps from 'perfect-scrollbar';
 import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
@@ -232,9 +233,22 @@ export default {
       for (var i = 0; i < this.template.length; i++) {
         // console.log(this.template[i].fieldName);
       }
+
+      this.updateScrollbar();
     },
     switchToEditingMode() {
       this.mode = this.EDIT_CURRENT_CARD;
+      this.updateScrollbar();
+    },
+    updateScrollbar() {
+      // 如果不写在 $nextTick() 里面，第一次加载的时候也许会不能正确计算高度。估计是因为子组件还没有全部加载所造成的。
+      this.$nextTick(() => {
+        Ps.destroy(this.$refs.scrollArea);
+        Ps.initialize(this.$refs.scrollArea, {
+          wheelSpeed: 1,
+          minScrollbarLength: 40
+        });
+      });
     },
     cancel() {
       this.lockSubmitButton = false;
@@ -474,6 +488,7 @@ export default {
       if (this.subModalType !== '') {
         this.warningResults['subModal'] = null;
       }
+      this.updateScrollbar();
     },
     _handleError(error) {
       // 当调用 api 发生错误时，执行此函数，注意在此时需要为“确定”按钮解锁
@@ -521,7 +536,9 @@ export default {
     padding: 0 40px;
     top: 5%;
     width: 600px;
+    max-height: 90%;
     background-color: @background-color;
+    overflow: hidden;
     &.high-box {
       top: 6%;
     }
@@ -532,8 +549,9 @@ export default {
     .field {
       display: inline-block;
       position: relative;
+      margin-bottom: 10px;
       width: 100%;
-      min-height: 50px;
+      min-height: 40px;
       text-align: left;
       transform: translateX(10px);
       // overflow: hidden;
@@ -613,6 +631,28 @@ export default {
       }
       &:active {
         opacity: 0.9;
+      }
+    }
+    .ps__scrollbar-y-rail {
+      position: absolute;
+      width: 15px;
+      right: 0;
+      padding: 0 3px;
+      box-sizing: border-box;
+      opacity: 0.3;
+      transition: opacity 0.3s, padding 0.2s;
+      .ps__scrollbar-y {
+        position: relative;
+        background-color: #aaa;
+        border-radius: 20px;
+      }
+    }
+    &:hover {
+      .ps__scrollbar-y-rail {
+        opacity: 0.6;
+        &:hover {
+          padding: 0;
+        }
       }
     }
   }
