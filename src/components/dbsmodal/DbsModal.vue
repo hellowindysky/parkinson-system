@@ -970,6 +970,15 @@ export default {
         this.initByFirstModel();
         getDbsFirstInfo(info.patientDbsFirstId).then((data) => {
           vueCopy(data, this.copyInfo);
+
+          // 不知道什么原因，在执行上面的 vueCopy 之后，会切掉一些空的字段，影响了【副作用持续时间】的数据绑定
+          // 因此这里给没有值的【副作用持续时间】重新设为空字符串
+          for (let record of this.copyInfo.patientDbsFirstDetail) {
+            if (record.sideEffectDuration === undefined) {
+              this.$set(record, 'sideEffectDuration', '');
+            }
+          }
+
           this.updateContactOrder();
           this.updateCheckBoxModel('firstDbsAdjustAfter');
           this.$nextTick(() => {
