@@ -3,7 +3,7 @@
     v-on:cancel="cancel" v-on:submit="submit" v-on:toggleFoldedPanel="updateScrollbar" :editable="canEdit">
     <div class="diagnostic-disease">
       <div v-for="field in diagnosticDiseaseTemplate" class="field"
-        :class="{'whole-line': field.fieldName === 'caseSymptom', 'multi-line': field.fieldName === 'caseSymptom'}">
+        :class="{'whole-line': field.fieldName === 'caseSymptom'}">
         <span class="field-name">
           {{field.cnfieldName}}
           <span class="required-mark" v-show="field.must === 1">*</span>
@@ -294,12 +294,14 @@ export default {
     startEditing() {
       this.mutableMode = this.EDITING_MODE;
       this.foldedStatus = false;
+      Bus.$emit(this.SCROLL_AREA_SIZE_CHANGE);
     },
     cancel() {
       this.copyInfo = {};
       vueCopy(this.diagnosticDisease, this.copyInfo);
       this.warningResults = {};
       this.mutableMode = this.READING_MODE;
+      Bus.$emit(this.SCROLL_AREA_SIZE_CHANGE);
     },
     submit() {
       // 先手动执行一遍 updateWarning()，因为有的字段在初始化的时候并没有经过校验
@@ -340,6 +342,7 @@ export default {
     },
     updateAndClose() {
       Bus.$emit(this.UPDATE_CASE_INFO);
+      Bus.$emit(this.SCROLL_AREA_SIZE_CHANGE);
       this.mutableMode = this.READING_MODE;
     },
     updateScrollbar() {
@@ -579,6 +582,7 @@ export default {
 
 @field-height: 50px;
 @field-name-width: 100px;
+@field-line-height: 25px;
 @scroll-bar-height: 10px;
 
 @col-name-width: 200px;
@@ -594,7 +598,7 @@ export default {
     display: inline-block;
     position: relative;
     width: 50%;
-    height: @field-height;
+    min-height: @field-height;
     text-align: left;
     &.whole-line {
       width: 100%;
@@ -602,13 +606,11 @@ export default {
         right: 2%;
       }
     }
-    &.multi-line {
-      height: @field-height * 1.5;
-    }
     .field-name {
       display: inline-block;
+      position: absolute;
       width: @field-name-width;
-      line-height: @field-height;
+      line-height: @field-line-height;
       font-size: @normal-font-size;
       color: @font-color;
       .required-mark {
@@ -619,30 +621,34 @@ export default {
     }
     .field-value {
       display: inline-block;
-      line-height: @field-height;
+      position: relative;
+      left: @field-name-width;
+      width: calc(~"96% - @{field-name-width}");
+      line-height: @field-line-height;
       font-size: @normal-font-size;
       color: @light-font-color;
     }
     .field-input {
       display: inline-block;
-      position: absolute;
+      position: relative;
       top: 0;
       left: @field-name-width;
-      right: 4%;
+      width: calc(~"96% - @{field-name-width}");
       line-height: @field-height;
       overflow: visible;
       .warning-text {
         position: absolute;
-        top: 25px;
+        top: 10px;
         left: 10px;
         height: 15px;
         color: red;
         font-size: @small-font-size;
         &.below-second-row {
-          top: 47px;
+          top: 40px;
         }
       }
       .el-input {
+        transform: translateY(-13px);
         .el-input__inner {
           height: 30px;
           border: none;
@@ -651,7 +657,7 @@ export default {
       }
       .el-textarea {
         vertical-align: middle;
-        transform: translateY(10px);
+        transform: translateY(-3px);
         .el-textarea__inner {
           border: none;
           background-color: @screen-color;
@@ -673,7 +679,7 @@ export default {
   }
   .form-wrapper {
     .form-title {
-      margin: 10px 0 15px;
+      margin: 15px 0;
       padding: 0;
       text-align: left;
       font-size: @normal-font-size;
