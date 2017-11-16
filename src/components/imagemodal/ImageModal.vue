@@ -214,6 +214,42 @@
             </el-upload>
           </span>
         </div>
+        <hr class="seperate-line">
+        <div class="field-file">
+          <span class="field-name">
+            其它文件:
+          </span>
+          <span class="field-input">
+            <div class="last-files">
+              <div class="last-files-title">已上传的其它文件</div>
+              <div class="file" :class="{'editing': mode!==VIEW_CURRENT_CARD}" v-for="file in other">
+                <i class="el-icon-document icon"></i>
+                <span class="file-name" @click="downloadFile(file)">{{file.fileName}}</span>
+                <i class="close-button iconfont icon-cancel" @click="removeFile(file, other, newOther)"></i>
+              </div>
+            </div>
+            <el-upload
+              class="upload-area"
+              :action="uploadUrl"
+              ref="upload4"
+              :disabled="mode===VIEW_CURRENT_CARD"
+              :data="fileParam"
+              :multiple="true"
+              :auto-upload="true"
+              :on-change="fileChange"
+              :on-preview="handlePreview"
+              :on-remove="handleOtherRemove"
+              :on-success="uploadOtherSuccess"
+              :on-error="uploadErr"
+              :before-upload="beforeUpload"
+              :file-list="fileList4">
+              <el-button slot="trigger" size="small" type="text" :disabled="mode===VIEW_CURRENT_CARD" v-show="mode!==VIEW_CURRENT_CARD">
+                点击上传其它文件
+              </el-button>
+              <div slot="tip" class="el-upload__tip"></div>
+            </el-upload>
+          </span>
+        </div>
       </div>
       <div class="button cancel-button btn-margin" @click="cancel">取消</div>
       <div v-show="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD" class="button submit-button btn-margin" @click="submit">确定</div>
@@ -253,9 +289,11 @@ export default {
       t1: [],
       t2: [],
       t2Flair: [],
+      other: [],
       newT1: [],
       newT2: [],
       newT2Flair: [],
+      newOther: [],
       uploadUrl: baseUrl + '/upload/uploadAttachment',
       downloadUrl: baseUrl + '/download/',
       pickerOptions: {
@@ -266,6 +304,7 @@ export default {
       fileList1: [],
       fileList2: [],
       fileList3: [],
+      fileList4: [],
       header: {
         'Content-Type': 'multipart/form-data'
       },
@@ -301,6 +340,7 @@ export default {
       this.newT1 = [];
       this.newT2 = [];
       this.newT2Flair = [];
+      this.newOther = [];
 
       // console.log('item: ', item);
       this.id = item.id ? item.id : '';
@@ -314,6 +354,7 @@ export default {
       this.t1 = item.t1 ? item.t1 : [];
       this.t2 = item.t2 ? item.t2 : [];
       this.t2Flair = item.t2Flair ? item.t2Flair : [];
+      this.other = item.other ? item.other : [];
 
       for (let fileItem of this.t1) {
         this.newT1.push({
@@ -327,6 +368,11 @@ export default {
       }
       for (let fileItem of this.t2Flair) {
         this.newT2Flair.push({
+          id: fileItem.id
+        });
+      }
+      for (let fileItem of this.other) {
+        this.newOther.push({
           id: fileItem.id
         });
       }
@@ -372,6 +418,7 @@ export default {
       this.$refs.upload1.clearFiles();
       this.$refs.upload2.clearFiles();
       this.$refs.upload3.clearFiles();
+      this.$refs.upload4.clearFiles();
       this.displayModal = false;
     },
     switchToEditingMode() {
@@ -410,6 +457,7 @@ export default {
       imageInfo.t1 = this.newT1;
       imageInfo.t2 = this.newT2;
       imageInfo.t2Flair = this.newT2Flair;
+      imageInfo.other = this.newOther;
 
       if (this.mode === this.ADD_NEW_CARD) {
         addImage(imageInfo).then(() => {
@@ -432,6 +480,7 @@ export default {
       this.$refs.upload1.clearFiles();
       this.$refs.upload2.clearFiles();
       this.$refs.upload3.clearFiles();
+      this.$refs.upload4.clearFiles();
       Bus.$emit(this.UPDATE_CASE_INFO);
       this.displayModal = false;
     },
@@ -463,6 +512,9 @@ export default {
     handleT2FlairRemove(file) {
       this.handleRemove(file, this.newT2Flair);
     },
+    handleOtherRemove(file) {
+      this.handleRemove(file, this.newOther);
+    },
     handleRemove(file, list) {
       console.log(file);
       for (var i = 0; i < list.length; i++) {
@@ -485,6 +537,9 @@ export default {
     },
     uploadT2FlairSuccess(response, file, fileList) {
       this.uploadSuccess(response, file, fileList, this.newT2Flair);
+    },
+    uploadOtherSuccess(response, file, fileList) {
+      this.uploadSuccess(response, file, fileList, this.newOther);
     },
     uploadSuccess(response, file, fileList, list) {
       if (response.code === 0) {
