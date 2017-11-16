@@ -504,7 +504,7 @@ export default {
 <style lang="less">
 @import "~styles/variables.less";
 
-@field-height: 40px;
+@field-line-height: 25px;
 @field-name-width: 125px;
 
 .modal-box-wrapper {
@@ -519,7 +519,7 @@ export default {
     position: relative;
     margin: auto;
     padding: 0 40px;
-    top: 10%;
+    top: 5%;
     width: 600px;
     background-color: @background-color;
     &.high-box {
@@ -530,20 +530,20 @@ export default {
       font-size: @large-font-size;
     }
     .field {
-      padding: 5px 0;
       display: inline-block;
       position: relative;
       width: 100%;
-      height: @field-height;
+      min-height: 50px;
       text-align: left;
-      overflow: hidden;
+      transform: translateX(10px);
+      // overflow: hidden;
       .field-name {
         display: inline-block;
         position: absolute;
         top: 0;
         left: 0;
         width: @field-name-width;
-        line-height: @field-height;
+        line-height: @field-line-height;
         font-size: @normal-font-size;
         color: @font-color;
         .required-mark {
@@ -554,11 +554,11 @@ export default {
       }
       .field-input {
         display: inline-block;
-        position: absolute;
+        position: relative;
         top: 0;
         left: @field-name-width;
-        right: 2%;
-        line-height: @field-height;
+        width: calc(~"96% - @{field-name-width}");
+        line-height: @field-line-height;
         font-size: @normal-font-size;
         color: @light-font-color;
         .warning-text {
@@ -570,6 +570,7 @@ export default {
           font-size: @small-font-size;
         }
         .el-input {
+          transform: translateY(-3px);
           .el-input__inner {
             height: 30px;
             border: none;
