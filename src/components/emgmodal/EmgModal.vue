@@ -12,7 +12,7 @@
             <span class="warning-text"></span>
             <span v-if="mode===VIEW_CURRENT_CARD">{{getFieldValue(copyInfo.elecTroGramId, 'emgName')}}</span>
             <el-select v-else placeholder="请选择肌电图名称" v-model="copyInfo.elecTroGramId"
-              :disabled="mode!==ADD_NEW_CARD" @change="selectEmg" class="shift-down">
+              :disabled="mode!==ADD_NEW_CARD" @change="selectEmg">
               <el-option v-for="emg in emgTypeList" :key="emg.id" :label="emg.emgName" :value="emg.id" ></el-option>
             </el-select>
           </span>
@@ -27,7 +27,7 @@
             <span>{{getFieldValue(copyInfo.etgType, 'emgType')}}</span>
           </span>
         </div>
-        <div class="field whole-line multi-line">
+        <div class="field whole-line">
           <span class="field-name">
             检查结果:
             <span class="required-mark"></span>
@@ -35,18 +35,18 @@
           <span class="field-input">
             <span class="warning-text"></span>
             <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patEleResule}}</span>
-            <el-input v-else type="textarea" :rows="2" v-model="copyInfo.patEleResule" placeholder="请输入检查结果" class="shift-down"></el-input>
+            <el-input v-else type="textarea" :rows="2" v-model="copyInfo.patEleResule" placeholder="请输入检查结果"></el-input>
           </span>
         </div>
-        <div class="field whole-line multi-line">
-          <span class="field-name go-down">
+        <div class="field whole-line">
+          <span class="field-name">
             提示内容:
             <span class="required-mark"></span>
           </span>
           <span class="field-input">
             <span class="warning-text"></span>
-            <span v-if="mode===VIEW_CURRENT_CARD" class="down">{{copyInfo.patEleHint}}</span>
-            <el-input v-else type="textarea" :rows="2" v-model="copyInfo.patEleHint" placeholder="请输入提示信息" class="shift-down down"></el-input>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patEleHint}}</span>
+            <el-input v-else type="textarea" :rows="2" v-model="copyInfo.patEleHint" placeholder="请输入提示信息"></el-input>
           </span>
         </div>
         <h3 class="form-title" v-if="tableMode===SON_OPEN">{{currentTableName}}</h3>
@@ -856,7 +856,6 @@ export default {
 @import "~styles/variables.less";
 
 @field-height: 40px;
-@multi-line-field-height: 60px;
 @field-name-width: 100px;
 @long-field-name-width: 160px;
 
@@ -898,18 +897,15 @@ export default {
         display: inline-block;
         position: relative;
         width: 50%;
-        // height: @field-height;
-        padding: 5px 0;
+        min-height: @field-height;
+        vertical-align: top;
         text-align: left;
         transform: translateX(10px); // 这一行是为了修补视觉上的偏移
         &.whole-line {
           width: 100%;
           .field-input {
-            right: 4%;
+            width: calc(~"96% - @{field-name-width}");
           }
-        }
-        &.multi-line {
-          height: @multi-line-field-height;
         }
         .field-name {
           display: inline-block;
@@ -917,12 +913,9 @@ export default {
           top: 0;
           left: 0;
           width: @field-name-width;
-          line-height: @field-height;
+          line-height: 25px;
           font-size: @normal-font-size;
           color: @font-color;
-          &.go-down{
-            transform: translateY(5px);
-          }
           &.long-field-name {
             width: @long-field-name-width;
           }
@@ -935,21 +928,12 @@ export default {
         .field-input {
           display: inline-block;
           position: relative;
-          top: 3px;
+          top: 0;
           left: @field-name-width;
-          right: 8%;
           width: calc(~"92% - @{field-name-width}");
-          height: @field-height;
           line-height: 25px;
           font-size: @normal-font-size;
           color: @light-font-color;
-         .shift-down {
-            top:-5px;
-          }
-          .down{
-            position:absolute;
-            top:5px;
-          }
           &.long-field-name {
             left: @long-field-name-width;
           }
@@ -962,8 +946,7 @@ export default {
             font-size: @small-font-size;
           }
           .el-input {
-            position: relative;
-            top: 2px;
+            transform: translateY(-3px);
             .el-input__inner {
               height: 30px;
               border: none;
@@ -971,10 +954,9 @@ export default {
             }
           }
           .el-textarea {
-            vertical-align: middle;
+            margin-bottom: 10px;
+            transform: translateY(-3px);
             .el-textarea__inner {
-              position: relative;
-              top:-2px;
               border: none;
               background-color: @screen-color;
             }
