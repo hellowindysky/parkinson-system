@@ -59,7 +59,8 @@ export default {
       originalInfo: {},
       warningResults: {},
       completeInit: false,
-      lockSubmitButton: false
+      lockSubmitButton: false,
+      showEdit: true
     };
   },
   computed: {
@@ -77,7 +78,7 @@ export default {
       }
     },
     canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients)) {
+      if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
         return true;
       } else {
         return false;
@@ -85,11 +86,11 @@ export default {
     }
   },
   methods: {
-    showModal(cardOperation, info) {
+    showModal(cardOperation, info, showEdit) {
       this.mode = cardOperation;
       this.originalInfo = info;
       this.initCopyInfo();
-
+      this.showEdit = showEdit;
       setTimeout(() => {
         // console.log(this.operativeComplicationDictionary);
         // console.log(this.operativeComplicationTemplate);

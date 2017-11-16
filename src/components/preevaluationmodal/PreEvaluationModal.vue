@@ -817,7 +817,8 @@ export default {
         'motorDTOScaleScoreAfter': null,
         'operationIntension': null
       },
-      lockSubmitButton: false
+      lockSubmitButton: false,
+      showEdit: true
     };
   },
   computed: {
@@ -846,7 +847,7 @@ export default {
       }
     },
     canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients)) {
+      if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
         return true;
       } else {
         return false;
@@ -854,9 +855,9 @@ export default {
     }
   },
   methods: {
-    showModal(cardOperation, info) {
+    showModal(cardOperation, info, showEdit) {
       this.mode = cardOperation;
-
+      this.showEdit = showEdit;
       this.completeInit = false;
       this.initCopyInfo();
       this.updateDiaryDayTime();
@@ -1450,6 +1451,8 @@ export default {
           if (colTotalHour[hourName] !== 24) {
             allTotalHourOk = false;
           }
+        } else {
+          this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[5][hourName] = 0;
         }
       }
       this.allTotalHourOk = allTotalHourOk;

@@ -270,7 +270,8 @@ export default {
         'Content-Type': 'multipart/form-data'
       },
       fileParam: getCommonRequest(),
-      lockSubmitButton: false
+      lockSubmitButton: false,
+      showEdit: true
     };
   },
   computed: {
@@ -285,7 +286,7 @@ export default {
       }
     },
     canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients)) {
+      if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
         return true;
       } else {
         return false;
@@ -293,10 +294,10 @@ export default {
     }
   },
   methods: {
-    showPanel(cardOperation, item) {
+    showPanel(cardOperation, item, showEdit) {
       this.completeInit = false;
       this.mode = cardOperation;
-
+      this.showEdit = showEdit;
       this.newT1 = [];
       this.newT2 = [];
       this.newT2Flair = [];

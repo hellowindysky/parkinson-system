@@ -1,5 +1,5 @@
 <template lang="html">
-  <folding-panel :title="'基本情况'" :mode="mutableMode" :folded-status="foldedStatus"
+  <folding-panel :title="'基本情况'" :archived="archived" :mode="mutableMode" :folded-status="foldedStatus"
     v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit" :editable="canEdit">
     <div class="diagnostic-basic">
       <div v-for="field in diagnosticBasicTemplate" class="field"
@@ -66,6 +66,10 @@ export default {
     diagnosticBasic: {
       type: Object,
       default: {}
+    },
+    archived: {
+      type: Boolean,
+      default: true
     }
   },
   computed: {
@@ -87,7 +91,7 @@ export default {
       }
     },
     canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients)) {
+      if (this.$route.matched.some(record => record.meta.myPatients) && this.archived) {
         return true;
       } else {
         return false;

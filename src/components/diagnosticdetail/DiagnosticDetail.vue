@@ -7,17 +7,17 @@
         v-show="hasBeenArchived===false && !isNewCase && canEdit">归档</div>
     </div>
     <div class="scroll-area" ref="scrollArea">
-      <diagnostic-basic class="folding-panel" :mode="mode" ref="diagnosticBasic"
+      <diagnostic-basic :archived="!hasBeenArchived" class="folding-panel" :mode="mode" ref="diagnosticBasic"
         :diagnosticBasic="diagnosticBasic"></diagnostic-basic>
-      <diagnostic-disease class="folding-panel" :mode="mode" v-show="existed"
+      <diagnostic-disease :archived="!hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
         :diagnosticDisease="diagnosticDisease"></diagnostic-disease>
-      <diagnostic-medicine class="folding-panel" :mode="mode" v-show="existed"
+      <diagnostic-medicine :archived="!hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
         :diagnosticMedicine="caseDetail.patientMedicineNew"></diagnostic-medicine>
-      <diagnostic-surgery class="folding-panel" :mode="mode" v-show="existed"
+      <diagnostic-surgery :archived="!hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
         :diagnosticSurgery="caseDetail.patientSurgicalDbs"></diagnostic-surgery>
-      <diagnostic-scale class="folding-panel" :mode="mode" v-show="existed"
+      <diagnostic-scale :archived="!hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
         :patientScale="caseDetail.patientScale"></diagnostic-scale>
-      <diagnostic-examination class="folding-panel" :mode="mode" v-show="existed"
+      <diagnostic-examination :archived="!hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
         :neurologicCheckList="caseDetail.patientSpephysical"
         :biochemicalExamList="caseDetail.patientBioexam"
         :emgList="caseDetail.patientElecTroGram"

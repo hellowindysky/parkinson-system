@@ -902,7 +902,8 @@ export default {
       followDbsAdjustBeforeFirstSchemeOrder: '',
       lastProgramDate: '',
       lastDbsParameter: [],
-      lockSubmitButton: false
+      lockSubmitButton: false,
+      showEdit: true
     };
   },
   computed: {
@@ -929,7 +930,7 @@ export default {
       return this.getSideDeviceContact('right').length;
     },
     canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients)) {
+      if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
         return true;
       } else {
         return false;
@@ -937,9 +938,10 @@ export default {
     }
   },
   methods: {
-    showModal(cardOperation, info) {
+    showModal(cardOperation, info, showEdit) {
       this.mode = cardOperation;
       this.completeInit = false;
+      this.showEdit = showEdit;
       if (this.mode === this.ADD_NEW_CARD) {
         this.modelType = 0;   // 新增程控记录的时候，“首次开机”默认选择“否”
         this.completeInit = true;
