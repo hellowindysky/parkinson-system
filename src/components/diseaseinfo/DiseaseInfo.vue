@@ -29,7 +29,7 @@
             </span>
             <span v-else-if="getUIType(field)===3">
               <el-select v-model="copyInfo[field.fieldName]" clearable :class="{'warning': warningResults[field.fieldName]}"
-                :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)">
+                :placeholder="getMatchedField(field).cnFieldDesc" @change="updateField(field)">
                 <el-option v-for="type in getTypes(field)" :label="type.typeName"
                   :value="type.typeCode" :key="type.typeCode"></el-option>
               </el-select>
@@ -43,7 +43,8 @@
             </span>
             <span v-else-if="getUIType(field)===6">
               <el-date-picker v-model="copyInfo[field.fieldName]" type="date" :class="{'warning': warningResults[field.fieldName]}"
-               :placeholder="getMatchedField(field).cnFieldDesc" :picker-options="pickerOptions0" format="yyyy-MM-dd" @change="updateWarning(field)"></el-date-picker>
+                :placeholder="getMatchedField(field).cnFieldDesc" :picker-options="pickerOptions0" format="yyyy-MM-dd"
+                @change="updateWarning(field)" :disabled="field.fieldName==='symmetriesTime' && copyInfo.symmetries!==1"></el-date-picker>
             </span>
             <span class="warning-text">{{getWarningText(field.fieldName)}}</span>
           </div>
@@ -263,6 +264,13 @@ export default {
         result.push(this.transformTypeCode(typeCode, field));
       }
       return result.join('，');
+    },
+    updateField(field) {
+      // 如果对称起病选择了否，或者没有选择，则将对称起病时间清空
+      if (field.fieldName === 'symmetries' && this.copyInfo.symmetries !== 1) {
+        this.copyInfo.symmetriesTime = '';
+      }
+      this.updateWarning(field);
     },
     updateWarning(field) {
       var fieldName = field.fieldName;
