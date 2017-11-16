@@ -1588,13 +1588,13 @@ export default {
       var sum = 0;
       for (let property of ['elbowTone', 'wristTone', 'kneeTone', 'neckTone', 'tremor']) {
         if (record[property] === '' || isNaN(record[property])) {
-          record[property] = '';
+          this.$set(record, property, '');
         } else {
           record[property] = Number(record[property]);
           sum += record[property];
         }
       }
-      record.tensionTone = sum;
+      this.$set(record, 'tensionTone', sum);
     },
     updateParamPole(formType, index) {
       // 每次参数表格内的 checkBox 有变化时，就更新相应的数据对象
