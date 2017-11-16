@@ -249,18 +249,16 @@ export default {
     .content {
       text-align: left;
       .field {
-        // padding: 5px 0;
-        text-align: left;
         display: inline-block;
         position: relative;
         width: 50%;
-        // height: @field-height;
+        min-height: @field-height + 10px;
         text-align: left;
         transform: translateX(10px);  // 这一行是为了修补视觉上的偏移
         &.whole-line {
           width: 100%;
           .field-input {
-            right: 4%;
+            width: calc(~"96% - @{field-name-width}");
           }
         }
         .field-name {
@@ -283,13 +281,11 @@ export default {
         }
         .field-input {
           display: inline-block;
-          // position: absolute;
-          padding-left:80px;
-          width:100%;
+          position: relative;
+          width: calc(~"92% - @{field-name-width}");
           box-sizing: border-box;
           top: 0;
           left: @field-name-width;
-          right: 8%;
           line-height: @field-height;
           font-size: @normal-font-size;
           color: @light-font-color;
