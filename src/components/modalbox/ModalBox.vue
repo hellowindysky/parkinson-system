@@ -15,7 +15,7 @@
         <span class="field-input" v-else>
           <span class="warning-text">{{getWarningText('subModal')}}</span>
           <el-select v-model="subModalType" :class="{'warning': warningResults['subModal']}"
-           placeholder="请输入个人史类型" @change="chooseSubModal" :disabled="disableChangingSubModal">
+            placeholder="请输入个人史类型" @change="chooseSubModal" :disabled="disableChangingSubModal">
             <el-option label="饮酒史" :value="WINE_HISTORY_MODAL"></el-option>
             <el-option label="吸烟史" :value="SMOKE_HISTORY_MODAL"></el-option>
             <el-option label="喝茶史" :value="TEA_HISTORY_MODAL"></el-option>
@@ -45,14 +45,14 @@
           </span>
           <span v-else-if="getUIType(field)===3">
             <el-select v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-             :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)">
+              :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)">
               <el-option v-for="type in getTypes(field)" :label="type.typeName"
-               :value="type.typeCode" :key="type.typeName"></el-option>
+                :value="type.typeCode" :key="type.typeName"></el-option>
             </el-select>
           </span>
           <span v-else-if="getUIType(field)===6">
             <el-date-picker v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}" type="date"
-             :placeholder="getMatchedField(field).cnFieldDesc" :picker-options="pickerOptions0" format="yyyy-MM-dd" @change="updateWarning(field)"></el-date-picker>
+              :placeholder="getMatchedField(field).cnFieldDesc" :picker-options="pickerOptions0" format="yyyy-MM-dd" @change="updateWarning(field)"></el-date-picker>
           </span>
         </span>
       </div>
