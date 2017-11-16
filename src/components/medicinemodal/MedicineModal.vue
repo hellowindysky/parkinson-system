@@ -8,7 +8,7 @@
             {{field.cnfieldName}}
             <span class="required-mark" v-show="field.must===1">*</span>
           </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+          <span class="field-input shift-down" v-if="mode===VIEW_CURRENT_CARD">
             <span v-if="getMatchedField(field.fieldName).readOnlyType===2">
               <span v-if="field.fieldName==='commonName'">{{commonName}}</span>
               <span v-else-if="field.fieldName==='medicalType'">{{medicalType}}</span>
@@ -19,7 +19,7 @@
               {{getFieldValue(field)}}
             </span>
           </span>
-          <span class="field-input" v-else>
+          <span class="field-input" v-else :class="{'shift-down': getMatchedField(field.fieldName).readOnlyType===2}">
             <span class="warning-text">{{warningResults[field.fieldName]}}</span>
             <span v-if="getMatchedField(field.fieldName).readOnlyType===2">
               <span v-if="field.fieldName==='commonName'">{{commonName}}</span>
@@ -80,7 +80,7 @@
             {{field.cnfieldName}}
             <span class="required-mark" v-show="field.must===1">*</span>
           </span>
-          <span v-if="mode===VIEW_CURRENT_CARD" class="field-input" :class="{'long-field-name': isLongName(field.fieldName)}">
+          <span v-if="mode===VIEW_CURRENT_CARD" class="field-input shift-down" :class="{'long-field-name': isLongName(field.fieldName)}">
             <span v-if="getMatchedField(field.fieldName).readOnlyType===2">
               <span v-if="field.fieldName==='levodopaDose'">{{levodopaDose}}</span>
               <span v-else-if="field.fieldName==='levodopaFactorUsed'">{{levodopaFactor}}</span>
@@ -88,7 +88,7 @@
             </span>
             <span v-else>{{medicine[field.fieldName]}}</span>
           </span>
-          <span v-else class="field-input" :class="{'long-field-name': isLongName(field.fieldName)}">
+          <span v-else class="field-input" :class="{'long-field-name': isLongName(field.fieldName), 'shift-down': getMatchedField(field.fieldName).readOnlyType===2}">
             <span class="warning-text">{{warningResults[field.fieldName]}}</span>
             <span v-if="getMatchedField(field.fieldName).readOnlyType===2">
               <span v-if="field.fieldName==='levodopaDose'">{{levodopaDose}}</span>
@@ -109,7 +109,7 @@
             {{field.cnfieldName}}
             <span class="required-mark" v-show="field.must===1">*</span>
           </span>
-          <span v-if="mode===VIEW_CURRENT_CARD" class="field-input" :class="{'long-field-name': isLongName(field.fieldName)}">
+          <span v-if="mode===VIEW_CURRENT_CARD" class="field-input shift-down" :class="{'long-field-name': isLongName(field.fieldName)}">
             <span v-if="getUIType(field.fieldName)===3">{{getFieldValue(field)}}</span>
             <span v-else>{{medicine[field.fieldName]}}</span>
           </span>
@@ -137,7 +137,7 @@
             {{field.cnfieldName}}
             <span class="required-mark" v-show="field.must===1 || hasSideEffect">*</span>
           </span>
-          <span v-if="mode===VIEW_CURRENT_CARD" class="field-input" :class="{'long-field-name': isLongName(field.fieldName)}">
+          <span v-if="mode===VIEW_CURRENT_CARD" class="field-input shift-down" :class="{'long-field-name': isLongName(field.fieldName)}">
             <span v-if="getUIType(field.fieldName)===3">{{getFieldValue(field)}}</span>
             <span v-else>{{medicine[field.fieldName]}}</span>
           </span>
@@ -399,6 +399,7 @@ export default {
     },
     switchToEditingMode() {
       this.mode = this.EDIT_CURRENT_CARD;
+      this.updateScrollbar();
     },
     submit() {
       if (this.lockSubmitButton) {
@@ -716,22 +717,23 @@ export default {
         display: inline-block;
         position: relative;
         width: 50%;
-        height: @field-height;
+        // height: @field-height;
         text-align: left;
         transform: translateX(10px);  // 这一行是为了修补视觉上的偏移
         &.whole-line {
           width: 100%;
+          overflow: hidden;
           .field-input {
-            right: 4%;
+            width: calc(~"96% - @{field-name-width}")
           }
         }
         .field-name {
           display: inline-block;
           position: absolute;
-          top: 0;
+          top: 5px;
           left: 0;
           width: @field-name-width;
-          line-height: @field-height;
+          line-height: 25px;
           font-size: @normal-font-size;
           color: @font-color;
           &.long-field-name {
@@ -745,13 +747,17 @@ export default {
         }
         .field-input {
           display: inline-block;
-          position: absolute;
-          top: 0;
+          position: relative;
+          top: -3px;
           left: @field-name-width;
-          right: 8%;
-          line-height: @field-height;
+          width: calc(~"92% - @{field-name-width}");
+          height: @field-height;
+          line-height: 25px;
           font-size: @normal-font-size;
           color: @light-font-color;
+          &.shift-down {
+          top: 0;
+          }
           &.long-field-name {
             left: @long-field-name-width;
           }
@@ -772,7 +778,7 @@ export default {
           }
           .el-textarea {
             vertical-align: middle;
-            transform: translateY(5px);
+            // transform: translateY(5px);
             .el-textarea__inner {
               border: none;
               background-color: @screen-color;
