@@ -574,6 +574,10 @@ export default {
         font-size: @small-font-size;
         color: @light-font-color;
         left: 10px;
+        right: 10px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
         .name {
           color: @font-color;
         }
