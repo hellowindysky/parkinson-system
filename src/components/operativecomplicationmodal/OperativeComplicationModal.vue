@@ -253,7 +253,7 @@ export default {
 <style lang="less">
 @import "~styles/variables.less";
 
-@field-height: 40px;
+@field-line-height: 40px;
 @field-name-width: 100px;
 @long-field-name-width: 160px;
 
@@ -269,9 +269,11 @@ export default {
     position: relative;
     margin: auto;
     padding: 0 40px;
-    top: 10%;
+    top: 3%;
+    max-height: 94%;
     width: 660px;
     background-color: @background-color;
+    overflow: hidden;
     .title {
       padding: 30px 0 10px;
       font-size: @large-font-size;
@@ -279,13 +281,13 @@ export default {
     .content {
       text-align: left;
       .field {
-        padding: 5px 0;
         text-align: left;
         display: inline-block;
         position: relative;
         width: 50%;
-        height: @field-height;
+        min-height: 50px;
         text-align: left;
+        vertical-align: top;
         transform: translateX(10px);  // 这一行是为了修补视觉上的偏移
         &.whole-line {
           width: 100%;
@@ -299,7 +301,7 @@ export default {
           top: 0;
           left: 0;
           width: @field-name-width;
-          line-height: @field-height;
+          line-height: @field-line-height;
           font-size: @normal-font-size;
           color: @font-color;
           &.long-field-name {
@@ -313,15 +315,16 @@ export default {
         }
         .field-input {
           display: inline-block;
-          position: absolute;
+          position: relative;
           top: 0;
           left: @field-name-width;
-          right: 8%;
-          line-height: @field-height;
+          width: calc(~"92% - @{field-name-width}");
+          line-height: @field-line-height;
           font-size: @normal-font-size;
           color: @light-font-color;
           &.long-field-name {
             left: @long-field-name-width;
+            width: calc(~"92% - @{long-field-name-width}");
           }
           .multi-line {
             display: inline-block;
