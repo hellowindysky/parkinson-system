@@ -361,7 +361,7 @@
               </td>
               <td class="col w2" colspan="2">
                 <span v-if="mode===VIEW_CURRENT_CARD">
-                  {{copyInfo.patientDbsFirstDetail[getRightIndex(index)].sideEffectDuration}}
+                  {{getFieldValue(copyInfo.patientDbsFirstDetail[getRightIndex(index)].sideEffectDuration, 'duration')}}
                 </span>
                 <el-select v-else v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].sideEffectDuration">
                   <el-option v-for="option in getOptions('duration')" :label="option.name" :value="option.code" :key="option.code"></el-option>
