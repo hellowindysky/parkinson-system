@@ -92,7 +92,7 @@
 
       <extensible-panel class="panel" :mode="mode" :title="toxicHistoryTitle" v-on:addNewCard="addToxicRecord" :editable="canEdit">
         <card class="card" :class="devideWidth" :mode="mode" v-for="item in processedToxicList" :key="item.expmaterialName"
-          :title="item.expmaterialName" v-on:editCurrentCard="editToxicRecord(item)"
+          :title="transform(item, 'exposedType', toxicExposureHistoryDictionary)" v-on:editCurrentCard="editToxicRecord(item)"
           v-on:viewCurrentCard="viewToxicRecord(item)"
           v-on:deleteCurrentCard="deleteToxicRecord(item)">
           <div class="text first-line">{{item.exposedFrquency}}</div>
