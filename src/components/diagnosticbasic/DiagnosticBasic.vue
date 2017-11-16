@@ -4,7 +4,7 @@
     <div class="diagnostic-basic">
       <div v-for="field in diagnosticBasicTemplate" class="field"
        :class="{'whole-line': field.fieldName === 'remarks', 'multi-line': field.fieldName === 'remarks'}">
-        <span class="field-name">
+        <span class="field-name ">
           {{field.cnfieldName}}
           <span class="required-mark" v-show="field.must===1">*</span>
         </span>
@@ -16,7 +16,7 @@
           <span v-else>
             {{copyInfo[field.fieldName]}}
           </span>
-        </div>
+        </div>  
 
         <div class="field-input" v-show="mutableMode===EDITING_MODE">
           <span class="warning-text" v-show="true">
@@ -32,7 +32,7 @@
            :editable="false" @change="updateWarning(field)">
           </el-date-picker>
           <el-input v-else-if="getUIType(field.fieldName)===1" v-model="copyInfo[field.fieldName]"
-           type="textarea" :rows="2" :placeholder="getMatchedField(field.fieldName).cnFieldDesc" :maxlength="500"></el-input>
+           type="textarea" :rows="3" :placeholder="getMatchedField(field.fieldName).cnFieldDesc" :maxlength="500"></el-input>
         </div>
       </div>
     </div>
@@ -254,7 +254,7 @@ export default {
 @field-name-width: 100px;
 
 .diagnostic-basic {
-  padding: 0 25px;
+  padding: 0 25px 18px;
   text-align: left;
   .field {
     display: inline-block;
@@ -273,6 +273,8 @@ export default {
     }
     .field-name {
       display: inline-block;
+      position: absolute;
+      top: 0;
       width: @field-name-width;
       line-height: @field-height;
       font-size: @normal-font-size;
@@ -285,7 +287,11 @@ export default {
     }
     .field-value {
       display: inline-block;
-      line-height: @field-height;
+      position: relative;
+      left: @field-name-width;
+      top: 12.5px;
+      width: calc(~"100% - @{field-name-width}");
+      line-height: 25px;
       font-size: @normal-font-size;
       color: @light-font-color;
     }
