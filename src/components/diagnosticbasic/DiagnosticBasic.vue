@@ -16,7 +16,7 @@
           <span v-else>
             {{copyInfo[field.fieldName]}}
           </span>
-        </div>  
+        </div>
 
         <div class="field-input" v-show="mutableMode===EDITING_MODE">
           <span class="warning-text" v-show="true">
@@ -29,7 +29,7 @@
           </el-select>
           <el-date-picker v-else-if="getUIType(field.fieldName)===6" v-model="copyInfo[field.fieldName]" type="date"
            :class="{'warning': warningResults[field.fieldName]}" :placeholder="getMatchedField(field).cnFieldDesc"
-           :editable="false" @change="updateWarning(field)">
+           :editable="true" @change="updateWarning(field)">
           </el-date-picker>
           <el-input v-else-if="getUIType(field.fieldName)===1" v-model="copyInfo[field.fieldName]"
            type="textarea" :rows="3" :placeholder="getMatchedField(field.fieldName).cnFieldDesc" :maxlength="500"></el-input>
@@ -91,7 +91,7 @@ export default {
       }
     },
     canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients) && this.archived) {
+      if (this.$route.matched.some(record => record.meta.myPatients) && (this.archived || this.$route.params.caseId === 'newCase')) {
         return true;
       } else {
         return false;

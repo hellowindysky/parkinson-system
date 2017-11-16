@@ -156,14 +156,12 @@ export default {
       // 即使删除不成功，也要解除 [确认对话框] 的 “确认” 回调函数
       Bus.$off(this.CONFIRM);
     },
-    getSwitchType(type) {
-      if (String(type) === '1') {
-        return '开';
-      } else if (String(type) === '0') {
-        return '关';
-      } else {
-        return '';
-      }
+    getSwitchType(code) {
+      code = parseInt(code, 10);
+      var info = Util.getElement('typegroupcode', 'switchType', this.typeGroup);
+      var types = info.types ? info.types : [];
+      var targetOption = Util.getElement('typeCode', code, types);
+      return targetOption.typeName ? targetOption.typeName : '';
     },
     getScaleTypeCode(scaleInfoId) {
       var scale = Util.getElement('scaleInfoId', scaleInfoId, this.allScale);

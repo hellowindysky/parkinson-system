@@ -325,6 +325,11 @@ export default {
             this.copyInfo.sex = gender === '男' ? 0 : 1;
           }
         }
+      } else if (fieldName === 'height' || fieldName === 'weight') {
+        if (parseFloat(this.copyInfo[fieldName], 10) < 0) {
+          this.$set(this.warningResults, fieldName, '身高和体重必须大于0');
+          return;
+        };
       }
 
       if (this.getUIType(field) === 6) {

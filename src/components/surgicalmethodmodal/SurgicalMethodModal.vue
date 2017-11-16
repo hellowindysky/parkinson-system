@@ -249,12 +249,12 @@ export default {
     .content {
       text-align: left;
       .field {
-        padding: 5px 0;
+        // padding: 5px 0;
         text-align: left;
         display: inline-block;
         position: relative;
         width: 50%;
-        height: @field-height;
+        // height: @field-height;
         text-align: left;
         transform: translateX(10px);  // 这一行是为了修补视觉上的偏移
         &.whole-line {
@@ -283,7 +283,10 @@ export default {
         }
         .field-input {
           display: inline-block;
-          position: absolute;
+          // position: absolute;
+          padding-left:80px;
+          width:100%;
+          box-sizing: border-box;
           top: 0;
           left: @field-name-width;
           right: 8%;
