@@ -530,9 +530,13 @@ export default {
         position: absolute;
         font-size: @small-font-size;
         color: @light-font-color;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
       .first-line {
         left: 10px;
+        right: 10px;
         top: 50px;
       }
       .start-time, .second-line {
