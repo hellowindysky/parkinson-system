@@ -18,8 +18,11 @@
           v-on:viewCurrentCard="viewMedRecord(item)"
           v-on:deleteCurrentCard="deleteMedRecord(item)">
           <div class="text first-line">一天{{item.medDose}}次</div>
-          <div class="text start-time">{{item.medStart}} ~</div>
-          <div class="text end-time">{{item.medEnd}}</div>
+          <div class="text start-time">{{item.medStart}}</div>
+          <div class="text end-time">
+            <span v-show="item.medEnd">~</span>
+            {{item.medEnd}}
+          </div>
         </card>
       </extensible-panel>
 
@@ -28,8 +31,11 @@
           :title="transform(item, 'diseaseRelationId', diseaseHistoryDictionary)" v-on:editCurrentCard="editDiseaseRecord(item)"
           v-on:viewCurrentCard="viewDiseaseRecord(item)" v-on:deleteCurrentCard="deleteDiseaseRecord(item)">
           <div class="text first-line">是否住院： {{transform(item, 'isHospitalization', diseaseHistoryDictionary)}}</div>
-          <div class="text start-time">{{item.beginTime}} ~</div>
-          <div class="text end-time">{{item.endTime}}</div>
+          <div class="text start-time">{{item.beginTime}}</div>
+          <div class="text end-time">
+            <span v-show="item.endTime">~</span>
+            {{item.endTime}}
+          </div>
         </card>
       </extensible-panel>
 
@@ -534,7 +540,7 @@ export default {
         top: 75px;
       }
       .end-time {
-        left: 85px;
+        left: 75px;
         top: 75px;
       }
     }
