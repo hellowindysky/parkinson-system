@@ -410,11 +410,11 @@ export default {
 <style lang="less">
 @import "~styles/variables.less";
 
-@field-height: 50px;
+@field-line-height: 25px;
 @field-name-width: 100px;
 
 .basic-info {
-  padding: 0 25px;
+  padding: 0 25px 10px;
   .group {
     padding: 15px 0;
     border-bottom: 1px solid @light-gray-color;
@@ -430,18 +430,22 @@ export default {
       display: inline-block;
       position: relative;
       width: 50%;
-      height: @field-height;
+      min-height: 50px;
       text-align: left;
+      transform: translateY(5px);
       &.whole-line {
         width: 100%;
-        .field-input {
-          right: 2%;
+        .field-name, .field-input {
+          width: calc(~"98% - @{field-name-width}");
         }
       }
       .field-name {
         display: inline-block;
+        position: absolute;
+        left: 0;
+        top: 0;
         width: @field-name-width;
-        line-height: @field-height;
+        line-height: @field-line-height;
         font-size: @normal-font-size;
         color: @font-color;
         .required-mark {
@@ -452,7 +456,10 @@ export default {
       }
       .field-value {
         display: inline-block;
-        line-height: @field-height;
+        position: relative;
+        left: @field-name-width;
+        width: calc(~"96% - @{field-name-width}");
+        line-height: @field-line-height;
         font-size: @normal-font-size;
         color: @light-font-color;
       }
@@ -461,18 +468,19 @@ export default {
         position: absolute;
         top: 0;
         left: @field-name-width;
-        right: 4%;
-        line-height: @field-height;
+        width: calc(~"96% - @{field-name-width}");
+        line-height: @field-line-height;
         overflow: visible;
         .warning-text {
           position: absolute;
-          top: 25px;
+          top: 22px;
           left: 10px;
           height: 15px;
           color: red;
           font-size: @small-font-size;
         }
         .el-input {
+          transform: translateY(-3px);
           .el-input__inner {
             height: 30px;
             border: none;
