@@ -690,7 +690,7 @@ export function addGeneCheck(patientGene) {
   return encapsulatePromise(url, request);
 };
 // 删除基因检查
-export function delGeneCheck(patientGene) {
+export function deleteGeneCheck(patientGene) {
   var request = Object.assign({}, getCommonRequest());
   request.patientGene = patientGene;
   var url = baseUrl + '/pdms/delPatientGene';
