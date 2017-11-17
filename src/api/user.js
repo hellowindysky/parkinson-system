@@ -37,7 +37,6 @@ export function getScaleInfo() {
 
 export function getUserList() {
   var request = Object.assign({}, getCommonRequest());
-
   var url = baseUrl + '/usermgr/queryUserList';
 
   return encapsulatePromise(url, request);
@@ -61,6 +60,15 @@ export function getRoleList() {
   });
 
   var url = baseUrl + '/pdms/queryRoleList';
+
+  return encapsulatePromise(url, request);
+};
+
+// 瑞金医院要的导出功能
+export function exportPatients(patientIdList) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientIds = patientIdList;
+  var url = baseUrl + '/pdms/ruiJinPatientExport';
 
   return encapsulatePromise(url, request);
 };
