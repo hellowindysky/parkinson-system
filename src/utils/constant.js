@@ -65,6 +65,7 @@ export default {
   SHOW_MODAL_BOX: 'showModalBox',
   SHOW_MEDICINE_MODAL: 'showMedicineModal',
   SHOW_NERVOU_SYSTEM_MODAL: 'showNervouSystemModal',
+  SHOW_GENE_MODAL: 'showGeneModal',
   SHOW_BIOCHEMICAL_EXAM_MODAL: 'showBiochemicalExamModal',
   SHOW_EMG_MODAL: 'showEmgModal',
   SHOW_IMG_MODAL: 'showImgModal',

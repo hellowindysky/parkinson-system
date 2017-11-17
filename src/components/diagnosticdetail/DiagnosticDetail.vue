@@ -19,6 +19,7 @@
         :patientScale="caseDetail.patientScale"></diagnostic-scale>
       <diagnostic-examination :archived="!hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
         :neurologicCheckList="caseDetail.patientSpephysical"
+        :geneCheckList="caseDetail.patientGene"
         :biochemicalExamList="caseDetail.patientBioexam"
         :emgList="caseDetail.patientElecTroGram"
         :medicalImagingList="caseDetail.patientVideoList"

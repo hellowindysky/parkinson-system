@@ -107,6 +107,21 @@
           </div>
          </card>
       </extensible-panel>
+      <!-- 基因检查 -->
+      <extensible-panel class="panel" :mode="mutableMode" :title="geneCheckTitle" v-on:addNewCard="addGeneCheckRecord" :editable="canEdit">
+        <card class="card" :class="cardWidth" :mode="mutableMode" v-for="(item,idx) in geneCheckList" :key="idx"
+          :title="item.checkName" v-on:editCurrentCard="editGeneCheckRecord(item)"
+          v-on:deleteCurrentCard="deleteGeneCheckRecord(item)" v-on:viewCurrentCard="viewGeneCheckRecord(item)">
+          <div class="text first-line">
+            <span class="name">检查结果: </span>
+            <span class="value">{{item.checkResult}}</span>
+          </div>
+          <div class="text second-line">
+            <span class="name">检查时间: </span>
+            <span class="value">{{item.checkDate}}</span>
+          </div>
+         </card>
+      </extensible-panel>
       <extensible-panel class="panel" :mode="mutableMode" :title="biochemicalExamTitle" v-on:addNewCard="addBiochemicalExamRecord" :editable="canEdit">
         <card class="card" :class="cardWidth" :mode="mutableMode" v-for="item in biochemicalExamList" :key="item.patientCaseId"
          :title="transformBiochemicalExamType(item.bioexamId)" v-on:editCurrentCard="editBiochemicalExamRecord(item)"
@@ -165,7 +180,7 @@
 import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import { delEmg, deleteBiochemical, delNervouSystem, deleteImage, modVitalSigns } from 'api/patient.js';
+import { deleteEmg, deleteBiochemical, delNervouSystem, deleteGeneCheck, deleteImage, modVitalSigns } from 'api/patient.js';
 import { vueCopy } from 'utils/helper';
 
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
@@ -199,6 +214,12 @@ export default {
       default: this.READING_MODE
     },
     neurologicCheckList: {
+      type: Array,
+      default: () => {
+        return [];
+      }
+    },
+    geneCheckList: {
       type: Array,
       default: () => {
         return [];
@@ -246,6 +267,9 @@ export default {
     ]),
     neurologicCheckTitle() {
       return '神经系统检查（' + this.neurologicCheckList.length + '条记录）';
+    },
+    geneCheckTitle() {
+      return '基因检查（' + this.geneCheckList.length + '条记录）';
     },
     biochemicalExamTitle() {
       return '生化指标（' + this.biochemicalExamList.length + '条记录）';
@@ -402,6 +426,24 @@ export default {
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
+    addGeneCheckRecord() {
+      Bus.$emit(this.SHOW_GENE_MODAL, this.ADD_NEW_CARD, {}, this.archived);
+    },
+    editGeneCheckRecord(item) {
+      Bus.$emit(this.SHOW_GENE_MODAL, this.EDIT_CURRENT_CARD, item, this.archived);
+    },
+    viewGeneCheckRecord(item) {
+      Bus.$emit(this.SHOW_GENE_MODAL, this.VIEW_CURRENT_CARD, item, this.archived);
+    },
+    deleteGeneCheckRecord(item) {
+      let geneInfo = {
+        patientGeneId: item.patientGeneId
+      };
+      Bus.$on(this.CONFIRM, () => {
+        deleteGeneCheck(geneInfo).then(this._resolveDeletion, this._rejectDeletion);
+      });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
+    },
     addBiochemicalExamRecord() {
       Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.ADD_NEW_CARD, {}, this.archived);
     },
@@ -412,11 +454,11 @@ export default {
       Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.VIEW_CURRENT_CARD, item, this.archived);
     },
     deleteBiochemicalExamRecord(item) { // 删除生化指标
-      let BiochemicalId = {
+      let BiochemicalInfo = {
         patientBioexamId: item.patientBioexamId
       };
       Bus.$on(this.CONFIRM, () => {
-        deleteBiochemical(BiochemicalId).then(this._resolveDeletion, this._rejectDeletion);
+        deleteBiochemical(BiochemicalInfo).then(this._resolveDeletion, this._rejectDeletion);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
@@ -430,11 +472,11 @@ export default {
       Bus.$emit(this.SHOW_EMG_MODAL, this.EDIT_CURRENT_CARD, item, this.archived);
     },
     deleteEmgRecord(item) { // 删除肌电图
-      let EmgId = {
+      let EmgInfo = {
         id: item.id
       };
       Bus.$on(this.CONFIRM, () => {
-        delEmg(EmgId).then(this._resolveDeletion, this._rejectDeletion);
+        deleteEmg(EmgInfo).then(this._resolveDeletion, this._rejectDeletion);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
