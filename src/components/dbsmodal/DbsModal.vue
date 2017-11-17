@@ -1019,6 +1019,7 @@ export default {
       }
       this.lockSubmitButton = true;
       // 提交前检查一下必填字段是否都有填写，即警告信息是否都为空
+      console.log(this.warningResults);
       this.updateWarning('deviceId');
       this.updateWarning('programDate');
       for (var fieldName in this.warningResults) {
@@ -1069,7 +1070,7 @@ export default {
     judgeProgramDate() {
       console.log(this.copyInfo);
       var programDate = this.copyInfo.programDate ? new Date(this.copyInfo.programDate).getTime() : undefined;
-      var lastProgramDate = this.copyInfo.lastProgramDate ? new Date(this.copyInfo.lastProgramDate).getTime() : undefined;
+      var lastProgramDate = this.lastProgramDate ? new Date(this.lastProgramDate).getTime() : undefined;
       if (lastProgramDate && programDate && (lastProgramDate > programDate)) {
         this.$message({
           message: '程控时间必须大于上次时间',
@@ -1166,7 +1167,7 @@ export default {
       if (!this.completeInit || this.duringTogglingModelType) {
         return;
       }
-      if (this.copyInfo[fieldName] === '') {
+      if (this.copyInfo[fieldName] === '' || this.copyInfo[fieldName] === undefined) {
         this.$set(this.warningResults, fieldName, '必填项');
       } else {
         this.$set(this.warningResults, fieldName, '');

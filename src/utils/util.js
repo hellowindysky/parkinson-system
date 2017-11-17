@@ -22,7 +22,9 @@ function simplifyDate(dateStr) {
   var dateObj = new Date(dateStr);
   var year = dateObj.getFullYear();
   var month = dateObj.getMonth() + 1;
+  month = month < 10 ? '0' + month : month;
   var date = dateObj.getDate();
+  date = date < 10 ? '0' + date : date;
   return year + '-' + month + '-' + date;
 }
 
@@ -34,17 +36,14 @@ function simplifyTime(dateStr) {
   var dateObj = new Date(dateStr);
   var year = dateObj.getFullYear();
   var month = dateObj.getMonth() + 1;
+  month = month < 10 ? '0' + month : month;
   var date = dateObj.getDate();
+  date = date < 10 ? '0' + date : date;
   var hour = dateObj.getHours();
+  hour = hour < 10 ? '0' + hour : hour;
   var min = dateObj.getMinutes();
-  var formatHour = '';
-  var formatMin = '';
-  if (Number(hour) < 10) {
-    formatHour = 0;
-  } else if (Number(min) < 10) {
-    formatMin = 0;
-  }
-  return year + '-' + month + '-' + date + ' ' + formatHour + hour + ':' + formatMin + min;
+  min = min < 10 ? '0' + min : min;
+  return year + '-' + month + '-' + date + ' ' + hour + ':' + min;
 }
 
 function calculateYearsBetween(fromDate, toDate) {
