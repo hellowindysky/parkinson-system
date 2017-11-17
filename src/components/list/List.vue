@@ -327,19 +327,17 @@ export default {
     }
   },
   mounted() {
-    // 将省市的数据请求过来
-    this.checkRoute();
 
     // 如果在某个指定了 id 的页面进行刷新，checkRoute函数内的[更新列表数据]不会执行，这个时候就需要手动更新
     if (!hasFirstUpdatedList) {
       if (this.listType === this.MY_PATIENTS_TYPE || this.listType === this.OTHER_PATIENTS_TYPE) {
-        this.updatePatientsList();
+        this.updatePatientsList(this.checkRoute);
       } else if (this.listType === this.GROUP_TYPE) {
-        this.updateGroupList();
+        this.updateGroupList(this.checkRoute);
       } else if (this.listType === this.USERTYPE_TYPE) {
-        this.updateUserList();
+        this.updateUserList(this.checkRoute);
       } else if (this.listType === this.GROUP_TYPE) {
-        this.updateRoleList();
+        this.updateRoleList(this.checkRoute);
       }
     }
 
@@ -561,18 +559,18 @@ export default {
       }
       return options;
     },
-    resetForm(formName) {
+    resetForm(formName, cb) {
       this.$refs[formName].resetFields();
-      this.submitForm(formName);
+      this.submitForm(formName, cb);
     },
-    submitForm(formName) {
+    submitForm(formName, cb) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           // 提交新的筛选条件，发出post请求
           if (formName === 'filterPatientsForm') {
-            this.updatePatientsList();
+            this.updatePatientsList(cb);
           } else if (formName === 'filterGroupsForm') {
-            this.updateGroupList();
+            this.updateGroupList(cb);
           }
         } else {
           console.log('error submit!!');
@@ -586,59 +584,50 @@ export default {
 
       // 一旦发现路由地址中还没有id，就更新病患列表数据，并默认加载当前列表中的第一项
       if (/^\/patients\/list\/?$/.test(path)) {
-        this.updatePatientsList(() => {
-          if (this.myPatientsList.length > 0) {
-            let firstPatientId = this.myPatientsList[0].patientId;
-            this.$router.replace({
-              name: 'patientInfo',
-              params: { id: firstPatientId }
-            });
-          }
-        });
+        if (this.myPatientsList.length > 0) {
+          let firstPatientId = this.myPatientsList[0].patientId;
+          this.$router.replace({
+            name: 'patientInfo',
+            params: { id: firstPatientId }
+          });
+        }
 
       } else if (/^\/patients\/groups\/?$/.test(path)) {
         // 获取分组列表的所有id，然后根据第一个id进行跳转
-        this.updateGroupList(() => {
-          if (this.groupList.length > 0) {
-            let firstGroupId = this.groupList[0].groupId;
-            this.$router.replace({
-              name: 'groupInfo',
-              params: { id: firstGroupId }
-            });
-          }
-        });
+        if (this.groupList.length > 0) {
+          let firstGroupId = this.groupList[0].groupId;
+          this.$router.replace({
+            name: 'groupInfo',
+            params: { id: firstGroupId }
+          });
+        }
 
       } else if (/^\/patients\/otherList\/?$/.test(path)) {
-        this.updatePatientsList(() => {
-          if (this.otherPatientsList.length > 0) {
-            let firstPatientId = this.otherPatientsList[0].patientId;
-            this.$router.replace({
-              name: 'otherPatientInfo',
-              params: { id: firstPatientId }
-            });
-          }
-        });
+        if (this.otherPatientsList.length > 0) {
+          let firstPatientId = this.otherPatientsList[0].patientId;
+          this.$router.replace({
+            name: 'otherPatientInfo',
+            params: { id: firstPatientId }
+          });
+        }
 
       } else if (/^\/configuration\/userManagement\/?$/.test(path)) {
-        this.updateUserList(() => {
-          if (this.userList.length > 0) {
-            let firstUserId = this.userList[0].id;
-            this.$router.replace({
-              name: 'userInfo',
-              params: { id: firstUserId }
-            });
-          }
-        });
+        if (this.userList.length > 0) {
+          let firstUserId = this.userList[0].id;
+          this.$router.replace({
+            name: 'userInfo',
+            params: { id: firstUserId }
+          });
+        }
+
       } else if (/^\/configuration\/roleManagement\/?$/.test(path)) {
-        this.updateRoleList(() => {
-          if (this.roleList.length > 0) {
-            let firstRoleId = this.roleList[0].roleId;
-            this.$router.replace({
-              name: 'roleInfo',
-              params: { id: firstRoleId }
-            });
-          }
-        });
+        if (this.roleList.length > 0) {
+          let firstRoleId = this.roleList[0].roleId;
+          this.$router.replace({
+            name: 'roleInfo',
+            params: { id: firstRoleId }
+          });
+        }
       }
     }
   },
@@ -652,16 +641,15 @@ export default {
     $route() {
       // 路由一旦发生变化，就关闭筛选面板
       this.panelDisplay = false;
-      this.checkRoute();
     },
     listType() {
       // 列表类型一旦发生变化，则清空搜索框内容
       this.searchInput = '';
-      // 同时清空各个筛选面板
+      // 同时清空各个筛选面板，重新获取列表
       if (this.listType === this.MY_PATIENTS_TYPE || this.listType === this.OTHER_PATIENTS_TYPE) {
-        this.resetForm('filterPatientsForm');
+        this.resetForm('filterPatientsForm', this.checkRoute);
       } else if (this.listType === this.GROUP_TYPE) {
-        this.resetForm('filterGroupsForm');
+        this.resetForm('filterGroupsForm', this.checkRoute);
       }
     }
   },
