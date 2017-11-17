@@ -13,6 +13,7 @@
     <dbs-modal></dbs-modal>
     <confirm-box></confirm-box>
     <nervous-system></nervous-system>
+    <gene-modal></gene-modal>
     <biochemical-exam></biochemical-exam>
     <emg-modal></emg-modal>
     <img-modal></img-modal>
@@ -37,6 +38,7 @@ import dbsModal from 'components/dbsmodal/DbsModal';
 import confirmBox from 'components/confirmbox/ConfirmBox';
 import filterPanel from 'components/filterpanel/FilterPanel';
 import nervousSystem from 'components/nervousystemmodal/NervouSystemModal';
+import geneModal from 'components/genemodal/GeneModal';
 import biochemicalExam from 'components/biochemicalexammodal/BiochemicalExamModal';
 import emgModal from 'components/emgmodal/EmgModal';
 import imgModal from 'components/imagemodal/ImageModal';
@@ -62,6 +64,7 @@ export default {
     confirmBox,
     filterPanel,
     nervousSystem,
+    geneModal,
     biochemicalExam,
     emgModal,
     imgModal
