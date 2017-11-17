@@ -22,7 +22,7 @@
             <span class="required-mark"></span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{sampleType}}</span>
+            <span>{{getFieldValue(sampleType, 'sampleType')}}</span>
           </span>
           <span class="field-input" v-else>
             <el-select v-model="sampleType" placeholder="请选择标本类型">
@@ -92,6 +92,7 @@
               v-model="remarks"
               type="textarea"
               :rows="2"
+              :maxlength="500"
               placeholder="请输入备注">
             </el-input>
           </span>
@@ -112,8 +113,7 @@ import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import { reviseDateFormat } from 'utils/helper.js';
 // import { reviseDateFormat, pruneObj } from 'utils/helper.js';
-// import { modifyGeneCheck, addGeneCheck } from 'api/patient.js';
-import { addGeneCheck } from 'api/patient.js';
+import { addGeneCheck, modifyGeneCheck } from 'api/patient.js';
 
 export default {
   data() {
@@ -132,7 +132,8 @@ export default {
         checkDate: '',
         checkName: '',
         checkResult: ''
-      }
+      },
+      showEdit: true
     };
   },
   computed: {
@@ -145,17 +146,28 @@ export default {
       } else {
         return '基因检查';
       }
+    },
+    canEdit() {
+      if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
+        return true;
+      } else {
+        return false;
+      }
     }
   },
   methods: {
-    showModal(cardOperation, item) {
+    showModal(cardOperation, item, showEdit) {
       this.completeInit = false;
       this.mode = cardOperation;
-      // ggggg
-      // ggggg
-      // ggggg
-      // ggggg
-      // ggggg
+      this.showEdit = showEdit;
+
+      this.checkDate = item.checkDate;
+      this.checkName = item.checkName;
+      this.sampleNo = item.sampleNo;
+      this.sampleType = item.sampleType;
+      this.checkResult = item.checkResult;
+      this.remarks = item.remarks;
+
       this.$nextTick(() => {
         for (var property in this.warningResults) {
           if (this.warningResults.hasOwnProperty(property)) {
@@ -165,7 +177,7 @@ export default {
       });
       this.completeInit = true;
       this.displayModal = true;
-      console.log(item);
+      // console.log(item);
     },
     getOptions(fieldName) {
       var options = [];
@@ -179,6 +191,12 @@ export default {
       };
       return options;
     },
+    getFieldValue(code, fieldName) {
+      code = parseInt(code, 10);
+      var options = this.getOptions(fieldName);
+      var targetOption = Util.getElement('code', code, options);
+      return targetOption.name ? targetOption.name : '';
+    },
     updateWarning(fieldName) {
       if (this.completeInit && !this[fieldName]) {
         this.warningResults[fieldName] = '必填项';
@@ -188,6 +206,7 @@ export default {
     },
     cancel() {
       this.displayModal = false;
+      this.lockSubmitButton = false;
     },
     switchToEditingMode() {
       this.mode = this.EDIT_CURRENT_CARD;
@@ -218,20 +237,25 @@ export default {
       geneInfo.checkResult = this.checkResult;
       geneInfo.remarks = this.remarks;
       reviseDateFormat(geneInfo);
-      console.log(geneInfo);
+
+      // console.log(geneInfo);
       if (this.mode === this.ADD_NEW_CARD) {
         addGeneCheck(geneInfo).then(() => {
           this.updateAndClose();
-          this.lockSubmitButton = false;
         }, this._handleError);
-      };
+      } else if (this.mode === this.EDIT_CURRENT_CARD) {
+        modifyGeneCheck(geneInfo).then(() => {
+          this.updateAndClose();
+        }, this._handleError);
+      }
     },
     _handleError(error) {
       console.log(error);
       this.lockSubmitButton = false;
     },
     updateAndClose() {
-      // Bus.$emit(this.UPDATE_CASE_INFO);
+      Bus.$emit(this.UPDATE_CASE_INFO);
+      this.lockSubmitButton = false;
       this.displayModal = false;
     }
   },
@@ -245,7 +269,7 @@ export default {
 @import "~styles/variables.less";
 
 @field-line-height: 25px;
-@field-name-width: 80px;
+@field-name-width: 90px;
 @long-field-name-width: 160px;
 
 .gene-modal-wrapper{

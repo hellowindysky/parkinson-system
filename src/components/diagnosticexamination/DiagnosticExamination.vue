@@ -110,14 +110,15 @@
       <!-- 基因检查 -->
       <extensible-panel class="panel" :mode="mutableMode" :title="geneCheckTitle" v-on:addNewCard="addGeneCheckRecord" :editable="canEdit">
         <card class="card" :class="cardWidth" :mode="mutableMode" v-for="(item,idx) in geneCheckList" :key="idx"
-         :title="transformNeurologicCheckType(item.spephysicalInfo)" v-on:editCurrentCard="editNeurologicCheckRecord(item)"
-         v-on:deleteCurrentCard="deleteNeurologicCheckRecord(item)" v-on:viewCurrentCard="viewNeurologicCheckRecord(item)">
+          :title="item.checkName" v-on:editCurrentCard="editGeneCheckRecord(item)"
+          v-on:deleteCurrentCard="deleteGeneCheckRecord(item)" v-on:viewCurrentCard="viewGeneCheckRecord(item)">
           <div class="text first-line">
-            <span class="name">诊断结果: </span>
-            <span class="value">{{item.spephysicalResult}}</span>
+            <span class="name">检查结果: </span>
+            <span class="value">{{item.checkResult}}</span>
           </div>
           <div class="text second-line">
-            {{item.ariseTime}}
+            <span class="name">检查时间: </span>
+            <span class="value">{{item.checkDate}}</span>
           </div>
          </card>
       </extensible-panel>
@@ -426,11 +427,13 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addGeneCheckRecord() {
-      Bus.$emit(this.SHOW_GENE_MODAL, this.ADD_NEW_CARD, {});
+      Bus.$emit(this.SHOW_GENE_MODAL, this.ADD_NEW_CARD, {}, this.archived);
     },
-    editGeneCheckRecord() {
+    editGeneCheckRecord(item) {
+      Bus.$emit(this.SHOW_GENE_MODAL, this.EDIT_CURRENT_CARD, item, this.archived);
     },
-    viewGeneCheckRecord() {
+    viewGeneCheckRecord(item) {
+      Bus.$emit(this.SHOW_GENE_MODAL, this.VIEW_CURRENT_CARD, item, this.archived);
     },
     deleteGeneCheckRecord() { // 删除基因检查
     },
