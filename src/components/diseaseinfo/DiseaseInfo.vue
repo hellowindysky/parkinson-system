@@ -149,6 +149,17 @@ export default {
             return false;
           }
         }
+      };
+      var ariTime = new Date(this.copyInfo.ariTime).getTime();
+      var firTime = this.copyInfo.firTime ? new Date(this.copyInfo.firTime).getTime() : ariTime;
+      var surTime = this.copyInfo.surTime ? new Date(this.copyInfo.surTime).getTime() : firTime;
+      if (ariTime > firTime || firTime > surTime) {
+        this.$message({
+          message: '请检查发病、初诊、确诊时间顺序',
+          type: 'warning',
+          duration: 2000
+        });
+        return;
       }
 
       this.restoreCopyInfo();
