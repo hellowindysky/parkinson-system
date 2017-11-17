@@ -58,7 +58,7 @@
     <div class="group-description" v-show="descPanelDisplay">
       <div class="iconfont icon-close" @click="closeDescPanel"></div>
       <p class="description-content" v-show="descriptionMode===READING_MODE">{{remarks}}</p>
-      <el-input type="textarea" v-model="copyRemarks" v-show="descriptionMode===EDITING_MODE" :rows="8" :maxlength="500"></el-input>
+      <el-input type="textarea" v-model="copyRemarks" v-show="descriptionMode===EDITING_MODE" :rows="14" :maxlength="500"></el-input>
       <div class="button-wrapper">
         <div class="button cancel-button" v-show="descriptionMode===EDITING_MODE" @click="cancelDescInput">取消</div>
         <div class="button submit-button" v-show="descriptionMode===EDITING_MODE" @click="submitDescInput">确定</div>
@@ -619,8 +619,8 @@ export default {
     position: absolute;
     top: @bar-height;
     left: 0;
-    width: 400px;
-    height: 250px;
+    width: 450px;
+    height: 390px;
     background-color: @theme-color;
     z-index: 100;
     .icon-close {
@@ -640,9 +640,9 @@ export default {
     }
     .description-content {
       position: absolute;
-      width: 350px;
+      width: 400px;
       left: 25px;
-      top: 5px;
+      top: 10px;
       box-sizing: border-box;
       padding: 5px;
       // background-color: @font-color;
@@ -651,9 +651,9 @@ export default {
     }
     .el-textarea {
       position: absolute;
-      width: 350px;
+      width: 400px;
       left: 25px;
-      top: 20px;
+      top: 22px;
       .el-textarea__inner {
         background-color: @font-color;
         color: #fff;
