@@ -443,21 +443,6 @@ export default {
         }
       }
 
-      // 检查是否所有文件都已上传成功
-      var totalFileList = [].concat(this.fileList1, this.fileList2, this.fileList3, this.fileList4);
-      console.log(totalFileList, this.fileList1);
-      for (let file of totalFileList) {
-        if (file.percentage !== 100) {
-          this.$message({
-            message: '请等待所有文件上传成功再提交',
-            type: 'warning',
-            duration: 2000
-          });
-          this.lockSubmitButton = false;
-          return;
-        }
-      }
-
       var imageInfo = {};
       imageInfo.patientCaseId = this.$route.params.caseId;
       imageInfo.title = this.name;
