@@ -1031,7 +1031,14 @@ export default {
           this.lockSubmitButton = false;
           return;
         }
-      }
+      };
+
+      if (this.modelType === 0) {
+        if (this.judgeProgramDate()) {
+          this.lockSubmitButton = false;
+          return;
+        }
+      };
 
       this.copyInfo.patientCaseId = this.$route.params.caseId;
       reviseDateFormat(this.copyInfo);
@@ -1058,6 +1065,20 @@ export default {
           this.updateAndClose();
         }, this._handleError);
       }
+    },
+    judgeProgramDate() {
+      console.log(this.copyInfo);
+      var programDate = this.copyInfo.programDate ? new Date(this.copyInfo.programDate).getTime() : undefined;
+      var lastProgramDate = this.copyInfo.lastProgramDate ? new Date(this.copyInfo.lastProgramDate).getTime() : undefined;
+      if (lastProgramDate && programDate && (lastProgramDate > programDate)) {
+        this.$message({
+          message: '程控时间必须大于上次时间',
+          type: 'warning',
+          duration: 2000
+        });
+        return true;
+      };
+      return false;
     },
     _handleError(error) {
       console.log(error);
