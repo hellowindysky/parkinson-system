@@ -3,26 +3,7 @@
     <div class="gene-modal">
       <h3 class="title">{{title}}</h3>
       <div class="content">
-        <div class="field whole-line">
-          <span class="field-name">
-            检查时间:
-            <span class="required-mark">*</span>
-          </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{checkDate}}</span>
-          </span>
-          <span class="field-input" v-else>
-            <span class="warning-text">{{warningResults.checkDate}}</span>
-            <el-date-picker
-              v-model="checkDate"
-              type="date"
-              placeholder="选择日期"
-              :class="{'warning': warningResults.checkDate}"
-              @change="updateWarning('checkDate')">
-            </el-date-picker>
-          </span>
-        </div>
-        <div class="field whole-line">
+        <div class="field">
           <span class="field-name">
             检查名称:
             <span class="required-mark">*</span>
@@ -35,19 +16,7 @@
             <el-input v-model="checkName" placeholder="请输入检查名称" :class="{'warning': warningResults.checkName}" @change="updateWarning('checkName')"></el-input>
           </span>
         </div>
-        <div class="field whole-line">
-          <span class="field-name">
-            标本号:
-            <span class="required-mark"></span>
-          </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{sampleNo}}</span>
-          </span>
-          <span class="field-input" v-else>
-            <el-input v-model="sampleNo" placeholder="请输入标本号"></el-input>
-          </span>
-        </div>
-        <div class="field whole-line">
+        <div class="field half-line">
           <span class="field-name">
             标本类型:
             <span class="required-mark"></span>
@@ -66,7 +35,38 @@
             </el-select>
           </span>
         </div>
-        <div class="field whole-line">
+        <div class="field half-line">
+          <span class="field-name">
+            检查时间:
+            <span class="required-mark">*</span>
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span>{{checkDate}}</span>
+          </span>
+          <span class="field-input" v-else>
+            <span class="warning-text">{{warningResults.checkDate}}</span>
+            <el-date-picker
+              v-model="checkDate"
+              type="date"
+              placeholder="选择日期"
+              :class="{'warning': warningResults.checkDate}"
+              @change="updateWarning('checkDate')">
+            </el-date-picker>
+          </span>
+        </div>
+        <div class="field">
+          <span class="field-name">
+            标本号:
+            <span class="required-mark"></span>
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span>{{sampleNo}}</span>
+          </span>
+          <span class="field-input" v-else>
+            <el-input v-model="sampleNo" placeholder="请输入标本号"></el-input>
+          </span>
+        </div>
+        <div class="field">
           <span class="field-name">
             检查结果:
             <span class="required-mark">*</span>
@@ -79,7 +79,7 @@
             <el-input v-model="checkResult" placeholder="请输入检查结果" :class="{'warning': warningResults.checkResult}" @change="updateWarning('checkResult')"></el-input>
           </span>
         </div>
-        <div class="field whole-line">
+        <div class="field">
           <span class="field-name">
             备注:
             <span class="required-mark"></span>
@@ -112,7 +112,7 @@ import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import { reviseDateFormat } from 'utils/helper.js';
 // import { reviseDateFormat, pruneObj } from 'utils/helper.js';
-// import { modifyGeneCheck, addGeneCheck, delGeneCheck } from 'api/patient.js';
+// import { modifyGeneCheck, addGeneCheck } from 'api/patient.js';
 import { addGeneCheck } from 'api/patient.js';
 
 export default {
@@ -243,7 +243,8 @@ export default {
 
 <style lang="less">
 @import "~styles/variables.less";
-@field-height: 45px;
+
+@field-line-height: 25px;
 @field-name-width: 80px;
 @long-field-name-width: 160px;
 
@@ -273,16 +274,15 @@ export default {
       .field {
         display: inline-block;
         position: relative;
-        padding: 5px 0;
-        width: 50%;
-        height: @field-height;
+        width: 100%;
+        min-height: 45px;
         box-sizing: border-box;
         text-align: left;
         transform: translateX(10px); // 这一行是为了修补视觉上的偏移
-        &.whole-line {
-          width: 100%;
+        &.half-line {
+          width: 50%;
           .field-input {
-            right: 4%;
+            width: calc(~"92% - @{field-name-width}");
           }
         }
         .field-name {
@@ -291,7 +291,7 @@ export default {
           top: 0;
           left: 0;
           width: @field-name-width;
-          line-height: @field-height;
+          line-height: @field-line-height;
           font-size: @normal-font-size;
           color: @font-color;
           // &.long-field-name {
@@ -308,8 +308,8 @@ export default {
           position: absolute;
           top: 0;
           left: @field-name-width;
-          right: 8%;
-          line-height: @field-height;
+          width: calc(~"96% - @{field-name-width}");
+          line-height: @field-line-height;
           font-size: @normal-font-size;
           color: @light-font-color;
           // &.long-field-name {
@@ -324,6 +324,7 @@ export default {
             font-size: @small-font-size;
           }
           .el-input {
+            transform: translateY(-3px);
             .el-input__inner {
               height: 30px;
               border: none;
@@ -337,8 +338,7 @@ export default {
             width: 100%;
           }
           .el-textarea {
-            vertical-align: middle;
-            transform: translateY(5px);
+            transform: translateY(-3px);
             .el-textarea__inner {
               border: none;
               background-color: @screen-color;
