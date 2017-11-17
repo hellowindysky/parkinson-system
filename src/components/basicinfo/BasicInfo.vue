@@ -192,6 +192,13 @@ export default {
 
         }, (error) => {
           console.log(error);
+          if (error.code === 23) {
+            this.$message({
+              message: '该用户已经存在',
+              type: 'error',
+              duration: 2000
+            });
+          }
           this.lockSubmitButton = false;
         });
 
