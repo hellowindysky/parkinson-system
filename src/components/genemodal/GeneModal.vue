@@ -322,6 +322,7 @@ export default {
         min-height: 45px;
         box-sizing: border-box;
         text-align: left;
+        vertical-align: top;
         transform: translateX(10px); // 这一行是为了修补视觉上的偏移
         &.half-line {
           width: 50%;
