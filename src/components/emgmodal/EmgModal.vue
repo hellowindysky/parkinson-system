@@ -9,9 +9,9 @@
             <span class="required-mark">*</span>
           </span>
           <span class="field-input">
-            <span class="warning-text"></span>
+            <span class="warning-text">{{warningResults.elecTroGramId}}</span>
             <span v-if="mode===VIEW_CURRENT_CARD">{{getFieldValue(copyInfo.elecTroGramId, 'emgName')}}</span>
-            <el-select v-else placeholder="请选择肌电图名称" v-model="copyInfo.elecTroGramId"
+            <el-select v-else placeholder="请选择肌电图名称" v-model="copyInfo.elecTroGramId" :class="{'warning': warningResults.elecTroGramId}"
               :disabled="mode!==ADD_NEW_CARD" @change="selectEmg">
               <el-option v-for="emg in emgTypeList" :key="emg.id" :label="emg.emgName" :value="emg.id" ></el-option>
             </el-select>
@@ -20,7 +20,6 @@
         <div class="field">
           <span class="field-name">
             肌电图类型:
-            <span class="required-mark"></span>
           </span>
           <span class="field-input">
             <span class="warning-text"></span>
@@ -30,7 +29,6 @@
         <div class="field whole-line">
           <span class="field-name">
             检查结果:
-            <span class="required-mark"></span>
           </span>
           <span class="field-input">
             <span class="warning-text"></span>
@@ -41,7 +39,6 @@
         <div class="field whole-line">
           <span class="field-name">
             提示内容:
-            <span class="required-mark"></span>
           </span>
           <span class="field-input">
             <span class="warning-text"></span>
@@ -453,7 +450,9 @@ export default {
       MOT_UNI_ANA_ITEM: 'motUniAnaItem',
       NEED_EXAM_ITEM: 'needExamItem',
       SEN_NER_COND_ITEM: 'senNerCondItem',
-      warningResults: {},
+      warningResults: {
+        elecTroGramId: ''
+      },
       copyInfo: {},
       targetEmg: {},
       currentTable: '',
@@ -531,6 +530,7 @@ export default {
       this.tableMode = this.FATHER_OPEN;
       // console.log('item: ', item);
       this.showEdit = showEdit;
+
       this.$set(this.copyInfo, 'etgName', '');
       this.$set(this.copyInfo, 'elecTroGramId', '');
       this.$set(this.copyInfo, 'etgType', '');
@@ -549,8 +549,24 @@ export default {
       } else {
         vueCopy(item, this.copyInfo);
       }
+
       this.selectEmg();
       this.updateScrollbar();
+      this.clearWarning();
+    },
+    updateWarning(fieldName) {
+      if (this.copyInfo[fieldName] === undefined || this.copyInfo[fieldName] === '') {
+        this.warningResults[fieldName] = '必填项';
+      } else {
+        this.warningResults[fieldName] = '';
+      }
+    },
+    clearWarning() {
+      for (let p in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(p)) {
+          this.warningResults[p] = '';
+        }
+      }
     },
     selectEmg() {
       var emg = Util.getElement('id', this.copyInfo.elecTroGramId, this.emgTypeList);
@@ -560,6 +576,11 @@ export default {
         this.tableMode = this.FATHER_OPEN;
       }
       // console.log('emgTypeList:', this.emgTypeList);
+
+      if (emg.emgName) {
+        this.warningResults.elecTroGramId = '';
+      }
+
       vueCopy(emg, this.targetEmg);
       this.updateScrollbar();
     },
@@ -758,6 +779,14 @@ export default {
       }
       this.lockSubmitButton = true;
 
+      this.updateWarning('elecTroGramId');
+      for (var p in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(p) && this.warningResults[p] !== '') {
+          this.lockSubmitButton = false;
+          return;
+        }
+      }
+
       let submitData = this.copyInfo;
       if (this.mode === this.ADD_NEW_CARD) {
         // 新增肌电图
@@ -780,11 +809,6 @@ export default {
     updateAndClose() {
       this.lockSubmitButton = false;
       this.displayModal = false;
-    },
-    clearWarning() {
-      for (let property in this.warningResults) {
-        this.warningResults[property] = null;
-      }
     },
     chooseSubModal() {
       if (this.subModalType !== '') {
@@ -855,7 +879,8 @@ export default {
 <style lang="less">
 @import "~styles/variables.less";
 
-@field-height: 40px;
+@field-height: 45px;
+@field-line-height: 25px;
 @field-name-width: 100px;
 @long-field-name-width: 160px;
 
@@ -913,7 +938,7 @@ export default {
           top: 0;
           left: 0;
           width: @field-name-width;
-          line-height: 25px;
+          line-height: @field-line-height;
           font-size: @normal-font-size;
           color: @font-color;
           &.long-field-name {
@@ -931,7 +956,7 @@ export default {
           top: 0;
           left: @field-name-width;
           width: calc(~"92% - @{field-name-width}");
-          line-height: 25px;
+          line-height: @field-line-height;
           font-size: @normal-font-size;
           color: @light-font-color;
           &.long-field-name {
@@ -939,7 +964,7 @@ export default {
           }
           .warning-text {
             position: absolute;
-            top: 25px;
+            top: 22px;
             left: 10px;
             height: 15px;
             color: red;
