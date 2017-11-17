@@ -839,10 +839,16 @@
       <div class="iconfont" :class="toggleIconClass"></div>
     </div>
     <div class="content-area" :class="{'hide-condition-status': !displayCondition}">
+      <div class="operation-bar">
+        <div class="export-button">批量导出</div>
+      </div>
       <div class="content-scroll-area" ref="scrollContent">
         <div class="form-head">
-          <table class="form form-head">
+          <table class="form form-head" :class="{'selectable': true}">
             <tr class="row top-row">
+              <td v-show="true" class="col col-select">
+                <el-checkbox></el-checkbox>
+              </td>
               <td class="col col-num">序号</td>
               <td class="col col-id">患者ID</td>
               <td class="col col-gender">性别</td>
@@ -856,6 +862,9 @@
         <div class="form-body" ref="formBody">
           <table class="form">
             <tr class="row" v-for="(patient, i) in patientList">
+              <td v-show="true" class="col col-select">
+                <el-checkbox></el-checkbox>
+              </td>
               <td class="col col-num">{{i + 1}}</td>
               <td class="col col-id">{{patient.patientId}}</td>
               <td class="col col-gender">{{getNameByCode(patient.sex, 'sex')}}</td>
@@ -1053,8 +1062,11 @@ export default {
     },
     toggleConditonDisplay() {
       this.displayCondition = !this.displayCondition;
-      this.updateScrollList();
-      this.updateScrollContent();
+      // 等动画结束
+      setTimeout(() => {
+        this.updateScrollList();
+        this.updateScrollContent();
+      }, 300);
     },
     updateScrollList() {
       this.$nextTick(() => {
@@ -1591,8 +1603,10 @@ export default {
 @tabs-wrapper-margin-bottom: 5px;
 @function-area-height: 45px;
 @scroll-bar-thickness: 10px;
+@operation-bar-height: 40px;
 @top-row-height: 40px;
 
+@col-select-width: 40px;
 @col-num-width: 50px;
 @col-id-width: 80px;
 @col-gender-width: 60px;
@@ -1602,6 +1616,7 @@ export default {
 @col-operation-width: 100px;
 @table-width: @col-num-width + @col-id-width + @col-gender-width + @col-age-width +
   @col-disease-width + @col-symptom-width + @col-operation-width;
+@selectable-table-width: @table-width + @col-select-width;
 
 .filter-panel {
   position: absolute;
@@ -1880,10 +1895,33 @@ export default {
     &.hide-condition-status {
       left: @bar-width;
     }
+    .operation-bar {
+      width: 100%;
+      height: @operation-bar-height;
+      background-color: @background-color;
+      .export-button {
+        position: absolute;
+        top: 6px;
+        right: 10px;
+        width: @small-button-width;
+        height: @small-button-height;
+        line-height: @small-button-height;
+        background-color: @button-color;
+        color: #fff;
+        font-size: @normal-font-size;
+        cursor: pointer;
+        &:hover {
+          opacity: 0.8;
+        }
+        &:active {
+          opacity: 0.6;
+        }
+      }
+    }
     .content-scroll-area {
       position: relative;
       width: 100%;
-      height: 100%;
+      height: calc(~"100% - @{operation-bar-height}");
       overflow: hidden;
       .form {
         width: 100%;
@@ -1891,8 +1929,11 @@ export default {
         border-spacing: 0;
         table-layout: fixed;
         border: 1px solid @light-gray-color;
-        border-collapse:collapse;
+        border-collapse: collapse;
         text-align: center;
+        &.selectable {
+          min-width: @selectable-table-width;
+        }
         .row {
           height: 30px;
           line-height: 30px;
@@ -1907,6 +1948,9 @@ export default {
             border: 1px solid @light-gray-color;
             box-sizing: border-box;
             white-space: pre-wrap;
+            &.col-select {
+              width: @col-select-width;
+            }
             &.col-num {
               width: @col-num-width;
             }
@@ -1940,6 +1984,9 @@ export default {
                 border-bottom: 1px solid @theme-color;
               }
             }
+            .el-checkbox__inner {
+              border-color: @light-font-color;
+            }
           }
         }
       }
@@ -1957,14 +2004,12 @@ export default {
           background-color: @gray-color;
           border-radius: 20px;
         }
+        &:hover {
+          opacity: 0.6;
+        }
       }
       .ps__scrollbar-y-rail {
         display: none;
-      }
-      &:hover {
-        .ps__scrollbar-x-rail {
-          opacity: 0.6;
-        }
       }
       .form-body {
         position: relative;
@@ -1973,6 +2018,9 @@ export default {
         width: 100%;
         min-width: @table-width;
         height: calc(~"100% - @{top-row-height}");
+        &.selectable {
+          min-width: @selectable-table-width;
+        }
         .ps__scrollbar-y-rail {
           display: block;
           position: absolute;
@@ -1989,9 +2037,7 @@ export default {
             border-radius: 20px;
           }
           &:hover {
-            .ps__scrollbar-y-rail {
-              opacity: 0.6;
-            }
+            opacity: 0.8;
           }
         }
         .ps__scrollbar-x-rail {
