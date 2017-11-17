@@ -676,7 +676,7 @@ export default {
         &.whole-line {
           width: 100%;
           .field-input {
-            right: 4%;
+            width: calc(~"96% - @{field-name-width}");
           }
         }
         .field-name {
@@ -701,7 +701,7 @@ export default {
           display: inline-block;
           position: relative;
           left: @field-name-width;
-          width:calc(~"92% - @{field-name-width}");
+          width: calc(~"92% - @{field-name-width}");
           line-height: @field-line-height;
           font-size: @normal-font-size;
           color: @light-font-color;
