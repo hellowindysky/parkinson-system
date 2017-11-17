@@ -180,7 +180,7 @@
 import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import { delEmg, deleteBiochemical, delNervouSystem, deleteImage, modVitalSigns } from 'api/patient.js';
+import { deleteEmg, deleteBiochemical, delNervouSystem, deleteGeneCheck, deleteImage, modVitalSigns } from 'api/patient.js';
 import { vueCopy } from 'utils/helper';
 
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
@@ -435,7 +435,14 @@ export default {
     viewGeneCheckRecord(item) {
       Bus.$emit(this.SHOW_GENE_MODAL, this.VIEW_CURRENT_CARD, item, this.archived);
     },
-    deleteGeneCheckRecord() { // 删除基因检查
+    deleteGeneCheckRecord(item) {
+      let geneInfo = {
+        patientGeneId: item.patientGeneId
+      };
+      Bus.$on(this.CONFIRM, () => {
+        deleteImage(geneInfo).then(this._resolveDeletion, this._rejectDeletion);
+      });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addBiochemicalExamRecord() {
       Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.ADD_NEW_CARD, {}, this.archived);
@@ -447,11 +454,11 @@ export default {
       Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.VIEW_CURRENT_CARD, item, this.archived);
     },
     deleteBiochemicalExamRecord(item) { // 删除生化指标
-      let BiochemicalId = {
+      let BiochemicalInfo = {
         patientBioexamId: item.patientBioexamId
       };
       Bus.$on(this.CONFIRM, () => {
-        deleteBiochemical(BiochemicalId).then(this._resolveDeletion, this._rejectDeletion);
+        deleteBiochemical(BiochemicalInfo).then(this._resolveDeletion, this._rejectDeletion);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
@@ -465,11 +472,11 @@ export default {
       Bus.$emit(this.SHOW_EMG_MODAL, this.EDIT_CURRENT_CARD, item, this.archived);
     },
     deleteEmgRecord(item) { // 删除肌电图
-      let EmgId = {
+      let EmgInfo = {
         id: item.id
       };
       Bus.$on(this.CONFIRM, () => {
-        delEmg(EmgId).then(this._resolveDeletion, this._rejectDeletion);
+        deleteEmg(EmgInfo).then(this._resolveDeletion, this._rejectDeletion);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },

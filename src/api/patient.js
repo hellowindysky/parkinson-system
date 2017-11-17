@@ -744,7 +744,7 @@ export function modEmg(patientElecTroGram) {
 };
 
 // 删除肌电图
-export function delEmg(patientElecTroGram) {
+export function deleteEmg(patientElecTroGram) {
   var request = Object.assign({}, getCommonRequest());
   request.patientElecTroGram = patientElecTroGram;
   var url = baseUrl + '/pdms/delPatElecTroGram';
