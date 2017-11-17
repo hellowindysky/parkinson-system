@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="gene-modal-wrapper" v-show="displayModal">
-    <div class="gene-modal">
+    <div class="gene-modal" ref="scrollArea">
       <h3 class="title">{{title}}</h3>
       <div class="content">
         <div class="field">
@@ -108,7 +108,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
-// import Ps from 'perfect-scrollbar';
+import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import { reviseDateFormat, pruneObj } from 'utils/helper.js';
@@ -183,7 +183,16 @@ export default {
       });
       this.completeInit = true;
       this.displayModal = true;
-      // console.log(item);
+      this.updateScrollbar();
+    },
+    updateScrollbar() {
+      this.$nextTick(() => {
+        Ps.destroy(this.$refs.scrollArea);
+        Ps.initialize(this.$refs.scrollArea, {
+          wheelSpeed: 1,
+          minScrollbarLength: 40
+        });
+      });
     },
     getOptions(fieldName) {
       var options = [];
@@ -216,6 +225,7 @@ export default {
     },
     switchToEditingMode() {
       this.mode = this.EDIT_CURRENT_CARD;
+      this.updateScrollbar();
     },
     submit() {
       if (this.lockSubmitButton) {
@@ -297,6 +307,7 @@ export default {
     width: 660px;
     max-height: 94%;
     background-color: @background-color;
+    overflow: hidden;
     .title {
       padding: 30px 0 10px;
       font-size: @large-font-size;
@@ -338,7 +349,7 @@ export default {
         }
         .field-input {
           display: inline-block;
-          position: absolute;
+          position: relative;
           top: 0;
           left: @field-name-width;
           width: calc(~"96% - @{field-name-width}");
@@ -415,6 +426,28 @@ export default {
       }
       &:active {
         opacity: 0.9;
+      }
+    }
+    .ps__scrollbar-y-rail {
+      position: absolute;
+      width: 15px;
+      right: 0;
+      padding: 0 3px;
+      box-sizing: border-box;
+      opacity: 0.3;
+      transition: opacity 0.3s, padding 0.2s;
+      .ps__scrollbar-y {
+        position: relative;
+        background-color: #aaa;
+        border-radius: 20px;
+      }
+    }
+    &:hover {
+      .ps__scrollbar-y-rail {
+        opacity: 0.6;
+        &:hover {
+          padding: 0;
+        }
       }
     }
   }
