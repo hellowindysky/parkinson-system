@@ -440,7 +440,7 @@ export default {
         patientGeneId: item.patientGeneId
       };
       Bus.$on(this.CONFIRM, () => {
-        deleteImage(geneInfo).then(this._resolveDeletion, this._rejectDeletion);
+        deleteGeneCheck(geneInfo).then(this._resolveDeletion, this._rejectDeletion);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
