@@ -672,6 +672,32 @@ export function delNervouSystem(patientSpephysical) {
   return encapsulatePromise(url, request);
 };
 
+// 修改基因检查
+export function modifyGeneCheck(patientGene) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientGene = patientGene;
+  var url = baseUrl + '/pdms/modPatientGene';
+
+  return encapsulatePromise(url, request);
+};
+
+// 新增基因检查
+export function addGeneCheck(patientGene) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientGene = patientGene;
+  var url = baseUrl + '/pdms/addPatientGene';
+
+  return encapsulatePromise(url, request);
+};
+// 删除基因检查
+export function delGeneCheck(patientGene) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientGene = patientGene;
+  var url = baseUrl + '/pdms/delPatientGene';
+
+  return encapsulatePromise(url, request);
+};
+
 // 新增生化指标
 export function addBiochemical(patientBioexam) {
   var request = Object.assign({}, getCommonRequest());

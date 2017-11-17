@@ -107,6 +107,20 @@
           </div>
          </card>
       </extensible-panel>
+      <!-- 基因检查 -->
+      <extensible-panel class="panel" :mode="mutableMode" :title="geneCheckTitle" v-on:addNewCard="addGeneCheckRecord" :editable="canEdit">
+        <card class="card" :class="cardWidth" :mode="mutableMode" v-for="(item,idx) in geneCheckList" :key="idx"
+         :title="transformNeurologicCheckType(item.spephysicalInfo)" v-on:editCurrentCard="editNeurologicCheckRecord(item)"
+         v-on:deleteCurrentCard="deleteNeurologicCheckRecord(item)" v-on:viewCurrentCard="viewNeurologicCheckRecord(item)">
+          <div class="text first-line">
+            <span class="name">诊断结果: </span>
+            <span class="value">{{item.spephysicalResult}}</span>
+          </div>
+          <div class="text second-line">
+            {{item.ariseTime}}
+          </div>
+         </card>
+      </extensible-panel>
       <extensible-panel class="panel" :mode="mutableMode" :title="biochemicalExamTitle" v-on:addNewCard="addBiochemicalExamRecord" :editable="canEdit">
         <card class="card" :class="cardWidth" :mode="mutableMode" v-for="item in biochemicalExamList" :key="item.patientCaseId"
          :title="transformBiochemicalExamType(item.bioexamId)" v-on:editCurrentCard="editBiochemicalExamRecord(item)"
@@ -204,6 +218,12 @@ export default {
         return [];
       }
     },
+    geneCheckList: {
+      type: Array,
+      default: () => {
+        return [];
+      }
+    },
     biochemicalExamList: {
       type: Array,
       default: () => {
@@ -246,6 +266,9 @@ export default {
     ]),
     neurologicCheckTitle() {
       return '神经系统检查（' + this.neurologicCheckList.length + '条记录）';
+    },
+    geneCheckTitle() {
+      return '基因检查（' + this.geneCheckList.length + '条记录）';
     },
     biochemicalExamTitle() {
       return '生化指标（' + this.biochemicalExamList.length + '条记录）';
@@ -401,6 +424,15 @@ export default {
         delNervouSystem(NeuroId).then(this._resolveDeletion, this._rejectDeletion);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
+    },
+    addGeneCheckRecord() {
+      Bus.$emit(this.SHOW_GENE_MODAL, this.ADD_NEW_CARD, {});
+    },
+    editGeneCheckRecord() {
+    },
+    viewGeneCheckRecord() {
+    },
+    deleteGeneCheckRecord() { // 删除基因检查
     },
     addBiochemicalExamRecord() {
       Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.ADD_NEW_CARD, {}, this.archived);
