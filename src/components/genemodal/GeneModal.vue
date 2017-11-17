@@ -111,8 +111,7 @@ import { mapGetters } from 'vuex';
 // import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import { reviseDateFormat } from 'utils/helper.js';
-// import { reviseDateFormat, pruneObj } from 'utils/helper.js';
+import { reviseDateFormat, pruneObj } from 'utils/helper.js';
 import { addGeneCheck, modifyGeneCheck } from 'api/patient.js';
 
 export default {
@@ -122,6 +121,7 @@ export default {
       mode: '',
       completeInit: false,
       lockSubmitButton: false,
+      patientGeneId: '',
       checkDate: '', // 检查时间
       checkName: '', // 检查名称
       sampleNo: '', // 标本号
@@ -167,6 +167,12 @@ export default {
       this.sampleType = item.sampleType;
       this.checkResult = item.checkResult;
       this.remarks = item.remarks;
+
+      if (this.mode !== this.ADD_NEW_CARD) {
+        this.patientGeneId = item.patientGeneId;
+      } else {
+        this.patientGeneId = '';
+      }
 
       this.$nextTick(() => {
         for (var property in this.warningResults) {
@@ -237,13 +243,16 @@ export default {
       geneInfo.checkResult = this.checkResult;
       geneInfo.remarks = this.remarks;
       reviseDateFormat(geneInfo);
+      pruneObj(geneInfo);
 
       // console.log(geneInfo);
       if (this.mode === this.ADD_NEW_CARD) {
         addGeneCheck(geneInfo).then(() => {
           this.updateAndClose();
         }, this._handleError);
+
       } else if (this.mode === this.EDIT_CURRENT_CARD) {
+        geneInfo.patientGeneId = this.patientGeneId;
         modifyGeneCheck(geneInfo).then(() => {
           this.updateAndClose();
         }, this._handleError);
