@@ -273,6 +273,7 @@ export default {
       displayModal: false,
       mode: '',
       completeInit: false,
+
       name: '',
       patientAttachmentId: '',
       imageType: '',
@@ -281,19 +282,24 @@ export default {
       checkDevice: '',
       checkConclusion: '',
       remarks: '',
+
       warningResults: {
         name: '',
         imageType: '',
         checkDate: ''
       },
+
       t1: [],
       t2: [],
       t2Flair: [],
       other: [],
+
       newT1: [],
       newT2: [],
       newT2Flair: [],
       newOther: [],
+
+      uploadingFilesNum: 0,
       uploadUrl: baseUrl + '/upload/uploadAttachment',
       downloadUrl: baseUrl + '/download/',
       pickerOptions: {
@@ -443,6 +449,16 @@ export default {
         }
       }
 
+      if (this.uploadingFilesNum > 0) {
+        this.$message({
+          message: '请等待文件上传后再提交',
+          type: 'warning',
+          duration: 2000
+        });
+        this.lockSubmitButton = false;
+        return;
+      }
+
       var imageInfo = {};
       imageInfo.patientCaseId = this.$route.params.caseId;
       imageInfo.title = this.name;
@@ -518,6 +534,9 @@ export default {
     },
     handleRemove(file, list) {
       console.log(file);
+      if (file.status === 'uploading') {
+        this.uploadingFilesNum -= 1;
+      }
       for (var i = 0; i < list.length; i++) {
         if (file.response.data.attachmentId === list[i].id) {
           list.splice(i, 1);
@@ -543,6 +562,7 @@ export default {
       this.uploadSuccess(response, file, fileList, this.newOther);
     },
     uploadSuccess(response, file, fileList, list) {
+      this.uploadingFilesNum -= 1;
       if (response.code === 0) {
         let id = response.data.patientAttachmentId;
         list.push({
@@ -560,6 +580,7 @@ export default {
       }
     },
     uploadErr(err, file, fileList) {
+      this.uploadingFilesNum -= 1;
       console.log('upload error: ', err);
       console.log('file: ', file);
       console.log('fileList', fileList);
@@ -572,6 +593,8 @@ export default {
           type: 'error',
           duration: 2000
         });
+      } else {
+        this.uploadingFilesNum += 1;
       }
       return isUnderLimit;
     },
