@@ -1054,7 +1054,13 @@ export default {
       return majorComplicationType;
     },
     showOperationBar() {
-      return true;
+      var userName = sessionStorage.getItem('userName');
+      let specialUserList = ['chenshengdi', 'zeng'];
+      if (specialUserList.indexOf(userName) >= 0) {
+        return true;
+      } else {
+        return false;
+      }
     }
   },
   methods: {

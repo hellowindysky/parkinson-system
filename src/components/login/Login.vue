@@ -85,12 +85,14 @@ export default {
             var token = data.loginToken;
             var accountNumber = data.user.accountNumber;
             var name = data.user.name;
+            var userName = data.user.userName;
             var userType = data.user.userType;
             var orgName = data.orgs && data.orgs[0] && data.orgs[0].orgName ? data.orgs[0].orgName : '';
 
             sessionStorage.setItem('token', token);
             sessionStorage.setItem('accountNumber', accountNumber);
             sessionStorage.setItem('name', name);
+            sessionStorage.setItem('userName', userName);
             sessionStorage.setItem('userType', userType);
             sessionStorage.setItem('orgName', orgName);
 
