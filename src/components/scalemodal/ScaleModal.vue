@@ -56,7 +56,7 @@
         <div class="field whole-line">
           <span class="field-name">其它信息:</span>
           <span class="field-value">
-            <el-input type="textarea" v-model="copyInfo.scaleExtraInfo" placeholder="请输入其它信息"></el-input>
+            <el-input type="textarea" v-model="copyInfo.scaleExtraInfo" placeholder="请输入其它信息" :maxlength="500"></el-input>
           </span>
         </div>
       </div>
