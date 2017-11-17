@@ -920,6 +920,7 @@ export default {
     },
     switchToEditingMode() {
       this.mode = this.EDIT_CURRENT_CARD;
+      this.updateScrollbar();
     },
     submit() {
       if (this.lockSubmitButton) {
@@ -1564,10 +1565,10 @@ export default {
 <style lang='less'>
 @import '~styles/variables.less';
 
-@field-height: 40px;
+@field-line-height: 25px;
 @field-name-width: 100px;
 @long-field-name-width: 140px;
-@end-words-width: 180px;
+@end-words-width: 220px;
 
 @computed-cell-color: lighten(@font-color, 55%);
 
@@ -1601,18 +1602,18 @@ export default {
       text-align: left;
       font-size: 0;
       .field {
-        padding: 5px 0;
+        padding: 3px 0;
         text-align: left;
         display: inline-block;
         position: relative;
         width: 50%;
-        height: @field-height;
+        line-height: @field-line-height;
         text-align: left;
         transform: translateX(10px);  // 这一行是为了修补视觉上的偏移
         &.whole-line {
           width: 100%;
           .field-input {
-            right: 4%;
+            width: calc(~"96% - @{field-name-width}");
           }
         }
         .field-name {
@@ -1621,7 +1622,8 @@ export default {
           top: 0;
           left: 0;
           width: @field-name-width;
-          line-height: @field-height;
+          line-height: @field-line-height;
+          min-height: 45px;
           font-size: @normal-font-size;
           color: @font-color;
           &.long-field-name {
@@ -1639,26 +1641,27 @@ export default {
           padding-left: 10px;
           box-sizing: border-box;
           top: 0;
-          right: 8%;
+          right: 0;
           width: @end-words-width;
           text-align: left;
-          line-height: @field-height;
+          line-height: @field-line-height;
           font-size: @normal-font-size;
         }
         .field-input {
           display: inline-block;
-          position: absolute;
-          top: 0;
+          position: relative;
           left: @field-name-width;
-          right: 8%;
-          line-height: @field-height;
+          width: calc(~"92% - @{field-name-width}");
+          line-height: @field-line-height;
+          transform: translateY(-3px);
           font-size: @normal-font-size;
           color: @light-font-color;
-          &.short-input {
-            right: calc(~'8% + @{end-words-width}');
-          }
           &.long-field-name {
             left: @long-field-name-width;
+            width: calc(~"92% - @{long-field-name-width}");
+          }
+          &.short-input {
+            width: calc(~"92% - @{field-name-width} - @{end-words-width}");
           }
           .warning-text {
             position: absolute;
@@ -1669,6 +1672,7 @@ export default {
             font-size: @small-font-size;
           }
           .el-input {
+            transform: translateY(-5px);
             .el-input__inner {
               height: 30px;
               border: none;

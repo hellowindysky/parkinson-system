@@ -423,6 +423,7 @@ export default {
     },
     switchToEditingMode() {
       this.mode = this.EDIT_CURRENT_CARD;
+      this.updateScrollbar();
     },
     submit() {
       if (this.lockSubmitButton) {
@@ -601,7 +602,7 @@ export default {
 <style lang="less">
 @import "~styles/variables.less";
 
-@field-height: 45px;
+@field-line-height: 25px;
 @field-name-width: 110px;
 @long-field-name-width: 160px;
 
@@ -642,9 +643,10 @@ export default {
       .field {
         display: inline-block;
         position: relative;
-        padding: 5px 0;
+        // padding: 5px 0;
         width: 50%;
-        height: @field-height;
+        min-height: 45px;
+        line-height: @field-line-height;
         box-sizing: border-box;
         text-align: left;
         transform: translateX(10px); // 这一行是为了修补视觉上的偏移
@@ -660,7 +662,7 @@ export default {
           top: 0;
           left: 0;
           width: @field-name-width;
-          line-height: @field-height;
+          line-height: @field-line-height;
           font-size: @normal-font-size;
           color: @font-color;
           // &.long-field-name {
@@ -674,11 +676,10 @@ export default {
         }
         .field-input {
           display: inline-block;
-          position: absolute;
-          top: 0;
+          position: relative;
           left: @field-name-width;
-          right: 8%;
-          line-height: @field-height;
+          width:calc(~"92% - @{field-name-width}");
+          line-height: @field-line-height;
           font-size: @normal-font-size;
           color: @light-font-color;
           // &.long-field-name {
@@ -694,6 +695,7 @@ export default {
           }
           .el-input {
             .el-input__inner {
+              transform: translateY(-4px);
               height: 30px;
               border: none;
               background-color: @screen-color;
@@ -744,6 +746,7 @@ export default {
             margin-bottom: 10px;
             width: 100%;
             .last-files-title {
+              transform: translateY(-5px);
               margin-bottom: 5px;
               height: 30px;
               line-height: 30px;

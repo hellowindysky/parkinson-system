@@ -39,7 +39,7 @@
           <el-input v-else placeholder="请输入检查结果" v-model="item.spephysicalResult" :maxlength="500"></el-input>
         </span>
       </div>
-      <div class="field multi-line">
+      <div class="field">
         <span class="field-name">
           备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注:
         </span>
@@ -191,6 +191,7 @@ export default {
     },
     switchToEditingMode() {
       this.mode = this.EDIT_CURRENT_CARD;
+      this.updateScrollbar();
     },
     cancel() {
       this.lockSubmitButton = false;
@@ -236,7 +237,7 @@ export default {
 <style lang="less">
 @import "~styles/variables.less";
 
-@field-height: 40px;
+@field-line-height: 25px;
 @field-name-width: 125px;
 
 .nervous-modal-box-wrapper {
@@ -259,22 +260,18 @@ export default {
       font-size: @large-font-size;
     }
     .field {
-      padding: 5px 0;
       display: inline-block;
       position: relative;
       width: 100%;
-      height: @field-height;
+      min-height: 45px;
       text-align: left;
-      &.multi-line {
-        height: @field-height * 1.6;
-      }
       .field-name {
         display: inline-block;
         position: absolute;
         top: 0;
         left: 0;
         width: @field-name-width;
-        line-height: @field-height;
+        line-height: @field-line-height;
         font-size: @normal-font-size;
         color: @font-color;
         .required-mark {
@@ -285,22 +282,22 @@ export default {
       }
       .field-input {
         display: inline-block;
-        position: absolute;
-        top: 0;
+        position: relative;
         left: @field-name-width;
-        right: 2%;
-        line-height: @field-height;
+        width: calc(~"92% - @{field-name-width}");
+        line-height: 25px;
         font-size: @normal-font-size;
         color: @light-font-color;
         .warning-text {
           position: absolute;
-          top: 25px;
+          top: 22px;
           left: 10px;
           height: 15px;
           color: red;
           font-size: @small-font-size;
         }
         .el-input {
+          transform: translateY(-4px);
           .el-input__inner {
             height: 30px;
             border: none;
@@ -308,8 +305,8 @@ export default {
           }
         }
         .el-textarea {
-          vertical-align: middle;
-          transform: translateY(10px);
+          // vertical-align: middle;
+          transform: translateY(-4px);
           .el-textarea__inner {
             border: none;
             background-color: @screen-color;
