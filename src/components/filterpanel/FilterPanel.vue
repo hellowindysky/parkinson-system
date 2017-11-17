@@ -891,7 +891,7 @@ import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import { queryPatientsByCondition, getPatientGroupInfo } from 'api/patient.js';
-import { exportPatients } from 'api/user.js';
+import { baseUrl } from 'api/common.js';
 import { vueCopy, pruneObj, reviseDateFormat, isEmptyObject } from 'utils/helper.js';
 import Util from 'utils/util.js';
 
@@ -1532,12 +1532,21 @@ export default {
           patientIdList.push(this.patientList[i].patientId);
         }
       }
+      if (patientIdList.length === 0) {
+        // 如果没有选择患者则不发出请求
+        return;
+      }
 
-      exportPatients(patientIdList).then(() => {
-        console.log('export now!');
-      }, (error) => {
-        console.log(error);
-      });
+      var userId = sessionStorage.getItem('userId');
+      var accountNumber = sessionStorage.getItem('accountNumber');
+      var userType = sessionStorage.getItem('userType');
+      var orgId = sessionStorage.getItem('orgId');
+      var orgType = sessionStorage.getItem('orgType');
+
+      var url = baseUrl + '/export/ruiJinPatientExport' + '?userId=' + userId +
+        '&accountNumber=' + accountNumber + '&userType=' + userType + '&orgId=' +
+        orgId + '&orgType=' + orgType + '&patientIds=' + patientIdList.join(',');
+      window.location.href = url;
     },
     getNameByCode(code, typeGroupCode) {
       var types = Util.getElement('typegroupcode', typeGroupCode, this.typeGroup).types;
