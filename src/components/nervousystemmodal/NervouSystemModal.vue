@@ -39,7 +39,7 @@
           <el-input v-else placeholder="请输入检查结果" v-model="item.spephysicalResult" :maxlength="500"></el-input>
         </span>
       </div>
-      <div class="field multi-line">
+      <div class="field">
         <span class="field-name">
           备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注:
         </span>
