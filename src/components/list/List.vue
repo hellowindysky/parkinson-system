@@ -587,47 +587,57 @@ export default {
       // 一旦发现路由地址中还没有id，就更新病患列表数据，并默认加载当前列表中的第一项
       if (/^\/patients\/list\/?$/.test(path)) {
         this.updatePatientsList(() => {
-          let firstPatientId = this.myPatientsList.length > 0 ? this.myPatientsList[0].patientId : 0;
-          this.$router.replace({
-            name: 'patientInfo',
-            params: { id: firstPatientId }
-          });
+          if (this.myPatientsList.length > 0) {
+            let firstPatientId = this.myPatientsList[0].patientId;
+            this.$router.replace({
+              name: 'patientInfo',
+              params: { id: firstPatientId }
+            });
+          }
         });
 
       } else if (/^\/patients\/groups\/?$/.test(path)) {
         // 获取分组列表的所有id，然后根据第一个id进行跳转
         this.updateGroupList(() => {
-          let firstGroupId = this.groupList.length > 0 ? this.groupList[0].groupId : 0;
-          this.$router.replace({
-            name: 'groupInfo',
-            params: { id: firstGroupId }
-          });
+          if (this.groupList.length > 0) {
+            let firstGroupId = this.groupList[0].groupId;
+            this.$router.replace({
+              name: 'groupInfo',
+              params: { id: firstGroupId }
+            });
+          }
         });
 
       } else if (/^\/patients\/otherList\/?$/.test(path)) {
         this.updatePatientsList(() => {
-          let firstPatientId = this.otherPatientsList.length > 0 ? this.otherPatientsList[0].patientId : 0;
-          this.$router.replace({
-            name: 'otherPatientInfo',
-            params: { id: firstPatientId }
-          });
+          if (this.otherPatientsList.length > 0) {
+            let firstPatientId = this.otherPatientsList[0].patientId;
+            this.$router.replace({
+              name: 'otherPatientInfo',
+              params: { id: firstPatientId }
+            });
+          }
         });
 
       } else if (/^\/configuration\/userManagement\/?$/.test(path)) {
         this.updateUserList(() => {
-          let firstUserId = this.userList.length > 0 ? this.userList[0].id : 0;
-          this.$router.replace({
-            name: 'userInfo',
-            params: { id: firstUserId }
-          });
+          if (this.userList.length > 0) {
+            let firstUserId = this.userList[0].id;
+            this.$router.replace({
+              name: 'userInfo',
+              params: { id: firstUserId }
+            });
+          }
         });
       } else if (/^\/configuration\/roleManagement\/?$/.test(path)) {
         this.updateRoleList(() => {
-          let firstRoleId = this.roleList.length > 0 ? this.roleList[0].roleId : 0;
-          this.$router.replace({
-            name: 'roleInfo',
-            params: { id: firstRoleId }
-          });
+          if (this.roleList.length > 0) {
+            let firstRoleId = this.roleList[0].roleId;
+            this.$router.replace({
+              name: 'roleInfo',
+              params: { id: firstRoleId }
+            });
+          }
         });
       }
     }
