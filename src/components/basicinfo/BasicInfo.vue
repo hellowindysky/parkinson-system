@@ -198,6 +198,12 @@ export default {
               type: 'error',
               duration: 2000
             });
+          } else if (error.code === 31) {
+            this.$message({
+              message: '医院患者编码重复',
+              type: 'error',
+              duration: 2000
+            });
           }
           this.lockSubmitButton = false;
         });
@@ -219,6 +225,19 @@ export default {
           this.lockSubmitButton = false;
         }, (error) => {
           console.log(error);
+          if (error.code === 23) {
+            this.$message({
+              message: '该用户已经存在',
+              type: 'error',
+              duration: 2000
+            });
+          } else if (error.code === 31) {
+            this.$message({
+              message: '医院患者编码重复',
+              type: 'error',
+              duration: 2000
+            });
+          }
           this.lockSubmitButton = false;
         });
       }
