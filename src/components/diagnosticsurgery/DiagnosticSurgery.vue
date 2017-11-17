@@ -71,7 +71,7 @@
       </extensible-panel>
       <extensible-panel class="panel dbs-panel" :mode="mutableMode" :title="dbsTitle"
         v-on:addNewCard="addDbsRecord" :editable="canEdit">
-        <card class="card dbs-card" :class="bigCardWidth" :mode="mutableMode"
+        <card class="card dbs-card" :class="superBigCardWidth" :mode="mutableMode"
           v-for="item in dbsFirstList" :key="item.patientDbsFirstId"
           :title="''" v-on:editCurrentCard="editDbsRecord(item)"
           v-on:deleteCurrentCard="deleteDbsRecord(item)" v-on:viewCurrentCard="viewDbsRecord(item)">
@@ -79,11 +79,11 @@
             <span class="name">首次开机: </span>
             <span class="value">{{item.dbsTimes}}</span>
           </div>
-          <div class="text line-2">
+          <div class="text line-2 single-line-ellipsis">
             <span class="name">服药情况: </span>
             <span class="value">{{item.medicationStatus}}</span>
           </div>
-          <div class="text line-3">
+          <div class="text line-3 single-line-ellipsis">
             <span class="name">微毁损效应: </span>
             <span class="value">{{item.damageEffect}}</span>
           </div>
@@ -104,22 +104,22 @@
             <span class="value">{{item.programDate}}</span>
           </div>
         </card>
-        <card class="card dbs-card" :class="bigCardWidth" :mode="mutableMode" v-for="item in dbsFollowList" :key="item.patientDbsFollowId"
+        <card class="card dbs-card" :class="superBigCardWidth" :mode="mutableMode" v-for="item in dbsFollowList" :key="item.patientDbsFollowId"
          :title="''" v-on:editCurrentCard="editDbsRecord(item)" v-on:viewCurrentCard="viewDbsRecord(item)"
          v-on:deleteCurrentCard="deleteDbsRecord(item)">
           <div class="text line-1">
             <span class="name">首次开机: </span>
             <span class="value">{{item.dbsTimes}}</span>
           </div>
-          <div class="text line-2">
+          <div class="text line-2 single-line-ellipsis">
             <span class="name">服药情况: </span>
             <span class="value">{{item.medicationStatus}}</span>
           </div>
-          <div class="text line-3">
+          <div class="text line-3 single-line-ellipsis">
             <span class="name">患者主诉: </span>
             <span class="value">{{item.complaint}}</span>
           </div>
-          <div class="text line-4">
+          <div class="text line-4 single-line-ellipsis">
             <span class="name">效果及副作用: </span>
             <span class="value">{{item.effectInfo}}</span>
           </div>
@@ -161,7 +161,8 @@ export default {
     return {
       mutableMode: this.mode,
       smallCardWidth: '',
-      bigCardWidth: ''
+      bigCardWidth: '',
+      superBigCardWidth: ''
     };
   },
   props: {
@@ -365,6 +366,13 @@ export default {
           bigCardNum += 1.0;
         }
         this.bigCardWidth = 'width-1-' + parseInt(bigCardNum, 10);
+
+        var superBigCardNum = 1.0;
+        // 20px 是卡片的横向间距，定义在了 varaibles.less 中，450px 是卡片的最小宽度，一排最多显示 10 个卡片
+        while (panelWidth / (superBigCardNum + 1) > 450 + 20 && superBigCardNum < 10) {
+          superBigCardNum += 1.0;
+        }
+        this.superBigCardWidth = 'width-1-' + parseInt(superBigCardNum, 10);
       });
     }
   },
