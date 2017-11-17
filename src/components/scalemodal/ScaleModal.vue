@@ -53,6 +53,12 @@
             </el-date-picker>
           </span>
         </div>
+        <div class="field whole-line">
+          <span class="field-name">其它信息:</span>
+          <span class="field-value">
+            <el-input type="textarea" v-model="copyInfo.scaleExtraInfo" placeholder="请输入其它信息" :maxlength="500"></el-input>
+          </span>
+        </div>
       </div>
 
       <div class="scale-selector" v-if="mode===VIEW_CURRENT_CARD">
@@ -71,6 +77,10 @@
         <div class="field">
           <span class="field-name">末次服药时间:</span>
           <span class="field-value">{{copyInfo.lastTakingTime}}</span>
+        </div>
+        <div class="field whole-line">
+          <span class="field-name">其它信息:</span>
+          <span class="field-value">{{copyInfo.scaleExtraInfo}}</span>
         </div>
       </div>
 
@@ -340,10 +350,11 @@ export default {
       // 初始化copyInfo对象
       this.copyInfo = {};
       this.$set(this.copyInfo, 'scaleInfoId', '');
+      this.$set(this.copyInfo, 'switchType', '');
       this.$set(this.copyInfo, 'inspectTime', '');
       this.$set(this.copyInfo, 'lastTakingTime', '');
+      this.$set(this.copyInfo, 'scaleExtraInfo', '');
       this.$set(this.copyInfo, 'scaleOptionIds', []);
-      this.$set(this.copyInfo, 'switchType', '');
       this.$set(this.copyInfo, 'scaleSympInfoList', []);
       this.$set(this.copyInfo, 'patientCaseId', this.$route.params.caseId);
       this.$set(this.copyInfo, 'patientId', this.$route.params.id);
@@ -414,6 +425,7 @@ export default {
 @symptom-item-title-width: 130px;
 
 @field-name-width: 95px;
+@field-line-height: 25px;
 
 .diagnostic-update-wrapper {
   width: 100%;
@@ -529,18 +541,21 @@ export default {
         display: inline-block;
         position: relative;
         width: 50%;
-        height: 45px;
-        line-height: 45px;
+        min-height: 45px;
+        line-height: @field-line-height;
+        text-align: left;
         &.whole-line {
           width: 100%;
           .field-value {
-            right: 2%;
+            width: calc(~"98% - @{field-name-width}");
           }
         }
         .field-name {
           display: inline-block;
+          position: absolute;
           width: @field-name-width;
           font-size: @normal-font-size;
+          line-height: @field-line-height;
           .required-mark {
             color: red;
             font-size: 20px;
@@ -548,13 +563,15 @@ export default {
           }
         }
         .field-value {
-          position: absolute;
+          display: inline-block;
+          position: relative;
           left: @field-name-width;
-          right: 4%;
+          width: calc(~"96% - @{field-name-width}");
           font-size: @normal-font-size;
+          line-height: @field-line-height;
           .warning-text {
             position: absolute;
-            top: 25px;
+            top: 22px;
             left: 10px;
             height: 15px;
             color: red;
@@ -565,6 +582,7 @@ export default {
           }
         }
         .el-input {
+          transform: translateY(-3px);
           .el-input__inner {
             height: 30px;
             border: none;
@@ -575,6 +593,13 @@ export default {
               background-color: #f0f1f2;
               color: @gray-color;
             }
+          }
+        }
+        .el-textarea {
+          transform: translateY(-3px);
+          .el-textarea__inner {
+            border: none;
+            background-color: @screen-color;
           }
         }
         .el-select {
