@@ -191,7 +191,6 @@ export default {
     },
     switchToEditingMode() {
       this.mode = this.EDIT_CURRENT_CARD;
-      this.updateScrollbar();
     },
     cancel() {
       this.lockSubmitButton = false;

@@ -1008,6 +1008,7 @@ export default {
     },
     switchToEditingMode() {
       this.mode = this.EDIT_CURRENT_CARD;
+      this.updateScrollbar();
     },
     cancel() {
       this.lockSubmitButton = false;
@@ -1683,7 +1684,7 @@ export default {
 <style lang="less">
 @import "~styles/variables.less";
 
-@field-height: 40px;
+@field-line-height: 25px;
 @field-name-width: 100px;
 @long-field-name-width: 150px;
 @scroll-bar-height: 10px;
@@ -1713,22 +1714,22 @@ export default {
       font-size: @large-font-size;
     }
     .content {
-      text-align: left;
+      text-align: left; 
       font-size: 0;
       .field {
-        padding: 5px 0;
         text-align: left;
         font-size: @normal-font-size;
         display: inline-block;
         position: relative;
         width: 50%;
-        height: @field-height;
+        min-height: 45px;
+        line-height: @field-line-height;
         text-align: left;
         transform: translateX(10px);  // 这一行是为了修补视觉上的偏移
         &.whole-line {
           width: 100%;
           .field-input {
-            right: 4%;
+            width: calc(~"96% - @{field-name-width}");
           }
         }
         &.double-line {
@@ -1740,7 +1741,7 @@ export default {
           top: 0;
           left: 0;
           width: @field-name-width;
-          line-height: @field-height;
+          line-height: @field-line-height;
           font-size: @normal-font-size;
           color: @font-color;
           &.long-field-name {
@@ -1754,11 +1755,10 @@ export default {
         }
         .field-input {
           display: inline-block;
-          position: absolute;
-          top: 0;
+          position: relative;
+          width: calc(~"92% - @{field-name-width}");
           left: @field-name-width;
-          right: 8%;
-          line-height: @field-height;
+          line-height: @field-line-height;
           font-size: @normal-font-size;
           color: @light-font-color;
           &.long-field-name {
@@ -1773,6 +1773,7 @@ export default {
             font-size: @small-font-size;
           }
           .el-input {
+             transform: translateY(-4px);
             .el-input__inner {
               height: 30px;
               border: none;
@@ -1781,7 +1782,7 @@ export default {
           }
           .el-textarea {
             vertical-align: middle;
-            transform: translateY(5px);
+            transform: translateY(-4px);
             .el-textarea__inner {
               border: none;
               background-color: @screen-color;

@@ -694,8 +694,8 @@ export default {
             font-size: @small-font-size;
           }
           .el-input {
+            transform: translateY(-4px);
             .el-input__inner {
-              transform: translateY(-4px);
               height: 30px;
               border: none;
               background-color: @screen-color;
