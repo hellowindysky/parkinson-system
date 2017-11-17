@@ -432,6 +432,7 @@ export default {
       width: 50%;
       min-height: 50px;
       text-align: left;
+      vertical-align: top;
       transform: translateY(5px);
       &.whole-line {
         width: 100%;
