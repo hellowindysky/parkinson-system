@@ -839,15 +839,16 @@
       <div class="iconfont" :class="toggleIconClass"></div>
     </div>
     <div class="content-area" :class="{'hide-condition-status': !displayCondition}">
-      <div class="operation-bar">
-        <div class="export-button">批量导出</div>
+      <div class="operation-bar" v-show="showOperationBar">
+        <div class="export-button" @click="batchExportPatients">批量导出</div>
       </div>
       <div class="content-scroll-area" ref="scrollContent">
         <div class="form-head">
-          <table class="form form-head" :class="{'selectable': true}">
+          <table class="form form-head" :class="{'selectable': showOperationBar}">
             <tr class="row top-row">
-              <td v-show="true" class="col col-select">
-                <el-checkbox></el-checkbox>
+              <td class="col col-select" v-show="showOperationBar">
+                <el-checkbox v-model="allPatientsSelectedStatus"
+                  @change="toggleAllPatientsSeletedStatus"></el-checkbox>
               </td>
               <td class="col col-num">序号</td>
               <td class="col col-id">患者ID</td>
@@ -860,10 +861,10 @@
           </table>
         </div>
         <div class="form-body" ref="formBody">
-          <table class="form">
+          <table class="form" :class="{'selectable': showOperationBar}">
             <tr class="row" v-for="(patient, i) in patientList">
-              <td v-show="true" class="col col-select">
-                <el-checkbox></el-checkbox>
+              <td class="col col-select" v-show="showOperationBar">
+                <el-checkbox v-model="patientSeletedStatusList[i]"></el-checkbox>
               </td>
               <td class="col col-num">{{i + 1}}</td>
               <td class="col col-id">{{patient.patientId}}</td>
@@ -890,6 +891,7 @@ import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import { queryPatientsByCondition, getPatientGroupInfo } from 'api/patient.js';
+import { exportPatients } from 'api/user.js';
 import { vueCopy, pruneObj, reviseDateFormat, isEmptyObject } from 'utils/helper.js';
 import Util from 'utils/util.js';
 
@@ -1005,6 +1007,9 @@ export default {
       diagnosticExaminationSelectedStatus: {},
 
       patientList: [],
+      patientSeletedStatusList: [],
+      allPatientsSelectedStatus: false,
+
       displayGroupPanel: false,
       belongGroups: [],
       patientId: ''
@@ -1047,6 +1052,9 @@ export default {
       let majorComplicationType = this.diagnosticSurgeryCondition.majorComplicationType;
       this.diagnosticSurgeryCondition.minorComplicationType = '';
       return majorComplicationType;
+    },
+    showOperationBar() {
+      return true;
     }
   },
   methods: {
@@ -1494,9 +1502,33 @@ export default {
         condition = {};
       }
       this.patientList = [];
+      this.patientSeletedStatusList = [];
+      this.allPatientsSelectedStatus = false;
       queryPatientsByCondition(condition).then((data) => {
         vueCopy(data, this.patientList);
+        for (var i = 0; i < data.length; i++) {
+          this.$set(this.patientSeletedStatusList, i, false);
+        }
         this.updateScrollContent();
+      }, (error) => {
+        console.log(error);
+      });
+    },
+    toggleAllPatientsSeletedStatus() {
+      for (var i = 0; i < this.patientSeletedStatusList.length; i++) {
+        this.$set(this.patientSeletedStatusList, i, this.allPatientsSelectedStatus);
+      }
+    },
+    batchExportPatients() {
+      var patientIdList = [];
+      for (var i = 0; i < this.patientList.length; i++) {
+        if (this.patientSeletedStatusList[i]) {
+          patientIdList.push(this.patientList[i].patientId);
+        }
+      }
+
+      exportPatients(patientIdList).then(() => {
+        console.log('export now!');
       }, (error) => {
         console.log(error);
       });
