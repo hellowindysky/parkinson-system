@@ -176,6 +176,7 @@ export default {
 
       // 同时，告诉它的子页面，放弃当前修改
       Bus.$emit(this.QUIT_DIAGNOSTIC_DETAIL);
+      Bus.$emit(this.UPDATE_PATIENT_CASE_LIST);
     },
     closePanel() {
       this.displayDetail = false;

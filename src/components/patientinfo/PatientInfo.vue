@@ -209,7 +209,6 @@ export default {
     this.checkRoute();
 
     this.updateScrollbar();
-
     // 监听折叠面板，如果发生状态的改变，就需要重新计算滚动区域的高度
     Bus.$on(this.SCROLL_AREA_SIZE_CHANGE, this.updateScrollbar);
 
