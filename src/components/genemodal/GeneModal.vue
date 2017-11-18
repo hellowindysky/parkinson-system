@@ -76,7 +76,12 @@
           </span>
           <span class="field-input" v-else>
             <span class="warning-text">{{warningResults.checkResult}}</span>
-            <el-input v-model="checkResult" placeholder="请输入检查结果" :class="{'warning': warningResults.checkResult}" @change="updateWarning('checkResult')"></el-input>
+            <el-input v-model="checkResult"
+              placeholder="请输入检查结果"
+              type="textarea"
+              :maxlength="500"
+              :class="{'warning': warningResults.checkResult}"
+              @change="updateWarning('checkResult')"></el-input>
           </span>
         </div>
         <div class="field">
@@ -383,6 +388,7 @@ export default {
             width: 100%;
           }
           .el-textarea {
+            margin-bottom: 15px;
             transform: translateY(-3px);
             .el-textarea__inner {
               border: none;
