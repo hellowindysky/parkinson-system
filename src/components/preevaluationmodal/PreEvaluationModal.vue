@@ -26,7 +26,7 @@
           <span class="field-input">
             <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.preopsRemark}}</span>
             <el-input v-else v-model="copyInfo.preopsRemark" placeholder="请输入该类评估的备注内容"
-              type="textarea" :maxlength="500"></el-input>
+              type="textarea" :maxlength="200"></el-input>
           </span>
         </div>
       </div>
@@ -101,7 +101,7 @@
           <span class="field-input">
             <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.preopsTerminalDTO.terminalRemark}}</span>
             <el-input v-else v-model="copyInfo.preopsTerminalDTO.terminalRemark" type="textarea"
-              placeholder="请输入剂末现象评估相关备注内容" :maxlength="500"></el-input>
+              placeholder="请输入剂末现象评估相关备注内容" :maxlength="200"></el-input>
           </span>
         </div>
       </div>
@@ -210,7 +210,7 @@
           <span class="field-input">
             <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.preopsDiaryDTO.diaryRemark}}</span>
             <el-input v-else v-model="copyInfo.preopsDiaryDTO.diaryRemark" placeholder="请输入患者日记相关备注内容"
-              type="textarea" :maxlength="500"></el-input>
+              type="textarea" :maxlength="200"></el-input>
           </span>
         </div>
       </div>
@@ -260,7 +260,7 @@
           <span class="field-input">
             <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.preopsDyskinesiaDTO.dyskinesiaRemark}}</span>
             <el-input v-else v-model="copyInfo.preopsDyskinesiaDTO.dyskinesiaRemark" placeholder="请输入统一异动症评估相关备注内容"
-              type="textarea" :maxlength="500"></el-input>
+              type="textarea" :maxlength="200"></el-input>
           </span>
         </div>
       </div>
@@ -300,7 +300,7 @@
           <span class="field-input">
             <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.preopsNonMotorDTO.nonmotorRemark}}</span>
             <el-input v-else v-model="copyInfo.preopsNonMotorDTO.nonmotorRemark" placeholder="请输入非运动症状评估相关备注内容"
-              type="textarea" :maxlength="500"></el-input>
+              type="textarea" :maxlength="200"></el-input>
           </span>
         </div>
       </div>
@@ -417,7 +417,7 @@
           <span class="field-input">
             <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.preopsMotorDTO.motorRemark}}</span>
             <el-input v-else v-model="copyInfo.preopsMotorDTO.motorRemark" placeholder="请输入运动症状评估相关备注内容"
-              type="textarea" :maxlength="500"></el-input>
+              type="textarea" :maxlength="200"></el-input>
           </span>
         </div>
       </div>
@@ -473,7 +473,7 @@
           <span class="field-input">
             <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.preopsIntensionDTO.intensionRemark}}</span>
             <el-input v-else v-model="copyInfo.preopsIntensionDTO.intensionRemark" placeholder="请输入患者手术意愿相关内容"
-              type="textarea" :maxlength="500"></el-input>
+              type="textarea" :maxlength="200"></el-input>
           </span>
         </div>
       </div>

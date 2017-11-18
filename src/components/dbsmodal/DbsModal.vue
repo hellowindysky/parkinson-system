@@ -57,7 +57,7 @@
             {{copyInfo.remarks}}
           </span>
           <span class="field-input" v-else>
-            <el-input type="textarea" v-model="copyInfo.remarks" :maxlength="500"></el-input>
+            <el-input type="textarea" v-model="copyInfo.remarks" :maxlength="300"></el-input>
           </span>
         </div>
         <div class="seperate-line"></div>
@@ -142,7 +142,7 @@
             {{copyInfo.adverseEventsRemark}}
           </span>
           <span class="field-input" v-else>
-            <el-input type="textarea" v-model="copyInfo.adverseEventsRemark" :maxlength="500"></el-input>
+            <el-input type="textarea" v-model="copyInfo.adverseEventsRemark" :maxlength="300"></el-input>
           </span>
         </div>
         <div class="field whole-line double-line" v-show="modelType===0">
@@ -151,7 +151,7 @@
             {{copyInfo.complaint}}
           </span>
           <span class="field-input" v-else>
-            <el-input type="textarea" v-model="copyInfo.complaint" :maxlength="500"></el-input>
+            <el-input type="textarea" v-model="copyInfo.complaint" :maxlength="300"></el-input>
           </span>
         </div>
         <div class="field whole-line double-line" v-show="modelType===0">
@@ -160,7 +160,7 @@
             {{copyInfo.effectInfo}}
           </span>
           <span class="field-input" v-else>
-            <el-input type="textarea" v-model="copyInfo.effectInfo" :maxlength="500"></el-input>
+            <el-input type="textarea" v-model="copyInfo.effectInfo" :maxlength="300"></el-input>
           </span>
         </div>
       </div>
