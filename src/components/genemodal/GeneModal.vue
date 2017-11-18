@@ -16,7 +16,7 @@
             <el-input v-model="checkName" placeholder="请输入检查名称" :class="{'warning': warningResults.checkName}" @change="updateWarning('checkName')"></el-input>
           </span>
         </div>
-        <div class="field half-line">
+        <div class="field">
           <span class="field-name">
             标本类型:
             <span class="required-mark"></span>
@@ -35,7 +35,7 @@
             </el-select>
           </span>
         </div>
-        <div class="field half-line">
+        <div class="field">
           <span class="field-name">
             检查时间:
             <span class="required-mark">*</span>
