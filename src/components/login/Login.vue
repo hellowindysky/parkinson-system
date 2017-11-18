@@ -16,7 +16,7 @@
             @keyup.enter.native="submitForm" autofocus="autofocus"></el-input>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input class="round-input" v-model="loginForm.password" type="password" auto-complete="off"
+          <el-input class="round-input" v-model="loginForm.password" type="password" auto-complete="new-password"
             placeholder="请输入6-10位数字和字母的密码" @keyup.enter.native="submitForm"></el-input>
         </el-form-item>
         <el-form-item prop="remember">
@@ -81,6 +81,14 @@ export default {
     submitForm() {
       this.$refs['loginForm'].validate((valid) => {
         if (valid) {
+          if (this.loginForm.remember) {
+            // 记住用户名
+            localStorage.setItem('account', this.loginForm.account);
+          } else {
+            // 没有勾选 记住用户名
+            localStorage.removeItem('account');
+          }
+
           getLoginInfo(this.loginForm.account, this.loginForm.password).then((data) => {
             var token = data.loginToken;
             var accountNumber = data.user.accountNumber;
@@ -124,6 +132,17 @@ export default {
   },
   components: {
     // particles
+  },
+  mounted() {
+    // 如果之前登录的时候勾选了“记住用户名”，则在浏览器中读取上次的用户名
+    var account = localStorage.getItem('account');
+    if (account !== null) {
+      this.loginForm.account = account;
+      this.loginForm.remember = true;
+    } else {
+      this.loginForm.account = '';
+      this.loginForm.remember = false;
+    }
   }
 };
 </script>
