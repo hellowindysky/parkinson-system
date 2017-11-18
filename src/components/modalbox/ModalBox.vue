@@ -41,7 +41,8 @@
           <span class="warning-text">{{getWarningText(field.fieldName)}}</span>
           <span v-if="getUIType(field)===1">
             <el-input v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-              :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)" :maxlength="500"></el-input>
+              :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)" :maxlength="500"
+              :type="getInputType(field.fieldName)"></el-input>
           </span>
           <span v-else-if="getUIType(field)===3">
             <el-select v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
@@ -419,6 +420,10 @@ export default {
       // uiType类型 0/无 1/输入框 2/数字箭头 3/单选下拉框 4/单选按纽 5/多选复选框 6/日期 7/日期时间
       return this.getMatchedField(field).uiType;
     },
+    getInputType(name) {
+      const textAreaNameList = ['remarks', 'chiefComplaint', 'surgeryHistory', 'medication'];
+      return textAreaNameList.indexOf(name) > -1 ? 'textarea' : 'text';
+    },
     getTypes(field) {
       // 在 typegroup 里面查找到 field 所对应的 types（选项组）
       var dictionaryField = this.getMatchedField(field);
@@ -553,7 +558,8 @@ export default {
       width: 100%;
       min-height: 40px;
       text-align: left;
-      transform: translateX(10px);
+      vertical-align: top;
+      transform: translate3d(10px, 5px, 0);
       // overflow: hidden;
       .field-name {
         display: inline-block;
@@ -595,13 +601,21 @@ export default {
             background-color: @screen-color;
           }
         }
+        .el-textarea {
+          margin-bottom: 5px;
+          transform: translateY(-3px);
+          .el-textarea__inner {
+            border: none;
+            background-color: @screen-color;
+          }
+        }
         .el-select {
           width: 100%;
         }
         .el-date-editor {
           width: 100%;
         }
-        .warning .el-input__inner {
+        .warning .el-input__inner, .warning .el-textarea__inner {
           border: 1px solid red;
         }
       }
