@@ -91,7 +91,7 @@
             <span>{{checkConclusion}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-input v-model="checkConclusion" placeholder="请输入检查结论" :maxlength="500"></el-input>
+            <el-input v-model="checkConclusion" placeholder="请输入检查结论" type="textarea" :maxlength="500"></el-input>
           </span>
         </div>
         <div class="field whole-line">
@@ -103,7 +103,7 @@
             <span>{{remarks}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-input v-model="remarks" placeholder="请输入备注信息" :maxlength="500"></el-input>
+            <el-input v-model="remarks" placeholder="请输入备注信息" type="textarea" :maxlength="500"></el-input>
           </span>
         </div>
         <hr class="seperate-line">
@@ -661,18 +661,19 @@ export default {
       .seperate-line {
         border-style: none;
         border-top: 1px solid @light-gray-color;
+        margin-top: 5px;
         margin-bottom: 15px;
       }
       .field {
         display: inline-block;
         position: relative;
-        // padding: 5px 0;
         width: 50%;
         min-height: 45px;
         line-height: @field-line-height;
         box-sizing: border-box;
         text-align: left;
-        transform: translateX(10px); // 这一行是为了修补视觉上的偏移
+        vertical-align: top;
+        transform: translate3d(10px, 5px, 0); // 这一行是为了修补视觉上的偏移
         &.whole-line {
           width: 100%;
           .field-input {
@@ -717,27 +718,28 @@ export default {
             font-size: @small-font-size;
           }
           .el-input {
-            transform: translateY(-4px);
+            transform: translateY(-3px);
             .el-input__inner {
               height: 30px;
               border: none;
               background-color: @screen-color;
             }
           }
-          // .el-textarea {
-          //   vertical-align: middle;
-          //   transform: translateY(5px);
-          //   .el-textarea__inner {
-          //     border: none;
-          //     background-color: @screen-color;
-          //   }
-          // }
-          // .el-select {
-          //   width: 100%;
-          // }
-          // .el-date-editor {
-          //   width: 100%;
-          // }
+          .el-textarea {
+            margin-bottom: 10px;
+            vertical-align: middle;
+            transform: translateY(-3px);
+            .el-textarea__inner {
+              border: none;
+              background-color: @screen-color;
+            }
+          }
+          .el-select {
+            width: 100%;
+          }
+          .el-date-editor {
+            width: 100%;
+          }
           .warning .el-input__inner,
           .warning .el-textarea__inner {
             border: 1px solid red;

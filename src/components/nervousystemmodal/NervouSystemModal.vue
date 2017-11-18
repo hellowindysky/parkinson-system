@@ -263,6 +263,7 @@ export default {
       position: relative;
       width: 100%;
       min-height: 45px;
+      vertical-align: top;
       text-align: left;
       .field-name {
         display: inline-block;
@@ -296,7 +297,7 @@ export default {
           font-size: @small-font-size;
         }
         .el-input {
-          transform: translateY(-4px);
+          transform: translateY(-3px);
           .el-input__inner {
             height: 30px;
             border: none;
@@ -304,8 +305,7 @@ export default {
           }
         }
         .el-textarea {
-          // vertical-align: middle;
-          transform: translateY(-4px);
+          transform: translateY(-3px);
           .el-textarea__inner {
             border: none;
             background-color: @screen-color;

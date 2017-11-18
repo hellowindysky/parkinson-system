@@ -554,9 +554,8 @@ export default {
     .field {
       display: inline-block;
       position: relative;
-      margin-bottom: 10px;
       width: 100%;
-      min-height: 40px;
+      min-height: 45px;
       text-align: left;
       vertical-align: top;
       transform: translate3d(10px, 5px, 0);
@@ -587,7 +586,7 @@ export default {
         color: @light-font-color;
         .warning-text {
           position: absolute;
-          top: 25px;
+          top: 22px;
           left: 10px;
           height: 15px;
           color: red;
@@ -602,7 +601,7 @@ export default {
           }
         }
         .el-textarea {
-          margin-bottom: 5px;
+          margin-bottom: 15px;
           transform: translateY(-3px);
           .el-textarea__inner {
             border: none;

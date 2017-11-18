@@ -543,6 +543,7 @@ export default {
         width: 50%;
         min-height: 45px;
         line-height: @field-line-height;
+        vertical-align: top;
         text-align: left;
         &.whole-line {
           width: 100%;

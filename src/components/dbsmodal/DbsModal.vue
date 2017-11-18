@@ -1736,7 +1736,7 @@ export default {
       font-size: @large-font-size;
     }
     .content {
-      text-align: left; 
+      text-align: left;
       font-size: 0;
       .field {
         text-align: left;
@@ -1746,8 +1746,9 @@ export default {
         width: 50%;
         min-height: 45px;
         line-height: @field-line-height;
+        vertical-align: top;
         text-align: left;
-        transform: translateX(10px);  // 这一行是为了修补视觉上的偏移
+        transform: translate3d(10px, 5px, 0);  // 这一行是为了修补视觉上的偏移
         &.whole-line {
           width: 100%;
           .field-input {
@@ -1788,14 +1789,14 @@ export default {
           }
           .warning-text {
             position: absolute;
-            top: 25px;
+            top: 22px;
             left: 10px;
             height: 15px;
             color: red;
             font-size: @small-font-size;
           }
           .el-input {
-             transform: translateY(-4px);
+             transform: translateY(-3px);
             .el-input__inner {
               height: 30px;
               border: none;
@@ -1804,7 +1805,7 @@ export default {
           }
           .el-textarea {
             vertical-align: middle;
-            transform: translateY(-4px);
+            transform: translateY(-3px);
             .el-textarea__inner {
               border: none;
               background-color: @screen-color;

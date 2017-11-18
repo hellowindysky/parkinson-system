@@ -600,6 +600,7 @@ export default {
     width: 50%;
     min-height: @field-height;
     text-align: left;
+    vertical-align: top;
     &.whole-line {
       width: 100%;
       .field-input {

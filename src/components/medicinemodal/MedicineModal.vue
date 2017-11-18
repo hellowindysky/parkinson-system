@@ -679,7 +679,7 @@ export default {
 <style lang="less">
 @import "~styles/variables.less";
 
-@field-height: 40px;
+@field-line-height: 25px;
 @field-name-width: 110px;
 @long-field-name-width: 160px;
 
@@ -712,15 +712,14 @@ export default {
     .content {
       text-align: left;
       .field {
-        padding: 5px 0;
         text-align: left;
         display: inline-block;
         position: relative;
         width: 50%;
-        // height: @field-height;
+        min-height: 45px;
         vertical-align: top;
         text-align: left;
-        transform: translateX(10px);  // 这一行是为了修补视觉上的偏移
+        transform: translate3d(10px, 5px, 0);  // 这一行是为了修补视觉上的偏移
         &.whole-line {
           width: 100%;
           overflow: hidden;
@@ -731,11 +730,9 @@ export default {
         .field-name {
           display: inline-block;
           position: absolute;
-          top: 5px;
           left: 0;
           width: @field-name-width;
-          height: @field-height;
-          line-height: 25px;
+          line-height: @field-line-height;
           font-size: @normal-font-size;
           color: @font-color;
           &.long-field-name {
@@ -753,8 +750,7 @@ export default {
           top: 0;
           left: @field-name-width;
           width: calc(~"92% - @{field-name-width}");
-          height: @field-height;
-          line-height: 25px;
+          line-height: @field-line-height;
           font-size: @normal-font-size;
           color: @light-font-color;
           &.long-field-name {
@@ -762,7 +758,7 @@ export default {
           }
           .warning-text {
             position: absolute;
-            top: 25px;
+            top: 22px;
             left: 10px;
             height: 15px;
             color: red;
@@ -777,7 +773,7 @@ export default {
             }
           }
           .el-textarea {
-            // vertical-align: middle;
+            margin-bottom: 5px;
             transform: translateY(-3px);
             .el-textarea__inner {
               border: none;
