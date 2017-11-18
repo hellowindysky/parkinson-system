@@ -124,7 +124,7 @@
             <span class="value">{{item.effectInfo}}</span>
           </div>
           <div class="text line-5">
-            <span class="name">开机参数: </span>
+            <span class="name">最后参数: </span>
             <span class="value">{{item.dbsParam}}</span>
           </div>
           <div class="text line-6 single-line-ellipsis">
