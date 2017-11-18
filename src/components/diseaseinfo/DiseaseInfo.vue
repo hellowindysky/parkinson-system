@@ -150,6 +150,10 @@ export default {
           }
         }
       };
+
+      this.copyInfo.ariTime = Util.simplifyDate(this.copyInfo.ariTime);
+      this.copyInfo.firTime = Util.simplifyDate(this.copyInfo.firTime);
+      this.copyInfo.surTime = Util.simplifyDate(this.copyInfo.surTime);
       var ariTime = new Date(this.copyInfo.ariTime).getTime();
       var firTime = this.copyInfo.firTime ? new Date(this.copyInfo.firTime).getTime() : ariTime;
       var surTime = this.copyInfo.surTime ? new Date(this.copyInfo.surTime).getTime() : firTime;
