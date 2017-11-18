@@ -201,8 +201,6 @@ import { getPatientList } from 'api/patient';
 import { getUserList, getRoleList } from 'api/user';
 import { getGroupList, deleteGroup } from 'api/group';
 
-var hasFirstUpdatedList = false;
-
 export default {
   data() {
     // 自定义校验规则，可以为空，数值在 0 ~ 120 之间
@@ -223,16 +221,19 @@ export default {
       }, 0);
     };
     return {
-      // proviceCity: {},
       searchInput: '',
       timeout: null,
+
       myPatientsList: [],
       otherPatientsList: [],
       groupList: [],
       userList: [],
       roleList: [],
+
       panelDisplay: false,
+      hasFirstUpdatedList: false,
       listMode: this.READING_MODE,
+
       MY_PATIENTS_TYPE: 'myPatients',
       OTHER_PATIENTS_TYPE: 'otherPatients',
       GROUP_TYPE: 'groups',
@@ -327,9 +328,8 @@ export default {
     }
   },
   mounted() {
-
     // 如果在某个指定了 id 的页面进行刷新，checkRoute函数内的[更新列表数据]不会执行，这个时候就需要手动更新
-    if (!hasFirstUpdatedList) {
+    if (!this.hasFirstUpdatedList) {
       if (this.listType === this.MY_PATIENTS_TYPE || this.listType === this.OTHER_PATIENTS_TYPE) {
         this.updatePatientsList(this.checkRoute);
       } else if (this.listType === this.GROUP_TYPE) {
@@ -338,6 +338,8 @@ export default {
         this.updateUserList(this.checkRoute);
       } else if (this.listType === this.GROUP_TYPE) {
         this.updateRoleList(this.checkRoute);
+      } else {
+        console.log('unknown listType');
       }
     }
 
@@ -414,7 +416,7 @@ export default {
         condition.ageTo = filterForm.maxAge;
       }
 
-      hasFirstUpdatedList = true;   // 这个变量用来阻止初次登录界面时，发出重复请求
+      this.hasFirstUpdatedList = true;   // 这个变量用来阻止初次登录界面时，发出重复请求
       getPatientList(condition).then((data) => {
         if (this.listType === this.MY_PATIENTS_TYPE) {
           this.myPatientsList = data;
@@ -436,7 +438,7 @@ export default {
       if (this.searchInput !== '' && this.listType === this.GROUP_TYPE) {
         condition.groupeName = this.searchInput.trim();
       }
-      hasFirstUpdatedList = true;
+      this.hasFirstUpdatedList = true;
       getGroupList(condition).then((data) => {
         this.groupList = data ? data : [];
         cb && cb();
@@ -444,7 +446,7 @@ export default {
       this.updateScrollbar();
     },
     updateUserList(cb) {
-      hasFirstUpdatedList = true;
+      this.hasFirstUpdatedList = true;
       getUserList().then((data) => {
         this.userList = data.userRoles ? data.userRoles : [];
         this.updateScrollbar();
@@ -453,7 +455,7 @@ export default {
       });
     },
     updateRoleList(cb) {
-      hasFirstUpdatedList = true;
+      this.hasFirstUpdatedList = true;
       getRoleList().then((data) => {
         this.roleList = data.userRoleDTOList ? data.userRoleDTOList : [];
         this.updateScrollbar();
