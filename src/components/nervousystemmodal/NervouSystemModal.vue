@@ -36,7 +36,7 @@
         </span>
         <span class="field-input">
           <span v-if="mode===VIEW_CURRENT_CARD">{{item.spephysicalResult}}</span>
-          <el-input v-else placeholder="请输入检查结果" v-model="item.spephysicalResult" :maxlength="500"></el-input>
+          <el-input v-else type="textarea" placeholder="请输入检查结果" v-model="item.spephysicalResult" :maxlength="500"></el-input>
         </span>
       </div>
       <div class="field">
@@ -45,7 +45,7 @@
         </span>
         <span class="field-input">
           <span v-if="mode===VIEW_CURRENT_CARD">{{item.remarks}}</span>
-          <el-input v-else type="textarea" :rows="2" placeholder="请输入备注内容" v-model="item.remarks" :maxlength="500"></el-input>
+          <el-input v-else type="textarea" placeholder="请输入备注内容" v-model="item.remarks" :maxlength="500"></el-input>
         </span>
       </div>
 
@@ -305,6 +305,7 @@ export default {
           }
         }
         .el-textarea {
+          margin-bottom: 15px;
           transform: translateY(-3px);
           .el-textarea__inner {
             border: none;
