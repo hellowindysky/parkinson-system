@@ -814,7 +814,7 @@
 import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
-import { vueCopy, reviseDateFormat, pruneObj} from 'utils/helper';
+import { deepCopy, vueCopy, reviseDateFormat, pruneObj} from 'utils/helper';
 import Util from 'utils/util.js';
 import {
   getPatientSimpleInfo,
@@ -1019,8 +1019,8 @@ export default {
         return;
       }
       this.lockSubmitButton = true;
+
       // 提交前检查一下必填字段是否都有填写，即警告信息是否都为空
-      console.log(this.warningResults);
       this.updateWarning('deviceId');
       this.updateWarning('programDate');
       for (var fieldName in this.warningResults) {
@@ -1042,28 +1042,32 @@ export default {
         }
       };
 
-      this.copyInfo.patientCaseId = this.$route.params.caseId;
-      reviseDateFormat(this.copyInfo);
-      pruneObj(this.copyInfo);
+      // 如果直接操作 copyInfo，后面的 delete 操作可能会影响到数据绑定
+      var submitData = deepCopy(this.copyInfo);
+
+      submitData.patientCaseId = this.$route.params.caseId;
+      reviseDateFormat(submitData);
+      pruneObj(submitData);
+
       if (this.modelType === 1 && this.mode === this.ADD_NEW_CARD) {
-        delete this.copyInfo.followDbsParams;
-        addDbsFirstInfo(this.copyInfo).then(() => {
+        delete submitData.followDbsParams;
+        addDbsFirstInfo(submitData).then(() => {
           this.updateAndClose();
         }, this._handleError);
       } else if (this.modelType === 1 && this.mode === this.EDIT_CURRENT_CARD) {
-        delete this.copyInfo.followDbsParams;
-        modifyDbsFirstInfo(this.copyInfo).then(() => {
+        delete submitData.followDbsParams;
+        modifyDbsFirstInfo(submitData).then(() => {
           this.updateAndClose();
         }, this._handleError);
 
       } else if (this.modelType === 0 && this.mode === this.ADD_NEW_CARD) {
-        delete this.copyInfo.firstDbsParams;
-        addDbsFollowInfo(this.copyInfo).then(() => {
+        delete submitData.firstDbsParams;
+        addDbsFollowInfo(submitData).then(() => {
           this.updateAndClose();
         }, this._handleError);
       } else if (this.modelType === 0 && this.mode === this.EDIT_CURRENT_CARD) {
-        delete this.copyInfo.firstDbsParams;
-        modifyDbsFollowInfo(this.copyInfo).then(() => {
+        delete submitData.firstDbsParams;
+        modifyDbsFollowInfo(submitData).then(() => {
           this.updateAndClose();
         }, this._handleError);
       }
