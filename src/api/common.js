@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Message } from 'element-ui';
 
-export var baseUrl = 'http://apitest.gyenno.com';
+export var baseUrl = process.env.BASE_API;
 
 // axios.post 本身就是个 Promise 对象，这里我们再用 Promise 封装一次，在本文件内对响应数据进行处理，对外只暴露请求成功时的有效数据
 export function encapsulatePromise(url, request) {

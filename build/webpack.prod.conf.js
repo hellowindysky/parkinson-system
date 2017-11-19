@@ -9,9 +9,16 @@ var HtmlWebpackPlugin = require('html-webpack-plugin')
 var ExtractTextPlugin = require('extract-text-webpack-plugin')
 var OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 
-var env = process.env.NODE_ENV === 'testing'
-  ? require('../config/test.env')
-  : config.build.env
+var env = config.build.prodEnv
+if (process.env.NODE_ENV === 'testing') {
+  env = require('../config/test.env')
+} else if (process.env.NODE_ENV === 'beta') {
+  env = config.build.betaEnv
+} else if (process.env.NODE_ENV === 'pre') {
+  env = config.build.preEnv
+} else if (process.env.NODE_ENV === 'prod') {
+  env = config.build.prodEnv
+}
 
 var webpackConfig = merge(baseWebpackConfig, {
   module: {
