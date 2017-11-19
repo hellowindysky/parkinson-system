@@ -1073,12 +1073,14 @@ export default {
       }
     },
     judgeProgramDate() {
-      console.log(this.copyInfo);
-      var programDate = this.copyInfo.programDate ? new Date(this.copyInfo.programDate).getTime() : undefined;
-      var lastProgramDate = this.lastProgramDate ? new Date(this.lastProgramDate).getTime() : undefined;
-      if (lastProgramDate && programDate && (lastProgramDate > programDate)) {
+      var programDate = Util.simplifyDate(this.copyInfo.programDate);
+      var lastProgramDate = Util.simplifyDate(this.lastProgramDate);
+      programDate = programDate ? new Date(programDate).getTime() : undefined;
+      lastProgramDate = lastProgramDate ? new Date(lastProgramDate).getDate() : undefined;
+
+      if (lastProgramDate && programDate && lastProgramDate > programDate) {
         this.$message({
-          message: '程控时间必须大于上次时间',
+          message: '程控时间必须不能早于上次程控时间',
           type: 'warning',
           duration: 2000
         });
