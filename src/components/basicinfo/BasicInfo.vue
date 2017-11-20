@@ -49,7 +49,7 @@ import { mapGetters } from 'vuex';
 import { modifyPatientInfo, addPatientInfo } from 'api/patient.js';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import { reviseDateFormat, pruneObj } from 'utils/helper.js';
+import { reviseDateFormat, pruneObj, deepCopy } from 'utils/helper.js';
 
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 
@@ -108,6 +108,7 @@ export default {
   },
   methods: {
     startEditing() {
+      this.shallowCopy(this.basicInfo);
       this.mode = this.EDITING_MODE;
       this.clearWarning();
     },
@@ -160,12 +161,23 @@ export default {
       }
 
       // 在提交前，将 copyInfo 中的数据还原成适合服务器传输的格式，并将提交按钮锁定
-      this.restoreCopyInfo();
-      pruneObj(this.copyInfo);
+      var submitData = deepCopy(this.copyInfo);
+      reviseDateFormat(submitData);
+      for (let group of this.basicInfoTemplateGroups) {
+        for (let field of group) {
+          var fieldName = field.fieldName;
+          // 有几个字段的值在取过来的时候进行了特殊处理，这里在传回给服务器的时候要还原成一开始的格式
+          if (CONVERT_TO_DECIMAL_LIST.indexOf(fieldName) > -1 && submitData[fieldName] !== '') {
+            submitData[fieldName] = parseInt(submitData[fieldName] * 10, 10);
+          }
+        }
+      }
+      pruneObj(submitData);
       console.log(this.copyInfo);
+      console.log(submitData);
       // 判断是新增患者还是修改已有患者
       if (this.$route.params.id === 'newPatient') {
-        addPatientInfo(this.copyInfo).then((data) => {
+        addPatientInfo(submitData).then((data) => {
           var newId = data.patientId;
           if (this.listType === 'myPatients') {
             this.$router.push({
@@ -210,8 +222,8 @@ export default {
 
       } else {
         // 一旦提交成功，basicInfo也会更新，这个时候再切换回阅读状态
-        this.copyInfo.patientId = this.$route.params.id;
-        modifyPatientInfo(this.copyInfo).then(() => {
+        submitData.patientId = this.$route.params.id;
+        modifyPatientInfo(submitData).then(() => {
           Bus.$emit(this.UPDATE_PATIENT_INFO);
 
           // 即使是编辑已有记录，也要更新患者列表（因为列表中存在年龄，性别等信息）
@@ -241,20 +253,6 @@ export default {
           this.lockSubmitButton = false;
         });
       }
-
-      // 在数据刷新之前，保证字段显示依然正确。
-      // 不知道为什么，如果没用 setTimeout 包裹，则会覆盖之前的 restoreCopyInfo() 的操作
-      setTimeout(() => {
-        // for (let group of this.basicInfoTemplateGroups) {
-        //   for (let field of group) {
-        //     if (this.copyInfo[field.fieldName] === undefined) {
-        //       this.$set(this.copyInfo, field.fieldName, '');
-        //     }
-        //   }
-        // }
-
-        this.handleSpecialField();
-      }, 0);
     },
     shallowCopy(obj) {
       // 进行浅复制之后，修改复制对象的属性，不会影响到原始对象
@@ -278,20 +276,6 @@ export default {
       for (let fieldName of CONVERT_TO_DECIMAL_LIST) {
         if (this.copyInfo[fieldName]) {
           this.copyInfo[fieldName] = this.copyInfo[fieldName] / 10;
-        }
-      }
-    },
-    restoreCopyInfo() {
-      // 这个函数用来在提交之前，将我们的临时数据 copyInfo，调整成适合服务器传输的格式
-      // 日期控件(el-date-picker)给的是一个表示完整日期对象的字符串，我们需要转换成 "yyyy-MM-dd"的格式后再提交
-      reviseDateFormat(this.copyInfo);
-      for (let group of this.basicInfoTemplateGroups) {
-        for (let field of group) {
-          var fieldName = field.fieldName;
-          // copyInfo 有几个字段的值在取过来的时候进行了特殊处理，这里在传回给服务器的时候要还原成一开始的格式
-          if (CONVERT_TO_DECIMAL_LIST.indexOf(fieldName) > -1 && this.copyInfo[fieldName] !== '') {
-            this.$set(this.copyInfo, fieldName, this.copyInfo[fieldName] * 10);
-          }
         }
       }
     },
