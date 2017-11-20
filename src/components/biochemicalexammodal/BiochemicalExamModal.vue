@@ -305,7 +305,7 @@ export default {
 @col-english-width: 70px;
 @col-result-width: 160px;
 @col-unit-width: 70px;
-@col-range-width: 70px;
+@col-range-width: 100px;
 @col-remarks-width: 180px;
 
 .biochemical-modal-wrapper {
