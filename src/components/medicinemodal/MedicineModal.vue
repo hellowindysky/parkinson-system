@@ -12,7 +12,7 @@
             <span v-if="getMatchedField(field.fieldName).readOnlyType===2">
               <span v-if="field.fieldName==='commonName'">{{commonName}}</span>
               <span v-else-if="field.fieldName==='medicalType'">{{medicalType}}</span>
-              <span v-else-if="field.fieldName==='totalMeasure'">{{totalMeasure}} mg</span>
+              <span v-else-if="field.fieldName==='totalMeasure'">{{medicine.totalMeasure}} mg</span>
               <span v-else>{{medicine[field.fieldName]}}</span>
             </span>
             <span v-else-if="getUIType(field.fieldName)===3">
