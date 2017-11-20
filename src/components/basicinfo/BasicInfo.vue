@@ -173,8 +173,7 @@ export default {
         }
       }
       pruneObj(submitData);
-      console.log(this.copyInfo);
-      console.log(submitData);
+
       // 判断是新增患者还是修改已有患者
       if (this.$route.params.id === 'newPatient') {
         addPatientInfo(submitData).then((data) => {
