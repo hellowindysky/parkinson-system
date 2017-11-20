@@ -10,7 +10,7 @@
           </span>
 
           <div class="field-value" v-show="mode===READING_MODE">
-            <span v-if="getUIType(field)===3">
+            <span v-if="getUIType(field)===3 && field.fieldName!=='homeProvince'">
               {{ transformTypeCode(copyInfo[field.fieldName], field) }}
             </span>
             <span v-else>
@@ -162,7 +162,7 @@ export default {
       // 在提交前，将 copyInfo 中的数据还原成适合服务器传输的格式，并将提交按钮锁定
       this.restoreCopyInfo();
       pruneObj(this.copyInfo);
-
+      console.log(this.copyInfo);
       // 判断是新增患者还是修改已有患者
       if (this.$route.params.id === 'newPatient') {
         addPatientInfo(this.copyInfo).then((data) => {
@@ -245,6 +245,14 @@ export default {
       // 在数据刷新之前，保证字段显示依然正确。
       // 不知道为什么，如果没用 setTimeout 包裹，则会覆盖之前的 restoreCopyInfo() 的操作
       setTimeout(() => {
+        // for (let group of this.basicInfoTemplateGroups) {
+        //   for (let field of group) {
+        //     if (this.copyInfo[field.fieldName] === undefined) {
+        //       this.$set(this.copyInfo, field.fieldName, '');
+        //     }
+        //   }
+        // }
+
         this.handleSpecialField();
       }, 0);
     },
