@@ -158,6 +158,8 @@ export default {
   width: 100vw;
   height: 100vh;
   background-color: @theme-color;
+  position: relative;
+  min-height:500px;
   .panel {
     position: absolute;
     left: 50%; top: 45%;
