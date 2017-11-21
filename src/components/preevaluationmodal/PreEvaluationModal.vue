@@ -126,23 +126,28 @@
             <td class="col" rowspan="2">平均值</td>
           </tr>
           <tr class="row">
-            <td class="col" v-for="(dayTimeName, listIndex) in dayTimeNameList">
+            <td class="col" v-for="(dayTimeName, listIndex) in dayTimeNameList"
+              @keyup.up="moveFocus(0, listIndex)" @keyup.down="moveFocus(1, listIndex)"
+              @keyup.left="moveFocus(0, listIndex-1)" @keyup.right="moveFocus(0, listIndex+1)">
               <span v-if="mode===VIEW_CURRENT_CARD && isTimeEditable(listIndex)">
                 {{copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName]}}
               </span>
-              <el-date-picker v-else v-model="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName]"
+              <el-date-picker v-else :ref="'r'+0+'c'+listIndex" v-model="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName]"
                 @change="updateDiaryDayTime()" :editable="false" :disabled="!isTimeEditable(listIndex)"
                 :class="{'warning': listIndex === 0 && warningResults['firstDayTime']}"
-                :placeholder="isTimeEditable(listIndex) ? '请选择日期' : ''"></el-date-picker>
+                :placeholder="isTimeEditable(listIndex) ? '请选择日期' : ''">
+              </el-date-picker>
             </td>
           </tr>
           <tr class="row" v-for="(rowName, index) in diaryRowNameList">
             <td class="col title-col">{{rowName}}</td>
-            <td class="col" v-for="(hourName, listIndex) in hourNameList">
+            <td class="col" v-for="(hourName, listIndex) in hourNameList"
+              @keyup.up="moveFocus(index, listIndex)" @keyup.down="moveFocus(index+2, listIndex)"
+              @keyup.left="moveFocus(index+1, listIndex-1)" @keyup.right="moveFocus(index+1, listIndex+1)">
               <span v-if="mode===VIEW_CURRENT_CARD && hasDayTime(listIndex)">
                 {{copyInfo.preopsDiaryDTO.patientPreopsDiaryList[index][hourName]}}
               </span>
-              <el-input v-else v-model="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[index][hourName]"
+              <el-input v-else :ref="'r'+(index+1)+'c'+listIndex" v-model="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[index][hourName]"
                 @blur="updateDiaryHour()" :disabled="!hasDayTime(listIndex)"></el-input>
             </td>
             <td class="col computed-cell">
@@ -1548,6 +1553,14 @@ export default {
         }
       }
       this.warningResults[warningFieldName] = null;
+    },
+    moveFocus(rowIndex, colIndex) {
+      // 整个日记表格有 diaryRowNameList.length + 1 行（第一行是日期）， hourNameList.length 列
+      if (rowIndex >= 0 && rowIndex < this.diaryRowNameList.length + 1 &&
+        colIndex >= 0 && colIndex < this.hourNameList.length) {
+        var refName = 'r' + rowIndex + 'c' + colIndex;
+        this.$refs[refName][0].$el.getElementsByTagName('input')[0].focus();
+      }
     }
   },
   created() {
