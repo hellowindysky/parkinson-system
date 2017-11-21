@@ -226,8 +226,24 @@ const getters = {
 
 const actions = {
   getWholeDictionary({ commit }) {
-    getDictionary().then(data => {
+    // 在 localStorage 里面获取之前存取的 dictionary
+    var lastDictionary = JSON.parse(localStorage.getItem('dictionary'));
+    if (lastDictionary) {
+      commit(types.UPDATE_DICTIONARY, lastDictionary);
+    }
+
+    // 然后将上次存的 dictionary 的 version 作为参数传给服务器，由服务器来判断 dictionary 是否有更新
+    // 如果有新版本的 dictionary，则在这里自动更新，如果服务器返回的 code 为 6(即返回错误)，那么就不用更新
+    var lastVersion = (lastDictionary && lastDictionary.version) ? lastDictionary.version : 0;
+    getDictionary(lastVersion).then(data => {
+      localStorage.setItem('dictionary', JSON.stringify(data));
       commit(types.UPDATE_DICTIONARY, data);
+    }, error => {
+      if (error.code === 6) {
+        // console.log('dictionary 已是最新');
+      } else {
+        console.log(error);
+      }
     });
   }
 };

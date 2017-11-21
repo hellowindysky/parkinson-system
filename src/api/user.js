@@ -10,9 +10,9 @@ export function resetPassword(oldPassword, newPassword) {
   return encapsulatePromise(url, request);
 };
 
-export function getDictionary() {
+export function getDictionary(version) {
   var request = Object.assign({}, getCommonRequest());
-  request.version = 43;
+  request.version = version;
   var url = baseUrl + '/pdms/queryDictionary';
 
   return encapsulatePromise(url, request);
