@@ -3,7 +3,7 @@
     <!-- <particles></particles> -->
     <div class="panel">
       <img class="logo" src="static/img/logo.png" alt="logo.png">
-      <h1 class="title">睿云</h1>
+      <h1 class="title">{{title}}</h1>
       <h3 class="subtitle"></h3>
       <div class="tabs-wrapper">
         <span class="tab tab-place-1" :class="{'current-tab':loginType===1}" @click="accountLogin">账号登录</span>
@@ -62,6 +62,9 @@ export default {
     };
   },
   computed: {
+    title() {
+      return process.env.TITLE;
+    },
     tabPlaceClass() {
       return 'tab-place-' + this.loginType;
     },
