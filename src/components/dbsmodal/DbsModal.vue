@@ -47,7 +47,7 @@
           </span>
           <span class="field-input" v-else>
             <span class="warning-text">{{warningResults.programDate}}</span>
-            <el-date-picker v-model="copyInfo.programDate" @change="updateWarning('programDate')"
+            <el-date-picker v-model="copyInfo.programDate" @change="updateWarning('programDate')" placeholder="请选择程控时间"
               :class="{'warning': warningResults.programDate}"></el-date-picker>
           </span>
         </div>
@@ -57,7 +57,7 @@
             {{copyInfo.remarks}}
           </span>
           <span class="field-input" v-else>
-            <el-input type="textarea" v-model="copyInfo.remarks" :maxlength="300"></el-input>
+            <el-input type="textarea" v-model="copyInfo.remarks" :maxlength="300" placeholder="请输入备注"></el-input>
           </span>
         </div>
         <div class="seperate-line"></div>
@@ -79,7 +79,7 @@
             {{lastProgramDate}}
           </span>
           <span class="field-input" v-else>
-            <el-date-picker v-model="lastProgramDate"></el-date-picker>
+            <el-date-picker v-model="lastProgramDate" placeholder="请选择上次程控时间"></el-date-picker>
           </span>
         </div>
         <div class="field">
@@ -100,7 +100,7 @@
             {{copyInfo.medicationStatus}}
           </span>
           <span class="field-input" v-else>
-            <el-input v-model="copyInfo.medicationStatus"></el-input>
+            <el-input v-model="copyInfo.medicationStatus" placeholder="请输入服用药物"></el-input>
           </span>
         </div>
         <div class="field" v-show="modelType===1">
@@ -121,7 +121,7 @@
             {{copyInfo.damageEffectDuration}}
           </span>
           <span class="field-input long-field-name" v-else>
-            <el-input v-model="copyInfo.damageEffectDuration"></el-input>
+            <el-input v-model="copyInfo.damageEffectDuration" placeholder="请输入微毁损效应持续时间"></el-input>
           </span>
         </div>
         <div class="field" v-show="modelType===1">
@@ -142,7 +142,7 @@
             {{copyInfo.adverseEventsRemark}}
           </span>
           <span class="field-input" v-else>
-            <el-input type="textarea" v-model="copyInfo.adverseEventsRemark" :maxlength="300"></el-input>
+            <el-input type="textarea" v-model="copyInfo.adverseEventsRemark" :maxlength="300" placeholder="请输入不良事件描述"></el-input>
           </span>
         </div>
         <div class="field whole-line double-line" v-show="modelType===0">
@@ -151,7 +151,7 @@
             {{copyInfo.complaint}}
           </span>
           <span class="field-input" v-else>
-            <el-input type="textarea" v-model="copyInfo.complaint" :maxlength="300"></el-input>
+            <el-input type="textarea" v-model="copyInfo.complaint" :maxlength="300" placeholder="请输入患者主诉"></el-input>
           </span>
         </div>
         <div class="field whole-line double-line" v-show="modelType===0">
@@ -160,7 +160,7 @@
             {{copyInfo.effectInfo}}
           </span>
           <span class="field-input" v-else>
-            <el-input type="textarea" v-model="copyInfo.effectInfo" :maxlength="300"></el-input>
+            <el-input type="textarea" v-model="copyInfo.effectInfo" :maxlength="300" placeholder="请输入效果及副作用"></el-input>
           </span>
         </div>
       </div>
@@ -1792,6 +1792,7 @@ export default {
           color: @light-font-color;
           &.long-field-name {
             left: @long-field-name-width;
+            width: calc(~"92% - @{long-field-name-width}");
           }
           .warning-text {
             position: absolute;
