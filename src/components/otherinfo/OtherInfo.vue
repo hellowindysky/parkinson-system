@@ -116,7 +116,7 @@ import { deletePatientPresentHistory, deletePatientMedHistory, deletePatientDise
 
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
 import ExtensiblePanel from 'components/extensiblepanel/ExtensiblePanel';
-import Card from 'components/card/Card';
+import Card from 'components/public/card/Card';
 
 export default {
   props: {

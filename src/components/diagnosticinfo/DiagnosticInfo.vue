@@ -24,7 +24,7 @@
 
 <script>
 import FoldingPanel from 'components/foldingpanel/FoldingPanel';
-import Card from 'components/card/Card';
+import Card from 'components/public/card/Card';
 import Bus from 'utils/bus.js';
 import { deleteDiagnosticInfo } from 'api/patient.js';
 
