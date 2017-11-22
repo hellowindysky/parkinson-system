@@ -127,7 +127,7 @@ import { modifyScaleInfo, addScaleInfo } from 'api/patient';
 import { mapGetters } from 'vuex';
 import { vueCopy, deepCopy } from 'utils/helper';
 
-import FoldingPanel from 'components/foldingpanel/FoldingPanel';
+import FoldingPanel from 'components/public/foldingpanel/FoldingPanel';
 
 export default {
   data() {

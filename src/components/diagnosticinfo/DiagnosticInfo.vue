@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import FoldingPanel from 'components/foldingpanel/FoldingPanel';
+import FoldingPanel from 'components/public/foldingpanel/FoldingPanel';
 import Card from 'components/public/card/Card';
 import Bus from 'utils/bus.js';
 import { deleteDiagnosticInfo } from 'api/patient.js';

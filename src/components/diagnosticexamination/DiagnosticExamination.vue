@@ -183,7 +183,7 @@ import Util from 'utils/util.js';
 import { deleteEmg, deleteBiochemical, delNervouSystem, deleteGeneCheck, deleteImage, modVitalSigns } from 'api/patient.js';
 import { vueCopy } from 'utils/helper';
 
-import FoldingPanel from 'components/foldingpanel/FoldingPanel';
+import FoldingPanel from 'components/public/foldingpanel/FoldingPanel';
 import ExtensiblePanel from 'components/extensiblepanel/ExtensiblePanel';
 import Card from 'components/public/card/Card';
 

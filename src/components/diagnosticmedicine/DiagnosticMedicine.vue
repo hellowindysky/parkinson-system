@@ -21,7 +21,7 @@ import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import { deletePatientMedicine } from 'api/patient.js';
 
-import FoldingPanel from 'components/foldingpanel/FoldingPanel';
+import FoldingPanel from 'components/public/foldingpanel/FoldingPanel';
 import ExtensiblePanel from 'components/extensiblepanel/ExtensiblePanel';
 import Card from 'components/public/card/Card';
 

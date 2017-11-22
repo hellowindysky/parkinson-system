@@ -46,7 +46,7 @@ import Bus from 'utils/bus.js';
 import { addDiagnosticBasic, modifyDiagnosticBasic } from 'api/patient.js';
 import { reviseDateFormat } from 'utils/helper.js';
 
-import FoldingPanel from 'components/foldingpanel/FoldingPanel';
+import FoldingPanel from 'components/public/foldingpanel/FoldingPanel';
 
 export default {
   data() {

@@ -61,7 +61,7 @@ import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import { reviseDateFormat, pruneObj } from 'utils/helper.js';
 
-import FoldingPanel from 'components/foldingpanel/FoldingPanel';
+import FoldingPanel from 'components/public/foldingpanel/FoldingPanel';
 
 const HALF_LINE_FIELD_LIST = ['diseaseType', 'ariTime', 'firTime', 'surTime', 'firMedinfo',
   'firMedtime', 'ariAge', 'symmetries', 'symmetriesTime', 'firHosp', 'surHosp'];
