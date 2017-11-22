@@ -5,15 +5,15 @@ import Login from 'components/login/Login';
 
 import Layout from 'components/layout/Layout';
 // import Home from 'components/home/Home';   // 首页还没做
-import ListFrame from 'components/listframe/ListFrame';
+import ListFrame from 'components/views/listframe/ListFrame';
 import Analytics from 'components/analytics/Analytics';
 import Configuration from 'components/configuration/Configuration';
 
-import PatientInfo from 'components/patientinfo/PatientInfo';
+import PatientInfo from 'components/views/patient/patientinfo/PatientInfo';
 import GroupInfo from 'components/groupinfo/GroupInfo';
 
-import PersonalInfo from 'components/personalinfo/PersonalInfo';
-import DiagnosticInfo from 'components/diagnosticinfo/DiagnosticInfo';
+import PersonalInfo from 'components/views/patient/personalinfo/PersonalInfo';
+import DiagnosticInfo from 'components/views/patient/diagnosticinfo/DiagnosticInfo';
 
 import BasicAnalytics from 'components/basicanalytics/BasicAnalytics';
 

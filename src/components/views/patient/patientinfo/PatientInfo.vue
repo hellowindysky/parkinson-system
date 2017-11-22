@@ -49,9 +49,9 @@ import Bus from 'utils/bus.js';
 
 import { getPatientInfo, getPatientGroupInfo, getPatientCaseList } from 'api/patient';
 
-import DiagnosticDetail from 'components/diagnosticdetail/DiagnosticDetail';
-import ScaleModal from 'components/scalemodal/ScaleModal';
-import BasicInfo from 'components/basicinfo/BasicInfo';
+import DiagnosticDetail from 'components/views/patient/diagnosticinfo/diagnosticdetail/DiagnosticDetail';
+import ScaleModal from 'components/views/modal/scalemodal/ScaleModal';
+import BasicInfo from 'components/views/patient/personalinfo/basicinfo/BasicInfo';
 import GroupPanel from 'components/grouppanel/GroupPanel';
 
 export default {

@@ -12,8 +12,8 @@
 
 <script>
 import BasicInfo from 'components/basicinfo/BasicInfo';
-import DiseaseInfo from 'components/diseaseinfo/DiseaseInfo';
-import OtherInfo from 'components/otherinfo/OtherInfo';
+import DiseaseInfo from 'components/views/patient/personalinfo/diseaseinfo/DiseaseInfo';
+import OtherInfo from 'components/views/patient/personalinfo/otherinfo/OtherInfo';
 
 export default {
   props: {

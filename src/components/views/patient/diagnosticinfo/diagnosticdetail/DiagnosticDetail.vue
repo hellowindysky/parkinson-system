@@ -35,12 +35,12 @@ import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import { getPatientCase, archivePatientCase } from 'api/patient.js';
 
-import DiagnosticBasic from 'components/diagnosticbasic/DiagnosticBasic';
-import DiagnosticDisease from 'components/diagnosticdisease/DiagnosticDisease';
-import DiagnosticMedicine from 'components/diagnosticmedicine/DiagnosticMedicine';
-import DiagnosticSurgery from 'components/diagnosticsurgery/DiagnosticSurgery';
-import DiagnosticScale from 'components/diagnosticscale/DiagnosticScale';
-import DiagnosticExamination from 'components/diagnosticexamination/DiagnosticExamination';
+import DiagnosticBasic from 'components/views/patient/diagnosticinfo/diagnosticbasic/DiagnosticBasic';
+import DiagnosticDisease from 'components/views/patient/diagnosticinfo/diagnosticdisease/DiagnosticDisease';
+import DiagnosticMedicine from 'components/views/patient/diagnosticinfo/diagnosticmedicine/DiagnosticMedicine';
+import DiagnosticSurgery from 'components/views/patient/diagnosticinfo/diagnosticsurgery/DiagnosticSurgery';
+import DiagnosticScale from 'components/views/patient/diagnosticinfo/diagnosticscale/DiagnosticScale';
+import DiagnosticExamination from 'components/views/patient/diagnosticinfo/diagnosticexamination/DiagnosticExamination';
 
 export default {
   data() {

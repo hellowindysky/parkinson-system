@@ -12,11 +12,11 @@
     <operative-complication-modal></operative-complication-modal>
     <dbs-modal></dbs-modal>
     <confirm-box></confirm-box>
-    <nervous-system></nervous-system>
+    <nervous-system-modal></nervous-system-modal>
     <gene-modal></gene-modal>
-    <biochemical-exam></biochemical-exam>
+    <biochemical-exam-modal></biochemical-exam-modal>
     <emg-modal></emg-modal>
-    <img-modal></img-modal>
+    <image-modal></image-modal>
     <filter-panel :showFilterPanel="showFilterPanel"></filter-panel>
   </div>
 </template>
@@ -29,19 +29,19 @@ import sidebar from 'components/views/sidebar/Sidebar';
 
 import passwordModal from 'components/passwordmodal/PasswordModal';
 import groupModal from 'components/groupmodal/GroupModal';
-import modalBox from 'components/modalbox/ModalBox';
-import medicineModal from 'components/medicinemodal/MedicineModal';
-import preEvaluationModal from 'components/preevaluationmodal/PreEvaluationModal';
-import surgicalMethodModal from 'components/surgicalmethodmodal/SurgicalMethodModal';
-import operativeComplicationModal from 'components/operativecomplicationmodal/OperativeComplicationModal';
-import dbsModal from 'components/dbsmodal/DbsModal';
+import modalBox from 'components/views/modal/modalbox/ModalBox';
+import medicineModal from 'components/views/modal/medicinemodal/MedicineModal';
+import preEvaluationModal from 'components/views/modal/preevaluationmodal/PreEvaluationModal';
+import surgicalMethodModal from 'components/views/modal/surgicalmethodmodal/SurgicalMethodModal';
+import operativeComplicationModal from 'components/views/modal/operativecomplicationmodal/OperativeComplicationModal';
+import dbsModal from 'components/views/modal/dbsmodal/DbsModal';
 import confirmBox from 'components/confirmbox/ConfirmBox';
 import filterPanel from 'components/filterpanel/FilterPanel';
-import nervousSystem from 'components/nervousystemmodal/NervouSystemModal';
-import geneModal from 'components/genemodal/GeneModal';
-import biochemicalExam from 'components/biochemicalexammodal/BiochemicalExamModal';
-import emgModal from 'components/emgmodal/EmgModal';
-import imgModal from 'components/imagemodal/ImageModal';
+import nervousSystemModal from 'components/views/modal/nervoussystemmodal/NervousSystemModal';
+import geneModal from 'components/views/modal/genemodal/GeneModal';
+import biochemicalExamModal from 'components/views/modal/biochemicalexammodal/BiochemicalExamModal';
+import emgModal from 'components/views/modal/emgmodal/EmgModal';
+import imageModal from 'components/views/modal/imagemodal/ImageModal';
 
 export default {
   data() {
@@ -63,11 +63,11 @@ export default {
     dbsModal,
     confirmBox,
     filterPanel,
-    nervousSystem,
+    nervousSystemModal,
     geneModal,
-    biochemicalExam,
+    biochemicalExamModal,
     emgModal,
-    imgModal
+    imageModal
   },
   methods: {
     blurOnScreen() {
