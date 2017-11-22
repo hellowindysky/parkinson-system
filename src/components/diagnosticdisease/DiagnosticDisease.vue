@@ -235,7 +235,7 @@ export default {
       // 运动症状
       var msSymptom = [];
       for (let symptom of this.allSymptom) {
-        if (symptom.symType === this.MS_SYMPTOM) {
+        if (symptom.symptomType === 0) {
           msSymptom.push(symptom);
         }
       }
@@ -245,7 +245,7 @@ export default {
       // 运动并发症
       var mcSymptom = [];
       for (let symptom of this.allSymptom) {
-        if (symptom.symType === this.MC_SYMPTOM) {
+        if (symptom.symptomType === 1) {
           mcSymptom.push(symptom);
         }
       }
@@ -255,7 +255,7 @@ export default {
       // 非运动症状
       var nmsSymptom = [];
       for (let symptom of this.allSymptom) {
-        if (symptom.symType === this.NMS_SYMPTOM) {
+        if (symptom.symptomType === 2) {
           nmsSymptom.push(symptom);
         }
       }
@@ -438,14 +438,17 @@ export default {
         case this.MS_SYMPTOM:
           template = this.diagnosticDiseaseMsTemplate;
           newSymptom.symType = this.MS_SYMPTOM;
+          newSymptom.symptomType = 0;
           break;
         case this.MC_SYMPTOM:
           template = this.diagnosticDiseaseMcTemplate;
           newSymptom.symType = this.MC_SYMPTOM;
+          newSymptom.symptomType = 1;
           break;
         case this.NMS_SYMPTOM:
           template = this.diagnosticDiseaseNmsTemplate;
           newSymptom.symType = this.NMS_SYMPTOM;
+          newSymptom.symptomType = 2;
           break;
         default:
           return;
@@ -460,6 +463,7 @@ export default {
       }
 
       var index = 0;
+      console.log(newSymptom);
       if (this.copyInfo.patientSymptom && this.copyInfo.patientSymptom instanceof Array) {
         index = this.copyInfo.patientSymptom.length;
         this.$set(this.copyInfo.patientSymptom, index, newSymptom);
