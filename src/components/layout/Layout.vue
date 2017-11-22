@@ -25,7 +25,7 @@
 import Bus from 'utils/bus.js';
 
 import topbar from 'components/header/Header';
-import sidebar from 'components/sidebar/Sidebar';
+import sidebar from 'components/views/sidebar/Sidebar';
 
 import passwordModal from 'components/passwordmodal/PasswordModal';
 import groupModal from 'components/groupmodal/GroupModal';
