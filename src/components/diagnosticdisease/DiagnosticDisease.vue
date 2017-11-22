@@ -325,6 +325,11 @@ export default {
         }
       }
 
+      // 对 this.copyInfo.patientSymptom 下对症状 根据 symptomTypeId 按从小到大进行排序
+      this.copyInfo.patientSymptom.sort((symptomA, symptomB) => {
+        return symptomA.symptomTypeId > symptomB.symptomTypeId;
+      });
+
       // 把 this.copyInfo.patientSymptom 下的日期对象转换为符合传输格式的字符串
       reviseDateFormat(this.copyInfo);
 
