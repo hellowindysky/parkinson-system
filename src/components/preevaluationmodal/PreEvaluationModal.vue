@@ -1124,7 +1124,7 @@ export default {
       // 重新选择药物后，会将使用量清空，同时因为可选的规格只有一个，所以会自动选上
       medicine.medUsage = '';
       var medSpecificationOptions = this.getOptions('medicineSpec', medicine.medicineInfo);
-      medicine.medSpecification = medSpecificationOptions[0].code;
+      medicine.medSpecification = medSpecificationOptions[0] ? medSpecificationOptions[0].code : '';
 
       // 因为 COMT抑制剂类药物（如珂丹）需要配合多巴胺类药物使用，所以每次有药物名字更新，
       // 就要检查是否出现了只有 COMT 抑制剂而没有 多巴胺类药物的情况
