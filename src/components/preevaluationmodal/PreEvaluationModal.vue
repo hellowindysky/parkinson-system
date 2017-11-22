@@ -80,7 +80,8 @@
         <div class="field" v-show="copyInfo.preopsTerminalDTO.terminalIsfirst===0">
           <span class="field-name">初次出现时间</span>
           <span class="field-input">
-            <el-date-picker v-model="copyInfo.preopsTerminalDTO.terminalFirstTime" placeholder="请输入初次出现剂末现象时间"
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.preopsTerminalDTO.terminalFirstTime}}</span>
+            <el-date-picker v-else v-model="copyInfo.preopsTerminalDTO.terminalFirstTime" placeholder="请输入初次出现剂末现象时间"
               @change="updateField('terminalFirstTime')" :editable="false"></el-date-picker>
           </span>
         </div>
@@ -90,7 +91,8 @@
             <span class="required-mark">*</span>
           </span>
           <span class="field-input short-input long-field-name">
-            <el-input v-model="copyInfo.preopsTerminalDTO.terminalDuration"
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.preopsTerminalDTO.terminalDuration}}</span>
+            <el-input v-else v-model="copyInfo.preopsTerminalDTO.terminalDuration"
               @change="checkWarning(['preopsTerminalDTO', 'terminalDuration'], 'terminalDuration')"
               :class="{'warning': warningResults['terminalDuration']}"></el-input>
           </span>
