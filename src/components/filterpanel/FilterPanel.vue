@@ -1339,7 +1339,7 @@ export default {
           this.basicInfoCondition[fieldName] !== '') {
           let value = this.basicInfoCondition[fieldName];
           if (value instanceof Array) {
-            value.sort();
+            value.sort((a, b) => a > b);
             value = value.join(',');
           }
           condition.patientInfo[fieldName] = value;
@@ -1355,7 +1355,7 @@ export default {
           this.diseaseInfoCondition[fieldName] !== '') {
           let value = this.diseaseInfoCondition[fieldName];
           if (value instanceof Array) {
-            value.sort();
+            value.sort((a, b) => a > b);
             value = value.join(',');
           }
           condition.patientDiseaseInfo[fieldName] = value;
@@ -1371,7 +1371,7 @@ export default {
           this.otherInfoCondition[fieldName] !== '') {
           let value = this.otherInfoCondition[fieldName];
           if (value instanceof Array) {
-            value.sort();
+            value.sort((a, b) => a > b);
             value = value.join(',');
           }
           condition.otherPatientInfo[fieldName] = value;
@@ -1387,7 +1387,7 @@ export default {
           this.otherInfoCondition[fieldName] !== '') {
           let value = this.otherInfoCondition[fieldName];
           if (value instanceof Array) {
-            value.sort();
+            value.sort((a, b) => a > b);
             value = value.join(',');
           }
           condition.otherPatientInfo[fieldName] = value;
@@ -1403,7 +1403,7 @@ export default {
           this.diagnosticBasicCondition[fieldName] !== '') {
           let value = this.diagnosticBasicCondition[fieldName];
           if (value instanceof Array) {
-            value.sort();
+            value.sort((a, b) => a > b);
             value = value.join(',');
           }
           condition.caseInfo[fieldName] = value;
@@ -1419,7 +1419,7 @@ export default {
           this.diagnosticDiseaseCondition[fieldName] !== '') {
           let value = this.diagnosticDiseaseCondition[fieldName];
           if (value instanceof Array) {
-            value.sort();
+            value.sort((a, b) => a > b);
             value = value.join(',');
           }
           condition.caseSymptom[fieldName] = value;
@@ -1435,7 +1435,7 @@ export default {
           this.diagnosticMedicineCondition[fieldName] !== '') {
           let value = this.diagnosticMedicineCondition[fieldName];
           if (value instanceof Array) {
-            value.sort();
+            value.sort((a, b) => a > b);
             value = value.join(',');
           }
           condition.caseMedicine[fieldName] = value;
@@ -1451,7 +1451,7 @@ export default {
           this.diagnosticSurgeryCondition[fieldName] !== '') {
           let value = this.diagnosticSurgeryCondition[fieldName];
           if (value instanceof Array) {
-            value.sort();
+            value.sort((a, b) => a > b);
             value = value.join(',');
           }
           condition.caseSurgical[fieldName] = value;
@@ -1467,7 +1467,7 @@ export default {
           this.diagnosticScaleCondition[fieldName] !== '') {
           let value = this.diagnosticScaleCondition[fieldName];
           if (value instanceof Array) {
-            value.sort();
+            value.sort((a, b) => a > b);
             value = value.join(',');
           }
           condition.caseScale[fieldName] = value;
@@ -1483,7 +1483,7 @@ export default {
           this.diagnosticExaminationCondition[fieldName] !== '') {
           let value = this.diagnosticExaminationCondition[fieldName];
           if (value instanceof Array) {
-            value.sort();
+            value.sort((a, b) => a > b);
             value = value.join(',');
           }
           condition.caseInspect[fieldName] = value;
