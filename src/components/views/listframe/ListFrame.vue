@@ -10,7 +10,7 @@
 
 <script>
 import Bus from 'utils/bus.js';
-import List from 'components/list/List';
+import List from 'components/views/list/List';
 
 export default {
   data() {

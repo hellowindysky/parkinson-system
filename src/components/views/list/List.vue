@@ -187,7 +187,7 @@
 <script>
 import Ps from 'perfect-scrollbar';
 
-import patientListItem from 'components/patientitem/PatientItem';
+import patientListItem from 'components/views/list/patientitem/PatientItem';
 import groupListItem from 'components/groupitem/GroupItem';
 import userListItem from 'components/useritem/UserItem';
 import roleListItem from 'components/roleitem/RoleItem';
