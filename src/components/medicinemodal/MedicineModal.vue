@@ -173,6 +173,7 @@ import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
+import { reviseDateFormat } from 'utils/helper.js';
 import { addPatientMedicine, modifyPatientMedicine } from 'api/patient.js';
 
 export default {
@@ -410,7 +411,7 @@ export default {
       // console.log(this.warningResults);
 
       // 首先，将日期格式改为符合传输标准的字符串
-      this.medicine.stopDate = Util.simplifyDate(this.medicine.stopDate);
+      reviseDateFormat(this.medicine);
 
       // 然后更新一下 warningResults，因为有的组件初始化的时候并不会做校验
       for (let field of [].concat(this.firstTemplateGroup, this.thirdTemplateGroup,
