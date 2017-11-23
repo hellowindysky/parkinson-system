@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import BasicInfo from 'components/basicinfo/BasicInfo';
+import BasicInfo from 'components/views/patient/personalinfo/basicinfo/BasicInfo';
 import DiseaseInfo from 'components/views/patient/personalinfo/diseaseinfo/DiseaseInfo';
 import OtherInfo from 'components/views/patient/personalinfo/otherinfo/OtherInfo';
 
