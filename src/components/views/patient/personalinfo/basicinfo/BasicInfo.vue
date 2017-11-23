@@ -161,8 +161,9 @@ export default {
       }
 
       // 在提交前，将 copyInfo 中的数据还原成适合服务器传输的格式，并将提交按钮锁定
+      reviseDateFormat(this.copyInfo);
       var submitData = deepCopy(this.copyInfo);
-      reviseDateFormat(submitData);
+
       for (let group of this.basicInfoTemplateGroups) {
         for (let field of group) {
           var fieldName = field.fieldName;

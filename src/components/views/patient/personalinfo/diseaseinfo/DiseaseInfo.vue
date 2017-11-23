@@ -214,7 +214,9 @@ export default {
 
         if (nameList.indexOf(name) > -1 && field.uiType === 5) {
           // 对于那些 uiType 为 5 的字段来说，我们需要将形如 [1,2] 这样的数组转化为 "1,2"这样的字符串
-          var codesString = this.copyInfo[name].join(',');
+          var codeArr = this.copyInfo[name];
+          codeArr.sort((a, b) => a > b);
+          var codesString = codeArr.join(',');
           this.copyInfo[name] = codesString;
 
         }
