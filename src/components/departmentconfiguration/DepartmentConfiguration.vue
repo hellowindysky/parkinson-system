@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import FeatureTableHead from 'components/tablehead/FeatureTableHead';
+import FeatureTableHead from 'components/views/configuration/featureconfiguration/tablehead/FeatureTableHead';
 import BasicInfoConfig from '../basicinfoconfig/BasicInfoConfig';
 import DiseageInfoConfig from '../diseageinfoconfig/DiseageInfoConfig';
 import OtherInfoConfig from '../otherinfoconfig/OtherInfoConfig';

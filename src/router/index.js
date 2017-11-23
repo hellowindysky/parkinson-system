@@ -1,30 +1,30 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-import Login from 'components/login/Login';
+import Login from 'components/views/login/Login';
 
 import Layout from 'components/layout/Layout';
 // import Home from 'components/home/Home';   // 首页还没做
 import ListFrame from 'components/views/listframe/ListFrame';
-import Analytics from 'components/analytics/Analytics';
-import Configuration from 'components/configuration/Configuration';
+import Analytics from 'components/views/analytics/Analytics';
+import Configuration from 'components/views/configuration/Configuration';
 
 import PatientInfo from 'components/views/patient/patientinfo/PatientInfo';
-import GroupInfo from 'components/groupinfo/GroupInfo';
+import GroupInfo from 'components/views/patient/groupinfo/GroupInfo';
 
 import PersonalInfo from 'components/views/patient/personalinfo/PersonalInfo';
 import DiagnosticInfo from 'components/views/patient/diagnosticinfo/DiagnosticInfo';
 
-import BasicAnalytics from 'components/basicanalytics/BasicAnalytics';
+import BasicAnalytics from 'components/views/analytics/basicanalytics/BasicAnalytics';
 
-import FeatureConfiguration from 'components/featureconfiguration/FeatureConfiguration';
-import SecondBar from 'components/configurationbar/SecondBar';
+import FeatureConfiguration from 'components/views/configuration/featureconfiguration/FeatureConfiguration';
+import SecondBar from 'components/views/configuration/featureconfiguration/configurationbar/SecondBar';
 import GroupConfiguration from 'components/groupconfiguration/GroupConfiguration';
 import DepartmentConfiguration from 'components/departmentconfiguration/DepartmentConfiguration';
-import AnalysisConfiguration from 'components/analysisconfiguration/AnalysisConfiguration';
+import AnalysisConfiguration from 'components/views/analytics/analysisconfiguration/AnalysisConfiguration';
 
-import FeatureDiagnosticInfo from 'components/featureconfiguration/FeatureDiagnosticInfo';
-import FreaturePersonInfo from 'components/featureconfiguration/FreaturePersonInfo';
+import FeatureDiagnosticInfo from 'components/views/configuration/featureconfiguration/FeatureDiagnosticInfo';
+import FreaturePersonInfo from 'components/views/configuration/featureconfiguration/FreaturePersonInfo';
 
 import UserInfo from 'components/userinfo/UserInfo';
 import RoleInfo from 'components/roleinfo/RoleInfo';

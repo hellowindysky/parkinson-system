@@ -24,19 +24,19 @@
 <script>
 import Bus from 'utils/bus.js';
 
-import topbar from 'components/header/Header';
+import topbar from 'components/views/topbar/Topbar';
 import sidebar from 'components/views/sidebar/Sidebar';
 
-import passwordModal from 'components/passwordmodal/PasswordModal';
-import groupModal from 'components/groupmodal/GroupModal';
+import passwordModal from 'components/views/modal/passwordmodal/PasswordModal';
+import groupModal from 'components/views/modal/groupmodal/GroupModal';
 import modalBox from 'components/views/modal/modalbox/ModalBox';
 import medicineModal from 'components/views/modal/medicinemodal/MedicineModal';
 import preEvaluationModal from 'components/views/modal/preevaluationmodal/PreEvaluationModal';
 import surgicalMethodModal from 'components/views/modal/surgicalmethodmodal/SurgicalMethodModal';
 import operativeComplicationModal from 'components/views/modal/operativecomplicationmodal/OperativeComplicationModal';
 import dbsModal from 'components/views/modal/dbsmodal/DbsModal';
-import confirmBox from 'components/confirmbox/ConfirmBox';
-import filterPanel from 'components/filterpanel/FilterPanel';
+import confirmBox from 'components/public/confirmbox/ConfirmBox';
+import filterPanel from 'components/public/filterpanel/FilterPanel';
 import nervousSystemModal from 'components/views/modal/nervoussystemmodal/NervousSystemModal';
 import geneModal from 'components/views/modal/genemodal/GeneModal';
 import biochemicalExamModal from 'components/views/modal/biochemicalexammodal/BiochemicalExamModal';
