@@ -129,14 +129,12 @@ export default {
       return (userType === 2 || userType === 4);
     },
     showConfiguration() {
-      return true;
-      // var userType = Number(sessionStorage.getItem('userType'));
-      // return userType === 4;
+      var userType = Number(sessionStorage.getItem('userType'));
+      return userType === 4;
     },
     showInstitutionConfiguration() {
-      return true;
-      // var userType = Number(sessionStorage.getItem('userType'));
-      // return userType === 3;
+      var userType = Number(sessionStorage.getItem('userType'));
+      return userType === 3;
     }
   },
   methods: {
