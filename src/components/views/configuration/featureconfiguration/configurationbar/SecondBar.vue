@@ -14,7 +14,7 @@
 
 <script>
 
-import FeatureTableHead from '../tablehead/FeatureTableHead';
+import FeatureTableHead from 'components/views/configuration/featureconfiguration/tablehead/FeatureTableHead';
 export default {
   computed: {
     currentTab() {

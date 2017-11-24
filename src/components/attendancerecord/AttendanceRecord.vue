@@ -35,7 +35,7 @@
   </feature-folding-panel>
 </template>
 <script>
-import FeatureFoldingPanel from '../featurefoldingpanel/FeatureFoldingPanel';
+import FeatureFoldingPanel from 'components/featurefoldingpanel/FeatureFoldingPanel';
 import { mapGetters } from 'vuex';
 import { vueCopy } from 'utils/helper';
 

@@ -156,7 +156,7 @@
 </template>
 
 <script>
-import FeatureFoldingPanel from '../featurefoldingpanel/FeatureFoldingPanel';
+import FeatureFoldingPanel from 'components/featurefoldingpanel/FeatureFoldingPanel';
 import { vueCopy } from 'utils/helper';
 
 export default {

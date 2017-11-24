@@ -8,9 +8,9 @@
   </div>
 </template>
 <script>
-import BasicInfoConfig from '../../../basicinfoconfig/BasicInfoConfig';
-import DiseageInfoConfig from '../../../diseageinfoconfig/DiseageInfoConfig';
-import OtherInfoConfig from '../../../otherinfoconfig/OtherInfoConfig';
+import BasicInfoConfig from 'components/basicinfoconfig/BasicInfoConfig';
+import DiseageInfoConfig from 'components/diseageinfoconfig/DiseageInfoConfig';
+import OtherInfoConfig from 'components/otherinfoconfig/OtherInfoConfig';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 
