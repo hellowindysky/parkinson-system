@@ -1,13 +1,19 @@
+
 <template>
-  <div class="scroll-wrapper">
-    <div class="freature-person-conf-wrapper" ref="scrollArea">
-      <basic-infoConfig :basicInfoF="basicInfoF" :basicInfoS="basicInfoS" :basicInfoT="basicInfoT"></basic-infoConfig>
+  <div class="department-wrapper">
+    <feature-table-head></feature-table-head>
+    <div class="scroll-wrapper">
+      <div class="freature-person-conf-wrapper" ref="scrollArea">
+       <basic-infoConfig :basicInfoF="basicInfoF" :basicInfoS="basicInfoS" :basicInfoT="basicInfoT"></basic-infoConfig>
       <diseage-infoConfig :diseaseInfoF="diseaseInfoF"  :diseaseInfoS="diseaseInfoS" :diseaseInfoT="diseaseInfoT"></diseage-infoConfig>
       <other-infoConfig :medHistoryList="medHistoryList" :diseaseHistoryList="diseaseHistoryList" :familyHistoryList="familyHistoryList" :coffeeHistoryList="coffeeHistoryList" :smokeHistoryList="smokeHistoryList" :wineHistoryList="wineHistoryList" :teaHistoryList="teaHistoryList" :exerciseHistoryList="exerciseHistoryList" :toxicExposureHistoryList="toxicExposureHistoryList"></other-infoConfig>
+      </div>
     </div>
   </div>
 </template>
+
 <script>
+import FeatureTableHead from 'components/views/configuration/featureconfiguration/tablehead/FeatureTableHead';
 import BasicInfoConfig from 'components/views/configuration/featureconfiguration/basicinfoconfig/BasicInfoConfig';
 import DiseageInfoConfig from 'components/views/configuration/featureconfiguration/diseageinfoconfig/DiseageInfoConfig';
 import OtherInfoConfig from 'components/views/configuration/featureconfiguration/otherinfoconfig/OtherInfoConfig';
@@ -27,7 +33,8 @@ export default {
   components: {
     BasicInfoConfig,
     DiseageInfoConfig,
-    OtherInfoConfig
+    OtherInfoConfig,
+    FeatureTableHead
   },
   methods: {
     updateScrollbar() {
@@ -59,9 +66,6 @@ export default {
         // 然后对这个数组进行加工，让它更扁平化，方便我们在组件中使用
         var processedGroups = [];
         for (var i = 0; i < groups.length; i++) {
-          for (let key in groups[i].fields) {
-            groups[i].fields[key]['tableName'] = table.tableName;
-          }
           processedGroups.push(groups[i].fields);
         }
         return processedGroups;
@@ -150,36 +154,36 @@ export default {
 @import "~styles/variables.less";
 @tabs-wrapper-height: 15px;
 @table-head-height: 57px;
-
-.scroll-wrapper {
+.department-wrapper {
   position: relative;
-  margin-right: 20px;
   height: calc(~"100% - @{table-head-height}");
-  .freature-person-conf-wrapper {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-    height: 100%;
-    .ps__scrollbar-y-rail {
-      position: absolute;
-      top: 0px;
-      width: 15px;
-      right: -2px;
-      padding: 0 3px;
-      box-sizing: border-box;
-      opacity: 0.3;
-      transition: opacity 0.3s, padding 0.2s;
-      .ps__scrollbar-y {
-        position: relative;
-        background-color: #aaa;
-        border-radius: 20px;
-      }
-    }
-    &:hover {
+  .scroll-wrapper {
+    .freature-person-conf-wrapper {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      height: 100%;
       .ps__scrollbar-y-rail {
-        opacity: 0.6;
-        &:hover {
-          padding: 0;
+        position: absolute;
+        top: 0;
+        width: 15px;
+        right: -2px;
+        padding: 0 3px;
+        box-sizing: border-box;
+        opacity: 0.3;
+        transition: opacity 0.3s, padding 0.2s;
+        .ps__scrollbar-y {
+          position: relative;
+          background-color: #aaa;
+          border-radius: 20px;
+        }
+      }
+      &:hover {
+        .ps__scrollbar-y-rail {
+          opacity: 0.6;
+          &:hover {
+            padding: 0;
+          }
         }
       }
     }

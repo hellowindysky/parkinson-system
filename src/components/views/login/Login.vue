@@ -35,7 +35,7 @@
 import md5 from 'md5';
 import {getLoginInfo} from 'api/login';
 
-// import particles from 'components/particles/Particles';
+// import particles from 'components/views/login/particles/Particles';
 
 const ACCOUNT_LOGIN = 1;
 

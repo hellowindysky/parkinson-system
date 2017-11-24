@@ -3,8 +3,8 @@ import Router from 'vue-router';
 
 import Login from 'components/views/login/Login';
 
-import Layout from 'components/layout/Layout';
-// import Home from 'components/home/Home';   // 首页还没做
+import Layout from 'components/public/layout/Layout';
+// import Home from 'components/views/home/Home';   // 首页还没做
 import ListFrame from 'components/views/listframe/ListFrame';
 import Analytics from 'components/views/analytics/Analytics';
 import Configuration from 'components/views/configuration/Configuration';
@@ -19,30 +19,30 @@ import BasicAnalytics from 'components/views/analytics/basicanalytics/BasicAnaly
 
 import FeatureConfiguration from 'components/views/configuration/featureconfiguration/FeatureConfiguration';
 import SecondBar from 'components/views/configuration/featureconfiguration/configurationbar/SecondBar';
-import GroupConfiguration from 'components/groupconfiguration/GroupConfiguration';
-import DepartmentConfiguration from 'components/departmentconfiguration/DepartmentConfiguration';
+import GroupConfiguration from 'components/views/configuration/featureconfiguration/groupconfiguration/GroupConfiguration';
+import DepartmentConfiguration from 'components/views/configuration/featureconfiguration/departmentconfiguration/DepartmentConfiguration';
 import AnalysisConfiguration from 'components/views/analytics/analysisconfiguration/AnalysisConfiguration';
 
 import FeatureDiagnosticInfo from 'components/views/configuration/featureconfiguration/FeatureDiagnosticInfo';
 import FreaturePersonInfo from 'components/views/configuration/featureconfiguration/FreaturePersonInfo';
 
-import UserInfo from 'components/userinfo/UserInfo';
-import RoleInfo from 'components/roleinfo/RoleInfo';
+import UserInfo from 'components/views/configuration/usermanagement/userinfo/UserInfo';
+import RoleInfo from 'components/views/configuration/rolemanagement/roleinfo/RoleInfo';
 
-import DictionaryManagement from 'components/dictionarymanagement/DictionaryManagement';
-import DictionSecondBar from 'components/dictionsecondbar/DictionSecondBar';
+import DictionaryManagement from 'components/views/configuration/dictionarymanagement/DictionaryManagement';
+import DictionSecondBar from 'components/views/configuration/dictionarymanagement/dictionsecondbar/DictionSecondBar';
 
-import DictionTreatmentPlan from 'components/dictiontreatmentplan/DictionTreatmentPlan';
-import DictionMedicalScale from 'components/dictionmedicalscale/DictionMedicalScale';
-import DictionInspection from 'components/dictioninspection/DictionInspection';
-import DictionImageDatas from 'components/dictionimagedatas/DictionImageDatas';
+import DictionTreatmentPlan from 'components/views/configuration/dictionarymanagement/dictiontreatmentplan/DictionTreatmentPlan';
+import DictionMedicalScale from 'components/views/configuration/dictionarymanagement/dictionmedicalscale/DictionMedicalScale';
+import DictionInspection from 'components/views/configuration/dictionarymanagement/dictioninspection/DictionInspection';
+import DictionImageDatas from 'components/views/configuration/dictionarymanagement/dictionimagedatas/DictionImageDatas';
 
-import InformationSecondBar from 'components/informationsecondbar/InformationSecondBar';
-import OtherMedicationHistory from 'components/othermedicationhistory/OtherMedicationHistory';
-import PastHistory from 'components/pasthistory/PastHistory';
-import FamilyHistory from 'components/familyhistory/FamilyHistory';
-import PersonalHistory from 'components/personalhistory/PersonalHistory';
-import ToxicExposure from 'components/toxicexposure/ToxicExposure';
+import InformationSecondBar from 'components/views/configuration/dictionarymanagement/informationsecondbar/InformationSecondBar';
+import OtherMedicationHistory from 'components/views/configuration/dictionarymanagement/othermedicationhistory/OtherMedicationHistory';
+import PastHistory from 'components/views/configuration/dictionarymanagement/pasthistory/PastHistory';
+import FamilyHistory from 'components/views/configuration/dictionarymanagement/familyhistory/FamilyHistory';
+import PersonalHistory from 'components/views/configuration/dictionarymanagement/personalhistory/PersonalHistory';
+import ToxicExposure from 'components/views/configuration/dictionarymanagement/toxicexposure/ToxicExposure';
 
 Vue.use(Router);
 

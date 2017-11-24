@@ -115,7 +115,7 @@ import { deletePatientPresentHistory, deletePatientMedHistory, deletePatientDise
        } from 'api/patient.js';
 
 import FoldingPanel from 'components/public/foldingpanel/FoldingPanel';
-import ExtensiblePanel from 'components/extensiblepanel/ExtensiblePanel';
+import ExtensiblePanel from 'components/public/extensiblepanel/ExtensiblePanel';
 import Card from 'components/public/card/Card';
 
 export default {

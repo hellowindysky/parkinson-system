@@ -52,7 +52,7 @@ import { getPatientInfo, getPatientGroupInfo, getPatientCaseList } from 'api/pat
 import DiagnosticDetail from 'components/views/patient/diagnosticinfo/diagnosticdetail/DiagnosticDetail';
 import ScaleModal from 'components/views/modal/scalemodal/ScaleModal';
 import BasicInfo from 'components/views/patient/personalinfo/basicinfo/BasicInfo';
-import GroupPanel from 'components/grouppanel/GroupPanel';
+import GroupPanel from 'components/public/filterpanel/grouppanel/GroupPanel';
 
 export default {
   data() {

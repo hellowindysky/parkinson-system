@@ -189,8 +189,8 @@ import Ps from 'perfect-scrollbar';
 
 import patientListItem from 'components/views/list/patientitem/PatientItem';
 import groupListItem from 'components/views/list/groupitem/GroupItem';
-import userListItem from 'components/useritem/UserItem';
-import roleListItem from 'components/roleitem/RoleItem';
+import userListItem from 'components/views/configuration/usermanagement/useritem/UserItem';
+import roleListItem from 'components/views/configuration/rolemanagement/roleitem/RoleItem';
 
 // import axios from 'axios';
 import { mapGetters } from 'vuex';
