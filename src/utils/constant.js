@@ -75,6 +75,8 @@ export default {
   SHOW_DBS_MODAL: 'showDbsModal',
   SHOW_PASSWORD_MODAL: 'showPasswordModal',
 
+  SHOW_CHOICE_PANEL: 'showChoicePanel',
+
   QUIT_DIAGNOSTIC_DETAIL: 'quitDiagnosticDetail',
 
   // modal
