@@ -11,10 +11,13 @@
         :diagnosticBasic="diagnosticBasic"></diagnostic-basic>
       <diagnostic-disease :archived="!hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
         :diagnosticDisease="diagnosticDisease"></diagnostic-disease>
-      <diagnostic-medicine :archived="!hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
+      <!-- <diagnostic-medicine :archived="!hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
         :diagnosticMedicine="caseDetail.patientMedicineNew"></diagnostic-medicine>
       <diagnostic-surgery :archived="!hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
-        :diagnosticSurgery="caseDetail.patientSurgicalDbs"></diagnostic-surgery>
+        :diagnosticSurgery="caseDetail.patientSurgicalDbs"></diagnostic-surgery> -->
+      <diagnostic-treatment :archived="!hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
+        :diagnosticSurgery="caseDetail.patientSurgicalDbs" :diagnosticMedicine="caseDetail.patientMedicineNew">
+      </diagnostic-treatment>
       <diagnostic-scale :archived="!hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
         :patientScale="caseDetail.patientScale"></diagnostic-scale>
       <diagnostic-examination :archived="!hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
@@ -39,6 +42,7 @@ import DiagnosticBasic from 'components/views/patient/diagnosticinfo/diagnosticb
 import DiagnosticDisease from 'components/views/patient/diagnosticinfo/diagnosticdisease/DiagnosticDisease';
 import DiagnosticMedicine from 'components/views/patient/diagnosticinfo/diagnosticmedicine/DiagnosticMedicine';
 import DiagnosticSurgery from 'components/views/patient/diagnosticinfo/diagnosticsurgery/DiagnosticSurgery';
+import DiagnosticTreatment from 'components/views/patient/diagnosticinfo/diagnostictreatment/DiagnosticTreatment';
 import DiagnosticScale from 'components/views/patient/diagnosticinfo/diagnosticscale/DiagnosticScale';
 import DiagnosticExamination from 'components/views/patient/diagnosticinfo/diagnosticexamination/DiagnosticExamination';
 
@@ -221,6 +225,7 @@ export default {
     DiagnosticDisease,
     DiagnosticMedicine,
     DiagnosticSurgery,
+    DiagnosticTreatment,
     DiagnosticScale,
     DiagnosticExamination
   },

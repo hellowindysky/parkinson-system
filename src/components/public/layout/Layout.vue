@@ -11,13 +11,14 @@
     <surgical-method-modal></surgical-method-modal>
     <operative-complication-modal></operative-complication-modal>
     <dbs-modal></dbs-modal>
-    <confirm-box></confirm-box>
     <nervous-system-modal></nervous-system-modal>
     <gene-modal></gene-modal>
     <biochemical-exam-modal></biochemical-exam-modal>
     <emg-modal></emg-modal>
     <image-modal></image-modal>
     <filter-panel :showFilterPanel="showFilterPanel"></filter-panel>
+    <choice-panel></choice-panel>
+    <confirm-box></confirm-box>
   </div>
 </template>
 
@@ -35,13 +36,15 @@ import preEvaluationModal from 'components/views/modal/preevaluationmodal/PreEva
 import surgicalMethodModal from 'components/views/modal/surgicalmethodmodal/SurgicalMethodModal';
 import operativeComplicationModal from 'components/views/modal/operativecomplicationmodal/OperativeComplicationModal';
 import dbsModal from 'components/views/modal/dbsmodal/DbsModal';
-import confirmBox from 'components/public/confirmbox/ConfirmBox';
-import filterPanel from 'components/public/filterpanel/FilterPanel';
 import nervousSystemModal from 'components/views/modal/nervoussystemmodal/NervousSystemModal';
 import geneModal from 'components/views/modal/genemodal/GeneModal';
 import biochemicalExamModal from 'components/views/modal/biochemicalexammodal/BiochemicalExamModal';
 import emgModal from 'components/views/modal/emgmodal/EmgModal';
 import imageModal from 'components/views/modal/imagemodal/ImageModal';
+
+import filterPanel from 'components/public/filterpanel/FilterPanel';
+import choicePanel from 'components/public/choicepanel/ChoicePanel';
+import confirmBox from 'components/public/confirmbox/ConfirmBox';
 
 export default {
   data() {
@@ -61,13 +64,15 @@ export default {
     surgicalMethodModal,
     operativeComplicationModal,
     dbsModal,
-    confirmBox,
-    filterPanel,
     nervousSystemModal,
     geneModal,
     biochemicalExamModal,
     emgModal,
-    imageModal
+    imageModal,
+
+    filterPanel,
+    choicePanel,
+    confirmBox
   },
   methods: {
     blurOnScreen() {
