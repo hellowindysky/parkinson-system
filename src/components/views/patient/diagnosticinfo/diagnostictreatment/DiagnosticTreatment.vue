@@ -250,21 +250,16 @@ export default {
       // 根据药物 id，在相应的 tableData 里面寻找对应的 药物详情
       return Util.getElement('medicineId', medicineId, this.medicineInfo);
     },
-    getTypes(fieldName) {
-      // 在 typegroup 里面查找到 fieldName 所对应的 types（选项组）
-      var dictionaryField = Util.getElement('fieldName', fieldName, this.medicineDictionary);
-      var value = dictionaryField.fieldEnumId;
-      value = fieldName; // TODO 等以后字典项返回 OK 了，就去掉这一行
-      var typeInfo = Util.getElement('typegroupcode', value, this.typeGroup);
-      return typeInfo.types ? typeInfo.types : [];
-    },
     transform(item, fieldName) {
-      var types = this.getTypes(fieldName);
+      var dictionaryField = Util.getElement('fieldName', fieldName, this.medicineDictionary);
+      var typeInfo = Util.getElement('typegroupcode', dictionaryField.fieldEnumId, this.typeGroup);
+      var types = typeInfo.types ? typeInfo.types : [];
       var matchedType = Util.getElement('typeCode', item[fieldName], types);
       return matchedType.typeName ? matchedType.typeName : '';
     },
     getMedicineTitle(medicineId) {
-      var medicine = this.getMedicine(medicineId);
+      // 根据药物 id，在相应的 tableData 里面寻找对应的 药物详情
+      var medicine = Util.getElement('medicineId', medicineId, this.medicineInfo);
       return medicine.medicineName + '(' + medicine.commonName + ')';
     },
     calcTotalLevodopaDoseOfAllOtherMedicine(targetMedicine) {
