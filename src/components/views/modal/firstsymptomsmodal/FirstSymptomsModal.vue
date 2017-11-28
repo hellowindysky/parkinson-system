@@ -1,6 +1,8 @@
 <template lang="html">
-  <div>
+  <div class="symptoms-modal-box">
+    <div class="">
 
+    </div>
   </div>
 </template>
 
