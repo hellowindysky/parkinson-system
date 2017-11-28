@@ -250,13 +250,9 @@ export default {
       // 根据药物 id，在相应的 tableData 里面寻找对应的 药物详情
       return Util.getElement('medicineId', medicineId, this.medicineInfo);
     },
-    getMatchedField(fieldName) {
-      // 在字典项中查询该名字所对应的字段，从而方便我们得到该字段的详细信息
-      return Util.getElement('fieldName', fieldName, this.medicineDictionary);
-    },
     getTypes(fieldName) {
       // 在 typegroup 里面查找到 fieldName 所对应的 types（选项组）
-      var dictionaryField = this.getMatchedField(fieldName);
+      var dictionaryField = Util.getElement('fieldName', fieldName, this.medicineDictionary);
       var value = dictionaryField.fieldEnumId;
       value = fieldName; // TODO 等以后字典项返回 OK 了，就去掉这一行
       var typeInfo = Util.getElement('typegroupcode', value, this.typeGroup);
