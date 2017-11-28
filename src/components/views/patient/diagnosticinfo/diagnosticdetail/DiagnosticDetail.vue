@@ -11,10 +11,6 @@
         :diagnosticBasic="diagnosticBasic"></diagnostic-basic>
       <diagnostic-disease :archived="!hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
         :diagnosticDisease="diagnosticDisease"></diagnostic-disease>
-      <!-- <diagnostic-medicine :archived="!hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
-        :diagnosticMedicine="caseDetail.patientMedicineNew"></diagnostic-medicine>
-      <diagnostic-surgery :archived="!hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
-        :diagnosticSurgery="caseDetail.patientSurgicalDbs"></diagnostic-surgery> -->
       <diagnostic-treatment :archived="!hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
         :diagnosticSurgery="caseDetail.patientSurgicalDbs" :diagnosticMedicine="caseDetail.patientMedicineNew">
       </diagnostic-treatment>
