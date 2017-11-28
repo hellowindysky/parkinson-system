@@ -4,7 +4,7 @@
     <div class="diagnostic-surgery" ref="diagnosticSurgery">
       <extensible-panel class="panel" :mode="mutableMode" :title="medicineTitle" v-on:addNewCard="addMedicine"
         :editable="canEdit">
-        <card class="card" :class="bigCardWidth" :mode="mutableMode" v-for="item in diagnosticMedicine" :key="item.medicineId"
+        <card class="card" :class="smallCardWidth" :mode="mutableMode" v-for="item in diagnosticMedicine" :key="item.medicineId"
           :title="getMedicineTitle(item.medicineId)" :disable-delete="item.statusFlag===0" v-on:editCurrentCard="editMedicine(item)"
           v-on:deleteCurrentCard="deleteMedicine(item)" v-on:viewCurrentCard="viewMedicine(item)">
           <div class="text first-line">
