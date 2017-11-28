@@ -7,8 +7,14 @@
         <card class="card" :class="bigCardWidth" :mode="mutableMode" v-for="item in diagnosticMedicine" :key="item.medicineId"
           :title="getMedicineTitle(item.medicineId)" :disable-delete="item.statusFlag===0" v-on:editCurrentCard="editMedicine(item)"
           v-on:deleteCurrentCard="deleteMedicine(item)" v-on:viewCurrentCard="viewMedicine(item)">
-          <div class="text first-line">{{transform(item, 'usages')}}</div>
-          <div class="text second-line">{{item.ariseTime}}</div>
+          <div class="text first-line">
+            <span class="name">用药频率: </span>
+            <span class="value">{{transformMedicineField(item, 'usages')}}</span>
+          </div>
+          <div class="text second-line">
+            <span class="name">首次用药: </span>
+            <span class="value">{{transformMedicineField(item, 'firMedFlag')}}</span>
+          </div>
         </card>
       </extensible-panel>
       <extensible-panel class="panel surgery-panel" :mode="mutableMode"
@@ -250,7 +256,7 @@ export default {
       // 根据药物 id，在相应的 tableData 里面寻找对应的 药物详情
       return Util.getElement('medicineId', medicineId, this.medicineInfo);
     },
-    transform(item, fieldName) {
+    transformMedicineField(item, fieldName) {
       var dictionaryField = Util.getElement('fieldName', fieldName, this.medicineDictionary);
       var typeInfo = Util.getElement('typegroupcode', dictionaryField.fieldEnumId, this.typeGroup);
       var types = typeInfo.types ? typeInfo.types : [];
