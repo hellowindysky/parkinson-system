@@ -374,8 +374,7 @@ export default {
     .shared-info {
       position: relative;
       margin: 0 @margin-right @vertical-spacing 0;
-      padding: 5px 25px;
-      height: 70px;
+      padding: 5px 25px 10px;
       box-sizing: border-box;
       background-color: @background-color;
       font-size: 0;
