@@ -74,6 +74,7 @@ export default {
   SHOW_OPERATIVE_COMPLICATION_MODAL: 'showOperativeComplication',
   SHOW_DBS_MODAL: 'showDbsModal',
   SHOW_PASSWORD_MODAL: 'showPasswordModal',
+  SHOW_FIRSTSYMPTOMS_MODAL: 'showFirstSymptomsModal',
 
   SHOW_CHOICE_PANEL: 'showChoicePanel',
 

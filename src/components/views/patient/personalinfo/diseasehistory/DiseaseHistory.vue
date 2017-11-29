@@ -38,7 +38,7 @@
             <span class="warning-text"></span>
           </div>
         </div>
-        <extensible-panel class="disease-card" :title="'首发症状（x 条记录）'">
+        <extensible-panel class="disease-card" :title="'首发症状（x 条记录）'" @addNewCard="addFirstSymptomsRecord">
           <Card class="card symptoms-card" :class="cardWidth" :title="'运动症状'">
             <div class="text first-line">
               <!-- <span class="name">类型</span> -->
@@ -144,6 +144,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import Bus from 'utils/bus.js';
 import FoldingPanel from 'components/public/foldingpanel/FoldingPanel';
 import ExtensiblePanel from 'components/public/extensiblepanel/ExtensiblePanel';
 import Card from 'components/public/card/Card';
@@ -170,6 +171,9 @@ export default {
     }
   },
   methods: {
+    addFirstSymptomsRecord() {
+      Bus.$emit(this.SHOW_FIRSTSYMPTOMS_MODAL, this.ADD_NEW_CARD, {});
+    },
     recalculateCardWidth() {
       this.$nextTick(() => {
         var panelWidth = this.$refs.diseaseInfo.clientWidth - 50;
@@ -410,7 +414,7 @@ export default {
         position: absolute;
         top: 0;
         left: @field-name-width;
-        right: 2%;
+        right: 0;
         font-size: @normal-font-size;
         line-height: @field-height;
         overflow: visible;
