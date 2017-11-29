@@ -544,10 +544,7 @@ export default {
 
       } else {
         // 如果是其它下拉框，属于普通字段，去 typeGroup 里面查就可以了
-        var typegroupName = dictionaryField.fieldName;
-        if (dictionaryField.fieldName === 'sideeffectType') {
-          typegroupName = 'drugEffect';
-        }
+        var typegroupName = dictionaryField.fieldEnumId;
         let typeInfo = Util.getElement('typegroupcode', typegroupName, this.typeGroup);
         let types = typeInfo.types ? typeInfo.types : [];
         for (let type of types) {
