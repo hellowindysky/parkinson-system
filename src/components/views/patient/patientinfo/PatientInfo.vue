@@ -117,7 +117,7 @@ export default {
       // 一个是从医院入口登录（这样才能管理这些患者是否加入某课题），
       // 另一个是必须是我的患者（不允许操作科室患者）
       // TODO 以后加入是否为医院入口的判断
-      if (this.$route.matched.some(record => record.meta.myPatients)) {
+      if (this.$route.matched.some(record => record.meta.myPatients) && false) {
         return true;
       } else {
         return false;
