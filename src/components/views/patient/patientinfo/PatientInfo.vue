@@ -12,19 +12,19 @@
     </div>
     <div class="info-wrapper" ref="scrollArea">
       <div class="shared-info" v-show="this.existed">
-        <div class="info adscription">
+        <div class="info">
           <span class="info-title">归属医生: </span>
           <span class="info-text">{{ belongDoctor }}</span>
         </div>
-        <div class="info create-time">
+        <div class="info">
           <span class="info-title">创建时间: </span>
           <span class="info-text">{{ createDate }}</span>
         </div>
-        <div class="info groups">
+        <div class="info whole-line">
           <span class="info-title">分组情况: </span>
           <span class="info-text">
-            <span class="group-wrapper">
-              <span v-for="group in belongGroups" class="group">{{ group.groupName }}</span>
+            <span class="tags-wrapper">
+              <span v-for="group in belongGroups" class="tag">{{ group.groupName }}</span>
             </span>
             <span class="iconfont icon-group" @click="toggleGroupPanel"></span>
           </span>
@@ -385,29 +385,22 @@ export default {
         height: 30px;
         line-height: 30px;
         font-size: @normal-font-size;
-        &.adscription {
-          top: 5px;
-        }
-        &.create-time {
-          top: 5px;
-        }
-        &.groups {
+        .whole-line{
           width: 100%;
-          top: 40px;
-          .group-wrapper {
+        }
+        .tags-wrapper {
+          display: inline-block;
+          max-width: calc(~"100% - 85px - 50px");
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          .tag {
             display: inline-block;
-            max-width: calc(~"100% - 85px - 50px");
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            .group {
-              display: inline-block;
-              padding: 0 5px;
-              margin-right: 8px;
-              background-color: @light-font-color;
-              border-radius: 5px;
-              color: #fff;
-            }
+            padding: 0 5px;
+            margin-right: 8px;
+            background-color: @light-font-color;
+            border-radius: 5px;
+            color: #fff;
           }
         }
         .info-title {
