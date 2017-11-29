@@ -5,7 +5,7 @@
         {{item.text}}
       </div>
       <div class="seperate-line"></div>
-      <div class="button" @click="closePanel">
+      <div class="choice-item cancel-button" @click="closePanel">
         取消
       </div>
     </div>
@@ -57,6 +57,7 @@ export default {
     margin: auto;
     top: 20%;
     width: 300px;
+    border: 1px solid @light-font-color;
     background-color: @font-color;
     color: #fff;
     overflow: hidden;
@@ -79,13 +80,9 @@ export default {
       height: 1px;
       background-color: @light-gray-color;
     }
-    .button {
-      width: 100%;
-      height: 40px;
-      line-height: 40px;
-      background-color: @background-color;
-      color: @light-font-color;
-      cursor: pointer;
+    .cancel-button {
+      height: 45px;
+      line-height: 45px;
     }
   }
 }
