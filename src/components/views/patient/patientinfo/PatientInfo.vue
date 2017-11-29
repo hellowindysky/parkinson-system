@@ -29,7 +29,7 @@
             <span class="iconfont icon-group" @click="toggleGroupPanel"></span>
           </span>
         </div>
-        <div class="info whole-line">
+        <div class="info whole-line" v-show="showProjectTags">
           <span class="info-title">课题标签: </span>
           <span class="info-text">
             <span class="tags-wrapper">
@@ -110,6 +110,17 @@ export default {
         return 'second-tab';
       } else {
         return 'Oops! check currentTab';
+      }
+    },
+    showProjectTags() {
+      // 课题标签这一栏的显示取决于两个条件，
+      // 一个是从医院入口登录（这样才能管理这些患者是否加入某课题），
+      // 另一个是必须是我的患者（不允许操作科室患者）
+      // TODO 以后加入是否为医院入口的判断
+      if (this.$route.matched.some(record => record.meta.myPatients)) {
+        return true;
+      } else {
+        return false;
       }
     }
   },
