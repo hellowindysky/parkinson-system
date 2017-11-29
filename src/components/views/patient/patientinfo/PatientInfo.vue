@@ -29,6 +29,15 @@
             <span class="iconfont icon-group" @click="toggleGroupPanel"></span>
           </span>
         </div>
+        <div class="info whole-line">
+          <span class="info-title">课题标签: </span>
+          <span class="info-text">
+            <span class="tags-wrapper">
+              <span v-for="group in belongGroups" class="tag">{{ group.groupName }}</span>
+            </span>
+            <span class="iconfont icon-group" @click="toggleGroupPanel"></span>
+          </span>
+        </div>
       </div>
       <div class="respective-info">
         <router-view v-if="this.existed" :patient-info="patientInfo" :patient-case-list="patientCaseList"></router-view>
@@ -374,7 +383,7 @@ export default {
     .shared-info {
       position: relative;
       margin: 0 @margin-right @vertical-spacing 0;
-      padding: 5px 25px 10px;
+      padding: 5px 25px;
       box-sizing: border-box;
       background-color: @background-color;
       font-size: 0;
@@ -382,7 +391,7 @@ export default {
       .info {
         display: inline-block;
         width: 50%;
-        height: 30px;
+        height: 34px;
         line-height: 30px;
         font-size: @normal-font-size;
         &.whole-line{
