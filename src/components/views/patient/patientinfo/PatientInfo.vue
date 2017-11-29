@@ -385,7 +385,7 @@ export default {
         height: 30px;
         line-height: 30px;
         font-size: @normal-font-size;
-        .whole-line{
+        &.whole-line{
           width: 100%;
         }
         .tags-wrapper {
