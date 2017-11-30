@@ -104,65 +104,68 @@
         </div>
 
         <div class="seperate-line">
-          <div class="fold-button">
+          <div class="toggle-fold-button" @click="toggleContentFolded">
             点击展开停药及副作用情况
           </div>
         </div>
-        <div class="field" v-for="field in fourthTemplateGroup" :class="{'whole-line': field.fieldName==='stopRemark'}">
-          <span class="field-name" :class="{'long-field-name': isLongName(field.fieldName)}">
-            {{field.cnfieldName}}
-            <span class="required-mark" v-show="field.must===1">*</span>
-          </span>
-          <span v-if="mode===VIEW_CURRENT_CARD" class="field-input" :class="{'long-field-name': isLongName(field.fieldName)}">
-            <span v-if="getUIType(field.fieldName)===3">{{getFieldValue(field)}}</span>
-            <span v-else>{{medicine[field.fieldName]}}</span>
-          </span>
-          <span v-else class="field-input" :class="{'long-field-name': isLongName(field.fieldName)}">
-            <span class="warning-text">{{warningResults[field.fieldName]}}</span>
-            <el-input v-if="getUIType(field.fieldName)===1" v-model="medicine[field.fieldName]"
-              :class="{'warning': warningResults[field.fieldName]}" :type="getInputType(field.fieldName)"
-              :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)"
-              :maxlength="500">
-            </el-input>
-            <el-select v-else-if="getUIType(field.fieldName)===3" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-              :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
-              <el-option v-for="option in getOptions(field.fieldName)" :label="option.name"
-                :value="option.code" :key="option.code"></el-option>
-            </el-select>
-            <el-date-picker v-else-if="getUIType(field.fieldName)===6" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-              :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
-           </el-date-picker>
-          </span>
-        </div>
 
-        <div class="seperate-line"></div>
-        <div class="field" v-for="field in fifthTemplateGroup" :class="{'whole-line': field.fieldName==='sideeffectRemark'}">
-          <span class="field-name" :class="{'long-field-name': isLongName(field.fieldName)}">
-            {{field.cnfieldName}}
-            <span class="required-mark" v-show="field.must===1 || hasSideEffect">*</span>
-          </span>
-          <span v-if="mode===VIEW_CURRENT_CARD" class="field-input" :class="{'long-field-name': isLongName(field.fieldName)}">
-            <span v-if="getUIType(field.fieldName)===3">{{getFieldValue(field)}}</span>
-            <span v-else>{{medicine[field.fieldName]}}</span>
-          </span>
-          <span v-else class="field-input" :class="{'long-field-name': isLongName(field.fieldName)}">
-            <span class="warning-text">{{warningResults[field.fieldName]}}</span>
-            <el-input v-if="getUIType(field.fieldName)===1" v-model="medicine[field.fieldName]"
-              :class="{'warning': warningResults[field.fieldName]}" :type="getInputType(field.fieldName)"
-              :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)" :maxlength="500">
-            </el-input>
-            <el-select v-else-if="getUIType(field.fieldName)===3" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-              :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
-              <el-option v-for="option in getOptions(field.fieldName)" :label="option.name"
-                :value="option.code" :key="option.code"></el-option>
-            </el-select>
-            <el-date-picker v-else-if="getUIType(field.fieldName)===6" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-              :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
-           </el-date-picker>
-          </span>
+        <div class="foldable-content" :class="{'folded': foldedConditionalContent}">
+          <div class="field" v-for="field in fourthTemplateGroup" :class="{'whole-line': field.fieldName==='stopRemark'}">
+            <span class="field-name" :class="{'long-field-name': isLongName(field.fieldName)}">
+              {{field.cnfieldName}}
+              <span class="required-mark" v-show="field.must===1">*</span>
+            </span>
+            <span v-if="mode===VIEW_CURRENT_CARD" class="field-input" :class="{'long-field-name': isLongName(field.fieldName)}">
+              <span v-if="getUIType(field.fieldName)===3">{{getFieldValue(field)}}</span>
+              <span v-else>{{medicine[field.fieldName]}}</span>
+            </span>
+            <span v-else class="field-input" :class="{'long-field-name': isLongName(field.fieldName)}">
+              <span class="warning-text">{{warningResults[field.fieldName]}}</span>
+              <el-input v-if="getUIType(field.fieldName)===1" v-model="medicine[field.fieldName]"
+                :class="{'warning': warningResults[field.fieldName]}" :type="getInputType(field.fieldName)"
+                :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)"
+                :maxlength="500">
+              </el-input>
+              <el-select v-else-if="getUIType(field.fieldName)===3" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
+                :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
+                <el-option v-for="option in getOptions(field.fieldName)" :label="option.name"
+                  :value="option.code" :key="option.code"></el-option>
+              </el-select>
+              <el-date-picker v-else-if="getUIType(field.fieldName)===6" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
+                :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
+             </el-date-picker>
+            </span>
+          </div>
+
+          <div class="seperate-line"></div>
+          <div class="field" v-for="field in fifthTemplateGroup" :class="{'whole-line': field.fieldName==='sideeffectRemark'}">
+            <span class="field-name" :class="{'long-field-name': isLongName(field.fieldName)}">
+              {{field.cnfieldName}}
+              <span class="required-mark" v-show="field.must===1 || hasSideEffect">*</span>
+            </span>
+            <span v-if="mode===VIEW_CURRENT_CARD" class="field-input" :class="{'long-field-name': isLongName(field.fieldName)}">
+              <span v-if="getUIType(field.fieldName)===3">{{getFieldValue(field)}}</span>
+              <span v-else>{{medicine[field.fieldName]}}</span>
+            </span>
+            <span v-else class="field-input" :class="{'long-field-name': isLongName(field.fieldName)}">
+              <span class="warning-text">{{warningResults[field.fieldName]}}</span>
+              <el-input v-if="getUIType(field.fieldName)===1" v-model="medicine[field.fieldName]"
+                :class="{'warning': warningResults[field.fieldName]}" :type="getInputType(field.fieldName)"
+                :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)" :maxlength="500">
+              </el-input>
+              <el-select v-else-if="getUIType(field.fieldName)===3" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
+                :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
+                <el-option v-for="option in getOptions(field.fieldName)" :label="option.name"
+                  :value="option.code" :key="option.code"></el-option>
+              </el-select>
+              <el-date-picker v-else-if="getUIType(field.fieldName)===6" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
+                :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
+             </el-date-picker>
+            </span>
+          </div>
+          <div class="seperate-line"></div>
         </div>
       </div>
-      <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
       <div v-show="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD"
         class="button submit-button" @click="submit">确定</div>
@@ -192,7 +195,8 @@ export default {
       hasSideEffect: false,  // 这个变量用来控制是否有副反应
       totalLevodopaDoseOfAllOtherMedicine: 0,  // 用来供 COMT 抑制剂药物(如珂丹) 计算左旋多巴等效剂量
       lockSubmitButton: false,
-      showEdit: true
+      showEdit: true,
+      foldedConditionalContent: false   // 这个变量用来控制是否显示停药信息和副反应信息
     };
   },
   computed: {
@@ -663,6 +667,12 @@ export default {
       } else {
         this.warningResults.patientMedicineDetail[index].takeDose = null;
       }
+    },
+    toggleContentFolded() {
+      this.foldedConditionalContent = !this.foldedConditionalContent;
+      setTimeout(() => {
+        this.updateScrollbar();
+      }, 150);
     }
   },
   mounted() {
@@ -713,6 +723,16 @@ export default {
     }
     .content {
       text-align: left;
+      .foldable-content {
+        padding: 5px 0;
+        height: auto;
+        overflow: hidden;
+        transition: 0.15s;
+        &.folded {
+          padding: 0;
+          height: 0;
+        }
+      }
       .field {
         text-align: left;
         display: inline-block;
@@ -884,15 +904,22 @@ export default {
       margin: 15px auto 10px;
       background-color: @light-gray-color;
       text-align: center;
-      .fold-button {
+      .toggle-fold-button {
         display: inline-block;
         width: 180px;
-        height: 16px;
+        height: 21px;
+        line-height: 21px;
         background-color: @background-color;
         font-size: @small-font-size;
         color: @gray-color;
-        transform: translateY(-8px);
+        transform: translateY(-10px);
         cursor: pointer;
+        &:hover {
+          color: fade(@gray-color, 50%);
+        }
+        &:active {
+          color: fade(@gray-color, 75%);
+        }
       }
     }
     .button {
