@@ -138,7 +138,8 @@
           </div>
 
           <div class="seperate-line"></div>
-          <div class="field" v-for="field in fifthTemplateGroup" :class="{'whole-line': field.fieldName==='sideeffectRemark'}">
+          <div class="field" v-for="field in fifthTemplateGroup" :class="{'whole-line': field.fieldName==='sideeffectRemark'}"
+            v-show="checkIfHidden(field.fieldName)">
             <span class="field-name" :class="{'long-field-name': isLongName(field.fieldName)}">
               {{field.cnfieldName}}
               <span class="required-mark" v-show="field.must===1 || hasSideEffect">*</span>
@@ -374,6 +375,7 @@ export default {
       this.displayModal = true;
       this.completeInit = false;
       this.showEdit = showEdit;
+      this.foldedConditionalContent = true;
       this.totalLevodopaDoseOfAllOtherMedicine = totalLevodopaDoseOfAllOtherMedicine;
 
       setTimeout(() => {
@@ -387,7 +389,15 @@ export default {
       }, 2000);
 
       this.initMedicine(item);
-      // console.log(this.medicine);
+      // var conditionalFieldNameList = ['stopDate', 'stopReason', 'stopRemark', 'sideeffectDate',
+      //   'sideeffectType', 'wearOffFlag', 'switchExistFlag', 'dyskinesia', 'dystoniaFlag',
+      //   'sideeffectRemark'];
+      var conditionalFieldList = [].concat(this.fourthTemplateGroup, this.fifthTemplateGroup);
+      for (let field of conditionalFieldList) {
+        if (this.medicine[field.fieldName] !== undefined && this.medicine[field.fieldName] !== '') {
+          this.foldedConditionalContent = false;
+        }
+      }
 
       for (let field of this.totalTemplate) {
         this.updateField(field);
@@ -673,6 +683,14 @@ export default {
       setTimeout(() => {
         this.updateScrollbar();
       }, 150);
+    },
+    checkIfHidden(fieldName) {
+      var list = ['wearOffFlag', 'switchExistFlag', 'dyskinesia', 'dystoniaFlag'];
+      if (this.medicine.sideeffectType !== 13 && list.indexOf(fieldName) >= 0) {
+        return false;
+      } else {
+        return true;
+      }
     }
   },
   mounted() {
