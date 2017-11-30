@@ -36,8 +36,6 @@ import { getPatientCase, archivePatientCase } from 'api/patient.js';
 
 import DiagnosticBasic from 'components/views/patient/diagnosticinfo/diagnosticbasic/DiagnosticBasic';
 import DiagnosticDisease from 'components/views/patient/diagnosticinfo/diagnosticdisease/DiagnosticDisease';
-import DiagnosticMedicine from 'components/views/patient/diagnosticinfo/diagnosticmedicine/DiagnosticMedicine';
-import DiagnosticSurgery from 'components/views/patient/diagnosticinfo/diagnosticsurgery/DiagnosticSurgery';
 import DiagnosticTreatment from 'components/views/patient/diagnosticinfo/diagnostictreatment/DiagnosticTreatment';
 import DiagnosticScale from 'components/views/patient/diagnosticinfo/diagnosticscale/DiagnosticScale';
 import DiagnosticExamination from 'components/views/patient/diagnosticinfo/diagnosticexamination/DiagnosticExamination';
@@ -219,8 +217,6 @@ export default {
   components: {
     DiagnosticBasic,
     DiagnosticDisease,
-    DiagnosticMedicine,
-    DiagnosticSurgery,
     DiagnosticTreatment,
     DiagnosticScale,
     DiagnosticExamination
