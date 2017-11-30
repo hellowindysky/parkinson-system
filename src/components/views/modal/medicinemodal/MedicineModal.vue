@@ -103,7 +103,11 @@
           </span>
         </div>
 
-        <div class="seperate-line"></div>
+        <div class="seperate-line">
+          <div class="fold-button">
+            点击展开停药及副作用情况
+          </div>
+        </div>
         <div class="field" v-for="field in fourthTemplateGroup" :class="{'whole-line': field.fieldName==='stopRemark'}">
           <span class="field-name" :class="{'long-field-name': isLongName(field.fieldName)}">
             {{field.cnfieldName}}
@@ -879,6 +883,17 @@ export default {
       height: 1px;
       margin: 15px auto 10px;
       background-color: @light-gray-color;
+      text-align: center;
+      .fold-button {
+        display: inline-block;
+        width: 180px;
+        height: 16px;
+        background-color: @background-color;
+        font-size: @small-font-size;
+        color: @gray-color;
+        transform: translateY(-8px);
+        cursor: pointer;
+      }
     }
     .button {
       display: inline-block;
