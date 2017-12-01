@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="header">
     <div class="organization-wrapper" v-on:click.stop="toggleOranizationPanel">
-      <span class="name">{{name}}</span>
+      <span class="name">{{title}}</span>
       <span class="iconfont" :class="toggleOranizationPanelIcon"></span>
     </div>
     <div class="operation-wrapper">
@@ -10,7 +10,7 @@
       <span class="iconfont icon-task" v-show="false"></span>
       <span class="account" @click="toggleAccountPanelDisplay">
         <img src="~img/profile.png" alt="doctor image" class="picture">
-        <span class="name" :class="{'on': showAccountPanel}">{{title}}</span>
+        <span class="name" :class="{'on': showAccountPanel}">{{accountName}}</span>
       </span>
     </div>
     <div class="shadow-border"></div>
@@ -51,7 +51,7 @@ export default {
     return {
       showOranizationPanel: false,
       showAccountPanel: false,
-      name
+      subjectId: sessionStorage.getItem('subjectId')
     };
   },
   computed: {
@@ -59,6 +59,11 @@ export default {
       return this.showOranizationPanel ? 'icon-up' : 'icon-down';
     },
     title() {
+      var subjectName = sessionStorage.getItem('subjectName');
+      subjectName = subjectName ? subjectName : '';
+      return this.subjectId === -1 ? this.orgName : subjectName;
+    },
+    accountName() {
       var name = sessionStorage.getItem('name');
       return name ? name : '';
     },
@@ -79,14 +84,15 @@ export default {
     chooseSubject(subject) {
       var subjectId = subject.id ? subject.id : -1;
       var subjectName = subject.taskName ? subject.taskName : '';
-      var currentSubjectId = sessionStorage.getItem('subjectId');
+      var currentSubjectId = Number(sessionStorage.getItem('subjectId'));
+
       if (subjectId !== currentSubjectId) {
+        this.subjectId = subjectId;
         sessionStorage.setItem('subjectId', subjectId);
         sessionStorage.setItem('subjectName', subjectName);
+
         this.$router.push({name: 'myPatients'});
         Bus.$emit(this.REFRESH_LIST);
-
-        this.name = subjectId === -1 ? this.orgName : subjectName;
       }
       this.showOranizationPanel = false;
     },
