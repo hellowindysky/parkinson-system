@@ -15,7 +15,20 @@
     </div>
     <div class="shadow-border"></div>
 
-    <div class="organization-panel" v-show="showOranizationPanel"></div>
+    <div class="organization-panel" v-show="showOranizationPanel">
+      <div class="hospital-items">
+        <div class="item">{{orgName}}</div>
+      </div>
+      <div class="seperate-line"></div>
+      <div class="subject-items">
+        <div v-for="item in subjects">
+          <span class="item">{{item.taskName}}</span>
+          <span class="item sub-item" v-for="subItem in item.tasks">
+            {{subItem.taskName}}
+          </span>
+        </div>
+      </div>
+    </div>
     <div class="account-panel" :class="{'hide': !showAccountPanel}">
       <p class="operate-item" @click="resetPassword">修改密码</p>
       <div class="seperate-line"></div>
@@ -51,6 +64,12 @@ export default {
     orgName() {
       var orgName = sessionStorage.getItem('orgName');
       return orgName ? orgName : '';
+    },
+    subjects() {
+      var subjects = sessionStorage.getItem('subjects');
+      subjects = JSON.parse(subjects);
+      console.log(subjects);
+      return subjects;
     }
   },
   methods: {
@@ -138,10 +157,41 @@ export default {
     position: absolute;
     top: @header-height;
     left: 0;
+    padding: 10px 0;
     width: 240px;
-    height: 360px;
-    background-color: rgba(16,16,16,0.8);
+    background-color: rgba(24,34,48,0.95);
+    font-size: 0;
     z-index: 300;
+    .item {
+      display: inline-block;
+      padding-left: 30px;
+      width: 100%;
+      height: 40px;
+      line-height: 40px;
+      box-sizing: border-box;
+      text-align: left;
+      color: #fff;
+      font-size: @normal-font-size;
+      cursor: pointer;
+      &:hover {
+        background-color: fade(@font-color, 80%);
+      }
+      &:active {
+        background-color: fade(@font-color, 90%);
+      }
+    }
+    .sub-item {
+      padding-left: 50px;
+      height: 35px;
+      line-height: 35px;
+    }
+    .seperate-line {
+      margin-left: 10%;
+      width: 80%;
+      height: 1px;
+      cursor: pointer;
+      background-color: @gray-color;
+    }
   }
   .operation-wrapper {
     position: absolute;
