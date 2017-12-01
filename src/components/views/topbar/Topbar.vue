@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="header">
     <div class="organization-wrapper" v-on:click.stop="toggleOranizationPanel">
-      <span class="name">{{orgName}}</span>
+      <span class="name">{{name}}</span>
       <span class="iconfont" :class="toggleOranizationPanelIcon"></span>
     </div>
     <div class="operation-wrapper">
@@ -17,13 +17,13 @@
 
     <div class="organization-panel" v-show="showOranizationPanel">
       <div class="hospital-items">
-        <div class="item" @click="chooseSubject(-1)">{{orgName}}</div>
+        <div class="item" @click="chooseSubject({})">{{orgName}}</div>
       </div>
       <div class="seperate-line"></div>
       <div class="subject-items">
-        <div v-for="item in subjects" @click="chooseSubject(item.id)">
-          <span class="item">{{item.taskName}}</span>
-          <span class="item sub-item" v-for="subItem in item.tasks" @click="chooseSubject(subItem.id)">
+        <div v-for="item in subjects">
+          <span class="item" @click="chooseSubject(item)">{{item.taskName}}</span>
+          <span class="item sub-item" v-for="subItem in item.tasks" @click="chooseSubject(subItem)">
             {{subItem.taskName}}
           </span>
         </div>
@@ -50,7 +50,8 @@ export default {
   data() {
     return {
       showOranizationPanel: false,
-      showAccountPanel: false
+      showAccountPanel: false,
+      name
     };
   },
   computed: {
@@ -75,12 +76,17 @@ export default {
     toggleOranizationPanel() {
       this.showOranizationPanel = !this.showOranizationPanel;
     },
-    chooseSubject(subjectId) {
+    chooseSubject(subject) {
+      var subjectId = subject.id ? subject.id : -1;
+      var subjectName = subject.taskName ? subject.taskName : '';
       var currentSubjectId = sessionStorage.getItem('subjectId');
       if (subjectId !== currentSubjectId) {
         sessionStorage.setItem('subjectId', subjectId);
+        sessionStorage.setItem('subjectName', subjectName);
         this.$router.push({name: 'myPatients'});
         Bus.$emit(this.REFRESH_LIST);
+
+        this.name = subjectId === -1 ? this.orgName : subjectName;
       }
       this.showOranizationPanel = false;
     },

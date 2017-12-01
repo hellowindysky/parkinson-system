@@ -386,6 +386,7 @@ export default {
       });
     },
     refreshList() {
+      // 切换了医院或者组织之后，会执行这个函数
       this.updatePatientsList(this.checkRoute);
     },
     updatePatientsList(cb) {
@@ -660,6 +661,7 @@ export default {
     }
   },
   beforeDestroy() {
+    Bus.$off(this.REFRESH_LIST);
     Bus.$off(this.UPDATE_MY_PATIENTS_LIST);
     Bus.$off(this.UPDATE_OTHER_PATIENTS_LIST);
     Bus.$off(this.UPDATE_GROUP_LIST);
