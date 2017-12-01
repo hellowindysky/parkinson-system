@@ -28,7 +28,7 @@
           <span class="field-input" v-else>
             <span class="warning-text">{{warningResults.imageType}}</span>
             <el-select v-model="imageType" placeholder="请选择" @change="updateWarning('imageType')"
-              :class="{'warning': warningResults.imageType}">
+              :class="{'warning': warningResults.imageType}" clearable>
               <el-option
                 v-for="item in getOptions('examType')"
                 :key="item.code"
@@ -58,6 +58,28 @@
             </el-date-picker>
           </span>
         </div>
+
+        <div class="field whole-line" v-show="imageType===2">
+          <span class="field-name">
+            磁场强度:
+            <span class="required-mark"></span>
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span>{{getMagneticIntensity(magneticIntensity)}}</span>
+          </span>
+          <span class="field-input" v-else>
+            <!-- <span class="warning-text">磁场强度验证信息</span> -->
+            <el-select v-model="magneticIntensity" placeholder="请选择磁场强度" clearable>
+              <el-option
+                v-for="item in getOptions('magneticIntensity')"
+                :key="item.code"
+                :label="item.name"
+                :value="item.code">
+              </el-option>
+            </el-select>
+          </span>
+        </div>
+
         <div class="field">
           <span class="field-name">
             检查编号:
@@ -214,6 +236,122 @@
             </el-upload>
           </span>
         </div>
+
+        <!-- 以下是 MRI 才有的序列 ↓↓↓↓↓↓↓↓ -->
+        <div v-show="imageType===2">
+        <hr class="seperate-line">
+        <div class="field-file">
+          <span class="field-name">
+            VBM文件:
+          </span>
+          <span class="field-input">
+            <div class="last-files">
+              <div class="last-files-title">已上传的VBM文件</div>
+              <div class="file" :class="{'editing': mode!==VIEW_CURRENT_CARD}" v-for="file in vbm">
+                <i class="el-icon-document icon"></i>
+                <span class="file-name" @click="downloadFile(file)">{{file.fileName}}</span>
+                <i class="close-button iconfont icon-cancel" @click="removeFile(file, vbm, newVbm)"></i>
+              </div>
+            </div>
+            <el-upload
+              class="upload-area"
+              :action="uploadUrl"
+              ref="upload5"
+              :disabled="mode===VIEW_CURRENT_CARD"
+              :data="fileParam"
+              :multiple="true"
+              :auto-upload="true"
+              :on-change="fileChange"
+              :on-preview="handlePreview"
+              :on-remove="handleVbmRemove"
+              :on-success="uploadVbmSuccess"
+              :on-error="uploadErr"
+              :before-upload="beforeUpload"
+              :file-list="fileList5">
+              <el-button slot="trigger" size="small" type="text" :disabled="mode===VIEW_CURRENT_CARD" v-show="mode!==VIEW_CURRENT_CARD">
+                点击上传 VBM 压缩文件/源文件
+              </el-button>
+              <div slot="tip" class="el-upload__tip"></div>
+            </el-upload>
+          </span>
+        </div>
+
+        <hr class="seperate-line">
+        <div class="field-file">
+          <span class="field-name">
+            DTI文件:
+          </span>
+          <span class="field-input">
+            <div class="last-files">
+              <div class="last-files-title">已上传的DTI文件</div>
+              <div class="file" :class="{'editing': mode!==VIEW_CURRENT_CARD}" v-for="file in dti">
+                <i class="el-icon-document icon"></i>
+                <span class="file-name" @click="downloadFile(file)">{{file.fileName}}</span>
+                <i class="close-button iconfont icon-cancel" @click="removeFile(file, dti, newDti)"></i>
+              </div>
+            </div>
+            <el-upload
+              class="upload-area"
+              :action="uploadUrl"
+              ref="upload6"
+              :disabled="mode===VIEW_CURRENT_CARD"
+              :data="fileParam"
+              :multiple="true"
+              :auto-upload="true"
+              :on-change="fileChange"
+              :on-preview="handlePreview"
+              :on-remove="handleDtiRemove"
+              :on-success="uploadDtiSuccess"
+              :on-error="uploadErr"
+              :before-upload="beforeUpload"
+              :file-list="fileList6">
+              <el-button slot="trigger" size="small" type="text" :disabled="mode===VIEW_CURRENT_CARD" v-show="mode!==VIEW_CURRENT_CARD">
+                点击上传 DTI 压缩文件/源文件
+              </el-button>
+              <div slot="tip" class="el-upload__tip"></div>
+            </el-upload>
+          </span>
+        </div>
+
+        <hr class="seperate-line">
+        <div class="field-file">
+          <span class="field-name">
+            FMR文件:
+          </span>
+          <span class="field-input">
+            <div class="last-files">
+              <div class="last-files-title">已上传的FMR文件</div>
+              <div class="file" :class="{'editing': mode!==VIEW_CURRENT_CARD}" v-for="file in fmr">
+                <i class="el-icon-document icon"></i>
+                <span class="file-name" @click="downloadFile(file)">{{file.fileName}}</span>
+                <i class="close-button iconfont icon-cancel" @click="removeFile(file, fmr, newFmr)"></i>
+              </div>
+            </div>
+            <el-upload
+              class="upload-area"
+              :action="uploadUrl"
+              ref="upload7"
+              :disabled="mode===VIEW_CURRENT_CARD"
+              :data="fileParam"
+              :multiple="true"
+              :auto-upload="true"
+              :on-change="fileChange"
+              :on-preview="handlePreview"
+              :on-remove="handleFmrRemove"
+              :on-success="uploadFmrSuccess"
+              :on-error="uploadErr"
+              :before-upload="beforeUpload"
+              :file-list="fileList7">
+              <el-button slot="trigger" size="small" type="text" :disabled="mode===VIEW_CURRENT_CARD" v-show="mode!==VIEW_CURRENT_CARD">
+                点击上传 FMR 压缩文件/源文件
+              </el-button>
+              <div slot="tip" class="el-upload__tip"></div>
+            </el-upload>
+          </span>
+        </div>
+        </div>
+        <!-- 以上是 MRI 才有的序列 ↑↑↑↑↑↑↑↑↑↑↑↑ -->
+
         <hr class="seperate-line">
         <div class="field-file">
           <span class="field-name">
@@ -278,6 +416,7 @@ export default {
       patientAttachmentId: '',
       imageType: '',
       checkDate: '',
+      magneticIntensity: '',
       checkNum: '',
       checkDevice: '',
       checkConclusion: '',
@@ -292,11 +431,21 @@ export default {
       t1: [],
       t2: [],
       t2Flair: [],
+
+      vbm: [],
+      dti: [],
+      fmr: [],
+
       other: [],
 
       newT1: [],
       newT2: [],
       newT2Flair: [],
+
+      newVbm: [],
+      newDti: [],
+      newFmr: [],
+
       newOther: [],
 
       uploadingFilesNum: 0,
@@ -307,10 +456,13 @@ export default {
           return time.getTime() > Date.now();
         }
       },
-      fileList1: [],
-      fileList2: [],
-      fileList3: [],
-      fileList4: [],
+      fileList1: [], // T1
+      fileList2: [], // T2
+      fileList3: [], // T2 Flair
+      fileList4: [], // other
+      fileList5: [], // VBM
+      fileList6: [], // DTI
+      fileList7: [], // FMR
       header: {
         'Content-Type': 'multipart/form-data'
       },
@@ -346,6 +498,9 @@ export default {
       this.newT1 = [];
       this.newT2 = [];
       this.newT2Flair = [];
+      this.newVbm = [];
+      this.newDti = [];
+      this.newFmr = [];
       this.newOther = [];
 
       // console.log('item: ', item);
@@ -353,6 +508,7 @@ export default {
       this.name = item.title ? item.title : '';
       this.checkDate = item.checkDate ? item.checkDate : '';
       this.imageType = item.imageType ? item.imageType : '';
+      this.magneticIntensity = item.magneticIntensity ? item.magneticIntensity : '';
       this.checkNum = item.checkNum ? item.checkNum : '';
       this.checkDevice = item.checkDevice ? item.checkDevice : '';
       this.checkConclusion = item.checkConclusion ? item.checkConclusion : '';
@@ -360,6 +516,9 @@ export default {
       this.t1 = item.t1 ? item.t1 : [];
       this.t2 = item.t2 ? item.t2 : [];
       this.t2Flair = item.t2Flair ? item.t2Flair : [];
+      this.vbm = item.vbm ? item.vbm : [];
+      this.dti = item.dti ? item.dti : [];
+      this.fmr = item.fmr ? item.fmr : [];
       this.other = item.other ? item.other : [];
 
       for (let fileItem of this.t1) {
@@ -374,6 +533,21 @@ export default {
       }
       for (let fileItem of this.t2Flair) {
         this.newT2Flair.push({
+          id: fileItem.id
+        });
+      }
+      for (let fileItem of this.vbm) {
+        this.newVbm.push({
+          id: fileItem.id
+        });
+      }
+      for (let fileItem of this.dti) {
+        this.newDti.push({
+          id: fileItem.id
+        });
+      }
+      for (let fileItem of this.fmr) {
+        this.newFmr.push({
           id: fileItem.id
         });
       }
@@ -412,6 +586,11 @@ export default {
       var targetOption = Util.getElement('code', imageType, options);
       return targetOption.name;
     },
+    getMagneticIntensity(magneticIntensity) {
+      var options = this.getOptions('magneticIntensity');
+      var targetOption = Util.getElement('code', magneticIntensity, options);
+      return targetOption.name;
+    },
     updateWarning(fieldName) {
       if (this.completeInit && !this[fieldName]) {
         this.warningResults[fieldName] = '必填项';
@@ -425,6 +604,9 @@ export default {
       this.$refs.upload2.clearFiles();
       this.$refs.upload3.clearFiles();
       this.$refs.upload4.clearFiles();
+      this.$refs.upload5.clearFiles();
+      this.$refs.upload6.clearFiles();
+      this.$refs.upload7.clearFiles();
       this.displayModal = false;
     },
     switchToEditingMode() {
@@ -474,6 +656,9 @@ export default {
       imageInfo.t1 = this.newT1;
       imageInfo.t2 = this.newT2;
       imageInfo.t2Flair = this.newT2Flair;
+      imageInfo.vbm = this.newVbm;
+      imageInfo.dti = this.newDti;
+      imageInfo.fmr = this.newFmr;
       imageInfo.other = this.newOther;
 
       if (this.mode === this.ADD_NEW_CARD) {
@@ -529,6 +714,15 @@ export default {
     handleT2FlairRemove(file) {
       this.handleRemove(file, this.newT2Flair);
     },
+    handleVbmRemove(file) {
+      this.handleRemove(file, this.newVbm);
+    },
+    handleDtiRemove(file) {
+      this.handleRemove(file, this.newDti);
+    },
+    handleFmrRemove(file) {
+      this.handleRemove(file, this.newFmr);
+    },
     handleOtherRemove(file) {
       this.handleRemove(file, this.newOther);
     },
@@ -557,6 +751,15 @@ export default {
     },
     uploadT2FlairSuccess(response, file, fileList) {
       this.uploadSuccess(response, file, fileList, this.newT2Flair);
+    },
+    uploadVbmSuccess(response, file, fileList) {
+      this.uploadSuccess(response, file, fileList, this.newVbm);
+    },
+    uploadDtiSuccess(response, file, fileList) {
+      this.uploadSuccess(response, file, fileList, this.newDti);
+    },
+    uploadFmrSuccess(response, file, fileList) {
+      this.uploadSuccess(response, file, fileList, this.newFmr);
     },
     uploadOtherSuccess(response, file, fileList) {
       this.uploadSuccess(response, file, fileList, this.newOther);
