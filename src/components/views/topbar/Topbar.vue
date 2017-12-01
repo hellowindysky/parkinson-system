@@ -17,13 +17,13 @@
 
     <div class="organization-panel" v-show="showOranizationPanel">
       <div class="hospital-items">
-        <div class="item">{{orgName}}</div>
+        <div class="item" @click="chooseSubject(-1)">{{orgName}}</div>
       </div>
       <div class="seperate-line"></div>
       <div class="subject-items">
-        <div v-for="item in subjects">
+        <div v-for="item in subjects" @click="chooseSubject(item.id)">
           <span class="item">{{item.taskName}}</span>
-          <span class="item sub-item" v-for="subItem in item.tasks">
+          <span class="item sub-item" v-for="subItem in item.tasks" @click="chooseSubject(subItem.id)">
             {{subItem.taskName}}
           </span>
         </div>
@@ -68,13 +68,21 @@ export default {
     subjects() {
       var subjects = sessionStorage.getItem('subjects');
       subjects = JSON.parse(subjects);
-      console.log(subjects);
       return subjects;
     }
   },
   methods: {
     toggleOranizationPanel() {
       this.showOranizationPanel = !this.showOranizationPanel;
+    },
+    chooseSubject(subjectId) {
+      var currentSubjectId = sessionStorage.getItem('subjectId');
+      if (subjectId !== currentSubjectId) {
+        sessionStorage.setItem('subjectId', subjectId);
+        this.$router.push({name: 'myPatients'});
+        Bus.$emit(this.REFRESH_LIST);
+      }
+      this.showOranizationPanel = false;
     },
     toggleFilterPanel() {
       Bus.$emit(this.TOGGLE_FILTER_PANEL_DISPLAY);
