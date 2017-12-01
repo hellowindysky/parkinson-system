@@ -158,12 +158,13 @@ export default {
     top: @header-height;
     left: 0;
     padding: 10px 0;
-    width: 240px;
+    width: 300px;
     background-color: rgba(24,34,48,0.95);
     font-size: 0;
     z-index: 300;
     .item {
-      display: inline-block;
+      display: block;
+      margin: 5px 0;
       padding-left: 30px;
       width: 100%;
       height: 40px;
@@ -186,8 +187,8 @@ export default {
       line-height: 35px;
     }
     .seperate-line {
-      margin-left: 10%;
-      width: 80%;
+      margin: 5px 30px;
+      width: calc(~"100%-60px");
       height: 1px;
       cursor: pointer;
       background-color: @gray-color;
