@@ -51,7 +51,7 @@ export default {
     return {
       showOranizationPanel: false,
       showAccountPanel: false,
-      subjectId: sessionStorage.getItem('subjectId')
+      subjectId: Number(sessionStorage.getItem('subjectId'))
     };
   },
   computed: {
@@ -61,7 +61,7 @@ export default {
     title() {
       var subjectName = sessionStorage.getItem('subjectName');
       subjectName = subjectName ? subjectName : '';
-      return this.subjectId === -1 ? this.orgName : subjectName;
+      return this.subjectId === this.SUBJECT_ID_FOR_HOSPITAL ? this.orgName : subjectName;
     },
     accountName() {
       var name = sessionStorage.getItem('name');
@@ -82,7 +82,7 @@ export default {
       this.showOranizationPanel = !this.showOranizationPanel;
     },
     chooseSubject(subject) {
-      var subjectId = subject.id ? subject.id : -1;
+      var subjectId = subject.id ? subject.id : this.SUBJECT_ID_FOR_HOSPITAL;
       var subjectName = subject.taskName ? subject.taskName : '';
       var currentSubjectId = Number(sessionStorage.getItem('subjectId'));
 

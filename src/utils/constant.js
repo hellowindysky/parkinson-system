@@ -1,5 +1,8 @@
 export default {
 
+  // variables
+  SUBJECT_ID_FOR_HOSPITAL: -1,
+
   // mode
   READING_MODE: 'reading',
   EDITING_MODE: 'editing',
