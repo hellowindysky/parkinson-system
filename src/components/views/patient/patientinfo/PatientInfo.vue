@@ -33,9 +33,9 @@
           <span class="info-title">课题标签: </span>
           <span class="info-text">
             <span class="tags-wrapper">
-              <span v-for="group in belongGroups" class="tag">{{ group.groupName }}</span>
+              <span v-for="subject in belongSubjects" class="tag">{{ subject.fullTaskName }}</span>
             </span>
-            <span class="iconfont icon-group" @click="toggleGroupPanel"></span>
+            <span class="iconfont icon-subject" @click="toggleGroupPanel"></span>
           </span>
         </div>
       </div>
@@ -61,7 +61,7 @@ import { getPatientInfo, getPatientGroupInfo, getPatientCaseList } from 'api/pat
 import DiagnosticDetail from 'components/views/patient/diagnosticinfo/diagnosticdetail/DiagnosticDetail';
 import ScaleModal from 'components/views/modal/scalemodal/ScaleModal';
 import BasicInfo from 'components/views/patient/personalinfo/basicinfo/BasicInfo';
-import GroupPanel from 'components/public/filterpanel/grouppanel/GroupPanel';
+import GroupPanel from 'components/public/grouppanel/GroupPanel';
 
 export default {
   data() {
@@ -70,6 +70,7 @@ export default {
       patientCaseList: [],
       belongDoctor: '',
       belongGroups: [],
+      belongSubjects: [],
       createDate: '',
       displayGroupPanel: false
     };
@@ -176,6 +177,7 @@ export default {
         this.patientInfo = data;
         this.belongDoctor = data.belongDoctor;
         this.belongGroups = data.belongGroups;
+        this.belongSubjects = data.belongTasks;
         this.createDate = data.createDate;
       }, (error) => {
         console.log(error);
