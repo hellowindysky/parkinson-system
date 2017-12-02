@@ -343,7 +343,6 @@ export default {
       }
     }
 
-    Bus.$on(this.REFRESH_LIST, this.refreshList);
     Bus.$on(this.UPDATE_MY_PATIENTS_LIST, this.updatePatientsList);
     Bus.$on(this.UPDATE_OTHER_PATIENTS_LIST, this.updatePatientsList);
     Bus.$on(this.UPDATE_GROUP_LIST, this.updateGroupList);
@@ -384,10 +383,6 @@ export default {
         });
         this.$refs.listArea.scrollTop = patientIdx * 60;
       });
-    },
-    refreshList() {
-      // 切换了医院或者组织之后，会执行这个函数
-      this.updatePatientsList(this.checkRoute);
     },
     updatePatientsList(cb) {
       // 根据筛选条件更新“我的患者”列表，如果不传入条件参数，则默认不作筛选
@@ -661,7 +656,6 @@ export default {
     }
   },
   beforeDestroy() {
-    Bus.$off(this.REFRESH_LIST);
     Bus.$off(this.UPDATE_MY_PATIENTS_LIST);
     Bus.$off(this.UPDATE_OTHER_PATIENTS_LIST);
     Bus.$off(this.UPDATE_GROUP_LIST);
