@@ -38,6 +38,10 @@
             <span class="iconfont icon-subject" @click="toggleSubjectPanel"></span>
           </span>
         </div>
+        <div class="info" v-show="listType==='subjectPatients'">
+          <span class="info-title">所属医院: </span>
+          <span class="info-text">{{ belongHospital }}</span>
+        </div>
       </div>
       <div class="respective-info">
         <router-view v-if="this.existed" :patient-info="patientInfo" :patient-case-list="patientCaseList"></router-view>
@@ -73,6 +77,7 @@ export default {
       patientInfo: {},
       patientCaseList: [],
       belongDoctor: '',
+      belongHospital: '',
       belongGroups: [],
       belongSubjects: [],
       createDate: '',
@@ -185,10 +190,11 @@ export default {
       getPatientInfo(this.patientId).then((data) => {
         // console.log('patientInfo: ', data);
         this.patientInfo = data;
+        this.createDate = data.createDate;
         this.belongDoctor = data.belongDoctor;
         this.belongGroups = data.belongGroups;
         this.belongSubjects = data.belongTasks;
-        this.createDate = data.createDate;
+        this.belongHospital = data.belongHospital ? data.belongHospital : '';
       }, (error) => {
         console.log(error);
       });
