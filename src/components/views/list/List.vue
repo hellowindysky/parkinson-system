@@ -225,6 +225,8 @@ export default {
       }, 0);
     };
     return {
+      subjectId: Number(sessionStorage.getItem('subjectId')),
+
       searchInput: '',
       timeout: null,
 
@@ -288,8 +290,7 @@ export default {
       'typeGroup'
     ]),
     inSubject() {
-      var subjectId = Number(sessionStorage.getItem('subjectId'));
-      return subjectId !== this.SUBJECT_ID_FOR_HOSPITAL;
+      return this.subjectId !== this.SUBJECT_ID_FOR_HOSPITAL;
     },
     showAdd() {
       if (this.listType === this.OTHER_PATIENTS_TYPE) {
@@ -359,6 +360,8 @@ export default {
       }
     }
 
+    this.subjectId = Number(sessionStorage.getItem('subjectId'));
+
     Bus.$on(this.UPDATE_MY_PATIENTS_LIST, this.updatePatientsList);
     Bus.$on(this.UPDATE_OTHER_PATIENTS_LIST, this.updatePatientsList);
     Bus.$on(this.UPDATE_SUBJECT_PATIENTS_LIST, this.updatePatientsList);
@@ -410,12 +413,16 @@ export default {
       };
       if (this.listType === this.MY_PATIENTS_TYPE && !this.inSubject) {
         condition.type = 1;
+        delete condition.taskId;
       } else if (this.listType === this.OTHER_PATIENTS_TYPE) {
         condition.type = 2;
+        delete condition.taskId;
       } else if (this.listType === this.MY_PATIENTS_TYPE && this.inSubject) {
         condition.type = 3;
+        condition.taskId = Number(sessionStorage.getItem('subjectId'));
       } else if (this.listType === this.SUBJECT_PATIENTS_TYPE) {
         condition.type = 4;
+        condition.taskId = Number(sessionStorage.getItem('subjectId'));
       }
 
       if (this.searchInput !== '') {
@@ -686,7 +693,9 @@ export default {
       // 列表类型一旦发生变化，则清空搜索框内容
       this.searchInput = '';
       // 同时清空各个筛选面板，重新获取列表
-      if (this.listType === this.MY_PATIENTS_TYPE || this.listType === this.OTHER_PATIENTS_TYPE) {
+      if (this.listType === this.MY_PATIENTS_TYPE ||
+        this.listType === this.OTHER_PATIENTS_TYPE ||
+        this.listType === this.SUBJECT_PATIENTS_TYPE) {
         this.resetForm('filterPatientsForm', this.checkRoute);
       } else if (this.listType === this.GROUP_TYPE) {
         this.resetForm('filterGroupsForm', this.checkRoute);
