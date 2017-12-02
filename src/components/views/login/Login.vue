@@ -99,7 +99,7 @@ export default {
             var userName = data.user.userName;
             var userType = data.user.userType;
             var orgName = data.orgs && data.orgs[0] && data.orgs[0].orgName ? data.orgs[0].orgName : '';
-            var subjects = data.tasks;
+            var subjects = data.tasks ? data.tasks : [];
 
             sessionStorage.setItem('token', token);
             sessionStorage.setItem('accountNumber', accountNumber);
