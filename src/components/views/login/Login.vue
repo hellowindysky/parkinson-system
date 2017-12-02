@@ -110,7 +110,7 @@ export default {
             sessionStorage.setItem('subjects', JSON.stringify(subjects));
 
             // 通过登录界面，进来后总是进入医院入口，而不会是某个课题，这里将课题 id 保存为一个后端不会用到的值
-            sessionStorage.setItem('subjectId', -1);
+            sessionStorage.setItem('subjectId', this.SUBJECT_ID_FOR_HOSPITAL);
 
             var commonRequest = {
               'userId': 93242,

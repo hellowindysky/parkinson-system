@@ -1,5 +1,8 @@
 export default {
 
+  // variables
+  SUBJECT_ID_FOR_HOSPITAL: -1,
+
   // mode
   READING_MODE: 'reading',
   EDITING_MODE: 'editing',
@@ -48,12 +51,12 @@ export default {
   FOLD_DIAGNOSTIC_BASIC: 'foldDiagnosticBasic',
   EDIT_DIAGNOSTIC_DISEASE: 'editDiagnosticDisease',
 
-  REFRESH_LIST: 'refreshList',
   UPDATE_MY_PATIENTS_LIST: 'updateMyPatientsList',
   UPDATE_OTHER_PATIENTS_LIST: 'updateOtherPatientsList',
   UPDATE_GROUP_LIST: 'updateGroupList',
   UPDATE_PATIENT_INFO: 'updatePatientInfo',
   UPDATE_PATIENT_GROUP_INFO: 'updatePatientGroupInfo',
+  UPDATE_PATIENT_SUBJECT_INFO: 'updatePatientSubjectInfo',
   UPDATE_CASE_INFO: 'updateCaseInfo',
   UPDATE_PATIENT_CASE_LIST: 'updatePatientCase',
   UPDATE_ITEM_POSITION: 'update_item_position',
@@ -62,6 +65,8 @@ export default {
   BLUR_ON_SCREEN: 'blurOnScreen',
 
   HIDE_GROUP_PANEL: 'hideGroupPanel',
+  HIDE_SUBJECT_PANEL: 'hideSubjectPanel',
+
   SHOW_GROUP_MODAL: 'showGroupModal',
   SHOW_MODAL_BOX: 'showModalBox',
   SHOW_MEDICINE_MODAL: 'showMedicineModal',

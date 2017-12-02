@@ -206,9 +206,17 @@ export default {
     chooseProjectConfiguration() {}
   },
   mounted() {
-    // 初始化该组件时，自动跳转到病患管理
+    // 加载菜单栏这个组件的时候，自动跳转到病患管理
     if (!/^\/patients/.test(this.$route.path)) {
       this.$router.replace({ name: 'myPatients' });
+    }
+  },
+  watch: {
+    $route() {
+      // 如果路由变为'/'，则自动跳转到病患管理
+      if (/^\/$/.test(this.$route.path)) {
+        this.$router.replace({ name: 'myPatients' });
+      }
     }
   }
 };

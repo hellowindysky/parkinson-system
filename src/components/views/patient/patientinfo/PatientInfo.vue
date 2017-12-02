@@ -33,9 +33,9 @@
           <span class="info-title">课题标签: </span>
           <span class="info-text">
             <span class="tags-wrapper">
-              <span v-for="group in belongGroups" class="tag">{{ group.groupName }}</span>
+              <span v-for="subject in belongSubjects" class="tag">{{ subject.fullTaskName }}</span>
             </span>
-            <span class="iconfont icon-group" @click="toggleGroupPanel"></span>
+            <span class="iconfont icon-subject" @click="toggleSubjectPanel"></span>
           </span>
         </div>
       </div>
@@ -49,6 +49,9 @@
     <group-panel class="group-panel" :class="{'hide': !displayGroupPanel}" :belongGroups="belongGroups"
       :display="displayGroupPanel" :patientId="Number(patientId)" @hideGroupPanel="hideGroupPanel"
       @updatePatientGroupInfo="updatePatientGroupInfo"></group-panel>
+    <subject-panel class="subject-panel" :class="{'hide': !displaySubjectPanel}" :belongSubjects="belongSubjects"
+      :display="displaySubjectPanel" :patientId="Number(patientId)" @hideSubjectPanel="hideSubjectPanel"
+      @updatePatientSubjectInfo="updatePatientSubjectInfo"></subject-panel>
   </div>
 </template>
 
@@ -56,12 +59,13 @@
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 
-import { getPatientInfo, getPatientGroupInfo, getPatientCaseList } from 'api/patient';
+import { getPatientInfo, getPatientGroupInfo, getPatientSubjectInfo, getPatientCaseList } from 'api/patient';
 
 import DiagnosticDetail from 'components/views/patient/diagnosticinfo/diagnosticdetail/DiagnosticDetail';
 import ScaleModal from 'components/views/modal/scalemodal/ScaleModal';
 import BasicInfo from 'components/views/patient/personalinfo/basicinfo/BasicInfo';
-import GroupPanel from 'components/public/filterpanel/grouppanel/GroupPanel';
+import GroupPanel from 'components/public/grouppanel/GroupPanel';
+import SubjectPanel from 'components/public/subjectpanel/SubjectPanel';
 
 export default {
   data() {
@@ -70,8 +74,10 @@ export default {
       patientCaseList: [],
       belongDoctor: '',
       belongGroups: [],
+      belongSubjects: [],
       createDate: '',
-      displayGroupPanel: false
+      displayGroupPanel: false,
+      displaySubjectPanel: false
     };
   },
   computed: {
@@ -176,6 +182,7 @@ export default {
         this.patientInfo = data;
         this.belongDoctor = data.belongDoctor;
         this.belongGroups = data.belongGroups;
+        this.belongSubjects = data.belongTasks;
         this.createDate = data.createDate;
       }, (error) => {
         console.log(error);
@@ -209,18 +216,42 @@ export default {
         console.log(error);
       });
     },
+    updatePatientSubjectInfo() {
+      // 如果是新增患者，则不去请求数据
+      if (!this.existed) {
+        return;
+      }
+      getPatientSubjectInfo(this.patientId).then((data) => {
+        this.belongSubjects = data;
+      }, (error) => {
+        console.log(error);
+      });
+    },
     toggleGroupPanel() {
       this.displayGroupPanel = !this.displayGroupPanel;
+      if (this.displayGroupPanel) {
+        this.hideSubjectPanel();
+      }
     },
     hideGroupPanel() {
       this.displayGroupPanel = false;
+    },
+    toggleSubjectPanel() {
+      this.displaySubjectPanel = !this.displaySubjectPanel;
+      if (this.displaySubjectPanel) {
+        this.hideGroupPanel();
+      }
+    },
+    hideSubjectPanel() {
+      this.displaySubjectPanel = false;
     }
   },
   components: {
     DiagnosticDetail,
     ScaleModal,
     BasicInfo,
-    GroupPanel
+    GroupPanel,
+    SubjectPanel
   },
   mounted() {
     this.updatePatientInfo();
@@ -291,12 +322,20 @@ export default {
     z-index: 400;
     background: @screen-color;
   }
-  .group-panel {
+  .group-panel, .subject-panel {
     position: absolute;
     right: 0;
     top: 0;
     transition: 0.3s;
+  }
+  .group-panel {
     z-index: 200;
+    &.hide {
+      right: -@group-panel-width;
+    }
+  }
+  .subject-panel {
+    z-index: 210;
     &.hide {
       right: -@group-panel-width;
     }
