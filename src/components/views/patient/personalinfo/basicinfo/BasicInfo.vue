@@ -94,6 +94,8 @@ export default {
         return 'myPatients';
       } else if (this.$route.matched.some(record => record.meta.otherPatients)) {
         return 'otherPatients';
+      } else if (this.$route.matched.some(record => record.meta.subjectPatients)) {
+        return 'subjectPatients';
       } else {
         return 'unknown';
       }
@@ -192,6 +194,13 @@ export default {
               params: {id: newId}
             });
             Bus.$emit(this.UPDATE_OTHER_PATIENTS_LIST);
+
+          } else if (this.listType === 'subjectPatients') {
+            this.$router.push({
+              name: 'subjectPatientInfo',
+              params: {id: newId}
+            });
+            Bus.$emit(this.UPDATE_SUBJECT_PATIENTS_LIST);
           }
 
           // 如果是新增患者，还要在确定之后，将个人信息的病症信息面板置为编辑状态，同时收起基础信息面板
@@ -231,6 +240,8 @@ export default {
             Bus.$emit(this.UPDATE_MY_PATIENTS_LIST);
           } else if (this.listType === 'otherPatients') {
             Bus.$emit(this.UPDATE_OTHER_PATIENTS_LIST);
+          } else if (this.listType === 'subjectPatients') {
+            Bus.$emit(this.UPDATE_SUBJECT_PATIENTS_LIST);
           }
 
           this.mode = this.READING_MODE;

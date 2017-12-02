@@ -13,8 +13,13 @@
       <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'groupsManagement'}" @click="chooseGroupsManagement">
         分组管理
       </li>
-      <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'otherPatients'}" @click="chooseOtherPatients">
+      <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'otherPatients'}"
+        @click="chooseOtherPatients" v-show="!inSubject">
         科室患者
+      </li>
+      <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'subjectPatients'}"
+        @click="chooseSubjectPatients" v-show="inSubject">
+        项目患者
       </li>
     </ul>
     <li class="item" :class="{'current-item': currentItem === 'analytics'}" @click="toggleAnalyticsList" v-show="showAnalytics">
@@ -84,7 +89,8 @@ export default {
       showPatientsList: true,
       showAnalyticsList: false,
       showConfigurationList: false,
-      showInstitutionList: false
+      showInstitutionList: false,
+      subjectId: Number(sessionStorage.getItem('subjectId'))
     };
   },
   computed: {
@@ -98,6 +104,9 @@ export default {
         return 'configuration';
       }
     },
+    inSubject() {
+      return this.subjectId !== this.SUBJECT_ID_FOR_HOSPITAL;
+    },
     currentSubItem() {
       var path = this.$route.path;
       if (/^\/patients\/list/.test(path)) {
@@ -106,6 +115,8 @@ export default {
         return 'groupsManagement';
       } else if (/^\/patients\/otherList/.test(path)) {
         return 'otherPatients';
+      } else if (/^\/patients\/subjectList/.test(path)) {
+        return 'subjectPatients';
       } else if (/^\/analytics\/basic/.test(path)) {
         return 'basicAnalytics';
       } else if (/^\/analytics\/advanced/.test(path)) {
@@ -168,6 +179,12 @@ export default {
         this.$router.push({name: 'otherPatients'});
       }
     },
+    chooseSubjectPatients() {
+      // 如果当前路径不是以“/patients/subjectList”开头了，才发生跳转
+      if (!/^\/patients\/subjectList/.test(this.$route.path)) {
+        this.$router.push({name: 'subjectPatients'});
+      }
+    },
     chooseBasicAnalytics() {
       // 如果当前路径不是以“/analytics”开头了，才发生跳转
       if (!/^\/analytics/.test(this.$route.path)) {
@@ -208,6 +225,7 @@ export default {
   mounted() {
     // 加载菜单栏这个组件的时候，自动跳转到病患管理
     if (!/^\/patients/.test(this.$route.path)) {
+      this.subjectId = Number(sessionStorage.getItem('subjectId'));
       this.$router.replace({ name: 'myPatients' });
     }
   },
@@ -215,6 +233,7 @@ export default {
     $route() {
       // 如果路由变为'/'，则自动跳转到病患管理
       if (/^\/$/.test(this.$route.path)) {
+        this.subjectId = Number(sessionStorage.getItem('subjectId'));
         this.$router.replace({ name: 'myPatients' });
       }
     }
