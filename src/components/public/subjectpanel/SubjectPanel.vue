@@ -5,7 +5,7 @@
     <div class="subject-wrapper" ref="scrollArea">
       <div class="subject-item" v-for="(subject, index) in allSubjects"
         :class="{'selected': subjectSelectedList[index]}" @click="toggleSelected(index)">
-        {{subject.subjectName}}
+        {{subject.taskName}}
       </div>
     </div>
   </div>
@@ -13,7 +13,7 @@
 
 <script>
 import Ps from 'perfect-scrollbar';
-import { addPatientToSubject, removePatientFromSubject } from 'api/patient.js';
+import { getSubjectList, addPatientToSubject, removePatientFromSubject } from 'api/subject.js';
 
 var lockList = [];  // 这个数组用来标记正在发生状态改变的分组
 
@@ -61,7 +61,7 @@ export default {
       lockList.push(index);
       var value = !this.subjectSelectedList[index];
       this.$set(this.subjectSelectedList, index, value);
-      var subjectId = this.allSubjects[index].leafId;
+      var subjectId = this.allSubjects[index].id;
       var patientId = Number(this.patientId);
       var patientSubject = {
         taskInfoId: subjectId,
@@ -89,26 +89,23 @@ export default {
   watch: {
     display: function(val) {
       if (val === true) {
-        var subjects = sessionStorage.getItem('subjects');
-        console.log(subjects);
-        for (let subject of subjects) {
-          var subjectName = subject.taskName;
-          var subjectId = subject.leafId;
-
-        }
-        // this.allSubjects = data;
-        // let length = this.allSubjects.length;
-        // this.subjectSelectedList = [];
-        // for (var i = 0; i < length; i++) {
-        //   var value = false;
-        //   for (let belongSubject of this.belongSubjects) {
-        //     if (this.allSubjects[i].subjectId === belongSubject.subjectId) {
-        //       value = true;
-        //     }
-        //   }
-        //   this.$set(this.subjectSelectedList, i, value);
-        // }
-        // this.updateScrollbar();
+        getSubjectList().then((data) => {
+          this.allSubjects = data;
+          let length = this.allSubjects.length;
+          this.subjectSelectedList = [];
+          for (var i = 0; i < length; i++) {
+            var value = false;
+            for (let belongSubject of this.belongSubjects) {
+              if (this.allSubjects[i].id === belongSubject.leafId) {
+                value = true;
+              }
+            }
+            this.$set(this.subjectSelectedList, i, value);
+          }
+          this.updateScrollbar();
+        }, (error) => {
+          console.log(error);
+        });
       }
     }
   }
