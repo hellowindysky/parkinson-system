@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="symptoms-modal-wrapper" v-show="!displayModal">
+  <div class="symptoms-modal-wrapper" v-show="displayModal">
     <div class="symptoms-modal" ref="scrollArea">
       <h3 class="title">{{title}}</h3>
       <div class="content">
