@@ -25,6 +25,8 @@ export default {
         return 'myPatients';
       } else if (this.$route.matched.some(record => record.meta.otherPatients)) {
         return 'otherPatients';
+      } else if (this.$route.matched.some(record => record.meta.subjectPatients)) {
+        return 'subjectPatients';
       } else {
         return 'unknown';
       }
@@ -54,6 +56,8 @@ export default {
         routeName = 'patientInfo';
       } else if (this.$route.matched.some(record => record.meta.otherPatients)) {
         routeName = 'otherPatientInfo';
+      } else if (this.$route.matched.some(record => record.meta.subjectPatients)) {
+        routeName = 'subjectPatientInfo';
       } else {
         return;
       }

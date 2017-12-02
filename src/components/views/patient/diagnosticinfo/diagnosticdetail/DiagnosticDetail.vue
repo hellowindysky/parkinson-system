@@ -60,6 +60,8 @@ export default {
         return 'myPatients';
       } else if (this.$route.matched.some(record => record.meta.otherPatients)) {
         return 'otherPatients';
+      } else if (this.$route.matched.some(record => record.meta.subjectPatients)) {
+        return 'subjectPatients';
       } else {
         return 'unknown';
       }
@@ -170,6 +172,8 @@ export default {
         this.$router.push({name: 'diagnosticInfo'});
       } else if (this.listType === 'otherPatients') {
         this.$router.push({name: 'otherDiagnosticInfo'});
+      } else if (this.listType === 'subjectPatients') {
+        this.$router.push({name: 'subjectDiagnosticInfo'});
       }
 
       // 同时，告诉它的子页面，放弃当前修改

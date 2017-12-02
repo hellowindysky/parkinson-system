@@ -50,6 +50,8 @@ export default {
         return 'myPatients';
       } else if (this.$route.matched.some(record => record.meta.otherPatients)) {
         return 'otherPatients';
+      } else if (this.$route.matched.some(record => record.meta.subjectPatients)) {
+        return 'subjectPatients';
       } else {
         return 'unknown';
       }
@@ -128,6 +130,8 @@ export default {
         routeName = 'diagnosticDetail';
       } else if (this.listType === 'otherPatients') {
         routeName = 'otherDiagnosticDetail';
+      } else if (this.listType === 'subjectPatients') {
+        routeName = 'subjectDiagnosticDetail';
       }
       this.$router.push({
         name: routeName,
@@ -160,6 +164,11 @@ export default {
       } else if (this.listType === 'otherPatients') {
         this.$router.push({
           name: 'otherDiagnosticDetail',
+          params: {'caseId': 'newCase'}
+        });
+      } else if (this.listType === 'subjectPatients') {
+        this.$router.push({
+          name: 'subjectrDiagnosticDetail',
           params: {'caseId': 'newCase'}
         });
       }
