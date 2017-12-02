@@ -192,9 +192,6 @@ export default {
     Card
   },
   mounted() {
-    console.log(this.diseaseInfoTemplateGroups);
-    console.log(1111);
-    console.log(this.diseaseInfoDictionaryGroups);
     // 第一次加载的时候，去计算一次卡片宽度
     this.recalculateCardWidth();
   }

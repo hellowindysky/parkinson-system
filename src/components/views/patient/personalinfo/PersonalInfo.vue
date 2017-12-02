@@ -2,7 +2,7 @@
   <div class="personal-info-wrapper">
     <basic-info class="component" :basic-info="basicInfo"></basic-info>
     <disease-info class="component" :disease-info="diseaseInfo" :birthday="birthday"></disease-info>
-    <disease-history class="component"></disease-history>
+    <disease-history class="component" v-show="false"></disease-history>
     <other-info class="component" :med-history-list="medHistoryList" :disease-history-list="diseaseHistoryList"
       :family-history-list="familyHistoryList" :coffee-history-list="coffeeHistoryList" :tea-history-list="teaHistoryList"
       :wine-history-list="wineHistoryList" :smoke-history-list="smokeHistoryList" :exercise-history-list="exerciseHistoryList"

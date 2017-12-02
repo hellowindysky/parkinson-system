@@ -17,6 +17,7 @@
     <emg-modal></emg-modal>
     <image-modal></image-modal>
     <first-symptoms-modal></first-symptoms-modal>
+    <first-treatment-modal></first-treatment-modal>
     <filter-panel :showFilterPanel="showFilterPanel"></filter-panel>
     <choice-panel></choice-panel>
     <confirm-box></confirm-box>
@@ -43,6 +44,7 @@ import biochemicalExamModal from 'components/views/modal/biochemicalexammodal/Bi
 import emgModal from 'components/views/modal/emgmodal/EmgModal';
 import imageModal from 'components/views/modal/imagemodal/ImageModal';
 import firstSymptomsModal from 'components/views/modal/firstsymptomsmodal/FirstSymptomsModal';
+import firstTreatmentModal from 'components/views/modal/firsttreatmentmodal/FirstTreatmentModal';
 
 import filterPanel from 'components/public/filterpanel/FilterPanel';
 import choicePanel from 'components/public/choicepanel/ChoicePanel';
@@ -72,6 +74,7 @@ export default {
     emgModal,
     imageModal,
     firstSymptomsModal,
+    firstTreatmentModal,
 
     filterPanel,
     choicePanel,
