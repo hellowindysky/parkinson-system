@@ -293,7 +293,7 @@ export default {
       return this.subjectId !== this.SUBJECT_ID_FOR_HOSPITAL;
     },
     showAdd() {
-      if (this.listType === this.OTHER_PATIENTS_TYPE) {
+      if (this.listType === this.OTHER_PATIENTS_TYPE || this.listType === this.SUBJECT_PATIENTS_TYPE) {
         return false;
       } else {
         return true;
