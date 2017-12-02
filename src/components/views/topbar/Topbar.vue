@@ -1,14 +1,14 @@
 <template lang="html">
   <div class="header">
-    <div class="organization-wrapper" v-on:click.stop="toggleOranizationPanel">
+    <div class="organization-wrapper" @click.stop="toggleOranizationPanelDisplay">
       <span class="name">{{title}}</span>
       <span class="iconfont" :class="toggleOranizationPanelIcon"></span>
     </div>
     <div class="operation-wrapper">
-      <span class="iconfont icon-search" :class="{'on': showFilterPanel}" @click="toggleFilterPanel"></span>
+      <span class="iconfont icon-search" :class="{'on': showFilterPanel}" @click="toggleFilterPanelDisplay"></span>
       <span class="iconfont icon-notice" v-show="false"></span>
       <span class="iconfont icon-task" v-show="false"></span>
-      <span class="account" @click="toggleAccountPanelDisplay">
+      <span class="account" @click.stop="toggleAccountPanelDisplay">
         <img src="~img/profile.png" alt="doctor image" class="picture">
         <span class="name" :class="{'on': showAccountPanel}">{{accountName}}</span>
       </span>
@@ -78,9 +78,6 @@ export default {
     }
   },
   methods: {
-    toggleOranizationPanel() {
-      this.showOranizationPanel = !this.showOranizationPanel;
-    },
     chooseSubject(subject) {
       var subjectId = subject.id ? subject.id : this.SUBJECT_ID_FOR_HOSPITAL;
       var subjectName = subject.taskName ? subject.taskName : '';
@@ -96,24 +93,28 @@ export default {
       }
       this.showOranizationPanel = false;
     },
-    toggleFilterPanel() {
+    toggleFilterPanelDisplay() {
       Bus.$emit(this.TOGGLE_FILTER_PANEL_DISPLAY);
+    },
+    toggleOranizationPanelDisplay() {
+      this.showOranizationPanel = !this.showOranizationPanel;
     },
     toggleAccountPanelDisplay(event) {
       // 按官网的说法，最好不在 methods 里面处理事件，而应该使用 v-on 的事件修饰符
       // 但是不知道为什么，我的 @click.stop 并没有阻止事件的冒泡传递
-      event.stopPropagation();
+      // event.stopPropagation();
       this.showAccountPanel = !this.showAccountPanel;
     },
-    hideAccountPanel() {
+    hidePanels() {
+      this.showOranizationPanel = false;
       this.showAccountPanel = false;
     },
     resetPassword() {
-      this.hideAccountPanel();
+      this.showAccountPanel = false;
       Bus.$emit(this.SHOW_PASSWORD_MODAL);
     },
     logout() {
-      this.hideAccountPanel();
+      this.showAccountPanel = false;
       sessionStorage.clear();
       this.$router.push({name: 'login'});
     }
@@ -125,7 +126,7 @@ export default {
     this.$store.dispatch('getWholeTemplate');
     this.$store.dispatch('getScaleList');
 
-    Bus.$on(this.BLUR_ON_SCREEN, this.hideAccountPanel);
+    Bus.$on(this.BLUR_ON_SCREEN, this.hidePanels);
   },
   beforeDestroy() {
     Bus.$off(this.BLUR_ON_SCREEN);
