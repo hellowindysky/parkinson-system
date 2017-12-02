@@ -20,7 +20,7 @@
           <span class="info-title">创建时间: </span>
           <span class="info-text">{{ createDate }}</span>
         </div>
-        <div class="info whole-line">
+        <div class="info whole-line" v-show="listType!=='subjectPatients'">
           <span class="info-title">分组情况: </span>
           <span class="info-text">
             <span class="tags-wrapper">
