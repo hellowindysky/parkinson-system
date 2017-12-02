@@ -12,7 +12,7 @@
             <span>ggggggggg</span>
           </span>
           <span class="field-input" v-else>
-            <span class="warning-text">hhhhhhhhhh</span>
+            <span class="warning-text">必填项</span>
             <el-select v-model="firstType"
             placeholder="请选择首发症状类型">
               <el-option label="运动症状" :value="WINE_HISTORY_MODAL"></el-option>
@@ -21,9 +21,297 @@
           </el-select>
           </span>
         </div>
+
+        <!-- 以下是 运动症状才有的序列 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
+        <div v-show="firstType===WINE_HISTORY_MODAL">
+          <div class="field">
+            <span class="field-name long-field-name">
+              症状名称:
+              <span class="required-mark">*</span>
+            </span>
+            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
+              <span>症状名称值</span>
+            </span>
+            <span class="field-input" v-else>
+              <span class="warning-text">必填项</span>
+              <el-select v-model="value1"
+              placeholder="请选择症状名称">
+                <el-option label="慌张步态" :value="WINE_HISTORY_MODAL"></el-option>
+                <el-option label="翻身困难" :value="SMOKE_HISTORY_MODAL"></el-option>
+                <el-option label="语言障碍" :value="TEA_HISTORY_MODAL"></el-option>
+            </el-select>
+            </span>
+          </div>
+
+          <div class="field">
+            <span class="field-name long-field-name">
+              左上肢出现时间:
+              <!-- <span class="required-mark">*</span> -->
+            </span>
+            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
+              <span>左上肢出现时间</span>
+            </span>
+            <span class="field-input" v-else>
+              <!-- <span class="warning-text">必填项</span> -->
+              <el-date-picker v-model="date1" type="date" placeholder="请选择左上肢出现时间" clearable ></el-date-picker>
+            </span>
+          </div>
+
+          <div class="field">
+            <span class="field-name long-field-name">
+              右上肢出现时间:
+              <!-- <span class="required-mark">*</span> -->
+            </span>
+            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
+              <span>右上肢出现时间</span>
+            </span>
+            <span class="field-input" v-else>
+              <!-- <span class="warning-text">必填项</span> -->
+              <el-date-picker v-model="date1" type="date" placeholder="请选择右上肢出现时间" clearable ></el-date-picker>
+            </span>
+          </div>
+
+          <div class="field">
+            <span class="field-name long-field-name">
+              左下肢出现时间:
+              <!-- <span class="required-mark">*</span> -->
+            </span>
+            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
+              <span>左下肢出现时间</span>
+            </span>
+            <span class="field-input" v-else>
+              <!-- <span class="warning-text">必填项</span> -->
+              <el-date-picker v-model="date1" type="date" placeholder="请选择左下肢出现时间" clearable ></el-date-picker>
+            </span>
+          </div>
+
+          <div class="field">
+            <span class="field-name long-field-name">
+              右下肢出现时间:
+              <!-- <span class="required-mark">*</span> -->
+            </span>
+            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
+              <span>右下肢出现时间</span>
+            </span>
+            <span class="field-input" v-else>
+              <!-- <span class="warning-text">必填项</span> -->
+              <el-date-picker v-model="date1" type="date" placeholder="请选择右下肢出现时间" clearable ></el-date-picker>
+            </span>
+          </div>
+
+          <div class="field">
+            <span class="field-name long-field-name">
+              是否规律出现:
+              <!-- <span class="required-mark">*</span> -->
+            </span>
+            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
+              <span>是否规律出现</span>
+            </span>
+            <span class="field-input" v-else>
+              <!-- <span class="warning-text">必填项</span> -->
+              <el-select v-model="value2"
+              placeholder="请选择是否规律出现">
+                <el-option label="是" :value="WINE_HISTORY_MODAL"></el-option>
+                <el-option label="否" :value="SMOKE_HISTORY_MODAL"></el-option>
+            </el-select>
+            </span>
+          </div>
+
+          <div class="field">
+            <span class="field-name long-field-name">
+              备注:
+              <!-- <span class="required-mark">*</span> -->
+            </span>
+            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
+              <span>备注</span>
+            </span>
+            <span class="field-input" v-else>
+              <!-- <span class="warning-text">必填项</span> -->
+              <el-input v-model="date1" placeholder="请输入备注"></el-input>
+            </span>
+          </div>
+
+        </div>
+        <!-- 以上是 运动症状才有的序列 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ -->
+
+
+        <!-- 以下是 运动并发症才有的序列 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
+        <div v-show="firstType===SMOKE_HISTORY_MODAL">
+
+          <div class="field">
+            <span class="field-name long-field-name">
+              症状名称:
+              <span class="required-mark">*</span>
+            </span>
+            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
+              <span>症状名称值</span>
+            </span>
+            <span class="field-input" v-else>
+              <span class="warning-text">必填项</span>
+              <el-select v-model="value1"
+                placeholder="请选择症状名称">
+                  <el-option label="症状波动-剂末现象" :value="WINE_HISTORY_MODAL"></el-option>
+                  <el-option label="症状波动-开关现象" :value="SMOKE_HISTORY_MODAL"></el-option>
+              </el-select>
+            </span>
+          </div>
+
+          <div class="field">
+            <span class="field-name long-field-name">
+              出现时间:
+              <!-- <span class="required-mark">*</span> -->
+            </span>
+            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
+              <span>出现时间</span>
+            </span>
+            <span class="field-input" v-else>
+              <!-- <span class="warning-text">必填项</span> -->
+              <el-date-picker v-model="date1" type="date" placeholder="请选择出现时间" clearable ></el-date-picker>
+            </span>
+          </div>
+
+          <div class="field">
+            <span class="field-name long-field-name">
+              是否规律出现:
+              <!-- <span class="required-mark">*</span> -->
+            </span>
+            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
+              <span>是否规律出现</span>
+            </span>
+            <span class="field-input" v-else>
+              <!-- <span class="warning-text">必填项</span> -->
+              <el-select v-model="value2"
+                placeholder="请选择是否规律出现">
+                  <el-option label="是" :value="WINE_HISTORY_MODAL"></el-option>
+                  <el-option label="否" :value="SMOKE_HISTORY_MODAL"></el-option>
+              </el-select>
+            </span>
+          </div>
+
+          <div class="field">
+            <span class="field-name long-field-name">
+              持续时长（小时/天）:
+              <!-- <span class="required-mark">*</span> -->
+            </span>
+            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
+              <span>持续时长</span>
+            </span>
+            <span class="field-input" v-else>
+              <!-- <span class="warning-text">必填项</span> -->
+              <el-input v-model="date1" placeholder="请输入持续时长"></el-input>
+            </span>
+          </div>
+
+          <div class="field">
+            <span class="field-name long-field-name">
+              备注:
+              <!-- <span class="required-mark">*</span> -->
+            </span>
+            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
+              <span>备注</span>
+            </span>
+            <span class="field-input" v-else>
+              <!-- <span class="warning-text">必填项</span> -->
+              <el-input v-model="date1" placeholder="请输入备注"></el-input>
+            </span>
+          </div>
+
+        </div>
+        <!-- 以上是 运动并发症才有的序列 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ -->
+
+        <!-- 以下是 非运动症状才有的序列 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
+        <div v-show="firstType===TEA_HISTORY_MODAL">
+
+          <div class="field">
+            <span class="field-name long-field-name">
+              非运动症状类型:
+              <span class="required-mark">*</span>
+            </span>
+            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
+              <span>症状名称值</span>
+            </span>
+            <span class="field-input" v-else>
+              <span class="warning-text">必填项</span>
+              <el-select v-model="value1"
+                placeholder="请选择症状名称">
+                  <el-option label="症状波动-剂末现象" :value="WINE_HISTORY_MODAL"></el-option>
+                  <el-option label="症状波动-开关现象" :value="SMOKE_HISTORY_MODAL"></el-option>
+              </el-select>
+            </span>
+          </div>
+
+          <div class="field">
+            <span class="field-name long-field-name">
+              症状名称:
+              <span class="required-mark">*</span>
+            </span>
+            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
+              <span>症状名称值</span>
+            </span>
+            <span class="field-input" v-else>
+              <span class="warning-text">必填项</span>
+              <el-select v-model="value1"
+                placeholder="请选择症状名称">
+                  <el-option label="症状波动-剂末现象" :value="WINE_HISTORY_MODAL"></el-option>
+                  <el-option label="症状波动-开关现象" :value="SMOKE_HISTORY_MODAL"></el-option>
+              </el-select>
+            </span>
+          </div>
+
+          <div class="field">
+            <span class="field-name long-field-name">
+              出现时间:
+              <!-- <span class="required-mark">*</span> -->
+            </span>
+            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
+              <span>出现时间</span>
+            </span>
+            <span class="field-input" v-else>
+              <!-- <span class="warning-text">必填项</span> -->
+              <el-date-picker v-model="date1" type="date" placeholder="请选择出现时间" clearable ></el-date-picker>
+            </span>
+          </div>
+
+          <div class="field">
+            <span class="field-name long-field-name">
+              是否规律出现:
+              <!-- <span class="required-mark">*</span> -->
+            </span>
+            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
+              <span>是否规律出现</span>
+            </span>
+            <span class="field-input" v-else>
+              <!-- <span class="warning-text">必填项</span> -->
+              <el-select v-model="value2"
+                placeholder="请选择是否规律出现">
+                  <el-option label="是" :value="WINE_HISTORY_MODAL"></el-option>
+                  <el-option label="否" :value="SMOKE_HISTORY_MODAL"></el-option>
+              </el-select>
+            </span>
+          </div>
+
+          <div class="field">
+            <span class="field-name long-field-name">
+              备注:
+              <!-- <span class="required-mark">*</span> -->
+            </span>
+            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
+              <span>备注</span>
+            </span>
+            <span class="field-input" v-else>
+              <!-- <span class="warning-text">必填项</span> -->
+              <el-input v-model="date1" placeholder="请输入备注"></el-input>
+            </span>
+          </div>
+
+        </div>
+        <!-- 以上是 非运动症状才有的序列 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ -->
+
       </div>
 
       <div class="seperate-line" v-show="true"></div>
+
+      
 
       <div class="button cancel-button" @click="cancel">取消</div>
       <div v-show="true" class="button submit-button" @click="submit">确定</div>
@@ -40,7 +328,10 @@ export default {
     return {
       displayModal: false,
       mode: '',
-      firstType: ''
+      firstType: '',
+      value1: '',
+      value2: '',
+      date1: ''
     };
   },
   computed: {
