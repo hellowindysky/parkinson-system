@@ -249,7 +249,7 @@ export default {
     top: @header-height;
     left: 0;
     padding: 10px 0;
-    width: 300px;
+    width: 400px;
     background-color: rgba(24,34,48,0.95);
     font-size: 0;
     transition: 0.15s;
