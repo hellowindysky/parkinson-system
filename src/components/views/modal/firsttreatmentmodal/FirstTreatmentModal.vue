@@ -1,6 +1,6 @@
 <template lang="html">
-  <div class="symptoms-modal-wrapper" v-show="displayModal">
-    <div class="symptoms-modal" ref="scrollArea">
+  <div class="treatment-modal-wrapper" v-show="displayModal">
+    <div class="treatment-modal" ref="scrollArea">
       <h3 class="title">{{title}}</h3>
       <div class="content">
         <div class="field">
@@ -16,7 +16,7 @@
             <el-select v-model="firstType"
             placeholder="请选择初诊治疗类型">
               <el-option label="药物治疗" :value="WINE_HISTORY_MODAL"></el-option>
-              <el-option label="非药物治疗" :value="TEA_HISTORY_MODAL"></el-option>
+              <el-option label="非药物治疗" :value="SMOKE_HISTORY_MODAL"></el-option>
           </el-select>
           </span>
         </div>
@@ -34,11 +34,11 @@
             <span class="field-input" v-else>
               <span class="warning-text">必填项</span>
               <el-select v-model="value1"
-              placeholder="请选择药物分类">
-                <el-option label="B型单胺氧化抑制剂" :value="WINE_HISTORY_MODAL"></el-option>
-                <el-option label="COMT抑制剂" :value="SMOKE_HISTORY_MODAL"></el-option>
-                <el-option label="多巴胺类制剂" :value="TEA_HISTORY_MODAL"></el-option>
-            </el-select>
+                placeholder="请选择药物分类">
+                  <el-option label="B型单胺氧化抑制剂" :value="WINE_HISTORY_MODAL"></el-option>
+                  <el-option label="COMT抑制剂" :value="SMOKE_HISTORY_MODAL"></el-option>
+                  <el-option label="多巴胺类制剂" :value="TEA_HISTORY_MODAL"></el-option>
+              </el-select>
             </span>
           </div>
 
@@ -48,71 +48,58 @@
               <!-- <span class="required-mark">*</span> -->
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>左上肢出现时间</span>
+              <span>药物名称</span>
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-date-picker v-model="date1" type="date" placeholder="请选择左上肢出现时间" clearable ></el-date-picker>
+              <el-select v-model="value1"
+                placeholder="请选择药物名称">
+                  <el-option label="药物名称1" :value="WINE_HISTORY_MODAL"></el-option>
+                  <el-option label="药物名称2" :value="SMOKE_HISTORY_MODAL"></el-option>
+                  <el-option label="药物名称3" :value="TEA_HISTORY_MODAL"></el-option>
+              </el-select>
             </span>
           </div>
 
           <div class="field">
             <span class="field-name long-field-name">
-              右上肢出现时间:
+              通用名:
               <!-- <span class="required-mark">*</span> -->
             </span>
-            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>右上肢出现时间</span>
+            <span class="field-input long-field-name">
+              <span>选择药物名称自动匹配</span>
             </span>
-            <span class="field-input" v-else>
-              <!-- <span class="warning-text">必填项</span> -->
+            <!-- <span class="field-input" v-else>
+                <span class="warning-text">必填项</span>
               <el-date-picker v-model="date1" type="date" placeholder="请选择右上肢出现时间" clearable ></el-date-picker>
+            </span> -->
+          </div>
+
+          <div class="field">
+            <span class="field-name long-field-name">
+              每日用量（mg）:
+              <!-- <span class="required-mark">*</span> -->
+            </span>
+            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
+              <span>每日用量</span>
+            </span>
+            <span class="field-input" v-else>
+              <!-- <span class="warning-text">必填项</span> -->
+              <el-input v-model="date1" placeholder="请输入每日用量"></el-input>
             </span>
           </div>
 
           <div class="field">
             <span class="field-name long-field-name">
-              左下肢出现时间:
+              初次用药时间:
               <!-- <span class="required-mark">*</span> -->
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>左下肢出现时间</span>
+              <span>初次用药时间</span>
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-date-picker v-model="date1" type="date" placeholder="请选择左下肢出现时间" clearable ></el-date-picker>
-            </span>
-          </div>
-
-          <div class="field">
-            <span class="field-name long-field-name">
-              右下肢出现时间:
-              <!-- <span class="required-mark">*</span> -->
-            </span>
-            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>右下肢出现时间</span>
-            </span>
-            <span class="field-input" v-else>
-              <!-- <span class="warning-text">必填项</span> -->
-              <el-date-picker v-model="date1" type="date" placeholder="请选择右下肢出现时间" clearable ></el-date-picker>
-            </span>
-          </div>
-
-          <div class="field">
-            <span class="field-name long-field-name">
-              是否规律出现:
-              <!-- <span class="required-mark">*</span> -->
-            </span>
-            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>是否规律出现</span>
-            </span>
-            <span class="field-input" v-else>
-              <!-- <span class="warning-text">必填项</span> -->
-              <el-select v-model="value2"
-              placeholder="请选择是否规律出现">
-                <el-option label="是" :value="WINE_HISTORY_MODAL"></el-option>
-                <el-option label="否" :value="SMOKE_HISTORY_MODAL"></el-option>
-            </el-select>
+              <el-date-picker v-model="date1" type="date" placeholder="请选择初次用药时间" clearable ></el-date-picker>
             </span>
           </div>
 
@@ -131,73 +118,59 @@
           </div>
 
         </div>
-        <!-- 以上是 运动症状才有的序列 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ -->
+        <!-- 以上是 药物治疗才有的序列 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ -->
 
 
-        <!-- 以下是 运动并发症才有的序列 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
+        <!-- 以下是 非药物治疗才有的序列 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
         <div v-show="firstType===SMOKE_HISTORY_MODAL">
 
           <div class="field">
             <span class="field-name long-field-name">
-              症状名称:
+              治疗类型:
               <span class="required-mark">*</span>
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>症状名称值</span>
+              <span>治疗类型</span>
             </span>
             <span class="field-input" v-else>
               <span class="warning-text">必填项</span>
-              <el-select v-model="value1"
+              <el-select v-model="value1" clearable
                 placeholder="请选择症状名称">
-                  <el-option label="症状波动-剂末现象" :value="WINE_HISTORY_MODAL"></el-option>
-                  <el-option label="症状波动-开关现象" :value="SMOKE_HISTORY_MODAL"></el-option>
+                  <el-option label="手术治疗" :value="WINE_HISTORY_MODAL"></el-option>
+                  <el-option label="物理治疗" :value="SMOKE_HISTORY_MODAL"></el-option>
               </el-select>
             </span>
           </div>
 
           <div class="field">
             <span class="field-name long-field-name">
-              出现时间:
+              治疗手段:
               <!-- <span class="required-mark">*</span> -->
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>出现时间</span>
+              <span>治疗手段</span>
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-date-picker v-model="date1" type="date" placeholder="请选择出现时间" clearable ></el-date-picker>
-            </span>
-          </div>
-
-          <div class="field">
-            <span class="field-name long-field-name">
-              是否规律出现:
-              <!-- <span class="required-mark">*</span> -->
-            </span>
-            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>是否规律出现</span>
-            </span>
-            <span class="field-input" v-else>
-              <!-- <span class="warning-text">必填项</span> -->
-              <el-select v-model="value2"
-                placeholder="请选择是否规律出现">
-                  <el-option label="是" :value="WINE_HISTORY_MODAL"></el-option>
-                  <el-option label="否" :value="SMOKE_HISTORY_MODAL"></el-option>
+              <el-select v-model="value1" clearable
+                placeholder="请选择治疗手段">
+                  <el-option label="吃药" :value="WINE_HISTORY_MODAL"></el-option>
+                  <el-option label="打针" :value="SMOKE_HISTORY_MODAL"></el-option>
               </el-select>
             </span>
           </div>
 
           <div class="field">
             <span class="field-name long-field-name">
-              持续时长（小时/天）:
+              治疗时间:
               <!-- <span class="required-mark">*</span> -->
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>持续时长</span>
+              <span>治疗时间</span>
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-input v-model="date1" placeholder="请输入持续时长"></el-input>
+              <el-date-picker v-model="date1" type="date" placeholder="请选择治疗时间" clearable ></el-date-picker>
             </span>
           </div>
 
@@ -216,95 +189,7 @@
           </div>
 
         </div>
-        <!-- 以上是 运动并发症才有的序列 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ -->
-
-        <!-- 以下是 非运动症状才有的序列 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
-        <div v-show="firstType===TEA_HISTORY_MODAL">
-
-          <div class="field">
-            <span class="field-name long-field-name">
-              非运动症状类型:
-              <span class="required-mark">*</span>
-            </span>
-            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>症状名称值</span>
-            </span>
-            <span class="field-input" v-else>
-              <span class="warning-text">必填项</span>
-              <el-select v-model="value1"
-                placeholder="请选择症状名称">
-                  <el-option label="症状波动-剂末现象" :value="WINE_HISTORY_MODAL"></el-option>
-                  <el-option label="症状波动-开关现象" :value="SMOKE_HISTORY_MODAL"></el-option>
-              </el-select>
-            </span>
-          </div>
-
-          <div class="field">
-            <span class="field-name long-field-name">
-              症状名称:
-              <span class="required-mark">*</span>
-            </span>
-            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>症状名称值</span>
-            </span>
-            <span class="field-input" v-else>
-              <span class="warning-text">必填项</span>
-              <el-select v-model="value1"
-                placeholder="请选择症状名称">
-                  <el-option label="症状波动-剂末现象" :value="WINE_HISTORY_MODAL"></el-option>
-                  <el-option label="症状波动-开关现象" :value="SMOKE_HISTORY_MODAL"></el-option>
-              </el-select>
-            </span>
-          </div>
-
-          <div class="field">
-            <span class="field-name long-field-name">
-              出现时间:
-              <!-- <span class="required-mark">*</span> -->
-            </span>
-            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>出现时间</span>
-            </span>
-            <span class="field-input" v-else>
-              <!-- <span class="warning-text">必填项</span> -->
-              <el-date-picker v-model="date1" type="date" placeholder="请选择出现时间" clearable ></el-date-picker>
-            </span>
-          </div>
-
-          <div class="field">
-            <span class="field-name long-field-name">
-              是否规律出现:
-              <!-- <span class="required-mark">*</span> -->
-            </span>
-            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>是否规律出现</span>
-            </span>
-            <span class="field-input" v-else>
-              <!-- <span class="warning-text">必填项</span> -->
-              <el-select v-model="value2"
-                placeholder="请选择是否规律出现">
-                  <el-option label="是" :value="WINE_HISTORY_MODAL"></el-option>
-                  <el-option label="否" :value="SMOKE_HISTORY_MODAL"></el-option>
-              </el-select>
-            </span>
-          </div>
-
-          <div class="field">
-            <span class="field-name long-field-name">
-              备注:
-              <!-- <span class="required-mark">*</span> -->
-            </span>
-            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>备注</span>
-            </span>
-            <span class="field-input" v-else>
-              <!-- <span class="warning-text">必填项</span> -->
-              <el-input v-model="date1" placeholder="请输入备注"></el-input>
-            </span>
-          </div>
-
-        </div>
-        <!-- 以上是 非运动症状才有的序列 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ -->
+        <!-- 以上是 非药物治疗才有的序列 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ -->
 
       </div>
 
@@ -359,7 +244,7 @@ export default {
     }
   },
   mounted() {
-    Bus.$on(this.SHOW_FIRSTSYMPTOMS_MODAL, this.showModal);
+    Bus.$on(this.SHOW_FIRSTTREATMENT_MODAL, this.showModal);
   }
 };
 </script>
@@ -371,7 +256,7 @@ export default {
 @field-name-width: 90px;
 @long-field-name-width: 160px;
 
-.symptoms-modal-wrapper{
+.treatment-modal-wrapper{
   position: absolute;
   left: 0;
   top: 0;
@@ -379,7 +264,7 @@ export default {
   height: 100%;
   background-color: fadeout(@light-font-color, 30%);
   z-index: 500;
-  .symptoms-modal{
+  .treatment-modal{
     position: relative;
     margin: auto;
     padding: 0 40px;

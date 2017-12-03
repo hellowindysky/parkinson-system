@@ -82,6 +82,8 @@ export default {
   SHOW_DBS_MODAL: 'showDbsModal',
   SHOW_PASSWORD_MODAL: 'showPasswordModal',
   SHOW_FIRSTSYMPTOMS_MODAL: 'showFirstSymptomsModal',
+  SHOW_FIRSTTREATMENT_MODAL: 'showFirstTreatmentModal',
+  SHOW_DIAGNOSTIC_RECORD_MODAL: 'showDiagnosticRecordModal',
 
   SHOW_CHOICE_PANEL: 'showChoicePanel',
 

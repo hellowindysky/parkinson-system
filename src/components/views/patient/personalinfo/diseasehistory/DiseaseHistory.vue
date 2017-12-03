@@ -80,7 +80,7 @@
           </div>
         </div>
 
-        <extensible-panel class="disease-card" :title="'初诊治疗（x 条记录）'">
+        <extensible-panel class="disease-card" :title="'初诊治疗（x 条记录）'" @addNewCard="addFirstTreatmentRecord">
           <Card class="card symptoms-card" :class="cardWidth" :title="'药物治疗'">
             <div class="text first-line">
               <!-- <span class="name">类型</span> -->
@@ -97,7 +97,7 @@
           </Card>
         </extensible-panel>
 
-        <extensible-panel class="disease-card" :title="'就诊记录（x 条记录）'">
+        <extensible-panel class="disease-card" :title="'就诊记录（x 条记录）'" @addNewCard="addDiagnosticRecord">
           <Card class="card symptoms-card" :class="cardWidth" :title="'心脏病'">
             <div class="text first-line">
               <!-- <span class="name">类型</span> -->
@@ -173,6 +173,12 @@ export default {
   methods: {
     addFirstSymptomsRecord() {
       Bus.$emit(this.SHOW_FIRSTSYMPTOMS_MODAL, this.ADD_NEW_CARD, {});
+    },
+    addFirstTreatmentRecord() {
+      Bus.$emit(this.SHOW_FIRSTTREATMENT_MODAL, this.ADD_NEW_CARD, {});
+    },
+    addDiagnosticRecord() {
+      Bus.$emit(this.SHOW_DIAGNOSTIC_RECORD_MODAL, this.ADD_NEW_CARD, {});
     },
     recalculateCardWidth() {
       this.$nextTick(() => {
