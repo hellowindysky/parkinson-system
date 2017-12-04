@@ -5,7 +5,7 @@
         {{item.text}}
       </div>
       <div class="seperate-line"></div>
-      <div class="choice-item cancel-button" @click="closePanel">
+      <div class="cancel-button" @click="closePanel">
         取消
       </div>
     </div>
@@ -57,31 +57,48 @@ export default {
     margin: auto;
     top: 20%;
     width: 300px;
-    padding-top: 5px;
-    background-color: @font-color;
-    color: #fff;
+    padding: 10px 0 0;
+    background-color: @background-color;
+    text-align: center;
     overflow: hidden;
     .choice-item {
-      width: 100%;
-      height: 45px;
-      line-height: 45px;
+      margin: 10px auto;
+      width: 160px;
+      height: 40px;
+      line-height: 40px;
+      background-color: @screen-color;
+      font-weight: bold;
+      color: @font-color;
       cursor: pointer;
       &:hover {
-        background-color: @light-font-color;
+        color: #fff;
+        background-color: @button-color;
       }
       &:active {
-        background-color: fadeout(@light-font-color, 10%);
+        color: #fff;
+        background-color: fadeout(@button-color, 10%);
       }
     }
     .seperate-line {
       margin: 0 auto;
       width: 80%;
       height: 1px;
-      background-color: @light-font-color;
+      background-color: @light-gray-color;
     }
     .cancel-button {
-      height: 45px;
-      line-height: 45px;
+      margin: 15px auto;
+      width: 100px;
+      height: 30px;
+      line-height: 30px;
+      background-color: @light-font-color;
+      color: #fff;
+      cursor: pointer;
+      &:hover {
+        opacity: 0.8;
+      }
+      &:active {
+        opacity: 0.9;
+      }
     }
   }
 }
