@@ -69,7 +69,7 @@
           </span>
           <span class="field-input" v-else>
             <!-- <span class="warning-text">磁场强度验证信息</span> -->
-            <el-select v-model="magneticIntensity" placeholder="请选择磁场强度" clearable>
+            <el-select v-model="magneticIntensity" placeholder="请选择磁场强度" clearable >
               <el-option
                 v-for="item in getOptions('magneticIntensity')"
                 :key="item.code"
@@ -491,6 +491,9 @@ export default {
     }
   },
   methods: {
+    aaa() {
+      console.log(this.magneticIntensity);
+    },
     showPanel(cardOperation, item, showEdit) {
       this.completeInit = false;
       this.mode = cardOperation;
@@ -646,6 +649,7 @@ export default {
       imageInfo.title = this.name;
       imageInfo.imageType = this.imageType;
       imageInfo.checkDate = this.checkDate;
+      imageInfo.magneticIntensity = this.magneticIntensity;
       imageInfo.checkNum = this.checkNum;
       imageInfo.checkDevice = this.checkDevice;
       imageInfo.checkConclusion = this.checkConclusion;
@@ -660,7 +664,7 @@ export default {
       imageInfo.dti = this.newDti;
       imageInfo.fmr = this.newFmr;
       imageInfo.other = this.newOther;
-
+      console.log(imageInfo);
       if (this.mode === this.ADD_NEW_CARD) {
         addImage(imageInfo).then(() => {
           this.updateAndClose();
