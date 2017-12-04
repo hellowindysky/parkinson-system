@@ -57,27 +57,27 @@ export default {
     margin: auto;
     top: 20%;
     width: 300px;
+    padding-top: 5px;
     background-color: @font-color;
     color: #fff;
     overflow: hidden;
     .choice-item {
       width: 100%;
-      height: 40px;
-      line-height: 40px;
-      background-color: @background-color;
-      color: @font-color;
+      height: 45px;
+      line-height: 45px;
       cursor: pointer;
       &:hover {
-        background-color: @light-gray-color;
+        background-color: @light-font-color;
       }
       &:active {
-        background-color: fadeout(@light-gray-color, 10%);
+        background-color: fadeout(@light-font-color, 10%);
       }
     }
     .seperate-line {
-      width: 100%;
+      margin: 0 auto;
+      width: 80%;
       height: 1px;
-      background-color: @light-gray-color;
+      background-color: @light-font-color;
     }
     .cancel-button {
       height: 45px;
