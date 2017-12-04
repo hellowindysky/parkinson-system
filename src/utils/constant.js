@@ -80,6 +80,7 @@ export default {
   SHOW_SURGICAL_METHOD_MODAL: 'showSurgicalMethodModal',
   SHOW_OPERATIVE_COMPLICATION_MODAL: 'showOperativeComplication',
   SHOW_DBS_MODAL: 'showDbsModal',
+  SHOW_AUTHORIZATION_MODAL: 'showAuthorizationModal',
   SHOW_PASSWORD_MODAL: 'showPasswordModal',
   SHOW_FIRSTSYMPTOMS_MODAL: 'showFirstSymptomsModal',
 

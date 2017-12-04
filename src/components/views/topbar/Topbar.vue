@@ -37,6 +37,8 @@
       </div>
     </div>
     <div class="account-panel" :class="{'hide': !showAccountPanel}">
+      <p class="operate-item" v-show="allowAuthorization" @click="authorize">授权技术支持</p>
+      <div class="seperate-line" v-show="allowAuthorization"></div>
       <p class="operate-item" @click="resetPassword">修改密码</p>
       <div class="seperate-line"></div>
       <p class="operate-item" @click="logout">退出登录</p>
@@ -90,6 +92,9 @@ export default {
       } else {
         return 'right';
       }
+    },
+    allowAuthorization() {
+      return Number(sessionStorage.getItem('userType')) === 2;
     }
   },
   methods: {
@@ -128,6 +133,10 @@ export default {
     hidePanels() {
       this.showOranizationPanel = false;
       this.showAccountPanel = false;
+    },
+    authorize() {
+      this.showAccountPanel = false;
+      Bus.$emit(this.SHOW_AUTHORIZATION_MODAL);
     },
     resetPassword() {
       this.showAccountPanel = false;
@@ -356,13 +365,13 @@ export default {
     top: @header-height;
     right: 0;
     width: 137px;
-    height: 81px;
+    // height: 81px;
     background-color: @theme-color;
     cursor: pointer;
     transition: 0.2s;
     z-index: -1;
     &.hide {
-      transform: translateY(-85px);
+      transform: translateY(-100%);
     }
     .operate-item {
       margin: 0;

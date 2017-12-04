@@ -4,6 +4,7 @@
     <sidebar class="sidebar"></sidebar>
     <router-view class="content"></router-view>
     <password-modal></password-modal>
+    <authorization-modal></authorization-modal>
     <group-modal></group-modal>
     <modal-box></modal-box>
     <medicine-modal></medicine-modal>
@@ -31,6 +32,7 @@ import topbar from 'components/views/topbar/Topbar';
 import sidebar from 'components/views/sidebar/Sidebar';
 
 import passwordModal from 'components/views/modal/passwordmodal/PasswordModal';
+import authorizationModal from 'components/views/modal/authorizationmodal/AuthorizationModal';
 import groupModal from 'components/views/modal/groupmodal/GroupModal';
 import modalBox from 'components/views/modal/modalbox/ModalBox';
 import medicineModal from 'components/views/modal/medicinemodal/MedicineModal';
@@ -61,6 +63,7 @@ export default {
     topbar,
     sidebar,
     passwordModal,
+    authorizationModal,
     groupModal,
     modalBox,
     medicineModal,
