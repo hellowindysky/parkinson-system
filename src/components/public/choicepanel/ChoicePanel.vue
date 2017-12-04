@@ -57,7 +57,6 @@ export default {
     margin: auto;
     top: 20%;
     width: 300px;
-    border: 1px solid @light-font-color;
     background-color: @font-color;
     color: #fff;
     overflow: hidden;
