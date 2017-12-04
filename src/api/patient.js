@@ -59,6 +59,15 @@ export function getPatientGroupInfo(patientInfo) {
   return encapsulatePromise(url, request);
 };
 
+// 获取特定患者的所属课题信息
+export function getPatientSubjectInfo(patientId) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientId = patientId;
+  var url = baseUrl + '/pdms/queryPatientTask';
+
+  return encapsulatePromise(url, request);
+};
+
 export function modifyPatientDiseaseInfo(patientDiseaseInfo) {
   var request = Object.assign({}, getCommonRequest());
   request.patientDiseaseInfo = patientDiseaseInfo;

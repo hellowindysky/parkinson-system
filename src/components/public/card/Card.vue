@@ -53,6 +53,7 @@ export default {
     right: 40px;
     top: 15px;
     font-size: @normal-font-size;
+    font-weight: bold;
     overflow:hidden;
     text-overflow: ellipsis;
     display: -webkit-box;

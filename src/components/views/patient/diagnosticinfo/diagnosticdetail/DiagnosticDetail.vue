@@ -11,10 +11,9 @@
         :diagnosticBasic="diagnosticBasic"></diagnostic-basic>
       <diagnostic-disease :archived="!hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
         :diagnosticDisease="diagnosticDisease"></diagnostic-disease>
-      <diagnostic-medicine :archived="!hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
-        :diagnosticMedicine="caseDetail.patientMedicineNew"></diagnostic-medicine>
-      <diagnostic-surgery :archived="!hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
-        :diagnosticSurgery="caseDetail.patientSurgicalDbs"></diagnostic-surgery>
+      <diagnostic-treatment :archived="!hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
+        :diagnosticSurgery="caseDetail.patientSurgicalDbs" :diagnosticMedicine="caseDetail.patientMedicineNew">
+      </diagnostic-treatment>
       <diagnostic-scale :archived="!hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
         :patientScale="caseDetail.patientScale"></diagnostic-scale>
       <diagnostic-examination :archived="!hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
@@ -37,8 +36,7 @@ import { getPatientCase, archivePatientCase } from 'api/patient.js';
 
 import DiagnosticBasic from 'components/views/patient/diagnosticinfo/diagnosticbasic/DiagnosticBasic';
 import DiagnosticDisease from 'components/views/patient/diagnosticinfo/diagnosticdisease/DiagnosticDisease';
-import DiagnosticMedicine from 'components/views/patient/diagnosticinfo/diagnosticmedicine/DiagnosticMedicine';
-import DiagnosticSurgery from 'components/views/patient/diagnosticinfo/diagnosticsurgery/DiagnosticSurgery';
+import DiagnosticTreatment from 'components/views/patient/diagnosticinfo/diagnostictreatment/DiagnosticTreatment';
 import DiagnosticScale from 'components/views/patient/diagnosticinfo/diagnosticscale/DiagnosticScale';
 import DiagnosticExamination from 'components/views/patient/diagnosticinfo/diagnosticexamination/DiagnosticExamination';
 
@@ -62,6 +60,8 @@ export default {
         return 'myPatients';
       } else if (this.$route.matched.some(record => record.meta.otherPatients)) {
         return 'otherPatients';
+      } else if (this.$route.matched.some(record => record.meta.subjectPatients)) {
+        return 'subjectPatients';
       } else {
         return 'unknown';
       }
@@ -172,6 +172,8 @@ export default {
         this.$router.push({name: 'diagnosticInfo'});
       } else if (this.listType === 'otherPatients') {
         this.$router.push({name: 'otherDiagnosticInfo'});
+      } else if (this.listType === 'subjectPatients') {
+        this.$router.push({name: 'subjectDiagnosticInfo'});
       }
 
       // 同时，告诉它的子页面，放弃当前修改
@@ -219,8 +221,7 @@ export default {
   components: {
     DiagnosticBasic,
     DiagnosticDisease,
-    DiagnosticMedicine,
-    DiagnosticSurgery,
+    DiagnosticTreatment,
     DiagnosticScale,
     DiagnosticExamination
   },

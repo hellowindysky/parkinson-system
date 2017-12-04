@@ -12,22 +12,35 @@
     </div>
     <div class="info-wrapper" ref="scrollArea">
       <div class="shared-info" v-show="this.existed">
-        <div class="info adscription">
+        <div class="info">
           <span class="info-title">归属医生: </span>
           <span class="info-text">{{ belongDoctor }}</span>
         </div>
-        <div class="info create-time">
+        <div class="info">
           <span class="info-title">创建时间: </span>
           <span class="info-text">{{ createDate }}</span>
         </div>
-        <div class="info groups">
+        <div class="info whole-line" v-show="listType!=='subjectPatients'">
           <span class="info-title">分组情况: </span>
           <span class="info-text">
-            <span class="group-wrapper">
-              <span v-for="group in belongGroups" class="group">{{ group.groupName }}</span>
+            <span class="tags-wrapper">
+              <span v-for="group in belongGroups" class="tag">{{ group.groupName }}</span>
             </span>
             <span class="iconfont icon-group" @click="toggleGroupPanel"></span>
           </span>
+        </div>
+        <div class="info whole-line" v-show="showProjectTags">
+          <span class="info-title">课题标签: </span>
+          <span class="info-text">
+            <span class="tags-wrapper">
+              <span v-for="subject in belongSubjects" class="tag">{{ subject.fullTaskName }}</span>
+            </span>
+            <span class="iconfont icon-subject" @click="toggleSubjectPanel"></span>
+          </span>
+        </div>
+        <div class="info" v-show="listType==='subjectPatients'">
+          <span class="info-title">所属医院: </span>
+          <span class="info-text">{{ belongHospital }}</span>
         </div>
       </div>
       <div class="respective-info">
@@ -40,6 +53,9 @@
     <group-panel class="group-panel" :class="{'hide': !displayGroupPanel}" :belongGroups="belongGroups"
       :display="displayGroupPanel" :patientId="Number(patientId)" @hideGroupPanel="hideGroupPanel"
       @updatePatientGroupInfo="updatePatientGroupInfo"></group-panel>
+    <subject-panel class="subject-panel" :class="{'hide': !displaySubjectPanel}" :belongSubjects="belongSubjects"
+      :display="displaySubjectPanel" :patientId="Number(patientId)" @hideSubjectPanel="hideSubjectPanel"
+      @updatePatientSubjectInfo="updatePatientSubjectInfo"></subject-panel>
   </div>
 </template>
 
@@ -47,12 +63,13 @@
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 
-import { getPatientInfo, getPatientGroupInfo, getPatientCaseList } from 'api/patient';
+import { getPatientInfo, getPatientGroupInfo, getPatientSubjectInfo, getPatientCaseList } from 'api/patient';
 
 import DiagnosticDetail from 'components/views/patient/diagnosticinfo/diagnosticdetail/DiagnosticDetail';
 import ScaleModal from 'components/views/modal/scalemodal/ScaleModal';
 import BasicInfo from 'components/views/patient/personalinfo/basicinfo/BasicInfo';
-import GroupPanel from 'components/public/filterpanel/grouppanel/GroupPanel';
+import GroupPanel from 'components/public/grouppanel/GroupPanel';
+import SubjectPanel from 'components/public/subjectpanel/SubjectPanel';
 
 export default {
   data() {
@@ -60,9 +77,12 @@ export default {
       patientInfo: {},
       patientCaseList: [],
       belongDoctor: '',
+      belongHospital: '',
       belongGroups: [],
+      belongSubjects: [],
       createDate: '',
-      displayGroupPanel: false
+      displayGroupPanel: false,
+      displaySubjectPanel: false
     };
   },
   computed: {
@@ -77,6 +97,8 @@ export default {
         return 'myPatients';
       } else if (this.$route.matched.some(record => record.meta.otherPatients)) {
         return 'otherPatients';
+      } else if (this.$route.matched.some(record => record.meta.subjectPatients)) {
+        return 'subjectPatients';
       } else {
         return 'unknown';
       }
@@ -101,6 +123,18 @@ export default {
         return 'second-tab';
       } else {
         return 'Oops! check currentTab';
+      }
+    },
+    showProjectTags() {
+      // 课题标签这一栏的显示取决于两个条件，
+      // 一个是从医院入口登录（这样才能管理这些患者是否加入某课题），
+      // 另一个是必须是我的患者（不允许操作科室患者）
+      var subjectId = Number(sessionStorage.getItem('subjectId'));
+      if (this.$route.matched.some(record => record.meta.myPatients) &&
+        subjectId === this.SUBJECT_ID_FOR_HOSPITAL) {
+        return true;
+      } else {
+        return false;
       }
     }
   },
@@ -130,6 +164,8 @@ export default {
         this.$router.replace({ name: 'personalInfo' });
       } else if (this.listType === 'otherPatients' && withoutPersonalOrDiagostic) {
         this.$router.replace({ name: 'otherPersonalInfo' });
+      } else if (this.listType === 'subjectPatients' && withoutPersonalOrDiagostic) {
+        this.$router.replace({ name: 'subjectPersonalInfo' });
       }
     },
     updateScrollbar() {
@@ -154,9 +190,11 @@ export default {
       getPatientInfo(this.patientId).then((data) => {
         // console.log('patientInfo: ', data);
         this.patientInfo = data;
+        this.createDate = data.createDate;
         this.belongDoctor = data.belongDoctor;
         this.belongGroups = data.belongGroups;
-        this.createDate = data.createDate;
+        this.belongSubjects = data.belongTasks;
+        this.belongHospital = data.belongHospital ? data.belongHospital : '';
       }, (error) => {
         console.log(error);
       });
@@ -189,18 +227,42 @@ export default {
         console.log(error);
       });
     },
+    updatePatientSubjectInfo() {
+      // 如果是新增患者，则不去请求数据
+      if (!this.existed) {
+        return;
+      }
+      getPatientSubjectInfo(this.patientId).then((data) => {
+        this.belongSubjects = data;
+      }, (error) => {
+        console.log(error);
+      });
+    },
     toggleGroupPanel() {
       this.displayGroupPanel = !this.displayGroupPanel;
+      if (this.displayGroupPanel) {
+        this.hideSubjectPanel();
+      }
     },
     hideGroupPanel() {
       this.displayGroupPanel = false;
+    },
+    toggleSubjectPanel() {
+      this.displaySubjectPanel = !this.displaySubjectPanel;
+      if (this.displaySubjectPanel) {
+        this.hideGroupPanel();
+      }
+    },
+    hideSubjectPanel() {
+      this.displaySubjectPanel = false;
     }
   },
   components: {
     DiagnosticDetail,
     ScaleModal,
     BasicInfo,
-    GroupPanel
+    GroupPanel,
+    SubjectPanel
   },
   mounted() {
     this.updatePatientInfo();
@@ -271,12 +333,20 @@ export default {
     z-index: 400;
     background: @screen-color;
   }
-  .group-panel {
+  .group-panel, .subject-panel {
     position: absolute;
     right: 0;
     top: 0;
     transition: 0.3s;
+  }
+  .group-panel {
     z-index: 200;
+    &.hide {
+      right: -@group-panel-width;
+    }
+  }
+  .subject-panel {
+    z-index: 210;
     &.hide {
       right: -@group-panel-width;
     }
@@ -375,7 +445,6 @@ export default {
       position: relative;
       margin: 0 @margin-right @vertical-spacing 0;
       padding: 5px 25px;
-      height: 70px;
       box-sizing: border-box;
       background-color: @background-color;
       font-size: 0;
@@ -383,32 +452,25 @@ export default {
       .info {
         display: inline-block;
         width: 50%;
-        height: 30px;
+        height: 34px;
         line-height: 30px;
         font-size: @normal-font-size;
-        &.adscription {
-          top: 5px;
-        }
-        &.create-time {
-          top: 5px;
-        }
-        &.groups {
+        &.whole-line{
           width: 100%;
-          top: 40px;
-          .group-wrapper {
+        }
+        .tags-wrapper {
+          display: inline-block;
+          max-width: calc(~"100% - 85px - 50px");
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          .tag {
             display: inline-block;
-            max-width: calc(~"100% - 85px - 50px");
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            .group {
-              display: inline-block;
-              padding: 0 5px;
-              margin-right: 8px;
-              background-color: @light-font-color;
-              border-radius: 5px;
-              color: #fff;
-            }
+            padding: 0 5px;
+            margin-right: 8px;
+            background-color: @light-font-color;
+            border-radius: 5px;
+            color: #fff;
           }
         }
         .info-title {

@@ -23,6 +23,9 @@
       <div v-else-if="listType === OTHER_PATIENTS_TYPE">
         <patient-list-item class="item" v-for="patient in otherPatientsList" :patient="patient" :key="patient.patientId"></patient-list-item>
       </div>
+      <div v-else-if="listType === SUBJECT_PATIENTS_TYPE">
+        <patient-list-item class="item" v-for="patient in subjectPatientsList" :patient="patient" :key="patient.patientId"></patient-list-item>
+      </div>
       <div v-else-if="listType === 'users'">
         <user-list-item class="item" v-for="user in userList" :user="user" :key="user.id"></user-list-item>
       </div>
@@ -31,7 +34,8 @@
       </div>
     </div>
 
-    <div class="function-area" v-if="listType === MY_PATIENTS_TYPE || listType === OTHER_PATIENTS_TYPE">
+    <div class="function-area"
+      v-if="listType === MY_PATIENTS_TYPE || listType === OTHER_PATIENTS_TYPE || listType === SUBJECT_PATIENTS_TYPE">
       <div class="function-button whole-line" @click="addNewPatient" v-show="showAdd">
         <span class="iconfont icon-new-patient"></span>
         <span class="text">新增患者</span>
@@ -221,11 +225,14 @@ export default {
       }, 0);
     };
     return {
+      subjectId: Number(sessionStorage.getItem('subjectId')),
+
       searchInput: '',
       timeout: null,
 
       myPatientsList: [],
       otherPatientsList: [],
+      subjectPatientsList: [],
       groupList: [],
       userList: [],
       roleList: [],
@@ -236,6 +243,7 @@ export default {
 
       MY_PATIENTS_TYPE: 'myPatients',
       OTHER_PATIENTS_TYPE: 'otherPatients',
+      SUBJECT_PATIENTS_TYPE: 'subjectPatients',
       GROUP_TYPE: 'groups',
       USER_TYPE: 'users',
       ROLE_TYPE: 'roles',
@@ -281,8 +289,11 @@ export default {
     ...mapGetters([
       'typeGroup'
     ]),
+    inSubject() {
+      return this.subjectId !== this.SUBJECT_ID_FOR_HOSPITAL;
+    },
     showAdd() {
-      if (this.listType === this.OTHER_PATIENTS_TYPE) {
+      if (this.listType === this.OTHER_PATIENTS_TYPE || this.listType === this.SUBJECT_PATIENTS_TYPE) {
         return false;
       } else {
         return true;
@@ -297,6 +308,8 @@ export default {
         return this.GROUP_TYPE;
       } else if (/^\/patients\/otherList/.test(path)) {
         return this.OTHER_PATIENTS_TYPE;
+      } else if (/^\/patients\/subjectList/.test(path)) {
+        return this.SUBJECT_PATIENTS_TYPE;
       } else if (/^\/configuration\/userManagement/.test(path)) {
         return 'users';
       } else if (/^\/configuration\/roleManagement/.test(path)) {
@@ -317,6 +330,8 @@ export default {
         return '分组：' + this.groupList.length + '个';
       } else if (this.listType === this.OTHER_PATIENTS_TYPE) {
         return '患者：' + this.otherPatientsList.length + '人';
+      } else if (this.listType === this.SUBJECT_PATIENTS_TYPE) {
+        return '患者：' + this.subjectPatientsList.length + '人';
       } else if (this.listType === 'users') {
         return '用户：86人';
       } else if (this.listType === 'roles') {
@@ -330,21 +345,26 @@ export default {
   mounted() {
     // 如果在某个指定了 id 的页面进行刷新，checkRoute函数内的[更新列表数据]不会执行，这个时候就需要手动更新
     if (!this.hasFirstUpdatedList) {
-      if (this.listType === this.MY_PATIENTS_TYPE || this.listType === this.OTHER_PATIENTS_TYPE) {
+      if (this.listType === this.MY_PATIENTS_TYPE ||
+        this.listType === this.OTHER_PATIENTS_TYPE ||
+        this.listType === this.SUBJECT_PATIENTS_TYPE) {
         this.updatePatientsList(this.checkRoute);
       } else if (this.listType === this.GROUP_TYPE) {
         this.updateGroupList(this.checkRoute);
       } else if (this.listType === this.USERTYPE_TYPE) {
         this.updateUserList(this.checkRoute);
-      } else if (this.listType === this.GROUP_TYPE) {
+      } else if (this.listType === this.ROLE_TYPE) {
         this.updateRoleList(this.checkRoute);
       } else {
         console.log('unknown listType');
       }
     }
 
+    this.subjectId = Number(sessionStorage.getItem('subjectId'));
+
     Bus.$on(this.UPDATE_MY_PATIENTS_LIST, this.updatePatientsList);
     Bus.$on(this.UPDATE_OTHER_PATIENTS_LIST, this.updatePatientsList);
+    Bus.$on(this.UPDATE_SUBJECT_PATIENTS_LIST, this.updatePatientsList);
     Bus.$on(this.UPDATE_GROUP_LIST, this.updateGroupList);
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
     Bus.$on(this.GIVE_UP, () => {
@@ -356,7 +376,9 @@ export default {
     search() {
       clearTimeout(this.timeout);
       this.timeout = setTimeout(() => {
-        if (this.listType === this.MY_PATIENTS_TYPE || this.listType === this.OTHER_PATIENTS_TYPE) {
+        if (this.listType === this.MY_PATIENTS_TYPE ||
+          this.listType === this.OTHER_PATIENTS_TYPE ||
+          this.listType === this.SUBJECT_PATIENTS_TYPE) {
           this.updatePatientsList();
         } else if (this.listType === this.GROUP_TYPE) {
           this.updateGroupList();
@@ -389,10 +411,18 @@ export default {
       var condition = {
         'type': 1
       };
-      if (this.listType === this.MY_PATIENTS_TYPE) {
+      if (this.listType === this.MY_PATIENTS_TYPE && !this.inSubject) {
         condition.type = 1;
+        delete condition.taskId;
       } else if (this.listType === this.OTHER_PATIENTS_TYPE) {
         condition.type = 2;
+        delete condition.taskId;
+      } else if (this.listType === this.MY_PATIENTS_TYPE && this.inSubject) {
+        condition.type = 3;
+        condition.taskId = Number(sessionStorage.getItem('subjectId'));
+      } else if (this.listType === this.SUBJECT_PATIENTS_TYPE) {
+        condition.type = 4;
+        condition.taskId = Number(sessionStorage.getItem('subjectId'));
       }
 
       if (this.searchInput !== '') {
@@ -422,6 +452,8 @@ export default {
           this.myPatientsList = data;
         } else if (this.listType === this.OTHER_PATIENTS_TYPE) {
           this.otherPatientsList = data ? data : [];
+        } else if (this.listType === this.SUBJECT_PATIENTS_TYPE) {
+          this.subjectPatientsList = data ? data : [];
         }
         this.updateScrollbar();
         this.setScrollbarPosition();
@@ -471,6 +503,10 @@ export default {
       } else if (this.listType === this.OTHER_PATIENTS_TYPE) {
         this.$router.push({
           name: 'otherPatientInfo', params: {id: 'newPatient'}
+        });
+      } else if (this.listType === this.SUBJECT_PATIENTS_TYPE) {
+        this.$router.push({
+          name: 'subjectPatientInfo', params: {id: 'newPatient'}
         });
       }
     },
@@ -613,6 +649,15 @@ export default {
           });
         }
 
+      } else if (/^\/patients\/subjectList\/?$/.test(path)) {
+        if (this.subjectPatientsList.length > 0) {
+          let firstPatientId = this.subjectPatientsList[0].patientId;
+          this.$router.replace({
+            name: 'subjectPatientInfo',
+            params: { id: firstPatientId }
+          });
+        }
+
       } else if (/^\/configuration\/userManagement\/?$/.test(path)) {
         if (this.userList.length > 0) {
           let firstUserId = this.userList[0].id;
@@ -648,7 +693,9 @@ export default {
       // 列表类型一旦发生变化，则清空搜索框内容
       this.searchInput = '';
       // 同时清空各个筛选面板，重新获取列表
-      if (this.listType === this.MY_PATIENTS_TYPE || this.listType === this.OTHER_PATIENTS_TYPE) {
+      if (this.listType === this.MY_PATIENTS_TYPE ||
+        this.listType === this.OTHER_PATIENTS_TYPE ||
+        this.listType === this.SUBJECT_PATIENTS_TYPE) {
         this.resetForm('filterPatientsForm', this.checkRoute);
       } else if (this.listType === this.GROUP_TYPE) {
         this.resetForm('filterGroupsForm', this.checkRoute);

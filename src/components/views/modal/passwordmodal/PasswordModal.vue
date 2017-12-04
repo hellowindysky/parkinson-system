@@ -228,7 +228,6 @@ export default {
       text-align: center;
       font-size: @large-font-size;
     }
-
     .field {
       padding: 10px 0;
       text-align: left;

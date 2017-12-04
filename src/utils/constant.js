@@ -1,5 +1,8 @@
 export default {
 
+  // variables
+  SUBJECT_ID_FOR_HOSPITAL: -1,
+
   // mode
   READING_MODE: 'reading',
   EDITING_MODE: 'editing',
@@ -50,9 +53,11 @@ export default {
 
   UPDATE_MY_PATIENTS_LIST: 'updateMyPatientsList',
   UPDATE_OTHER_PATIENTS_LIST: 'updateOtherPatientsList',
+  UPDATE_SUBJECT_PATIENTS_LIST: 'updateSubjectPatientsList',
   UPDATE_GROUP_LIST: 'updateGroupList',
   UPDATE_PATIENT_INFO: 'updatePatientInfo',
   UPDATE_PATIENT_GROUP_INFO: 'updatePatientGroupInfo',
+  UPDATE_PATIENT_SUBJECT_INFO: 'updatePatientSubjectInfo',
   UPDATE_CASE_INFO: 'updateCaseInfo',
   UPDATE_PATIENT_CASE_LIST: 'updatePatientCase',
   UPDATE_ITEM_POSITION: 'update_item_position',
@@ -61,6 +66,8 @@ export default {
   BLUR_ON_SCREEN: 'blurOnScreen',
 
   HIDE_GROUP_PANEL: 'hideGroupPanel',
+  HIDE_SUBJECT_PANEL: 'hideSubjectPanel',
+
   SHOW_GROUP_MODAL: 'showGroupModal',
   SHOW_MODAL_BOX: 'showModalBox',
   SHOW_MEDICINE_MODAL: 'showMedicineModal',
@@ -73,8 +80,12 @@ export default {
   SHOW_SURGICAL_METHOD_MODAL: 'showSurgicalMethodModal',
   SHOW_OPERATIVE_COMPLICATION_MODAL: 'showOperativeComplication',
   SHOW_DBS_MODAL: 'showDbsModal',
+  SHOW_AUTHORIZATION_MODAL: 'showAuthorizationModal',
   SHOW_PASSWORD_MODAL: 'showPasswordModal',
   SHOW_PHYSIONTHERAPY_MODAL: 'showPhysiontherapyModal',
+  SHOW_FIRSTSYMPTOMS_MODAL: 'showFirstSymptomsModal',
+
+  SHOW_CHOICE_PANEL: 'showChoicePanel',
 
   QUIT_DIAGNOSTIC_DETAIL: 'quitDiagnosticDetail',
 

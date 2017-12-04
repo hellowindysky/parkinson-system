@@ -160,6 +160,40 @@ export default new Router({
                   name: 'otherDiagnosticDetail'
                 }
               ]
+            },
+            {
+              path: 'subjectList',
+              name: 'subjectPatients',
+              meta: {
+                subjectPatients: true
+              }
+            },
+            {
+              path: 'subjectList/:id',
+              components: {
+                content: PatientInfo
+              },
+              name: 'subjectPatientInfo',
+              meta: {
+                subjectPatients: true
+              },
+              children: [
+                {
+                  path: 'personalInfo',
+                  component: PersonalInfo,
+                  name: 'subjectPersonalInfo'
+                },
+                {
+                  path: 'diagnosticInfo',
+                  component: DiagnosticInfo,
+                  name: 'subjectDiagnosticInfo'
+                },
+                {
+                  path: 'diagnosticInfo/:caseId',
+                  component: DiagnosticInfo,
+                  name: 'subjectDiagnosticDetail'
+                }
+              ]
             }
           ]
         },

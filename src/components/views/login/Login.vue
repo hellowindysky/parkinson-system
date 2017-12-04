@@ -99,6 +99,7 @@ export default {
             var userName = data.user.userName;
             var userType = data.user.userType;
             var orgName = data.orgs && data.orgs[0] && data.orgs[0].orgName ? data.orgs[0].orgName : '';
+            var subjects = data.tasks ? data.tasks : [];
 
             sessionStorage.setItem('token', token);
             sessionStorage.setItem('accountNumber', accountNumber);
@@ -106,6 +107,10 @@ export default {
             sessionStorage.setItem('userName', userName);
             sessionStorage.setItem('userType', userType);
             sessionStorage.setItem('orgName', orgName);
+            sessionStorage.setItem('subjects', JSON.stringify(subjects));
+
+            // 通过登录界面，进来后总是进入医院入口，而不会是某个课题，这里将课题 id 保存为一个后端不会用到的值
+            sessionStorage.setItem('subjectId', this.SUBJECT_ID_FOR_HOSPITAL);
 
             var commonRequest = {
               'userId': 93242,

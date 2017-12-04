@@ -30,6 +30,17 @@
               placeholder="请输入检查时间" v-model="copyInfo.checkDate"></el-date-picker>
           </span>
         </div>
+        <div class="field">
+          <span class="field-name">
+            血液标本编号:
+            <span class="required-mark"></span>
+          </span>
+          <span class="field-input">
+            <!-- <span class="warning-text">{{warningResults.checkDate}}</span> -->
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.checkDate}}</span>
+            <el-input v-else placeholder="请输入血液标本编号" v-model="copyInfo.checkDate"></el-input>
+          </span>
+        </div>
         <div class="form-wrapper" ref="formWrapper">
           <table class="form">
             <tr class="row first-row">
@@ -59,13 +70,15 @@
               <td class="col col-id">{{index + 1}}</td>
               <td class="col col-name">
                 {{item.projectName}}
+                <span class="required-mark" v-show="copyInfo.bioexamId===12&&checkRequired(item.id)">*</span>
               </td>
               <td class="col col-english">
                 {{item.englishAbbreviation}}
               </td>
               <td class="col col-result">
+                <span class="warning-text" v-show="warningResults.checkDate&&copyInfo.bioexamId===12&&checkRequired(item.id)">必填项</span>
                 <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.bioexamResult[index].result}}</span>
-                <el-input v-else v-model="copyInfo.bioexamResult[index].result"
+                <el-input v-else v-model="copyInfo.bioexamResult[index].result" :class="{'warning': warningResults.checkDate&&copyInfo.bioexamId===12&&checkRequired(item.id)}"
                   placeholder="请输入检查结果" :maxlength="500"></el-input>
               </td>
               <td class="col col-unit">
@@ -142,6 +155,12 @@ export default {
     }
   },
   methods: {
+    checkRequired(id) {
+      if (id === 55 || id === 68 || id === 69 || id === 70 || id === 75 || id === 63 || id === 62) {
+        return true;
+      };
+      return false;
+    },
     showPanel(cardOperation, item, showEdit) {
       this.displayModal = true;
       this.mode = cardOperation;
@@ -178,6 +197,7 @@ export default {
       this.updateScrollbar();
     },
     changeBioexam() {
+      console.log(this.targetBioexam);
       this.updateWarning('bioexamId');
       this.updateTemplate();
 
@@ -445,6 +465,18 @@ export default {
               }
               &.col-result {
                 width: @col-result-width;
+                position: relative;
+                .warning-text {
+                  position: absolute;
+                  top: 38px;
+                  left: 10px;
+                  height: 15px;
+                  color: red;
+                  font-size: @small-font-size;
+                }
+                .warning .el-input__inner {
+                  border: 1px solid red;
+                }
               }
               &.col-unit {
                 width: @col-unit-width;

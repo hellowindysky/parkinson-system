@@ -4,6 +4,7 @@
     <sidebar class="sidebar"></sidebar>
     <router-view class="content"></router-view>
     <password-modal></password-modal>
+    <authorization-modal></authorization-modal>
     <group-modal></group-modal>
     <modal-box></modal-box>
     <medicine-modal></medicine-modal>
@@ -11,14 +12,20 @@
     <surgical-method-modal></surgical-method-modal>
     <operative-complication-modal></operative-complication-modal>
     <dbs-modal></dbs-modal>
-    <confirm-box></confirm-box>
     <nervous-system-modal></nervous-system-modal>
     <gene-modal></gene-modal>
     <biochemical-exam-modal></biochemical-exam-modal>
     <emg-modal></emg-modal>
     <image-modal></image-modal>
+<<<<<<< HEAD
     <physiontherapy-modal></physiontherapy-modal>
+=======
+    <first-symptoms-modal></first-symptoms-modal>
+    <first-treatment-modal></first-treatment-modal>
+>>>>>>> 211a4c7d3c540d0276badb922762b5856d72c428
     <filter-panel :showFilterPanel="showFilterPanel"></filter-panel>
+    <choice-panel></choice-panel>
+    <confirm-box></confirm-box>
   </div>
 </template>
 
@@ -29,6 +36,7 @@ import topbar from 'components/views/topbar/Topbar';
 import sidebar from 'components/views/sidebar/Sidebar';
 
 import passwordModal from 'components/views/modal/passwordmodal/PasswordModal';
+import authorizationModal from 'components/views/modal/authorizationmodal/AuthorizationModal';
 import groupModal from 'components/views/modal/groupmodal/GroupModal';
 import modalBox from 'components/views/modal/modalbox/ModalBox';
 import medicineModal from 'components/views/modal/medicinemodal/MedicineModal';
@@ -36,13 +44,17 @@ import preEvaluationModal from 'components/views/modal/preevaluationmodal/PreEva
 import surgicalMethodModal from 'components/views/modal/surgicalmethodmodal/SurgicalMethodModal';
 import operativeComplicationModal from 'components/views/modal/operativecomplicationmodal/OperativeComplicationModal';
 import dbsModal from 'components/views/modal/dbsmodal/DbsModal';
-import confirmBox from 'components/public/confirmbox/ConfirmBox';
-import filterPanel from 'components/public/filterpanel/FilterPanel';
 import nervousSystemModal from 'components/views/modal/nervoussystemmodal/NervousSystemModal';
 import geneModal from 'components/views/modal/genemodal/GeneModal';
 import biochemicalExamModal from 'components/views/modal/biochemicalexammodal/BiochemicalExamModal';
 import emgModal from 'components/views/modal/emgmodal/EmgModal';
 import imageModal from 'components/views/modal/imagemodal/ImageModal';
+import firstSymptomsModal from 'components/views/modal/firstsymptomsmodal/FirstSymptomsModal';
+import firstTreatmentModal from 'components/views/modal/firsttreatmentmodal/FirstTreatmentModal';
+
+import filterPanel from 'components/public/filterpanel/FilterPanel';
+import choicePanel from 'components/public/choicepanel/ChoicePanel';
+import confirmBox from 'components/public/confirmbox/ConfirmBox';
 
 import physiontherapyModal from 'components/views/modal/physiontherapymodal/physiontherapyModal';
 
@@ -57,6 +69,7 @@ export default {
     topbar,
     sidebar,
     passwordModal,
+    authorizationModal,
     groupModal,
     modalBox,
     medicineModal,
@@ -64,14 +77,18 @@ export default {
     surgicalMethodModal,
     operativeComplicationModal,
     dbsModal,
-    confirmBox,
-    filterPanel,
     nervousSystemModal,
     geneModal,
     biochemicalExamModal,
     emgModal,
     imageModal,
-    physiontherapyModal
+    physiontherapyModal,
+    firstSymptomsModal,
+    firstTreatmentModal,
+
+    filterPanel,
+    choicePanel,
+    confirmBox
   },
   methods: {
     blurOnScreen() {
