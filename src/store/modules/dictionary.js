@@ -112,6 +112,10 @@ const getters = {
     // 药物信息只有一个 group
     return getFirstGroup(state, 'tc_patient_medicine');
   },
+  physiontherapyDictionary: (state) => {
+    // 药物信息只有一个 group
+    return getFirstGroup(state, 'tc_patient_physiontherapy');
+  },
   surgicalMethodDictionary: (state) => {
     // 手术方案只有一个 group
     return getFirstGroup(state, 'tc_patient_treatment');
@@ -126,6 +130,13 @@ const getters = {
       return [];
     }
     return state.all.tableData.medicineInfo;
+  },
+  physiontherapyInfo: (state) => {
+    // medicineInfo 是药物所具有的特殊字典项，包含了各种不规则的详细信息
+    if (!state.all.tableData || !state.all.tableData.physiontherapyInfo) {
+      return [];
+    }
+    return state.all.tableData.physiontherapyInfo;
   },
   medicineStopReason: (state) => {
     // 停药原因

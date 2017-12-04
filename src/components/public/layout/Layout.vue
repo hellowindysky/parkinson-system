@@ -17,6 +17,7 @@
     <biochemical-exam-modal></biochemical-exam-modal>
     <emg-modal></emg-modal>
     <image-modal></image-modal>
+    <physiontherapy-modal></physiontherapy-modal>
     <filter-panel :showFilterPanel="showFilterPanel"></filter-panel>
   </div>
 </template>
@@ -43,6 +44,8 @@ import biochemicalExamModal from 'components/views/modal/biochemicalexammodal/Bi
 import emgModal from 'components/views/modal/emgmodal/EmgModal';
 import imageModal from 'components/views/modal/imagemodal/ImageModal';
 
+import physiontherapyModal from 'components/views/modal/physiontherapymodal/physiontherapyModal';
+
 export default {
   data() {
     return {
@@ -67,7 +70,8 @@ export default {
     geneModal,
     biochemicalExamModal,
     emgModal,
-    imageModal
+    imageModal,
+    physiontherapyModal
   },
   methods: {
     blurOnScreen() {

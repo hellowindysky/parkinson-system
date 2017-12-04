@@ -1,14 +1,15 @@
 <template lang="html">
-  <folding-panel :title="title" :archived="archived" :mode="mutableMode"  v-on:edit="startEditing" v-on:cancel="cancel"
-    v-on:submit="submit" :editable="canEdit">
-    <div class="diagnostic-medicine" ref="diagnosticMedicine">
-      <extensible-panel class="panel" :mode="mutableMode" :title="subTitle" v-on:addNewCard="addMedicine"
+  <folding-panel :title="'治疗方案'" :archived="archived" :mode="mutableMode"  v-on:edit="startEditing" v-on:cancel="cancel"
+    v-on:submit="submit" :editable="canEdit" :folded-status="foldedStatus" >
+    <div class="diagnostic-physiontherapy" ref="diagnosticPhysiontherapy">
+      <extensible-panel class="panel" :mode="mutableMode" :title="physiontherapyTitle" v-on:addNewCard="addPhysiontherapy"
         :editable="canEdit">
-        <card class="card" :class="devideWidth" :mode="mutableMode" v-for="item in diagnosticMedicine" :key="item.medicineId"
-          :title="getTitle(item.medicineId)" :disable-delete="item.statusFlag===0" v-on:editCurrentCard="editMedicine(item)"
-          v-on:deleteCurrentCard="deleteMedicine(item)" v-on:viewCurrentCard="viewMedicine(item)">
-          <div class="text first-line">{{transform(item, 'usages')}}</div>
-          <div class="text second-line">{{item.ariseTime}}</div>
+        <card class="card" :class="devideWidth" :mode="mutableMode" v-for="item in physiontherapyList" :key="item.physiType"
+          :title="transform(item, 'physiType', physiontherapyDictionary)" v-on:editCurrentCard="editPhysiontherapy(item,PHYSIONTHERAPY_MODAL)"
+          v-on:deleteCurrentCard="deletePhysiontherapy(item)" v-on:viewCurrentCard="viewPhysiontherapy(item,PHYSIONTHERAPY_MODAL)">
+          <div class="text first-line">{{transform(item, 'grade', exerciseHistoryDictionary)}}</div>
+          <div class="text second-line">{{transform(item, 'ageStage', exerciseHistoryDictionary)}}</div>
+         
         </card>
       </extensible-panel>
     </div>
@@ -19,7 +20,7 @@
 import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import { deletePatientMedicine } from 'api/patient.js';
+import { deletePhysiontherapy } from 'api/patient.js';
 
 import FoldingPanel from 'components/public/foldingpanel/FoldingPanel';
 import ExtensiblePanel from 'components/public/extensiblepanel/ExtensiblePanel';
@@ -28,17 +29,13 @@ import Card from 'components/public/card/Card';
 export default {
   data() {
     return {
-      mutableMode: this.mode,
-      title: '药物方案',
+      mutableMode: this.READING_MODE,
+      foldedStatus: true,
       devideWidth: ''
     };
   },
   props: {
-    mode: {
-      type: String,
-      default: this.READING_MODE
-    },
-    diagnosticMedicine: {
+    physiontherapyList: {
       type: Array,
       default: () => {
         return [];
@@ -51,13 +48,16 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'medicineDictionary',
-      'typeGroup',
-      'medicineInfo'
+      'physiontherapyDictionary',
+      'typeGroup'
+      // 'physiontherapyInfo'
     ]),
-    subTitle() {
-      var count = this.diagnosticMedicine.length;
-      return this.title + '（' + count + '条记录）';
+    id() {
+      return parseInt(this.$route.params.id, 10);
+    },
+    physiontherapyTitle() {
+      var totalCount = this.physiontherapyList.length ;
+      return '物理治疗（' + totalCount + '条记录）';
     },
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients) && this.archived) {
@@ -70,6 +70,7 @@ export default {
   methods: {
     startEditing() {
       this.mutableMode = this.EDITING_MODE;
+      this.foldedStatus = false;
     },
     cancel() {
       this.mutableMode = this.READING_MODE;
@@ -77,62 +78,40 @@ export default {
     submit() {
       this.mutableMode = this.READING_MODE;
     },
-    getMatchedField(fieldName) {
+    getMatchedField(fieldName, dictionary) {
       // 在字典项中查询该名字所对应的字段，从而方便我们得到该字段的详细信息
-      return Util.getElement('fieldName', fieldName, this.medicineDictionary);
+      return Util.getElement('fieldName', fieldName, this.dictionary);
     },
-    getTypes(fieldName) {
+    getTypes(fieldName, dictionary) {
       // 在 typegroup 里面查找到 fieldName 所对应的 types（选项组）
-      var dictionaryField = this.getMatchedField(fieldName);
+      var dictionaryField = this.getMatchedField(fieldName, dictionary);
       var value = dictionaryField.fieldEnumId;
       value = fieldName; // TODO 等以后字典项返回 OK 了，就去掉这一行
       var typeInfo = Util.getElement('typegroupcode', value, this.typeGroup);
       return typeInfo.types ? typeInfo.types : [];
     },
-    transform(item, fieldName) {
-      var types = this.getTypes(fieldName);
+    transform(item, fieldName, dictionary) {
+      var types = this.getTypes(fieldName, dictionary);
       var matchedType = Util.getElement('typeCode', item[fieldName], types);
       return matchedType.typeName ? matchedType.typeName : '';
     },
-    getMedicine(medicineId) {
-      // 根据药物 id，在相应的 tableData 里面寻找对应的 药物详情
-      return Util.getElement('medicineId', medicineId, this.medicineInfo);
+    addPhysiontherapy() {
+      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.ADD_NEW_CARD, '新增物理治疗', {}, this.PERSON_HISTORY_MODAL);
     },
-    getTitle(medicineId) {
-      var medicine = this.getMedicine(medicineId);
-      return medicine.medicineName + '(' + medicine.commonName + ')';
+    viewPhysiontherapy(item, modal) {
+      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.VIEW_CURRENT_CARD, '物理治疗', item, modal);
     },
-    calcTotalLevodopaDoseOfAllOtherMedicine(targetMedicine) {
-      var totalLevodopaDose = 0;
-      for (let item of this.diagnosticMedicine) {
-        var medicineInfoObj = Util.getElement('medicineId', item.medicineId, this.medicineInfo);
-        // 用来计算的药物要满足 3 个条件：未停药，不是当前药物，属于多巴胺类制剂
-        if (item.stopFlag === 1 && item.medicineId !== targetMedicine.medicineId && medicineInfoObj.medicalType === 0) {
-          totalLevodopaDose += item.levodopaDose;
-        }
-      }
-      return totalLevodopaDose;
+    editPhysiontherapy(item, modal) {
+      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.EDIT_CURRENT_CARD, '物理治疗', item, modal);
     },
-    addMedicine() {
-      var totalLevodopaDoseOfAllOtherMedicine = this.calcTotalLevodopaDoseOfAllOtherMedicine({});
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.ADD_NEW_CARD, {}, this.archived, totalLevodopaDoseOfAllOtherMedicine);
-    },
-    viewMedicine(item) {
-      var totalLevodopaDoseOfAllOtherMedicine = this.calcTotalLevodopaDoseOfAllOtherMedicine(item);
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.VIEW_CURRENT_CARD, item, this.archived, totalLevodopaDoseOfAllOtherMedicine);
-    },
-    editMedicine(item) {
-      var totalLevodopaDoseOfAllOtherMedicine = this.calcTotalLevodopaDoseOfAllOtherMedicine(item);
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.EDIT_CURRENT_CARD, item, this.archived, totalLevodopaDoseOfAllOtherMedicine);
-    },
-    deleteMedicine(item) {
-      var patientMedicine = {
-        patientId: parseInt(this.$route.params.id, 10),
-        patientCaseId: this.$route.params.caseId,
-        patientMedicineId: item.patientMedicineId
+    deletePhysiontherapy(item) {
+      var patientPhysiontherapy = {
+        physiType: parseInt(this.$route.params.id, 1),
+        patientCaseId: this.$route.params.patientCaseId,
+        patientId: item.patientId
       };
       Bus.$on(this.CONFIRM, () => {
-        deletePatientMedicine(patientMedicine).then(this._resolveDeletion, this._rejectDeletion);
+        deletePhysiontherapy(patientPhysiontherapy).then(this._resolveDeletion, this._rejectDeletion);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
@@ -166,16 +145,33 @@ export default {
     Card
   },
   mounted() {
-    this.recalculateCardWidth();
+    // 如果收到 [确认对话框] 发过来的 “取消” 事件，则解除 “确认” 事件的回调函数
+    Bus.$on(this.GIVE_UP, () => {
+      Bus.$off(this.CONFIRM);
+    });
 
+    // 如果收到屏幕宽度变化，或者内容区域宽度变化的事件，则重新计算卡片的宽度
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
     Bus.$on(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
     Bus.$on(this.RECALCULATE_CARD_WIDTH, this.recalculateCardWidth);
+    // 第一次加载的时候，去计算一次卡片宽度
+    this.recalculateCardWidth();
+
+    Bus.$on(this.EDIT_OTHER_INFO, this.startEditing);
+
+    setTimeout(() => {
+      // console.log(this.toxicExposureHistoryList);
+      // console.log(this.medHistoryDictionary);
+      // console.log(this.typeGroup);
+    }, 2000);
   },
   beforeDestroy() {
+    // 还是记得销毁组件前，解除事件绑定
     Bus.$off(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
     Bus.$off(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
-    Bus.$off(this.RECALCULATE_CARD_WIDTH, this.recalculateCardWidth);
+    Bus.$off(this.CONFIRM);
+    Bus.$off(this.GIVE_UP);
+    Bus.$off(this.EDIT_OTHER_INFO);
   }
 };
 </script>
@@ -223,6 +219,9 @@ export default {
         position: absolute;
         font-size: @small-font-size;
         color: @light-font-color;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
       .first-line {
         left: 10px;

@@ -74,6 +74,7 @@ export default {
   SHOW_OPERATIVE_COMPLICATION_MODAL: 'showOperativeComplication',
   SHOW_DBS_MODAL: 'showDbsModal',
   SHOW_PASSWORD_MODAL: 'showPasswordModal',
+  SHOW_PHYSIONTHERAPY_MODAL: 'showPhysiontherapyModal',
 
   QUIT_DIAGNOSTIC_DETAIL: 'quitDiagnosticDetail',
 
@@ -84,6 +85,7 @@ export default {
   FAMILY_HISTORY_MODAL: 'familyHistoryModal',
   PERSON_HISTORY_MODAL: 'personHistoryModal',
   TOXIC_HISTORY_MODAL: 'toxicHistoryModal',
+  PHYSIONTHERAPY_MODAL: 'PhysiontherapyModal',
 
   TEA_HISTORY_MODAL: 'teaHistoryModal',
   COFFEE_HISTORY_MODAL: 'coffeeHistoryModal',
