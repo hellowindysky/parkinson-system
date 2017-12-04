@@ -121,7 +121,12 @@ export default {
             };
 
             sessionStorage.setItem('commonRequest', JSON.stringify(commonRequest));
+
+            this.$store.commit('UPDATE_LAST_OPERATION_TIME');
+            sessionStorage.setItem('lastOperationTime', this.$store.state.lastOperationTime);
+
             this.$router.push('/');
+
           }, (error) => {
             if (error.code === 21) {
               this.$message({

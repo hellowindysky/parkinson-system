@@ -52,6 +52,7 @@ import filterPanel from 'components/public/filterpanel/FilterPanel';
 import choicePanel from 'components/public/choicepanel/ChoicePanel';
 import confirmBox from 'components/public/confirmbox/ConfirmBox';
 
+// 设定多长时间不操作，就返回登录界面
 const RELOGIN_TIME_FOR_NO_OPERATION = 1000 * 60 * 60;
 
 export default {
@@ -87,13 +88,15 @@ export default {
   },
   methods: {
     clickScreen() {
-      // 这个函数的作用有两个，一个是通过失焦来关闭某些面板，另一个是更新最后点击的时间
+      // 这个函数的作用有两个，一个是通过失焦来关闭某些面板，另一个是检查是否长时间没有操作
       Bus.$emit(this.BLUR_ON_SCREEN);
 
-      var lastOperationTime = this.$store.state.lastOperationTime;
-
+      this.checkIfNoOperationForTooLong(this.$store.state.lastOperationTime);
+    },
+    checkIfNoOperationForTooLong(lastOperationTime) {
       this.$store.commit('UPDATE_LAST_OPERATION_TIME');
       var thisOperationTime = this.$store.state.lastOperationTime;
+      sessionStorage.setItem('lastOperationTime', thisOperationTime);
 
       // 如果本次点击的时间离上一次的点击时间间隔过长，则返回登录界面，并清空 token
       if (thisOperationTime - lastOperationTime > RELOGIN_TIME_FOR_NO_OPERATION) {
@@ -121,7 +124,10 @@ export default {
       this.display = true;
     }
 
-    this.$store.commit('UPDATE_LAST_OPERATION_TIME');
+    var lastOperationTime = Number(sessionStorage.getItem('lastOperationTime'));
+    lastOperationTime = lastOperationTime ? lastOperationTime : 0;
+    this.checkIfNoOperationForTooLong(lastOperationTime);
+
     Bus.$on(this.TOGGLE_FILTER_PANEL_DISPLAY, this.toggleFilterPanelDisplay);
   },
   beforeDestroy() {
