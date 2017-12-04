@@ -52,6 +52,8 @@ import filterPanel from 'components/public/filterpanel/FilterPanel';
 import choicePanel from 'components/public/choicepanel/ChoicePanel';
 import confirmBox from 'components/public/confirmbox/ConfirmBox';
 
+const RELOGIN_TIME_FOR_NO_OPERATION = 1000 * 60 * 60;
+
 export default {
   data() {
     return {
@@ -85,7 +87,20 @@ export default {
   },
   methods: {
     blurOnScreen() {
+      // 这个函数的作用有两个，一个是通过失焦来关闭某些面板，另一个是更新最后点击的时间
       Bus.$emit(this.BLUR_ON_SCREEN);
+
+      var lastOperationTime = this.$store.state.lastOperationTime;
+
+      this.$store.commit('UPDATE_LAST_OPERATION_TIME');
+      var thisOperationTime = this.$store.state.lastOperationTime;
+
+      // 如果本次点击的时间离上一次的点击时间间隔过长，则返回登录界面，并清空 token
+      if (thisOperationTime - lastOperationTime > RELOGIN_TIME_FOR_NO_OPERATION) {
+        sessionStorage.removeItem('token');
+        this.display = false;
+        this.$router.push('/login');
+      }
     },
     toggleFilterPanelDisplay() {
       // 为什么 FilterPanel 的状态需要由 Layout 来控制呢？
@@ -106,6 +121,7 @@ export default {
       this.display = true;
     }
 
+    this.$store.commit('UPDATE_LAST_OPERATION_TIME');
     Bus.$on(this.TOGGLE_FILTER_PANEL_DISPLAY, this.toggleFilterPanelDisplay);
   },
   beforeDestroy() {
