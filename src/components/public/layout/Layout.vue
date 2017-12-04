@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="app-wrapper" v-if="display" @click="blurOnScreen">
+  <div class="app-wrapper" v-if="display" @click="clickScreen">
     <topbar class="topbar" :showFilterPanel="showFilterPanel"></topbar>
     <sidebar class="sidebar"></sidebar>
     <router-view class="content"></router-view>
@@ -86,7 +86,7 @@ export default {
     confirmBox
   },
   methods: {
-    blurOnScreen() {
+    clickScreen() {
       // 这个函数的作用有两个，一个是通过失焦来关闭某些面板，另一个是更新最后点击的时间
       Bus.$emit(this.BLUR_ON_SCREEN);
 
