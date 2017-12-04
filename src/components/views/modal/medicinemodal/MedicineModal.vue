@@ -12,7 +12,6 @@
             <span v-if="getMatchedField(field.fieldName).readOnlyType===2">
               <span v-if="field.fieldName==='commonName'">{{commonName}}</span>
               <span v-else-if="field.fieldName==='medicalType'">{{medicalType}}</span>
-              <span v-else-if="field.fieldName==='totalMeasure'">{{medicine.totalMeasure}} mg</span>
               <span v-else>{{medicine[field.fieldName]}}</span>
             </span>
             <span v-else-if="getUIType(field.fieldName)===3">
@@ -24,7 +23,6 @@
             <span v-if="getMatchedField(field.fieldName).readOnlyType===2">
               <span v-if="field.fieldName==='commonName'">{{commonName}}</span>
               <span v-else-if="field.fieldName==='medicalType'">{{medicalType}}</span>
-              <span v-else-if="field.fieldName==='totalMeasure'">{{totalMeasure}} mg</span>
               <span v-else>{{medicine[field.fieldName]}}</span>
             </span>
             <el-select v-else-if="getUIType(field.fieldName)===3" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
@@ -84,6 +82,7 @@
             <span v-if="getMatchedField(field.fieldName).readOnlyType===2">
               <span v-if="field.fieldName==='levodopaDose'">{{levodopaDose}}</span>
               <span v-else-if="field.fieldName==='levodopaFactorUsed'">{{levodopaFactor}}</span>
+              <span v-else-if="field.fieldName==='totalMeasure'">{{medicine.totalMeasure}} mg</span>
               <span v-else>{{medicine[field.fieldName]}}</span>
             </span>
             <span v-else>{{medicine[field.fieldName]}}</span>
@@ -93,6 +92,7 @@
             <span v-if="getMatchedField(field.fieldName).readOnlyType===2">
               <span v-if="field.fieldName==='levodopaDose'">{{levodopaDose}}</span>
               <span v-else-if="field.fieldName==='levodopaFactorUsed'">{{levodopaFactor}}</span>
+              <span v-else-if="field.fieldName==='totalMeasure'">{{totalMeasure}} mg</span>
               <span v-else>{{medicine[field.fieldName]}}</span>
             </span>
             <el-input v-else-if="getUIType(field.fieldName)===1" v-model="medicine[field.fieldName]"
