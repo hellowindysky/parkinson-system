@@ -5,6 +5,11 @@
         <span class="name">{{title}}</span>
         <span class="iconfont" :class="toggleOranizationPanelIcon"></span>
       </div>
+      <div class="switch-button">
+        <span class="on" :class="switchButtonSide"></span>
+        <span class="text left" @click="swichBlockSensitiveStatus(true)">脱敏显示</span>
+        <span class="text right" @click="swichBlockSensitiveStatus(false)">全部显示</span>
+      </div>
       <div class="operation-wrapper">
         <span class="iconfont icon-search" :class="{'on': showFilterPanel}" @click="toggleFilterPanelDisplay"></span>
         <span class="iconfont icon-notice" v-show="false"></span>
@@ -53,7 +58,8 @@ export default {
     return {
       showOranizationPanel: false,
       showAccountPanel: false,
-      subjectId: Number(sessionStorage.getItem('subjectId'))
+      subjectId: Number(sessionStorage.getItem('subjectId')),
+      blockSensitiveInfo: false
     };
   },
   computed: {
@@ -77,6 +83,13 @@ export default {
       var subjects = sessionStorage.getItem('subjects');
       subjects = JSON.parse(subjects);
       return subjects;
+    },
+    switchButtonSide() {
+      if (this.blockSensitiveInfo) {
+        return 'left';
+      } else {
+        return 'right';
+      }
     }
   },
   methods: {
@@ -96,6 +109,9 @@ export default {
         }, 150);
       }
       this.showOranizationPanel = false;
+    },
+    swichBlockSensitiveStatus(status) {
+      this.blockSensitiveInfo = status;
     },
     toggleFilterPanelDisplay() {
       Bus.$emit(this.TOGGLE_FILTER_PANEL_DISPLAY);
@@ -169,6 +185,52 @@ export default {
         margin-left: 10px;
         font-size: @normal-font-size;
         color: @button-color;
+      }
+    }
+    .switch-button {
+      display: inline-block;
+      position: absolute;
+      left: 50%;
+      top: 8px;
+      width: 180px;
+      height: 32px;
+      transform: translateX(-90px);
+      background-color: @theme-color;
+      border-radius: 8px;
+      .on {
+        display: inline-block;
+        position: absolute;
+        width: 50%;
+        height: 100%;
+        left: 0;
+        border-radius: 8px;
+        background-color: @button-color;
+        box-shadow: 0 0 1px @button-color;
+        transition: 0.2s;
+        z-index: 10;
+        &.left {
+          transform: translateX(0);
+        }
+        &.right {
+          transform: translateX(90px);
+        }
+      }
+      .text {
+        display: inline-block;
+        position: absolute;
+        width: 50%;
+        height: 32px;
+        line-height: 32px;
+        font-weight: bold;
+        color: #fff;
+        cursor: pointer;
+        z-index: 20;
+        &.left {
+          left: 0;
+        }
+        &.right {
+          right: 0;
+        }
       }
     }
     .operation-wrapper {
