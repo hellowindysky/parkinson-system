@@ -2,18 +2,30 @@
   <folding-panel :title="'治疗方案'" :archived="archived" :mode="mutableMode"  v-on:edit="startEditing"
     v-on:cancel="cancel" v-on:submit="submit" :editable="canEdit">
     <div class="diagnostic-surgery" ref="diagnosticSurgery">
-      <extensible-panel class="panel" :mode="mutableMode" :title="medicineTitle" v-on:addNewCard="addMedicine"
+      <extensible-panel class="panel medicine-panel" :mode="mutableMode" :title="medicineTitle" v-on:addNewCard="addMedicine"
         :editable="canEdit">
-        <card class="card" :class="smallCardWidth" :mode="mutableMode" v-for="item in diagnosticMedicine" :key="item.medicineId"
+        <card class="card medicine-card" :class="smallCardWidth" :mode="mutableMode" v-for="item in diagnosticMedicine" :key="item.medicineId"
           :title="getMedicineTitle(item.medicineId)" :disable-delete="item.statusFlag===0" v-on:editCurrentCard="editMedicine(item)"
           v-on:deleteCurrentCard="deleteMedicine(item)" v-on:viewCurrentCard="viewMedicine(item)">
-          <div class="text first-line">
+          <div class="text line-1">
             <span class="name">用药频率: </span>
             <span class="value">{{transformMedicineField(item, 'usages')}}</span>
           </div>
-          <div class="text second-line">
+          <div class="text line-2">
             <span class="name">首次用药: </span>
             <span class="value">{{transformMedicineField(item, 'firMedFlag')}}</span>
+          </div>
+          <div class="text line-3">
+            <span class="name">停药原因: </span>
+            <span class="value">{{transformMedicineField(item, 'stopReason')}}</span>
+          </div>
+          <div class="text line-4">
+            <span class="name">副反应类型: </span>
+            <span class="value">{{transformMedicineField(item, 'sideeffectType')}}</span>
+          </div>
+          <div class="text line-5">
+            <span class="name">处方性质: </span>
+            <span class="value">{{getPrescriptionDesc(item.statusFlag)}}</span>
           </div>
         </card>
       </extensible-panel>
@@ -227,6 +239,7 @@ export default {
     ...mapGetters([
       'medicineInfo',
       'medicineDictionary',
+      'medicineStopReason',
       'surgicalTypeList',
       'complicationTypeList',
       'typeGroup'
@@ -297,10 +310,25 @@ export default {
     },
     transformMedicineField(item, fieldName) {
       var dictionaryField = Util.getElement('fieldName', fieldName, this.medicineDictionary);
-      var typeInfo = Util.getElement('typegroupcode', dictionaryField.fieldEnumId, this.typeGroup);
-      var types = typeInfo.types ? typeInfo.types : [];
-      var matchedType = Util.getElement('typeCode', item[fieldName], types);
-      return matchedType.typeName ? matchedType.typeName : '';
+      if (fieldName === 'stopReason') {
+        var reason = Util.getElement('id', item[fieldName], this.medicineStopReason);
+        return reason.stopReason;
+
+      } else {
+        var typeInfo = Util.getElement('typegroupcode', dictionaryField.fieldEnumId, this.typeGroup);
+        var types = typeInfo.types ? typeInfo.types : [];
+        var matchedType = Util.getElement('typeCode', item[fieldName], types);
+        return matchedType.typeName ? matchedType.typeName : '';
+      }
+    },
+    getPrescriptionDesc(statusFlag) {
+      if (statusFlag === 0) {
+        return '沿用上次处方';
+      } else if (statusFlag === 1) {
+        return '增加用药';
+      } else {
+        return '';
+      }
     },
     getMedicineTitle(medicineId) {
       // 根据药物 id，在相应的 tableData 里面寻找对应的 药物详情
@@ -577,12 +605,19 @@ export default {
 <style lang="less">
 @import "~styles/variables.less";
 
-@surgery-card-height: 220px;
-@physiontherapy-card-height: 180px;
+@medicine-card-height: 175px;
+@surgery-card-height: 225px;
+@physiontherapy-card-height: 175px;
 
 .diagnostic-surgery {
   .panel {
     text-align: left;
+    &.medicine-panel .content {
+      height: @medicine-card-height + @card-vertical-margin * 2 + 5px * 2;
+      &.extended {
+        height: auto;
+      }
+    }
     &.surgery-panel .content {
       height: @surgery-card-height + @card-vertical-margin * 2 + 5px * 2;
       &.extended {
@@ -631,6 +666,9 @@ export default {
       &.width-1-10 {
         width: calc(~"10% - @{card-horizontal-margin} * 2");
       }
+      &.medicine-card {
+        height: @medicine-card-height;
+      }
       &.surgery-card {
         height: @surgery-card-height;
       }
@@ -669,25 +707,25 @@ export default {
         top: 100px;
       }
       .line-1 {
-        top: 45px;
+        top: 50px;
       }
       .line-2 {
-        top: 70px;
+        top: 75px;
       }
       .line-3 {
-        top: 95px;
+        top: 100px;
       }
       .line-4 {
-        top: 120px;
+        top: 125px;
       }
       .line-5 {
-        top: 145px;
+        top: 150px;
       }
       .line-6 {
-        top: 170px;
+        top: 175px;
       }
       .line-7 {
-        top: 195px;
+        top: 200px;
       }
     }
   }
