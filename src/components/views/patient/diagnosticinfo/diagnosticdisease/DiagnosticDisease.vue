@@ -1,7 +1,7 @@
 <template lang="html">
   <folding-panel :title="'病症情况'" :archived="archived" :mode="mutableMode" :folded-status="foldedStatus" v-on:edit="startEditing"
     v-on:cancel="cancel" v-on:submit="submit" v-on:toggleFoldedPanel="updateScrollbar" :editable="canEdit">
-    <div class="diagnostic-disease">
+    <div class="diagnostic-disease" ref="diagnosticDisease">
       <div v-for="field in diagnosticDiseaseTemplate" class="field"
         :class="{'whole-line': field.fieldName === 'caseSymptom'}">
         <span class="field-name">
@@ -11,7 +11,7 @@
 
         <div class="field-value" v-show="mutableMode===READING_MODE">
           <span v-if="getUIType(field.fieldName)===3">
-            {{ transformTypeCode(copyInfo[field.fieldName], field.fieldName) }}
+             {{ transformTypeCode(copyInfo[field.fieldName], field.fieldName) }}
           </span>
           <span v-else>
             {{copyInfo[field.fieldName]}}
@@ -35,14 +35,14 @@
         </div>
       </div>
 
-      <div class="form-wrapper">
+      <!-- <div class="form-wrapper">
         <h4 class="form-title">运动症状</h4>
         <div class="scroll-area" ref="scrollArea1">
           <table class="form-content">
             <tr class="row first-row">
               <td v-for="field in diagnosticDiseaseMsTemplate" class="col" :class="getClass(field.fieldName)">
                 {{field.cnfieldName}}
-                <!-- <span class="required-mark" v-show="field.must === 1">*</span> -->
+                <span class="required-mark" v-show="field.must === 1">*</span>
                 <span class="add-button iconfont icon-plus" @click="addSymtom(MS_SYMPTOM)"
                   v-show="field.fieldName === 'symptomTypeId' && mutableMode===EDITING_MODE">
                 </span>
@@ -82,16 +82,16 @@
             </tr>
           </table>
         </div>
-      </div>
+      </div> -->
 
-      <div class="form-wrapper">
+      <!-- <div class="form-wrapper">
         <h4 class="form-title">运动并发症</h4>
         <div class="scroll-area" ref="scrollArea2">
           <table class="form-content">
             <tr class="row first-row">
               <td v-for="field in diagnosticDiseaseMcTemplate" class="col" :class="getClass(field.fieldName)">
                 {{field.cnfieldName}}
-                <!-- <span class="required-mark" v-show="field.must === 1">*</span> -->
+                <span class="required-mark" v-show="field.must === 1">*</span>
                 <span class="add-button iconfont icon-plus" @click="addSymtom(MC_SYMPTOM)"
                   v-show="field.fieldName === 'symptomTypeId' && mutableMode===EDITING_MODE">
                 </span>
@@ -132,16 +132,16 @@
             </tr>
           </table>
         </div>
-      </div>
+      </div> -->
 
-      <div class="form-wrapper">
+      <!-- <div class="form-wrapper">
         <h4 class="form-title">非运动症状</h4>
         <div class="scroll-area" ref="scrollArea3">
           <table class="form-content">
             <tr class="row first-row">
               <td v-for="field in diagnosticDiseaseNmsTemplate" class="col" :class="getClass(field.fieldName)">
                 {{field.cnfieldName}}
-                <!-- <span class="required-mark" v-show="field.must === 1">*</span> -->
+                <span class="required-mark" v-show="field.must === 1">*</span>
                 <span class="add-button iconfont icon-plus" @click="addSymtom(NMS_SYMPTOM)"
                   v-show="field.fieldName === 'symptomTypeId' && mutableMode===EDITING_MODE">
                 </span>
@@ -180,21 +180,33 @@
             </tr>
           </table>
         </div>
-      </div>
+      </div> -->
+       <extensible-panel class="panel" :mode="mutableMode" :title="subTitle" v-on:addNewCard="addDisease"
+        :editable="canEdit">
+        <card class="card" :class="devideWidth" :mode="mutableMode" v-for="item in diagnosticDisease" :key="item.diseaseId"
+          :title="getTitle(item.diseaseId)" :disable-delete="item.statusFlag===0" v-on:editCurrentCard="editDisease(item)"
+          v-on:deleteCurrentCard="deleteDisease(item)" v-on:viewCurrentCard="viewDisease(item)">
+          <div class="text first-line">{{transform(item, 'usages')}}</div>
+          <div class="text second-line">{{item.ariseTime}}</div>
+        </card>
+      </extensible-panel>
     </div>
   </folding-panel>
 </template>
 
 <script>
-import Ps from 'perfect-scrollbar';
+// import Ps from 'perfect-scrollbar';
 import { mapGetters } from 'vuex';
 import Util from 'utils/util.js';
 import Bus from 'utils/bus.js';
 import { vueCopy } from 'utils/helper';
 import { modifyDiagnosticDisease } from 'api/patient.js';
-import { reviseDateFormat } from 'utils/helper.js';
+
+// import { reviseDateFormat } from 'utils/helper.js';
 
 import FoldingPanel from 'components/public/foldingpanel/FoldingPanel';
+import ExtensiblePanel from 'components/public/extensiblepanel/ExtensiblePanel';
+import Card from 'components/public/card/Card';
 
 export default {
   data() {
@@ -203,71 +215,34 @@ export default {
       foldedStatus: true,
       copyInfo: {},
       warningResults: {},
-      MS_SYMPTOM: '运动症状',
-      MC_SYMPTOM: '运动并发症',
-      NMS_SYMPTOM: '非运动症状'
+      title: '主诉症状',
+      devideWidth: ''
+      // MS_SYMPTOM: '运动症状',
+      // MC_SYMPTOM: '运动并发症',
+      // NMS_SYMPTOM: '非运动症状'
     };
   },
   computed: {
     ...mapGetters([
       'diagnosticDiseaseDictionary',
-      'diagnosticDiseaseMsDictionary',
-      'diagnosticDiseaseMcDictionary',
-      'diagnosticDiseaseNmsDictionary',
+      // 'diagnosticDiseaseMsDictionary',
+      // 'diagnosticDiseaseMcDictionary',
+      // 'diagnosticDiseaseNmsDictionary',
       'diagnosticDiseaseTemplate',
-      'diagnosticDiseaseMsTemplate',
-      'diagnosticDiseaseMcTemplate',
-      'diagnosticDiseaseNmsTemplate',
-      'symptomType',
+      // 'diagnosticDiseaseMsTemplate',
+      // 'diagnosticDiseaseMcTemplate',
+      // 'diagnosticDiseaseNmsTemplate',
+      // 'symptomType',
       'typeGroup'
     ]),
-    totalDictionary() {
-      return [].concat(this.diagnosticDiseaseDictionary, this.diagnosticDiseaseMsDictionary,
-      this.diagnosticDiseaseMcDictionary, this.diagnosticDiseaseNmsDictionary);
+    subTitle() {
+      var count = this.diagnosticDisease.length;
+      return this.title + '（' + count + '条记录）';
     },
-    allSymptom() {
-      if (!this.copyInfo.patientSymptom) {
-        this.$set(this.copyInfo, 'patientSymptom', []);
-      }
-      return this.copyInfo.patientSymptom;
-    },
-    msSymptom() {
-      // 运动症状
-      var msSymptom = [];
-      for (let symptom of this.allSymptom) {
-        if (symptom.symptomType === 0) {
-          msSymptom.push(symptom);
-        }
-      }
-      return msSymptom;
-    },
-    mcSymptom() {
-      // 运动并发症
-      var mcSymptom = [];
-      for (let symptom of this.allSymptom) {
-        if (symptom.symptomType === 1) {
-          mcSymptom.push(symptom);
-        }
-      }
-      return mcSymptom;
-    },
-    nmsSymptom() {
-      // 非运动症状
-      var nmsSymptom = [];
-      for (let symptom of this.allSymptom) {
-        if (symptom.symptomType === 2) {
-          nmsSymptom.push(symptom);
-        }
-      }
-      return nmsSymptom;
-    },
-    templateLength() {
-      // 这个计算属性的返回值本身并没有价值，我设定它，只是为了在 watch 中监控 几个 Vuex 对象（因为不能直接监控它们）
-      var t1 = this.diagnosticDiseaseMsTemplate ? this.diagnosticDiseaseMsTemplate : [];
-      var t2 = this.diagnosticDiseaseMcTemplate ? this.diagnosticDiseaseMcTemplate : [];
-      var t3 = this.diagnosticDiseaseNmsTemplate ? this.diagnosticDiseaseNmsTemplate : [];
-      return [t1.length, t2.length, t3.length];  // 这个值并没有意义
-    },
+    // totalDictionary() {
+    //   return [].concat(this.diagnosticDiseaseDictionary, this.diagnosticDiseaseMsDictionary,
+    //   this.diagnosticDiseaseMcDictionary, this.diagnosticDiseaseNmsDictionary);
+    // },
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients) && this.archived) {
         return true;
@@ -293,203 +268,103 @@ export default {
   methods: {
     startEditing() {
       this.mutableMode = this.EDITING_MODE;
-      this.foldedStatus = false;
-      Bus.$emit(this.SCROLL_AREA_SIZE_CHANGE);
+      // this.foldedStatus = false;
+      // Bus.$emit(this.SCROLL_AREA_SIZE_CHANGE);
     },
     cancel() {
-      this.copyInfo = {};
-      vueCopy(this.diagnosticDisease, this.copyInfo);
-      this.warningResults = {};
+      // this.copyInfo = {};
+      // vueCopy(this.diagnosticDisease, this.copyInfo);
+      // this.warningResults = {};
       this.mutableMode = this.READING_MODE;
-      Bus.$emit(this.SCROLL_AREA_SIZE_CHANGE);
-    },
-    submit() {
-      // 先手动执行一遍 updateWarning()，因为有的字段在初始化的时候并没有经过校验
-      for (let field of this.diagnosticDiseaseTemplate) {
-        this.updateWarning(field);
-      }
-
-      // 然后检查 warningResults
-      for (var p in this.warningResults) {
-        if (this.warningResults.hasOwnProperty(p)) {
-          if (this.warningResults[p]) {
-            return;
-          }
-        }
-      }
-
-      // 症状列表并没有用 warningResults 来校验，所以这里手动校验每一行的名字 —— 既不为空，又没有重复
-      for (let symptom of this.allSymptom) {
-        if (!this.isSymptomValid(symptom)) {
-          return;
-        }
-      }
-
-      // 对 this.copyInfo.patientSymptom 下对症状 根据 symptomTypeId 按从小到大进行排序
-      this.copyInfo.patientSymptom.sort((symptomA, symptomB) => {
-        return symptomA.symptomTypeId > symptomB.symptomTypeId;
-      });
-
-      // 把 this.copyInfo.patientSymptom 下的日期对象转换为符合传输格式的字符串
-      reviseDateFormat(this.copyInfo);
-
-      // 到这里，就可以准备提交数据了
-      this.copyInfo.patientId = this.$route.params.id;
-      this.copyInfo.patientCaseId = this.$route.params.caseId;
-
-      // console.log(this.copyInfo);
-      // 临时将 submit 事件的回调函数卸掉，等数据传输完毕后再加回来。这样可以避免用户在短时间内多次发出重复的提交请求
-      this.$off(this.SUBMIT, this.submit);
-      modifyDiagnosticDisease(this.copyInfo).then(() => {
-        this.updateAndClose();
-        this.$on(this.SUBMIT, this.submit);
-      });
-    },
-    updateAndClose() {
-      Bus.$emit(this.UPDATE_CASE_INFO);
-      Bus.$emit(this.SCROLL_AREA_SIZE_CHANGE);
-      this.mutableMode = this.READING_MODE;
-    },
-    updateScrollbar() {
-      this.$nextTick(() => {
-        Ps.destroy(this.$refs.scrollArea1);
-        Ps.destroy(this.$refs.scrollArea2);
-        Ps.destroy(this.$refs.scrollArea3);
-        Ps.initialize(this.$refs.scrollArea1, {
-          wheelSpeed: 1,
-          minScrollbarLength: 40
-        });
-        Ps.initialize(this.$refs.scrollArea2, {
-          wheelSpeed: 1,
-          minScrollbarLength: 40
-        });
-        Ps.initialize(this.$refs.scrollArea3, {
-          wheelSpeed: 1,
-          minScrollbarLength: 40
-        });
-      });
-    },
-    supplementCopyInfo() {
-      // this.copyInfo.patientSymptom 这个数组下的对象，有可能没有足够的属性，
-      // 这个时候我们需要根据相应的 template，给这些属性值补上，赋值为空字符串
-      if (!this.copyInfo.patientSymptom) {
-        return;   // 如果该对象不存在，就直接返回
-      }
-      for (let symptom of this.copyInfo.patientSymptom) {
-        if (symptom.symType === this.MS_SYMPTOM) {
-          for (let field of this.diagnosticDiseaseMsTemplate) {
-            if (!symptom[field.fieldName]) {
-              this.$set(symptom, field.fieldName, '');
-            }
-          }
-        } else if (symptom.symType === this.MC_SYMPTOM) {
-          for (let field of this.diagnosticDiseaseMcTemplate) {
-            if (!symptom[field.fieldName]) {
-              this.$set(symptom, field.fieldName, '');
-            }
-          }
-        } else if (symptom.symType === this.NMS_SYMPTOM) {
-          for (let field of this.diagnosticDiseaseNmsTemplate) {
-            if (!symptom[field.fieldName]) {
-              this.$set(symptom, field.fieldName, '');
-            }
-          }
-        }
-      }
-    },
-    getClass(fieldName) {
-      if (['symptomTypeId'].indexOf(fieldName) > -1) {
-        return 'col-name';
-      } else if (['ariseTime', 'ariseTimeLeftUp', 'ariseTimeRightUp', 'ariseTimeLeftDown', 'ariseTimeRightDown'].indexOf(fieldName) > -1) {
-        return 'col-time';
-      } else if (['whetherLaw'].indexOf(fieldName) > -1) {
-        return 'col-select';
-      } else if (['remarks'].indexOf(fieldName) > -1) {
-        return 'col-remarks';
-      }
-    },
-    getFieldValue(symptom, fieldName) {
-      if (fieldName === 'symptomTypeId') {
-        var symptomType = symptom[fieldName];
-        var symptomTypeItem = Util.getElement('id', symptomType, this.symptomType);
-        return symptomTypeItem.sympName;
-      } else {
-        return symptom[fieldName];
-      }
-    },
-    deleteSymptom(targetSymptom, indexOfItsType) {
-      // 删除 this.copyInfo.patientSymptom 中的 item 对象
-      var subIndex = 0;
-      for (var i = 0; i < this.copyInfo.patientSymptom.length; i++) {
-        if (this.copyInfo.patientSymptom[i].symType === targetSymptom.symType) {
-          if (subIndex === indexOfItsType) {
-            this.copyInfo.patientSymptom.splice(i, 1);
-            return;
-          }
-          subIndex += 1;
-        }
-      }
-    },
-    addSymtom(type) {
-      // 在 this.copyInfo.patientSymptom 中添加对象，传入的参数代表症状类型
-      var newSymptom = {};
-      var template = [];
-      switch (type) {
-        case this.MS_SYMPTOM:
-          template = this.diagnosticDiseaseMsTemplate;
-          newSymptom.symType = this.MS_SYMPTOM;
-          newSymptom.symptomType = 0;
-          break;
-        case this.MC_SYMPTOM:
-          template = this.diagnosticDiseaseMcTemplate;
-          newSymptom.symType = this.MC_SYMPTOM;
-          newSymptom.symptomType = 1;
-          break;
-        case this.NMS_SYMPTOM:
-          template = this.diagnosticDiseaseNmsTemplate;
-          newSymptom.symType = this.NMS_SYMPTOM;
-          newSymptom.symptomType = 2;
-          break;
-        default:
-          return;
-      }
-
-      // 然后为这条症状记录补上相应的属性值，因为它们无需被 Vue 做数据绑定，所以直接定义属性即可
-      newSymptom.patientId = parseInt(this.$route.params.id, 10);
-      newSymptom.patientCaseId = this.$route.params.caseId;
-
-      for (let field of template) {
-        this.$set(newSymptom, field.fieldName, '');
-      }
-
-      var index = 0;
-      console.log(newSymptom);
-      if (this.copyInfo.patientSymptom && this.copyInfo.patientSymptom instanceof Array) {
-        index = this.copyInfo.patientSymptom.length;
-        this.$set(this.copyInfo.patientSymptom, index, newSymptom);
-      }
-    },
-    isSymptomValid(symptom) {
-      // 检查一个症状的名字(实际上是检查其 ID)，第一个是不能为空，第二个是不能和现有列表中的重复
-      var symptomTypeId = symptom.symptomTypeId;
-      if (symptomTypeId === undefined || symptomTypeId === null || symptomTypeId === '') {
-        return false;
-      }
-
-      var count = 0;
-      for (let existedSymptom of this.allSymptom) {
-        if (existedSymptom.symptomTypeId === symptomTypeId) {
-          count += 1;
-          if (count > 1) {
-            return false;
-          }
-        }
-      }
-      return true;
+      // Bus.$emit(this.SCROLL_AREA_SIZE_CHANGE);
     },
     getMatchedField(fieldName) {
       // 在字典项中查询该名字所对应的字段，从而方便我们得到该字段的详细信息
-      return Util.getElement('fieldName', fieldName, this.totalDictionary);
+      return Util.getElement('fieldName', fieldName, this.diagnosticDiseaseDictionary);
+    },
+    getTypes(fieldName) {
+      // 在 typegroup 里面查找到 fieldName 所对应的 types（选项组）
+      var dictionaryField = this.getMatchedField(fieldName);
+      var value = dictionaryField.fieldEnumId;
+      value = fieldName; // TODO 等以后字典项返回 OK 了，就去掉这一行
+      var typeInfo = Util.getElement('typegroupcode', value, this.typeGroup);
+      return typeInfo.types ? typeInfo.types : [];
+    },
+    transform(item, fieldName) {
+      var types = this.getTypes(fieldName);
+      var diseaseType = Util.getElement('typeCode', item[fieldName], types);
+      return diseaseType.typeName ? diseaseType.typeName : '';
+    },
+    getDisease(diseaseId) {
+      // 根据药物 id，在相应的 tableData 里面寻找对应的 药物详情
+      return Util.getElement('diseaseId', diseaseId, this.diseaseInfo);
+    },
+    getTitle(diseaseId) {
+      var disease = this.getDisease(diseaseId);
+      return disease.diseaseName + '(' + disease.commonName + ')';
+    },
+    submit() {
+      this.mutableMode = this.READING_MODE;
+      // 把 this.copyInfo.patientSymptom 下的日期对象转换为符合传输格式的字符串
+      // reviseDateFormat(this.copyInfo);
+    },
+    // updateAndClose() {
+    //   Bus.$emit(this.UPDATE_CASE_INFO);
+    //   Bus.$emit(this.SCROLL_AREA_SIZE_CHANGE);
+    //   this.mutableMode = this.READING_MODE;
+    // },
+    updateScrollbar() {
+      this.$nextTick(() => {
+        // Ps.destroy(this.$refs.scrollArea1);
+        // Ps.destroy(this.$refs.scrollArea2);
+        // Ps.destroy(this.$refs.scrollArea3);
+        // Ps.initialize(this.$refs.scrollArea1, {
+        //   wheelSpeed: 1,
+        //   minScrollbarLength: 40
+        // });
+        // Ps.initialize(this.$refs.scrollArea2, {
+        //   wheelSpeed: 1,
+        //   minScrollbarLength: 40
+        // });
+        // Ps.initialize(this.$refs.scrollArea3, {
+        //   wheelSpeed: 1,
+        //   minScrollbarLength: 40
+        // });
+      });
+    },
+    calcTotalLevodopaDoseOfAllOtherDisease(targetDisease) {
+      var totalLevodopaDose = 0;
+      for (let item of this.diagnosticDisease) {
+        var diseaseInfoObj = Util.getElement('diseaseId', item.diseaseId, this.diseaseInfo);
+
+        if (item.stopFlag === 1 && item.diseaseId !== targetDisease.diseaseId && diseaseInfoObj.diseaseType === 0) {
+          totalLevodopaDose += item.levodopaDose;
+        }
+      }
+      return totalLevodopaDose;
+    },
+    addDisease() {
+      var totalLevodopaDoseOfAllOtherDisease = this.calcTotalLevodopaDoseOfAllOtherDisease({});
+      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.ADD_NEW_CARD, {}, this.archived, totalLevodopaDoseOfAllOtherDisease);
+    },
+    viewDisease(item) {
+      var totalLevodopaDoseOfAllOtherDisease = this.calcTotalLevodopaDoseOfAllOtherDisease(item);
+      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.VIEW_CURRENT_CARD, item, this.archived, totalLevodopaDoseOfAllOtherDisease);
+    },
+    editDisease(item) {
+      var totalLevodopaDoseOfAllOtherDisease = this.calcTotalLevodopaDoseOfAllOtherDisease(item);
+      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.EDIT_CURRENT_CARD, item, this.archived, totalLevodopaDoseOfAllOtherDisease);
+    },
+    deleteDisease(item) {
+      var patientDisease = {
+        patientId: parseInt(this.$route.params.id, 10),
+        patientCaseId: this.$route.params.caseId,
+        patientDiseaseId: item.patientDiseaseId
+      };
+      Bus.$on(this.CONFIRM, () => {
+        modifyDiagnosticDisease(patientDisease).then(this._resolveDeletion, this._rejectDeletion);
+      });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     getUIType(fieldName) {
       return this.getMatchedField(fieldName).uiType;
@@ -515,7 +390,7 @@ export default {
         return options;
 
       } else {
-        var dictionaryField = Util.getElement('fieldName', fieldName, this.totalDictionary);
+        var dictionaryField = Util.getElement('fieldName', fieldName, this.diagnosticDiseaseDictionary);
         var fieldEnumId = dictionaryField.fieldEnumId;
         var types = Util.getElement('typegroupcode', fieldEnumId, this.typeGroup).types;
         types = types ? types : [];
@@ -533,15 +408,43 @@ export default {
       } else {
         this.$set(this.warningResults, fieldName, null);
       }
+    },
+    _resolveDeletion() {
+      // 如果成功删除记录，则重新发出请求，获取最新数据。同时解除 [确认对话框] 的 “确认” 回调函数
+      Bus.$emit(this.UPDATE_CASE_INFO);
+      Bus.$off(this.CONFIRM);
+    },
+    _rejectDeletion() {
+      // 即使删除不成功，也要解除 [确认对话框] 的 “确认” 回调函数
+      Bus.$off(this.CONFIRM);
+    },
+    recalculateCardWidth() {
+      this.$nextTick(() => {
+        var panelWidth = this.$refs.diagnosticDisease.clientWidth;
+        var devideNum = 1.0;
+        // 20px 是卡片的横向间距，定义在了 varaibles.less 中，200px 是卡片的最小宽度
+        while (panelWidth / devideNum > 200 + 20) {
+          devideNum += 1.0;
+        }
+        devideNum -= 1;
+        // 一排最多显示 10 个卡片
+        devideNum = devideNum <= 10 ? devideNum : 10;
+        this.devideWidth = 'width-1-' + parseInt(devideNum, 10);
+      });
     }
   },
   mounted() {
-    this.updateScrollbar();
+    // this.updateScrollbar();
 
-    Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
-    Bus.$on(this.TOGGLE_LIST_DISPLAY, this.updateScrollbar);
+    // Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
+    // Bus.$on(this.TOGGLE_LIST_DISPLAY, this.updateScrollbar);
     Bus.$on(this.QUIT_DIAGNOSTIC_DETAIL, this.cancel);
     Bus.$on(this.EDIT_DIAGNOSTIC_DISEASE, this.startEditing);
+    this.recalculateCardWidth();
+
+    Bus.$on(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
+    Bus.$on(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
+    Bus.$on(this.RECALCULATE_CARD_WIDTH, this.recalculateCardWidth);
 
     setTimeout(() => {
       // console.log(this.copyInfo);
@@ -562,9 +465,14 @@ export default {
     Bus.$off(this.SCREEN_SIZE_CHANGE);
     Bus.$off(this.TOGGLE_LIST_DISPLAY);
     Bus.$off(this.QUIT_DIAGNOSTIC_DETAIL);
+    Bus.$off(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
+    Bus.$off(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
+    Bus.$off(this.RECALCULATE_CARD_WIDTH, this.recalculateCardWidth);
   },
   components: {
-    FoldingPanel
+    FoldingPanel,
+    ExtensiblePanel,
+    Card
   },
   watch: {
     $route() {
@@ -576,12 +484,12 @@ export default {
       vueCopy(this.diagnosticDisease, this.copyInfo);
 
       // 传过来的数据可能会没有某些字段属性，我们接下来将通过 template 来补齐
-      this.supplementCopyInfo();
-    },
-    templateLength: function() {
-      // 如果 template 数据还没到位，那么补齐就会没有效果，所以在获取到 template 后，也要做一次补齐操作
-      this.supplementCopyInfo();
+      // this.supplementCopyInfo();
     }
+    // templateLength: function() {
+    //  // 如果 template 数据还没到位，那么补齐就会没有效果，所以在获取到 template 后，也要做一次补齐操作
+    //   this.supplementCopyInfo();
+    // }
   }
 };
 </script>
@@ -601,7 +509,7 @@ export default {
 @row-height: 45px;
 
 .diagnostic-disease {
-  padding: 0 25px;
+  // padding: 0 25px;
   text-align: left;
   .field {
     display: inline-block;
@@ -617,6 +525,7 @@ export default {
       }
     }
     .field-name {
+      padding: 0 25px;
       display: inline-block;
       position: absolute;
       width: @field-name-width;
@@ -687,116 +596,164 @@ export default {
       }
     }
   }
-  .form-wrapper {
-    .form-title {
-      margin: 15px 0;
-      padding: 0;
-      text-align: left;
-      font-size: @normal-font-size;
-    }
-    .scroll-area {
+  // .form-wrapper {
+  //   .form-title {
+  //     margin: 15px 0;
+  //     padding: 0;
+  //     text-align: left;
+  //     font-size: @normal-font-size;
+  //   }
+    // .scroll-area {
+    //   position: relative;
+    //   width: 100%;
+    //   padding-bottom: 10px;
+    //   overflow: hidden;
+    //   .form-content {
+    //     border: 1px solid @light-gray-color;
+    //     border-spacing: 0;
+    //     table-layout: fixed;
+    //     .row {
+    //       height: @row-height;
+    //       &.first-row {
+    //         background-color: @screen-color;
+    //         height: 30px;
+    //         line-height: 30px;
+    //         .add-button {
+    //           position: absolute;
+    //           left: 5px;
+    //           cursor: pointer;
+    //           &:hover {
+    //             opacity: 0.8;
+    //           }
+    //           &:active {
+    //             opacity: 0.9;
+    //           }
+    //         }
+    //       }
+    //       .col {
+    //         position: relative;
+    //         font-size: @normal-font-size;
+    //         text-align: center;
+    //         &.col-name {
+    //           min-width: @col-name-width;
+    //           .el-input {
+    //             margin-left: 20px;
+    //             width: @col-name-width - 30px;
+    //           }
+    //         }
+    //         &.col-time {
+    //           min-width: @col-time-width;
+    //         }
+    //         &.col-select {
+    //           min-width: @col-select-width;
+    //         }
+    //         &.col-remarks {
+    //           min-width: @col-remarks-width;
+    //         }
+    //         .required-mark {
+    //           color: red;
+    //           font-size: 20px;
+    //           vertical-align: middle;
+    //         }
+    //         .delete-button {
+    //           position: absolute;
+    //           left: 5px;
+    //           top: 13px;
+    //           color: @alert-color;
+    //           cursor: pointer;
+    //           z-index: 10;
+    //           &:hover {
+    //             opacity: 0.8;
+    //           }
+    //           &:active {
+    //             opacity: 0.9;
+    //           }
+    //         }
+    //         .el-input {
+    //           margin-left: 2%;
+    //           width: 90%;
+    //           .el-input__inner {
+    //             height: 30px;
+    //             border: none;
+    //             background-color: @screen-color;
+    //           }
+    //         }
+    //         .warning .el-input__inner {
+    //           border: 1px solid red;
+    //         }
+    //       }
+    //     }
+    //   }
+    //   .ps__scrollbar-x-rail {
+    //     position: absolute;
+    //     height: @scroll-bar-height;
+    //     width: 100%;
+    //     bottom: 0;
+    //     box-sizing: border-box;
+    //     opacity: 0.3;
+    //     transition: opacity 0.3s;
+    //     .ps__scrollbar-x {
+    //       position: relative;
+    //       height: @scroll-bar-height;
+    //       background-color: #aaa;
+    //       border-radius: 20px;
+    //     }
+    //   }
+    //   &:hover {
+    //     .ps__scrollbar-x-rail {
+    //       opacity: 0.6;
+    //     }
+    //   }
+    // }
+  // }
+  .card {
       position: relative;
-      width: 100%;
-      padding-bottom: 10px;
-      overflow: hidden;
-      .form-content {
-        border: 1px solid @light-gray-color;
-        border-spacing: 0;
-        table-layout: fixed;
-        .row {
-          height: @row-height;
-          &.first-row {
-            background-color: @screen-color;
-            height: 30px;
-            line-height: 30px;
-            .add-button {
-              position: absolute;
-              left: 5px;
-              cursor: pointer;
-              &:hover {
-                opacity: 0.8;
-              }
-              &:active {
-                opacity: 0.9;
-              }
-            }
-          }
-          .col {
-            position: relative;
-            font-size: @normal-font-size;
-            text-align: center;
-            &.col-name {
-              min-width: @col-name-width;
-              .el-input {
-                margin-left: 20px;
-                width: @col-name-width - 30px;
-              }
-            }
-            &.col-time {
-              min-width: @col-time-width;
-            }
-            &.col-select {
-              min-width: @col-select-width;
-            }
-            &.col-remarks {
-              min-width: @col-remarks-width;
-            }
-            .required-mark {
-              color: red;
-              font-size: 20px;
-              vertical-align: middle;
-            }
-            .delete-button {
-              position: absolute;
-              left: 5px;
-              top: 13px;
-              color: @alert-color;
-              cursor: pointer;
-              z-index: 10;
-              &:hover {
-                opacity: 0.8;
-              }
-              &:active {
-                opacity: 0.9;
-              }
-            }
-            .el-input {
-              margin-left: 2%;
-              width: 90%;
-              .el-input__inner {
-                height: 30px;
-                border: none;
-                background-color: @screen-color;
-              }
-            }
-            .warning .el-input__inner {
-              border: 1px solid red;
-            }
-          }
-        }
+      display: inline-block;
+      margin: @card-vertical-margin @card-horizontal-margin;
+      &.width-1-1, &.width-1-0 {
+        width: calc(~"100% - @{card-horizontal-margin} * 2");
       }
-      .ps__scrollbar-x-rail {
+      &.width-1-2 {
+        width: calc(~"50% - @{card-horizontal-margin} * 2");
+      }
+      &.width-1-3 {
+        width: calc(~"33.3333% - @{card-horizontal-margin} * 2");
+      }
+      &.width-1-4 {
+        width: calc(~"25% - @{card-horizontal-margin} * 2");
+      }
+      &.width-1-5 {
+        width: calc(~"20% - @{card-horizontal-margin} * 2");
+      }
+      &.width-1-6 {
+        width: calc(~"16.6666% - @{card-horizontal-margin} * 2");
+      }
+      &.width-1-7 {
+        width: calc(~"14.2857% - @{card-horizontal-margin} * 2");
+      }
+      &.width-1-8 {
+        width: calc(~"12.5% - @{card-horizontal-margin} * 2");
+      }
+      &.width-1-9 {
+        width: calc(~"11.1111% - @{card-horizontal-margin} * 2");
+      }
+      &.width-1-10 {
+        width: calc(~"10% - @{card-horizontal-margin} * 2");
+      }
+      .text {
         position: absolute;
-        height: @scroll-bar-height;
-        width: 100%;
-        bottom: 0;
-        box-sizing: border-box;
-        opacity: 0.3;
-        transition: opacity 0.3s;
-        .ps__scrollbar-x {
-          position: relative;
-          height: @scroll-bar-height;
-          background-color: #aaa;
-          border-radius: 20px;
-        }
+        font-size: @small-font-size;
+        color: @light-font-color;
       }
-      &:hover {
-        .ps__scrollbar-x-rail {
-          opacity: 0.6;
-        }
+      .first-line {
+        left: 10px;
+        top: 50px;
       }
-    }
+      .second-line {
+        left: 10px;
+        top: 75px;
+      }
   }
-}
+}      
 
 </style>

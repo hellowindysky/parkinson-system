@@ -137,6 +137,34 @@
           </div>
         </card>
       </extensible-panel>
+
+      <extensible-panel class="panel physiontherapy-panel" :mode="mutableMode" :title="physiontherapyTitle" v-on:addNewCard="addPhysiontherapy"
+        :editable="canEdit">
+        <card class="card physiontherapy-card" :class="smallCardWidth" :mode="mutableMode" v-for="item in diagnosticPhysiontherapy" :key="item.physiType"
+          :title="'物理治疗'" v-on:editCurrentCard="editPhysiontherapy(item)"
+          v-on:deleteCurrentCard="deletePhysiontherapy(item)" v-on:viewCurrentCard="viewPhysiontherapy(item)">
+          <div class="text line-1">
+            <span class="name">物理治疗类型: </span>
+            <span class="value">{{transformPhysiType(item.physiType)}}</span>
+          </div>
+          <div class="text line-2">
+            <span class="name">治疗前左侧运动阈值: </span>
+            <span class="value">{{item.leftThresholdBefore}}</span>
+          </div>
+           <div class="text line-3">
+            <span class="name">治疗前右侧运动阈值: </span>
+            <span class="value">{{item.rightThresholdBefore}}</span>
+          </div>
+           <div class="text line-4">
+            <span class="name">不良反应: </span>
+            <span class="value">{{item.patientPhytheReactionId}}</span>
+          </div>
+           <div class="text line-5">
+            <span class="name">记录时间: </span>
+            <span class="value">{{item.recordDate}}</span>
+          </div>
+        </card>
+      </extensible-panel>
     </div>
   </folding-panel>
 </template>
@@ -146,6 +174,7 @@ import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import {
+  deletePhysiontherapy,
   deletePatientMedicine,
   deletePreEvaluation,
   deleteSurgicalMethod,
@@ -183,6 +212,12 @@ export default {
         return {};
       }
     },
+    diagnosticPhysiontherapy: {
+      type: Array,
+      default: () => {
+        return [];
+      }
+    },
     archived: {
       type: Boolean,
       default: true
@@ -218,6 +253,10 @@ export default {
     dbsTitle() {
       var amount = this.dbsFirstList.length + this.dbsFollowList.length;
       return '程控记录（' + amount + '条记录）';
+    },
+    physiontherapyTitle() {
+      var totalCount = this.diagnosticPhysiontherapy.length ;
+      return '物理治疗（' + totalCount + '条记录）';
     },
     preEvaluationList() {
       return this.diagnosticSurgery.patientPreopsList ? this.diagnosticSurgery.patientPreopsList : [];
@@ -349,7 +388,12 @@ export default {
         {
           text: '程控记录',
           callback: this.addDbsRecord
+        },
+        {
+          text: '物理治疗',
+          callback: this.addPhysiontherapy
         }
+
       ];
       Bus.$emit(this.SHOW_CHOICE_PANEL, list);
     },
@@ -439,6 +483,29 @@ export default {
       }
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
+    transformPhysiType(physiType) {
+      var types = Util.getElement('typegroupcode', 'physiType', this.typeGroup).types;
+      var typeName = Util.getElement('typeCode', physiType, types).typeName;
+      return typeName ? typeName : '';
+    },
+    addPhysiontherapy() {
+      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.ADD_NEW_CARD, {}, this.archived);
+    },
+    viewPhysiontherapy(item) {
+      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.VIEW_CURRENT_CARD, item, this.archived);
+    },
+    editPhysiontherapy(item) {
+      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.EDIT_CURRENT_CARD, item, this.archived);
+    },
+    deletePhysiontherapy(item) {
+      var patientPhysiontherapy = {
+        patientPhytheTmsId: item.patientPhytheTmsId
+      };
+      Bus.$on(this.CONFIRM, () => {
+        deletePhysiontherapy(patientPhysiontherapy).then(this._resolveDeletion, this._rejectDeletion);
+      });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
+    },
     _resolveDeletion() {
       // 如果成功删除记录，则重新发出请求，获取最新数据。同时解除 [确认对话框] 的 “确认” 回调函数
       Bus.$emit(this.UPDATE_CASE_INFO);
@@ -511,12 +578,19 @@ export default {
 @import "~styles/variables.less";
 
 @surgery-card-height: 220px;
+@physiontherapy-card-height: 180px;
 
 .diagnostic-surgery {
   .panel {
     text-align: left;
     &.surgery-panel .content {
       height: @surgery-card-height + @card-vertical-margin * 2 + 5px * 2;
+      &.extended {
+        height: auto;
+      }
+    }
+    &.physiontherapy-panel .content {
+      height: @physiontherapy-card-height + @card-vertical-margin * 2 + 5px * 2;
       &.extended {
         height: auto;
       }
@@ -559,6 +633,9 @@ export default {
       }
       &.surgery-card {
         height: @surgery-card-height;
+      }
+      &.physiontherapy-card {
+        height: @physiontherapy-card-height;
       }
       .text {
         position: absolute;

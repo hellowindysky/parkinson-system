@@ -12,7 +12,8 @@
       <diagnostic-disease :archived="!hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
         :diagnosticDisease="diagnosticDisease"></diagnostic-disease>
       <diagnostic-treatment :archived="!hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
-        :diagnosticSurgery="caseDetail.patientSurgicalDbs" :diagnosticMedicine="caseDetail.patientMedicineNew">
+        :diagnosticSurgery="caseDetail.patientSurgicalDbs" :diagnosticMedicine="caseDetail.patientMedicineNew"
+        :diagnosticPhysiontherapy="caseDetail.patientPhytheTms">
       </diagnostic-treatment>
       <diagnostic-scale :archived="!hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
         :patientScale="caseDetail.patientScale"></diagnostic-scale>

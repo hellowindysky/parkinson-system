@@ -82,6 +82,7 @@ export default {
   SHOW_DBS_MODAL: 'showDbsModal',
   SHOW_AUTHORIZATION_MODAL: 'showAuthorizationModal',
   SHOW_PASSWORD_MODAL: 'showPasswordModal',
+  SHOW_PHYSIONTHERAPY_MODAL: 'showPhysiontherapyModal',
   SHOW_FIRSTSYMPTOMS_MODAL: 'showFirstSymptomsModal',
   SHOW_FIRSTTREATMENT_MODAL: 'showFirstTreatmentModal',
   SHOW_DIAGNOSTIC_RECORD_MODAL: 'showDiagnosticRecordModal',
@@ -97,6 +98,7 @@ export default {
   FAMILY_HISTORY_MODAL: 'familyHistoryModal',
   PERSON_HISTORY_MODAL: 'personHistoryModal',
   TOXIC_HISTORY_MODAL: 'toxicHistoryModal',
+  PHYSIONTHERAPY_MODAL: 'PhysiontherapyModal',
 
   TEA_HISTORY_MODAL: 'teaHistoryModal',
   COFFEE_HISTORY_MODAL: 'coffeeHistoryModal',
