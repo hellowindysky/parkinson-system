@@ -328,6 +328,7 @@ import Bus from 'utils/bus.js';
 import Ps from 'perfect-scrollbar';
 import { mapGetters } from 'vuex';
 import Util from 'utils/util.js';
+import { getDictionary } from 'api/user';
 export default {
   data() {
     return {
@@ -352,6 +353,11 @@ export default {
     }
   },
   methods: {
+    updateUserInfo() {
+      getDictionary().then((data) => {
+        this.userInfo.all = data;
+      });
+    },
     showModal(cardOperation, item) {
       console.log(cardOperation, item);
       this.mode = cardOperation;
@@ -391,7 +397,6 @@ export default {
   },
   mounted() {
     Bus.$on(this.SHOW_FIRSTSYMPTOMS_MODAL, this.showModal);
-    console.log(JSON.stringify(this.typeGroup));
   }
 };
 </script>
