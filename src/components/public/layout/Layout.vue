@@ -11,22 +11,16 @@
     <pre-evaluation-modal></pre-evaluation-modal>
     <surgical-method-modal></surgical-method-modal>
     <operative-complication-modal></operative-complication-modal>
+    <physiontherapy-modal></physiontherapy-modal>
     <dbs-modal></dbs-modal>
     <nervous-system-modal></nervous-system-modal>
     <gene-modal></gene-modal>
     <biochemical-exam-modal></biochemical-exam-modal>
     <emg-modal></emg-modal>
     <image-modal></image-modal>
-<<<<<<< HEAD
-    <physiontherapy-modal></physiontherapy-modal>
-=======
     <first-symptoms-modal></first-symptoms-modal>
     <first-treatment-modal></first-treatment-modal>
-<<<<<<< HEAD
->>>>>>> 211a4c7d3c540d0276badb922762b5856d72c428
-=======
     <diagnostic-record-modal></diagnostic-record-modal>
->>>>>>> 4ad01b0da7254c048958dd470aeb19859b14abbd
     <filter-panel :showFilterPanel="showFilterPanel"></filter-panel>
     <choice-panel></choice-panel>
     <confirm-box></confirm-box>
