@@ -138,10 +138,10 @@
         </card>
       </extensible-panel>
 
-      <extensible-panel class="panel" :mode="mutableMode" :title="physiontherapyTitle" v-on:addNewCard="addPhysiontherapy"
+      <extensible-panel class="panel physiontherapy-panel" :mode="mutableMode" :title="physiontherapyTitle" v-on:addNewCard="addPhysiontherapy"
         :editable="canEdit">
-        <card class="card" :class="devideWidth" :mode="mutableMode" v-for="item in physiontherapyList" :key="item.physiType"
-          :title="物理治疗" v-on:editCurrentCard="editPhysiontherapy(item)"
+        <card class="card physiontherapy-card" :class="smallCardWidth" :mode="mutableMode" v-for="item in diagnosticPhysiontherapy" :key="item.physiType"
+          :title="'物理治疗'" v-on:editCurrentCard="editPhysiontherapy(item)"
           v-on:deleteCurrentCard="deletePhysiontherapy(item)" v-on:viewCurrentCard="viewPhysiontherapy(item)">
           <div class="text line-1">
             <span class="name">物理治疗类型: </span>
@@ -212,7 +212,7 @@ export default {
         return {};
       }
     },
-    physiontherapy: {
+    diagnosticPhysiontherapy: {
       type: Array,
       default: () => {
         return [];
@@ -229,8 +229,7 @@ export default {
       'medicineDictionary',
       'surgicalTypeList',
       'complicationTypeList',
-      'typeGroup',
-      'physiontherapyDictionary'
+      'typeGroup'
     ]),
     medicineTitle() {
       var count = this.diagnosticMedicine.length;
@@ -255,11 +254,8 @@ export default {
       return '程控记录（' + amount + '条记录）';
     },
     physiontherapyTitle() {
-      var totalCount = this.physiontherapyList.length ;
+      var totalCount = this.diagnosticPhysiontherapy.length ;
       return '物理治疗（' + totalCount + '条记录）';
-    },
-    physiontherapyList() {
-      return this.physiontherapy. physiontherapyList ? this.physiontherapy. physiontherapyList : [];
     },
     preEvaluationList() {
       return this.diagnosticSurgery.patientPreopsList ? this.diagnosticSurgery.patientPreopsList : [];
@@ -477,24 +473,21 @@ export default {
     },
     transformPhysiType(physiType, fieldName) {
       var types = Util.getElement('typegroupcode', fieldName, this.typeGroup).types;
-      types = types === undefined ? [] : types;
       var typeName = Util.getElement('typeCode', physiType, types).typeName;
-      return typeName === undefined ? '' : typeName;
+      return typeName ? typeName : '';
     },
     addPhysiontherapy() {
-      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.ADD_NEW_CARD, '新增物理治疗', {}, this.PERSON_HISTORY_MODAL);
+      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.ADD_NEW_CARD, {}, this.archived);
     },
-    viewPhysiontherapy(item, modal) {
-      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.VIEW_CURRENT_CARD, '物理治疗', item, modal);
+    viewPhysiontherapy(item) {
+      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.VIEW_CURRENT_CARD, item, this.archived);
     },
-    editPhysiontherapy(item, modal) {
-      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.EDIT_CURRENT_CARD, '物理治疗', item, modal);
+    editPhysiontherapy(item) {
+      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.EDIT_CURRENT_CARD, item, this.archived);
     },
     deletePhysiontherapy(item) {
       var patientPhysiontherapy = {
-        physiType: parseInt(this.$route.params.id, 1),
-        patientCaseId: this.$route.params.patientCaseId,
-        patientId: item.patientId
+        patientPhytheTmsId: item.patientPhytheTmsId
       };
       Bus.$on(this.CONFIRM, () => {
         deletePhysiontherapy(patientPhysiontherapy).then(this._resolveDeletion, this._rejectDeletion);
@@ -573,12 +566,19 @@ export default {
 @import "~styles/variables.less";
 
 @surgery-card-height: 220px;
+@physiontherapy-card-height: 180px;
 
 .diagnostic-surgery {
   .panel {
     text-align: left;
     &.surgery-panel .content {
       height: @surgery-card-height + @card-vertical-margin * 2 + 5px * 2;
+      &.extended {
+        height: auto;
+      }
+    }
+    &.physiontherapy-panel .content {
+      height: @physiontherapy-card-height + @card-vertical-margin * 2 + 5px * 2;
       &.extended {
         height: auto;
       }
@@ -621,6 +621,9 @@ export default {
       }
       &.surgery-card {
         height: @surgery-card-height;
+      }
+      &.physiontherapy-card {
+        height: @physiontherapy-card-height;
       }
       .text {
         position: absolute;
