@@ -9,7 +9,7 @@
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-             <span>{{physiType}}</span>
+             <span>{{transform(physiType,'physiType')}}</span>
           </span>
           <span class="field-input" v-else>
             <span class="warning-text">{{warningResults.physiType}}</span>
@@ -85,7 +85,7 @@
            刺激侧:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{stimulusSide}}</span>
+            <span>{{transform(stimulusSide,'stimulusSide')}}</span>
           </span>
           <span class="field-input" v-else>
             <span class="warning-text">{{warningResults.stimulusSide}}</span>
@@ -265,6 +265,11 @@ export default {
       this.completeInit = true;
       this.displayModal = true;
       this.updateScrollbar();
+    },
+    transform(code, fieldName) {
+      var options = this.getOptions(fieldName);
+      var targetOption = Util.getElement('code', code, options);
+      return targetOption.name;
     },
     getOptions(fieldName) {
       var options = [];

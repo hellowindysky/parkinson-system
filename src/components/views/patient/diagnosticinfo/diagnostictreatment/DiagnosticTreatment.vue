@@ -471,8 +471,8 @@ export default {
       }
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
-    transformPhysiType(physiType, fieldName) {
-      var types = Util.getElement('typegroupcode', fieldName, this.typeGroup).types;
+    transformPhysiType(physiType) {
+      var types = Util.getElement('typegroupcode', 'physiType', this.typeGroup).types;
       var typeName = Util.getElement('typeCode', physiType, types).typeName;
       return typeName ? typeName : '';
     },
