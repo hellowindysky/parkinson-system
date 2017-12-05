@@ -113,6 +113,25 @@ export function deletePatientPresentHistory(presentHistory) {
   return encapsulatePromise(url, request);
 };
 
+// v2.1 现病史 ↓
+// 新增首发症状
+export function addPatientFirstSymbol(firstSymbol) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientFirstSymbolModel = firstSymbol;
+  var url = baseUrl + '/pdms/addPatientFirstSymbol';
+
+  return encapsulatePromise(url, request);
+};
+
+// 删除首发症状
+export function deletePatientFirstSymbol(firstSymbol) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientFirstSymbolModel = firstSymbol;
+  var url = baseUrl + '/pdms/addPatientFirstSymbol';
+
+  return encapsulatePromise(url, request);
+};
+
 // 新增用药史
 export function addPatientMedHistory(medHistory) {
   var request = Object.assign({}, getCommonRequest());
