@@ -774,7 +774,6 @@ export default {
         transform: translate3d(10px, 5px, 0);  // 这一行是为了修补视觉上的偏移
         &.whole-line {
           width: 100%;
-          overflow: hidden;
           .field-input {
             width: calc(~"96% - @{field-name-width}")
           }
