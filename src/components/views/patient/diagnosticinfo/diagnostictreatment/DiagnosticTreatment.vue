@@ -198,7 +198,8 @@ export default {
     ]),
     medicineTitle() {
       var count = this.diagnosticMedicine.length;
-      return '药物治疗' + '（' + count + '条记录）';
+      var ledd = this.calcTotalLevodopaDoseOfAllOtherMedicine({});
+      return '药物治疗' + '（' + count + '条记录） LEDD: ' + ledd + ' mg';
     },
     surgeryTitle() {
       var count = this.preEvaluationList.length + this.surgicalMethodList.length +
@@ -270,13 +271,24 @@ export default {
     calcTotalLevodopaDoseOfAllOtherMedicine(targetMedicine) {
       var totalLevodopaDose = 0;
       for (let item of this.diagnosticMedicine) {
-        var medicineInfoObj = Util.getElement('medicineId', item.medicineId, this.medicineInfo);
-        // 用来计算的药物要满足 3 个条件：未停药，不是当前药物，属于多巴胺类制剂
-        if (item.stopFlag === 1 && item.medicineId !== targetMedicine.medicineId && medicineInfoObj.medicalType === 0) {
+        // 用来计算的药物要满足 2 个条件：未停药，不是当前药物
+        if (item.stopFlag === 1 && item.medicineId !== targetMedicine.medicineId) {
           totalLevodopaDose += item.levodopaDose;
         }
       }
       return totalLevodopaDose;
+    },
+    checkIfComtExistsAmongOtherMedicine(targetMedicine) {
+      // 遍历其它所有未停药的药物，看是否存在 COMT 抑制剂
+      var hasCOMT = false;
+      for (let item of this.diagnosticMedicine) {
+        var medicineInfoObj = Util.getElement('medicineId', item.medicineId, this.medicineInfo);
+        if (item.stopFlag === 1 && item.medicineId !== targetMedicine.medicineId &&
+          medicineInfoObj.medicalType === 3) {
+          hasCOMT = true;
+        }
+      }
+      return hasCOMT;
     },
     transformSurgicalType(typeId) {
       // 在 tableData 中找到对应的值
@@ -298,16 +310,16 @@ export default {
       return typeName === undefined ? '' : typeName;
     },
     addMedicine() {
-      var totalLevodopaDoseOfAllOtherMedicine = this.calcTotalLevodopaDoseOfAllOtherMedicine({});
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.ADD_NEW_CARD, {}, this.archived, totalLevodopaDoseOfAllOtherMedicine);
+      var hasCOMT = this.checkIfComtExistsAmongOtherMedicine({});
+      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.ADD_NEW_CARD, {}, this.archived, hasCOMT);
     },
     viewMedicine(item) {
-      var totalLevodopaDoseOfAllOtherMedicine = this.calcTotalLevodopaDoseOfAllOtherMedicine(item);
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.VIEW_CURRENT_CARD, item, this.archived, totalLevodopaDoseOfAllOtherMedicine);
+      var hasCOMT = this.checkIfComtExistsAmongOtherMedicine(item);
+      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.VIEW_CURRENT_CARD, item, this.archived, hasCOMT);
     },
     editMedicine(item) {
-      var totalLevodopaDoseOfAllOtherMedicine = this.calcTotalLevodopaDoseOfAllOtherMedicine(item);
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.EDIT_CURRENT_CARD, item, this.archived, totalLevodopaDoseOfAllOtherMedicine);
+      var hasCOMT = this.checkIfComtExistsAmongOtherMedicine(item);
+      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.EDIT_CURRENT_CARD, item, this.archived, hasCOMT);
     },
     deleteMedicine(item) {
       var patientMedicine = {

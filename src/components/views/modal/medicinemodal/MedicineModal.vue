@@ -80,7 +80,10 @@
           </span>
           <span v-if="mode===VIEW_CURRENT_CARD" class="field-input" :class="{'long-field-name': isLongName(field.fieldName)}">
             <span v-if="getMatchedField(field.fieldName).readOnlyType===2">
-              <span v-if="field.fieldName==='levodopaDose'">{{levodopaDose}}</span>
+              <span v-if="field.fieldName==='levodopaDose'">
+                {{levodopaDose}}
+                <span class="enhance" v-show="enhanceEffect">( +33% )</span>
+              </span>
               <span v-else-if="field.fieldName==='levodopaFactorUsed'">{{levodopaFactor}}</span>
               <span v-else-if="field.fieldName==='totalMeasure'">{{medicine.totalMeasure}} mg</span>
               <span v-else>{{medicine[field.fieldName]}}</span>
@@ -90,7 +93,10 @@
           <span v-else class="field-input" :class="{'long-field-name': isLongName(field.fieldName)}">
             <span class="warning-text">{{warningResults[field.fieldName]}}</span>
             <span v-if="getMatchedField(field.fieldName).readOnlyType===2">
-              <span v-if="field.fieldName==='levodopaDose'">{{levodopaDose}}</span>
+              <span v-if="field.fieldName==='levodopaDose'">
+                {{levodopaDose}}
+                <span class="enhance" v-show="enhanceEffect">( +33% )</span>
+              </span>
               <span v-else-if="field.fieldName==='levodopaFactorUsed'">{{levodopaFactor}}</span>
               <span v-else-if="field.fieldName==='totalMeasure'">{{totalMeasure}} mg</span>
               <span v-else>{{medicine[field.fieldName]}}</span>
@@ -194,7 +200,7 @@ export default {
       warningResults: {},
       completeInit: false,
       hasSideEffect: false,  // 这个变量用来控制是否有副反应
-      totalLevodopaDoseOfAllOtherMedicine: 0,  // 用来供 COMT 抑制剂药物(如珂丹) 计算左旋多巴等效剂量
+      hasComtAmongOtherMedicine: false,
       lockSubmitButton: false,
       showEdit: true,
       foldedConditionalContent: false   // 这个变量用来控制是否显示停药信息和副反应信息
@@ -308,18 +314,24 @@ export default {
       this.medicine.levodopaFactorUsed = levodopaFactor;
       return levodopaFactor;
     },
+    enhanceEffect() {
+      // 如果是多巴胺类药物，则要看其它药物中是否存在 COMT 抑制剂，存在则有药效增益的
+      // 如果是本身具有左旋多巴等效系数的 COMT 抑制剂，比如达灵复，同样是具有药效增益的
+      // 如果是左旋多巴等效系数为 0 的 COMT 抑制剂，比如珂丹，也是视为具有药效增益，因为怎么算最后都是 0
+      // 其它情况均不具有药效增益
+      return (this.medicineInfoObj.medicalType === 0 && this.hasComtAmongOtherMedicine) ||
+        this.medicineInfoObj.medicalType === 3;
+    },
     levodopaDose() {
       // 单日左旋多巴等效剂量，更新这个计算属性的同时也更新 this.medicine.levodopaDose
-      // 注意 COMT 抑制剂类药物（如珂丹），其左旋多巴等效系数为 0，它们的左旋多巴等效剂量，依赖于该次诊断的其它药物
+      // 注意 COMT 抑制剂类药物，某一些的左旋多巴等效系数为 0（如珂丹），另一些则不为 0（如达灵复）
       let levodopaDose = 0;
-      if (this.medicineInfoObj.medicalType === 3) {
-        levodopaDose = Math.round(this.totalLevodopaDoseOfAllOtherMedicine * 100000 * 0.33) / 100000.0;
-      } else {
-        let levodopaFactor = this.medicine.levodopaFactorUsed;
-        levodopaDose = Math.round(this.totalAmount * levodopaFactor * 100000) / 100000.0;
-      }
+      let levodopaFactor = this.medicine.levodopaFactorUsed;
 
+      var coefficient = this.enhanceEffect ? 1.33 : 1;
+      levodopaDose = Math.round(this.totalAmount * levodopaFactor * 100000 * coefficient) / 100000.0;
       this.medicine.levodopaDose = levodopaDose;
+
       return levodopaDose;
     },
     rowArray() {
@@ -370,13 +382,13 @@ export default {
     }
   },
   methods: {
-    showModal(cardOperation, item, showEdit, totalLevodopaDoseOfAllOtherMedicine) {
+    showModal(cardOperation, item, showEdit, hasComtAmongOtherMedicine) {
       this.mode = cardOperation;
       this.displayModal = true;
       this.completeInit = false;
       this.showEdit = showEdit;
       this.foldedConditionalContent = true;
-      this.totalLevodopaDoseOfAllOtherMedicine = totalLevodopaDoseOfAllOtherMedicine;
+      this.hasComtAmongOtherMedicine = hasComtAmongOtherMedicine;
 
       setTimeout(() => {
         // console.log('firstTemplate', this.firstTemplateGroup);
@@ -795,6 +807,13 @@ export default {
           color: @light-font-color;
           &.long-field-name {
             left: @long-field-name-width;
+          }
+          .enhance {
+            display: inline-block;
+            margin-left: 2px;
+            width: 60px;
+            color: #208040;
+            text-align: center;
           }
           .warning-text {
             position: absolute;
