@@ -391,7 +391,6 @@ export default {
   },
   mounted() {
     Bus.$on(this.SHOW_FIRSTSYMPTOMS_MODAL, this.showModal);
-    console.log(JSON.stringify(this.typeGroup));
   }
 };
 </script>
