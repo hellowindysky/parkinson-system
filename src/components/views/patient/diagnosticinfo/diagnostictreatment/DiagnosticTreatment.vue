@@ -202,8 +202,7 @@ export default {
     },
     surgeryTitle() {
       var count = this.preEvaluationList.length + this.surgicalMethodList.length +
-        this.surgicalMethodList.length + this.postComplicationList.length +
-        this.dbsFirstList.length + this.dbsFollowList.length;
+        this.postComplicationList.length + this.dbsFirstList.length + this.dbsFollowList.length;
       return '手术治疗' + '（' + count + '条记录）';
     },
     preEvaluationTitle() {

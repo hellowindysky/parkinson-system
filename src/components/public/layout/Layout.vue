@@ -1,9 +1,10 @@
 <template lang="html">
-  <div class="app-wrapper" v-if="display" @click="blurOnScreen">
+  <div class="app-wrapper" v-if="display" @click="clickScreen">
     <topbar class="topbar" :showFilterPanel="showFilterPanel"></topbar>
     <sidebar class="sidebar"></sidebar>
     <router-view class="content"></router-view>
     <password-modal></password-modal>
+    <authorization-modal></authorization-modal>
     <group-modal></group-modal>
     <modal-box></modal-box>
     <medicine-modal></medicine-modal>
@@ -32,6 +33,7 @@ import topbar from 'components/views/topbar/Topbar';
 import sidebar from 'components/views/sidebar/Sidebar';
 
 import passwordModal from 'components/views/modal/passwordmodal/PasswordModal';
+import authorizationModal from 'components/views/modal/authorizationmodal/AuthorizationModal';
 import groupModal from 'components/views/modal/groupmodal/GroupModal';
 import modalBox from 'components/views/modal/modalbox/ModalBox';
 import medicineModal from 'components/views/modal/medicinemodal/MedicineModal';
@@ -52,6 +54,9 @@ import filterPanel from 'components/public/filterpanel/FilterPanel';
 import choicePanel from 'components/public/choicepanel/ChoicePanel';
 import confirmBox from 'components/public/confirmbox/ConfirmBox';
 
+// 设定多长时间不操作，就返回登录界面
+const RELOGIN_TIME_FOR_NO_OPERATION = 1000 * 60 * 60;
+
 export default {
   data() {
     return {
@@ -63,6 +68,7 @@ export default {
     topbar,
     sidebar,
     passwordModal,
+    authorizationModal,
     groupModal,
     modalBox,
     medicineModal,
@@ -84,8 +90,23 @@ export default {
     confirmBox
   },
   methods: {
-    blurOnScreen() {
+    clickScreen() {
+      // 这个函数的作用有两个，一个是通过失焦来关闭某些面板，另一个是检查是否长时间没有操作
       Bus.$emit(this.BLUR_ON_SCREEN);
+
+      this.checkIfNoOperationForTooLong(this.$store.state.lastOperationTime);
+    },
+    checkIfNoOperationForTooLong(lastOperationTime) {
+      this.$store.commit('UPDATE_LAST_OPERATION_TIME');
+      var thisOperationTime = this.$store.state.lastOperationTime;
+      sessionStorage.setItem('lastOperationTime', thisOperationTime);
+
+      // 如果本次点击的时间离上一次的点击时间间隔过长，则返回登录界面，并清空 token
+      if (thisOperationTime - lastOperationTime > RELOGIN_TIME_FOR_NO_OPERATION) {
+        sessionStorage.removeItem('token');
+        this.display = false;
+        this.$router.push('/login');
+      }
     },
     toggleFilterPanelDisplay() {
       // 为什么 FilterPanel 的状态需要由 Layout 来控制呢？
@@ -105,6 +126,10 @@ export default {
     } else {
       this.display = true;
     }
+
+    var lastOperationTime = Number(sessionStorage.getItem('lastOperationTime'));
+    lastOperationTime = lastOperationTime ? lastOperationTime : 0;
+    this.checkIfNoOperationForTooLong(lastOperationTime);
 
     Bus.$on(this.TOGGLE_FILTER_PANEL_DISPLAY, this.toggleFilterPanelDisplay);
   },

@@ -12,15 +12,19 @@ export function encapsulatePromise(url, request) {
       if (response.data.code === 0) {
         resolve(response.data.data);
       } else {
-        console.log('参数错误或服务器内部错误: ', response.data.msg);
-        console.log('错误代码: ', response.data.code);
-        console.log('请求地址: ', url);
-        console.log('请求参数: ', request);
-        let error = {
-          code: response.data.code,
-          message: response.data.msg
-        };
-        reject(error);
+        if (response.data.code !== 6) {
+          // code 为 6 代表没有修改，因为前端对某些数据做了缓存，每次刷新如果数据没变都会遇到这个 code
+          // 这个并不是真正的请求出错，因此没有必要打印出来
+          console.log('参数错误或服务器内部错误: ', response.data.msg);
+          console.log('错误代码: ', response.data.code);
+          console.log('请求地址: ', url);
+          console.log('请求参数: ', request);
+          let error = {
+            code: response.data.code,
+            message: response.data.msg
+          };
+          reject(error);
+        }
       }
 
     }).catch(function(error) {
