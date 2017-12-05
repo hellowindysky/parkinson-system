@@ -128,6 +128,9 @@
             <el-input v-model="remarks" placeholder="请输入备注信息" type="textarea" :maxlength="500"></el-input>
           </span>
         </div>
+
+        <!-- 以下是 MRI 才有的序列 ↓↓↓↓↓↓↓↓ -->
+        <div v-show="imageType===2">
         <hr class="seperate-line">
         <div class="field-file">
           <span class="field-name">
@@ -237,8 +240,7 @@
           </span>
         </div>
 
-        <!-- 以下是 MRI 才有的序列 ↓↓↓↓↓↓↓↓ -->
-        <div v-show="imageType===2">
+        
         <hr class="seperate-line">
         <div class="field-file">
           <span class="field-name">
