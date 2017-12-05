@@ -9,8 +9,10 @@
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+             <span>{{physiType}}</span>
           </span>
           <span class="field-input" v-else>
+            <span class="warning-text">{{warningResults.physiType}}</span>
             <el-select v-model="physiType" placeholder="经颅磁刺激" @change="updateWarning('physiType')"
               :class="{'warning': warningResults.physiType}">
               <el-option
@@ -18,7 +20,7 @@
                 :key="item.code"
                 :label="item.name"
                 :value="item.code">
-              </el-option>
+              </el-option> 
             </el-select>
           </span>
         </div>
@@ -83,7 +85,7 @@
            刺激侧:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{getstimulusSidetype(stimulusSide)}}</span>
+            <span>{{stimulusSide}}</span>
           </span>
           <span class="field-input" v-else>
             <span class="warning-text">{{warningResults.stimulusSide}}</span>
@@ -120,6 +122,7 @@
             <span>{{leftThresholdBefore}}</span>
           </span>
           <span class="field-input" v-else>
+            <span class="warning-text">{{warningResults.leftThresholdBefore}}</span>
             <el-input v-model="leftThresholdBefore" placeholder="请输入运动阈值" :class="{'warning': warningResults.leftThresholdBefore}" @change="updateWarning('leftThresholdBefore')"></el-input>
           </span>
         </div>
@@ -133,6 +136,7 @@
             <span>{{rightThresholdBefore}}</span>
           </span>
           <span class="field-input" v-else>
+            <span class="warning-text">{{warningResults.rightThresholdBefore}}</span>
             <el-input v-model="rightThresholdBefore" placeholder="请输入运动阈值" :class="{'warning': warningResults.rightThresholdBefore}" @change="updateWarning('rightThresholdBefore')" ></el-input>
           </span>
         </div>
@@ -176,7 +180,7 @@ import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import { reviseDateFormat, pruneObj } from 'utils/helper.js';
-import { addImage, modifyImage } from 'api/patient.js';
+import { addPhysiontherapy, modifyPhysiontherapy } from 'api/patient.js';
 
 export default {
   data() {
@@ -185,7 +189,7 @@ export default {
       mode: '',
       completeInit: false,
 
-      name: '',
+      patientPhytheTmsId: '',
       patientPhytheTms: '',
       physiType: '',
       recordDate: '',
@@ -238,8 +242,7 @@ export default {
       this.showEdit = showEdit;
 
       // console.log('item: ', item);
-      this.id = item.id ? item.id : '';
-      this.name = item.title ? item.title : '';
+      this.patientPhytheTmsId = item.patientPhytheTmsId ? item.patientPhytheTmsId : '';
       this.recordDate = item.recordDate ? item.recordDate : '';
       this.physiType = item.physiType ? item.physiType : '';
       this.deviceType = item.deviceType ? item.deviceType : '';
@@ -309,7 +312,7 @@ export default {
       }
       var physicsInfo = {};
       physicsInfo.patientCaseId = this.$route.params.caseId;
-      physicsInfo.title = this.name;
+
       physicsInfo.physiType = this.physiType;
       physicsInfo.recordDate = this.recordDate;
       physicsInfo.deviceType = this.deviceType;
@@ -321,18 +324,19 @@ export default {
       physicsInfo.rightThresholdBefore = this.rightThresholdBefore;
       physicsInfo.leftThresholdAfter = this.leftThresholdAfter;
       physicsInfo.rightThresholdAfter = this.rightThresholdAfter;
+
       reviseDateFormat(physicsInfo);
       pruneObj(physicsInfo);
+
       if (this.mode === this.ADD_NEW_CARD) {
-        addImage(physicsInfo).then(() => {
+        addPhysiontherapy(physicsInfo).then(() => {
           this.updateAndClose();
-          this.lockSubmitButton = false;
         }, this._handleError);
+
       } else if (this.mode === this.EDIT_CURRENT_CARD) {
-        physicsInfo.id = this.id;
-        modifyImage(physicsInfo).then(() => {
+        physicsInfo.patientPhytheTmsId = this.patientPhytheTmsId;
+        modifyPhysiontherapy(physicsInfo).then(() => {
           this.updateAndClose();
-          this.lockSubmitButton = false;
         }, this._handleError);
       }
     },
@@ -342,10 +346,8 @@ export default {
     },
     updateAndClose() {
       Bus.$emit(this.UPDATE_CASE_INFO);
+      this.lockSubmitButton = false;
       this.displayModal = false;
-    },
-    fileChange() {
-      this.updateScrollbar();
     },
     updateScrollbar() {
       this.$nextTick(() => {
