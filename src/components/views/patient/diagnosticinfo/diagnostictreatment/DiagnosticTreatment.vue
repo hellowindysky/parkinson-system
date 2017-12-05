@@ -137,6 +137,34 @@
           </div>
         </card>
       </extensible-panel>
+
+      <extensible-panel class="panel" :mode="mutableMode" :title="physiontherapyTitle" v-on:addNewCard="addPhysiontherapy"
+        :editable="canEdit">
+        <card class="card" :class="devideWidth" :mode="mutableMode" v-for="item in physiontherapyList" :key="item.physiType"
+          :title="物理治疗" v-on:editCurrentCard="editPhysiontherapy(item)"
+          v-on:deleteCurrentCard="deletePhysiontherapy(item)" v-on:viewCurrentCard="viewPhysiontherapy(item)">
+          <div class="text line-1">
+            <span class="name">物理治疗类型: </span>
+            <span class="value">{{transformPhysiType(item.physiType)}}</span>
+          </div>
+          <div class="text line-2">
+            <span class="name">治疗前左侧运动阈值: </span>
+            <span class="value">{{item.leftThresholdBefore}}</span>
+          </div>
+           <div class="text line-3">
+            <span class="name">治疗前右侧运动阈值: </span>
+            <span class="value">{{item.rightThresholdBefore}}</span>
+          </div>
+           <div class="text line-4">
+            <span class="name">不良反应: </span>
+            <span class="value">{{item.patientPhytheReactionId}}</span>
+          </div>
+           <div class="text line-5">
+            <span class="name">记录时间: </span>
+            <span class="value">{{item.recordDate}}</span>
+          </div>
+        </card>
+      </extensible-panel>
     </div>
   </folding-panel>
 </template>
@@ -146,6 +174,7 @@ import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import {
+  deletePhysiontherapy,
   deletePatientMedicine,
   deletePreEvaluation,
   deleteSurgicalMethod,
@@ -183,6 +212,12 @@ export default {
         return {};
       }
     },
+    physiontherapy: {
+      type: Array,
+      default: () => {
+        return [];
+      }
+    },
     archived: {
       type: Boolean,
       default: true
@@ -194,7 +229,8 @@ export default {
       'medicineDictionary',
       'surgicalTypeList',
       'complicationTypeList',
-      'typeGroup'
+      'typeGroup',
+      'physiontherapyDictionary'
     ]),
     medicineTitle() {
       var count = this.diagnosticMedicine.length;
@@ -217,6 +253,13 @@ export default {
     dbsTitle() {
       var amount = this.dbsFirstList.length + this.dbsFollowList.length;
       return '程控记录（' + amount + '条记录）';
+    },
+    physiontherapyTitle() {
+      var totalCount = this.physiontherapyList.length ;
+      return '物理治疗（' + totalCount + '条记录）';
+    },
+    physiontherapyList() {
+      return this.physiontherapy. physiontherapyList ? this.physiontherapy. physiontherapyList : [];
     },
     preEvaluationList() {
       return this.diagnosticSurgery.patientPreopsList ? this.diagnosticSurgery.patientPreopsList : [];
@@ -337,7 +380,12 @@ export default {
         {
           text: '程控记录',
           callback: this.addDbsRecord
+        },
+        {
+          text: '物理治疗',
+          callback: this.addPhysiontherapy
         }
+
       ];
       Bus.$emit(this.SHOW_CHOICE_PANEL, list);
     },
@@ -425,6 +473,32 @@ export default {
       } else {
         return;
       }
+      Bus.$emit(this.REQUEST_CONFIRMATION);
+    },
+    transformPhysiType(physiType, fieldName) {
+      var types = Util.getElement('typegroupcode', fieldName, this.typeGroup).types;
+      types = types === undefined ? [] : types;
+      var typeName = Util.getElement('typeCode', physiType, types).typeName;
+      return typeName === undefined ? '' : typeName;
+    },
+    addPhysiontherapy() {
+      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.ADD_NEW_CARD, '新增物理治疗', {}, this.PERSON_HISTORY_MODAL);
+    },
+    viewPhysiontherapy(item, modal) {
+      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.VIEW_CURRENT_CARD, '物理治疗', item, modal);
+    },
+    editPhysiontherapy(item, modal) {
+      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.EDIT_CURRENT_CARD, '物理治疗', item, modal);
+    },
+    deletePhysiontherapy(item) {
+      var patientPhysiontherapy = {
+        physiType: parseInt(this.$route.params.id, 1),
+        patientCaseId: this.$route.params.patientCaseId,
+        patientId: item.patientId
+      };
+      Bus.$on(this.CONFIRM, () => {
+        deletePhysiontherapy(patientPhysiontherapy).then(this._resolveDeletion, this._rejectDeletion);
+      });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     _resolveDeletion() {

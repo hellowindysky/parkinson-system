@@ -1,5 +1,5 @@
 <template lang="html">
-  <folding-panel :title="'现病史'" :mode="mode" :editable="canEdit">
+  <folding-panel :title="'现病史'" :mode="mode" :folded-status="foldedStatus" v-on:edit="startEditing" v-on:cancel="cancel" :editable="canEdit" v-on:submit="submit">
     <div class="disease-info" ref="diseaseInfo">
       <!-- 现病史开始 -->
       <div class="group"><!-- 起病情况开始 -->
@@ -10,7 +10,7 @@
             <span class="required-mark" v-show="true">*</span>
           </span>
 
-          <div class="field-value" v-show="true">
+          <div class="field-value" v-show="mode===READING_MODE">
             <span v-if="true">
               起病类型值
             </span>
@@ -22,7 +22,7 @@
             </span>
           </div>
 
-          <div class="field-input" v-show="true">
+          <div class="field-input" v-show="mode===EDITING_MODE">
             <span v-if="true">
               <el-input v-model="mode"></el-input>
             </span>
@@ -39,7 +39,9 @@
           </div>
         </div>
         <extensible-panel class="disease-card" :title="'首发症状（x 条记录）'" @addNewCard="addFirstSymptomsRecord">
-          <Card class="card symptoms-card" :class="cardWidth" :title="'运动症状'">
+          <Card class="card symptoms-card" :mode="mode" :class="cardWidth" :title="'运动症状'"
+           v-on:editCurrentCard="editFirstSymptomsRecord('循环出的每一个card的模态框数据对象')" 
+           v-on:viewCurrentCard="viewFirstSymptomsRecord('循环出的每一个card的模态框数据对象')">
             <div class="text first-line">
               <!-- <span class="name">类型</span> -->
               <span class="value">面具脸</span>
@@ -80,8 +82,8 @@
           </div>
         </div>
 
-        <extensible-panel class="disease-card" :title="'初诊治疗（x 条记录）'">
-          <Card class="card symptoms-card" :class="cardWidth" :title="'药物治疗'">
+        <extensible-panel class="disease-card" :title="'初诊治疗（x 条记录）'" @addNewCard="addFirstTreatmentRecord">
+          <Card class="card symptoms-card" :mode="mode" :class="cardWidth" :title="'药物治疗'">
             <div class="text first-line">
               <!-- <span class="name">类型</span> -->
               <span class="value">美多芭</span>
@@ -97,8 +99,8 @@
           </Card>
         </extensible-panel>
 
-        <extensible-panel class="disease-card" :title="'就诊记录（x 条记录）'">
-          <Card class="card symptoms-card" :class="cardWidth" :title="'心脏病'">
+        <extensible-panel class="disease-card" :title="'就诊记录（x 条记录）'" @addNewCard="addDiagnosticRecord">
+          <Card class="card symptoms-card" :mode="mode" :class="cardWidth" :title="'心脏病'">
             <div class="text first-line">
               <!-- <span class="name">类型</span> -->
               <span class="value">红十字医院</span>
@@ -153,6 +155,8 @@ export default {
   data() {
     return {
       mode: this.READING_MODE,
+      foldedStatus: true,
+      warningResults: {},
       cardWidth: ''
     };
   },
@@ -171,8 +175,36 @@ export default {
     }
   },
   methods: {
+    startEditing() {
+      this.mode = this.EDITING_MODE;
+      this.foldedStatus = false;
+      this.clearWarning();
+    },
+    cancel() {
+      // 点击取消按钮，将我们对 copyInfo 所做的临时修改全部放弃，还原其为 diseaseInfo 的复制对象，同时不要忘了重新对其进行特殊处理
+      // this.shallowCopy(this.diseaseInfo);
+      // this.changeCopyInfo();
+      this.mode = this.READING_MODE;
+    },
+    submit() {
+      if ('请求成功后') {
+        this.mode = this.READING_MODE;
+      }
+    },
     addFirstSymptomsRecord() {
       Bus.$emit(this.SHOW_FIRSTSYMPTOMS_MODAL, this.ADD_NEW_CARD, {});
+    },
+    editFirstSymptomsRecord(item) {
+      Bus.$emit(this.SHOW_FIRSTSYMPTOMS_MODAL, this.EDIT_CURRENT_CARD, item);
+    },
+    viewFirstSymptomsRecord(item) {
+      Bus.$emit(this.SHOW_FIRSTSYMPTOMS_MODAL, this.VIEW_CURRENT_CARD, item);
+    },
+    addFirstTreatmentRecord() {
+      Bus.$emit(this.SHOW_FIRSTTREATMENT_MODAL, this.ADD_NEW_CARD, {});
+    },
+    addDiagnosticRecord() {
+      Bus.$emit(this.SHOW_DIAGNOSTIC_RECORD_MODAL, this.ADD_NEW_CARD, {});
     },
     recalculateCardWidth() {
       this.$nextTick(() => {
@@ -184,6 +216,11 @@ export default {
         }
         this.cardWidth = 'width-1-' + parseInt(cardNum, 10);
       });
+    },
+    clearWarning() {
+      for (let key in this.warningResults) {
+        this.warningResults[key] = null;
+      }
     }
   },
   components: {

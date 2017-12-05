@@ -13,17 +13,19 @@
           </span>
           <span class="field-input" v-else>
             <span class="warning-text">必填项</span>
-            <el-select v-model="firstType"
-            placeholder="请选择首发症状类型">
-              <el-option label="运动症状" :value="WINE_HISTORY_MODAL"></el-option>
-              <el-option label="运动并发症" :value="SMOKE_HISTORY_MODAL"></el-option>
-              <el-option label="非运动症状" :value="TEA_HISTORY_MODAL"></el-option>
+            <el-select v-model="firSymType" placeholder="请选择首发症状类型">
+              <el-option
+                v-for="item in getOptions('SympType')"
+                :key="item.code"
+                :label="item.name"
+                :value="item.code">
+              </el-option>
           </el-select>
           </span>
         </div>
 
         <!-- 以下是 运动症状才有的序列 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
-        <div v-show="firstType===WINE_HISTORY_MODAL">
+        <div v-show="firSymType===0">
           <div class="field">
             <span class="field-name long-field-name">
               症状名称:
@@ -136,11 +138,11 @@
 
 
         <!-- 以下是 运动并发症才有的序列 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
-        <div v-show="firstType===SMOKE_HISTORY_MODAL">
-
+        <div v-show="firSymType===1">
+          
           <div class="field">
             <span class="field-name long-field-name">
-              症状名称:
+              症状名称:-------
               <span class="required-mark">*</span>
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
@@ -220,7 +222,7 @@
         <!-- 以上是 运动并发症才有的序列 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ -->
 
         <!-- 以下是 非运动症状才有的序列 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
-        <div v-show="firstType===TEA_HISTORY_MODAL">
+        <div v-show="firSymType===2">
 
           <div class="field">
             <span class="field-name long-field-name">
@@ -242,7 +244,7 @@
 
           <div class="field">
             <span class="field-name long-field-name">
-              症状名称:
+              症状名称:-------
               <span class="required-mark">*</span>
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
@@ -323,18 +325,24 @@
 
 <script>
 import Bus from 'utils/bus.js';
+import Ps from 'perfect-scrollbar';
+import { mapGetters } from 'vuex';
+import Util from 'utils/util.js';
 export default {
   data() {
     return {
       displayModal: false,
       mode: '',
-      firstType: '',
+      firSymType: '',
       value1: '',
       value2: '',
       date1: ''
     };
   },
   computed: {
+    ...mapGetters([
+      'typeGroup'
+    ]),
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
         return '新增首发症状';
@@ -348,6 +356,28 @@ export default {
       console.log(cardOperation, item);
       this.mode = cardOperation;
       this.displayModal = true;
+      this.updateScrollbar();
+    },
+    updateScrollbar() {
+      this.$nextTick(() => {
+        Ps.destroy(this.$refs.scrollArea);
+        Ps.initialize(this.$refs.scrollArea, {
+          wheelSpeed: 1,
+          minScrollbarLength: 40
+        });
+      });
+    },
+    getOptions(fieldName) {
+      var options = [];
+      var types = Util.getElement('typegroupcode', fieldName, this.typeGroup).types;
+      types = types ? types : [];
+      for (let type of types) {
+        options.push({
+          name: type.typeName,
+          code: type.typeCode
+        });
+      };
+      return options;
     },
     cancel() {
       this.displayModal = false;
@@ -361,6 +391,7 @@ export default {
   },
   mounted() {
     Bus.$on(this.SHOW_FIRSTSYMPTOMS_MODAL, this.showModal);
+    console.log(JSON.stringify(this.typeGroup));
   }
 };
 </script>
@@ -509,6 +540,28 @@ export default {
       }
       &:active {
         opacity: 0.9;
+      }
+    }
+    .ps__scrollbar-y-rail {
+      position: absolute;
+      width: 15px;
+      right: 0;
+      padding: 0 3px;
+      box-sizing: border-box;
+      opacity: 0.3;
+      transition: opacity 0.3s, padding 0.2s;
+      .ps__scrollbar-y {
+        position: relative;
+        background-color: #aaa;
+        border-radius: 20px;
+      }
+    }
+    &:hover {
+      .ps__scrollbar-y-rail {
+        opacity: 0.6;
+        &:hover {
+          padding: 0;
+        }
       }
     }
   }
