@@ -810,7 +810,7 @@ export function queryPatientsByCondition(condition) {
 // 新增物理治疗
 export function addPhysiontherapy(patientPhytheTms) {
   var request = Object.assign({}, getCommonRequest());
-  request.PatientPhytheTms = patientPhytheTms;
+  request.patientPhytheTms = patientPhytheTms;
   var url = baseUrl + '/pdms/addPatientPhytheTms';
 
   return encapsulatePromise(url, request);
@@ -819,7 +819,7 @@ export function addPhysiontherapy(patientPhytheTms) {
 // 修改物理治疗
 export function modifyPhysiontherapy(patientPhytheTms) {
   var request = Object.assign({}, getCommonRequest());
-  request.PatientPhytheTms = patientPhytheTms;
+  request.patientPhytheTms = patientPhytheTms;
   var url = baseUrl + '/pdms/modPatientPhytheTms';
 
   return encapsulatePromise(url, request);
@@ -828,7 +828,7 @@ export function modifyPhysiontherapy(patientPhytheTms) {
 // 删除物理治疗
 export function deletePhysiontherapy(patientPhytheTms) {
   var request = Object.assign({}, getCommonRequest());
-  request.PatientPhytheTms = patientPhytheTms;
+  request.patientPhytheTms = patientPhytheTms;
   var url = baseUrl + '/pdms/delPatientPhytheTms';
 
   return encapsulatePromise(url, request);
