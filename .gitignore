@@ -4,6 +4,7 @@ dist/
 dist_beta/
 dist_pre/
 dist_prod/
+dist_alone/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
