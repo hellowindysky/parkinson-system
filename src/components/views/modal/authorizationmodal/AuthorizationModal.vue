@@ -7,7 +7,7 @@
         <el-input v-model="technicalSupportAccount"
           :placeholder="'请输入技术支持员的睿云账号或手机号'"></el-input>
       </div>
-      <div class="field">
+      <div class="field agreement">
         <el-checkbox v-model="readAgreement">我已阅读并同意睿云系统保密协议</el-checkbox>
       </div>
       <div class="seperate-line"></div>
@@ -62,8 +62,7 @@ export default {
 <style lang="less">
 @import "~styles/variables.less";
 
-@field-height: 40px;
-@field-name-width: 80px;
+@field-height: 45px;
 
 .authorization-modal-wrapper {
   position: absolute;
@@ -83,7 +82,7 @@ export default {
     font-size: 0;
     background-color: @background-color;
     .title {
-      padding: 30px 0 10px;
+      padding: 30px 0 20px;
       width: 100%;
       text-align: center;
       font-size: @large-font-size;
@@ -98,6 +97,9 @@ export default {
       line-height: @field-height;
       font-size: @normal-font-size;
       text-align: left;
+      &.agreement {
+        padding-top: 10px;
+      }
       .el-input {
         .el-input__inner {
           height: 30px;
