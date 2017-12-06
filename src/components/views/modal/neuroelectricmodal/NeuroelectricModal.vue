@@ -856,7 +856,7 @@ export default {
   },
   mounted() {
     this.updateScrollbar();
-    Bus.$on(this.SHOW_EMG_MODAL, this.showPanel);
+    Bus.$on(this.SHOW_NEUROELECTRIC_MODAL, this.showPanel);
     // 监听折叠面板，如果发生状态的改变，就需要重新计算滚动区域的高度
     Bus.$on(this.SCROLL_AREA_SIZE_CHANGE, this.updateScrollbar);
 
@@ -869,7 +869,7 @@ export default {
     }
   },
   beforeDestroy() {
-    Bus.$off(this.SHOW_EMG_MODAL, this.showPanel);
+    Bus.$off(this.SHOW_NEUROELECTRIC_MODAL, this.showPanel);
     Bus.$off(this.SCROLL_AREA_SIZE_CHANGE, this.updateScrollbar);
     Bus.$off(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
   }

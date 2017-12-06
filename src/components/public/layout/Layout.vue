@@ -17,7 +17,7 @@
     <nervous-system-modal></nervous-system-modal>
     <gene-modal></gene-modal>
     <biochemical-exam-modal></biochemical-exam-modal>
-    <emg-modal></emg-modal>
+    <neuroelectric-modal></neuroelectric-modal>
     <image-modal></image-modal>
     <first-symptoms-modal></first-symptoms-modal>
     <first-treatment-modal></first-treatment-modal>
@@ -48,7 +48,7 @@ import physiontherapyModal from 'components/views/modal/physiontherapymodal/phys
 import nervousSystemModal from 'components/views/modal/nervoussystemmodal/NervousSystemModal';
 import geneModal from 'components/views/modal/genemodal/GeneModal';
 import biochemicalExamModal from 'components/views/modal/biochemicalexammodal/BiochemicalExamModal';
-import emgModal from 'components/views/modal/emgmodal/EmgModal';
+import neuroelectricModal from 'components/views/modal/neuroelectricmodal/NeuroelectricModal';
 import imageModal from 'components/views/modal/imagemodal/ImageModal';
 import firstSymptomsModal from 'components/views/modal/firstsymptomsmodal/FirstSymptomsModal';
 import firstTreatmentModal from 'components/views/modal/firsttreatmentmodal/FirstTreatmentModal';
@@ -84,7 +84,7 @@ export default {
     nervousSystemModal,
     geneModal,
     biochemicalExamModal,
-    emgModal,
+    neuroelectricModal,
     imageModal,
     physiontherapyModal,
     firstSymptomsModal,
