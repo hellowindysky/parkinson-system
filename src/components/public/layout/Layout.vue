@@ -108,6 +108,11 @@ export default {
       if (thisOperationTime - lastOperationTime > RELOGIN_TIME_FOR_NO_OPERATION) {
         sessionStorage.removeItem('token');
         this.display = false;
+        this.$message({
+          message: '长时间未操作，请重新登录',
+          type: 'warning',
+          duration: 2000
+        });
         this.$router.push('/login');
       }
     },
