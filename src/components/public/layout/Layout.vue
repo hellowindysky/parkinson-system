@@ -25,6 +25,7 @@
     <filter-panel :showFilterPanel="showFilterPanel"></filter-panel>
     <choice-panel></choice-panel>
     <confirm-box></confirm-box>
+    <notice-box></notice-box>
   </div>
 </template>
 
@@ -57,6 +58,7 @@ import diagnosticRecordModal from 'components/views/modal/diagnosticrecordmodal/
 import filterPanel from 'components/public/filterpanel/FilterPanel';
 import choicePanel from 'components/public/choicepanel/ChoicePanel';
 import confirmBox from 'components/public/confirmbox/ConfirmBox';
+import noticeBox from 'components/public/noticebox/NoticeBox';
 
 // 设定多长时间不操作，就返回登录界面
 const RELOGIN_TIME_FOR_NO_OPERATION = 1000 * 60 * 60;
@@ -93,7 +95,8 @@ export default {
 
     filterPanel,
     choicePanel,
-    confirmBox
+    confirmBox,
+    noticeBox
   },
   methods: {
     clickScreen() {

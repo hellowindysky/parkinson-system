@@ -33,6 +33,7 @@ export default {
   GIVE_UP: 'giveUpDecision',
   CONFIRM: 'confirmDecision',
   REQUEST_CONFIRMATION: 'requestConfirmation',
+  NOTICE: 'notice',
 
   ADD_DATA: 'addData',
   EDIT_DATA: 'editData',
