@@ -2,7 +2,7 @@
   <div class="message-modal-wrapper" v-show="displayModal">
     <div class="message-modal">
       <div class="title">确认提醒</div>
-      <div class="desc">阿三开的飞机啊身份卡上的发生地附近卡是大家发    IE无法点击发送的福利卡上的快乐法卡是大家反馈了</div>
+      <div class="desc">{{desc}}</div>
       <div class="field account">当前账号手机: 18612345678</div>
       <div class="field">
         <el-input class="verification-code" v-model="verificationCode" placeholder="请输入验证码"></el-input>
@@ -27,7 +27,7 @@ import Bus from 'utils/bus.js';
 export default {
   data() {
     return {
-      displayModal: true,
+      displayModal: false,
       lockSubmitButton: false,
       desc: '',
       verificationCode: '',
@@ -35,9 +35,9 @@ export default {
     };
   },
   methods: {
-    showModal() {
+    showModal(desc) {
       this.displayModal = true;
-      this.technicalSupportAccount = '';
+      this.desc = desc;
       this.verificationCode = '';
       this.readAgreement = false;
     },
@@ -55,10 +55,10 @@ export default {
     }
   },
   mounted() {
-    Bus.$on(this.SHOW_AUTHORIZATION_MODAL, this.showModal);
+    Bus.$on(this.SHOW_MESSAGE_MODAL, this.showModal);
   },
   beforeDestroy() {
-    Bus.$off(this.SHOW_AUTHORIZATION_MODAL);
+    Bus.$off(this.SHOW_MESSAGE_MODAL);
   }
 };
 </script>

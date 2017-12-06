@@ -116,7 +116,14 @@ export default {
       this.showOranizationPanel = false;
     },
     swichBlockSensitiveStatus(status) {
-      this.blockSensitiveInfo = status;
+      var passSMSVerification = sessionStorage.getItem('passSMSVerification');
+      if (!status && !passSMSVerification) {
+        let desc = '你正在修改系统默认的显示方式，有可能会带来隐私泄漏的风险。' +
+        '为确保账户及患者数据安全，切换为【全部显示】状态时需要手机验证，验证通过后才能进行切换。';
+        Bus.$emit(this.SHOW_MESSAGE_MODAL, desc);
+      } else {
+        this.blockSensitiveInfo = status;
+      }
     },
     toggleFilterPanelDisplay() {
       Bus.$emit(this.TOGGLE_FILTER_PANEL_DISPLAY);
