@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="message-modal-wrapper" v-show="displayModal">
     <div class="message-modal">
-      <div class="title">确认提醒</div>
+      <div class="title">{{title}}</div>
       <div class="desc">{{desc}}</div>
       <div class="field account">当前账号手机: 18612345678</div>
       <div class="field">
@@ -29,14 +29,16 @@ export default {
     return {
       displayModal: false,
       lockSubmitButton: false,
+      title: '',
       desc: '',
       verificationCode: '',
       readAgreement: false
     };
   },
   methods: {
-    showModal(desc) {
+    showModal(title, desc) {
       this.displayModal = true;
+      this.title = title;
       this.desc = desc;
       this.verificationCode = '';
       this.readAgreement = false;
@@ -89,6 +91,7 @@ export default {
       padding: 30px 0 20px;
       width: 100%;
       text-align: center;
+      font-weight: bold;
       font-size: @large-font-size;
     }
     .desc {
