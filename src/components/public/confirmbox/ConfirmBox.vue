@@ -41,7 +41,7 @@ export default {
       this.displayConfirmBox = true;
       this.title = (title !== undefined && title !== '') ? title : DEFAULT_TITLE;
       this.content = (content !== undefined && content !== '') ? content : DEFAULT_CONTENT;
-      this.confirmText = (confirmText !== undefined && confirmText !== '') : confirmText : DEFAULT_CONFIRM_TEXT;
+      this.confirmText = (confirmText !== undefined && confirmText !== '') ? confirmText : DEFAULT_CONFIRM_TEXT;
     }
   },
   mounted() {
