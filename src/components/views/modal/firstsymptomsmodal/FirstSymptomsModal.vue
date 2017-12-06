@@ -14,7 +14,7 @@
           <span class="field-input" v-else>
             <span class="warning-text">{{warningResults.firSymType}}</span>
             <el-select v-model="copyInfo.firSymType" placeholder="请选择首发症状类型" clearable
-             @change="updateWarning('firSymType')" :class="{'warning': warningResults.firSymType}" >
+             @change="updateWarning('firSymType'),clearVal('firSymType')" :class="{'warning': warningResults.firSymType}" >
               <el-option
                 v-for="item in getOptions('SympType')"
                 :key="item.code"
@@ -233,11 +233,15 @@
               <span>症状名称值</span>
             </span>
             <span class="field-input" v-else>
-              <span class="warning-text">必填项</span>
-              <el-select v-model="value1"
-                placeholder="请选择症状dd名称">
-                  <el-option label="症状波动-剂末现象" :value="WINE_HISTORY_MODAL"></el-option>
-                  <el-option label="症状波动-开关现象" :value="SMOKE_HISTORY_MODAL"></el-option>
+              <span class="warning-text">{{warningResults.notSportType}}</span>
+              <el-select v-model="copyInfo.notSportType" placeholder="请选择非运动症状类型"
+               @change="updateWarning('notSportType')" :class="{'warning': warningResults.notSportType}" >
+                <el-option
+                 v-for="item in getOptions('noSportSymType')"
+                 :key="item.code"
+                 :label="item.name"
+                 :value="item.code">
+                </el-option>
               </el-select>
             </span>
           </div>
@@ -254,7 +258,7 @@
               <span class="warning-text">{{warningResults.firSymName}}</span>
               <el-select v-model="copyInfo.firSymName" placeholder="请选择症状名称" clearable
                @change="updateWarning('firSymName')" :class="{'warning': warningResults.firSymName}" >
-                <el-option v-for="item in getSymOptions(copyInfo.firSymType)" :key="item.code" :label="item.name" :value="item.code"></el-option>
+                <el-option v-for="item in getNoSportOptions(copyInfo.notSportType)" :key="item.code" :label="item.name" :value="item.code"></el-option>
               </el-select>
             </span>
           </div>
@@ -269,7 +273,7 @@
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-date-picker v-model="date1" type="date" placeholder="请选择出现时间" clearable ></el-date-picker>
+              <el-date-picker v-model="copyInfo.ariseTime" type="date" placeholder="请选择出现时间" clearable ></el-date-picker>
             </span>
           </div>
 
@@ -301,7 +305,7 @@
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-input v-model="date1" placeholder="请输入备注"></el-input>
+              <el-input v-model="copyInfo.remarks" placeholder="请输入备注"></el-input>
             </span>
           </div>
 
@@ -315,8 +319,8 @@
       
 
       <div class="button cancel-button" @click="cancel">取消</div>
-      <div v-show="true" class="button submit-button" @click="submit">确定</div>
-      <div v-show="false" class="button edit-button" @click="switchToEditingMode">编辑</div>
+      <div v-show="mode!==VIEW_CURRENT_CARD" class="button submit-button" @click="submit">确定</div>
+      <div v-show="mode===VIEW_CURRENT_CARD && canEdit" class="button edit-button" @click="switchToEditingMode">编辑</div>
 
     </div>
   </div>
@@ -329,7 +333,6 @@ import { mapGetters } from 'vuex';
 import Util from 'utils/util.js';
 import { reviseDateFormat, pruneObj } from 'utils/helper.js';
 import { addPatientFirstSymbol } from 'api/patient.js';
-// import { getDictionary } from 'api/user';
 export default {
   data() {
     return {
@@ -345,27 +348,24 @@ export default {
         ariseTimeRightUp: '', // 右上肢出现时间
         regular: '',
         remarks: '',
-
         ariseTime: '', // 出现时间
         lastTime: '', // 持续时间
-        a: '',
-        b: ''
+        notSportType: '' // 非运动症状类型
       },
       warningResults: {
         firSymType: '',
-        firSymName: ''
+        firSymName: '',
+        notSportType: ''
       },
       lockSubmitButton: false,
-
-      value1: '',
-      value2: '',
-      date1: ''
+      showEdit: true
     };
   },
   computed: {
     ...mapGetters([
       'typeGroup',
-      'symptomType'
+      'symptomType',
+      'noSportType'
     ]),
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
@@ -373,35 +373,52 @@ export default {
       } else {
         return '首发症状';
       }
+    },
+    canEdit() {
+      if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    verificationFieldList() {
+      if (this.copyInfo.firSymType === 0 || this.copyInfo.firSymType === 1) {
+        return ['firSymType', 'firSymName'];
+      } else if (this.copyInfo.firSymType === 2) {
+        return ['firSymType', 'firSymName', 'notSportType'];
+      } else {
+        return ['firSymType'];
+      }
     }
   },
   methods: {
-    // updateUserInfo() {
-    //   getDictionary().then((data) => {
-    //     this.userInfo.all = data;
-    //   });
-    // },
+    clearVal(fieldName) {
+      for (let key in this.copyInfo) {
+        if (key !== fieldName) {
+          this.$set(this.copyInfo, key, '');
+        };
+      };
+      this.$nextTick(() => {
+        for (var property in this.warningResults) {
+          if (this.warningResults.hasOwnProperty(property)) {
+            this.warningResults[property] = '';
+          }
+        }
+      });
+    },
     showModal(cardOperation, item) {
       this.completeInit = false;
       console.log(cardOperation, item);
       this.mode = cardOperation;
+
+      // jjjj
 
       if (this.mode === this.ADD_NEW_CARD) {
         for (let key in this.copyInfo) {
           this.$set(this.copyInfo, key, '');
         };
       };
-      // ggggg
-      // ggggg
-      // ggggg
-      // ggggg
-      // ggggg
-      // ggggg
-      // ggggg
-      // ggggg
-      // ggggg
-      // ggggg
-      // ggggg
+
       this.$nextTick(() => {
         for (var property in this.warningResults) {
           if (this.warningResults.hasOwnProperty(property)) {
@@ -444,6 +461,16 @@ export default {
         };
       });
     },
+    getNoSportOptions(fieldType) {
+      return this.noSportType.filter((obj) => {
+        return obj.noSportType === fieldType;
+      }).map((obj) => {
+        return {
+          name: obj.noSportName,
+          code: obj.id
+        };
+      });
+    },
     updateWarning(fieldName) {
       if (this.completeInit && !this.copyInfo[fieldName] && this.copyInfo[fieldName] !== 0) {
         this.warningResults[fieldName] = '必填项';
@@ -456,7 +483,8 @@ export default {
       this.displayModal = false;
     },
     switchToEditingMode() {
-      // ffff
+      this.mode = this.EDIT_CURRENT_CARD;
+      this.updateScrollbar();
     },
     submit() {
       if (this.lockSubmitButton) {
@@ -466,7 +494,7 @@ export default {
 
       // 验证必填项 如果没填显示红框，显示必填项三个字
       for (let property in this.warningResults) {
-        if (this.warningResults.hasOwnProperty(property)) {
+        if (this.verificationFieldList.indexOf(property) >= 0 && this.warningResults.hasOwnProperty(property)) {
           this.updateWarning(property);
         }
       };
@@ -485,10 +513,9 @@ export default {
       pruneObj(symInfo);
 
       console.log(symInfo);
-      console.log(this.$route.params);
-      if (true) {
-        return;
-      };
+      // if (true) {
+      //   return;
+      // };
       if (this.mode === this.ADD_NEW_CARD) {
         addPatientFirstSymbol(symInfo).then(() => {
           this.updateAndClose();
@@ -508,8 +535,6 @@ export default {
   },
   mounted() {
     Bus.$on(this.SHOW_FIRSTSYMPTOMS_MODAL, this.showModal);
-    console.log(this.symptomType);
-    console.log(this.getSymOptions(2));
   }
 };
 </script>
