@@ -6,6 +6,7 @@ module.exports = {
     betaEnv: require('./beta.env'),
     preEnv: require('./pre.env'),
     prodEnv: require('./prod.env'),
+    aloneEnv: require('./alone.env'),
     index: path.resolve(__dirname, '../dist_' + process.env.NODE_ENV + '/index.html'),
     assetsRoot: path.resolve(__dirname, '../dist_' + process.env.NODE_ENV),
     assetsSubDirectory: 'static',

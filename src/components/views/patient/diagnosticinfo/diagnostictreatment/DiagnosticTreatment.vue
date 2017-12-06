@@ -2,18 +2,30 @@
   <folding-panel :title="'治疗方案'" :archived="archived" :mode="mutableMode"  v-on:edit="startEditing"
     v-on:cancel="cancel" v-on:submit="submit" :editable="canEdit">
     <div class="diagnostic-surgery" ref="diagnosticSurgery">
-      <extensible-panel class="panel" :mode="mutableMode" :title="medicineTitle" v-on:addNewCard="addMedicine"
+      <extensible-panel class="panel medicine-panel" :mode="mutableMode" :title="medicineTitle" v-on:addNewCard="addMedicine"
         :editable="canEdit">
-        <card class="card" :class="smallCardWidth" :mode="mutableMode" v-for="item in diagnosticMedicine" :key="item.medicineId"
+        <card class="card medicine-card" :class="smallCardWidth" :mode="mutableMode" v-for="item in diagnosticMedicine" :key="item.medicineId"
           :title="getMedicineTitle(item.medicineId)" :disable-delete="item.statusFlag===0" v-on:editCurrentCard="editMedicine(item)"
           v-on:deleteCurrentCard="deleteMedicine(item)" v-on:viewCurrentCard="viewMedicine(item)">
-          <div class="text first-line">
+          <div class="text line-1">
             <span class="name">用药频率: </span>
             <span class="value">{{transformMedicineField(item, 'usages')}}</span>
           </div>
-          <div class="text second-line">
+          <div class="text line-2">
             <span class="name">首次用药: </span>
             <span class="value">{{transformMedicineField(item, 'firMedFlag')}}</span>
+          </div>
+          <div class="text line-3">
+            <span class="name">停药原因: </span>
+            <span class="value">{{transformMedicineField(item, 'stopReason')}}</span>
+          </div>
+          <div class="text line-4">
+            <span class="name">副反应类型: </span>
+            <span class="value">{{transformMedicineField(item, 'sideeffectType')}}</span>
+          </div>
+          <div class="text line-5">
+            <span class="name">处方性质: </span>
+            <span class="value">{{getPrescriptionDesc(item.statusFlag)}}</span>
           </div>
         </card>
       </extensible-panel>
@@ -137,6 +149,34 @@
           </div>
         </card>
       </extensible-panel>
+
+      <extensible-panel class="panel physiontherapy-panel" :mode="mutableMode" :title="physiontherapyTitle" v-on:addNewCard="addPhysiontherapy"
+        :editable="canEdit">
+        <card class="card physiontherapy-card" :class="smallCardWidth" :mode="mutableMode" v-for="item in diagnosticPhysiontherapy" :key="item.physiType"
+          :title="'物理治疗'" v-on:editCurrentCard="editPhysiontherapy(item)"
+          v-on:deleteCurrentCard="deletePhysiontherapy(item)" v-on:viewCurrentCard="viewPhysiontherapy(item)">
+          <div class="text line-1">
+            <span class="name">物理治疗类型: </span>
+            <span class="value">{{transformPhysiType(item.physiType)}}</span>
+          </div>
+          <div class="text line-2">
+            <span class="name">治疗前左侧运动阈值: </span>
+            <span class="value">{{item.leftThresholdBefore}}</span>
+          </div>
+           <div class="text line-3">
+            <span class="name">治疗前右侧运动阈值: </span>
+            <span class="value">{{item.rightThresholdBefore}}</span>
+          </div>
+           <div class="text line-4">
+            <span class="name">不良反应: </span>
+            <span class="value">{{item.patientPhytheReactionId}}</span>
+          </div>
+           <div class="text line-5">
+            <span class="name">记录时间: </span>
+            <span class="value">{{item.recordDate}}</span>
+          </div>
+        </card>
+      </extensible-panel>
     </div>
   </folding-panel>
 </template>
@@ -146,6 +186,7 @@ import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import {
+  deletePhysiontherapy,
   deletePatientMedicine,
   deletePreEvaluation,
   deleteSurgicalMethod,
@@ -183,6 +224,12 @@ export default {
         return {};
       }
     },
+    diagnosticPhysiontherapy: {
+      type: Array,
+      default: () => {
+        return [];
+      }
+    },
     archived: {
       type: Boolean,
       default: true
@@ -192,13 +239,15 @@ export default {
     ...mapGetters([
       'medicineInfo',
       'medicineDictionary',
+      'medicineStopReason',
       'surgicalTypeList',
       'complicationTypeList',
       'typeGroup'
     ]),
     medicineTitle() {
       var count = this.diagnosticMedicine.length;
-      return '药物治疗' + '（' + count + '条记录）';
+      var ledd = this.calcTotalLevodopaDoseOfAllOtherMedicine({});
+      return '药物治疗' + '（' + count + '条记录） LEDD: ' + ledd + ' mg';
     },
     surgeryTitle() {
       var count = this.preEvaluationList.length + this.surgicalMethodList.length +
@@ -217,6 +266,10 @@ export default {
     dbsTitle() {
       var amount = this.dbsFirstList.length + this.dbsFollowList.length;
       return '程控记录（' + amount + '条记录）';
+    },
+    physiontherapyTitle() {
+      var totalCount = this.diagnosticPhysiontherapy.length ;
+      return '物理治疗（' + totalCount + '条记录）';
     },
     preEvaluationList() {
       return this.diagnosticSurgery.patientPreopsList ? this.diagnosticSurgery.patientPreopsList : [];
@@ -257,10 +310,25 @@ export default {
     },
     transformMedicineField(item, fieldName) {
       var dictionaryField = Util.getElement('fieldName', fieldName, this.medicineDictionary);
-      var typeInfo = Util.getElement('typegroupcode', dictionaryField.fieldEnumId, this.typeGroup);
-      var types = typeInfo.types ? typeInfo.types : [];
-      var matchedType = Util.getElement('typeCode', item[fieldName], types);
-      return matchedType.typeName ? matchedType.typeName : '';
+      if (fieldName === 'stopReason') {
+        var reason = Util.getElement('id', item[fieldName], this.medicineStopReason);
+        return reason.stopReason;
+
+      } else {
+        var typeInfo = Util.getElement('typegroupcode', dictionaryField.fieldEnumId, this.typeGroup);
+        var types = typeInfo.types ? typeInfo.types : [];
+        var matchedType = Util.getElement('typeCode', item[fieldName], types);
+        return matchedType.typeName ? matchedType.typeName : '';
+      }
+    },
+    getPrescriptionDesc(statusFlag) {
+      if (statusFlag === 0) {
+        return '沿用上次处方';
+      } else if (statusFlag === 1) {
+        return '增加用药';
+      } else {
+        return '';
+      }
     },
     getMedicineTitle(medicineId) {
       // 根据药物 id，在相应的 tableData 里面寻找对应的 药物详情
@@ -270,13 +338,24 @@ export default {
     calcTotalLevodopaDoseOfAllOtherMedicine(targetMedicine) {
       var totalLevodopaDose = 0;
       for (let item of this.diagnosticMedicine) {
-        var medicineInfoObj = Util.getElement('medicineId', item.medicineId, this.medicineInfo);
-        // 用来计算的药物要满足 3 个条件：未停药，不是当前药物，属于多巴胺类制剂
-        if (item.stopFlag === 1 && item.medicineId !== targetMedicine.medicineId && medicineInfoObj.medicalType === 0) {
+        // 用来计算的药物要满足 2 个条件：未停药，不是当前药物
+        if (item.stopFlag === 1 && item.medicineId !== targetMedicine.medicineId) {
           totalLevodopaDose += item.levodopaDose;
         }
       }
       return totalLevodopaDose;
+    },
+    checkIfComtExistsAmongOtherMedicine(targetMedicine) {
+      // 遍历其它所有未停药的药物，看是否存在 COMT 抑制剂
+      var hasCOMT = false;
+      for (let item of this.diagnosticMedicine) {
+        var medicineInfoObj = Util.getElement('medicineId', item.medicineId, this.medicineInfo);
+        if (item.stopFlag === 1 && item.medicineId !== targetMedicine.medicineId &&
+          medicineInfoObj.medicalType === 3) {
+          hasCOMT = true;
+        }
+      }
+      return hasCOMT;
     },
     transformSurgicalType(typeId) {
       // 在 tableData 中找到对应的值
@@ -298,16 +377,16 @@ export default {
       return typeName === undefined ? '' : typeName;
     },
     addMedicine() {
-      var totalLevodopaDoseOfAllOtherMedicine = this.calcTotalLevodopaDoseOfAllOtherMedicine({});
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.ADD_NEW_CARD, {}, this.archived, totalLevodopaDoseOfAllOtherMedicine);
+      var hasCOMT = this.checkIfComtExistsAmongOtherMedicine({});
+      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.ADD_NEW_CARD, {}, this.archived, hasCOMT);
     },
     viewMedicine(item) {
-      var totalLevodopaDoseOfAllOtherMedicine = this.calcTotalLevodopaDoseOfAllOtherMedicine(item);
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.VIEW_CURRENT_CARD, item, this.archived, totalLevodopaDoseOfAllOtherMedicine);
+      var hasCOMT = this.checkIfComtExistsAmongOtherMedicine(item);
+      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.VIEW_CURRENT_CARD, item, this.archived, hasCOMT);
     },
     editMedicine(item) {
-      var totalLevodopaDoseOfAllOtherMedicine = this.calcTotalLevodopaDoseOfAllOtherMedicine(item);
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.EDIT_CURRENT_CARD, item, this.archived, totalLevodopaDoseOfAllOtherMedicine);
+      var hasCOMT = this.checkIfComtExistsAmongOtherMedicine(item);
+      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.EDIT_CURRENT_CARD, item, this.archived, hasCOMT);
     },
     deleteMedicine(item) {
       var patientMedicine = {
@@ -337,7 +416,12 @@ export default {
         {
           text: '程控记录',
           callback: this.addDbsRecord
+        },
+        {
+          text: '物理治疗',
+          callback: this.addPhysiontherapy
         }
+
       ];
       Bus.$emit(this.SHOW_CHOICE_PANEL, list);
     },
@@ -427,6 +511,29 @@ export default {
       }
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
+    transformPhysiType(physiType) {
+      var types = Util.getElement('typegroupcode', 'physiType', this.typeGroup).types;
+      var typeName = Util.getElement('typeCode', physiType, types).typeName;
+      return typeName ? typeName : '';
+    },
+    addPhysiontherapy() {
+      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.ADD_NEW_CARD, {}, this.archived);
+    },
+    viewPhysiontherapy(item) {
+      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.VIEW_CURRENT_CARD, item, this.archived);
+    },
+    editPhysiontherapy(item) {
+      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.EDIT_CURRENT_CARD, item, this.archived);
+    },
+    deletePhysiontherapy(item) {
+      var patientPhysiontherapy = {
+        patientPhytheTmsId: item.patientPhytheTmsId
+      };
+      Bus.$on(this.CONFIRM, () => {
+        deletePhysiontherapy(patientPhysiontherapy).then(this._resolveDeletion, this._rejectDeletion);
+      });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
+    },
     _resolveDeletion() {
       // 如果成功删除记录，则重新发出请求，获取最新数据。同时解除 [确认对话框] 的 “确认” 回调函数
       Bus.$emit(this.UPDATE_CASE_INFO);
@@ -498,13 +605,27 @@ export default {
 <style lang="less">
 @import "~styles/variables.less";
 
-@surgery-card-height: 220px;
+@medicine-card-height: 175px;
+@surgery-card-height: 225px;
+@physiontherapy-card-height: 175px;
 
 .diagnostic-surgery {
   .panel {
     text-align: left;
+    &.medicine-panel .content {
+      height: @medicine-card-height + @card-vertical-margin * 2 + 5px * 2;
+      &.extended {
+        height: auto;
+      }
+    }
     &.surgery-panel .content {
       height: @surgery-card-height + @card-vertical-margin * 2 + 5px * 2;
+      &.extended {
+        height: auto;
+      }
+    }
+    &.physiontherapy-panel .content {
+      height: @physiontherapy-card-height + @card-vertical-margin * 2 + 5px * 2;
       &.extended {
         height: auto;
       }
@@ -545,8 +666,14 @@ export default {
       &.width-1-10 {
         width: calc(~"10% - @{card-horizontal-margin} * 2");
       }
+      &.medicine-card {
+        height: @medicine-card-height;
+      }
       &.surgery-card {
         height: @surgery-card-height;
+      }
+      &.physiontherapy-card {
+        height: @physiontherapy-card-height;
       }
       .text {
         position: absolute;
@@ -580,25 +707,25 @@ export default {
         top: 100px;
       }
       .line-1 {
-        top: 45px;
+        top: 50px;
       }
       .line-2 {
-        top: 70px;
+        top: 75px;
       }
       .line-3 {
-        top: 95px;
+        top: 100px;
       }
       .line-4 {
-        top: 120px;
+        top: 125px;
       }
       .line-5 {
-        top: 145px;
+        top: 150px;
       }
       .line-6 {
-        top: 170px;
+        top: 175px;
       }
       .line-7 {
-        top: 195px;
+        top: 200px;
       }
     }
   }
