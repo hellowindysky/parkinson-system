@@ -181,12 +181,12 @@
           </table>
         </div>
       </div> -->
-       <extensible-panel class="panel" :mode="mutableMode" :title="subTitle" v-on:addNewCard="addDisease"
+       <extensible-panel class="panel" :mode="mutableMode" :title="subTitle" v-on:addNewCard="addFirstSymptomsRecord"
         :editable="canEdit">
-        <card class="card" :class="devideWidth" :mode="mutableMode" v-for="item in diagnosticDisease" :key="item.diseaseId"
-          :title="getTitle(item.diseaseId)" :disable-delete="item.statusFlag===0" v-on:editCurrentCard="editDisease(item)"
-          v-on:deleteCurrentCard="deleteDisease(item)" v-on:viewCurrentCard="viewDisease(item)">
-          <div class="text first-line">{{transform(item, 'usages')}}</div>
+        <card class="card" :class="devideWidth" :mode="mutableMode" v-for="item in diagnosticDisease.patientSymptom" :key="item.diseaseId"
+          :title="item.symType" :disable-delete="item.statusFlag===0" v-on:editCurrentCard="editFirstSymptomsRecord(item)"
+          v-on:deleteCurrentCard="deleteDisease(item)" v-on:viewCurrentCard="viewFirstSymptomsRecord(item)">
+          <div class="text first-line">{{item.symName}}</div>
           <div class="text second-line">{{item.ariseTime}}</div>
         </card>
       </extensible-panel>
@@ -236,7 +236,7 @@ export default {
       'typeGroup'
     ]),
     subTitle() {
-      var count = this.diagnosticDisease.length;
+      var count = this.diagnosticDisease.patientSymptom.length;
       return this.title + '（' + count + '条记录）';
     },
     // totalDictionary() {
@@ -332,28 +332,14 @@ export default {
         // });
       });
     },
-    calcTotalLevodopaDoseOfAllOtherDisease(targetDisease) {
-      var totalLevodopaDose = 0;
-      for (let item of this.diagnosticDisease) {
-        var diseaseInfoObj = Util.getElement('diseaseId', item.diseaseId, this.diseaseInfo);
-
-        if (item.stopFlag === 1 && item.diseaseId !== targetDisease.diseaseId && diseaseInfoObj.diseaseType === 0) {
-          totalLevodopaDose += item.levodopaDose;
-        }
-      }
-      return totalLevodopaDose;
+    addFirstSymptomsRecord() {
+      Bus.$emit(this.SHOW_FIRSTSYMPTOMS_MODAL, this.ADD_NEW_CARD, {}, '主诉症状');
     },
-    addDisease() {
-      var totalLevodopaDoseOfAllOtherDisease = this.calcTotalLevodopaDoseOfAllOtherDisease({});
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.ADD_NEW_CARD, {}, this.archived, totalLevodopaDoseOfAllOtherDisease);
+    viewFirstSymptomsRecord(item) {
+      Bus.$emit(this.SHOW_FIRSTSYMPTOMS_MODAL, this.VIEW_CURRENT_CARD, item, '主诉症状');
     },
-    viewDisease(item) {
-      var totalLevodopaDoseOfAllOtherDisease = this.calcTotalLevodopaDoseOfAllOtherDisease(item);
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.VIEW_CURRENT_CARD, item, this.archived, totalLevodopaDoseOfAllOtherDisease);
-    },
-    editDisease(item) {
-      var totalLevodopaDoseOfAllOtherDisease = this.calcTotalLevodopaDoseOfAllOtherDisease(item);
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.EDIT_CURRENT_CARD, item, this.archived, totalLevodopaDoseOfAllOtherDisease);
+    editFirstSymptomsRecord(item) {
+      Bus.$emit(this.SHOW_FIRSTSYMPTOMS_MODAL, this.EDIT_CURRENT_CARD, item, '主诉症状');
     },
     deleteDisease(item) {
       var patientDisease = {
@@ -445,7 +431,7 @@ export default {
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
     Bus.$on(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
     Bus.$on(this.RECALCULATE_CARD_WIDTH, this.recalculateCardWidth);
-
+    console.log(this.diagnosticDisease);
     setTimeout(() => {
       // console.log(this.copyInfo);
       // console.log(this.diagnosticDisease);

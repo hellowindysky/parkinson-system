@@ -410,6 +410,15 @@ export function modifyDiagnosticDisease(diagnosticDisease) {
   return encapsulatePromise(url, request);
 };
 
+// 新增主诉症状  诊断记录 主诉症状
+export function addPatientSymptom(complaintsInfo) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientSymptomModel = complaintsInfo;
+  var url = baseUrl + '/pdms/addPatientSymptom';
+
+  return encapsulatePromise(url, request);
+};
+
 // 获取患者诊断列表
 export function getPatientCaseList(patientId) {
   // 传进来的 patientId 可能是字符串，这里需要转化为数字
