@@ -8,7 +8,8 @@
           :placeholder="'请输入技术支持员的睿云账号或手机号'"></el-input>
       </div>
       <div class="field agreement">
-        <el-checkbox v-model="readAgreement">我已阅读并同意睿云系统保密协议</el-checkbox>
+        <el-checkbox v-model="readAgreement"></el-checkbox>
+        我已阅读并同意<span class="link">睿云系统保密协议</span>
       </div>
       <div class="seperate-line"></div>
       <div class="button-wrapper">
@@ -89,7 +90,6 @@ export default {
     }
     .field {
       padding: 0;
-      text-align: left;
       display: inline-block;
       position: relative;
       width: 100%;
@@ -99,6 +99,16 @@ export default {
       text-align: left;
       &.agreement {
         padding-top: 10px;
+        .link {
+          border-bottom: 1px solid @light-font-color;
+          cursor: pointer;
+          &:hover {
+            opacity: 0.7;
+          }
+          &:active {
+            opacity: 0.85;
+          }
+        }
       }
       .el-input {
         .el-input__inner {
