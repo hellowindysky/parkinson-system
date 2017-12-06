@@ -5,6 +5,7 @@
     <router-view class="content"></router-view>
     <password-modal></password-modal>
     <authorization-modal></authorization-modal>
+    <message-modal></message-modal>
     <group-modal></group-modal>
     <modal-box></modal-box>
     <medicine-modal></medicine-modal>
@@ -35,6 +36,7 @@ import sidebar from 'components/views/sidebar/Sidebar';
 
 import passwordModal from 'components/views/modal/passwordmodal/PasswordModal';
 import authorizationModal from 'components/views/modal/authorizationmodal/AuthorizationModal';
+import messageModal from 'components/views/modal/messagemodal/MessageModal';
 import groupModal from 'components/views/modal/groupmodal/GroupModal';
 import modalBox from 'components/views/modal/modalbox/ModalBox';
 import medicineModal from 'components/views/modal/medicinemodal/MedicineModal';
@@ -71,6 +73,7 @@ export default {
     sidebar,
     passwordModal,
     authorizationModal,
+    messageModal,
     groupModal,
     modalBox,
     medicineModal,

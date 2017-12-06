@@ -81,6 +81,7 @@ export default {
   SHOW_OPERATIVE_COMPLICATION_MODAL: 'showOperativeComplication',
   SHOW_DBS_MODAL: 'showDbsModal',
   SHOW_AUTHORIZATION_MODAL: 'showAuthorizationModal',
+  SHOW_MESSAGE_MODAL: 'showMessageModal',
   SHOW_PASSWORD_MODAL: 'showPasswordModal',
   SHOW_PHYSIONTHERAPY_MODAL: 'showPhysiontherapyModal',
   SHOW_FIRSTSYMPTOMS_MODAL: 'showFirstSymptomsModal',
