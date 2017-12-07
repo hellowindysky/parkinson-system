@@ -3,10 +3,14 @@
     <topbar class="topbar" :showFilterPanel="showFilterPanel"></topbar>
     <sidebar class="sidebar"></sidebar>
     <router-view class="content"></router-view>
+
     <password-modal></password-modal>
     <authorization-modal></authorization-modal>
+    <secret-agreement-modal></secret-agreement-modal>
     <message-modal></message-modal>
+
     <group-modal></group-modal>
+
     <modal-box></modal-box>
     <medicine-modal></medicine-modal>
     <pre-evaluation-modal></pre-evaluation-modal>
@@ -23,10 +27,13 @@
     <first-symptoms-modal></first-symptoms-modal>
     <first-treatment-modal></first-treatment-modal>
     <diagnostic-record-modal></diagnostic-record-modal>
+
     <filter-panel :showFilterPanel="showFilterPanel"></filter-panel>
     <choice-panel></choice-panel>
     <confirm-box></confirm-box>
     <notice-box></notice-box>
+
+    <water-mark v-show="showWaterMark"></water-mark>
   </div>
 </template>
 
@@ -38,6 +45,7 @@ import sidebar from 'components/views/sidebar/Sidebar';
 
 import passwordModal from 'components/views/modal/passwordmodal/PasswordModal';
 import authorizationModal from 'components/views/modal/authorizationmodal/AuthorizationModal';
+import secretAgreementModal from 'components/views/modal/secretagreementmodal/SecretAgreementModal';
 import messageModal from 'components/views/modal/messagemodal/MessageModal';
 import groupModal from 'components/views/modal/groupmodal/GroupModal';
 import modalBox from 'components/views/modal/modalbox/ModalBox';
@@ -62,6 +70,8 @@ import choicePanel from 'components/public/choicepanel/ChoicePanel';
 import confirmBox from 'components/public/confirmbox/ConfirmBox';
 import noticeBox from 'components/public/noticebox/NoticeBox';
 
+import waterMark from 'components/public/watermark/WaterMark';
+
 // 设定多长时间不操作，就返回登录界面
 const RELOGIN_TIME_FOR_NO_OPERATION = 1000 * 60 * 60;
 
@@ -77,6 +87,7 @@ export default {
     sidebar,
     passwordModal,
     authorizationModal,
+    secretAgreementModal,
     messageModal,
     groupModal,
     modalBox,
@@ -99,7 +110,14 @@ export default {
     filterPanel,
     choicePanel,
     confirmBox,
-    noticeBox
+    noticeBox,
+
+    waterMark
+  },
+  computed: {
+    showWaterMark() {
+      return false;
+    }
   },
   methods: {
     clickScreen() {
@@ -140,6 +158,7 @@ export default {
     if (sessionStorage.getItem('token') === null) {
       this.display = false;
       this.$router.push('/login');
+      return;
     } else {
       this.display = true;
     }

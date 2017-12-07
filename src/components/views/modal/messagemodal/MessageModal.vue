@@ -10,7 +10,7 @@
       </div>
       <div class="field agreement">
         <el-checkbox v-model="readAgreement"></el-checkbox>
-        我已阅读并同意<span class="link">睿云系统保密协议</span>
+        我已阅读并同意<span class="link" @click="showSecretAgreement">睿云系统保密协议</span>
       </div>
       <div class="seperate-line"></div>
       <div class="button-wrapper">
@@ -54,6 +54,9 @@ export default {
       this.lockSubmitButton = true;
 
       this.lockSubmitButton = false;
+    },
+    showSecretAgreement() {
+      Bus.$emit(this.SHOW_SECRET_AGREEMENT_MODAL);
     }
   },
   mounted() {

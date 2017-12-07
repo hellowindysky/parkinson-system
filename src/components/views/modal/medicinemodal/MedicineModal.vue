@@ -174,9 +174,9 @@
         </div>
       </div>
       <div class="button cancel-button" @click="cancel">取消</div>
-      <div v-show="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD"
+      <div v-if="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD"
         class="button submit-button" @click="submit">确定</div>
-      <div v-show="mode===VIEW_CURRENT_CARD && canEdit"
+      <div v-else-if="mode===VIEW_CURRENT_CARD && canEdit"
         class="button edit-button" @click="switchToEditingMode">编辑</div>
     </div>
   </div>

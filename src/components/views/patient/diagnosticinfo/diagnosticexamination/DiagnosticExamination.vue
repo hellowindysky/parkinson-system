@@ -1,5 +1,5 @@
 <template lang="html">
-  <folding-panel :title="'检验检查'" :archived="archived" :mode="mutableMode"  v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit" :editable="canEdit">
+  <folding-panel :title="'检验检查'" :mode="mutableMode"  v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit" :editable="canEdit">
     <div class="diagnostic-examination" ref="diagnosticExamination">
       <extensible-panel class="panel" :mode="mutableMode" :title="vitalSigns" :hideButtons="true"
         :editable="canEdit" :shrinkable="false">
@@ -285,7 +285,7 @@ export default {
       return info.types ? info.types : [];
     },
     canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients) && this.archived) {
+      if (this.$route.matched.some(record => record.meta.myPatients) && !this.archived) {
         return true;
       } else {
         return false;
@@ -409,13 +409,13 @@ export default {
       // return typeId;
     },
     addNeurologicCheckRecord() {
-      Bus.$emit(this.SHOW_NERVOU_SYSTEM_MODAL, this.ADD_NEW_CARD, {}, this.archived);
+      Bus.$emit(this.SHOW_NERVOU_SYSTEM_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
     },
     editNeurologicCheckRecord(item) {
-      Bus.$emit(this.SHOW_NERVOU_SYSTEM_MODAL, this.EDIT_CURRENT_CARD, item, this.archived);
+      Bus.$emit(this.SHOW_NERVOU_SYSTEM_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
     },
     viewNeurologicCheckRecord(item) {
-      Bus.$emit(this.SHOW_NERVOU_SYSTEM_MODAL, this.VIEW_CURRENT_CARD, item, this.archived);
+      Bus.$emit(this.SHOW_NERVOU_SYSTEM_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived);
     },
     deleteNeurologicCheckRecord(item) { // 删除神经检查
       let NeuroId = {

@@ -1,5 +1,5 @@
 <template lang="html">
-  <folding-panel :title="'医学量表'" :archived="archived" :mode="mutableMode"  v-on:edit="startEditing"
+  <folding-panel :title="'医学量表'" :mode="mutableMode"  v-on:edit="startEditing"
     v-on:cancel="cancel" v-on:submit="submit" :editable="canEdit">
     <div class="diagnostic-scale" ref="diagnosticscale">
       <extensible-panel v-for="type in allScaleTypes" class="panel" :mode="mutableMode" :title="getTypeTitle(type.typeName)"
@@ -72,7 +72,7 @@ export default {
       'typeGroup'
     ]),
     canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients) && this.archived) {
+      if (this.$route.matched.some(record => record.meta.myPatients) && !this.archived) {
         return true;
       } else {
         return false;
@@ -128,14 +128,14 @@ export default {
     },
     editScale(item) {
       var scaleTypeCode = this.getScaleTypeCode(item.scaleInfoId);
-      Bus.$emit(this.SHOW_SCALE_MODAL, this.EDIT_CURRENT_CARD, item, scaleTypeCode);
+      Bus.$emit(this.SHOW_SCALE_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived, scaleTypeCode);
     },
     viewScale(item) {
       var scaleTypeCode = this.getScaleTypeCode(item.scaleInfoId);
-      Bus.$emit(this.SHOW_SCALE_MODAL, this.VIEW_CURRENT_CARD, item, scaleTypeCode);
+      Bus.$emit(this.SHOW_SCALE_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived, scaleTypeCode);
     },
     addScale(scaleTypeCode) {
-      Bus.$emit(this.SHOW_SCALE_MODAL, this.ADD_NEW_CARD, {}, scaleTypeCode);
+      Bus.$emit(this.SHOW_SCALE_MODAL, this.ADD_NEW_CARD, {}, !this.archived, scaleTypeCode);
     },
     deleteScaleRecord(item) {
       // console.log(item);

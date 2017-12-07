@@ -69,6 +69,7 @@ export default {
   HIDE_GROUP_PANEL: 'hideGroupPanel',
   HIDE_SUBJECT_PANEL: 'hideSubjectPanel',
 
+  SHOW_SECRET_AGREEMENT_MODAL: 'showSecretAgreementModal',
   SHOW_GROUP_MODAL: 'showGroupModal',
   SHOW_MODAL_BOX: 'showModalBox',
   SHOW_MEDICINE_MODAL: 'showMedicineModal',

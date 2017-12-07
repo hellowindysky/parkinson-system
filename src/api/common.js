@@ -23,7 +23,7 @@ export function encapsulatePromise(url, request) {
             code: response.data.code,
             message: response.data.msg
           };
-          reject(error);
+          reject && reject(error);
         }
       }
 
