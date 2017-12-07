@@ -5,7 +5,7 @@
       <div class="content">
         <p class="text">本协议由：</p>
         <p class="text underline">披露方：{{orgName}}  {{accountName}}（“名称”），联系方式为 {{accountNumber}}</p>
-        <p class="text underline">接收方：深圳市臻络科技有限公司 （“公司名称”），公司注册地为 深圳市南山区高新区南区粤兴三道9号华中科技大学深圳产学研基地A栋805</p>
+        <p class="text underline">接收方：深圳市臻络科技有限公司（“公司名称”），公司注册地为 深圳市南山区高新区南区粤兴三道9号华中科技大学深圳产学研基地A栋805</p>
         <p class="text">本协议为“睿云-帕金森病数据管理及智能分析系统”保密协议：医院及医院指定的使用“睿云-帕金森病数据管理及智能分析系统”的医生为披露保密信息的一方，简称为“披露方”，主要使用“睿云-帕金森病数据管理及智能分析系统”，管理临床帕金森病人；深圳市臻络科技有限公司接收保密信息的一方，简称为“接收方”，主要负责为医生使用睿云平台提供技术支持以及后期提供数据管理分析服务。协议正文披露方或接收方也可称为“一方”，或统称为“双方”。双方就保守保密信息的秘密一事达成如下协议：</p>
 
         <p class="sub-title">1.保密信息</p>
@@ -68,6 +68,7 @@ export default {
   methods: {
     showModal() {
       this.displayModal = true;
+      this.updateScrollbar();
     },
     hideModal() {
       this.displayModal = false;
