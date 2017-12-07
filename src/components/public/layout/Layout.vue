@@ -5,6 +5,7 @@
     <router-view class="content"></router-view>
     <password-modal></password-modal>
     <authorization-modal></authorization-modal>
+    <secret-agreement-modal></secret-agreement-modal>
     <message-modal></message-modal>
     <group-modal></group-modal>
     <modal-box></modal-box>
@@ -37,6 +38,7 @@ import sidebar from 'components/views/sidebar/Sidebar';
 
 import passwordModal from 'components/views/modal/passwordmodal/PasswordModal';
 import authorizationModal from 'components/views/modal/authorizationmodal/AuthorizationModal';
+import secretAgreementModal from 'components/views/modal/secretagreementmodal/SecretAgreementModal';
 import messageModal from 'components/views/modal/messagemodal/MessageModal';
 import groupModal from 'components/views/modal/groupmodal/GroupModal';
 import modalBox from 'components/views/modal/modalbox/ModalBox';
@@ -75,6 +77,7 @@ export default {
     sidebar,
     passwordModal,
     authorizationModal,
+    secretAgreementModal,
     messageModal,
     groupModal,
     modalBox,
@@ -137,6 +140,7 @@ export default {
     if (sessionStorage.getItem('token') === null) {
       this.display = false;
       this.$router.push('/login');
+      return;
     } else {
       this.display = true;
     }
