@@ -410,11 +410,30 @@ export function modifyDiagnosticDisease(diagnosticDisease) {
   return encapsulatePromise(url, request);
 };
 
-// 新增主诉症状  诊断记录 主诉症状
+// 诊断记录 主诉症状
+// 新增主诉症状
 export function addPatientSymptom(complaintsInfo) {
   var request = Object.assign({}, getCommonRequest());
   request.patientSymptomModel = complaintsInfo;
   var url = baseUrl + '/pdms/addPatientSymptom';
+
+  return encapsulatePromise(url, request);
+};
+
+// 修改主诉症状
+export function modPatientSymptom(complaintsInfo) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientSymptomModel = complaintsInfo;
+  var url = baseUrl + '/pdms/modPatientSymptom';
+
+  return encapsulatePromise(url, request);
+};
+
+// 删除主诉症状
+export function delPatientSymptom(complaintsInfo) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientSymptomModel = complaintsInfo;
+  var url = baseUrl + '/pdms/delPatientSymptom';
 
   return encapsulatePromise(url, request);
 };

@@ -181,13 +181,23 @@
           </table>
         </div>
       </div> -->
-       <extensible-panel class="panel" :mode="mutableMode" :title="subTitle" v-on:addNewCard="addFirstSymptomsRecord"
+       <extensible-panel class="panel disease-panel" :mode="mutableMode" :title="subTitle" v-on:addNewCard="addFirstSymptomsRecord"
         :editable="canEdit">
-        <card class="card" :class="devideWidth" :mode="mutableMode" v-for="item in diagnosticDisease.patientSymptom" :key="item.diseaseId"
+        <card class="card symptoms-card" :class="devideWidth" :mode="mutableMode" v-for="item in diagnosticDisease.patientSymptom" :key="item.diseaseId"
           :title="item.symType" :disable-delete="item.statusFlag===0" v-on:editCurrentCard="editFirstSymptomsRecord(item)"
           v-on:deleteCurrentCard="deleteDisease(item)" v-on:viewCurrentCard="viewFirstSymptomsRecord(item)">
-          <div class="text first-line">{{item.symName}}</div>
-          <div class="text second-line">{{item.ariseTime}}</div>
+          <div class="text first-line">
+            <span class="name">症状名称：</span>
+            <span class="value">{{item.symName}}</span>
+          </div>
+          <div class="text second-line">
+            <span class="name">是否规律出现：</span>
+            <span class="value">{{item.whetherLaw ? item.whetherLaw : '未填写'}}</span>
+          </div>
+          <div class="text third-line">
+            <span class="name">出现时间：</span>
+            <span class="value">{{item.ariseTime ? item.ariseTime : '未填写'}}</span>
+          </div>
         </card>
       </extensible-panel>
     </div>
@@ -200,7 +210,7 @@ import { mapGetters } from 'vuex';
 import Util from 'utils/util.js';
 import Bus from 'utils/bus.js';
 import { vueCopy } from 'utils/helper';
-import { modifyDiagnosticDisease } from 'api/patient.js';
+import { delPatientSymptom } from 'api/patient.js';
 
 // import { reviseDateFormat } from 'utils/helper.js';
 
@@ -343,12 +353,13 @@ export default {
     },
     deleteDisease(item) {
       var patientDisease = {
-        patientId: parseInt(this.$route.params.id, 10),
-        patientCaseId: this.$route.params.caseId,
-        patientDiseaseId: item.patientDiseaseId
+        // patientId: parseInt(this.$route.params.id, 10),
+        // patientCaseId: this.$route.params.caseId,
+        // patientDiseaseId: item.patientDiseaseId
+        id: item.id
       };
       Bus.$on(this.CONFIRM, () => {
-        modifyDiagnosticDisease(patientDisease).then(this._resolveDeletion, this._rejectDeletion);
+        delPatientSymptom(patientDisease).then(this._resolveDeletion, this._rejectDeletion);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
@@ -420,10 +431,6 @@ export default {
     }
   },
   mounted() {
-    // this.updateScrollbar();
-
-    // Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
-    // Bus.$on(this.TOGGLE_LIST_DISPLAY, this.updateScrollbar);
     Bus.$on(this.QUIT_DIAGNOSTIC_DETAIL, this.cancel);
     Bus.$on(this.EDIT_DIAGNOSTIC_DISEASE, this.startEditing);
     this.recalculateCardWidth();
@@ -431,21 +438,6 @@ export default {
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
     Bus.$on(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
     Bus.$on(this.RECALCULATE_CARD_WIDTH, this.recalculateCardWidth);
-    console.log(this.diagnosticDisease);
-    setTimeout(() => {
-      // console.log(this.copyInfo);
-      // console.log(this.diagnosticDisease);
-      // console.log(this.diagnosticDiseaseTemplate);
-      // console.log(this.diagnosticDiseaseDictionary);
-      // console.log(this.diagnosticDiseaseMsTemplate);
-      // console.log(this.diagnosticDiseaseMcTemplate);
-      // console.log(this.diagnosticDiseaseNmsTemplate);
-      // console.log(this.diagnosticDiseaseMsDictionary);
-      // console.log(this.diagnosticDiseaseMcDictionary);
-      // console.log(this.diagnosticDiseaseNmsDictionary);
-      // console.log(this.symptomType);
-      // console.log(this.totalDictionary);
-    }, 3000);
   },
   beforeDestroy() {
     Bus.$off(this.SCREEN_SIZE_CHANGE);
@@ -493,6 +485,8 @@ export default {
 @col-select-width: 150px;
 @col-remarks-width: 250px;
 @row-height: 45px;
+
+@disease-card-height: 130px;
 
 .diagnostic-disease {
   // padding: 0 25px;
@@ -582,120 +576,18 @@ export default {
       }
     }
   }
-  // .form-wrapper {
-  //   .form-title {
-  //     margin: 15px 0;
-  //     padding: 0;
-  //     text-align: left;
-  //     font-size: @normal-font-size;
-  //   }
-    // .scroll-area {
-    //   position: relative;
-    //   width: 100%;
-    //   padding-bottom: 10px;
-    //   overflow: hidden;
-    //   .form-content {
-    //     border: 1px solid @light-gray-color;
-    //     border-spacing: 0;
-    //     table-layout: fixed;
-    //     .row {
-    //       height: @row-height;
-    //       &.first-row {
-    //         background-color: @screen-color;
-    //         height: 30px;
-    //         line-height: 30px;
-    //         .add-button {
-    //           position: absolute;
-    //           left: 5px;
-    //           cursor: pointer;
-    //           &:hover {
-    //             opacity: 0.8;
-    //           }
-    //           &:active {
-    //             opacity: 0.9;
-    //           }
-    //         }
-    //       }
-    //       .col {
-    //         position: relative;
-    //         font-size: @normal-font-size;
-    //         text-align: center;
-    //         &.col-name {
-    //           min-width: @col-name-width;
-    //           .el-input {
-    //             margin-left: 20px;
-    //             width: @col-name-width - 30px;
-    //           }
-    //         }
-    //         &.col-time {
-    //           min-width: @col-time-width;
-    //         }
-    //         &.col-select {
-    //           min-width: @col-select-width;
-    //         }
-    //         &.col-remarks {
-    //           min-width: @col-remarks-width;
-    //         }
-    //         .required-mark {
-    //           color: red;
-    //           font-size: 20px;
-    //           vertical-align: middle;
-    //         }
-    //         .delete-button {
-    //           position: absolute;
-    //           left: 5px;
-    //           top: 13px;
-    //           color: @alert-color;
-    //           cursor: pointer;
-    //           z-index: 10;
-    //           &:hover {
-    //             opacity: 0.8;
-    //           }
-    //           &:active {
-    //             opacity: 0.9;
-    //           }
-    //         }
-    //         .el-input {
-    //           margin-left: 2%;
-    //           width: 90%;
-    //           .el-input__inner {
-    //             height: 30px;
-    //             border: none;
-    //             background-color: @screen-color;
-    //           }
-    //         }
-    //         .warning .el-input__inner {
-    //           border: 1px solid red;
-    //         }
-    //       }
-    //     }
-    //   }
-    //   .ps__scrollbar-x-rail {
-    //     position: absolute;
-    //     height: @scroll-bar-height;
-    //     width: 100%;
-    //     bottom: 0;
-    //     box-sizing: border-box;
-    //     opacity: 0.3;
-    //     transition: opacity 0.3s;
-    //     .ps__scrollbar-x {
-    //       position: relative;
-    //       height: @scroll-bar-height;
-    //       background-color: #aaa;
-    //       border-radius: 20px;
-    //     }
-    //   }
-    //   &:hover {
-    //     .ps__scrollbar-x-rail {
-    //       opacity: 0.6;
-    //     }
-    //   }
-    // }
-  // }
+  >.extensible-panel-wrapper.disease-panel{
+    >.content{
+      height:@disease-card-height + @card-vertical-margin * 2 + 5px * 2;
+    }
+  }
   .card {
       position: relative;
       display: inline-block;
       margin: @card-vertical-margin @card-horizontal-margin;
+      &.symptoms-card{
+        height: @disease-card-height;
+      }
       &.width-1-1, &.width-1-0 {
         width: calc(~"100% - @{card-horizontal-margin} * 2");
       }
@@ -738,6 +630,10 @@ export default {
       .second-line {
         left: 10px;
         top: 75px;
+      }
+      .third-line {
+        left: 10px;
+        top: 100px;
       }
   }
 }      

@@ -9,40 +9,40 @@
             <span class="required-mark">*</span>
           </span>
           <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-            <span>ggggggggg</span>
+            <span>{{copyInfo.symType}}</span>
           </span>
           <span class="field-input" v-else>
-            <span class="warning-text">{{warningResults.firSymType}}</span>
-            <el-select v-model="copyInfo.firSymType" placeholder="请选择首发症状类型" clearable
-             @change="updateWarning('firSymType'),clearVal('firSymType')" :class="{'warning': warningResults.firSymType}" >
+            <span class="warning-text">{{warningResults.symType}}</span>
+            <el-select v-model="copyInfo.symType" placeholder="请选择首发症状类型" clearable
+             @change="updateWarning('symType'),clearVal(['symType'])" :class="{'warning': warningResults.symType}" >
               <el-option
                 v-for="item in getOptions('SympType')"
                 :key="item.code"
                 :label="item.name"
-                :value="item.code">
+                :value="item.name">
               </el-option>
           </el-select>
           </span>
         </div>
 
         <!-- 以下是 运动症状才有的序列 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
-        <div v-show="copyInfo.firSymType===0">
+        <div v-show="copyInfo.symType===t(0, 'SympType')">
           <div class="field">
             <span class="field-name long-field-name">
               症状名称:
               <span class="required-mark">*</span>
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>症状名称值</span>
+              <span>{{copyInfo.symName}}</span>
             </span>
             <span class="field-input" v-else>
-              <span class="warning-text">{{warningResults.firSymName}}</span>
-              <el-select v-model="copyInfo.firSymName" placeholder="请选择症状名称" clearable
-               @change="updateWarning('firSymName')" :class="{'warning': warningResults.firSymName}" >
+              <span class="warning-text">{{warningResults.symName}}</span>
+              <el-select v-model="copyInfo.symName" placeholder="请选择症状名称" clearable
+               @change="updateWarning('symName')" :class="{'warning': warningResults.symName}" >
                 <el-option
-                 v-for="item in getSymOptions(copyInfo.firSymType)" 
+                 v-for="item in getSymOptions(transId(copyInfo.symType, 'SympType'))"
                  :key="item.code" :label="item.name" 
-                 :value="item.code"></el-option>
+                 :value="item.name"></el-option>
               </el-select>
             </span>
           </div>
@@ -53,7 +53,7 @@
               <!-- <span class="required-mark">*</span> -->
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>左上肢出现时间</span>
+              <span>{{copyInfo.ariseTimeLeftUp}}</span>
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
@@ -67,7 +67,7 @@
               <!-- <span class="required-mark">*</span> -->
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>右上肢出现时间</span>
+              <span>{{copyInfo.ariseTimeRightUp}}</span>
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
@@ -81,7 +81,7 @@
               <!-- <span class="required-mark">*</span> -->
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>左下肢出现时间</span>
+              <span>{{copyInfo.ariseTimeLeftDown}}</span>
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
@@ -95,7 +95,7 @@
               <!-- <span class="required-mark">*</span> -->
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>右下肢出现时间</span>
+              <span>{{copyInfo.ariseTimeRightDown}}</span>
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
@@ -109,13 +109,13 @@
               <!-- <span class="required-mark">*</span> -->
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>是否规律出现</span>
+              <span>{{copyInfo.whetherLaw}}</span>
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-select v-model="copyInfo.regular" placeholder="请选择是否规律出现">
-                <el-option label="是" :value="1"></el-option>
-                <el-option label="否" :value="0"></el-option>
+              <el-select v-model="copyInfo.whetherLaw" placeholder="请选择是否规律出现">
+                <el-option label="是" :value="'是'"></el-option>
+                <el-option label="否" :value="'否'"></el-option>
             </el-select>
             </span>
           </div>
@@ -126,7 +126,7 @@
               <!-- <span class="required-mark">*</span> -->
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>备注</span>
+              <span>{{copyInfo.remarks}}</span>
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
@@ -139,7 +139,7 @@
 
 
         <!-- 以下是 运动并发症才有的序列 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
-        <div v-show="copyInfo.firSymType===1">
+        <div v-show="copyInfo.symType===t(1, 'SympType')">
           
           <div class="field">
             <span class="field-name long-field-name">
@@ -147,13 +147,18 @@
               <span class="required-mark">*</span>
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>症状名称值</span>
+              <span>{{copyInfo.symName}}</span>
             </span>
             <span class="field-input" v-else>
-              <span class="warning-text">{{warningResults.firSymName}}</span>
-              <el-select v-model="copyInfo.firSymName" placeholder="请选择症状名称" clearable
-               @change="updateWarning('firSymName')" :class="{'warning': warningResults.firSymName}" >
-                <el-option v-for="item in getSymOptions(copyInfo.firSymType)" :key="item.code" :label="item.name" :value="item.code"></el-option>
+              <span class="warning-text">{{warningResults.symName}}</span>
+              <el-select v-model="copyInfo.symName" placeholder="请选择症状名称" clearable
+               @change="updateWarning('symName')" :class="{'warning': warningResults.symName}" >
+                <el-option
+                 v-for="item in getSymOptions(transId(copyInfo.symType, 'SympType'))"
+                 :key="item.code" 
+                 :label="item.name" 
+                 :value="item.name">
+                </el-option>
               </el-select>
             </span>
           </div>
@@ -164,7 +169,7 @@
               <!-- <span class="required-mark">*</span> -->
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>出现时间</span>
+              <span>{{copyInfo.ariseTime}}</span>
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
@@ -178,14 +183,14 @@
               <!-- <span class="required-mark">*</span> -->
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>是否规律出现</span>
+              <span>{{copyInfo.whetherLaw}}</span>
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-select v-model="copyInfo.regular"
+              <el-select v-model="copyInfo.whetherLaw"
                 placeholder="请选择是否规律出现">
-                  <el-option label="是" :value="1"></el-option>
-                  <el-option label="否" :value="0"></el-option>
+                  <el-option label="是" :value="'是'"></el-option>
+                  <el-option label="否" :value="'否'"></el-option>
               </el-select>
             </span>
           </div>
@@ -210,7 +215,7 @@
               <!-- <span class="required-mark">*</span> -->
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>备注</span>
+              <span>{{copyInfo.remarks}}</span>
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
@@ -222,7 +227,7 @@
         <!-- 以上是 运动并发症才有的序列 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ -->
 
         <!-- 以下是 非运动症状才有的序列 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
-        <div v-show="copyInfo.firSymType===2">
+        <div v-show="copyInfo.symType===t(2, 'SympType')">
 
           <div class="field">
             <span class="field-name long-field-name">
@@ -230,17 +235,17 @@
               <span class="required-mark">*</span>
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>症状名称值</span>
+              <span>{{copyInfo.notSportType}}</span>
             </span>
             <span class="field-input" v-else>
               <span class="warning-text">{{warningResults.notSportType}}</span>
-              <el-select v-model="copyInfo.notSportType" placeholder="请选择非运动症状类型"
-               @change="updateWarning('notSportType')" :class="{'warning': warningResults.notSportType}" >
+              <el-select v-model="copyInfo.notSportType" placeholder="请选择非运动症状类型" clearable 
+               @change="updateWarning('notSportType'),clearVal(['symType','notSportType'])" :class="{'warning': warningResults.notSportType}" >
                 <el-option
                  v-for="item in getOptions('noSportSymType')"
                  :key="item.code"
                  :label="item.name"
-                 :value="item.code">
+                 :value="item.name">
                 </el-option>
               </el-select>
             </span>
@@ -252,13 +257,18 @@
               <span class="required-mark">*</span>
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>症状名称值</span>
+              <span>{{copyInfo.symName}}</span>
             </span>
             <span class="field-input" v-else>
-              <span class="warning-text">{{warningResults.firSymName}}</span>
-              <el-select v-model="copyInfo.firSymName" placeholder="请选择症状名称" clearable
-               @change="updateWarning('firSymName')" :class="{'warning': warningResults.firSymName}" >
-                <el-option v-for="item in getNoSportOptions(copyInfo.notSportType)" :key="item.code" :label="item.name" :value="item.code"></el-option>
+              <span class="warning-text">{{warningResults.symName}}</span>
+              <el-select v-model="copyInfo.symName" placeholder="请选择症状名称" clearable
+               @change="updateWarning('symName')" :class="{'warning': warningResults.symName}" >
+                <el-option
+                 v-for="item in getNoSportOptions(transId(copyInfo.notSportType, 'noSportSymType'))"
+                 :key="item.code" 
+                 :label="item.name" 
+                 :value="item.name">
+                </el-option>
               </el-select>
             </span>
           </div>
@@ -269,7 +279,7 @@
               <!-- <span class="required-mark">*</span> -->
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>出现时间</span>
+              <span>{{copyInfo.ariseTime}}</span>
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
@@ -283,14 +293,14 @@
               <!-- <span class="required-mark">*</span> -->
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>是否规律出现</span>
+              <span>{{copyInfo.whetherLaw}}</span>
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-select v-model="copyInfo.regular"
+              <el-select v-model="copyInfo.whetherLaw"
                 placeholder="请选择是否规律出现">
-                  <el-option label="是" :value="1"></el-option>
-                  <el-option label="否" :value="0"></el-option>
+                  <el-option label="是" :value="'是'"></el-option>
+                  <el-option label="否" :value="'否'"></el-option>
               </el-select>
             </span>
           </div>
@@ -301,7 +311,7 @@
               <!-- <span class="required-mark">*</span> -->
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>备注</span>
+              <span>{{copyInfo.remarks}}</span>
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
@@ -332,7 +342,8 @@ import Ps from 'perfect-scrollbar';
 import { mapGetters } from 'vuex';
 import Util from 'utils/util.js';
 import { reviseDateFormat, pruneObj } from 'utils/helper.js';
-import { addPatientFirstSymbol, addPatientSymptom} from 'api/patient.js';
+import {addPatientSymptom, modPatientSymptom} from 'api/patient.js';
+// import { addPatientFirstSymbol, addPatientSymptom, modPatientSymptom} from 'api/patient.js';
 export default {
   data() {
     return {
@@ -341,21 +352,22 @@ export default {
       completeInit: false,
       title2: 'ttt',
       copyInfo: {
-        firSymType: '', // int 首发症状类型 0 1 2
-        firSymName: '', // int 症状名称
+        symType: '', //  首发症状类型 string
+        symName: '', // 症状名称 string
         ariseTimeLeftDown: '', // 左下肢出现时间
         ariseTimeLeftUp: '', // 左上肢出现时间
         ariseTimeRightDown: '', // 右下肢出现时间
         ariseTimeRightUp: '', // 右上肢出现时间
-        regular: '',
+        whetherLaw: '',
         remarks: '',
         ariseTime: '', // 出现时间
         lastTime: '', // 持续时间
         notSportType: '' // 非运动症状类型
       },
+      id: '',
       warningResults: {
-        firSymType: '',
-        firSymName: '',
+        symType: '',
+        symName: '',
         notSportType: ''
       },
       lockSubmitButton: false,
@@ -383,19 +395,19 @@ export default {
       }
     },
     verificationFieldList() {
-      if (this.copyInfo.firSymType === 0 || this.copyInfo.firSymType === 1) {
-        return ['firSymType', 'firSymName'];
-      } else if (this.copyInfo.firSymType === 2) {
-        return ['firSymType', 'firSymName', 'notSportType'];
+      if (this.copyInfo.symType === this.t(0, 'SympType') || this.copyInfo.symType === this.t(1, 'SympType')) {
+        return ['symType', 'symName'];
+      } else if (this.copyInfo.symType === this.t(2, 'SympType')) {
+        return ['symType', 'symName', 'notSportType'];
       } else {
-        return ['firSymType'];
+        return ['symType'];
       }
     }
   },
   methods: {
     clearVal(fieldName) {
       for (let key in this.copyInfo) {
-        if (key !== fieldName) {
+        if (fieldName.indexOf(key) === -1) {
           this.$set(this.copyInfo, key, '');
         };
       };
@@ -412,7 +424,21 @@ export default {
       console.log(cardOperation, item);
       this.mode = cardOperation;
       this.title2 = title2;
-      // jjjj
+      // ******************************
+      this.copyInfo.symType = item.symType;
+      this.copyInfo.symName = item.symName;
+      this.copyInfo.ariseTimeLeftDown = item.ariseTimeLeftDown;
+      this.copyInfo.ariseTimeLeftUp = item.ariseTimeLeftUp;
+      this.copyInfo.ariseTimeRightDown = item.ariseTimeRightDown;
+      this.copyInfo.ariseTimeRightUp = item.ariseTimeRightUp;
+      this.copyInfo.whetherLaw = item.whetherLaw;
+      this.copyInfo.remarks = item.remarks;
+      this.copyInfo.ariseTime = item.ariseTime;
+      this.copyInfo.lastTime = item.lastTime;
+      this.copyInfo.notSportType = item.notSportType;
+      // ---------
+      this.id = item.id;
+      // ********************************
 
       if (this.mode === this.ADD_NEW_CARD) {
         for (let key in this.copyInfo) {
@@ -439,6 +465,21 @@ export default {
           minScrollbarLength: 40
         });
       });
+    },
+    t(i, fieldName) {
+      if (this.getOptions(fieldName)[i] === undefined) {
+        return -1;
+      } else {
+        return this.getOptions(fieldName)[i].name;
+      }
+    },
+    transId(str, fieldName) {
+      var obj = this.getOptions(fieldName).filter((item) => {return str === item.name;})[0];
+      if (obj) {
+        return obj.code;
+      } else {
+        return -1;
+      }
     },
     getOptions(fieldName) {
       var options = [];
@@ -473,7 +514,7 @@ export default {
       });
     },
     updateWarning(fieldName) {
-      if (this.completeInit && !this.copyInfo[fieldName] && this.copyInfo[fieldName] !== 0) {
+      if (this.completeInit && !this.copyInfo[fieldName]) {
         this.warningResults[fieldName] = '必填项';
       } else {
         this.warningResults[fieldName] = '';
@@ -509,21 +550,9 @@ export default {
 
       // 验证完成，准备请求数据
       if (this.title2 === '主诉症状') {
-        var ComplaintsInfo = {}; // 主诉症状数据
+        var ComplaintsInfo = Object.assign({}, this.copyInfo); // 主诉症状数据
         ComplaintsInfo.patientId = this.$route.params.id;
         ComplaintsInfo.patientCaseId = this.$route.params.caseId;
-
-        ComplaintsInfo.symType = this.copyInfo.firSymType;
-        ComplaintsInfo.symptomTypeId = this.copyInfo.firSymName;
-        ComplaintsInfo.ariseTimeLeftUp = this.copyInfo.ariseTimeLeftUp;
-        ComplaintsInfo.ariseTimeRightUp = this.copyInfo.ariseTimeRightUp;
-        ComplaintsInfo.ariseTimeLeftDown = this.copyInfo.ariseTimeLeftDown;
-        ComplaintsInfo.ariseTimeRightDown = this.copyInfo.ariseTimeRightDown;
-        ComplaintsInfo.whetherLaw = this.copyInfo.regular === 1 ? '是' : '否';
-        ComplaintsInfo.remarks = this.copyInfo.remarks;
-        ComplaintsInfo.ariseTime = this.copyInfo.ariseTime;
-        ComplaintsInfo.lastTime = this.copyInfo.lastTime;
-        ComplaintsInfo.notSportType = this.copyInfo.notSportType;
       };
 
       reviseDateFormat(ComplaintsInfo);
@@ -544,6 +573,14 @@ export default {
           //   this.updateAndClose();
           //   this.lockSubmitButton = false;
           // }, this._handleError);
+        };
+      } else if (this.mode === this.EDIT_CURRENT_CARD) {
+        if (this.title2 === '主诉症状') {
+          ComplaintsInfo.id = this.id;
+          modPatientSymptom(ComplaintsInfo).then(() => {
+            this.updateAndClose();
+            this.lockSubmitButton = false;
+          }, this._handleError);
         };
       };
 
