@@ -1,5 +1,5 @@
 <template lang="html">
-  <folding-panel :title="'治疗方案'" :archived="archived" :mode="mutableMode"  v-on:edit="startEditing"
+  <folding-panel :title="'治疗方案'" :mode="mutableMode"  v-on:edit="startEditing"
     v-on:cancel="cancel" v-on:submit="submit" :editable="canEdit">
     <div class="diagnostic-surgery" ref="diagnosticSurgery">
       <extensible-panel class="panel medicine-panel" :mode="mutableMode" :title="medicineTitle" v-on:addNewCard="addMedicine"
@@ -287,7 +287,7 @@ export default {
       return this.diagnosticSurgery.patientDbsFollowList ? this.diagnosticSurgery.patientDbsFollowList : [];
     },
     canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients) && this.archived) {
+      if (this.$route.matched.some(record => record.meta.myPatients) && !this.archived) {
         return true;
       } else {
         return false;
@@ -378,15 +378,15 @@ export default {
     },
     addMedicine() {
       var hasCOMT = this.checkIfComtExistsAmongOtherMedicine({});
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.ADD_NEW_CARD, {}, this.archived, hasCOMT);
+      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.ADD_NEW_CARD, {}, !this.archived, hasCOMT);
     },
     viewMedicine(item) {
       var hasCOMT = this.checkIfComtExistsAmongOtherMedicine(item);
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.VIEW_CURRENT_CARD, item, this.archived, hasCOMT);
+      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived, hasCOMT);
     },
     editMedicine(item) {
       var hasCOMT = this.checkIfComtExistsAmongOtherMedicine(item);
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.EDIT_CURRENT_CARD, item, this.archived, hasCOMT);
+      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived, hasCOMT);
     },
     deleteMedicine(item) {
       var patientMedicine = {
@@ -426,13 +426,13 @@ export default {
       Bus.$emit(this.SHOW_CHOICE_PANEL, list);
     },
     addPreEvaluationRecord() {
-      Bus.$emit(this.SHOW_PRE_EVALUATION_MODAL, this.ADD_NEW_CARD, {}, this.archived);
+      Bus.$emit(this.SHOW_PRE_EVALUATION_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
     },
     viewPreEvaluationRecord(item) {
-      Bus.$emit(this.SHOW_PRE_EVALUATION_MODAL, this.VIEW_CURRENT_CARD, item, this.archived);
+      Bus.$emit(this.SHOW_PRE_EVALUATION_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived);
     },
     editPreEvaluationRecord(item) {
-      Bus.$emit(this.SHOW_PRE_EVALUATION_MODAL, this.EDIT_CURRENT_CARD, item, this.archived);
+      Bus.$emit(this.SHOW_PRE_EVALUATION_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
     },
     deletePreEvaluationRecord(item) {
       var preEvaluation = {
@@ -444,13 +444,13 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addSurgicalRecord() {
-      Bus.$emit(this.SHOW_SURGICAL_METHOD_MODAL, this.ADD_NEW_CARD, {}, this.archived);
+      Bus.$emit(this.SHOW_SURGICAL_METHOD_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
     },
     viewSurgicalRecord(item) {
-      Bus.$emit(this.SHOW_SURGICAL_METHOD_MODAL, this.VIEW_CURRENT_CARD, item, this.archived);
+      Bus.$emit(this.SHOW_SURGICAL_METHOD_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived);
     },
     editSurgicalRecord(item) {
-      Bus.$emit(this.SHOW_SURGICAL_METHOD_MODAL, this.EDIT_CURRENT_CARD, item, this.archived);
+      Bus.$emit(this.SHOW_SURGICAL_METHOD_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
     },
     deleteSurgicalRecord(item) {
       var surgicalMethod = {
@@ -462,13 +462,13 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addPostComplicationRecord() {
-      Bus.$emit(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.ADD_NEW_CARD, {}, this.archived);
+      Bus.$emit(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
     },
     viewPostComplicationRecord(item) {
-      Bus.$emit(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.VIEW_CURRENT_CARD, item, this.archived);
+      Bus.$emit(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived);
     },
     editPostComplicationRecord(item) {
-      Bus.$emit(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.EDIT_CURRENT_CARD, item, this.archived);
+      Bus.$emit(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
     },
     deletePostComplicationRecord(item) {
       var operativeComplication = {
@@ -481,13 +481,13 @@ export default {
     },
     addDbsRecord() {
       // 这里要传递 2 个参数，一个是模式（新增／阅读／修改），一个是当前数据对象（新建的时候为空）
-      Bus.$emit(this.SHOW_DBS_MODAL, this.ADD_NEW_CARD, {}, this.archived);
+      Bus.$emit(this.SHOW_DBS_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
     },
     viewDbsRecord(item) {
-      Bus.$emit(this.SHOW_DBS_MODAL, this.VIEW_CURRENT_CARD, item, this.archived);
+      Bus.$emit(this.SHOW_DBS_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived);
     },
     editDbsRecord(item) {
-      Bus.$emit(this.SHOW_DBS_MODAL, this.EDIT_CURRENT_CARD, item, this.archived);
+      Bus.$emit(this.SHOW_DBS_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
     },
     deleteDbsRecord(item) {
       // 先判断这条程控记录是首次还是非首次，从而决定调用哪个 api
@@ -517,13 +517,13 @@ export default {
       return typeName ? typeName : '';
     },
     addPhysiontherapy() {
-      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.ADD_NEW_CARD, {}, this.archived);
+      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
     },
     viewPhysiontherapy(item) {
-      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.VIEW_CURRENT_CARD, item, this.archived);
+      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived);
     },
     editPhysiontherapy(item) {
-      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.EDIT_CURRENT_CARD, item, this.archived);
+      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
     },
     deletePhysiontherapy(item) {
       var patientPhysiontherapy = {

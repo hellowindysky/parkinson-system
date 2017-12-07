@@ -1,5 +1,5 @@
 <template lang="html">
-  <folding-panel :title="'病症情况'" :archived="archived" :mode="mutableMode" :folded-status="foldedStatus" v-on:edit="startEditing"
+  <folding-panel :title="'病症情况'" :mode="mutableMode" :folded-status="foldedStatus" v-on:edit="startEditing"
     v-on:cancel="cancel" v-on:submit="submit" v-on:toggleFoldedPanel="updateScrollbar" :editable="canEdit">
     <div class="diagnostic-disease" ref="diagnosticDisease">
       <div v-for="field in diagnosticDiseaseTemplate" class="field"
@@ -244,7 +244,7 @@ export default {
     //   this.diagnosticDiseaseMcDictionary, this.diagnosticDiseaseNmsDictionary);
     // },
     canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients) && this.archived) {
+      if (this.$route.matched.some(record => record.meta.myPatients) && !this.archived) {
         return true;
       } else {
         return false;
@@ -345,15 +345,15 @@ export default {
     },
     addDisease() {
       var totalLevodopaDoseOfAllOtherDisease = this.calcTotalLevodopaDoseOfAllOtherDisease({});
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.ADD_NEW_CARD, {}, this.archived, totalLevodopaDoseOfAllOtherDisease);
+      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.ADD_NEW_CARD, {}, !this.archived, totalLevodopaDoseOfAllOtherDisease);
     },
     viewDisease(item) {
       var totalLevodopaDoseOfAllOtherDisease = this.calcTotalLevodopaDoseOfAllOtherDisease(item);
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.VIEW_CURRENT_CARD, item, this.archived, totalLevodopaDoseOfAllOtherDisease);
+      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived, totalLevodopaDoseOfAllOtherDisease);
     },
     editDisease(item) {
       var totalLevodopaDoseOfAllOtherDisease = this.calcTotalLevodopaDoseOfAllOtherDisease(item);
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.EDIT_CURRENT_CARD, item, this.archived, totalLevodopaDoseOfAllOtherDisease);
+      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived, totalLevodopaDoseOfAllOtherDisease);
     },
     deleteDisease(item) {
       var patientDisease = {
@@ -754,6 +754,6 @@ export default {
         top: 75px;
       }
   }
-}      
+}
 
 </style>
