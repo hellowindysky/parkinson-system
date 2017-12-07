@@ -1,8 +1,8 @@
 <template lang="html">
   <div class="physiontherapy-modal-wrapper" v-show="displayModal">
     <div class="physiontherapy-modal" ref="scrollArea">
-         <h3 class="title">{{title}}</h3>
-         <div class="content">
+        <h3 class="title">{{title}}</h3>
+        <div class="content">
             <div class="field whole-line">
           <span class="field-name">
             物理治疗类型:
