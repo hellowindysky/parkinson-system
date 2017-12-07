@@ -4,7 +4,7 @@
       <h2 class="title" v-if="mode!==ADD_NEW_CARD">{{scaleName}}</h2>
       <h2 class="title" v-else>新增量表信息</h2>
       <div class="button back-button" @click="closePanel">返回</div>
-      <div class="button edit-button" @click="edit" v-if="mode===VIEW_CURRENT_CARD">编辑</div>
+      <div class="button edit-button" @click="edit" v-if="mode===VIEW_CURRENT_CARD && canEdit">编辑</div>
       <div class="button save-button" @click="submit" v-if="mode!==VIEW_CURRENT_CARD">保存</div>
     </div>
 
@@ -134,6 +134,7 @@ export default {
     return {
       displayScaleModal: false,
       mode: '',
+      showEdit: true,
       lockSubmitButton: false,
       copyInfo: {},
       warningResults: {
@@ -164,7 +165,7 @@ export default {
       return option.name ? option.name : '';
     },
     canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients)) {
+      if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
         return true;
       } else {
         return false;
@@ -208,8 +209,9 @@ export default {
         });
       });
     },
-    showDetailPanel(cardOperation, item, scaleTypeCode) {
+    showModal(cardOperation, item, showEdit, scaleTypeCode) {
       this.mode = cardOperation;
+      this.showEdit = showEdit;
 
       this.initPatientScale(item);
       this.scaleTypeCode = scaleTypeCode;
@@ -386,12 +388,12 @@ export default {
   },
   mounted() {
     // 初始化提交到服务器的对象
-    Bus.$on(this.SHOW_SCALE_MODAL, this.showDetailPanel);
+    Bus.$on(this.SHOW_SCALE_MODAL, this.showModal);
     Bus.$on(this.SCROLL_AREA_SIZE_CHANGE, this.updateScrollbar);
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
   },
   beforeDestroy() {
-    Bus.$off(this.SHOW_SCALE_MODAL, this.showDetailPanel);
+    Bus.$off(this.SHOW_SCALE_MODAL, this.showModal);
     Bus.$off(this.SCROLL_AREA_SIZE_CHANGE);
     Bus.$off(this.SCREEN_SIZE_CHANGE);
   },
