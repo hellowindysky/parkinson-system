@@ -1,21 +1,20 @@
 <template lang="html">
-  <div class="treatmentEvaluation-modal-wrapper" v-show="displayModal">
-   <div class="treatmentEvaluation-modal" ref="scrollArea">
-        <h3 class="title">{{title}}</h3>
-     <div class="content">
-      <div class="field whole-line">
+  <div class="treatment-evaluation-modal-wrapper" v-show="displayModal">
+    <div class="treatment-evaluation-modal" ref="scrollArea">
+      <h3 class="title">{{title}}</h3>
+      <div class="content">
+        <div class="field whole-line">
           <span class="field-name">
-           记录时间:
+            记录时间:
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span>{{recordDate}}</span>
           </span>
-          <span class="field-input dateLength" v-else>
+          <span class="field-input" v-else>
             <span class="warning-text">{{warningResults.recordDate}}</span>
             <el-date-picker
               v-model="recordDate"
-              class="dateLength"
               :class="{'warning': warningResults.recordDate}"
               type="date"
               placeholder="请选择记录时间"
@@ -23,18 +22,18 @@
               @change="updateWarning('recordDate')">
             </el-date-picker>
           </span>
-      </div>
-      <div class="field">
+        </div>
+        <div class="field">
           <span class="field-name">
             治疗后情况:
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-             <span>{{ transformSituationType(situationType,'situationType')}}</span>
+            <span>{{ transformSituationType(situationType,'situationType')}}</span>
           </span>
           <span class="field-input" v-else>
             <span class="warning-text">{{warningResults.situationType}}</span>
-            <el-select class="dateWidth" v-model="situationType" placeholder="请选择" @change="updateWarning('situationType')"
+            <el-select v-model="situationType" placeholder="请选择" @change="updateWarning('situationType')"
               :class="{'warning': warningResults.situationType}">
               <el-option
                 v-for="item in getOptions('situationType')"
@@ -44,48 +43,39 @@
               </el-option> 
             </el-select>
           </span>
-      </div>
-      <div class="field move" v-show="situationType===1">
-          <span class="field-name">
-             <span class="required-mark">*</span>
-          </span>
-          <span class="field-input shifting" v-if="mode===VIEW_CURRENT_CARD">
-            <span class="warning-text"></span>
-            <span>{{leftThreshold}}</span>
-          </span>
-          <span class="field-input shifting" v-else>
-            <span class="warning-text goLeft">{{warningResults.leftThreshold}}</span>
-            <el-input class="bias" v-model="leftThreshold" placeholder="请输入左侧运动阈值" :class="{'warning': warningResults.leftThreshold}" @change="updateWarning('leftThreshold')" ></el-input>
-          </span>
         </div>
-
-       <div class="field shift" v-show="situationType===1">
-           <span class="field-name">
-             <span class="sprit">/</span>
-             <span class="required-mark">*</span>
-           </span>
-          <span class="field-input shifting" v-if="mode===VIEW_CURRENT_CARD">
-            <span class="warning-text"></span>
-            <span>{{rightThreshold}}</span>
-          </span>
-          <span class="field-input shifting" v-else>
-            <span class="warning-text goLeft">{{warningResults.rightThreshold}}</span>
-            <el-input class="skewing" v-model="rightThreshold" placeholder="请输入右侧运动阈值" :class="{'warning': warningResults.rightThreshold}" @change="updateWarning('rightThreshold')" ></el-input>
-          </span>
-       </div>
-      <div class="field" v-show="situationType===2">
+        <div class="field" v-show="situationType===1">
           <span class="field-name">
-              <span class="required-mark mark">*</span>
+            左侧/右侧阈值:
+            <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span class="warning-text"></span>  
-            <span>{{situationRemark}}</span>
+            <span>{{leftThreshold}}</span>
+            <span class="narrow-middle"> / </span>
+            <span>{{rightThreshold}}</span>
           </span>
-          <span class="field-input" v-else>
-             <span class="warning-text">{{warningResults.situationRemark}}</span>
-            <el-input class="excursion" v-model="situationRemark" placeholder="请输入治疗后情况描述" :class="{'warning': warningResults.situationRemark}" @change="updateWarning('situationRemark')" ></el-input>
+          <span class="field-input zero-font-size" v-else>
+            <span class="warning-text left">{{warningResults.leftThreshold}}</span>
+            <span class="warning-text right">{{warningResults.rightThreshold}}</span>
+            <el-input class="left" v-model="leftThreshold" placeholder="请输入左侧运动阈值" :class="{'warning': warningResults.leftThreshold}" @change="updateWarning('leftThreshold')" ></el-input>
+            <span class="middle">/</span>
+            <el-input class="right" v-model="rightThreshold" placeholder="请输入右侧运动阈值" :class="{'warning': warningResults.rightThreshold}" @change="updateWarning('rightThreshold')" ></el-input>
           </span>
+        </div>
       </div>
+      <div class="field" v-show="situationType===2">
+        <span class="field-name">
+          治疗后情况描述:
+          <span class="required-mark mark">*</span>
+        </span>
+        <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+          <span class="warning-text"></span>  
+          <span>{{situationRemark}}</span>
+        </span>
+        <span class="field-input" v-else>
+          <span class="warning-text">{{warningResults.situationRemark}}</span>
+          <el-input v-model="situationRemark" placeholder="请输入治疗后情况描述" :class="{'warning': warningResults.situationRemark}" type="textarea" @change="updateWarning('situationRemark')" :maxlength="500"></el-input>
+        </span>
       </div> 
       <div class="seperate-line"></div>
       <div class="button cancel-button btn-margin" @click="cancel">取消</div>
@@ -142,6 +132,15 @@ export default {
       } else {
         return '治疗评估';
       }
+    },
+    fieldListToCheck() {
+      var list = ['recordDate', 'situationType'];
+      if (this.situationType === 1) {
+        list = list.concat(['leftThreshold', 'rightThreshold']);
+      } else if (this.situationType === 2) {
+        list = list.concat(['situationRemark']);
+      }
+      return list;
     },
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
@@ -215,12 +214,12 @@ export default {
       this.lockSubmitButton = true;
 
       for (let property in this.warningResults) {
-        if (this.warningResults.hasOwnProperty(property)) {
+        if (this.fieldListToCheck.indexOf(property) >= 0 && this.warningResults.hasOwnProperty(property)) {
           this.updateWarning(property);
         }
       }
       for (let property in this.warningResults) {
-        if (this.warningResults.hasOwnProperty(property) && this.warningResults[property]) {
+        if (this.fieldListToCheck.indexOf(property) >= 0 && this.warningResults.hasOwnProperty(property) && this.warningResults[property]) {
           this.lockSubmitButton = false;
           return;
         }
@@ -281,15 +280,9 @@ export default {
 @import "~styles/variables.less";
 
 @field-line-height: 25px;
-@field-name-width: 150px;
-@long-field-name-width: 160px;
+@field-name-width: 125px;
 
-@col-id-width: 100px;
-@col-time-width: 200px;
-@col-amount-width: 150px;
-@col-unit-width: 150px;
-
-.treatmentEvaluation-modal-wrapper {
+.treatment-evaluation-modal-wrapper {
   position: absolute;
   left: 0;
   top: 0;
@@ -297,134 +290,123 @@ export default {
   height: 100%;
   background-color: fadeout(@light-font-color, 30%);
   z-index: 500;
-  .treatmentEvaluation-modal {
+  .treatment-evaluation-modal {
     position: relative;
     margin: auto;
-    top: 3%;
-    width: 800px;
-    max-height: 94%;
+    padding: 0 40px;
+    top: 5%;
+    width: 600px;
+    max-height: 90%;
     background-color: @background-color;
     overflow: hidden;
     .title {
       padding: 30px 0 10px;
       font-size: @large-font-size;
     }
-    .content {
+    .field {
+      display: inline-block;
+      position: relative;
+      width: 100%;
+      min-height: 45px;
       text-align: left;
-      font-size: 0;
-      padding: 0 40px;
-      .field {
+      vertical-align: top;
+      transform: translate3d(10px, 5px, 0);
+      // overflow: hidden;
+      .field-name {
+        display: inline-block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: @field-name-width;
+        line-height: @field-line-height;
+        font-size: @normal-font-size;
+        color: @font-color;
+        .required-mark {
+          color: red;
+          font-size: 20px;
+          vertical-align: middle;
+        }
+      }
+      .field-input {
         display: inline-block;
         position: relative;
-        width: 50%;
-        min-height: 45px;
+        top: 0;
+        left: @field-name-width;
+        width: calc(~"96% - @{field-name-width}");
         line-height: @field-line-height;
-        box-sizing: border-box;
-        text-align: left;
-        vertical-align: top;
-        transform: translate3d(10px, 5px, 0); // 这一行是为了修补视觉上的偏移
-        
-        &.whole-line {
-          width: 100%;
-          .field-input {
-            width: calc(~"96% - @{field-name-width}");
-          }
+        font-size: @normal-font-size;
+        color: @light-font-color;
+        &.zero-font-size {
+          font-size: 0;
         }
-        .field-name {
-          display: inline-block;
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: @field-name-width;
-          line-height: @field-line-height;
-          font-size: @normal-font-size;
-          color: @font-color;
-          .required-mark {
-            color: red;
-            font-size: 20px;
-            vertical-align: middle;
-          }
-        }
-        .move {
-          left: 100px;
-        }
-        .field-input {
+        .left {
           display: inline-block;
           position: relative;
-          left: @field-name-width;
-          width: calc(~"90% - @{field-name-width}");
-          line-height: @field-line-height;
+          width: 40%;
           font-size: @normal-font-size;
-          color: @light-font-color;
-          .warning-text {
-            position: absolute;
-            top: 22px;
-            left: 10px;
-            height: 15px;
-            color: red;
-            font-size: @small-font-size;
-          }
-          .goLeft {
-            left: -130px;
-            top: 27px;
-          }
-          .el-input {
-            transform: translateY(-3px);
-            .el-input__inner {
-              height: 30px;
-              border: none;
-              background-color: @screen-color;
-            }
-          }
-          .el-select {
-            width: 100%;
-          }
-          .warning .el-input__inner {
-            border: 1px solid red;
+        }
+        .middle {
+          display: inline-block;
+          position: relative;
+          width: 20%;
+          text-align: center;
+          font-size: @normal-font-size;
+        }
+        .right {
+          display: inline-block;
+          position: relative;
+          width: 40%;
+          font-size: @normal-font-size;
+        }
+        .narrow-middle {
+          display: inline-block;
+          width: 30px;
+          text-align: center;
+        }
+        .warning-text {
+          position: absolute;
+          top: 22px;
+          left: 10px;
+          height: 15px;
+          color: red;
+          font-size: @small-font-size;
+          &.right {
+            left: calc(~"60% + 10px");
           }
         }
-        }
-        // .shifting {
-        //     transform: translateX(-100px);
-        // }
-          .move {
-            transform: translateX(-10px);
+        .el-input {
+          transform: translateY(-3px);
+          .el-input__inner {
+            height: 30px;
+            border: none;
+            background-color: @screen-color;
           }
-         .shift {
-            transform: translate(520px, -44px);
-         }
-         .sprit {
-            position: relative;
-            top: 5px;
-         }
-         .skewing {
-            left: -133px;
-            top: 5px;
-         }
-         .bias {
-           width: 150px;
-           left: -140px;
-           top: 5px;
-         }
-         .excursion {
-           width: 350px;
-           left: -160px;
-         }
-         .mark {
-           position: relative;
-           left:-20px;
-         }
-       }
-     .seperate-line {
-        position: relative;
-        width: 650px;
-        margin: auto;
-        border-style: none;
-        border-top: 1px solid @light-gray-color;
+        }
+        .el-textarea {
+          margin-bottom: 15px;
+          transform: translateY(-3px);
+          .el-textarea__inner {
+            border: none;
+            background-color: @screen-color;
+          }
+        }
+        .el-select {
+          width: 100%;
+        }
+        .el-date-editor {
+          width: 100%;
+        }
+        .warning .el-input__inner, .warning .el-textarea__inner {
+          border: 1px solid red;
+        }
       }
-      .dateLength {
-        width: 100%;
-      }
+    }
+    .seperate-line {
+      width: 90%;
+      height: 1px;
+      margin: 10px auto;
+      background-color: @light-gray-color;
+    }
     .button {
       display: inline-block;
       width: 100px;
@@ -436,7 +418,7 @@ export default {
       &.cancel-button {
         background-color: @light-font-color;
       }
-      &.submit-button {
+      &.submit-button, &.edit-button {
         background-color: @button-color;
       }
       &:hover {
@@ -445,16 +427,30 @@ export default {
       &:active {
         opacity: 0.9;
       }
-      &.btn-margin {
-        margin-top: 10px;
+    }
+    .ps__scrollbar-y-rail {
+      position: absolute;
+      width: 15px;
+      right: -2px;
+      padding: 0 3px;
+      box-sizing: border-box;
+      opacity: 0.3;
+      transition: opacity 0.3s, padding 0.2s;
+      .ps__scrollbar-y {
+        position: relative;
+        background-color: #aaa;
+        border-radius: 20px;
       }
     }
     &:hover {
+      .ps__scrollbar-y-rail {
+        opacity: 0.6;
         &:hover {
           padding: 0;
         }
       }
     }
   }
+}
   
 </style>
