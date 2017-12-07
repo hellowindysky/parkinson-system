@@ -165,6 +165,31 @@
           </div>
         </card>
       </extensible-panel>
+
+      <extensible-panel class="panel treatmentEvaluation-panel" :mode="mutableMode" :title="treatmentEvaluationTitle" v-on:addNewCard="addTreatmentEvaluation"
+        :editable="canEdit">
+        <card class="card treatmentEvaluation-card" :class="smallCardWidth" :mode="mutableMode" v-for="item in diagnosticTreatmentEvaluation" :key="item.situationType"
+          :title="'治疗评估'" v-on:editCurrentCard="editTreatmentEvaluation(item)"
+          v-on:deleteCurrentCard="deleteTreatmentEvaluation(item)" v-on:viewCurrentCard="viewTreatmentEvaluation(item)">
+          <div class="text line-1">
+            <span class="name">记录时间: </span>
+            <span class="value">{{item.recordDate}}</span>
+          </div>
+          <div class="text line-2">
+            <span class="name">治疗后左侧运动阈值: </span>
+            <span class="value">{{item.leftThreshold}}</span>
+          </div>
+           <div class="text line-3">
+            <span class="name">治疗后右侧运动阈值: </span>
+            <span class="value">{{item.rightThreshold}}</span>
+          </div>
+           <div class="text line-4">
+            <span class="name">不良反应: </span>
+            <span class="value">{{item.patientPhytheReactionId}}</span>
+          </div>
+           
+        </card>
+      </extensible-panel>
     </div>
   </folding-panel>
 </template>
@@ -174,6 +199,7 @@ import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import {
+  deleteTreatmentEvaluation,
   deletePhysiontherapy,
   deletePatientMedicine,
   deletePreEvaluation,
@@ -218,6 +244,12 @@ export default {
         return [];
       }
     },
+    diagnosticTreatmentEvaluation: {
+      type: Array,
+      default: () => {
+        return [];
+      }
+    },
     archived: {
       type: Boolean,
       default: true
@@ -256,6 +288,10 @@ export default {
     physiontherapyTitle() {
       var totalCount = this.diagnosticPhysiontherapy.length ;
       return '物理治疗（' + totalCount + '条记录）';
+    },
+    treatmentEvaluationTitle() {
+      var totalCount = this.diagnosticTreatmentEvaluation.length ;
+      return '治疗评估（' + totalCount + '条记录）';
     },
     preEvaluationList() {
       return this.diagnosticSurgery.patientPreopsList ? this.diagnosticSurgery.patientPreopsList : [];
@@ -380,6 +416,10 @@ export default {
         {
           text: '物理治疗',
           callback: this.addPhysiontherapy
+        },
+        {
+          text: '治疗评估',
+          callback: this.addTreatmentEvaluation
         }
 
       ];
@@ -494,6 +534,24 @@ export default {
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
+    addTreatmentEvaluation() {
+      Bus.$emit(this.SHOW_TREATMENTEVALUATION_MODAL, this.ADD_NEW_CARD, {}, this.archived);
+    },
+    viewTreatmentEvaluation(item) {
+      Bus.$emit(this.SHOW_TREATMENTEVALUATION_MODAL, this.VIEW_CURRENT_CARD, item, this.archived);
+    },
+    editTreatmentEvaluation(item) {
+      Bus.$emit(this.SHOW_TREATMENTEVALUATION_MODAL, this.EDIT_CURRENT_CARD, item, this.archived);
+    },
+    deleteTreatmentEvaluation(item) {
+      var patientTreatmentEvaluation = {
+        patientPhytheAssessId: item.patientPhytheAssessId
+      };
+      Bus.$on(this.CONFIRM, () => {
+        deleteTreatmentEvaluation(patientTreatmentEvaluation).then(this._resolveDeletion, this._rejectDeletion);
+      });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
+    },
     _resolveDeletion() {
       // 如果成功删除记录，则重新发出请求，获取最新数据。同时解除 [确认对话框] 的 “确认” 回调函数
       Bus.$emit(this.UPDATE_CASE_INFO);
@@ -567,6 +625,7 @@ export default {
 
 @surgery-card-height: 220px;
 @physiontherapy-card-height: 180px;
+@treatmentEvaluation-card-height: 150px;
 
 .diagnostic-surgery {
   .panel {
@@ -579,6 +638,12 @@ export default {
     }
     &.physiontherapy-panel .content {
       height: @physiontherapy-card-height + @card-vertical-margin * 2 + 5px * 2;
+      &.extended {
+        height: auto;
+      }
+    }
+     &.treatmentEvaluation-panel .content {
+      height: @treatmentEvaluation-card-height + @card-vertical-margin * 2 + 5px * 2;
       &.extended {
         height: auto;
       }
@@ -624,6 +689,9 @@ export default {
       }
       &.physiontherapy-card {
         height: @physiontherapy-card-height;
+      }
+      &.treatmentEvaluation-card {
+        height: @treatmentEvaluation-card-height;
       }
       .text {
         position: absolute;
