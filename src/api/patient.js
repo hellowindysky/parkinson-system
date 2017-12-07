@@ -833,3 +833,29 @@ export function deletePhysiontherapy(patientPhytheTms) {
 
   return encapsulatePromise(url, request);
 };
+// 新增治疗评估
+export function addTreatmentEvaluation(patientPhytheAssess) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientPhytheAssess = patientPhytheAssess;
+  var url = baseUrl + '/pdms/addPatientPhytheAssess';
+
+  return encapsulatePromise(url, request);
+};
+
+// 修改治疗评估
+export function modifyTreatmentEvaluation(patientPhytheAssess) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientPhytheAssess = patientPhytheAssess;
+  var url = baseUrl + '/pdms/modPatientPhytheAssess';
+
+  return encapsulatePromise(url, request);
+};
+
+// 删除治疗评估
+export function deleteTreatmentEvaluation(patientPhytheAssess) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientPhytheAssess = patientPhytheAssess;
+  var url = baseUrl + '/pdms/delPatientPhytheAssess';
+
+  return encapsulatePromise(url, request);
+};
