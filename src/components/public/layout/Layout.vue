@@ -46,8 +46,8 @@ import preEvaluationModal from 'components/views/modal/preevaluationmodal/PreEva
 import surgicalMethodModal from 'components/views/modal/surgicalmethodmodal/SurgicalMethodModal';
 import operativeComplicationModal from 'components/views/modal/operativecomplicationmodal/OperativeComplicationModal';
 import dbsModal from 'components/views/modal/dbsmodal/DbsModal';
-import physiontherapyModal from 'components/views/modal/physiontherapymodal/physiontherapyModal';
-import treatmentEvaluationModal from 'components/views/modal/treatmentEvaluationmodal/treatmentEvaluationModal';
+import physiontherapyModal from 'components/views/modal/physiontherapymodal/PhysiontherapyModal';
+import treatmentEvaluationModal from 'components/views/modal/treatmentEvaluationmodal/TreatmentEvaluationModal';
 import nervousSystemModal from 'components/views/modal/nervoussystemmodal/NervousSystemModal';
 import geneModal from 'components/views/modal/genemodal/GeneModal';
 import biochemicalExamModal from 'components/views/modal/biochemicalexammodal/BiochemicalExamModal';
