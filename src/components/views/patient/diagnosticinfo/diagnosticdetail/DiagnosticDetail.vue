@@ -13,7 +13,7 @@
         :diagnosticDisease="diagnosticDisease"></diagnostic-disease>
       <diagnostic-treatment :archived="!hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
         :diagnosticSurgery="caseDetail.patientSurgicalDbs" :diagnosticMedicine="caseDetail.patientMedicineNew"
-        :diagnosticPhysiontherapy="caseDetail.patientPhytheTms">
+        :diagnosticPhysiontherapy="caseDetail.patientPhytheTms" :diagnosticTreatmentEvaluation="caseDetail.patientPhytheAssess">
       </diagnostic-treatment>
       <diagnostic-scale :archived="!hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
         :patientScale="caseDetail.patientScale"></diagnostic-scale>
