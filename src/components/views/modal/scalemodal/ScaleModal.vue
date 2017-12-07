@@ -5,7 +5,7 @@
       <h2 class="title" v-else>新增量表信息</h2>
       <div class="button back-button" @click="closePanel">返回</div>
       <div class="button edit-button" @click="edit" v-if="mode===VIEW_CURRENT_CARD && canEdit">编辑</div>
-      <div class="button save-button" @click="submit" v-if="mode!==VIEW_CURRENT_CARD">保存</div>
+      <div class="button save-button" @click="submit" v-else-if="mode!==VIEW_CURRENT_CARD">保存</div>
     </div>
 
     <div class="scroll-area" ref="scrollArea">
