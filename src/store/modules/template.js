@@ -122,6 +122,8 @@ const actions = {
   getWholeTemplate({ commit }) {
     getTemplate().then(data => {
       commit(types.UPDATE_TEMPLATE, data);
+    }, (error) => {
+      console.log(error);
     });
   }
 };

@@ -459,6 +459,8 @@ export default {
         this.setScrollbarPosition();
         // 如果有回调函数作为参数传递进来了，则执行该函数
         cb && cb();
+      }, (error) => {
+        console.log(error);
       });
     },
     updateGroupList(cb) {
@@ -474,6 +476,8 @@ export default {
       getGroupList(condition).then((data) => {
         this.groupList = data ? data : [];
         cb && cb();
+      }, (error) => {
+        console.log(error);
       });
       this.updateScrollbar();
     },
@@ -484,6 +488,8 @@ export default {
         this.updateScrollbar();
         // 如果有回调函数作为参数传递进来了，则执行该函数
         cb && cb();
+      }, (error) => {
+        console.log(error);
       });
     },
     updateRoleList(cb) {
@@ -493,6 +499,8 @@ export default {
         this.updateScrollbar();
         // 如果有回调函数作为参数传递进来了，则执行该函数
         cb && cb();
+      }, (error) => {
+        console.log(error);
       });
     },
     addNewPatient() {
