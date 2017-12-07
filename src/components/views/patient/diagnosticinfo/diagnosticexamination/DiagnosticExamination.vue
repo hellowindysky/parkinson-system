@@ -275,7 +275,7 @@ export default {
       return '生化指标（' + this.biochemicalExamList.length + '条记录）';
     },
     emgTitle() {
-      return '肌电图（' + this.emgList.length + '条记录）';
+      return '神经电生理检查（' + this.emgList.length + '条记录）';
     },
     medicalImagingTitle() {
       return '医学影像（' + this.medicalImagingList.length + '条记录）';
@@ -463,13 +463,13 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addEmgRecord() {
-      Bus.$emit(this.SHOW_EMG_MODAL, this.ADD_NEW_CARD, {}, this.archived);
+      Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.ADD_NEW_CARD, {}, this.archived);
     },
     viewEmgRecord(item) {
-      Bus.$emit(this.SHOW_EMG_MODAL, this.VIEW_CURRENT_CARD, item, this.archived);
+      Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.VIEW_CURRENT_CARD, item, this.archived);
     },
     editEmgRecord(item) {
-      Bus.$emit(this.SHOW_EMG_MODAL, this.EDIT_CURRENT_CARD, item, this.archived);
+      Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.EDIT_CURRENT_CARD, item, this.archived);
     },
     deleteEmgRecord(item) { // 删除肌电图
       let EmgInfo = {

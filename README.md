@@ -17,6 +17,7 @@ npm run dev
 npm run build:beta
 npm run build:pre
 npm run build:prod
+npm run build:alone
 
 # 发布生产代码的同时，输出构建情况
 npm run build:prod --report

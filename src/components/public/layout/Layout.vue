@@ -5,6 +5,7 @@
     <router-view class="content"></router-view>
     <password-modal></password-modal>
     <authorization-modal></authorization-modal>
+    <message-modal></message-modal>
     <group-modal></group-modal>
     <modal-box></modal-box>
     <medicine-modal></medicine-modal>
@@ -17,7 +18,7 @@
     <nervous-system-modal></nervous-system-modal>
     <gene-modal></gene-modal>
     <biochemical-exam-modal></biochemical-exam-modal>
-    <emg-modal></emg-modal>
+    <neuroelectric-modal></neuroelectric-modal>
     <image-modal></image-modal>
     <first-symptoms-modal></first-symptoms-modal>
     <first-treatment-modal></first-treatment-modal>
@@ -25,6 +26,7 @@
     <filter-panel :showFilterPanel="showFilterPanel"></filter-panel>
     <choice-panel></choice-panel>
     <confirm-box></confirm-box>
+    <notice-box></notice-box>
   </div>
 </template>
 
@@ -36,6 +38,7 @@ import sidebar from 'components/views/sidebar/Sidebar';
 
 import passwordModal from 'components/views/modal/passwordmodal/PasswordModal';
 import authorizationModal from 'components/views/modal/authorizationmodal/AuthorizationModal';
+import messageModal from 'components/views/modal/messagemodal/MessageModal';
 import groupModal from 'components/views/modal/groupmodal/GroupModal';
 import modalBox from 'components/views/modal/modalbox/ModalBox';
 import medicineModal from 'components/views/modal/medicinemodal/MedicineModal';
@@ -48,7 +51,7 @@ import treatmentEvaluationModal from 'components/views/modal/treatmentEvaluation
 import nervousSystemModal from 'components/views/modal/nervoussystemmodal/NervousSystemModal';
 import geneModal from 'components/views/modal/genemodal/GeneModal';
 import biochemicalExamModal from 'components/views/modal/biochemicalexammodal/BiochemicalExamModal';
-import emgModal from 'components/views/modal/emgmodal/EmgModal';
+import neuroelectricModal from 'components/views/modal/neuroelectricmodal/NeuroelectricModal';
 import imageModal from 'components/views/modal/imagemodal/ImageModal';
 import firstSymptomsModal from 'components/views/modal/firstsymptomsmodal/FirstSymptomsModal';
 import firstTreatmentModal from 'components/views/modal/firsttreatmentmodal/FirstTreatmentModal';
@@ -57,6 +60,7 @@ import diagnosticRecordModal from 'components/views/modal/diagnosticrecordmodal/
 import filterPanel from 'components/public/filterpanel/FilterPanel';
 import choicePanel from 'components/public/choicepanel/ChoicePanel';
 import confirmBox from 'components/public/confirmbox/ConfirmBox';
+import noticeBox from 'components/public/noticebox/NoticeBox';
 
 // 设定多长时间不操作，就返回登录界面
 const RELOGIN_TIME_FOR_NO_OPERATION = 1000 * 60 * 60;
@@ -73,6 +77,7 @@ export default {
     sidebar,
     passwordModal,
     authorizationModal,
+    messageModal,
     groupModal,
     modalBox,
     medicineModal,
@@ -85,7 +90,7 @@ export default {
     nervousSystemModal,
     geneModal,
     biochemicalExamModal,
-    emgModal,
+    neuroelectricModal,
     imageModal,
     firstSymptomsModal,
     firstTreatmentModal,
@@ -93,7 +98,8 @@ export default {
 
     filterPanel,
     choicePanel,
-    confirmBox
+    confirmBox,
+    noticeBox
   },
   methods: {
     clickScreen() {
@@ -111,6 +117,11 @@ export default {
       if (thisOperationTime - lastOperationTime > RELOGIN_TIME_FOR_NO_OPERATION) {
         sessionStorage.removeItem('token');
         this.display = false;
+        this.$message({
+          message: '长时间未操作，请重新登录',
+          type: 'warning',
+          duration: 2000
+        });
         this.$router.push('/login');
       }
     },

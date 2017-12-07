@@ -18,6 +18,8 @@ if (process.env.NODE_ENV === 'testing') {
   env = config.build.preEnv
 } else if (process.env.NODE_ENV === 'prod') {
   env = config.build.prodEnv
+} else if (process.env.NODE_ENV === 'alone') {
+  env = config.build.aloneEnv
 }
 
 var webpackConfig = merge(baseWebpackConfig, {
