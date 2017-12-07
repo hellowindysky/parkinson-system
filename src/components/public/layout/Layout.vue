@@ -12,6 +12,7 @@
     <surgical-method-modal></surgical-method-modal>
     <operative-complication-modal></operative-complication-modal>
     <physiontherapy-modal></physiontherapy-modal>
+    <treatmentEvaluation-modal></treatmentEvaluation-modal>
     <dbs-modal></dbs-modal>
     <nervous-system-modal></nervous-system-modal>
     <gene-modal></gene-modal>
@@ -43,6 +44,7 @@ import surgicalMethodModal from 'components/views/modal/surgicalmethodmodal/Surg
 import operativeComplicationModal from 'components/views/modal/operativecomplicationmodal/OperativeComplicationModal';
 import dbsModal from 'components/views/modal/dbsmodal/DbsModal';
 import physiontherapyModal from 'components/views/modal/physiontherapymodal/physiontherapyModal';
+import treatmentEvaluationModal from 'components/views/modal/treatmentEvaluationmodal/treatmentEvaluationModal';
 import nervousSystemModal from 'components/views/modal/nervoussystemmodal/NervousSystemModal';
 import geneModal from 'components/views/modal/genemodal/GeneModal';
 import biochemicalExamModal from 'components/views/modal/biochemicalexammodal/BiochemicalExamModal';
@@ -78,12 +80,13 @@ export default {
     surgicalMethodModal,
     operativeComplicationModal,
     dbsModal,
+    physiontherapyModal,
+    treatmentEvaluationModal,
     nervousSystemModal,
     geneModal,
     biochemicalExamModal,
     emgModal,
     imageModal,
-    physiontherapyModal,
     firstSymptomsModal,
     firstTreatmentModal,
     diagnosticRecordModal,
