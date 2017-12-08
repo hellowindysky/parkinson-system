@@ -60,7 +60,6 @@ export default {
     return {
       showOranizationPanel: false,
       showAccountPanel: false,
-      subjectId: Number(sessionStorage.getItem('subjectId')),
       blockSensitiveInfo: false
     };
   },
@@ -71,7 +70,7 @@ export default {
     title() {
       var subjectName = sessionStorage.getItem('subjectName');
       subjectName = subjectName ? subjectName : '';
-      return this.subjectId === this.SUBJECT_ID_FOR_HOSPITAL ? this.orgName : subjectName;
+      return this.$store.state.subjectId === this.SUBJECT_ID_FOR_HOSPITAL ? this.orgName : subjectName;
     },
     accountName() {
       var name = sessionStorage.getItem('name');
@@ -101,10 +100,9 @@ export default {
     chooseSubject(subject) {
       var subjectId = subject.id ? subject.id : this.SUBJECT_ID_FOR_HOSPITAL;
       var subjectName = subject.taskName ? subject.taskName : '';
-      var currentSubjectId = Number(sessionStorage.getItem('subjectId'));
 
-      if (subjectId !== currentSubjectId) {
-        this.subjectId = subjectId;
+      if (subjectId !== this.$store.state.subjectId) {
+        this.$store.commit('UPDATE_SUBJECT_ID', subjectId);
         sessionStorage.setItem('subjectId', subjectId);
         sessionStorage.setItem('subjectName', subjectName);
 

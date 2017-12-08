@@ -109,9 +109,6 @@ export default {
             sessionStorage.setItem('orgName', orgName);
             sessionStorage.setItem('subjects', JSON.stringify(subjects));
 
-            // 通过登录界面，进来后总是进入医院入口，而不会是某个课题，这里将课题 id 保存为一个后端不会用到的值
-            sessionStorage.setItem('subjectId', this.SUBJECT_ID_FOR_HOSPITAL);
-
             var commonRequest = {
               'userId': 93242,
               'accountNumber': accountNumber,
@@ -122,6 +119,11 @@ export default {
 
             sessionStorage.setItem('commonRequest', JSON.stringify(commonRequest));
 
+            // 登录时默认进入医院入口
+            this.$store.commit('UPDATE_SUBJECT_ID', this.SUBJECT_ID_FOR_HOSPITAL);
+            sessionStorage.setItem('UPDATE_SUBJECT_ID', this.SUBJECT_ID_FOR_HOSPITAL);
+
+            // 重新记录操作时间点
             this.$store.commit('UPDATE_LAST_OPERATION_TIME');
             sessionStorage.setItem('lastOperationTime', this.$store.state.lastOperationTime);
 
