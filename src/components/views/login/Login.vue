@@ -5,12 +5,14 @@
       <img class="logo" src="static/img/logo.png" alt="logo.png">
       <h1 class="title">{{title}}</h1>
       <h3 class="subtitle"></h3>
-      <div class="tabs-wrapper">
+
+      <div class="tabs-wrapper" v-if="false">
         <span class="tab tab-place-1" :class="{'current-tab':loginType===1}" @click="accountLogin">账号登录</span>
         <span class="tab tab-place-2" :class="{'current-tab':loginType===2}" @click="">备用</span>
         <div class="tab-bottom-bar" :class="tabPlaceClass"></div>
       </div>
-      <el-form class="input-wrapper" :model="loginForm" :rules="rules" ref="loginForm" label-width="0">
+
+      <el-form class="input-wrapper" v-if="!mustResetPassword" :model="loginForm" :rules="rules" ref="loginForm" label-width="0">
         <el-form-item prop="account">
           <el-input class="round-input" v-model="loginForm.account" auto-complete="off" :placeholder="holderText"
             @keyup.enter.native="submitForm" autofocus="autofocus"></el-input>
@@ -24,6 +26,24 @@
         </el-form-item>
         <el-form-item>
           <el-button class="button" type="primary" @click="submitForm">登 录</el-button>
+        </el-form-item>
+      </el-form>
+
+      <el-form class="input-wrapper" v-if="mustResetPassword" :model="resetForm" :rules="resetRules" ref="resetForm" label-width="0">
+        <el-form-item prop="originalPassword">
+          <el-input class="round-input" v-model="resetForm.originalPassword" type="password" auto-complete="new-password"
+            placeholder="请输入当前密码" autofocus="autofocus"></el-input>
+        </el-form-item>
+        <el-form-item prop="newPassword">
+          <el-input class="round-input" v-model="resetForm.newPassword" type="password" auto-complete="new-password"
+            placeholder="请输入新密码(字母，数字或符号，8-16位)"></el-input>
+        </el-form-item>
+        <el-form-item prop="repeatedNewPassword">
+          <el-input class="round-input" v-model="resetForm.resetNewPassword" type="password" auto-complete="new-password"
+            placeholder="请再次输入新密码"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button class="button" type="primary" @click="submitResetForm">确认修改</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -44,10 +64,16 @@ export default {
   data() {
     return {
       loginType: 1,
+      mustResetPassword: false,
       loginForm: {
         account: '',
         password: '',
         remember: false
+      },
+      resetForm: {
+        originalPassword: '',
+        newPassword: '',
+        repeatedNewPassword: ''
       },
       rules: {
         account: [
@@ -57,6 +83,17 @@ export default {
         password: [
           { required: true, message: '请输入密码', trigger: 'change' },
           { min: 6, message: '长度至少为 6 个字符', trigger: 'blur' }
+        ]
+      },
+      resetRules: {
+        originalPassword: [
+
+        ],
+        newPassword: [
+
+        ],
+        repeatedNewPassword: [
+
         ]
       }
     };
@@ -101,33 +138,39 @@ export default {
             var orgName = data.orgs && data.orgs[0] && data.orgs[0].orgName ? data.orgs[0].orgName : '';
             var subjects = data.tasks ? data.tasks : [];
 
-            sessionStorage.setItem('token', token);
-            sessionStorage.setItem('accountNumber', accountNumber);
-            sessionStorage.setItem('name', name);
-            sessionStorage.setItem('userName', userName);
-            sessionStorage.setItem('userType', userType);
-            sessionStorage.setItem('orgName', orgName);
-            sessionStorage.setItem('subjects', JSON.stringify(subjects));
+            // 0 需要修改密码 1表示已经修改过密码
+            var changePassword = data.user.changePassword;
+            this.mustResetPassword = changePassword === 0;
 
-            var commonRequest = {
-              'userId': 93242,
-              'accountNumber': accountNumber,
-              'userType': userType,
-              'orgId': 34,
-              'orgType': 2
-            };
+            if (!this.mustResetPassword) {
+              sessionStorage.setItem('token', token);
+              sessionStorage.setItem('accountNumber', accountNumber);
+              sessionStorage.setItem('name', name);
+              sessionStorage.setItem('userName', userName);
+              sessionStorage.setItem('userType', userType);
+              sessionStorage.setItem('orgName', orgName);
+              sessionStorage.setItem('subjects', JSON.stringify(subjects));
 
-            sessionStorage.setItem('commonRequest', JSON.stringify(commonRequest));
+              var commonRequest = {
+                'userId': 93242,
+                'accountNumber': accountNumber,
+                'userType': userType,
+                'orgId': 34,
+                'orgType': 2
+              };
 
-            // 登录时默认进入医院入口
-            this.$store.commit('UPDATE_SUBJECT_ID', this.SUBJECT_ID_FOR_HOSPITAL);
-            sessionStorage.setItem('UPDATE_SUBJECT_ID', this.SUBJECT_ID_FOR_HOSPITAL);
+              sessionStorage.setItem('commonRequest', JSON.stringify(commonRequest));
 
-            // 重新记录操作时间点
-            this.$store.commit('UPDATE_LAST_OPERATION_TIME');
-            sessionStorage.setItem('lastOperationTime', this.$store.state.lastOperationTime);
+              // 登录时默认进入医院入口
+              this.$store.commit('UPDATE_SUBJECT_ID', this.SUBJECT_ID_FOR_HOSPITAL);
+              sessionStorage.setItem('UPDATE_SUBJECT_ID', this.SUBJECT_ID_FOR_HOSPITAL);
 
-            this.$router.push('/');
+              // 重新记录操作时间点
+              this.$store.commit('UPDATE_LAST_OPERATION_TIME');
+              sessionStorage.setItem('lastOperationTime', this.$store.state.lastOperationTime);
+
+              this.$router.push('/');
+            }
 
           }, (error) => {
             if (error.code === 21) {
@@ -143,6 +186,9 @@ export default {
           return;
         }
       });
+    },
+    submitResetForm() {
+
     }
   },
   components: {
@@ -166,7 +212,7 @@ export default {
 @import '~styles/variables.less';
 @tab-width: 60px;
 @tab-horizontal-space: 20px;
-@input-width: 280px;
+@input-width: 320px;
 @input-height: 45px;
 
 .login {
@@ -174,13 +220,15 @@ export default {
   height: 100vh;
   background-color: @theme-color;
   position: relative;
-  min-height:500px;
+  min-height: 500px;
+  min-width: @min-screen-width;
   .panel {
     position: absolute;
-    left: 50%; top: 45%;
+    left: 50%;
+    top: 6%;
     width: 300px;
     height: 500px;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, 0);
     background-color: rgba(224,224,224,0);
     border-radius: 30px;
     z-index: 100;
