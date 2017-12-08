@@ -89,8 +89,7 @@ export default {
       showPatientsList: true,
       showAnalyticsList: false,
       showConfigurationList: false,
-      showInstitutionList: false,
-      subjectId: Number(sessionStorage.getItem('subjectId'))
+      showInstitutionList: false
     };
   },
   computed: {
@@ -105,7 +104,7 @@ export default {
       }
     },
     inSubject() {
-      return this.subjectId !== this.SUBJECT_ID_FOR_HOSPITAL;
+      return this.$store.state.subjectId !== this.SUBJECT_ID_FOR_HOSPITAL;
     },
     currentSubItem() {
       var path = this.$route.path;
@@ -225,7 +224,6 @@ export default {
   mounted() {
     // 加载菜单栏这个组件的时候，自动跳转到病患管理
     if (!/^\/patients/.test(this.$route.path)) {
-      this.subjectId = Number(sessionStorage.getItem('subjectId'));
       this.$router.replace({ name: 'myPatients' });
     }
   },
@@ -233,7 +231,6 @@ export default {
     $route() {
       // 如果路由变为'/'，则自动跳转到病患管理
       if (/^\/$/.test(this.$route.path)) {
-        this.subjectId = Number(sessionStorage.getItem('subjectId'));
         this.$router.replace({ name: 'myPatients' });
       }
     }

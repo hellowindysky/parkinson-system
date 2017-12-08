@@ -113,6 +113,25 @@ export function deletePatientPresentHistory(presentHistory) {
   return encapsulatePromise(url, request);
 };
 
+// v2.1 现病史 ↓
+// 新增首发症状
+export function addPatientFirstSymbol(firstSymbol) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientFirstSymbolModel = firstSymbol;
+  var url = baseUrl + '/pdms/addPatientFirstSymbol';
+
+  return encapsulatePromise(url, request);
+};
+
+// 删除首发症状
+export function deletePatientFirstSymbol(firstSymbol) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientFirstSymbolModel = firstSymbol;
+  var url = baseUrl + '/pdms/addPatientFirstSymbol';
+
+  return encapsulatePromise(url, request);
+};
+
 // 新增用药史
 export function addPatientMedHistory(medHistory) {
   var request = Object.assign({}, getCommonRequest());
@@ -387,6 +406,34 @@ export function modifyDiagnosticDisease(diagnosticDisease) {
   var request = Object.assign({}, getCommonRequest());
   request.patientDisease = diagnosticDisease;
   var url = baseUrl + '/pdms/modPatientSymptom';
+
+  return encapsulatePromise(url, request);
+};
+
+// 诊断记录 主诉症状
+// 新增主诉症状
+export function addPatientSymptom(complaintsInfo) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientSymptomModel = complaintsInfo;
+  var url = baseUrl + '/pdms/addPatientSymptom';
+
+  return encapsulatePromise(url, request);
+};
+
+// 修改主诉症状
+export function modPatientSymptom(complaintsInfo) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientSymptomModel = complaintsInfo;
+  var url = baseUrl + '/pdms/modPatientSymptom';
+
+  return encapsulatePromise(url, request);
+};
+
+// 删除主诉症状
+export function delPatientSymptom(complaintsInfo) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientSymptomModel = complaintsInfo;
+  var url = baseUrl + '/pdms/delPatientSymptom';
 
   return encapsulatePromise(url, request);
 };

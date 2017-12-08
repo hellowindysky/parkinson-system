@@ -179,9 +179,8 @@ export default {
 
       // 判断是新增患者还是修改已有患者
       if (this.$route.params.id === 'newPatient') {
-        let subjectId = Number(sessionStorage.getItem('subjectId'));
-        if (subjectId !== this.SUBJECT_ID_FOR_HOSPITAL) {
-          submitData.taskInfoId = subjectId;
+        if (this.$store.state.subjectId !== this.SUBJECT_ID_FOR_HOSPITAL) {
+          submitData.taskInfoId = this.$store.state.subjectId;
         }
         addPatientInfo(submitData).then((data) => {
           var newId = data.patientId;

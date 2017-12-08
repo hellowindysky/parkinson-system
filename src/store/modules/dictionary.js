@@ -141,6 +141,13 @@ const getters = {
     }
     return state.all.tableData.symptomType;
   },
+  noSportType: (state) => {
+    // 主诉的各种症状 非运动症状类型
+    if (!state.all.tableData || !state.all.tableData.noSportType) {
+      return [];
+    }
+    return state.all.tableData.noSportType;
+  },
   deviceInfo: (state) => {
     // 主诉的各种症状
     if (!state.all.tableData || !state.all.tableData.deviceInfo) {
