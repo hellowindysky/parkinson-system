@@ -143,7 +143,7 @@
           
           <div class="field">
             <span class="field-name long-field-name">
-              症状名称:---222----
+              症状名称:
               <span class="required-mark">*</span>
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
@@ -253,7 +253,7 @@
 
           <div class="field">
             <span class="field-name long-field-name">
-              症状名称:---333----
+              症状名称:
               <span class="required-mark">*</span>
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
