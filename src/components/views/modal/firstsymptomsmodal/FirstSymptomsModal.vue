@@ -421,7 +421,7 @@ export default {
     },
     showModal(cardOperation, item, title2) {
       this.completeInit = false;
-      console.log(cardOperation, item);
+      // console.log(cardOperation, item);
       this.mode = cardOperation;
       this.title2 = title2;
       // ******************************
@@ -558,7 +558,7 @@ export default {
       reviseDateFormat(ComplaintsInfo);
       pruneObj(ComplaintsInfo);
 
-      console.log(ComplaintsInfo);
+      // console.log(ComplaintsInfo);
       // if (true) {
       //   return;
       // };
