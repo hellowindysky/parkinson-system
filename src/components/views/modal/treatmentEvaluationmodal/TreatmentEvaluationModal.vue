@@ -77,6 +77,34 @@
           <el-input v-model="situationRemark" placeholder="请输入治疗后情况描述" :class="{'warning': warningResults.situationRemark}" type="textarea" @change="updateWarning('situationRemark')" :maxlength="500"></el-input>
         </span>
       </div> 
+        <div class="seperate-line"></div>
+        <div class="content">
+        <table class="table">
+          <tr class="row title-row">
+            <td class="col narrow-col">序号</td>
+            <td class="col wide-col">不良反应程度评估</td>
+            <td class="col">严重程度</td>
+          </tr>
+          <tr class="row" v-for="(scale, index) in treatmentEvaluationInfo.patientPhytheReaction">
+            <td class="col narrow-col">{{index + 1}}</td>
+            <td class="col wide-col">
+              {{getRealName(scale.reactionType, 'reactionType')}}
+            </td>
+            <td class="col narrow-col">
+              <span v-if="mode===VIEW_CURRENT_CARD">{{scale.reactionLevel}}</span>
+              <el-select v-else v-model="scale.reactionLevel" @change="updateWarning('reactionLevel')">
+              <el-option
+                v-for="item in getOptions('reactionLevel')"
+                :key="item.code"
+                :label="item.name"
+                :value="item.code">
+              </el-option>
+            </el-select>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <P>无该症状 0；轻度 1-3；中度 4-6；重度 7-9；数值越大越严重</p>
       <div class="seperate-line"></div>
       <div class="button cancel-button btn-margin" @click="cancel">取消</div>
       <div v-show="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD" class="button submit-button btn-margin" @click="submit">确定</div>
@@ -90,9 +118,89 @@ import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import { reviseDateFormat, pruneObj } from 'utils/helper.js';
+import { vueCopy, reviseDateFormat, pruneObj } from 'utils/helper.js';
 import { addTreatmentEvaluation, modifyTreatmentEvaluation } from 'api/patient.js';
 
+let dataModel = {
+  'patientPhytheReaction': [{
+    'reactionType': 1,
+    'severityLevel': 0,
+    'assessType': 1,
+    'reactionLevel': 0
+    },
+    {
+    'reactionType': 2,
+    'severityLevel': 0,
+    'assessType': 1,
+    'reactionLevel': 0
+  },
+  {
+    'reactionType': 3,
+    'severityLevel': 0,
+    'assessType': 1,
+    'reactionLevel': 0
+  },
+  {
+    'reactionType': 4,
+    'severityLevel': 0,
+    'assessType': 1,
+    'reactionLevel': 0
+  },
+  {
+    'reactionType': 5,
+    'severityLevel': 0,
+    'assessType': 1,
+    'reactionLevel': 0
+  },
+  {
+    'reactionType': 6,
+    'severityLevel': 0,
+    'assessType': 1,
+    'reactionLevel': 0
+  },
+  {
+    'reactionType': 7,
+    'severityLevel': 0,
+    'assessType': 1,
+    'reactionLevel': 0
+  },
+  {
+    'reactionType': 8,
+    'severityLevel': 0,
+    'assessType': 1,
+    'reactionLevel': 0
+  },
+  {
+    'reactionType': 9,
+    'severityLevel': 0,
+    'assessType': 1,
+    'reactionLevel': 0
+  },
+  {
+    'reactionType': 10,
+    'severityLevel': 0,
+    'assessType': 1,
+    'reactionLevel': 0
+  },
+  {
+    'reactionType': 11,
+    'severityLevel': 0,
+    'assessType': 1,
+    'reactionLevel': 0
+  },
+  {
+    'reactionType': 12,
+    'severityLevel': 0,
+    'assessType': 1,
+    'reactionLevel': 0
+  },
+  {
+    'reactionType': 13,
+    'severityLevel': 0,
+    'assessType': 1,
+    'reactionLevel': 0
+  }]
+};
 export default {
   data() {
     return {
@@ -107,6 +215,9 @@ export default {
       leftThreshold: '',
       rightThreshold: '',
       situationRemark: '',
+      severityLevel: '',
+      reactionLevel: '',
+      treatmentEvaluationInfo: {},
       warningResults: {
         situationType: '',
         recordDate: '',
@@ -163,6 +274,9 @@ export default {
       this.leftThreshold = item.leftThreshold ? item.leftThreshold : '';
       this.rightThreshold = item.rightThreshold ? item.rightThreshold : '';
       this.situationRemark = item.situationRemark ? item.situationRemark : '';
+      this.severityLevel = item.severityLevel ? item.severityLevel : '';
+      this.reactionLevel = item.reactionLevel ? item.reactionLevel : '';
+      this.initCopyInfo();
       this.$nextTick(() => {
         for (var property in this.warningResults) {
           if (this.warningResults.hasOwnProperty(property)) {
@@ -174,6 +288,10 @@ export default {
       this.completeInit = true;
       this.displayModal = true;
       this.updateScrollbar();
+    },
+    initCopyInfo() {
+      this.treatmentEvaluationInfo = {};
+      vueCopy(dataModel, this.treatmentEvaluationInfo);
     },
     transformSituationType(code, fieldName) {
       var options = this.getOptions(fieldName);
@@ -191,6 +309,22 @@ export default {
         });
       };
       return options;
+    },
+    getRealName(code, typeGroupCode) {
+      var typesInfo = Util.getElement('typegroupcode', typeGroupCode, this.typeGroup);
+      var types = typesInfo && typesInfo.types ? typesInfo.types : [];
+      var type = Util.getElement('typeCode', code, types);
+      return type.typeName ? type.typeName : '';
+    },
+    transformToNum(obj, property, index, fieldName) {
+      // 如果填写的不是一个数字，则转换成一个空字符串，如果是一个数字，则将这个数字字符串转化为真正的数字
+      var value = obj[property];
+      var reg = new RegExp(/^[0-9]+\.{0,1}[0-9]{0,2}$/);
+      if (reg.test(value)) {
+        obj[property] = Number(value);
+      } else {
+        obj[property] = '';
+      }
     },
     updateWarning(fieldName) {
       if (this.completeInit && !this[fieldName]) {
@@ -231,6 +365,8 @@ export default {
       treatmentEvaluationInfo.leftThreshold = this.leftThreshold;
       treatmentEvaluationInfo.rightThreshold = this.rightThreshold;
       treatmentEvaluationInfo.situationRemark = this.situationRemark;
+      treatmentEvaluationInfo.severityLevel = this.severityLevel;
+      treatmentEvaluationInfo.reactionLevel = this.reactionLevel;
       reviseDateFormat(treatmentEvaluationInfo);
       pruneObj(treatmentEvaluationInfo);
 
@@ -401,6 +537,103 @@ export default {
         }
       }
     }
+    .table {
+      margin: 10px 0 20px;
+      width: 100%;
+      border: 1px solid @light-gray-color;
+      border-collapse: collapse;
+      text-align: center;
+      .row {
+        height: 35px;
+        font-size: @normal-font-size;
+        &.title-row {
+          background-color: @font-color;
+          color: #fff;
+        }
+        .col {
+          position: relative;
+          width: 10%;
+          border: 1px solid @light-gray-color;
+          .required-mark {
+            position: absolute;
+            right: 5px;
+            top: 8px;
+            color: red;
+            font-size: 25px;
+            vertical-align: middle;
+          }
+          &.title-col {
+            background-color: @font-color;
+            color: #fff;
+          }
+          &.wide-col {
+            width: 30%;
+          }
+          &.narrow-col {
+            width: 5%;
+          }
+          .iconfont {
+            position: absolute;
+            left: 5px;
+            top: 9px;
+            cursor: pointer;
+            z-index: 20;
+            &.icon-remove {
+              color: @alert-color;
+            }
+            &:hover {
+              opacity: 0.6;
+            }
+            &:active {
+              opacity: 0.8;
+            }
+          }
+          .el-input {
+            width: 100%;
+            &.warning {
+              margin: -1px;
+              border: 1px solid red;
+            }
+            .el-input__inner {
+              padding: 0;
+              border: none;
+              text-align: center;
+            }
+            .el-input__icon {
+              &.el-icon-date {
+                width: 12px;
+                height: 12px;
+                padding: 0 0 18px 10px;
+                opacity: 0.3;
+              }
+              &.el-icon-close {
+                width: 12px;
+                height: 12px;
+                padding: 0 0 18px 10px;
+                color: @alert-color;
+              }
+            }
+            &.is-disabled {
+              .el-input__inner {
+                background-color: rgba(0,0,0,0);
+                color: @font-color;
+              }
+              .el-input__icon {
+                display: none;
+              }
+            }
+          }
+          .el-select {
+            &.warning {
+              .el-input {
+                margin: -1px;
+                border: 1px solid red;
+              }
+            }
+          }
+        }
+      }
+    }
     .seperate-line {
       width: 90%;
       height: 1px;
@@ -426,6 +659,9 @@ export default {
       }
       &:active {
         opacity: 0.9;
+      }
+      &.btn-margin {
+        margin-top: 10px;
       }
     }
     .ps__scrollbar-y-rail {
