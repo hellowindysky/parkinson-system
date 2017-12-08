@@ -240,7 +240,7 @@
           </span>
         </div>
 
-        
+
         <hr class="seperate-line">
         <div class="field-file">
           <span class="field-name">
@@ -392,8 +392,8 @@
         </div>
       </div>
       <div class="button cancel-button btn-margin" @click="cancel">取消</div>
-      <div v-show="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD" class="button submit-button btn-margin" @click="submit">确定</div>
-      <div v-show="mode===VIEW_CURRENT_CARD && canEdit" class="button submit-button btn-margin" @click="switchToEditingMode">编辑</div>
+      <div v-if="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD" class="button submit-button btn-margin" @click="submit">确定</div>
+      <div v-else-if="mode===VIEW_CURRENT_CARD && canEdit" class="button submit-button btn-margin" @click="switchToEditingMode">编辑</div>
     </div>
   </div>
 </template>

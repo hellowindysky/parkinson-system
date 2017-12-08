@@ -68,8 +68,8 @@
                 {{table.cnName}}
               </td>
               <td class="col col-width-15">
-                <span class="text-button" v-show="mode===VIEW_CURRENT_CARD" @click="selectTable(table.name)">查看</span>
-                <span class="text-button" v-show="mode!==VIEW_CURRENT_CARD" @click="selectTable(table.name)">编辑</span>
+                <span class="text-button" v-if="mode===VIEW_CURRENT_CARD" @click="selectTable(table.name)">查看</span>
+                <span class="text-button" v-else-if="mode!==VIEW_CURRENT_CARD" @click="selectTable(table.name)">编辑</span>
               </td>
             </tr>
           </table>
@@ -417,12 +417,12 @@
           </table>
         </div>
       </div>
-      <div class="button cancel-button" v-show="tableMode!==SON_OPEN" @click="cancel">取消</div>
-      <div class="button cancel-button" v-show="tableMode===SON_OPEN && mode===VIEW_CURRENT_CARD" @click="closeEmgTable">返回</div>
-      <div class="button submit-button" v-show="mode===VIEW_CURRENT_CARD && canEdit" @click="switchToEditingMode">编辑</div>
-      <div class="button submit-button" v-show="tableMode===FATHER_OPEN && mode!==VIEW_CURRENT_CARD" @click="submit">确认</div>
-      <div class="button reset-button" v-show="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD" @click="resetEmgTableData">重置</div>
-      <div class="button submit-button" v-show="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD" @click="closeEmgTable">完成</div>
+      <div class="button cancel-button" v-if="tableMode!==SON_OPEN" @click="cancel">取消</div>
+      <div class="button cancel-button" v-if="tableMode===SON_OPEN && mode===VIEW_CURRENT_CARD" @click="closeEmgTable">返回</div>
+      <div class="button submit-button" v-if="mode===VIEW_CURRENT_CARD && canEdit" @click="switchToEditingMode">编辑</div>
+      <div class="button submit-button" v-if="tableMode===FATHER_OPEN && mode!==VIEW_CURRENT_CARD" @click="submit">确认</div>
+      <div class="button reset-button" v-if="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD" @click="resetEmgTableData">重置</div>
+      <div class="button submit-button" v-if="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD" @click="closeEmgTable">完成</div>
     </div>
   </div>
 </template>

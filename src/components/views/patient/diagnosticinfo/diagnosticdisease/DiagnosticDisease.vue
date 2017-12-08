@@ -1,5 +1,5 @@
 <template lang="html">
-  <folding-panel :title="'病症情况'" :archived="archived" :mode="mutableMode" :folded-status="foldedStatus" v-on:edit="startEditing"
+  <folding-panel :title="'病症情况'" :mode="mutableMode" :folded-status="foldedStatus" v-on:edit="startEditing"
     v-on:cancel="cancel" v-on:submit="submit" v-on:toggleFoldedPanel="updateScrollbar" :editable="canEdit">
     <div class="diagnostic-disease" ref="diagnosticDisease">
       <div v-for="field in diagnosticDiseaseTemplate" class="field"
@@ -254,7 +254,7 @@ export default {
     //   this.diagnosticDiseaseMcDictionary, this.diagnosticDiseaseNmsDictionary);
     // },
     canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients) && this.archived) {
+      if (this.$route.matched.some(record => record.meta.myPatients) && !this.archived) {
         return true;
       } else {
         return false;
@@ -636,6 +636,6 @@ export default {
         top: 100px;
       }
   }
-}      
+}
 
 </style>

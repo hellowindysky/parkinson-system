@@ -4,20 +4,20 @@
       <h2 class="title">{{title}}</h2>
       <div class="button back-button" @click="goBack" v-show="!isNewCase">返回</div>
       <div class="button archive-button" :class="{'disabled': !existed}" @click="archiveCase"
-        v-show="hasBeenArchived===false && !isNewCase && canEdit">归档</div>
+        v-if="hasBeenArchived===false && !isNewCase && canEdit">归档</div>
     </div>
     <div class="scroll-area" ref="scrollArea">
-      <diagnostic-basic :archived="!hasBeenArchived" class="folding-panel" :mode="mode" ref="diagnosticBasic"
+      <diagnostic-basic :archived="hasBeenArchived" class="folding-panel" :mode="mode" ref="diagnosticBasic"
         :diagnosticBasic="diagnosticBasic"></diagnostic-basic>
-      <diagnostic-disease :archived="!hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
+      <diagnostic-disease :archived="hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
         :diagnosticDisease="diagnosticDisease"></diagnostic-disease>
-      <diagnostic-treatment :archived="!hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
+      <diagnostic-treatment :archived="hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
         :diagnosticSurgery="caseDetail.patientSurgicalDbs" :diagnosticMedicine="caseDetail.patientMedicineNew"
         :diagnosticPhysiontherapy="caseDetail.patientPhytheTms">
       </diagnostic-treatment>
-      <diagnostic-scale :archived="!hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
+      <diagnostic-scale :archived="hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
         :patientScale="caseDetail.patientScale"></diagnostic-scale>
-      <diagnostic-examination :archived="!hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
+      <diagnostic-examination :archived="hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
         :neurologicCheckList="caseDetail.patientSpephysical"
         :geneCheckList="caseDetail.patientGene"
         :biochemicalExamList="caseDetail.patientBioexam"
