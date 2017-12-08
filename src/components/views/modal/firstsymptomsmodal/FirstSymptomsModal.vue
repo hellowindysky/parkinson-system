@@ -342,8 +342,8 @@ import Ps from 'perfect-scrollbar';
 import { mapGetters } from 'vuex';
 import Util from 'utils/util.js';
 import { reviseDateFormat, pruneObj } from 'utils/helper.js';
-import {addPatientSymptom, modPatientSymptom} from 'api/patient.js';
-// import { addPatientFirstSymbol, addPatientSymptom, modPatientSymptom} from 'api/patient.js';
+// import {addPatientSymptom, modPatientSymptom} from 'api/patient.js';
+import { addPatientFirstSymbol, addPatientSymptom, modPatientSymptom} from 'api/patient.js';
 export default {
   data() {
     return {
@@ -553,12 +553,20 @@ export default {
         var ComplaintsInfo = Object.assign({}, this.copyInfo); // 主诉症状数据
         ComplaintsInfo.patientId = this.$route.params.id;
         ComplaintsInfo.patientCaseId = this.$route.params.caseId;
+
+        reviseDateFormat(ComplaintsInfo);
+        pruneObj(ComplaintsInfo);
+
+      } else if (this.title2 === '首发症状') {
+        var firstInfo = Object.assign({}, this.copyInfo); // 首发症状数据
+        firstInfo.patientId = this.$route.params.id;
+
+        reviseDateFormat(firstInfo);
+        pruneObj(firstInfo);
       };
 
-      reviseDateFormat(ComplaintsInfo);
-      pruneObj(ComplaintsInfo);
-
-      // console.log(ComplaintsInfo);
+      console.log(ComplaintsInfo);
+      console.log(firstInfo);
       // if (true) {
       //   return;
       // };
@@ -568,11 +576,11 @@ export default {
             this.updateAndClose();
             this.lockSubmitButton = false;
           }, this._handleError);
-        } else {
-          // addPatientFirstSymbol(ComplaintsInfo).then(() => {
-          //   this.updateAndClose();
-          //   this.lockSubmitButton = false;
-          // }, this._handleError);
+        } else if (this.title2 === '首发症状') {
+          addPatientFirstSymbol(firstInfo).then(() => {
+            this.updateAndClose();
+            this.lockSubmitButton = false;
+          }, this._handleError);
         };
       } else if (this.mode === this.EDIT_CURRENT_CARD) {
         if (this.title2 === '主诉症状') {
@@ -590,7 +598,12 @@ export default {
       this.lockSubmitButton = false;
     },
     updateAndClose() {
-      Bus.$emit(this.UPDATE_CASE_INFO);
+      if (this.title2 === '主诉症状') {
+        Bus.$emit(this.UPDATE_CASE_INFO);
+      } else if (this.title2 === '首发症状') {
+        Bus.$emit(this.UPDATE_PATIENT_INFO);
+      }
+
       this.displayModal = false;
     }
   },

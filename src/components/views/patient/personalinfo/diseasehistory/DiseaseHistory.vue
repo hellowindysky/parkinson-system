@@ -38,21 +38,22 @@
             <span class="warning-text"></span>
           </div>
         </div>
-        <extensible-panel class="disease-card" :title="'首发症状（x 条记录）'" @addNewCard="addFirstSymptomsRecord">
-          <Card class="card symptoms-card" :mode="mode" :class="cardWidth" :title="'运动症状'"
-           v-on:editCurrentCard="editFirstSymptomsRecord('循环出的每一个card的模态框数据对象')" 
-           v-on:viewCurrentCard="viewFirstSymptomsRecord('循环出的每一个card的模态框数据对象')">
+        <extensible-panel class="disease-card" :title="firstSymTitle" @addNewCard="addFirstSymptomsRecord">
+          <Card class="card symptoms-card" :mode="mode" :class="cardWidth"
+           v-for="item in diseaseInfo.patientFirstSymbols" :key="item.id" :title="item.symType"
+           v-on:editCurrentCard="editFirstSymptomsRecord(item)" 
+           v-on:viewCurrentCard="viewFirstSymptomsRecord(item)">
             <div class="text first-line">
-              <!-- <span class="name">类型</span> -->
-              <span class="value">面具脸</span>
+              <span class="name">症状名称：</span>
+              <span class="value">{{item.symName}}</span>
             </div>
             <div class="text second-line">
-              <!-- <span class="name">编号</span> -->
-              <span class="value">咕咕咕咕</span>
+              <span class="name">是否规律出现：</span>
+              <span class="value">{{item.whetherLaw ? item.whetherLaw : '未填写'}}</span>
             </div>
             <div class="text third-line">
-              <!-- <span class="name">日期</span> -->
-              <span class="value">哈哈哈哈</span>
+              <span class="name">出现时间：</span>
+              <span class="value">{{item.ariseTime ? item.ariseTime : '未填写'}}</span>
             </div>
           </Card>
         </extensible-panel>
@@ -160,12 +161,21 @@ export default {
       cardWidth: ''
     };
   },
+  props: {
+    diseaseInfo: {
+      type: Object,
+      default: () => {}
+    }
+  },
   computed: {
     ...mapGetters([
       'diseaseInfoDictionaryGroups',
       'diseaseInfoTemplateGroups',
       'typeGroup'
     ]),
+    firstSymTitle() {
+      return '首发症状（' + (this.diseaseInfo.patientFirstSymbols ? this.diseaseInfo.patientFirstSymbols : []).length + '条记录）';
+    },
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients)) {
         return true;
@@ -208,13 +218,19 @@ export default {
     },
     recalculateCardWidth() {
       this.$nextTick(() => {
-        var panelWidth = this.$refs.diseaseInfo.clientWidth - 50;
-        var cardNum = 1.0;
-        // 20px 是卡片的横向间距，定义在了 varaibles.less 中，200px 是卡片的最小宽度，一排最多显示 10 个卡片
-        while (panelWidth / (cardNum + 1) > 200 + 20 && cardNum < 10) {
-          cardNum += 1.0;
+        if (!this.$refs.diseaseInfo) {
+          return;
         }
-        this.cardWidth = 'width-1-' + parseInt(cardNum, 10);
+        var panelWidth = this.$refs.diseaseInfo.clientWidth;
+        var devideNum = 1.0;
+        // 20px 是卡片的横向间距，定义在了 varaibles.less 中，200px 是卡片的最小宽度
+        while (panelWidth / devideNum > 200 + 20) {
+          devideNum += 1.0;
+        }
+        devideNum -= 1;
+        // 一排最多显示 10 个卡片
+        devideNum = devideNum <= 10 ? devideNum : 10;
+        this.cardWidth = 'width-1-' + parseInt(devideNum, 10);
       });
     },
     clearWarning() {
