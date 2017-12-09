@@ -72,6 +72,8 @@ export default {
     var validateOriginalPass = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请输入当前密码'));
+      } else if (value !== this.currentPassword) {
+        callback(new Error('当前密码输入不正确'));
       } else {
         if (this.resetForm.originalPassword !== '') {
           this.$refs.resetForm.validateField('newPassword');
@@ -121,6 +123,7 @@ export default {
     return {
       loginType: 1,
       mustResetPassword: false,
+      currentPassword: '',
       codeButtonText: '获取验证码',
       loginForm: {
         account: '',
@@ -238,6 +241,8 @@ export default {
             var userType = data.user.userType;
             var orgName = data.orgs && data.orgs[0] && data.orgs[0].orgName ? data.orgs[0].orgName : '';
             var subjects = data.tasks ? data.tasks : [];
+
+            this.currentPassword = this.loginForm.password;
 
             // 0 需要修改密码 1表示已经修改过密码
             // var changePassword = data.user.changePassword;
