@@ -395,6 +395,13 @@ export default {
             });
 
           }, (error) => {
+            if (error.code === 33) {
+              this.$message({
+                message: '验证码输入错误或已失效',
+                type: 'warning',
+                duration: 2000
+              });
+            }
             this.lockSubmitButton = false;
             console.log(error);
           });

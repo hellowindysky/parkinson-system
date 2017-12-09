@@ -10,7 +10,7 @@
           <span class="warning-text">{{originalPasswordWarning}}</span>
           <el-input :class="{'warning': originalPasswordWarning}" v-model="originalPassword"
             type="password" placeholder="请输入当前密码" @focus="clearOriginalPasswordWarning"
-            @change="updateOriginalPassword"></el-input>
+            @change="updateOriginalPassword" auto-complete="new-password"></el-input>
         </span>
       </div>
       <div class="field">
@@ -19,7 +19,7 @@
         </span>
         <span class="field-input">
           <span class="warning-text">{{newPasswordWarning}}</span>
-          <el-input :class="{'warning': newPasswordWarning}" v-model="newPassword"
+          <el-input :class="{'warning': newPasswordWarning}" v-model="newPassword" auto-complete="new-password"
             type="password" placeholder="请输入新密码(字母，数字或符号，8-16位)" @focus="clearNewPasswordWarning"
             @change="updateNewPassword"></el-input>
         </span>
@@ -31,7 +31,7 @@
         </span>
         <span class="field-input">
           <span class="warning-text">{{repeatedNewPasswordWarning}}</span>
-          <el-input :class="{'warning': repeatedNewPasswordWarning}" v-model="repeatedNewPassword"
+          <el-input :class="{'warning': repeatedNewPasswordWarning}" v-model="repeatedNewPassword" auto-complete="new-password"
             type="password" placeholder="请再次输入新密码" @focus="clearRepeatedNewPasswordWarning"></el-input>
         </span>
         <span class="iconfont icon-ok note" v-show="repeatedSuccessfully"></span>
@@ -106,6 +106,10 @@ export default {
         this.newPasswordWarning = '请输入新密码';
         return;
       }
+      if (this.newPassword === this.originalPassword) {
+        this.newPasswordWarning = '新密码不能与原来密码相同';
+        return;
+      }
       if (this.repeatedNewPassword !== this.newPassword) {
         this.repeatedNewPasswordWarning = '两次输入的密码不一致';
         return;
@@ -130,9 +134,7 @@ export default {
       });
     },
     clearOriginalPasswordWarning() {
-      if (this.originalPasswordWarning === '请输入当前密码') {
-        this.originalPasswordWarning = '';
-      }
+      this.originalPasswordWarning = '';
     },
     updateOriginalPassword() {
       if (this.originalPassword.indexOf(' ') >= 0) {
@@ -142,9 +144,7 @@ export default {
       }
     },
     clearNewPasswordWarning() {
-      if (this.newPasswordWarning === '请输入新密码') {
-        this.newPasswordWarning = '';
-      }
+      this.newPasswordWarning = '';
     },
     updateNewPassword() {
       if (this.newPassword.indexOf(' ') >= 0) {
