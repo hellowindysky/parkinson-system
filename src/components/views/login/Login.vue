@@ -38,6 +38,7 @@
         <el-form-item prop="newPassword">
           <el-input class="round-input" v-model="resetForm.newPassword" type="password" auto-complete="new-password"
             placeholder="请输入新密码(字母，数字或符号，8-16位)"></el-input>
+          <div class="password-strength">{{passwordStrength}}</div>
         </el-form-item>
         <el-form-item prop="repeatedNewPassword">
           <el-input class="round-input" v-model="resetForm.repeatedNewPassword" type="password" auto-complete="new-password"
@@ -68,6 +69,55 @@ const ACCOUNT_LOGIN = 1;
 export default {
   name: 'login',
   data() {
+    var validateOriginalPass = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入当前密码'));
+      } else {
+        if (this.resetForm.originalPassword !== '') {
+          this.$refs.resetForm.validateField('newPassword');
+        }
+        callback();
+      }
+    };
+    var validateNewPass = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入新密码'));
+      } else if (value === this.resetForm.originalPassword) {
+        callback(new Error('新密码不能和当前密码一致'));
+      } else if (value.indexOf(' ') >= 0) {
+        callback(new Error('不能包含空格'));
+      } else if (value.length < 8) {
+        callback(new Error('新密码长度不能少于8位'));
+      } else if (value.length > 16) {
+        callback(new Error('新密码长度不能多于16位'));
+      } else {
+        var strengthLevel = this.getPasswordStrength(value);
+        if (strengthLevel === 0) {
+          callback(new Error('含有非法字符'));
+        } else if (strengthLevel > 0 && this.resetForm.newPassword !== '') {
+          this.$refs.resetForm.validateField('repeatedNewPassword');
+          callback();
+        }
+      }
+    };
+    var validateRepeatedNewPass = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请再次输入新密码'));
+      } else if (value !== this.resetForm.newPassword) {
+        callback(new Error('两次输入密码不一致!'));
+      } else {
+        callback();
+      }
+    };
+    var validateVerificationCode = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入验证码'));
+      } else if (!(/^[0-9]$ /.test(value))) {
+        callback(new Error('请输入数字'));
+      } else {
+        callback();
+      }
+    };
     return {
       loginType: 1,
       mustResetPassword: false,
@@ -80,7 +130,8 @@ export default {
       resetForm: {
         originalPassword: '',
         newPassword: '',
-        repeatedNewPassword: ''
+        repeatedNewPassword: '',
+        verificationCode: ''
       },
       rules: {
         account: [
@@ -94,13 +145,16 @@ export default {
       },
       resetRules: {
         originalPassword: [
-
+          {validator: validateOriginalPass, trigger: 'blur'}
         ],
         newPassword: [
-
+          {validator: validateNewPass, trigger: 'blur'}
         ],
         repeatedNewPassword: [
-
+          {validator: validateRepeatedNewPass, trigger: 'blur'}
+        ],
+        verificationCode: [
+          {validator: validateVerificationCode, trigger: 'blur'}
         ]
       }
     };
@@ -119,11 +173,51 @@ export default {
     },
     md5Password() {
       return md5(this.password);
+    },
+    passwordStrength() {
+      var value = this.resetForm.newPassword;
+      if (value !== '' && value !== this.resetForm.originalPassword && value.indexOf(' ') < 0 &&
+        value.length >= 8 && value.length <= 16) {
+
+        var strengthLevel = this.getPasswordStrength(value);
+        if (strengthLevel === 1) {
+          return '密码强度: 弱';
+        } else if (strengthLevel === 2) {
+          return '密码强度: 中';
+        } else if (strengthLevel === 3) {
+          return '密码强度: 强';
+        }
+      } else {
+        return '';
+      }
     }
   },
   methods: {
     accountLogin() {
       this.loginType = ACCOUNT_LOGIN;
+    },
+    getPasswordStrength(value) {
+      // 返回值为 0，1，2，3，分别代表 非法，弱，中，强
+      var regValid = new RegExp(/^(?:[0-9a-zA-Z!@#$%^&*()\-_=+`~\[{\]};:'",<.>\/?\\|]+)$/);
+      var regNum = new RegExp(/[0-9]+/);
+      var regAlphabet = new RegExp(/[a-zA-Z]+/);
+      var regSpecialCharacter = new RegExp(/[!@#$%^&*()\-_=+`~\[{\]};:'",<.>\/?\\|]+/);
+
+      var isValid = regValid.test(value);
+      var hasNum = regNum.test(value);
+      var hasAlphabet = regAlphabet.test(value);
+      var hasSpecialCharacter = regSpecialCharacter.test(value);
+
+      var count = 0;
+      count += (hasNum ? 1 : 0);
+      count += (hasAlphabet ? 1 : 0);
+      count += (hasSpecialCharacter ? 1 : 0);
+
+      if (!isValid) {
+        return 0;
+      } else {
+        return count;
+      }
     },
     submitForm() {
       this.$refs['loginForm'].validate((valid) => {
@@ -146,8 +240,9 @@ export default {
             var subjects = data.tasks ? data.tasks : [];
 
             // 0 需要修改密码 1表示已经修改过密码
-            var changePassword = data.user.changePassword;
-            this.mustResetPassword = changePassword === 0;
+            // var changePassword = data.user.changePassword;
+            // this.mustResetPassword = changePassword === 0;
+            this.mustResetPassword = true;
 
             if (!this.mustResetPassword) {
               sessionStorage.setItem('token', token);
@@ -239,8 +334,7 @@ export default {
     top: 50%;
     width: @input-width;
     height: 500px;
-    transform: translate(-50%, -350px);
-    background-color: rgba(224,224,224,0);
+    transform: translate(-50%, -320px);
     border-radius: 30px;
     z-index: 100;
     .logo {
@@ -324,6 +418,16 @@ export default {
         border-radius: 50px;
         padding-left: 20px;
       }
+      .password-strength {
+        position: absolute;
+        left: 100%;
+        top: 0;
+        width: 100px;
+        padding-left: 10px;
+        line-height: @input-height;
+        color: #fff;
+        font-size: @normal-font-size;
+      }
       .short {
         width: @input-width * 0.5;
       }
@@ -337,6 +441,9 @@ export default {
         .el-checkbox__label {
           color: #fff;
         }
+      }
+      .el-form-item__error {
+        padding-left: 22px;
       }
       .button {
         width: @input-width;
