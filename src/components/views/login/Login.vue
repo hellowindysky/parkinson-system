@@ -33,20 +33,20 @@
         <div class="notice" v-if="mustResetPassword">首次登录需要修改初始密码</div>
         <el-form-item prop="originalPassword">
           <el-input class="round-input" v-model="resetForm.originalPassword" type="password" auto-complete="new-password"
-            placeholder="请输入当前密码" autofocus="autofocus"></el-input>
+            placeholder="请输入当前密码" autofocus="autofocus" @keyup.enter.native="submitResetForm"></el-input>
         </el-form-item>
         <el-form-item prop="newPassword">
           <el-input class="round-input" v-model="resetForm.newPassword" type="password" auto-complete="new-password"
-            placeholder="请输入新密码(字母，数字或符号，8-16位)"></el-input>
+            placeholder="请输入新密码(字母，数字或符号，8-16位)" @keyup.enter.native="submitResetForm"></el-input>
           <div class="password-strength">{{passwordStrength}}</div>
         </el-form-item>
         <el-form-item prop="repeatedNewPassword">
           <el-input class="round-input" v-model="resetForm.repeatedNewPassword" type="password" auto-complete="new-password"
-            placeholder="请再次输入新密码"></el-input>
+            placeholder="请再次输入新密码" @keyup.enter.native="submitResetForm"></el-input>
         </el-form-item>
         <el-form-item prop="verificationCode">
           <el-input class="round-input short" v-model="resetForm.verificationCode" type="text" auto-complete="new-password"
-            placeholder="请输入短信验证码"></el-input>
+            placeholder="请输入短信验证码" @keyup.enter.native="submitResetForm"></el-input>
           <el-button class="button code-button" type="primary" @click="sendCode" :disabled="codeButtonStatus===1">{{codeButtonText}}</el-button>
         </el-form-item>
         <el-form-item>
@@ -115,7 +115,7 @@ export default {
     var validateVerificationCode = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请输入验证码'));
-      } else if (!(/^[0-9]$ /.test(value))) {
+      } else if (!(/^[0-9]*$/.test(value))) {
         callback(new Error('请输入数字'));
       } else {
         callback();
@@ -335,9 +335,8 @@ export default {
             sessionStorage.setItem('commonRequest', JSON.stringify(commonRequest));
 
             // 0 需要修改密码 1表示已经修改过密码
-            // var changePassword = data.user.changePassword;
-            // this.mustResetPassword = changePassword === 0;
-            this.mustResetPassword = true;
+            var changePassword = data.user.changePassword;
+            this.mustResetPassword = changePassword === 0;
 
             if (!this.mustResetPassword) {
               this.enterApp();
