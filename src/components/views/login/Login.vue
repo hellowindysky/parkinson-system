@@ -47,7 +47,7 @@
         <el-form-item prop="verificationCode">
           <el-input class="round-input short" v-model="resetForm.verificationCode" type="text" auto-complete="new-password"
             placeholder="请输入短信验证码"></el-input>
-          <el-button class="button code-button" type="primary">{{codeButtonText}}</el-button>
+          <el-button class="button code-button" type="primary" @click="sendCode" :disabled="codeButtonStatus===1">{{codeButtonText}}</el-button>
         </el-form-item>
         <el-form-item>
           <el-button class="button" type="primary" @click="submitResetForm">确认修改</el-button>
@@ -60,7 +60,8 @@
 
 <script>
 import md5 from 'md5';
-import {getLoginInfo} from 'api/login';
+import { getLoginInfo } from 'api/login';
+import { sendVerificationCode, verifyMessageCode, resetPassword } from 'api/user';
 
 // import particles from 'components/views/login/particles/Particles';
 
@@ -122,9 +123,23 @@ export default {
     };
     return {
       loginType: 1,
+
+      token: '',
+      accountNumber: '',
+      name: '',
+      userName: '',
+      userType: '',
+      orgName: '',
+      subjects: [],
+
+      lockSendButton: false,
+      lockSubmitButton: false,
       mustResetPassword: false,
       currentPassword: '',
-      codeButtonText: '获取验证码',
+      codeButtonStatus: 0,  // 0 初始状态，1 禁止状态，2 重新点击状态
+      codeButtonCount: 0,
+      countDown: null,      // 用来开启和关闭倒计时
+
       loginForm: {
         account: '',
         password: '',
@@ -193,11 +208,52 @@ export default {
       } else {
         return '';
       }
+    },
+    codeButtonText() {
+      if (this.codeButtonStatus === 0) {
+        return '获取验证码';
+      } else if (this.codeButtonStatus === 1) {
+        return '重新获取 (' + this.codeButtonCount + ')';
+      } else if (this.codeButtonStatus === 2) {
+        return '重新获取';
+      }
     }
   },
   methods: {
     accountLogin() {
       this.loginType = ACCOUNT_LOGIN;
+    },
+    sendCode() {
+      if (this.lockSendButton) {
+        return;
+      }
+
+      this.lockSendButton = true;
+      var verificationInfo = {
+        businessType: 1
+      };
+      sendVerificationCode(verificationInfo).then(() => {
+        this.lockSendButton = false;
+        this.codeButtonStatus = 1;
+        this.codeButtonCount = 180;
+        this.countDown = setInterval(() => {
+          this.codeButtonCount -= 1;
+          if (this.codeButtonCount <= 0) {
+            clearInterval(this.countDown);
+            this.codeButtonStatus = 2;
+          }
+        }, 1000);
+      }, (error) => {
+        this.lockSendButton = false;
+        console.log(error);
+        if (error.code === 32) {
+          this.$message({
+            message: '请等待足够时间后再发送验证码',
+            type: 'warning',
+            duration: 2000
+          });
+        }
+      });
     },
     getPasswordStrength(value) {
       // 返回值为 0，1，2，3，分别代表 非法，弱，中，强
@@ -222,7 +278,22 @@ export default {
         return count;
       }
     },
+    enterApp() {
+      // 登录时默认进入医院入口
+      this.$store.commit('UPDATE_SUBJECT_ID', this.SUBJECT_ID_FOR_HOSPITAL);
+      sessionStorage.setItem('UPDATE_SUBJECT_ID', this.SUBJECT_ID_FOR_HOSPITAL);
+
+      // 重新记录操作时间点
+      this.$store.commit('UPDATE_LAST_OPERATION_TIME');
+      sessionStorage.setItem('lastOperationTime', this.$store.state.lastOperationTime);
+
+      this.$router.push('/');
+    },
     submitForm() {
+      if (this.lockSubmitButton) {
+        return;
+      }
+      this.lockSubmitButton = true;
       this.$refs['loginForm'].validate((valid) => {
         if (valid) {
           if (this.loginForm.remember) {
@@ -234,15 +305,34 @@ export default {
           }
 
           getLoginInfo(this.loginForm.account, this.loginForm.password).then((data) => {
-            var token = data.loginToken;
-            var accountNumber = data.user.accountNumber;
-            var name = data.user.name;
-            var userName = data.user.userName;
-            var userType = data.user.userType;
-            var orgName = data.orgs && data.orgs[0] && data.orgs[0].orgName ? data.orgs[0].orgName : '';
-            var subjects = data.tasks ? data.tasks : [];
+            this.lockSubmitButton = false;
+            this.token = data.loginToken;
+            this.accountNumber = data.user.accountNumber;
+            this.name = data.user.name;
+            this.userName = data.user.userName;
+            this.userType = data.user.userType;
+            this.orgName = data.orgs && data.orgs[0] && data.orgs[0].orgName ? data.orgs[0].orgName : '';
+            this.subjects = data.tasks ? data.tasks : [];
 
             this.currentPassword = this.loginForm.password;
+
+            sessionStorage.setItem('token', this.token);
+            sessionStorage.setItem('accountNumber', this.accountNumber);
+            sessionStorage.setItem('name', this.name);
+            sessionStorage.setItem('userName', this.userName);
+            sessionStorage.setItem('userType', this.userType);
+            sessionStorage.setItem('orgName', this.orgName);
+            sessionStorage.setItem('subjects', JSON.stringify(this.subjects));
+
+            var commonRequest = {
+              'userId': 93242,
+              'accountNumber': this.accountNumber,
+              'userType': this.userType,
+              'orgId': 34,
+              'orgType': 2
+            };
+
+            sessionStorage.setItem('commonRequest', JSON.stringify(commonRequest));
 
             // 0 需要修改密码 1表示已经修改过密码
             // var changePassword = data.user.changePassword;
@@ -250,36 +340,11 @@ export default {
             this.mustResetPassword = true;
 
             if (!this.mustResetPassword) {
-              sessionStorage.setItem('token', token);
-              sessionStorage.setItem('accountNumber', accountNumber);
-              sessionStorage.setItem('name', name);
-              sessionStorage.setItem('userName', userName);
-              sessionStorage.setItem('userType', userType);
-              sessionStorage.setItem('orgName', orgName);
-              sessionStorage.setItem('subjects', JSON.stringify(subjects));
-
-              var commonRequest = {
-                'userId': 93242,
-                'accountNumber': accountNumber,
-                'userType': userType,
-                'orgId': 34,
-                'orgType': 2
-              };
-
-              sessionStorage.setItem('commonRequest', JSON.stringify(commonRequest));
-
-              // 登录时默认进入医院入口
-              this.$store.commit('UPDATE_SUBJECT_ID', this.SUBJECT_ID_FOR_HOSPITAL);
-              sessionStorage.setItem('UPDATE_SUBJECT_ID', this.SUBJECT_ID_FOR_HOSPITAL);
-
-              // 重新记录操作时间点
-              this.$store.commit('UPDATE_LAST_OPERATION_TIME');
-              sessionStorage.setItem('lastOperationTime', this.$store.state.lastOperationTime);
-
-              this.$router.push('/');
+              this.enterApp();
             }
 
           }, (error) => {
+            this.lockSubmitButton = false;
             if (error.code === 21) {
               this.$message({
                 message: '用户名或密码错误',
@@ -289,15 +354,56 @@ export default {
             }
           });
         } else {
+          this.lockSubmitButton = false;
           console.log('input invalid');
           return;
         }
       });
     },
     submitResetForm() {
+      if (this.lockSubmitButton) {
+        return;
+      }
+      this.lockSubmitButton = true;
       this.$refs['resetForm'].validate((valid) => {
+        // 校验字段之后，发送验证，如果验证码正确，再发送修改密码的请求，如果再返回正确，则跳转到系统
         if (valid) {
+          let verificationInfo = {
+            code: this.resetForm.verificationCode,
+            businessType: 1
+          };
+          verifyMessageCode(verificationInfo).then(() => {
+            resetPassword(this.resetForm.originalPassword, this.resetForm.newPassword).then(() => {
+              this.$message({
+                message: '已成功修改密码',
+                type: 'success',
+                duration: 2000
+              });
+              this.enterApp();
+              this.lockSubmitButton = false;
 
+            }, (error) => {
+              if (error.code === 25) {
+                // 由于我们在前端就做了校验，所以正常情况下不会执行到这里
+                this.$message({
+                  message: '当前密码输入错误',
+                  type: 'warning',
+                  duration: 2000
+                });
+              }
+              console.log(error);
+              this.lockSubmitButton = false;
+            });
+
+          }, (error) => {
+            this.lockSubmitButton = false;
+            console.log(error);
+          });
+
+        } else {
+          this.lockSubmitButton = false;
+          console.log('input invalid');
+          return;
         }
       });
     }
@@ -461,6 +567,11 @@ export default {
           right: 0;
           width: @input-width * 0.4;
           background-color: @light-font-color;
+        }
+        &.is-disabled {
+          border-color: @theme-color;
+          background-color: @gray-color;
+          color: #fff;
         }
       }
     }
