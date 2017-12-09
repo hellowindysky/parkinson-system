@@ -225,8 +225,6 @@ export default {
       }, 0);
     };
     return {
-      subjectId: Number(sessionStorage.getItem('subjectId')),
-
       searchInput: '',
       timeout: null,
 
@@ -290,7 +288,7 @@ export default {
       'typeGroup'
     ]),
     inSubject() {
-      return this.subjectId !== this.SUBJECT_ID_FOR_HOSPITAL;
+      return this.$store.state.subjectId !== this.SUBJECT_ID_FOR_HOSPITAL;
     },
     showAdd() {
       if (this.listType === this.OTHER_PATIENTS_TYPE || this.listType === this.SUBJECT_PATIENTS_TYPE) {
@@ -360,8 +358,6 @@ export default {
       }
     }
 
-    this.subjectId = Number(sessionStorage.getItem('subjectId'));
-
     Bus.$on(this.UPDATE_MY_PATIENTS_LIST, this.updatePatientsList);
     Bus.$on(this.UPDATE_OTHER_PATIENTS_LIST, this.updatePatientsList);
     Bus.$on(this.UPDATE_SUBJECT_PATIENTS_LIST, this.updatePatientsList);
@@ -419,10 +415,10 @@ export default {
         delete condition.taskId;
       } else if (this.listType === this.MY_PATIENTS_TYPE && this.inSubject) {
         condition.type = 3;
-        condition.taskId = Number(sessionStorage.getItem('subjectId'));
+        condition.taskId = this.$store.state.subjectId;
       } else if (this.listType === this.SUBJECT_PATIENTS_TYPE) {
         condition.type = 4;
-        condition.taskId = Number(sessionStorage.getItem('subjectId'));
+        condition.taskId = this.$store.state.subjectId;
       }
 
       if (this.searchInput !== '') {
@@ -449,7 +445,7 @@ export default {
       this.hasFirstUpdatedList = true;   // 这个变量用来阻止初次登录界面时，发出重复请求
       getPatientList(condition).then((data) => {
         if (this.listType === this.MY_PATIENTS_TYPE) {
-          this.myPatientsList = data;
+          this.myPatientsList = data ? data : [];
         } else if (this.listType === this.OTHER_PATIENTS_TYPE) {
           this.otherPatientsList = data ? data : [];
         } else if (this.listType === this.SUBJECT_PATIENTS_TYPE) {
