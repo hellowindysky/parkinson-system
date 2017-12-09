@@ -30,6 +30,7 @@
       </el-form>
 
       <el-form class="input-wrapper" v-if="mustResetPassword" :model="resetForm" :rules="resetRules" ref="resetForm" label-width="0">
+        <div class="notice" v-if="mustResetPassword">首次登录需要修改初始密码</div>
         <el-form-item prop="originalPassword">
           <el-input class="round-input" v-model="resetForm.originalPassword" type="password" auto-complete="new-password"
             placeholder="请输入当前密码" autofocus="autofocus"></el-input>
@@ -39,8 +40,13 @@
             placeholder="请输入新密码(字母，数字或符号，8-16位)"></el-input>
         </el-form-item>
         <el-form-item prop="repeatedNewPassword">
-          <el-input class="round-input" v-model="resetForm.resetNewPassword" type="password" auto-complete="new-password"
+          <el-input class="round-input" v-model="resetForm.repeatedNewPassword" type="password" auto-complete="new-password"
             placeholder="请再次输入新密码"></el-input>
+        </el-form-item>
+        <el-form-item prop="verificationCode">
+          <el-input class="round-input short" v-model="resetForm.verificationCode" type="text" auto-complete="new-password"
+            placeholder="请输入短信验证码"></el-input>
+          <el-button class="button code-button" type="primary">{{codeButtonText}}</el-button>
         </el-form-item>
         <el-form-item>
           <el-button class="button" type="primary" @click="submitResetForm">确认修改</el-button>
@@ -65,6 +71,7 @@ export default {
     return {
       loginType: 1,
       mustResetPassword: false,
+      codeButtonText: '获取验证码',
       loginForm: {
         account: '',
         password: '',
@@ -188,7 +195,11 @@ export default {
       });
     },
     submitResetForm() {
+      this.$refs['resetForm'].validate((valid) => {
+        if (valid) {
 
+        }
+      });
     }
   },
   components: {
@@ -220,15 +231,15 @@ export default {
   height: 100vh;
   background-color: @theme-color;
   position: relative;
-  min-height: 500px;
+  min-height: 666px;
   min-width: @min-screen-width;
   .panel {
     position: absolute;
     left: 50%;
-    top: 6%;
-    width: 300px;
+    top: 50%;
+    width: @input-width;
     height: 500px;
-    transform: translate(-50%, 0);
+    transform: translate(-50%, -350px);
     background-color: rgba(224,224,224,0);
     border-radius: 30px;
     z-index: 100;
@@ -294,13 +305,27 @@ export default {
       }
     }
     .input-wrapper {
+      position: relative;
       margin: 20px auto;
       width: @input-width;
       height: 130px;
+      text-align: left;
+      .notice {
+        position: absolute;
+        width: @input-width;
+        top: -25px;
+        line-height: 25px;
+        font-size: @normal-font-size;
+        color: #fff;
+        text-align: center;
+      }
       .round-input input {
         height: @input-height;
         border-radius: 50px;
         padding-left: 20px;
+      }
+      .short {
+        width: @input-width * 0.5;
       }
       .checkbox {
         float: left;
@@ -319,6 +344,12 @@ export default {
         border-radius: 50px;
         background-color: @button-color;
         color: @button-font-color;
+        &.code-button {
+          position: absolute;
+          right: 0;
+          width: @input-width * 0.4;
+          background-color: @light-font-color;
+        }
       }
     }
   }
