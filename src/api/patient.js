@@ -123,11 +123,20 @@ export function addPatientFirstSymbol(firstSymbol) {
   return encapsulatePromise(url, request);
 };
 
+// 修改首发症状
+export function modPatientFirstSymbol(firstSymbol) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientFirstSymbolModel = firstSymbol;
+  var url = baseUrl + '/pdms/modPatientFirstSymbol';
+
+  return encapsulatePromise(url, request);
+};
+
 // 删除首发症状
 export function deletePatientFirstSymbol(firstSymbol) {
   var request = Object.assign({}, getCommonRequest());
   request.patientFirstSymbolModel = firstSymbol;
-  var url = baseUrl + '/pdms/addPatientFirstSymbol';
+  var url = baseUrl + '/pdms/delPatientFirstSymbol';
 
   return encapsulatePromise(url, request);
 };

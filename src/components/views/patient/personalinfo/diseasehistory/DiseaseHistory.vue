@@ -42,7 +42,8 @@
           <Card class="card symptoms-card" :mode="mode" :class="cardWidth"
            v-for="item in diseaseInfo.patientFirstSymbols" :key="item.id" :title="item.symType"
            v-on:editCurrentCard="editFirstSymptomsRecord(item)" 
-           v-on:viewCurrentCard="viewFirstSymptomsRecord(item)">
+           v-on:viewCurrentCard="viewFirstSymptomsRecord(item)"
+           v-on:deleteCurrentCard="deleteFirstSymptomsRecord(item)">
             <div class="text first-line">
               <span class="name">症状名称：</span>
               <span class="value">{{item.symName}}</span>
@@ -52,8 +53,8 @@
               <span class="value">{{item.whetherLaw ? item.whetherLaw : '未填写'}}</span>
             </div>
             <div class="text third-line">
-              <span class="name">出现时间：</span>
-              <span class="value">{{item.ariseTime ? item.ariseTime : '未填写'}}</span>
+              <span class="name">{{item.ariseTime ? '出现时间：' : '...'}}</span>
+              <span class="value">{{item.ariseTime}}</span>
             </div>
           </Card>
         </extensible-panel>
@@ -151,7 +152,7 @@ import Bus from 'utils/bus.js';
 import FoldingPanel from 'components/public/foldingpanel/FoldingPanel';
 import ExtensiblePanel from 'components/public/extensiblepanel/ExtensiblePanel';
 import Card from 'components/public/card/Card';
-
+import { deletePatientFirstSymbol } from 'api/patient.js';
 export default {
   data() {
     return {
@@ -210,6 +211,15 @@ export default {
     viewFirstSymptomsRecord(item) {
       Bus.$emit(this.SHOW_FIRSTSYMPTOMS_MODAL, this.VIEW_CURRENT_CARD, item, '首发症状');
     },
+    deleteFirstSymptomsRecord(item) {
+      var firSymId = {
+        id: item.id
+      };
+      Bus.$on(this.CONFIRM, () => {
+        deletePatientFirstSymbol(firSymId).then(this._resolveDeletion, this._rejectDeletion);
+      });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
+    },
     addFirstTreatmentRecord() {
       Bus.$emit(this.SHOW_FIRSTTREATMENT_MODAL, this.ADD_NEW_CARD, {});
     },
@@ -237,6 +247,15 @@ export default {
       for (let key in this.warningResults) {
         this.warningResults[key] = null;
       }
+    },
+    _resolveDeletion() {
+      // 如果成功删除记录，则重新发出请求，获取最新数据。同时解除 [确认对话框] 的 “确认” 回调函数
+      Bus.$emit(this.UPDATE_PATIENT_INFO);
+      Bus.$off(this.CONFIRM);
+    },
+    _rejectDeletion() {
+      // 即使删除不成功，也要解除 [确认对话框] 的 “确认” 回调函数
+      Bus.$off(this.CONFIRM);
     }
   },
   components: {
@@ -245,8 +264,16 @@ export default {
     Card
   },
   mounted() {
+    Bus.$on(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
+    Bus.$on(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
+    Bus.$on(this.RECALCULATE_CARD_WIDTH, this.recalculateCardWidth);
     // 第一次加载的时候，去计算一次卡片宽度
     this.recalculateCardWidth();
+  },
+  beforeDestroy() {
+    // 还是记得销毁组件前，解除事件绑定
+    Bus.$off(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
+    Bus.$off(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
   }
 };
 </script>

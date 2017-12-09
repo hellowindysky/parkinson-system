@@ -195,8 +195,8 @@
             <span class="value">{{item.whetherLaw ? item.whetherLaw : '未填写'}}</span>
           </div>
           <div class="text third-line">
-            <span class="name">出现时间：</span>
-            <span class="value">{{item.ariseTime ? item.ariseTime : '未填写'}}</span>
+            <span class="name">{{item.ariseTime ? '出现时间：' : '...'}}</span>
+            <span class="value">{{item.ariseTime}}</span>
           </div>
         </card>
       </extensible-panel>

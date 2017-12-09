@@ -343,7 +343,7 @@ import { mapGetters } from 'vuex';
 import Util from 'utils/util.js';
 import { reviseDateFormat, pruneObj } from 'utils/helper.js';
 // import {addPatientSymptom, modPatientSymptom} from 'api/patient.js';
-import { addPatientFirstSymbol, addPatientSymptom, modPatientSymptom} from 'api/patient.js';
+import { addPatientFirstSymbol, modPatientFirstSymbol, addPatientSymptom, modPatientSymptom} from 'api/patient.js';
 export default {
   data() {
     return {
@@ -586,6 +586,12 @@ export default {
         if (this.title2 === '主诉症状') {
           ComplaintsInfo.id = this.id;
           modPatientSymptom(ComplaintsInfo).then(() => {
+            this.updateAndClose();
+            this.lockSubmitButton = false;
+          }, this._handleError);
+        } else if (this.title2 === '首发症状') {
+          firstInfo.id = this.id;
+          modPatientFirstSymbol(firstInfo).then(() => {
             this.updateAndClose();
             this.lockSubmitButton = false;
           }, this._handleError);
