@@ -28,7 +28,7 @@
           </el-input>
           <el-select v-else-if="getUIType(field.fieldName)===3" v-model="copyInfo[field.fieldName]"
             :class="{'warning': warningResults[field.fieldName]}" :placeholder="getMatchedField(field).cnFieldDesc"
-            @change="updateWarning(field)">
+            @change="updateWarning(field)" clearable >
             <el-option v-for="option in getOptions(field.fieldName)" :label="option.typeName"
               :value="option.typeCode" :key="option.typeCode"></el-option>
           </el-select>
@@ -210,7 +210,7 @@ import { mapGetters } from 'vuex';
 import Util from 'utils/util.js';
 import Bus from 'utils/bus.js';
 import { vueCopy } from 'utils/helper';
-import { delPatientSymptom } from 'api/patient.js';
+import { delPatientSymptom, modDiseaseSituation } from 'api/patient.js';
 
 // import { reviseDateFormat } from 'utils/helper.js';
 
@@ -226,7 +226,8 @@ export default {
       copyInfo: {},
       warningResults: {},
       title: '主诉症状',
-      devideWidth: ''
+      devideWidth: '',
+      lockSubmitButton: false
       // MS_SYMPTOM: '运动症状',
       // MC_SYMPTOM: '运动并发症',
       // NMS_SYMPTOM: '非运动症状'
@@ -314,15 +315,43 @@ export default {
       return disease.diseaseName + '(' + disease.commonName + ')';
     },
     submit() {
-      this.mutableMode = this.READING_MODE;
+      if (this.lockSubmitButton) {
+        return;
+      }
+      this.lockSubmitButton = true;
+      // -----------
+      // 验证必填项 如果没填 显示红框，显示必填项三个字
+      for (let field of this.diagnosticDiseaseTemplate) {
+        this.updateWarning(field);
+      }
+
+      // 然后检查 warningResults，看填写的数据是否合规
+      for (var p in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(p) && this.warningResults[p]) {
+          this.lockSubmitButton = false;
+          return;
+        }
+      }
+      // -------------
+      var submitData = Object.assign({}, this.copyInfo);
+      delete submitData.patientSymptom;
+      submitData.patientCaseId = this.$route.params.caseId;
+      modDiseaseSituation(submitData).then(() => {
+        this.updateAndClose();
+        this.lockSubmitButton = false;
+      }, this._handleError);
       // 把 this.copyInfo.patientSymptom 下的日期对象转换为符合传输格式的字符串
       // reviseDateFormat(this.copyInfo);
     },
-    // updateAndClose() {
-    //   Bus.$emit(this.UPDATE_CASE_INFO);
-    //   Bus.$emit(this.SCROLL_AREA_SIZE_CHANGE);
-    //   this.mutableMode = this.READING_MODE;
-    // },
+    _handleError(error) {
+      console.log(error);
+      this.lockSubmitButton = false;
+    },
+    updateAndClose() {
+      Bus.$emit(this.UPDATE_CASE_INFO);
+      Bus.$emit(this.SCROLL_AREA_SIZE_CHANGE);
+      this.mutableMode = this.READING_MODE;
+    },
     updateScrollbar() {
       this.$nextTick(() => {
         // Ps.destroy(this.$refs.scrollArea1);
