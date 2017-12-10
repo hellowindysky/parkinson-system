@@ -9,11 +9,12 @@
             <span class="required-mark">*</span>
           </span>
           <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-            <span>ggggggggg</span>
+            <span>{{copyInfo.firstVisitType}}</span>
           </span>
           <span class="field-input" v-else>
-            <span class="warning-text">必填项</span>
-            <el-select v-model="firstType" placeholder="请选择初诊治疗类型" clearable>
+            <span class="warning-text">{{warningResults.firstVisitType}}</span>
+            <el-select v-model="copyInfo.firstVisitType" placeholder="请选择初诊治疗类型" clearable
+             @change="updateWarning('firstVisitType'),clearVal(['firstVisitType'])" :class="{'warning': warningResults.firstVisitType}" >
               <el-option
                 v-for="item in firstTreatmentTypeOptions"
                 :key="item.code"
@@ -25,7 +26,7 @@
         </div>
 
         <!-- 以下是 药物治疗才有的序列 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
-        <div v-show="firstType===WINE_HISTORY_MODAL">
+        <div v-show="copyInfo.firstVisitType==='药物治疗'">
           <div class="field">
             <span class="field-name long-field-name">
               药物分类:
@@ -36,8 +37,8 @@
             </span>
             <span class="field-input" v-else>
               <span class="warning-text">必填项</span>
-              <el-select v-model="value1"
-                placeholder="请选择药物分类">
+              <el-select v-model="copyInfo.medicineClassification" placeholder="请选择药物分类" clearable
+               @change="updateWarning('medicineClassification')" :class="{'warning': warningResults.medicineClassification}" >
                   <el-option label="B型单胺氧化抑制剂" :value="WINE_HISTORY_MODAL"></el-option>
                   <el-option label="COMT抑制剂" :value="SMOKE_HISTORY_MODAL"></el-option>
                   <el-option label="多巴胺类制剂" :value="TEA_HISTORY_MODAL"></el-option>
@@ -125,7 +126,7 @@
 
 
         <!-- 以下是 非药物治疗才有的序列 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
-        <div v-show="firstType===SMOKE_HISTORY_MODAL">
+        <div v-show="copyInfo.firstVisitType!=='药物治疗'&&copyInfo.firstVisitType">
 
           <div class="field">
             <span class="field-name long-field-name">
@@ -136,11 +137,11 @@
               <span>治疗类型</span>
             </span>
             <span class="field-input" v-else>
-              <span class="warning-text">必填项</span>
-              <el-select v-model="value1" clearable
-                placeholder="请选择症状名称">
-                  <el-option label="手术治疗" :value="WINE_HISTORY_MODAL"></el-option>
-                  <el-option label="物理治疗" :value="SMOKE_HISTORY_MODAL"></el-option>
+              <span class="warning-text">{{warningResults.treatmentType}}</span>
+              <el-select v-model="copyInfo.treatmentType" clearable placeholder="请选择症状名称"
+               @change="updateWarning('treatmentType')" :class="{'warning': warningResults.treatmentType}" >
+                <el-option label="手术治疗" :value="WINE_HISTORY_MODAL"></el-option>
+                <el-option label="物理治疗" :value="SMOKE_HISTORY_MODAL"></el-option>
               </el-select>
             </span>
           </div>
@@ -155,7 +156,7 @@
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-select v-model="value1" clearable
+              <el-select v-model="copyInfo.treatmentMethod" clearable
                 placeholder="请选择治疗手段">
                   <el-option label="吃药" :value="WINE_HISTORY_MODAL"></el-option>
                   <el-option label="打针" :value="SMOKE_HISTORY_MODAL"></el-option>
@@ -173,7 +174,7 @@
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-date-picker v-model="date1" type="date" placeholder="请选择治疗时间" clearable ></el-date-picker>
+              <el-date-picker v-model="copyInfo.treatmentTime" type="date" placeholder="请选择治疗时间" clearable ></el-date-picker>
             </span>
           </div>
 
@@ -187,7 +188,7 @@
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-input v-model="date1" placeholder="请输入备注"></el-input>
+              <el-input v-model="copyInfo.remarks" placeholder="请输入备注"></el-input>
             </span>
           </div>
 
@@ -210,6 +211,7 @@
 
 <script>
 import Bus from 'utils/bus.js';
+import Ps from 'perfect-scrollbar';
 import Util from 'utils/util.js';
 import { mapGetters } from 'vuex';
 export default {
@@ -217,7 +219,25 @@ export default {
     return {
       displayModal: false,
       mode: '',
-      firstType: '', // 初诊治疗类型
+      completeInit: false,
+      copyInfo: {
+        firstVisitType: '', // 初诊治疗类型
+        treatmentType: '', // 治疗类型
+        treatmentMethod: '', // 治疗手段
+        treatmentTime: '', // 治疗时间
+        remarks: '', // 备注
+
+        medicineClassification: '', // 药物分类
+        medicineName: '', // 药物名称
+        commonMedicineName: '', // 通用名
+        dailyDosage: '', // 每日用量
+        firstTime: '' // 初次用药时间
+      },
+      warningResults: {
+        firstVisitType: '',
+        treatmentType: '',
+        medicineClassification: ''
+      },
       value1: '',
       value2: '',
       date1: ''
@@ -235,14 +255,65 @@ export default {
       }
     },
     firstTreatmentTypeOptions() {
-      return this.getOptions('treatment');
+      return this.getOptions('treatPro');
     }
   },
   methods: {
+    clearVal(fieldName) {
+      for (let key in this.copyInfo) {
+        if (fieldName.indexOf(key) === -1) {
+          this.$set(this.copyInfo, key, '');
+        };
+      };
+      this.$nextTick(() => {
+        for (var property in this.warningResults) {
+          if (this.warningResults.hasOwnProperty(property)) {
+            this.warningResults[property] = '';
+          }
+        }
+      });
+    },
     showModal(cardOperation, item) {
+      // this.completeInit = false;
       console.log(cardOperation, item);
       this.mode = cardOperation;
+      // gggg
+      // gggg
+      // gggg
+      // gggg
+      // gggg
+      if (this.mode === this.ADD_NEW_CARD) {
+        for (let key in this.copyInfo) {
+          this.$set(this.copyInfo, key, '');
+        };
+      };
+
+      this.$nextTick(() => {
+        for (var property in this.warningResults) {
+          if (this.warningResults.hasOwnProperty(property)) {
+            this.warningResults[property] = '';
+          }
+        }
+      });
+      this.completeInit = true;
       this.displayModal = true;
+      this.updateScrollbar();
+    },
+    updateScrollbar() {
+      this.$nextTick(() => {
+        Ps.destroy(this.$refs.scrollArea);
+        Ps.initialize(this.$refs.scrollArea, {
+          wheelSpeed: 1,
+          minScrollbarLength: 40
+        });
+      });
+    },
+    updateWarning(fieldName) {
+      if (this.completeInit && !this.copyInfo[fieldName]) {
+        this.warningResults[fieldName] = '必填项';
+      } else {
+        this.warningResults[fieldName] = '';
+      }
     },
     getOptions(fieldName) {
       var options = [];
@@ -268,7 +339,7 @@ export default {
   },
   mounted() {
     Bus.$on(this.SHOW_FIRSTTREATMENT_MODAL, this.showModal);
-    console.log(this.selectOptions);
+    console.log(this.firstTreatmentTypeOptions);
   }
 };
 </script>
