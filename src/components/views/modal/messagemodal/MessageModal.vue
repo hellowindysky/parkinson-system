@@ -160,6 +160,7 @@ export default {
       };
       verifyMessageCode(verificationInfo).then(() => {
         Bus.$emit(this.PERMIT_DISPLAYING_SENSITIVE_INFO);
+        this.displayModal = false;
         this.lockSubmitButton = false;
 
       }, (error) => {
