@@ -30,7 +30,9 @@
       </el-form>
 
       <el-form class="input-wrapper" v-if="mustResetPassword" :model="resetForm" :rules="resetRules" ref="resetForm" label-width="0">
-        <div class="notice" v-if="mustResetPassword">首次登录需要修改初始密码</div>
+        <div class="notice" v-if="mustResetPassword">
+          首次登录需要修改初始密码<span class="phone-num">【手机尾号 {{lastNumbers}}】</span>
+        </div>
         <el-form-item prop="originalPassword">
           <el-input class="round-input" v-model="resetForm.originalPassword" type="password" auto-complete="new-password"
             placeholder="请输入当前密码" autofocus="autofocus" @keyup.enter.native="submitResetForm"></el-input>
@@ -61,7 +63,7 @@
 <script>
 import md5 from 'md5';
 import { getLoginInfo } from 'api/login';
-import { sendVerificationCode, verifyMessageCode, resetPassword } from 'api/user';
+import { sendVerificationCode, resetPassword } from 'api/user';
 
 // import particles from 'components/views/login/particles/Particles';
 
@@ -217,6 +219,16 @@ export default {
       } else if (this.codeButtonStatus === 2) {
         return '重新获取';
       }
+    },
+    lastNumbers() {
+      if (this.accountNumber) {
+        var numStr = String(this.accountNumber);
+        if (numStr.length >= 4) {
+          return numStr.slice(numStr.length - 4, numStr);
+        }
+      } else {
+        return '****';  // 返回正确的情况下，不会运行这一行
+      }
     }
   },
   methods: {
@@ -365,50 +377,39 @@ export default {
       }
       this.lockSubmitButton = true;
       this.$refs['resetForm'].validate((valid) => {
-        // 校验字段之后，发送验证，如果验证码正确，再发送修改密码的请求，如果再返回正确，则跳转到系统
+        // 校验字段之后，发送修改密码的请求，如果再返回正确，则跳转到系统
         if (valid) {
-          let verificationInfo = {
-            code: this.resetForm.verificationCode,
-            businessType: 1
-          };
-          verifyMessageCode(verificationInfo).then(() => {
-            resetPassword(this.resetForm.originalPassword, this.resetForm.newPassword).then(() => {
-              this.$message({
-                message: '已成功修改密码',
-                type: 'success',
-                duration: 2000
-              });
-              this.enterApp();
-              this.lockSubmitButton = false;
-
-            }, (error) => {
-              if (error.code === 25) {
-                // 由于我们在前端就做了校验，所以正常情况下不会执行到这里
-                this.$message({
-                  message: '当前密码输入错误',
-                  type: 'warning',
-                  duration: 2000
-                });
-              }
-              console.log(error);
-              this.lockSubmitButton = false;
+          resetPassword(this.resetForm.originalPassword, this.resetForm.newPassword, this.resetForm.verificationCode).then(() => {
+            this.$message({
+              message: '已成功修改密码',
+              type: 'success',
+              duration: 2000
             });
+            this.enterApp();
+            this.lockSubmitButton = false;
 
           }, (error) => {
-            if (error.code === 33) {
+            if (error.code === 25) {
+              // 由于我们在前端就做了校验，所以正常情况下不会执行到这里
+              this.$message({
+                message: '当前密码输入错误',
+                type: 'warning',
+                duration: 2000
+              });
+            } else if (error.code === 33) {
               this.$message({
                 message: '验证码输入错误或已失效',
                 type: 'warning',
                 duration: 2000
               });
             }
-            this.lockSubmitButton = false;
             console.log(error);
+            this.lockSubmitButton = false;
           });
 
         } else {
-          this.lockSubmitButton = false;
           console.log('input invalid');
+          this.lockSubmitButton = false;
           return;
         }
       });
@@ -529,6 +530,9 @@ export default {
         font-size: @normal-font-size;
         color: #fff;
         text-align: center;
+        .phone-num {
+          color: @button-color;
+        }
       }
       .round-input input {
         height: @input-height;

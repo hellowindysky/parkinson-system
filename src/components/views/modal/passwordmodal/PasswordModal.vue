@@ -59,7 +59,7 @@
 
 <script>
 import Bus from 'utils/bus.js';
-import { sendVerificationCode, verifyMessageCode, resetPassword } from 'api/user.js';
+import { sendVerificationCode, resetPassword } from 'api/user.js';
 
 export default {
   data() {
@@ -108,6 +108,11 @@ export default {
       this.originalPasswordWarning = '';
       this.newPasswordWarning = '';
       this.repeatedNewPasswordWarning = '';
+      this.verificationCode = '';
+      this.verificationCodeWarning = '';
+      if (this.codeButtonStatus === 2) {
+        this.codeButtonStatus = 0;
+      }
       this.displayModal = true;
     },
     cancel() {
@@ -151,7 +156,7 @@ export default {
       // 在发送请求前，锁住提交按钮
       this.lockSubmitButton = true;
       // 运行到这里，说明满足所有条件，可以更新代码了
-      resetPassword(this.originalPassword, this.newPassword).then(() => {
+      resetPassword(this.originalPassword, this.newPassword, this.verificationCode).then(() => {
         this.$message({
           message: '已成功修改密码',
           type: 'success',
@@ -162,6 +167,8 @@ export default {
       }, (error) => {
         if (error.code === 25) {
           this.originalPasswordWarning = '当前密码不正确，请重新输入';
+        } else if (error.code === 33) {
+          this.verificationCodeWarning = '验证码输入错误或已失效';
         }
         this.lockSubmitButton = false;
       });
