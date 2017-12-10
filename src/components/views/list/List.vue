@@ -383,6 +383,9 @@ export default {
     },
     updateScrollbar() {
       this.$nextTick(() => {
+        if (!this.$refs.listArea) {
+          return;
+        }
         Ps.destroy(this.$refs.listArea);
         Ps.initialize(this.$refs.listArea, {
           wheelSpeed: 1,
@@ -399,6 +402,9 @@ export default {
             patientIdx = i;
           }
         });
+        if (!this.$refs.listArea) {
+          return;
+        }
         this.$refs.listArea.scrollTop = patientIdx * 60;
       });
     },

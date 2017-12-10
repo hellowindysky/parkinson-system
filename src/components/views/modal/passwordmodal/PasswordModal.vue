@@ -36,6 +36,11 @@
         </span>
         <span class="iconfont icon-ok note" v-show="repeatedSuccessfully"></span>
       </div>
+      <div class="seperate-line"></div>
+      <div class="field notice">
+        <span class="field-name">当前账号手机</span>
+        <span class="field-input">{{accuntNumberWithParialHiding}}</span>
+      </div>
       <div class="field">
         <span class="field-name">
           验证码
@@ -59,7 +64,7 @@
 
 <script>
 import Bus from 'utils/bus.js';
-import { sendVerificationCode, verifyMessageCode, resetPassword } from 'api/user.js';
+import { sendVerificationCode, resetPassword } from 'api/user.js';
 
 export default {
   data() {
@@ -98,6 +103,17 @@ export default {
       } else if (this.codeButtonStatus === 2) {
         return '重新获取';
       }
+    },
+    accuntNumberWithParialHiding() {
+      var accountNumber = sessionStorage.getItem('accountNumber');
+      if (accountNumber) {
+        var accountNumberStr = String(accountNumber);
+        var length = accountNumberStr.length;
+        if (length >= 8) {
+          return accountNumberStr.slice(0, length - 8) + '****' + accountNumberStr.slice(length - 4, length);
+        }
+      }
+      return '****';    // 正常情况下不会返回这一行
     }
   },
   methods: {
@@ -108,6 +124,11 @@ export default {
       this.originalPasswordWarning = '';
       this.newPasswordWarning = '';
       this.repeatedNewPasswordWarning = '';
+      this.verificationCode = '';
+      this.verificationCodeWarning = '';
+      if (this.codeButtonStatus === 2) {
+        this.codeButtonStatus = 0;
+      }
       this.displayModal = true;
     },
     cancel() {
@@ -151,7 +172,7 @@ export default {
       // 在发送请求前，锁住提交按钮
       this.lockSubmitButton = true;
       // 运行到这里，说明满足所有条件，可以更新代码了
-      resetPassword(this.originalPassword, this.newPassword).then(() => {
+      resetPassword(this.originalPassword, this.newPassword, this.verificationCode).then(() => {
         this.$message({
           message: '已成功修改密码',
           type: 'success',
@@ -162,6 +183,8 @@ export default {
       }, (error) => {
         if (error.code === 25) {
           this.originalPasswordWarning = '当前密码不正确，请重新输入';
+        } else if (error.code === 33) {
+          this.verificationCodeWarning = '验证码输入错误或已失效';
         }
         this.lockSubmitButton = false;
       });
@@ -279,7 +302,7 @@ export default {
 @import "~styles/variables.less";
 
 @field-height: 40px;
-@field-name-width: 80px;
+@field-name-width: 90px;
 
 .password-modal-wrapper {
   position: absolute;
@@ -293,7 +316,7 @@ export default {
     position: relative;
     margin: auto;
     padding: 0 40px;
-    top: 15%;
+    top: 12%;
     width: 560px;
     text-align: left;
     font-size: 0;
@@ -312,6 +335,19 @@ export default {
       width: 100%;
       height: @field-height;
       text-align: left;
+      &.notice {
+        padding: 0;
+        height: 40px;
+        font-weight: bold;
+        .field-name {
+          height: 40px;
+          color: @button-color;
+        }
+        .field-input {
+          height: 40px;
+          color: @button-color;
+        }
+      }
       .field-name {
         display: inline-block;
         position: absolute;
@@ -396,7 +432,7 @@ export default {
     .seperate-line {
       width: 90%;
       height: 1px;
-      margin: 20px auto 10px;
+      margin: 5px auto 10px;
       background-color: @light-gray-color;
     }
     .button-wrapper {
