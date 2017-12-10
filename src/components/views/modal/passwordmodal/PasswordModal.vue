@@ -36,6 +36,11 @@
         </span>
         <span class="iconfont icon-ok note" v-show="repeatedSuccessfully"></span>
       </div>
+      <div class="seperate-line"></div>
+      <div class="field notice">
+        <span class="field-name">当前账号手机</span>
+        <span class="field-input">{{accuntNumberWithParialHiding}}</span>
+      </div>
       <div class="field">
         <span class="field-name">
           验证码
@@ -98,6 +103,17 @@ export default {
       } else if (this.codeButtonStatus === 2) {
         return '重新获取';
       }
+    },
+    accuntNumberWithParialHiding() {
+      var accountNumber = sessionStorage.getItem('accountNumber');
+      if (accountNumber) {
+        var accountNumberStr = String(accountNumber);
+        var length = accountNumberStr.length;
+        if (length >= 8) {
+          return accountNumberStr.slice(0, length - 8) + '****' + accountNumberStr.slice(length - 4, length);
+        }
+      }
+      return '****';    // 正常情况下不会返回这一行
     }
   },
   methods: {
@@ -286,7 +302,7 @@ export default {
 @import "~styles/variables.less";
 
 @field-height: 40px;
-@field-name-width: 80px;
+@field-name-width: 90px;
 
 .password-modal-wrapper {
   position: absolute;
@@ -300,7 +316,7 @@ export default {
     position: relative;
     margin: auto;
     padding: 0 40px;
-    top: 15%;
+    top: 12%;
     width: 560px;
     text-align: left;
     font-size: 0;
@@ -319,6 +335,19 @@ export default {
       width: 100%;
       height: @field-height;
       text-align: left;
+      &.notice {
+        padding: 0;
+        height: 40px;
+        font-weight: bold;
+        .field-name {
+          height: 40px;
+          color: @button-color;
+        }
+        .field-input {
+          height: 40px;
+          color: @button-color;
+        }
+      }
       .field-name {
         display: inline-block;
         position: absolute;
@@ -403,7 +432,7 @@ export default {
     .seperate-line {
       width: 90%;
       height: 1px;
-      margin: 20px auto 10px;
+      margin: 5px auto 10px;
       background-color: @light-gray-color;
     }
     .button-wrapper {

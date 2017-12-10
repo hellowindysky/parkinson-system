@@ -226,9 +226,8 @@ export default {
         if (numStr.length >= 4) {
           return numStr.slice(numStr.length - 4, numStr);
         }
-      } else {
-        return '****';  // 返回正确的情况下，不会运行这一行
       }
+      return '****';  // 返回正确的情况下，不会运行这一行
     }
   },
   methods: {
