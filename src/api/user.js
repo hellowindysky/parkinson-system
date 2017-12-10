@@ -10,6 +10,24 @@ export function resetPassword(oldPassword, newPassword) {
   return encapsulatePromise(url, request);
 };
 
+// 向手机发送短信验证码
+export function sendVerificationCode(verificationInfo) {
+  var request = Object.assign({}, getCommonRequest());
+  request.verify = verificationInfo;
+  var url = baseUrl + '/pdms/queryCode';
+
+  return encapsulatePromise(url, request);
+};
+
+// 验证短信验证码
+export function verifyMessageCode(verificationInfo) {
+  var request = Object.assign({}, getCommonRequest());
+  request.verify = verificationInfo;
+  var url = baseUrl + '/pdms/verifyCode';
+
+  return encapsulatePromise(url, request);
+};
+
 export function getDictionary(version) {
   var request = Object.assign({}, getCommonRequest());
   request.version = version;

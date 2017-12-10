@@ -113,7 +113,9 @@ export default {
   },
   computed: {
     showWaterMark() {
-      return false;
+      // 1 患者 2 医生 3 管理员 4 医院管理员 5 技术支持人员
+      var userType = parseInt(sessionStorage.getItem('userType'), 10);
+      return userType === 5;
     }
   },
   methods: {

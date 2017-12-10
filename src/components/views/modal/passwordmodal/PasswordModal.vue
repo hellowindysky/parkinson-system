@@ -10,7 +10,7 @@
           <span class="warning-text">{{originalPasswordWarning}}</span>
           <el-input :class="{'warning': originalPasswordWarning}" v-model="originalPassword"
             type="password" placeholder="请输入当前密码" @focus="clearOriginalPasswordWarning"
-            @change="updateOriginalPassword"></el-input>
+            @change="updateOriginalPassword" auto-complete="new-password"></el-input>
         </span>
       </div>
       <div class="field">
@@ -19,7 +19,7 @@
         </span>
         <span class="field-input">
           <span class="warning-text">{{newPasswordWarning}}</span>
-          <el-input :class="{'warning': newPasswordWarning}" v-model="newPassword"
+          <el-input :class="{'warning': newPasswordWarning}" v-model="newPassword" auto-complete="new-password"
             type="password" placeholder="请输入新密码(字母，数字或符号，8-16位)" @focus="clearNewPasswordWarning"
             @change="updateNewPassword"></el-input>
         </span>
@@ -31,10 +31,22 @@
         </span>
         <span class="field-input">
           <span class="warning-text">{{repeatedNewPasswordWarning}}</span>
-          <el-input :class="{'warning': repeatedNewPasswordWarning}" v-model="repeatedNewPassword"
+          <el-input :class="{'warning': repeatedNewPasswordWarning}" v-model="repeatedNewPassword" auto-complete="new-password"
             type="password" placeholder="请再次输入新密码" @focus="clearRepeatedNewPasswordWarning"></el-input>
         </span>
         <span class="iconfont icon-ok note" v-show="repeatedSuccessfully"></span>
+      </div>
+      <div class="field">
+        <span class="field-name">
+          验证码
+        </span>
+        <span class="field-input">
+          <span class="warning-text">{{verificationCodeWarning}}</span>
+          <el-input class="short-input" :class="{'warning': verificationCodeWarning}" v-model="verificationCode"
+            type="password" placeholder="请输入短信验证码" @focus="clearVerificationCodeWarning" auto-complete="new-password"
+            @change="updateVerificationCode"></el-input>
+          <div class="send-button" :class="{'disabled': codeButtonStatus===1}" @click="sendCode">{{codeButtonText}}</div>
+        </span>
       </div>
       <div class="seperate-line"></div>
       <div class="button-wrapper">
@@ -47,7 +59,7 @@
 
 <script>
 import Bus from 'utils/bus.js';
-import { resetPassword } from 'api/user.js';
+import { sendVerificationCode, verifyMessageCode, resetPassword } from 'api/user.js';
 
 export default {
   data() {
@@ -59,7 +71,13 @@ export default {
       newPasswordWarning: '',
       repeatedNewPassword: '',
       repeatedNewPasswordWarning: '',
+      verificationCode: '',
+      verificationCodeWarning: '',
       newPasswordNote: '',
+      codeButtonStatus: 0,  // 0 初始状态，1 禁止状态，2 重新点击状态
+      codeButtonCount: 0,
+      countDown: null,      // 用来开启和关闭倒计时
+      lockSendButton: false,
       lockSubmitButton: false
     };
   },
@@ -70,6 +88,15 @@ export default {
         return true;
       } else {
         return false;
+      }
+    },
+    codeButtonText() {
+      if (this.codeButtonStatus === 0) {
+        return '获取验证码';
+      } else if (this.codeButtonStatus === 1) {
+        return '重新获取 (' + this.codeButtonCount + ')';
+      } else if (this.codeButtonStatus === 2) {
+        return '重新获取';
       }
     }
   },
@@ -85,6 +112,7 @@ export default {
     },
     cancel() {
       this.lockSubmitButton = false;
+      this.lockSendButton = false;
       this.displayModal = false;
     },
     submit() {
@@ -94,7 +122,8 @@ export default {
 
       if (this.originalPasswordWarning !== '' ||
         this.newPasswordWarning !== '' ||
-        this.repeatedNewPasswordWarning !== '') {
+        this.repeatedNewPasswordWarning !== '' ||
+        this.verificationCodeWarning !== '') {
         return;
       }
 
@@ -106,8 +135,16 @@ export default {
         this.newPasswordWarning = '请输入新密码';
         return;
       }
+      if (this.newPassword === this.originalPassword) {
+        this.newPasswordWarning = '新密码不能与原来密码相同';
+        return;
+      }
       if (this.repeatedNewPassword !== this.newPassword) {
         this.repeatedNewPasswordWarning = '两次输入的密码不一致';
+        return;
+      }
+      if (this.verificationCode === '') {
+        this.verificationCodeWarning = '请输入验证码';
         return;
       }
 
@@ -130,9 +167,8 @@ export default {
       });
     },
     clearOriginalPasswordWarning() {
-      if (this.originalPasswordWarning === '请输入当前密码') {
-        this.originalPasswordWarning = '';
-      }
+      this.originalPasswordWarning = '';
+      this.updateOriginalPassword();
     },
     updateOriginalPassword() {
       if (this.originalPassword.indexOf(' ') >= 0) {
@@ -142,9 +178,8 @@ export default {
       }
     },
     clearNewPasswordWarning() {
-      if (this.newPasswordWarning === '请输入新密码') {
-        this.newPasswordWarning = '';
-      }
+      this.newPasswordWarning = '';
+      this.updateNewPassword();
     },
     updateNewPassword() {
       if (this.newPassword.indexOf(' ') >= 0) {
@@ -185,9 +220,50 @@ export default {
       }
     },
     clearRepeatedNewPasswordWarning() {
-      if (this.repeatedNewPasswordWarning === '两次输入的密码不一致') {
-        this.repeatedNewPasswordWarning = '';
+      this.repeatedNewPasswordWarning = '';
+    },
+    clearVerificationCodeWarning() {
+      this.verificationCodeWarning = '';
+      this.updateVerificationCode();
+    },
+    updateVerificationCode() {
+      if (/^[0-9]*$/.test(this.verificationCode)) {
+        this.verificationCodeWarning = '';
+      } else {
+        this.verificationCodeWarning = '请输入数字';
       }
+    },
+    sendCode() {
+      if (this.lockSendButton) {
+        return;
+      }
+
+      this.lockSendButton = true;
+      var verificationInfo = {
+        businessType: 1
+      };
+      sendVerificationCode(verificationInfo).then(() => {
+        this.lockSendButton = false;
+        this.codeButtonStatus = 1;
+        this.codeButtonCount = 180;
+        this.countDown = setInterval(() => {
+          this.codeButtonCount -= 1;
+          if (this.codeButtonCount <= 0) {
+            clearInterval(this.countDown);
+            this.codeButtonStatus = 2;
+          }
+        }, 1000);
+      }, (error) => {
+        this.lockSendButton = false;
+        console.log(error);
+        if (error.code === 32) {
+          this.$message({
+            message: '请等待足够时间后再发送验证码',
+            type: 'warning',
+            duration: 2000
+          });
+        }
+      });
     }
   },
   mounted() {
@@ -217,7 +293,7 @@ export default {
     position: relative;
     margin: auto;
     padding: 0 40px;
-    top: 20%;
+    top: 15%;
     width: 560px;
     text-align: left;
     font-size: 0;
@@ -273,6 +349,34 @@ export default {
             height: 30px;
             border: none;
             background-color: @screen-color;
+          }
+          &.short-input {
+            width: 55%;
+          }
+        }
+        .send-button {
+          display: inline-block;
+          position: absolute;
+          right: 0;
+          top: 5px;
+          width: 35%;
+          height: 30px;
+          line-height: 30px;
+          background-color: @light-font-color;
+          color: #fff;
+          text-align: center;;
+          border-radius: 5px;
+          cursor: pointer;
+          &:hover {
+            opacity: 0.8;
+          }
+          &:active {
+            opacity: 0.9;
+          }
+          &.disabled {
+            pointer-events: none;
+            background-color: @gray-color;
+            cursor: default;
           }
         }
         .warning .el-input__inner {
