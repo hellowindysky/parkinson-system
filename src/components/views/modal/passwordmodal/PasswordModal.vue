@@ -187,6 +187,7 @@ export default {
           this.verificationCodeWarning = '验证码输入错误或已失效';
         }
         this.lockSubmitButton = false;
+        console.log(error);
       });
     },
     clearOriginalPasswordWarning() {

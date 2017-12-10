@@ -3,10 +3,10 @@
     <div class="message-modal">
       <div class="title">{{title}}</div>
       <div class="desc">{{desc}}</div>
-      <div class="field account">当前账号手机: 18612345678</div>
+      <div class="field account">当前账号手机: {{accountNumberWithPartialHiding}}</div>
       <div class="field">
         <el-input class="verification-code" v-model="verificationCode" placeholder="请输入验证码"></el-input>
-        <span class="send-button">获取验证码</span>
+        <span class="send-button" :class="{'disabled': codeButtonStatus===1}" @click="sendCode">{{codeButtonText}}</span>
       </div>
       <div class="field agreement">
         <el-checkbox v-model="readAgreement"></el-checkbox>
@@ -23,6 +23,7 @@
 
 <script>
 import Bus from 'utils/bus.js';
+import { sendVerificationCode } from 'api/user.js';
 
 export default {
   data() {
@@ -32,8 +33,34 @@ export default {
       title: '',
       desc: '',
       verificationCode: '',
-      readAgreement: false
+      readAgreement: false,
+
+      codeButtonStatus: 0,
+      codeButtonCount: 0,
+      logckSendButton: false
     };
+  },
+  computed: {
+    codeButtonText() {
+      if (this.codeButtonStatus === 0) {
+        return '获取验证码';
+      } else if (this.codeButtonStatus === 1) {
+        return '重新获取 (' + this.codeButtonCount + ')';
+      } else if (this.codeButtonStatus === 2) {
+        return '重新获取';
+      }
+    },
+    accountNumberWithPartialHiding() {
+      var accountNumber = sessionStorage.getItem('accountNumber');
+      if (accountNumber) {
+        var accountNumberStr = String(accountNumber);
+        var length = accountNumberStr.length;
+        if (length >= 8) {
+          return accountNumberStr.slice(0, length - 8) + '****' + accountNumberStr.slice(length - 4, length);
+        }
+      }
+      return '****';    // 正常情况下不会返回这一行
+    }
   },
   methods: {
     showModal(title, desc) {
@@ -42,6 +69,38 @@ export default {
       this.desc = desc;
       this.verificationCode = '';
       this.readAgreement = false;
+    },
+    sendCode() {
+      if (this.lockSendButton) {
+        return;
+      }
+
+      this.lockSendButton = true;
+      var verificationInfo = {
+        businessType: 2   // 1.修改密码业务 2.授权技术支持业务 3.脱敏业务
+      };
+      sendVerificationCode(verificationInfo).then(() => {
+        this.lockSendButton = false;
+        this.codeButtonStatus = 1;
+        this.codeButtonCount = 180;
+        this.countDown = setInterval(() => {
+          this.codeButtonCount -= 1;
+          if (this.codeButtonCount <= 0) {
+            clearInterval(this.countDown);
+            this.codeButtonStatus = 2;
+          }
+        }, 1000);
+      }, (error) => {
+        this.lockSendButton = false;
+        console.log(error);
+        if (error.code === 32) {
+          this.$message({
+            message: '请等待足够时间后再发送验证码',
+            type: 'warning',
+            duration: 2000
+          });
+        }
+      });
     },
     cancel() {
       this.lockSubmitButton = false;
@@ -115,6 +174,7 @@ export default {
       font-size: @normal-font-size;
       text-align: left;
       &.account {
+        font-weight: bold;
         color: @button-color;
       }
       &.agreement {
@@ -145,6 +205,7 @@ export default {
         margin-left: 30px;
         text-align: center;
         vertical-align: center;
+        border-radius: 5px;
         background-color: @light-font-color;
         color: #fff;
         cursor: pointer;
@@ -153,6 +214,11 @@ export default {
         }
         &:active {
           opacity: 0.9;
+        }
+        &.disabled {
+          pointer-events: none;
+          background-color: @gray-color;
+          cursor: default;
         }
       }
       .el-input {
