@@ -34,6 +34,7 @@ export default {
   CONFIRM: 'confirmDecision',
   REQUEST_CONFIRMATION: 'requestConfirmation',
   NOTICE: 'notice',
+  PERMIT_DISPLAYING_SENSITIVE_INFO: 'permitDisplayingSensitiveInfo',
 
   ADD_DATA: 'addData',
   EDIT_DATA: 'editData',

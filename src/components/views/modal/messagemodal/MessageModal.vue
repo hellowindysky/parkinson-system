@@ -5,8 +5,13 @@
       <div class="desc">{{desc}}</div>
       <div class="field account">当前账号手机: {{accountNumberWithPartialHiding}}</div>
       <div class="field">
-        <el-input class="verification-code" v-model="verificationCode" placeholder="请输入验证码"></el-input>
-        <span class="send-button" :class="{'disabled': codeButtonStatus===1}" @click="sendCode">{{codeButtonText}}</span>
+        <span class="warning-text">{{verificationCodeWarning}}</span>
+        <el-input class="verification-code" :class="{'warning': verificationCodeWarning}"
+          v-model="verificationCode" placeholder="请输入验证码" @change="updateVerificationCode">
+        </el-input>
+        <span class="send-button" :class="{'disabled': codeButtonStatus===1}" @click="sendCode">
+          {{codeButtonText}}
+        </span>
       </div>
       <div class="field agreement">
         <el-checkbox v-model="readAgreement"></el-checkbox>
@@ -23,21 +28,24 @@
 
 <script>
 import Bus from 'utils/bus.js';
-import { sendVerificationCode } from 'api/user.js';
+import { sendVerificationCode, verifyMessageCode } from 'api/user.js';
 
 export default {
   data() {
     return {
       displayModal: false,
       lockSubmitButton: false,
+
+      businessType: '',    // 1.修改密码业务 2.授权技术支持业务 3.脱敏业务
       title: '',
       desc: '',
       verificationCode: '',
+      verificationCodeWarning: '',
       readAgreement: false,
 
       codeButtonStatus: 0,
       codeButtonCount: 0,
-      logckSendButton: false
+      lockSendButton: false
     };
   },
   computed: {
@@ -63,21 +71,28 @@ export default {
     }
   },
   methods: {
-    showModal(title, desc) {
-      this.displayModal = true;
+    showModal(businessType, title, desc) {
+      if (this.businessType !== businessType || this.codeButtonStatus === 2) {
+        // 如果更换了验证码对应的业务类型，或者发送按钮的文字已经是“重新发送”，则将发送按钮还原成初始状态
+        this.codeButtonStatus = 0;
+      }
+
+      this.businessType = businessType;    // 1.修改密码业务 2.授权技术支持业务 3.脱敏业务
       this.title = title;
       this.desc = desc;
       this.verificationCode = '';
+      this.verificationCodeWarning = '';
       this.readAgreement = false;
+
+      this.displayModal = true;
     },
     sendCode() {
       if (this.lockSendButton) {
         return;
       }
-
       this.lockSendButton = true;
       var verificationInfo = {
-        businessType: 2   // 1.修改密码业务 2.授权技术支持业务 3.脱敏业务
+        businessType: this.businessType
       };
       sendVerificationCode(verificationInfo).then(() => {
         this.lockSendButton = false;
@@ -91,8 +106,8 @@ export default {
           }
         }, 1000);
       }, (error) => {
-        this.lockSendButton = false;
         console.log(error);
+        this.lockSendButton = false;
         if (error.code === 32) {
           this.$message({
             message: '请等待足够时间后再发送验证码',
@@ -102,17 +117,58 @@ export default {
         }
       });
     },
+    updateVerificationCode() {
+      if (/^[0-9]*$/.test(this.verificationCode)) {
+        this.verificationCodeWarning = '';
+      } else {
+        this.verificationCodeWarning = '请输入数字';
+      }
+    },
     cancel() {
       this.lockSubmitButton = false;
       this.displayModal = false;
     },
     submit() {
-      if (this.lockSubmitButton || !this.readAgreement) {
+      if (this.lockSubmitButton) {
         return;
       }
       this.lockSubmitButton = true;
 
-      this.lockSubmitButton = false;
+      if (!this.readAgreement) {
+        this.$message({
+          message: '请阅读并同意保密协议',
+          type: 'warning',
+          duration: 2000
+        });
+        this.lockSubmitButton = false;
+        return;
+      }
+
+      if (this.verificationCode === '') {
+        this.verificationCodeWarning = '请输入验证码';
+      } else {
+        this.updateVerificationCode();
+      }
+
+      if (this.verificationCodeWarning !== '') {
+        this.lockSubmitButton = false;
+        return;
+      }
+      var verificationInfo = {
+        code: this.verificationCode,
+        businessType: this.businessType
+      };
+      verifyMessageCode(verificationInfo).then(() => {
+        Bus.$emit(this.PERMIT_DISPLAYING_SENSITIVE_INFO);
+        this.lockSubmitButton = false;
+
+      }, (error) => {
+        if (error.code === 33) {
+          this.verificationCodeWarning = '验证码输入错误或已失效';
+        }
+        this.lockSubmitButton = false;
+        console.log(error);
+      });
     },
     showSecretAgreement() {
       Bus.$emit(this.SHOW_SECRET_AGREEMENT_MODAL);
@@ -221,12 +277,23 @@ export default {
           cursor: default;
         }
       }
+      .warning-text {
+        position: absolute;
+        top: 25px;
+        left: 10px;
+        height: 15px;
+        color: red;
+        font-size: @small-font-size;
+      }
       .el-input {
         .el-input__inner {
           height: 30px;
           border: none;
           background-color: @screen-color;
         }
+      }
+      .warning .el-input__inner {
+        border: 1px solid red;
       }
     }
     .seperate-line {
