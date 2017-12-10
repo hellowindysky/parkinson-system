@@ -281,7 +281,7 @@ export default {
     enterApp() {
       // 登录时默认进入医院入口
       this.$store.commit('UPDATE_SUBJECT_ID', this.SUBJECT_ID_FOR_HOSPITAL);
-      sessionStorage.setItem('UPDATE_SUBJECT_ID', this.SUBJECT_ID_FOR_HOSPITAL);
+      sessionStorage.setItem('subjectId', this.SUBJECT_ID_FOR_HOSPITAL);
 
       // 重新记录操作时间点
       this.$store.commit('UPDATE_LAST_OPERATION_TIME');
