@@ -60,7 +60,7 @@ export default {
     return {
       showOranizationPanel: false,
       showAccountPanel: false,
-      blockSensitiveInfo: false
+      blockSensitiveInfo: true
     };
   },
   computed: {
