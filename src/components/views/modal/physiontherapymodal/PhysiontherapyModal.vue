@@ -80,7 +80,7 @@
             <el-input v-model="stimulusFrequency" placeholder="请输入刺激频率"></el-input>
           </span>
         </div>
-         <div class="field">
+          <div class="field">
           <span class="field-name">
            刺激侧:
           </span>
@@ -128,8 +128,8 @@
         </div>
         <div class="field">
           <span class="field-name">
-             治疗前右侧运动阈值:
-             <span class="required-mark">*</span>
+            治疗前右侧运动阈值:
+            <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span class="warning-text"></span>
@@ -165,7 +165,7 @@
           </span>
         </div>
       </div>
-       <div class="seperate-line"></div>
+      <div class="seperate-line"></div>
         <div class="content">
         <table class="table">
           <tr class="row title-row">
@@ -173,21 +173,21 @@
             <td class="col wide-col">不良反应程度评估</td>
             <td class="col">严重程度</td>
           </tr>
-          <tr class="row" v-for="(scale, index) in copyInfo.patientPhytheReaction">
+          <tr class="row" v-for="(reaction, index) in patientPhytheReaction">
             <td class="col narrow-col">{{index + 1}}</td>
             <td class="col wide-col">
-              {{getRealName(scale.reactionType, 'reactionType')}}
+              {{getRealName(reaction.reactionType, 'reactionType')}}
             </td>
             <td class="col narrow-col">
-              <span v-if="mode===VIEW_CURRENT_CARD">{{scale.reactionLevel}}</span>
-             <el-select v-else v-model="scale.reactionLevel" @change="updateWarning('reactionLevel')">
-              <el-option
-                v-for="item in getOptions('reactionLevel')"
-                :key="item.code"
-                :label="item.name"
-                :value="item.code">
-              </el-option>
-            </el-select>
+              <span v-if="mode===VIEW_CURRENT_CARD">{{transform(reaction.severityLevel,'reactionLevel')}}</span>
+              <el-select v-else v-model="reaction.severityLevel" @change="updateWarning('severityLevel')">
+                <el-option
+                  v-for="item in getOptions('reactionLevel')"
+                  :key="item.code"
+                  :label="item.name"
+                  :value="item.code">
+                </el-option>
+              </el-select>
             </td>
           </tr>
         </table>
@@ -206,89 +206,9 @@ import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import { vueCopy, reviseDateFormat, pruneObj } from 'utils/helper.js';
+import { deepCopy, vueCopy, reviseDateFormat, pruneObj } from 'utils/helper.js';
 import { addPhysiontherapy, modifyPhysiontherapy } from 'api/patient.js';
 
-let dataModel = {
-  'patientPhytheReaction': [{
-    'reactionType': 1,
-    'severityLevel': 0,
-    'assessType': 1,
-    'reactionLevel': 0
-    },
-    {
-    'reactionType': 2,
-    'severityLevel': 0,
-    'assessType': 1,
-    'reactionLevel': 0
-  },
-  {
-    'reactionType': 3,
-    'severityLevel': 0,
-    'assessType': 1,
-    'reactionLevel': 0
-  },
-  {
-    'reactionType': 4,
-    'severityLevel': 0,
-    'assessType': 1,
-    'reactionLevel': 0
-  },
-  {
-    'reactionType': 5,
-    'severityLevel': 0,
-    'assessType': 1,
-    'reactionLevel': 0
-  },
-  {
-    'reactionType': 6,
-    'severityLevel': 0,
-    'assessType': 1,
-    'reactionLevel': 0
-  },
-  {
-    'reactionType': 7,
-    'severityLevel': 0,
-    'assessType': 1,
-    'reactionLevel': 0
-  },
-  {
-    'reactionType': 8,
-    'severityLevel': 0,
-    'assessType': 1,
-    'reactionLevel': 0
-  },
-  {
-    'reactionType': 9,
-    'severityLevel': 0,
-    'assessType': 1,
-    'reactionLevel': 0
-  },
-  {
-    'reactionType': 10,
-    'severityLevel': 0,
-    'assessType': 1,
-    'reactionLevel': 0
-  },
-  {
-    'reactionType': 11,
-    'severityLevel': 0,
-    'assessType': 1,
-    'reactionLevel': 0
-  },
-  {
-    'reactionType': 12,
-    'severityLevel': 0,
-    'assessType': 1,
-    'reactionLevel': 0
-  },
-  {
-    'reactionType': 13,
-    'severityLevel': 0,
-    'assessType': 1,
-    'reactionLevel': 0
-  }]
-};
 export default {
   data() {
     return {
@@ -310,7 +230,73 @@ export default {
       leftThresholdAfter: '',
       rightThresholdAfter: '',
       severityLevel: '',
-      copyInfo: {},
+      patientPhytheReaction: [
+        {
+          'reactionType': 1,
+          'severityLevel': '',
+          'assessType': 1
+        },
+        {
+          'reactionType': 2,
+          'severityLevel': '',
+          'assessType': 1
+        },
+        {
+          'reactionType': 3,
+          'severityLevel': '',
+          'assessType': 1
+        },
+        {
+          'reactionType': 4,
+          'severityLevel': '',
+          'assessType': 1
+        },
+        {
+          'reactionType': 5,
+          'severityLevel': '',
+          'assessType': 1
+        },
+        {
+          'reactionType': 6,
+          'severityLevel': '',
+          'assessType': 1
+        },
+        {
+          'reactionType': 7,
+          'severityLevel': '',
+          'assessType': 1
+        },
+        {
+          'reactionType': 8,
+          'severityLevel': '',
+          'assessType': 1
+        },
+        {
+          'reactionType': 9,
+          'severityLevel': '',
+          'assessType': 1
+        },
+        {
+          'reactionType': 10,
+          'severityLevel': '',
+          'assessType': 1
+        },
+        {
+          'reactionType': 11,
+          'severityLevel': '',
+          'assessType': 1
+        },
+        {
+          'reactionType': 12,
+          'severityLevel': '',
+          'assessType': 1
+        },
+        {
+          'reactionType': 13,
+          'severityLevel': '',
+          'assessType': 1
+        }
+      ],
       warningResults: {
         physiType: '',
         recordDate: '',
@@ -349,8 +335,10 @@ export default {
       this.completeInit = false;
       this.mode = cardOperation;
       this.showEdit = showEdit;
-      this.initCopyInfo();
-
+      for (let reaction of this.patientPhytheReaction) {
+        reaction.severityLevel = '';
+      }
+    
       // console.log('item: ', item);
       this.patientPhytheTmsId = item.patientPhytheTmsId ? item.patientPhytheTmsId : '';
       this.recordDate = item.recordDate ? item.recordDate : '';
@@ -363,10 +351,10 @@ export default {
       this.rightThresholdBefore = item.rightThresholdBefore ? item.rightThresholdBefore : '';
       this.leftThresholdAfter = item.leftThresholdAfter ? item.leftThresholdAfter : '';
       this.rightThresholdAfter = item.rightThresholdAfter ? item.rightThresholdAfter : '';
-      this.severityLevel = item.severityLevel ? item.severityLevel : '';
-      this.reactionLevel = item.reactionLevel ? item.reactionLevel : '';
+      vueCopy(item.patientPhytheReaction, this.patientPhytheReaction);
       
       this.$nextTick(() => {
+        this.$refs.scrollArea.scrollTop = 0;
         for (var property in this.warningResults) {
           if (this.warningResults.hasOwnProperty(property)) {
             this.warningResults[property] = '';
@@ -377,10 +365,6 @@ export default {
       this.completeInit = true;
       this.displayModal = true;
       this.updateScrollbar();
-    },
-    initCopyInfo() {
-      this.copyInfo = {};
-      vueCopy(dataModel, this.copyInfo);
     },
     transform(code, fieldName) {
       var options = this.getOptions(fieldName);
@@ -416,7 +400,8 @@ export default {
       }
     },
     updateWarning(fieldName) {
-      if (this.completeInit && !this[fieldName]) {
+      var list = ['recordDate', 'physiType', 'leftThresholdBefore', 'rightThresholdBefore'];
+      if (list.indexOf(fieldName) >= 0 && !this[fieldName]) {
         this.warningResults[fieldName] = '必填项';
       } else {
         this.warningResults[fieldName] = '';
@@ -435,7 +420,7 @@ export default {
         return;
       }
       this.lockSubmitButton = true;
-
+      console.log(1111);
       for (let property in this.warningResults) {
         if (this.warningResults.hasOwnProperty(property)) {
           this.updateWarning(property);
@@ -444,9 +429,11 @@ export default {
       for (let property in this.warningResults) {
         if (this.warningResults.hasOwnProperty(property) && this.warningResults[property]) {
           this.lockSubmitButton = false;
+          console.log(property, this.warningResults[property]);
           return;
         }
       }
+      console.log(2222);
       var physicsInfo = {};
       physicsInfo.patientCaseId = this.$route.params.caseId;
 
@@ -461,9 +448,7 @@ export default {
       physicsInfo.rightThresholdBefore = this.rightThresholdBefore;
       physicsInfo.leftThresholdAfter = this.leftThresholdAfter;
       physicsInfo.rightThresholdAfter = this.rightThresholdAfter;
-      physicsInfo.severityLevel = this.severityLevel;
-      physicsInfo.severityLevel = this.reactionLevel;
-
+      physicsInfo.patientPhytheReaction = deepCopy(this.patientPhytheReaction);
 
       reviseDateFormat(physicsInfo);
       pruneObj(physicsInfo);
