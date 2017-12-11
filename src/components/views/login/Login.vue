@@ -428,6 +428,9 @@ export default {
       this.loginForm.account = '';
       this.loginForm.remember = false;
     }
+
+    // 每次回到登录界面的时候，都要清空显示敏感信息的权限
+    this.$store.commit('DISCARD_RIGHT_OF_DISPLAYING_SENSITIVE_INFO');
   }
 };
 </script>

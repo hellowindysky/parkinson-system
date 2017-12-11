@@ -39,7 +39,7 @@
       <div class="seperate-line"></div>
       <div class="field notice">
         <span class="field-name">当前账号手机</span>
-        <span class="field-input">{{accuntNumberWithParialHiding}}</span>
+        <span class="field-input">{{accountNumberWithPartialHiding}}</span>
       </div>
       <div class="field">
         <span class="field-name">
@@ -104,7 +104,7 @@ export default {
         return '重新获取';
       }
     },
-    accuntNumberWithParialHiding() {
+    accountNumberWithPartialHiding() {
       var accountNumber = sessionStorage.getItem('accountNumber');
       if (accountNumber) {
         var accountNumberStr = String(accountNumber);
@@ -187,6 +187,7 @@ export default {
           this.verificationCodeWarning = '验证码输入错误或已失效';
         }
         this.lockSubmitButton = false;
+        console.log(error);
       });
     },
     clearOriginalPasswordWarning() {

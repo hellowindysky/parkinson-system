@@ -7,6 +7,14 @@ const mutations = {
 
   [types.UPDATE_SUBJECT_ID](state, subjectId) {
     state.subjectId = subjectId;
+  },
+
+  [types.PERMIT_DISPLAYING_SENSITIVE_INFO](state) {
+    state.hasRightToDisplaySensitiveInfo = true;
+  },
+
+  [types.DISCARD_RIGHT_OF_DISPLAYING_SENSITIVE_INFO](state) {
+    state.hasRightToDisplaySensitiveInfo = false;
   }
 };
 

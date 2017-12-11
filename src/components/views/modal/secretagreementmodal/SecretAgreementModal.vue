@@ -69,6 +69,9 @@ export default {
     showModal() {
       this.displayModal = true;
       this.updateScrollbar();
+      this.$nextTick(() => {
+        this.$refs.scrollArea.scrollTop = 0;
+      });
     },
     hideModal() {
       this.displayModal = false;
