@@ -1,11 +1,30 @@
 /* eslint-disable quotes */
 import { baseUrl, encapsulatePromise, getCommonRequest } from 'api/common.js';
 
-export function resetPassword(oldPassword, newPassword) {
+export function resetPassword(oldPassword, newPassword, verificationCode) {
   var request = Object.assign({}, getCommonRequest());
   request.oldPassword = oldPassword;
   request.newPassword = newPassword;
+  request.verifyCode = verificationCode;
   var url = baseUrl + '/usermgr/modPassword';
+
+  return encapsulatePromise(url, request);
+};
+
+// 向手机发送短信验证码
+export function sendVerificationCode(verificationInfo) {
+  var request = Object.assign({}, getCommonRequest());
+  request.verify = verificationInfo;
+  var url = baseUrl + '/pdms/queryCode';
+
+  return encapsulatePromise(url, request);
+};
+
+// 验证短信验证码
+export function verifyMessageCode(verificationInfo) {
+  var request = Object.assign({}, getCommonRequest());
+  request.verify = verificationInfo;
+  var url = baseUrl + '/pdms/verifyCode';
 
   return encapsulatePromise(url, request);
 };

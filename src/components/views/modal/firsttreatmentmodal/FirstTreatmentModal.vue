@@ -13,10 +13,13 @@
           </span>
           <span class="field-input" v-else>
             <span class="warning-text">必填项</span>
-            <el-select v-model="firstType"
-            placeholder="请选择初诊治疗类型">
-              <el-option label="药物治疗" :value="WINE_HISTORY_MODAL"></el-option>
-              <el-option label="非药物治疗" :value="SMOKE_HISTORY_MODAL"></el-option>
+            <el-select v-model="firstType" placeholder="请选择初诊治疗类型" clearable>
+              <el-option
+                v-for="item in firstTreatmentTypeOptions"
+                :key="item.code"
+                :label="item.name"
+                :value="item.name">
+              </el-option>
           </el-select>
           </span>
         </div>
@@ -207,24 +210,32 @@
 
 <script>
 import Bus from 'utils/bus.js';
+import Util from 'utils/util.js';
+import { mapGetters } from 'vuex';
 export default {
   data() {
     return {
       displayModal: false,
       mode: '',
-      firstType: '',
+      firstType: '', // 初诊治疗类型
       value1: '',
       value2: '',
       date1: ''
     };
   },
   computed: {
+    ...mapGetters([
+      'typeGroup'
+    ]),
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
         return '新增初诊治疗';
       } else {
         return '初诊治疗';
       }
+    },
+    firstTreatmentTypeOptions() {
+      return this.getOptions('treatment');
     }
   },
   methods: {
@@ -232,6 +243,18 @@ export default {
       console.log(cardOperation, item);
       this.mode = cardOperation;
       this.displayModal = true;
+    },
+    getOptions(fieldName) {
+      var options = [];
+      var types = Util.getElement('typegroupcode', fieldName, this.typeGroup).types;
+      types = types ? types : [];
+      for (let type of types) {
+        options.push({
+          name: type.typeName,
+          code: type.typeCode
+        });
+      };
+      return options;
     },
     cancel() {
       this.displayModal = false;
@@ -245,6 +268,7 @@ export default {
   },
   mounted() {
     Bus.$on(this.SHOW_FIRSTTREATMENT_MODAL, this.showModal);
+    console.log(this.selectOptions);
   }
 };
 </script>

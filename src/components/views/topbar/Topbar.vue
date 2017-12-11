@@ -60,7 +60,7 @@ export default {
     return {
       showOranizationPanel: false,
       showAccountPanel: false,
-      blockSensitiveInfo: false
+      blockSensitiveInfo: true
     };
   },
   computed: {
@@ -114,12 +114,16 @@ export default {
       this.showOranizationPanel = false;
     },
     swichBlockSensitiveStatus(status) {
-      var passSMSVerification = sessionStorage.getItem('passSMSVerification');
-      if (!status && !passSMSVerification) {
-        let title = '确认提醒';
-        let desc = '你正在修改系统默认的显示方式，有可能会带来隐私泄漏的风险。' +
-        '为确保账户及患者数据安全，切换为【全部显示】状态时需要手机验证，验证通过后才能进行切换。';
-        Bus.$emit(this.SHOW_MESSAGE_MODAL, title, desc);
+      if (!status) {
+        if (!this.$store.state.hasRightToDisplaySensitiveInfo) {
+          let title = '确认提醒';
+          let desc = '你正在修改系统默认的显示方式，有可能会带来隐私泄漏的风险。' +
+          '为确保账户及患者数据安全，切换为【全部显示】状态时需要手机验证，验证通过后才能进行切换。';
+          Bus.$emit(this.SHOW_MESSAGE_MODAL, 3, title, desc);    // 第一个参数 3 代表脱敏业务
+        } else {
+          this.blockSensitiveInfo = status;
+        }
+
       } else {
         this.blockSensitiveInfo = status;
       }
@@ -162,6 +166,10 @@ export default {
     this.$store.dispatch('getScaleList');
 
     Bus.$on(this.BLUR_ON_SCREEN, this.hidePanels);
+    Bus.$on(this.PERMIT_DISPLAYING_SENSITIVE_INFO, () => {
+      this.$store.commit('PERMIT_DISPLAYING_SENSITIVE_INFO');
+      this.blockSensitiveInfo = false;
+    });
   },
   beforeDestroy() {
     Bus.$off(this.BLUR_ON_SCREEN);

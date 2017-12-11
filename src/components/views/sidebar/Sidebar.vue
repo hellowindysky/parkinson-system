@@ -132,11 +132,11 @@ export default {
     },
     showPatientsManagement() {
       var userType = Number(sessionStorage.getItem('userType'));
-      return (userType === 2 || userType === 4);
+      return (userType === 2 || userType === 4 || userType === 5);
     },
     showAnalytics() {
       var userType = Number(sessionStorage.getItem('userType'));
-      return (userType === 2 || userType === 4);
+      return (userType === 2 || userType === 4 || userType === 5);
     },
     showConfiguration() {
       var userType = Number(sessionStorage.getItem('userType'));
