@@ -142,7 +142,7 @@ const getters = {
     return state.all.tableData.symptomType;
   },
   noSportType: (state) => {
-    // 主诉的各种症状 非运动症状类型
+    // 主诉的各种症状 非运动症状类型 zq
     if (!state.all.tableData || !state.all.tableData.noSportType) {
       return [];
     }

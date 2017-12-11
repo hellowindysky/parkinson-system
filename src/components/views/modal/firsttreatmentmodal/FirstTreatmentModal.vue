@@ -19,29 +19,33 @@
                 v-for="item in firstTreatmentTypeOptions"
                 :key="item.code"
                 :label="item.name"
-                :value="item.name">
+                :value="item.code">
               </el-option>
           </el-select>
           </span>
         </div>
 
         <!-- 以下是 药物治疗才有的序列 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
-        <div v-show="copyInfo.firstVisitType==='药物治疗'">
+        <div v-show="copyInfo.firstVisitType===1">
           <div class="field">
             <span class="field-name long-field-name">
               药物分类:
               <span class="required-mark">*</span>
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>药物分类</span>
+              <span>{{copyInfo.medicineClassification}}</span>
             </span>
             <span class="field-input" v-else>
-              <span class="warning-text">必填项</span>
+              <span class="warning-text">{{warningResults.medicineClassification}}</span>
               <el-select v-model="copyInfo.medicineClassification" placeholder="请选择药物分类" clearable
-               @change="updateWarning('medicineClassification')" :class="{'warning': warningResults.medicineClassification}" >
-                  <el-option label="B型单胺氧化抑制剂" :value="WINE_HISTORY_MODAL"></el-option>
-                  <el-option label="COMT抑制剂" :value="SMOKE_HISTORY_MODAL"></el-option>
-                  <el-option label="多巴胺类制剂" :value="TEA_HISTORY_MODAL"></el-option>
+               @change="updateWarning('medicineClassification'),clearVal(['firstVisitType','medicineClassification'])"
+                :class="{'warning': warningResults.medicineClassification}" >
+                <el-option
+                 v-for="item in medicineClassOpt"
+                 :key="item.code"
+                 :label="item.name"
+                 :value="item.code">
+                </el-option>
               </el-select>
             </span>
           </div>
@@ -52,15 +56,17 @@
               <!-- <span class="required-mark">*</span> -->
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>药物名称</span>
+              <span>{{copyInfo.medicineName}}</span>
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-select v-model="value1"
-                placeholder="请选择药物名称">
-                  <el-option label="药物名称1" :value="WINE_HISTORY_MODAL"></el-option>
-                  <el-option label="药物名称2" :value="SMOKE_HISTORY_MODAL"></el-option>
-                  <el-option label="药物名称3" :value="TEA_HISTORY_MODAL"></el-option>
+              <el-select v-model="copyInfo.medicineName" placeholder="请选择药物名称">
+                <el-option
+                 v-for="item in medicineNameOpt"
+                 :key="item.code"
+                 :label="item.name"
+                 :value="item.code">
+                </el-option>
               </el-select>
             </span>
           </div>
@@ -71,7 +77,7 @@
               <!-- <span class="required-mark">*</span> -->
             </span>
             <span class="field-input long-field-name">
-              <span>选择药物名称自动匹配</span>
+              <span>{{commonMedicineName}}</span>
             </span>
             <!-- <span class="field-input" v-else>
                 <span class="warning-text">必填项</span>
@@ -85,11 +91,11 @@
               <!-- <span class="required-mark">*</span> -->
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>每日用量</span>
+              <span>{{copyInfo.dailyDosage}}</span>
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-input v-model="date1" placeholder="请输入每日用量"></el-input>
+              <el-input v-model="copyInfo.dailyDosage" placeholder="请输入每日用量"></el-input>
             </span>
           </div>
 
@@ -99,11 +105,11 @@
               <!-- <span class="required-mark">*</span> -->
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>初次用药时间</span>
+              <span>{{copyInfo.firstTime}}</span>
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-date-picker v-model="date1" type="date" placeholder="请选择初次用药时间" clearable ></el-date-picker>
+              <el-date-picker v-model="copyInfo.firstTime" type="date" placeholder="请选择初次用药时间" clearable ></el-date-picker>
             </span>
           </div>
 
@@ -113,11 +119,11 @@
               <!-- <span class="required-mark">*</span> -->
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>备注</span>
+              <span>{{copyInfo.remarks}}</span>
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-input v-model="date1" placeholder="请输入备注"></el-input>
+              <el-input v-model="copyInfo.remarks" placeholder="请输入备注"></el-input>
             </span>
           </div>
 
@@ -126,7 +132,7 @@
 
 
         <!-- 以下是 非药物治疗才有的序列 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
-        <div v-show="copyInfo.firstVisitType!=='药物治疗'&&copyInfo.firstVisitType">
+        <div v-show="copyInfo.firstVisitType===2">
 
           <div class="field">
             <span class="field-name long-field-name">
@@ -134,14 +140,14 @@
               <span class="required-mark">*</span>
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>治疗类型</span>
+              <span>{{copyInfo.treatmentType}}</span>
             </span>
             <span class="field-input" v-else>
               <span class="warning-text">{{warningResults.treatmentType}}</span>
               <el-select v-model="copyInfo.treatmentType" clearable placeholder="请选择症状名称"
                @change="updateWarning('treatmentType')" :class="{'warning': warningResults.treatmentType}" >
-                <el-option label="手术治疗" :value="WINE_HISTORY_MODAL"></el-option>
-                <el-option label="物理治疗" :value="SMOKE_HISTORY_MODAL"></el-option>
+                <el-option label="治疗类型1" :value="WINE_HISTORY_MODAL"></el-option>
+                <el-option label="治疗类型2" :value="SMOKE_HISTORY_MODAL"></el-option>
               </el-select>
             </span>
           </div>
@@ -229,7 +235,7 @@ export default {
 
         medicineClassification: '', // 药物分类
         medicineName: '', // 药物名称
-        commonMedicineName: '', // 通用名
+        // commonMedicineName: '', // 通用名
         dailyDosage: '', // 每日用量
         firstTime: '' // 初次用药时间
       },
@@ -245,7 +251,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'typeGroup'
+      'typeGroup',
+      'medicineInfo'
     ]),
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
@@ -255,6 +262,27 @@ export default {
       }
     },
     firstTreatmentTypeOptions() {
+      // 初诊治疗类型的select
+      return this.getOptions('firstVisitType');
+    },
+    medicineClassOpt() {
+      // 药物分类的select
+      return this.getOptions('firstVisitMedType');
+    },
+    medicineNameOpt() {
+      // 药物名称的select
+      return this.getMedNameOptions(this.copyInfo.medicineClassification);
+    },
+    commonMedicineName() {
+      // 通用名
+      return this.medicineNameOpt.filter((obj) => {
+        return obj.code === this.copyInfo.medicineName;
+      }).map((obj) => {
+        return obj.commonName;
+      })[0];
+    },
+    treatmentTypeOpt() {
+      // 非药物治疗治疗类型的select
       return this.getOptions('treatPro');
     }
   },
@@ -274,7 +302,7 @@ export default {
       });
     },
     showModal(cardOperation, item) {
-      // this.completeInit = false;
+      this.completeInit = false;
       console.log(cardOperation, item);
       this.mode = cardOperation;
       // gggg
@@ -327,6 +355,17 @@ export default {
       };
       return options;
     },
+    getMedNameOptions(fieldType) {
+      return this.medicineInfo.filter((obj) => {
+        return obj.firstTreatMedicalType === fieldType;
+      }).map((obj) => {
+        return {
+          name: obj.medicineName,
+          code: obj.medicineId,
+          commonName: obj.commonName
+        };
+      });
+    },
     cancel() {
       this.displayModal = false;
     },
@@ -339,7 +378,8 @@ export default {
   },
   mounted() {
     Bus.$on(this.SHOW_FIRSTTREATMENT_MODAL, this.showModal);
-    console.log(this.firstTreatmentTypeOptions);
+    // console.log(this.firstTreatmentTypeOptions);
+    console.log(this.typeGroup, 1);
   }
 };
 </script>
