@@ -298,16 +298,6 @@ export default {
       sessionStorage.setItem('orgName', this.orgName);
       sessionStorage.setItem('subjects', JSON.stringify(this.subjects));
 
-      var commonRequest = {
-        'userId': 93242,
-        'accountNumber': this.accountNumber,
-        'userType': this.userType,
-        'orgId': 34,
-        'orgType': 2
-      };
-
-      sessionStorage.setItem('commonRequest', JSON.stringify(commonRequest));
-
       // 登录时默认进入医院入口
       this.$store.commit('UPDATE_SUBJECT_ID', this.SUBJECT_ID_FOR_HOSPITAL);
       sessionStorage.setItem('subjectId', this.SUBJECT_ID_FOR_HOSPITAL);
@@ -342,6 +332,15 @@ export default {
             this.userType = data.user.userType;
             this.orgName = data.orgs && data.orgs[0] && data.orgs[0].orgName ? data.orgs[0].orgName : '';
             this.subjects = data.tasks ? data.tasks : [];
+
+            var commonRequest = {
+              'userId': 93242,
+              'accountNumber': this.accountNumber,
+              'userType': this.userType,
+              'orgId': 34,
+              'orgType': 2
+            };
+            sessionStorage.setItem('commonRequest', JSON.stringify(commonRequest));
 
             // 将正确密码缓存起来，在重置密码的时候会用到
             this.currentPassword = this.loginForm.password;
