@@ -169,7 +169,7 @@
           </div>
            <div class="text line-4">
             <span class="name">不良反应: </span>
-            <span class="value">{{item.patientPhytheReactionId}}</span>
+            <span class="value">{{item.patientPhytheReaction[3]}}</span>
           </div>
            <div class="text line-5">
             <span class="name">记录时间: </span>
@@ -197,7 +197,7 @@
           </div>
            <div class="text line-4">
             <span class="name">不良反应: </span>
-            <span class="value">{{item.patientPhytheReactionId}}</span>
+            <span class="value">{{item.patientPhytheReaction[3]}}</span>
           </div>
            
         </card>
@@ -357,6 +357,12 @@ export default {
         return matchedType.typeName ? matchedType.typeName : '';
       }
     },
+    // checkout() {
+    //   var patientPhytheReaction = [1, 2, 3, 4];
+    //   for (var i = 0 ; i < patientPhytheReaction.length; i++) {
+    //   console.log(i);
+    //   }
+    // },
     getPrescriptionDesc(statusFlag) {
       if (statusFlag === 0) {
         return '沿用上次处方';

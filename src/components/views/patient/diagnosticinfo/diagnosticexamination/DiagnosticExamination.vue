@@ -1,97 +1,31 @@
 <template lang="html">
   <folding-panel :title="'检验检查'" :mode="mutableMode"  v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit" :editable="canEdit">
     <div class="diagnostic-examination" ref="diagnosticExamination">
-      <extensible-panel class="panel" :mode="mutableMode" :title="vitalSigns" :hideButtons="true"
-        :editable="canEdit" :shrinkable="false">
-        <ul class="vital-signs">
-          <li class="field-item">
-            <span class="field-name">呼吸(次/分):</span>
-            <div class="field-value" v-if="mutableMode===READING_MODE">{{VitalSignsData.breathing}}</div>
-            <div class="field-value" v-else-if="mutableMode===EDITING_MODE">
-              <el-input v-model="vitalData.breathing" placeholder="请输入每分钟呼吸频率"></el-input>
-            </div>
-          </li>
-          <li class="field-item">
-            <span class="field-name">体温(℃):</span>
-            <div class="field-value" v-if="mutableMode===READING_MODE">{{VitalSignsData.temperature}}</div>
-            <div class="field-value" v-else-if="mutableMode===EDITING_MODE">
-              <el-input v-model="vitalData.temperature" placeholder="请输入体温"></el-input>
-            </div>
-          </li>
-          <li class="field-item">
-            <span class="field-name">脉搏(次/分):</span>
-            <div class="field-value" v-if="mutableMode===READING_MODE">{{VitalSignsData.pulse}}</div>
-            <div class="field-value" v-else-if="mutableMode===EDITING_MODE">
-              <el-input v-model="vitalData.pulse" placeholder="请输入每分钟脉搏频率"></el-input>
-            </div>
-          </li>
-          <li class="field-item">
-            <span class="field-name">心率(次/分):</span>
-            <div class="field-value" v-if="mutableMode===READING_MODE">{{VitalSignsData.heartRate}}</div>
-            <div class="field-value" v-else-if="mutableMode===EDITING_MODE">
-              <el-input v-model="vitalData.heartRate" placeholder="请输入心率"></el-input>
-            </div>
-          </li>
-          <li class="field-item">
-            <span class="field-name">心率情况:</span>
-            <div class="field-value" v-if="mutableMode===READING_MODE">{{showVital(VitalSignsData.rhythm)}}</div>
-            <div class="field-value" v-else-if="mutableMode===EDITING_MODE">
-              <el-select v-model="vitalData.rhythm" placeholder="请选择">
-                <el-option v-for="item in heartRate" :key="item.typeCode" :label="item.typeName"
-                  :value="String(item.typeCode)">
-                </el-option>
-              </el-select>
-            </div>
-          </li>
-          <li class="field-item">
-            <span class="field-name">血压:卧位(mmHg):</span>
-            <div class="field-value" v-if="mutableMode===READING_MODE">{{VitalSignsData.bpDecubitus}}</div>
-            <div class="field-value" v-else-if="mutableMode===EDITING_MODE">
-              <el-input class="half-input left" v-model="vitalData.bpDecubitusL" placeholder="收缩压"></el-input>
-              <span class="middle-text">/</span>
-              <el-input class="half-input right" v-model="vitalData.bpDecubitusR" placeholder="舒张压"></el-input>
-            </div>
-          </li>
-          <li class="field-item">
-            <span class="field-name">血压:坐位(mmHg):</span>
-            <div class="field-value" v-if="mutableMode===READING_MODE">{{VitalSignsData.bpSitting}}</div>
-            <div class="field-value" v-else-if="mutableMode===EDITING_MODE">
-              <el-input class="half-input left" v-model="vitalData.bpSittingL" placeholder="收缩压"></el-input>
-              <span class="middle-text">/</span>
-              <el-input class="half-input right" v-model="vitalData.bpSittingR" placeholder="舒张压"></el-input>
-            </div>
-          </li>
-          <li class="field-item">
-            <span class="field-name">血压:立位(mmHg):</span>
-            <div class="field-value" v-if="mutableMode===READING_MODE">{{VitalSignsData.bpOrthostatic}}</div>
-            <div class="field-value" v-else-if="mutableMode===EDITING_MODE">
-              <el-input class="half-input left" v-model="vitalData.bpOrthostaticL" placeholder="收缩压"></el-input>
-              <span class="middle-text">/</span>
-              <el-input class="half-input right" v-model="vitalData.bpOrthostaticR" placeholder="舒张压"></el-input>
-            </div>
-          </li>
-          <li class="field-item">
-            <span class="field-name">智能障碍-MMSE:</span>
-            <div class="field-value" v-if="mutableMode===READING_MODE">{{VitalSignsData.doiMmse}}</div>
-            <div class="field-value" v-else-if="mutableMode===EDITING_MODE">
-              <el-input v-model="vitalData.doiMmse" placeholder="请输入检查结果" :maxlength="500"></el-input>
-            </div>
-          </li>
-          <li class="field-item">
-            <span class="field-name">智能障碍-MoCA:</span>
-            <div class="field-value" v-if="mutableMode===READING_MODE">{{VitalSignsData.doiMoca}}</div>
-            <div class="field-value" v-else-if="mutableMode===EDITING_MODE">
-              <el-input v-model="vitalData.doiMoca" placeholder="请输入检查结果" :maxlength="500"></el-input>
-            </div>
-          </li>
-          <li class="field-item">
-            <span class="field-name">智能障碍-CDR:</span>
-            <div class="field-value" v-if="mutableMode===READING_MODE">{{VitalSignsData.doiCdr}}</div>
-            <div class="field-value" v-else-if="mutableMode===EDITING_MODE">
-              <el-input v-model="vitalData.doiCdr" placeholder="请输入检查结果" :maxlength="500"></el-input>
-            </div>
-          </li>
-        </ul>
+    <extensible-panel class="panel" :mode="mutableMode" :title="vitalSignsTitle" v-on:addNewCard="addVitalSigns" :editable="canEdit">
+        <card class="card vitalSigns-card" :class="cardWidth" :mode="mutableMode" v-for="item in diagnosticVitalSigns" :key="item.checkTime"
+         :title="'生命体征'" v-on:editCurrentCard="editVitalSigns(item)"
+         v-on:deleteCurrentCard="deleteVitalSigns(item)" v-on:viewCurrentCard="viewVitalSigns(item)">
+          <div class="text line-1">
+            <span class="name">检查时间: </span>
+            <span class="value">{{item.checkTime}}</span>
+          </div>
+          <div class="text line-2">
+            <span class="name">呼吸（次/分）: </span>
+            <span class="value">{{item.breathing}}</span>
+          </div>
+           <div class="text line-3">
+            <span class="name">体温（℃）: </span>
+            <span class="value">{{item.temperature}}</span>
+          </div>
+           <div class="text line-4">
+            <span class="name">脉搏（次/分）: </span>
+            <span class="value">{{item.pulse}}</span>
+          </div>
+           <div class="text line-5">
+            <span class="name">心率情况: </span>
+            <span class="value">{{item.rhythm}}</span>
+          </div>
+         </card>
       </extensible-panel>
       <extensible-panel class="panel" :mode="mutableMode" :title="neurologicCheckTitle" v-on:addNewCard="addNeurologicCheckRecord" :editable="canEdit">
         <card class="card" :class="cardWidth" :mode="mutableMode" v-for="item in neurologicCheckList" :key="item.preopsInfoId"
@@ -180,7 +114,7 @@
 import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import { deleteEmg, deleteBiochemical, delNervouSystem, deleteGeneCheck, deleteImage, modVitalSigns } from 'api/patient.js';
+import { deleteEmg, deleteBiochemical, delNervouSystem, deleteGeneCheck, deleteImage, deleteVitalSigns } from 'api/patient.js';
 import { vueCopy } from 'utils/helper';
 
 import FoldingPanel from 'components/public/foldingpanel/FoldingPanel';
@@ -191,20 +125,20 @@ export default {
   data() {
     return {
       mutableMode: this.mode,
-      vitalSigns: '生命体征',
-      vitalData: {
-        breathing: '',
-        temperature: '',
-        pulse: '',
-        heartRate: '',
-        rhythm: '',
-        bpDecubitus: '',
-        bpSitting: '',
-        bpOrthostatic: '',
-        doiMmse: '',
-        doiMoca: '',
-        doiCdr: ''
-      },
+      // vitalSigns: '生命体征',
+      // vitalData: {
+      //   breathing: '',
+      //   temperature: '',
+      //   pulse: '',
+      //   heartRate: '',
+      //   rhythm: '',
+      //   bpDecubitus: '',
+      //   bpSitting: '',
+      //   bpOrthostatic: '',
+      //   doiMmse: '',
+      //   doiMoca: '',
+      //   doiCdr: ''
+      // },
       cardWidth: ''
     };
   },
@@ -243,7 +177,7 @@ export default {
         return [];
       }
     },
-    VitalSignsData: {
+    diagnosticVitalSigns: {
       type: Object,
       default: () => {
         return {};
@@ -265,6 +199,9 @@ export default {
       'rhythm',
       'typeGroup'
     ]),
+    vitalSignsTitle() {
+      return '生命体征 (' + this.diagnosticVitalSigns.length + '条记录)';
+    },
     neurologicCheckTitle() {
       return '神经系统检查（' + this.neurologicCheckList.length + '条记录）';
     },
@@ -295,7 +232,7 @@ export default {
   methods: {
     startEditing() {
       this.mutableMode = this.EDITING_MODE;
-      this.handleVitalData(this.VitalSignsData);
+      this.handleVitalData(this.diagnosticVitalSigns);
     },
     cancel() {
       this.mutableMode = this.READING_MODE;
@@ -314,73 +251,73 @@ export default {
         return '';
       }
     },
-    submitVitalData() {
-      let submitData = this.vitalData;
-      for (let key in submitData) {
-        switch (key) {
-          case 'bpOrthostatic':
-          case 'bpSitting':
-          case 'bpDecubitus':
-            switch (true) {
-              case (Boolean(submitData[key + 'L']) === false && Boolean(submitData[key + 'R']) === false): // 左右值都不存在
-                submitData[key] = '';
-                break;
-              case (Boolean(submitData[key + 'L']) && Boolean(submitData[key + 'R'])): // 左右值都存在
-                submitData[key] = submitData[key + 'L'] + ',' + submitData[key + 'R'];
-                break;
-              case (Boolean(submitData[key + 'L']) && Boolean(submitData[key + 'R']) === false): // 左边的值存在
-                submitData[key] = submitData[key + 'L'];
-                break;
-              case (Boolean(submitData[key + 'L']) === false && Boolean(submitData[key + 'R'])): // 右边的值存在
-                submitData[key] = ',' + submitData[key + 'R'];
-                break;
-            }
-            delete submitData[key + 'L'];  // 删除这两个辅助值
-            delete submitData[key + 'R'];
-            break;
-        }
-      }
-      submitData['patientCaseId'] = this.$route.params.caseId;
-      modVitalSigns(submitData).then(() => {
-        Bus.$emit(this.UPDATE_CASE_INFO);
-      }); // 提交生命体征
-    },
-    handleVitalData(data) {
-      // 对生命体征作特殊的处理
-      for (let key in data) {
-        switch (key) {
-          case 'bpOrthostatic':
-          case 'bpSitting':
-          case 'bpDecubitus':
-            switch (true) {
-              case data[key] === '':
-                // 为空值
-                this.$set(this.vitalData, key + 'L', '');
-                this.$set(this.vitalData, key + 'R', '');
-                break;
-              case (Boolean(data[key].split(',')[0]) && Boolean(data[key].split(',')[1])):
-                // 左右值都存在
-                this.$set(this.vitalData, key + 'L', data[key].split(',')[0]);
-                this.$set(this.vitalData, key + 'R', data[key].split(',')[1]);
-                break;
-              case (Boolean(data[key].split(',')[0]) === true) && data[key].indexOf(',') === -1:
-                // 左值存在
-                this.$set(this.vitalData, key + 'L', data[key]);
-                this.$set(this.vitalData, key + 'R', '');
-                break;
-              case Boolean(data[key].split(',')[0]) === true && data[key].indexOf(',') !== -1:
-                // 右值存在
-                this.$set(this.vitalData, key + 'L', '');
-                this.$set(this.vitalData, key + 'R', data[key].split(',')[1]);
-                break;
-            }
-            break;
-          default:
-            this.$set(this.vitalData, key, data[key]);
-            break;
-        }
-      }
-    },
+    // submitVitalData() {
+    //   let submitData = this.vitalData;
+    //   for (let key in submitData) {
+    //     switch (key) {
+    //       case 'bpOrthostatic':
+    //       case 'bpSitting':
+    //       case 'bpDecubitus':
+    //         switch (true) {
+    //           case (Boolean(submitData[key + 'L']) === false && Boolean(submitData[key + 'R']) === false): // 左右值都不存在
+    //             submitData[key] = '';
+    //             break;
+    //           case (Boolean(submitData[key + 'L']) && Boolean(submitData[key + 'R'])): // 左右值都存在
+    //             submitData[key] = submitData[key + 'L'] + ',' + submitData[key + 'R'];
+    //             break;
+    //           case (Boolean(submitData[key + 'L']) && Boolean(submitData[key + 'R']) === false): // 左边的值存在
+    //             submitData[key] = submitData[key + 'L'];
+    //             break;
+    //           case (Boolean(submitData[key + 'L']) === false && Boolean(submitData[key + 'R'])): // 右边的值存在
+    //             submitData[key] = ',' + submitData[key + 'R'];
+    //             break;
+    //         }
+    //         delete submitData[key + 'L'];  // 删除这两个辅助值
+    //         delete submitData[key + 'R'];
+    //         break;
+    //     }
+    //   }
+    //   submitData['patientCaseId'] = this.$route.params.caseId;
+    //   // modVitalSigns(submitData).then(() => {
+    //   //   Bus.$emit(this.UPDATE_CASE_INFO);
+    //   // }); // 提交生命体征
+    // },
+    // handleVitalData(data) {
+    //   // 对生命体征作特殊的处理
+    //   for (let key in data) {
+    //     switch (key) {
+    //       case 'bpOrthostatic':
+    //       case 'bpSitting':
+    //       case 'bpDecubitus':
+    //         switch (true) {
+    //           case data[key] === '':
+    //             // 为空值
+    //             this.$set(this.vitalData, key + 'L', '');
+    //             this.$set(this.vitalData, key + 'R', '');
+    //             break;
+    //           case (Boolean(data[key].split(',')[0]) && Boolean(data[key].split(',')[1])):
+    //             // 左右值都存在
+    //             this.$set(this.vitalData, key + 'L', data[key].split(',')[0]);
+    //             this.$set(this.vitalData, key + 'R', data[key].split(',')[1]);
+    //             break;
+    //           case (Boolean(data[key].split(',')[0]) === true) && data[key].indexOf(',') === -1:
+    //             // 左值存在
+    //             this.$set(this.vitalData, key + 'L', data[key]);
+    //             this.$set(this.vitalData, key + 'R', '');
+    //             break;
+    //           case Boolean(data[key].split(',')[0]) === true && data[key].indexOf(',') !== -1:
+    //             // 右值存在
+    //             this.$set(this.vitalData, key + 'L', '');
+    //             this.$set(this.vitalData, key + 'R', data[key].split(',')[1]);
+    //             break;
+    //         }
+    //         break;
+    //       default:
+    //         this.$set(this.vitalData, key, data[key]);
+    //         break;
+    //     }
+    //   }
+    // },
     transformNeurologicCheckType(typeId) {
       // 在 tableData 中找到对应的值
       var data = Util.getElement('id', typeId, this.neurologicCheckTypeList);
@@ -498,6 +435,24 @@ export default {
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
+    addVitalSigns() {
+      Bus.$emit(this.SHOW_VITALSIGNS_MODAL, this.ADD_NEW_CARD, {}, this.archived);
+    },
+    viewVitalSigns(item) {
+      Bus.$emit(this.SHOW_VITALSIGNS_MODAL, this.VIEW_CURRENT_CARD, item, this.archived);
+    },
+    editVitalSigns(item) {
+      Bus.$emit(this.SHOW_VITALSIGNS_MODAL, this.EDIT_CURRENT_CARD, item, this.archived);
+    },
+    deleteVitalSigns(item) {
+      var patientVitalSigns = {
+        patientVitalSignsId: item.patientVitalSignsId
+      };
+      Bus.$on(this.CONFIRM, () => {
+        deleteVitalSigns(patientVitalSigns).then(this._resolveDeletion, this._rejectDeletion);
+      });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
+    },
     _resolveDeletion() {
       // 如果成功删除记录，则重新发出请求，获取最新数据。同时解除 [确认对话框] 的 “确认” 回调函数
       Bus.$emit(this.UPDATE_CASE_INFO);
@@ -546,7 +501,7 @@ export default {
     Bus.$off(this.GIVE_UP);
   },
   watch: {
-    VitalSignsData: {
+    diagnosticVitalSigns: {
       handler: function(newVal) {
         vueCopy(newVal, this.vitalData);
       },

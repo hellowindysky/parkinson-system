@@ -1,204 +1,118 @@
 <template lang="html">
-  <div class="physiontherapy-modal-wrapper" v-show="displayModal">
-    <div class="physiontherapy-modal" ref="scrollArea">
-        <h3 class="title">{{title}}</h3>
-        <div class="content">
-            <div class="field whole-line">
+  <div class="vital-signs-modal-wrapper" v-show="displayModal">
+    <div class="vital-signs-modal" ref="scrollArea">
+      <h3 class="title">{{title}}</h3>
+      <div class="content">
+        <div class="field whole-line">
           <span class="field-name">
-            物理治疗类型:
+            检查时间:
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-             <span>{{transform(physiType,'physiType')}}</span>
+            <span>{{checkTime}}</span>
           </span>
           <span class="field-input" v-else>
-            <span class="warning-text">{{warningResults.physiType}}</span>
-            <el-select v-model="physiType" placeholder="经颅磁刺激" @change="updateWarning('physiType')"
-              :class="{'warning': warningResults.physiType}">
-              <el-option
-                v-for="item in getOptions('physiType')"
-                :key="item.code"
-                :label="item.name"
-                :value="item.code">
-              </el-option>
-            </el-select>
-          </span>
-        </div>
-        <div class="field">
-          <span class="field-name">
-           记录时间:
-            <span class="required-mark">*</span>
-          </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{recordDate}}</span>
-          </span>
-          <span class="field-input" v-else>
-            <span class="warning-text">{{warningResults.recordDate}}</span>
+            <span class="warning-text">{{warningResults.checkTime}}</span>
             <el-date-picker
-              v-model="recordDate"
-              :class="{'warning': warningResults.recordDate}"
+              v-model="checkTime"
+              :class="{'warning': warningResults.checkTime}"
               type="date"
-              placeholder="请选择记录时间"
+              placeholder="请输入检查时间"
               :picker-options="pickerOptions"
-              @change="updateWarning('recordDate')">
+              @change="updateWarning('checkTime')">
             </el-date-picker>
           </span>
         </div>
         <div class="field">
           <span class="field-name">
-            设备型号:
+            呼吸（次/分）:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{deviceType}}</span>
+            <span>{{breathing}}</span>
           </span>
           <span class="field-input" v-else>
-            <span class="warning-text"></span>
-            <el-input v-model="deviceType" placeholder="请输入设备型号"></el-input>
+           <el-input v-model="breathing" placeholder="请输入每分钟呼吸频率"></el-input>
           </span>
         </div>
         <div class="field">
           <span class="field-name">
-            刺激强度（T）:
+            体温（℃）:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span class="warning-text"></span>
-            <span>{{stimulusIntensity}}</span>
+            <span>{{temperature}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-input v-model="stimulusIntensity" placeholder="请输入刺激强度"></el-input>
+           <el-input v-model="temperature" placeholder="请输入体温"></el-input>
           </span>
         </div>
-        <div class="field">
-          <span class="field-name">
-            刺激频率（HZ）:
-          </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span class="warning-text"></span>
-            <span>{{stimulusFrequency}}</span>
-          </span>
-          <span class="field-input" v-else>
-            <el-input v-model="stimulusFrequency" placeholder="请输入刺激频率"></el-input>
-          </span>
-        </div>
-          <div class="field">
-          <span class="field-name">
-           刺激侧:
-          </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{transform(stimulusSide,'stimulusSide')}}</span>
-          </span>
-          <span class="field-input" v-else>
-            <span class="warning-text">{{warningResults.stimulusSide}}</span>
-            <el-select v-model="stimulusSide" placeholder="请选择刺激侧" @change="updateWarning('stimulusSide')"
-              :class="{'warning': warningResults.stimulusSide}">
+      <div class="field">
+        <span class="field-name">
+         脉搏（次/分）:
+        </span>
+        <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+          <span>{{pulse}}</span>
+        </span>
+        <span class="field-input" v-else>
+         <el-input v-model="pulse" placeholder="请输入每分钟脉搏频率"></el-input>
+        </span>
+      </div> 
+      <div class="field">
+        <span class="field-name">
+        心率情况:
+        </span>
+        <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+          <span>{{rhythm}}</span>
+        </span>
+        <span class="field-input" v-else>
+          <span class="warning-text">{{warningResults.rhythm}}</span>
+         <el-select v-model="rhythm" placeholder="请选择心率情况" @change="updateWarning('rhythm')"
+              :class="{'warning': warningResults.rhythm}">
               <el-option
-                v-for="item in getOptions('stimulusSide')"
+                v-for="item in getOptions('rhythm')"
                 :key="item.code"
                 :label="item.name"
                 :value="item.code">
               </el-option>
             </el-select>
-          </span>
-        </div>
-        <div class="field">
-          <span class="field-name">
-            刺激时长（分钟）:
-          </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span class="warning-text"></span>
-            <span>{{stimulusDuration}}</span>
-          </span>
-          <span class="field-input" v-else>
-            <el-input v-model="stimulusDuration" placeholder="请输入刺激时长"></el-input>
-          </span>
-        </div>
-        <div class="field">
-          <span class="field-name">
-            治疗前左侧运动阈值:
-            <span class="required-mark">*</span>
-          </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span class="warning-text"></span>
-            <span>{{leftThresholdBefore}}</span>
-          </span>
-          <span class="field-input" v-else>
-            <span class="warning-text">{{warningResults.leftThresholdBefore}}</span>
-            <el-input v-model="leftThresholdBefore" placeholder="请输入运动阈值" :class="{'warning': warningResults.leftThresholdBefore}" @change="updateWarning('leftThresholdBefore')"></el-input>
-          </span>
-        </div>
-        <div class="field">
-          <span class="field-name">
-            治疗前右侧运动阈值:
-            <span class="required-mark">*</span>
-          </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span class="warning-text"></span>
-            <span>{{rightThresholdBefore}}</span>
-          </span>
-          <span class="field-input" v-else>
-            <span class="warning-text">{{warningResults.rightThresholdBefore}}</span>
-            <el-input v-model="rightThresholdBefore" placeholder="请输入运动阈值" :class="{'warning': warningResults.rightThresholdBefore}" @change="updateWarning('rightThresholdBefore')" ></el-input>
-          </span>
-        </div>
-        <div class="field">
-          <span class="field-name">
-             治疗后左侧运动阈值:
-          </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span class="warning-text"></span>
-            <span>{{leftThresholdAfter}}</span>
-          </span>
-          <span class="field-input" v-else>
-            <el-input v-model="leftThresholdAfter" placeholder="请输入运动阈值"></el-input>
-          </span>
-        </div>
-        <div class="field">
-          <span class="field-name">
-             治疗后右侧运动阈值:
-          </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span class="warning-text"></span>
-            <span>{{rightThresholdAfter}}</span>
-          </span>
-          <span class="field-input" v-else>
-            <el-input v-model="rightThresholdAfter" placeholder="请输入运动阈值"></el-input>
-          </span>
-        </div>
-      </div>
+        </span>
+      </div> 
       <div class="seperate-line"></div>
-        <div class="content">
+      <div class="content">
         <table class="table">
           <tr class="row title-row">
-            <td class="col narrow-col">序号</td>
-            <td class="col wide-col">不良反应程度评估</td>
-            <td class="col">严重程度</td>
+            卧立位血压
+               <tb class="sol1 wide-col">卧立位血压</tb>
+               <tb class="sol2 wide-col">体侧</tb>
+               <tb class="sol3 wide-col">收缩压/舒张压（mmg）</tb>
+            <td class="col wide-col">心率（次/分）</td>
+            <td class="col">头晕</td>
           </tr>
-          <tr class="row" v-for="(reaction, index) in patientPhytheReaction">
+          <tr class="row" v-for="(reaction, index) in patientVitalSign">
             <td class="col narrow-col">{{index + 1}}</td>
             <td class="col wide-col">
-              {{transform(reaction.reactionType, 'reactionType')}}
+              {{getRealName(reaction.reactionType, 'reactionType')}}
             </td>
             <td class="col narrow-col">
-              <span v-if="mode===VIEW_CURRENT_CARD">{{transform(reaction.severityLevel,'reactionLevel')}}</span>
-              <el-select v-else v-model="reaction.severityLevel" @change="updateWarning('severityLevel')">
-                <el-option
-                  v-for="item in getOptions('reactionLevel')"
-                  :key="item.code"
-                  :label="item.name"
-                  :value="item.code">
-                </el-option>
-              </el-select>
+              <span v-if="mode===VIEW_CURRENT_CARD">{{reaction.reactionLevel}}</span>
+              <el-select v-else v-model="scale.reactionLevel" @change="updateWarning('reactionLevel')">
+              <el-option
+                v-for="item in getOptions('reactionLevel')"
+                :key="item.code"
+                :label="item.name"
+                :value="item.code">
+              </el-option>
+            </el-select>
             </td>
           </tr>
         </table>
       </div>
-       <P>无该症状 0；轻度 1-3；中度 4-6；重度 7-9；数值越大越严重</p>
       <div class="seperate-line"></div>
       <div class="button cancel-button btn-margin" @click="cancel">取消</div>
-      <div v-if="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD" class="button submit-button btn-margin" @click="submit">确定</div>
-      <div v-else-if="mode===VIEW_CURRENT_CARD && canEdit" class="button submit-button btn-margin" @click="switchToEditingMode">编辑</div>
+      <div v-show="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD" class="button submit-button btn-margin" @click="submit">确定</div>
+      <div v-show="mode===VIEW_CURRENT_CARD && canEdit" class="button submit-button btn-margin" @click="switchToEditingMode">编辑</div>
     </div>
   </div>
+</div>
 </template>
 
 <script>
@@ -207,8 +121,7 @@ import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import { deepCopy, vueCopy, reviseDateFormat, pruneObj } from 'utils/helper.js';
-import { addPhysiontherapy, modifyPhysiontherapy } from 'api/patient.js';
-
+import { addVitalSigns, modifyVitalSigns } from 'api/patient.js';
 export default {
   data() {
     return {
@@ -216,92 +129,82 @@ export default {
       mode: '',
       completeInit: false,
 
-      patientPhytheTmsId: '',
-      patientPhytheTms: '',
-      physiType: '',
-      recordDate: '',
-      deviceType: '',
-      stimulusIntensity: '',
-      stimulusFrequency: '',
-      stimulusSide: '',
-      stimulusDuration: '',
-      leftThresholdBefore: '',
-      rightThresholdBefore: '',
-      leftThresholdAfter: '',
-      rightThresholdAfter: '',
-      severityLevel: '',
+      patientVitalSignsId: '',
+      patientVitalSign: '',
+      checkTime: '',
+      breathing: '',
+      temperature: '',
+      pulse: '',
+      rhythm: '',
       patientPhytheReaction: [
         {
           'reactionType': 1,
-          'severityLevel': '',
+          'severityLevel': 0,
           'assessType': 1
         },
         {
           'reactionType': 2,
-          'severityLevel': '',
+          'severityLevel': 0,
           'assessType': 1
         },
         {
           'reactionType': 3,
-          'severityLevel': '',
+          'severityLevel': 0,
           'assessType': 1
         },
         {
           'reactionType': 4,
-          'severityLevel': '',
+          'severityLevel': 0,
           'assessType': 1
         },
         {
           'reactionType': 5,
-          'severityLevel': '',
+          'severityLevel': 0,
           'assessType': 1
         },
         {
           'reactionType': 6,
-          'severityLevel': '',
+          'severityLevel': 0,
           'assessType': 1
         },
         {
           'reactionType': 7,
-          'severityLevel': '',
+          'severityLevel': 0,
           'assessType': 1
         },
         {
           'reactionType': 8,
-          'severityLevel': '',
+          'severityLevel': 0,
           'assessType': 1
         },
         {
           'reactionType': 9,
-          'severityLevel': '',
+          'severityLevel': 0,
           'assessType': 1
         },
         {
           'reactionType': 10,
-          'severityLevel': '',
+          'severityLevel': 0,
           'assessType': 1
         },
         {
           'reactionType': 11,
-          'severityLevel': '',
+          'severityLevel': 0,
           'assessType': 1
         },
         {
           'reactionType': 12,
-          'severityLevel': '',
+          'severityLevel': 0,
           'assessType': 1
         },
         {
           'reactionType': 13,
-          'severityLevel': '',
+          'severityLevel': 0,
           'assessType': 1
         }
       ],
       warningResults: {
-        physiType: '',
-        recordDate: '',
-        leftThresholdBefore: '',
-        rightThresholdBefore: ''
+        checkTime: ''
       },
       pickerOptions: {
         disabledDate(time) {
@@ -317,9 +220,9 @@ export default {
     ]),
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
-        return '新增物理治疗';
+        return '新增生命体征';
       } else {
-        return '物理治疗';
+        return '生命体征';
       }
     },
     canEdit() {
@@ -335,24 +238,16 @@ export default {
       this.completeInit = false;
       this.mode = cardOperation;
       this.showEdit = showEdit;
-      for (let reaction of this.patientPhytheReaction) {
-        reaction.severityLevel = '';
-      }
+
       // console.log('item: ', item);
-      this.patientPhytheTmsId = item.patientPhytheTmsId ? item.patientPhytheTmsId : '';
-      this.recordDate = item.recordDate ? item.recordDate : '';
-      this.physiType = item.physiType ? item.physiType : '';
-      this.deviceType = item.deviceType ? item.deviceType : '';
-      this.stimulusIntensity = item.stimulusIntensity ? item.stimulusIntensity : '';
-      this.stimulusSide = item.stimulusSide ? item.stimulusSide : '';
-      this.stimulusDuration = item.stimulusDuration ? item.stimulusDuration : '';
-      this.leftThresholdBefore = item.leftThresholdBefore ? item.leftThresholdBefore : '';
-      this.rightThresholdBefore = item.rightThresholdBefore ? item.rightThresholdBefore : '';
-      this.leftThresholdAfter = item.leftThresholdAfter ? item.leftThresholdAfter : '';
-      this.rightThresholdAfter = item.rightThresholdAfter ? item.rightThresholdAfter : '';
-      vueCopy(item.patientPhytheReaction, this.patientPhytheReaction);
+      this.patientVitalSignsId = item.patientVitalSignsId ? item. patientVitalSignsId : '';
+      this.checkTime = item.checkTime ? item.checkTime : '';
+      this.breathing = item.breathing ? item.breathing : '';
+      this.temperature = item.temperature ? item.temperature : '';
+      this.pulse = item.pulse ? item.pulse : '';
+      this.rhythm = item.rhythm ? item.rhythm : '';
+      vueCopy(item.patientVitalSign, this.patientVitalSign);
       this.$nextTick(() => {
-        this.$refs.scrollArea.scrollTop = 0;
         for (var property in this.warningResults) {
           if (this.warningResults.hasOwnProperty(property)) {
             this.warningResults[property] = '';
@@ -364,7 +259,7 @@ export default {
       this.displayModal = true;
       this.updateScrollbar();
     },
-    transform(code, fieldName) {
+    transformSituationType(code, fieldName) {
       var options = this.getOptions(fieldName);
       var targetOption = Util.getElement('code', code, options);
       return targetOption.name;
@@ -381,19 +276,24 @@ export default {
       };
       return options;
     },
-    // transformToNum(obj, property, index, fieldName) {
-    //   // 如果填写的不是一个数字，则转换成一个空字符串，如果是一个数字，则将这个数字字符串转化为真正的数字
-    //   var value = obj[property];
-    //   var reg = new RegExp(/^[0-9]+\.{0,1}[0-9]{0,2}$/);
-    //   if (reg.test(value)) {
-    //     obj[property] = Number(value);
-    //   } else {
-    //     obj[property] = '';
-    //   }
-    // },
+    getRealName(code, typeGroupCode) {
+      var typesInfo = Util.getElement('typegroupcode', typeGroupCode, this.typeGroup);
+      var types = typesInfo && typesInfo.types ? typesInfo.types : [];
+      var type = Util.getElement('typeCode', code, types);
+      return type.typeName ? type.typeName : '';
+    },
+    transformToNum(obj, property) {
+      // 如果填写的不是一个数字，则转换成一个空字符串，如果是一个数字，则将这个数字字符串转化为真正的数字
+      var value = obj[property];
+      var reg = new RegExp(/^[0-9]+\.{0,1}[0-9]{0,2}$/);
+      if (reg.test(value)) {
+        obj[property] = Number(value);
+      } else {
+        obj[property] = '';
+      }
+    },
     updateWarning(fieldName) {
-      var list = ['recordDate', 'physiType', 'leftThresholdBefore', 'rightThresholdBefore'];
-      if (list.indexOf(fieldName) >= 0 && !this[fieldName]) {
+      if (this.completeInit && !this[fieldName]) {
         this.warningResults[fieldName] = '必填项';
       } else {
         this.warningResults[fieldName] = '';
@@ -412,47 +312,38 @@ export default {
         return;
       }
       this.lockSubmitButton = true;
-      console.log(1111);
+
       for (let property in this.warningResults) {
-        if (this.warningResults.hasOwnProperty(property)) {
+        if (this.fieldListToCheck.indexOf(property) >= 0 && this.warningResults.hasOwnProperty(property)) {
           this.updateWarning(property);
         }
       }
       for (let property in this.warningResults) {
-        if (this.warningResults.hasOwnProperty(property) && this.warningResults[property]) {
+        if (this.fieldListToCheck.indexOf(property) >= 0 && this.warningResults.hasOwnProperty(property) && this.warningResults[property]) {
           this.lockSubmitButton = false;
-          console.log(property, this.warningResults[property]);
           return;
         }
       }
-      console.log(2222);
-      var physicsInfo = {};
-      physicsInfo.patientCaseId = this.$route.params.caseId;
-
-      physicsInfo.physiType = this.physiType;
-      physicsInfo.recordDate = this.recordDate;
-      physicsInfo.deviceType = this.deviceType;
-      physicsInfo.stimulusIntensity = this.stimulusIntensity;
-      physicsInfo.stimulusFrequency = this.stimulusFrequency;
-      physicsInfo.stimulusSide = this.stimulusSide;
-      physicsInfo.stimulusDuration = this.stimulusDuration;
-      physicsInfo.leftThresholdBefore = this.leftThresholdBefore;
-      physicsInfo.rightThresholdBefore = this.rightThresholdBefore;
-      physicsInfo.leftThresholdAfter = this.leftThresholdAfter;
-      physicsInfo.rightThresholdAfter = this.rightThresholdAfter;
-      physicsInfo.patientPhytheReaction = deepCopy(this.patientPhytheReaction);
-
-      reviseDateFormat(physicsInfo);
-      pruneObj(physicsInfo);
+      var vitalSignsInfo = {};
+      vitalSignsInfo.patientVitalSignsId = this.$route.params.caseId;
+      vitalSignsInfo.patientVitalSign = this.patientVitalSign;
+      vitalSignsInfo.checkTime = this.checkTime;
+      vitalSignsInfo.breathing = this.breathing;
+      vitalSignsInfo.temperature = this.temperature;
+      vitalSignsInfo.pulse = this.pulse;
+      vitalSignsInfo.rhythm = this.rhythm;
+      vitalSignsInfo.patientVitalSign = deepCopy(this.patientVitalSign);
+      reviseDateFormat(vitalSignsInfo);
+      pruneObj(vitalSignsInfo);
 
       if (this.mode === this.ADD_NEW_CARD) {
-        addPhysiontherapy(physicsInfo).then(() => {
+        addVitalSigns(vitalSignsInfo).then(() => {
           this.updateAndClose();
         }, this._handleError);
 
       } else if (this.mode === this.EDIT_CURRENT_CARD) {
-        physicsInfo.patientPhytheTmsId = this.patientPhytheTmsId;
-        modifyPhysiontherapy(physicsInfo).then(() => {
+        vitalSignsInfo.patientVitalSignsId = this.patientVitalSignsId;
+        modifyVitalSigns(vitalSignsInfo).then(() => {
           this.updateAndClose();
         }, this._handleError);
       }
@@ -478,11 +369,11 @@ export default {
     }
   },
   mounted() {
-    Bus.$on(this.SHOW_PHYSIONTHERAPY_MODAL, this.showPanel);
+    Bus.$on(this.SHOW_VITALSIGNS_MODAL, this.showPanel);
     this.updateScrollbar();
   },
   beforeDestroy() {
-    Bus.$off(this.SHOW_PHYSIONTHERAPY_MODAL);
+    Bus.$off(this.SHOW_VITALSIGNS_MODAL);
   }
 };
 </script>
@@ -491,10 +382,9 @@ export default {
 @import "~styles/variables.less";
 
 @field-line-height: 25px;
-@field-name-width: 150px;
-@long-field-name-width: 160px;
+@field-name-width: 125px;
 
-.physiontherapy-modal-wrapper {
+.vital-signs-modal-wrapper {
   position: absolute;
   left: 0;
   top: 0;
@@ -502,13 +392,13 @@ export default {
   height: 100%;
   background-color: fadeout(@light-font-color, 30%);
   z-index: 500;
-  .physiontherapy-modal {
+  .vital-signs-modal {
     position: relative;
     margin: auto;
     padding: 0 40px;
-    top: 3%;
-    width: 660px;
-    max-height: 94%;
+    top: 5%;
+    width: 600px;
+    max-height: 90%;
     background-color: @background-color;
     overflow: hidden;
     .title {
@@ -516,7 +406,7 @@ export default {
       font-size: @large-font-size;
     }
     .content {
-      text-align: left;
+      // text-align: left;
       font-size: 0;
       .field {
         display: inline-block;
@@ -697,6 +587,30 @@ export default {
           }
         }
       }
+      .sol1 {
+         position: absolute;
+         width: 18%;
+         display: inline-block;
+         transform: translate(-216px,16px);
+         border: 1px solid @light-gray-color;
+         text-align: center;
+      }
+      .sol2 {
+         position: absolute;
+         width: 10%;
+         display: inline-block;
+         transform: translate(-94px,16px);
+         border: 1px solid @light-gray-color;
+         text-align: center;
+      }
+      .sol3 {
+         position: absolute;
+         width: 25%;
+         display: inline-block;
+         transform: translate(-26px,16px);
+         border: 1px solid @light-gray-color;
+         text-align: center;
+      }
     }
     .seperate-line {
       width: 90%;
@@ -752,5 +666,4 @@ export default {
     }
   }
 }
-
 </style>

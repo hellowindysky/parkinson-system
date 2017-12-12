@@ -85,14 +85,14 @@
             <td class="col wide-col">不良反应程度评估</td>
             <td class="col">严重程度</td>
           </tr>
-          <tr class="row" v-for="(scale, index) in treatmentEvaluationInfo.patientPhytheReaction">
+          <tr class="row" v-for="(reaction, index) in patientPhytheReaction">
             <td class="col narrow-col">{{index + 1}}</td>
             <td class="col wide-col">
-              {{getRealName(scale.reactionType, 'reactionType')}}
+               {{transformSituationType(reaction.reactionType, 'reactionType')}}
             </td>
             <td class="col narrow-col">
-              <span v-if="mode===VIEW_CURRENT_CARD">{{scale.reactionLevel}}</span>
-              <el-select v-else v-model="scale.reactionLevel" @change="updateWarning('reactionLevel')">
+              <span v-if="mode===VIEW_CURRENT_CARD">{{transformSituationType(reaction.severityLevel,'reactionLevel')}}</span>
+              <el-select v-else v-model="reaction.severityLevel" @change="updateWarning('severityLevel')">
               <el-option
                 v-for="item in getOptions('reactionLevel')"
                 :key="item.code"
@@ -104,7 +104,7 @@
           </tr>
         </table>
       </div>
-      <P>无该症状 0；轻度 1-3；中度 4-6；重度 7-9；数值越大越严重</p>
+       <P>无该症状 0；轻度 1-3；中度 4-6；重度 7-9；数值越大越严重</p>
       <div class="seperate-line"></div>
       <div class="button cancel-button btn-margin" @click="cancel">取消</div>
       <div v-show="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD" class="button submit-button btn-margin" @click="submit">确定</div>
@@ -118,89 +118,9 @@ import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import { vueCopy, reviseDateFormat, pruneObj } from 'utils/helper.js';
+import { deepCopy, vueCopy, reviseDateFormat, pruneObj } from 'utils/helper.js';
 import { addTreatmentEvaluation, modifyTreatmentEvaluation } from 'api/patient.js';
 
-let dataModel = {
-  'patientPhytheReaction': [{
-    'reactionType': 1,
-    'severityLevel': 0,
-    'assessType': 1,
-    'reactionLevel': 0
-    },
-    {
-    'reactionType': 2,
-    'severityLevel': 0,
-    'assessType': 1,
-    'reactionLevel': 0
-  },
-  {
-    'reactionType': 3,
-    'severityLevel': 0,
-    'assessType': 1,
-    'reactionLevel': 0
-  },
-  {
-    'reactionType': 4,
-    'severityLevel': 0,
-    'assessType': 1,
-    'reactionLevel': 0
-  },
-  {
-    'reactionType': 5,
-    'severityLevel': 0,
-    'assessType': 1,
-    'reactionLevel': 0
-  },
-  {
-    'reactionType': 6,
-    'severityLevel': 0,
-    'assessType': 1,
-    'reactionLevel': 0
-  },
-  {
-    'reactionType': 7,
-    'severityLevel': 0,
-    'assessType': 1,
-    'reactionLevel': 0
-  },
-  {
-    'reactionType': 8,
-    'severityLevel': 0,
-    'assessType': 1,
-    'reactionLevel': 0
-  },
-  {
-    'reactionType': 9,
-    'severityLevel': 0,
-    'assessType': 1,
-    'reactionLevel': 0
-  },
-  {
-    'reactionType': 10,
-    'severityLevel': 0,
-    'assessType': 1,
-    'reactionLevel': 0
-  },
-  {
-    'reactionType': 11,
-    'severityLevel': 0,
-    'assessType': 1,
-    'reactionLevel': 0
-  },
-  {
-    'reactionType': 12,
-    'severityLevel': 0,
-    'assessType': 1,
-    'reactionLevel': 0
-  },
-  {
-    'reactionType': 13,
-    'severityLevel': 0,
-    'assessType': 1,
-    'reactionLevel': 0
-  }]
-};
 export default {
   data() {
     return {
@@ -216,8 +136,73 @@ export default {
       rightThreshold: '',
       situationRemark: '',
       severityLevel: '',
-      reactionLevel: '',
-      treatmentEvaluationInfo: {},
+      patientPhytheReaction: [
+        {
+          'reactionType': 1,
+          'severityLevel': '',
+          'assessType': 1
+        },
+        {
+          'reactionType': 2,
+          'severityLevel': '',
+          'assessType': 1
+        },
+        {
+          'reactionType': 3,
+          'severityLevel': '',
+          'assessType': 1
+        },
+        {
+          'reactionType': 4,
+          'severityLevel': '',
+          'assessType': 1
+        },
+        {
+          'reactionType': 5,
+          'severityLevel': '',
+          'assessType': 1
+        },
+        {
+          'reactionType': 6,
+          'severityLevel': '',
+          'assessType': 1
+        },
+        {
+          'reactionType': 7,
+          'severityLevel': '',
+          'assessType': 1
+        },
+        {
+          'reactionType': 8,
+          'severityLevel': '',
+          'assessType': 1
+        },
+        {
+          'reactionType': 9,
+          'severityLevel': '',
+          'assessType': 1
+        },
+        {
+          'reactionType': 10,
+          'severityLevel': '',
+          'assessType': 1
+        },
+        {
+          'reactionType': 11,
+          'severityLevel': '',
+          'assessType': 1
+        },
+        {
+          'reactionType': 12,
+          'severityLevel': '',
+          'assessType': 1
+        },
+        {
+          'reactionType': 13,
+          'severityLevel': '',
+          'assessType': 1
+        }
+      ],
       warningResults: {
         situationType: '',
         recordDate: '',
@@ -274,9 +259,7 @@ export default {
       this.leftThreshold = item.leftThreshold ? item.leftThreshold : '';
       this.rightThreshold = item.rightThreshold ? item.rightThreshold : '';
       this.situationRemark = item.situationRemark ? item.situationRemark : '';
-      this.severityLevel = item.severityLevel ? item.severityLevel : '';
-      this.reactionLevel = item.reactionLevel ? item.reactionLevel : '';
-      this.initCopyInfo();
+      vueCopy(item.patientPhytheReaction, this.patientPhytheReaction);
       this.$nextTick(() => {
         for (var property in this.warningResults) {
           if (this.warningResults.hasOwnProperty(property)) {
@@ -288,10 +271,6 @@ export default {
       this.completeInit = true;
       this.displayModal = true;
       this.updateScrollbar();
-    },
-    initCopyInfo() {
-      this.treatmentEvaluationInfo = {};
-      vueCopy(dataModel, this.treatmentEvaluationInfo);
     },
     transformSituationType(code, fieldName) {
       var options = this.getOptions(fieldName);
@@ -310,13 +289,7 @@ export default {
       };
       return options;
     },
-    getRealName(code, typeGroupCode) {
-      var typesInfo = Util.getElement('typegroupcode', typeGroupCode, this.typeGroup);
-      var types = typesInfo && typesInfo.types ? typesInfo.types : [];
-      var type = Util.getElement('typeCode', code, types);
-      return type.typeName ? type.typeName : '';
-    },
-    transformToNum(obj, property, index, fieldName) {
+    transformToNum(obj, property) {
       // 如果填写的不是一个数字，则转换成一个空字符串，如果是一个数字，则将这个数字字符串转化为真正的数字
       var value = obj[property];
       var reg = new RegExp(/^[0-9]+\.{0,1}[0-9]{0,2}$/);
@@ -327,7 +300,8 @@ export default {
       }
     },
     updateWarning(fieldName) {
-      if (this.completeInit && !this[fieldName]) {
+      var list = ['recordDate', 'situationType', 'leftThreshold', 'rightThreshold'];
+      if (list.indexOf(fieldName) >= 0 && !this[fieldName]) {
         this.warningResults[fieldName] = '必填项';
       } else {
         this.warningResults[fieldName] = '';
@@ -365,8 +339,7 @@ export default {
       treatmentEvaluationInfo.leftThreshold = this.leftThreshold;
       treatmentEvaluationInfo.rightThreshold = this.rightThreshold;
       treatmentEvaluationInfo.situationRemark = this.situationRemark;
-      treatmentEvaluationInfo.severityLevel = this.severityLevel;
-      treatmentEvaluationInfo.reactionLevel = this.reactionLevel;
+      treatmentEvaluationInfo.patientPhytheReaction = deepCopy(this.patientPhytheReaction);
       reviseDateFormat(treatmentEvaluationInfo);
       pruneObj(treatmentEvaluationInfo);
 

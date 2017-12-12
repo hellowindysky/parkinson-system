@@ -18,6 +18,7 @@
     <operative-complication-modal></operative-complication-modal>
     <physiontherapy-modal></physiontherapy-modal>
     <treatmentEvaluation-modal></treatmentEvaluation-modal>
+    <vitalSigns-modal></vitalSigns-modal>
     <dbs-modal></dbs-modal>
     <nervous-system-modal></nervous-system-modal>
     <gene-modal></gene-modal>
@@ -56,6 +57,7 @@ import operativeComplicationModal from 'components/views/modal/operativecomplica
 import dbsModal from 'components/views/modal/dbsmodal/DbsModal';
 import physiontherapyModal from 'components/views/modal/physiontherapymodal/PhysiontherapyModal';
 import treatmentEvaluationModal from 'components/views/modal/treatmentEvaluationmodal/TreatmentEvaluationModal';
+import vitalSignsModal from 'components/views/modal/vitalSignsmodal/VitalSignsModal';
 import nervousSystemModal from 'components/views/modal/nervoussystemmodal/NervousSystemModal';
 import geneModal from 'components/views/modal/genemodal/GeneModal';
 import biochemicalExamModal from 'components/views/modal/biochemicalexammodal/BiochemicalExamModal';
@@ -98,6 +100,7 @@ export default {
     dbsModal,
     physiontherapyModal,
     treatmentEvaluationModal,
+    vitalSignsModal,
     nervousSystemModal,
     geneModal,
     biochemicalExamModal,

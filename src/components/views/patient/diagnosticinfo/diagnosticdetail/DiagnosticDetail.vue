@@ -23,7 +23,7 @@
         :biochemicalExamList="caseDetail.patientBioexam"
         :emgList="caseDetail.patientElecTroGram"
         :medicalImagingList="caseDetail.patientVideoList"
-        :VitalSignsData="VitalSignsData">
+        :diagnosticVitalSigns="caseDetail.diagnosticVitalSigns">
       </diagnostic-examination>
       <div class="blank-area"></div>
     </div>
