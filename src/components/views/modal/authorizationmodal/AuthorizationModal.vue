@@ -4,13 +4,23 @@
       <div v-show="!hasAuthorized" class="unauthorized">
         <div class="title">授权技术支持</div>
         <div class="field">请输入需授权的技术支持员账号</div>
-        <div class="field">
+        <div class="field input">
           <el-input v-model="technicalSupportAccount"
             :placeholder="'请输入技术支持员的睿云账号或手机号'"></el-input>
         </div>
+        <div class="field">请输入短信验证码:
+          <span class="phone-num">【当前手机账号 {{accountNumber}}】</span>
+        </div>
+        <div class="field input">
+          <el-input class="short-input" v-model="verificationCode"
+            :placeholder="'请输入短信验证码'"></el-input>
+          <span class="send-button" :class="{'disabled':codeButtonStatus===1}" @click="sendCode">
+            {{codeButtonText}}
+          </span>
+        </div>
         <div class="field agreement">
           <el-checkbox v-model="readAgreement"></el-checkbox>
-          我已阅读并同意<span class="link" @click="showSecretAgreement">睿云系统保密协议</span>
+          我已阅读并同意<span class="link" @click="showSecretAgreement">授权技术支持协议</span>
         </div>
         <div class="seperate-line"></div>
         <div class="button-wrapper">
@@ -32,6 +42,7 @@
 
 <script>
 import Bus from 'utils/bus.js';
+import { sendVerificationCode } from 'api/user.js';
 
 export default {
   data() {
@@ -39,15 +50,71 @@ export default {
       displayModal: false,
       hasAuthorized: false,
       lockSubmitButton: false,
+
       technicalSupportAccount: '',
-      readAgreement: false
+      accountNumber: '',
+      verificationCode: '',
+      codeButtonStatus: 0,
+      readAgreement: false,
+
+      lockSendButton: false,
+      codeButtonCount: 0,
+      countDown: null
     };
+  },
+  computed: {
+    codeButtonText() {
+      if (this.codeButtonStatus === 0) {
+        return '获取验证码';
+      } else if (this.codeButtonStatus === 1) {
+        return '重新获取 (' + this.codeButtonCount + ')';
+      } else if (this.codeButtonStatus === 2) {
+        return '重新获取';
+      }
+    }
   },
   methods: {
     showModal() {
       this.displayModal = true;
       this.technicalSupportAccount = '';
       this.readAgreement = false;
+      this.accountNumber = sessionStorage.getItem('accountNumber');
+      this.verificationCode = '';
+      if (this.codeButtonStatus === 1) {
+        this.codeButtonStatus = 0;
+      }
+    },
+    sendCode() {
+      if (this.lockSendButton) {
+        return;
+      }
+
+      this.lockSendButton = true;
+      var verificationInfo = {
+        businessType: 2
+      };
+      sendVerificationCode(verificationInfo).then(() => {
+        this.lockSendButton = false;
+        this.codeButtonStatus = 1;
+        this.codeButtonCount = 180;
+        this.countDown = setInterval(() => {
+          this.codeButtonCount -= 1;
+          if (this.codeButtonCount <= 0) {
+            clearInterval(this.countDown);
+            this.codeButtonStatus = 2;
+          }
+        }, 1000);
+      }, (error) => {
+        this.lockSendButton = false;
+        console.log(error);
+        if (error.code === 32) {
+          this.$message({
+            message: '请等待足够时间后再发送验证码',
+            type: 'warning',
+            duration: 2000
+          });
+        }
+      });
     },
     cancel() {
       this.lockSubmitButton = false;
@@ -84,7 +151,7 @@ export default {
 <style lang="less">
 @import "~styles/variables.less";
 
-@field-height: 45px;
+@field-height: 40px;
 
 .authorization-modal-wrapper {
   position: absolute;
@@ -99,7 +166,7 @@ export default {
     margin: auto;
     padding: 0 40px;
     top: 10%;
-    width: 320px;
+    width: 360px;
     text-align: left;
     font-size: 0;
     background-color: @background-color;
@@ -123,8 +190,11 @@ export default {
         line-height: @field-height;
         font-size: @normal-font-size;
         text-align: left;
+        &.input {
+          margin-bottom: 15px;
+        }
         &.agreement {
-          padding-top: 10px;
+          padding-top: 5px;
           .link {
             border-bottom: 1px solid @light-font-color;
             cursor: pointer;
@@ -136,11 +206,42 @@ export default {
             }
           }
         }
+        .phone-num {
+          color: @button-color;
+        }
+        .short-input {
+          width: 60%;
+        }
         .el-input {
           .el-input__inner {
             height: 30px;
             border: none;
             background-color: @screen-color;
+          }
+        }
+        .send-button {
+          display: inline-block;
+          position: absolute;
+          right: 0;
+          top: 7px;
+          width: 100px;
+          height: 30px;
+          line-height: 30px;
+          text-align: center;
+          border-radius: 5px;
+          background-color: @light-font-color;
+          color: #fff;
+          cursor: pointer;
+          &:hover {
+            opacity: 0.8;
+          }
+          &:active {
+            opacity: 0.9;
+          }
+          &.disabled {
+            pointer-events: none;
+            background-color: @gray-color;
+            cursor: default;
           }
         }
       }
