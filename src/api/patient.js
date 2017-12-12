@@ -925,3 +925,29 @@ export function deleteTreatmentEvaluation(patientPhytheAssess) {
 
   return encapsulatePromise(url, request);
 };
+// 新增生命体征
+export function addVitalSigns(patientVitalSign) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientVitalSign = patientVitalSign;
+  var url = baseUrl + '/pdms/addPatientVitalSign';
+
+  return encapsulatePromise(url, request);
+};
+
+// 修改生命体征
+export function modifyVitalSigns(patientVitalSign) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientVitalSign = patientVitalSign;
+  var url = baseUrl + '/pdms/modPatientVitalSign';
+
+  return encapsulatePromise(url, request);
+};
+
+// 删除生命体征
+export function deleteVitalSigns(patientVitalSign) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientVitalSign = patientVitalSign;
+  var url = baseUrl + '/pdms/delPatientVitalSign';
+
+  return encapsulatePromise(url, request);
+};
