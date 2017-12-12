@@ -32,10 +32,13 @@
       </div>
       <div v-show="hasAuthorized" class="authorized">
         <img src="~img/profile.png" alt="icon" class="avatar">
-        <div class="authorization-account">某某某</div>
+        <div class="authorization-account">{{supportAccountName}}</div>
         <div class="authorization-status">当前授权中</div>
+        <div class="authorization-number">
+          <span class="iconfont icon-phone"></span>
+          {{supportAccountNumber}}
+        </div>
         <div class="button terminate-button" @click="terminateAuthorization">解除授权</div>
-        <div class="button replace-button" @click="replaceAuthorization">更换授权</div>
         <div class="button cancel-button" @click="cancel">取消</div>
       </div>
     </div>
@@ -44,7 +47,7 @@
 
 <script>
 import Bus from 'utils/bus.js';
-import { sendVerificationCode, getTechnicalSupport, addAuthentication } from 'api/user.js';
+import { sendVerificationCode, getTechnicalSupport, addAuthentication, removeAuthentication } from 'api/user.js';
 
 export default {
   data() {
@@ -63,7 +66,10 @@ export default {
 
       lockSendButton: false,
       codeButtonCount: 0,
-      countDown: null
+      countDown: null,
+
+      technicalSupportAccountInfo: null,
+      lockTerminateButton: false
     };
   },
   computed: {
@@ -75,20 +81,35 @@ export default {
       } else if (this.codeButtonStatus === 2) {
         return '重新获取';
       }
+    },
+    supportAccountName() {
+      return (this.technicalSupportAccountInfo && this.technicalSupportAccountInfo.realname)
+        ? this.technicalSupportAccountInfo.realname : '';
+    },
+    supportAccountNumber() {
+      return (this.technicalSupportAccountInfo && this.technicalSupportAccountInfo.mobilephone)
+        ? this.technicalSupportAccountInfo.mobilephone : '';
     }
   },
   methods: {
-    showModal() {
-      this.displayModal = true;
+    showModal(technicalSupportAccountInfo) {
+      if (technicalSupportAccountInfo === null) {
+        this.hasAuthorized = false;
+      } else {
+        this.technicalSupportAccountInfo = technicalSupportAccountInfo;
+        this.hasAuthorized = true;
+      }
+
       this.technicalSupportAccount = '';
       this.supportAccountWarning = '';
       this.readAgreement = false;
       this.accountNumber = sessionStorage.getItem('accountNumber');
       this.verificationCode = '';
       this.verificationCodeWarning = '';
-      if (this.codeButtonStatus === 1) {
+      if (this.codeButtonStatus === 2) {
         this.codeButtonStatus = 0;
       }
+      this.displayModal = true;
     },
     updateVerificationCode() {
       if (/^[0-9]*$/.test(this.verificationCode)) {
@@ -134,6 +155,8 @@ export default {
     },
     cancel() {
       this.lockSubmitButton = false;
+      this.lockSendButton = false;
+      this.lockTerminateButton = false;
       this.displayModal = false;
     },
     submit() {
@@ -164,23 +187,26 @@ export default {
       }
 
       getTechnicalSupport(this.technicalSupportAccount).then((data) => {
-        console.log(data);
         if (!data || data.length === 0) {
           this.supportAccountWarning = '请输入正确的技术支持员账号';
           this.lockSubmitButton = false;
 
         } else if (data.length > 0) {
           let supportAccountList = [data[0].id];
-          addAuthentication(supportAccountList).then(() => {
+          addAuthentication(supportAccountList, this.verificationCode).then(() => {
             this.$message({
               message: '已成功授权',
               type: 'success',
               duration: 2000
             });
             this.lockSubmitButton = false;
+            Bus.$emit(this.UPDATE_AUTHORIZED_STATUS);
             this.displayModal = false;
 
           }, (error) => {
+            if (error.code === 33) {
+              this.verificationCodeWarning = '验证码输入错误或已失效';
+            }
             console.log(error);
             this.lockSubmitButton = false;
           });
@@ -192,10 +218,26 @@ export default {
       });
     },
     terminateAuthorization() {
-      this.hasAuthorized = false;
-    },
-    replaceAuthorization() {
+      if (this.lockTerminateButton) {
+        return;
+      }
+      this.lockTerminateButton = true;
 
+      let supportAccountList = [this.technicalSupportAccountInfo.id];
+      removeAuthentication(supportAccountList).then(() => {
+        this.$message({
+          message: '成功解除授权',
+          type: 'success',
+          duration: 2000
+        });
+        Bus.$emit(this.UPDATE_AUTHORIZED_STATUS);
+        this.displayModal = false;
+        this.lockTerminateButton = false;
+
+      }, (error) => {
+        console.log(error);
+        this.lockTerminateButton = false;
+      });
     },
     showSecretAgreement() {
       Bus.$emit(this.SHOW_SECRET_AGREEMENT_MODAL);
@@ -227,13 +269,14 @@ export default {
     position: relative;
     margin: auto;
     padding: 0 40px;
-    top: 10%;
+    top: 12%;
     width: 360px;
     text-align: left;
     font-size: 0;
     background-color: @background-color;
     transition: 0.1s;
     &.narrow {
+      top: 18%;
       width: 220px;
     }
     .unauthorized {
@@ -370,6 +413,16 @@ export default {
         color: @button-color;
         font-size: @normal-font-size;
       }
+      .authorization-number {
+        padding: 0 15px 0 0;
+        line-height: 25px;
+        font-size: @normal-font-size;
+        color: @light-font-color;
+        .iconfont {
+          display: inline-block;
+          transform: translateY(1px);
+        }
+      }
       .button {
         margin: 15px auto;
         width: 220px;
@@ -378,7 +431,7 @@ export default {
         font-size: @normal-font-size;
         color: #fff;
         cursor: pointer;
-        &.terminate-button, &.replace-button {
+        &.terminate-button {
           background-color: @light-font-color;
         }
         &.cancel-button {

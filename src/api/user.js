@@ -38,9 +38,10 @@ export function getAuthenticationList() {
 };
 
 // 医生新增授权的技术支持，参数为一个数组
-export function addAuthentication(technicalSupportAccountList) {
+export function addAuthentication(technicalSupportAccountList, verificationCode) {
   var request = Object.assign({}, getCommonRequest());
   request.techSupport = technicalSupportAccountList;
+  request.verifyCode = verificationCode;
   var url = baseUrl + '/usermgr/addAuthTechSupport';
 
   return encapsulatePromise(url, request);

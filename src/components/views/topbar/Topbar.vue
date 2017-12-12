@@ -48,6 +48,10 @@
 
 <script>
 import Bus from 'utils/bus.js';
+import { getAuthenticationList } from 'api/user.js';
+
+const WAITING_TO_CHANGE = 'waitingToChange';
+const NEED_TO_QUERY_AGAIN = 'needToQueryAgain';
 
 export default {
   props: {
@@ -60,7 +64,8 @@ export default {
     return {
       showOranizationPanel: false,
       showAccountPanel: false,
-      blockSensitiveInfo: true
+      blockSensitiveInfo: true,
+      technicalSupportAccountInfo: null
     };
   },
   computed: {
@@ -146,7 +151,40 @@ export default {
     },
     authorize() {
       this.showAccountPanel = false;
-      Bus.$emit(this.SHOW_AUTHORIZATION_MODAL);
+      console.log(this.technicalSupportAccountInfo);
+      if (this.technicalSupportAccountInfo === WAITING_TO_CHANGE) {
+        // 只有网速很慢，而且用户在刚刚更新账户信息之后马上点击，才会走到这个逻辑里面，一般不会出现该情况
+        this.$message({
+          message: '账户信息正在更新，请稍后再试',
+          type: 'warning',
+          duration: 2000
+        });
+
+      } else if (this.technicalSupportAccountInfo === NEED_TO_QUERY_AGAIN) {
+        this.updateAuthorizedStatus();
+        this.$message({
+          message: '账户信息正在更新，请稍后再试',
+          type: 'warning',
+          duration: 2000
+        });
+
+      } else {
+        // 只有当支持员账户信息的更新过程完成之后，才打开模态框
+        Bus.$emit(this.SHOW_AUTHORIZATION_MODAL, this.technicalSupportAccountInfo);
+      }
+    },
+    updateAuthorizedStatus() {
+      this.technicalSupportAccountInfo = WAITING_TO_CHANGE;
+      getAuthenticationList().then((data) => {
+        if (data && data.length > 0) {
+          this.technicalSupportAccountInfo = data[0];
+        } else {
+          this.technicalSupportAccountInfo = null;
+        }
+      }, (error) => {
+        this.technicalSupportAccountInfo = NEED_TO_QUERY_AGAIN;
+        console.log(error);
+      });
     },
     resetPassword() {
       this.showAccountPanel = false;
@@ -165,14 +203,19 @@ export default {
     this.$store.dispatch('getWholeTemplate');
     this.$store.dispatch('getScaleList');
 
+    this.updateAuthorizedStatus();
+
     Bus.$on(this.BLUR_ON_SCREEN, this.hidePanels);
     Bus.$on(this.PERMIT_DISPLAYING_SENSITIVE_INFO, () => {
       this.$store.commit('PERMIT_DISPLAYING_SENSITIVE_INFO');
       this.blockSensitiveInfo = false;
     });
+    Bus.$on(this.UPDATE_AUTHORIZED_STATUS, this.updateAuthorizedStatus);
   },
   beforeDestroy() {
     Bus.$off(this.BLUR_ON_SCREEN);
+    Bus.$off(this.PERMIT_DISPLAYING_SENSITIVE_INFO);
+    Bus.$off(this.UPDATE_AUTHORIZED_STATUS);
   }
 };
 </script>
