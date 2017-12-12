@@ -145,9 +145,14 @@
             <span class="field-input" v-else>
               <span class="warning-text">{{warningResults.treatmentType}}</span>
               <el-select v-model="copyInfo.treatmentType" clearable placeholder="请选择症状名称"
-               @change="updateWarning('treatmentType')" :class="{'warning': warningResults.treatmentType}" >
-                <el-option label="治疗类型1" :value="WINE_HISTORY_MODAL"></el-option>
-                <el-option label="治疗类型2" :value="SMOKE_HISTORY_MODAL"></el-option>
+               @change="updateWarning('treatmentType'),clearVal(['firstVisitType','treatmentType'])"
+                :class="{'warning': warningResults.treatmentType}" >
+                <el-option
+                 v-for="item in treatmentTypeOpt"
+                 :key="item.code"
+                 :label="item.name"
+                 :value="item.code">
+                </el-option>
               </el-select>
             </span>
           </div>
@@ -162,10 +167,13 @@
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-select v-model="copyInfo.treatmentMethod" clearable
-                placeholder="请选择治疗手段">
-                  <el-option label="吃药" :value="WINE_HISTORY_MODAL"></el-option>
-                  <el-option label="打针" :value="SMOKE_HISTORY_MODAL"></el-option>
+              <el-select v-model="copyInfo.treatmentMethod" clearable placeholder="请选择治疗手段">
+                <el-option
+                 v-for="item in treatmentMethodOpt"
+                 :key="item.typeCode"
+                 :label="item.typeName"
+                 :value="item.typeCode">
+                </el-option>
               </el-select>
             </span>
           </div>
@@ -220,6 +228,9 @@ import Bus from 'utils/bus.js';
 import Ps from 'perfect-scrollbar';
 import Util from 'utils/util.js';
 import { mapGetters } from 'vuex';
+import { reviseDateFormat, pruneObj } from 'utils/helper.js';
+import {addPatientFirstVisitTreatment} from 'api/patient.js';
+// import {addPatientFirstVisitTreatment, modPatientFirstVisitTreatment} from 'api/patient.js';
 export default {
   data() {
     return {
@@ -244,6 +255,7 @@ export default {
         treatmentType: '',
         medicineClassification: ''
       },
+      lockSubmitButton: false,
       value1: '',
       value2: '',
       date1: ''
@@ -259,6 +271,15 @@ export default {
         return '新增初诊治疗';
       } else {
         return '初诊治疗';
+      }
+    },
+    verificationFieldList() {
+      if (this.copyInfo.firstVisitType === 1) {
+        return ['firstVisitType', 'medicineClassification'];
+      } else if (this.copyInfo.firstVisitType === 2) {
+        return ['firstVisitType', 'treatmentType'];
+      } else {
+        return ['firstVisitType'];
       }
     },
     firstTreatmentTypeOptions() {
@@ -284,6 +305,14 @@ export default {
     treatmentTypeOpt() {
       // 非药物治疗治疗类型的select
       return this.getOptions('treatPro');
+    },
+    treatmentMethodOpt() {
+      // 治疗手段的select
+      return this.treatmentTypeOpt.filter((obj) => {
+        return obj.code === this.copyInfo.treatmentType;
+      }).map((obj) => {
+        return obj.child;
+      })[0];
     }
   },
   methods: {
@@ -337,7 +366,7 @@ export default {
       });
     },
     updateWarning(fieldName) {
-      if (this.completeInit && !this.copyInfo[fieldName]) {
+      if (this.completeInit && !this.copyInfo[fieldName] && this.copyInfo[fieldName] !== 0) {
         this.warningResults[fieldName] = '必填项';
       } else {
         this.warningResults[fieldName] = '';
@@ -350,7 +379,8 @@ export default {
       for (let type of types) {
         options.push({
           name: type.typeName,
-          code: type.typeCode
+          code: type.typeCode,
+          child: type.childType
         });
       };
       return options;
@@ -367,19 +397,59 @@ export default {
       });
     },
     cancel() {
+      this.lockSubmitButton = false;
       this.displayModal = false;
     },
     switchToEditingMode() {
       // ffff
     },
     submit() {
-      // ggg
+      if (this.lockSubmitButton) {
+        return;
+      }
+      this.lockSubmitButton = true;
+
+      // 验证必填项 如果没填显示红框，显示必填项三个字
+      for (let property in this.warningResults) {
+        if (this.verificationFieldList.indexOf(property) >= 0 && this.warningResults.hasOwnProperty(property)) {
+          this.updateWarning(property);
+        }
+      };
+      // 如果显示了必填项三个字，说明验证没通过，就将确定按钮打开，允许再次验证，并退出
+      for (let property in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(property) && this.warningResults[property]) {
+          this.lockSubmitButton = false;
+          return;
+        }
+      };
+
+      // 验证完成，准备请求数据
+      let submitData = Object.assign({}, this.copyInfo);
+      reviseDateFormat(submitData);
+      pruneObj(submitData);
+      submitData.patientId = this.$route.params.id;
+      console.log(submitData);
+      if (this.mode === this.ADD_NEW_CARD) {
+        addPatientFirstVisitTreatment(submitData).then(() => {
+          this.updateAndClose();
+          this.lockSubmitButton = false;
+        }, this._handleError);
+      } else if (this.mode === this.EDIT_CURRENT_CARD) {
+        // this.lockSubmitButton = false;
+      };
+
+    },
+    _handleError(error) {
+      console.log(error);
+      this.lockSubmitButton = false;
+    },
+    updateAndClose() {
+      Bus.$emit(this.UPDATE_PATIENT_INFO);
+      this.displayModal = false;
     }
   },
   mounted() {
     Bus.$on(this.SHOW_FIRSTTREATMENT_MODAL, this.showModal);
-    // console.log(this.firstTreatmentTypeOptions);
-    console.log(this.typeGroup, 1);
   }
 };
 </script>
