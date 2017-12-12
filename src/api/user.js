@@ -30,7 +30,7 @@ export function verifyMessageCode(verificationInfo) {
 };
 
 // 医生查询已授权的技术支持列表
-export function getAuthenticationList(verificationInfo) {
+export function getAuthenticationList() {
   var request = Object.assign({}, getCommonRequest());
   var url = baseUrl + '/usermgr/queryAuthTechSupport';
 

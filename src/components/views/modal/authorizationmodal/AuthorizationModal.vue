@@ -5,15 +5,17 @@
         <div class="title">授权技术支持</div>
         <div class="field">请输入需授权的技术支持员账号</div>
         <div class="field input">
-          <el-input v-model="technicalSupportAccount"
-            :placeholder="'请输入技术支持员的睿云账号或手机号'"></el-input>
+          <span class="warning-text">{{supportAccountWarning}}</span>
+          <el-input v-model="technicalSupportAccount" @change="updateSupportAccount"
+            :class="{'warning':supportAccountWarning}" :placeholder="'请输入技术支持员的睿云账号或手机号'"></el-input>
         </div>
         <div class="field">请输入短信验证码:
           <span class="phone-num">【当前手机账号 {{accountNumber}}】</span>
         </div>
         <div class="field input">
-          <el-input class="short-input" v-model="verificationCode"
-            :placeholder="'请输入短信验证码'"></el-input>
+          <span class="warning-text">{{verificationCodeWarning}}</span>
+          <el-input class="short-input" v-model="verificationCode" @change="updateVerificationCode"
+            :class="{'warning': verificationCodeWarning}" :placeholder="'请输入短信验证码'"></el-input>
           <span class="send-button" :class="{'disabled':codeButtonStatus===1}" @click="sendCode">
             {{codeButtonText}}
           </span>
@@ -42,7 +44,7 @@
 
 <script>
 import Bus from 'utils/bus.js';
-import { sendVerificationCode } from 'api/user.js';
+import { sendVerificationCode, getTechnicalSupport, addAuthentication } from 'api/user.js';
 
 export default {
   data() {
@@ -52,8 +54,10 @@ export default {
       lockSubmitButton: false,
 
       technicalSupportAccount: '',
+      supportAccountWarning: '',
       accountNumber: '',
       verificationCode: '',
+      verificationCodeWarning: '',
       codeButtonStatus: 0,
       readAgreement: false,
 
@@ -77,12 +81,24 @@ export default {
     showModal() {
       this.displayModal = true;
       this.technicalSupportAccount = '';
+      this.supportAccountWarning = '';
       this.readAgreement = false;
       this.accountNumber = sessionStorage.getItem('accountNumber');
       this.verificationCode = '';
+      this.verificationCodeWarning = '';
       if (this.codeButtonStatus === 1) {
         this.codeButtonStatus = 0;
       }
+    },
+    updateVerificationCode() {
+      if (/^[0-9]*$/.test(this.verificationCode)) {
+        this.verificationCodeWarning = '';
+      } else {
+        this.verificationCodeWarning = '请输入数字';
+      }
+    },
+    updateSupportAccount() {
+      this.supportAccountWarning = '';
     },
     sendCode() {
       if (this.lockSendButton) {
@@ -121,13 +137,59 @@ export default {
       this.displayModal = false;
     },
     submit() {
-      if (this.lockSubmitButton || !this.readAgreement) {
+      if (this.lockSubmitButton) {
         return;
       }
       this.lockSubmitButton = true;
 
-      this.hasAuthorized = true;
-      this.lockSubmitButton = false;
+      if (!this.readAgreement) {
+        this.$message({
+          message: '请阅读并同意授权技术支持协议',
+          type: 'warning',
+          duration: 2000
+        });
+        this.lockSubmitButton = false;
+        return;
+      }
+
+      if (this.technicalSupportAccount === '') {
+        this.supportAccountWarning = '请输入技术支持员的账号或手机号';
+      }
+      if (this.verificationCode === '') {
+        this.verificationCodeWarning = '请输入短信验证码';
+      }
+      if (this.supportAccountWarning !== '' || this.verificationCodeWarning !== '') {
+        this.lockSubmitButton = false;
+        return;
+      }
+
+      getTechnicalSupport(this.technicalSupportAccount).then((data) => {
+        console.log(data);
+        if (!data || data.length === 0) {
+          this.supportAccountWarning = '请输入正确的技术支持员账号';
+          this.lockSubmitButton = false;
+
+        } else if (data.length > 0) {
+          let supportAccountList = [data[0].id];
+          addAuthentication(supportAccountList).then(() => {
+            this.$message({
+              message: '已成功授权',
+              type: 'success',
+              duration: 2000
+            });
+            this.lockSubmitButton = false;
+            this.displayModal = false;
+
+          }, (error) => {
+            console.log(error);
+            this.lockSubmitButton = false;
+          });
+        }
+
+      }, (error) => {
+        this.lockSubmitButton = false;
+        console.log(error);
+      });
     },
     terminateAuthorization() {
       this.hasAuthorized = false;
@@ -192,6 +254,14 @@ export default {
         text-align: left;
         &.input {
           margin-bottom: 15px;
+          .warning-text {
+            position: absolute;
+            top: 25px;
+            left: 10px;
+            height: 15px;
+            color: red;
+            font-size: @small-font-size;
+          }
         }
         &.agreement {
           padding-top: 5px;
@@ -218,6 +288,9 @@ export default {
             border: none;
             background-color: @screen-color;
           }
+        }
+        .warning .el-input__inner {
+          border: 1px solid red;
         }
         .send-button {
           display: inline-block;
