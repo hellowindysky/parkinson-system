@@ -126,12 +126,24 @@ export default {
           '为确保账户及患者数据安全，切换为【全部显示】状态时需要手机验证，验证通过后才能进行切换。';
           Bus.$emit(this.SHOW_MESSAGE_MODAL, 3, title, desc);    // 第一个参数 3 代表脱敏业务
         } else {
-          this.blockSensitiveInfo = status;
+          this.showSensitiveInfo();
         }
 
       } else {
-        this.blockSensitiveInfo = status;
+        this.hideSensitiveInfo();
       }
+    },
+    showSensitiveInfo() {
+      this.blockSensitiveInfo = false;
+      var commonRequest = JSON.parse(sessionStorage.getItem('commonRequest'));
+      commonRequest.viewType = 1;
+      sessionStorage.setItem('commonRequest', JSON.stringify(commonRequest));
+    },
+    hideSensitiveInfo() {
+      this.blockSensitiveInfo = true;
+      var commonRequest = JSON.parse(sessionStorage.getItem('commonRequest'));
+      commonRequest.viewType = 2;
+      sessionStorage.setItem('commonRequest', JSON.stringify(commonRequest));
     },
     toggleFilterPanelDisplay() {
       Bus.$emit(this.TOGGLE_FILTER_PANEL_DISPLAY);
@@ -151,7 +163,6 @@ export default {
     },
     authorize() {
       this.showAccountPanel = false;
-      console.log(this.technicalSupportAccountInfo);
       if (this.technicalSupportAccountInfo === WAITING_TO_CHANGE) {
         // 只有网速很慢，而且用户在刚刚更新账户信息之后马上点击，才会走到这个逻辑里面，一般不会出现该情况
         this.$message({
@@ -208,7 +219,7 @@ export default {
     Bus.$on(this.BLUR_ON_SCREEN, this.hidePanels);
     Bus.$on(this.PERMIT_DISPLAYING_SENSITIVE_INFO, () => {
       this.$store.commit('PERMIT_DISPLAYING_SENSITIVE_INFO');
-      this.blockSensitiveInfo = false;
+      this.showSensitiveInfo();
     });
     Bus.$on(this.UPDATE_AUTHORIZED_STATUS, this.updateAuthorizedStatus);
   },

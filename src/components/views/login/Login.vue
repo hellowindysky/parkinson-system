@@ -338,7 +338,8 @@ export default {
               'accountNumber': this.accountNumber,
               'userType': this.userType,
               'orgId': 34,
-              'orgType': 2
+              'orgType': 2,
+              'viewType': 2   // 1 表示全部显示，2表示脱敏显示
             };
             sessionStorage.setItem('commonRequest', JSON.stringify(commonRequest));
 
