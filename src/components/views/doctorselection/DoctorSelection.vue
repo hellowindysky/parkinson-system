@@ -171,8 +171,8 @@ export default {
       cursor: pointer;
       .el-icon-loading {
         position: absolute;
-        top: 8px;
-        left: 10px;
+        top: 9px;
+        left: 12px;
       }
       .iconfont {
         position: absolute;
@@ -246,6 +246,7 @@ export default {
       right: 15px;
       top: 0;
       height: 50px;
+      margin-left: @this-card-horizontal-margin;
       box-sizing: border-box;
       background: @background-color;
       .iconfont {
@@ -284,34 +285,34 @@ export default {
         }
       }
       &.left-1-1, &.left-1-0 {
-        left: calc(~"100% + @{this-card-horizontal-margin} * 2 - 2px");
+        left: calc(~"100% + @{this-card-horizontal-margin}");
       }
       &.left-1-2 {
-        left: calc(~"50% + @{this-card-horizontal-margin} * 2 - 2px");
+        left: calc(~"50% + @{this-card-horizontal-margin}");
       }
       &.left-1-3 {
-        left: calc(~"33.3333% + @{this-card-horizontal-margin} * 2 - 2px");
+        left: calc(~"33.3333% + @{this-card-horizontal-margin}");
       }
       &.left-1-4 {
-        left: calc(~"25% + @{this-card-horizontal-margin} * 2 - 2px");
+        left: calc(~"25% + @{this-card-horizontal-margin}");
       }
       &.left-1-5 {
-        left: calc(~"20% + @{this-card-horizontal-margin} * 2 - 2px");
+        left: calc(~"20% + @{this-card-horizontal-margin}");
       }
       &.left-1-6 {
-        left: calc(~"16.6666% + @{this-card-horizontal-margin} * 2 - 2px");
+        left: calc(~"16.6666% + @{this-card-horizontal-margin}");
       }
       &.left-1-7 {
-        left: calc(~"14.2857% + @{this-card-horizontal-margin} * 2 - 2px");
+        left: calc(~"14.2857% + @{this-card-horizontal-margin}");
       }
       &.left-1-8 {
-        left: calc(~"12.5% + @{this-card-horizontal-margin} * 2 - 2px");
+        left: calc(~"12.5% + @{this-card-horizontal-margin}");
       }
       &.left-1-9 {
-        left: calc(~"11.1111% + @{this-card-horizontal-margin} * 2 - 2px");
+        left: calc(~"11.1111% + @{this-card-horizontal-margin}");
       }
       &.left-1-10 {
-        left: calc(~"10% + @{this-card-horizontal-margin} * 2 - 2px");
+        left: calc(~"10% + @{this-card-horizontal-margin}");
       }
     }
   }
