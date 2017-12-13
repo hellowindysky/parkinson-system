@@ -87,16 +87,15 @@
             <td class="col wide-col">心率（次/分）</td>
             <td class="col">头晕</td>
           </tr>
-          <tr class="row" v-for="(reaction, index) in patientVitalSign">
-            <td class="col narrow-col">{{index + 1}}</td>
+          <tr class="row" v-for="(reaction, index) in decubitusList">
             <td class="col wide-col">
-              {{getRealName(reaction.reactionType, 'reactionType')}}
+              {{transformDecubitus(reaction.reactionType, 'reactionType')}}
             </td>
             <td class="col narrow-col">
-              <span v-if="mode===VIEW_CURRENT_CARD">{{reaction.reactionLevel}}</span>
-              <el-select v-else v-model="scale.reactionLevel" @change="updateWarning('reactionLevel')">
+              <span v-if="mode===VIEW_CURRENT_CARD">{{reaction.decubitusDizzy}}</span>
+              <el-select v-else v-model="reaction.decubitusDizzy" @change="updateWarning('decubitusDizzy')">
               <el-option
-                v-for="item in getOptions('reactionLevel')"
+                v-for="item in getOptions('decubitusDizzy')"
                 :key="item.code"
                 :label="item.name"
                 :value="item.code">
@@ -128,6 +127,7 @@ export default {
       displayModal: false,
       mode: '',
       completeInit: false,
+      decubitusList: ['卧位', '坐位', '立位立即', '立位 1min', '立位 3min', '立位 5min', '立位 7min'],
 
       patientVitalSignsId: '',
       patientVitalSign: '',
@@ -136,7 +136,7 @@ export default {
       temperature: '',
       pulse: '',
       rhythm: '',
-      patientPhytheReaction: [
+      patientVitalSignDetail: [
         {
           'reactionType': 1,
           'severityLevel': 0,
@@ -259,7 +259,7 @@ export default {
       this.displayModal = true;
       this.updateScrollbar();
     },
-    transformSituationType(code, fieldName) {
+    transformDecubitus(code, fieldName) {
       var options = this.getOptions(fieldName);
       var targetOption = Util.getElement('code', code, options);
       return targetOption.name;
@@ -599,15 +599,15 @@ export default {
          position: absolute;
          width: 10%;
          display: inline-block;
-         transform: translate(-94px,16px);
+         transform: translate(-90px,16px);
          border: 1px solid @light-gray-color;
          text-align: center;
       }
       .sol3 {
          position: absolute;
-         width: 25%;
+         width: 24%;
          display: inline-block;
-         transform: translate(-26px,16px);
+         transform: translate(-20px,16px);
          border: 1px solid @light-gray-color;
          text-align: center;
       }
