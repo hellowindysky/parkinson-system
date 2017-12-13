@@ -55,7 +55,7 @@
         <span class="field-input" v-else>
          <el-input v-model="pulse" placeholder="请输入每分钟脉搏频率"></el-input>
         </span>
-      </div> 
+      </div>
       <div class="field">
         <span class="field-name">
         心率情况:
@@ -75,15 +75,15 @@
               </el-option>
             </el-select>
         </span>
-      </div> 
+      </div>
       <div class="seperate-line"></div>
       <div class="content">
         <table class="table">
           <tr class="row title-row">
             卧立位血压
-               <tb class="sol1 wide-col">卧立位血压</tb>
-               <tb class="sol2 wide-col">体侧</tb>
-               <tb class="sol3 wide-col">收缩压/舒张压（mmg）</tb>
+            <td class="sol1 wide-col">卧立位血压</td>
+            <td class="sol2 wide-col">体侧</td>
+            <td class="sol3 wide-col">收缩压/舒张压（mmg）</td>
             <td class="col wide-col">心率（次/分）</td>
             <td class="col">头晕</td>
           </tr>

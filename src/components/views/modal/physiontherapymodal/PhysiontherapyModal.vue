@@ -412,7 +412,6 @@ export default {
         return;
       }
       this.lockSubmitButton = true;
-      console.log(1111);
       for (let property in this.warningResults) {
         if (this.warningResults.hasOwnProperty(property)) {
           this.updateWarning(property);
@@ -425,7 +424,6 @@ export default {
           return;
         }
       }
-      console.log(2222);
       var physicsInfo = {};
       physicsInfo.patientCaseId = this.$route.params.caseId;
 
@@ -556,7 +554,7 @@ export default {
           display: inline-block;
           position: relative;
           left: @field-name-width;
-          width: calc(~"90% - @{field-name-width}");
+          width: calc(~"92% - @{field-name-width}");
           line-height: @field-line-height;
           font-size: @normal-font-size;
           color: @light-font-color;
