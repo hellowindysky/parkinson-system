@@ -2,9 +2,6 @@
   <div class="doctor-selection">
     <div class="top-bar shadow">
       <h2 class="title">{{title}}</h2>
-      <!-- <div class="fresh-button">
-        <span class="iconfont icon-refresh"></span>
-      </div> -->
       <el-button class="fresh-button" type="primary" :loading="refreshing" @click="refreshList">
         <span class="iconfont icon-refresh" v-show="!refreshing"></span>
         <span class="text">刷新</span>
@@ -26,8 +23,19 @@
       </div>
     </div>
     <div class="card-wrapper" ref="cardWrapper">
-      <div class="card shadow" :class="devideWidth" v-for="i in [1,2,3,4,5,6,7,8,9,10,11,12,13]">
-
+      <div class="card shadow" :class="devideWidth" v-for="doctor in doctorList">
+        <span class="text first-line">
+          <span class="name">医生姓名</span>
+          <span class="value">{{doctor.doctorName}}</span>
+        </span>
+        <span class="text second-line">
+          <span class="name">医生姓名</span>
+          <span class="value">{{doctor.userName}}</span>
+        </span>
+        <span class="text third-line">
+          <span class="name">所在医院</span>
+          <span class="value">{{doctor.hospName}}23rsfw3wsdafas</span>
+        </span>
       </div>
     </div>
     <!-- <water-mark></water-mark> -->
@@ -36,6 +44,7 @@
 
 <script>
 import Ps from 'perfect-scrollbar';
+import { getSupportMessage, getSupportedDoctorList } from 'api/user.js';
 import waterMark from 'components/public/watermark/WaterMark';
 
 export default {
@@ -45,7 +54,8 @@ export default {
       searchKeyword: '',
       refreshing: false,
       devideWidth: '',
-      searchInputWrapperLeft: ''
+      searchInputWrapperLeft: '',
+      doctorList: []
     };
   },
   computed: {
@@ -61,8 +71,8 @@ export default {
       var panelWidth = this.$refs.cardWrapper.clientWidth;
       panelWidth += 10 * 2;
       var devideNum = 1.0;
-      // 10px 是卡片的横向间距，定义在了 varaibles.less 中，240px 是卡片的最小宽度
-      while (panelWidth / devideNum > 240 + 10) {
+      // 10px 是卡片的横向间距，定义在了 varaibles.less 中，260px 是卡片的最小宽度
+      while (panelWidth / devideNum > 260 + 10) {
         devideNum += 1.0;
       }
       devideNum -= 1;
@@ -70,6 +80,22 @@ export default {
       devideNum = devideNum <= 10 ? devideNum : 10;
       this.devideWidth = 'width-1-' + parseInt(devideNum, 10);
       this.searchInputWrapperLeft = 'left-1-' + parseInt(devideNum, 10);
+    },
+    updateDoctorList() {
+      getSupportedDoctorList().then((data) => {
+        if (data) {
+          this.doctorList = data;
+        }
+      }, (error) => {
+        console.log(error);
+      });
+    },
+    updateMessage() {
+      getSupportMessage().then(() => {
+
+      }, (error) => {
+        console.log(error);
+      });
     },
     updateScrollbar() {
       this.$nextTick(() => {
@@ -90,7 +116,11 @@ export default {
   },
   mounted() {
     this.recalculateCardWidth();
+    window.onresize = () => {
+      this.recalculateCardWidth();
+    };
     this.updateScrollbar();
+    this.updateDoctorList();
   },
   components: {
     waterMark
@@ -293,39 +323,42 @@ export default {
     overflow: hidden;
     .card {
       display: inline-block;
+      position: relative;
       margin: 3px @this-card-horizontal-margin;
-      height: 130px;
+      height: 105px;
       background-color: @background-color;
-      .title {
-        left: 20px;
-      }
+      font-size: @normal-font-size;
       .text {
+        display: inline-block;
         position: absolute;
-        font-size: @small-font-size;
+        width: 100%;
         &.first-line {
           left: 20px;
-          top: 45px;
-          right: 20px;
-          color: @font-color;
+          top: 15px;
         }
         &.second-line {
           left: 20px;
-          top: 65px;
-          right: 20px;
-          line-height: 16px;
-          color: @light-font-color;
-          white-space: pre-wrap;
+          top: 45px;
         }
         &.third-line {
           left: 20px;
-          top: 100px;
+          top: 75px;
+        }
+        .name {
+          display: inline-block;
+          position: absolute;
+          left: 0;
+          width: 70px;
+        }
+        .value {
+          display: inline-block;
+          position: absolute;
+          left: 70px;
           right: 20px;
-          .third-line-content {
-            color: @light-font-color;
-            &.unarchived {
-              color: @button-color;
-            }
-          }
+          color: @light-font-color;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
       }
     }
