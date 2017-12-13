@@ -2,6 +2,13 @@
   <div class="doctor-selection">
     <div class="top-bar shadow">
       <h2 class="title">{{title}}</h2>
+      <!-- <div class="fresh-button">
+        <span class="iconfont icon-refresh"></span>
+      </div> -->
+      <el-button class="fresh-button" type="primary" :loading="refreshing" @click="refreshList">
+        <span class="iconfont icon-refresh" v-show="!refreshing"></span>
+        <span class="text">刷新</span>
+      </el-button>
     </div>
     <div class="info-line">
       <span class="desc">技术支持授权医生：（每次只能同时为1位医生提供技术支持服务）</span>
@@ -36,6 +43,7 @@ export default {
     return {
       district: '',
       searchKeyword: '',
+      refreshing: false,
       devideWidth: '',
       searchInputWrapperLeft: ''
     };
@@ -72,6 +80,12 @@ export default {
           suppressScrollX: true
         });
       });
+    },
+    refreshList() {
+      this.refreshing = true;
+      setTimeout(() => {
+        this.refreshing = false;
+      }, 3000);
     }
   },
   mounted() {
@@ -112,6 +126,43 @@ export default {
       line-height: 80px;
       color: @button-color;
       font-size: 24px;
+    }
+    .fresh-button {
+      position: absolute;
+      width: 100px;
+      height: 30px;
+      top: 24px;
+      right: 15px;
+      padding-left: 30px;
+      font-size: @large-font-size;
+      border: none;
+      background-color: rgba(0, 0, 0, 0);
+      color: @font-color;
+      cursor: pointer;
+      .el-icon-loading {
+        position: absolute;
+        top: 8px;
+        left: 10px;
+      }
+      .iconfont {
+        position: absolute;
+        display: inline-block;
+        top: 8px;
+        left: 10px;
+        font-size: 20px;
+      }
+      .text {
+        position: absolute;
+        display: inline-block;
+        top: 9px;
+        left: 40px;
+      }
+      &:hover {
+        opacity: 0.6;
+      }
+      &:active {
+        opacity: 0.8;
+      }
     }
   }
   .info-line {
