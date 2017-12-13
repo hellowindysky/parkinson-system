@@ -9,10 +9,13 @@
     </div>
     <div class="search-line">
       <div class="area shadow" :class="devideWidth">
-
+        <span class="text">地区</span>
+        <el-select v-model="district"></el-select>
       </div>
       <div class="search-input-wrapper shadow" :class="searchInputWrapperLeft">
-
+        <span class="iconfont icon-search"></span>
+        <el-input v-model="searchKeyword" placeholder="请输入医院名称、医生姓名、医生睿云账号或手机号码"></el-input>
+        <span class="button">搜索</span>
       </div>
     </div>
     <div class="card-wrapper" ref="cardWrapper">
@@ -31,6 +34,8 @@ import waterMark from 'components/public/watermark/WaterMark';
 export default {
   data() {
     return {
+      district: '',
+      searchKeyword: '',
       devideWidth: '',
       searchInputWrapperLeft: ''
     };
@@ -99,7 +104,7 @@ export default {
   }
   .top-bar {
     width: 100%;
-    height: 80px;
+    height: @this-top-bar-height;
     background-color: @background-color;
     text-align: center;
     .title {
@@ -111,7 +116,7 @@ export default {
   }
   .info-line {
     width: 100%;
-    height: 40px;
+    height: @this-info-line-height;
     padding: 0 30px;
     text-align: left;
     line-height: 40px;
@@ -127,57 +132,111 @@ export default {
   }
   .search-line {
     position: relative;
-    height: 60px;
-    padding: 0 20px;
+    height: @this-search-line-height;
+    padding: 0 10px;
     box-sizing: content-box;
     text-align: left;
     .area {
       display: inline-block;
       margin: 0 @this-card-horizontal-margin;
+      padding: 10px 20px;
       height: 50px;
+      box-sizing: border-box;
+      font-size: @normal-font-size;
       background-color: @background-color;
+      .text {
+        display: inline-block;
+        width: 50px;
+        line-height: 30px;
+      }
+      .el-select {
+        display: inline-block;
+        width: calc(~"100% - 60px");
+        .el-input__inner {
+          height: 30px;
+          border: none;
+          background-color: @screen-color;
+        }
+      }
     }
     .search-input-wrapper {
       position: absolute;
-      right: 25px;
+      padding: 10px 20px;
+      right: 15px;
       top: 0;
       height: 50px;
+      box-sizing: border-box;
       background: @background-color;
+      .iconfont {
+        display: inline-block;
+        margin-right: 5px;
+        line-height: 30px;
+        color: @gray-color;
+      }
+      .el-input {
+        display: inline-block;
+        width: calc(~"100% - 120px");
+        .el-input__inner {
+          height: 30px;
+          border: none;
+          border-radius: 0;
+          border-bottom: 1px solid @light-gray-color;
+        }
+      }
+      .button {
+        display: inline-block;
+        position: absolute;
+        right: 20px;
+        top: 12px;
+        width: @small-button-width;
+        height: @small-button-height;
+        line-height: @small-button-height;
+        text-align: center;
+        background-color: @light-font-color;
+        color: #fff;
+        cursor: pointer;
+        &:hover {
+          opacity: 0.8;
+        }
+        &:active {
+          opacity: 0.9;
+        }
+      }
       &.left-1-1, &.left-1-0 {
-        left: calc(~"100% + @{this-card-horizontal-margin} * 2 + 2px");
+        left: calc(~"100% + @{this-card-horizontal-margin} * 2 - 2px");
       }
       &.left-1-2 {
-        left: calc(~"50% + @{this-card-horizontal-margin} * 2 + 2px");
+        left: calc(~"50% + @{this-card-horizontal-margin} * 2 - 2px");
       }
       &.left-1-3 {
-        left: calc(~"33.3333% + @{this-card-horizontal-margin} * 2 + 2px");
+        left: calc(~"33.3333% + @{this-card-horizontal-margin} * 2 - 2px");
       }
       &.left-1-4 {
-        left: calc(~"25% + @{this-card-horizontal-margin} * 2 + 2px");
+        left: calc(~"25% + @{this-card-horizontal-margin} * 2 - 2px");
       }
       &.left-1-5 {
-        left: calc(~"20% + @{this-card-horizontal-margin} * 2 + 2px");
+        left: calc(~"20% + @{this-card-horizontal-margin} * 2 - 2px");
       }
       &.left-1-6 {
-        left: calc(~"16.6666% + @{this-card-horizontal-margin} * 2 + 2px");
+        left: calc(~"16.6666% + @{this-card-horizontal-margin} * 2 - 2px");
       }
       &.left-1-7 {
-        left: calc(~"14.2857% + @{this-card-horizontal-margin} * 2 + 2px");
+        left: calc(~"14.2857% + @{this-card-horizontal-margin} * 2 - 2px");
       }
       &.left-1-8 {
-        left: calc(~"12.5% + @{this-card-horizontal-margin} * 2 + 2px");
+        left: calc(~"12.5% + @{this-card-horizontal-margin} * 2 - 2px");
       }
       &.left-1-9 {
-        left: calc(~"11.1111% + @{this-card-horizontal-margin} * 2 + 2px");
+        left: calc(~"11.1111% + @{this-card-horizontal-margin} * 2 - 2px");
       }
       &.left-1-10 {
-        left: calc(~"10% + @{this-card-horizontal-margin} * 2 + 2px");
+        left: calc(~"10% + @{this-card-horizontal-margin} * 2 - 2px");
       }
     }
   }
   .card-wrapper {
     position: relative;
-    padding: 0 20px;
+    padding: 0 10px;
     height: calc(~"100% - @{this-top-bar-height} - @{this-info-line-height} - @{this-search-line-height}");
     text-align: left;
     overflow: hidden;
