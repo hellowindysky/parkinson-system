@@ -9,7 +9,7 @@
             <span class="required-mark">*</span>
           </span>
           <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{copyInfo.firstVisitType}}</span>
+            <span>{{transform(copyInfo.firstVisitType,firstTreatmentTypeOptions)}}</span>
           </span>
           <span class="field-input" v-else>
             <span class="warning-text">{{warningResults.firstVisitType}}</span>
@@ -33,7 +33,7 @@
               <span class="required-mark">*</span>
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>{{copyInfo.medicineClassification}}</span>
+              <span>{{transform(copyInfo.medicineClassification, medicineClassOpt)}}</span>
             </span>
             <span class="field-input" v-else>
               <span class="warning-text">{{warningResults.medicineClassification}}</span>
@@ -56,11 +56,12 @@
               <!-- <span class="required-mark">*</span> -->
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>{{copyInfo.medicineName}}</span>
+              <!-- <span>{{copyInfo.medicineName}}</span> -->
+              <span>{{transform(copyInfo.medicineName,medicineNameOpt)}}</span>
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-select v-model="copyInfo.medicineName" placeholder="请选择药物名称">
+              <el-select v-model="copyInfo.medicineName" placeholder="请选择药物名称" clearable >
                 <el-option
                  v-for="item in medicineNameOpt"
                  :key="item.code"
@@ -76,13 +77,13 @@
               通用名:
               <!-- <span class="required-mark">*</span> -->
             </span>
-            <span class="field-input long-field-name">
+            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
               <span>{{commonMedicineName}}</span>
             </span>
-            <!-- <span class="field-input" v-else>
-                <span class="warning-text">必填项</span>
-              <el-date-picker v-model="date1" type="date" placeholder="请选择右上肢出现时间" clearable ></el-date-picker>
-            </span> -->
+            <span class="field-input" v-else>
+              <!-- <span class="warning-text">必填项</span> -->
+              <el-input v-model="commonMedicineName" placeholder="选择药物名称自动匹配" disabled></el-input>
+            </span>
           </div>
 
           <div class="field">
@@ -140,7 +141,7 @@
               <span class="required-mark">*</span>
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>{{copyInfo.treatmentType}}</span>
+              <span>{{transform(copyInfo.treatmentType,treatmentTypeOpt)}}</span>
             </span>
             <span class="field-input" v-else>
               <span class="warning-text">{{warningResults.treatmentType}}</span>
@@ -163,7 +164,8 @@
               <!-- <span class="required-mark">*</span> -->
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>治疗手段</span>
+              <!-- <span>{{copyInfo.treatmentMethod}}</span> -->
+              <span>{{transform(copyInfo.treatmentMethod,treatmentMethodOpt)}}</span>
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
@@ -184,7 +186,7 @@
               <!-- <span class="required-mark">*</span> -->
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>治疗时间</span>
+              <span>{{copyInfo.treatmentTime}}</span>
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
@@ -198,7 +200,7 @@
               <!-- <span class="required-mark">*</span> -->
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>备注</span>
+              <span>{{copyInfo.remarks}}</span>
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
@@ -216,8 +218,8 @@
       
 
       <div class="button cancel-button" @click="cancel">取消</div>
-      <div v-show="true" class="button submit-button" @click="submit">确定</div>
-      <div v-show="false" class="button edit-button" @click="switchToEditingMode">编辑</div>
+      <div v-show="mode!==VIEW_CURRENT_CARD" class="button submit-button" @click="submit">确定</div>
+      <div v-show="mode===VIEW_CURRENT_CARD && canEdit" class="button edit-button" @click="switchToEditingMode">编辑</div>
 
     </div>
   </div>
@@ -229,8 +231,7 @@ import Ps from 'perfect-scrollbar';
 import Util from 'utils/util.js';
 import { mapGetters } from 'vuex';
 import { reviseDateFormat, pruneObj } from 'utils/helper.js';
-import {addPatientFirstVisitTreatment} from 'api/patient.js';
-// import {addPatientFirstVisitTreatment, modPatientFirstVisitTreatment} from 'api/patient.js';
+import {addPatientFirstVisitTreatment, modPatientFirstVisitTreatment} from 'api/patient.js';
 export default {
   data() {
     return {
@@ -250,15 +251,14 @@ export default {
         dailyDosage: '', // 每日用量
         firstTime: '' // 初次用药时间
       },
+      id: '',
       warningResults: {
         firstVisitType: '',
         treatmentType: '',
         medicineClassification: ''
       },
       lockSubmitButton: false,
-      value1: '',
-      value2: '',
-      date1: ''
+      showEdit: true
     };
   },
   computed: {
@@ -271,6 +271,13 @@ export default {
         return '新增初诊治疗';
       } else {
         return '初诊治疗';
+      }
+    },
+    canEdit() {
+      if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
+        return true;
+      } else {
+        return false;
       }
     },
     verificationFieldList() {
@@ -330,15 +337,31 @@ export default {
         }
       });
     },
+    transform(id, arr) {
+      arr = arr ? arr : [];
+      return arr.filter((obj) => {
+        return (parseInt(obj.typeCode, 10) || parseInt(obj.code, 10)) === id;
+      }).map((obj) => {
+        return (obj.typeName || obj.name);
+      })[0];
+    },
     showModal(cardOperation, item) {
       this.completeInit = false;
       console.log(cardOperation, item);
       this.mode = cardOperation;
-      // gggg
-      // gggg
-      // gggg
-      // gggg
-      // gggg
+      // ----------------------
+      this.copyInfo.firstVisitType = item.firstVisitType;
+      this.copyInfo.treatmentType = item.treatmentType;
+      this.copyInfo.treatmentMethod = item.treatmentMethod;
+      this.copyInfo.treatmentTime = item.treatmentTime;
+      this.copyInfo.remarks = item.remarks;
+      this.copyInfo.medicineClassification = item.medicineClassification;
+      this.copyInfo.medicineName = item.medicineName;
+      this.copyInfo.dailyDosage = item.dailyDosage;
+      this.copyInfo.firstTime = item.firstTime;
+      // 编辑时的id
+      this.id = item.id;
+      // -------------------------
       if (this.mode === this.ADD_NEW_CARD) {
         for (let key in this.copyInfo) {
           this.$set(this.copyInfo, key, '');
@@ -401,7 +424,8 @@ export default {
       this.displayModal = false;
     },
     switchToEditingMode() {
-      // ffff
+      this.mode = this.EDIT_CURRENT_CARD;
+      this.updateScrollbar();
     },
     submit() {
       if (this.lockSubmitButton) {
@@ -435,7 +459,11 @@ export default {
           this.lockSubmitButton = false;
         }, this._handleError);
       } else if (this.mode === this.EDIT_CURRENT_CARD) {
-        // this.lockSubmitButton = false;
+        submitData.id = this.id;
+        modPatientFirstVisitTreatment(submitData).then(() => {
+          this.updateAndClose();
+          this.lockSubmitButton = false;
+        }, this._handleError);
       };
 
     },
@@ -450,6 +478,7 @@ export default {
   },
   mounted() {
     Bus.$on(this.SHOW_FIRSTTREATMENT_MODAL, this.showModal);
+    console.log(this.typeGroup);
   }
 };
 </script>

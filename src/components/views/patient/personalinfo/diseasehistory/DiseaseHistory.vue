@@ -105,19 +105,19 @@
           </Card>
         </extensible-panel>
 
-        <extensible-panel class="disease-card" :title="'就诊记录（x 条记录）'" @addNewCard="addDiagnosticRecord">
-          <Card class="card symptoms-card" :mode="mode" :class="cardWidth" :title="'心脏病'">
+        <extensible-panel class="disease-card" :title="'就诊记录rrr（x 条记录）'" @addNewCard="addDiagnosticRecord">
+          <Card class="card symptoms-card" :mode="mode" :class="cardWidth" :title="'心脏病rrrrr'">
             <div class="text first-line">
               <!-- <span class="name">类型</span> -->
-              <span class="value">红十字医院</span>
+              <span class="value">红十字医院rrr</span>
             </div>
             <div class="text second-line">
               <!-- <span class="name">编号</span> -->
-              <span class="value">2017-11-11</span>
+              <span class="value">2017-11-11rrr</span>
             </div>
             <div class="text third-line">
               <!-- <span class="name">日期</span> -->
-              <span class="value">哈哈哈哈</span>
+              <span class="value">哈哈哈哈rrr</span>
             </div>
           </Card>
         </extensible-panel>
@@ -157,7 +157,7 @@ import Bus from 'utils/bus.js';
 import FoldingPanel from 'components/public/foldingpanel/FoldingPanel';
 import ExtensiblePanel from 'components/public/extensiblepanel/ExtensiblePanel';
 import Card from 'components/public/card/Card';
-import { deletePatientFirstSymbol } from 'api/patient.js';
+import { deletePatientFirstSymbol, delPatientFirstVisitTreatment } from 'api/patient.js';
 export default {
   data() {
     return {
@@ -273,6 +273,15 @@ export default {
     },
     viewFirstTreatmentRecord(item) {
       Bus.$emit(this.SHOW_FIRSTTREATMENT_MODAL, this.VIEW_CURRENT_CARD, item);
+    },
+    deleteFirstTreatmentRecord(item) {
+      var firTreatmentId = {
+        id: item.id
+      };
+      Bus.$on(this.CONFIRM, () => {
+        delPatientFirstVisitTreatment(firTreatmentId).then(this._resolveDeletion, this._rejectDeletion);
+      });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addDiagnosticRecord() {
       Bus.$emit(this.SHOW_DIAGNOSTIC_RECORD_MODAL, this.ADD_NEW_CARD, {});

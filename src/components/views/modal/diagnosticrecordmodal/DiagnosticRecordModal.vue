@@ -11,10 +11,8 @@
         </span>
         <span class="field-input">
           <span class="warning-text"></span>
-          <el-date-picker v-if="mode===ADD_NEW_CARD" placeholder="请选择就诊时间" type="date" format="yyyy-MM-dd"></el-date-picker>
-          <span v-else>
-            就诊时间
-          </span>
+          <span v-if="mode===VIEW_CURRENT_CARD">就诊时间</span>
+          <el-date-picker v-else placeholder="请选择就诊时间" type="date" format="yyyy-MM-dd"></el-date-picker>
         </span>
       </div>
 
@@ -106,7 +104,21 @@ export default {
   data() {
     return {
       displayModal: false,
-      mode: ''
+      mode: '',
+      copyInfo: {
+        visitingTime: '', // 就诊时间
+        hospitalName: '', // 医院名称
+        doctorName: '', // 医生名称
+        diagnosis: '', // 诊断结果
+        chiefComplaint: '', // 主诉
+        givenMedicine: '', // 给予药物
+        curativeEffect: '', // 疗效
+        remarks: '' // 备注
+      },
+      warningResults: {
+        visitingTime: '', // 就诊时间
+        chiefComplaint: '' // 主诉
+      }
     };
   },
   computed: {

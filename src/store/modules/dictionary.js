@@ -224,6 +224,11 @@ const getters = {
             // 对于其它普通的 typeCode，因为服务器给的是字符串，需要转化为 Number
             type.typeCode = parseInt(type.typeCode, 10);
           }
+          if (type.childType) {
+            for (let item of type.childType) {
+              item.typeCode = parseInt(item.typeCode, 10);
+            }
+          }
         }
       }
       return typegroup;
