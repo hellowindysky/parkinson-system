@@ -264,7 +264,7 @@ export default {
 
       this.lockSendButton = true;
       var verificationInfo = {
-        businessType: 1
+        businessType: 1     // 1代表修改密码业务
       };
       sendVerificationCode(verificationInfo).then(() => {
         this.lockSendButton = false;

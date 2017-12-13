@@ -53,6 +53,7 @@ export default {
   FOLD_DIAGNOSTIC_BASIC: 'foldDiagnosticBasic',
   EDIT_DIAGNOSTIC_DISEASE: 'editDiagnosticDisease',
 
+  UPDATE_AUTHORIZED_STATUS: 'updateAuthorizedStatus',
   UPDATE_MY_PATIENTS_LIST: 'updateMyPatientsList',
   UPDATE_OTHER_PATIENTS_LIST: 'updateOtherPatientsList',
   UPDATE_SUBJECT_PATIENTS_LIST: 'updateSubjectPatientsList',
