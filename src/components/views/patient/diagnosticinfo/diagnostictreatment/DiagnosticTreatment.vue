@@ -152,7 +152,7 @@
 
       <extensible-panel class="panel physiontherapy-panel" :mode="mutableMode" :title="physiontherapyTitle" v-on:addNewCard="addPhysiontherapy"
         :editable="canEdit">
-        <card class="card physiontherapy-card" :class="smallCardWidth" :mode="mutableMode" v-for="item in diagnosticPhysiontherapy" :key="item.physiType"
+        <card class="card physiontherapy-card" :class="bigCardWidth" :mode="mutableMode" v-for="item in diagnosticPhysiontherapy" :key="item.physiType"
           :title="'物理治疗'" v-on:editCurrentCard="editPhysiontherapy(item)"
           v-on:deleteCurrentCard="deletePhysiontherapy(item)" v-on:viewCurrentCard="viewPhysiontherapy(item)">
           <div class="text line-1">
@@ -169,7 +169,7 @@
           </div>
            <div class="text line-4">
             <span class="name">不良反应: </span>
-            <span class="value">{{item.patientPhytheReaction[3]}}</span>
+            <span class="value">{{getReaction(item.patientPhytheReaction)}}</span>
           </div>
            <div class="text line-5">
             <span class="name">记录时间: </span>
@@ -180,7 +180,7 @@
 
       <extensible-panel class="panel treatmentEvaluation-panel" :mode="mutableMode" :title="treatmentEvaluationTitle" v-on:addNewCard="addTreatmentEvaluation"
         :editable="canEdit">
-        <card class="card treatmentEvaluation-card" :class="smallCardWidth" :mode="mutableMode" v-for="item in diagnosticTreatmentEvaluation" :key="item.situationType"
+        <card class="card treatmentEvaluation-card" :class="bigCardWidth" :mode="mutableMode" v-for="item in diagnosticTreatmentEvaluation" :key="item.situationType"
           :title="'治疗评估'" v-on:editCurrentCard="editTreatmentEvaluation(item)"
           v-on:deleteCurrentCard="deleteTreatmentEvaluation(item)" v-on:viewCurrentCard="viewTreatmentEvaluation(item)">
           <div class="text line-1">
@@ -197,7 +197,7 @@
           </div>
            <div class="text line-4">
             <span class="name">不良反应: </span>
-            <span class="value">{{item.patientPhytheReaction[3]}}</span>
+            <span class="value">{{getReaction(item.patientPhytheReaction)}}</span>
           </div>
            
         </card>
@@ -357,12 +357,16 @@ export default {
         return matchedType.typeName ? matchedType.typeName : '';
       }
     },
-    // checkout() {
-    //   var patientPhytheReaction = [1, 2, 3, 4];
-    //   for (var i = 0 ; i < patientPhytheReaction.length; i++) {
-    //   console.log(i);
-    //   }
-    // },
+    getReaction(reactionList) {
+      var arr = [];
+      for (let reaction of reactionList) {
+        if (reaction.severityLevel) {
+          let reactionText = this.transformTypeGroupId(reaction.reactionType, 'reactionType');
+          arr.push(reactionText);
+        }
+      }
+      return arr.join(',');
+    },
     getPrescriptionDesc(statusFlag) {
       if (statusFlag === 0) {
         return '沿用上次处方';
@@ -581,13 +585,13 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addTreatmentEvaluation() {
-      Bus.$emit(this.SHOW_TREATMENTEVALUATION_MODAL, this.ADD_NEW_CARD, {}, this.archived);
+      Bus.$emit(this.SHOW_TREATMENTEVALUATION_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
     },
     viewTreatmentEvaluation(item) {
-      Bus.$emit(this.SHOW_TREATMENTEVALUATION_MODAL, this.VIEW_CURRENT_CARD, item, this.archived);
+      Bus.$emit(this.SHOW_TREATMENTEVALUATION_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived);
     },
     editTreatmentEvaluation(item) {
-      Bus.$emit(this.SHOW_TREATMENTEVALUATION_MODAL, this.EDIT_CURRENT_CARD, item, this.archived);
+      Bus.$emit(this.SHOW_TREATMENTEVALUATION_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
     },
     deleteTreatmentEvaluation(item) {
       var patientTreatmentEvaluation = {
