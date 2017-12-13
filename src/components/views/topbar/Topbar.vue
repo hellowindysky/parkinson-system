@@ -48,6 +48,10 @@
 
 <script>
 import Bus from 'utils/bus.js';
+import { getAuthenticationList } from 'api/user.js';
+
+const WAITING_TO_CHANGE = 'waitingToChange';
+const NEED_TO_QUERY_AGAIN = 'needToQueryAgain';
 
 export default {
   props: {
@@ -60,7 +64,8 @@ export default {
     return {
       showOranizationPanel: false,
       showAccountPanel: false,
-      blockSensitiveInfo: true
+      blockSensitiveInfo: true,
+      technicalSupportAccountInfo: null
     };
   },
   computed: {
@@ -121,12 +126,24 @@ export default {
           '为确保账户及患者数据安全，切换为【全部显示】状态时需要手机验证，验证通过后才能进行切换。';
           Bus.$emit(this.SHOW_MESSAGE_MODAL, 3, title, desc);    // 第一个参数 3 代表脱敏业务
         } else {
-          this.blockSensitiveInfo = status;
+          this.showSensitiveInfo();
         }
 
       } else {
-        this.blockSensitiveInfo = status;
+        this.hideSensitiveInfo();
       }
+    },
+    showSensitiveInfo() {
+      this.blockSensitiveInfo = false;
+      var commonRequest = JSON.parse(sessionStorage.getItem('commonRequest'));
+      commonRequest.viewType = 1;
+      sessionStorage.setItem('commonRequest', JSON.stringify(commonRequest));
+    },
+    hideSensitiveInfo() {
+      this.blockSensitiveInfo = true;
+      var commonRequest = JSON.parse(sessionStorage.getItem('commonRequest'));
+      commonRequest.viewType = 2;
+      sessionStorage.setItem('commonRequest', JSON.stringify(commonRequest));
     },
     toggleFilterPanelDisplay() {
       Bus.$emit(this.TOGGLE_FILTER_PANEL_DISPLAY);
@@ -146,7 +163,39 @@ export default {
     },
     authorize() {
       this.showAccountPanel = false;
-      Bus.$emit(this.SHOW_AUTHORIZATION_MODAL);
+      if (this.technicalSupportAccountInfo === WAITING_TO_CHANGE) {
+        // 只有网速很慢，而且用户在刚刚更新账户信息之后马上点击，才会走到这个逻辑里面，一般不会出现该情况
+        this.$message({
+          message: '账户信息正在更新，请稍后再试',
+          type: 'warning',
+          duration: 2000
+        });
+
+      } else if (this.technicalSupportAccountInfo === NEED_TO_QUERY_AGAIN) {
+        this.updateAuthorizedStatus();
+        this.$message({
+          message: '账户信息正在更新，请稍后再试',
+          type: 'warning',
+          duration: 2000
+        });
+
+      } else {
+        // 只有当支持员账户信息的更新过程完成之后，才打开模态框
+        Bus.$emit(this.SHOW_AUTHORIZATION_MODAL, this.technicalSupportAccountInfo);
+      }
+    },
+    updateAuthorizedStatus() {
+      this.technicalSupportAccountInfo = WAITING_TO_CHANGE;
+      getAuthenticationList().then((data) => {
+        if (data && data.length > 0) {
+          this.technicalSupportAccountInfo = data[0];
+        } else {
+          this.technicalSupportAccountInfo = null;
+        }
+      }, (error) => {
+        this.technicalSupportAccountInfo = NEED_TO_QUERY_AGAIN;
+        console.log(error);
+      });
     },
     resetPassword() {
       this.showAccountPanel = false;
@@ -165,14 +214,19 @@ export default {
     this.$store.dispatch('getWholeTemplate');
     this.$store.dispatch('getScaleList');
 
+    this.updateAuthorizedStatus();
+
     Bus.$on(this.BLUR_ON_SCREEN, this.hidePanels);
     Bus.$on(this.PERMIT_DISPLAYING_SENSITIVE_INFO, () => {
       this.$store.commit('PERMIT_DISPLAYING_SENSITIVE_INFO');
-      this.blockSensitiveInfo = false;
+      this.showSensitiveInfo();
     });
+    Bus.$on(this.UPDATE_AUTHORIZED_STATUS, this.updateAuthorizedStatus);
   },
   beforeDestroy() {
     Bus.$off(this.BLUR_ON_SCREEN);
+    Bus.$off(this.PERMIT_DISPLAYING_SENSITIVE_INFO);
+    Bus.$off(this.UPDATE_AUTHORIZED_STATUS);
   }
 };
 </script>

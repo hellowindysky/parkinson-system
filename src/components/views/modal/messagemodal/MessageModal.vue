@@ -45,6 +45,7 @@ export default {
 
       codeButtonStatus: 0,
       codeButtonCount: 0,
+      countDown: null,
       lockSendButton: false
     };
   },

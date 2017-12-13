@@ -29,6 +29,59 @@ export function verifyMessageCode(verificationInfo) {
   return encapsulatePromise(url, request);
 };
 
+// 医生查询已授权的技术支持列表
+export function getAuthenticationList() {
+  var request = Object.assign({}, getCommonRequest());
+  var url = baseUrl + '/usermgr/queryAuthTechSupport';
+
+  return encapsulatePromise(url, request);
+};
+
+// 医生新增授权的技术支持，参数为一个数组
+export function addAuthentication(technicalSupportAccountList, verificationCode) {
+  var request = Object.assign({}, getCommonRequest());
+  request.techSupport = technicalSupportAccountList;
+  request.verifyCode = verificationCode;
+  var url = baseUrl + '/usermgr/addAuthTechSupport';
+
+  return encapsulatePromise(url, request);
+};
+
+// 医生解除已授权的技术支持
+export function removeAuthentication(technicalSupportAccountList) {
+  var request = Object.assign({}, getCommonRequest());
+  request.techSupport = technicalSupportAccountList;
+  var url = baseUrl + '/usermgr/delAuthTechSupport';
+
+  return encapsulatePromise(url, request);
+};
+
+// 医生查询所有符合关键词的技术支持专员
+export function getTechnicalSupport(keyword) {
+  var request = Object.assign({}, getCommonRequest());
+  request.keyword = keyword;
+  var url = baseUrl + '/usermgr/querySupportList';
+
+  return encapsulatePromise(url, request);
+};
+
+// 技术支持专员查询支持通知
+export function getSupportMessage() {
+  var request = Object.assign({}, getCommonRequest());
+  var url = baseUrl + '/usermgr/querySupportMsg';
+
+  return encapsulatePromise(url, request);
+};
+
+// 技术支持专员查询自己支持的医生列表
+export function getSupportedDoctorList(condition) {
+  var request = Object.assign({}, getCommonRequest());
+  request.doctorCond = condition;
+  var url = baseUrl + '/usermgr/querySupportMsg';
+
+  return encapsulatePromise(url, request);
+};
+
 export function getDictionary(version) {
   var request = Object.assign({}, getCommonRequest());
   request.version = version;

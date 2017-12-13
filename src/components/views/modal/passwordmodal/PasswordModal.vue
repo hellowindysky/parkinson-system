@@ -48,8 +48,8 @@
         <span class="field-input">
           <span class="warning-text">{{verificationCodeWarning}}</span>
           <el-input class="short-input" :class="{'warning': verificationCodeWarning}" v-model="verificationCode"
-            type="password" placeholder="请输入短信验证码" @focus="clearVerificationCodeWarning" auto-complete="new-password"
-            @change="updateVerificationCode"></el-input>
+            type="text" placeholder="请输入短信验证码" @focus="clearVerificationCodeWarning" @change="updateVerificationCode">
+          </el-input>
           <div class="send-button" :class="{'disabled': codeButtonStatus===1}" @click="sendCode">{{codeButtonText}}</div>
         </span>
       </div>
@@ -264,7 +264,7 @@ export default {
 
       this.lockSendButton = true;
       var verificationInfo = {
-        businessType: 1
+        businessType: 1     // 1代表修改密码业务
       };
       sendVerificationCode(verificationInfo).then(() => {
         this.lockSendButton = false;
