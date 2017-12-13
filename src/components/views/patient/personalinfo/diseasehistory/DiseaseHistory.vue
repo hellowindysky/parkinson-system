@@ -105,19 +105,23 @@
           </Card>
         </extensible-panel>
 
-        <extensible-panel class="disease-card" :title="'就诊记录rrr（x 条记录）'" @addNewCard="addDiagnosticRecord">
-          <Card class="card symptoms-card" :mode="mode" :class="cardWidth" :title="'心脏病rrrrr'">
+        <extensible-panel class="disease-card" :title="visitRecordTitle" @addNewCard="addVisitRecord">
+          <Card class="card symptoms-card" :mode="mode" :class="cardWidth"
+           v-for="item in diseaseInfo.patientHistorys" :key="item.patientHistoryId" :title="item.diagnosis"
+           v-on:editCurrentCard="editVisitRecord(item)" 
+           v-on:viewCurrentCard="viewVisitRecord(item)"
+           v-on:deleteCurrentCard="deleteVisitRecord(item)">
             <div class="text first-line">
-              <!-- <span class="name">类型</span> -->
-              <span class="value">红十字医院rrr</span>
+              <!-- <span class="name">医院名称：</span> -->
+              <span class="value">{{item.hospName}}</span>
             </div>
             <div class="text second-line">
-              <!-- <span class="name">编号</span> -->
-              <span class="value">2017-11-11rrr</span>
+              <!-- <span class="name">就诊时间：</span> -->
+              <span class="value">{{item.ariseTime}}</span>
             </div>
             <div class="text third-line">
               <!-- <span class="name">日期</span> -->
-              <span class="value">哈哈哈哈rrr</span>
+              <span class="value"></span>
             </div>
           </Card>
         </extensible-panel>
@@ -157,7 +161,7 @@ import Bus from 'utils/bus.js';
 import FoldingPanel from 'components/public/foldingpanel/FoldingPanel';
 import ExtensiblePanel from 'components/public/extensiblepanel/ExtensiblePanel';
 import Card from 'components/public/card/Card';
-import { deletePatientFirstSymbol, delPatientFirstVisitTreatment } from 'api/patient.js';
+import { deletePatientFirstSymbol, delPatientFirstVisitTreatment, delVisitDignosticRecord } from 'api/patient.js';
 export default {
   data() {
     return {
@@ -185,6 +189,9 @@ export default {
     },
     firstTreatmentsTitle() {
       return '初诊治疗（' + (this.diseaseInfo.patientFirstVisitTreatments ? this.diseaseInfo.patientFirstVisitTreatments : []).length + '条记录）';
+    },
+    visitRecordTitle() {
+      return '就诊记录（' + (this.diseaseInfo.patientHistorys ? this.diseaseInfo.patientHistorys : []).length + '条记录）';
     },
     allFirstVisitType() {
       // 初诊治疗类型的集合
@@ -283,8 +290,23 @@ export default {
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
-    addDiagnosticRecord() {
+    addVisitRecord() {
       Bus.$emit(this.SHOW_DIAGNOSTIC_RECORD_MODAL, this.ADD_NEW_CARD, {});
+    },
+    editVisitRecord(item) {
+      Bus.$emit(this.SHOW_DIAGNOSTIC_RECORD_MODAL, this.EDIT_CURRENT_CARD, item);
+    },
+    viewVisitRecord(item) {
+      Bus.$emit(this.SHOW_DIAGNOSTIC_RECORD_MODAL, this.VIEW_CURRENT_CARD, item);
+    },
+    deleteVisitRecord(item) {
+      var patientHistory = {
+        patientHistoryId: item.patientHistoryId
+      };
+      Bus.$on(this.CONFIRM, () => {
+        delVisitDignosticRecord(patientHistory).then(this._resolveDeletion, this._rejectDeletion);
+      });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     recalculateCardWidth() {
       this.$nextTick(() => {

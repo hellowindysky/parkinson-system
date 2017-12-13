@@ -10,9 +10,10 @@
           <span class="required-mark">*</span>
         </span>
         <span class="field-input">
-          <span class="warning-text"></span>
-          <span v-if="mode===VIEW_CURRENT_CARD">就诊时间</span>
-          <el-date-picker v-else placeholder="请选择就诊时间" type="date" format="yyyy-MM-dd"></el-date-picker>
+          <span class="warning-text">{{warningResults.ariseTime}}</span>
+          <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.ariseTime}}</span>
+          <el-date-picker v-else v-model="copyInfo.ariseTime" placeholder="请选择就诊时间" type="date" format="yyyy-MM-dd"
+           @change="updateWarning('ariseTime')" :class="{'warning': warningResults.ariseTime}" ></el-date-picker>
         </span>
       </div>
 
@@ -21,8 +22,8 @@
           医院名:
         </span>
         <span class="field-input">
-          <span v-if="mode===VIEW_CURRENT_CARD">中南医院</span>
-          <el-input v-else placeholder="请输入医院名称"></el-input>
+          <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.hospName}}</span>
+          <el-input v-else v-model="copyInfo.hospName" placeholder="请输入医院名称"></el-input>
         </span>
       </div>
 
@@ -31,8 +32,8 @@
           医生名:
         </span>
         <span class="field-input">
-          <span v-if="mode===VIEW_CURRENT_CARD">张仲景</span>
-          <el-input v-else placeholder="请输入医生名字"></el-input>
+          <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.doctorName}}</span>
+          <el-input v-else v-model="copyInfo.doctorName" placeholder="请输入医生名字"></el-input>
         </span>
       </div>
 
@@ -41,8 +42,8 @@
           诊断结果:
         </span>
         <span class="field-input">
-          <span v-if="mode===VIEW_CURRENT_CARD">没问题</span>
-          <el-input v-else placeholder="请输入诊断结果"></el-input>
+          <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.diagnosis}}</span>
+          <el-input v-else v-model="copyInfo.diagnosis" placeholder="请输入诊断结果"></el-input>
         </span>
       </div>
 
@@ -52,9 +53,10 @@
           <span class="required-mark">*</span>
         </span>
         <span class="field-input">
-          <span class="warning-text"></span>
-          <span v-if="mode===VIEW_CURRENT_CARD">没问题</span>
-          <el-input v-else type="textarea" placeholder="请输入患者主诉信息"></el-input>
+          <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.chiefComplaint}}</span>
+          <el-input v-else v-model="copyInfo.chiefComplaint" type="textarea" placeholder="请输入患者主诉信息"
+           @change="updateWarning('chiefComplaint')" :class="{'warning': warningResults.chiefComplaint}" ></el-input>
+          <span class="warning-text textarea-warning-text">{{warningResults.chiefComplaint}}</span>
         </span>
       </div>
 
@@ -63,8 +65,8 @@
           给予药物:
         </span>
         <span class="field-input">
-          <span v-if="mode===VIEW_CURRENT_CARD">没问题</span>
-          <el-input v-else placeholder="请输入给予药物"></el-input>
+          <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.givenMedicine}}</span>
+          <el-input v-else v-model="copyInfo.givenMedicine" placeholder="请输入给予药物"></el-input>
         </span>
       </div>
 
@@ -73,8 +75,8 @@
           疗效:
         </span>
         <span class="field-input">
-          <span v-if="mode===VIEW_CURRENT_CARD">没问题</span>
-          <el-input v-else placeholder="请输入就诊疗效"></el-input>
+          <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.curativeEffect}}</span>
+          <el-input v-else v-model="copyInfo.curativeEffect" placeholder="请输入就诊疗效"></el-input>
         </span>
       </div>
 
@@ -83,8 +85,8 @@
           备注:
         </span>
         <span class="field-input">
-          <span v-if="mode===VIEW_CURRENT_CARD">没问题</span>
-          <el-input v-else type="textarea" placeholder="请输入备注信息"></el-input>
+          <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.remarks}}</span>
+          <el-input v-else v-model="copyInfo.remarks" type="textarea" placeholder="请输入备注信息"></el-input>
         </span>
       </div>
 
@@ -100,14 +102,18 @@
 
 <script>
 import Bus from 'utils/bus.js';
+import Ps from 'perfect-scrollbar';
+import { reviseDateFormat, pruneObj } from 'utils/helper.js';
+import {addVisitDignosticRecord, modVisitDignosticRecord} from 'api/patient.js';
 export default {
   data() {
     return {
       displayModal: false,
       mode: '',
+      completeInit: false,
       copyInfo: {
-        visitingTime: '', // 就诊时间
-        hospitalName: '', // 医院名称
+        ariseTime: '', // 就诊时间
+        hospName: '', // 医院名称
         doctorName: '', // 医生名称
         diagnosis: '', // 诊断结果
         chiefComplaint: '', // 主诉
@@ -115,10 +121,13 @@ export default {
         curativeEffect: '', // 疗效
         remarks: '' // 备注
       },
+      patientHistoryId: '',
       warningResults: {
-        visitingTime: '', // 就诊时间
+        ariseTime: '', // 就诊时间
         chiefComplaint: '' // 主诉
-      }
+      },
+      lockSubmitButton: false,
+      showEdit: true
     };
   },
   computed: {
@@ -128,22 +137,122 @@ export default {
       } else {
         return '就诊记录';
       }
+    },
+    canEdit() {
+      if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
+        return true;
+      } else {
+        return false;
+      }
     }
   },
   methods: {
     showModal(cardOperation, item) {
+      this.completeInit = false;
       console.log(cardOperation, item);
       this.mode = cardOperation;
+      // -------------------
+      this.copyInfo.ariseTime = item.ariseTime;
+      this.copyInfo.hospName = item.hospName;
+      this.copyInfo.doctorName = item.doctorName;
+      this.copyInfo.diagnosis = item.diagnosis;
+      this.copyInfo.chiefComplaint = item.chiefComplaint;
+      this.copyInfo.givenMedicine = item.givenMedicine;
+      this.copyInfo.curativeEffect = item.curativeEffect;
+      this.copyInfo.remarks = item.remarks;
+      // 编辑时的id
+      this.patientHistoryId = item.patientHistoryId;
+      // ------------------
+
+      if (this.mode === this.ADD_NEW_CARD) {
+        for (let key in this.copyInfo) {
+          this.$set(this.copyInfo, key, '');
+        };
+      };
+
+      this.$nextTick(() => {
+        for (var property in this.warningResults) {
+          if (this.warningResults.hasOwnProperty(property)) {
+            this.warningResults[property] = '';
+          }
+        }
+      });
+
+      this.completeInit = true;
       this.displayModal = true;
+      this.updateScrollbar();
+    },
+    updateScrollbar() {
+      this.$nextTick(() => {
+        Ps.destroy(this.$refs.scrollArea);
+        Ps.initialize(this.$refs.scrollArea, {
+          wheelSpeed: 1,
+          minScrollbarLength: 40
+        });
+      });
+    },
+    updateWarning(fieldName) {
+      if (this.completeInit && !this.copyInfo[fieldName]) {
+        this.warningResults[fieldName] = '必填项';
+      } else {
+        this.warningResults[fieldName] = '';
+      }
     },
     cancel() {
+      this.lockSubmitButton = false;
       this.displayModal = false;
     },
     switchToEditingMode() {
-      // ffff
+      this.mode = this.EDIT_CURRENT_CARD;
+      this.updateScrollbar();
     },
     submit() {
-      // ggg
+      if (this.lockSubmitButton) {
+        return;
+      }
+      this.lockSubmitButton = true;
+
+      // 验证必填项 如果没填显示红框，显示必填项三个字
+      for (let property in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(property)) {
+          this.updateWarning(property);
+        }
+      };
+      // 如果显示了必填项三个字，说明验证没通过，就将确定按钮打开，允许再次验证，并退出
+      for (let property in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(property) && this.warningResults[property]) {
+          this.lockSubmitButton = false;
+          return;
+        }
+      };
+
+      // 验证完成，准备请求数据
+      let submitData = Object.assign({}, this.copyInfo);
+      reviseDateFormat(submitData);
+      pruneObj(submitData);
+      submitData.patientId = this.$route.params.id;
+      console.log(submitData);
+
+      if (this.mode === this.ADD_NEW_CARD) {
+        addVisitDignosticRecord(submitData).then(() => {
+          this.updateAndClose();
+          this.lockSubmitButton = false;
+        }, this._handleError);
+      } else if (this.mode === this.EDIT_CURRENT_CARD) {
+        submitData.patientHistoryId = this.patientHistoryId;
+        modVisitDignosticRecord(submitData).then(() => {
+          this.updateAndClose();
+          this.lockSubmitButton = false;
+        }, this._handleError);
+      }
+    },
+    _handleError(error) {
+      console.log(error);
+      this.lockSubmitButton = false;
+    },
+    updateAndClose() {
+      Bus.$emit(this.UPDATE_PATIENT_INFO);
+      this.displayModal = false;
     }
   },
   mounted() {
@@ -216,6 +325,12 @@ export default {
           height: 15px;
           color: red;
           font-size: @small-font-size;
+          &.textarea-warning-text{
+            margin-top:-15px;
+            position: static;
+            display: block;
+            line-height:1;
+          }
         }
         .el-input {
           transform: translateY(-3px);

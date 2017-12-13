@@ -167,6 +167,33 @@ export function delPatientFirstVisitTreatment(firstVisit) {
 
   return encapsulatePromise(url, request);
 };
+
+// 新增就诊记录
+export function addVisitDignosticRecord(dignosticRecord) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientHistory = dignosticRecord;
+  var url = baseUrl + '/pdms/addPatientHistory';
+
+  return encapsulatePromise(url, request);
+};
+
+// 修改就诊记录
+export function modVisitDignosticRecord(dignosticRecord) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientHistory = dignosticRecord;
+  var url = baseUrl + '/pdms/modPatientHistory';
+
+  return encapsulatePromise(url, request);
+};
+
+// 删除就诊记录
+export function delVisitDignosticRecord(dignosticRecord) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientHistory = dignosticRecord;
+  var url = baseUrl + '/pdms/delPatientHistory';
+
+  return encapsulatePromise(url, request);
+};
 // v2.1 现病史 ↑↑↑
 
 // 新增用药史
