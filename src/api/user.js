@@ -76,7 +76,9 @@ export function getSupportMessage() {
 // 技术支持专员查询自己支持的医生列表
 export function getSupportedDoctorList(condition) {
   var request = Object.assign({}, getCommonRequest());
-  request.doctorCond = condition;
+  if (condition) {
+    request.doctorCond = condition;
+  }
   var url = baseUrl + '/usermgr/querySupportMsg';
 
   return encapsulatePromise(url, request);
