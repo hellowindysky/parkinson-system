@@ -222,22 +222,30 @@ export default {
         return;
       }
       this.lockTerminateButton = true;
+      this.displayModal = false;
 
-      let supportAccountList = [this.technicalSupportAccountInfo.id];
-      removeAuthentication(supportAccountList).then(() => {
-        this.$message({
-          message: '成功解除授权',
-          type: 'success',
-          duration: 2000
+      Bus.$on(this.CONFIRM, () => {
+        let supportAccountList = [this.technicalSupportAccountInfo.id];
+        removeAuthentication(supportAccountList).then(() => {
+          this.$message({
+            message: '成功解除授权',
+            type: 'success',
+            duration: 2000
+          });
+          Bus.$emit(this.UPDATE_AUTHORIZED_STATUS);
+
+          this.lockTerminateButton = false;
+
+        }, (error) => {
+          console.log(error);
+          this.lockTerminateButton = false;
         });
-        Bus.$emit(this.UPDATE_AUTHORIZED_STATUS);
-        this.displayModal = false;
-        this.lockTerminateButton = false;
-
-      }, (error) => {
-        console.log(error);
-        this.lockTerminateButton = false;
       });
+
+      let title = '解除提醒';
+      let content = '你确定要解除对【' + this.supportAccountName + '】的授权吗?';
+      let confirmButtonText = '确认解除';
+      Bus.$emit(this.REQUEST_CONFIRMATION, title, content, confirmButtonText);
     },
     showSecretAgreement() {
       Bus.$emit(this.SHOW_SECRET_AGREEMENT_MODAL);
@@ -245,9 +253,14 @@ export default {
   },
   mounted() {
     Bus.$on(this.SHOW_AUTHORIZATION_MODAL, this.showModal);
+    Bus.$on(this.GIVE_UP, () => {
+      Bus.$off(this.CONFIRM);
+    });
   },
   beforeDestroy() {
     Bus.$off(this.SHOW_AUTHORIZATION_MODAL);
+    Bus.$off(this.CONFIRM);
+    Bus.$off(this.GIVE_UP);
   }
 };
 </script>
