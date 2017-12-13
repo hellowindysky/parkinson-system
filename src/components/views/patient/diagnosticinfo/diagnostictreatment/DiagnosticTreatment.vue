@@ -187,15 +187,23 @@
             <span class="name">记录时间: </span>
             <span class="value">{{item.recordDate}}</span>
           </div>
-          <div class="text line-2">
+          <div class="text line-2" v-if="item.situationType===1">
             <span class="name">治疗后左侧运动阈值: </span>
             <span class="value">{{item.leftThreshold}}</span>
           </div>
-           <div class="text line-3">
+           <div class="text line-3" v-if="item.situationType===1">
             <span class="name">治疗后右侧运动阈值: </span>
             <span class="value">{{item.rightThreshold}}</span>
           </div>
-           <div class="text line-4">
+          <div class="text line-2" v-if="item.situationType===2">
+            <span class="name">治疗后情况描述: </span>
+            <span class="value">{{item.situationRemark}}</span>
+          </div>
+           <div class="text line-4" v-if="item.situationType===1">
+            <span class="name">不良反应: </span>
+            <span class="value">{{getReaction(item.patientPhytheReaction)}}</span>
+          </div>
+          <div class="text line-3"v-if="item.situationType===2">
             <span class="name">不良反应: </span>
             <span class="value">{{getReaction(item.patientPhytheReaction)}}</span>
           </div>
