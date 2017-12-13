@@ -232,12 +232,14 @@ export default {
             type: 'success',
             duration: 2000
           });
+          Bus.$off(this.CONFIRM);
           Bus.$emit(this.UPDATE_AUTHORIZED_STATUS);
 
           this.lockTerminateButton = false;
 
         }, (error) => {
           console.log(error);
+          Bus.$off(this.CONFIRM);
           this.lockTerminateButton = false;
         });
       });
