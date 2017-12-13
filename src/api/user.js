@@ -79,7 +79,7 @@ export function getSupportedDoctorList(condition) {
   if (condition) {
     request.doctorCond = condition;
   }
-  var url = baseUrl + '/usermgr/querySupportMsg';
+  var url = baseUrl + '/usermgr/querySupportedDoctor';
 
   return encapsulatePromise(url, request);
 };
