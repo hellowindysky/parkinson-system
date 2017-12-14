@@ -112,7 +112,11 @@ export default {
     },
     updateMessage() {
       getSupportMessage().then(() => {
-
+        this.$notify({
+          title: '成功',
+          message: '这是一条成功的提示消息',
+          type: 'success'
+        });
       }, (error) => {
         console.log(error);
       });
@@ -159,6 +163,7 @@ export default {
     };
     this.updateScrollbar();
     this.updateDoctorList();
+    this.updateMessage();
     this.recalculateCardWidth();
     this.$store.dispatch('getWholeDictionary');
   },
