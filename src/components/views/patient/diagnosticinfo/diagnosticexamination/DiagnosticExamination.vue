@@ -1,9 +1,9 @@
 <template lang="html">
   <folding-panel :title="'检验检查'" :mode="mutableMode"  v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit" :editable="canEdit">
     <div class="diagnostic-examination" ref="diagnosticExamination">
-    <extensible-panel class="panel" :mode="mutableMode" :title="vitalSignsTitle" v-on:addNewCard="addVitalSigns" :editable="canEdit">
-        <card class="card vitalSigns-card" :class="cardWidth" :mode="mutableMode" v-for="item in diagnosticVitalSigns" :key="item.checkTime"
-         :title="'生命体征'" v-on:editCurrentCard="editVitalSigns(item)"
+    <extensible-panel class="panel vitalSigns-panel" :mode="mutableMode" :title="vitalSignsTitle" v-on:addNewCard="addVitalSigns" :editable="canEdit">
+        <card class="card" :class="cardWidth" :mode="mutableMode" v-for="item in diagnosticVitalSigns" :key="item.patientVitalSign"
+         :title="item.title" v-on:editCurrentCard="editVitalSigns(item)"
          v-on:deleteCurrentCard="deleteVitalSigns(item)" v-on:viewCurrentCard="viewVitalSigns(item)">
           <div class="text line-1">
             <span class="name">检查时间: </span>
@@ -115,7 +115,7 @@ import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import { deleteEmg, deleteBiochemical, delNervouSystem, deleteGeneCheck, deleteImage, deleteVitalSigns } from 'api/patient.js';
-import { vueCopy } from 'utils/helper';
+// import { vueCopy } from 'utils/helper';
 
 import FoldingPanel from 'components/public/foldingpanel/FoldingPanel';
 import ExtensiblePanel from 'components/public/extensiblepanel/ExtensiblePanel';
@@ -125,20 +125,6 @@ export default {
   data() {
     return {
       mutableMode: this.mode,
-      // vitalSigns: '生命体征',
-      // vitalData: {
-      //   breathing: '',
-      //   temperature: '',
-      //   pulse: '',
-      //   heartRate: '',
-      //   rhythm: '',
-      //   bpDecubitus: '',
-      //   bpSitting: '',
-      //   bpOrthostatic: '',
-      //   doiMmse: '',
-      //   doiMoca: '',
-      //   doiCdr: ''
-      // },
       cardWidth: ''
     };
   },
@@ -178,9 +164,9 @@ export default {
       }
     },
     diagnosticVitalSigns: {
-      type: Object,
+      type: Array,
       default: () => {
-        return {};
+        return [];
       }
     },
     archived: {
@@ -195,8 +181,6 @@ export default {
       'neurologicCheckTypeList',
       'bioexamTypeList',
       'emgTypeList',
-      'typeGroup',
-      'rhythm',
       'typeGroup'
     ]),
     vitalSignsTitle() {
@@ -232,92 +216,13 @@ export default {
   methods: {
     startEditing() {
       this.mutableMode = this.EDITING_MODE;
-      this.handleVitalData(this.diagnosticVitalSigns);
     },
     cancel() {
       this.mutableMode = this.READING_MODE;
     },
     submit() {
       this.mutableMode = this.READING_MODE;
-      // 在此页面点击完成要提交生命体征
-      this.submitVitalData(); // 提交生命体征
     },
-    showVital(code) {
-      if (code === '0' || code === 0) {
-        return '不齐';
-      } else if (code === '1' || code === 1) {
-        return '齐';
-      } else {
-        return '';
-      }
-    },
-    // submitVitalData() {
-    //   let submitData = this.vitalData;
-    //   for (let key in submitData) {
-    //     switch (key) {
-    //       case 'bpOrthostatic':
-    //       case 'bpSitting':
-    //       case 'bpDecubitus':
-    //         switch (true) {
-    //           case (Boolean(submitData[key + 'L']) === false && Boolean(submitData[key + 'R']) === false): // 左右值都不存在
-    //             submitData[key] = '';
-    //             break;
-    //           case (Boolean(submitData[key + 'L']) && Boolean(submitData[key + 'R'])): // 左右值都存在
-    //             submitData[key] = submitData[key + 'L'] + ',' + submitData[key + 'R'];
-    //             break;
-    //           case (Boolean(submitData[key + 'L']) && Boolean(submitData[key + 'R']) === false): // 左边的值存在
-    //             submitData[key] = submitData[key + 'L'];
-    //             break;
-    //           case (Boolean(submitData[key + 'L']) === false && Boolean(submitData[key + 'R'])): // 右边的值存在
-    //             submitData[key] = ',' + submitData[key + 'R'];
-    //             break;
-    //         }
-    //         delete submitData[key + 'L'];  // 删除这两个辅助值
-    //         delete submitData[key + 'R'];
-    //         break;
-    //     }
-    //   }
-    //   submitData['patientCaseId'] = this.$route.params.caseId;
-    //   // modVitalSigns(submitData).then(() => {
-    //   //   Bus.$emit(this.UPDATE_CASE_INFO);
-    //   // }); // 提交生命体征
-    // },
-    // handleVitalData(data) {
-    //   // 对生命体征作特殊的处理
-    //   for (let key in data) {
-    //     switch (key) {
-    //       case 'bpOrthostatic':
-    //       case 'bpSitting':
-    //       case 'bpDecubitus':
-    //         switch (true) {
-    //           case data[key] === '':
-    //             // 为空值
-    //             this.$set(this.vitalData, key + 'L', '');
-    //             this.$set(this.vitalData, key + 'R', '');
-    //             break;
-    //           case (Boolean(data[key].split(',')[0]) && Boolean(data[key].split(',')[1])):
-    //             // 左右值都存在
-    //             this.$set(this.vitalData, key + 'L', data[key].split(',')[0]);
-    //             this.$set(this.vitalData, key + 'R', data[key].split(',')[1]);
-    //             break;
-    //           case (Boolean(data[key].split(',')[0]) === true) && data[key].indexOf(',') === -1:
-    //             // 左值存在
-    //             this.$set(this.vitalData, key + 'L', data[key]);
-    //             this.$set(this.vitalData, key + 'R', '');
-    //             break;
-    //           case Boolean(data[key].split(',')[0]) === true && data[key].indexOf(',') !== -1:
-    //             // 右值存在
-    //             this.$set(this.vitalData, key + 'L', '');
-    //             this.$set(this.vitalData, key + 'R', data[key].split(',')[1]);
-    //             break;
-    //         }
-    //         break;
-    //       default:
-    //         this.$set(this.vitalData, key, data[key]);
-    //         break;
-    //     }
-    //   }
-    // },
     transformNeurologicCheckType(typeId) {
       // 在 tableData 中找到对应的值
       var data = Util.getElement('id', typeId, this.neurologicCheckTypeList);
@@ -364,13 +269,13 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addGeneCheckRecord() {
-      Bus.$emit(this.SHOW_GENE_MODAL, this.ADD_NEW_CARD, {}, this.archived);
+      Bus.$emit(this.SHOW_GENE_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
     },
     editGeneCheckRecord(item) {
-      Bus.$emit(this.SHOW_GENE_MODAL, this.EDIT_CURRENT_CARD, item, this.archived);
+      Bus.$emit(this.SHOW_GENE_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
     },
     viewGeneCheckRecord(item) {
-      Bus.$emit(this.SHOW_GENE_MODAL, this.VIEW_CURRENT_CARD, item, this.archived);
+      Bus.$emit(this.SHOW_GENE_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived);
     },
     deleteGeneCheckRecord(item) {
       let geneInfo = {
@@ -382,13 +287,13 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addBiochemicalExamRecord() {
-      Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.ADD_NEW_CARD, {}, this.archived);
+      Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
     },
     editBiochemicalExamRecord(item) {
-      Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.EDIT_CURRENT_CARD, item, this.archived);
+      Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
     },
     viewBiochemicalExamRecord(item) {
-      Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.VIEW_CURRENT_CARD, item, this.archived);
+      Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived);
     },
     deleteBiochemicalExamRecord(item) { // 删除生化指标
       let BiochemicalInfo = {
@@ -400,13 +305,13 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addEmgRecord() {
-      Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.ADD_NEW_CARD, {}, this.archived);
+      Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
     },
     viewEmgRecord(item) {
-      Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.VIEW_CURRENT_CARD, item, this.archived);
+      Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived);
     },
     editEmgRecord(item) {
-      Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.EDIT_CURRENT_CARD, item, this.archived);
+      Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
     },
     deleteEmgRecord(item) { // 删除肌电图
       let EmgInfo = {
@@ -418,13 +323,13 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addImgRecord() {
-      Bus.$emit(this.SHOW_IMG_MODAL, this.ADD_NEW_CARD, {}, this.archived);
+      Bus.$emit(this.SHOW_IMG_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
     },
     viewImgRecord(item) {
-      Bus.$emit(this.SHOW_IMG_MODAL, this.VIEW_CURRENT_CARD, item, this.archived);
+      Bus.$emit(this.SHOW_IMG_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived);
     },
     editImgRecord(item) {
-      Bus.$emit(this.SHOW_IMG_MODAL, this.EDIT_CURRENT_CARD, item, this.archived);
+      Bus.$emit(this.SHOW_IMG_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
     },
     deleteImgRecord(item) {
       let imageInfo = {
@@ -436,17 +341,16 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addVitalSigns() {
-      Bus.$emit(this.SHOW_VITALSIGNS_MODAL, this.ADD_NEW_CARD, {}, this.archived);
+      Bus.$emit(this.SHOW_VITALSIGNS_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
     },
     viewVitalSigns(item) {
-      Bus.$emit(this.SHOW_VITALSIGNS_MODAL, this.VIEW_CURRENT_CARD, item, this.archived);
+      Bus.$emit(this.SHOW_VITALSIGNS_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived);
     },
     editVitalSigns(item) {
-      Bus.$emit(this.SHOW_VITALSIGNS_MODAL, this.EDIT_CURRENT_CARD, item, this.archived);
+      Bus.$emit(this.SHOW_VITALSIGNS_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
     },
     deleteVitalSigns(item) {
-      var patientVitalSigns = {
-        patientVitalSignsId: item.patientVitalSignsId
+      var patientVitalSigns = {patientVitalSignsId: item.patientVitalSignsId
       };
       Bus.$on(this.CONFIRM, () => {
         deleteVitalSigns(patientVitalSigns).then(this._resolveDeletion, this._rejectDeletion);
@@ -499,14 +403,6 @@ export default {
     Bus.$off(this.RECALCULATE_CARD_WIDTH, this.recalculateCardWidth);
     Bus.$off(this.CONFIRM);
     Bus.$off(this.GIVE_UP);
-  },
-  watch: {
-    diagnosticVitalSigns: {
-      handler: function(newVal) {
-        vueCopy(newVal, this.vitalData);
-      },
-      deep: true
-    }
   }
 };
 </script>
@@ -522,6 +418,12 @@ export default {
   .panel {
     text-align: left;
     &.image-panel .content {
+      height: @image-card-height + @card-vertical-margin * 2 + 5px * 2;
+      &.extended {
+        height: auto;
+      }
+    }
+     &.vitalSigns-panel .content {
       height: @image-card-height + @card-vertical-margin * 2 + 5px * 2;
       &.extended {
         height: auto;
@@ -612,66 +514,6 @@ export default {
       }
       .line-7 {
         top: 160px;
-      }
-    }
-    .vital-signs {
-      position: relative;
-      padding: 0;
-      width: 100%;
-      height: auto;
-      .field-item {
-        position: relative;
-        display: inline-block;
-        width: 50%;
-        height: @field-height;
-        font-size: 0px;
-        .field-name {
-          display: inline-block;
-          width: @field-item-width;
-          box-sizing: border-box;
-          padding-left: 10px;
-          line-height: @field-height;
-          font-size: @normal-font-size;
-          &.long-field-name {
-            font-size: @small-font-size;
-          }
-        }
-        .field-value {
-          display: inline-block;
-          position: absolute;
-          left: @field-item-width;
-          right: 4%;
-          height: 50px;
-          line-height: @field-height;
-          font-size: @normal-font-size;
-          .middle-text {
-            display: inline-block;
-            position: absolute;
-            width: 10%;
-            left: 45%;
-            text-align: center;
-          }
-          .half-input {
-            position: absolute;
-            width: 45%;
-            &.left {
-              left: 0;
-            }
-            &.right {
-              right: 0;
-            }
-          }
-          .el-input {
-            .el-input__inner {
-              height: 30px;
-              border: none;
-              background-color: @screen-color;
-            }
-          }
-          .el-select {
-            width: 100%;
-          }
-        }
       }
     }
   }

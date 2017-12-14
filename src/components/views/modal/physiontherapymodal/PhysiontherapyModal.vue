@@ -13,7 +13,7 @@
           </span>
           <span class="field-input" v-else>
             <span class="warning-text">{{warningResults.physiType}}</span>
-            <el-select v-model="physiType" placeholder="经颅磁刺激" @change="updateWarning('physiType')"
+            <el-select v-model="physiType" clearable placeholder="请选择物理治疗类型" @change="updateWarning('physiType')"
               :class="{'warning': warningResults.physiType}">
               <el-option
                 v-for="item in getOptions('physiType')"
@@ -89,7 +89,7 @@
           </span>
           <span class="field-input" v-else>
             <span class="warning-text">{{warningResults.stimulusSide}}</span>
-            <el-select v-model="stimulusSide" placeholder="请选择刺激侧" @change="updateWarning('stimulusSide')"
+            <el-select v-model="stimulusSide" clearable placeholder="请选择刺激侧" @change="updateWarning('stimulusSide')"
               :class="{'warning': warningResults.stimulusSide}">
               <el-option
                 v-for="item in getOptions('stimulusSide')"
@@ -180,7 +180,7 @@
             </td>
             <td class="col narrow-col">
               <span v-if="mode===VIEW_CURRENT_CARD">{{transform(reaction.severityLevel,'reactionLevel')}}</span>
-              <el-select v-else v-model="reaction.severityLevel" @change="updateWarning('severityLevel')">
+              <el-select v-else v-model="reaction.severityLevel" clearable  @change="updateWarning('severityLevel')">
                 <el-option
                   v-for="item in getOptions('reactionLevel')"
                   :key="item.code"
@@ -381,16 +381,6 @@ export default {
       };
       return options;
     },
-    // transformToNum(obj, property, index, fieldName) {
-    //   // 如果填写的不是一个数字，则转换成一个空字符串，如果是一个数字，则将这个数字字符串转化为真正的数字
-    //   var value = obj[property];
-    //   var reg = new RegExp(/^[0-9]+\.{0,1}[0-9]{0,2}$/);
-    //   if (reg.test(value)) {
-    //     obj[property] = Number(value);
-    //   } else {
-    //     obj[property] = '';
-    //   }
-    // },
     updateWarning(fieldName) {
       var list = ['recordDate', 'physiType', 'leftThresholdBefore', 'rightThresholdBefore'];
       if (list.indexOf(fieldName) >= 0 && !this[fieldName]) {

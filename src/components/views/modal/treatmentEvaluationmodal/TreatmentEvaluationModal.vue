@@ -33,7 +33,7 @@
           </span>
           <span class="field-input" v-else>
             <span class="warning-text">{{warningResults.situationType}}</span>
-            <el-select v-model="situationType" placeholder="请选择" @change="updateWarning('situationType')"
+            <el-select v-model="situationType" clearable placeholder="请选择" @change="updateWarning('situationType')"
               :class="{'warning': warningResults.situationType}">
               <el-option
                 v-for="item in getOptions('situationType')"
@@ -92,7 +92,7 @@
             </td>
             <td class="col narrow-col">
               <span v-if="mode===VIEW_CURRENT_CARD">{{transformSituationType(reaction.severityLevel,'reactionLevel')}}</span>
-              <el-select v-else v-model="reaction.severityLevel" @change="updateWarning('severityLevel')">
+              <el-select v-else v-model="reaction.severityLevel" clearable  @change="updateWarning('severityLevel')">
               <el-option
                 v-for="item in getOptions('reactionLevel')"
                 :key="item.code"
@@ -251,6 +251,9 @@ export default {
       this.completeInit = false;
       this.mode = cardOperation;
       this.showEdit = showEdit;
+      for (let reaction of this.patientPhytheReaction) {
+        reaction.severityLevel = '';
+      }
 
       // console.log('item: ', item);
       this.patientPhytheAssessId = item.patientPhytheAssessId ? item. patientPhytheAssessId : '';

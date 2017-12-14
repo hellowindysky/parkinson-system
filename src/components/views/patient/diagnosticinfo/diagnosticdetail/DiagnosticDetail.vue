@@ -23,7 +23,7 @@
         :biochemicalExamList="caseDetail.patientBioexam"
         :emgList="caseDetail.patientElecTroGram"
         :medicalImagingList="caseDetail.patientVideoList"
-        :diagnosticVitalSigns="caseDetail.diagnosticVitalSigns">
+        :diagnosticVitalSigns="caseDetail.patientVitalSign">
       </diagnostic-examination>
       <div class="blank-area"></div>
     </div>
@@ -85,15 +85,6 @@ export default {
     diagnosticDisease() {
       var obj = {};
       var propertyList = ['diseaseType', 'caseSymptom', 'patientSymptom'];
-      for (let propertyName of propertyList) {
-        obj[propertyName] = this.caseDetail[propertyName] ? this.caseDetail[propertyName] : '';
-      }
-      return obj;
-    },
-    VitalSignsData() {
-      var obj = {};
-      var propertyList = ['breathing', 'temperature', 'pulse', 'heartRate', 'rhythm',
-        'bpDecubitus', 'bpSitting', 'bpOrthostatic', 'doiMmse', 'doiMoca', 'doiCdr'];
       for (let propertyName of propertyList) {
         obj[propertyName] = this.caseDetail[propertyName] ? this.caseDetail[propertyName] : '';
       }
