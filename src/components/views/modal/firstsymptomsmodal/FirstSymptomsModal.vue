@@ -201,7 +201,7 @@
               <!-- <span class="required-mark">*</span> -->
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              <span>持续时长</span>
+              <span>{{copyInfo.lastTime}}</span>
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
