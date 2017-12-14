@@ -165,13 +165,6 @@ export default {
       temperature: '',
       pulse: '',
       rhythm: '',
-      vitalSignBP: '',
-      vitalSignSide: '',
-      vitalSignDizzy: '',
-      systolic: '',
-      diastolic: '',
-      heartrate: '',
-
       patientVitalSignDetail: [
         {
           'bp': 1,
@@ -358,15 +351,10 @@ export default {
       vitalSignsInfo.temperature = this.temperature;
       vitalSignsInfo.pulse = this.pulse;
       vitalSignsInfo.rhythm = this.rhythm;
-      vitalSignsInfo.bp = this.bp;
-      vitalSignsInfo.side = this.side;
-      vitalSignsInfo.dizzy = this.dizzy;
       vitalSignsInfo.patientVitalSignDetail = deepCopy(this.patientVitalSignDetail);
       // reviseDateFormat(vitalSignsInfo);
       pruneObj(vitalSignsInfo);
-      console.log(vitalSignsInfo);
       // this.lockSubmitButton = false;
-    
       if (this.mode === this.ADD_NEW_CARD) {
         addVitalSigns(vitalSignsInfo).then(() => {
           this.updateAndClose();
