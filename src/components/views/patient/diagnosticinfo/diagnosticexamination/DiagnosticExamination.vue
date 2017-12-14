@@ -2,7 +2,7 @@
   <folding-panel :title="'检验检查'" :mode="mutableMode"  v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit" :editable="canEdit">
     <div class="diagnostic-examination" ref="diagnosticExamination">
     <extensible-panel class="panel vitalSigns-panel" :mode="mutableMode" :title="vitalSignsTitle" v-on:addNewCard="addVitalSigns" :editable="canEdit">
-        <card class="card" :class="cardWidth" :mode="mutableMode" v-for="item in diagnosticVitalSigns" :key="item.patientVitalSign"
+        <card class="card vitalSigns-card" :class="cardWidth" :mode="mutableMode" v-for="item in diagnosticVitalSigns" :key="item.patientVitalSign"
          :title="item.title" v-on:editCurrentCard="editVitalSigns(item)"
          v-on:deleteCurrentCard="deleteVitalSigns(item)" v-on:viewCurrentCard="viewVitalSigns(item)">
           <div class="text line-1">
@@ -350,10 +350,10 @@ export default {
       Bus.$emit(this.SHOW_VITALSIGNS_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
     },
     deleteVitalSigns(item) {
-      var patientVitalSigns = {patientVitalSignsId: item.patientVitalSignsId
+      var patientVitalSign = {patientVitalSign: item.patientVitalSign
       };
       Bus.$on(this.CONFIRM, () => {
-        deleteVitalSigns(patientVitalSigns).then(this._resolveDeletion, this._rejectDeletion);
+        deleteVitalSigns(patientVitalSign).then(this._resolveDeletion, this._rejectDeletion);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
@@ -413,6 +413,7 @@ export default {
 @image-card-height: 130px;
 @field-item-width: 150px;
 @field-height: 45px;
+@vitalSigns-card-height: 140px;
 
 .diagnostic-examination {
   .panel {
@@ -467,6 +468,9 @@ export default {
       }
       &.width-1-10 {
         width: calc(~"10% - @{card-horizontal-margin} * 2");
+      }
+      &.vitalSigns-card {
+        height: @vitalSigns-card-height;
       }
       .text {
         position: absolute;
