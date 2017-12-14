@@ -1,43 +1,116 @@
 <template lang="html">
-  <folding-panel :title="'现病史'" :mode="mode" :folded-status="foldedStatus" v-on:edit="startEditing" v-on:cancel="cancel" :editable="canEdit" v-on:submit="submit">
+  <folding-panel :title="'现病史是'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit"
+    :folded-status="foldedStatus" :editable="canEdit">
+    <!-- 现病史开始 ↓-->
     <div class="disease-info" ref="diseaseInfo">
-      <!-- 现病史开始 -->
-      <div class="group"><!-- 起病情况开始 -->
+      
+      <!-- 起病情况开始 ↓-->
+      <div class="group">
+        
         <h3>起病情况</h3>
-        <div class="field">
+        <!-- template 第一部分 ↓↓↓↓ -->
+        <div class="field" v-for="field in diseaseInfoTemplateGroups[0]" :class="checkField(field)">
           <span class="field-name">
-            起病类型
-            <span class="required-mark" v-show="true">*</span>
+            {{field.cnfieldName}}
+            <!-- <span class="required-mark" v-show="true">*</span> -->
           </span>
 
           <div class="field-value" v-show="mode===READING_MODE">
             <span v-if="true">
               起病类型值
             </span>
-            <span v-else-if="true">
-              起病类型值
+          </div>
+
+          <div class="field-input" v-show="mode===EDITING_MODE">
+            <span v-if="getUIType(field)===1">
+              <el-input v-model="copyInfo[field.fieldName]"
+                :placeholder="getMatchedField(field).cnFieldDesc"></el-input>
             </span>
-            <span v-else>
+            <span v-else-if="getUIType(field)===3">
+              <el-select v-model="copyInfo[field.fieldName]" clearable
+                :placeholder="getMatchedField(field).cnFieldDesc">
+                <el-option :label="'啊啊啊'" :value="11"></el-option>
+              </el-select>
+            </span>
+            <span v-else-if="getUIType(field)===5">
+              <el-checkbox-group v-model="copyInfo[field.fieldName]"
+                :placeholder="getMatchedField(field).cnFieldDesc">
+                <el-checkbox :label="'1'">一</el-checkbox>
+                <el-checkbox :label="'2'">二</el-checkbox>
+              </el-checkbox-group>
+            </span>
+            <span v-else-if="getUIType(field)===6">
+              <el-date-picker v-model="copyInfo[field.fieldName]" type="date"
+                :placeholder="getMatchedField(field).cnFieldDesc" format="yyyy-MM-dd" ></el-date-picker>
+            </span>
+            <!-- <span class="warning-text"></span> -->
+          </div>
+        </div>
+        <!-- template 第一部分 ↑↑↑↑ -->
+
+        <!-- 发病顺序 ↓ ↓ ↓ -->
+        <div class="field custom-field">
+          <span class="field-name">发病顺序</span>
+          <div class="field-value" v-show="mode===READING_MODE">
+
+            <div class="custom-item">
+              <span>大大大</span>
+              <span>（2018-02-02）</span>
+              <i class="iconfont icon-single-right" style="font-size:14px;"></i>
+            </div>
+
+          </div>
+          <div class="field-input" v-show="mode===EDITING_MODE">
+
+            <div class="custom-item">
+              <i class="iconfont icon-remove"></i>
+              <span class="sub-item">
+                <el-select v-model="test1" placeholder="请选择" clearable >
+                  <el-option :label="'啊啊啊'" :value="1">
+                  </el-option>
+                </el-select>
+              </span>
+              <span class="sub-item">
+                <el-date-picker v-model="test2" type="date" placeholder="选择发生日期" clearable ></el-date-picker>
+              </span>
+            </div>
+
+            <i class="iconfont icon-plus"></i>
+
+          </div>
+        </div>
+        <!-- 发病顺序 ↑ ↑ ↑-->
+
+        <!-- template 第二部分 ↓↓↓↓ -->
+        <div class="field" v-for="field in diseaseInfoTemplateGroups[1]" :class="checkField(field)">
+          <span class="field-name">
+            {{field.cnfieldName}}
+            <!-- <span class="required-mark" v-show="true">*</span> -->
+          </span>
+
+          <div class="field-value" v-show="mode===READING_MODE">
+            <span v-if="true">
               起病类型值
             </span>
           </div>
 
           <div class="field-input" v-show="mode===EDITING_MODE">
-            <span v-if="true">
-              <el-input v-model="mode"></el-input>
-            </span>
-            <span v-else-if="getUIType(field)===3">
-              
+            <span v-if="getUIType(field)===1">
+              <el-input v-model="copyInfo[field.fieldName]"
+                :placeholder="getMatchedField(field).cnFieldDesc"></el-input>
             </span>
             <span v-else-if="getUIType(field)===5">
-              
+              <el-checkbox-group v-model="copyInfo[field.fieldName]"
+                :placeholder="getMatchedField(field).cnFieldDesc">
+                <el-checkbox :label="'1'">一</el-checkbox>
+                <el-checkbox :label="'2'">二</el-checkbox>
+              </el-checkbox-group>
             </span>
-            <span v-else-if="getUIType(field)===6">
-              
-            </span>
-            <span class="warning-text"></span>
+            <!-- <span class="warning-text"></span> -->
           </div>
         </div>
+        <!-- template 第二部分 ↑↑↑ -->
+
         <extensible-panel class="disease-card" :title="firstSymTitle" @addNewCard="addFirstSymptomsRecord">
           <Card class="card symptoms-card" :mode="mode" :class="cardWidth"
            v-for="item in diseaseInfo.patientFirstSymbols" :key="item.id" :title="item.symType"
@@ -58,8 +131,12 @@
             </div>
           </Card>
         </extensible-panel>
-      </div><!-- 起病情况结束 -->
-      <div class="group"><!-- 就诊情况开始 -->
+
+      </div>
+      <!-- 起病情况结束 ↑-->
+
+      <!-- 就诊情况开始 ↓-->
+      <div class="group">
         <h3>就诊情况</h3>
 
         <div class="field">
@@ -75,7 +152,7 @@
 
           <div class="field-input" v-show="true">
             <span v-if="true">
-              <el-checkbox-group v-model="mode">
+              <el-checkbox-group v-model="test1">
                 <el-checkbox>SPECT</el-checkbox>
                 <el-checkbox>PET</el-checkbox>
                 <el-checkbox>医生的临床诊断</el-checkbox>
@@ -139,7 +216,7 @@
 
           <div class="field-input" v-show="true">
             <span v-if="true">
-              <el-checkbox-group v-model="mode">
+              <el-checkbox-group v-model="test1">
                 <el-checkbox>报纸</el-checkbox>
                 <el-checkbox>广播电视</el-checkbox>
                 <el-checkbox>社区服务</el-checkbox>
@@ -148,9 +225,10 @@
           </div>
         </div>
 
-      </div><!-- 就诊情况结束 -->
-      <!-- 现病史结束 -->
+      </div>
+      <!-- 就诊情况结束 ↑-->
     </div>
+    <!-- 现病史结束 ↑-->
   </folding-panel>
 </template>
 
@@ -162,9 +240,16 @@ import FoldingPanel from 'components/public/foldingpanel/FoldingPanel';
 import ExtensiblePanel from 'components/public/extensiblepanel/ExtensiblePanel';
 import Card from 'components/public/card/Card';
 import { deletePatientFirstSymbol, delPatientFirstVisitTreatment, delVisitDignosticRecord } from 'api/patient.js';
+
+const HALF_LINE_FIELD_LIST = ['diseaseType', 'specificDisease', 'ariTime', 'firTime', 'surTime', 'firMedinfo',
+  'firMedtime', 'ariAge', 'symmetries', 'symmetriesTime', 'firHosp', 'surHosp'];
+
 export default {
   data() {
     return {
+      test1: '',
+      test2: '',
+      copyInfo: {},
       mode: this.READING_MODE,
       foldedStatus: true,
       warningResults: {},
@@ -184,6 +269,14 @@ export default {
       'typeGroup',
       'medicineInfo'
     ]),
+    diseaseInfoDictionary() {
+      // 对 diseaseInfoDictionaryGroups 进行扁平化处理，方便之后操作
+      var flattenedGroup = [];
+      for (let group of this.diseaseInfoDictionaryGroups) {
+        flattenedGroup = flattenedGroup.concat(group);
+      }
+      return flattenedGroup;
+    },
     firstSymTitle() {
       return '首发症状（' + (this.diseaseInfo.patientFirstSymbols ? this.diseaseInfo.patientFirstSymbols : []).length + '条记录）';
     },
@@ -242,6 +335,34 @@ export default {
       }).map((obj) => {
         return obj.typeName;
       })[0];
+    },
+    getMatchedField(field) {
+      // 这个函数根据实际数据，在字典项中查询到对应的字段，从而方便我们得到其 uiType 等信息
+      return Util.getElement('fieldName', field.fieldName, this.diseaseInfoDictionary);
+    },
+    checkField(field) {
+      // 用来检测当前 field 的特殊样式
+      var dictionaryField = this.getMatchedField(field);
+      var name = dictionaryField.fieldName;
+      var classNameList = [];
+
+      // 判断该字段是否是半行
+      if (HALF_LINE_FIELD_LIST.indexOf(name) > -1) {
+        classNameList.push('half-line');
+      }
+      // 判断该字段的名字是否比较长
+      if (field.cnfieldName.length > 6) {
+        classNameList.push('long-label-field');
+      }
+      // 判断该字段是否是多选框
+      if (this.getUIType(field) === 5) {
+        classNameList.push('multiple-select');
+      }
+      return classNameList.join(' ');
+    },
+    getUIType(field) {
+      // uiType类型 0/无 1/输入框 2/数字箭头 3/单选下拉框 4/单选按纽 5/多选复选框 6/日期 7/日期时间
+      return this.getMatchedField(field).uiType;
     },
     cancel() {
       // 点击取消按钮，将我们对 copyInfo 所做的临时修改全部放弃，还原其为 diseaseInfo 的复制对象，同时不要忘了重新对其进行特殊处理
@@ -351,9 +472,8 @@ export default {
     Bus.$on(this.RECALCULATE_CARD_WIDTH, this.recalculateCardWidth);
     // 第一次加载的时候，去计算一次卡片宽度
     this.recalculateCardWidth();
-    // console.log(this.allFirstVisitType);
-    console.log(this.treatmentTypeOpt);
-    console.log(this.getTreatment(1));
+    console.log(this.diseaseInfoTemplateGroups);
+    console.log(this.diseaseInfoDictionaryGroups);
   },
   beforeDestroy() {
     // 还是记得销毁组件前，解除事件绑定
@@ -612,6 +732,42 @@ export default {
         }
         .warning .el-input__inner {
           border: 1px solid red;
+        }
+      }
+      &.custom-field{
+        height:auto;
+        min-height:30px;
+        margin-top:10px;
+        margin-bottom:3px;
+        .field-name{
+          line-height:30px;
+        }
+        .field-value{
+          line-height:30px;
+          position: relative;
+          .custom-item{
+            display:inline-block;
+          }
+        }
+        .field-input{
+          position: relative;
+          line-height:30px;
+          .custom-item{
+            display:inline-block;
+            width:300px;
+            margin-right:10px;
+            margin-bottom:6px;
+            >i{
+              color:#d20000f5;
+            }
+            .sub-item{
+              display:inline-block;
+              width:45%;
+            }
+          }
+          i{
+            cursor: pointer;
+          }
         }
       }
     }
