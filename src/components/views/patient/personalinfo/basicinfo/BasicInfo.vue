@@ -106,6 +106,11 @@ export default {
       } else {
         return false;
       }
+    },
+    blockSensitiveInfo() {
+      // 如果当前处于脱敏显示状态，则返回 true
+      var commonRequest = JSON.parse(sessionStorage.getItem('commonRequest'));
+      return commonRequest.viewType === 2;
     }
   },
   methods: {
@@ -172,6 +177,13 @@ export default {
           // 有几个字段的值在取过来的时候进行了特殊处理，这里在传回给服务器的时候要还原成一开始的格式
           if (CONVERT_TO_DECIMAL_LIST.indexOf(fieldName) > -1 && submitData[fieldName] !== '') {
             submitData[fieldName] = parseInt(submitData[fieldName] * 10, 10);
+          }
+
+          // 由于脱敏显示状态下，服务器传回的部分字段包含多个连续星号（至少 4 个）
+          // 因此我们需要将这些字段切除掉，不传给后端，否则会覆盖有效数据
+          if (this.$route.params.id !== 'newPatient' && this.blockSensitiveInfo &&
+            /^.*[*]{4,18}.*$/.test(submitData[fieldName])) {
+            delete submitData[fieldName];
           }
         }
       }
@@ -335,6 +347,14 @@ export default {
       var copyFieldValue = this.copyInfo[fieldName];
       // 如果是身份证信息，先对其进行校验
       if (fieldName === 'cardId') {
+        // 这里插入一段特殊逻辑，如果是修改病患信息（不是新增），而且处于脱敏显示状态下，
+        // 那么由于服务器返回的加密字段是连续18个星号，这里就得让其通过校验
+        if (this.$route.params.id !== 'newPatient' && this.blockSensitiveInfo &&
+          /^[*]{18}$/.test(copyFieldValue)) {
+          this.$set(this.warningResults, fieldName, null);
+          return;
+        }
+
         let result = Util.checkId(copyFieldValue).split(',');
         if (copyFieldValue === '' || copyFieldValue === undefined) {
           this.$set(this.warningResults, fieldName, null);
