@@ -142,10 +142,13 @@ export default {
       var commonRequest = JSON.parse(sessionStorage.getItem('commonRequest'));
       commonRequest.supportNumber = doctor.mobileNumber;
       sessionStorage.setItem('commonRequest', JSON.stringify(commonRequest));
+
+      sessionStorage.setItem('supportedDoctor', JSON.stringify(doctor));
+
       this.$message({
         message: '已选择服务医生：' + doctor.doctorName,
         type: 'success',
-        duration: 2000
+        duration: 3000
       });
       this.$router.push('/');
     }
@@ -158,6 +161,15 @@ export default {
     this.updateDoctorList();
     this.recalculateCardWidth();
     this.$store.dispatch('getWholeDictionary');
+  },
+  beforeRouteEnter(to, from, next) {
+    var userType = parseInt(sessionStorage.getItem('userType'), 10);
+    var token = sessionStorage.getItem('token');
+    if (userType === 5 && token) {
+      next();
+    } else {
+      next(from.path);
+    }
   },
   components: {
     waterMark

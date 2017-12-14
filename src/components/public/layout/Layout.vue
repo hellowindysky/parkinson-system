@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="app-wrapper" v-if="display" @click="clickScreen">
+  <div class="app-wrapper" @click="clickScreen">
     <topbar class="topbar" :showFilterPanel="showFilterPanel"></topbar>
     <sidebar class="sidebar"></sidebar>
     <router-view class="content"></router-view>
@@ -34,7 +34,7 @@
     <confirm-box></confirm-box>
     <notice-box></notice-box>
 
-    <water-mark v-show="showWaterMark"></water-mark>
+    <water-mark v-show="isSupportAccount"></water-mark>
   </div>
 </template>
 
@@ -80,7 +80,6 @@ const RELOGIN_TIME_FOR_NO_OPERATION = 1000 * 60 * 60;
 export default {
   data() {
     return {
-      display: false,
       showFilterPanel: false
     };
   },
@@ -118,7 +117,7 @@ export default {
     waterMark
   },
   computed: {
-    showWaterMark() {
+    isSupportAccount() {
       // 1 患者 2 医生 3 管理员 4 医院管理员 5 技术支持人员
       var userType = parseInt(sessionStorage.getItem('userType'), 10);
       return userType === 5;
@@ -136,10 +135,8 @@ export default {
       var thisOperationTime = this.$store.state.lastOperationTime;
       sessionStorage.setItem('lastOperationTime', thisOperationTime);
 
-      // 如果本次点击的时间离上一次的点击时间间隔过长，则返回登录界面，并清空 token
+      // 如果本次点击的时间离上一次的点击时间间隔过长，则返回登录界面
       if (thisOperationTime - lastOperationTime > RELOGIN_TIME_FOR_NO_OPERATION) {
-        sessionStorage.removeItem('token');
-        this.display = false;
         this.$message({
           message: '长时间未操作，请重新登录',
           type: 'warning',
@@ -159,20 +156,26 @@ export default {
       Bus.$emit(this.SCREEN_SIZE_CHANGE);
     };
 
-    // 如果还未获得 token 信息，则说明还没有登录，所以返回登录界面
-    if (sessionStorage.getItem('token') === null) {
-      this.display = false;
-      this.$router.push('/login');
-      return;
-    } else {
-      this.display = true;
-    }
-
     var lastOperationTime = Number(sessionStorage.getItem('lastOperationTime'));
     lastOperationTime = lastOperationTime ? lastOperationTime : 0;
     this.checkIfNoOperationForTooLong(lastOperationTime);
 
     Bus.$on(this.TOGGLE_FILTER_PANEL_DISPLAY, this.toggleFilterPanelDisplay);
+  },
+  beforeRouteEnter(to, from, next) {
+    let userType = parseInt(sessionStorage.getItem('userType'), 10);
+    let supportedDoctor = sessionStorage.getItem('supportedDoctor');
+
+    if (sessionStorage.getItem('token') === null) {
+      // 如果还未获得 token 信息，则说明还没有登录，所以返回登录界面
+      next({path: '/login'});
+      return;
+    } else if (userType === 5 && supportedDoctor === null) {
+      // 如果发现是技术支持专员，而且还没有选择医生，那么就跳转到医生选择界面
+      next({path: '/doctorSelection'});
+    } else {
+      next();
+    }
   },
   beforeDestroy() {
     Bus.$off(this.TOGGLE_FILTER_PANEL_DISPLAY);
