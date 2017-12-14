@@ -93,10 +93,10 @@ export default {
         text-align: center;
         cursor: pointer;
         &.cancel-button {
-          margin-right: 20px;
+          margin-right: 25px;
         }
         &.confirm-button {
-          margin-left: 20px;
+          margin-left: 25px;
           color: @button-color;
         }
         &:hover {

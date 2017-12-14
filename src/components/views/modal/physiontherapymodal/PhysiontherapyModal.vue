@@ -1,8 +1,8 @@
 <template lang="html">
   <div class="physiontherapy-modal-wrapper" v-show="displayModal">
     <div class="physiontherapy-modal" ref="scrollArea">
-         <h3 class="title">{{title}}</h3>
-         <div class="content">
+        <h3 class="title">{{title}}</h3>
+        <div class="content">
             <div class="field whole-line">
           <span class="field-name">
             物理治疗类型:
@@ -80,7 +80,7 @@
             <el-input v-model="stimulusFrequency" placeholder="请输入刺激频率"></el-input>
           </span>
         </div>
-         <div class="field">
+          <div class="field">
           <span class="field-name">
            刺激侧:
           </span>
@@ -128,8 +128,8 @@
         </div>
         <div class="field">
           <span class="field-name">
-             治疗前右侧运动阈值:
-             <span class="required-mark">*</span>
+            治疗前右侧运动阈值:
+            <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span class="warning-text"></span>
@@ -165,8 +165,35 @@
           </span>
         </div>
       </div>
-
-       <div class="seperate-line"></div>
+      <div class="seperate-line"></div>
+        <div class="content">
+        <table class="table">
+          <tr class="row title-row">
+            <td class="col narrow-col">序号</td>
+            <td class="col wide-col">不良反应程度评估</td>
+            <td class="col">严重程度</td>
+          </tr>
+          <tr class="row" v-for="(reaction, index) in patientPhytheReaction">
+            <td class="col narrow-col">{{index + 1}}</td>
+            <td class="col wide-col">
+              {{transform(reaction.reactionType, 'reactionType')}}
+            </td>
+            <td class="col narrow-col">
+              <span v-if="mode===VIEW_CURRENT_CARD">{{transform(reaction.severityLevel,'reactionLevel')}}</span>
+              <el-select v-else v-model="reaction.severityLevel" @change="updateWarning('severityLevel')">
+                <el-option
+                  v-for="item in getOptions('reactionLevel')"
+                  :key="item.code"
+                  :label="item.name"
+                  :value="item.code">
+                </el-option>
+              </el-select>
+            </td>
+          </tr>
+        </table>
+      </div>
+       <P>无该症状 0；轻度 1-3；中度 4-6；重度 7-9；数值越大越严重</p>
+      <div class="seperate-line"></div>
       <div class="button cancel-button btn-margin" @click="cancel">取消</div>
       <div v-if="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD" class="button submit-button btn-margin" @click="submit">确定</div>
       <div v-else-if="mode===VIEW_CURRENT_CARD && canEdit" class="button submit-button btn-margin" @click="switchToEditingMode">编辑</div>
@@ -179,7 +206,7 @@ import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import { reviseDateFormat, pruneObj } from 'utils/helper.js';
+import { deepCopy, vueCopy, reviseDateFormat, pruneObj } from 'utils/helper.js';
 import { addPhysiontherapy, modifyPhysiontherapy } from 'api/patient.js';
 
 export default {
@@ -202,6 +229,74 @@ export default {
       rightThresholdBefore: '',
       leftThresholdAfter: '',
       rightThresholdAfter: '',
+      severityLevel: '',
+      patientPhytheReaction: [
+        {
+          'reactionType': 1,
+          'severityLevel': '',
+          'assessType': 1
+        },
+        {
+          'reactionType': 2,
+          'severityLevel': '',
+          'assessType': 1
+        },
+        {
+          'reactionType': 3,
+          'severityLevel': '',
+          'assessType': 1
+        },
+        {
+          'reactionType': 4,
+          'severityLevel': '',
+          'assessType': 1
+        },
+        {
+          'reactionType': 5,
+          'severityLevel': '',
+          'assessType': 1
+        },
+        {
+          'reactionType': 6,
+          'severityLevel': '',
+          'assessType': 1
+        },
+        {
+          'reactionType': 7,
+          'severityLevel': '',
+          'assessType': 1
+        },
+        {
+          'reactionType': 8,
+          'severityLevel': '',
+          'assessType': 1
+        },
+        {
+          'reactionType': 9,
+          'severityLevel': '',
+          'assessType': 1
+        },
+        {
+          'reactionType': 10,
+          'severityLevel': '',
+          'assessType': 1
+        },
+        {
+          'reactionType': 11,
+          'severityLevel': '',
+          'assessType': 1
+        },
+        {
+          'reactionType': 12,
+          'severityLevel': '',
+          'assessType': 1
+        },
+        {
+          'reactionType': 13,
+          'severityLevel': '',
+          'assessType': 1
+        }
+      ],
       warningResults: {
         physiType: '',
         recordDate: '',
@@ -240,7 +335,9 @@ export default {
       this.completeInit = false;
       this.mode = cardOperation;
       this.showEdit = showEdit;
-
+      for (let reaction of this.patientPhytheReaction) {
+        reaction.severityLevel = '';
+      }
       // console.log('item: ', item);
       this.patientPhytheTmsId = item.patientPhytheTmsId ? item.patientPhytheTmsId : '';
       this.recordDate = item.recordDate ? item.recordDate : '';
@@ -253,8 +350,9 @@ export default {
       this.rightThresholdBefore = item.rightThresholdBefore ? item.rightThresholdBefore : '';
       this.leftThresholdAfter = item.leftThresholdAfter ? item.leftThresholdAfter : '';
       this.rightThresholdAfter = item.rightThresholdAfter ? item.rightThresholdAfter : '';
-
+      vueCopy(item.patientPhytheReaction, this.patientPhytheReaction);
       this.$nextTick(() => {
+        this.$refs.scrollArea.scrollTop = 0;
         for (var property in this.warningResults) {
           if (this.warningResults.hasOwnProperty(property)) {
             this.warningResults[property] = '';
@@ -283,8 +381,19 @@ export default {
       };
       return options;
     },
+    // transformToNum(obj, property, index, fieldName) {
+    //   // 如果填写的不是一个数字，则转换成一个空字符串，如果是一个数字，则将这个数字字符串转化为真正的数字
+    //   var value = obj[property];
+    //   var reg = new RegExp(/^[0-9]+\.{0,1}[0-9]{0,2}$/);
+    //   if (reg.test(value)) {
+    //     obj[property] = Number(value);
+    //   } else {
+    //     obj[property] = '';
+    //   }
+    // },
     updateWarning(fieldName) {
-      if (this.completeInit && !this[fieldName]) {
+      var list = ['recordDate', 'physiType', 'leftThresholdBefore', 'rightThresholdBefore'];
+      if (list.indexOf(fieldName) >= 0 && !this[fieldName]) {
         this.warningResults[fieldName] = '必填项';
       } else {
         this.warningResults[fieldName] = '';
@@ -303,7 +412,6 @@ export default {
         return;
       }
       this.lockSubmitButton = true;
-
       for (let property in this.warningResults) {
         if (this.warningResults.hasOwnProperty(property)) {
           this.updateWarning(property);
@@ -312,6 +420,7 @@ export default {
       for (let property in this.warningResults) {
         if (this.warningResults.hasOwnProperty(property) && this.warningResults[property]) {
           this.lockSubmitButton = false;
+          console.log(property, this.warningResults[property]);
           return;
         }
       }
@@ -329,6 +438,7 @@ export default {
       physicsInfo.rightThresholdBefore = this.rightThresholdBefore;
       physicsInfo.leftThresholdAfter = this.leftThresholdAfter;
       physicsInfo.rightThresholdAfter = this.rightThresholdAfter;
+      physicsInfo.patientPhytheReaction = deepCopy(this.patientPhytheReaction);
 
       reviseDateFormat(physicsInfo);
       pruneObj(physicsInfo);
@@ -382,11 +492,6 @@ export default {
 @field-name-width: 150px;
 @long-field-name-width: 160px;
 
-@col-id-width: 100px;
-@col-time-width: 200px;
-@col-amount-width: 150px;
-@col-unit-width: 150px;
-
 .physiontherapy-modal-wrapper {
   position: absolute;
   left: 0;
@@ -411,12 +516,6 @@ export default {
     .content {
       text-align: left;
       font-size: 0;
-      .seperate-line {
-        border-style: none;
-        border-top: 1px solid @light-gray-color;
-        margin-top: 5px;
-        margin-bottom: 15px;
-      }
       .field {
         display: inline-block;
         position: relative;
@@ -455,7 +554,7 @@ export default {
           display: inline-block;
           position: relative;
           left: @field-name-width;
-          width: calc(~"90% - @{field-name-width}");
+          width: calc(~"92% - @{field-name-width}");
           line-height: @field-line-height;
           font-size: @normal-font-size;
           color: @light-font-color;
@@ -499,119 +598,109 @@ export default {
           }
         }
       }
-      .field-file {
-        margin-bottom: 10px;
-        transform: translateX(10px);
-        .field-name {
-          display: inline-block;
-          position: absolute;
-          left: 0;
-          top: 0;
-          width: @field-name-width;
-          line-height: 20px;
+      .table {
+        margin: 10px 0 20px;
+        width: 100%;
+        border: 1px solid @light-gray-color;
+        border-collapse: collapse;
+        text-align: center;
+        .row {
+          height: 35px;
           font-size: @normal-font-size;
-          color: @font-color;
-        }
-        .field-input {
-          display: block;
-          position: relative;
-          left: @field-name-width;
-          width: 96%;
-          padding-right: @field-name-width;
-          box-sizing: border-box;
-          font-size: @normal-font-size;
-          .last-files {
-            margin-bottom: 10px;
-            width: 100%;
-            .last-files-title {
-              transform: translateY(-5px);
-              margin-bottom: 5px;
-              height: 30px;
-              line-height: 30px;
+          &.title-row {
+            background-color: @font-color;
+            color: #fff;
+          }
+          .col {
+            position: relative;
+            width: 10%;
+            border: 1px solid @light-gray-color;
+            .required-mark {
+              position: absolute;
+              right: 5px;
+              top: 8px;
+              color: red;
+              font-size: 25px;
+              vertical-align: middle;
+            }
+            &.title-col {
               background-color: @font-color;
               color: #fff;
-              text-align: center;
-              cursor: default;
             }
-            .file {
-              position: relative;
-              padding-left: 5px;
-              height: 30px;
-              line-height: 30px;
-              transition: 0.2s;
-              cursor: default;
-              .icon {
-                display: inline-block;
-                width: 20px;
+            &.wide-col {
+              width: 30%;
+            }
+            &.narrow-col {
+              width: 5%;
+            }
+            .iconfont {
+              position: absolute;
+              left: 5px;
+              top: 9px;
+              cursor: pointer;
+              z-index: 20;
+              &.icon-remove {
+                color: @alert-color;
               }
-              .file-name {
-                display: inline-block;
-                padding: 0 3px;
-                line-height: 20px;
-                transform: translateX(-3px);
-                cursor: pointer;
-                &:hover {
-                  border-bottom: 1px solid @font-color;
-                }
+              &:hover {
+                opacity: 0.6;
               }
-              .close-button {
-                display: none;
-                position: absolute;
-                right: 0;
-                width: 22px;
-                text-align: center;
-                color: @light-font-color;
-                font-size: 13px;
-              }
-              &.editing {
-                cursor: pointer;
-                &:hover {
-                  background-color: @screen-color;
-                  .close-button {
-                    display: inline-block;
-                    &:hover {
-                      color: @font-color;
-                    }
-                  }
-                }
+              &:active {
+                opacity: 0.8;
               }
             }
-          }
-          .upload-area {
-            .el-upload {
+            .el-input {
               width: 100%;
-              text-align: left;
-              .el-button {
-                width: 100%;
-                height: 30px;
-                border-radius: 10px;
-                &:hover {
-                  opacity: 0.7;
+              &.warning {
+                margin: -1px;
+                border: 1px solid red;
+              }
+              .el-input__inner {
+                padding: 0;
+                border: none;
+                text-align: center;
+              }
+              .el-input__icon {
+                &.el-icon-date {
+                  width: 12px;
+                  height: 12px;
+                  padding: 0 0 18px 10px;
+                  opacity: 0.3;
                 }
-                &:active {
-                  opacity: 0.85;
+                &.el-icon-close {
+                  width: 12px;
+                  height: 12px;
+                  padding: 0 0 18px 10px;
+                  color: @alert-color;
                 }
-                &.el-button--text {
-                  background-color: @light-font-color;
-                  color: #fff;
-                  &:disabled {
-                    background-color: @gray-color;
-                    cursor: not-allowed;
-                  }
+              }
+              &.is-disabled {
+                .el-input__inner {
+                  background-color: rgba(0,0,0,0);
+                  color: @font-color;
+                }
+                .el-input__icon {
+                  display: none;
                 }
               }
             }
-            .el-upload__tip {
-              line-height: normal;
-              margin-top:0;
-            }
-            .el-upload-list {
-              // max-height: 80px;
-              // overflow-y: scroll;
+            .el-select {
+              &.warning {
+                .el-input {
+                  margin: -1px;
+                  border: 1px solid red;
+                }
+              }
             }
           }
         }
       }
+    }
+    .seperate-line {
+      width: 90%;
+      height: 1px;
+      margin: 10px auto;
+      background-color: @light-gray-color;
     }
     .button {
       display: inline-block;

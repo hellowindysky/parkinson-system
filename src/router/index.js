@@ -3,6 +3,8 @@ import Router from 'vue-router';
 
 import Login from 'components/views/login/Login';
 
+import DoctorSelection from 'components/views/doctorselection/DoctorSelection';
+
 import Layout from 'components/public/layout/Layout';
 // import Home from 'components/views/home/Home';   // 首页还没做
 import ListFrame from 'components/views/listframe/ListFrame';
@@ -52,6 +54,11 @@ export default new Router({
       path: '/login',
       name: 'login',
       component: Login
+    },
+    {
+      path: '/doctorSelection',
+      name: 'doctorSelection',
+      component: DoctorSelection
     },
     // {
     //   path: '*',
