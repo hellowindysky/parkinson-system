@@ -142,7 +142,7 @@ const getters = {
     return state.all.tableData.symptomType;
   },
   noSportType: (state) => {
-    // 主诉的各种症状 非运动症状类型
+    // 主诉的各种症状 非运动症状类型 zq
     if (!state.all.tableData || !state.all.tableData.noSportType) {
       return [];
     }
@@ -223,6 +223,11 @@ const getters = {
           } else {
             // 对于其它普通的 typeCode，因为服务器给的是字符串，需要转化为 Number
             type.typeCode = parseInt(type.typeCode, 10);
+          }
+          if (type.childType) {
+            for (let item of type.childType) {
+              item.typeCode = parseInt(item.typeCode, 10);
+            }
           }
         }
       }
