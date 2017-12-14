@@ -216,6 +216,9 @@ export default {
 
     this.updateAuthorizedStatus();
 
+    var commonRequest = JSON.parse(sessionStorage.getItem('commonRequest'));
+    this.blockSensitiveInfo = commonRequest.viewType !== 1;
+
     Bus.$on(this.BLUR_ON_SCREEN, this.hidePanels);
     Bus.$on(this.PERMIT_DISPLAYING_SENSITIVE_INFO, () => {
       this.$store.commit('PERMIT_DISPLAYING_SENSITIVE_INFO');

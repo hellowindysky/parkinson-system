@@ -28,6 +28,7 @@ export function encapsulatePromise(url, request) {
       }
 
     }).catch(function(error) {
+      reject && reject(error);
       console.error('请求出错: ', error);
       Message({
         message: '请求失败，请稍后再试',
