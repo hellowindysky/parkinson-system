@@ -255,9 +255,10 @@ export default {
     line-height: @header-height;
     background-color: @background-color;
     box-sizing: border-box;
+    text-align: left;
     color: @font-color;
     .organization-wrapper {
-      position: absolute;
+      position: relative;
       display: inline-block;
       left: 20px;
       font-weight: bold;
@@ -285,6 +286,7 @@ export default {
       transform: translateX(-90px);
       background-color: @theme-color;
       border-radius: 8px;
+      text-align: center;
       .on {
         display: inline-block;
         position: absolute;
@@ -324,6 +326,7 @@ export default {
     .operation-wrapper {
       position: absolute;
       right: 0;
+      top: 0;
       padding-right: 20px;
       height: @header-height;
       background-color: @background-color;
@@ -337,6 +340,7 @@ export default {
         line-height: 30px;
         border-right: 1px solid lighten(@inverse-font-color, 20%);
         font-size: 18px;
+        text-align: center;
         color: @light-font-color;
         cursor: pointer;
         &:first-child {
@@ -403,7 +407,7 @@ export default {
     background-color: rgba(24,34,48,0.95);
     color: #fff;
     font-size: 0;
-    transition: 0.3s;
+    transition: 0.3s linear;
     z-index: -1;
     &.hide {
       color: rgba(0, 0, 0, 0);
@@ -445,12 +449,13 @@ export default {
     top: @header-height;
     right: 0;
     width: 137px;
-    // height: 81px;
     background-color: @theme-color;
+    color: #fff;
     cursor: pointer;
-    transition: 0.2s;
+    transition: 0.2s linear;
     z-index: -1;
     &.hide {
+      color: rgba(0, 0, 0, 0);
       transform: translateY(-100%);
     }
     .operate-item {
@@ -460,7 +465,6 @@ export default {
       height: 40px;
       line-height: 40px;
       text-align: center;
-      color: #fff;
       cursor: pointer;
       font-size: @normal-font-size;
       &:hover {

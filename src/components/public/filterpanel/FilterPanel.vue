@@ -1672,11 +1672,11 @@ export default {
   width: 100%;
   height: calc(~"100% - @{header-height} - @{header-margin-bottom}");
   background-color: @background-color;
-  transition: 0.5s;
+  transition: 0.5s linear;
   overflow: hidden;
   z-index: 300;
   &.hide {
-    transform: translateY(-150%);
+    transform: translateY(-130%);
   }
   .condition-area {
     position: absolute;
