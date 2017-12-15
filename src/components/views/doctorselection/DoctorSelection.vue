@@ -2,7 +2,7 @@
   <div class="doctor-selection">
     <div class="top-bar shadow">
       <h2 class="title">{{title}}</h2>
-      <el-button class="fresh-button" type="primary" :loading="refreshing" @click="refreshList">
+      <el-button class="fresh-button" type="primary" :loading="refreshing" @click="updateDoctorList">
         <span class="iconfont icon-refresh" v-show="!refreshing"></span>
         <span class="text">刷新</span>
       </el-button>
@@ -14,16 +14,19 @@
     <div class="search-line">
       <div class="area shadow" :class="devideWidth">
         <span class="text">地区</span>
-        <el-select v-model="district"></el-select>
+        <el-select v-model="district" :clearable="true">
+          <el-option v-for="option in getOptions('homeProvince')" :label="option.typeName"
+            :value="option.typeCode" :key="option.typeCode"></el-option>
+        </el-select>
       </div>
       <div class="search-input-wrapper shadow" :class="searchInputWrapperLeft">
         <span class="iconfont icon-search"></span>
         <el-input v-model="searchKeyword" placeholder="请输入医院名称、医生姓名、医生睿云账号或手机号码"></el-input>
-        <span class="button">搜索</span>
+        <span class="button" @click="searchDoctor">搜索</span>
       </div>
     </div>
     <div class="card-wrapper" ref="cardWrapper">
-      <div class="card shadow" :class="devideWidth" v-for="doctor in doctorList">
+      <div class="card shadow" :class="devideWidth" v-for="doctor in doctorList" @click="selectDoctor(doctor)">
         <span class="text first-line">
           <span class="name">医生姓名</span>
           <span class="value">{{doctor.doctorName}}</span>
@@ -34,17 +37,19 @@
         </span>
         <span class="text third-line">
           <span class="name">所在医院</span>
-          <span class="value">{{doctor.hospName}}23rsfw3wsdafas</span>
+          <span class="value">{{doctor.hospName}}</span>
         </span>
       </div>
     </div>
-    <!-- <water-mark></water-mark> -->
+    <water-mark></water-mark>
   </div>
 </template>
 
 <script>
 import Ps from 'perfect-scrollbar';
+import { mapGetters } from 'vuex';
 import { getSupportMessage, getSupportedDoctorList } from 'api/user.js';
+import Util from 'utils/util.js';
 import waterMark from 'components/public/watermark/WaterMark';
 
 export default {
@@ -59,6 +64,9 @@ export default {
     };
   },
   computed: {
+    ...mapGetters([
+      'typeGroup'
+    ]),
     title() {
       return '欢迎您，' + sessionStorage.getItem('name');
     },
@@ -81,17 +89,70 @@ export default {
       this.devideWidth = 'width-1-' + parseInt(devideNum, 10);
       this.searchInputWrapperLeft = 'left-1-' + parseInt(devideNum, 10);
     },
-    updateDoctorList() {
-      getSupportedDoctorList().then((data) => {
-        if (data) {
-          this.doctorList = data;
-        }
+    getOptions(fieldName) {
+      var typeInfo = Util.getElement('typegroupcode', fieldName, this.typeGroup);
+      // console.log(this.typeGroup);
+      return typeInfo.types ? typeInfo.types : [];
+    },
+    updateDoctorList(condition) {
+      this.refreshing = true;
+      getSupportedDoctorList(condition).then((data) => {
+        this.doctorList = data ? data : [];
+        this.refreshing = false;
+        this.updateMessage();
+
       }, (error) => {
+        this.refreshing = false;
         console.log(error);
       });
+
+      // 最多 3 秒，然后将按钮状态还原，否则请求出错的话按钮会一直处于禁用状态
+      setTimeout(() => {
+        this.refreshing = false;
+      }, 3000);
     },
     updateMessage() {
-      getSupportMessage().then(() => {
+      getSupportMessage().then((data) => {
+        if (data && data.length > 0) {
+          for (let i = 0; i < data.length; i++) {
+            (() => {
+              let authorizationInfo = data[i];
+              let operationType = authorizationInfo.operateType;  // 0 为授权，1 为解除授权
+              let hospitalName = authorizationInfo.hospName ? authorizationInfo.hospName : '-';
+              let doctorName = authorizationInfo.doctor ? authorizationInfo.doctor : '-';
+              let userName = authorizationInfo.username ? authorizationInfo.userName : '-';
+              let date = authorizationInfo.date ? authorizationInfo.date : '-';
+              let gender = authorizationInfo.sex ? authorizationInfo.sex : 0;
+
+              var title = '';
+              var type = '';
+              var message = '';
+              var thirdPerson = gender === 0 ? '他' : '她';
+
+              if (operationType === 0) {
+                title = '授权提醒';
+                type = 'success';
+                message = '【' + hospitalName + '】的 ' + doctorName + ' 医生（账号：' +
+                  userName + '）在【' + date + '】成功授权你成为' + thirdPerson + '的技术支持专员';
+
+              } else if (operationType === 1) {
+                title = '解除授权通知';
+                type = 'warning';
+                message = '【' + hospitalName + '】的 ' + doctorName + ' 医生（账号：' +
+                  userName + '）在【' + date + '】取消了对你的技术支持授权';
+              }
+
+              setTimeout(() => {
+                this.$notify({
+                  title: title,
+                  message: message,
+                  type: type,
+                  duration: 6000
+                });
+              }, 2000 * i);
+            })();
+          }
+        }
 
       }, (error) => {
         console.log(error);
@@ -107,20 +168,49 @@ export default {
         });
       });
     },
-    refreshList() {
-      this.refreshing = true;
-      setTimeout(() => {
-        this.refreshing = false;
-      }, 3000);
+    searchDoctor() {
+      // 相当于带条件地刷新
+      var condition = {};
+      if (this.district) {
+        condition.province = this.district;
+      }
+      if (this.searchKeyword) {
+        condition.keyword = this.searchKeyword;
+      }
+      this.updateDoctorList(condition);
+    },
+    selectDoctor(doctor) {
+      var commonRequest = JSON.parse(sessionStorage.getItem('commonRequest'));
+      commonRequest.supportNumber = doctor.mobileNumber;
+      sessionStorage.setItem('commonRequest', JSON.stringify(commonRequest));
+
+      sessionStorage.setItem('supportedDoctor', JSON.stringify(doctor));
+
+      this.$message({
+        message: '已选择服务医生：' + doctor.doctorName,
+        type: 'success',
+        duration: 3000
+      });
+      this.$router.push('/');
     }
   },
   mounted() {
-    this.recalculateCardWidth();
     window.onresize = () => {
       this.recalculateCardWidth();
     };
     this.updateScrollbar();
     this.updateDoctorList();
+    this.recalculateCardWidth();
+    this.$store.dispatch('getWholeDictionary');
+  },
+  beforeRouteEnter(to, from, next) {
+    var userType = parseInt(sessionStorage.getItem('userType'), 10);
+    var token = sessionStorage.getItem('token');
+    if (userType === 5 && token) {
+      next();
+    } else {
+      next(from.path);
+    }
   },
   components: {
     waterMark
@@ -171,8 +261,8 @@ export default {
       cursor: pointer;
       .el-icon-loading {
         position: absolute;
-        top: 8px;
-        left: 10px;
+        top: 9px;
+        left: 12px;
       }
       .iconfont {
         position: absolute;
@@ -246,6 +336,7 @@ export default {
       right: 15px;
       top: 0;
       height: 50px;
+      margin-left: @this-card-horizontal-margin;
       box-sizing: border-box;
       background: @background-color;
       .iconfont {
@@ -273,6 +364,7 @@ export default {
         height: @small-button-height;
         line-height: @small-button-height;
         text-align: center;
+        font-size: @normal-font-size;
         background-color: @light-font-color;
         color: #fff;
         cursor: pointer;
@@ -284,34 +376,34 @@ export default {
         }
       }
       &.left-1-1, &.left-1-0 {
-        left: calc(~"100% + @{this-card-horizontal-margin} * 2 - 2px");
+        left: calc(~"100% + @{this-card-horizontal-margin}");
       }
       &.left-1-2 {
-        left: calc(~"50% + @{this-card-horizontal-margin} * 2 - 2px");
+        left: calc(~"50% + @{this-card-horizontal-margin}");
       }
       &.left-1-3 {
-        left: calc(~"33.3333% + @{this-card-horizontal-margin} * 2 - 2px");
+        left: calc(~"33.3333% + @{this-card-horizontal-margin}");
       }
       &.left-1-4 {
-        left: calc(~"25% + @{this-card-horizontal-margin} * 2 - 2px");
+        left: calc(~"25% + @{this-card-horizontal-margin}");
       }
       &.left-1-5 {
-        left: calc(~"20% + @{this-card-horizontal-margin} * 2 - 2px");
+        left: calc(~"20% + @{this-card-horizontal-margin}");
       }
       &.left-1-6 {
-        left: calc(~"16.6666% + @{this-card-horizontal-margin} * 2 - 2px");
+        left: calc(~"16.6666% + @{this-card-horizontal-margin}");
       }
       &.left-1-7 {
-        left: calc(~"14.2857% + @{this-card-horizontal-margin} * 2 - 2px");
+        left: calc(~"14.2857% + @{this-card-horizontal-margin}");
       }
       &.left-1-8 {
-        left: calc(~"12.5% + @{this-card-horizontal-margin} * 2 - 2px");
+        left: calc(~"12.5% + @{this-card-horizontal-margin}");
       }
       &.left-1-9 {
-        left: calc(~"11.1111% + @{this-card-horizontal-margin} * 2 - 2px");
+        left: calc(~"11.1111% + @{this-card-horizontal-margin}");
       }
       &.left-1-10 {
-        left: calc(~"10% + @{this-card-horizontal-margin} * 2 - 2px");
+        left: calc(~"10% + @{this-card-horizontal-margin}");
       }
     }
   }
@@ -319,6 +411,7 @@ export default {
     position: relative;
     padding: 0 10px;
     height: calc(~"100% - @{this-top-bar-height} - @{this-info-line-height} - @{this-search-line-height}");
+    box-sizing: content-box;
     text-align: left;
     overflow: hidden;
     .card {
@@ -328,6 +421,13 @@ export default {
       height: 105px;
       background-color: @background-color;
       font-size: @normal-font-size;
+      cursor: pointer;
+      &:hover {
+        box-shadow: 0 0 5px @gray-color;
+      }
+      &:active {
+        box-shadow: 0 0 5px @light-gray-color;
+      }
       .text {
         display: inline-block;
         position: absolute;
@@ -354,7 +454,7 @@ export default {
           display: inline-block;
           position: absolute;
           left: 70px;
-          right: 20px;
+          right: 25px;
           color: @light-font-color;
           overflow: hidden;
           text-overflow: ellipsis;

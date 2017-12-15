@@ -16,7 +16,7 @@
             <el-date-picker
               v-model="checkTime"
               :class="{'warning': warningResults.checkTime}"
-              type="date"
+              type="datetime"
               placeholder="请输入检查时间"
               :picker-options="pickerOptions"
               @change="updateWarning('checkTime')">
@@ -42,61 +42,93 @@
             <span>{{temperature}}</span>
           </span>
           <span class="field-input" v-else>
-           <el-input v-model="temperature" placeholder="请输入体温"></el-input>
+            <el-input v-model="temperature" placeholder="请输入体温"></el-input>
           </span>
         </div>
-      <div class="field">
-        <span class="field-name">
-         脉搏（次/分）:
-        </span>
-        <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+        <div class="field">
+          <span class="field-name">
+            脉搏（次/分）:
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
           <span>{{pulse}}</span>
-        </span>
-        <span class="field-input" v-else>
-         <el-input v-model="pulse" placeholder="请输入每分钟脉搏频率"></el-input>
-        </span>
-      </div>
-      <div class="field">
-        <span class="field-name">
-        心率情况:
-        </span>
-        <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+          </span>
+          <span class="field-input" v-else>
+          <el-input v-model="pulse" placeholder="请输入每分钟脉搏频率"></el-input>
+          </span>
+        </div>
+        <div class="field">
+          <span class="field-name">
+            心率情况:
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
           <span>{{rhythm}}</span>
-        </span>
-        <span class="field-input" v-else>
-          <span class="warning-text">{{warningResults.rhythm}}</span>
-         <el-select v-model="rhythm" placeholder="请选择心率情况" @change="updateWarning('rhythm')"
-              :class="{'warning': warningResults.rhythm}">
+          </span>
+          <span class="field-input" v-else>
+          <el-select v-model="rhythm" placeholder="请选择心率情况" clearable @change="updateWarning('rhythm')">
+            <el-option
+              v-for="item in getOptions('rhythm')"
+              :key="item.code"
+              :label="item.name"
+              :value="item.code">
+            </el-option>
+          </el-select>
+          </span>
+        </div>
+        <div class="seperate-line"></div>
+          <table class="table">
+          <tr class="row title-row">
+            <td class="col" colspan="3" rowspan="1">卧立位血压</td>
+            <td class="col col-4" rowspan="2">心率（次/分）</td>
+            <td class="col col-5" rowspan="2">头晕</td>
+          </tr>
+          <tr class="row">
+            <td class="col title-col col-1">卧立位血压</td>
+            <td class="col title-col col-2">体侧</td>
+            <td class="col title-col col-3">收缩压 / 舒张压（mmHg）</td>
+          </tr>
+           <tr class="row" v-for="sign in patientVitalSignDetail">
+            <td class="col col-1">
+              {{transform(sign.bp,'vitalSignBP')}}
+            </td>
+            <td class="col col-2">
+              <span v-if="mode===VIEW_CURRENT_CARD">{{transform(sign.side,'vitalSignSide')}}</span>
+              <el-select v-else v-model="sign.side" clearable placeholder="请选择体侧" @change="updateWarning('vitalSignSide')">
               <el-option
-                v-for="item in getOptions('rhythm')"
+                v-for="item in getOptions('vitalSignSide')"
                 :key="item.code"
                 :label="item.name"
                 :value="item.code">
               </el-option>
             </el-select>
-        </span>
-      </div>
-      <div class="seperate-line"></div>
-      <div class="content">
-        <table class="table">
-          <tr class="row title-row">
-            卧立位血压
-            <td class="sol1 wide-col">卧立位血压</td>
-            <td class="sol2 wide-col">体侧</td>
-            <td class="sol3 wide-col">收缩压/舒张压（mmg）</td>
-            <td class="col wide-col">心率（次/分）</td>
-            <td class="col">头晕</td>
-          </tr>
-          <tr class="row" v-for="(reaction, index) in patientVitalSign">
-            <td class="col narrow-col">{{index + 1}}</td>
-            <td class="col wide-col">
-              {{getRealName(reaction.reactionType, 'reactionType')}}
             </td>
-            <td class="col narrow-col">
-              <span v-if="mode===VIEW_CURRENT_CARD">{{reaction.reactionLevel}}</span>
-              <el-select v-else v-model="scale.reactionLevel" @change="updateWarning('reactionLevel')">
+            <td class="col col-3">
+              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                <span>{{transform(sign.systolic,'systolic')}}</span>
+              </span>
+              <span class="field-input" v-else>
+                <el-input class="left" v-model="sign.systolic"></el-input>
+              </span>
+              <span>/</span>
+              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                <span>{{transform(sign.diastolic,'diastolic')}}</span>
+              </span>
+              <span class="field-input" v-else>
+                <el-input class="right" v-model="sign.diastolic"></el-input>
+              </span>
+            </td>
+            <td class="col col-4">
+              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                <span>{{transform(sign.heartrate,'heartrate')}}</span>
+              </span>
+              <span class="field-input" v-else>
+                <el-input v-model="sign.heartrate"></el-input>
+              </span>
+            </td>
+            <td class="col col-5">
+              <span v-if="mode===VIEW_CURRENT_CARD">{{transform(sign.dizzy,'vitalSignDizzy')}}</span>
+              <el-select v-else v-model="sign.dizzy" clearable placeholder="是否头晕" @change="updateWarning('vitalSignDizzy')">
               <el-option
-                v-for="item in getOptions('reactionLevel')"
+                v-for="item in getOptions('vitalSignDizzy')"
                 :key="item.code"
                 :label="item.name"
                 :value="item.code">
@@ -105,14 +137,13 @@
             </td>
           </tr>
         </table>
-      </div>
-      <div class="seperate-line"></div>
-      <div class="button cancel-button btn-margin" @click="cancel">取消</div>
-      <div v-show="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD" class="button submit-button btn-margin" @click="submit">确定</div>
-      <div v-show="mode===VIEW_CURRENT_CARD && canEdit" class="button submit-button btn-margin" @click="switchToEditingMode">编辑</div>
+        </div>
+        <div class="seperate-line"></div>
+        <div class="button cancel-button btn-margin" @click="cancel">取消</div>
+        <div v-show="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD" class="button submit-button btn-margin" @click="submit">确定</div>
+        <div v-show="mode===VIEW_CURRENT_CARD && canEdit" class="button submit-button btn-margin" @click="switchToEditingMode">编辑</div>
     </div>
   </div>
-</div>
 </template>
 
 <script>
@@ -120,7 +151,7 @@ import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import { deepCopy, vueCopy, reviseDateFormat, pruneObj } from 'utils/helper.js';
+import { deepCopy, vueCopy, pruneObj } from 'utils/helper.js';
 import { addVitalSigns, modifyVitalSigns } from 'api/patient.js';
 export default {
   data() {
@@ -128,79 +159,68 @@ export default {
       displayModal: false,
       mode: '',
       completeInit: false,
-
-      patientVitalSignsId: '',
       patientVitalSign: '',
       checkTime: '',
       breathing: '',
       temperature: '',
       pulse: '',
       rhythm: '',
-      patientPhytheReaction: [
+      patientVitalSignDetail: [
         {
-          'reactionType': 1,
-          'severityLevel': 0,
-          'assessType': 1
+          'bp': 1,
+          'side': '',
+          'systolic': '',
+          'diastolic': '',
+          'heartrate': '',
+          'dizzy': ''
         },
         {
-          'reactionType': 2,
-          'severityLevel': 0,
-          'assessType': 1
+          'bp': 2,
+          'side': '',
+          'systolic': '',
+          'diastolic': '',
+          'heartrate': '',
+          'dizzy': ''
         },
         {
-          'reactionType': 3,
-          'severityLevel': 0,
-          'assessType': 1
+          'bp': 3,
+          'side': '',
+          'systolic': '',
+          'diastolic': '',
+          'heartrate': '',
+          'dizzy': ''
         },
         {
-          'reactionType': 4,
-          'severityLevel': 0,
-          'assessType': 1
+          'bp': 4,
+          'side': '',
+          'systolic': '',
+          'diastolic': '',
+          'heartrate': '',
+          'dizzy': ''
         },
         {
-          'reactionType': 5,
-          'severityLevel': 0,
-          'assessType': 1
+          'bp': 5,
+          'side': '',
+          'systolic': '',
+          'diastolic': '',
+          'heartrate': '',
+          'dizzy': ''
         },
         {
-          'reactionType': 6,
-          'severityLevel': 0,
-          'assessType': 1
+          'bp': 6,
+          'side': '',
+          'systolic': '',
+          'diastolic': '',
+          'heartrate': '',
+          'dizzy': ''
         },
         {
-          'reactionType': 7,
-          'severityLevel': 0,
-          'assessType': 1
-        },
-        {
-          'reactionType': 8,
-          'severityLevel': 0,
-          'assessType': 1
-        },
-        {
-          'reactionType': 9,
-          'severityLevel': 0,
-          'assessType': 1
-        },
-        {
-          'reactionType': 10,
-          'severityLevel': 0,
-          'assessType': 1
-        },
-        {
-          'reactionType': 11,
-          'severityLevel': 0,
-          'assessType': 1
-        },
-        {
-          'reactionType': 12,
-          'severityLevel': 0,
-          'assessType': 1
-        },
-        {
-          'reactionType': 13,
-          'severityLevel': 0,
-          'assessType': 1
+          'bp': 7,
+          'side': '',
+          'systolic': '',
+          'diastolic': '',
+          'heartrate': '',
+          'dizzy': ''
         }
       ],
       warningResults: {
@@ -238,6 +258,13 @@ export default {
       this.completeInit = false;
       this.mode = cardOperation;
       this.showEdit = showEdit;
+      for (let sign of this.patientVitalSignDetail) {
+        sign.side = '';
+        sign.dizzy = '';
+        sign.systolic = '';
+        sign.diastolic = '';
+        sign.heartrate = '';
+      }
 
       // console.log('item: ', item);
       this.patientVitalSignsId = item.patientVitalSignsId ? item. patientVitalSignsId : '';
@@ -246,7 +273,8 @@ export default {
       this.temperature = item.temperature ? item.temperature : '';
       this.pulse = item.pulse ? item.pulse : '';
       this.rhythm = item.rhythm ? item.rhythm : '';
-      vueCopy(item.patientVitalSign, this.patientVitalSign);
+      vueCopy(item.patientVitalSignDetail, this.patientVitalSignDetail);
+
       this.$nextTick(() => {
         for (var property in this.warningResults) {
           if (this.warningResults.hasOwnProperty(property)) {
@@ -259,7 +287,7 @@ export default {
       this.displayModal = true;
       this.updateScrollbar();
     },
-    transformSituationType(code, fieldName) {
+    transform(code, fieldName) {
       var options = this.getOptions(fieldName);
       var targetOption = Util.getElement('code', code, options);
       return targetOption.name;
@@ -313,29 +341,20 @@ export default {
       }
       this.lockSubmitButton = true;
 
-      for (let property in this.warningResults) {
-        if (this.fieldListToCheck.indexOf(property) >= 0 && this.warningResults.hasOwnProperty(property)) {
-          this.updateWarning(property);
-        }
-      }
-      for (let property in this.warningResults) {
-        if (this.fieldListToCheck.indexOf(property) >= 0 && this.warningResults.hasOwnProperty(property) && this.warningResults[property]) {
-          this.lockSubmitButton = false;
-          return;
-        }
-      }
       var vitalSignsInfo = {};
-      vitalSignsInfo.patientVitalSignsId = this.$route.params.caseId;
+      vitalSignsInfo.patientCaseId = this.$route.params.caseId;
+      vitalSignsInfo.patientId = this.$route.params.id;
+
       vitalSignsInfo.patientVitalSign = this.patientVitalSign;
-      vitalSignsInfo.checkTime = this.checkTime;
+      vitalSignsInfo.checkTime = Util.simplifyTime(this.checkTime);
       vitalSignsInfo.breathing = this.breathing;
       vitalSignsInfo.temperature = this.temperature;
       vitalSignsInfo.pulse = this.pulse;
       vitalSignsInfo.rhythm = this.rhythm;
-      vitalSignsInfo.patientVitalSign = deepCopy(this.patientVitalSign);
-      reviseDateFormat(vitalSignsInfo);
+      vitalSignsInfo.patientVitalSignDetail = deepCopy(this.patientVitalSignDetail);
+      // reviseDateFormat(vitalSignsInfo);
       pruneObj(vitalSignsInfo);
-
+      // this.lockSubmitButton = false;
       if (this.mode === this.ADD_NEW_CARD) {
         addVitalSigns(vitalSignsInfo).then(() => {
           this.updateAndClose();
@@ -382,7 +401,7 @@ export default {
 @import "~styles/variables.less";
 
 @field-line-height: 25px;
-@field-name-width: 125px;
+@field-name-width: 110px;
 
 .vital-signs-modal-wrapper {
   position: absolute;
@@ -397,7 +416,7 @@ export default {
     margin: auto;
     padding: 0 40px;
     top: 5%;
-    width: 600px;
+    width: 660px;
     max-height: 90%;
     background-color: @background-color;
     overflow: hidden;
@@ -406,7 +425,7 @@ export default {
       font-size: @large-font-size;
     }
     .content {
-      // text-align: left;
+      text-align: left;
       font-size: 0;
       .field {
         display: inline-block;
@@ -421,7 +440,7 @@ export default {
         &.whole-line {
           width: 100%;
           .field-input {
-            width: calc(~"96% - @{field-name-width}");
+            width: calc(~"98% - @{field-name-width}");
           }
         }
         .field-name {
@@ -446,7 +465,7 @@ export default {
           display: inline-block;
           position: relative;
           left: @field-name-width;
-          width: calc(~"90% - @{field-name-width}");
+          width: calc(~"96% - @{field-name-width}");
           line-height: @field-line-height;
           font-size: @normal-font-size;
           color: @light-font-color;
@@ -505,7 +524,7 @@ export default {
           }
           .col {
             position: relative;
-            width: 10%;
+            width: 20%;
             border: 1px solid @light-gray-color;
             .required-mark {
               position: absolute;
@@ -519,11 +538,16 @@ export default {
               background-color: @font-color;
               color: #fff;
             }
-            &.wide-col {
-              width: 30%;
+            &.col-1, 
+            &.col-4,
+            &.col-5 {
+              width: 10%;
             }
-            &.narrow-col {
-              width: 5%;
+            &.col-2 {
+              width: 12%;
+            }
+            &.col-3 {
+              width: 16%;
             }
             .iconfont {
               position: absolute;
@@ -553,12 +577,6 @@ export default {
                 text-align: center;
               }
               .el-input__icon {
-                &.el-icon-date {
-                  width: 12px;
-                  height: 12px;
-                  padding: 0 0 18px 10px;
-                  opacity: 0.3;
-                }
                 &.el-icon-close {
                   width: 12px;
                   height: 12px;
@@ -576,6 +594,20 @@ export default {
                 }
               }
             }
+            .left {
+              display: inline-block;
+              position: absolute;
+              width: 45%;
+              left: 0;
+              top: 0;
+            }
+            .right {
+              display: inline-block;
+              position: absolute;
+              width: 45%;
+              right: 0;
+              top: 0;
+            }
             .el-select {
               &.warning {
                 .el-input {
@@ -586,30 +618,6 @@ export default {
             }
           }
         }
-      }
-      .sol1 {
-         position: absolute;
-         width: 18%;
-         display: inline-block;
-         transform: translate(-216px,16px);
-         border: 1px solid @light-gray-color;
-         text-align: center;
-      }
-      .sol2 {
-         position: absolute;
-         width: 10%;
-         display: inline-block;
-         transform: translate(-94px,16px);
-         border: 1px solid @light-gray-color;
-         text-align: center;
-      }
-      .sol3 {
-         position: absolute;
-         width: 25%;
-         display: inline-block;
-         transform: translate(-26px,16px);
-         border: 1px solid @light-gray-color;
-         text-align: center;
       }
     }
     .seperate-line {

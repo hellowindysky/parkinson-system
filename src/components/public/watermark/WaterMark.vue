@@ -60,7 +60,7 @@ export default {
 @import "~styles/variables.less";
 
 .water-mark {
-  position: relative;
+  position: absolute;
   width: 200%;
   height: 200%;
   top: -50%;

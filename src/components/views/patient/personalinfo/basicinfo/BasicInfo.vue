@@ -20,7 +20,12 @@
 
           <div class="field-input" v-show="mode===EDITING_MODE">
             <span class="warning-text">{{getWarningText(field.fieldName)}}</span>
-            <span v-if="getUIType(field)===1">
+
+            <span v-if="checkIfBlocking(field.fieldName)" class="desensitized-value">
+              {{ copyInfo[field.fieldName] }}
+            </span>
+
+            <span v-else-if="getUIType(field)===1">
               <el-input v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
                 :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)" :maxlength="50" @input="inputing(field)"></el-input>
             </span>
@@ -119,6 +124,16 @@ export default {
       this.mode = this.EDITING_MODE;
       this.clearWarning();
     },
+    checkIfBlocking(fieldName) {
+      // 1.脱敏字段；2.在脱敏状态下；3.非新增病患 ———— 这个函数用来返回是否同时满足前面 3 个条件
+      let blockingFieldList = ['name', 'cardId', 'phone', 'phone2', 'homeAddress'];
+      if (this.blockSensitiveInfo && blockingFieldList.indexOf(fieldName) >= 0 &&
+        this.$route.params.id !== 'newPatient') {
+        return true;
+      } else {
+        return false;
+      }
+    },
     cancel() {
       this.lockSubmitButton = false;
       // 如果是新增患者界面，点击取消按钮，则回到患者列表的第一个患者
@@ -178,13 +193,6 @@ export default {
           if (CONVERT_TO_DECIMAL_LIST.indexOf(fieldName) > -1 && submitData[fieldName] !== '') {
             submitData[fieldName] = parseInt(submitData[fieldName] * 10, 10);
           }
-
-          // 由于脱敏显示状态下，服务器传回的部分字段包含多个连续星号（至少 4 个）
-          // 因此我们需要将这些字段切除掉，不传给后端，否则会覆盖有效数据
-          if (this.$route.params.id !== 'newPatient' && this.blockSensitiveInfo &&
-            /^.*[*]{4,18}.*$/.test(submitData[fieldName])) {
-            delete submitData[fieldName];
-          }
         }
       }
       pruneObj(submitData);
@@ -240,6 +248,18 @@ export default {
               type: 'error',
               duration: 2000
             });
+          } else if (error.code === 2006) {
+            this.$message({
+              message: '门诊病例号重复',
+              type: 'error',
+              duration: 2000
+            });
+          } else if (error.code === 2007) {
+            this.$message({
+              message: '住院病例号重复',
+              type: 'error',
+              duration: 2000
+            });
           }
           this.lockSubmitButton = false;
         });
@@ -272,6 +292,18 @@ export default {
           } else if (error.code === 31) {
             this.$message({
               message: '医院患者编码重复',
+              type: 'error',
+              duration: 2000
+            });
+          } else if (error.code === 2006) {
+            this.$message({
+              message: '门诊病例号重复',
+              type: 'error',
+              duration: 2000
+            });
+          } else if (error.code === 2007) {
+            this.$message({
+              message: '住院病例号重复',
               type: 'error',
               duration: 2000
             });
@@ -524,6 +556,9 @@ export default {
           height: 15px;
           color: red;
           font-size: @small-font-size;
+        }
+        .desensitized-value {
+          font-size: @normal-font-size;
         }
         .el-input {
           transform: translateY(-3px);
