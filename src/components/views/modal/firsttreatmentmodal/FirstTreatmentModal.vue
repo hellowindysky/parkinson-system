@@ -478,7 +478,6 @@ export default {
   },
   mounted() {
     Bus.$on(this.SHOW_FIRSTTREATMENT_MODAL, this.showModal);
-    console.log(this.typeGroup);
   }
 };
 </script>
