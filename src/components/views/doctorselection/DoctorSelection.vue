@@ -99,6 +99,7 @@ export default {
       getSupportedDoctorList(condition).then((data) => {
         this.doctorList = data ? data : [];
         this.refreshing = false;
+        this.updateMessage();
 
       }, (error) => {
         this.refreshing = false;
@@ -111,12 +112,48 @@ export default {
       }, 3000);
     },
     updateMessage() {
-      getSupportMessage().then(() => {
-        this.$notify({
-          title: '成功',
-          message: '这是一条成功的提示消息',
-          type: 'success'
-        });
+      getSupportMessage().then((data) => {
+        if (data && data.length > 0) {
+          for (let i = 0; i < data.length; i++) {
+            (() => {
+              let authorizationInfo = data[i];
+              let operationType = authorizationInfo.operateType;  // 0 为授权，1 为解除授权
+              let hospitalName = authorizationInfo.hospName ? authorizationInfo.hospName : '-';
+              let doctorName = authorizationInfo.doctor ? authorizationInfo.doctor : '-';
+              let userName = authorizationInfo.username ? authorizationInfo.userName : '-';
+              let date = authorizationInfo.date ? authorizationInfo.date : '-';
+              let gender = authorizationInfo.sex ? authorizationInfo.sex : 0;
+
+              var title = '';
+              var type = '';
+              var message = '';
+              var thirdPerson = gender === 0 ? '他' : '她';
+
+              if (operationType === 0) {
+                title = '授权提醒';
+                type = 'success';
+                message = '【' + hospitalName + '】的 ' + doctorName + ' 医生（账号：' +
+                  userName + '）在【' + date + '】成功授权你成为' + thirdPerson + '的技术支持专员';
+
+              } else if (operationType === 1) {
+                title = '解除授权通知';
+                type = 'warning';
+                message = '【' + hospitalName + '】的 ' + doctorName + ' 医生（账号：' +
+                  userName + '）在【' + date + '】取消了对你的技术支持授权';
+              }
+
+              setTimeout(() => {
+                this.$notify({
+                  title: title,
+                  message: message,
+                  type: type,
+                  duration: 6000
+                });
+              }, 2000 * i);
+            })();
+          }
+        }
+
       }, (error) => {
         console.log(error);
       });
@@ -163,7 +200,6 @@ export default {
     };
     this.updateScrollbar();
     this.updateDoctorList();
-    this.updateMessage();
     this.recalculateCardWidth();
     this.$store.dispatch('getWholeDictionary');
   },
