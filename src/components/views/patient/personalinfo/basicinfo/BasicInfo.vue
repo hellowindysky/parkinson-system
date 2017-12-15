@@ -21,11 +21,11 @@
           <div class="field-input" v-show="mode===EDITING_MODE">
             <span class="warning-text">{{getWarningText(field.fieldName)}}</span>
 
-            <!-- <span v-if="checkIfBlocking(field.fieldName)" class="desensitized-value">
+            <span v-if="checkIfBlocking(field.fieldName)" class="desensitized-value">
               {{ copyInfo[field.fieldName] }}
-            </span> -->
+            </span>
 
-            <span v-if="getUIType(field)===1">
+            <span v-else-if="getUIType(field)===1">
               <el-input v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
                 :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)" :maxlength="50" @input="inputing(field)"></el-input>
             </span>
@@ -248,6 +248,18 @@ export default {
               type: 'error',
               duration: 2000
             });
+          } else if (error.code === 2006) {
+            this.$message({
+              message: '门诊病例号重复',
+              type: 'error',
+              duration: 2000
+            });
+          } else if (error.code === 2007) {
+            this.$message({
+              message: '住院病例号重复',
+              type: 'error',
+              duration: 2000
+            });
           }
           this.lockSubmitButton = false;
         });
@@ -280,6 +292,18 @@ export default {
           } else if (error.code === 31) {
             this.$message({
               message: '医院患者编码重复',
+              type: 'error',
+              duration: 2000
+            });
+          } else if (error.code === 2006) {
+            this.$message({
+              message: '门诊病例号重复',
+              type: 'error',
+              duration: 2000
+            });
+          } else if (error.code === 2007) {
+            this.$message({
+              message: '住院病例号重复',
               type: 'error',
               duration: 2000
             });

@@ -138,12 +138,20 @@ export default {
       var commonRequest = JSON.parse(sessionStorage.getItem('commonRequest'));
       commonRequest.viewType = 1;
       sessionStorage.setItem('commonRequest', JSON.stringify(commonRequest));
+      this.reloadPage();
     },
     hideSensitiveInfo() {
       this.blockSensitiveInfo = true;
       var commonRequest = JSON.parse(sessionStorage.getItem('commonRequest'));
       commonRequest.viewType = 2;
       sessionStorage.setItem('commonRequest', JSON.stringify(commonRequest));
+      this.reloadPage();
+    },
+    reloadPage() {
+      // 让相应的组件重新加载，从而以新的显示方式（带着新的参数）向服务器发出请求
+      let currentPath = this.$route.path;
+      this.$router.push('/');
+      this.$router.push(currentPath);
     },
     toggleFilterPanelDisplay() {
       Bus.$emit(this.TOGGLE_FILTER_PANEL_DISPLAY);
