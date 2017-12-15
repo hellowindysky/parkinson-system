@@ -248,6 +248,18 @@ export default {
               type: 'error',
               duration: 2000
             });
+          } else if (error.code === 2006) {
+            this.$message({
+              message: '门诊病例号重复',
+              type: 'error',
+              duration: 2000
+            });
+          } else if (error.code === 2007) {
+            this.$message({
+              message: '住院病例号重复',
+              type: 'error',
+              duration: 2000
+            });
           }
           this.lockSubmitButton = false;
         });

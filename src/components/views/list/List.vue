@@ -840,8 +840,13 @@ export default {
     width: 100%;
     height: @function-area-height;
     background-color: @background-color;
-    box-sizing: border-box; // box-shadow: 2px 2px 2px @light-gray-color;
+    border: 1px solid @theme-color;
+    border-radius: 10px;
+    // background-color: @theme-color;
+    // color: #fff;
+    box-sizing: border-box;
     font-size: @normal-font-size;
+    transform: translateY(-1px);
     vertical-align: middle;
     .function-button {
       float: left;
