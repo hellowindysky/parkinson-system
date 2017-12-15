@@ -401,10 +401,12 @@ export default {
     padding: 10px 0;
     width: 400px;
     background-color: rgba(24,34,48,0.95);
+    color: #fff;
     font-size: 0;
-    transition: 0.15s;
+    transition: 0.3s;
     z-index: -1;
     &.hide {
+      color: rgba(0, 0, 0, 0);
       transform: translateY(-120%);
     }
     .item {
@@ -416,7 +418,6 @@ export default {
       line-height: 40px;
       box-sizing: border-box;
       text-align: left;
-      color: #fff;
       font-size: @normal-font-size;
       cursor: pointer;
       &:hover {
