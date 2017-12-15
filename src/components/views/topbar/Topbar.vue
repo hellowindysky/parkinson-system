@@ -148,9 +148,10 @@ export default {
       this.reloadPage();
     },
     reloadPage() {
-      // 下面两行可以让相应的组件重新加载，从而以新的显示方式（带着新的参数）向服务器发出请求
+      // 让相应的组件重新加载，从而以新的显示方式（带着新的参数）向服务器发出请求
+      let currentPath = this.$route.path;
       this.$router.push('/');
-      this.$router.push(this.$route.path);
+      this.$router.push(currentPath);
     },
     toggleFilterPanelDisplay() {
       Bus.$emit(this.TOGGLE_FILTER_PANEL_DISPLAY);
