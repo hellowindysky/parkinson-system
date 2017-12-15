@@ -413,7 +413,7 @@ export default {
 @image-card-height: 130px;
 @field-item-width: 150px;
 @field-height: 45px;
-@vitalSigns-card-height: 140px;
+@vitalSigns-card-height: 130px;
 
 .diagnostic-examination {
   .panel {
