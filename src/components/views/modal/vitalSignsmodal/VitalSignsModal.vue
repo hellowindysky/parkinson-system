@@ -159,6 +159,8 @@ export default {
       displayModal: false,
       mode: '',
       completeInit: false,
+
+      id: '',
       patientVitalSign: '',
       checkTime: '',
       breathing: '',
@@ -267,6 +269,7 @@ export default {
       }
 
       // console.log('item: ', item);
+      this.id = item.id;
       this.checkTime = item.checkTime ? item.checkTime : '';
       this.breathing = item.breathing ? item.breathing : '';
       this.temperature = item.temperature ? item.temperature : '';
@@ -305,7 +308,7 @@ export default {
     },
     updateWarning(fieldName) {
       var list = ['checkTime'];
-      if (list.indexOf(fieldName) && !this[fieldName]) {
+      if (list.indexOf(fieldName) >= 0 && !this[fieldName]) {
         this.warningResults[fieldName] = '必填项';
       } else {
         this.warningResults[fieldName] = '';
@@ -324,6 +327,14 @@ export default {
         return;
       }
       this.lockSubmitButton = true;
+
+      this.updateWarning('checkTime');
+      for (const property in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(property) && this.warningResults[property]) {
+          this.lockSubmitButton = false;
+          return;
+        }
+      }
 
       var vitalSignsInfo = {};
       vitalSignsInfo.patientCaseId = this.$route.params.caseId;
