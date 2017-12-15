@@ -202,6 +202,7 @@ export default {
     this.updateDoctorList();
     this.recalculateCardWidth();
     this.$store.dispatch('getWholeDictionary');
+    sessionStorage.removeItem('supportedDoctor');
   },
   beforeRouteEnter(to, from, next) {
     var userType = parseInt(sessionStorage.getItem('userType'), 10);

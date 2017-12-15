@@ -16,7 +16,11 @@
         <span class="iconfont icon-task" v-show="false"></span>
         <span class="account" @click.stop="toggleAccountPanelDisplay">
           <img src="~img/profile.png" alt="doctor image" class="picture">
-          <span class="name" :class="{'on': showAccountPanel}">{{accountName}}</span>
+          <span v-if="isSupportAccount" class="support-mark">授</span>
+          <span class="name" :class="{'on': showAccountPanel}">
+            <span v-if="isSupportAccount">{{supportedDoctorName}}</span>
+            <span v-else>{{accountName}}</span>
+          </span>
         </span>
       </div>
     </div>
@@ -37,8 +41,10 @@
       </div>
     </div>
     <div class="account-panel" :class="{'hide': !showAccountPanel}">
-      <p class="operate-item" v-show="allowAuthorization" @click="authorize">授权技术支持</p>
-      <div class="seperate-line" v-show="allowAuthorization"></div>
+      <p class="operate-item" v-if="allowAuthorization" @click="authorize">授权技术支持</p>
+      <div class="seperate-line" v-if="allowAuthorization"></div>
+      <p class="operate-item" v-if="isSupportAccount" @click="reselectDoctor">更换授权医生</p>
+      <div class="seperate-line" v-if="isSupportAccount"></div>
       <p class="operate-item" @click="resetPassword">修改密码</p>
       <div class="seperate-line"></div>
       <p class="operate-item" @click="logout">退出登录</p>
@@ -89,6 +95,17 @@ export default {
       var subjects = sessionStorage.getItem('subjects');
       subjects = JSON.parse(subjects);
       return subjects;
+    },
+    isSupportAccount() {
+      // 1 患者 2 医生 3 管理员 4 医院管理员 5 技术支持人员
+      return Number(sessionStorage.getItem('userType')) === 5;
+    },
+    supportedDoctor() {
+      var supportedDoctor = sessionStorage.getItem('supportedDoctor');
+      return supportedDoctor ? JSON.parse(supportedDoctor) : {};
+    },
+    supportedDoctorName() {
+      return this.supportedDoctor.doctorName ? this.supportedDoctor.doctorName : '';
     },
     switchButtonSide() {
       if (this.blockSensitiveInfo) {
@@ -205,6 +222,14 @@ export default {
         console.log(error);
       });
     },
+    reselectDoctor() {
+      Bus.$on(this.CONFIRM, () => {
+        Bus.$off(this.CONFIRM);
+        this.$router.push('/doctorSelection');
+      });
+      let message = '更换操作需要先退出当前医生的授权管理页，退出后需要医生重新进行手机验证才能登录，是否继续？';
+      Bus.$emit(this.REQUEST_CONFIRMATION, '确认提醒', message, '确定');
+    },
     resetPassword() {
       this.showAccountPanel = false;
       Bus.$emit(this.SHOW_PASSWORD_MODAL);
@@ -233,11 +258,17 @@ export default {
       this.showSensitiveInfo();
     });
     Bus.$on(this.UPDATE_AUTHORIZED_STATUS, this.updateAuthorizedStatus);
+
+    Bus.$on(this.GIVE_UP, () => {
+      Bus.$off(this.CONFIRM);
+    });
   },
   beforeDestroy() {
     Bus.$off(this.BLUR_ON_SCREEN);
     Bus.$off(this.PERMIT_DISPLAYING_SENSITIVE_INFO);
     Bus.$off(this.UPDATE_AUTHORIZED_STATUS);
+    Bus.$off(this.CONFIRM);
+    Bus.$off(this.GIVE_UP);
   }
 };
 </script>
@@ -260,7 +291,7 @@ export default {
     .organization-wrapper {
       position: relative;
       display: inline-block;
-      left: 20px;
+      margin-left: 20px;
       font-weight: bold;
       cursor: pointer;
       &:hover {
@@ -360,6 +391,8 @@ export default {
         }
       }
       .account {
+        position: relative;
+        display: inline-block;
         margin-left: 20px;
         cursor: pointer;
         .picture {
@@ -367,6 +400,21 @@ export default {
           width: 30px;
           height: 30px;
           top: 10px;
+        }
+        .support-mark {
+          position: absolute;
+          display: inline-block;
+          width: 20px;
+          height: 20px;
+          top: 25px;
+          left: 15px;
+          line-height: 20px;
+          border-radius: 10px;
+          box-shadow: 0 0 2px @gray-color;
+          background-color: @button-color;
+          color: #fff;
+          font-size: @small-font-size;
+          text-align: center;
         }
         .name {
           padding-left: 10px;
