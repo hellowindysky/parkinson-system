@@ -113,11 +113,13 @@ export default {
     },
     updateScrollbar() {
       this.$nextTick(() => {
-        Ps.destroy(this.$refs.cardWrapper);
-        Ps.initialize(this.$refs.cardWrapper, {
-          wheelSpeed: 1,
-          minScrollbarLength: 40
-        });
+        if (this.$refs.cardWrapper) {
+          Ps.destroy(this.$refs.cardWrapper);
+          Ps.initialize(this.$refs.cardWrapper, {
+            wheelSpeed: 1,
+            minScrollbarLength: 40
+          });
+        }
       });
     },
     clickCard(i) {
