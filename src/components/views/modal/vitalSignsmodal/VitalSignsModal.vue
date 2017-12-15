@@ -64,7 +64,7 @@
           <span>{{rhythm}}</span>
           </span>
           <span class="field-input" v-else>
-          <el-select v-model="rhythm" placeholder="请选择心率情况" clearable @change="updateWarning('rhythm')">
+          <el-select v-model="rhythm" placeholder="请选择心率情况" clearable>
             <el-option
               v-for="item in getOptions('rhythm')"
               :key="item.code"
@@ -103,14 +103,14 @@
             </td>
             <td class="col col-3">
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span>{{transform(sign.systolic,'systolic')}}</span>
+                <span class="left">{{sign.systolic}}</span>
               </span>
               <span class="field-input" v-else>
                 <el-input class="left" v-model="sign.systolic"></el-input>
               </span>
               <span>/</span>
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span>{{transform(sign.diastolic,'diastolic')}}</span>
+                <span class="right">{{sign.diastolic}}</span>
               </span>
               <span class="field-input" v-else>
                 <el-input class="right" v-model="sign.diastolic"></el-input>
@@ -118,7 +118,7 @@
             </td>
             <td class="col col-4">
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span>{{transform(sign.heartrate,'heartrate')}}</span>
+                <span>{{sign.heartrate}}</span>
               </span>
               <span class="field-input" v-else>
                 <el-input v-model="sign.heartrate"></el-input>
@@ -267,7 +267,6 @@ export default {
       }
 
       // console.log('item: ', item);
-      this.patientVitalSignsId = item.patientVitalSignsId ? item. patientVitalSignsId : '';
       this.checkTime = item.checkTime ? item.checkTime : '';
       this.breathing = item.breathing ? item.breathing : '';
       this.temperature = item.temperature ? item.temperature : '';
@@ -304,24 +303,9 @@ export default {
       };
       return options;
     },
-    getRealName(code, typeGroupCode) {
-      var typesInfo = Util.getElement('typegroupcode', typeGroupCode, this.typeGroup);
-      var types = typesInfo && typesInfo.types ? typesInfo.types : [];
-      var type = Util.getElement('typeCode', code, types);
-      return type.typeName ? type.typeName : '';
-    },
-    transformToNum(obj, property) {
-      // 如果填写的不是一个数字，则转换成一个空字符串，如果是一个数字，则将这个数字字符串转化为真正的数字
-      var value = obj[property];
-      var reg = new RegExp(/^[0-9]+\.{0,1}[0-9]{0,2}$/);
-      if (reg.test(value)) {
-        obj[property] = Number(value);
-      } else {
-        obj[property] = '';
-      }
-    },
     updateWarning(fieldName) {
-      if (this.completeInit && !this[fieldName]) {
+      var list = ['checkTime'];
+      if (list.indexOf(fieldName) && !this[fieldName]) {
         this.warningResults[fieldName] = '必填项';
       } else {
         this.warningResults[fieldName] = '';
@@ -343,8 +327,6 @@ export default {
 
       var vitalSignsInfo = {};
       vitalSignsInfo.patientCaseId = this.$route.params.caseId;
-      vitalSignsInfo.patientId = this.$route.params.id;
-
       vitalSignsInfo.patientVitalSign = this.patientVitalSign;
       vitalSignsInfo.checkTime = Util.simplifyTime(this.checkTime);
       vitalSignsInfo.breathing = this.breathing;
@@ -352,16 +334,15 @@ export default {
       vitalSignsInfo.pulse = this.pulse;
       vitalSignsInfo.rhythm = this.rhythm;
       vitalSignsInfo.patientVitalSignDetail = deepCopy(this.patientVitalSignDetail);
-      // reviseDateFormat(vitalSignsInfo);
       pruneObj(vitalSignsInfo);
-      // this.lockSubmitButton = false;
+
       if (this.mode === this.ADD_NEW_CARD) {
         addVitalSigns(vitalSignsInfo).then(() => {
           this.updateAndClose();
         }, this._handleError);
 
       } else if (this.mode === this.EDIT_CURRENT_CARD) {
-        vitalSignsInfo.patientVitalSignsId = this.patientVitalSignsId;
+        vitalSignsInfo.id = this.id;
         modifyVitalSigns(vitalSignsInfo).then(() => {
           this.updateAndClose();
         }, this._handleError);
@@ -598,15 +579,19 @@ export default {
               display: inline-block;
               position: absolute;
               width: 45%;
+              height: 100%;
               left: 0;
               top: 0;
+              line-height: 35px;
             }
             .right {
               display: inline-block;
               position: absolute;
               width: 45%;
+              height: 100%;
               right: 0;
               top: 0;
+              line-height: 35px;
             }
             .el-select {
               &.warning {
