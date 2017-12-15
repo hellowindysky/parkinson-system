@@ -21,11 +21,11 @@
           <div class="field-input" v-show="mode===EDITING_MODE">
             <span class="warning-text">{{getWarningText(field.fieldName)}}</span>
 
-            <!-- <span v-if="checkIfBlocking(field.fieldName)" class="desensitized-value">
+            <span v-if="checkIfBlocking(field.fieldName)" class="desensitized-value">
               {{ copyInfo[field.fieldName] }}
-            </span> -->
+            </span>
 
-            <span v-if="getUIType(field)===1">
+            <span v-else-if="getUIType(field)===1">
               <el-input v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
                 :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)" :maxlength="50" @input="inputing(field)"></el-input>
             </span>
