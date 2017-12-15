@@ -186,11 +186,13 @@ export default {
 
       sessionStorage.setItem('supportedDoctor', JSON.stringify(doctor));
 
-      this.$message({
-        message: '已选择服务医生：' + doctor.doctorName,
-        type: 'success',
-        duration: 3000
-      });
+      setTimeout(() => {
+        this.$message({
+          message: '已选择服务医生：' + doctor.doctorName,
+          type: 'success',
+          duration: 3000
+        });
+      }, 3000);
       this.$router.push('/');
     }
   },
