@@ -839,14 +839,10 @@ export default {
     margin-top: @vertical-spacing;
     width: 100%;
     height: @function-area-height;
-    background-color: @background-color;
-    border: 1px solid @theme-color;
-    border-radius: 10px;
-    // background-color: @theme-color;
-    // color: #fff;
+    background-color: @theme-color;
+    color: #fff;
     box-sizing: border-box;
     font-size: @normal-font-size;
-    transform: translateY(-1px);
     vertical-align: middle;
     .function-button {
       float: left;
@@ -865,10 +861,10 @@ export default {
         width: 100%;
       }
       &:hover {
-        opacity: 0.7;
+        opacity: 0.6;
       }
       &:active {
-        opacity: 0.85;
+        opacity: 0.8;
       }
       &.warning {
         color: @alert-color;
