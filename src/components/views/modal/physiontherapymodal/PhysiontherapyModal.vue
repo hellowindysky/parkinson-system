@@ -410,7 +410,6 @@ export default {
       for (let property in this.warningResults) {
         if (this.warningResults.hasOwnProperty(property) && this.warningResults[property]) {
           this.lockSubmitButton = false;
-          console.log(property, this.warningResults[property]);
           return;
         }
       }
