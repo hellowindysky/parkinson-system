@@ -1,5 +1,5 @@
 <template lang="html">
-  <folding-panel :title="'现病史是'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit"
+  <folding-panel :title="'现病史'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit"
     :folded-status="foldedStatus" :editable="canEdit">
     <!-- 现病史开始 ↓-->
     <div class="disease-info" ref="diseaseInfo">
@@ -24,24 +24,25 @@
           <div class="field-input" v-show="mode===EDITING_MODE">
             <span v-if="getUIType(field)===1">
               <el-input v-model="copyInfo[field.fieldName]"
-                :placeholder="getMatchedField(field).cnFieldDesc"></el-input>
+                :placeholder="getMatchedField(field.fieldName).cnFieldDesc"></el-input>
             </span>
             <span v-else-if="getUIType(field)===3">
               <el-select v-model="copyInfo[field.fieldName]" clearable
-                :placeholder="getMatchedField(field).cnFieldDesc">
-                <el-option :label="'啊啊啊'" :value="11"></el-option>
+                :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
+                <el-option v-for="type in getTypes(field.fieldName)" :label="type.typeName"
+                  :value="type.typeCode" :key="type.typeCode"></el-option>
               </el-select>
             </span>
             <span v-else-if="getUIType(field)===5">
               <el-checkbox-group v-model="copyInfo[field.fieldName]"
-                :placeholder="getMatchedField(field).cnFieldDesc">
-                <el-checkbox :label="'1'">一</el-checkbox>
-                <el-checkbox :label="'2'">二</el-checkbox>
+                :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
+                <el-checkbox v-for="type in getTypes(field.fieldName)" :label="type.typeCode"
+                 :key="type.typeCode">{{type.typeName}}</el-checkbox>
               </el-checkbox-group>
             </span>
             <span v-else-if="getUIType(field)===6">
               <el-date-picker v-model="copyInfo[field.fieldName]" type="date"
-                :placeholder="getMatchedField(field).cnFieldDesc" format="yyyy-MM-dd" ></el-date-picker>
+                :placeholder="getMatchedField(field.fieldName).cnFieldDesc" format="yyyy-MM-dd" ></el-date-picker>
             </span>
             <!-- <span class="warning-text"></span> -->
           </div>
@@ -53,29 +54,32 @@
           <span class="field-name">发病顺序</span>
           <div class="field-value" v-show="mode===READING_MODE">
 
-            <div class="custom-item">
-              <span>大大大</span>
-              <span>（2018-02-02）</span>
-              <i class="iconfont icon-single-right" style="font-size:14px;"></i>
+            <div class="custom-item" v-for="(item,index) in diseaseOrder" :key="index">
+              <span>{{transform(item.arisePart, diseaseOrderOpt)}}</span>
+              <span>{{formatDate(item.time)}}</span>
+              <i class="iconfont icon-single-right" v-show="item.arisePart"></i>
             </div>
 
           </div>
           <div class="field-input" v-show="mode===EDITING_MODE">
 
-            <div class="custom-item">
-              <i class="iconfont icon-remove"></i>
+            <div class="custom-item" v-for="(item,index) in diseaseOrder" :key="index">
+              <i class="iconfont icon-remove" @click="reduceOrder(index)"></i>
               <span class="sub-item">
-                <el-select v-model="test1" placeholder="请选择" clearable >
-                  <el-option :label="'啊啊啊'" :value="1">
+                <el-select v-model="item.arisePart" placeholder="请选择" clearable >
+                  <el-option
+                   v-for="item in diseaseOrderOpt" :key="item.typeCode" 
+                   :label="item.typeName"
+                   :value="item.typeCode">
                   </el-option>
                 </el-select>
               </span>
               <span class="sub-item">
-                <el-date-picker v-model="test2" type="date" placeholder="选择发生日期" clearable ></el-date-picker>
+                <el-date-picker v-model="item.time" type="date" placeholder="选择发生日期" clearable ></el-date-picker>
               </span>
             </div>
 
-            <i class="iconfont icon-plus"></i>
+            <i class="iconfont icon-plus"  @click="addOrder"></i>
 
           </div>
         </div>
@@ -97,13 +101,13 @@
           <div class="field-input" v-show="mode===EDITING_MODE">
             <span v-if="getUIType(field)===1">
               <el-input v-model="copyInfo[field.fieldName]"
-                :placeholder="getMatchedField(field).cnFieldDesc"></el-input>
+                :placeholder="getMatchedField(field.fieldName).cnFieldDesc"></el-input>
             </span>
             <span v-else-if="getUIType(field)===5">
               <el-checkbox-group v-model="copyInfo[field.fieldName]"
-                :placeholder="getMatchedField(field).cnFieldDesc">
-                <el-checkbox :label="'1'">一</el-checkbox>
-                <el-checkbox :label="'2'">二</el-checkbox>
+                :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
+                <el-checkbox v-for="type in getTypes(field.fieldName)" :label="type.typeCode"
+                 :key="type.typeCode">{{type.typeName}}</el-checkbox>
               </el-checkbox-group>
             </span>
             <!-- <span class="warning-text"></span> -->
@@ -139,27 +143,31 @@
       <div class="group">
         <h3>就诊情况</h3>
 
-        <div class="field">
+        <!-- template 第三部分 ↓↓↓↓ -->
+        <div class="field" v-for="field in diseaseInfoTemplateGroups[2]" :class="checkField(field)">
           <span class="field-name">
-            初诊方式
+            {{field.cnfieldName}}
+            <!-- <span class="required-mark" v-show="true">*</span> -->
           </span>
 
-          <div class="field-value" v-show="true">
-            <span v-if="false">
-              初诊方式值
+          <div class="field-value" v-show="mode===READING_MODE">
+            <span v-if="true">
+              起病类型值
             </span>
           </div>
 
-          <div class="field-input" v-show="true">
-            <span v-if="true">
-              <el-checkbox-group v-model="test1">
-                <el-checkbox>SPECT</el-checkbox>
-                <el-checkbox>PET</el-checkbox>
-                <el-checkbox>医生的临床诊断</el-checkbox>
+          <div class="field-input" v-show="mode===EDITING_MODE">
+            <span v-if="getUIType(field)===5">
+              <el-checkbox-group v-model="copyInfo[field.fieldName]"
+                :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
+                <el-checkbox v-for="type in getTypes(field.fieldName)" :label="type.typeCode"
+                 :key="type.typeCode">{{type.typeName}}</el-checkbox>
               </el-checkbox-group>
             </span>
+            <!-- <span class="warning-text"></span> -->
           </div>
         </div>
+        <!-- template 第三部分 ↑↑↑ -->
 
         <extensible-panel class="disease-card" :title="firstTreatmentsTitle" @addNewCard="addFirstTreatmentRecord">
           <Card class="card symptoms-card" :mode="mode" :class="cardWidth"
@@ -189,11 +197,11 @@
            v-on:viewCurrentCard="viewVisitRecord(item)"
            v-on:deleteCurrentCard="deleteVisitRecord(item)">
             <div class="text first-line">
-              <!-- <span class="name">医院名称：</span> -->
+              <span class="name">医院名称：</span>
               <span class="value">{{item.hospName}}</span>
             </div>
             <div class="text second-line">
-              <!-- <span class="name">就诊时间：</span> -->
+              <span class="name">就诊时间：</span>
               <span class="value">{{item.ariseTime}}</span>
             </div>
             <div class="text third-line">
@@ -203,27 +211,31 @@
           </Card>
         </extensible-panel>
 
-        <div class="field long-label-field">
+        <!-- template 第四部分 ↓↓↓↓ -->
+        <div class="field" v-for="field in diseaseInfoTemplateGroups[3]" :class="checkField(field)">
           <span class="field-name">
-            初次获得疾病信息途径
+            {{field.cnfieldName}}
+            <!-- <span class="required-mark" v-show="true">*</span> -->
           </span>
 
-          <div class="field-value" v-show="true">
-            <span v-if="false">
-              初诊方式值
+          <div class="field-value" v-show="mode===READING_MODE">
+            <span v-if="true">
+              起病类型值
             </span>
           </div>
 
-          <div class="field-input" v-show="true">
-            <span v-if="true">
-              <el-checkbox-group v-model="test1">
-                <el-checkbox>报纸</el-checkbox>
-                <el-checkbox>广播电视</el-checkbox>
-                <el-checkbox>社区服务</el-checkbox>
+          <div class="field-input" v-show="mode===EDITING_MODE">
+            <span v-if="getUIType(field)===5">
+              <el-checkbox-group v-model="copyInfo[field.fieldName]" @change="testchange(copyInfo[field.fieldName])"
+                :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
+                <el-checkbox v-for="type in getTypes(field.fieldName)" :label="type.typeCode"
+                 :key="type.typeCode">{{type.typeName}}</el-checkbox>
               </el-checkbox-group>
             </span>
+            <!-- <span class="warning-text"></span> -->
           </div>
         </div>
+        <!-- template 第四部分 ↑↑↑ -->
 
       </div>
       <!-- 就诊情况结束 ↑-->
@@ -236,12 +248,13 @@
 import { mapGetters } from 'vuex';
 import Util from 'utils/util.js';
 import Bus from 'utils/bus.js';
+// import { reviseDateFormat, pruneObj } from 'utils/helper.js';
 import FoldingPanel from 'components/public/foldingpanel/FoldingPanel';
 import ExtensiblePanel from 'components/public/extensiblepanel/ExtensiblePanel';
 import Card from 'components/public/card/Card';
 import { deletePatientFirstSymbol, delPatientFirstVisitTreatment, delVisitDignosticRecord } from 'api/patient.js';
 
-const HALF_LINE_FIELD_LIST = ['diseaseType', 'specificDisease', 'ariTime', 'firTime', 'surTime', 'firMedinfo',
+const HALF_LINE_FIELD_LIST = ['diseaseType', 'specificDisease', 'ariTime', 'courseOfDisease', 'firTime', 'surTime', 'firMedinfo',
   'firMedtime', 'ariAge', 'symmetries', 'symmetriesTime', 'firHosp', 'surHosp'];
 
 export default {
@@ -250,6 +263,12 @@ export default {
       test1: '',
       test2: '',
       copyInfo: {},
+      diseaseOrder: [ // 发病顺序
+        {
+          arisePart: '',
+          time: ''
+        }
+      ],
       mode: this.READING_MODE,
       foldedStatus: true,
       warningResults: {},
@@ -294,6 +313,10 @@ export default {
       // 非药物治疗治疗类型的集合
       return this.getTypeGroupitem('treatPro');
     },
+    diseaseOrderOpt() {
+      // 发病顺序集合
+      return this.getTypeGroupitem('firBody');
+    },
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients)) {
         return true;
@@ -303,6 +326,9 @@ export default {
     }
   },
   methods: {
+    testchange(ff) {
+      console.log(ff);
+    },
     startEditing() {
       this.mode = this.EDITING_MODE;
       this.foldedStatus = false;
@@ -336,13 +362,29 @@ export default {
         return obj.typeName;
       })[0];
     },
-    getMatchedField(field) {
+    addOrder() {
+      this.diseaseOrder.push({
+        arisePart: '',
+        time: ''
+      });
+    },
+    formatDate(d) {
+      if (d) {
+        return '（' + Util.simplifyDate(d) + '）';
+      } else {
+        return '';
+      }
+    },
+    reduceOrder(idx) {
+      this.diseaseOrder.splice(idx, 1);
+    },
+    getMatchedField(fieldName) {
       // 这个函数根据实际数据，在字典项中查询到对应的字段，从而方便我们得到其 uiType 等信息
-      return Util.getElement('fieldName', field.fieldName, this.diseaseInfoDictionary);
+      return Util.getElement('fieldName', fieldName, this.diseaseInfoDictionary);
     },
     checkField(field) {
       // 用来检测当前 field 的特殊样式
-      var dictionaryField = this.getMatchedField(field);
+      var dictionaryField = this.getMatchedField(field.fieldName);
       var name = dictionaryField.fieldName;
       var classNameList = [];
 
@@ -362,15 +404,60 @@ export default {
     },
     getUIType(field) {
       // uiType类型 0/无 1/输入框 2/数字箭头 3/单选下拉框 4/单选按纽 5/多选复选框 6/日期 7/日期时间
-      return this.getMatchedField(field).uiType;
+      return this.getMatchedField(field.fieldName).uiType;
+    },
+    getTypes(fieldName) {
+      if (fieldName === 'specificDisease') {
+        let types = this.getTypes('diseaseType');
+        let targetTypeList = types.filter((type) => {
+          return type.typeCode === Number(this.copyInfo.diseaseType);
+        });
+        return targetTypeList.length > 0 ? targetTypeList[0].childType : [];
+
+      } else {
+        // 在 typegroup 里面查找到 field 所对应的 types（选项组）
+        var dictionaryField = this.getMatchedField(fieldName);
+        var value = dictionaryField.fieldEnumId;
+        var typeInfo = Util.getElement('typegroupcode', value, this.typeGroup);
+        return typeInfo.types ? typeInfo.types : [];
+      }
+
     },
     cancel() {
       // 点击取消按钮，将我们对 copyInfo 所做的临时修改全部放弃，还原其为 diseaseInfo 的复制对象，同时不要忘了重新对其进行特殊处理
-      // this.shallowCopy(this.diseaseInfo);
-      // this.changeCopyInfo();
+      this.shallowCopy(this.diseaseInfo);
+      this.changeCopyInfo();
       this.mode = this.READING_MODE;
     },
+    shallowCopy(obj) {
+      // 进行浅复制之后，修改复制对象的属性，不会影响到原始对象
+      // 下面这行有一个特殊作用，能让 Vue 动态检测已有对象的新添加的属性，参看 https://cn.vuejs.org/v2/guide/reactivity.html
+      this.copyInfo = Object.assign({}, obj);
+    },
+    changeCopyInfo() {
+      // 复制得到的 copyInfo 有几个字段的值需要特殊处理一下
+      // uiType 为 5 (多选框)的字段，形如 “1，3，4” 要转化为 [1, 3, 4]
+      // 我们先将 CopyInfo 所有属性的名字放到一个数组里，然后遍历 diseaseInfoDictionary 下的所有 field
+      // 看 哪些 field 的 fieldName 在这个数组里，同时该 field 的 uiType 为 5，这时就把 copyInfo 的相应字段进行转换
+      var nameList = [];
+      for (let fieldName in this.copyInfo) {
+        nameList.push(fieldName);
+      }
+      for (let field of this.diseaseInfoDictionary) {
+        let name = field.fieldName;
+        if (nameList.indexOf(name) > -1 && field.uiType === 5 && (typeof this.copyInfo[name]) === 'string') {
+          var codesArray = this.copyInfo[name].split(',').map((str) => {
+            return parseInt(str, 10);
+          });
+          this.copyInfo[name] = codesArray;
+        } else if (field.uiType === 5) {
+          // 这种情况指的是，得到的信息没有相应的字段，那么我们就为它建一个空数组，注意为了让 Vue 动态检测，这里采用 set 方法
+          this.$set(this.copyInfo, name, []);
+        }
+      }
+    },
     submit() {
+      console.log(this.copyInfo);
       if ('请求成功后') {
         this.mode = this.READING_MODE;
       }
@@ -467,13 +554,16 @@ export default {
     Card
   },
   mounted() {
+    this.changeCopyInfo();
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
     Bus.$on(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
     Bus.$on(this.RECALCULATE_CARD_WIDTH, this.recalculateCardWidth);
     // 第一次加载的时候，去计算一次卡片宽度
     this.recalculateCardWidth();
     console.log(this.diseaseInfoTemplateGroups);
-    console.log(this.diseaseInfoDictionaryGroups);
+    console.log(this.diseaseInfoDictionary);
+    console.log(this.typeGroup);
+    // console.log(this.copyInfo);
   },
   beforeDestroy() {
     // 还是记得销毁组件前，解除事件绑定
@@ -747,6 +837,9 @@ export default {
           position: relative;
           .custom-item{
             display:inline-block;
+            i{
+              font-size:14px;
+            }
           }
         }
         .field-input{
