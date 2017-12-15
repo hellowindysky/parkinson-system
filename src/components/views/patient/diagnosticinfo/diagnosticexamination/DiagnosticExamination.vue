@@ -23,7 +23,7 @@
           </div>
            <div class="text line-5">
             <span class="name">心率情况: </span>
-            <span class="value">{{item.rhythm}}</span>
+            <span class="value">{{transformVitalSigns(item.rhythm)}}</span>
           </div>
          </card>
       </extensible-panel>
@@ -223,6 +223,11 @@ export default {
     submit() {
       this.mutableMode = this.READING_MODE;
     },
+    transformVitalSigns(rhythm) {
+      var types = Util.getElement('typegroupcode', 'rhythm', this.typeGroup).types;
+      var typeName = Util.getElement('typeCode', rhythm, types).typeName;
+      return typeName ? typeName : '';
+    },
     transformNeurologicCheckType(typeId) {
       // 在 tableData 中找到对应的值
       var data = Util.getElement('id', typeId, this.neurologicCheckTypeList);
@@ -350,7 +355,7 @@ export default {
       Bus.$emit(this.SHOW_VITALSIGNS_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
     },
     deleteVitalSigns(item) {
-      var patientVitalSign = {patientVitalSign: item.patientVitalSign
+      var patientVitalSign = {id: item.id
       };
       Bus.$on(this.CONFIRM, () => {
         deleteVitalSigns(patientVitalSign).then(this._resolveDeletion, this._rejectDeletion);
