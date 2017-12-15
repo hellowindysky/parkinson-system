@@ -292,16 +292,6 @@ export default {
       };
       return options;
     },
-    transformToNum(obj, property) {
-      // 如果填写的不是一个数字，则转换成一个空字符串，如果是一个数字，则将这个数字字符串转化为真正的数字
-      var value = obj[property];
-      var reg = new RegExp(/^[0-9]+\.{0,1}[0-9]{0,2}$/);
-      if (reg.test(value)) {
-        obj[property] = Number(value);
-      } else {
-        obj[property] = '';
-      }
-    },
     updateWarning(fieldName) {
       var list = ['recordDate', 'situationType', 'leftThreshold', 'rightThreshold'];
       if (list.indexOf(fieldName) >= 0 && !this[fieldName]) {
