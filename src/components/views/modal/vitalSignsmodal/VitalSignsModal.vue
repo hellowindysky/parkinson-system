@@ -61,7 +61,7 @@
             心率情况:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-          <span>{{rhythm}}</span>
+           <span>{{rhythm}}</span>
           </span>
           <span class="field-input" v-else>
           <el-select v-model="rhythm" placeholder="请选择心率情况" clearable>
