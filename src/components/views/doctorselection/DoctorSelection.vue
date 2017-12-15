@@ -71,7 +71,7 @@ export default {
       return '欢迎您，' + sessionStorage.getItem('name');
     },
     doctorNumber() {
-      return 17;
+      return this.doctorList.length;
     }
   },
   methods: {
