@@ -231,13 +231,16 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION, '确认提醒', message, '确定');
     },
     resetPassword() {
-      this.showAccountPanel = false;
       Bus.$emit(this.SHOW_PASSWORD_MODAL);
     },
     logout() {
-      this.showAccountPanel = false;
-      sessionStorage.clear();
-      this.$router.push({name: 'login'});
+      Bus.$on(this.CONFIRM, () => {
+        Bus.$off(this.CONFIRM);
+        sessionStorage.clear();
+        this.$router.push({name: 'login'});
+      });
+      let message = '即将退出当前账号，是否继续？';
+      Bus.$emit(this.REQUEST_CONFIRMATION, '提醒', message, '确定退出');
     }
   },
   mounted() {
