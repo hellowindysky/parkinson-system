@@ -335,6 +335,7 @@ export default {
 
             var commonRequest = {
               'userId': 93242,
+              'token': this.token,
               'accountNumber': this.accountNumber,
               'userType': this.userType,
               'orgId': 34,
