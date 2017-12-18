@@ -3,8 +3,8 @@
     <div class="diagnostic-examination" ref="diagnosticExamination">
     <extensible-panel class="panel vitalSigns-panel" :mode="mutableMode" :title="vitalSignsTitle" v-on:addNewCard="addVitalSigns" :editable="canEdit">
         <card class="card vitalSigns-card" :class="cardWidth" :mode="mutableMode" v-for="item in diagnosticVitalSigns" :key="item.patientVitalSign"
-         :title="item.title" v-on:editCurrentCard="editVitalSigns(item)"
-         v-on:deleteCurrentCard="deleteVitalSigns(item)" v-on:viewCurrentCard="viewVitalSigns(item)">
+          :title="item.title" v-on:editCurrentCard="editVitalSigns(item)"
+          v-on:deleteCurrentCard="deleteVitalSigns(item)" v-on:viewCurrentCard="viewVitalSigns(item)">
           <div class="text line-1">
             <span class="name">检查时间: </span>
             <span class="value">{{item.checkTime}}</span>
@@ -23,14 +23,14 @@
           </div>
            <div class="text line-5">
             <span class="name">心率情况: </span>
-            <span class="value">{{transformVitalSigns(item.rhythm)}}</span>
+            <span class="value">{{transform(item.rhythm, 'rhythm')}}</span>
           </div>
          </card>
       </extensible-panel>
       <extensible-panel class="panel" :mode="mutableMode" :title="neurologicCheckTitle" v-on:addNewCard="addNeurologicCheckRecord" :editable="canEdit">
         <card class="card" :class="cardWidth" :mode="mutableMode" v-for="item in neurologicCheckList" :key="item.preopsInfoId"
-         :title="transformNeurologicCheckType(item.spephysicalInfo)" v-on:editCurrentCard="editNeurologicCheckRecord(item)"
-         v-on:deleteCurrentCard="deleteNeurologicCheckRecord(item)" v-on:viewCurrentCard="viewNeurologicCheckRecord(item)">
+          :title="transformNeurologicCheckType(item.spephysicalInfo)" v-on:editCurrentCard="editNeurologicCheckRecord(item)"
+          v-on:deleteCurrentCard="deleteNeurologicCheckRecord(item)" v-on:viewCurrentCard="viewNeurologicCheckRecord(item)">
           <div class="text first-line">
             <span class="name">诊断结果: </span>
             <span class="value">{{item.spephysicalResult}}</span>
@@ -58,8 +58,8 @@
       </extensible-panel>
       <extensible-panel class="panel" :mode="mutableMode" :title="biochemicalExamTitle" v-on:addNewCard="addBiochemicalExamRecord" :editable="canEdit">
         <card class="card" :class="cardWidth" :mode="mutableMode" v-for="item in biochemicalExamList" :key="item.patientCaseId"
-         :title="transformBiochemicalExamType(item.bioexamId)" v-on:editCurrentCard="editBiochemicalExamRecord(item)"
-         v-on:deleteCurrentCard="deleteBiochemicalExamRecord(item)" v-on:viewCurrentCard="viewBiochemicalExamRecord(item)">
+          :title="transformBiochemicalExamType(item.bioexamId)" v-on:editCurrentCard="editBiochemicalExamRecord(item)"
+          v-on:deleteCurrentCard="deleteBiochemicalExamRecord(item)" v-on:viewCurrentCard="viewBiochemicalExamRecord(item)">
           <div class="text first-line">
             <span class="name"></span>
             <span class="value"></span>
@@ -72,27 +72,39 @@
       </extensible-panel>
 
       <extensible-panel class="panel" :mode="mutableMode" :title="emgTitle" v-on:addNewCard="addEmgRecord" :editable="canEdit">
-        <card class="card" :class="cardWidth" :mode="mutableMode" v-for="item in emgList" :key="item.patientCaseId"
-         :title="item.etgName" v-on:editCurrentCard="editEmgRecord(item)" v-on:viewCurrentCard="viewEmgRecord(item)"
-         v-on:deleteCurrentCard="deleteEmgRecord(item)">
+        <card class="card" :class="cardWidth" :mode="mutableMode" v-for="item in emgList" :key="item.pcaseId"
+          :title="item.etgName" v-on:editCurrentCard="editNeuroelectricRecord(item)" v-on:viewCurrentCard="viewNeuroelectricRecord(item)"
+          v-on:deleteCurrentCard="deleteNeuroelectricRecord(item)">
           <div class="text first-line">
             <span class="name">类型</span>
-            <span class="value">{{transformEmgType(item.etgType)}}</span>
+            <span class="value">{{transform(item.etgType, 'eleType')}}</span>
           </div>
           <div class="text second-line">
             <span class="name">结果</span>
             <span class="value">{{item.patEleResule}}</span>
           </div>
         </card>
+        <card class="card" :class="cardWidth" :mode="mutableMode" v-for="item in sleepMonitoringList" :key="item.patientCaseId"
+          :title="transform(item.elecExamType, 'elecExam')" v-on:editCurrentCard="editNeuroelectricRecord(item)" v-on:viewCurrentCard="viewNeuroelectricRecord(item)"
+          v-on:deleteCurrentCard="deleteNeuroelectricRecord(item)">
+          <div class="text first-line">
+            <span class="name">字段一</span>
+            <span class="value">待定</span>
+          </div>
+          <div class="text second-line">
+            <span class="name">字段二</span>
+            <span class="value">待定</span>
+          </div>
+        </card>
       </extensible-panel>
 <!-- 医学影像 -->
       <extensible-panel class="panel image-panel" :mode="mutableMode" :title="medicalImagingTitle" v-on:addNewCard="addImgRecord" :editable="canEdit">
         <card class="card image-card" :class="cardWidth" :mode="mutableMode" v-for="(item,idx) in medicalImagingList" :key="idx"
-         :title="item.title" v-on:editCurrentCard="editImgRecord(item)" v-on:viewCurrentCard="viewImgRecord(item)"
-         v-on:deleteCurrentCard="deleteImgRecord(item)">
+          :title="item.title" v-on:editCurrentCard="editImgRecord(item)" v-on:viewCurrentCard="viewImgRecord(item)"
+          v-on:deleteCurrentCard="deleteImgRecord(item)">
           <div class="text first-line">
             <span class="name">类型</span>
-            <span class="value">{{transformMedicalImagingType(item.imageType)}}</span>
+            <span class="value">{{transform(item.imageType, 'examType')}}</span>
           </div>
           <div class="text second-line">
             <span class="name">编号</span>
@@ -102,7 +114,6 @@
             <span class="name">日期</span>
             <span class="value">{{item.checkDate}}</span>
           </div>
-
         </card>
       </extensible-panel>
 
@@ -152,6 +163,12 @@ export default {
       }
     },
     emgList: {
+      type: Array,
+      default: () => {
+        return [];
+      }
+    },
+    sleepMonitoringList: {
       type: Array,
       default: () => {
         return [];
@@ -223,11 +240,6 @@ export default {
     submit() {
       this.mutableMode = this.READING_MODE;
     },
-    transformVitalSigns(rhythm) {
-      var types = Util.getElement('typegroupcode', 'rhythm', this.typeGroup).types;
-      var typeName = Util.getElement('typeCode', rhythm, types).typeName;
-      return typeName ? typeName : '';
-    },
     transformNeurologicCheckType(typeId) {
       // 在 tableData 中找到对应的值
       var data = Util.getElement('id', typeId, this.neurologicCheckTypeList);
@@ -240,20 +252,11 @@ export default {
       var name = data.examName ? data.examName : '';
       return name;
     },
-    transformEmgType(typeId) {
-      // 在 tableData 中找到对应的值
-      var emgInfo = Util.getElement('typegroupcode', 'eleType', this.typeGroup);
-      var types = emgInfo.types ? emgInfo.types : [];
+    transform(typeId, fieldName) {
+      var typeInfo = Util.getElement('typegroupcode', fieldName, this.typeGroup);
+      var types = typeInfo.types ? typeInfo.types : [];
       var name = Util.getElement('typeCode', parseInt(typeId, 10), types).typeName;
       return name;
-    },
-    transformMedicalImagingType(typeId) {
-      // 在 tableData 中找到对应的值
-      var imageInfo = Util.getElement('typegroupcode', 'examType', this.typeGroup);
-      var types = imageInfo.types ? imageInfo.types : [];
-      var name = Util.getElement('typeCode', parseInt(typeId, 10), types).typeName;
-      return name;
-      // return typeId;
     },
     addNeurologicCheckRecord() {
       Bus.$emit(this.SHOW_NERVOU_SYSTEM_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
@@ -312,13 +315,13 @@ export default {
     addEmgRecord() {
       Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
     },
-    viewEmgRecord(item) {
+    viewNeuroelectricRecord(item) {
       Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived);
     },
-    editEmgRecord(item) {
+    editNeuroelectricRecord(item) {
       Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
     },
-    deleteEmgRecord(item) { // 删除肌电图
+    deleteNeuroelectricRecord(item) { // 删除肌电图
       let EmgInfo = {
         id: item.id
       };
