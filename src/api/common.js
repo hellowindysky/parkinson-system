@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { Message } from 'element-ui';
+import store from '../store';
 
 export var baseUrl = process.env.BASE_API;
 
@@ -42,10 +43,23 @@ export function encapsulatePromise(url, request) {
           console.log('错误代码: ', response.data.code);
           console.log('请求地址: ', url);
           console.log('请求参数: ', request);
+
           let error = {
             code: response.data.code,
             message: response.data.msg
           };
+
+          if (error.code === 4) {
+            // token 出错或失效
+            Message({
+              message: '验证信息出错，请重新登录',
+              type: 'error',
+              duration: 2000
+            });
+            // 回到登录界面
+            router.push({name: 'login'});
+          }
+
           reject && reject(error);
         }
       }
