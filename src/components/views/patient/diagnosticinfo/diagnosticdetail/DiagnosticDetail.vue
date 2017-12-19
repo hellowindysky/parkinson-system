@@ -22,6 +22,7 @@
         :geneCheckList="caseDetail.patientGene"
         :biochemicalExamList="caseDetail.patientBioexam"
         :emgList="caseDetail.patientElecTroGram"
+        :sleepMonitoringList="caseDetail.patientNerveSleep"
         :medicalImagingList="caseDetail.patientVideoList"
         :diagnosticVitalSigns="caseDetail.patientVitalSign">
       </diagnostic-examination>

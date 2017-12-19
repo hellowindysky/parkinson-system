@@ -3,7 +3,22 @@
     <div class="emg-modal" ref="emgModal">
       <h3 class="title">{{title}}</h3>
       <div class="content">
-        <div class="field">
+        <div class="field whole-line">
+          <span class="field-name long-field-name">
+            神经电检查类型:
+            <span class="required-mark">*</span>
+          </span>
+          <span class="field-input long-field-name">
+            <span class="warning-text">{{warningResults.elecTroGramId}}</span>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{getFieldValue(copyInfo.elecExamType, 'elecExam')}}</span>
+            <el-select v-else placeholder="请选择神经电生理检查类型" v-model="copyInfo.elecExamType" @change="chooseElecExamType"
+              :class="{'warning': warningResults.elecTroGramId}" :disabled="mode!==ADD_NEW_CARD" size="small">
+              <el-option v-for="option in getOptions('elecExam')" :key="option.code" :label="option.name" :value="option.code" ></el-option>
+            </el-select>
+          </span>
+        </div>
+        <div class="seperate-line"></div>
+        <!-- <div class="field" v-if="copyInfo.elecExamType===1">
           <span class="field-name">
             肌电图名称:
             <span class="required-mark">*</span>
@@ -12,12 +27,12 @@
             <span class="warning-text">{{warningResults.elecTroGramId}}</span>
             <span v-if="mode===VIEW_CURRENT_CARD">{{getFieldValue(copyInfo.elecTroGramId, 'emgName')}}</span>
             <el-select v-else placeholder="请选择肌电图名称" v-model="copyInfo.elecTroGramId" :class="{'warning': warningResults.elecTroGramId}"
-              :disabled="mode!==ADD_NEW_CARD" @change="selectEmg">
+              :disabled="mode!==ADD_NEW_CARD" @change="selectEmg" size="small">
               <el-option v-for="emg in emgTypeList" :key="emg.id" :label="emg.emgName" :value="emg.id" ></el-option>
             </el-select>
           </span>
-        </div>
-        <div class="field">
+        </div> -->
+        <div class="field" v-if="copyInfo.elecExamType===1">
           <span class="field-name">
             肌电图类型:
           </span>
@@ -26,7 +41,7 @@
             <span>{{getFieldValue(copyInfo.etgType, 'emgType')}}</span>
           </span>
         </div>
-        <div class="field whole-line">
+        <div class="field whole-line" v-if="copyInfo.elecExamType===1">
           <span class="field-name">
             检查结果:
           </span>
@@ -36,7 +51,7 @@
             <el-input v-else type="textarea" :rows="2" v-model="copyInfo.patEleResule" placeholder="请输入检查结果"></el-input>
           </span>
         </div>
-        <div class="field whole-line">
+        <div class="field whole-line" v-if="copyInfo.elecExamType===1">
           <span class="field-name">
             提示内容:
           </span>
@@ -47,7 +62,7 @@
           </span>
         </div>
         <h3 class="form-title" v-if="tableMode===SON_OPEN">{{currentTableName}}</h3>
-        <div class="form-wrapper" :class="{'father-open':tableMode==='' && mode===ADD_NEW_CARD}" ref="formWrapper">
+        <div class="form-wrapper" ref="formWrapper">
           <table class="form" v-if="tableMode===FATHER_OPEN">
             <tr class="row first-row">
               <td class="col col-width-10">
@@ -493,9 +508,9 @@ export default {
     ]),
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
-        return '新增肌电图';
+        return '新增神经电生理检查';
       } else {
-        return '肌电图';
+        return '神经电生理检查';
       }
     },
     currentTableName() {
@@ -528,8 +543,10 @@ export default {
       this.displayModal = true;
       this.mode = cardOperation;
       this.tableMode = this.FATHER_OPEN;
-      // console.log('item: ', item);
       this.showEdit = showEdit;
+      console.log('item: ', item);
+      console.log('emgTypeList: ', this.emgTypeList);
+      console.log(this.copyInfo);
 
       this.$set(this.copyInfo, 'etgName', '');
       this.$set(this.copyInfo, 'elecTroGramId', '');
@@ -548,11 +565,20 @@ export default {
         this.$set(this.copyInfo, 'pinfoId', this.$route.params.id);
       } else {
         vueCopy(item, this.copyInfo);
+        this.copyInfo.elecExamType = this.copyInfo.elecExamType ? Number(this.copyInfo.elecExamType) : '';
       }
 
       this.selectEmg();
       this.updateScrollbar();
       this.clearWarning();
+    },
+    initCopyInfo() {
+      this.$set(this.copyInfo, 'elecExamType', '');
+    },
+    chooseElecExamType() {
+      if (this.copyInfo.elecExamType && Number(this.copyInfo.elecExamType) === 1) {
+        this.selectEmg();
+      }
     },
     updateWarning(fieldName) {
       if (this.copyInfo[fieldName] === undefined || this.copyInfo[fieldName] === '') {
@@ -763,6 +789,18 @@ export default {
       this.updateScrollbar();
       this.$refs.formWrapper.scrollTop = 0;
     },
+    getOptions(fieldName) {
+      var options = [];
+      var types = Util.getElement('typegroupcode', fieldName, this.typeGroup).types;
+      types = types ? types : [];
+      for (let type of types) {
+        options.push({
+          name: type.typeName,
+          code: type.typeCode
+        });
+      };
+      return options;
+    },
     cancel() {
       this.lockSubmitButton = false;
       this.displayModal = false;
@@ -817,6 +855,7 @@ export default {
     },
     getFieldValue(code, fieldName) {
       let mapObj = {
+        'elecExam': 'elecExam',
         'emgType': 'eleType',
         'nerveType': 'nervType',
         'muscle': 'muscleType'
@@ -855,6 +894,8 @@ export default {
     }
   },
   mounted() {
+    this.initCopyInfo();
+
     this.updateScrollbar();
     Bus.$on(this.SHOW_NEUROELECTRIC_MODAL, this.showPanel);
     // 监听折叠面板，如果发生状态的改变，就需要重新计算滚动区域的高度
@@ -883,14 +924,6 @@ export default {
 @field-line-height: 25px;
 @field-name-width: 100px;
 @long-field-name-width: 160px;
-
-@col-id-width: 40px;
-@col-name-width: 180px;
-@col-english-width: 70px;
-@col-result-width: 160px;
-@col-danwei-width: 70px;
-@col-cankao-width: 70px;
-@col-beizhu-width: 180px;
 
 .emg-modal-wrapper {
   position: absolute;
@@ -930,6 +963,9 @@ export default {
           width: 100%;
           .field-input {
             width: calc(~"96% - @{field-name-width}");
+            &.long-field-name {
+              width: calc(~"96% - @{long-field-name-width}");
+            }
           }
         }
         .field-name {
@@ -1015,13 +1051,10 @@ export default {
         overflow: hidden;
         box-sizing: border-box;
         border: 1px solid @inverse-font-color;
-        &.father-open {
-          border: none;
-        }
         .form {
           position: relative;
           margin-bottom: 5px;
-          width: 100%; // left: calc(~"50% - (@{col-id-width} + @{col-time-width} + @{col-amount-width} + @{col-unit-width}) / 2");
+          width: 100%;
           border-spacing: 0;
           font-size: 14px;
           &.small-font {
@@ -1121,7 +1154,7 @@ export default {
     .seperate-line {
       width: 90%;
       height: 1px;
-      margin: 15px auto 10px;
+      margin: 5px auto 15px;
       background-color: @light-gray-color;
     }
     .button {

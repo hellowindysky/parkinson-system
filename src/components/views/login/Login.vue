@@ -63,6 +63,7 @@
 <script>
 import md5 from 'md5';
 import { getLoginInfo } from 'api/login';
+import { setRequestToken, clearRequestToken } from 'api/common';
 import { sendVerificationCode, resetPassword } from 'api/user';
 
 // import particles from 'components/views/login/particles/Particles';
@@ -333,6 +334,8 @@ export default {
             this.orgName = data.orgs && data.orgs[0] && data.orgs[0].orgName ? data.orgs[0].orgName : '';
             this.subjects = data.tasks ? data.tasks : [];
 
+            setRequestToken(this.token);
+
             var commonRequest = {
               'userId': 93242,
               'accountNumber': this.accountNumber,
@@ -428,6 +431,9 @@ export default {
       this.loginForm.account = '';
       this.loginForm.remember = false;
     }
+
+    // 清除请求头里的 token 信息
+    clearRequestToken();
 
     // 回到登陆界面时，清空 sessionStorage
     // sessionStorage.removeItem('token');

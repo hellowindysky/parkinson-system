@@ -1,5 +1,5 @@
 /* eslint-disable quotes */
-import { baseUrl, encapsulatePromise, getCommonRequest } from 'api/common.js';
+import { encapsulatePromise, getCommonRequest } from 'api/common.js';
 
 export function getPatientList(condition) {
   // condition 对象包含了查询参数，必须包含 type 属性
@@ -9,7 +9,7 @@ export function getPatientList(condition) {
   if ((condition instanceof Object) && condition.type) {
     request.patientCond = condition;
   }
-  var url = baseUrl + '/pdms/queryPatientList';
+  var url = '/pdms/queryPatientList';
   return encapsulatePromise(url, request);
 };
 
@@ -18,7 +18,7 @@ export function getPatientInfo(patientId) {
   var patientIdNum = parseInt(patientId, 10);
   var request = Object.assign({}, getCommonRequest());
   request.patientId = patientIdNum;
-  var url = baseUrl + '/pdms/queryPatientPerson';
+  var url = '/pdms/queryPatientPerson';
 
   return encapsulatePromise(url, request);
 };
@@ -26,7 +26,7 @@ export function getPatientInfo(patientId) {
 export function modifyPatientInfo(patientInfo) {
   var request = Object.assign({}, getCommonRequest());
   request.patientInfo = patientInfo;
-  var url = baseUrl + '/pdms/modPatientInfo';
+  var url = '/pdms/modPatientInfo';
 
   return encapsulatePromise(url, request);
 };
@@ -35,7 +35,7 @@ export function modifyPatientInfo(patientInfo) {
 export function addPatientInfo(patientInfo) {
   var request = Object.assign({}, getCommonRequest());
   request.patientInfo = patientInfo;
-  var url = baseUrl + '/pdms/addPatientInfo';
+  var url = '/pdms/addPatientInfo';
 
   return encapsulatePromise(url, request);
 };
@@ -45,7 +45,7 @@ export function getPatientSimpleInfo(patientId) {
   var patientIdNum = parseInt(patientId, 10);
   var request = Object.assign({}, getCommonRequest());
   request.patientId = patientIdNum;
-  var url = baseUrl + '/pdms/queryPatientInfo';
+  var url = '/pdms/queryPatientInfo';
 
   return encapsulatePromise(url, request);
 };
@@ -54,7 +54,7 @@ export function getPatientSimpleInfo(patientId) {
 export function getPatientGroupInfo(patientInfo) {
   var request = Object.assign({}, getCommonRequest());
   request.patientInfo = patientInfo;
-  var url = baseUrl + '/pdms/queryPatientGroup';
+  var url = '/pdms/queryPatientGroup';
 
   return encapsulatePromise(url, request);
 };
@@ -63,7 +63,7 @@ export function getPatientGroupInfo(patientInfo) {
 export function getPatientSubjectInfo(patientId) {
   var request = Object.assign({}, getCommonRequest());
   request.patientId = patientId;
-  var url = baseUrl + '/pdms/queryPatientTask';
+  var url = '/pdms/queryPatientTask';
 
   return encapsulatePromise(url, request);
 };
@@ -71,7 +71,7 @@ export function getPatientSubjectInfo(patientId) {
 export function modifyPatientDiseaseInfo(patientDiseaseInfo) {
   var request = Object.assign({}, getCommonRequest());
   request.patientDiseaseInfo = patientDiseaseInfo;
-  var url = baseUrl + '/pdms/modPatientDiseaseInfo';
+  var url = '/pdms/modPatientDiseaseInfo';
 
   return encapsulatePromise(url, request);
 };
@@ -81,7 +81,7 @@ export function getPatientMedHistoryList(patientId) {
   var patientIdNum = parseInt(patientId, 10);
   var request = Object.assign({}, getCommonRequest());
   request.patientId = patientIdNum;
-  var url = baseUrl + '/pdms/queryPatientMedHistoryList';
+  var url = '/pdms/queryPatientMedHistoryList';
 
   return encapsulatePromise(url, request);
 };
@@ -90,7 +90,7 @@ export function getPatientMedHistoryList(patientId) {
 export function addPatientPresentHistory(presentHistory) {
   var request = Object.assign({}, getCommonRequest());
   request.patientHistory = presentHistory;
-  var url = baseUrl + '/pdms/addPatientHistory';
+  var url = '/pdms/addPatientHistory';
 
   return encapsulatePromise(url, request);
 };
@@ -99,7 +99,7 @@ export function addPatientPresentHistory(presentHistory) {
 export function modifyPatientPresentHistory(presentHistory) {
   var request = Object.assign({}, getCommonRequest());
   request.patientHistory = presentHistory;
-  var url = baseUrl + '/pdms/modPatientHistory';
+  var url = '/pdms/modPatientHistory';
 
   return encapsulatePromise(url, request);
 };
@@ -108,7 +108,7 @@ export function modifyPatientPresentHistory(presentHistory) {
 export function deletePatientPresentHistory(presentHistory) {
   var request = Object.assign({}, getCommonRequest());
   request.patientHistory = presentHistory;
-  var url = baseUrl + '/pdms/delPatientHistory';
+  var url = '/pdms/delPatientHistory';
 
   return encapsulatePromise(url, request);
 };
@@ -118,7 +118,7 @@ export function deletePatientPresentHistory(presentHistory) {
 export function addPatientFirstSymbol(firstSymbol) {
   var request = Object.assign({}, getCommonRequest());
   request.patientFirstSymbolModel = firstSymbol;
-  var url = baseUrl + '/pdms/addPatientFirstSymbol';
+  var url = '/pdms/addPatientFirstSymbol';
 
   return encapsulatePromise(url, request);
 };
@@ -127,7 +127,7 @@ export function addPatientFirstSymbol(firstSymbol) {
 export function modPatientFirstSymbol(firstSymbol) {
   var request = Object.assign({}, getCommonRequest());
   request.patientFirstSymbolModel = firstSymbol;
-  var url = baseUrl + '/pdms/modPatientFirstSymbol';
+  var url = '/pdms/modPatientFirstSymbol';
 
   return encapsulatePromise(url, request);
 };
@@ -136,7 +136,7 @@ export function modPatientFirstSymbol(firstSymbol) {
 export function deletePatientFirstSymbol(firstSymbol) {
   var request = Object.assign({}, getCommonRequest());
   request.patientFirstSymbolModel = firstSymbol;
-  var url = baseUrl + '/pdms/delPatientFirstSymbol';
+  var url = '/pdms/delPatientFirstSymbol';
 
   return encapsulatePromise(url, request);
 };
@@ -145,7 +145,7 @@ export function deletePatientFirstSymbol(firstSymbol) {
 export function addPatientFirstVisitTreatment(firstVisit) {
   var request = Object.assign({}, getCommonRequest());
   request.patientFirstVisitTreatmentModel = firstVisit;
-  var url = baseUrl + '/pdms/addPatientFirstVisitTreatment';
+  var url = '/pdms/addPatientFirstVisitTreatment';
 
   return encapsulatePromise(url, request);
 };
@@ -154,7 +154,7 @@ export function addPatientFirstVisitTreatment(firstVisit) {
 export function modPatientFirstVisitTreatment(firstVisit) {
   var request = Object.assign({}, getCommonRequest());
   request.patientFirstVisitTreatmentModel = firstVisit;
-  var url = baseUrl + '/pdms/modPatientFirstVisitTreatment';
+  var url = '/pdms/modPatientFirstVisitTreatment';
 
   return encapsulatePromise(url, request);
 };
@@ -163,7 +163,7 @@ export function modPatientFirstVisitTreatment(firstVisit) {
 export function delPatientFirstVisitTreatment(firstVisit) {
   var request = Object.assign({}, getCommonRequest());
   request.patientFirstVisitTreatmentModel = firstVisit;
-  var url = baseUrl + '/pdms/delPatientFirstVisitTreatment';
+  var url = '/pdms/delPatientFirstVisitTreatment';
 
   return encapsulatePromise(url, request);
 };
@@ -172,7 +172,7 @@ export function delPatientFirstVisitTreatment(firstVisit) {
 export function addVisitDignosticRecord(dignosticRecord) {
   var request = Object.assign({}, getCommonRequest());
   request.patientHistory = dignosticRecord;
-  var url = baseUrl + '/pdms/addPatientHistory';
+  var url = '/pdms/addPatientHistory';
 
   return encapsulatePromise(url, request);
 };
@@ -181,7 +181,7 @@ export function addVisitDignosticRecord(dignosticRecord) {
 export function modVisitDignosticRecord(dignosticRecord) {
   var request = Object.assign({}, getCommonRequest());
   request.patientHistory = dignosticRecord;
-  var url = baseUrl + '/pdms/modPatientHistory';
+  var url = '/pdms/modPatientHistory';
 
   return encapsulatePromise(url, request);
 };
@@ -190,7 +190,7 @@ export function modVisitDignosticRecord(dignosticRecord) {
 export function delVisitDignosticRecord(dignosticRecord) {
   var request = Object.assign({}, getCommonRequest());
   request.patientHistory = dignosticRecord;
-  var url = baseUrl + '/pdms/delPatientHistory';
+  var url = '/pdms/delPatientHistory';
 
   return encapsulatePromise(url, request);
 };
@@ -199,7 +199,7 @@ export function delVisitDignosticRecord(dignosticRecord) {
 export function modDiseaseHistory(diseaseHistoryInfo) {
   var request = Object.assign({}, getCommonRequest());
   request.patientDiseaseInfo = diseaseHistoryInfo;
-  var url = baseUrl + '/pdms/modPatientDiseaseInfo';
+  var url = '/pdms/modPatientDiseaseInfo';
 
   return encapsulatePromise(url, request);
 };
@@ -209,7 +209,7 @@ export function modDiseaseHistory(diseaseHistoryInfo) {
 export function addPatientMedHistory(medHistory) {
   var request = Object.assign({}, getCommonRequest());
   request.patientMedHistory = medHistory;
-  var url = baseUrl + '/pdms/addPatientMedHistory';
+  var url = '/pdms/addPatientMedHistory';
 
   return encapsulatePromise(url, request);
 };
@@ -218,7 +218,7 @@ export function addPatientMedHistory(medHistory) {
 export function modifyPatientMedHistory(medHistory) {
   var request = Object.assign({}, getCommonRequest());
   request.patientMedHistory = medHistory;
-  var url = baseUrl + '/pdms/modPatientMedHistory';
+  var url = '/pdms/modPatientMedHistory';
 
   return encapsulatePromise(url, request);
 };
@@ -227,7 +227,7 @@ export function modifyPatientMedHistory(medHistory) {
 export function deletePatientMedHistory(medHistory) {
   var request = Object.assign({}, getCommonRequest());
   request.patientMedHistory = medHistory;
-  var url = baseUrl + '/pdms/delPatientMedHistory';
+  var url = '/pdms/delPatientMedHistory';
 
   return encapsulatePromise(url, request);
 };
@@ -236,7 +236,7 @@ export function deletePatientMedHistory(medHistory) {
 export function addPatientDisease(patientDisease) {
   var request = Object.assign({}, getCommonRequest());
   request.patientDisease = patientDisease;
-  var url = baseUrl + '/pdms/addPatientDisease';
+  var url = '/pdms/addPatientDisease';
 
   return encapsulatePromise(url, request);
 };
@@ -245,7 +245,7 @@ export function addPatientDisease(patientDisease) {
 export function modifyPatientDisease(patientDisease) {
   var request = Object.assign({}, getCommonRequest());
   request.patientDisease = patientDisease;
-  var url = baseUrl + '/pdms/modPatientDisease';
+  var url = '/pdms/modPatientDisease';
 
   return encapsulatePromise(url, request);
 };
@@ -254,7 +254,7 @@ export function modifyPatientDisease(patientDisease) {
 export function deletePatientDisease(patientDisease) {
   var request = Object.assign({}, getCommonRequest());
   request.patientDisease = patientDisease;
-  var url = baseUrl + '/pdms/delPatientDisease';
+  var url = '/pdms/delPatientDisease';
 
   return encapsulatePromise(url, request);
 };
@@ -263,7 +263,7 @@ export function deletePatientDisease(patientDisease) {
 export function addPatientFamily(patientFamily) {
   var request = Object.assign({}, getCommonRequest());
   request.patientFamily = patientFamily;
-  var url = baseUrl + '/pdms/addPatientFamily';
+  var url = '/pdms/addPatientFamily';
 
   return encapsulatePromise(url, request);
 };
@@ -272,7 +272,7 @@ export function addPatientFamily(patientFamily) {
 export function modifyPatientFamily(patientFamily) {
   var request = Object.assign({}, getCommonRequest());
   request.patientFamily = patientFamily;
-  var url = baseUrl + '/pdms/modPatientFamily';
+  var url = '/pdms/modPatientFamily';
 
   return encapsulatePromise(url, request);
 };
@@ -281,7 +281,7 @@ export function modifyPatientFamily(patientFamily) {
 export function deletePatientFamily(patientFamily) {
   var request = Object.assign({}, getCommonRequest());
   request.patientFamily = patientFamily;
-  var url = baseUrl + '/pdms/delPatientFamily';
+  var url = '/pdms/delPatientFamily';
 
   return encapsulatePromise(url, request);
 };
@@ -290,7 +290,7 @@ export function deletePatientFamily(patientFamily) {
 export function addPatientExercise(patientExercise) {
   var request = Object.assign({}, getCommonRequest());
   request.patientExercise = patientExercise;
-  var url = baseUrl + '/pdms/addPatientExercise';
+  var url = '/pdms/addPatientExercise';
 
   return encapsulatePromise(url, request);
 };
@@ -299,7 +299,7 @@ export function addPatientExercise(patientExercise) {
 export function modifyPatientExercise(patientExercise) {
   var request = Object.assign({}, getCommonRequest());
   request.patientExercise = patientExercise;
-  var url = baseUrl + '/pdms/modPatientExercise';
+  var url = '/pdms/modPatientExercise';
 
   return encapsulatePromise(url, request);
 };
@@ -308,7 +308,7 @@ export function modifyPatientExercise(patientExercise) {
 export function deletePatientExercise(patientExercise) {
   var request = Object.assign({}, getCommonRequest());
   request.patientExercise = patientExercise;
-  var url = baseUrl + '/pdms/delPatientExercise';
+  var url = '/pdms/delPatientExercise';
 
   return encapsulatePromise(url, request);
 };
@@ -317,7 +317,7 @@ export function deletePatientExercise(patientExercise) {
 export function addPatientSmoke(patientSmoke) {
   var request = Object.assign({}, getCommonRequest());
   request.patientSmoke = patientSmoke;
-  var url = baseUrl + '/pdms/addPatientSmoke';
+  var url = '/pdms/addPatientSmoke';
 
   return encapsulatePromise(url, request);
 };
@@ -326,7 +326,7 @@ export function addPatientSmoke(patientSmoke) {
 export function modifyPatientSmoke(patientSmoke) {
   var request = Object.assign({}, getCommonRequest());
   request.patientSmoke = patientSmoke;
-  var url = baseUrl + '/pdms/modPatientSmoke';
+  var url = '/pdms/modPatientSmoke';
 
   return encapsulatePromise(url, request);
 };
@@ -335,7 +335,7 @@ export function modifyPatientSmoke(patientSmoke) {
 export function deletePatientSmoke(patientSmoke) {
   var request = Object.assign({}, getCommonRequest());
   request.patientSmoke = patientSmoke;
-  var url = baseUrl + '/pdms/delPatientSmoke';
+  var url = '/pdms/delPatientSmoke';
 
   return encapsulatePromise(url, request);
 };
@@ -344,7 +344,7 @@ export function deletePatientSmoke(patientSmoke) {
 export function addPatientWine(patientWine) {
   var request = Object.assign({}, getCommonRequest());
   request.patientWine = patientWine;
-  var url = baseUrl + '/pdms/addPatientWine';
+  var url = '/pdms/addPatientWine';
 
   return encapsulatePromise(url, request);
 };
@@ -353,7 +353,7 @@ export function addPatientWine(patientWine) {
 export function modifyPatientWine(patientWine) {
   var request = Object.assign({}, getCommonRequest());
   request.patientWine = patientWine;
-  var url = baseUrl + '/pdms/modPatientWine';
+  var url = '/pdms/modPatientWine';
 
   return encapsulatePromise(url, request);
 };
@@ -362,7 +362,7 @@ export function modifyPatientWine(patientWine) {
 export function deletePatientWine(patientWine) {
   var request = Object.assign({}, getCommonRequest());
   request.patientWine = patientWine;
-  var url = baseUrl + '/pdms/delPatientWine';
+  var url = '/pdms/delPatientWine';
 
   return encapsulatePromise(url, request);
 };
@@ -371,7 +371,7 @@ export function deletePatientWine(patientWine) {
 export function addPatientTea(patientTea) {
   var request = Object.assign({}, getCommonRequest());
   request.patientTea = patientTea;
-  var url = baseUrl + '/pdms/addPatientTea';
+  var url = '/pdms/addPatientTea';
 
   return encapsulatePromise(url, request);
 };
@@ -380,7 +380,7 @@ export function addPatientTea(patientTea) {
 export function modifyPatientTea(patientTea) {
   var request = Object.assign({}, getCommonRequest());
   request.patientTea = patientTea;
-  var url = baseUrl + '/pdms/modPatientTea';
+  var url = '/pdms/modPatientTea';
 
   return encapsulatePromise(url, request);
 };
@@ -389,7 +389,7 @@ export function modifyPatientTea(patientTea) {
 export function deletePatientTea(patientTea) {
   var request = Object.assign({}, getCommonRequest());
   request.patientTea = patientTea;
-  var url = baseUrl + '/pdms/delPatientTea';
+  var url = '/pdms/delPatientTea';
 
   return encapsulatePromise(url, request);
 };
@@ -398,7 +398,7 @@ export function deletePatientTea(patientTea) {
 export function addPatientCoffee(patientCoffee) {
   var request = Object.assign({}, getCommonRequest());
   request.patientCoffee = patientCoffee;
-  var url = baseUrl + '/pdms/addPatientCoffee';
+  var url = '/pdms/addPatientCoffee';
 
   return encapsulatePromise(url, request);
 };
@@ -407,7 +407,7 @@ export function addPatientCoffee(patientCoffee) {
 export function modifyPatientCoffee(patientCoffee) {
   var request = Object.assign({}, getCommonRequest());
   request.patientCoffee = patientCoffee;
-  var url = baseUrl + '/pdms/modPatientCoffee';
+  var url = '/pdms/modPatientCoffee';
 
   return encapsulatePromise(url, request);
 };
@@ -416,7 +416,7 @@ export function modifyPatientCoffee(patientCoffee) {
 export function deletePatientCoffee(patientCoffee) {
   var request = Object.assign({}, getCommonRequest());
   request.patientCoffee = patientCoffee;
-  var url = baseUrl + '/pdms/delPatientCoffee';
+  var url = '/pdms/delPatientCoffee';
 
   return encapsulatePromise(url, request);
 };
@@ -425,7 +425,7 @@ export function deletePatientCoffee(patientCoffee) {
 export function addPatientToxicExposure(toxicExposure) {
   var request = Object.assign({}, getCommonRequest());
   request.patientCideexposed = toxicExposure;
-  var url = baseUrl + '/pdms/addPatientCideexposed';
+  var url = '/pdms/addPatientCideexposed';
 
   return encapsulatePromise(url, request);
 };
@@ -434,7 +434,7 @@ export function addPatientToxicExposure(toxicExposure) {
 export function modifyPatientToxicExposure(toxicExposure) {
   var request = Object.assign({}, getCommonRequest());
   request.patientCideexposed = toxicExposure;
-  var url = baseUrl + '/pdms/modPatientCideexposed';
+  var url = '/pdms/modPatientCideexposed';
 
   return encapsulatePromise(url, request);
 };
@@ -443,7 +443,7 @@ export function modifyPatientToxicExposure(toxicExposure) {
 export function deletePatientToxicExposure(toxicExposure) {
   var request = Object.assign({}, getCommonRequest());
   request.patientCideexposed = toxicExposure;
-  var url = baseUrl + '/pdms/delPatientCideexposed';
+  var url = '/pdms/delPatientCideexposed';
 
   return encapsulatePromise(url, request);
 };
@@ -452,7 +452,7 @@ export function deletePatientToxicExposure(toxicExposure) {
 export function addDiagnosticBasic(diagnosticBasic) {
   var request = Object.assign({}, getCommonRequest());
   request.patientCase = diagnosticBasic;
-  var url = baseUrl + '/pdms/addPatientCase';
+  var url = '/pdms/addPatientCase';
 
   return encapsulatePromise(url, request);
 };
@@ -461,7 +461,7 @@ export function addDiagnosticBasic(diagnosticBasic) {
 export function modifyDiagnosticBasic(diagnosticBasic) {
   var request = Object.assign({}, getCommonRequest());
   request.patientCase = diagnosticBasic;
-  var url = baseUrl + '/pdms/modPatientCase';
+  var url = '/pdms/modPatientCase';
 
   return encapsulatePromise(url, request);
 };
@@ -470,7 +470,7 @@ export function modifyDiagnosticBasic(diagnosticBasic) {
 export function deleteDiagnosticInfo(diagnosticInfo) {
   var request = Object.assign({}, getCommonRequest());
   request.patientCase = diagnosticInfo;
-  var url = baseUrl + '/pdms/delPatientCase';
+  var url = '/pdms/delPatientCase';
   return encapsulatePromise(url, request);
 };
 
@@ -478,7 +478,7 @@ export function deleteDiagnosticInfo(diagnosticInfo) {
 export function modifyDiagnosticDisease(diagnosticDisease) {
   var request = Object.assign({}, getCommonRequest());
   request.patientDisease = diagnosticDisease;
-  var url = baseUrl + '/pdms/modPatientSymptom';
+  var url = '/pdms/modPatientSymptom';
 
   return encapsulatePromise(url, request);
 };
@@ -488,7 +488,7 @@ export function modifyDiagnosticDisease(diagnosticDisease) {
 export function addPatientSymptom(complaintsInfo) {
   var request = Object.assign({}, getCommonRequest());
   request.patientSymptomModel = complaintsInfo;
-  var url = baseUrl + '/pdms/addPatientSymptom';
+  var url = '/pdms/addPatientSymptom';
 
   return encapsulatePromise(url, request);
 };
@@ -497,7 +497,7 @@ export function addPatientSymptom(complaintsInfo) {
 export function modPatientSymptom(complaintsInfo) {
   var request = Object.assign({}, getCommonRequest());
   request.patientSymptomModel = complaintsInfo;
-  var url = baseUrl + '/pdms/modPatientSymptom';
+  var url = '/pdms/modPatientSymptom';
 
   return encapsulatePromise(url, request);
 };
@@ -506,7 +506,7 @@ export function modPatientSymptom(complaintsInfo) {
 export function delPatientSymptom(complaintsInfo) {
   var request = Object.assign({}, getCommonRequest());
   request.patientSymptomModel = complaintsInfo;
-  var url = baseUrl + '/pdms/delPatientSymptom';
+  var url = '/pdms/delPatientSymptom';
 
   return encapsulatePromise(url, request);
 };
@@ -515,7 +515,7 @@ export function delPatientSymptom(complaintsInfo) {
 export function modDiseaseSituation(diseaseSituation) {
   var request = Object.assign({}, getCommonRequest());
   request.patientCase = diseaseSituation;
-  var url = baseUrl + '/pdms/modPatientCase';
+  var url = '/pdms/modPatientCase';
 
   return encapsulatePromise(url, request);
 };
@@ -529,7 +529,7 @@ export function getPatientCaseList(patientId) {
   request.patientId = patientIdNum;
   request.pageSize = 0;
   request.pageNo = 1;
-  var url = baseUrl + '/pdms/queryPatientCaseList';
+  var url = '/pdms/queryPatientCaseList';
   return encapsulatePromise(url, request);
 };
 
@@ -539,7 +539,7 @@ export function getPatientCase(patientId, patientCaseId) {
   var request = Object.assign({}, getCommonRequest());
   request.patientId = patientIdNum;
   request.patientCaseId = patientCaseId;
-  var url = baseUrl + '/pdms/queryPatientCase';
+  var url = '/pdms/queryPatientCase';
 
   return encapsulatePromise(url, request);
 };
@@ -548,7 +548,7 @@ export function getPatientCase(patientId, patientCaseId) {
 export function archivePatientCase(patientCaseId) {
   var request = Object.assign({}, getCommonRequest());
   request.patientCaseId = patientCaseId;
-  var url = baseUrl + '/pdms/archivePatientCase';
+  var url = '/pdms/archivePatientCase';
 
   return encapsulatePromise(url, request);
 };
@@ -557,7 +557,7 @@ export function archivePatientCase(patientCaseId) {
 export function addPatientMedicine(patientMedicine) {
   var request = Object.assign({}, getCommonRequest());
   request.patientMedicine = patientMedicine;
-  var url = baseUrl + '/pdms/addPatientMedicine';
+  var url = '/pdms/addPatientMedicine';
 
   return encapsulatePromise(url, request);
 };
@@ -566,7 +566,7 @@ export function addPatientMedicine(patientMedicine) {
 export function modifyPatientMedicine(patientMedicine) {
   var request = Object.assign({}, getCommonRequest());
   request.patientMedicine = patientMedicine;
-  var url = baseUrl + '/pdms/modPatientMedicine';
+  var url = '/pdms/modPatientMedicine';
 
   return encapsulatePromise(url, request);
 };
@@ -575,7 +575,7 @@ export function modifyPatientMedicine(patientMedicine) {
 export function deletePatientMedicine(patientMedicine) {
   var request = Object.assign({}, getCommonRequest());
   request.patientMedicine = patientMedicine;
-  var url = baseUrl + '/pdms/delPatientMedicine';
+  var url = '/pdms/delPatientMedicine';
 
   return encapsulatePromise(url, request);
 };
@@ -585,7 +585,7 @@ export function getPreEvaluation(preEvaluationId) {
   preEvaluationId = parseInt(preEvaluationId, 10);
   var request = Object.assign({}, getCommonRequest());
   request.preopsInfoId = preEvaluationId;
-  var url = baseUrl + '/pdms/queryPatientPreopsDetail';
+  var url = '/pdms/queryPatientPreopsDetail';
 
   return encapsulatePromise(url, request);
 };
@@ -594,7 +594,7 @@ export function getPreEvaluation(preEvaluationId) {
 export function addPreEvaluation(preEvaluation) {
   var request = Object.assign({}, getCommonRequest());
   request.patientPreops = preEvaluation;
-  var url = baseUrl + '/pdms/addPatientPreops';
+  var url = '/pdms/addPatientPreops';
 
   return encapsulatePromise(url, request);
 };
@@ -603,7 +603,7 @@ export function addPreEvaluation(preEvaluation) {
 export function modifyPreEvaluation(preEvaluation) {
   var request = Object.assign({}, getCommonRequest());
   request.patientPreops = preEvaluation;
-  var url = baseUrl + '/pdms/modPatientPreops';
+  var url = '/pdms/modPatientPreops';
 
   return encapsulatePromise(url, request);
 };
@@ -612,7 +612,7 @@ export function modifyPreEvaluation(preEvaluation) {
 export function deletePreEvaluation(preEvaluation) {
   var request = Object.assign({}, getCommonRequest());
   request.patientPreops = preEvaluation;
-  var url = baseUrl + '/pdms/delPatientPreops';
+  var url = '/pdms/delPatientPreops';
 
   return encapsulatePromise(url, request);
 };
@@ -621,7 +621,7 @@ export function deletePreEvaluation(preEvaluation) {
 export function addSurgicalMethod(surgicalMethod) {
   var request = Object.assign({}, getCommonRequest());
   request.patientTreatment = surgicalMethod;
-  var url = baseUrl + '/pdms/addPatientTreatment';
+  var url = '/pdms/addPatientTreatment';
 
   return encapsulatePromise(url, request);
 };
@@ -630,7 +630,7 @@ export function addSurgicalMethod(surgicalMethod) {
 export function modifySurgicalMethod(surgicalMethod) {
   var request = Object.assign({}, getCommonRequest());
   request.patientTreatment = surgicalMethod;
-  var url = baseUrl + '/pdms/modPatientTreatment';
+  var url = '/pdms/modPatientTreatment';
 
   return encapsulatePromise(url, request);
 };
@@ -639,7 +639,7 @@ export function modifySurgicalMethod(surgicalMethod) {
 export function deleteSurgicalMethod(surgicalMethod) {
   var request = Object.assign({}, getCommonRequest());
   request.patientTreatment = surgicalMethod;
-  var url = baseUrl + '/pdms/delPatientTreatment';
+  var url = '/pdms/delPatientTreatment';
 
   return encapsulatePromise(url, request);
 };
@@ -648,7 +648,7 @@ export function deleteSurgicalMethod(surgicalMethod) {
 export function addOperativeCompliation(operativeComplication) {
   var request = Object.assign({}, getCommonRequest());
   request.patientComplication = operativeComplication;
-  var url = baseUrl + '/pdms/addPatientComplication';
+  var url = '/pdms/addPatientComplication';
 
   return encapsulatePromise(url, request);
 };
@@ -657,7 +657,7 @@ export function addOperativeCompliation(operativeComplication) {
 export function modifyOperativeCompliation(operativeComplication) {
   var request = Object.assign({}, getCommonRequest());
   request.patientComplication = operativeComplication;
-  var url = baseUrl + '/pdms/modPatientComplication';
+  var url = '/pdms/modPatientComplication';
 
   return encapsulatePromise(url, request);
 };
@@ -666,7 +666,7 @@ export function modifyOperativeCompliation(operativeComplication) {
 export function deleteOperativeCompliation(operativeComplication) {
   var request = Object.assign({}, getCommonRequest());
   request.patientComplication = operativeComplication;
-  var url = baseUrl + '/pdms/delPatientComplication';
+  var url = '/pdms/delPatientComplication';
 
   return encapsulatePromise(url, request);
 };
@@ -676,7 +676,7 @@ export function getDbsFirstInfo(dbsFirstId) {
   dbsFirstId = parseInt(dbsFirstId, 10);
   var request = Object.assign({}, getCommonRequest());
   request.patientDbsFirstId = dbsFirstId;
-  var url = baseUrl + '/pdms/queryPatientDbsFirstDetail';
+  var url = '/pdms/queryPatientDbsFirstDetail';
 
   return encapsulatePromise(url, request);
 };
@@ -685,7 +685,7 @@ export function getDbsFirstInfo(dbsFirstId) {
 export function addDbsFirstInfo(dbsFirstInfo) {
   var request = Object.assign({}, getCommonRequest());
   request.patientDbsFirst = dbsFirstInfo;
-  var url = baseUrl + '/pdms/addPatientDbsFirst';
+  var url = '/pdms/addPatientDbsFirst';
 
   return encapsulatePromise(url, request);
 };
@@ -694,7 +694,7 @@ export function addDbsFirstInfo(dbsFirstInfo) {
 export function modifyDbsFirstInfo(dbsFirstInfo) {
   var request = Object.assign({}, getCommonRequest());
   request.patientDbsFirst = dbsFirstInfo;
-  var url = baseUrl + '/pdms/modPatientDbsFirst';
+  var url = '/pdms/modPatientDbsFirst';
 
   return encapsulatePromise(url, request);
 };
@@ -703,7 +703,7 @@ export function modifyDbsFirstInfo(dbsFirstInfo) {
 export function deleteDbsFirstInfo(dbsFirstInfo) {
   var request = Object.assign({}, getCommonRequest());
   request.patientDbsFirst = dbsFirstInfo;
-  var url = baseUrl + '/pdms/delPatientDbsFirst';
+  var url = '/pdms/delPatientDbsFirst';
 
   return encapsulatePromise(url, request);
 };
@@ -715,7 +715,7 @@ export function getDbsFollowInfo(patientId, dbsFollowId) {
   var request = Object.assign({}, getCommonRequest());
   request.patientId = patientId;
   request.patientDbsFollowId = dbsFollowId;
-  var url = baseUrl + '/pdms/queryPatientDbsFollowDetail';
+  var url = '/pdms/queryPatientDbsFollowDetail';
 
   return encapsulatePromise(url, request);
 };
@@ -724,7 +724,7 @@ export function getDbsFollowInfo(patientId, dbsFollowId) {
 export function addDbsFollowInfo(dbsFollowInfo) {
   var request = Object.assign({}, getCommonRequest());
   request.patientDbsFollow = dbsFollowInfo;
-  var url = baseUrl + '/pdms/addPatientDbsFollow';
+  var url = '/pdms/addPatientDbsFollow';
 
   return encapsulatePromise(url, request);
 };
@@ -733,7 +733,7 @@ export function addDbsFollowInfo(dbsFollowInfo) {
 export function modifyDbsFollowInfo(dbsFollowInfo) {
   var request = Object.assign({}, getCommonRequest());
   request.patientDbsFollow = dbsFollowInfo;
-  var url = baseUrl + '/pdms/modPatientDbsFollow';
+  var url = '/pdms/modPatientDbsFollow';
 
   return encapsulatePromise(url, request);
 };
@@ -742,7 +742,7 @@ export function modifyDbsFollowInfo(dbsFollowInfo) {
 export function deleteDbsFollowInfo(dbsFollowInfo) {
   var request = Object.assign({}, getCommonRequest());
   request.patientDbsFollow = dbsFollowInfo;
-  var url = baseUrl + '/pdms/delPatientDbsFollow';
+  var url = '/pdms/delPatientDbsFollow';
 
   return encapsulatePromise(url, request);
 };
@@ -753,7 +753,7 @@ export function getLastDbsInfo(patientId, patientCaseId) {
   var request = Object.assign({}, getCommonRequest());
   request.patientId = patientId;
   request.patientCaseId = patientCaseId;
-  var url = baseUrl + '/pdms/queryLastPatientDbsParms';
+  var url = '/pdms/queryLastPatientDbsParms';
 
   return encapsulatePromise(url, request);
 };
@@ -762,7 +762,7 @@ export function getLastDbsInfo(patientId, patientCaseId) {
 export function addScaleInfo(patientScale) {
   var request = Object.assign({}, getCommonRequest());
   request.patientScale = patientScale;
-  var url = baseUrl + '/pdms/addPatientScaleInfo';
+  var url = '/pdms/addPatientScaleInfo';
 
   return encapsulatePromise(url, request);
 };
@@ -771,7 +771,7 @@ export function addScaleInfo(patientScale) {
 export function modifyScaleInfo(patientScale) {
   var request = Object.assign({}, getCommonRequest());
   request.patientScale = patientScale;
-  var url = baseUrl + '/pdms/modPatientScaleInfo';
+  var url = '/pdms/modPatientScaleInfo';
 
   return encapsulatePromise(url, request);
 };
@@ -779,7 +779,7 @@ export function modifyScaleInfo(patientScale) {
 export function deleteScaleInfo(patientScale) {
   var request = Object.assign({}, getCommonRequest());
   request.patientScale = patientScale;
-  var url = baseUrl + '/pdms/delPatientScaleInfo';
+  var url = '/pdms/delPatientScaleInfo';
 
   return encapsulatePromise(url, request);
 };
@@ -788,7 +788,7 @@ export function deleteScaleInfo(patientScale) {
 export function modifyNervouSystem(patientSpephysical) {
   var request = Object.assign({}, getCommonRequest());
   request.patientSpephysical = patientSpephysical;
-  var url = baseUrl + '/pdms/modPatientSpephysical';
+  var url = '/pdms/modPatientSpephysical';
 
   return encapsulatePromise(url, request);
 };
@@ -797,7 +797,7 @@ export function modifyNervouSystem(patientSpephysical) {
 export function addNervouSystem(patientSpephysical) {
   var request = Object.assign({}, getCommonRequest());
   request.patientSpephysical = patientSpephysical;
-  var url = baseUrl + '/pdms/addPatientSpephysical';
+  var url = '/pdms/addPatientSpephysical';
 
   return encapsulatePromise(url, request);
 };
@@ -806,7 +806,7 @@ export function addNervouSystem(patientSpephysical) {
 export function delNervouSystem(patientSpephysical) {
   var request = Object.assign({}, getCommonRequest());
   request.patientSpephysical = patientSpephysical;
-  var url = baseUrl + '/pdms/delPatientSpephysical';
+  var url = '/pdms/delPatientSpephysical';
 
   return encapsulatePromise(url, request);
 };
@@ -815,7 +815,7 @@ export function delNervouSystem(patientSpephysical) {
 export function modifyGeneCheck(patientGene) {
   var request = Object.assign({}, getCommonRequest());
   request.patientGene = patientGene;
-  var url = baseUrl + '/pdms/modPatientGene';
+  var url = '/pdms/modPatientGene';
 
   return encapsulatePromise(url, request);
 };
@@ -824,7 +824,7 @@ export function modifyGeneCheck(patientGene) {
 export function addGeneCheck(patientGene) {
   var request = Object.assign({}, getCommonRequest());
   request.patientGene = patientGene;
-  var url = baseUrl + '/pdms/addPatientGene';
+  var url = '/pdms/addPatientGene';
 
   return encapsulatePromise(url, request);
 };
@@ -832,7 +832,7 @@ export function addGeneCheck(patientGene) {
 export function deleteGeneCheck(patientGene) {
   var request = Object.assign({}, getCommonRequest());
   request.patientGene = patientGene;
-  var url = baseUrl + '/pdms/delPatientGene';
+  var url = '/pdms/delPatientGene';
 
   return encapsulatePromise(url, request);
 };
@@ -841,7 +841,7 @@ export function deleteGeneCheck(patientGene) {
 export function addBiochemical(patientBioexam) {
   var request = Object.assign({}, getCommonRequest());
   request.patientBioexam = patientBioexam;
-  var url = baseUrl + '/pdms/addBioexam';
+  var url = '/pdms/addBioexam';
 
   return encapsulatePromise(url, request);
 };
@@ -850,7 +850,7 @@ export function addBiochemical(patientBioexam) {
 export function modifyBiochemical(patientBioexam) {
   var request = Object.assign({}, getCommonRequest());
   request.patientBioexam = patientBioexam;
-  var url = baseUrl + '/pdms/modBioexam';
+  var url = '/pdms/modBioexam';
 
   return encapsulatePromise(url, request);
 };
@@ -859,7 +859,7 @@ export function modifyBiochemical(patientBioexam) {
 export function deleteBiochemical(patientBioexam) {
   var request = Object.assign({}, getCommonRequest());
   request.patientBioexam = patientBioexam;
-  var url = baseUrl + '/pdms/delBioexam';
+  var url = '/pdms/delBioexam';
 
   return encapsulatePromise(url, request);
 };
@@ -868,7 +868,7 @@ export function deleteBiochemical(patientBioexam) {
 export function addEmg(patientElecTroGram) {
   var request = Object.assign({}, getCommonRequest());
   request.patientElecTroGram = patientElecTroGram;
-  var url = baseUrl + '/pdms/addPatElecTroGram';
+  var url = '/pdms/addPatElecTroGram';
 
   return encapsulatePromise(url, request);
 };
@@ -877,7 +877,7 @@ export function addEmg(patientElecTroGram) {
 export function modEmg(patientElecTroGram) {
   var request = Object.assign({}, getCommonRequest());
   request.patientElecTroGram = patientElecTroGram;
-  var url = baseUrl + '/pdms/modPatElecTroGram';
+  var url = '/pdms/modPatElecTroGram';
 
   return encapsulatePromise(url, request);
 };
@@ -886,7 +886,7 @@ export function modEmg(patientElecTroGram) {
 export function deleteEmg(patientElecTroGram) {
   var request = Object.assign({}, getCommonRequest());
   request.patientElecTroGram = patientElecTroGram;
-  var url = baseUrl + '/pdms/delPatElecTroGram';
+  var url = '/pdms/delPatElecTroGram';
 
   return encapsulatePromise(url, request);
 };
@@ -895,7 +895,7 @@ export function deleteEmg(patientElecTroGram) {
 export function addImage(imageInfo) {
   var request = Object.assign({}, getCommonRequest());
   request.patientImageReq = imageInfo;
-  var url = baseUrl + '/pdms/addPatientImage';
+  var url = '/pdms/addPatientImage';
 
   return encapsulatePromise(url, request);
 };
@@ -904,7 +904,7 @@ export function addImage(imageInfo) {
 export function modifyImage(imageInfo) {
   var request = Object.assign({}, getCommonRequest());
   request.patientImageReq = imageInfo;
-  var url = baseUrl + '/pdms/modPatientImage';
+  var url = '/pdms/modPatientImage';
 
   return encapsulatePromise(url, request);
 };
@@ -913,7 +913,7 @@ export function modifyImage(imageInfo) {
 export function deleteImage(imageInfo) {
   var request = Object.assign({}, getCommonRequest());
   request.patientImageReq = imageInfo;
-  var url = baseUrl + '/pdms/delPatientImage';
+  var url = '/pdms/delPatientImage';
 
   return encapsulatePromise(url, request);
 };
@@ -922,7 +922,7 @@ export function deleteImage(imageInfo) {
 export function modVitalSigns(patientCase) {
   var request = Object.assign({}, getCommonRequest());
   request.patientCase = patientCase;
-  var url = baseUrl + '/pdms/modPatientCase';
+  var url = '/pdms/modPatientCase';
 
   return encapsulatePromise(url, request);
 };
@@ -930,7 +930,7 @@ export function modVitalSigns(patientCase) {
 // 综合查询
 export function queryPatientsByCondition(condition) {
   var request = Object.assign({}, getCommonRequest());
-  var url = baseUrl + '/pdms/integratedQuery';
+  var url = '/pdms/integratedQuery';
   if (condition) {
     request.integratedQueryCond = condition;
   }
@@ -941,7 +941,7 @@ export function queryPatientsByCondition(condition) {
 export function addPhysiontherapy(patientPhytheTms) {
   var request = Object.assign({}, getCommonRequest());
   request.patientPhytheTms = patientPhytheTms;
-  var url = baseUrl + '/pdms/addPatientPhytheTms';
+  var url = '/pdms/addPatientPhytheTms';
 
   return encapsulatePromise(url, request);
 };
@@ -950,7 +950,7 @@ export function addPhysiontherapy(patientPhytheTms) {
 export function modifyPhysiontherapy(patientPhytheTms) {
   var request = Object.assign({}, getCommonRequest());
   request.patientPhytheTms = patientPhytheTms;
-  var url = baseUrl + '/pdms/modPatientPhytheTms';
+  var url = '/pdms/modPatientPhytheTms';
 
   return encapsulatePromise(url, request);
 };
@@ -959,7 +959,7 @@ export function modifyPhysiontherapy(patientPhytheTms) {
 export function deletePhysiontherapy(patientPhytheTms) {
   var request = Object.assign({}, getCommonRequest());
   request.patientPhytheTms = patientPhytheTms;
-  var url = baseUrl + '/pdms/delPatientPhytheTms';
+  var url = '/pdms/delPatientPhytheTms';
 
   return encapsulatePromise(url, request);
 };
@@ -967,7 +967,7 @@ export function deletePhysiontherapy(patientPhytheTms) {
 export function addTreatmentEvaluation(patientPhytheAssess) {
   var request = Object.assign({}, getCommonRequest());
   request.patientPhytheAssess = patientPhytheAssess;
-  var url = baseUrl + '/pdms/addPatientPhytheAssess';
+  var url = '/pdms/addPatientPhytheAssess';
 
   return encapsulatePromise(url, request);
 };
@@ -976,7 +976,7 @@ export function addTreatmentEvaluation(patientPhytheAssess) {
 export function modifyTreatmentEvaluation(patientPhytheAssess) {
   var request = Object.assign({}, getCommonRequest());
   request.patientPhytheAssess = patientPhytheAssess;
-  var url = baseUrl + '/pdms/modPatientPhytheAssess';
+  var url = '/pdms/modPatientPhytheAssess';
 
   return encapsulatePromise(url, request);
 };
@@ -985,7 +985,7 @@ export function modifyTreatmentEvaluation(patientPhytheAssess) {
 export function deleteTreatmentEvaluation(patientPhytheAssess) {
   var request = Object.assign({}, getCommonRequest());
   request.patientPhytheAssess = patientPhytheAssess;
-  var url = baseUrl + '/pdms/delPatientPhytheAssess';
+  var url = '/pdms/delPatientPhytheAssess';
 
   return encapsulatePromise(url, request);
 };
@@ -993,7 +993,7 @@ export function deleteTreatmentEvaluation(patientPhytheAssess) {
 export function addVitalSigns(patientVitalSign) {
   var request = Object.assign({}, getCommonRequest());
   request.patientVitalSign = patientVitalSign;
-  var url = baseUrl + '/pdms/addPatientVitalSign';
+  var url = '/pdms/addPatientVitalSign';
 
   return encapsulatePromise(url, request);
 };
@@ -1002,7 +1002,7 @@ export function addVitalSigns(patientVitalSign) {
 export function modifyVitalSigns(patientVitalSign) {
   var request = Object.assign({}, getCommonRequest());
   request.patientVitalSign = patientVitalSign;
-  var url = baseUrl + '/pdms/modPatientVitalSign';
+  var url = '/pdms/modPatientVitalSign';
 
   return encapsulatePromise(url, request);
 };
@@ -1011,7 +1011,7 @@ export function modifyVitalSigns(patientVitalSign) {
 export function deleteVitalSigns(patientVitalSign) {
   var request = Object.assign({}, getCommonRequest());
   request.patientVitalSign = patientVitalSign;
-  var url = baseUrl + '/pdms/delPatientVitalSign';
+  var url = '/pdms/delPatientVitalSign';
 
   return encapsulatePromise(url, request);
 };

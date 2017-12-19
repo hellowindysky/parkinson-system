@@ -40,6 +40,7 @@
 
 <script>
 import Bus from 'utils/bus.js';
+import { setRequestToken } from 'api/common.js';
 
 import topbar from 'components/views/topbar/Topbar';
 import sidebar from 'components/views/sidebar/Sidebar';
@@ -163,6 +164,7 @@ export default {
     Bus.$on(this.TOGGLE_FILTER_PANEL_DISPLAY, this.toggleFilterPanelDisplay);
   },
   beforeRouteEnter(to, from, next) {
+    let token = sessionStorage.getItem('token');
     let userType = parseInt(sessionStorage.getItem('userType'), 10);
     let supportedDoctor = sessionStorage.getItem('supportedDoctor');
 
@@ -170,10 +172,13 @@ export default {
       // 如果还未获得 token 信息，则说明还没有登录，所以返回登录界面
       next({path: '/login'});
       return;
+
     } else if (userType === 5 && supportedDoctor === null) {
       // 如果发现是技术支持专员，而且还没有选择医生，那么就跳转到医生选择界面
       next({path: '/doctorSelection'});
+
     } else {
+      setRequestToken(token);
       next();
     }
   },

@@ -1,10 +1,10 @@
 /* eslint-disable quotes */
-import { baseUrl, encapsulatePromise, getCommonRequest } from 'api/common.js';
+import { encapsulatePromise, getCommonRequest } from 'api/common.js';
 
 // 查询所有课题
 export function getSubjectList() {
   var request = Object.assign({}, getCommonRequest());
-  var url = baseUrl + '/pdms/queryTaskInfo';
+  var url = '/pdms/queryTaskInfo';
   return encapsulatePromise(url, request);
 };
 
@@ -12,7 +12,7 @@ export function getSubjectList() {
 export function addPatientToSubject(patientSubjectList) {
   var request = Object.assign({}, getCommonRequest());
   request.taskPatient = patientSubjectList;
-  var url = baseUrl + '/pdms/addTaskMember';
+  var url = '/pdms/addTaskMember';
 
   return encapsulatePromise(url, request);
 };
@@ -21,7 +21,7 @@ export function addPatientToSubject(patientSubjectList) {
 export function removePatientFromSubject(patientSubjectList) {
   var request = Object.assign({}, getCommonRequest());
   request.taskPatient = patientSubjectList;
-  var url = baseUrl + '/pdms/delTaskMember';
+  var url = '/pdms/delTaskMember';
 
   return encapsulatePromise(url, request);
 };
