@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="personal-info-wrapper">
     <basic-info class="component" :basic-info="basicInfo"></basic-info>
-    <disease-info class="component" :disease-info="diseaseInfo" :birthday="birthday"></disease-info>
+    <disease-info class="component" :disease-info="diseaseInfo" :birthday="birthday" v-show="false"></disease-info>
     <disease-history class="component" v-show="!false" :disease-info="diseaseInfo"></disease-history>
     <other-info class="component" :med-history-list="medHistoryList" :disease-history-list="diseaseHistoryList"
       :family-history-list="familyHistoryList" :coffee-history-list="coffeeHistoryList" :tea-history-list="teaHistoryList"

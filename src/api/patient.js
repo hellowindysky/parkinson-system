@@ -194,6 +194,15 @@ export function delVisitDignosticRecord(dignosticRecord) {
 
   return encapsulatePromise(url, request);
 };
+
+// 修改现病史
+export function modDiseaseHistory(diseaseHistoryInfo) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientDiseaseInfo = diseaseHistoryInfo;
+  var url = baseUrl + '/pdms/modPatientDiseaseInfo';
+
+  return encapsulatePromise(url, request);
+};
 // v2.1 现病史 ↑↑↑
 
 // 新增用药史

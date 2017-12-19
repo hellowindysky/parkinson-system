@@ -16,13 +16,20 @@
           </span>
 
           <div class="field-value" v-show="mode===READING_MODE">
-            <span v-if="true">
-              起病类型值
+            <span v-if="getUIType(field)===3">
+              {{ transformTypeCode(copyInfo[field.fieldName], field.fieldName) }}
+            </span>
+            <span v-else-if="getUIType(field)===5">
+              {{ translateCodes(copyInfo[field.fieldName], field.fieldName) }}
+            </span>
+            <span v-else>
+              {{ copyInfo[field.fieldName] }}
             </span>
           </div>
 
           <div class="field-input" v-show="mode===EDITING_MODE">
-            <span v-if="getUIType(field)===1">
+            <span v-if="field.fieldName==='courseOfDisease'">{{courseOfDiseaseInfo}}</span>
+            <span v-else-if="getUIType(field)===1">
               <el-input v-model="copyInfo[field.fieldName]"
                 :placeholder="getMatchedField(field.fieldName).cnFieldDesc"></el-input>
             </span>
@@ -93,8 +100,14 @@
           </span>
 
           <div class="field-value" v-show="mode===READING_MODE">
-            <span v-if="true">
-              起病类型值
+            <span v-if="getUIType(field)===3">
+              {{ transformTypeCode(copyInfo[field.fieldName], field.fieldName) }}
+            </span>
+            <span v-else-if="getUIType(field)===5">
+              {{ translateCodes(copyInfo[field.fieldName], field.fieldName) }}
+            </span>
+            <span v-else>
+              {{ copyInfo[field.fieldName] }}
             </span>
           </div>
 
@@ -151,8 +164,14 @@
           </span>
 
           <div class="field-value" v-show="mode===READING_MODE">
-            <span v-if="true">
-              起病类型值
+            <span v-if="getUIType(field)===3">
+              {{ transformTypeCode(copyInfo[field.fieldName], field.fieldName) }}
+            </span>
+            <span v-else-if="getUIType(field)===5">
+              {{ translateCodes(copyInfo[field.fieldName], field.fieldName) }}
+            </span>
+            <span v-else>
+              {{ copyInfo[field.fieldName] }}
             </span>
           </div>
 
@@ -219,8 +238,14 @@
           </span>
 
           <div class="field-value" v-show="mode===READING_MODE">
-            <span v-if="true">
-              起病类型值
+            <span v-if="getUIType(field)===3">
+              {{ transformTypeCode(copyInfo[field.fieldName], field.fieldName) }}
+            </span>
+            <span v-else-if="getUIType(field)===5">
+              {{ translateCodes(copyInfo[field.fieldName], field.fieldName) }}
+            </span>
+            <span v-else>
+              {{ copyInfo[field.fieldName] }}
             </span>
           </div>
 
@@ -247,12 +272,13 @@
 <script>
 import { mapGetters } from 'vuex';
 import Util from 'utils/util.js';
+import {deepCopy} from 'utils/helper.js';
 import Bus from 'utils/bus.js';
-// import { reviseDateFormat, pruneObj } from 'utils/helper.js';
+import { reviseDateFormat, pruneObj } from 'utils/helper.js';
 import FoldingPanel from 'components/public/foldingpanel/FoldingPanel';
 import ExtensiblePanel from 'components/public/extensiblepanel/ExtensiblePanel';
 import Card from 'components/public/card/Card';
-import { deletePatientFirstSymbol, delPatientFirstVisitTreatment, delVisitDignosticRecord } from 'api/patient.js';
+import { deletePatientFirstSymbol, delPatientFirstVisitTreatment, delVisitDignosticRecord, modDiseaseHistory } from 'api/patient.js';
 
 const HALF_LINE_FIELD_LIST = ['diseaseType', 'specificDisease', 'ariTime', 'courseOfDisease', 'firTime', 'surTime', 'firMedinfo',
   'firMedtime', 'ariAge', 'symmetries', 'symmetriesTime', 'firHosp', 'surHosp'];
@@ -288,6 +314,15 @@ export default {
       'typeGroup',
       'medicineInfo'
     ]),
+    courseOfDiseaseInfo() {
+      // 病程 特殊的字段特殊处理
+      if (this.copyInfo['ariTime']) {
+        return Util.calculateYearsBetween(this.copyInfo['ariTime'], new Date());
+      } else {
+        return 0;
+      }
+
+    },
     diseaseInfoDictionary() {
       // 对 diseaseInfoDictionaryGroups 进行扁平化处理，方便之后操作
       var flattenedGroup = [];
@@ -369,6 +404,7 @@ export default {
       });
     },
     formatDate(d) {
+      // 阅读状态下发病顺序的日期
       if (d) {
         return '（' + Util.simplifyDate(d) + '）';
       } else {
@@ -423,6 +459,26 @@ export default {
       }
 
     },
+    transformTypeCode(typeCode, fieldName) {
+      // 根据 typeCode 找到对应的 typeName
+      var types = this.getTypes(fieldName);
+      var matchedType = Util.getElement('typeCode', typeCode, types);
+      return matchedType.typeName ? matchedType.typeName : '';
+    },
+    translateCodes(typeCodes, fieldName) {
+      // 将形如 [1, 2, 4] 的字段信息 转换成 '内容 1，内容 2，内容 4' 这样的单字符串进行显示
+      if (!typeCodes) {
+        return '';
+      }
+      var result = [];
+
+      for (let typeCode of typeCodes) {
+        result.push(this.transformTypeCode(typeCode, fieldName));
+      }
+      let str = result.join('，');
+      str = str[0] === '，' ? str.slice(1) : str;
+      return str;
+    },
     cancel() {
       // 点击取消按钮，将我们对 copyInfo 所做的临时修改全部放弃，还原其为 diseaseInfo 的复制对象，同时不要忘了重新对其进行特殊处理
       this.shallowCopy(this.diseaseInfo);
@@ -454,13 +510,42 @@ export default {
           // 这种情况指的是，得到的信息没有相应的字段，那么我们就为它建一个空数组，注意为了让 Vue 动态检测，这里采用 set 方法
           this.$set(this.copyInfo, name, []);
         }
-      }
+      };
     },
     submit() {
+      // var submitData = Object.assign({}, this.copyInfo);
+      pruneObj(this.copyInfo);
+      reviseDateFormat(this.copyInfo);
+      var submitData = deepCopy(this.copyInfo);
+      delete submitData.firMed;
+      delete submitData.firSym;
+      delete submitData.treatPro;
+      for (let key in submitData) {
+        if (Array.isArray(submitData[key])) {
+          submitData[key] = submitData[key].join(',');
+        };
+      };
+      submitData.courseOfDisease = this.courseOfDiseaseInfo;
+      submitData.patientDiseaseOrderModels = Object.assign([], this.diseaseOrder);
+      submitData.patientId = this.$route.params.id;
+      reviseDateFormat(submitData);
       console.log(this.copyInfo);
-      if ('请求成功后') {
+      console.log(submitData);
+
+      // ---------------------
+      // this.copyInfo.courseOfDisease = this.courseOfDiseaseInfo;
+      // this.copyInfo.patientDiseaseOrderModels = Object.assign([], this.diseaseOrder);
+      // this.copyInfo.patientId = this.$route.params.id;
+      // pruneObj(this.copyInfo);
+      // reviseDateFormat(this.copyInfo);
+      // console.log(this.copyInfo);
+      // if (true) {
+      //   return;
+      // };
+      modDiseaseHistory(submitData).then(() => {
+        Bus.$emit(this.UPDATE_PATIENT_INFO);
         this.mode = this.READING_MODE;
-      }
+      });
     },
     addFirstSymptomsRecord() {
       Bus.$emit(this.SHOW_FIRSTSYMPTOMS_MODAL, this.ADD_NEW_CARD, {}, '首发症状');
@@ -552,6 +637,31 @@ export default {
     FoldingPanel,
     ExtensiblePanel,
     Card
+  },
+  watch: {
+    diseaseInfo: function(newBasicInfo) {
+      // 当 diseaseInfo这个属性变量发生变化时（包括第一次传递进来），我们都对其进行浅复制，复制到 copyInfo 对象中。
+      // 这样一来，编辑状态下修改 copyInfo 对象的属性时，就不会影响到 diseaseInfo 对象本身。
+      // 如果组件的 diseaseInfo 属性发生变化，copyInfo 对象就会重置，而我们对 copyInfo 所做的还未提交的修改则会丢失。
+      this.shallowCopy(newBasicInfo);
+
+      // 这里对 copyInfo 的某些字段进行特殊处理
+      // 因为要等到 diseaseInfo 和 diseaseInfoDictionaryGroups 这两个对象都异步调用成功才能有效执行
+      // 所以我们对它们同时进行监控，任何一个调用成功，都会试图执行该函数（只有一个成功时，执行该函数是没有效果的）
+      // 这样就保证，当两个异步数据都调用成功的时候，一定会有效地执行 changeCopyInfo
+      this.changeCopyInfo();
+      this.diseaseOrder = this.diseaseInfo['patientDiseaseOrders'];
+    },
+    diseaseInfoDictionaryGroups: function() {
+      this.changeCopyInfo();
+    }
+  },
+  created() {
+    // 当用户在页面中跳转，导致本组件重新装载的时候，需要将 copyInfo 进行恢复
+    // 注意，这里之所以选择 created 钩子函数而不是 mounted，是因为 el-date-picker 组件的绑定数据模型是 copyInfo 下的属性
+    // 如果在 DOM 都加载好了之后再去修改 this.copyInfo，会发现跟 el-date-picker 相关的属性会出现问题
+    this.shallowCopy(this.diseaseInfo);
+    this.changeCopyInfo();
   },
   mounted() {
     this.changeCopyInfo();
