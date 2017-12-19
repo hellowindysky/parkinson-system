@@ -48,6 +48,7 @@
 <script>
 import Ps from 'perfect-scrollbar';
 import { mapGetters } from 'vuex';
+import { setRequestToken } from 'api/common.js';
 import { getSupportMessage, getSupportedDoctorList } from 'api/user.js';
 import Util from 'utils/util.js';
 import waterMark from 'components/public/watermark/WaterMark';
@@ -210,6 +211,7 @@ export default {
     var userType = parseInt(sessionStorage.getItem('userType'), 10);
     var token = sessionStorage.getItem('token');
     if (userType === 5 && token) {
+      setRequestToken(token);
       next();
     } else {
       next(from.path);

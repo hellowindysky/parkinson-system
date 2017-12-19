@@ -63,7 +63,7 @@
 <script>
 import md5 from 'md5';
 import { getLoginInfo } from 'api/login';
-import { setRequestToken } from 'api/common';
+import { setRequestToken, clearRequestToken } from 'api/common';
 import { sendVerificationCode, resetPassword } from 'api/user';
 
 // import particles from 'components/views/login/particles/Particles';
@@ -433,7 +433,7 @@ export default {
     }
 
     // 清除请求头里的 token 信息
-    setRequestToken('');
+    clearRequestToken();
 
     // 回到登陆界面时，清空 sessionStorage
     // sessionStorage.removeItem('token');

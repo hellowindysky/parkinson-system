@@ -3,9 +3,27 @@ import { Message } from 'element-ui';
 
 export var baseUrl = process.env.BASE_API;
 
+// 请求拦截器
+axios.interceptors.request.use(
+  config => {
+    // 在发送请求之前做些什么
+    // console.log(config);
+    return config;
+  },
+  error => {
+    // 对请求错误做些什么
+    console.log('请求错误: ', error);
+  }
+);
+
 // 给请求头设置 token
 export function setRequestToken(token) {
   axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
+};
+
+// 清除请求头里的 token
+export function clearRequestToken() {
+  delete axios.defaults.headers.common['Authorization'];
 };
 
 // axios.post 本身就是个 Promise 对象，这里我们再用 Promise 封装一次，在本文件内对响应数据进行处理，对外只暴露请求成功时的有效数据
