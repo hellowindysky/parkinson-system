@@ -26,7 +26,7 @@
         </div>
 
         <!-- 以下是 运动症状才有的序列 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
-        <div v-show="copyInfo.symType===t(0, 'SympType')">
+        <div v-show="copyInfo.symType==='运动症状'">
           <div class="field">
             <span class="field-name long-field-name">
               症状名称:
@@ -139,7 +139,7 @@
 
 
         <!-- 以下是 运动并发症才有的序列 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
-        <div v-show="copyInfo.symType===t(1, 'SympType')">
+        <div v-show="copyInfo.symType==='运动并发症'">
           
           <div class="field">
             <span class="field-name long-field-name">
@@ -227,7 +227,7 @@
         <!-- 以上是 运动并发症才有的序列 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ -->
 
         <!-- 以下是 非运动症状才有的序列 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
-        <div v-show="copyInfo.symType===t(2, 'SympType')">
+        <div v-show="copyInfo.symType==='非运动症状'">
 
           <div class="field">
             <span class="field-name long-field-name">
@@ -466,7 +466,9 @@ export default {
         });
       });
     },
-    t(i, fieldName) {
+    transName(i, fieldName) {
+      // transName(0, 'SympType')
+      // 本来是在改变首发症状类型时，作比较用，但select顺序一变，就错了，暂时先直接比汉字了
       if (this.getOptions(fieldName)[i] === undefined) {
         return -1;
       } else {
