@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Message } from 'element-ui';
-import store from '../store';
+import router from '../router';
 
 export var baseUrl = process.env.BASE_API;
 
