@@ -1,5 +1,5 @@
 /* eslint-disable quotes */
-import { baseUrl, encapsulatePromise, getCommonRequest } from 'api/common.js';
+import { encapsulatePromise, getCommonRequest } from 'api/common.js';
 
 // 获取分组信息
 export function getGroupList(groupInfoCondition) {
@@ -9,7 +9,7 @@ export function getGroupList(groupInfoCondition) {
   } else {
     request.groupInfoCond = groupInfoCondition;
   }
-  var url = baseUrl + '/pdms/queryGroupList';
+  var url = '/pdms/queryGroupList';
   return encapsulatePromise(url, request);
 };
 
@@ -17,7 +17,7 @@ export function getGroupList(groupInfoCondition) {
 export function getGroupInfo(groupInfo) {
   var request = Object.assign({}, getCommonRequest());
   request.groupInfo = groupInfo;
-  var url = baseUrl + '/pdms/queryGroupInfo';
+  var url = '/pdms/queryGroupInfo';
 
   return encapsulatePromise(url, request);
 };
@@ -26,7 +26,7 @@ export function getGroupInfo(groupInfo) {
 export function modifyGroupInfo(groupInfo) {
   var request = Object.assign({}, getCommonRequest());
   request.groupInfo = groupInfo;
-  var url = baseUrl + '/pdms/modGroupInfo';
+  var url = '/pdms/modGroupInfo';
 
   return encapsulatePromise(url, request);
 };
@@ -37,7 +37,7 @@ export function addGroup(groupInfo) {
   request.pageNo = 1;
   request.pageSize = 0;
   request.group = groupInfo;
-  var url = baseUrl + '/pdms/addGroup';
+  var url = '/pdms/addGroup';
 
   return encapsulatePromise(url, request);
 };
@@ -48,7 +48,7 @@ export function deleteGroup(groupIdList) {
   request.pageNo = 1;
   request.pageSize = 0;
   request.group = groupIdList;
-  var url = baseUrl + '/pdms/delGroup';
+  var url = '/pdms/delGroup';
 
   return encapsulatePromise(url, request);
 };
@@ -59,7 +59,7 @@ export function getGroupMembers(groupCondition) {
   request.pageSize = 0;
   request.pageNo = 1;
   request.patientGroupCond = groupCondition;
-  var url = baseUrl + '/pdms/queryPatientList';
+  var url = '/pdms/queryPatientList';
 
   return encapsulatePromise(url, request);
 };
@@ -71,7 +71,7 @@ export function removeGroupMembers(groupId, memberList) {
   request.pageNo = 1;
   request.groupId = groupId;
   request.members = memberList;
-  var url = baseUrl + '/pdms/delGroupMember';
+  var url = '/pdms/delGroupMember';
 
   return encapsulatePromise(url, request);
 };
@@ -83,7 +83,7 @@ export function addGroupMembers(groupId, memberList) {
   request.pageNo = 1;
   request.groupId = groupId;
   request.members = memberList;
-  var url = baseUrl + '/pdms/addGroupMember';
+  var url = '/pdms/addGroupMember';
 
   return encapsulatePromise(url, request);
 };

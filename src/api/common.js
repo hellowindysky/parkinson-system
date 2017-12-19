@@ -32,7 +32,11 @@ export function encapsulatePromise(url, request) {
 
   var promise = new Promise(function(resolve, reject) {
 
-    axios.post(url, request).then((response) => {
+    var config = {
+      baseURL: baseUrl
+    };
+
+    axios.post(url, request, config).then((response) => {
       if (response.data.code === 0) {
         resolve(response.data.data);
       } else {

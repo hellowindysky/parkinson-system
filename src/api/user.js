@@ -1,12 +1,12 @@
 /* eslint-disable quotes */
-import { baseUrl, encapsulatePromise, getCommonRequest } from 'api/common.js';
+import { encapsulatePromise, getCommonRequest } from 'api/common.js';
 
 export function resetPassword(oldPassword, newPassword, verificationCode) {
   var request = Object.assign({}, getCommonRequest());
   request.oldPassword = oldPassword;
   request.newPassword = newPassword;
   request.verifyCode = verificationCode;
-  var url = baseUrl + '/usermgr/modPassword';
+  var url = '/usermgr/modPassword';
 
   return encapsulatePromise(url, request);
 };
@@ -15,7 +15,7 @@ export function resetPassword(oldPassword, newPassword, verificationCode) {
 export function sendVerificationCode(verificationInfo) {
   var request = Object.assign({}, getCommonRequest());
   request.verify = verificationInfo;
-  var url = baseUrl + '/pdms/queryCode';
+  var url = '/pdms/queryCode';
 
   return encapsulatePromise(url, request);
 };
@@ -24,7 +24,7 @@ export function sendVerificationCode(verificationInfo) {
 export function verifyMessageCode(verificationInfo) {
   var request = Object.assign({}, getCommonRequest());
   request.verify = verificationInfo;
-  var url = baseUrl + '/pdms/verifyCode';
+  var url = '/pdms/verifyCode';
 
   return encapsulatePromise(url, request);
 };
@@ -32,7 +32,7 @@ export function verifyMessageCode(verificationInfo) {
 // 医生查询已授权的技术支持列表
 export function getAuthenticationList() {
   var request = Object.assign({}, getCommonRequest());
-  var url = baseUrl + '/usermgr/queryAuthTechSupport';
+  var url = '/usermgr/queryAuthTechSupport';
 
   return encapsulatePromise(url, request);
 };
@@ -42,7 +42,7 @@ export function addAuthentication(technicalSupportAccountList, verificationCode)
   var request = Object.assign({}, getCommonRequest());
   request.techSupport = technicalSupportAccountList;
   request.verifyCode = verificationCode;
-  var url = baseUrl + '/usermgr/addAuthTechSupport';
+  var url = '/usermgr/addAuthTechSupport';
 
   return encapsulatePromise(url, request);
 };
@@ -51,7 +51,7 @@ export function addAuthentication(technicalSupportAccountList, verificationCode)
 export function removeAuthentication(technicalSupportAccountList) {
   var request = Object.assign({}, getCommonRequest());
   request.techSupport = technicalSupportAccountList;
-  var url = baseUrl + '/usermgr/delAuthTechSupport';
+  var url = '/usermgr/delAuthTechSupport';
 
   return encapsulatePromise(url, request);
 };
@@ -60,7 +60,7 @@ export function removeAuthentication(technicalSupportAccountList) {
 export function getTechnicalSupport(keyword) {
   var request = Object.assign({}, getCommonRequest());
   request.keyword = keyword;
-  var url = baseUrl + '/usermgr/querySupportList';
+  var url = '/usermgr/querySupportList';
 
   return encapsulatePromise(url, request);
 };
@@ -68,7 +68,7 @@ export function getTechnicalSupport(keyword) {
 // 技术支持专员查询支持通知
 export function getSupportMessage() {
   var request = Object.assign({}, getCommonRequest());
-  var url = baseUrl + '/usermgr/querySupportMsg';
+  var url = '/usermgr/querySupportMsg';
 
   return encapsulatePromise(url, request);
 };
@@ -79,7 +79,7 @@ export function getSupportedDoctorList(condition) {
   if (condition) {
     request.doctorCond = condition;
   }
-  var url = baseUrl + '/usermgr/querySupportedDoctor';
+  var url = '/usermgr/querySupportedDoctor';
 
   return encapsulatePromise(url, request);
 };
@@ -87,7 +87,7 @@ export function getSupportedDoctorList(condition) {
 export function getDictionary(version) {
   var request = Object.assign({}, getCommonRequest());
   request.version = version;
-  var url = baseUrl + '/pdms/queryDictionary';
+  var url = '/pdms/queryDictionary';
 
   return encapsulatePromise(url, request);
 };
@@ -96,7 +96,7 @@ export function getTemplate() {
   var request = Object.assign({}, getCommonRequest());
   request.activeType = 1;
 
-  var url = baseUrl + '/pdms/queryTemplate';
+  var url = '/pdms/queryTemplate';
 
   return encapsulatePromise(url, request);
 };
@@ -104,14 +104,14 @@ export function getTemplate() {
 // 获得所有量表信息
 export function getScaleInfo() {
   var request = Object.assign({}, getCommonRequest());
-  var url = baseUrl + '/pdms/queryScaleInfo';
+  var url = '/pdms/queryScaleInfo';
 
   return encapsulatePromise(url, request);
 };
 
 export function getUserList() {
   var request = Object.assign({}, getCommonRequest());
-  var url = baseUrl + '/usermgr/queryUserList';
+  var url = '/usermgr/queryUserList';
 
   return encapsulatePromise(url, request);
 };
@@ -133,7 +133,7 @@ export function getRoleList() {
     }
   });
 
-  var url = baseUrl + '/pdms/queryRoleList';
+  var url = '/pdms/queryRoleList';
 
   return encapsulatePromise(url, request);
 };
@@ -142,7 +142,7 @@ export function getRoleList() {
 export function exportPatients(patientIdList) {
   var request = Object.assign({}, getCommonRequest());
   request.patientIds = patientIdList;
-  var url = baseUrl + '/pdms/ruiJinPatientExport';
+  var url = '/pdms/ruiJinPatientExport';
 
   return encapsulatePromise(url, request);
 };
