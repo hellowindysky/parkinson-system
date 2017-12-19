@@ -433,7 +433,7 @@ export default {
     }
 
     // 清除请求头里的 token 信息
-    setToken('');
+    setRequestToken('');
 
     // 回到登陆界面时，清空 sessionStorage
     // sessionStorage.removeItem('token');
