@@ -28,7 +28,8 @@
           </div>
 
           <div class="field-input" v-show="mode===EDITING_MODE">
-            <span v-if="field.fieldName==='courseOfDisease'">{{courseOfDiseaseInfo}}</span>
+            <span v-if="field.fieldName==='ariAge'">{{ariAge}}</span>
+            <span v-else-if="field.fieldName==='courseOfDisease'">{{courseOfDiseaseInfo}}</span>
             <span v-else-if="getUIType(field)===1">
               <el-input v-model="copyInfo[field.fieldName]"
                 :placeholder="getMatchedField(field.fieldName).cnFieldDesc"></el-input>
@@ -305,6 +306,10 @@ export default {
     diseaseInfo: {
       type: Object,
       default: () => {}
+    },
+    birthday: {
+      type: String,
+      default: ''
     }
   },
   computed: {
@@ -314,6 +319,15 @@ export default {
       'typeGroup',
       'medicineInfo'
     ]),
+    ariAge() {
+      if (this.copyInfo.ariTime) {
+        var years = Util.calculateYearsBetween(this.birthday, this.copyInfo.ariTime);
+        this.$set(this.copyInfo, 'ariAge', years);
+        return years;
+      } else {
+        return '';
+      }
+    },
     courseOfDiseaseInfo() {
       // 病程 特殊的字段特殊处理
       if (this.copyInfo['ariTime']) {
@@ -901,7 +915,7 @@ export default {
           line-height: @field-height * 0.3;
           .warning-text {
             position: relative;
-            top: -8px;
+            top: -4px;
             left: 0;
             height: 15px;
             line-height: 15px;
