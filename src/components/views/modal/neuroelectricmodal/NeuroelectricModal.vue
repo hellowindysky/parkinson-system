@@ -9,10 +9,10 @@
             <span class="required-mark">*</span>
           </span>
           <span class="field-input long-field-name">
-            <span class="warning-text">{{warningResults.elecTroGramId}}</span>
+            <span class="warning-text">{{warningResults.elecExamType}}</span>
             <span v-if="mode===VIEW_CURRENT_CARD">{{getFieldValue(copyInfo.elecExamType, 'elecExam')}}</span>
             <el-select v-else placeholder="请选择神经电生理检查类型" v-model="copyInfo.elecExamType" @change="chooseElecExamType"
-              :class="{'warning': warningResults.elecTroGramId}" :disabled="mode!==ADD_NEW_CARD" size="small">
+              :class="{'warning': warningResults.elecExamType}" :disabled="mode!==ADD_NEW_CARD" size="small">
               <el-option v-for="option in getOptions('elecExam')" :key="option.code" :label="option.name" :value="option.code" ></el-option>
             </el-select>
           </span>
@@ -75,7 +75,7 @@
                 操作
               </td>
             </tr>
-            <tr class="row" v-for="(table, index) in emgTableList">
+            <tr class="row" v-for="(table, index) in emgTableList" v-if="copyInfo.elecExamType===1">
               <td class="col col-width-10">
                 {{index+1}}
               </td>
@@ -548,21 +548,13 @@ export default {
       console.log('emgTypeList: ', this.emgTypeList);
       console.log(this.copyInfo);
 
-      this.$set(this.copyInfo, 'etgName', '');
-      this.$set(this.copyInfo, 'elecTroGramId', '');
-      this.$set(this.copyInfo, 'etgType', '');
-      this.$set(this.copyInfo, 'patEleHint', '');
-      this.$set(this.copyInfo, 'patEleResule', '');
-      this.$set(this.copyInfo, 'patientMotNerCondResu', []);
-      this.$set(this.copyInfo, 'patienFWaStuResu', []);
-      this.$set(this.copyInfo, 'patientNeedExamItemResu', []);
-      this.$set(this.copyInfo, 'patientMotUniAnaResu', []);
-      this.$set(this.copyInfo, 'patientIntPatAnaItem', []);
-      this.$set(this.copyInfo, 'patientSenNerCondResu', []);
+      this.initCopyInfo();
 
       if (this.mode === this.ADD_NEW_CARD) {
-        this.$set(this.copyInfo, 'pcaseId', this.$route.params.caseId);
-        this.$set(this.copyInfo, 'pinfoId', this.$route.params.id);
+        this.copyInfo.pcaseId = this.$route.params.caseId;
+        this.copyInfo.patientCaseId = this.$route.params.caseId;
+        this.copyInfo.pinfoId = this.$route.params.id;
+        this.copyInfo.patientId = this.$route.params.id;
       } else {
         vueCopy(item, this.copyInfo);
         this.copyInfo.elecExamType = this.copyInfo.elecExamType ? Number(this.copyInfo.elecExamType) : '';
@@ -574,17 +566,32 @@ export default {
     },
     initCopyInfo() {
       this.$set(this.copyInfo, 'elecExamType', '');
+
+      this.$set(this.copyInfo, 'etgName', '');
+      this.$set(this.copyInfo, 'elecTroGramId', '');
+      this.$set(this.copyInfo, 'etgType', '');
+      this.$set(this.copyInfo, 'patEleHint', '');
+      this.$set(this.copyInfo, 'patEleResule', '');
+      this.$set(this.copyInfo, 'patientMotNerCondResu', []);
+      this.$set(this.copyInfo, 'patienFWaStuResu', []);
+      this.$set(this.copyInfo, 'patientNeedExamItemResu', []);
+      this.$set(this.copyInfo, 'patientMotUniAnaResu', []);
+      this.$set(this.copyInfo, 'patientIntPatAnaItem', []);
+      this.$set(this.copyInfo, 'patientSenNerCondResu', []);
     },
     chooseElecExamType() {
       if (this.copyInfo.elecExamType && Number(this.copyInfo.elecExamType) === 1) {
+        // 肌电图本来也是个列表，只是目前这里面只有“肌电图”这一个选项，所以这里就默认直接选上了
+        // 而且这个下拉框在 2.1 版本的更新中被去掉了，现在选择了神经电检查下的肌电图，就默认选中 emgTypeList 的第一项
+        this.copyInfo.elecTroGramId = this.emgTypeList[0].id;
         this.selectEmg();
       }
     },
     updateWarning(fieldName) {
       if (this.copyInfo[fieldName] === undefined || this.copyInfo[fieldName] === '') {
-        this.warningResults[fieldName] = '必填项';
+        this.$set(this.warningResults, fieldName, '必填项');
       } else {
-        this.warningResults[fieldName] = '';
+        this.$set(this.warningResults, fieldName, '');
       }
     },
     clearWarning() {
@@ -601,7 +608,6 @@ export default {
       if (this.mode === this.ADD_NEW_CARD) {
         this.tableMode = this.FATHER_OPEN;
       }
-      // console.log('emgTypeList:', this.emgTypeList);
 
       if (emg.emgName) {
         this.warningResults.elecTroGramId = '';
@@ -817,7 +823,8 @@ export default {
       }
       this.lockSubmitButton = true;
 
-      this.updateWarning('elecTroGramId');
+      // this.updateWarning('elecTroGramId');
+      this.updateWarning('elecExamType');
       for (var p in this.warningResults) {
         if (this.warningResults.hasOwnProperty(p) && this.warningResults[p] !== '') {
           this.lockSubmitButton = false;
