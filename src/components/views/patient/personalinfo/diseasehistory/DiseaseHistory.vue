@@ -915,7 +915,7 @@ export default {
           line-height: @field-height * 0.3;
           .warning-text {
             position: relative;
-            top: -8px;
+            top: -4px;
             left: 0;
             height: 15px;
             line-height: 15px;
