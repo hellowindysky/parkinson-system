@@ -29,7 +29,7 @@
         </el-form-item>
         <div class="sign-up-text">
           还没有账号？
-          <a class="link" target="_blank" href="https://www.wjx.top/jq/17733695.aspx">点击这里</a>申请试用
+          <a class="link" target="_blank" href="https://www.wjx.top/jq/19488329.aspx">点击这里</a>申请试用
         </div>
       </el-form>
 
