@@ -33,7 +33,8 @@ export function encapsulatePromise(url, request) {
   var promise = new Promise(function(resolve, reject) {
 
     var config = {
-      baseURL: baseUrl
+      baseURL: baseUrl,
+      withCredentials: true
     };
 
     axios.post(url, request, config).then((response) => {
