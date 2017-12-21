@@ -87,6 +87,18 @@
                 <span class="text-button" v-else-if="mode!==VIEW_CURRENT_CARD" @click="selectTable(table.name)">编辑</span>
               </td>
             </tr>
+            <tr class="row" v-for="(type, index) in sleepMonitoringTypes" v-if="copyInfo.elecExamType===2">
+              <td class="col col-width-10">
+                {{index+1}}
+              </td>
+              <td class="col col-width-30">
+                {{type.typeName}}
+              </td>
+              <td class="col col-width-15">
+                <span class="text-button" v-if="mode===VIEW_CURRENT_CARD" @click="selectSleepMonitoringSubTable(type.typeCode)">查看</span>
+                <span class="text-button" v-else-if="mode!==VIEW_CURRENT_CARD" @click="selectSleepMonitoringSubTable(type.typeCode)">编辑</span>
+              </td>
+            </tr>
           </table>
           <table class="form" :class="{'small-font':tableMode===SON_OPEN}" v-if="tableMode===SON_OPEN && currentTable===MOT_NER_COND_ITEM">
             <tr class="row first-row">
@@ -459,15 +471,18 @@ export default {
       displayModal: false,
       mode: '',
       lockSubmitButton: false,
+
       F_WAV_STU_ITEM: 'fwavStuItem',
       INT_PAT_ANA_ITEM: 'intPatAnaItem',
       MOT_NER_COND_ITEM: 'motNerCondItem',
       MOT_UNI_ANA_ITEM: 'motUniAnaItem',
       NEED_EXAM_ITEM: 'needExamItem',
       SEN_NER_COND_ITEM: 'senNerCondItem',
+
       warningResults: {
         elecTroGramId: ''
       },
+
       copyInfo: {},
       targetEmg: {},
       currentTable: '',
@@ -498,13 +513,16 @@ export default {
           cnName: '感觉神经传导项'
         }
       ],
+
+      sleepMonitoringSubTableCode: '',
       showEdit: true
     };
   },
   computed: {
     ...mapGetters([
       'emgTypeList',
-      'typeGroup'
+      'typeGroup',
+      'typeField'
     ]),
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
@@ -530,6 +548,15 @@ export default {
         return '';
       }
     },
+    sleepMonitoringTypes() {
+      var types = Util.getElement('typegroupcode', 'elecExam', this.typeGroup).types;
+      types = types ? types : [];
+      var targetType = Util.getElement('typeCode', 2, types);
+      return targetType && targetType.childType ? targetType.childType : [];
+    },
+    sleepMonitoringTable() {
+      return this.typeField;
+    },
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
         return true;
@@ -545,8 +572,8 @@ export default {
       this.tableMode = this.FATHER_OPEN;
       this.showEdit = showEdit;
       console.log('item: ', item);
-      console.log('emgTypeList: ', this.emgTypeList);
-      console.log(this.copyInfo);
+      // console.log('emgTypeList: ', this.emgTypeList);
+      console.log('typeField: ', this.typeField);
 
       this.initCopyInfo();
 
@@ -678,6 +705,10 @@ export default {
       }
       this.updateScrollbar();
       this.$refs.formWrapper.scrollTop = 0;
+    },
+    selectSleepMonitoringSubTable(typeCode) {
+      this.sleepMonitoringSubTableCode = typeCode;
+      console.log(typeCode);
     },
     resetEmgTableData() {
       switch (this.currentTable) {
