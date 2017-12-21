@@ -395,9 +395,9 @@ export default {
       }
     },
     verificationFieldList() {
-      if (this.copyInfo.symType === this.t(0, 'SympType') || this.copyInfo.symType === this.t(1, 'SympType')) {
+      if (this.copyInfo.symType === '运动症状' || this.copyInfo.symType === '运动并发症') {
         return ['symType', 'symName'];
-      } else if (this.copyInfo.symType === this.t(2, 'SympType')) {
+      } else if (this.copyInfo.symType === '非运动症状') {
         return ['symType', 'symName', 'notSportType'];
       } else {
         return ['symType'];
@@ -421,7 +421,7 @@ export default {
     },
     showModal(cardOperation, item, title2) {
       this.completeInit = false;
-      // console.log(cardOperation, item);
+      console.log(cardOperation, item);
       this.mode = cardOperation;
       this.title2 = title2;
       // ******************************
@@ -567,11 +567,6 @@ export default {
         pruneObj(firstInfo);
       };
 
-      console.log(ComplaintsInfo);
-      console.log(firstInfo);
-      // if (true) {
-      //   return;
-      // };
       if (this.mode === this.ADD_NEW_CARD) {
         if (this.title2 === '主诉症状') {
           addPatientSymptom(ComplaintsInfo).then(() => {
@@ -609,7 +604,7 @@ export default {
       if (this.title2 === '主诉症状') {
         Bus.$emit(this.UPDATE_CASE_INFO);
       } else if (this.title2 === '首发症状') {
-        Bus.$emit(this.UPDATE_PATIENT_INFO);
+        Bus.$emit(this.UPDATE_FIRSTSYMPTOMS_INFO);
       }
 
       this.displayModal = false;

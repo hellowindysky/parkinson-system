@@ -65,6 +65,9 @@ export default {
   UPDATE_PATIENT_CASE_LIST: 'updatePatientCase',
   UPDATE_ITEM_POSITION: 'update_item_position',
   SHOW_SCALE_MODAL: 'showScaleModal',
+  UPDATE_FIRSTSYMPTOMS_INFO: 'updateFirstsymptomsInfo',
+  UPDATE_FIRSTTREATMENT_INFO: 'updateFirstTreatmentInfo',
+  UPDATE_VISITDIAGNOSTICRECORD_INFO: 'updateVisitDiagnosticRecordInfo',
 
   BLUR_ON_SCREEN: 'blurOnScreen',
 

@@ -131,7 +131,7 @@
 
         <extensible-panel class="disease-card" :title="firstSymTitle" @addNewCard="addFirstSymptomsRecord">
           <Card class="card symptoms-card" :mode="mode" :class="cardWidth"
-           v-for="item in diseaseInfo.patientFirstSymbols" :key="item.id" :title="item.symType"
+           v-for="item in firstSymbolData" :key="item.id" :title="item.symType"
            v-on:editCurrentCard="editFirstSymptomsRecord(item)" 
            v-on:viewCurrentCard="viewFirstSymptomsRecord(item)"
            v-on:deleteCurrentCard="deleteFirstSymptomsRecord(item)">
@@ -191,7 +191,7 @@
 
         <extensible-panel class="disease-card" :title="firstTreatmentsTitle" @addNewCard="addFirstTreatmentRecord">
           <Card class="card symptoms-card" :mode="mode" :class="cardWidth"
-           v-for="item in diseaseInfo.patientFirstVisitTreatments" :key="item.id" :title="transform(item.firstVisitType, allFirstVisitType)"
+           v-for="item in firstVisitTreatmentData" :key="item.id" :title="transform(item.firstVisitType, allFirstVisitType)"
            v-on:editCurrentCard="editFirstTreatmentRecord(item)" 
            v-on:viewCurrentCard="viewFirstTreatmentRecord(item)"
            v-on:deleteCurrentCard="deleteFirstTreatmentRecord(item)">
@@ -212,7 +212,7 @@
 
         <extensible-panel class="disease-card" :title="visitRecordTitle" @addNewCard="addVisitRecord">
           <Card class="card symptoms-card" :mode="mode" :class="cardWidth"
-           v-for="item in diseaseInfo.patientHistorys" :key="item.patientHistoryId" :title="item.diagnosis"
+           v-for="item in patientHistorysData" :key="item.patientHistoryId" :title="item.diagnosis"
            v-on:editCurrentCard="editVisitRecord(item)" 
            v-on:viewCurrentCard="viewVisitRecord(item)"
            v-on:deleteCurrentCard="deleteVisitRecord(item)">
@@ -278,7 +278,7 @@ import { deepCopy, vueCopy, pruneObj } from 'utils/helper.js';
 import FoldingPanel from 'components/public/foldingpanel/FoldingPanel';
 import ExtensiblePanel from 'components/public/extensiblepanel/ExtensiblePanel';
 import Card from 'components/public/card/Card';
-import { deletePatientFirstSymbol, delPatientFirstVisitTreatment, delVisitDignosticRecord, modDiseaseHistory } from 'api/patient.js';
+import {queryPatientFirstSymbol, deletePatientFirstSymbol, queryPatientFirstVisitTreatment, delPatientFirstVisitTreatment, queryVisitDignosticRecord, delVisitDignosticRecord, modDiseaseHistory } from 'api/patient.js';
 
 const HALF_LINE_FIELD_LIST = ['diseaseType', 'specificDisease', 'ariTime', 'courseOfDisease', 'firTime', 'surTime', 'firMedinfo',
   'firMedtime', 'ariAge', 'symmetries', 'symmetriesTime', 'firHosp', 'surHosp'];
@@ -286,8 +286,9 @@ const HALF_LINE_FIELD_LIST = ['diseaseType', 'specificDisease', 'ariTime', 'cour
 export default {
   data() {
     return {
-      test1: '',
-      test2: '',
+      firstSymbolData: [], // 首发症状
+      firstVisitTreatmentData: [], // 初诊治疗
+      patientHistorysData: [], // 就诊记录
       copyInfo: {
         patientDiseaseOrders: []
       },
@@ -319,6 +320,12 @@ export default {
       'typeGroup',
       'medicineInfo'
     ]),
+    patientId() {
+      return this.$route.params.id;
+    },
+    existed() {
+      return !(this.patientId === 'newPatient');
+    },
     ariAge() {
       if (this.copyInfo.ariTime) {
         var years = Util.calculateYearsBetween(this.birthday, this.copyInfo.ariTime);
@@ -346,13 +353,13 @@ export default {
       return flattenedGroup;
     },
     firstSymTitle() {
-      return '首发症状（' + (this.diseaseInfo.patientFirstSymbols ? this.diseaseInfo.patientFirstSymbols : []).length + '条记录）';
+      return '首发症状（' + (this.firstSymbolData ? this.firstSymbolData : []).length + '条记录）';
     },
     firstTreatmentsTitle() {
-      return '初诊治疗（' + (this.diseaseInfo.patientFirstVisitTreatments ? this.diseaseInfo.patientFirstVisitTreatments : []).length + '条记录）';
+      return '初诊治疗（' + (this.firstVisitTreatmentData ? this.firstVisitTreatmentData : []).length + '条记录）';
     },
     visitRecordTitle() {
-      return '就诊记录（' + (this.diseaseInfo.patientHistorys ? this.diseaseInfo.patientHistorys : []).length + '条记录）';
+      return '就诊记录（' + (this.patientHistorysData ? this.patientHistorysData : []).length + '条记录）';
     },
     allFirstVisitType() {
       // 初诊治疗类型的集合
@@ -375,6 +382,36 @@ export default {
     }
   },
   methods: {
+    updatafirstSymbolCard() {
+      // 查询首发症状
+      // 如果是新增患者，则不去请求数据
+      if (!this.existed) {
+        return;
+      }
+      queryPatientFirstSymbol({patientId: this.patientId}).then((data) => {
+        this.firstSymbolData = data;
+      });
+    },
+    updatafirstVisitTreatmentCard() {
+      // 查询初诊治疗
+      // 如果是新增患者，则不去请求数据
+      if (!this.existed) {
+        return;
+      }
+      queryPatientFirstVisitTreatment({patientId: this.patientId}).then((data) => {
+        this.firstVisitTreatmentData = data;
+      });
+    },
+    updatapatientHistorysCard() {
+      // 查询就诊记录
+      // 如果是新增患者，则不去请求数据
+      if (!this.existed) {
+        return;
+      }
+      queryVisitDignosticRecord({patientId: this.patientId}).then((data) => {
+        this.patientHistorysData = data;
+      });
+    },
     valChange(fieldName) {
       if (fieldName === 'diseaseType') {
         this.copyInfo['specificDisease'] = '';
@@ -579,13 +616,15 @@ export default {
       // submitData.ariTime = Util.simplifyDate(submitData.ariTime);
 
       for (let key in submitData) {
-        if (Array.isArray(submitData[key])) {
-          submitData[key] = submitData[key].join(',');
+        if (Array.isArray(submitData[key]) && key !== 'patientDiseaseOrders') {
+          let valStr = submitData[key].join(',');
+          valStr = valStr[0] === ',' ? valStr.slice(1) : valStr;
+          // submitData[key] = submitData[key].join(',').slice(1);
+          submitData[key] = valStr;
         };
       };
       submitData.courseOfDisease = this.courseOfDiseaseInfo;
       submitData.patientId = this.$route.params.id;
-      console.log(submitData);
 
       modDiseaseHistory(submitData).then(() => {
         Bus.$emit(this.UPDATE_PATIENT_INFO);
@@ -674,7 +713,11 @@ export default {
     },
     _resolveDeletion() {
       // 如果成功删除记录，则重新发出请求，获取最新数据。同时解除 [确认对话框] 的 “确认” 回调函数
-      Bus.$emit(this.UPDATE_PATIENT_INFO);
+      // Bus.$emit(this.UPDATE_PATIENT_INFO);
+      // 重新查询首发症状等三个
+      this.updatafirstSymbolCard();
+      this.updatafirstVisitTreatmentCard();
+      this.updatapatientHistorysCard();
       Bus.$off(this.CONFIRM);
     },
     _rejectDeletion() {
@@ -718,24 +761,25 @@ export default {
     // this.changeCopyInfo();
   },
   mounted() {
+    this.updatafirstSymbolCard();
+    Bus.$on(this.UPDATE_FIRSTSYMPTOMS_INFO, this.updatafirstSymbolCard);
+    this.updatafirstVisitTreatmentCard();
+    Bus.$on(this.UPDATE_FIRSTTREATMENT_INFO, this.updatafirstVisitTreatmentCard);
+    this.updatapatientHistorysCard();
+    Bus.$on(this.UPDATE_VISITDIAGNOSTICRECORD_INFO, this.updatapatientHistorysCard);
+
     for (let group of this.diseaseInfoTemplateGroups) {
       for (let field of group) {
         this.$set(this.copyInfo, field.fieldName, '');
       }
     }
     vueCopy(this.diseaseInfo, this.copyInfo);
-    console.log('mounted: ', this.copyInfo);
     this.changeCopyInfo();
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
     Bus.$on(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
     Bus.$on(this.RECALCULATE_CARD_WIDTH, this.recalculateCardWidth);
     // 第一次加载的时候，去计算一次卡片宽度
     this.recalculateCardWidth();
-
-    // console.log(this.diseaseInfoTemplateGroups);
-    // console.log(this.diseaseInfoDictionary);
-    // console.log(this.typeGroup);
-    // console.log(this.copyInfo);
   },
   beforeDestroy() {
     // 还是记得销毁组件前，解除事件绑定
