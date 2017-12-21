@@ -231,7 +231,6 @@ export default {
       reviseDateFormat(submitData);
       pruneObj(submitData);
       submitData.patientId = this.$route.params.id;
-      console.log(submitData);
 
       if (this.mode === this.ADD_NEW_CARD) {
         addVisitDignosticRecord(submitData).then(() => {
@@ -251,7 +250,7 @@ export default {
       this.lockSubmitButton = false;
     },
     updateAndClose() {
-      Bus.$emit(this.UPDATE_PATIENT_INFO);
+      Bus.$emit(this.UPDATE_VISITDIAGNOSTICRECORD_INFO);
       this.displayModal = false;
     }
   },

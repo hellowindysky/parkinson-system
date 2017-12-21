@@ -114,6 +114,15 @@ export function deletePatientPresentHistory(presentHistory) {
 };
 
 // v2.1 现病史 ↓↓↓
+// 查询首发症状
+export function queryPatientFirstSymbol(firstSymbol) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientFirstSymbolModel = firstSymbol;
+  var url = '/pdms/queryPatientFirstSymbol';
+
+  return encapsulatePromise(url, request);
+};
+
 // 新增首发症状
 export function addPatientFirstSymbol(firstSymbol) {
   var request = Object.assign({}, getCommonRequest());
@@ -141,6 +150,15 @@ export function deletePatientFirstSymbol(firstSymbol) {
   return encapsulatePromise(url, request);
 };
 
+// 查询初诊治疗
+export function queryPatientFirstVisitTreatment(firstVisit) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientFirstVisitTreatmentModel = firstVisit;
+  var url = '/pdms/queryPatientFirstVisitTreatment';
+
+  return encapsulatePromise(url, request);
+};
+
 // 新增初诊治疗
 export function addPatientFirstVisitTreatment(firstVisit) {
   var request = Object.assign({}, getCommonRequest());
@@ -164,6 +182,15 @@ export function delPatientFirstVisitTreatment(firstVisit) {
   var request = Object.assign({}, getCommonRequest());
   request.patientFirstVisitTreatmentModel = firstVisit;
   var url = '/pdms/delPatientFirstVisitTreatment';
+
+  return encapsulatePromise(url, request);
+};
+
+// 查询就诊记录
+export function queryVisitDignosticRecord(dignosticRecord) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientHistory = dignosticRecord;
+  var url = '/pdms/queryPatientHistoryList';
 
   return encapsulatePromise(url, request);
 };
