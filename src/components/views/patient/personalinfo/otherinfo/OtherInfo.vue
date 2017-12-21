@@ -3,7 +3,7 @@
     :folded-status="foldedStatus" :editable="canEdit">
     <div class="other-info" ref="otherInfo">
 
-      <extensible-panel class="panel" :mode="mode" :title="presentHistoryTitle" v-on:addNewCard="addPresentRecord" :editable="canEdit">
+      <extensible-panel v-if="false" class="panel" :mode="mode" :title="presentHistoryTitle" v-on:addNewCard="addPresentRecord" :editable="canEdit">
         <card class="card" :class="devideWidth" :mode="mode" v-for="item in presentHistoryList" :key="item.medName"
           :title="item.chiefComplaint" v-on:editCurrentCard="editPresentRecord(item)" v-on:viewCurrentCard="viewPresentRecord(item)"
           v-on:deleteCurrentCard="deletePresentRecord(item)">
