@@ -5,7 +5,7 @@
       <div class="content">
         <div class="field whole-line">
           <span class="field-name long-field-name">
-            神经电检查类型:
+            神经电检查类型
             <span class="required-mark">*</span>
           </span>
           <span class="field-input long-field-name">
@@ -34,7 +34,7 @@
         </div> -->
         <div class="field" v-if="copyInfo.elecExamType===1">
           <span class="field-name">
-            肌电图类型:
+            肌电图类型
           </span>
           <span class="field-input">
             <span class="warning-text"></span>
@@ -43,7 +43,7 @@
         </div>
         <div class="field whole-line" v-if="copyInfo.elecExamType===1">
           <span class="field-name">
-            检查结果:
+            检查结果
           </span>
           <span class="field-input">
             <span class="warning-text"></span>
@@ -53,7 +53,7 @@
         </div>
         <div class="field whole-line" v-if="copyInfo.elecExamType===1">
           <span class="field-name">
-            提示内容:
+            提示内容
           </span>
           <span class="field-input">
             <span class="warning-text"></span>
@@ -61,6 +61,66 @@
             <el-input v-else type="textarea" :rows="2" v-model="copyInfo.patEleHint" placeholder="请输入提示信息"></el-input>
           </span>
         </div>
+
+        <div class="field" v-if="copyInfo.elecExamType===2">
+          <span class="field-name">
+            记录开始
+          </span>
+          <span class="field-input">
+            <span class="warning-text"></span>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.recordStart}}</span>
+            <el-date-picker v-else type="datetime" v-model="copyInfo.recordStart" placeholder="请输入记录开始时间"></el-date-picker>
+          </span>
+        </div>
+        <div class="field" v-if="copyInfo.elecExamType===2">
+          <span class="field-name">
+            身高 (cm)
+          </span>
+          <span class="field-input">
+            <span class="warning-text"></span>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.height}}</span>
+            <el-input v-else v-model="copyInfo.height" placeholder="请输入身高"></el-input>
+          </span>
+        </div>
+        <div class="field" v-if="copyInfo.elecExamType===2">
+          <span class="field-name">
+            记录结束
+          </span>
+          <span class="field-input">
+            <span class="warning-text"></span>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.recordEnd}}</span>
+            <el-date-picker v-else type="datetime" v-model="copyInfo.recordEnd" placeholder="请输入记录结束时间"></el-date-picker>
+          </span>
+        </div>
+        <div class="field" v-if="copyInfo.elecExamType===2">
+          <span class="field-name">
+            体重 (kg)
+          </span>
+          <span class="field-input">
+            <span class="warning-text"></span>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.weight}}</span>
+            <el-input v-else v-model="copyInfo.weight" placeholder="请输入体重"></el-input>
+          </span>
+        </div>
+        <div class="field" v-if="copyInfo.elecExamType===2">
+          <span class="field-name">
+            总记录时间
+          </span>
+          <span class="field-input">
+            <span class="warning-text"></span>
+            <span>{{totalRecordTime}}</span>
+          </span>
+        </div>
+        <div class="field" v-if="copyInfo.elecExamType===2">
+          <span class="field-name">
+            肥胖指数 (BMI)
+          </span>
+          <span class="field-input">
+            <span class="warning-text"></span>
+            <span></span>
+          </span>
+        </div>
+
         <h3 class="form-title" v-if="tableMode===SON_OPEN">{{currentTableName}}</h3>
         <div class="form-wrapper" ref="formWrapper">
           <table class="form" v-if="tableMode===FATHER_OPEN">
@@ -480,7 +540,7 @@ export default {
       SEN_NER_COND_ITEM: 'senNerCondItem',
 
       warningResults: {
-        elecTroGramId: ''
+        elecExamType: ''
       },
 
       copyInfo: {},
@@ -554,6 +614,23 @@ export default {
       var targetType = Util.getElement('typeCode', 2, types);
       return targetType && targetType.childType ? targetType.childType : [];
     },
+    totalRecordTime() {
+      var fromTime = new Date(this.copyInfo.recordStart);
+      var toTime = new Date(this.copyInfo.recordEnd);
+      var interval = toTime - fromTime;
+      if (interval >= 0) {
+        interval = parseInt(interval / 1000, 10);
+        var hour = parseInt(interval / 3600, 10);
+        var minute = parseInt((interval % 3600) / 60, 10);
+        minute = minute >= 10 ? minute : '0' + minute;
+        var second = parseInt((interval % 60) / 60, 10);
+        second = second >= 10 ? second : '0' + second;
+        this.recordTotal = hour + ':' + minute + ':' + second;
+      } else {
+        this.recordTotal = '0:00:00';
+      }
+      return this.recordTotal;
+    },
     sleepMonitoringTable() {
       return this.typeField;
     },
@@ -605,6 +682,13 @@ export default {
       this.$set(this.copyInfo, 'patientMotUniAnaResu', []);
       this.$set(this.copyInfo, 'patientIntPatAnaItem', []);
       this.$set(this.copyInfo, 'patientSenNerCondResu', []);
+
+      this.$set(this.copyInfo, 'recordStart', '');
+      this.$set(this.copyInfo, 'recordEnd', '');
+      this.$set(this.copyInfo, 'recordTotal', '');
+      this.$set(this.copyInfo, 'height', '');
+      this.$set(this.copyInfo, 'weight', '');
+      this.$set(this.copyInfo, 'typeGroupCode', 'elecExam');
     },
     chooseElecExamType() {
       if (this.copyInfo.elecExamType && Number(this.copyInfo.elecExamType) === 1) {
@@ -961,7 +1045,7 @@ export default {
 @field-height: 45px;
 @field-line-height: 25px;
 @field-name-width: 100px;
-@long-field-name-width: 160px;
+@long-field-name-width: 130px;
 
 .emg-modal-wrapper {
   position: absolute;
