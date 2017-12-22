@@ -512,6 +512,40 @@
               </td>
             </tr>
           </table>
+
+          <table class="form" :class="{'small-font':tableMode===SON_OPEN}"
+            v-if="tableMode===SON_OPEN && currentTable===SLEEP_MONITORING_ITEM">
+            <tr class="row" v-if="sleepMonitoringTableCols.length===0" v-for="row in rearrangeRows(sleepMonitoringTableRows)">
+              <td class="col col-width-10">
+                {{row[0].fieldName}}
+              </td>
+              <td class="col col-width-10">
+                <el-input></el-input>
+              </td>
+              <td class="col col-width-10" v-if="row.length===2">
+                {{row[1].fieldName}}
+              </td>
+              <td class="col col-width-10" v-if="row.length===2">
+                <el-input></el-input>
+              </td>
+            </tr>
+
+            <tr class="row first-row" v-if="sleepMonitoringTableCols.length>0">
+              <td class="col col-width-10"></td>
+              <td class="col col-width-10" v-for="col in sleepMonitoringTableCols">
+                {{col.fieldName}}
+              </td>
+            </tr>
+            <tr class="row" v-for="row in sleepMonitoringTableRows" v-if="sleepMonitoringTableCols.length>0">
+              <td class="col col-width-10">
+                {{row.fieldName}}
+              </td>
+              <td class="col col-width-10" v-for="col in sleepMonitoringTableCols">
+                <el-input></el-input>
+              </td>
+            </tr>
+
+          </table>
         </div>
       </div>
       <div class="button cancel-button" v-if="tableMode!==SON_OPEN" @click="cancel">取消</div>
@@ -548,6 +582,8 @@ export default {
       MOT_UNI_ANA_ITEM: 'motUniAnaItem',
       NEED_EXAM_ITEM: 'needExamItem',
       SEN_NER_COND_ITEM: 'senNerCondItem',
+
+      SLEEP_MONITORING_ITEM: 'sleepMonitoringItem',
 
       warningResults: {
         elecExamType: ''
@@ -655,7 +691,7 @@ export default {
         item.typeGroupCode === 'elecExam' &&
         item.fieldType === 0;
       });
-      console.log('rowTypeFields: ' + rowItems);
+      console.log(rowItems);
       return rowItems;
     },
     sleepMonitoringTableCols() {
@@ -664,7 +700,7 @@ export default {
         item.typeGroupCode === 'elecExam' &&
         item.fieldType === 1;
       });
-      console.log('colTypeFields: ' + colItems);
+      console.log(colItems);
       return colItems;
     },
     canEdit() {
@@ -826,11 +862,27 @@ export default {
     },
     selectSleepMonitoringSubTable(typeCode) {
       this.sleepMonitoringSubTableCode = typeCode;
+      this.currentTable = this.SLEEP_MONITORING_ITEM;
 
       // 取到这个值之后就要关闭父表格，打开子表格
       this.tableMode = this.SON_OPEN;
       this.updateScrollbar();
       this.$refs.formWrapper.scrollTop = 0;
+    },
+    rearrangeRows(items) {
+      // 因为有的睡眠监测子表格没有明确的列信息，只有行信息，而且每一行只有字段名字和字段值
+      // 因此需要重新排列此表格，一排有4列，分别为字段1的名字，字段1的值，字段2的名字，字段2的值
+      var newArray = [];
+      var subArray = [];
+      var length = items.length;
+      for (var i = 0; i < length; i++) {
+        subArray.push(items[i]);
+        if (i % 2 === 1 || i === length - 1) {
+          newArray.push(subArray);
+          subArray = [];
+        }
+      }
+      return newArray;
     },
     resetEmgTableData() {
       switch (this.currentTable) {
@@ -986,19 +1038,31 @@ export default {
       }
 
       let submitData = this.copyInfo;
-      if (this.mode === this.ADD_NEW_CARD) {
-        // 新增肌电图
-        addEmg(submitData).then(() => {
-          Bus.$emit(this.UPDATE_CASE_INFO);
-          this.cancel();
-        }, this._handleError);
-      } else if (this.mode === this.EDIT_CURRENT_CARD) {
-        // 修改肌电图
-        modEmg(submitData).then(() => {
-          Bus.$emit(this.UPDATE_CASE_INFO);
-          this.cancel();
-        }, this._handleError);
+      if (this.copyInfo.elecExamType === 1) {
+        if (this.mode === this.ADD_NEW_CARD) {
+          // 新增肌电图
+          addEmg(submitData).then(() => {
+            Bus.$emit(this.UPDATE_CASE_INFO);
+            this.cancel();
+          }, this._handleError);
+        } else if (this.mode === this.EDIT_CURRENT_CARD) {
+          // 修改肌电图
+          modEmg(submitData).then(() => {
+            Bus.$emit(this.UPDATE_CASE_INFO);
+            this.cancel();
+          }, this._handleError);
+        }
+
+      } else if (this.copyInfo.elecExamType === 2) {
+        if (this.mode === this.ADD_NEW_CARD) {
+          // 新增睡眠监测
+
+        } else if (this.mode === this.EDIT_CURRENT_CARD) {
+          // 修改睡眠监测
+
+        }
       }
+
     },
     _handleError(error) {
       console.log(error);
