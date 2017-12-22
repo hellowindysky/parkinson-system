@@ -272,7 +272,6 @@ export default {
       line-height: @title-bar-height;
       text-align: left;
       font-size: @large-font-size;
-      cursor: pointer;
       color: @font-color;
     }
     .button {
