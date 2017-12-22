@@ -120,6 +120,16 @@
             <span></span>
           </span>
         </div>
+        <div class="field whole-line" v-if="copyInfo.elecExamType===2">
+          <span class="field-name">
+            检查结果
+          </span>
+          <span class="field-input">
+            <span class="warning-text"></span>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.examResult}}</span>
+            <el-input v-else type="textarea" :rows="2" v-model="copyInfo.examResult" placeholder="请输入检查结果"></el-input>
+          </span>
+        </div>
 
         <h3 class="form-title" v-if="tableMode===SON_OPEN">{{currentTableName}}</h3>
         <div class="form-wrapper" ref="formWrapper">
@@ -631,8 +641,23 @@ export default {
       }
       return this.recordTotal;
     },
-    sleepMonitoringTable() {
-      return this.typeField;
+    sleepMonitoringTableRows() {
+      var rowItems = this.typeField.filter(item => {
+        return Number(item.typeCode) === this.sleepMonitoringSubTableCode &&
+        item.typeGroupCode === 'elecExam' &&
+        item.fieldType === 0;
+      });
+      console.log('rowTypeFields: ' + rowItems);
+      return rowItems;
+    },
+    sleepMonitoringTableCols() {
+      var colItems = this.typeField.filter(item => {
+        return Number(item.typeCode) === this.sleepMonitoringSubTableCode &&
+        item.typeGroupCode === 'elecExam' &&
+        item.fieldType === 1;
+      });
+      console.log('colTypeFields: ' + colItems);
+      return colItems;
     },
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
@@ -650,7 +675,7 @@ export default {
       this.showEdit = showEdit;
       console.log('item: ', item);
       // console.log('emgTypeList: ', this.emgTypeList);
-      console.log('typeField: ', this.typeField);
+      // console.log('typeField: ', this.typeField);
 
       this.initCopyInfo();
 
@@ -688,6 +713,7 @@ export default {
       this.$set(this.copyInfo, 'recordTotal', '');
       this.$set(this.copyInfo, 'height', '');
       this.$set(this.copyInfo, 'weight', '');
+      this.$set(this.copyInfo, 'examResult', '');
       this.$set(this.copyInfo, 'typeGroupCode', 'elecExam');
     },
     chooseElecExamType() {
@@ -792,7 +818,6 @@ export default {
     },
     selectSleepMonitoringSubTable(typeCode) {
       this.sleepMonitoringSubTableCode = typeCode;
-      console.log(typeCode);
     },
     resetEmgTableData() {
       switch (this.currentTable) {
