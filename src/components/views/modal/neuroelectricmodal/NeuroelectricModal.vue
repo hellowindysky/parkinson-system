@@ -275,7 +275,7 @@
             </tr>
           </table>
           <table class="form" :class="{'small-font':tableMode===SON_OPEN}" v-else-if="tableMode===SON_OPEN && currentTable===SEN_NER_COND_ITEM">
-             <tr class="row first-row">
+            <tr class="row first-row">
               <td class="col col-width-5">
                 序号
               </td>
@@ -602,21 +602,29 @@ export default {
       }
     },
     currentTableName() {
-      if (this.currentTable === this.F_WAV_STU_ITEM) {
-        return 'F波研究';
-      } else if (this.currentTable === this.INT_PAT_ANA_ITEM) {
-        return '干扰项分析';
-      } else if (this.currentTable === this.MOT_NER_COND_ITEM) {
-        return '运动神经传导项';
-      } else if (this.currentTable === this.MOT_UNI_ANA_ITEM) {
-        return '运动单元分析';
-      } else if (this.currentTable === this.NEED_EXAM_ITEM) {
-        return '针刺肌电图检查';
-      } else if (this.currentTable === this.SEN_NER_COND_ITEM) {
-        return '感觉神经传导项';
+      if (this.copyInfo.elecExamType === 1) {
+        if (this.currentTable === this.F_WAV_STU_ITEM) {
+          return 'F波研究';
+        } else if (this.currentTable === this.INT_PAT_ANA_ITEM) {
+          return '干扰项分析';
+        } else if (this.currentTable === this.MOT_NER_COND_ITEM) {
+          return '运动神经传导项';
+        } else if (this.currentTable === this.MOT_UNI_ANA_ITEM) {
+          return '运动单元分析';
+        } else if (this.currentTable === this.NEED_EXAM_ITEM) {
+          return '针刺肌电图检查';
+        } else if (this.currentTable === this.SEN_NER_COND_ITEM) {
+          return '感觉神经传导项';
+        } else {
+          return '';
+        }
+      } else if (this.copyInfo.elecExamType === 2) {
+        var subType = Util.getElement('typeCode', this.sleepMonitoringSubTableCode, this.sleepMonitoringTypes);
+        return subType.typeName ? subType.typeName : '';
       } else {
         return '';
       }
+
     },
     sleepMonitoringTypes() {
       var types = Util.getElement('typegroupcode', 'elecExam', this.typeGroup).types;
@@ -818,6 +826,11 @@ export default {
     },
     selectSleepMonitoringSubTable(typeCode) {
       this.sleepMonitoringSubTableCode = typeCode;
+
+      // 取到这个值之后就要关闭父表格，打开子表格
+      this.tableMode = this.SON_OPEN;
+      this.updateScrollbar();
+      this.$refs.formWrapper.scrollTop = 0;
     },
     resetEmgTableData() {
       switch (this.currentTable) {
