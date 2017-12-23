@@ -27,11 +27,11 @@
         <el-form-item>
           <el-button class="button" type="primary" @click="submitForm">登 录</el-button>
         </el-form-item>
-        <div class="sign-up-text">
-          还没有账号？
-          <a class="link" target="_blank" href="https://www.wjx.top/jq/19488329.aspx">点击这里</a>申请试用
-        </div>
       </el-form>
+      <div class="sign-up-text" v-if="!mustResetPassword">
+        还没有账号？
+        <a class="link" target="_blank" href="https://www.wjx.top/jq/19488329.aspx">点击这里</a>申请试用
+      </div>
 
       <el-form class="input-wrapper" v-if="mustResetPassword" :model="resetForm" :rules="resetRules" ref="resetForm" label-width="0">
         <div class="notice" v-if="mustResetPassword">
@@ -538,7 +538,6 @@ export default {
       position: relative;
       margin: 20px auto;
       width: @input-width;
-      height: 130px;
       text-align: left;
       .notice {
         position: absolute;
@@ -602,20 +601,21 @@ export default {
           color: #fff;
         }
       }
-      .sign-up-text {
-        line-height: 20px;
-        text-align: center;
+    }
+    .sign-up-text {
+      line-height: 20px;
+      text-align: center;
+      color: #fff;
+      font-size: @normal-font-size;
+      transform: translateY(-10px);
+      .link {
         color: #fff;
-        font-size: @normal-font-size;
-        .link {
-          color: #fff;
-          cursor: pointer;
-          &:hover {
-            opacity: 0.6;
-          }
-          &:active {
-            opacity: 0.8;
-          }
+        cursor: pointer;
+        &:hover {
+          opacity: 0.6;
+        }
+        &:active {
+          opacity: 0.8;
         }
       }
     }

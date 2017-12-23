@@ -12,7 +12,7 @@
       <div class="num-info">{{totalNumText}}</div>
     </div>
 
-    <div class="list-area" ref="listArea">
+    <div class="list-area" ref="listArea" :class="{'including-function-area': !showAdd}">
       <div v-if="listType === MY_PATIENTS_TYPE">
         <patient-list-item class="item" v-for="patient in myPatientsList" :patient="patient" :key="patient.patientId"></patient-list-item>
       </div>
@@ -36,7 +36,7 @@
 
     <div class="function-area"
       v-if="listType === MY_PATIENTS_TYPE || listType === OTHER_PATIENTS_TYPE || listType === SUBJECT_PATIENTS_TYPE">
-      <div class="function-button whole-line" @click="addNewPatient" v-show="showAdd">
+      <div class="function-button whole-line" @click="addNewPatient" v-if="showAdd">
         <span class="iconfont icon-new-patient"></span>
         <span class="text">新增患者</span>
       </div>
@@ -290,6 +290,9 @@ export default {
     inSubject() {
       return this.$store.state.subjectId !== this.SUBJECT_ID_FOR_HOSPITAL;
     },
+    showSensitiveInfo() {
+      return this.$store.state.showSensitiveInfo;
+    },
     showAdd() {
       if (this.listType === this.OTHER_PATIENTS_TYPE || this.listType === this.SUBJECT_PATIENTS_TYPE) {
         return false;
@@ -315,8 +318,15 @@ export default {
       }
     },
     searchInputPlaceholder() {
-      if (this.listType === this.MY_PATIENTS_TYPE || this.listType === this.OTHER_PATIENTS_TYPE) {
-        return '请输入姓名/身份证号/手机号';
+      if (this.listType === this.MY_PATIENTS_TYPE ||
+        this.listType === this.OTHER_PATIENTS_TYPE ||
+        this.listType === this.SUBJECT_PATIENTS_TYPE) {
+        if (this.$store.state.showSensitiveInfo === false) {
+          return '请输入患者姓名编码或ID';
+        } else {
+          return '请输入姓名/身份证号/手机号';
+        }
+
       } else if (this.listType === this.GROUP_TYPE) {
         return '请输入组名';
       }
@@ -343,19 +353,7 @@ export default {
   mounted() {
     // 如果在某个指定了 id 的页面进行刷新，checkRoute函数内的[更新列表数据]不会执行，这个时候就需要手动更新
     if (!this.hasFirstUpdatedList) {
-      if (this.listType === this.MY_PATIENTS_TYPE ||
-        this.listType === this.OTHER_PATIENTS_TYPE ||
-        this.listType === this.SUBJECT_PATIENTS_TYPE) {
-        this.updatePatientsList(this.checkRoute);
-      } else if (this.listType === this.GROUP_TYPE) {
-        this.updateGroupList(this.checkRoute);
-      } else if (this.listType === this.USERTYPE_TYPE) {
-        this.updateUserList(this.checkRoute);
-      } else if (this.listType === this.ROLE_TYPE) {
-        this.updateRoleList(this.checkRoute);
-      } else {
-        console.log('unknown listType');
-      }
+      this.updateCurrentList();
     }
 
     Bus.$on(this.UPDATE_MY_PATIENTS_LIST, this.updatePatientsList);
@@ -380,6 +378,21 @@ export default {
           this.updateGroupList();
         }
       }, 1000);
+    },
+    updateCurrentList() {
+      if (this.listType === this.MY_PATIENTS_TYPE ||
+        this.listType === this.OTHER_PATIENTS_TYPE ||
+        this.listType === this.SUBJECT_PATIENTS_TYPE) {
+        this.updatePatientsList(this.checkRoute);
+      } else if (this.listType === this.GROUP_TYPE) {
+        this.updateGroupList(this.checkRoute);
+      } else if (this.listType === this.USERTYPE_TYPE) {
+        this.updateUserList(this.checkRoute);
+      } else if (this.listType === this.ROLE_TYPE) {
+        this.updateRoleList(this.checkRoute);
+      } else {
+        console.log('unknown listType');
+      }
     },
     updateScrollbar() {
       this.$nextTick(() => {
@@ -710,6 +723,9 @@ export default {
       } else if (this.listType === this.GROUP_TYPE) {
         this.resetForm('filterGroupsForm', this.checkRoute);
       }
+    },
+    showSensitiveInfo() {
+      this.updateCurrentList();
     }
   },
   beforeDestroy() {
@@ -891,6 +907,9 @@ export default {
     height: calc(~"100% - @{search-area-height} - @{control-area-height} - @{function-area-height} - @{vertical-spacing} * 3");
     background-color: @background-color; // box-shadow: 2px 2px 2px @light-gray-color;
     overflow: hidden;
+    &.including-function-area {
+      height: calc(~"100% - @{search-area-height} - @{control-area-height} - @{vertical-spacing} * 2");
+    }
     .item {
       box-sizing: border-box;
       cursor: pointer;
@@ -903,7 +922,8 @@ export default {
           background-color: darken(@background-color, 8%);
         }
       }
-    } // 下面这组 CSS 是为了让 perfect-scrollbar正常工作的，不知道为什么，默认状态下这个组件不能正常显示
+    }
+    // 下面这组 CSS 是为了让 perfect-scrollbar正常工作的，不知道为什么，默认状态下这个组件不能正常显示
     .ps__scrollbar-y-rail {
       position: absolute;
       width: 15px;

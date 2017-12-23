@@ -7,8 +7,8 @@
       </div>
       <div class="switch-button">
         <span class="on" :class="switchButtonSide"></span>
-        <span class="text left" @click="swichBlockSensitiveStatus(true)">脱敏显示</span>
-        <span class="text right" @click="swichBlockSensitiveStatus(false)">全部显示</span>
+        <span class="text left" @click="switchBlockSensitiveStatus(true)">脱敏显示</span>
+        <span class="text right" @click="switchBlockSensitiveStatus(false)">全部显示</span>
       </div>
       <div class="operation-wrapper">
         <span class="iconfont icon-search" :class="{'on': showFilterPanel}" @click="toggleFilterPanelDisplay"></span>
@@ -135,7 +135,7 @@ export default {
       }
       this.showOranizationPanel = false;
     },
-    swichBlockSensitiveStatus(status) {
+    switchBlockSensitiveStatus(status) {
       if (!status) {
         if (!this.$store.state.hasRightToDisplaySensitiveInfo) {
           let title = '确认提醒';
@@ -155,14 +155,16 @@ export default {
       var commonRequest = JSON.parse(sessionStorage.getItem('commonRequest'));
       commonRequest.viewType = 1;
       sessionStorage.setItem('commonRequest', JSON.stringify(commonRequest));
-      this.reloadPage();
+      this.$store.commit('SHOW_SENSITIVE_INFO');
+      // this.reloadPage();
     },
     hideSensitiveInfo() {
       this.blockSensitiveInfo = true;
       var commonRequest = JSON.parse(sessionStorage.getItem('commonRequest'));
       commonRequest.viewType = 2;
       sessionStorage.setItem('commonRequest', JSON.stringify(commonRequest));
-      this.reloadPage();
+      this.$store.commit('HIDE_SENSITIVE_INFO');
+      // this.reloadPage();
     },
     reloadPage() {
       // 让相应的组件重新加载，从而以新的显示方式（带着新的参数）向服务器发出请求
@@ -254,6 +256,11 @@ export default {
 
     var commonRequest = JSON.parse(sessionStorage.getItem('commonRequest'));
     this.blockSensitiveInfo = commonRequest.viewType !== 1;
+    if (this.blockSensitiveInfo) {
+      this.$store.commit('HIDE_SENSITIVE_INFO');
+    } else {
+      this.$store.commit('SHOW_SENSITIVE_INFO');
+    }
 
     Bus.$on(this.BLUR_ON_SCREEN, this.hidePanels);
     Bus.$on(this.PERMIT_DISPLAYING_SENSITIVE_INFO, () => {

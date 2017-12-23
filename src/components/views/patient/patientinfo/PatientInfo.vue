@@ -89,6 +89,9 @@ export default {
     patientId() {
       return this.$route.params.id;
     },
+    showSensitiveInfo() {
+      return this.$store.state.showSensitiveInfo;
+    },
     existed() {
       return !(this.patientId === 'newPatient');
     },
@@ -288,6 +291,9 @@ export default {
       this.displayGroupPanel = false;  // 路由变化时，关闭分组面板
       this.$refs.scrollArea.scrollTop = 0;  // 切换自组件时，滚动条还原到顶部
       this.updateScrollbar();
+    },
+    showSensitiveInfo() {
+      this.updatePatientInfo();
     }
   },
   beforeDestroy() {
