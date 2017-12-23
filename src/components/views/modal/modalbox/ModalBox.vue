@@ -37,7 +37,7 @@
           </span>
           <span v-else>{{copyInfo[field.fieldName]}}</span>
         </span>
-        <span class="field-input" :class="{doseInfo: field.fieldName === 'doseInfo'&&subModalType!==SMOKE_HISTORY_MODAL, unit: field.fieldName === 'unit'}" v-else>
+        <span class="field-input" v-else :class="{doseInfo: field.fieldName === 'doseInfo'&&subModalType!==SMOKE_HISTORY_MODAL, unit: field.fieldName === 'unit'}">
           <span class="warning-text">{{getWarningText(field.fieldName)}}</span>
           <span v-if="getUIType(field)===1">
             <el-input v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
@@ -54,6 +54,22 @@
           <span v-else-if="getUIType(field)===6">
             <el-date-picker v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}" type="date"
               :placeholder="getMatchedField(field).cnFieldDesc" :picker-options="pickerOptions0" format="yyyy-MM-dd" @change="updateWarning(field)"></el-date-picker>
+          </span>
+          <span v-else-if="getUIType(field)===9">
+            <el-upload
+              class="upload-area"
+              :action="uploadUrl"
+              ref="upload1"
+              :disabled="mode===VIEW_CURRENT_CARD"
+              :data="fileParam"
+              :multiple="true"
+              :auto-upload="true"
+              :file-list="fileList1">
+              <el-button slot="trigger" size="small" type="text" :disabled="mode===VIEW_CURRENT_CARD" v-show="mode!==VIEW_CURRENT_CARD">
+                点击上传
+              </el-button>
+              <div slot="tip" class="el-upload__tip"></div>
+            </el-upload>
           </span>
         </span>
       </div>
@@ -72,6 +88,7 @@ import Ps from 'perfect-scrollbar';
 import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
+import { baseUrl, getCommonRequest } from 'api/common.js';
 
 import { addPatientPresentHistory, modifyPatientPresentHistory,
          addPatientMedHistory, modifyPatientMedHistory,
@@ -97,6 +114,9 @@ export default {
       copyInfo: {},
       warningResults: {},
       lockSubmitButton: false,   // 这个变量用来锁住确定按钮，避免短时间内多次点击造成重复提交
+      uploadUrl: baseUrl + '/upload/uploadAttachment',
+      fileParam: getCommonRequest(),
+      fileList1: [],
       pickerOptions0: {
         disabledDate(time) {
           return time.getTime() > Date.now();
@@ -649,7 +669,8 @@ export default {
   },
   mounted() {
     Bus.$on(this.SHOW_MODAL_BOX, this.showPanel);
-    console.log(this.wineHistoryTemplate, 111);
+    console.log(this.familyHistoryTemplate, 111);
+    console.log(this.familyHistoryDictionary, 222);
   },
   watch: {
     template: function() {
@@ -776,6 +797,40 @@ export default {
         }
         .warning .el-input__inner, .warning .el-textarea__inner {
           border: 1px solid red;
+        }
+        .upload-area {
+          padding-bottom:10px;
+          .el-upload {
+            width: 100%;
+            text-align: left;
+            .el-button {
+              width: 100%;
+              height: 30px;
+              border-radius: 10px;
+              &:hover {
+                opacity: 0.7;
+              }
+              &:active {
+                opacity: 0.85;
+              }
+              &.el-button--text {
+                background-color: @light-font-color;
+                color: #fff;
+                &:disabled {
+                  background-color: @gray-color;
+                  cursor: not-allowed;
+                }
+              }
+            }
+          }
+          .el-upload__tip {
+            line-height: normal;
+            margin-top:0;
+          }
+          .el-upload-list {
+            // max-height: 80px;
+            // overflow-y: scroll;
+          }
         }
       }
     }
