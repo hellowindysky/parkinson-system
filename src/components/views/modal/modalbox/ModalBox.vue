@@ -26,7 +26,7 @@
       </div>
       <div class="seperate-line" v-show="this.modalType === this.PERSON_HISTORY_MODAL && this.subModalType !== ''"></div>
 
-      <div class="field" v-for="field in template">
+      <div class="field" v-for="field in template" :class="{'field-unit': field.fieldName === 'unit'}">
         <span class="field-name">
           {{field.cnfieldName}}
           <span class="required-mark" v-show="field.must===1">*</span>
@@ -37,7 +37,7 @@
           </span>
           <span v-else>{{copyInfo[field.fieldName]}}</span>
         </span>
-        <span class="field-input" v-else>
+        <span class="field-input" :class="{doseInfo: field.fieldName === 'doseInfo'&&subModalType!==SMOKE_HISTORY_MODAL, unit: field.fieldName === 'unit'}" v-else>
           <span class="warning-text">{{getWarningText(field.fieldName)}}</span>
           <span v-if="getUIType(field)===1">
             <el-input v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
@@ -164,28 +164,174 @@ export default {
       if (this.modalType === this.PRESENT_HISTORY_MODAL) {
         return this.presentHistoryTemplate;
       } else if (this.modalType === this.MEDICINE_HISTORY_MODAL) {
-        return this.medHistoryTemplate;
+        if (this.copyInfo['medType'] === 6) {
+          // 药物类型 选择 否认存在其他用药史 时，把不必要的提交字段,不要的验证删了
+          for (let key in this.copyInfo) {
+            if (key !== 'medType' && key !== 'remarks' && key !== 'patientMedHistoryId') {
+              delete this.copyInfo[key];
+            };
+          }
+          for (let key in this.warningResults) {
+            if (key !== 'medType') {
+              delete this.warningResults[key];
+            };
+          }
+          return this.medHistoryTemplate.filter((obj) => {
+            return obj.fieldName === 'medType' || obj.fieldName === 'remarks';
+          });
+        } else {
+          return this.medHistoryTemplate;
+        }
       } else if (this.modalType === this.DISEASE_HISTORY_MODAL) {
-        return this.diseaseHistoryTemplate;
+        if (this.copyInfo['diseaseRelationId'] === 30) {
+          // 疾病名称 选择 否认存在既往史 时，把不必要的提交字段,不要的验证删了，此处没有不要的验证
+          for (let key in this.copyInfo) {
+            if (key !== 'diseaseRelationId' && key !== 'remarks' && key !== 'patientDiseaseId') {
+              delete this.copyInfo[key];
+            };
+          }
+          return this.diseaseHistoryTemplate.filter((obj) => {
+            return obj.fieldName === 'diseaseRelationId' || obj.fieldName === 'remarks';
+          });
+        } else {
+          return this.diseaseHistoryTemplate;
+        }
+
       } else if (this.modalType === this.FAMILY_HISTORY_MODAL) {
-        return this.familyHistoryTemplate;
+        // console.log(this.copyInfo, this.warningResults);
+        if (this.copyInfo['similarRole'] === 6) {
+          // 类似疾病家族成员 选择 否认存在家族史 时，把不必要的提交字段,不要的验证删了
+          for (let key in this.copyInfo) {
+            if (key !== 'similarRole' && key !== 'remarks' && key !== 'patientFamilyId') {
+              delete this.copyInfo[key];
+            };
+          }
+          for (let key in this.warningResults) {
+            if (key !== 'similarRole') {
+              delete this.warningResults[key];
+            };
+          }
+          // console.log(this.copyInfo, this.warningResults);
+          return this.familyHistoryTemplate.filter((obj) => {
+            return obj.fieldName === 'similarRole' || obj.fieldName === 'remarks';
+          });
+        } else {
+          return this.familyHistoryTemplate;
+        }
+
       } else if (this.modalType === this.PERSON_HISTORY_MODAL) {
         // 如果是个人史面板，则有几个子模版，需要在选择个人史类型后，自动确定新的模版
         if (this.subModalType === this.WINE_HISTORY_MODAL) {
-          return this.wineHistoryTemplate;
+          // console.log(this.copyInfo, this.copyInfo['patientHabitId'], this.warningResults);
+          if (this.copyInfo['patientHabitId'] === 19) {
+            // 饮酒类型 选择 否认存在饮酒史 时，把不必要的提交字段,不要的验证删了
+            for (let key in this.copyInfo) {
+              if (key !== 'patientHabitId' && key !== 'remarks' && key !== 'patientWineId') {
+                delete this.copyInfo[key];
+              };
+            }
+            for (let key in this.warningResults) {
+              if (key !== 'patientHabitId') {
+                delete this.warningResults[key];
+              };
+            }
+            // console.log(this.copyInfo, this.warningResults);
+            return this.wineHistoryTemplate.filter((obj) => {
+              return obj.fieldName === 'patientHabitId' || obj.fieldName === 'remarks';
+            });
+          } else {
+            return this.wineHistoryTemplate;
+          }
+
         } else if (this.subModalType === this.TEA_HISTORY_MODAL) {
-          return this.teaHistoryTemplate;
+          console.log(this.copyInfo, this.copyInfo['patientHabitId'], this.warningResults);
+          if (this.copyInfo['patientHabitId'] === 21) {
+            // 喝茶类型 选择 否认存在喝茶史 时，把不必要的提交字段,不要的验证删了
+            for (let key in this.copyInfo) {
+              if (key !== 'patientHabitId' && key !== 'remarks' && key !== 'patientTeaId') {
+                delete this.copyInfo[key];
+              };
+            }
+            for (let key in this.warningResults) {
+              if (key !== 'patientHabitId') {
+                delete this.warningResults[key];
+              };
+            }
+            // console.log(this.copyInfo, this.warningResults);
+            return this.teaHistoryTemplate.filter((obj) => {
+              return obj.fieldName === 'patientHabitId' || obj.fieldName === 'remarks';
+            });
+          } else {
+            return this.teaHistoryTemplate;
+          }
+
         } else if (this.subModalType === this.COFFEE_HISTORY_MODAL) {
-          return this.coffeeHistoryTemplate;
+          // console.log(this.copyInfo, this.copyInfo['patientHabitId'], this.warningResults);
+          if (this.copyInfo['patientHabitId'] === 20) {
+            // 咖啡类型 选择 否认存在咖啡史 时，把不必要的提交字段,不要的验证删了
+            for (let key in this.copyInfo) {
+              if (key !== 'patientHabitId' && key !== 'remarks' && key !== 'patientCoffeeId') {
+                delete this.copyInfo[key];
+              };
+            }
+            for (let key in this.warningResults) {
+              if (key !== 'patientHabitId') {
+                delete this.warningResults[key];
+              };
+            }
+            return this.coffeeHistoryTemplate.filter((obj) => {
+              return obj.fieldName === 'patientHabitId' || obj.fieldName === 'remarks';
+            });
+          } else {
+            return this.coffeeHistoryTemplate;
+          }
+
         } else if (this.subModalType === this.SMOKE_HISTORY_MODAL) {
-          return this.smokeHistoryTemplate;
+          console.log(this.copyInfo, this.copyInfo['patientHabitId'], this.warningResults);
+          if (this.copyInfo['patientHabitId'] === 18) {
+            // 吸烟类型 选择 否认存在吸烟史 时，把不必要的提交字段,不要的验证删了
+            for (let key in this.copyInfo) {
+              if (key !== 'patientHabitId' && key !== 'remarks' && key !== 'patientSmokeId') {
+                delete this.copyInfo[key];
+              };
+            }
+            for (let key in this.warningResults) {
+              if (key !== 'patientHabitId') {
+                delete this.warningResults[key];
+              };
+            }
+            return this.smokeHistoryTemplate.filter((obj) => {
+              return obj.fieldName === 'patientHabitId' || obj.fieldName === 'remarks';
+            });
+          } else {
+            return this.smokeHistoryTemplate;
+          }
         } else if (this.subModalType === this.EXERCISE_HISTORY_MODAL) {
           return this.exerciseHistoryTemplate;
         } else {
           return [];
         }
       } else if (this.modalType === this.TOXIC_HISTORY_MODAL) {
-        return this.toxicExposureHistoryTemplate;
+        // console.log(this.copyInfo['exposedType']);
+        if (this.copyInfo['exposedType'] === 8) {
+          // 毒物接触史 选择 否认存在毒物接触史 时，把不必要的提交字段,不要的验证删了
+          for (let key in this.copyInfo) {
+            if (key !== 'exposedType' && key !== 'remarks' && key !== 'patientCideexposedId') {
+              delete this.copyInfo[key];
+            };
+          }
+          for (let key in this.warningResults) {
+            if (key !== 'exposedType') {
+              delete this.warningResults[key];
+            };
+          }
+          // console.log(this.copyInfo, this.warningResults);
+          return this.toxicExposureHistoryTemplate.filter((obj) => {
+            return obj.fieldName === 'exposedType' || obj.fieldName === 'remarks';
+          });
+        } else {
+          return this.toxicExposureHistoryTemplate;
+        }
       } else {
         return [];
       }
@@ -204,7 +350,6 @@ export default {
       // 由 cardOperation 来决定，到底是新增记录，浏览记录，还是修改记录
       // 这三个值分别为 this.ADD_NEW_CARD, this.VIEW_CURRENT_CARD, this.EDIT_CURRENT_CARD
       this.mode = cardOperation;
-
       // 如果传过来的 modalType 是个人史下的子类，则将其赋值为 this.subModalType，而 this.modalType 还是个人史
       // 同时，还要禁止个人史下子类的选择，因为此时子类不可更换
       const SUB_MODAL_LIST = [this.TEA_HISTORY_MODAL, this.COFFEE_HISTORY_MODAL, this.WINE_HISTORY_MODAL, this.SMOKE_HISTORY_MODAL, this.EXERCISE_HISTORY_MODAL];
@@ -256,6 +401,7 @@ export default {
       this.displayModal = false;
     },
     submit() {
+      console.log(this.warningResults);
       // 如果确定按钮被锁住了，则不执行下面的逻辑，防止重复点击
       if (this.lockSubmitButton) {
         return;
@@ -503,6 +649,7 @@ export default {
   },
   mounted() {
     Bus.$on(this.SHOW_MODAL_BOX, this.showPanel);
+    console.log(this.wineHistoryTemplate, 111);
   },
   watch: {
     template: function() {
@@ -560,6 +707,10 @@ export default {
       vertical-align: top;
       transform: translate3d(10px, 5px, 0);
       // overflow: hidden;
+      &.field-unit{
+        min-height: 0;
+        display: block;
+      }
       .field-name {
         display: inline-block;
         position: absolute;
@@ -584,6 +735,15 @@ export default {
         line-height: @field-line-height;
         font-size: @normal-font-size;
         color: @light-font-color;
+        &.doseInfo{
+          width: calc(~"96% - @{field-name-width} - 110px");
+        }
+        &.unit{
+          width: 100px;
+          position: absolute;
+          top:-45px;
+          left: calc(~"96% - 100px");
+        }
         .warning-text {
           position: absolute;
           top: 22px;
