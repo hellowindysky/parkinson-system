@@ -621,6 +621,8 @@ export default {
       ],
 
       sleepMonitoringSubTableCode: '',
+      sleepMonitoringTables: [],
+
       showEdit: true
     };
   },
@@ -781,6 +783,29 @@ export default {
       this.$set(this.copyInfo, 'weight', '');
       this.$set(this.copyInfo, 'examResult', '');
       this.$set(this.copyInfo, 'typeGroupCode', 'elecExam');
+
+      this.sleepMonitoringTables = [];
+      for (var i = 0; i < this.sleepMonitoringTypes.length; i++) {
+        this.$set(this.sleepMonitoringTables, i, {});
+        var typeCode = this.sleepMonitoringTypes[i].typeCode;
+        this.$set(this.sleepMonitoringTables[i], 'typeCode', typeCode);
+        this.$set(this.sleepMonitoringTables[i], 'fieldRow', []);
+
+        var rowItems = this.typeField.filter(item => {
+          return Number(item.typeCode) === typeCode &&
+          item.typeGroupCode === 'elecExam' &&
+          item.fieldType === 0;
+        });
+        for (var j = 0; j < rowItems.length; j++) {
+          this.$set(this.sleepMonitoringTables[i].fieldRow, j, {});
+          var item = rowItems[j];
+          this.$set(this.sleepMonitoringTables[i].fieldRow[j], 'rowFieldId', item.id);
+          this.$set(this.sleepMonitoringTables[i].fieldRow[j], 'fieldDetail', []);
+          this.$set(this.sleepMonitoringTables[i].fieldRow[j], 'fieldDetail', []);
+          // console.log(item);
+        }
+
+      }
     },
     chooseElecExamType() {
       if (this.copyInfo.elecExamType && Number(this.copyInfo.elecExamType) === 1) {

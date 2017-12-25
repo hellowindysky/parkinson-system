@@ -30,7 +30,7 @@
       <!-- 神经系统检查 -->
       <extensible-panel class="panel" :mode="mutableMode" :title="neurologicCheckTitle" v-on:addNewCard="addNeurologicCheckRecord" :editable="canEdit">
         <card class="card" :class="cardWidth" :mode="mutableMode" v-for="item in neurologicCheckList" :key="item.preopsInfoId"
-          :title="transformNeurologicCheckType(item.spephysicalInfo)" v-on:editCurrentCard="editNeurologicCheckRecord(item)"
+          :title="transform(item.checkType, 'neurologicExam')" v-on:editCurrentCard="editNeurologicCheckRecord(item)"
           v-on:deleteCurrentCard="deleteNeurologicCheckRecord(item)" v-on:viewCurrentCard="viewNeurologicCheckRecord(item)">
           <div class="text first-line">
             <span class="name">诊断结果: </span>
@@ -196,7 +196,6 @@ export default {
     ...mapGetters([
       'surgicalTypeList',
       'complicationTypeList',
-      'neurologicCheckTypeList',
       'bioexamTypeList',
       'emgTypeList',
       'typeGroup'
@@ -241,12 +240,6 @@ export default {
     },
     submit() {
       this.mutableMode = this.READING_MODE;
-    },
-    transformNeurologicCheckType(typeId) {
-      // 在 tableData 中找到对应的值
-      var data = Util.getElement('id', typeId, this.neurologicCheckTypeList);
-      var name = data.spephysicalName ? data.spephysicalName : '';
-      return name;
     },
     transformBiochemicalExamType(typeId) {
       // 在 tableData 中找到对应的值
