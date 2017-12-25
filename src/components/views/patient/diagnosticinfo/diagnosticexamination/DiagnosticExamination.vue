@@ -27,6 +27,7 @@
           </div>
          </card>
       </extensible-panel>
+      <!-- 神经系统检查 -->
       <extensible-panel class="panel" :mode="mutableMode" :title="neurologicCheckTitle" v-on:addNewCard="addNeurologicCheckRecord" :editable="canEdit">
         <card class="card" :class="cardWidth" :mode="mutableMode" v-for="item in neurologicCheckList" :key="item.preopsInfoId"
           :title="transformNeurologicCheckType(item.spephysicalInfo)" v-on:editCurrentCard="editNeurologicCheckRecord(item)"
@@ -71,7 +72,7 @@
         </card>
       </extensible-panel>
 
-      <extensible-panel class="panel" :mode="mutableMode" :title="emgTitle" v-on:addNewCard="addEmgRecord" :editable="canEdit">
+      <extensible-panel class="panel" :mode="mutableMode" :title="neuroelectricTitle" v-on:addNewCard="addEmgRecord" :editable="canEdit">
         <card class="card" :class="cardWidth" :mode="mutableMode" v-for="item in emgList" :key="item.pcaseId"
           :title="item.etgName" v-on:editCurrentCard="editNeuroelectricRecord(item)" v-on:viewCurrentCard="viewNeuroelectricRecord(item)"
           v-on:deleteCurrentCard="deleteNeuroelectricRecord(item)">
@@ -212,8 +213,9 @@ export default {
     biochemicalExamTitle() {
       return '生化指标（' + this.biochemicalExamList.length + '条记录）';
     },
-    emgTitle() {
-      return '神经电生理检查（' + this.emgList.length + '条记录）';
+    neuroelectricTitle() {
+      let count = this.emgList.length + this.sleepMonitoringList.length;
+      return '神经电生理检查（' + count + '条记录）';
     },
     medicalImagingTitle() {
       return '医学影像（' + this.medicalImagingList.length + '条记录）';

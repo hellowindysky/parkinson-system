@@ -150,37 +150,30 @@
         </card>
       </extensible-panel>
 
-      <extensible-panel class="panel physiontherapy-panel" :mode="mutableMode" :title="physiontherapyTitle" v-on:addNewCard="addPhysiontherapy"
-        :editable="canEdit">
+      <extensible-panel class="panel physiontherapy-panel" :mode="mutableMode" :title="physiontherapyTitle"
+        v-on:addNewCard="addPhysiontherapyRecord" :editable="canEdit">
         <card class="card physiontherapy-card" :class="bigCardWidth" :mode="mutableMode" v-for="item in diagnosticPhysiontherapy" :key="item.physiType"
-          :title="'物理治疗'" v-on:editCurrentCard="editPhysiontherapy(item)"
+          :title="transformPhysiType(item.physiType)" v-on:editCurrentCard="editPhysiontherapy(item)"
           v-on:deleteCurrentCard="deletePhysiontherapy(item)" v-on:viewCurrentCard="viewPhysiontherapy(item)">
           <div class="text line-1">
-            <span class="name">物理治疗类型: </span>
-            <span class="value">{{transformPhysiType(item.physiType)}}</span>
-          </div>
-          <div class="text line-2">
             <span class="name">治疗前左侧运动阈值: </span>
             <span class="value">{{item.leftThresholdBefore}}</span>
           </div>
-           <div class="text line-3">
+           <div class="text line-2">
             <span class="name">治疗前右侧运动阈值: </span>
             <span class="value">{{item.rightThresholdBefore}}</span>
           </div>
-           <div class="text line-4">
+           <div class="text line-3">
             <span class="name">不良反应: </span>
             <span class="value">{{getReaction(item.patientPhytheReaction)}}</span>
           </div>
-           <div class="text line-5">
+           <div class="text line-4">
             <span class="name">记录时间: </span>
             <span class="value">{{item.recordDate}}</span>
           </div>
         </card>
-      </extensible-panel>
 
-      <extensible-panel class="panel treatmentEvaluation-panel" :mode="mutableMode" :title="treatmentEvaluationTitle" v-on:addNewCard="addTreatmentEvaluation"
-        :editable="canEdit">
-        <card class="card treatmentEvaluation-card" :class="bigCardWidth" :mode="mutableMode" v-for="item in diagnosticTreatmentEvaluation" :key="item.situationType"
+        <card class="card physiontherapy-card" :class="bigCardWidth" :mode="mutableMode" v-for="item in diagnosticTreatmentEvaluation" :key="item.situationType"
           :title="'治疗评估'" v-on:editCurrentCard="editTreatmentEvaluation(item)"
           v-on:deleteCurrentCard="deleteTreatmentEvaluation(item)" v-on:viewCurrentCard="viewTreatmentEvaluation(item)">
           <div class="text line-1">
@@ -207,9 +200,9 @@
             <span class="name">不良反应: </span>
             <span class="value">{{getReaction(item.patientPhytheReaction)}}</span>
           </div>
-           
         </card>
       </extensible-panel>
+
     </div>
   </folding-panel>
 </template>
@@ -308,12 +301,8 @@ export default {
       return '程控记录（' + amount + '条记录）';
     },
     physiontherapyTitle() {
-      var totalCount = this.diagnosticPhysiontherapy.length ;
+      var totalCount = this.diagnosticPhysiontherapy.length + this.diagnosticTreatmentEvaluation.length;
       return '物理治疗（' + totalCount + '条记录）';
-    },
-    treatmentEvaluationTitle() {
-      var totalCount = this.diagnosticTreatmentEvaluation.length ;
-      return '治疗评估（' + totalCount + '条记录）';
     },
     preEvaluationList() {
       return this.diagnosticSurgery.patientPreopsList ? this.diagnosticSurgery.patientPreopsList : [];
@@ -470,16 +459,7 @@ export default {
         {
           text: '程控记录',
           callback: this.addDbsRecord
-        },
-        {
-          text: '物理治疗',
-          callback: this.addPhysiontherapy
-        },
-        {
-          text: '治疗评估',
-          callback: this.addTreatmentEvaluation
         }
-
       ];
       Bus.$emit(this.SHOW_CHOICE_PANEL, list);
     },
@@ -573,6 +553,19 @@ export default {
       var types = Util.getElement('typegroupcode', 'physiType', this.typeGroup).types;
       var typeName = Util.getElement('typeCode', physiType, types).typeName;
       return typeName ? typeName : '';
+    },
+    addPhysiontherapyRecord() {
+      var list = [
+        {
+          text: '物理疗法',
+          callback: this.addPhysiontherapy
+        },
+        {
+          text: '治疗评估',
+          callback: this.addTreatmentEvaluation
+        }
+      ];
+      Bus.$emit(this.SHOW_CHOICE_PANEL, list);
     },
     addPhysiontherapy() {
       Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
@@ -681,13 +674,9 @@ export default {
 <style lang="less">
 @import "~styles/variables.less";
 
-@surgery-card-height: 220px;
-@physiontherapy-card-height: 180px;
-@treatmentEvaluation-card-height: 150px;
 @medicine-card-height: 175px;
 @surgery-card-height: 225px;
-@physiontherapy-card-height: 175px;
-
+@physiontherapy-card-height: 150px;
 
 .diagnostic-surgery {
   .panel {
@@ -706,12 +695,6 @@ export default {
     }
     &.physiontherapy-panel .content {
       height: @physiontherapy-card-height + @card-vertical-margin * 2 + 5px * 2;
-      &.extended {
-        height: auto;
-      }
-    }
-     &.treatmentEvaluation-panel .content {
-      height: @treatmentEvaluation-card-height + @card-vertical-margin * 2 + 5px * 2;
       &.extended {
         height: auto;
       }
@@ -760,9 +743,6 @@ export default {
       }
       &.physiontherapy-card {
         height: @physiontherapy-card-height;
-      }
-      &.treatmentEvaluation-card {
-        height: @treatmentEvaluation-card-height;
       }
       .text {
         position: absolute;

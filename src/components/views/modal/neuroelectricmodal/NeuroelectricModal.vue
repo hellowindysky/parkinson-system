@@ -117,7 +117,7 @@
           </span>
           <span class="field-input">
             <span class="warning-text"></span>
-            <span></span>
+            <span>{{BMIIndex}}</span>
           </span>
         </div>
         <div class="field whole-line" v-if="copyInfo.elecExamType===2">
@@ -684,6 +684,28 @@ export default {
         this.recordTotal = '0:00:00';
       }
       return this.recordTotal;
+    },
+    BMIIndex() {
+      let height = this.copyInfo.height;
+      let weight = this.copyInfo.weight;
+      if (weight !== undefined && height !== undefined && Number(height) > 0 && Number(weight) > 0) {
+        var result = Number(weight) / Math.pow(Number(height) / 100, 2);
+        var evaluation = '';
+        if (result < 18.5) {
+          evaluation = '过轻';
+        } else if (result < 24) {
+          evaluation = '正常';
+        } else if (result < 28) {
+          evaluation = '过重';
+        } else if (result < 32) {
+          evaluation = '肥胖';
+        } else {
+          evaluation = '非常肥胖';
+        }
+        return result.toFixed(1) + ' (' + evaluation + ')';
+      } else {
+        return '';
+      }
     },
     sleepMonitoringTableRows() {
       var rowItems = this.typeField.filter(item => {
