@@ -150,8 +150,8 @@
         </card>
       </extensible-panel>
 
-      <extensible-panel class="panel physiontherapy-panel" :mode="mutableMode" :title="physiontherapyTitle" v-on:addNewCard="addPhysiontherapy"
-        :editable="canEdit">
+      <extensible-panel class="panel physiontherapy-panel" :mode="mutableMode" :title="physiontherapyTitle"
+        v-on:addNewCard="addPhysiontherapyRecord" :editable="canEdit">
         <card class="card physiontherapy-card" :class="bigCardWidth" :mode="mutableMode" v-for="item in diagnosticPhysiontherapy" :key="item.physiType"
           :title="transformPhysiType(item.physiType)" v-on:editCurrentCard="editPhysiontherapy(item)"
           v-on:deleteCurrentCard="deletePhysiontherapy(item)" v-on:viewCurrentCard="viewPhysiontherapy(item)">
@@ -203,10 +203,6 @@
         </card>
       </extensible-panel>
 
-      <extensible-panel class="panel treatmentEvaluation-panel" :mode="mutableMode" :title="treatmentEvaluationTitle" v-on:addNewCard="addTreatmentEvaluation"
-        :editable="canEdit">
-
-      </extensible-panel>
     </div>
   </folding-panel>
 </template>
@@ -305,12 +301,8 @@ export default {
       return '程控记录（' + amount + '条记录）';
     },
     physiontherapyTitle() {
-      var totalCount = this.diagnosticPhysiontherapy.length ;
+      var totalCount = this.diagnosticPhysiontherapy.length + this.diagnosticTreatmentEvaluation.length;
       return '物理治疗（' + totalCount + '条记录）';
-    },
-    treatmentEvaluationTitle() {
-      var totalCount = this.diagnosticTreatmentEvaluation.length ;
-      return '治疗评估（' + totalCount + '条记录）';
     },
     preEvaluationList() {
       return this.diagnosticSurgery.patientPreopsList ? this.diagnosticSurgery.patientPreopsList : [];
@@ -476,7 +468,6 @@ export default {
           text: '治疗评估',
           callback: this.addTreatmentEvaluation
         }
-
       ];
       Bus.$emit(this.SHOW_CHOICE_PANEL, list);
     },
@@ -570,6 +561,19 @@ export default {
       var types = Util.getElement('typegroupcode', 'physiType', this.typeGroup).types;
       var typeName = Util.getElement('typeCode', physiType, types).typeName;
       return typeName ? typeName : '';
+    },
+    addPhysiontherapyRecord() {
+      var list = [
+        {
+          text: '物理疗法',
+          callback: this.addPhysiontherapy
+        },
+        {
+          text: '治疗评估',
+          callback: this.addTreatmentEvaluation
+        }
+      ];
+      Bus.$emit(this.SHOW_CHOICE_PANEL, list);
     },
     addPhysiontherapy() {
       Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
