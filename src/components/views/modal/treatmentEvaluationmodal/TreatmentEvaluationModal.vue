@@ -40,7 +40,7 @@
                 :key="item.code"
                 :label="item.name"
                 :value="item.code">
-              </el-option> 
+              </el-option>
             </el-select>
           </span>
         </div>
@@ -69,14 +69,14 @@
           <span class="required-mark mark">*</span>
         </span>
         <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-          <span class="warning-text"></span>  
+          <span class="warning-text"></span>
           <span>{{situationRemark}}</span>
         </span>
         <span class="field-input" v-else>
           <span class="warning-text">{{warningResults.situationRemark}}</span>
           <el-input v-model="situationRemark" placeholder="请输入治疗后情况描述" :class="{'warning': warningResults.situationRemark}" type="textarea" @change="updateWarning('situationRemark')" :maxlength="500"></el-input>
         </span>
-      </div> 
+      </div>
         <div class="seperate-line"></div>
         <div class="content">
         <table class="table">
@@ -104,7 +104,7 @@
           </tr>
         </table>
       </div>
-       <P>无该症状 0；轻度 1-3；中度 4-6；重度 7-9；数值越大越严重</p>
+      <p>0，无该症状；轻度 1-3；中度 4-7；重度 8-10；数值越大越严重</p>
       <div class="seperate-line"></div>
       <div class="button cancel-button btn-margin" @click="cancel">取消</div>
       <div v-show="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD" class="button submit-button btn-margin" @click="submit">确定</div>
@@ -654,5 +654,5 @@ export default {
     }
   }
 }
-  
+
 </style>
