@@ -805,7 +805,7 @@ export default {
       //     // console.log(item);
       //   }
 
-      }
+      // }
     },
     chooseElecExamType() {
       if (this.copyInfo.elecExamType && Number(this.copyInfo.elecExamType) === 1) {
