@@ -35,6 +35,16 @@
           <span v-if="getUIType(field)===3">
             {{getFieldValue(field)}}
           </span>
+          <span v-else-if="getUIType(field)===9">
+            <div class="last-files">
+              <div class="last-files-title">已上传的家系图</div>
+              <div class="file" :class="{'editing': mode!==VIEW_CURRENT_CARD}" v-for="file in familyTreeView">
+                <i class="el-icon-document icon"></i>
+                <span class="file-name" @click="downloadFile(file)">{{file.fileName}}</span>
+                <i class="close-button iconfont icon-cancel"></i>
+              </div>
+            </div>
+          </span>
           <span v-else>{{copyInfo[field.fieldName]}}</span>
         </span>
         <span class="field-input" v-else :class="{doseInfo: field.fieldName === 'doseInfo'&&subModalType!==SMOKE_HISTORY_MODAL, unit: field.fieldName === 'unit'}">
@@ -56,15 +66,28 @@
               :placeholder="getMatchedField(field).cnFieldDesc" :picker-options="pickerOptions0" format="yyyy-MM-dd" @change="updateWarning(field)"></el-date-picker>
           </span>
           <span v-else-if="getUIType(field)===9">
+            <div class="last-files">
+              <div class="last-files-title">已上传的家系图</div>
+              <div class="file" :class="{'editing': mode!==VIEW_CURRENT_CARD}" v-for="file in familyTreeView">
+                <i class="el-icon-document icon"></i>
+                <span class="file-name" @click="downloadFile(file)">{{file.fileName}}</span>
+                <i class="close-button iconfont icon-cancel" @click="removeFile(file, familyTreeView, copyInfo['patientFamilyTree'])"></i>
+              </div>
+            </div>
             <el-upload
               class="upload-area"
               :action="uploadUrl"
-              ref="upload1"
+              ref="uploadTag"
               :disabled="mode===VIEW_CURRENT_CARD"
               :data="fileParam"
               :multiple="true"
               :auto-upload="true"
-              :file-list="fileList1">
+              :on-change="fileChange"
+              :before-upload="beforeUpload"
+              :on-success="uploadTreeSuccess"
+              :on-error="uploadErr"
+              :on-remove="handleTreeRemove"
+              :file-list="fileList">
               <el-button slot="trigger" size="small" type="text" :disabled="mode===VIEW_CURRENT_CARD" v-show="mode!==VIEW_CURRENT_CARD">
                 点击上传
               </el-button>
@@ -112,11 +135,14 @@ export default {
       disableChangingSubModal: false,
       title: '',
       copyInfo: {},
+      familyTreeView: [],
       warningResults: {},
       lockSubmitButton: false,   // 这个变量用来锁住确定按钮，避免短时间内多次点击造成重复提交
-      uploadUrl: baseUrl + '/upload/uploadAttachment',
+      uploadingFilesNum: 0,
+      uploadUrl: baseUrl + '/upload/uploadPatientFamilyTree',
+      downloadUrl: baseUrl + '/download/',
       fileParam: getCommonRequest(),
-      fileList1: [],
+      fileList: [],
       pickerOptions0: {
         disabledDate(time) {
           return time.getTime() > Date.now();
@@ -218,7 +244,6 @@ export default {
         }
 
       } else if (this.modalType === this.FAMILY_HISTORY_MODAL) {
-        // console.log(this.copyInfo, this.warningResults);
         if (this.copyInfo['similarRole'] === 6) {
           // 类似疾病家族成员 选择 否认存在家族史 时，把不必要的提交字段,不要的验证删了
           for (let key in this.copyInfo) {
@@ -231,7 +256,6 @@ export default {
               delete this.warningResults[key];
             };
           }
-          // console.log(this.copyInfo, this.warningResults);
           return this.familyHistoryTemplate.filter((obj) => {
             return obj.fieldName === 'similarRole' || obj.fieldName === 'remarks';
           });
@@ -242,7 +266,6 @@ export default {
       } else if (this.modalType === this.PERSON_HISTORY_MODAL) {
         // 如果是个人史面板，则有几个子模版，需要在选择个人史类型后，自动确定新的模版
         if (this.subModalType === this.WINE_HISTORY_MODAL) {
-          // console.log(this.copyInfo, this.copyInfo['patientHabitId'], this.warningResults);
           if (this.copyInfo['patientHabitId'] === 19) {
             // 饮酒类型 选择 否认存在饮酒史 时，把不必要的提交字段,不要的验证删了
             for (let key in this.copyInfo) {
@@ -255,7 +278,6 @@ export default {
                 delete this.warningResults[key];
               };
             }
-            // console.log(this.copyInfo, this.warningResults);
             return this.wineHistoryTemplate.filter((obj) => {
               return obj.fieldName === 'patientHabitId' || obj.fieldName === 'remarks';
             });
@@ -264,7 +286,6 @@ export default {
           }
 
         } else if (this.subModalType === this.TEA_HISTORY_MODAL) {
-          console.log(this.copyInfo, this.copyInfo['patientHabitId'], this.warningResults);
           if (this.copyInfo['patientHabitId'] === 21) {
             // 喝茶类型 选择 否认存在喝茶史 时，把不必要的提交字段,不要的验证删了
             for (let key in this.copyInfo) {
@@ -277,7 +298,6 @@ export default {
                 delete this.warningResults[key];
               };
             }
-            // console.log(this.copyInfo, this.warningResults);
             return this.teaHistoryTemplate.filter((obj) => {
               return obj.fieldName === 'patientHabitId' || obj.fieldName === 'remarks';
             });
@@ -286,7 +306,6 @@ export default {
           }
 
         } else if (this.subModalType === this.COFFEE_HISTORY_MODAL) {
-          // console.log(this.copyInfo, this.copyInfo['patientHabitId'], this.warningResults);
           if (this.copyInfo['patientHabitId'] === 20) {
             // 咖啡类型 选择 否认存在咖啡史 时，把不必要的提交字段,不要的验证删了
             for (let key in this.copyInfo) {
@@ -332,7 +351,6 @@ export default {
           return [];
         }
       } else if (this.modalType === this.TOXIC_HISTORY_MODAL) {
-        // console.log(this.copyInfo['exposedType']);
         if (this.copyInfo['exposedType'] === 8) {
           // 毒物接触史 选择 否认存在毒物接触史 时，把不必要的提交字段,不要的验证删了
           for (let key in this.copyInfo) {
@@ -345,7 +363,6 @@ export default {
               delete this.warningResults[key];
             };
           }
-          // console.log(this.copyInfo, this.warningResults);
           return this.toxicExposureHistoryTemplate.filter((obj) => {
             return obj.fieldName === 'exposedType' || obj.fieldName === 'remarks';
           });
@@ -365,6 +382,90 @@ export default {
     }
   },
   methods: {
+    clearFieldOfCopyInfoAndWarning() {
+      // ggg
+    },
+    fileChange() {
+      console.log(this.copyInfo);
+      this.updateScrollbar();
+    },
+    beforeUpload(file) {
+      const isUnderLimit = file.size / 1024 / 1024 < 300;
+      if (!isUnderLimit) {
+        this.$message({
+          message: '上传文件大小不能超过 300MB',
+          type: 'error',
+          duration: 2000
+        });
+      } else {
+        this.uploadingFilesNum += 1;
+      }
+      return isUnderLimit;
+    },
+    uploadTreeSuccess(response, file, fileList) {
+      this.uploadSuccess(response, file, fileList, this.copyInfo['patientFamilyTree']);
+    },
+    uploadSuccess(response, file, fileList, treeList) {
+      this.uploadingFilesNum -= 1;
+      if (response.code === 0) {
+        let id = response.data.patientFamilyTreeId;
+        treeList.push({
+          'id': id
+        });
+      } else {
+        this.$message({
+          message: '文件上传出错',
+          type: 'warning',
+          duration: 2000
+        });
+        console.log('response: ', response);
+        console.log('file: ', file);
+        console.log('fileList', fileList);
+      }
+      // console.log(this.copyInfo);
+    },
+    handleTreeRemove(file) {
+      this.handleRemove(file, this.copyInfo['patientFamilyTree']);
+    },
+    handleRemove(file, treeList) {
+      console.log(file);
+      if (file.status === 'uploading') {
+        this.uploadingFilesNum -= 1;
+      }
+      for (var i = 0; i < treeList.length; i++) {
+        if (file.response.data.patientFamilyTreeId === treeList[i].id) {
+          treeList.splice(i, 1);
+          break;
+        }
+      }
+      console.log(this.copyInfo);
+      this.updateScrollbar();
+    },
+    downloadFile(file) {
+      window.location.href = this.downloadUrl + file.realPath;
+    },
+    removeFile(file, showingList, transferringList) {
+      console.log(file, showingList, transferringList);
+      for (let i = 0; i < showingList.length; i++) {
+        if (file.id === showingList[i].id) {
+          showingList.splice(i, 1);
+          break;
+        }
+      }
+      for (let i = 0; i < transferringList.length; i++) {
+        if (file.id === transferringList[i].id) {
+          transferringList.splice(i, 1);
+          break;
+        }
+      }
+      this.updateScrollbar();
+    },
+    uploadErr(err, file, fileList) {
+      this.uploadingFilesNum -= 1;
+      console.log('upload error: ', err);
+      console.log('file: ', file);
+      console.log('fileList', fileList);
+    },
     showPanel(cardOperation, title, originalInfo, modalType) {
       this.displayModal = true;
       // 由 cardOperation 来决定，到底是新增记录，浏览记录，还是修改记录
@@ -385,7 +486,9 @@ export default {
 
       this.title = title;
       this.copyInfo = Object.assign({}, originalInfo);
-
+      this.familyTreeView = Object.assign([], originalInfo.patientFamilyTree);
+      console.log('originalInfo', originalInfo);
+      console.log('this.copyInfo', this.copyInfo);
       // 每次打开这个模态框，都会重新初始化 this.copyInfo
       this.initCopyInfo();
 
@@ -418,6 +521,10 @@ export default {
     },
     cancel() {
       this.lockSubmitButton = false;
+      if (this.mode === this.EDIT_CURRENT_CARD) {
+        console.log(this.$refs.uploadTag[0]);
+        // this.$refs.uploadTag[0].clearFiles();
+      };
       this.displayModal = false;
     },
     submit() {
@@ -480,90 +587,100 @@ export default {
         if (this.modalType === this.PRESENT_HISTORY_MODAL) {
           addPatientPresentHistory(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError());
+          }, this._handleError);
         } else if (this.modalType === this.MEDICINE_HISTORY_MODAL) {
           addPatientMedHistory(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError());
+          }, this._handleError);
         } else if (this.modalType === this.DISEASE_HISTORY_MODAL) {
           addPatientDisease(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError());
+          }, this._handleError);
         } else if (this.modalType === this.FAMILY_HISTORY_MODAL) {
+          if (this.uploadingFilesNum > 0) {
+            this.$message({
+              message: '请等待文件上传后再提交',
+              type: 'warning',
+              duration: 2000
+            });
+            this.lockSubmitButton = false;
+            return;
+          }
           addPatientFamily(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError());
+          }, this._handleError);
         } else if (this.modalType === this.TOXIC_HISTORY_MODAL) {
           addPatientToxicExposure(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError());
+          }, this._handleError);
         } else if (this.subModalType === this.COFFEE_HISTORY_MODAL) {
           addPatientCoffee(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError());
+          }, this._handleError);
         } else if (this.subModalType === this.TEA_HISTORY_MODAL) {
           addPatientTea(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError());
+          }, this._handleError);
         } else if (this.subModalType === this.WINE_HISTORY_MODAL) {
           addPatientWine(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError());
+          }, this._handleError);
         } else if (this.subModalType === this.SMOKE_HISTORY_MODAL) {
           addPatientSmoke(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError());
+          }, this._handleError);
         } else if (this.subModalType === this.EXERCISE_HISTORY_MODAL) {
           addPatientExercise(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError());
+          }, this._handleError);
         }
 
       } else if (this.mode === this.EDIT_CURRENT_CARD) {
         if (this.modalType === this.PRESENT_HISTORY_MODAL) {
           modifyPatientPresentHistory(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError());
+          }, this._handleError);
         } else if (this.modalType === this.MEDICINE_HISTORY_MODAL) {
           modifyPatientMedHistory(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError());
+          }, this._handleError);
         } else if (this.modalType === this.DISEASE_HISTORY_MODAL) {
           modifyPatientDisease(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError());
+          }, this._handleError);
         } else if (this.modalType === this.FAMILY_HISTORY_MODAL) {
           modifyPatientFamily(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError());
+          }, this._handleError);
         } else if (this.modalType === this.TOXIC_HISTORY_MODAL) {
           modifyPatientToxicExposure(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError());
+          }, this._handleError);
         } else if (this.subModalType === this.COFFEE_HISTORY_MODAL) {
           modifyPatientCoffee(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError());
+          }, this._handleError);
         } else if (this.subModalType === this.TEA_HISTORY_MODAL) {
           modifyPatientTea(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError());
+          }, this._handleError);
         } else if (this.subModalType === this.WINE_HISTORY_MODAL) {
           modifyPatientWine(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError());
+          }, this._handleError);
         } else if (this.subModalType === this.SMOKE_HISTORY_MODAL) {
           modifyPatientSmoke(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError());
+          }, this._handleError);
         } else if (this.subModalType === this.EXERCISE_HISTORY_MODAL) {
           modifyPatientExercise(this.copyInfo).then(() => {
             this.updateAndClose();
-          }, this._handleError());
+          }, this._handleError);
         }
       }
     },
     updateAndClose() {
+      // this.$refs.uploadTag[0].clearFiles();
       Bus.$emit(this.UPDATE_PATIENT_INFO);
       this.displayModal = false;
       this.lockSubmitButton = false;  // 为按钮解锁
@@ -571,12 +688,20 @@ export default {
     initCopyInfo() {
       // 遍历当前的 template，对其中的每个 field，检查 this.copyInfo 下有没有名字对应的属性值，没有的话，就初始化为空字符串
       // 注意初始化采用 this.$set 方法，使得当前 Vue 实例对象可以跟踪该属性值的变化
+      console.log(this.template);
       for (let field of this.template) {
         let name = field.fieldName;
         if (this.copyInfo[name] === undefined) {
-          this.$set(this.copyInfo, name, '');
+          console.log(55555555555555, name, this.modalType);
+          if (this.modalType === this.FAMILY_HISTORY_MODAL && name === 'patientFamilyTree') {
+            this.$set(this.copyInfo, name, []);
+          } else {
+            this.$set(this.copyInfo, name, '');
+          }
+
         }
       }
+      console.log(this.copyInfo);
     },
     getMatchedField(field) {
       // 这个函数根据实际数据，在字典项中查询到对应的字段，从而方便我们得到其 uiType 等信息
@@ -637,7 +762,7 @@ export default {
         }
       }
 
-      if (fieldValue && fieldValue.toString().indexOf(' ') > -1) {
+      if (fieldValue && !Array.isArray(fieldValue) && fieldValue.toString().indexOf(' ') > -1) {
         this.$set(this.warningResults, fieldName, '不能包含空格');
 
       } else {
@@ -669,8 +794,6 @@ export default {
   },
   mounted() {
     Bus.$on(this.SHOW_MODAL_BOX, this.showPanel);
-    console.log(this.familyHistoryTemplate, 111);
-    console.log(this.familyHistoryDictionary, 222);
   },
   watch: {
     template: function() {
@@ -830,6 +953,63 @@ export default {
           .el-upload-list {
             // max-height: 80px;
             // overflow-y: scroll;
+          }
+        }
+        .last-files {
+          margin-bottom: 10px;
+          width: 100%;
+          .last-files-title {
+            transform: translateY(-5px);
+            margin-bottom: 5px;
+            height: 30px;
+            line-height: 30px;
+            background-color: @font-color;
+            color: #fff;
+            text-align: center;
+            cursor: default;
+          }
+          .file {
+            position: relative;
+            padding-left: 5px;
+            height: 30px;
+            line-height: 30px;
+            transition: 0.2s;
+            cursor: default;
+            .icon {
+              display: inline-block;
+              width: 20px;
+            }
+            .file-name {
+              display: inline-block;
+              padding: 0 3px;
+              line-height: 20px;
+              transform: translateX(-3px);
+              cursor: pointer;
+              &:hover {
+                border-bottom: 1px solid @font-color;
+              }
+            }
+            .close-button {
+              display: none;
+              position: absolute;
+              right: 0;
+              width: 22px;
+              text-align: center;
+              color: @light-font-color;
+              font-size: 13px;
+            }
+            &.editing {
+              cursor: pointer;
+              &:hover {
+                background-color: @screen-color;
+                .close-button {
+                  display: inline-block;
+                  &:hover {
+                    color: @font-color;
+                  }
+                }
+              }
+            }
           }
         }
       }
