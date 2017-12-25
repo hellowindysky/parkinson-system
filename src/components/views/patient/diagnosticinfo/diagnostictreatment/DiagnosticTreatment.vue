@@ -459,14 +459,6 @@ export default {
         {
           text: '程控记录',
           callback: this.addDbsRecord
-        },
-        {
-          text: '物理治疗',
-          callback: this.addPhysiontherapy
-        },
-        {
-          text: '治疗评估',
-          callback: this.addTreatmentEvaluation
         }
       ];
       Bus.$emit(this.SHOW_CHOICE_PANEL, list);
