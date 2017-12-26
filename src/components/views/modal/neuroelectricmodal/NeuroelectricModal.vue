@@ -887,10 +887,6 @@ export default {
         this.tableMode = this.FATHER_OPEN;
       }
 
-      if (emg.emgName) {
-        this.warningResults.elecTroGramId = '';
-      }
-
       vueCopy(emg, this.targetEmg);
       this.updateScrollbar();
     },
@@ -1060,10 +1056,10 @@ export default {
           for (let i = 0; i < this.emgTable.length; i++) {
             this.$set(this.copyInfo.patientMotNerCondResu, i, {});
             this.$set(this.copyInfo.patientMotNerCondResu[i], 'motNerItemId', this.emgTable[i].id);
-            this.$set(this.copyInfo['patientMotNerCondResu'][i], 'amplitude', '');
-            this.$set(this.copyInfo['patientMotNerCondResu'][i], 'duration', '');
-            this.$set(this.copyInfo['patientMotNerCondResu'][i], 'phases', '');
-            this.$set(this.copyInfo['patientMotNerCondResu'][i], 'spikeDuration', '');
+            this.$set(this.copyInfo.patientMotNerCondResu[i], 'amplitude', '');
+            this.$set(this.copyInfo.patientMotNerCondResu[i], 'duration', '');
+            this.$set(this.copyInfo.patientMotNerCondResu[i], 'phases', '');
+            this.$set(this.copyInfo.patientMotNerCondResu[i], 'spikeDuration', '');
           }
           break;
         case this.INT_PAT_ANA_ITEM:
@@ -1125,7 +1121,6 @@ export default {
       }
       this.lockSubmitButton = true;
 
-      // this.updateWarning('elecTroGramId');
       this.updateWarning('elecExamType');
       for (var p in this.warningResults) {
         if (this.warningResults.hasOwnProperty(p) && this.warningResults[p] !== '') {
