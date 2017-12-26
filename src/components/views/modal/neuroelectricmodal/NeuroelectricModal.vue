@@ -566,11 +566,13 @@
         </div>
       </div>
       <div class="button cancel-button" v-if="tableMode!==SON_OPEN" @click="cancel">取消</div>
-      <div class="button cancel-button" v-if="tableMode===SON_OPEN && mode===VIEW_CURRENT_CARD" @click="closeEmgTable">返回</div>
+      <div class="button cancel-button" v-if="tableMode===SON_OPEN && mode===VIEW_CURRENT_CARD" @click="closeSubTable">返回</div>
       <div class="button submit-button" v-if="mode===VIEW_CURRENT_CARD && canEdit" @click="switchToEditingMode">编辑</div>
       <div class="button submit-button" v-if="tableMode===FATHER_OPEN && mode!==VIEW_CURRENT_CARD" @click="submit">确认</div>
-      <div class="button reset-button" v-if="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD" @click="resetEmgTableData">重置</div>
-      <div class="button submit-button" v-if="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD" @click="closeEmgTable">完成</div>
+
+      <div class="button reset-button" v-if="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD && copyInfo.elecExamType===1" @click="resetEmgTableData">重置</div>
+      <div class="button reset-button" v-if="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD && copyInfo.elecExamType===2" @click="resetSleepMonitoringSubTable">重置</div>
+      <div class="button submit-button" v-if="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD" @click="closeSubTable">完成</div>
     </div>
   </div>
 </template>
@@ -1092,7 +1094,15 @@ export default {
           break;
       }
     },
-    closeEmgTable() {
+    resetSleepMonitoringSubTable() {
+      let typeCode = this.sleepMonitoringSubTableCode;
+      for (var rowFieldId in this.copyInfo.patientFieldCode[typeCode]) {
+        for (var columnFieldId in this.copyInfo.patientFieldCode[typeCode][rowFieldId]) {
+          this.copyInfo.patientFieldCode[typeCode][rowFieldId][columnFieldId].fieldValue = '';
+        }
+      }
+    },
+    closeSubTable() {
       this.tableMode = this.FATHER_OPEN;
       this.updateScrollbar();
       this.$refs.formWrapper.scrollTop = 0;
