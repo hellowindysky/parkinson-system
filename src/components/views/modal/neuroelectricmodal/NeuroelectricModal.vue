@@ -522,7 +522,8 @@
                 {{row[0].fieldName}}
               </td>
               <td class="col col-width-10">
-                <el-input v-if="row[0].uiType===1" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"></el-input>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue}}</span>
+                <el-input v-else-if="row[0].uiType===1" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"></el-input>
                 <el-select v-else-if="row[0].uiType===3" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"></el-select>
                 <el-date-picker v-else-if="row[0].uiType===6" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"></el-date-picker>
                 <el-date-picker v-else-if="row[0].uiType===7" type="datetime" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"></el-date-picker>
@@ -532,7 +533,8 @@
                 {{row[1].fieldName}}
               </td>
               <td class="col col-width-10" v-if="row.length===2">
-                <el-input v-if="row[1].uiType===1" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"></el-input>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue}}</span>
+                <el-input v-else-if="row[1].uiType===1" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"></el-input>
                 <el-select v-else-if="row[1].uiType===3" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"></el-select>
                 <el-date-picker v-else-if="row[1].uiType===6" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"></el-date-picker>
                 <el-date-picker v-else-if="row[1].uiType===7" type="datetime" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"></el-date-picker>
@@ -551,7 +553,8 @@
                 {{row.fieldName}}
               </td>
               <td class="col col-width-10" v-for="col in group.colItems">
-                <el-input v-if="col.uiType===1" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"></el-input>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue}}</span>
+                <el-input v-else-if="col.uiType===1" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"></el-input>
                 <el-select v-if="col.uiType===3" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"></el-select>
                 <el-date-picker v-if="col.uiType===6" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"></el-date-picker>
                 <el-date-picker v-if="col.uiType===7" type="datetime" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"></el-date-picker>
@@ -800,7 +803,7 @@ export default {
         this.$set(this.copyInfo.patientFieldCode, typeCode, {});
 
         let items = this.typeField.filter(item => {
-          return Number(item.typeCode) === this.sleepMonitoringSubTableCode &&
+          return Number(item.typeCode) === typeCode &&
           item.typeGroupCode === 'elecExam';
         });
         let groups = this.filterItemsIntoGroups(items);
@@ -863,6 +866,7 @@ export default {
         // 而且这个下拉框在 2.1 版本的更新中被去掉了，现在选择了神经电检查下的肌电图，就默认选中 emgTypeList 的第一项
         this.copyInfo.elecTroGramId = this.emgTypeList[0].id;
         this.selectEmg();
+        this.updateWarning('elecExamType');
       }
     },
     updateWarning(fieldName) {
