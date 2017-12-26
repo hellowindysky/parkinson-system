@@ -723,7 +723,7 @@ export default {
         } else {
           evaluation = '非常肥胖';
         }
-        return result.toFixed(1) + ' (' + evaluation + ')';
+        return result.toFixed(2) + ' (' + evaluation + ')';
       } else {
         return '';
       }
