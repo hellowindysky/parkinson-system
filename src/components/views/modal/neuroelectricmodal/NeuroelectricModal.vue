@@ -514,34 +514,48 @@
           </table>
 
           <table class="form" :class="{'small-font':tableMode===SON_OPEN}"
-            v-if="tableMode===SON_OPEN && currentTable===SLEEP_MONITORING_ITEM">
-            <tr class="row" v-if="sleepMonitoringTableCols.length===0" v-for="row in rearrangeRows(sleepMonitoringTableRows)">
+            v-if="tableMode===SON_OPEN && currentTable===SLEEP_MONITORING_ITEM"
+            v-for="(group, groupIndex) in sleepMonitoringItemGroups">
+            <tr class="row" v-if="group.colItems.length===0"
+              v-for="row in rearrangeRows(group.rowItems)">
               <td class="col col-width-10">
                 {{row[0].fieldName}}
               </td>
               <td class="col col-width-10">
-                <el-input></el-input>
+                <el-input v-if="row[0].uiType===1" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"></el-input>
+                <el-select v-else-if="row[0].uiType===3" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"></el-select>
+                <el-date-picker v-else-if="row[0].uiType===6" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"></el-date-picker>
+                <el-date-picker v-else-if="row[0].uiType===7" type="datetime" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"></el-date-picker>
+                <el-time-select v-else-if="row[0].uiType===8" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"></el-time-select>
               </td>
               <td class="col col-width-10" v-if="row.length===2">
                 {{row[1].fieldName}}
               </td>
               <td class="col col-width-10" v-if="row.length===2">
-                <el-input></el-input>
+                <el-input v-if="row[1].uiType===1" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"></el-input>
+                <el-select v-else-if="row[1].uiType===3" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"></el-select>
+                <el-date-picker v-else-if="row[1].uiType===6" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"></el-date-picker>
+                <el-date-picker v-else-if="row[1].uiType===7" type="datetime" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"></el-date-picker>
+                <el-time-select v-else-if="row[1].uiType===8" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"></el-time-select>
               </td>
             </tr>
 
-            <tr class="row first-row" v-if="sleepMonitoringTableCols.length>0">
+            <tr class="row first-row" v-if="group.colItems.length>0">
               <td class="col col-width-10"></td>
-              <td class="col col-width-10" v-for="col in sleepMonitoringTableCols">
+              <td class="col col-width-10" v-for="col in group.colItems">
                 {{col.fieldName}}
               </td>
             </tr>
-            <tr class="row" v-for="row in sleepMonitoringTableRows" v-if="sleepMonitoringTableCols.length>0">
+            <tr class="row" v-for="row in group.rowItems" v-if="group.colItems.length>0">
               <td class="col col-width-10">
                 {{row.fieldName}}
               </td>
-              <td class="col col-width-10" v-for="col in sleepMonitoringTableCols">
-                <el-input></el-input>
+              <td class="col col-width-10" v-for="col in group.colItems">
+                <el-input v-if="col.uiType===1" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"></el-input>
+                <el-select v-if="col.uiType===3" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"></el-select>
+                <el-date-picker v-if="col.uiType===6" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"></el-date-picker>
+                <el-date-picker v-if="col.uiType===7" type="datetime" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"></el-date-picker>
+                <el-time-select v-if="col.uiType===8" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"></el-time-select>
               </td>
             </tr>
 
@@ -709,23 +723,19 @@ export default {
         return '';
       }
     },
-    sleepMonitoringTableRows() {
-      var rowItems = this.typeField.filter(item => {
+    sleepMonitoringItemGroups() {
+      var items = this.typeField.filter(item => {
         return Number(item.typeCode) === this.sleepMonitoringSubTableCode &&
-        item.typeGroupCode === 'elecExam' &&
-        item.fieldType === 0;
+        item.typeGroupCode === 'elecExam';
       });
-      console.log(rowItems);
-      return rowItems;
-    },
-    sleepMonitoringTableCols() {
-      var colItems = this.typeField.filter(item => {
-        return Number(item.typeCode) === this.sleepMonitoringSubTableCode &&
-        item.typeGroupCode === 'elecExam' &&
-        item.fieldType === 1;
-      });
-      console.log(colItems);
-      return colItems;
+      var groups = this.filterItemsIntoGroups(items);
+      var resultGroups = [];
+      for (let i = 0; i < groups.length; i += 1) {
+        resultGroups.push({});
+        resultGroups[i].rowItems = groups[i].filter(item => item.fieldType === 0);
+        resultGroups[i].colItems = groups[i].filter(item => item.fieldType === 1);
+      }
+      return resultGroups;
     },
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
@@ -784,28 +794,68 @@ export default {
       this.$set(this.copyInfo, 'examResult', '');
       this.$set(this.copyInfo, 'typeGroupCode', 'elecExam');
 
-      this.sleepMonitoringTables = [];
-      // for (var i = 0; i < this.sleepMonitoringTypes.length; i++) {
-      //   this.$set(this.sleepMonitoringTables, i, {});
-      //   var typeCode = this.sleepMonitoringTypes[i].typeCode;
-      //   this.$set(this.sleepMonitoringTables[i], 'typeCode', typeCode);
-      //   this.$set(this.sleepMonitoringTables[i], 'fieldRow', []);
-      //
-      //   var rowItems = this.typeField.filter(item => {
-      //     return Number(item.typeCode) === typeCode &&
-      //     item.typeGroupCode === 'elecExam' &&
-      //     item.fieldType === 0;
-      //   });
-      //   for (var j = 0; j < rowItems.length; j++) {
-      //     this.$set(this.sleepMonitoringTables[i].fieldRow, j, {});
-      //     var item = rowItems[j];
-      //     this.$set(this.sleepMonitoringTables[i].fieldRow[j], 'rowFieldId', item.id);
-      //     this.$set(this.sleepMonitoringTables[i].fieldRow[j], 'fieldDetail', []);
-      //     this.$set(this.sleepMonitoringTables[i].fieldRow[j], 'fieldDetail', []);
-      //     // console.log(item);
-      //   }
+      this.$set(this.copyInfo, 'patientFieldCode', {});
+      for (let type of this.sleepMonitoringTypes) {
+        let typeCode = type.typeCode;
+        this.$set(this.copyInfo.patientFieldCode, typeCode, {});
 
-      // }
+        let items = this.typeField.filter(item => {
+          return Number(item.typeCode) === this.sleepMonitoringSubTableCode &&
+          item.typeGroupCode === 'elecExam';
+        });
+        let groups = this.filterItemsIntoGroups(items);
+        let resultGroups = [];
+        for (let i = 0; i < groups.length; i += 1) {
+          resultGroups.push({});
+          resultGroups[i].rowItems = groups[i].filter(item => item.fieldType === 0);
+          resultGroups[i].colItems = groups[i].filter(item => item.fieldType === 1);
+        }
+
+        for (let group of resultGroups) {
+          for (let rowItem of group.rowItems) {
+            var rowItemCode = rowItem.id;
+            this.$set(this.copyInfo.patientFieldCode[typeCode], rowItemCode, {});
+
+            let colItems = group.colItems;
+            if (colItems.length === 0) {
+              // 特殊情况：如果没有列，则新建一个code为 0 的虚拟列
+              colItems = [{id: 0}];
+            }
+
+            for (let colItem of colItems) {
+              var colItemCode = colItem.id;
+              this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode], colItemCode, {});
+
+              this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode][colItemCode], 'typeGroupCode', 'elecExam');
+              this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode][colItemCode], 'typeCode', typeCode);
+              this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode][colItemCode], 'rowFieldId', rowItemCode);
+              this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode][colItemCode], 'columnFieldId', colItemCode);
+              this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode][colItemCode], 'fieldValue', '');
+            }
+          }
+        }
+      }
+    },
+    filterItemsIntoGroups(items) {
+      // 根据 item 的 groupNo 属性，装到不同的子数组里面，最后返回最外层的数组
+      var groups = [];
+      var hasSameGroupNumberBefore = false;
+
+      for (let item of items) {
+        hasSameGroupNumberBefore = false;
+        for (let i = 0; i < groups.length; i++) {
+          if (groups[i][0].groupNo === item.groupNo) {
+            hasSameGroupNumberBefore = true;
+            groups[i].push(item);
+          }
+        }
+        if (!hasSameGroupNumberBefore) {
+          let newGroup = [];
+          newGroup.push(item);
+          groups.push(newGroup);
+        }
+      }
+      return groups;
     },
     chooseElecExamType() {
       if (this.copyInfo.elecExamType && Number(this.copyInfo.elecExamType) === 1) {
@@ -1103,10 +1153,10 @@ export default {
       } else if (this.copyInfo.elecExamType === 2) {
         if (this.mode === this.ADD_NEW_CARD) {
           // 新增睡眠监测
-
+          console.log(this.copyInfo);
         } else if (this.mode === this.EDIT_CURRENT_CARD) {
           // 修改睡眠监测
-
+          console.log(this.copyInfo);
         }
       }
 
