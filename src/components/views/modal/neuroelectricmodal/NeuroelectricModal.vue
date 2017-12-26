@@ -582,7 +582,7 @@ import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import { mapGetters } from 'vuex';
 import { vueCopy } from 'utils/helper';
-import { addEmg, modEmg } from 'api/patient.js';
+import { addEmg, modEmg, addSleepMonitoring, modSleepMonitoring } from 'api/patient.js';
 import Util from 'utils/util.js';
 
 export default {
@@ -1162,10 +1162,16 @@ export default {
       } else if (this.copyInfo.elecExamType === 2) {
         if (this.mode === this.ADD_NEW_CARD) {
           // 新增睡眠监测
-          console.log(this.copyInfo);
+          addSleepMonitoring(submitData).then(() => {
+            Bus.$emit(this.UPDATE_CASE_INFO);
+            this.cancel();
+          }, this._handleError);
         } else if (this.mode === this.EDIT_CURRENT_CARD) {
           // 修改睡眠监测
-          console.log(this.copyInfo);
+          modSleepMonitoring(submitData).then(() => {
+            Bus.$emit(this.UPDATE_CASE_INFO);
+            this.cancel();
+          }, this._handleError);
         }
       }
 
