@@ -54,7 +54,7 @@
         </span>
         <span class="field-input">
           <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.chiefComplaint}}</span>
-          <el-input v-else v-model="copyInfo.chiefComplaint" type="textarea" placeholder="请输入患者主诉信息"
+          <el-input v-else v-model="copyInfo.chiefComplaint" type="textarea" placeholder="请输入患者主诉信息" :maxlength="500"
            @change="updateWarning('chiefComplaint')" :class="{'warning': warningResults.chiefComplaint}" ></el-input>
           <span class="warning-text textarea-warning-text">{{warningResults.chiefComplaint}}</span>
         </span>
@@ -86,7 +86,7 @@
         </span>
         <span class="field-input">
           <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.remarks}}</span>
-          <el-input v-else v-model="copyInfo.remarks" type="textarea" placeholder="请输入备注信息"></el-input>
+          <el-input v-else v-model="copyInfo.remarks" type="textarea" placeholder="请输入备注信息" :maxlength="500"></el-input>
         </span>
       </div>
 
