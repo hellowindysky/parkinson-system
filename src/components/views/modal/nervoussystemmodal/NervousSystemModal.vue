@@ -10,13 +10,13 @@
         </span>
         <span class="field-input">
           <span class="warning-text">{{warningResults.spephysicalInfo}}</span>
-          <el-select v-if="mode===ADD_NEW_CARD" placeholder="请选择检查类型" v-model="item.spephysicalInfo"
+          <el-select v-if="mode===ADD_NEW_CARD" placeholder="请选择检查类型" v-model="item.checkType"
             :class="{'warning': warningResults.spephysicalInfo}" @change="updateWarning('spephysicalInfo')">
-            <el-option v-for="spephyItem in spephysicalType" :key="spephyItem.spephysicalInfo"
-              :label="spephyItem.spephysicalName" :value="spephyItem.spephysicalInfo"></el-option>
+            <el-option v-for="type in getOptions('neurologicExam')" :key="type.code"
+              :label="type.name" :value="type.code"></el-option>
           </el-select>
           <span v-else>
-            {{getSpephyName(item.spephysicalInfo)}}
+            {{transform(item.checkType, 'neurologicExam')}}
           </span>
         </span>
       </div>
@@ -85,6 +85,7 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'typeGroup',
       'neurologicCheckTypeList'
     ]),
     title() {
@@ -124,6 +125,7 @@ export default {
         this.$set(this.item, 'ariseTime', '');
         this.$set(this.item, 'patientCaseId', this.$route.params.caseId);
         this.$set(this.item, 'patientId', this.$route.params.id);
+        this.$set(this.item, 'checkType', '');
         this.$set(this.item, 'remarks', '');
         this.$set(this.item, 'spephysicalInfo', '');
         this.$set(this.item, 'spephysicalResult', '');
@@ -132,6 +134,7 @@ export default {
         vueCopy(item, this.item);
         vueCopy(item, this.showItem);
       }
+      console.log('item: ', item);
 
       // 处理一下检查类型
       let typeDiction = deepCopy(this.neurologicCheckTypeList);
@@ -205,6 +208,24 @@ export default {
           this.$set(this.item, name, '');
         }
       }
+    },
+    getOptions(fieldName) {
+      var options = [];
+      var typeInfo = Util.getElement('typegroupcode', fieldName, this.typeGroup);
+      var types = typeInfo.types ? typeInfo.types : [];
+      for (let type of types) {
+        options.push({
+          name: type.typeName,
+          code: type.typeCode
+        });
+      };
+      return options;
+    },
+    transform(typeId, fieldName) {
+      var typeInfo = Util.getElement('typegroupcode', fieldName, this.typeGroup);
+      var types = typeInfo.types ? typeInfo.types : [];
+      var name = Util.getElement('typeCode', parseInt(typeId, 10), types).typeName;
+      return name;
     },
     updateWarning(fieldName) {
       if (this.item[fieldName] === undefined || this.item[fieldName] === '') {

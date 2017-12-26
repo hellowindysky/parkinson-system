@@ -121,7 +121,7 @@ export default {
               let operationType = authorizationInfo.operateType;  // 0 为授权，1 为解除授权
               let hospitalName = authorizationInfo.hospName ? authorizationInfo.hospName : '-';
               let doctorName = authorizationInfo.doctor ? authorizationInfo.doctor : '-';
-              let userName = authorizationInfo.username ? authorizationInfo.userName : '-';
+              let userName = authorizationInfo.username ? authorizationInfo.username : '-';
               let date = authorizationInfo.date ? authorizationInfo.date : '-';
               let gender = authorizationInfo.sex ? authorizationInfo.sex : 0;
 
