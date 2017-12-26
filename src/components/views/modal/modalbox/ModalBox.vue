@@ -326,7 +326,6 @@ export default {
           }
 
         } else if (this.subModalType === this.SMOKE_HISTORY_MODAL) {
-          console.log(this.copyInfo, this.copyInfo['patientHabitId'], this.warningResults);
           if (this.copyInfo['patientHabitId'] === 18) {
             // 吸烟类型 选择 否认存在吸烟史 时，把不必要的提交字段,不要的验证删了
             for (let key in this.copyInfo) {
@@ -383,10 +382,12 @@ export default {
   },
   methods: {
     clearFieldOfCopyInfoAndWarning() {
-      // ggg
+      /* template计算属性里面的删除字段的操作可以写到这里面，
+        然后在watch里面当template改变的时候去执行这个方法，
+        template里面就不用重复那么多东西，
+        还没试过，不知行不行 */
     },
     fileChange() {
-      console.log(this.copyInfo);
       this.updateScrollbar();
     },
     beforeUpload(file) {
@@ -422,13 +423,11 @@ export default {
         console.log('file: ', file);
         console.log('fileList', fileList);
       }
-      // console.log(this.copyInfo);
     },
     handleTreeRemove(file) {
       this.handleRemove(file, this.copyInfo['patientFamilyTree']);
     },
     handleRemove(file, treeList) {
-      console.log(file);
       if (file.status === 'uploading') {
         this.uploadingFilesNum -= 1;
       }
@@ -438,14 +437,12 @@ export default {
           break;
         }
       }
-      console.log(this.copyInfo);
       this.updateScrollbar();
     },
     downloadFile(file) {
       window.location.href = this.downloadUrl + file.realPath;
     },
     removeFile(file, showingList, transferringList) {
-      console.log(file, showingList, transferringList);
       for (let i = 0; i < showingList.length; i++) {
         if (file.id === showingList[i].id) {
           showingList.splice(i, 1);
@@ -487,8 +484,6 @@ export default {
       this.title = title;
       this.copyInfo = Object.assign({}, originalInfo);
       this.familyTreeView = Object.assign([], originalInfo.patientFamilyTree);
-      console.log('originalInfo', originalInfo);
-      console.log('this.copyInfo', this.copyInfo);
       // 每次打开这个模态框，都会重新初始化 this.copyInfo
       this.initCopyInfo();
 
@@ -500,7 +495,6 @@ export default {
       });
 
       for (var i = 0; i < this.template.length; i++) {
-        // console.log(this.template[i].fieldName);
       }
 
       this.updateScrollbar();
@@ -521,14 +515,12 @@ export default {
     },
     cancel() {
       this.lockSubmitButton = false;
-      if (this.mode === this.EDIT_CURRENT_CARD) {
-        console.log(this.$refs.uploadTag[0]);
-        // this.$refs.uploadTag[0].clearFiles();
+      if (this.modalType === this.FAMILY_HISTORY_MODAL && this.mode !== this.VIEW_CURRENT_CARD) {
+        this.$refs.uploadTag[0].clearFiles();
       };
       this.displayModal = false;
     },
     submit() {
-      console.log(this.warningResults);
       // 如果确定按钮被锁住了，则不执行下面的逻辑，防止重复点击
       if (this.lockSubmitButton) {
         return;
@@ -550,7 +542,6 @@ export default {
           return false;
         }
       };
-      // console.log(this.copyInfo);
       // 准备提交之前，需要将日期格式调整成符合服务器传输的字符串
       for (let field of this.template) {
         if (this.getUIType(field) === 6) {
@@ -680,7 +671,9 @@ export default {
       }
     },
     updateAndClose() {
-      // this.$refs.uploadTag[0].clearFiles();
+      if (this.modalType === this.FAMILY_HISTORY_MODAL) {
+        this.$refs.uploadTag[0].clearFiles();
+      };
       Bus.$emit(this.UPDATE_PATIENT_INFO);
       this.displayModal = false;
       this.lockSubmitButton = false;  // 为按钮解锁
@@ -688,11 +681,10 @@ export default {
     initCopyInfo() {
       // 遍历当前的 template，对其中的每个 field，检查 this.copyInfo 下有没有名字对应的属性值，没有的话，就初始化为空字符串
       // 注意初始化采用 this.$set 方法，使得当前 Vue 实例对象可以跟踪该属性值的变化
-      console.log(this.template);
+
       for (let field of this.template) {
         let name = field.fieldName;
         if (this.copyInfo[name] === undefined) {
-          console.log(55555555555555, name, this.modalType);
           if (this.modalType === this.FAMILY_HISTORY_MODAL && name === 'patientFamilyTree') {
             this.$set(this.copyInfo, name, []);
           } else {
@@ -701,7 +693,6 @@ export default {
 
         }
       }
-      console.log(this.copyInfo);
     },
     getMatchedField(field) {
       // 这个函数根据实际数据，在字典项中查询到对应的字段，从而方便我们得到其 uiType 等信息
