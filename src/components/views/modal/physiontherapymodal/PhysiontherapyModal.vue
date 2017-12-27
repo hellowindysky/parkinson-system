@@ -5,7 +5,7 @@
         <div class="content">
             <div class="field whole-line">
           <span class="field-name">
-            物理治疗类型:
+            物理疗法类型:
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -13,7 +13,7 @@
           </span>
           <span class="field-input" v-else>
             <span class="warning-text">{{warningResults.physiType}}</span>
-            <el-select v-model="physiType" clearable placeholder="请选择物理治疗类型" @change="updateWarning('physiType')"
+            <el-select v-model="physiType" clearable placeholder="请选择物理疗法类型" @change="updateWarning('physiType')"
               :class="{'warning': warningResults.physiType}">
               <el-option
                 v-for="item in getOptions('physiType')"
@@ -344,9 +344,9 @@ export default {
     ]),
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
-        return '新增物理治疗';
+        return '新增物理疗法';
       } else {
-        return '物理治疗';
+        return '物理疗法';
       }
     },
     canEdit() {
