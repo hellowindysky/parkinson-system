@@ -1,6 +1,6 @@
 <template lang="html">
-  <div class="nervous-modal-box-wrapper" v-show="displayModal">
-    <div class="modal-box">
+  <div class="neurologic-modal-wrapper" v-show="displayModal">
+    <div class="neurologic-modal">
       <h3 class="title">{{title}}</h3>
 
       <div class="field">
@@ -223,7 +223,7 @@ export default {
 @field-line-height: 25px;
 @field-name-width: 125px;
 
-.nervous-modal-box-wrapper {
+.neurologic-modal-wrapper {
   position: absolute;
   left: 0;
   top: 0;
@@ -231,11 +231,11 @@ export default {
   height: 100%;
   background-color: fadeout(@light-font-color, 30%);
   z-index: 500;
-  .modal-box {
+  .neurologic-modal {
     position: relative;
     margin: auto;
     padding: 0 40px;
-    top: 10%;
+    top: 6%;
     width: 600px;
     background-color: @background-color;
     .title {
