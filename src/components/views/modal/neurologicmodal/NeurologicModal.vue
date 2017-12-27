@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="neurologic-modal-wrapper" v-show="displayModal">
-    <div class="neurologic-modal">
+    <div class="neurologic-modal" ref="neurologicModal">
       <h3 class="title">{{title}}</h3>
 
       <div class="field">
@@ -58,6 +58,7 @@
 </template>
 
 <script>
+import Ps from 'perfect-scrollbar';
 import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import { vueCopy } from 'utils/helper';
@@ -116,6 +117,7 @@ export default {
       this.$nextTick(() => {
         this.clearWarning();
       });
+      this.updateScrollbar();
     },
     initCopyInfo() {
       this.copyInfo = {};
@@ -167,6 +169,7 @@ export default {
     },
     switchToEditingMode() {
       this.mode = this.EDIT_CURRENT_CARD;
+      this.updateScrollbar();
     },
     cancel() {
       this.lockSubmitButton = false;
@@ -206,6 +209,15 @@ export default {
       if (this.subModalType !== '') {
         this.warningResults['subModal'] = null;
       }
+    },
+    updateScrollbar() {
+      this.$nextTick(() => {
+        Ps.destroy(this.$refs.neurologicModal);
+        Ps.initialize(this.$refs.neurologicModal, {
+          wheelSpeed: 1,
+          minScrollbarLength: 40
+        });
+      });
     }
   },
   mounted() {
@@ -237,7 +249,9 @@ export default {
     padding: 0 40px;
     top: 6%;
     width: 600px;
+    max-height: 90%;
     background-color: @background-color;
+    overflow: hidden;
     .title {
       padding: 30px 0 10px;
       font-size: @large-font-size;
@@ -335,6 +349,28 @@ export default {
       }
       &:active {
         opacity: 0.9;
+      }
+    }
+    .ps__scrollbar-y-rail {
+      position: absolute;
+      width: 15px;
+      right: 0;
+      padding: 0 3px;
+      box-sizing: border-box;
+      opacity: 0.3;
+      transition: opacity 0.3s, padding 0.2s;
+      .ps__scrollbar-y {
+        position: relative;
+        background-color: #aaa;
+        border-radius: 20px;
+      }
+    }
+    &:hover {
+      .ps__scrollbar-y-rail {
+        opacity: 0.6;
+        &:hover {
+          padding: 0;
+        }
       }
     }
   }
