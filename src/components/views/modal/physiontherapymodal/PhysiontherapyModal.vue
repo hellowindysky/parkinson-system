@@ -164,8 +164,14 @@
             <el-input v-model="rightThresholdAfter" placeholder="请输入运动阈值"></el-input>
           </span>
         </div>
-      </div>
-      <div class="seperate-line"></div>
+        </div>
+        <div class="seperate-line"></div>
+        <div class="check-field">
+          无不良反应： 
+          <span v-if="mode===VIEW_CURRENT_CARD" disabled @change="checkAll">
+          </span>
+          <el-checkbox v-model="hasNoReaction" ></el-checkbox>
+        </div>
         <div class="content">
         <table class="table">
           <tr class="row title-row">
@@ -180,7 +186,7 @@
             </td>
             <td class="col narrow-col">
               <span v-if="mode===VIEW_CURRENT_CARD">{{transform(reaction.severityLevel,'reactionLevel')}}</span>
-              <el-select v-else v-model="reaction.severityLevel" clearable  @change="updateWarning('severityLevel')">
+              <el-select v-else v-model="reaction.severityLevel" clearable>
                 <el-option
                   v-for="item in getOptions('reactionLevel')"
                   :key="item.code"
@@ -230,6 +236,8 @@ export default {
       leftThresholdAfter: '',
       rightThresholdAfter: '',
       severityLevel: '',
+      patientId: '',
+      hasNoReaction: false,
       patientPhytheReaction: [
         {
           'reactionType': 1,
@@ -350,6 +358,8 @@ export default {
       this.rightThresholdBefore = item.rightThresholdBefore ? item.rightThresholdBefore : '';
       this.leftThresholdAfter = item.leftThresholdAfter ? item.leftThresholdAfter : '';
       this.rightThresholdAfter = item.rightThresholdAfter ? item.rightThresholdAfter : '';
+      this.patientId = item.patientId ? item.patientId : '';
+      this.hasNoReaction = item.reactionFlag === 1;
       vueCopy(item.patientPhytheReaction, this.patientPhytheReaction);
       this.$nextTick(() => {
         this.$refs.scrollArea.scrollTop = 0;
@@ -368,6 +378,27 @@ export default {
       var options = this.getOptions(fieldName);
       var targetOption = Util.getElement('code', code, options);
       return targetOption.name;
+    },
+    // otherCheck() {
+    //   for (var i = 0 ; i < this.patientPhytheReaction.length ; i++) {
+    //     if (this.patientPhytheReaction[i].severityLevel = 0) {
+    //       this.hasNoReaction === true;
+    //       // console.log(this.patientPhytheReaction[i]);
+    //       // console.log(this.hasNoReaction);
+    //     } else {
+    //       this.hasNoReaction === false;
+    //     }
+    //   };
+    // },
+    checkAll() {
+      for (var i = 0; i < this.patientPhytheReaction.length ; i++) {
+        if (this.hasNoReaction === true) {
+          this.patientPhytheReaction[i].severityLevel = 0;
+        } else {
+          this.patientPhytheReaction[i].severityLevel = this.patientPhytheReaction.severityLevel;
+        }
+      };
+      // console.log(this.patientPhytheReaction.reaction.severityLevel);
     },
     getOptions(fieldName) {
       var options = [];
@@ -427,6 +458,8 @@ export default {
       physicsInfo.rightThresholdBefore = this.rightThresholdBefore;
       physicsInfo.leftThresholdAfter = this.leftThresholdAfter;
       physicsInfo.rightThresholdAfter = this.rightThresholdAfter;
+      physicsInfo.patientId = this.patientId;
+      physicsInfo.reactionFlag = this.hasNoReaction ? 1 : 0;
       physicsInfo.patientPhytheReaction = deepCopy(this.patientPhytheReaction);
 
       reviseDateFormat(physicsInfo);
@@ -498,6 +531,15 @@ export default {
     max-height: 94%;
     background-color: @background-color;
     overflow: hidden;
+    .check-field {
+      padding-left: 10px;
+      text-align: left;
+      .text {
+        display: inline-block;
+        height: 20px;
+        line-height: 20px;
+      }
+    }
     .title {
       padding: 30px 0 10px;
       font-size: @large-font-size;
