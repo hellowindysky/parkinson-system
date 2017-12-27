@@ -54,7 +54,7 @@
           v-on:editCurrentCard="editPersonRecord(item, COFFEE_HISTORY_MODAL)"
           v-on:viewCurrentCard="viewPersonRecord(item, COFFEE_HISTORY_MODAL)"
           v-on:deleteCurrentCard="deleteCoffeeRecord(item)">
-          <div class="text first-line">{{item.doseInfo}} 杯/周</div>
+          <div class="text first-line">{{item.doseInfo}} {{transform(item, 'unit', coffeeHistoryDictionary)}}/周 </div>
           <div class="text start-time">{{item.startTime}}</div>
         </card>
         <card class="card" :class="devideWidth" :mode="mode" v-for="item in teaHistoryList" :key="item.patientHabitId"
@@ -62,7 +62,7 @@
           v-on:editCurrentCard="editPersonRecord(item, TEA_HISTORY_MODAL)"
           v-on:viewCurrentCard="viewPersonRecord(item, TEA_HISTORY_MODAL)"
           v-on:deleteCurrentCard="deleteTeaRecord(item)">
-          <div class="text first-line">{{item.doseInfo}} 杯/周</div>
+          <div class="text first-line">{{item.doseInfo}} {{transform(item, 'unit', coffeeHistoryDictionary)}}/周</div>
           <div class="text start-time">{{item.startTime}}</div>
         </card>
         <card class="card" :class="devideWidth" :mode="mode" v-for="item in smokeHistoryList" :key="item.patientHabitId"
@@ -78,7 +78,7 @@
           v-on:editCurrentCard="editPersonRecord(item, WINE_HISTORY_MODAL)"
           v-on:viewCurrentCard="viewPersonRecord(item, WINE_HISTORY_MODAL)"
           v-on:deleteCurrentCard="deleteWineRecord(item)">
-          <div class="text first-line">{{item.doseInfo}} mL/周</div>
+          <div class="text first-line">{{item.doseInfo}} {{transform(item, 'unit', coffeeHistoryDictionary)}}/周</div>
           <div class="text start-time">{{item.startTime}}</div>
         </card>
         <card class="card" :class="devideWidth" :mode="mode" v-for="item in exerciseHistoryList" :key="item.patientExerciseId"
@@ -470,8 +470,8 @@ export default {
 
     setTimeout(() => {
       // console.log(this.toxicExposureHistoryList);
-      // console.log(this.medHistoryDictionary);
-      // console.log(this.typeGroup);
+      console.log(this.coffeeHistoryDictionary);
+      console.log(this.typeGroup);
     }, 2000);
   },
   beforeDestroy() {
