@@ -167,7 +167,11 @@
             <span class="name">治疗前右侧运动阈值: </span>
             <span class="value">{{item.rightThresholdBefore}}</span>
           </div>
-           <div class="text line-4">
+          <div class="text line-4" v-if="item.reactionFlag===1">
+            <span class="name">不良反应: </span>
+            <span class="value">{{'无'}}</span>
+          </div>
+           <div class="text line-4" v-else>
             <span class="name">不良反应: </span>
             <span class="value">{{getReaction(item.patientPhytheReaction)}}</span>
           </div>
@@ -368,7 +372,7 @@ export default {
     getReaction(reactionList) {
       var arr = [];
       for (let reaction of reactionList) {
-        if (reaction.severityLevel) {
+        if (Number(reaction.severityLevel) > 1) {
           let reactionText = this.transformTypeGroupId(reaction.reactionType, 'reactionType');
           arr.push(reactionText);
         }
