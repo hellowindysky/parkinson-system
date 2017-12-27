@@ -164,6 +164,24 @@
             <el-input v-model="rightThresholdAfter" placeholder="请输入运动阈值"></el-input>
           </span>
         </div>
+        <div class="field whole-line">
+          <span class="field-name">
+            备注:
+            <span class="required-mark"></span>
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span>{{remarks}}</span>
+          </span>
+          <span class="field-input" v-else>
+            <el-input
+              v-model="remarks"
+              type="textarea"
+              :rows="2"
+              :maxlength="500"
+              placeholder="请输入备注">
+            </el-input>
+          </span>
+        </div>
         </div>
         <div class="seperate-line"></div>
         <div class="check-field">
