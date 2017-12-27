@@ -586,13 +586,13 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addTreatmentEvaluation() {
-      Bus.$emit(this.SHOW_TREATMENTEVALUATION_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
+      Bus.$emit(this.SHOW_TREATMENT_EVALUATION_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
     },
     viewTreatmentEvaluation(item) {
-      Bus.$emit(this.SHOW_TREATMENTEVALUATION_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived);
+      Bus.$emit(this.SHOW_TREATMENT_EVALUATION_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived);
     },
     editTreatmentEvaluation(item) {
-      Bus.$emit(this.SHOW_TREATMENTEVALUATION_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
+      Bus.$emit(this.SHOW_TREATMENT_EVALUATION_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
     },
     deleteTreatmentEvaluation(item) {
       var patientTreatmentEvaluation = {

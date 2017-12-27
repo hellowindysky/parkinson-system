@@ -254,13 +254,13 @@ export default {
       return name;
     },
     addNeurologicCheckRecord() {
-      Bus.$emit(this.SHOW_NERVOU_SYSTEM_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
+      Bus.$emit(this.SHOW_NEUROLOGIC_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
     },
     editNeurologicCheckRecord(item) {
-      Bus.$emit(this.SHOW_NERVOU_SYSTEM_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
+      Bus.$emit(this.SHOW_NEUROLOGIC_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
     },
     viewNeurologicCheckRecord(item) {
-      Bus.$emit(this.SHOW_NERVOU_SYSTEM_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived);
+      Bus.$emit(this.SHOW_NEUROLOGIC_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived);
     },
     deleteNeurologicCheckRecord(item) { // 删除神经检查
       let NeuroId = {

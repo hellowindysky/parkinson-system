@@ -369,11 +369,11 @@ export default {
     }
   },
   mounted() {
-    Bus.$on(this.SHOW_TREATMENTEVALUATION_MODAL, this.showPanel);
+    Bus.$on(this.SHOW_TREATMENT_EVALUATION_MODAL, this.showPanel);
     this.updateScrollbar();
   },
   beforeDestroy() {
-    Bus.$off(this.SHOW_TREATMENTEVALUATION_MODAL);
+    Bus.$off(this.SHOW_TREATMENT_EVALUATION_MODAL);
   }
 };
 </script>

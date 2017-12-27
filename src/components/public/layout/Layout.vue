@@ -20,7 +20,7 @@
     <treatmentEvaluation-modal></treatmentEvaluation-modal>
     <vitalSigns-modal></vitalSigns-modal>
     <dbs-modal></dbs-modal>
-    <nervous-system-modal></nervous-system-modal>
+    <neurologic-modal></neurologic-modal>
     <gene-modal></gene-modal>
     <biochemical-exam-modal></biochemical-exam-modal>
     <neuroelectric-modal></neuroelectric-modal>
@@ -59,7 +59,7 @@ import dbsModal from 'components/views/modal/dbsmodal/DbsModal';
 import physiontherapyModal from 'components/views/modal/physiontherapymodal/PhysiontherapyModal';
 import treatmentEvaluationModal from 'components/views/modal/treatmentEvaluationmodal/TreatmentEvaluationModal';
 import vitalSignsModal from 'components/views/modal/vitalSignsmodal/VitalSignsModal';
-import nervousSystemModal from 'components/views/modal/nervoussystemmodal/NervousSystemModal';
+import neurologicModal from 'components/views/modal/neurologicmodal/NeurologicModal';
 import geneModal from 'components/views/modal/genemodal/GeneModal';
 import biochemicalExamModal from 'components/views/modal/biochemicalexammodal/BiochemicalExamModal';
 import neuroelectricModal from 'components/views/modal/neuroelectricmodal/NeuroelectricModal';
@@ -101,7 +101,7 @@ export default {
     physiontherapyModal,
     treatmentEvaluationModal,
     vitalSignsModal,
-    nervousSystemModal,
+    neurologicModal,
     geneModal,
     biochemicalExamModal,
     neuroelectricModal,

@@ -209,10 +209,10 @@ export default {
     }
   },
   mounted() {
-    Bus.$on(this.SHOW_NERVOU_SYSTEM_MODAL, this.showPanel);
+    Bus.$on(this.SHOW_NEUROLOGIC_MODAL, this.showPanel);
   },
   beforeDestroy() {
-    Bus.$off(this.SHOW_NERVOU_SYSTEM_MODAL, this.showPanel);
+    Bus.$off(this.SHOW_NEUROLOGIC_MODAL, this.showPanel);
   }
 };
 </script>
