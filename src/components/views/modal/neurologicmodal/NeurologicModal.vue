@@ -49,7 +49,24 @@
         </span>
       </div>
 
-      <div class="seperate-line"></div>
+      <h3 class="form-title" v-if="tableMode===SON_OPEN">currentTableName</h3>
+      <div class="form-wrapper" ref="formWrapper">
+        <table class="form" v-if="tableMode===FATHER_OPEN">
+          <tr class="row first-row">
+            <td class="col col-width-10">
+              序号
+            </td>
+            <td class="col col-width-30">
+              检查项
+            </td>
+            <td class="col col-width-15">
+              操作
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- <div class="seperate-line"></div> -->
       <div class="button cancel-button" @click="cancel">取消</div>
       <div class="button edit-button" @click="switchToEditingMode" v-if="mode===VIEW_CURRENT_CARD && canEdit">编辑</div>
       <div class="button submit-button" @click="submit" v-else-if="mode!==VIEW_CURRENT_CARD">确定</div>
@@ -71,16 +88,17 @@ export default {
     return {
       displayModal: false,
       mode: '',
-      modalType: '',
-      subModalType: '',
-      disableChangingSubModal: false,
+      lockSubmitButton: false,
+      showEdit: true,
+
+      FATHER_OPEN: 'fatherOpen',
+      SON_OPEN: 'sonOpen',
+      tableMode: '',
+
       copyInfo: {},
       warningResults: {
         checkType: ''
-      },
-      spephysicalType: [],
-      lockSubmitButton: false,
-      showEdit: true
+      }
     };
   },
   computed: {
@@ -109,6 +127,7 @@ export default {
       this.mode = cardOperation;
       this.showEdit = showEdit;
 
+      this.tableMode = this.FATHER_OPEN;
       this.initCopyInfo();
       vueCopy(item, this.copyInfo);
 
@@ -205,18 +224,22 @@ export default {
         this.warningResults[key] = null;
       }
     },
-    chooseSubModal() {
-      if (this.subModalType !== '') {
-        this.warningResults['subModal'] = null;
-      }
-    },
     updateScrollbar() {
       this.$nextTick(() => {
-        Ps.destroy(this.$refs.neurologicModal);
-        Ps.initialize(this.$refs.neurologicModal, {
-          wheelSpeed: 1,
-          minScrollbarLength: 40
-        });
+        if (this.$refs.formWrapper) {
+          Ps.destroy(this.$refs.formWrapper);
+          Ps.initialize(this.$refs.formWrapper, {
+            wheelSpeed: 1,
+            minScrollbarLength: 40
+          });
+        }
+        if (this.$refs.neurologicModal) {
+          Ps.destroy(this.$refs.neurologicModal);
+          Ps.initialize(this.$refs.neurologicModal, {
+            wheelSpeed: 1,
+            minScrollbarLength: 40
+          });
+        }
       });
     }
   },
@@ -263,6 +286,7 @@ export default {
       min-height: 45px;
       vertical-align: top;
       text-align: left;
+      transform: translateX(20px);
       .field-name {
         display: inline-block;
         position: absolute;
@@ -321,6 +345,122 @@ export default {
         }
         .warning .el-input__inner {
           border: 1px solid red;
+        }
+      }
+    }
+    .form-title {
+      margin: 0;
+      padding: 0;
+      line-height: 40px;
+      font-size: @normal-font-size;
+      color: @font-color;
+      text-align: center;
+    }
+    .form-wrapper {
+      position: relative;
+      margin-top: 5px;
+      max-height: 320px;
+      height: auto;
+      width: 100%;
+      overflow: hidden;
+      box-sizing: border-box;
+      border: 1px solid @inverse-font-color;
+      .form {
+        position: relative;
+        margin-bottom: 5px;
+        width: 100%;
+        border-spacing: 0;
+        font-size: 14px;
+        &.small-font {
+          font-size: @small-font-size !important;
+        }
+        .row {
+          height: 40px;
+          &.first-row {
+            background-color: @screen-color;
+            height: 30px;
+            .col {
+              padding: 0 3px;
+            }
+          }
+          .col {
+            text-align: center;
+            padding: 0;
+            margin: 0;
+            .text-button {
+              margin: 0 5px;
+              color: @theme-color;
+              line-height: 20px;
+              border-bottom: 1px solid @theme-color;
+              cursor: pointer;
+              &:hover {
+                opacity: 0.8;
+              }
+            }
+            &.col-width-5 {
+              width: 5%;
+              min-width: 40px;
+            }
+            &.col-width-10 {
+              width: 10%;
+            }
+            &.col-width-15 {
+              width: 15%;
+            }
+            &.col-width-20 {
+              width: 20%;
+            }
+            &.col-width-25 {
+              width: 25%;
+            }
+            &.col-width-30 {
+              width: 30%;
+            }
+            &.col-width-18 {
+              width: 18%;
+            }
+            &.col-width-7 {
+              width: 7%;
+            }
+            .required-mark {
+              color: red;
+              font-size: 20px;
+              vertical-align: middle;
+            }
+            .el-input {
+              margin-left: 2%;
+              width: 90%;
+              .el-input__inner {
+                height: 30px;
+                border: none;
+                background-color: @screen-color;
+                text-align: center;
+              }
+            }
+            .warning .el-input__inner {
+              border: 1px solid red;
+            }
+          }
+        }
+      }
+      .ps__scrollbar-y-rail {
+        position: absolute;
+        padding: 0;
+        top: 0;
+        width: 10px !important;
+        right: 0;
+        box-sizing: border-box;
+        opacity: 0.3;
+        transition: opacity 0.3s;
+        .ps__scrollbar-y {
+          position: relative;
+          border-radius: 0 !important;
+          background-color: #aaa;
+        }
+      }
+      &:hover {
+        .ps__scrollbar-y-rail {
+          opacity: 0.6;
         }
       }
     }
