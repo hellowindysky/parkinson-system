@@ -76,11 +76,7 @@
           <span class="warning-text">{{warningResults.situationRemark}}</span>
           <el-input v-model="situationRemark" placeholder="请输入治疗后情况描述" :class="{'warning': warningResults.situationRemark}" type="textarea" @change="updateWarning('situationRemark')" :maxlength="500"></el-input>
         </span>
-<<<<<<< HEAD
-        </div> 
-=======
       </div>
->>>>>>> e445afc993200e7b4e218bfcfa5c6505ade19b72
         <div class="seperate-line"></div>
         <div class="moveLeft">
              无不良反应: 

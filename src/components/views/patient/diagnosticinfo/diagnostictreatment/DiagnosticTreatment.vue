@@ -163,15 +163,7 @@
             <span class="name">治疗前右侧运动阈值: </span>
             <span class="value">{{item.rightThresholdBefore}}</span>
           </div>
-<<<<<<< HEAD
-          <div class="text line-4" v-if="item.reactionFlag===1">
-            <span class="name">不良反应: </span>
-            <span class="value">{{'无'}}</span>
-          </div>
-           <div class="text line-4" v-else>
-=======
            <div class="text line-3">
->>>>>>> e445afc993200e7b4e218bfcfa5c6505ade19b72
             <span class="name">不良反应: </span>
             <span class="value">{{getReaction(item.patientPhytheReaction)}}</span>
           </div>
