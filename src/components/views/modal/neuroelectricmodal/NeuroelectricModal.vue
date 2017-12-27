@@ -3,7 +3,22 @@
     <div class="emg-modal" ref="emgModal">
       <h3 class="title">{{title}}</h3>
       <div class="content">
-        <div class="field">
+        <div class="field whole-line">
+          <span class="field-name long-field-name">
+            神经电检查类型
+            <span class="required-mark">*</span>
+          </span>
+          <span class="field-input long-field-name">
+            <span class="warning-text">{{warningResults.elecExamType}}</span>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{getFieldValue(copyInfo.elecExamType, 'elecExam')}}</span>
+            <el-select v-else placeholder="请选择神经电生理检查类型" v-model="copyInfo.elecExamType" @change="chooseElecExamType"
+              :class="{'warning': warningResults.elecExamType}" :disabled="mode!==ADD_NEW_CARD" size="small">
+              <el-option v-for="option in getOptions('elecExam')" :key="option.code" :label="option.name" :value="option.code" ></el-option>
+            </el-select>
+          </span>
+        </div>
+        <div class="seperate-line"></div>
+        <!-- <div class="field" v-if="copyInfo.elecExamType===1">
           <span class="field-name">
             肌电图名称:
             <span class="required-mark">*</span>
@@ -12,23 +27,23 @@
             <span class="warning-text">{{warningResults.elecTroGramId}}</span>
             <span v-if="mode===VIEW_CURRENT_CARD">{{getFieldValue(copyInfo.elecTroGramId, 'emgName')}}</span>
             <el-select v-else placeholder="请选择肌电图名称" v-model="copyInfo.elecTroGramId" :class="{'warning': warningResults.elecTroGramId}"
-              :disabled="mode!==ADD_NEW_CARD" @change="selectEmg">
+              :disabled="mode!==ADD_NEW_CARD" @change="selectEmg" size="small">
               <el-option v-for="emg in emgTypeList" :key="emg.id" :label="emg.emgName" :value="emg.id" ></el-option>
             </el-select>
           </span>
-        </div>
-        <div class="field">
+        </div> -->
+        <div class="field" v-if="copyInfo.elecExamType===1">
           <span class="field-name">
-            肌电图类型:
+            肌电图类型
           </span>
           <span class="field-input">
             <span class="warning-text"></span>
             <span>{{getFieldValue(copyInfo.etgType, 'emgType')}}</span>
           </span>
         </div>
-        <div class="field whole-line">
+        <div class="field whole-line" v-if="copyInfo.elecExamType===1">
           <span class="field-name">
-            检查结果:
+            检查结果
           </span>
           <span class="field-input">
             <span class="warning-text"></span>
@@ -36,9 +51,9 @@
             <el-input v-else type="textarea" :rows="2" v-model="copyInfo.patEleResule" placeholder="请输入检查结果"></el-input>
           </span>
         </div>
-        <div class="field whole-line">
+        <div class="field whole-line" v-if="copyInfo.elecExamType===1">
           <span class="field-name">
-            提示内容:
+            提示内容
           </span>
           <span class="field-input">
             <span class="warning-text"></span>
@@ -46,8 +61,78 @@
             <el-input v-else type="textarea" :rows="2" v-model="copyInfo.patEleHint" placeholder="请输入提示信息"></el-input>
           </span>
         </div>
+
+        <div class="field" v-if="copyInfo.elecExamType===2">
+          <span class="field-name">
+            记录开始
+          </span>
+          <span class="field-input">
+            <span class="warning-text"></span>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.recordStart}}</span>
+            <el-date-picker v-else type="datetime" v-model="copyInfo.recordStart" placeholder="请输入记录开始时间"></el-date-picker>
+          </span>
+        </div>
+        <div class="field" v-if="copyInfo.elecExamType===2">
+          <span class="field-name">
+            身高 (cm)
+          </span>
+          <span class="field-input">
+            <span class="warning-text"></span>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.height}}</span>
+            <el-input v-else v-model="copyInfo.height" placeholder="请输入身高"></el-input>
+          </span>
+        </div>
+        <div class="field" v-if="copyInfo.elecExamType===2">
+          <span class="field-name">
+            记录结束
+          </span>
+          <span class="field-input">
+            <span class="warning-text"></span>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.recordEnd}}</span>
+            <el-date-picker v-else type="datetime" v-model="copyInfo.recordEnd" placeholder="请输入记录结束时间"></el-date-picker>
+          </span>
+        </div>
+        <div class="field" v-if="copyInfo.elecExamType===2">
+          <span class="field-name">
+            体重 (kg)
+          </span>
+          <span class="field-input">
+            <span class="warning-text"></span>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.weight}}</span>
+            <el-input v-else v-model="copyInfo.weight" placeholder="请输入体重"></el-input>
+          </span>
+        </div>
+        <div class="field" v-if="copyInfo.elecExamType===2">
+          <span class="field-name">
+            总记录时间
+          </span>
+          <span class="field-input">
+            <span class="warning-text"></span>
+            <span>{{totalRecordTime}}</span>
+          </span>
+        </div>
+        <div class="field" v-if="copyInfo.elecExamType===2">
+          <span class="field-name">
+            肥胖指数 (BMI)
+          </span>
+          <span class="field-input">
+            <span class="warning-text"></span>
+            <span>{{BMIIndex}}</span>
+          </span>
+        </div>
+        <div class="field whole-line" v-if="copyInfo.elecExamType===2">
+          <span class="field-name">
+            检查结果
+          </span>
+          <span class="field-input">
+            <span class="warning-text"></span>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.examResult}}</span>
+            <el-input v-else type="textarea" :rows="2" v-model="copyInfo.examResult" placeholder="请输入检查结果"></el-input>
+          </span>
+        </div>
+
         <h3 class="form-title" v-if="tableMode===SON_OPEN">{{currentTableName}}</h3>
-        <div class="form-wrapper" :class="{'father-open':tableMode==='' && mode===ADD_NEW_CARD}" ref="formWrapper">
+        <div class="form-wrapper" ref="formWrapper">
           <table class="form" v-if="tableMode===FATHER_OPEN">
             <tr class="row first-row">
               <td class="col col-width-10">
@@ -60,7 +145,7 @@
                 操作
               </td>
             </tr>
-            <tr class="row" v-for="(table, index) in emgTableList">
+            <tr class="row" v-for="(table, index) in emgTableList" v-if="copyInfo.elecExamType===1">
               <td class="col col-width-10">
                 {{index+1}}
               </td>
@@ -70,6 +155,18 @@
               <td class="col col-width-15">
                 <span class="text-button" v-if="mode===VIEW_CURRENT_CARD" @click="selectTable(table.name)">查看</span>
                 <span class="text-button" v-else-if="mode!==VIEW_CURRENT_CARD" @click="selectTable(table.name)">编辑</span>
+              </td>
+            </tr>
+            <tr class="row" v-for="(type, index) in sleepMonitoringTypes" v-if="copyInfo.elecExamType===2">
+              <td class="col col-width-10">
+                {{index+1}}
+              </td>
+              <td class="col col-width-30">
+                {{type.typeName}}
+              </td>
+              <td class="col col-width-15">
+                <span class="text-button" v-if="mode===VIEW_CURRENT_CARD" @click="selectSleepMonitoringSubTable(type.typeCode)">查看</span>
+                <span class="text-button" v-else-if="mode!==VIEW_CURRENT_CARD" @click="selectSleepMonitoringSubTable(type.typeCode)">编辑</span>
               </td>
             </tr>
           </table>
@@ -178,7 +275,7 @@
             </tr>
           </table>
           <table class="form" :class="{'small-font':tableMode===SON_OPEN}" v-else-if="tableMode===SON_OPEN && currentTable===SEN_NER_COND_ITEM">
-             <tr class="row first-row">
+            <tr class="row first-row">
               <td class="col col-width-5">
                 序号
               </td>
@@ -415,14 +512,70 @@
               </td>
             </tr>
           </table>
+
+          <table class="form" :class="{'small-font':tableMode===SON_OPEN}"
+            v-if="tableMode===SON_OPEN && currentTable===SLEEP_MONITORING_ITEM"
+            v-for="(group, groupIndex) in sleepMonitoringItemGroups">
+            <tr class="row" v-if="group.colItems.length===0"
+              v-for="row in rearrangeRows(group.rowItems)">
+              <td class="col col-width-10">
+                {{row[0].fieldName}}
+              </td>
+              <td class="col col-width-10">
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue}}</span>
+                <el-input v-else-if="row[0].uiType===1" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"></el-input>
+                <el-select v-else-if="row[0].uiType===3" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"></el-select>
+                <el-date-picker v-else-if="row[0].uiType===6" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"></el-date-picker>
+                <el-date-picker v-else-if="row[0].uiType===7" type="datetime" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"></el-date-picker>
+                <el-time-select v-else-if="row[0].uiType===8" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"
+                  :picker-options="{start:'00:00', end:'24:00'}"></el-time-select>
+              </td>
+              <td class="col col-width-10" v-if="row.length===2">
+                {{row[1].fieldName}}
+              </td>
+              <td class="col col-width-10" v-if="row.length===2">
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue}}</span>
+                <el-input v-else-if="row[1].uiType===1" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"></el-input>
+                <el-select v-else-if="row[1].uiType===3" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"></el-select>
+                <el-date-picker v-else-if="row[1].uiType===6" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"></el-date-picker>
+                <el-date-picker v-else-if="row[1].uiType===7" type="datetime" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"></el-date-picker>
+                <el-time-select v-else-if="row[1].uiType===8" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"
+                  :picker-options="{start:'00:00', end:'24:00'}"></el-time-select>
+              </td>
+            </tr>
+
+            <tr class="row first-row" v-if="group.colItems.length>0">
+              <td class="col col-width-10"></td>
+              <td class="col col-width-10" v-for="col in group.colItems">
+                {{col.fieldName}}
+              </td>
+            </tr>
+            <tr class="row" v-for="row in group.rowItems" v-if="group.colItems.length>0">
+              <td class="col col-width-10">
+                {{row.fieldName}}
+              </td>
+              <td class="col col-width-10" v-for="col in group.colItems">
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue}}</span>
+                <el-input v-else-if="col.uiType===1" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"></el-input>
+                <el-select v-if="col.uiType===3" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"></el-select>
+                <el-date-picker v-if="col.uiType===6" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"></el-date-picker>
+                <el-date-picker v-if="col.uiType===7" type="datetime" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"></el-date-picker>
+                <el-time-select v-if="col.uiType===8" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"
+                  :picker-options="{start:'00:00', end:'24:00'}"></el-time-select>
+              </td>
+            </tr>
+
+          </table>
         </div>
       </div>
       <div class="button cancel-button" v-if="tableMode!==SON_OPEN" @click="cancel">取消</div>
-      <div class="button cancel-button" v-if="tableMode===SON_OPEN && mode===VIEW_CURRENT_CARD" @click="closeEmgTable">返回</div>
+      <div class="button cancel-button" v-if="tableMode===SON_OPEN && mode===VIEW_CURRENT_CARD" @click="closeSubTable">返回</div>
       <div class="button submit-button" v-if="mode===VIEW_CURRENT_CARD && canEdit" @click="switchToEditingMode">编辑</div>
       <div class="button submit-button" v-if="tableMode===FATHER_OPEN && mode!==VIEW_CURRENT_CARD" @click="submit">确认</div>
-      <div class="button reset-button" v-if="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD" @click="resetEmgTableData">重置</div>
-      <div class="button submit-button" v-if="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD" @click="closeEmgTable">完成</div>
+
+      <div class="button reset-button" v-if="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD && copyInfo.elecExamType===1" @click="resetEmgTableData">重置</div>
+      <div class="button reset-button" v-if="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD && copyInfo.elecExamType===2" @click="resetSleepMonitoringSubTable">重置</div>
+      <div class="button submit-button" v-if="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD" @click="closeSubTable">完成</div>
     </div>
   </div>
 </template>
@@ -431,8 +584,8 @@
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import { mapGetters } from 'vuex';
-import { vueCopy } from 'utils/helper';
-import { addEmg, modEmg } from 'api/patient.js';
+import { vueCopy, deepCopy } from 'utils/helper';
+import { addEmg, modEmg, addSleepMonitoring, modSleepMonitoring } from 'api/patient.js';
 import Util from 'utils/util.js';
 
 export default {
@@ -444,15 +597,20 @@ export default {
       displayModal: false,
       mode: '',
       lockSubmitButton: false,
+
       F_WAV_STU_ITEM: 'fwavStuItem',
       INT_PAT_ANA_ITEM: 'intPatAnaItem',
       MOT_NER_COND_ITEM: 'motNerCondItem',
       MOT_UNI_ANA_ITEM: 'motUniAnaItem',
       NEED_EXAM_ITEM: 'needExamItem',
       SEN_NER_COND_ITEM: 'senNerCondItem',
+
+      SLEEP_MONITORING_ITEM: 'sleepMonitoringItem',
+
       warningResults: {
-        elecTroGramId: ''
+        elecExamType: ''
       },
+
       copyInfo: {},
       targetEmg: {},
       currentTable: '',
@@ -483,37 +641,109 @@ export default {
           cnName: '感觉神经传导项'
         }
       ],
+
+      sleepMonitoringSubTableCode: '',
+      sleepMonitoringTables: [],
+
       showEdit: true
     };
   },
   computed: {
     ...mapGetters([
       'emgTypeList',
-      'typeGroup'
+      'typeGroup',
+      'typeField'
     ]),
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
-        return '新增肌电图';
+        return '新增神经电生理检查';
       } else {
-        return '肌电图';
+        return '神经电生理检查';
       }
     },
     currentTableName() {
-      if (this.currentTable === this.F_WAV_STU_ITEM) {
-        return 'F波研究';
-      } else if (this.currentTable === this.INT_PAT_ANA_ITEM) {
-        return '干扰项分析';
-      } else if (this.currentTable === this.MOT_NER_COND_ITEM) {
-        return '运动神经传导项';
-      } else if (this.currentTable === this.MOT_UNI_ANA_ITEM) {
-        return '运动单元分析';
-      } else if (this.currentTable === this.NEED_EXAM_ITEM) {
-        return '针刺肌电图检查';
-      } else if (this.currentTable === this.SEN_NER_COND_ITEM) {
-        return '感觉神经传导项';
+      if (this.copyInfo.elecExamType === 1) {
+        if (this.currentTable === this.F_WAV_STU_ITEM) {
+          return 'F波研究';
+        } else if (this.currentTable === this.INT_PAT_ANA_ITEM) {
+          return '干扰项分析';
+        } else if (this.currentTable === this.MOT_NER_COND_ITEM) {
+          return '运动神经传导项';
+        } else if (this.currentTable === this.MOT_UNI_ANA_ITEM) {
+          return '运动单元分析';
+        } else if (this.currentTable === this.NEED_EXAM_ITEM) {
+          return '针刺肌电图检查';
+        } else if (this.currentTable === this.SEN_NER_COND_ITEM) {
+          return '感觉神经传导项';
+        } else {
+          return '';
+        }
+      } else if (this.copyInfo.elecExamType === 2) {
+        var subType = Util.getElement('typeCode', this.sleepMonitoringSubTableCode, this.sleepMonitoringTypes);
+        return subType.typeName ? subType.typeName : '';
       } else {
         return '';
       }
+
+    },
+    sleepMonitoringTypes() {
+      var types = Util.getElement('typegroupcode', 'elecExam', this.typeGroup).types;
+      types = types ? types : [];
+      var targetType = Util.getElement('typeCode', 2, types);
+      return targetType && targetType.childType ? targetType.childType : [];
+    },
+    totalRecordTime() {
+      var fromTime = new Date(this.copyInfo.recordStart);
+      var toTime = new Date(this.copyInfo.recordEnd);
+      var interval = toTime - fromTime;
+      if (interval >= 0) {
+        interval = parseInt(interval / 1000, 10);
+        var hour = parseInt(interval / 3600, 10);
+        var minute = parseInt((interval % 3600) / 60, 10);
+        minute = minute >= 10 ? minute : '0' + minute;
+        var second = parseInt((interval % 60) / 60, 10);
+        second = second >= 10 ? second : '0' + second;
+        this.recordTotal = hour + ':' + minute + ':' + second;
+      } else {
+        this.recordTotal = '0:00:00';
+      }
+      return this.recordTotal;
+    },
+    BMIIndex() {
+      let height = this.copyInfo.height;
+      let weight = this.copyInfo.weight;
+      if (weight !== undefined && height !== undefined && Number(height) > 0 && Number(weight) > 0) {
+        var result = Number(weight) / Math.pow(Number(height) / 100, 2);
+        var evaluation = '';
+        if (result < 18.5) {
+          evaluation = '过轻';
+        } else if (result < 24) {
+          evaluation = '正常';
+        } else if (result < 28) {
+          evaluation = '过重';
+        } else if (result < 32) {
+          evaluation = '肥胖';
+        } else {
+          evaluation = '非常肥胖';
+        }
+        return result.toFixed(2) + ' (' + evaluation + ')';
+      } else {
+        return '';
+      }
+    },
+    sleepMonitoringItemGroups() {
+      var items = this.typeField.filter(item => {
+        return Number(item.typeCode) === this.sleepMonitoringSubTableCode &&
+        item.typeGroupCode === 'elecExam';
+      });
+      var groups = this.filterItemsIntoGroups(items);
+      var resultGroups = [];
+      for (let i = 0; i < groups.length; i += 1) {
+        resultGroups.push({});
+        resultGroups[i].rowItems = groups[i].filter(item => item.fieldType === 0);
+        resultGroups[i].colItems = groups[i].filter(item => item.fieldType === 1);
+      }
+      return resultGroups;
     },
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
@@ -528,8 +758,22 @@ export default {
       this.displayModal = true;
       this.mode = cardOperation;
       this.tableMode = this.FATHER_OPEN;
-      // console.log('item: ', item);
       this.showEdit = showEdit;
+      console.log('item: ', item);
+      // console.log('emgTypeList: ', this.emgTypeList);
+      // console.log('typeField: ', this.typeField);
+
+      this.initCopyInfo();
+
+      vueCopy(item, this.copyInfo);
+      this.copyInfo.elecExamType = this.copyInfo.elecExamType ? Number(this.copyInfo.elecExamType) : '';
+
+      this.selectEmg();
+      this.updateScrollbar();
+      this.clearWarning();
+    },
+    initCopyInfo() {
+      this.$set(this.copyInfo, 'elecExamType', '');
 
       this.$set(this.copyInfo, 'etgName', '');
       this.$set(this.copyInfo, 'elecTroGramId', '');
@@ -543,22 +787,91 @@ export default {
       this.$set(this.copyInfo, 'patientIntPatAnaItem', []);
       this.$set(this.copyInfo, 'patientSenNerCondResu', []);
 
-      if (this.mode === this.ADD_NEW_CARD) {
-        this.$set(this.copyInfo, 'pcaseId', this.$route.params.caseId);
-        this.$set(this.copyInfo, 'pinfoId', this.$route.params.id);
-      } else {
-        vueCopy(item, this.copyInfo);
-      }
+      this.$set(this.copyInfo, 'recordStart', '');
+      this.$set(this.copyInfo, 'recordEnd', '');
+      this.$set(this.copyInfo, 'recordTotal', '');
+      this.$set(this.copyInfo, 'height', '');
+      this.$set(this.copyInfo, 'weight', '');
+      this.$set(this.copyInfo, 'examResult', '');
+      this.$set(this.copyInfo, 'typeGroupCode', 'elecExam');
 
-      this.selectEmg();
-      this.updateScrollbar();
-      this.clearWarning();
+      this.$set(this.copyInfo, 'patientFieldCode', {});
+      for (let type of this.sleepMonitoringTypes) {
+        let typeCode = type.typeCode;
+        this.$set(this.copyInfo.patientFieldCode, typeCode, {});
+
+        let items = this.typeField.filter(item => {
+          return Number(item.typeCode) === typeCode &&
+          item.typeGroupCode === 'elecExam';
+        });
+        let groups = this.filterItemsIntoGroups(items);
+        let resultGroups = [];
+        for (let i = 0; i < groups.length; i += 1) {
+          resultGroups.push({});
+          resultGroups[i].rowItems = groups[i].filter(item => item.fieldType === 0);
+          resultGroups[i].colItems = groups[i].filter(item => item.fieldType === 1);
+        }
+
+        for (let group of resultGroups) {
+          for (let rowItem of group.rowItems) {
+            var rowItemCode = rowItem.id;
+            this.$set(this.copyInfo.patientFieldCode[typeCode], rowItemCode, {});
+
+            let colItems = group.colItems;
+            if (colItems.length === 0) {
+              // 特殊情况：如果没有列，则新建一个code为 0 的虚拟列
+              colItems = [{id: 0}];
+            }
+
+            for (let colItem of colItems) {
+              var colItemCode = colItem.id;
+              this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode], colItemCode, {});
+
+              this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode][colItemCode], 'typeGroupCode', 'elecExam');
+              this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode][colItemCode], 'typeCode', typeCode);
+              this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode][colItemCode], 'rowFieldId', rowItemCode);
+              this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode][colItemCode], 'columnFieldId', colItemCode);
+              this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode][colItemCode], 'fieldValue', '');
+            }
+          }
+        }
+      }
+    },
+    filterItemsIntoGroups(items) {
+      // 根据 item 的 groupNo 属性，装到不同的子数组里面，最后返回最外层的数组
+      var groups = [];
+      var hasSameGroupNumberBefore = false;
+
+      for (let item of items) {
+        hasSameGroupNumberBefore = false;
+        for (let i = 0; i < groups.length; i++) {
+          if (groups[i][0].groupNo === item.groupNo) {
+            hasSameGroupNumberBefore = true;
+            groups[i].push(item);
+          }
+        }
+        if (!hasSameGroupNumberBefore) {
+          let newGroup = [];
+          newGroup.push(item);
+          groups.push(newGroup);
+        }
+      }
+      return groups;
+    },
+    chooseElecExamType() {
+      if (this.copyInfo.elecExamType && Number(this.copyInfo.elecExamType) === 1) {
+        // 肌电图本来也是个列表，只是目前这里面只有“肌电图”这一个选项，所以这里就默认直接选上了
+        // 而且这个下拉框在 2.1 版本的更新中被去掉了，现在选择了神经电检查下的肌电图，就默认选中 emgTypeList 的第一项
+        this.copyInfo.elecTroGramId = this.emgTypeList[0].id;
+        this.selectEmg();
+        this.updateWarning('elecExamType');
+      }
     },
     updateWarning(fieldName) {
       if (this.copyInfo[fieldName] === undefined || this.copyInfo[fieldName] === '') {
-        this.warningResults[fieldName] = '必填项';
+        this.$set(this.warningResults, fieldName, '必填项');
       } else {
-        this.warningResults[fieldName] = '';
+        this.$set(this.warningResults, fieldName, '');
       }
     },
     clearWarning() {
@@ -574,11 +887,6 @@ export default {
       this.$set(this.copyInfo, 'etgType', emg.emgType);
       if (this.mode === this.ADD_NEW_CARD) {
         this.tableMode = this.FATHER_OPEN;
-      }
-      // console.log('emgTypeList:', this.emgTypeList);
-
-      if (emg.emgName) {
-        this.warningResults.elecTroGramId = '';
       }
 
       vueCopy(emg, this.targetEmg);
@@ -646,6 +954,30 @@ export default {
       }
       this.updateScrollbar();
       this.$refs.formWrapper.scrollTop = 0;
+    },
+    selectSleepMonitoringSubTable(typeCode) {
+      this.sleepMonitoringSubTableCode = typeCode;
+      this.currentTable = this.SLEEP_MONITORING_ITEM;
+
+      // 取到这个值之后就要关闭父表格，打开子表格
+      this.tableMode = this.SON_OPEN;
+      this.updateScrollbar();
+      this.$refs.formWrapper.scrollTop = 0;
+    },
+    rearrangeRows(items) {
+      // 因为有的睡眠监测子表格没有明确的列信息，只有行信息，而且每一行只有字段名字和字段值
+      // 因此需要重新排列此表格，一排有4列，分别为字段1的名字，字段1的值，字段2的名字，字段2的值
+      var newArray = [];
+      var subArray = [];
+      var length = items.length;
+      for (var i = 0; i < length; i++) {
+        subArray.push(items[i]);
+        if (i % 2 === 1 || i === length - 1) {
+          newArray.push(subArray);
+          subArray = [];
+        }
+      }
+      return newArray;
     },
     resetEmgTableData() {
       switch (this.currentTable) {
@@ -726,10 +1058,10 @@ export default {
           for (let i = 0; i < this.emgTable.length; i++) {
             this.$set(this.copyInfo.patientMotNerCondResu, i, {});
             this.$set(this.copyInfo.patientMotNerCondResu[i], 'motNerItemId', this.emgTable[i].id);
-            this.$set(this.copyInfo['patientMotNerCondResu'][i], 'amplitude', '');
-            this.$set(this.copyInfo['patientMotNerCondResu'][i], 'duration', '');
-            this.$set(this.copyInfo['patientMotNerCondResu'][i], 'phases', '');
-            this.$set(this.copyInfo['patientMotNerCondResu'][i], 'spikeDuration', '');
+            this.$set(this.copyInfo.patientMotNerCondResu[i], 'amplitude', '');
+            this.$set(this.copyInfo.patientMotNerCondResu[i], 'duration', '');
+            this.$set(this.copyInfo.patientMotNerCondResu[i], 'phases', '');
+            this.$set(this.copyInfo.patientMotNerCondResu[i], 'spikeDuration', '');
           }
           break;
         case this.INT_PAT_ANA_ITEM:
@@ -758,10 +1090,30 @@ export default {
           break;
       }
     },
-    closeEmgTable() {
+    resetSleepMonitoringSubTable() {
+      let typeCode = this.sleepMonitoringSubTableCode;
+      for (var rowFieldId in this.copyInfo.patientFieldCode[typeCode]) {
+        for (var columnFieldId in this.copyInfo.patientFieldCode[typeCode][rowFieldId]) {
+          this.copyInfo.patientFieldCode[typeCode][rowFieldId][columnFieldId].fieldValue = '';
+        }
+      }
+    },
+    closeSubTable() {
       this.tableMode = this.FATHER_OPEN;
       this.updateScrollbar();
       this.$refs.formWrapper.scrollTop = 0;
+    },
+    getOptions(fieldName) {
+      var options = [];
+      var types = Util.getElement('typegroupcode', fieldName, this.typeGroup).types;
+      types = types ? types : [];
+      for (let type of types) {
+        options.push({
+          name: type.typeName,
+          code: type.typeCode
+        });
+      };
+      return options;
     },
     cancel() {
       this.lockSubmitButton = false;
@@ -779,7 +1131,7 @@ export default {
       }
       this.lockSubmitButton = true;
 
-      this.updateWarning('elecTroGramId');
+      this.updateWarning('elecExamType');
       for (var p in this.warningResults) {
         if (this.warningResults.hasOwnProperty(p) && this.warningResults[p] !== '') {
           this.lockSubmitButton = false;
@@ -787,20 +1139,45 @@ export default {
         }
       }
 
-      let submitData = this.copyInfo;
-      if (this.mode === this.ADD_NEW_CARD) {
-        // 新增肌电图
-        addEmg(submitData).then(() => {
-          Bus.$emit(this.UPDATE_CASE_INFO);
-          this.cancel();
-        }, this._handleError);
-      } else if (this.mode === this.EDIT_CURRENT_CARD) {
-        // 修改肌电图
-        modEmg(submitData).then(() => {
-          Bus.$emit(this.UPDATE_CASE_INFO);
-          this.cancel();
-        }, this._handleError);
+      let submitData = deepCopy(this.copyInfo);
+
+      if (submitData.elecExamType === 1) {
+        submitData.pinfoId = this.$route.params.id;
+        submitData.pcaseId = this.$route.params.caseId;
+        if (this.mode === this.ADD_NEW_CARD) {
+          // 新增肌电图
+          addEmg(submitData).then(() => {
+            Bus.$emit(this.UPDATE_CASE_INFO);
+            this.cancel();
+          }, this._handleError);
+        } else if (this.mode === this.EDIT_CURRENT_CARD) {
+          // 修改肌电图
+          modEmg(submitData).then(() => {
+            Bus.$emit(this.UPDATE_CASE_INFO);
+            this.cancel();
+          }, this._handleError);
+        }
+
+      } else if (submitData.elecExamType === 2) {
+        submitData.patientId = this.$route.params.id;
+        submitData.patientCaseId = this.$route.params.caseId;
+        submitData.recordStart = Util.simplifyTime(submitData.recordStart);
+        submitData.recordEnd = Util.simplifyTime(submitData.recordEnd);
+        if (this.mode === this.ADD_NEW_CARD) {
+          // 新增睡眠监测
+          addSleepMonitoring(submitData).then(() => {
+            Bus.$emit(this.UPDATE_CASE_INFO);
+            this.cancel();
+          }, this._handleError);
+        } else if (this.mode === this.EDIT_CURRENT_CARD) {
+          // 修改睡眠监测
+          modSleepMonitoring(submitData).then(() => {
+            Bus.$emit(this.UPDATE_CASE_INFO);
+            this.cancel();
+          }, this._handleError);
+        }
       }
+
     },
     _handleError(error) {
       console.log(error);
@@ -817,6 +1194,7 @@ export default {
     },
     getFieldValue(code, fieldName) {
       let mapObj = {
+        'elecExam': 'elecExam',
         'emgType': 'eleType',
         'nerveType': 'nervType',
         'muscle': 'muscleType'
@@ -855,6 +1233,8 @@ export default {
     }
   },
   mounted() {
+    this.initCopyInfo();
+
     this.updateScrollbar();
     Bus.$on(this.SHOW_NEUROELECTRIC_MODAL, this.showPanel);
     // 监听折叠面板，如果发生状态的改变，就需要重新计算滚动区域的高度
@@ -882,15 +1262,7 @@ export default {
 @field-height: 45px;
 @field-line-height: 25px;
 @field-name-width: 100px;
-@long-field-name-width: 160px;
-
-@col-id-width: 40px;
-@col-name-width: 180px;
-@col-english-width: 70px;
-@col-result-width: 160px;
-@col-danwei-width: 70px;
-@col-cankao-width: 70px;
-@col-beizhu-width: 180px;
+@long-field-name-width: 130px;
 
 .emg-modal-wrapper {
   position: absolute;
@@ -930,6 +1302,9 @@ export default {
           width: 100%;
           .field-input {
             width: calc(~"96% - @{field-name-width}");
+            &.long-field-name {
+              width: calc(~"96% - @{long-field-name-width}");
+            }
           }
         }
         .field-name {
@@ -1015,13 +1390,10 @@ export default {
         overflow: hidden;
         box-sizing: border-box;
         border: 1px solid @inverse-font-color;
-        &.father-open {
-          border: none;
-        }
         .form {
           position: relative;
           margin-bottom: 5px;
-          width: 100%; // left: calc(~"50% - (@{col-id-width} + @{col-time-width} + @{col-amount-width} + @{col-unit-width}) / 2");
+          width: 100%;
           border-spacing: 0;
           font-size: 14px;
           &.small-font {
@@ -1121,7 +1493,7 @@ export default {
     .seperate-line {
       width: 90%;
       height: 1px;
-      margin: 15px auto 10px;
+      margin: 5px auto 15px;
       background-color: @light-gray-color;
     }
     .button {

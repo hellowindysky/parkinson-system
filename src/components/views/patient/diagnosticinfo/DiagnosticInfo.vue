@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="diagnostic-info-wrapper" ref="diagnosticInfo">
-    <folding-panel class="panel" :title="'看诊记录'" :mode="mode" :isCardsPanel="true" :folded-status="foldedStatus"
+    <folding-panel class="panel" :title="title" :mode="mode" :isCardsPanel="true" :folded-status="foldedStatus"
       v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit" v-on:addNewCard="addRecord"
       v-on:updateFilterCondition="changeFilterCondition" :editable="canEdit">
       <card class="card" :class="devideWidth" :mode="mode" v-for="item in patientCaseList" :key="item.caseName"
@@ -13,10 +13,6 @@
             {{ getArchiveStatus(item) }}
           </span>
         </div>
-      </card>
-    </folding-panel>
-    <folding-panel class="panel" v-show="false" :title="'随诊记录'" :mode="mode" v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit">
-      <card class="card" :class="devideWidth" :mode="mode" v-for="item in [1,2,3,4,5,6,7,8,9]" :key="item" :title="'第' + item+ '条'">
       </card>
     </folding-panel>
   </div>
@@ -55,6 +51,9 @@ export default {
       } else {
         return 'unknown';
       }
+    },
+    title() {
+      return '看诊记录（' + this.patientCaseList.length + '条记录）';
     },
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients)) {

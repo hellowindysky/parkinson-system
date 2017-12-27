@@ -197,6 +197,13 @@ const getters = {
     }
     return state.all.tableData.elecTroGramInfo;
   },
+  typeField: (state) => {
+    // 嵌套表格
+    if (!state.all.tableData || !state.all.tableData.typefield) {
+      return [];
+    }
+    return state.all.tableData.typefield;
+  },
   rhythm: (state) => {
     // 生命体征
     if (!state.all.tableData || !state.all.tableData.rhythm) {

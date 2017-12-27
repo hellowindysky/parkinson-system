@@ -15,6 +15,14 @@ const mutations = {
 
   [types.DISCARD_RIGHT_OF_DISPLAYING_SENSITIVE_INFO](state) {
     state.hasRightToDisplaySensitiveInfo = false;
+  },
+
+  [types.SHOW_SENSITIVE_INFO](state) {
+    state.showSensitiveInfo = true;
+  },
+
+  [types.HIDE_SENSITIVE_INFO](state) {
+    state.showSensitiveInfo = false;
   }
 };
 

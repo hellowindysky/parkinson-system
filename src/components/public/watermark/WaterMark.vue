@@ -1,6 +1,8 @@
 <template lang="html">
   <div class="water-mark" ref="pic">
-    <span class="text" v-for="i in array" :class="{'odd-row': checkIfInOddRow(i)}">{{orgName}}</span>
+    <span class="text" v-for="i in array" :class="{'odd-row': checkIfInOddRow(i)}">
+      {{accountName}}（账号：{{accountNumber}}）
+    </span>
   </div>
 </template>
 
@@ -28,6 +30,10 @@ export default {
     accountName() {
       var name = sessionStorage.getItem('name');
       return name ? name : '';
+    },
+    accountNumber() {
+      var accountNumber = sessionStorage.getItem('accountNumber');
+      return accountNumber ? accountNumber : '';
     }
   },
   methods: {
@@ -66,7 +72,7 @@ export default {
   top: -50%;
   left: -50%;
   transform: rotate(-20deg);
-  color: fade(@light-font-color, 50%);
+  color: fade(@light-font-color, 30%);
   opacity: 0.9;
   pointer-events: none;   // 点击穿透
   z-index: 8000;

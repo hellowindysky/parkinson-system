@@ -111,11 +111,6 @@ export default {
       } else {
         return false;
       }
-    },
-    blockSensitiveInfo() {
-      // 如果当前处于脱敏显示状态，则返回 true
-      var commonRequest = JSON.parse(sessionStorage.getItem('commonRequest'));
-      return commonRequest.viewType === 2;
     }
   },
   methods: {
@@ -127,7 +122,7 @@ export default {
     checkIfBlocking(fieldName) {
       // 1.脱敏字段；2.在脱敏状态下；3.非新增病患 ———— 这个函数用来返回是否同时满足前面 3 个条件
       let blockingFieldList = ['name', 'cardId', 'phone', 'phone2', 'homeAddress'];
-      if (this.blockSensitiveInfo && blockingFieldList.indexOf(fieldName) >= 0 &&
+      if (!this.$store.state.showSensitiveInfo && blockingFieldList.indexOf(fieldName) >= 0 &&
         this.$route.params.id !== 'newPatient') {
         return true;
       } else {
@@ -381,7 +376,7 @@ export default {
       if (fieldName === 'cardId') {
         // 这里插入一段特殊逻辑，如果是修改病患信息（不是新增），而且处于脱敏显示状态下，
         // 那么由于服务器返回的加密字段是连续18个星号，这里就得让其通过校验
-        if (this.$route.params.id !== 'newPatient' && this.blockSensitiveInfo &&
+        if (this.$route.params.id !== 'newPatient' && !this.$store.state.showSensitiveInfo &&
           /^[*]{18}$/.test(copyFieldValue)) {
           this.$set(this.warningResults, fieldName, null);
           return;

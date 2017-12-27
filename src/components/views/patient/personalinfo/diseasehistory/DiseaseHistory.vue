@@ -12,23 +12,31 @@
         <div class="field" v-for="field in diseaseInfoTemplateGroups[0]" :class="checkField(field)">
           <span class="field-name">
             {{field.cnfieldName}}
-            <!-- <span class="required-mark" v-show="true">*</span> -->
+            <span class="required-mark" v-show="field.must===1">*</span>
           </span>
 
           <div class="field-value" v-show="mode===READING_MODE">
-            <span v-if="true">
-              起病类型值
+            <span v-if="getUIType(field)===3">
+              {{ transformTypeCode(copyInfo[field.fieldName], field.fieldName) }}
+            </span>
+            <span v-else-if="getUIType(field)===5">
+              {{ translateCodes(copyInfo[field.fieldName], field.fieldName) }}
+            </span>
+            <span v-else>
+              {{ copyInfo[field.fieldName] }}
             </span>
           </div>
 
           <div class="field-input" v-show="mode===EDITING_MODE">
-            <span v-if="getUIType(field)===1">
+            <span v-if="field.fieldName==='ariAge'">{{ariAge}}</span>
+            <span v-else-if="field.fieldName==='courseOfDisease'">{{courseOfDiseaseInfo}}</span>
+            <span v-else-if="getUIType(field)===1">
               <el-input v-model="copyInfo[field.fieldName]"
                 :placeholder="getMatchedField(field.fieldName).cnFieldDesc"></el-input>
             </span>
             <span v-else-if="getUIType(field)===3">
-              <el-select v-model="copyInfo[field.fieldName]" clearable
-                :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
+              <el-select v-model="copyInfo[field.fieldName]" clearable @change="updateWarning(field),valChange(field.fieldName)"
+                :placeholder="getMatchedField(field.fieldName).cnFieldDesc" :class="{'warning': warningResults[field.fieldName]}">
                 <el-option v-for="type in getTypes(field.fieldName)" :label="type.typeName"
                   :value="type.typeCode" :key="type.typeCode"></el-option>
               </el-select>
@@ -41,10 +49,10 @@
               </el-checkbox-group>
             </span>
             <span v-else-if="getUIType(field)===6">
-              <el-date-picker v-model="copyInfo[field.fieldName]" type="date"
-                :placeholder="getMatchedField(field.fieldName).cnFieldDesc" format="yyyy-MM-dd" ></el-date-picker>
+              <el-date-picker v-model="copyInfo[field.fieldName]" type="date" :class="{'warning': warningResults[field.fieldName]}" :picker-options="pickerOptions0"
+                :placeholder="getMatchedField(field.fieldName).cnFieldDesc" format="yyyy-MM-dd" @change="updateWarning(field)" ></el-date-picker>
             </span>
-            <!-- <span class="warning-text"></span> -->
+            <span class="warning-text">{{getWarningText(field.fieldName)}}</span>
           </div>
         </div>
         <!-- template 第一部分 ↑↑↑↑ -->
@@ -54,16 +62,16 @@
           <span class="field-name">发病顺序</span>
           <div class="field-value" v-show="mode===READING_MODE">
 
-            <div class="custom-item" v-for="(item,index) in diseaseOrder" :key="index">
+            <div class="custom-item" v-for="(item,index) in copyInfo['patientDiseaseOrders']" :key="index">
               <span>{{transform(item.arisePart, diseaseOrderOpt)}}</span>
               <span>{{formatDate(item.time)}}</span>
-              <i class="iconfont icon-single-right" v-show="item.arisePart"></i>
+              <i class="iconfont icon-single-right" v-show="item.arisePart && index!==copyInfo.patientDiseaseOrders.length-1"></i>
             </div>
 
           </div>
           <div class="field-input" v-show="mode===EDITING_MODE">
 
-            <div class="custom-item" v-for="(item,index) in diseaseOrder" :key="index">
+            <div class="custom-item" v-for="(item,index) in copyInfo['patientDiseaseOrders']" :key="index">
               <i class="iconfont icon-remove" @click="reduceOrder(index)"></i>
               <span class="sub-item">
                 <el-select v-model="item.arisePart" placeholder="请选择" clearable >
@@ -89,12 +97,18 @@
         <div class="field" v-for="field in diseaseInfoTemplateGroups[1]" :class="checkField(field)">
           <span class="field-name">
             {{field.cnfieldName}}
-            <!-- <span class="required-mark" v-show="true">*</span> -->
+            <span class="required-mark" v-show="field.must===1">*</span>
           </span>
 
           <div class="field-value" v-show="mode===READING_MODE">
-            <span v-if="true">
-              起病类型值
+            <span v-if="getUIType(field)===3">
+              {{ transformTypeCode(copyInfo[field.fieldName], field.fieldName) }}
+            </span>
+            <span v-else-if="getUIType(field)===5">
+              {{ translateCodes(copyInfo[field.fieldName], field.fieldName) }}
+            </span>
+            <span v-else>
+              {{ copyInfo[field.fieldName] }}
             </span>
           </div>
 
@@ -104,20 +118,20 @@
                 :placeholder="getMatchedField(field.fieldName).cnFieldDesc"></el-input>
             </span>
             <span v-else-if="getUIType(field)===5">
-              <el-checkbox-group v-model="copyInfo[field.fieldName]"
-                :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
+              <el-checkbox-group v-model="copyInfo[field.fieldName]" @change="updateWarning(field)"
+                :placeholder="getMatchedField(field.fieldName).cnFieldDesc" :class="{'warning': warningResults[field.fieldName]}">
                 <el-checkbox v-for="type in getTypes(field.fieldName)" :label="type.typeCode"
                  :key="type.typeCode">{{type.typeName}}</el-checkbox>
               </el-checkbox-group>
             </span>
-            <!-- <span class="warning-text"></span> -->
+            <span class="warning-text">{{getWarningText(field.fieldName)}}</span>
           </div>
         </div>
         <!-- template 第二部分 ↑↑↑ -->
 
         <extensible-panel class="disease-card" :title="firstSymTitle" @addNewCard="addFirstSymptomsRecord">
           <Card class="card symptoms-card" :mode="mode" :class="cardWidth"
-           v-for="item in diseaseInfo.patientFirstSymbols" :key="item.id" :title="item.symType"
+           v-for="item in firstSymbolData" :key="item.id" :title="item.symType"
            v-on:editCurrentCard="editFirstSymptomsRecord(item)" 
            v-on:viewCurrentCard="viewFirstSymptomsRecord(item)"
            v-on:deleteCurrentCard="deleteFirstSymptomsRecord(item)">
@@ -151,8 +165,14 @@
           </span>
 
           <div class="field-value" v-show="mode===READING_MODE">
-            <span v-if="true">
-              起病类型值
+            <span v-if="getUIType(field)===3">
+              {{ transformTypeCode(copyInfo[field.fieldName], field.fieldName) }}
+            </span>
+            <span v-else-if="getUIType(field)===5">
+              {{ translateCodes(copyInfo[field.fieldName], field.fieldName) }}
+            </span>
+            <span v-else>
+              {{ copyInfo[field.fieldName] }}
             </span>
           </div>
 
@@ -171,7 +191,7 @@
 
         <extensible-panel class="disease-card" :title="firstTreatmentsTitle" @addNewCard="addFirstTreatmentRecord">
           <Card class="card symptoms-card" :mode="mode" :class="cardWidth"
-           v-for="item in diseaseInfo.patientFirstVisitTreatments" :key="item.id" :title="transform(item.firstVisitType, allFirstVisitType)"
+           v-for="item in firstVisitTreatmentData" :key="item.id" :title="transform(item.firstVisitType, allFirstVisitType)"
            v-on:editCurrentCard="editFirstTreatmentRecord(item)" 
            v-on:viewCurrentCard="viewFirstTreatmentRecord(item)"
            v-on:deleteCurrentCard="deleteFirstTreatmentRecord(item)">
@@ -192,7 +212,7 @@
 
         <extensible-panel class="disease-card" :title="visitRecordTitle" @addNewCard="addVisitRecord">
           <Card class="card symptoms-card" :mode="mode" :class="cardWidth"
-           v-for="item in diseaseInfo.patientHistorys" :key="item.patientHistoryId" :title="item.diagnosis"
+           v-for="item in patientHistorysData" :key="item.patientHistoryId" :title="item.diagnosis"
            v-on:editCurrentCard="editVisitRecord(item)" 
            v-on:viewCurrentCard="viewVisitRecord(item)"
            v-on:deleteCurrentCard="deleteVisitRecord(item)">
@@ -219,14 +239,20 @@
           </span>
 
           <div class="field-value" v-show="mode===READING_MODE">
-            <span v-if="true">
-              起病类型值
+            <span v-if="getUIType(field)===3">
+              {{ transformTypeCode(copyInfo[field.fieldName], field.fieldName) }}
+            </span>
+            <span v-else-if="getUIType(field)===5">
+              {{ translateCodes(copyInfo[field.fieldName], field.fieldName) }}
+            </span>
+            <span v-else>
+              {{ copyInfo[field.fieldName] }}
             </span>
           </div>
 
           <div class="field-input" v-show="mode===EDITING_MODE">
             <span v-if="getUIType(field)===5">
-              <el-checkbox-group v-model="copyInfo[field.fieldName]" @change="testchange(copyInfo[field.fieldName])"
+              <el-checkbox-group v-model="copyInfo[field.fieldName]"
                 :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
                 <el-checkbox v-for="type in getTypes(field.fieldName)" :label="type.typeCode"
                  :key="type.typeCode">{{type.typeName}}</el-checkbox>
@@ -248,11 +274,11 @@
 import { mapGetters } from 'vuex';
 import Util from 'utils/util.js';
 import Bus from 'utils/bus.js';
-// import { reviseDateFormat, pruneObj } from 'utils/helper.js';
+import { deepCopy, vueCopy, pruneObj } from 'utils/helper.js';
 import FoldingPanel from 'components/public/foldingpanel/FoldingPanel';
 import ExtensiblePanel from 'components/public/extensiblepanel/ExtensiblePanel';
 import Card from 'components/public/card/Card';
-import { deletePatientFirstSymbol, delPatientFirstVisitTreatment, delVisitDignosticRecord } from 'api/patient.js';
+import {queryPatientFirstSymbol, deletePatientFirstSymbol, queryPatientFirstVisitTreatment, delPatientFirstVisitTreatment, queryVisitDignosticRecord, delVisitDignosticRecord, modDiseaseHistory } from 'api/patient.js';
 
 const HALF_LINE_FIELD_LIST = ['diseaseType', 'specificDisease', 'ariTime', 'courseOfDisease', 'firTime', 'surTime', 'firMedinfo',
   'firMedtime', 'ariAge', 'symmetries', 'symmetriesTime', 'firHosp', 'surHosp'];
@@ -260,18 +286,20 @@ const HALF_LINE_FIELD_LIST = ['diseaseType', 'specificDisease', 'ariTime', 'cour
 export default {
   data() {
     return {
-      test1: '',
-      test2: '',
-      copyInfo: {},
-      diseaseOrder: [ // 发病顺序
-        {
-          arisePart: '',
-          time: ''
+      firstSymbolData: [], // 首发症状
+      firstVisitTreatmentData: [], // 初诊治疗
+      patientHistorysData: [], // 就诊记录
+      copyInfo: {
+        patientDiseaseOrders: []
+      },
+      warningResults: {},
+      pickerOptions0: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
         }
-      ],
+      },
       mode: this.READING_MODE,
       foldedStatus: true,
-      warningResults: {},
       cardWidth: ''
     };
   },
@@ -279,6 +307,10 @@ export default {
     diseaseInfo: {
       type: Object,
       default: () => {}
+    },
+    birthday: {
+      type: String,
+      default: ''
     }
   },
   computed: {
@@ -288,6 +320,30 @@ export default {
       'typeGroup',
       'medicineInfo'
     ]),
+    patientId() {
+      return this.$route.params.id;
+    },
+    existed() {
+      return !(this.patientId === 'newPatient');
+    },
+    ariAge() {
+      if (this.copyInfo.ariTime) {
+        var years = Util.calculateYearsBetween(this.birthday, this.copyInfo.ariTime);
+        this.$set(this.copyInfo, 'ariAge', years);
+        return years;
+      } else {
+        return '';
+      }
+    },
+    courseOfDiseaseInfo() {
+      // 病程 特殊的字段特殊处理
+      if (this.copyInfo['ariTime']) {
+        return Util.calculateYearsBetween(this.copyInfo['ariTime'], new Date());
+      } else {
+        return 0;
+      }
+
+    },
     diseaseInfoDictionary() {
       // 对 diseaseInfoDictionaryGroups 进行扁平化处理，方便之后操作
       var flattenedGroup = [];
@@ -297,13 +353,13 @@ export default {
       return flattenedGroup;
     },
     firstSymTitle() {
-      return '首发症状（' + (this.diseaseInfo.patientFirstSymbols ? this.diseaseInfo.patientFirstSymbols : []).length + '条记录）';
+      return '首发症状（' + (this.firstSymbolData ? this.firstSymbolData : []).length + '条记录）';
     },
     firstTreatmentsTitle() {
-      return '初诊治疗（' + (this.diseaseInfo.patientFirstVisitTreatments ? this.diseaseInfo.patientFirstVisitTreatments : []).length + '条记录）';
+      return '初诊治疗（' + (this.firstVisitTreatmentData ? this.firstVisitTreatmentData : []).length + '条记录）';
     },
     visitRecordTitle() {
-      return '就诊记录（' + (this.diseaseInfo.patientHistorys ? this.diseaseInfo.patientHistorys : []).length + '条记录）';
+      return '就诊记录（' + (this.patientHistorysData ? this.patientHistorysData : []).length + '条记录）';
     },
     allFirstVisitType() {
       // 初诊治疗类型的集合
@@ -326,8 +382,40 @@ export default {
     }
   },
   methods: {
-    testchange(ff) {
-      console.log(ff);
+    updatafirstSymbolCard() {
+      // 查询首发症状
+      // 如果是新增患者，则不去请求数据
+      if (!this.existed) {
+        return;
+      }
+      queryPatientFirstSymbol({patientId: this.patientId}).then((data) => {
+        this.firstSymbolData = data;
+      });
+    },
+    updatafirstVisitTreatmentCard() {
+      // 查询初诊治疗
+      // 如果是新增患者，则不去请求数据
+      if (!this.existed) {
+        return;
+      }
+      queryPatientFirstVisitTreatment({patientId: this.patientId}).then((data) => {
+        this.firstVisitTreatmentData = data;
+      });
+    },
+    updatapatientHistorysCard() {
+      // 查询就诊记录
+      // 如果是新增患者，则不去请求数据
+      if (!this.existed) {
+        return;
+      }
+      queryVisitDignosticRecord({patientId: this.patientId}).then((data) => {
+        this.patientHistorysData = data;
+      });
+    },
+    valChange(fieldName) {
+      if (fieldName === 'diseaseType') {
+        this.copyInfo['specificDisease'] = '';
+      };
     },
     startEditing() {
       this.mode = this.EDITING_MODE;
@@ -363,12 +451,13 @@ export default {
       })[0];
     },
     addOrder() {
-      this.diseaseOrder.push({
+      this.copyInfo.patientDiseaseOrders.push({
         arisePart: '',
         time: ''
       });
     },
     formatDate(d) {
+      // 阅读状态下发病顺序的日期
       if (d) {
         return '（' + Util.simplifyDate(d) + '）';
       } else {
@@ -376,7 +465,7 @@ export default {
       }
     },
     reduceOrder(idx) {
-      this.diseaseOrder.splice(idx, 1);
+      this.copyInfo.patientDiseaseOrders.splice(idx, 1);
     },
     getMatchedField(fieldName) {
       // 这个函数根据实际数据，在字典项中查询到对应的字段，从而方便我们得到其 uiType 等信息
@@ -423,16 +512,57 @@ export default {
       }
 
     },
+    transformTypeCode(typeCode, fieldName) {
+      // 根据 typeCode 找到对应的 typeName
+      var types = this.getTypes(fieldName);
+      var matchedType = Util.getElement('typeCode', typeCode, types);
+      return matchedType.typeName ? matchedType.typeName : '';
+    },
+    translateCodes(typeCodes, fieldName) {
+      // 将形如 [1, 2, 4] 的字段信息 转换成 '内容 1，内容 2，内容 4' 这样的单字符串进行显示
+      if (!typeCodes) {
+        return '';
+      }
+      var result = [];
+
+      for (let typeCode of typeCodes) {
+        result.push(this.transformTypeCode(typeCode, fieldName));
+      }
+      let str = result.join('，');
+      str = str[0] === '，' ? str.slice(1) : str;
+      return str;
+    },
+    updateWarning(field) {
+      var fieldName = field.fieldName;
+      var copyFieldValue = this.copyInfo[fieldName];
+      if (this.getUIType(field) === 6) {
+        // 日期控件(el-date-picker)给的是一个表示完整日期对象的字符串，我们需要格式化之后再校验
+        copyFieldValue = Util.simplifyDate(copyFieldValue);
+      }
+      if (field.must === 1) {
+        // must 为 1 代表必填，为 2 代表选填
+        var isEmptyValue = !copyFieldValue && copyFieldValue !== 0;
+        var isEmptyArray = copyFieldValue instanceof Array && copyFieldValue.length === 0;
+        if (isEmptyValue || isEmptyArray) {
+          // 下面这个方法将响应属性添加到嵌套的对象上，这样 Vue 才能实时检测和渲染
+          this.$set(this.warningResults, fieldName, '必填项');
+          return;
+        }
+      }
+      if (copyFieldValue && copyFieldValue.toString().indexOf(' ') > -1) {
+        this.$set(this.warningResults, fieldName, '不能包含空格');
+
+      } else {
+        // 初始化组件的时候，对应字段的警告文本为 undefined，判断之后，就为实际文本或 null
+        // null 代表该字段项的填写没有毛病
+        this.$set(this.warningResults, fieldName, null);
+      }
+    },
     cancel() {
       // 点击取消按钮，将我们对 copyInfo 所做的临时修改全部放弃，还原其为 diseaseInfo 的复制对象，同时不要忘了重新对其进行特殊处理
-      this.shallowCopy(this.diseaseInfo);
+      vueCopy(this.diseaseInfo, this.copyInfo);
       this.changeCopyInfo();
       this.mode = this.READING_MODE;
-    },
-    shallowCopy(obj) {
-      // 进行浅复制之后，修改复制对象的属性，不会影响到原始对象
-      // 下面这行有一个特殊作用，能让 Vue 动态检测已有对象的新添加的属性，参看 https://cn.vuejs.org/v2/guide/reactivity.html
-      this.copyInfo = Object.assign({}, obj);
     },
     changeCopyInfo() {
       // 复制得到的 copyInfo 有几个字段的值需要特殊处理一下
@@ -445,22 +575,61 @@ export default {
       }
       for (let field of this.diseaseInfoDictionary) {
         let name = field.fieldName;
-        if (nameList.indexOf(name) > -1 && field.uiType === 5 && (typeof this.copyInfo[name]) === 'string') {
-          var codesArray = this.copyInfo[name].split(',').map((str) => {
+        let val = this.copyInfo[name];
+        if (nameList.indexOf(name) > -1 && field.uiType === 5 && (typeof val) === 'string') {
+          var codesArray = val.split(',').map((str) => {
             return parseInt(str, 10);
           });
-          this.copyInfo[name] = codesArray;
+          if (val === '') {
+            this.copyInfo[name] = [];
+          } else {
+            this.copyInfo[name] = codesArray;
+          };
+
         } else if (field.uiType === 5) {
           // 这种情况指的是，得到的信息没有相应的字段，那么我们就为它建一个空数组，注意为了让 Vue 动态检测，这里采用 set 方法
           this.$set(this.copyInfo, name, []);
-        }
-      }
+        };
+      };
     },
     submit() {
-      console.log(this.copyInfo);
-      if ('请求成功后') {
-        this.mode = this.READING_MODE;
+      for (let group of this.diseaseInfoTemplateGroups) {
+        for (let field of group) {
+          // 首先检查是否每个字段都合格，检查一遍之后，如果 warningResults 的所有属性值都为空，就证明表单符合要求
+          this.updateWarning(field);
+          if (this.warningResults[field.fieldName]) {
+            return false;
+          }
+        }
       }
+      this.copyInfo.ariTime = Util.simplifyDate(this.copyInfo.ariTime);
+
+      var submitData = deepCopy(this.copyInfo);
+      delete submitData.firMed;
+      delete submitData.firSym;
+      delete submitData.treatPro;
+      delete submitData.patientFirstSymbols;
+      delete submitData.patientFirstVisitTreatments;
+      delete submitData.patientHistorys;
+      pruneObj(submitData);
+      // reviseDateFormat(submitData);
+      // submitData.ariTime = Util.simplifyDate(submitData.ariTime);
+
+      for (let key in submitData) {
+        if (Array.isArray(submitData[key]) && key !== 'patientDiseaseOrders') {
+          let valStr = submitData[key].join(',');
+          valStr = valStr[0] === ',' ? valStr.slice(1) : valStr;
+          // submitData[key] = submitData[key].join(',').slice(1);
+          submitData[key] = valStr;
+        };
+      };
+      submitData.courseOfDisease = this.courseOfDiseaseInfo;
+      submitData.patientId = this.$route.params.id;
+
+      modDiseaseHistory(submitData).then(() => {
+        Bus.$emit(this.UPDATE_PATIENT_INFO);
+        this.mode = this.READING_MODE;
+      });
     },
     addFirstSymptomsRecord() {
       Bus.$emit(this.SHOW_FIRSTSYMPTOMS_MODAL, this.ADD_NEW_CARD, {}, '首发症状');
@@ -533,6 +702,10 @@ export default {
         this.cardWidth = 'width-1-' + parseInt(devideNum, 10);
       });
     },
+    getWarningText(fieldName) {
+      var warningResult = this.warningResults[fieldName];
+      return warningResult ? warningResult : '';
+    },
     clearWarning() {
       for (let key in this.warningResults) {
         this.warningResults[key] = null;
@@ -540,7 +713,11 @@ export default {
     },
     _resolveDeletion() {
       // 如果成功删除记录，则重新发出请求，获取最新数据。同时解除 [确认对话框] 的 “确认” 回调函数
-      Bus.$emit(this.UPDATE_PATIENT_INFO);
+      // Bus.$emit(this.UPDATE_PATIENT_INFO);
+      // 重新查询首发症状等三个
+      this.updatafirstSymbolCard();
+      this.updatafirstVisitTreatmentCard();
+      this.updatapatientHistorysCard();
       Bus.$off(this.CONFIRM);
     },
     _rejectDeletion() {
@@ -553,17 +730,56 @@ export default {
     ExtensiblePanel,
     Card
   },
+  watch: {
+    diseaseInfo: function(newBasicInfo) {
+      // 当 diseaseInfo这个属性变量发生变化时（包括第一次传递进来），我们都对其进行浅复制，复制到 copyInfo 对象中。
+      // 这样一来，编辑状态下修改 copyInfo 对象的属性时，就不会影响到 diseaseInfo 对象本身。
+      // 如果组件的 diseaseInfo 属性发生变化，copyInfo 对象就会重置，而我们对 copyInfo 所做的还未提交的修改则会丢失。
+      vueCopy(newBasicInfo, this.copyInfo);
+      // 这里对 copyInfo 的某些字段进行特殊处理
+      // 因为要等到 diseaseInfo 和 diseaseInfoDictionaryGroups 这两个对象都异步调用成功才能有效执行
+      // 所以我们对它们同时进行监控，任何一个调用成功，都会试图执行该函数（只有一个成功时，执行该函数是没有效果的）
+      // 这样就保证，当两个异步数据都调用成功的时候，一定会有效地执行 changeCopyInfo
+      this.changeCopyInfo();
+    },
+    diseaseInfoDictionaryGroups: function() {
+      for (let group of this.diseaseInfoTemplateGroups) {
+        for (let field of group) {
+          if (this.copyInfo[field.fieldName] !== undefined) {
+            this.$set(this.copyInfo, field.fieldName, '');
+          }
+        }
+      }
+      this.changeCopyInfo();
+    }
+  },
+  created() {
+    // 当用户在页面中跳转，导致本组件重新装载的时候，需要将 copyInfo 进行恢复
+    // 注意，这里之所以选择 created 钩子函数而不是 mounted，是因为 el-date-picker 组件的绑定数据模型是 copyInfo 下的属性
+    // 如果在 DOM 都加载好了之后再去修改 this.copyInfo，会发现跟 el-date-picker 相关的属性会出现问题
+    // this.shallowCopy(this.diseaseInfo);
+    // this.changeCopyInfo();
+  },
   mounted() {
+    this.updatafirstSymbolCard();
+    Bus.$on(this.UPDATE_FIRSTSYMPTOMS_INFO, this.updatafirstSymbolCard);
+    this.updatafirstVisitTreatmentCard();
+    Bus.$on(this.UPDATE_FIRSTTREATMENT_INFO, this.updatafirstVisitTreatmentCard);
+    this.updatapatientHistorysCard();
+    Bus.$on(this.UPDATE_VISITDIAGNOSTICRECORD_INFO, this.updatapatientHistorysCard);
+
+    for (let group of this.diseaseInfoTemplateGroups) {
+      for (let field of group) {
+        this.$set(this.copyInfo, field.fieldName, '');
+      }
+    }
+    vueCopy(this.diseaseInfo, this.copyInfo);
     this.changeCopyInfo();
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
     Bus.$on(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
     Bus.$on(this.RECALCULATE_CARD_WIDTH, this.recalculateCardWidth);
     // 第一次加载的时候，去计算一次卡片宽度
     this.recalculateCardWidth();
-    console.log(this.diseaseInfoTemplateGroups);
-    console.log(this.diseaseInfoDictionary);
-    console.log(this.typeGroup);
-    // console.log(this.copyInfo);
   },
   beforeDestroy() {
     // 还是记得销毁组件前，解除事件绑定
@@ -743,7 +959,7 @@ export default {
           line-height: @field-height * 0.3;
           .warning-text {
             position: relative;
-            top: -8px;
+            top: -4px;
             left: 0;
             height: 15px;
             line-height: 15px;
@@ -837,6 +1053,7 @@ export default {
           position: relative;
           .custom-item{
             display:inline-block;
+            margin-right: 5px;
             i{
               font-size:14px;
             }

@@ -1,14 +1,43 @@
 import axios from 'axios';
 import { Message } from 'element-ui';
+import router from '../router';
 
 export var baseUrl = process.env.BASE_API;
+
+// 请求拦截器
+axios.interceptors.request.use(
+  config => {
+    // 在发送请求之前做些什么
+    // console.log(config);
+    return config;
+  },
+  error => {
+    // 对请求错误做些什么
+    console.log('请求错误: ', error);
+  }
+);
+
+// 给请求头设置 token
+export function setRequestToken(token) {
+  axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
+};
+
+// 清除请求头里的 token
+export function clearRequestToken() {
+  delete axios.defaults.headers.common['Authorization'];
+};
 
 // axios.post 本身就是个 Promise 对象，这里我们再用 Promise 封装一次，在本文件内对响应数据进行处理，对外只暴露请求成功时的有效数据
 export function encapsulatePromise(url, request) {
 
   var promise = new Promise(function(resolve, reject) {
 
-    axios.post(url, request).then((response) => {
+    var config = {
+      baseURL: baseUrl,
+      withCredentials: true
+    };
+
+    axios.post(url, request, config).then((response) => {
       if (response.data.code === 0) {
         resolve(response.data.data);
       } else {
@@ -19,10 +48,23 @@ export function encapsulatePromise(url, request) {
           console.log('错误代码: ', response.data.code);
           console.log('请求地址: ', url);
           console.log('请求参数: ', request);
+
           let error = {
             code: response.data.code,
             message: response.data.msg
           };
+
+          if (error.code === 4) {
+            // token 出错或失效
+            Message({
+              message: '验证信息出错，请重新登录',
+              type: 'error',
+              duration: 2000
+            });
+            // 回到登录界面
+            router.push({name: 'login'});
+          }
+
           reject && reject(error);
         }
       }

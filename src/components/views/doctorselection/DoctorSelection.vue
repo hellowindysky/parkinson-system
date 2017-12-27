@@ -48,6 +48,7 @@
 <script>
 import Ps from 'perfect-scrollbar';
 import { mapGetters } from 'vuex';
+import { setRequestToken } from 'api/common.js';
 import { getSupportMessage, getSupportedDoctorList } from 'api/user.js';
 import Util from 'utils/util.js';
 import waterMark from 'components/public/watermark/WaterMark';
@@ -120,7 +121,7 @@ export default {
               let operationType = authorizationInfo.operateType;  // 0 为授权，1 为解除授权
               let hospitalName = authorizationInfo.hospName ? authorizationInfo.hospName : '-';
               let doctorName = authorizationInfo.doctor ? authorizationInfo.doctor : '-';
-              let userName = authorizationInfo.username ? authorizationInfo.userName : '-';
+              let userName = authorizationInfo.username ? authorizationInfo.username : '-';
               let date = authorizationInfo.date ? authorizationInfo.date : '-';
               let gender = authorizationInfo.sex ? authorizationInfo.sex : 0;
 
@@ -210,6 +211,7 @@ export default {
     var userType = parseInt(sessionStorage.getItem('userType'), 10);
     var token = sessionStorage.getItem('token');
     if (userType === 5 && token) {
+      setRequestToken(token);
       next();
     } else {
       next(from.path);

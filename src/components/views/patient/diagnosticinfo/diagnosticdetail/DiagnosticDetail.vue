@@ -22,6 +22,7 @@
         :geneCheckList="caseDetail.patientGene"
         :biochemicalExamList="caseDetail.patientBioexam"
         :emgList="caseDetail.patientElecTroGram"
+        :sleepMonitoringList="caseDetail.patientNerveSleep"
         :medicalImagingList="caseDetail.patientVideoList"
         :diagnosticVitalSigns="caseDetail.patientVitalSign">
       </diagnostic-examination>
@@ -271,7 +272,6 @@ export default {
       line-height: @title-bar-height;
       text-align: left;
       font-size: @large-font-size;
-      cursor: pointer;
       color: @font-color;
     }
     .button {

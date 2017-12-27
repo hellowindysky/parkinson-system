@@ -198,7 +198,7 @@
           </tr>
         </table>
       </div>
-       <P>无该症状 0；轻度 1-3；中度 4-6；重度 7-9；数值越大越严重</p>
+      <p>0，无该症状；轻度 1-3；中度 4-7；重度 8-10；数值越大越严重</p>
       <div class="seperate-line"></div>
       <div class="button cancel-button btn-margin" @click="cancel">取消</div>
       <div v-if="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD" class="button submit-button btn-margin" @click="submit">确定</div>

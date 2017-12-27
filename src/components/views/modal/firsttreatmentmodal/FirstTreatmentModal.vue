@@ -124,7 +124,7 @@
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-input v-model="copyInfo.remarks" placeholder="请输入备注"></el-input>
+              <el-input v-model="copyInfo.remarks" type="textarea" placeholder="请输入备注" :maxlength="500"></el-input>
             </span>
           </div>
 
@@ -204,7 +204,7 @@
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-input v-model="copyInfo.remarks" placeholder="请输入备注"></el-input>
+              <el-input v-model="copyInfo.remarks" type="textarea" placeholder="请输入备注" :maxlength="500"></el-input>
             </span>
           </div>
 
@@ -452,7 +452,6 @@ export default {
       reviseDateFormat(submitData);
       pruneObj(submitData);
       submitData.patientId = this.$route.params.id;
-      console.log(submitData);
       if (this.mode === this.ADD_NEW_CARD) {
         addPatientFirstVisitTreatment(submitData).then(() => {
           this.updateAndClose();
@@ -472,7 +471,7 @@ export default {
       this.lockSubmitButton = false;
     },
     updateAndClose() {
-      Bus.$emit(this.UPDATE_PATIENT_INFO);
+      Bus.$emit(this.UPDATE_FIRSTTREATMENT_INFO);
       this.displayModal = false;
     }
   },

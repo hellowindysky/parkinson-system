@@ -26,7 +26,7 @@
         </div>
 
         <!-- 以下是 运动症状才有的序列 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
-        <div v-show="copyInfo.symType===t(0, 'SympType')">
+        <div v-show="copyInfo.symType==='运动症状'">
           <div class="field">
             <span class="field-name long-field-name">
               症状名称:
@@ -130,7 +130,7 @@
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-input v-model="copyInfo.remarks" placeholder="请输入备注"></el-input>
+              <el-input v-model="copyInfo.remarks" type="textarea" placeholder="请输入备注" :maxlength="500"></el-input>
             </span>
           </div>
 
@@ -139,7 +139,7 @@
 
 
         <!-- 以下是 运动并发症才有的序列 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
-        <div v-show="copyInfo.symType===t(1, 'SympType')">
+        <div v-show="copyInfo.symType==='运动并发症'">
           
           <div class="field">
             <span class="field-name long-field-name">
@@ -219,7 +219,7 @@
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-input v-model="copyInfo.remarks" placeholder="请输入备注"></el-input>
+              <el-input v-model="copyInfo.remarks" type="textarea" placeholder="请输入备注" :maxlength="500"></el-input>
             </span>
           </div>
 
@@ -227,7 +227,7 @@
         <!-- 以上是 运动并发症才有的序列 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ -->
 
         <!-- 以下是 非运动症状才有的序列 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
-        <div v-show="copyInfo.symType===t(2, 'SympType')">
+        <div v-show="copyInfo.symType==='非运动症状'">
 
           <div class="field">
             <span class="field-name long-field-name">
@@ -315,7 +315,7 @@
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-input v-model="copyInfo.remarks" placeholder="请输入备注"></el-input>
+              <el-input v-model="copyInfo.remarks" type="textarea" placeholder="请输入备注" :maxlength="500"></el-input>
             </span>
           </div>
 
@@ -395,9 +395,9 @@ export default {
       }
     },
     verificationFieldList() {
-      if (this.copyInfo.symType === this.t(0, 'SympType') || this.copyInfo.symType === this.t(1, 'SympType')) {
+      if (this.copyInfo.symType === '运动症状' || this.copyInfo.symType === '运动并发症') {
         return ['symType', 'symName'];
-      } else if (this.copyInfo.symType === this.t(2, 'SympType')) {
+      } else if (this.copyInfo.symType === '非运动症状') {
         return ['symType', 'symName', 'notSportType'];
       } else {
         return ['symType'];
@@ -421,7 +421,7 @@ export default {
     },
     showModal(cardOperation, item, title2) {
       this.completeInit = false;
-      // console.log(cardOperation, item);
+      console.log(cardOperation, item);
       this.mode = cardOperation;
       this.title2 = title2;
       // ******************************
@@ -466,7 +466,9 @@ export default {
         });
       });
     },
-    t(i, fieldName) {
+    transName(i, fieldName) {
+      // transName(0, 'SympType')
+      // 本来是在改变首发症状类型时，作比较用，但select顺序一变，就错了，暂时先直接比汉字了
       if (this.getOptions(fieldName)[i] === undefined) {
         return -1;
       } else {
@@ -565,11 +567,6 @@ export default {
         pruneObj(firstInfo);
       };
 
-      console.log(ComplaintsInfo);
-      console.log(firstInfo);
-      // if (true) {
-      //   return;
-      // };
       if (this.mode === this.ADD_NEW_CARD) {
         if (this.title2 === '主诉症状') {
           addPatientSymptom(ComplaintsInfo).then(() => {
@@ -607,7 +604,7 @@ export default {
       if (this.title2 === '主诉症状') {
         Bus.$emit(this.UPDATE_CASE_INFO);
       } else if (this.title2 === '首发症状') {
-        Bus.$emit(this.UPDATE_PATIENT_INFO);
+        Bus.$emit(this.UPDATE_FIRSTSYMPTOMS_INFO);
       }
 
       this.displayModal = false;

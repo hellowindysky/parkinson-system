@@ -1,8 +1,10 @@
 <template lang="html">
   <div class="folding-panel-wrapper">
     <div class="header">
-      <div class="iconfont" :class="iconToggleFolded"></div>
-      <h2 class="title" @click="toggleFoldedPanel">{{title}}</h2>
+      <h2 class="bar" @click="toggleFoldedPanel">
+        <span class="title">{{title}}</span>
+        <span class="iconfont" :class="iconToggleFolded"></span>
+      </h2>
       <div v-if="editable && mode===READING_MODE" class="button edit-button" @click="edit">编辑</div>
       <div v-if="editable && mode===EDITING_MODE && !isCardsPanel" class="button cancel-button" @click="cancel">取消</div>
       <div v-if="editable && isCardsPanel" class="button add-button" @click="add">添加</div>
@@ -122,31 +124,33 @@ export default {
   .header {
     position: relative;
     height: @panel-header-height;
-    .title {
+    .bar {
       margin: 0;
       position: absolute;
       display: inline-block;
       padding-left: 20px;
       left: 0;
-      width: 100%;
+      width: calc(~"100% - @{small-button-width} * 2 - 60px");
       height: @panel-header-height;
       line-height: @panel-header-height;
       text-align: left;
-      font-size: @large-font-size;
       cursor: pointer;
       color: @font-color;
       &:hover {
         color: lighten(@font-color, 20%);
       }
-    }
-    .iconfont {
-      position: absolute;
-      display: inline-block;
-      left: 110px;
-      top: 0;
-      height: @panel-header-height;
-      line-height: @panel-header-height;
-      color: @button-color;
+      .title {
+        display: inline-block;
+        min-width: 80px;
+        font-size: @large-font-size;
+      }
+      .iconfont {
+        display: inline-block;
+        margin-left: 10px;
+        height: @panel-header-height;
+        line-height: @panel-header-height;
+        color: @button-color;
+      }
     }
     .button {
       position: absolute;

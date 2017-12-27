@@ -3,6 +3,7 @@
 
 import Vue from 'vue';
 import ElementUI from 'element-ui';
+import axios from 'axios';
 
 import 'normalize.css';  // 引入normalize.css
 // import 'element-ui/lib/theme-default/index.css';  // 放弃默认的element-theme
@@ -21,6 +22,13 @@ import globalVariables from 'utils/constant.js'; // 引入常量
 for (let name in globalVariables) {
   Vue.prototype[name] = globalVariables[name];
 }
+
+// 添加全局的路由守卫，如果请求头里没有 token 信息，则返回登录界面
+router.afterEach(() => {
+  if (axios.defaults.headers.common['Authorization'] === undefined) {
+    router.push({name: 'login'});
+  }
+});
 
 Vue.config.productionTip = false;
 
