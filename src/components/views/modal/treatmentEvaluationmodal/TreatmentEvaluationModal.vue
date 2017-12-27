@@ -76,8 +76,12 @@
           <span class="warning-text">{{warningResults.situationRemark}}</span>
           <el-input v-model="situationRemark" placeholder="请输入治疗后情况描述" :class="{'warning': warningResults.situationRemark}" type="textarea" @change="updateWarning('situationRemark')" :maxlength="500"></el-input>
         </span>
-      </div> 
+        </div> 
         <div class="seperate-line"></div>
+        <div class="moveLeft">
+             无不良反应: 
+        <el-checkbox v-model="checked"></el-checkbox>
+        </div>
         <div class="content">
         <table class="table">
           <tr class="row title-row">
@@ -127,6 +131,7 @@ export default {
       displayModal: false,
       mode: '',
       completeInit: false,
+      checked: true,
 
       patientPhytheAssessId: '',
       patientPhytheAssess: '',
@@ -401,6 +406,9 @@ export default {
     max-height: 90%;
     background-color: @background-color;
     overflow: hidden;
+    .moveLeft {
+      text-align: left;
+    }
     .title {
       padding: 30px 0 10px;
       font-size: @large-font-size;
