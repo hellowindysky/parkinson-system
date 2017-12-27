@@ -527,7 +527,8 @@
                 <el-select v-else-if="row[0].uiType===3" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"></el-select>
                 <el-date-picker v-else-if="row[0].uiType===6" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"></el-date-picker>
                 <el-date-picker v-else-if="row[0].uiType===7" type="datetime" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"></el-date-picker>
-                <el-time-select v-else-if="row[0].uiType===8" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"></el-time-select>
+                <el-time-select v-else-if="row[0].uiType===8" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"
+                  :picker-options="{start:'00:00', end:'24:00'}"></el-time-select>
               </td>
               <td class="col col-width-10" v-if="row.length===2">
                 {{row[1].fieldName}}
@@ -538,7 +539,8 @@
                 <el-select v-else-if="row[1].uiType===3" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"></el-select>
                 <el-date-picker v-else-if="row[1].uiType===6" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"></el-date-picker>
                 <el-date-picker v-else-if="row[1].uiType===7" type="datetime" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"></el-date-picker>
-                <el-time-select v-else-if="row[1].uiType===8" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"></el-time-select>
+                <el-time-select v-else-if="row[1].uiType===8" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"
+                  :picker-options="{start:'00:00', end:'24:00'}"></el-time-select>
               </td>
             </tr>
 
@@ -558,7 +560,8 @@
                 <el-select v-if="col.uiType===3" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"></el-select>
                 <el-date-picker v-if="col.uiType===6" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"></el-date-picker>
                 <el-date-picker v-if="col.uiType===7" type="datetime" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"></el-date-picker>
-                <el-time-select v-if="col.uiType===8" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"></el-time-select>
+                <el-time-select v-if="col.uiType===8" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"
+                  :picker-options="{start:'00:00', end:'24:00'}"></el-time-select>
               </td>
             </tr>
 
@@ -581,7 +584,7 @@
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import { mapGetters } from 'vuex';
-import { vueCopy } from 'utils/helper';
+import { vueCopy, deepCopy } from 'utils/helper';
 import { addEmg, modEmg, addSleepMonitoring, modSleepMonitoring } from 'api/patient.js';
 import Util from 'utils/util.js';
 
@@ -762,15 +765,8 @@ export default {
 
       this.initCopyInfo();
 
-      if (this.mode === this.ADD_NEW_CARD) {
-        this.copyInfo.pcaseId = this.$route.params.caseId;
-        this.copyInfo.patientCaseId = this.$route.params.caseId;
-        this.copyInfo.pinfoId = this.$route.params.id;
-        this.copyInfo.patientId = this.$route.params.id;
-      } else {
-        vueCopy(item, this.copyInfo);
-        this.copyInfo.elecExamType = this.copyInfo.elecExamType ? Number(this.copyInfo.elecExamType) : '';
-      }
+      vueCopy(item, this.copyInfo);
+      this.copyInfo.elecExamType = this.copyInfo.elecExamType ? Number(this.copyInfo.elecExamType) : '';
 
       this.selectEmg();
       this.updateScrollbar();
@@ -1143,8 +1139,11 @@ export default {
         }
       }
 
-      let submitData = this.copyInfo;
-      if (this.copyInfo.elecExamType === 1) {
+      let submitData = deepCopy(this.copyInfo);
+
+      if (submitData.elecExamType === 1) {
+        submitData.pinfoId = this.$route.params.id;
+        submitData.pcaseId = this.$route.params.caseId;
         if (this.mode === this.ADD_NEW_CARD) {
           // 新增肌电图
           addEmg(submitData).then(() => {
@@ -1159,7 +1158,11 @@ export default {
           }, this._handleError);
         }
 
-      } else if (this.copyInfo.elecExamType === 2) {
+      } else if (submitData.elecExamType === 2) {
+        submitData.patientId = this.$route.params.id;
+        submitData.patientCaseId = this.$route.params.caseId;
+        submitData.recordStart = Util.simplifyTime(submitData.recordStart);
+        submitData.recordEnd = Util.simplifyTime(submitData.recordEnd);
         if (this.mode === this.ADD_NEW_CARD) {
           // 新增睡眠监测
           addSleepMonitoring(submitData).then(() => {
