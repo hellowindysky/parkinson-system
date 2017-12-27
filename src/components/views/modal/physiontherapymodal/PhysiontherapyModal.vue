@@ -170,11 +170,11 @@
             <span class="required-mark"></span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{remarks}}</span>
+            <span>{{remark}}</span>
           </span>
           <span class="field-input" v-else>
             <el-input
-              v-model="remarks"
+              v-model="remark"
               type="textarea"
               :rows="2"
               :maxlength="500"
@@ -255,6 +255,7 @@ export default {
       rightThresholdAfter: '',
       severityLevel: '',
       patientId: '',
+      remark: '',
       hasNoReaction: false,
       patientPhytheReaction: [
         {
@@ -377,6 +378,7 @@ export default {
       this.leftThresholdAfter = item.leftThresholdAfter ? item.leftThresholdAfter : '';
       this.rightThresholdAfter = item.rightThresholdAfter ? item.rightThresholdAfter : '';
       this.patientId = item.patientId ? item.patientId : '';
+      this.remark = item.remark ? item.remark : '';
       this.hasNoReaction = item.reactionFlag === 1;
       vueCopy(item.patientPhytheReaction, this.patientPhytheReaction);
       this.$nextTick(() => {
@@ -477,6 +479,7 @@ export default {
       physicsInfo.leftThresholdAfter = this.leftThresholdAfter;
       physicsInfo.rightThresholdAfter = this.rightThresholdAfter;
       physicsInfo.patientId = this.patientId;
+      physicsInfo.remark = this.remark;
       physicsInfo.reactionFlag = this.hasNoReaction ? 1 : 0;
       physicsInfo.patientPhytheReaction = deepCopy(this.patientPhytheReaction);
 
