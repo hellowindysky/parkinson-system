@@ -49,8 +49,8 @@
         </span>
       </div>
 
-      <h3 class="form-title" v-if="tableMode===SON_OPEN">currentTableName</h3>
-      <div class="form-wrapper" ref="formWrapper">
+      <h3 class="form-title" v-if="tableMode===SON_OPEN && hasTableExisted">currentTableName</h3>
+      <div class="form-wrapper" v-if="hasTableExisted" ref="formWrapper">
         <table class="form" v-if="tableMode===FATHER_OPEN">
           <tr class="row first-row">
             <td class="col col-width-10">
@@ -106,6 +106,10 @@ export default {
       'typeGroup',
       'neurologicCheckTypeList'
     ]),
+    hasTableExisted() {
+      return this.copyInfo.checkType !== undefined && this.copyInfo.checkType !== '' &&
+        this.copyInfo.checkType !== 3;
+    },
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
         return '新增神经系统检查';
