@@ -83,11 +83,11 @@
           <span class="required-mark"></span>
         </span>
         <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-          <span>{{remarks}}</span>
+          <span>{{remark}}</span>
         </span>
         <span class="field-input" v-else>
           <el-input
-            v-model="remarks"
+            v-model="remark"
             type="textarea"
             :rows="2"
             :maxlength="500"
@@ -159,6 +159,7 @@ export default {
       rightThreshold: '',
       situationRemark: '',
       severityLevel: '',
+      remark: '',
       patientPhytheReaction: [
         {
           'reactionType': 1,
@@ -285,6 +286,7 @@ export default {
       this.leftThreshold = item.leftThreshold ? item.leftThreshold : '';
       this.rightThreshold = item.rightThreshold ? item.rightThreshold : '';
       this.situationRemark = item.situationRemark ? item.situationRemark : '';
+      this.remark = item.remark ? item.remark : '';
       vueCopy(item.patientPhytheReaction, this.patientPhytheReaction);
       this.$nextTick(() => {
         for (var property in this.warningResults) {
@@ -355,6 +357,7 @@ export default {
       treatmentEvaluationInfo.leftThreshold = this.leftThreshold;
       treatmentEvaluationInfo.rightThreshold = this.rightThreshold;
       treatmentEvaluationInfo.situationRemark = this.situationRemark;
+      treatmentEvaluationInfo.remark = this.remark;
       treatmentEvaluationInfo.patientPhytheReaction = deepCopy(this.patientPhytheReaction);
       reviseDateFormat(treatmentEvaluationInfo);
       pruneObj(treatmentEvaluationInfo);
