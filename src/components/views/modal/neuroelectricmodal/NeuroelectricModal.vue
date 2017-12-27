@@ -514,34 +514,54 @@
           </table>
 
           <table class="form" :class="{'small-font':tableMode===SON_OPEN}"
-            v-if="tableMode===SON_OPEN && currentTable===SLEEP_MONITORING_ITEM">
-            <tr class="row" v-if="sleepMonitoringTableCols.length===0" v-for="row in rearrangeRows(sleepMonitoringTableRows)">
+            v-if="tableMode===SON_OPEN && currentTable===SLEEP_MONITORING_ITEM"
+            v-for="(group, groupIndex) in sleepMonitoringItemGroups">
+            <tr class="row" v-if="group.colItems.length===0"
+              v-for="row in rearrangeRows(group.rowItems)">
               <td class="col col-width-10">
                 {{row[0].fieldName}}
               </td>
               <td class="col col-width-10">
-                <el-input></el-input>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue}}</span>
+                <el-input v-else-if="row[0].uiType===1" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"></el-input>
+                <el-select v-else-if="row[0].uiType===3" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"></el-select>
+                <el-date-picker v-else-if="row[0].uiType===6" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"></el-date-picker>
+                <el-date-picker v-else-if="row[0].uiType===7" type="datetime" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"></el-date-picker>
+                <el-time-select v-else-if="row[0].uiType===8" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"
+                  :picker-options="{start:'00:00', end:'24:00'}"></el-time-select>
               </td>
               <td class="col col-width-10" v-if="row.length===2">
                 {{row[1].fieldName}}
               </td>
               <td class="col col-width-10" v-if="row.length===2">
-                <el-input></el-input>
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue}}</span>
+                <el-input v-else-if="row[1].uiType===1" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"></el-input>
+                <el-select v-else-if="row[1].uiType===3" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"></el-select>
+                <el-date-picker v-else-if="row[1].uiType===6" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"></el-date-picker>
+                <el-date-picker v-else-if="row[1].uiType===7" type="datetime" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"></el-date-picker>
+                <el-time-select v-else-if="row[1].uiType===8" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"
+                  :picker-options="{start:'00:00', end:'24:00'}"></el-time-select>
               </td>
             </tr>
 
-            <tr class="row first-row" v-if="sleepMonitoringTableCols.length>0">
+            <tr class="row first-row" v-if="group.colItems.length>0">
               <td class="col col-width-10"></td>
-              <td class="col col-width-10" v-for="col in sleepMonitoringTableCols">
+              <td class="col col-width-10" v-for="col in group.colItems">
                 {{col.fieldName}}
               </td>
             </tr>
-            <tr class="row" v-for="row in sleepMonitoringTableRows" v-if="sleepMonitoringTableCols.length>0">
+            <tr class="row" v-for="row in group.rowItems" v-if="group.colItems.length>0">
               <td class="col col-width-10">
                 {{row.fieldName}}
               </td>
-              <td class="col col-width-10" v-for="col in sleepMonitoringTableCols">
-                <el-input></el-input>
+              <td class="col col-width-10" v-for="col in group.colItems">
+                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue}}</span>
+                <el-input v-else-if="col.uiType===1" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"></el-input>
+                <el-select v-if="col.uiType===3" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"></el-select>
+                <el-date-picker v-if="col.uiType===6" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"></el-date-picker>
+                <el-date-picker v-if="col.uiType===7" type="datetime" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"></el-date-picker>
+                <el-time-select v-if="col.uiType===8" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"
+                  :picker-options="{start:'00:00', end:'24:00'}"></el-time-select>
               </td>
             </tr>
 
@@ -549,11 +569,13 @@
         </div>
       </div>
       <div class="button cancel-button" v-if="tableMode!==SON_OPEN" @click="cancel">取消</div>
-      <div class="button cancel-button" v-if="tableMode===SON_OPEN && mode===VIEW_CURRENT_CARD" @click="closeEmgTable">返回</div>
+      <div class="button cancel-button" v-if="tableMode===SON_OPEN && mode===VIEW_CURRENT_CARD" @click="closeSubTable">返回</div>
       <div class="button submit-button" v-if="mode===VIEW_CURRENT_CARD && canEdit" @click="switchToEditingMode">编辑</div>
       <div class="button submit-button" v-if="tableMode===FATHER_OPEN && mode!==VIEW_CURRENT_CARD" @click="submit">确认</div>
-      <div class="button reset-button" v-if="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD" @click="resetEmgTableData">重置</div>
-      <div class="button submit-button" v-if="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD" @click="closeEmgTable">完成</div>
+
+      <div class="button reset-button" v-if="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD && copyInfo.elecExamType===1" @click="resetEmgTableData">重置</div>
+      <div class="button reset-button" v-if="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD && copyInfo.elecExamType===2" @click="resetSleepMonitoringSubTable">重置</div>
+      <div class="button submit-button" v-if="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD" @click="closeSubTable">完成</div>
     </div>
   </div>
 </template>
@@ -562,8 +584,8 @@
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import { mapGetters } from 'vuex';
-import { vueCopy } from 'utils/helper';
-import { addEmg, modEmg } from 'api/patient.js';
+import { vueCopy, deepCopy } from 'utils/helper';
+import { addEmg, modEmg, addSleepMonitoring, modSleepMonitoring } from 'api/patient.js';
 import Util from 'utils/util.js';
 
 export default {
@@ -704,28 +726,24 @@ export default {
         } else {
           evaluation = '非常肥胖';
         }
-        return result.toFixed(1) + ' (' + evaluation + ')';
+        return result.toFixed(2) + ' (' + evaluation + ')';
       } else {
         return '';
       }
     },
-    sleepMonitoringTableRows() {
-      var rowItems = this.typeField.filter(item => {
+    sleepMonitoringItemGroups() {
+      var items = this.typeField.filter(item => {
         return Number(item.typeCode) === this.sleepMonitoringSubTableCode &&
-        item.typeGroupCode === 'elecExam' &&
-        item.fieldType === 0;
+        item.typeGroupCode === 'elecExam';
       });
-      console.log(rowItems);
-      return rowItems;
-    },
-    sleepMonitoringTableCols() {
-      var colItems = this.typeField.filter(item => {
-        return Number(item.typeCode) === this.sleepMonitoringSubTableCode &&
-        item.typeGroupCode === 'elecExam' &&
-        item.fieldType === 1;
-      });
-      console.log(colItems);
-      return colItems;
+      var groups = this.filterItemsIntoGroups(items);
+      var resultGroups = [];
+      for (let i = 0; i < groups.length; i += 1) {
+        resultGroups.push({});
+        resultGroups[i].rowItems = groups[i].filter(item => item.fieldType === 0);
+        resultGroups[i].colItems = groups[i].filter(item => item.fieldType === 1);
+      }
+      return resultGroups;
     },
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
@@ -747,15 +765,8 @@ export default {
 
       this.initCopyInfo();
 
-      if (this.mode === this.ADD_NEW_CARD) {
-        this.copyInfo.pcaseId = this.$route.params.caseId;
-        this.copyInfo.patientCaseId = this.$route.params.caseId;
-        this.copyInfo.pinfoId = this.$route.params.id;
-        this.copyInfo.patientId = this.$route.params.id;
-      } else {
-        vueCopy(item, this.copyInfo);
-        this.copyInfo.elecExamType = this.copyInfo.elecExamType ? Number(this.copyInfo.elecExamType) : '';
-      }
+      vueCopy(item, this.copyInfo);
+      this.copyInfo.elecExamType = this.copyInfo.elecExamType ? Number(this.copyInfo.elecExamType) : '';
 
       this.selectEmg();
       this.updateScrollbar();
@@ -784,28 +795,68 @@ export default {
       this.$set(this.copyInfo, 'examResult', '');
       this.$set(this.copyInfo, 'typeGroupCode', 'elecExam');
 
-      this.sleepMonitoringTables = [];
-      // for (var i = 0; i < this.sleepMonitoringTypes.length; i++) {
-      //   this.$set(this.sleepMonitoringTables, i, {});
-      //   var typeCode = this.sleepMonitoringTypes[i].typeCode;
-      //   this.$set(this.sleepMonitoringTables[i], 'typeCode', typeCode);
-      //   this.$set(this.sleepMonitoringTables[i], 'fieldRow', []);
-      //
-      //   var rowItems = this.typeField.filter(item => {
-      //     return Number(item.typeCode) === typeCode &&
-      //     item.typeGroupCode === 'elecExam' &&
-      //     item.fieldType === 0;
-      //   });
-      //   for (var j = 0; j < rowItems.length; j++) {
-      //     this.$set(this.sleepMonitoringTables[i].fieldRow, j, {});
-      //     var item = rowItems[j];
-      //     this.$set(this.sleepMonitoringTables[i].fieldRow[j], 'rowFieldId', item.id);
-      //     this.$set(this.sleepMonitoringTables[i].fieldRow[j], 'fieldDetail', []);
-      //     this.$set(this.sleepMonitoringTables[i].fieldRow[j], 'fieldDetail', []);
-      //     // console.log(item);
-      //   }
+      this.$set(this.copyInfo, 'patientFieldCode', {});
+      for (let type of this.sleepMonitoringTypes) {
+        let typeCode = type.typeCode;
+        this.$set(this.copyInfo.patientFieldCode, typeCode, {});
 
-      // }
+        let items = this.typeField.filter(item => {
+          return Number(item.typeCode) === typeCode &&
+          item.typeGroupCode === 'elecExam';
+        });
+        let groups = this.filterItemsIntoGroups(items);
+        let resultGroups = [];
+        for (let i = 0; i < groups.length; i += 1) {
+          resultGroups.push({});
+          resultGroups[i].rowItems = groups[i].filter(item => item.fieldType === 0);
+          resultGroups[i].colItems = groups[i].filter(item => item.fieldType === 1);
+        }
+
+        for (let group of resultGroups) {
+          for (let rowItem of group.rowItems) {
+            var rowItemCode = rowItem.id;
+            this.$set(this.copyInfo.patientFieldCode[typeCode], rowItemCode, {});
+
+            let colItems = group.colItems;
+            if (colItems.length === 0) {
+              // 特殊情况：如果没有列，则新建一个code为 0 的虚拟列
+              colItems = [{id: 0}];
+            }
+
+            for (let colItem of colItems) {
+              var colItemCode = colItem.id;
+              this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode], colItemCode, {});
+
+              this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode][colItemCode], 'typeGroupCode', 'elecExam');
+              this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode][colItemCode], 'typeCode', typeCode);
+              this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode][colItemCode], 'rowFieldId', rowItemCode);
+              this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode][colItemCode], 'columnFieldId', colItemCode);
+              this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode][colItemCode], 'fieldValue', '');
+            }
+          }
+        }
+      }
+    },
+    filterItemsIntoGroups(items) {
+      // 根据 item 的 groupNo 属性，装到不同的子数组里面，最后返回最外层的数组
+      var groups = [];
+      var hasSameGroupNumberBefore = false;
+
+      for (let item of items) {
+        hasSameGroupNumberBefore = false;
+        for (let i = 0; i < groups.length; i++) {
+          if (groups[i][0].groupNo === item.groupNo) {
+            hasSameGroupNumberBefore = true;
+            groups[i].push(item);
+          }
+        }
+        if (!hasSameGroupNumberBefore) {
+          let newGroup = [];
+          newGroup.push(item);
+          groups.push(newGroup);
+        }
+      }
+      return groups;
     },
     chooseElecExamType() {
       if (this.copyInfo.elecExamType && Number(this.copyInfo.elecExamType) === 1) {
@@ -813,6 +864,7 @@ export default {
         // 而且这个下拉框在 2.1 版本的更新中被去掉了，现在选择了神经电检查下的肌电图，就默认选中 emgTypeList 的第一项
         this.copyInfo.elecTroGramId = this.emgTypeList[0].id;
         this.selectEmg();
+        this.updateWarning('elecExamType');
       }
     },
     updateWarning(fieldName) {
@@ -835,10 +887,6 @@ export default {
       this.$set(this.copyInfo, 'etgType', emg.emgType);
       if (this.mode === this.ADD_NEW_CARD) {
         this.tableMode = this.FATHER_OPEN;
-      }
-
-      if (emg.emgName) {
-        this.warningResults.elecTroGramId = '';
       }
 
       vueCopy(emg, this.targetEmg);
@@ -1010,10 +1058,10 @@ export default {
           for (let i = 0; i < this.emgTable.length; i++) {
             this.$set(this.copyInfo.patientMotNerCondResu, i, {});
             this.$set(this.copyInfo.patientMotNerCondResu[i], 'motNerItemId', this.emgTable[i].id);
-            this.$set(this.copyInfo['patientMotNerCondResu'][i], 'amplitude', '');
-            this.$set(this.copyInfo['patientMotNerCondResu'][i], 'duration', '');
-            this.$set(this.copyInfo['patientMotNerCondResu'][i], 'phases', '');
-            this.$set(this.copyInfo['patientMotNerCondResu'][i], 'spikeDuration', '');
+            this.$set(this.copyInfo.patientMotNerCondResu[i], 'amplitude', '');
+            this.$set(this.copyInfo.patientMotNerCondResu[i], 'duration', '');
+            this.$set(this.copyInfo.patientMotNerCondResu[i], 'phases', '');
+            this.$set(this.copyInfo.patientMotNerCondResu[i], 'spikeDuration', '');
           }
           break;
         case this.INT_PAT_ANA_ITEM:
@@ -1042,7 +1090,15 @@ export default {
           break;
       }
     },
-    closeEmgTable() {
+    resetSleepMonitoringSubTable() {
+      let typeCode = this.sleepMonitoringSubTableCode;
+      for (var rowFieldId in this.copyInfo.patientFieldCode[typeCode]) {
+        for (var columnFieldId in this.copyInfo.patientFieldCode[typeCode][rowFieldId]) {
+          this.copyInfo.patientFieldCode[typeCode][rowFieldId][columnFieldId].fieldValue = '';
+        }
+      }
+    },
+    closeSubTable() {
       this.tableMode = this.FATHER_OPEN;
       this.updateScrollbar();
       this.$refs.formWrapper.scrollTop = 0;
@@ -1075,7 +1131,6 @@ export default {
       }
       this.lockSubmitButton = true;
 
-      // this.updateWarning('elecTroGramId');
       this.updateWarning('elecExamType');
       for (var p in this.warningResults) {
         if (this.warningResults.hasOwnProperty(p) && this.warningResults[p] !== '') {
@@ -1084,8 +1139,11 @@ export default {
         }
       }
 
-      let submitData = this.copyInfo;
-      if (this.copyInfo.elecExamType === 1) {
+      let submitData = deepCopy(this.copyInfo);
+
+      if (submitData.elecExamType === 1) {
+        submitData.pinfoId = this.$route.params.id;
+        submitData.pcaseId = this.$route.params.caseId;
         if (this.mode === this.ADD_NEW_CARD) {
           // 新增肌电图
           addEmg(submitData).then(() => {
@@ -1100,13 +1158,23 @@ export default {
           }, this._handleError);
         }
 
-      } else if (this.copyInfo.elecExamType === 2) {
+      } else if (submitData.elecExamType === 2) {
+        submitData.patientId = this.$route.params.id;
+        submitData.patientCaseId = this.$route.params.caseId;
+        submitData.recordStart = Util.simplifyTime(submitData.recordStart);
+        submitData.recordEnd = Util.simplifyTime(submitData.recordEnd);
         if (this.mode === this.ADD_NEW_CARD) {
           // 新增睡眠监测
-
+          addSleepMonitoring(submitData).then(() => {
+            Bus.$emit(this.UPDATE_CASE_INFO);
+            this.cancel();
+          }, this._handleError);
         } else if (this.mode === this.EDIT_CURRENT_CARD) {
           // 修改睡眠监测
-
+          modSleepMonitoring(submitData).then(() => {
+            Bus.$emit(this.UPDATE_CASE_INFO);
+            this.cancel();
+          }, this._handleError);
         }
       }
 

@@ -918,6 +918,33 @@ export function deleteEmg(patientElecTroGram) {
   return encapsulatePromise(url, request);
 };
 
+// 新增睡眠监测
+export function addSleepMonitoring(sleepMonitoringInfo) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientNerveSleep = sleepMonitoringInfo;
+  var url = '/pdms/addPatientNerveSleep';
+
+  return encapsulatePromise(url, request);
+};
+
+// 修改睡眠监测
+export function modSleepMonitoring(sleepMonitoringInfo) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientNerveSleep = sleepMonitoringInfo;
+  var url = '/pdms/modPatientNerveSleep';
+
+  return encapsulatePromise(url, request);
+};
+
+// 删除睡眠监测
+export function deleteSleepMonitoring(sleepMonitoringInfo) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientNerveSleep = sleepMonitoringInfo;
+  var url = '/pdms/delPatientNerveSleep';
+
+  return encapsulatePromise(url, request);
+};
+
 // 新增医学影像
 export function addImage(imageInfo) {
   var request = Object.assign({}, getCommonRequest());
