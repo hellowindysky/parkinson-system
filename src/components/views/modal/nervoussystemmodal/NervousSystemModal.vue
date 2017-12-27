@@ -9,9 +9,9 @@
           <span class="required-mark">*</span>
         </span>
         <span class="field-input">
-          <span class="warning-text">{{warningResults.spephysicalInfo}}</span>
+          <span class="warning-text">{{warningResults.checkType}}</span>
           <el-select v-if="mode===ADD_NEW_CARD" placeholder="请选择检查类型" v-model="item.checkType"
-            :class="{'warning': warningResults.spephysicalInfo}" @change="updateWarning('spephysicalInfo')">
+            :class="{'warning': warningResults.checkType}" @change="updateWarning('checkType')">
             <el-option v-for="type in getOptions('neurologicExam')" :key="type.code"
               :label="type.name" :value="type.code"></el-option>
           </el-select>
@@ -76,7 +76,7 @@ export default {
       item: {},
       showItem: {},
       warningResults: {
-        spephysicalInfo: ''
+        checkType: ''
       },
       spephysicalType: [],
       lockSubmitButton: false,
@@ -104,18 +104,6 @@ export default {
     }
   },
   methods: {
-    getSpephyName(code) {
-      for (let key in this.spephysicalType) {
-        let sonData = this.spephysicalType[key];
-        for (let sonkey in sonData) {
-          if (sonkey === 'spephysicalInfo') {
-            if (code === sonData[sonkey]) {
-              return sonData['spephysicalName'];
-            }
-          }
-        }
-      }
-    },
     showPanel(cardOperation, item, showEdit) {
       this.displayModal = true;
       this.mode = cardOperation;
@@ -127,7 +115,7 @@ export default {
         this.$set(this.item, 'patientId', this.$route.params.id);
         this.$set(this.item, 'checkType', '');
         this.$set(this.item, 'remarks', '');
-        this.$set(this.item, 'spephysicalInfo', '');
+        this.$set(this.item, 'checkType', '');
         this.$set(this.item, 'spephysicalResult', '');
       } else {
         // 如果是阅读或修改卡片内容，那么直接渲染传进来的数据
@@ -137,17 +125,17 @@ export default {
       console.log('item: ', item);
 
       // 处理一下检查类型
-      let typeDiction = deepCopy(this.neurologicCheckTypeList);
-      for (let j = 0; j < typeDiction.length; j++) {
-        this.$set(this.spephysicalType, j, {});
-        for (let key in typeDiction[j]) {
-          if (key === 'id') {
-            this.$set(this.spephysicalType[j], 'spephysicalInfo', typeDiction[j][key]);
-          } else if (key === 'spephysicalName') {
-            this.$set(this.spephysicalType[j], 'spephysicalName', typeDiction[j][key]);
-          }
-        }
-      }
+      // let typeDiction = deepCopy(this.neurologicCheckTypeList);
+      // for (let j = 0; j < typeDiction.length; j++) {
+      //   this.$set(this.spephysicalType, j, {});
+      //   for (let key in typeDiction[j]) {
+      //     if (key === 'id') {
+      //       this.$set(this.spephysicalType[j], 'spephysicalInfo', typeDiction[j][key]);
+      //     } else if (key === 'spephysicalName') {
+      //       this.$set(this.spephysicalType[j], 'spephysicalName', typeDiction[j][key]);
+      //     }
+      //   }
+      // }
 
       this.$nextTick(() => {
         this.clearWarning();
@@ -159,8 +147,8 @@ export default {
       }
       this.lockSubmitButton = true;
 
-      this.updateWarning('spephysicalInfo');
-      if (this.warningResults.spephysicalInfo !== '') {
+      this.updateWarning('checkType');
+      if (this.warningResults.checkType !== '') {
         this.lockSubmitButton = false;
         return;
       }
