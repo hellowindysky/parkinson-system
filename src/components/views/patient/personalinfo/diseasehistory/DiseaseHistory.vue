@@ -414,7 +414,7 @@ export default {
     },
     valChange(fieldName) {
       if (fieldName === 'diseaseType') {
-        this.copyInfo['specificDisease'] = '';
+        // this.copyInfo['specificDisease'] = '';
       };
     },
     startEditing() {
@@ -515,6 +515,8 @@ export default {
     transformTypeCode(typeCode, fieldName) {
       // 根据 typeCode 找到对应的 typeName
       var types = this.getTypes(fieldName);
+      console.log(types);
+      console.log(typeCode, fieldName, this.copyInfo);
       var matchedType = Util.getElement('typeCode', typeCode, types);
       return matchedType.typeName ? matchedType.typeName : '';
     },
@@ -780,6 +782,7 @@ export default {
     Bus.$on(this.RECALCULATE_CARD_WIDTH, this.recalculateCardWidth);
     // 第一次加载的时候，去计算一次卡片宽度
     this.recalculateCardWidth();
+    console.log(this.typeGroup);
   },
   beforeDestroy() {
     // 还是记得销毁组件前，解除事件绑定
