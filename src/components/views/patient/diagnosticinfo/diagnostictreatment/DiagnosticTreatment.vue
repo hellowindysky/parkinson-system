@@ -357,7 +357,7 @@ export default {
     getReaction(reactionList) {
       var arr = [];
       for (let reaction of reactionList) {
-        if (reaction.severityLevel) {
+        if (Number(reaction.severityLevel) > 1) {
           let reactionText = this.transformTypeGroupId(reaction.reactionType, 'reactionType');
           arr.push(reactionText);
         }

@@ -5,7 +5,7 @@
         <div class="content">
             <div class="field whole-line">
           <span class="field-name">
-            物理治疗类型:
+            物理疗法类型:
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -13,7 +13,7 @@
           </span>
           <span class="field-input" v-else>
             <span class="warning-text">{{warningResults.physiType}}</span>
-            <el-select v-model="physiType" clearable placeholder="请选择物理治疗类型" @change="updateWarning('physiType')"
+            <el-select v-model="physiType" clearable placeholder="请选择物理疗法类型" @change="updateWarning('physiType')"
               :class="{'warning': warningResults.physiType}">
               <el-option
                 v-for="item in getOptions('physiType')"
@@ -164,8 +164,32 @@
             <el-input v-model="rightThresholdAfter" placeholder="请输入运动阈值"></el-input>
           </span>
         </div>
-      </div>
-      <div class="seperate-line"></div>
+        <div class="field whole-line">
+          <span class="field-name">
+            备注:
+            <span class="required-mark"></span>
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span>{{remark}}</span>
+          </span>
+          <span class="field-input" v-else>
+            <el-input
+              v-model="remark"
+              type="textarea"
+              :rows="2"
+              :maxlength="500"
+              placeholder="请输入备注">
+            </el-input>
+          </span>
+        </div>
+        </div>
+        <div class="seperate-line"></div>
+        <div class="check-field">
+          无不良反应： 
+          <span v-if="mode===VIEW_CURRENT_CARD" disabled @change="checkAll">
+          </span>
+          <el-checkbox v-model="hasNoReaction" ></el-checkbox>
+        </div>
         <div class="content">
         <table class="table">
           <tr class="row title-row">
@@ -180,7 +204,7 @@
             </td>
             <td class="col narrow-col">
               <span v-if="mode===VIEW_CURRENT_CARD">{{transform(reaction.severityLevel,'reactionLevel')}}</span>
-              <el-select v-else v-model="reaction.severityLevel" clearable  @change="updateWarning('severityLevel')">
+              <el-select v-else v-model="reaction.severityLevel" clearable>
                 <el-option
                   v-for="item in getOptions('reactionLevel')"
                   :key="item.code"
@@ -192,7 +216,7 @@
           </tr>
         </table>
       </div>
-      <p>0，无该症状；轻度 1-3；中度 4-7；重度 8-10；数值越大越严重</p>
+       <P>无该症状 0；轻度 1-3；中度 4-7；重度 8-10；数值越大越严重</p>
       <div class="seperate-line"></div>
       <div class="button cancel-button btn-margin" @click="cancel">取消</div>
       <div v-if="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD" class="button submit-button btn-margin" @click="submit">确定</div>
@@ -230,6 +254,9 @@ export default {
       leftThresholdAfter: '',
       rightThresholdAfter: '',
       severityLevel: '',
+      patientId: '',
+      remark: '',
+      hasNoReaction: false,
       patientPhytheReaction: [
         {
           'reactionType': 1,
@@ -317,9 +344,9 @@ export default {
     ]),
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
-        return '新增物理治疗';
+        return '新增物理疗法';
       } else {
-        return '物理治疗';
+        return '物理疗法';
       }
     },
     canEdit() {
@@ -350,6 +377,9 @@ export default {
       this.rightThresholdBefore = item.rightThresholdBefore ? item.rightThresholdBefore : '';
       this.leftThresholdAfter = item.leftThresholdAfter ? item.leftThresholdAfter : '';
       this.rightThresholdAfter = item.rightThresholdAfter ? item.rightThresholdAfter : '';
+      this.patientId = item.patientId ? item.patientId : '';
+      this.remark = item.remark ? item.remark : '';
+      this.hasNoReaction = item.reactionFlag === 1;
       vueCopy(item.patientPhytheReaction, this.patientPhytheReaction);
       this.$nextTick(() => {
         this.$refs.scrollArea.scrollTop = 0;
@@ -368,6 +398,27 @@ export default {
       var options = this.getOptions(fieldName);
       var targetOption = Util.getElement('code', code, options);
       return targetOption.name;
+    },
+    // otherCheck() {
+    //   for (var i = 0 ; i < this.patientPhytheReaction.length ; i++) {
+    //     if (this.patientPhytheReaction[i].severityLevel = 0) {
+    //       this.hasNoReaction === true;
+    //       // console.log(this.patientPhytheReaction[i]);
+    //       // console.log(this.hasNoReaction);
+    //     } else {
+    //       this.hasNoReaction === false;
+    //     }
+    //   };
+    // },
+    checkAll() {
+      for (var i = 0; i < this.patientPhytheReaction.length ; i++) {
+        if (this.hasNoReaction === true) {
+          this.patientPhytheReaction[i].severityLevel = 0;
+        } else {
+          this.patientPhytheReaction[i].severityLevel = this.patientPhytheReaction.severityLevel;
+        }
+      };
+      // console.log(this.patientPhytheReaction.reaction.severityLevel);
     },
     getOptions(fieldName) {
       var options = [];
@@ -427,6 +478,9 @@ export default {
       physicsInfo.rightThresholdBefore = this.rightThresholdBefore;
       physicsInfo.leftThresholdAfter = this.leftThresholdAfter;
       physicsInfo.rightThresholdAfter = this.rightThresholdAfter;
+      physicsInfo.patientId = this.patientId;
+      physicsInfo.remark = this.remark;
+      physicsInfo.reactionFlag = this.hasNoReaction ? 1 : 0;
       physicsInfo.patientPhytheReaction = deepCopy(this.patientPhytheReaction);
 
       reviseDateFormat(physicsInfo);
@@ -498,6 +552,15 @@ export default {
     max-height: 94%;
     background-color: @background-color;
     overflow: hidden;
+    .check-field {
+      padding-left: 10px;
+      text-align: left;
+      .text {
+        display: inline-block;
+        height: 20px;
+        line-height: 20px;
+      }
+    }
     .title {
       padding: 30px 0 10px;
       font-size: @large-font-size;
