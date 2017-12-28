@@ -71,8 +71,8 @@
               {{type.typeName}}
             </td>
             <td class="col col-width-15">
-              <span class="text-button" v-if="mode===VIEW_CURRENT_CARD" @click="selectSubTable(type.typeCode)">查看</span>
-              <span class="text-button" v-else-if="mode!==VIEW_CURRENT_CARD" @click="selectSubTable(type.typeCode)">编辑</span>
+              <span class="text-button" v-if="mode===VIEW_CURRENT_CARD" @click.stop="selectSubTable(type.typeCode)">查看</span>
+              <span class="text-button" v-else-if="mode!==VIEW_CURRENT_CARD" @click.stop="selectSubTable(type.typeCode)">编辑</span>
             </td>
           </tr>
         </table>
@@ -134,9 +134,14 @@
       </div>
 
       <!-- <div class="seperate-line"></div> -->
-      <div class="button cancel-button" @click="cancel">取消</div>
-      <div class="button edit-button" @click="switchToEditingMode" v-if="mode===VIEW_CURRENT_CARD && canEdit">编辑</div>
-      <div class="button submit-button" @click="submit" v-else-if="mode!==VIEW_CURRENT_CARD">确定</div>
+      <div class="button cancel-button" v-if="tableMode===FATHER_OPEN" @click="cancel">取消</div>
+      <div class="button cancel-button" v-if="tableMode===SON_OPEN && mode===VIEW_CURRENT_CARD" @click="closeSubTable">返回</div>
+      <div class="button edit-button" v-if="mode===VIEW_CURRENT_CARD && canEdit" @click="switchToEditingMode">编辑</div>
+      <div class="button submit-button" v-if="tableMode===FATHER_OPEN && mode!==VIEW_CURRENT_CARD" @click="submit">确认</div>
+
+      <div class="button reset-button" v-if="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD && hasTableExisted"
+        @click="initSubTableDataForTypeCode(subTableCode)">重置</div>
+      <div class="button submit-button" v-if="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD && hasTableExisted" @click="closeSubTable">完成</div>
     </div>
   </div>
 </template>
@@ -261,47 +266,47 @@ export default {
 
       for (let type of this.tableTypes) {
         let typeCode = type.typeCode;
-        this.$set(this.copyInfo.patientFieldCode, typeCode, {});
+        this.initSubTableDataForTypeCode(typeCode);
+      }
+    },
+    initSubTableDataForTypeCode(typeCode) {
+      this.$set(this.copyInfo.patientFieldCode, typeCode, {});
 
-        let items = this.typeField.filter(item => {
-          return Number(item.typeCode) === typeCode &&
-          item.typeGroupCode === 'neurologicExam';
-        });
-        let groups = this.filterItemsIntoGroups(items);
-        let resultGroups = [];
-        for (let i = 0; i < groups.length; i += 1) {
-          resultGroups.push({});
-          resultGroups[i].rowItems = groups[i].filter(item => item.fieldType === 0);
-          resultGroups[i].colItems = groups[i].filter(item => item.fieldType === 1);
-        }
+      let items = this.typeField.filter(item => {
+        return Number(item.typeCode) === typeCode &&
+        item.typeGroupCode === 'neurologicExam';
+      });
+      let groups = this.filterItemsIntoGroups(items);
+      let resultGroups = [];
+      for (let i = 0; i < groups.length; i += 1) {
+        resultGroups.push({});
+        resultGroups[i].rowItems = groups[i].filter(item => item.fieldType === 0);
+        resultGroups[i].colItems = groups[i].filter(item => item.fieldType === 1);
+      }
 
-        for (let group of resultGroups) {
-          for (let rowItem of group.rowItems) {
-            var rowItemCode = rowItem.id;
-            this.$set(this.copyInfo.patientFieldCode[typeCode], rowItemCode, {});
+      for (let group of resultGroups) {
+        for (let rowItem of group.rowItems) {
+          var rowItemCode = rowItem.id;
+          this.$set(this.copyInfo.patientFieldCode[typeCode], rowItemCode, {});
 
-            let colItems = group.colItems;
-            if (colItems.length === 0) {
-              // 特殊情况：如果没有列，则新建一个code为 0 的虚拟列
-              colItems = [{id: 0}];
-            }
+          let colItems = group.colItems;
+          if (colItems.length === 0) {
+            // 特殊情况：如果没有列，则新建一个code为 0 的虚拟列
+            colItems = [{id: 0}];
+          }
 
-            for (let colItem of colItems) {
-              var colItemCode = colItem.id;
-              this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode], colItemCode, {});
+          for (let colItem of colItems) {
+            var colItemCode = colItem.id;
+            this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode], colItemCode, {});
 
-              this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode][colItemCode], 'typeGroupCode', 'elecExam');
-              this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode][colItemCode], 'typeCode', typeCode);
-              this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode][colItemCode], 'rowFieldId', rowItemCode);
-              this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode][colItemCode], 'columnFieldId', colItemCode);
-              this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode][colItemCode], 'fieldValue', '');
-            }
+            this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode][colItemCode], 'typeGroupCode', 'elecExam');
+            this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode][colItemCode], 'typeCode', typeCode);
+            this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode][colItemCode], 'rowFieldId', rowItemCode);
+            this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode][colItemCode], 'columnFieldId', colItemCode);
+            this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode][colItemCode], 'fieldValue', '');
           }
         }
       }
-
-      // 最后，将传递进来的数据覆盖过来
-      vueCopy(this.copyItem, this.copyInfo);
     },
     selectSubTable(code) {
       this.subTableCode = code;
@@ -355,6 +360,11 @@ export default {
       this.lockSubmitButton = false;
       this.displayModal = false;
     },
+    closeSubTable() {
+      this.tableMode = this.FATHER_OPEN;
+      this.updateScrollbar();
+      this.$refs.formWrapper.scrollTop = 0;
+    },
     getOptions(fieldName) {
       var options = [];
       var typeInfo = Util.getElement('typegroupcode', fieldName, this.typeGroup);
@@ -365,7 +375,6 @@ export default {
           code: type.typeCode
         });
       };
-      console.log(options);
       return options;
     },
     transform(typeId, fieldName) {
@@ -450,6 +459,7 @@ export default {
   watch: {
     tableTypes() {
       this.initSubTableData();
+      vueCopy(this.copyItem, this.copyInfo);
     }
   }
 };
@@ -686,6 +696,9 @@ export default {
       }
       &.submit-button, &.edit-button {
         background-color: @button-color;
+      }
+      &.reset-button {
+        background-color: @font-color;
       }
       &:hover {
         opacity: 0.8;
