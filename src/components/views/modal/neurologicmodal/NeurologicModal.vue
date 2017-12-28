@@ -76,6 +76,61 @@
             </td>
           </tr>
         </table>
+
+        <table class="form" :class="{'small-font':tableMode===SON_OPEN}"
+          v-if="tableMode===SON_OPEN" v-for="(group, groupIndex) in itemGroups">
+          <tr class="row" v-if="group.colItems.length===0"
+            v-for="row in rearrangeRows(group.rowItems)">
+            <td class="col col-width-10">
+              {{row[0].fieldName}}
+            </td>
+            <td class="col col-width-10">
+              <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue}}</span>
+              <el-input v-else-if="row[0].uiType===1" v-model="copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue"></el-input>
+              <el-select v-else-if="row[0].uiType===3" v-model="copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue"></el-select>
+              <el-date-picker v-else-if="row[0].uiType===6" v-model="copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue"></el-date-picker>
+              <el-date-picker v-else-if="row[0].uiType===7" type="datetime" v-model="copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue"></el-date-picker>
+              <el-time-select v-else-if="row[0].uiType===8" v-model="copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue"
+                :picker-options="{start:'00:00', end:'24:00'}"></el-time-select>
+            </td>
+            <td class="col col-width-10" v-if="row.length===2">
+              {{row[1].fieldName}}
+            </td>
+            <td class="col col-width-10" v-if="row.length===2">
+              <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue}}</span>
+              <el-input v-else-if="row[1].uiType===1" v-model="copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue"></el-input>
+              <el-select v-else-if="row[1].uiType===3" v-model="copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue"></el-select>
+              <el-date-picker v-else-if="row[1].uiType===6" v-model="copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue"></el-date-picker>
+              <el-date-picker v-else-if="row[1].uiType===7" type="datetime" v-model="copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue"></el-date-picker>
+              <el-time-select v-else-if="row[1].uiType===8" v-model="copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue"
+                :picker-options="{start:'00:00', end:'24:00'}"></el-time-select>
+            </td>
+          </tr>
+
+          <tr class="row first-row" v-if="group.colItems.length>0">
+            <td class="col col-width-10"></td>
+            <td class="col col-width-10" v-for="col in group.colItems">
+              {{col.fieldName}}
+            </td>
+          </tr>
+          <tr class="row" v-for="row in group.rowItems" v-if="group.colItems.length>0">
+            <td class="col col-width-10">
+              {{row.fieldName}}
+            </td>
+            <td class="col col-width-10" v-for="col in group.colItems">
+              <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue}}</span>
+              <el-input v-else-if="col.uiType===1" v-model="copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue"></el-input>
+              <el-select v-else-if="col.uiType===3" v-model="copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue">
+                <el-option v-for="option in getOptions(col.fieldEnumId)" :label="option.name" :key="option.code" :value="option.code"></el-option>
+              </el-select>
+              <el-date-picker v-else-if="col.uiType===6" v-model="copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue"></el-date-picker>
+              <el-date-picker v-else-if="col.uiType===7" type="datetime" v-model="copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue"></el-date-picker>
+              <el-time-select v-else-if="col.uiType===8" v-model="copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue"
+                :picker-options="{start:'00:00', end:'24:00'}"></el-time-select>
+            </td>
+          </tr>
+
+        </table>
       </div>
 
       <!-- <div class="seperate-line"></div> -->
@@ -90,8 +145,7 @@
 import Ps from 'perfect-scrollbar';
 import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
-import { vueCopy } from 'utils/helper';
-import { deepCopy } from 'utils/helper';
+import { vueCopy, deepCopy } from 'utils/helper';
 import Util from 'utils/util.js';
 import { modifyNervouSystem, addNervouSystem } from 'api/patient.js';
 
@@ -108,6 +162,7 @@ export default {
       tableMode: '',
 
       copyInfo: {},
+      copyItem: {},   //  用来缓存传递进来的数据
       subTableCode: '',
       warningResults: {
         checkType: ''
@@ -180,7 +235,8 @@ export default {
 
       this.tableMode = this.FATHER_OPEN;
       this.initCopyInfo();
-      vueCopy(item, this.copyInfo);
+      this.copyItem = item;
+      vueCopy(this.copyItem, this.copyInfo);
 
       console.log('item: ', item);
 
@@ -197,7 +253,11 @@ export default {
       this.$set(this.copyInfo, 'ariseTime', '');
       this.$set(this.copyInfo, 'spephysicalResult', '');
       this.$set(this.copyInfo, 'remarks', '');
-      this.$set(this.copyInfo, 'patientFieldDetail', {});
+
+      this.initSubTableData();
+    },
+    initSubTableData() {
+      this.$set(this.copyInfo, 'patientFieldCode', {});
 
       for (let type of this.tableTypes) {
         let typeCode = type.typeCode;
@@ -239,6 +299,9 @@ export default {
           }
         }
       }
+
+      // 最后，将传递进来的数据覆盖过来
+      vueCopy(this.copyItem, this.copyInfo);
     },
     selectSubTable(code) {
       this.subTableCode = code;
@@ -302,6 +365,7 @@ export default {
           code: type.typeCode
         });
       };
+      console.log(options);
       return options;
     },
     transform(typeId, fieldName) {
@@ -309,6 +373,21 @@ export default {
       var types = typeInfo.types ? typeInfo.types : [];
       var name = Util.getElement('typeCode', parseInt(typeId, 10), types).typeName;
       return name;
+    },
+    rearrangeRows(items) {
+      // 因为有的子表格没有明确的列信息，只有行信息，而且每一行只有字段名字和字段值
+      // 因此需要重新排列此表格，一排有4列，分别为字段1的名字，字段1的值，字段2的名字，字段2的值
+      var newArray = [];
+      var subArray = [];
+      var length = items.length;
+      for (var i = 0; i < length; i++) {
+        subArray.push(items[i]);
+        if (i % 2 === 1 || i === length - 1) {
+          newArray.push(subArray);
+          subArray = [];
+        }
+      }
+      return newArray;
     },
     filterItemsIntoGroups(items) {
       // 根据 item 的 groupNo 属性，装到不同的子数组里面，最后返回最外层的数组
@@ -367,6 +446,11 @@ export default {
   },
   beforeDestroy() {
     Bus.$off(this.SHOW_NEUROLOGIC_MODAL, this.showPanel);
+  },
+  watch: {
+    tableTypes() {
+      this.initSubTableData();
+    }
   }
 };
 </script>
@@ -390,7 +474,7 @@ export default {
     margin: auto;
     padding: 0 40px;
     top: 6%;
-    width: 600px;
+    width: 800px;
     max-height: 90%;
     background-color: @background-color;
     overflow: hidden;
