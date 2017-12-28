@@ -49,7 +49,7 @@
         </span>
       </div>
 
-      <h3 class="form-title" v-if="tableMode===SON_OPEN && hasTableExisted">currentTableName</h3>
+      <h3 class="form-title" v-if="tableMode===SON_OPEN && hasTableExisted">{{subTableTitle}}</h3>
       <div class="form-wrapper" v-if="hasTableExisted" ref="formWrapper">
         <table class="form" v-if="tableMode===FATHER_OPEN">
           <tr class="row first-row">
@@ -61,6 +61,18 @@
             </td>
             <td class="col col-width-15">
               操作
+            </td>
+          </tr>
+          <tr class="row" v-for="(type, index) in tableTypes">
+            <td class="col col-width-10">
+              {{ index + 1 }}
+            </td>
+            <td class="col col-width-30">
+              {{type.typeName}}
+            </td>
+            <td class="col col-width-15">
+              <span class="text-button" v-if="mode===VIEW_CURRENT_CARD" @click="selectSubTable(type.typeCode)">查看</span>
+              <span class="text-button" v-else-if="mode!==VIEW_CURRENT_CARD" @click="selectSubTable(type.typeCode)">编辑</span>
             </td>
           </tr>
         </table>
@@ -96,6 +108,7 @@ export default {
       tableMode: '',
 
       copyInfo: {},
+      subTableCode: '',
       warningResults: {
         checkType: ''
       }
@@ -104,10 +117,13 @@ export default {
   computed: {
     ...mapGetters([
       'typeGroup',
+      'typeField',
       'neurologicCheckTypeList'
     ]),
     hasTableExisted() {
-      return this.copyInfo.checkType !== undefined && this.copyInfo.checkType !== '' &&
+      this.updateScrollbar();
+      return this.copyInfo.checkType !== undefined &&
+        this.copyInfo.checkType !== '' &&
         this.copyInfo.checkType !== 3;
     },
     title() {
@@ -116,6 +132,37 @@ export default {
       } else {
         return '神经系统检查';
       }
+    },
+    subTableTitle() {
+      if (this.tableMode === this.SON_OPEN) {
+        let targetType = Util.getElement('typeCode', this.subTableCode, this.tableTypes);
+        return targetType.typeName ? targetType.typeName : '';
+      } else {
+        return '';
+      }
+    },
+    tableTypes() {
+      if (!this.hasTableExisted) {
+        return [];
+      }
+      var typeInfo = Util.getElement('typegroupcode', 'neurologicExam', this.typeGroup);
+      var types = typeInfo.types ? typeInfo.types : [];
+      var targetType = Util.getElement('typeCode', Number(this.copyInfo.checkType), types);
+      return targetType.childType ? targetType.childType : [];
+    },
+    itemGroups() {
+      var items = this.typeField.filter(item => {
+        return Number(item.typeCode) === this.subTableCode &&
+        item.typeGroupCode === 'neurologicExam';
+      });
+      var groups = this.filterItemsIntoGroups(items);
+      var resultGroups = [];
+      for (let i = 0; i < groups.length; i += 1) {
+        resultGroups.push({});
+        resultGroups[i].rowItems = groups[i].filter(item => item.fieldType === 0);
+        resultGroups[i].colItems = groups[i].filter(item => item.fieldType === 1);
+      }
+      return resultGroups;
     },
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
@@ -150,6 +197,53 @@ export default {
       this.$set(this.copyInfo, 'ariseTime', '');
       this.$set(this.copyInfo, 'spephysicalResult', '');
       this.$set(this.copyInfo, 'remarks', '');
+      this.$set(this.copyInfo, 'patientFieldDetail', {});
+
+      for (let type of this.tableTypes) {
+        let typeCode = type.typeCode;
+        this.$set(this.copyInfo.patientFieldCode, typeCode, {});
+
+        let items = this.typeField.filter(item => {
+          return Number(item.typeCode) === typeCode &&
+          item.typeGroupCode === 'neurologicExam';
+        });
+        let groups = this.filterItemsIntoGroups(items);
+        let resultGroups = [];
+        for (let i = 0; i < groups.length; i += 1) {
+          resultGroups.push({});
+          resultGroups[i].rowItems = groups[i].filter(item => item.fieldType === 0);
+          resultGroups[i].colItems = groups[i].filter(item => item.fieldType === 1);
+        }
+
+        for (let group of resultGroups) {
+          for (let rowItem of group.rowItems) {
+            var rowItemCode = rowItem.id;
+            this.$set(this.copyInfo.patientFieldCode[typeCode], rowItemCode, {});
+
+            let colItems = group.colItems;
+            if (colItems.length === 0) {
+              // 特殊情况：如果没有列，则新建一个code为 0 的虚拟列
+              colItems = [{id: 0}];
+            }
+
+            for (let colItem of colItems) {
+              var colItemCode = colItem.id;
+              this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode], colItemCode, {});
+
+              this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode][colItemCode], 'typeGroupCode', 'elecExam');
+              this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode][colItemCode], 'typeCode', typeCode);
+              this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode][colItemCode], 'rowFieldId', rowItemCode);
+              this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode][colItemCode], 'columnFieldId', colItemCode);
+              this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode][colItemCode], 'fieldValue', '');
+            }
+          }
+        }
+      }
+    },
+    selectSubTable(code) {
+      this.subTableCode = code;
+      this.tableMode = this.SON_OPEN;
+      console.log(this.itemGroups);
     },
     submit() {
       if (this.lockSubmitButton) {
@@ -215,6 +309,27 @@ export default {
       var types = typeInfo.types ? typeInfo.types : [];
       var name = Util.getElement('typeCode', parseInt(typeId, 10), types).typeName;
       return name;
+    },
+    filterItemsIntoGroups(items) {
+      // 根据 item 的 groupNo 属性，装到不同的子数组里面，最后返回最外层的数组
+      var groups = [];
+      var hasSameGroupNumberBefore = false;
+
+      for (let item of items) {
+        hasSameGroupNumberBefore = false;
+        for (let i = 0; i < groups.length; i++) {
+          if (groups[i][0].groupNo === item.groupNo) {
+            hasSameGroupNumberBefore = true;
+            groups[i].push(item);
+          }
+        }
+        if (!hasSameGroupNumberBefore) {
+          let newGroup = [];
+          newGroup.push(item);
+          groups.push(newGroup);
+        }
+      }
+      return groups;
     },
     updateWarning(fieldName) {
       if (this.copyInfo[fieldName] === undefined || this.copyInfo[fieldName] === '') {
