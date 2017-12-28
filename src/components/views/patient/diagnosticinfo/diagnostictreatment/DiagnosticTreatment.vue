@@ -156,19 +156,23 @@
           :title="transformPhysiType(item.physiType)" v-on:editCurrentCard="editPhysiontherapy(item)"
           v-on:deleteCurrentCard="deletePhysiontherapy(item)" v-on:viewCurrentCard="viewPhysiontherapy(item)">
           <div class="text line-1">
-            <span class="name">治疗前左侧运动阈值: </span>
-            <span class="value">{{item.leftThresholdBefore}}</span>
+            <span class="name">治疗前阈值： </span>
+            <span class="value">左{{item.leftThresholdBefore}}，右{{item.rightThresholdBefore}}</span>
           </div>
            <div class="text line-2">
-            <span class="name">治疗前右侧运动阈值: </span>
-            <span class="value">{{item.rightThresholdBefore}}</span>
+            <span class="name">治疗后阈值： </span>
+            <span class="value">左 {{item.leftThresholdAfter ? item.leftThresholdAfter : '-'}}，右 {{item.rightThresholdAfter ? item.rightThresholdAfter : '-' }}</span>
           </div>
-           <div class="text line-3">
-            <span class="name">不良反应: </span>
+           <div class="text line-3" v-if="item.reactionFlag=== 1">
+            <span class="name">不良反应： </span>
+            <span class="value">{{'无'}}</span>
+          </div>
+          <div class="text line-3" v-if="item.reactionFlag=== 0">
+            <span class="name">不良反应： </span>
             <span class="value">{{getReaction(item.patientPhytheReaction)}}</span>
           </div>
            <div class="text line-4">
-            <span class="name">记录时间: </span>
+            <span class="name">记录时间： </span>
             <span class="value">{{item.recordDate}}</span>
           </div>
         </card>
