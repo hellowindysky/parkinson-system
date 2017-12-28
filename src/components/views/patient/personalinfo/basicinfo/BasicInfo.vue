@@ -26,7 +26,12 @@
             </span>
 
             <span v-else-if="getUIType(field)===1">
-              <el-input v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}" :disabled="field.fieldName==='bmi'"
+              <el-autocomplete v-if="field.fieldName==='nation'" v-model="copyInfo[field.fieldName]"
+               :fetch-suggestions="querySearchAsync" 
+               @select="handleSelect" 
+               :placeholder="getMatchedField(field).cnFieldDesc">
+              </el-autocomplete>
+              <el-input v-else v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}" :disabled="field.fieldName==='bmi'"
                 :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)" :maxlength="50" @input="inputing(field)"></el-input>
             </span>
             <span v-else-if="getUIType(field)===3">
@@ -77,7 +82,8 @@ export default {
       foldedStatus: false,
       copyInfo: {},
       warningResults: {},
-      lockSubmitButton: false
+      lockSubmitButton: false,
+      allNation: [] // 所有民族
     };
   },
   computed: {
@@ -311,7 +317,7 @@ export default {
       // 进行浅复制之后，修改复制对象的属性，不会影响到原始对象
       // 下面这行有一个特殊作用，能让 Vue 动态检测已有对象的新添加的属性，参看 https://cn.vuejs.org/v2/guide/reactivity.html
       this.copyInfo = Object.assign({}, obj);
-
+      console.log(this.copyInfo);
       // 如果传过来的数据对象缺少某些属性，则根据 template 补上
       for (let group of this.basicInfoTemplateGroups) {
         for (let field of group) {
@@ -440,6 +446,23 @@ export default {
       for (let key in this.warningResults) {
         this.warningResults[key] = null;
       }
+    },
+    querySearchAsync(queryStr, callback) {
+      let allNation = this.allNation;
+      allNation = allNation ? allNation : [];
+      let results = queryStr ? allNation.filter((state) => {
+        return (state.typeName.indexOf(queryStr) !== -1);
+      }) : allNation;
+      results = results.map((obj) => {
+        return {
+          value: obj.typeName,
+          code: obj.typeCode
+        };
+      });
+      callback(results);
+    },
+    handleSelect(item) {
+      console.log(item);
     }
   },
   components: {
@@ -481,11 +504,11 @@ export default {
     }
   },
   mounted() {
+    this.allNation = Util.getElement('typegroupcode', 'nation', this.typeGroup).types;
     this.$on(this.EDIT, this.startEditing);
     Bus.$on(this.FOLD_BASIC_INFO, () => {
       this.foldedStatus = true;
     });
-    console.log(this.basicInfoTemplateGroups);
   },
   created() {
     // 注意，这里之所以选择 created 钩子函数而不是 mounted，是因为 el-date-picker 组件的绑定数据模型是 copyInfo 下的属性

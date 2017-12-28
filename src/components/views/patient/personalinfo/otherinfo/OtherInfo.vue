@@ -470,8 +470,6 @@ export default {
 
     setTimeout(() => {
       // console.log(this.toxicExposureHistoryList);
-      console.log(this.coffeeHistoryDictionary);
-      console.log(this.typeGroup);
     }, 2000);
   },
   beforeDestroy() {

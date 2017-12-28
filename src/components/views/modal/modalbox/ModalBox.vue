@@ -801,7 +801,7 @@ export default {
   },
   mounted() {
     Bus.$on(this.SHOW_MODAL_BOX, this.showPanel);
-    console.log(this.smokeHistoryTemplate);
+    // console.log(this.smokeHistoryTemplate);
   },
   watch: {
     template: function() {
