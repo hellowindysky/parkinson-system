@@ -1,6 +1,6 @@
 <template lang="html">
-  <div class="emg-modal-wrapper" v-show="displayModal">
-    <div class="emg-modal" ref="emgModal">
+  <div class="neuroelectric-modal-wrapper" v-show="displayModal">
+    <div class="neuroelectric-modal" ref="neuroelectricModal">
       <h3 class="title">{{title}}</h3>
       <div class="content">
         <div class="field whole-line">
@@ -1224,8 +1224,8 @@ export default {
           wheelSpeed: 1,
           minScrollbarLength: 40
         });
-        Ps.destroy(this.$refs.emgModal);
-        Ps.initialize(this.$refs.emgModal, {
+        Ps.destroy(this.$refs.neuroelectricModal);
+        Ps.initialize(this.$refs.neuroelectricModal, {
           wheelSpeed: 1,
           minScrollbarLength: 40
         });
@@ -1264,7 +1264,7 @@ export default {
 @field-name-width: 100px;
 @long-field-name-width: 130px;
 
-.emg-modal-wrapper {
+.neuroelectric-modal-wrapper {
   position: absolute;
   left: 0;
   top: 0;
@@ -1272,7 +1272,7 @@ export default {
   height: 100%;
   background-color: fadeout(@light-font-color, 30%);
   z-index: 500;
-  .emg-modal {
+  .neuroelectric-modal {
     position: relative;
     margin: auto;
     padding: 0 40px;

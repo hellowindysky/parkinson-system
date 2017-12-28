@@ -77,32 +77,54 @@
           <el-input v-model="situationRemark" placeholder="请输入治疗后情况描述" :class="{'warning': warningResults.situationRemark}" type="textarea" @change="updateWarning('situationRemark')" :maxlength="500"></el-input>
         </span>
       </div>
-        <div class="seperate-line"></div>
-        <div class="content">
-        <table class="table">
-          <tr class="row title-row">
-            <td class="col narrow-col">序号</td>
-            <td class="col wide-col">不良反应程度评估</td>
-            <td class="col">严重程度</td>
-          </tr>
-          <tr class="row" v-for="(reaction, index) in patientPhytheReaction">
-            <td class="col narrow-col">{{index + 1}}</td>
-            <td class="col wide-col">
-               {{transformSituationType(reaction.reactionType, 'reactionType')}}
-            </td>
-            <td class="col narrow-col">
-              <span v-if="mode===VIEW_CURRENT_CARD">{{transformSituationType(reaction.severityLevel,'reactionLevel')}}</span>
-              <el-select v-else v-model="reaction.severityLevel" clearable  @change="updateWarning('severityLevel')">
-              <el-option
-                v-for="item in getOptions('reactionLevel')"
-                :key="item.code"
-                :label="item.name"
-                :value="item.code">
-              </el-option>
+      <div class="field whole-line">
+        <span class="field-name">
+          备注:
+          <span class="required-mark"></span>
+        </span>
+        <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+          <span>{{remark}}</span>
+        </span>
+        <span class="field-input" v-else>
+          <el-input
+            v-model="remark"
+            type="textarea"
+            :rows="2"
+            :maxlength="500"
+            placeholder="请输入备注">
+          </el-input>
+        </span>
+      </div>
+      <div class="seperate-line"></div>
+      <div class="moveLeft">
+             无不良反应: 
+        <el-checkbox v-model="checked"></el-checkbox>
+      </div>
+      <div class="content">
+      <table class="table">
+        <tr class="row title-row">
+          <td class="col narrow-col">序号</td>
+          <td class="col wide-col">不良反应程度评估</td>
+          <td class="col">严重程度</td>
+        </tr>
+        <tr class="row" v-for="(reaction, index) in patientPhytheReaction">
+          <td class="col narrow-col">{{index + 1}}</td>
+          <td class="col wide-col">
+              {{transformSituationType(reaction.reactionType, 'reactionType')}}
+          </td>
+          <td class="col narrow-col">
+            <span v-if="mode===VIEW_CURRENT_CARD">{{transformSituationType(reaction.severityLevel,'reactionLevel')}}</span>
+            <el-select v-else v-model="reaction.severityLevel" clearable  @change="updateWarning('severityLevel')">
+            <el-option
+              v-for="item in getOptions('reactionLevel')"
+              :key="item.code"
+              :label="item.name"
+              :value="item.code">
+            </el-option>
             </el-select>
-            </td>
-          </tr>
-        </table>
+          </td>
+        </tr>
+      </table> 
       </div>
       <p>0，无该症状；轻度 1-3；中度 4-7；重度 8-10；数值越大越严重</p>
       <div class="seperate-line"></div>
@@ -127,6 +149,7 @@ export default {
       displayModal: false,
       mode: '',
       completeInit: false,
+      checked: true,
 
       patientPhytheAssessId: '',
       patientPhytheAssess: '',
@@ -136,6 +159,7 @@ export default {
       rightThreshold: '',
       situationRemark: '',
       severityLevel: '',
+      remark: '',
       patientPhytheReaction: [
         {
           'reactionType': 1,
@@ -262,6 +286,7 @@ export default {
       this.leftThreshold = item.leftThreshold ? item.leftThreshold : '';
       this.rightThreshold = item.rightThreshold ? item.rightThreshold : '';
       this.situationRemark = item.situationRemark ? item.situationRemark : '';
+      this.remark = item.remark ? item.remark : '';
       vueCopy(item.patientPhytheReaction, this.patientPhytheReaction);
       this.$nextTick(() => {
         for (var property in this.warningResults) {
@@ -332,6 +357,7 @@ export default {
       treatmentEvaluationInfo.leftThreshold = this.leftThreshold;
       treatmentEvaluationInfo.rightThreshold = this.rightThreshold;
       treatmentEvaluationInfo.situationRemark = this.situationRemark;
+      treatmentEvaluationInfo.remark = this.remark;
       treatmentEvaluationInfo.patientPhytheReaction = deepCopy(this.patientPhytheReaction);
       reviseDateFormat(treatmentEvaluationInfo);
       pruneObj(treatmentEvaluationInfo);
@@ -369,11 +395,11 @@ export default {
     }
   },
   mounted() {
-    Bus.$on(this.SHOW_TREATMENTEVALUATION_MODAL, this.showPanel);
+    Bus.$on(this.SHOW_TREATMENT_EVALUATION_MODAL, this.showPanel);
     this.updateScrollbar();
   },
   beforeDestroy() {
-    Bus.$off(this.SHOW_TREATMENTEVALUATION_MODAL);
+    Bus.$off(this.SHOW_TREATMENT_EVALUATION_MODAL);
   }
 };
 </script>
@@ -401,6 +427,9 @@ export default {
     max-height: 90%;
     background-color: @background-color;
     overflow: hidden;
+    .moveLeft {
+      text-align: left;
+    }
     .title {
       padding: 30px 0 10px;
       font-size: @large-font-size;
