@@ -326,6 +326,7 @@ export default {
           }
 
         } else if (this.subModalType === this.SMOKE_HISTORY_MODAL) {
+          console.log(this.copyInfo['patientHabitId']);
           if (this.copyInfo['patientHabitId'] === 18) {
             // 吸烟类型 选择 否认存在吸烟史 时，把不必要的提交字段,不要的验证删了
             for (let key in this.copyInfo) {
@@ -340,6 +341,16 @@ export default {
             }
             return this.smokeHistoryTemplate.filter((obj) => {
               return obj.fieldName === 'patientHabitId' || obj.fieldName === 'remarks';
+            });
+          } else if (this.copyInfo['patientHabitId'] === 16) {
+            for (let key in this.warningResults) {
+              if (key === 'doseInfo') {
+                delete this.warningResults[key];
+                delete this.copyInfo[key];
+              };
+            }
+            return this.smokeHistoryTemplate.filter((obj) => {
+              return obj.fieldName !== 'doseInfo';
             });
           } else {
             return this.smokeHistoryTemplate;
@@ -752,7 +763,12 @@ export default {
           return;
         }
       }
-
+      // -----
+      if (fieldName === 'doseInfo' && !Number(fieldValue)) {
+        this.$set(this.warningResults, fieldName, '请输入数字');
+        return;
+      };
+      // -----
       if (fieldValue && !Array.isArray(fieldValue) && fieldValue.toString().indexOf(' ') > -1) {
         this.$set(this.warningResults, fieldName, '不能包含空格');
 
@@ -785,6 +801,7 @@ export default {
   },
   mounted() {
     Bus.$on(this.SHOW_MODAL_BOX, this.showPanel);
+    console.log(this.smokeHistoryTemplate);
   },
   watch: {
     template: function() {

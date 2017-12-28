@@ -26,7 +26,7 @@
             </span>
 
             <span v-else-if="getUIType(field)===1">
-              <el-input v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
+              <el-input v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}" :disabled="field.fieldName==='bmi'"
                 :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)" :maxlength="50" @input="inputing(field)"></el-input>
             </span>
             <span v-else-if="getUIType(field)===3">
@@ -454,6 +454,30 @@ export default {
     },
     basicInfoTemplateGroups: function() {
       Bus.$emit(this.SCREEN_SIZE_CHANGE);
+    },
+    ['copyInfo.height']: function(val) {
+      // 监听身高
+      let h = parseFloat(val, 10);
+      let w = parseFloat(this.copyInfo.weight, 10);
+      if (h && w) {
+        let res = w / ((h / 100) * (h / 100));
+        res = res.toFixed(2);
+        this.copyInfo.bmi = parseFloat(res, 10);
+      } else {
+        this.copyInfo.bmi = 0;
+      }
+    },
+    ['copyInfo.weight']: function(val) {
+      // 监听体重
+      let h = parseFloat(this.copyInfo.height, 10);
+      let w = parseFloat(val, 10);
+      if (h && w) {
+        let res = w / ((h / 100) * (h / 100));
+        res = res.toFixed(2);
+        this.copyInfo.bmi = parseFloat(res, 10);
+      } else {
+        this.copyInfo.bmi = 0;
+      }
     }
   },
   mounted() {
@@ -461,6 +485,7 @@ export default {
     Bus.$on(this.FOLD_BASIC_INFO, () => {
       this.foldedStatus = true;
     });
+    console.log(this.basicInfoTemplateGroups);
   },
   created() {
     // 注意，这里之所以选择 created 钩子函数而不是 mounted，是因为 el-date-picker 组件的绑定数据模型是 copyInfo 下的属性
