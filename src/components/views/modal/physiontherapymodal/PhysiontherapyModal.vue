@@ -186,9 +186,8 @@
         <div class="seperate-line"></div>
         <div class="check-field">
           无不良反应： 
-          <span v-if="mode===VIEW_CURRENT_CARD" disabled @change="checkAll">
-          </span>
-          <el-checkbox v-model="hasNoReaction" ></el-checkbox>
+          <el-checkbox v-model="hasNoReaction" @change="checkAll"
+          :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
         </div>
         <div class="content">
         <table class="table">
@@ -256,6 +255,7 @@ export default {
       severityLevel: '',
       patientId: '',
       remark: '',
+      reactionFlag: '',
       hasNoReaction: false,
       patientPhytheReaction: [
         {
@@ -400,25 +400,25 @@ export default {
       return targetOption.name;
     },
     // otherCheck() {
+    //   console.log(this.hasNoReaction);
     //   for (var i = 0 ; i < this.patientPhytheReaction.length ; i++) {
-    //     if (this.patientPhytheReaction[i].severityLevel = 0) {
-    //       this.hasNoReaction === true;
+    //     if (this.patientPhytheReaction[i].severityLevel !== 0) {
+    //       this.hasNoReaction === false;
     //       // console.log(this.patientPhytheReaction[i]);
     //       // console.log(this.hasNoReaction);
     //     } else {
-    //       this.hasNoReaction === false;
+    //       this.hasNoReaction === true;
     //     }
     //   };
     // },
     checkAll() {
       for (var i = 0; i < this.patientPhytheReaction.length ; i++) {
         if (this.hasNoReaction === true) {
-          this.patientPhytheReaction[i].severityLevel = 0;
+          this.patientPhytheReaction[i].severityLevel = 1;
         } else {
-          this.patientPhytheReaction[i].severityLevel = this.patientPhytheReaction.severityLevel;
+          this.patientPhytheReaction[i].severityLevel = '';
         }
       };
-      // console.log(this.patientPhytheReaction.reaction.severityLevel);
     },
     getOptions(fieldName) {
       var options = [];
