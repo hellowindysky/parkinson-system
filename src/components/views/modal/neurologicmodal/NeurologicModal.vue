@@ -107,8 +107,8 @@
               {{row[0].fieldName}}
             </td>
             <td class="col col-width-10">
-              <span v-if="mode===VIEW_CURRENT_CARD && row.uiType===3">
-                {{transform(copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue, row.fieldEnumId)}}
+              <span v-if="mode===VIEW_CURRENT_CARD && row[0].uiType===3">
+                {{transform(copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue, row[0].fieldEnumId)}}
               </span>
               <span v-else-if="mode===VIEW_CURRENT_CARD">
                 {{copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue}}
@@ -126,8 +126,8 @@
               {{row[1].fieldName}}
             </td>
             <td class="col col-width-10" v-if="row.length===2">
-              <span v-if="mode===VIEW_CURRENT_CARD && row.uiType===3">
-                {{transform(copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue, row.fieldEnumId)}}
+              <span v-if="mode===VIEW_CURRENT_CARD && row[1].uiType===3">
+                {{transform(copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue, row[1].fieldEnumId)}}
               </span>
               <span v-else-if="mode===VIEW_CURRENT_CARD">
                 {{copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue}}
