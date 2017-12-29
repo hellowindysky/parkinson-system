@@ -48,6 +48,28 @@
           <el-input v-else type="textarea" placeholder="请输入备注内容" v-model="copyInfo.remarks" :maxlength="500"></el-input>
         </span>
       </div>
+      <div class="field" v-if="copyInfo.checkType===3">
+        <span class="field-name">
+          回拉试验:
+        </span>
+        <span class="field-input">
+          <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.pullTest, 'positiveType')}}</span>
+          <el-select v-else v-model="copyInfo.pullTest">
+            <el-option v-for="option in getOptions('positiveType')" :label="option.name" :value="option.code" :key="option.code"></el-option>
+          </el-select>
+        </span>
+      </div>
+      <div class="field" v-if="copyInfo.checkType===3">
+        <span class="field-name">
+          sitting en bloc现象:
+        </span>
+        <span class="field-input">
+          <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.sittingBloc, 'positiveType')}}</span>
+          <el-select v-else v-model="copyInfo.sittingBloc">
+            <el-option v-for="option in getOptions('positiveType')" :label="option.name" :value="option.code" :key="option.code"></el-option>
+          </el-select>
+        </span>
+      </div>
 
       <h3 class="form-title" v-if="tableMode===SON_OPEN && hasTableExisted">{{subTableTitle}}</h3>
       <div class="form-wrapper" v-if="hasTableExisted" ref="formWrapper">
@@ -85,9 +107,16 @@
               {{row[0].fieldName}}
             </td>
             <td class="col col-width-10">
-              <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue}}</span>
+              <span v-if="mode===VIEW_CURRENT_CARD && row[0].uiType===3">
+                {{transform(copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue, row[0].fieldEnumId)}}
+              </span>
+              <span v-else-if="mode===VIEW_CURRENT_CARD">
+                {{copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue}}
+              </span>
               <el-input v-else-if="row[0].uiType===1" v-model="copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue"></el-input>
-              <el-select v-else-if="row[0].uiType===3" v-model="copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue"></el-select>
+              <el-select v-else-if="row[0].uiType===3" v-model="copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue">
+                <el-option v-for="option in getOptions(row[0].fieldEnumId)" :label="option.name" :key="option.code" :value="option.code"></el-option>
+              </el-select>
               <el-date-picker v-else-if="row[0].uiType===6" v-model="copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue"></el-date-picker>
               <el-date-picker v-else-if="row[0].uiType===7" type="datetime" v-model="copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue"></el-date-picker>
               <el-time-select v-else-if="row[0].uiType===8" v-model="copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue"
@@ -97,9 +126,16 @@
               {{row[1].fieldName}}
             </td>
             <td class="col col-width-10" v-if="row.length===2">
-              <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue}}</span>
+              <span v-if="mode===VIEW_CURRENT_CARD && row[1].uiType===3">
+                {{transform(copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue, row[1].fieldEnumId)}}
+              </span>
+              <span v-else-if="mode===VIEW_CURRENT_CARD">
+                {{copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue}}
+              </span>
               <el-input v-else-if="row[1].uiType===1" v-model="copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue"></el-input>
-              <el-select v-else-if="row[1].uiType===3" v-model="copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue"></el-select>
+              <el-select v-else-if="row[1].uiType===3" v-model="copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue">
+                <el-option v-for="option in getOptions(row[1].fieldEnumId)" :label="option.name" :key="option.code" :value="option.code"></el-option>
+              </el-select>
               <el-date-picker v-else-if="row[1].uiType===6" v-model="copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue"></el-date-picker>
               <el-date-picker v-else-if="row[1].uiType===7" type="datetime" v-model="copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue"></el-date-picker>
               <el-time-select v-else-if="row[1].uiType===8" v-model="copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue"
@@ -118,9 +154,15 @@
               {{row.fieldName}}
             </td>
             <td class="col col-width-10" v-for="col in group.colItems">
-              <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue}}</span>
+              <span v-if="mode===VIEW_CURRENT_CARD && col.uiType===3">
+                {{transform(copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue, col.fieldEnumId)}}
+              </span>
+              <span v-else-if="mode===VIEW_CURRENT_CARD">
+                {{copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue}}
+              </span>
               <el-input v-else-if="col.uiType===1" v-model="copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue"></el-input>
-              <el-select v-else-if="col.uiType===3" v-model="copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue">
+              <el-select v-else-if="col.uiType===3" v-model="copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue"
+                placeholder="">
                 <el-option v-for="option in getOptions(col.fieldEnumId)" :label="option.name" :key="option.code" :value="option.code"></el-option>
               </el-select>
               <el-date-picker v-else-if="col.uiType===6" v-model="copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue"></el-date-picker>
@@ -152,7 +194,7 @@ import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import { vueCopy, deepCopy } from 'utils/helper';
 import Util from 'utils/util.js';
-import { modifyNervouSystem, addNervouSystem } from 'api/patient.js';
+import { addNeurologicCheck, modifyNeurologicCheck } from 'api/patient.js';
 
 export default {
   data() {
@@ -241,6 +283,9 @@ export default {
       this.tableMode = this.FATHER_OPEN;
       this.initCopyInfo();
       this.copyItem = item;
+      if (this.copyItem.checkType) {
+        this.copyItem.checkType = Number(this.copyItem.checkType);
+      }
       vueCopy(this.copyItem, this.copyInfo);
 
       console.log('item: ', item);
@@ -258,6 +303,9 @@ export default {
       this.$set(this.copyInfo, 'ariseTime', '');
       this.$set(this.copyInfo, 'spephysicalResult', '');
       this.$set(this.copyInfo, 'remarks', '');
+
+      this.$set(this.copyInfo, 'pullTest', '');
+      this.$set(this.copyInfo, 'sittingBloc', '');
 
       this.initSubTableData();
     },
@@ -311,6 +359,7 @@ export default {
     selectSubTable(code) {
       this.subTableCode = code;
       this.tableMode = this.SON_OPEN;
+      this.updateScrollbar();
       console.log(this.itemGroups);
     },
     submit() {
@@ -328,17 +377,24 @@ export default {
       let submitData = deepCopy(this.copyInfo);
       submitData.ariseTime = Util.simplifyDate(submitData.ariseTime);
 
+      delete submitData.patientFieldCode;
+      for (let type of this.tableTypes) {
+        submitData[type.typeCode] = deepCopy(this.copyInfo.patientFieldCode[type.typeCode]);
+      }
+      if (submitData.checkType !== 3) {
+        delete submitData.pullTest;
+        delete submitData.sittingBloc;
+      }
+
       if (this.mode === this.EDIT_CURRENT_CARD) {
-        // 修改的状态
-        modifyNervouSystem(submitData).then(() => {
+        modifyNeurologicCheck(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
           this.updateAndClose();
         }, this._handleError);
 
       } else if (this.mode === this.ADD_NEW_CARD) {
-        // 新增的状态
         delete submitData.patientSpephysicalId;
-        addNervouSystem(submitData).then(() => {
+        addNeurologicCheck(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
           this.updateAndClose();
         }, this._handleError);
@@ -575,6 +631,7 @@ export default {
       max-height: 320px;
       height: auto;
       width: 100%;
+      padding-bottom: 5px;
       overflow: hidden;
       box-sizing: border-box;
       border: 1px solid @inverse-font-color;
@@ -616,6 +673,7 @@ export default {
             }
             &.col-width-10 {
               width: 10%;
+              min-width: 60px;
             }
             &.col-width-15 {
               width: 15%;
@@ -660,19 +718,35 @@ export default {
         position: absolute;
         padding: 0;
         top: 0;
-        width: 10px !important;
+        width: 10px;
         right: 0;
         box-sizing: border-box;
         opacity: 0.3;
         transition: opacity 0.3s;
         .ps__scrollbar-y {
           position: relative;
-          border-radius: 0 !important;
+          border-radius: 0;
+          background-color: #aaa;
+        }
+      }
+      .ps__scrollbar-x-rail {
+        position: absolute;
+        padding: 0;
+        bottom: 0;
+        height: 10px;
+        right: 0;
+        box-sizing: border-box;
+        opacity: 0.3;
+        transition: opacity 0.3s;
+        .ps__scrollbar-x {
+          position: relative;
+          height: 10px;
+          border-radius: 0;
           background-color: #aaa;
         }
       }
       &:hover {
-        .ps__scrollbar-y-rail {
+        .ps__scrollbar-y-rail, .ps__scrollbar-x-rail {
           opacity: 0.6;
         }
       }

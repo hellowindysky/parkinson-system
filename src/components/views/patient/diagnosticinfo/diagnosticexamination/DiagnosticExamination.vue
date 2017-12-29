@@ -126,7 +126,7 @@
 import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import { deleteEmg, deleteBiochemical, delNervouSystem, deleteGeneCheck, deleteImage, deleteVitalSigns } from 'api/patient.js';
+import { deleteEmg, deleteBiochemical, deleteNeurologicCheck, deleteGeneCheck, deleteImage, deleteVitalSigns } from 'api/patient.js';
 // import { vueCopy } from 'utils/helper';
 
 import FoldingPanel from 'components/public/foldingpanel/FoldingPanel';
@@ -267,7 +267,7 @@ export default {
         patientSpephysicalId: item.patientSpephysicalId
       };
       Bus.$on(this.CONFIRM, () => {
-        delNervouSystem(NeuroId).then(this._resolveDeletion, this._rejectDeletion);
+        deleteNeurologicCheck(NeuroId).then(this._resolveDeletion, this._rejectDeletion);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
