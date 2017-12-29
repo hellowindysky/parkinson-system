@@ -317,7 +317,6 @@ export default {
       // 进行浅复制之后，修改复制对象的属性，不会影响到原始对象
       // 下面这行有一个特殊作用，能让 Vue 动态检测已有对象的新添加的属性，参看 https://cn.vuejs.org/v2/guide/reactivity.html
       this.copyInfo = Object.assign({}, obj);
-      console.log(this.copyInfo);
       // 如果传过来的数据对象缺少某些属性，则根据 template 补上
       for (let group of this.basicInfoTemplateGroups) {
         for (let field of group) {
@@ -461,8 +460,8 @@ export default {
       });
       callback(results);
     },
-    handleSelect(item) {
-      console.log(item);
+    handleSelect() {
+      // console.log(item);
     }
   },
   components: {
@@ -484,10 +483,9 @@ export default {
       let w = parseFloat(this.copyInfo.weight, 10);
       if (h && w) {
         let res = w / ((h / 100) * (h / 100));
-        res = res.toFixed(2);
-        this.copyInfo.bmi = parseFloat(res, 10);
+        this.copyInfo.bmi = res.toFixed(2);
       } else {
-        this.copyInfo.bmi = 0;
+        this.copyInfo.bmi = '';
       }
     },
     ['copyInfo.weight']: function(val) {
@@ -496,10 +494,9 @@ export default {
       let w = parseFloat(val, 10);
       if (h && w) {
         let res = w / ((h / 100) * (h / 100));
-        res = res.toFixed(2);
-        this.copyInfo.bmi = parseFloat(res, 10);
+        this.copyInfo.bmi = res.toFixed(2);
       } else {
-        this.copyInfo.bmi = 0;
+        this.copyInfo.bmi = '';
       }
     }
   },

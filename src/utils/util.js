@@ -60,13 +60,18 @@ function calculateYearsBetween(fromDate, toDate) {
   var currentMonth = Number(todayList[1]);
   var currentDate = Number(todayList[2]);
 
-  if (date > currentDate) {
+  /* if (date > currentDate) {
     month += 1;
   }
   if (month > currentMonth) {
     year += 1;
-  }
-  return currentYear - year > 0 ? currentYear - year : 0;
+  } */
+  if (currentMonth > month) {
+    year -= 1;
+  } else if (currentMonth === month && currentDate > date) {
+    year -= 1;
+  };
+  return currentYear - year > 0 ? currentYear - year : 1;
 }
 
 function checkId(ID) {

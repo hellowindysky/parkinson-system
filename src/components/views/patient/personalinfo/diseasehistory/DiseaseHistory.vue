@@ -9,7 +9,7 @@
         
         <h3>起病情况</h3>
         <!-- template 第一部分 ↓↓↓↓ -->
-        <div class="field" v-for="field in diseaseInfoTemplateGroups[0]" :class="checkField(field)">
+        <div class="field" v-for="field in diseaseInfoTemplateGroups[0]" :class="checkField(field)" v-show="field.fieldName!=='specificDisease'||mmp">
           <span class="field-name">
             {{field.cnfieldName}}
             <span class="required-mark" v-show="field.must===1">*</span>
@@ -23,13 +23,13 @@
               {{ translateCodes(copyInfo[field.fieldName], field.fieldName) }}
             </span>
             <span v-else>
-              {{ copyInfo[field.fieldName] }}
+              {{ copyInfo[field.fieldName] }}{{theUnit(field.fieldName)}}
             </span>
           </div>
 
           <div class="field-input" v-show="mode===EDITING_MODE">
-            <span v-if="field.fieldName==='ariAge'">{{ariAge}}</span>
-            <span v-else-if="field.fieldName==='courseOfDisease'">{{courseOfDiseaseInfo}}</span>
+            <span v-if="field.fieldName==='ariAge'">{{ariAge}}{{theUnit(field.fieldName)}}</span>
+            <span v-else-if="field.fieldName==='courseOfDisease'">{{courseOfDiseaseInfo}}{{theUnit(field.fieldName)}}</span>
             <span v-else-if="getUIType(field)===1">
               <el-input v-model="copyInfo[field.fieldName]"
                 :placeholder="getMatchedField(field.fieldName).cnFieldDesc"></el-input>
@@ -144,7 +144,7 @@
               <span class="value">{{item.whetherLaw ? item.whetherLaw : '未填写'}}</span>
             </div>
             <div class="text third-line">
-              <span class="name">{{item.ariseTime ? '出现时间：' : '...'}}</span>
+              <span class="name">{{item.ariseTime ? '出现时间：' : ''}}</span>
               <span class="value">{{item.ariseTime}}</span>
             </div>
           </Card>
@@ -300,7 +300,8 @@ export default {
       },
       mode: this.READING_MODE,
       foldedStatus: true,
-      cardWidth: ''
+      cardWidth: '',
+      mmp: true
     };
   },
   props: {
@@ -340,7 +341,7 @@ export default {
       if (this.copyInfo['ariTime']) {
         return Util.calculateYearsBetween(this.copyInfo['ariTime'], new Date());
       } else {
-        return 0;
+        return '';
       }
 
     },
@@ -382,6 +383,13 @@ export default {
     }
   },
   methods: {
+    theUnit(fieldName) {
+      if (this.copyInfo['ariTime']) {
+        return fieldName === 'ariAge' ? ' 岁' : fieldName === 'courseOfDisease' ? ' 年' : '';
+      } else {
+        return '';
+      }
+    },
     updatafirstSymbolCard() {
       // 查询首发症状
       // 如果是新增患者，则不去请求数据
@@ -414,7 +422,16 @@ export default {
     },
     valChange(fieldName) {
       if (fieldName === 'diseaseType') {
-        // this.copyInfo['specificDisease'] = '';
+        let types = this.getTypes('diseaseType');
+        let targetTypeList = types.filter((type) => {
+          return type.typeCode === Number(this.copyInfo.diseaseType);
+        });
+        if (targetTypeList.length > 0 && !targetTypeList[0].childType) {
+          this.copyInfo['specificDisease'] = '';
+          this.mmp = false;
+        } else {
+          this.mmp = true;
+        };
       };
     },
     startEditing() {
@@ -510,13 +527,10 @@ export default {
         var typeInfo = Util.getElement('typegroupcode', value, this.typeGroup);
         return typeInfo.types ? typeInfo.types : [];
       }
-
     },
     transformTypeCode(typeCode, fieldName) {
       // 根据 typeCode 找到对应的 typeName
       var types = this.getTypes(fieldName);
-      console.log(types);
-      console.log(typeCode, fieldName, this.copyInfo);
       var matchedType = Util.getElement('typeCode', typeCode, types);
       return matchedType.typeName ? matchedType.typeName : '';
     },
@@ -782,7 +796,6 @@ export default {
     Bus.$on(this.RECALCULATE_CARD_WIDTH, this.recalculateCardWidth);
     // 第一次加载的时候，去计算一次卡片宽度
     this.recalculateCardWidth();
-    console.log(this.typeGroup);
   },
   beforeDestroy() {
     // 还是记得销毁组件前，解除事件绑定
