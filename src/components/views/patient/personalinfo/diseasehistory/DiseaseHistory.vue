@@ -9,7 +9,7 @@
         
         <h3>起病情况</h3>
         <!-- template 第一部分 ↓↓↓↓ -->
-        <div class="field" v-for="field in diseaseInfoTemplateGroups[0]" :class="checkField(field)" v-show="field.fieldName!=='specificDisease'||mmp">
+        <div class="field" v-for="field in diseaseInfoTemplateGroups[0]" :class="checkField(field)" v-show="field.fieldName!=='specificDisease'||specificDiseaseState">
           <span class="field-name">
             {{field.cnfieldName}}
             <span class="required-mark" v-show="field.must===1">*</span>
@@ -35,7 +35,7 @@
                 :placeholder="getMatchedField(field.fieldName).cnFieldDesc"></el-input>
             </span>
             <span v-else-if="getUIType(field)===3">
-              <el-select v-model="copyInfo[field.fieldName]" clearable @change="updateWarning(field),valChange(field.fieldName)"
+              <el-select v-model="copyInfo[field.fieldName]" clearable @change="updateWarning(field)"
                 :placeholder="getMatchedField(field.fieldName).cnFieldDesc" :class="{'warning': warningResults[field.fieldName]}">
                 <el-option v-for="type in getTypes(field.fieldName)" :label="type.typeName"
                   :value="type.typeCode" :key="type.typeCode"></el-option>
@@ -301,7 +301,7 @@ export default {
       mode: this.READING_MODE,
       foldedStatus: true,
       cardWidth: '',
-      mmp: true
+      specificDiseaseState: true
     };
   },
   props: {
@@ -420,20 +420,6 @@ export default {
         this.patientHistorysData = data;
       });
     },
-    valChange(fieldName) {
-      if (fieldName === 'diseaseType') {
-        let types = this.getTypes('diseaseType');
-        let targetTypeList = types.filter((type) => {
-          return type.typeCode === Number(this.copyInfo.diseaseType);
-        });
-        if (targetTypeList.length > 0 && !targetTypeList[0].childType) {
-          this.copyInfo['specificDisease'] = '';
-          this.mmp = false;
-        } else {
-          this.mmp = true;
-        };
-      };
-    },
     startEditing() {
       this.mode = this.EDITING_MODE;
       this.foldedStatus = false;
@@ -518,6 +504,17 @@ export default {
         let targetTypeList = types.filter((type) => {
           return type.typeCode === Number(this.copyInfo.diseaseType);
         });
+        if (targetTypeList.length > 0 && !targetTypeList[0].childType) {
+          // this.copyInfo['specificDisease'] = '';
+          this.$set(this.copyInfo, 'specificDisease', '');
+          this.specificDiseaseState = false;
+          // console.log(this.copyInfo, 'false时');
+        } else {
+          this.specificDiseaseState = true;
+          // this.copyInfo['specificDisease'] = '';
+          // this.$set(this.copyInfo, 'specificDisease', '');
+          // console.log(this.copyInfo, 'true时');
+        };
         return targetTypeList.length > 0 ? targetTypeList[0].childType : [];
 
       } else {
