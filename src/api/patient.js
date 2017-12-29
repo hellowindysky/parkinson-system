@@ -812,7 +812,7 @@ export function deleteScaleInfo(patientScale) {
 };
 
 // 修改神经系统检查
-export function modifyNervouSystem(patientSpephysical) {
+export function modifyNeurologicCheck(patientSpephysical) {
   var request = Object.assign({}, getCommonRequest());
   request.patientSpephysical = patientSpephysical;
   var url = '/pdms/modPatientSpephysical';
@@ -821,7 +821,7 @@ export function modifyNervouSystem(patientSpephysical) {
 };
 
 // 新增神经系统检查
-export function addNervouSystem(patientSpephysical) {
+export function addNeurologicCheck(patientSpephysical) {
   var request = Object.assign({}, getCommonRequest());
   request.patientSpephysical = patientSpephysical;
   var url = '/pdms/addPatientSpephysical';
@@ -830,7 +830,7 @@ export function addNervouSystem(patientSpephysical) {
 };
 
 // 删除神经系统检查
-export function delNervouSystem(patientSpephysical) {
+export function deleteNeurologicCheck(patientSpephysical) {
   var request = Object.assign({}, getCommonRequest());
   request.patientSpephysical = patientSpephysical;
   var url = '/pdms/delPatientSpephysical';

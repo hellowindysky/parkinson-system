@@ -194,7 +194,7 @@ import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import { vueCopy, deepCopy } from 'utils/helper';
 import Util from 'utils/util.js';
-import { modifyNervouSystem, addNervouSystem } from 'api/patient.js';
+import { addNeurologicCheck, modifyNeurologicCheck } from 'api/patient.js';
 
 export default {
   data() {
@@ -376,7 +376,7 @@ export default {
 
       if (this.mode === this.EDIT_CURRENT_CARD) {
         // 修改的状态
-        modifyNervouSystem(submitData).then(() => {
+        modifyNeurologicCheck(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
           this.updateAndClose();
         }, this._handleError);
@@ -384,7 +384,7 @@ export default {
       } else if (this.mode === this.ADD_NEW_CARD) {
         // 新增的状态
         delete submitData.patientSpephysicalId;
-        addNervouSystem(submitData).then(() => {
+        addNeurologicCheck(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
           this.updateAndClose();
         }, this._handleError);
