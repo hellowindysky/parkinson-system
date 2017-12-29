@@ -98,7 +98,8 @@
       <div class="seperate-line"></div>
       <div class="moveLeft">
              无不良反应: 
-        <el-checkbox v-model="checked"></el-checkbox>
+         <el-checkbox v-model="hasNoReaction" @change="checkAll"
+          :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
       </div>
       <div class="content">
       <table class="table">
@@ -160,6 +161,8 @@ export default {
       situationRemark: '',
       severityLevel: '',
       remark: '',
+      reactionFlag: '',
+      hasNoReaction: false,
       patientPhytheReaction: [
         {
           'reactionType': 1,
@@ -286,7 +289,9 @@ export default {
       this.leftThreshold = item.leftThreshold ? item.leftThreshold : '';
       this.rightThreshold = item.rightThreshold ? item.rightThreshold : '';
       this.situationRemark = item.situationRemark ? item.situationRemark : '';
+      this.patientId = item.patientId ? item.patientId : '';
       this.remark = item.remark ? item.remark : '';
+      this.hasNoReaction = item.reactionFlag === 1;
       vueCopy(item.patientPhytheReaction, this.patientPhytheReaction);
       this.$nextTick(() => {
         for (var property in this.warningResults) {
@@ -304,6 +309,15 @@ export default {
       var options = this.getOptions(fieldName);
       var targetOption = Util.getElement('code', code, options);
       return targetOption.name;
+    },
+    checkAll() {
+      for (var i = 0; i < this.patientPhytheReaction.length ; i++) {
+        if (this.hasNoReaction === true) {
+          this.patientPhytheReaction[i].severityLevel = 1;
+        } else {
+          this.patientPhytheReaction[i].severityLevel = '';
+        }
+      };
     },
     getOptions(fieldName) {
       var options = [];
@@ -358,6 +372,8 @@ export default {
       treatmentEvaluationInfo.rightThreshold = this.rightThreshold;
       treatmentEvaluationInfo.situationRemark = this.situationRemark;
       treatmentEvaluationInfo.remark = this.remark;
+      treatmentEvaluationInfo.patientId = this.patientId;
+      treatmentEvaluationInfo.reactionFlag = this.hasNoReaction ? 1 : 0;
       treatmentEvaluationInfo.patientPhytheReaction = deepCopy(this.patientPhytheReaction);
       reviseDateFormat(treatmentEvaluationInfo);
       pruneObj(treatmentEvaluationInfo);
