@@ -326,7 +326,6 @@ export default {
           }
 
         } else if (this.subModalType === this.SMOKE_HISTORY_MODAL) {
-          console.log(this.copyInfo['patientHabitId']);
           if (this.copyInfo['patientHabitId'] === 18) {
             // 吸烟类型 选择 否认存在吸烟史 时，把不必要的提交字段,不要的验证删了
             for (let key in this.copyInfo) {

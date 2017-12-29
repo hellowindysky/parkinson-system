@@ -145,7 +145,7 @@
             </span>
             <span class="field-input" v-else>
               <span class="warning-text">{{warningResults.treatmentType}}</span>
-              <el-select v-model="copyInfo.treatmentType" clearable placeholder="请选择症状名称"
+              <el-select v-model="copyInfo.treatmentType" clearable placeholder="请选择治疗类型"
                @change="updateWarning('treatmentType'),clearVal(['firstVisitType','treatmentType'])"
                 :class="{'warning': warningResults.treatmentType}" >
                 <el-option
