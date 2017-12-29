@@ -223,9 +223,9 @@ export default {
     },
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
-        return '新增药物方案';
+        return '新增药物治疗';
       } else {
-        return '药物方案';
+        return '药物治疗';
       }
     },
     firstTemplateGroup() {
