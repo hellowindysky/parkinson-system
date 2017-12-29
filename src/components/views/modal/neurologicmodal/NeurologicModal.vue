@@ -139,7 +139,8 @@
                 {{copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue}}
               </span>
               <el-input v-else-if="col.uiType===1" v-model="copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue"></el-input>
-              <el-select v-else-if="col.uiType===3" v-model="copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue">
+              <el-select v-else-if="col.uiType===3" v-model="copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue"
+                placeholder="">
                 <el-option v-for="option in getOptions(col.fieldEnumId)" :label="option.name" :key="option.code" :value="option.code"></el-option>
               </el-select>
               <el-date-picker v-else-if="col.uiType===6" v-model="copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue"></el-date-picker>
@@ -595,6 +596,7 @@ export default {
       max-height: 320px;
       height: auto;
       width: 100%;
+      padding-bottom: 5px;
       overflow: hidden;
       box-sizing: border-box;
       border: 1px solid @inverse-font-color;
@@ -636,6 +638,7 @@ export default {
             }
             &.col-width-10 {
               width: 10%;
+              min-width: 60px;
             }
             &.col-width-15 {
               width: 15%;
@@ -680,19 +683,35 @@ export default {
         position: absolute;
         padding: 0;
         top: 0;
-        width: 10px !important;
+        width: 10px;
         right: 0;
         box-sizing: border-box;
         opacity: 0.3;
         transition: opacity 0.3s;
         .ps__scrollbar-y {
           position: relative;
-          border-radius: 0 !important;
+          border-radius: 0;
+          background-color: #aaa;
+        }
+      }
+      .ps__scrollbar-x-rail {
+        position: absolute;
+        padding: 0;
+        bottom: 0;
+        height: 10px;
+        right: 0;
+        box-sizing: border-box;
+        opacity: 0.3;
+        transition: opacity 0.3s;
+        .ps__scrollbar-x {
+          position: relative;
+          height: 10px;
+          border-radius: 0;
           background-color: #aaa;
         }
       }
       &:hover {
-        .ps__scrollbar-y-rail {
+        .ps__scrollbar-y-rail, .ps__scrollbar-x-rail {
           opacity: 0.6;
         }
       }
