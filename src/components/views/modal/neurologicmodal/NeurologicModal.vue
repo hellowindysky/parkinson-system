@@ -48,6 +48,28 @@
           <el-input v-else type="textarea" placeholder="请输入备注内容" v-model="copyInfo.remarks" :maxlength="500"></el-input>
         </span>
       </div>
+      <div class="field" v-if="copyInfo.checkType===3">
+        <span class="field-name">
+          回拉试验:
+        </span>
+        <span class="field-input">
+          <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.pullTest, 'positiveType')}}</span>
+          <el-select v-else v-model="copyInfo.pullTest">
+            <el-option v-for="option in getOptions('positiveType')" :label="option.name" :value="option.code" :key="option.code"></el-option>
+          </el-select>
+        </span>
+      </div>
+      <div class="field" v-if="copyInfo.checkType===3">
+        <span class="field-name">
+          sitting en bloc现象:
+        </span>
+        <span class="field-input">
+          <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.sittingBloc, 'positiveType')}}</span>
+          <el-select v-else v-model="copyInfo.sittingBloc">
+            <el-option v-for="option in getOptions('positiveType')" :label="option.name" :value="option.code" :key="option.code"></el-option>
+          </el-select>
+        </span>
+      </div>
 
       <h3 class="form-title" v-if="tableMode===SON_OPEN && hasTableExisted">{{subTableTitle}}</h3>
       <div class="form-wrapper" v-if="hasTableExisted" ref="formWrapper">
@@ -278,6 +300,9 @@ export default {
       this.$set(this.copyInfo, 'ariseTime', '');
       this.$set(this.copyInfo, 'spephysicalResult', '');
       this.$set(this.copyInfo, 'remarks', '');
+
+      this.$set(this.copyInfo, 'pullTest', '');
+      this.$set(this.copyInfo, 'sittingBloc', '');
 
       this.initSubTableData();
     },
