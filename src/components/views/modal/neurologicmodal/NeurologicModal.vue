@@ -85,9 +85,16 @@
               {{row[0].fieldName}}
             </td>
             <td class="col col-width-10">
-              <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue}}</span>
+              <span v-if="mode===VIEW_CURRENT_CARD && row.uiType===3">
+                {{transform(copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue, row.fieldEnumId)}}
+              </span>
+              <span v-else-if="mode===VIEW_CURRENT_CARD">
+                {{copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue}}
+              </span>
               <el-input v-else-if="row[0].uiType===1" v-model="copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue"></el-input>
-              <el-select v-else-if="row[0].uiType===3" v-model="copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue"></el-select>
+              <el-select v-else-if="row[0].uiType===3" v-model="copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue">
+                <el-option v-for="option in getOptions(row[0].fieldEnumId)" :label="option.name" :key="option.code" :value="option.code"></el-option>
+              </el-select>
               <el-date-picker v-else-if="row[0].uiType===6" v-model="copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue"></el-date-picker>
               <el-date-picker v-else-if="row[0].uiType===7" type="datetime" v-model="copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue"></el-date-picker>
               <el-time-select v-else-if="row[0].uiType===8" v-model="copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue"
@@ -97,9 +104,16 @@
               {{row[1].fieldName}}
             </td>
             <td class="col col-width-10" v-if="row.length===2">
-              <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue}}</span>
+              <span v-if="mode===VIEW_CURRENT_CARD && row.uiType===3">
+                {{transform(copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue, row.fieldEnumId)}}
+              </span>
+              <span v-else-if="mode===VIEW_CURRENT_CARD">
+                {{copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue}}
+              </span>
               <el-input v-else-if="row[1].uiType===1" v-model="copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue"></el-input>
-              <el-select v-else-if="row[1].uiType===3" v-model="copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue"></el-select>
+              <el-select v-else-if="row[1].uiType===3" v-model="copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue">
+                <el-option v-for="option in getOptions(row[1].fieldEnumId)" :label="option.name" :key="option.code" :value="option.code"></el-option>
+              </el-select>
               <el-date-picker v-else-if="row[1].uiType===6" v-model="copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue"></el-date-picker>
               <el-date-picker v-else-if="row[1].uiType===7" type="datetime" v-model="copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue"></el-date-picker>
               <el-time-select v-else-if="row[1].uiType===8" v-model="copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue"
@@ -118,7 +132,12 @@
               {{row.fieldName}}
             </td>
             <td class="col col-width-10" v-for="col in group.colItems">
-              <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue}}</span>
+              <span v-if="mode===VIEW_CURRENT_CARD && col.uiType===3">
+                {{transform(copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue, col.fieldEnumId)}}
+              </span>
+              <span v-else-if="mode===VIEW_CURRENT_CARD">
+                {{copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue}}
+              </span>
               <el-input v-else-if="col.uiType===1" v-model="copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue"></el-input>
               <el-select v-else-if="col.uiType===3" v-model="copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue">
                 <el-option v-for="option in getOptions(col.fieldEnumId)" :label="option.name" :key="option.code" :value="option.code"></el-option>
@@ -311,6 +330,7 @@ export default {
     selectSubTable(code) {
       this.subTableCode = code;
       this.tableMode = this.SON_OPEN;
+      this.updateScrollbar();
       console.log(this.itemGroups);
     },
     submit() {
