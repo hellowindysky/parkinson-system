@@ -283,6 +283,9 @@ export default {
       this.tableMode = this.FATHER_OPEN;
       this.initCopyInfo();
       this.copyItem = item;
+      if (this.copyItem.checkType) {
+        this.copyItem.checkType = Number(this.copyItem.checkType);
+      }
       vueCopy(this.copyItem, this.copyInfo);
 
       console.log('item: ', item);
@@ -374,15 +377,22 @@ export default {
       let submitData = deepCopy(this.copyInfo);
       submitData.ariseTime = Util.simplifyDate(submitData.ariseTime);
 
+      delete submitData.patientFieldCode;
+      for (let type of this.tableTypes) {
+        submitData[type.typeCode] = deepCopy(this.copyInfo.patientFieldCode[type.typeCode]);
+      }
+      if (submitData.checkType !== 3) {
+        delete submitData.pullTest;
+        delete submitData.sittingBloc;
+      }
+
       if (this.mode === this.EDIT_CURRENT_CARD) {
-        // 修改的状态
         modifyNeurologicCheck(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
           this.updateAndClose();
         }, this._handleError);
 
       } else if (this.mode === this.ADD_NEW_CARD) {
-        // 新增的状态
         delete submitData.patientSpephysicalId;
         addNeurologicCheck(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
