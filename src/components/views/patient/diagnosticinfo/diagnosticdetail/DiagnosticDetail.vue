@@ -114,14 +114,16 @@ export default {
 
       var regMyPatientsWithoutCase = new RegExp(/^\/patients\/list\/[0-9]+\/diagnosticInfo\/?$/);
       var regOtherPatientsWithoutCase = new RegExp(/^\/patients\/otherList\/[0-9]+\/diagnosticInfo\/?$/);
+      var regSubjectPatientsWithoutCase = new RegExp(/^\/patients\/subjectList\/[0-9]+\/diagnosticInfo\/?$/);
 
       var regMyPatientsWithCase = new RegExp(/^\/patients\/list\/[0-9]+\/diagnosticInfo\/[0-9a-zA-Z]+$/);
       var regOtherPatientsWithCase = new RegExp(/^\/patients\/otherList\/[0-9]+\/diagnosticInfo\/[0-9a-zA-Z]+$/);
+      var regSubjectPatientsWithCase = new RegExp(/^\/patients\/subjectList\/[0-9]+\/diagnosticInfo\/[0-9a-zA-Z]+$/);
 
-      if (regMyPatientsWithoutCase.test(path) || regOtherPatientsWithoutCase.test(path)) {
+      if (regMyPatientsWithoutCase.test(path) || regOtherPatientsWithoutCase.test(path) || regSubjectPatientsWithoutCase.test(path)) {
         // 一旦发现路由地址中还没有 caseId，则不显示诊断详情面板
         this.closePanel();
-      } else if (regMyPatientsWithCase.test(path) || regOtherPatientsWithCase.test(path)) {
+      } else if (regMyPatientsWithCase.test(path) || regOtherPatientsWithCase.test(path) || regSubjectPatientsWithCase.test(path)) {
         // 如果路由地址中有 caseId，则显示面板并获取对应的诊断数据
         this.caseId = this.$route.params.caseId;
         this.showDetailPanel();
