@@ -143,9 +143,15 @@
             </td>
           </tr>
 
+          <tr class="row first-row" v-if="group.anotherColItems.length>0">
+            <td class="col col-width-10" :rowspan="group.anotherColItems.length>0 ? 2:1"></td>
+            <td class="col col-width-10" v-for="col in group.anotherColItems" :rowspan="col.rowSpan" :colspan="col.colSpan">
+              {{col.fieldName}}
+            </td>
+          </tr>
           <tr class="row first-row" v-if="group.colItems.length>0">
-            <td class="col col-width-10"></td>
-            <td class="col col-width-10" v-for="col in group.colItems">
+            <td class="col col-width-10" v-if="group.anotherColItems.length===0"></td>
+            <td class="col col-width-10" v-if="col.rowSpan>0" v-for="col in group.colItems" :rowspan="col.rowSpan" :colspan="col.colSpan">
               {{col.fieldName}}
             </td>
           </tr>
@@ -263,6 +269,7 @@ export default {
         resultGroups.push({});
         resultGroups[i].rowItems = groups[i].filter(item => item.fieldType === 0);
         resultGroups[i].colItems = groups[i].filter(item => item.fieldType === 1);
+        resultGroups[i].anotherColItems = groups[i].filter(item => item.fieldType === 2);
       }
       return resultGroups;
     },
@@ -375,15 +382,18 @@ export default {
       }
 
       let submitData = deepCopy(this.copyInfo);
+      submitData.typeGroupCode = 'neurologicExam';
       submitData.ariseTime = Util.simplifyDate(submitData.ariseTime);
 
-      delete submitData.patientFieldCode;
+      submitData.patientFieldCode = {};
       for (let type of this.tableTypes) {
-        submitData[type.typeCode] = deepCopy(this.copyInfo.patientFieldCode[type.typeCode]);
+        submitData.patientFieldCode[type.typeCode] = deepCopy(this.copyInfo.patientFieldCode[type.typeCode]);
       }
       if (submitData.checkType !== 3) {
         delete submitData.pullTest;
         delete submitData.sittingBloc;
+      } else {
+        delete submitData.patientFieldCode;
       }
 
       if (this.mode === this.EDIT_CURRENT_CARD) {
