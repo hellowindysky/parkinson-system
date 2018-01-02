@@ -83,7 +83,7 @@ export default {
       panelWidth += 10 * 2;
       var devideNum = 1.0;
       // 10px 是卡片的横向间距，定义在了 varaibles.less 中，260px 是卡片的最小宽度
-      while (panelWidth / devideNum > 260 + 10) {
+      while (panelWidth / devideNum > 160 + 10) {
         devideNum += 1.0;
       }
       devideNum -= 1;
@@ -393,31 +393,31 @@ export default {
         left: calc(~"100% + @{this-card-horizontal-margin}");
       }
       &.left-1-2 {
-        left: calc(~"50% + @{this-card-horizontal-margin}");
+        left: calc(~"49.4% + @{this-card-horizontal-margin}");
       }
       &.left-1-3 {
-        left: calc(~"33.3333% + @{this-card-horizontal-margin}");
+        left: calc(~"33.1% + @{this-card-horizontal-margin}");
       }
       &.left-1-4 {
         left: calc(~"25% + @{this-card-horizontal-margin}");
       }
       &.left-1-5 {
-        left: calc(~"20% + @{this-card-horizontal-margin}");
+        left: calc(~"20.08% + @{this-card-horizontal-margin}");
       }
       &.left-1-6 {
-        left: calc(~"16.6666% + @{this-card-horizontal-margin}");
+        left: calc(~"16.8% + @{this-card-horizontal-margin}");
       }
       &.left-1-7 {
-        left: calc(~"14.2857% + @{this-card-horizontal-margin}");
+        left: calc(~"14.48% + @{this-card-horizontal-margin}");
       }
       &.left-1-8 {
-        left: calc(~"12.5% + @{this-card-horizontal-margin}");
+        left: calc(~"12.65% + @{this-card-horizontal-margin}");
       }
       &.left-1-9 {
-        left: calc(~"11.1111% + @{this-card-horizontal-margin}");
+        left: calc(~"11.3% + @{this-card-horizontal-margin}");
       }
       &.left-1-10 {
-        left: calc(~"10% + @{this-card-horizontal-margin}");
+        left: calc(~"10.2% + @{this-card-horizontal-margin}");
       }
     }
   }
