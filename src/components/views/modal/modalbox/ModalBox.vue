@@ -681,7 +681,7 @@ export default {
       }
     },
     updateAndClose() {
-      if (this.modalType === this.FAMILY_HISTORY_MODAL) {
+      if (this.modalType === this.FAMILY_HISTORY_MODAL && this.$refs.uploadTag[0]) {
         this.$refs.uploadTag[0].clearFiles();
       };
       Bus.$emit(this.UPDATE_PATIENT_INFO);
@@ -800,7 +800,7 @@ export default {
   },
   mounted() {
     Bus.$on(this.SHOW_MODAL_BOX, this.showPanel);
-    // console.log(this.smokeHistoryTemplate);
+    console.log(this.wineHistoryTemplate);
   },
   watch: {
     template: function() {

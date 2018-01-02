@@ -144,8 +144,9 @@
               <span class="value">{{item.whetherLaw ? item.whetherLaw : '未填写'}}</span>
             </div>
             <div class="text third-line">
-              <span class="name">{{item.ariseTime ? '出现时间：' : ''}}</span>
-              <span class="value">{{item.ariseTime}}</span>
+              <!-- <span class="name">{{item.ariseTime ? '出现时间：' : ''}}</span> -->
+              <span class="name">出现时间：</span>
+              <span class="value">{{TheAriseTime(item)}}</span>
             </div>
           </Card>
         </extensible-panel>
@@ -383,6 +384,24 @@ export default {
     }
   },
   methods: {
+    TheAriseTime(item) {
+      if (item.ariseTime) {
+        return item.ariseTime;
+      } else {
+        let fieldNames = ['ariseTimeLeftDown', 'ariseTimeLeftUp', 'ariseTimeRightDown', 'ariseTimeRightUp'];
+        let nums = [];
+        fieldNames.forEach((elem) => {
+          if (item[elem]) {
+            nums.push(new Date(item[elem]).getTime());
+          };
+        });
+        if (nums.length > 0) {
+          return Util.simplifyDate(Math.min.apply(Math, nums));
+        } else {
+          return '未填写';
+        }
+      }
+    },
     theUnit(fieldName) {
       if (this.copyInfo['ariTime']) {
         return fieldName === 'ariAge' ? ' 岁' : fieldName === 'courseOfDisease' ? ' 年' : '';
