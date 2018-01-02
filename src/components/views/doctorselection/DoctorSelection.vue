@@ -2,14 +2,20 @@
   <div class="doctor-selection">
     <div class="top-bar shadow">
       <h2 class="title">{{title}}</h2>
+      <div class="quit" @click="reLogin">
+        <span class="iconfont icon-quit"></span>
+        退出
+      </div>
+    </div>
+    <div class="info-line">
+      <span class="desc">技术支持授权医生：
+        <span class="count">{{doctorNumber}}人</span>
+        （每次只能同时为1位医生提供技术支持服务）
+      </span>
       <el-button class="fresh-button" type="primary" :loading="refreshing" @click="updateDoctorList">
         <span class="iconfont icon-refresh" v-show="!refreshing"></span>
         <span class="text">刷新</span>
       </el-button>
-    </div>
-    <div class="info-line">
-      <span class="desc">技术支持授权医生：（每次只能同时为1位医生提供技术支持服务）</span>
-      <span class="count">可选：{{doctorNumber}}人</span>
     </div>
     <div class="search-line">
       <div class="area shadow" :class="devideWidth">
@@ -96,6 +102,9 @@ export default {
       var typeInfo = Util.getElement('typegroupcode', fieldName, this.typeGroup);
       // console.log(this.typeGroup);
       return typeInfo.types ? typeInfo.types : [];
+    },
+    reLogin() {
+      this.$router.push({name: 'login'});
     },
     updateDoctorList(condition) {
       this.refreshing = true;
@@ -260,12 +269,46 @@ export default {
       color: @button-color;
       font-size: 24px;
     }
+    .quit {
+      display: inline-block;
+      position: absolute;
+      top: 20px;
+      right: 3px;
+      width: 100px;
+      height: 40px;
+      line-height: 40px;
+      cursor: pointer;
+      &:hover {
+        opacity: 0.6;
+      }
+      &:active {
+        opacity: 0.8;
+      }
+      .iconfont {
+        margin-right: 6px;
+      }
+    }
+  }
+  .info-line {
+    position: relative;
+    width: 100%;
+    height: @this-info-line-height;
+    padding: 0 30px;
+    text-align: left;
+    line-height: 40px;
+    font-size: @normal-font-size;
+    .desc {
+    }
+    .count {
+      // color: @button-color;
+      font-weight: bold;
+    }
     .fresh-button {
       position: absolute;
       width: 100px;
       height: 30px;
-      top: 24px;
-      right: 15px;
+      top: 5px;
+      right: 55px;
       padding-left: 30px;
       font-size: @large-font-size;
       border: none;
@@ -296,22 +339,6 @@ export default {
       &:active {
         opacity: 0.8;
       }
-    }
-  }
-  .info-line {
-    width: 100%;
-    height: @this-info-line-height;
-    padding: 0 30px;
-    text-align: left;
-    line-height: 40px;
-    font-size: @normal-font-size;
-    .desc {
-    }
-    .count {
-      position: absolute;
-      right: 30px;
-      color: @button-color;
-      font-weight: bold;
     }
   }
   .search-line {
