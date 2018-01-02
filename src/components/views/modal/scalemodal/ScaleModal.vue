@@ -42,14 +42,14 @@
         <div class="field">
           <span class="field-name">量表填写时间:</span>
           <span class="field-value">
-            <el-date-picker type="datetime" v-model="copyInfo.inspectTime" placeholder="请选择量表填写时间">
+            <el-date-picker type="datetime" format="yyyy-MM-dd HH:mm" v-model="copyInfo.inspectTime" placeholder="请选择量表填写时间">
             </el-date-picker>
           </span>
         </div>
         <div class="field">
           <span class="field-name">末次服药时间:</span>
           <span class="field-value">
-            <el-date-picker type="datetime" v-model="copyInfo.lastTakingTime" placeholder="请选择末次服药时间">
+            <el-date-picker type="datetime" format="yyyy-MM-dd HH:mm" v-model="copyInfo.lastTakingTime" placeholder="请选择末次服药时间">
             </el-date-picker>
           </span>
         </div>
