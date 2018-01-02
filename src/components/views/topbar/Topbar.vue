@@ -11,6 +11,7 @@
         <span class="text right" @click="switchBlockSensitiveStatus(false)">全部显示</span>
       </div>
       <div class="operation-wrapper">
+        <span class="iconfont icon-question"></span>
         <span class="iconfont icon-search" :class="{'on': showFilterPanel}" @click="toggleFilterPanelDisplay"></span>
         <span class="iconfont icon-notice" v-show="false"></span>
         <span class="iconfont icon-task" v-show="false"></span>
