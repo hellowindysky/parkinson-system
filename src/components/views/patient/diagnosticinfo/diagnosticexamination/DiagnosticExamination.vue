@@ -10,15 +10,15 @@
             <span class="value">{{item.checkTime}}</span>
           </div>
           <div class="text line-2">
-            <span class="name">呼吸（次/分）</span>
+            <span class="name">呼吸 (次/分)</span>
             <span class="value">{{item.breathing}}</span>
           </div>
            <div class="text line-3">
-            <span class="name">体温（℃）</span>
+            <span class="name">体温 (℃)</span>
             <span class="value">{{item.temperature}}</span>
           </div>
            <div class="text line-4">
-            <span class="name">脉搏（次/分）</span>
+            <span class="name">脉搏 (次/分)</span>
             <span class="value">{{item.pulse}}</span>
           </div>
            <div class="text line-5">

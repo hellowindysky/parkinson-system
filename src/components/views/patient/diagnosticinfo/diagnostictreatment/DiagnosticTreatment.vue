@@ -8,23 +8,23 @@
           :title="getMedicineTitle(item.medicineId)" :disable-delete="item.statusFlag===0" v-on:editCurrentCard="editMedicine(item)"
           v-on:deleteCurrentCard="deleteMedicine(item)" v-on:viewCurrentCard="viewMedicine(item)">
           <div class="text line-1">
-            <span class="name">用药频率: </span>
+            <span class="name">用药频率</span>
             <span class="value">{{transformMedicineField(item, 'usages')}}</span>
           </div>
           <div class="text line-2">
-            <span class="name">首次用药: </span>
+            <span class="name">首次用药</span>
             <span class="value">{{transformMedicineField(item, 'firMedFlag')}}</span>
           </div>
           <div class="text line-3">
-            <span class="name">停药原因: </span>
+            <span class="name">停药原因</span>
             <span class="value">{{transformMedicineField(item, 'stopReason')}}</span>
           </div>
           <div class="text line-4">
-            <span class="name">副反应类型: </span>
+            <span class="name">副反应类型</span>
             <span class="value">{{transformMedicineField(item, 'sideeffectType')}}</span>
           </div>
           <div class="text line-5">
-            <span class="name">处方性质: </span>
+            <span class="name">处方性质</span>
             <span class="value">{{getPrescriptionDesc(item.statusFlag)}}</span>
           </div>
         </card>
@@ -37,31 +37,31 @@
           v-on:viewCurrentCard="viewPreEvaluationRecord(item)"
           v-on:deleteCurrentCard="deletePreEvaluationRecord(item)">
           <div class="text line-1">
-            <span class="name">剂末现象: </span>
+            <span class="name">剂末现象</span>
             <span class="value">{{item.terminalDesc}}</span>
           </div>
           <div class="text line-2">
-            <span class="name">患者日记: </span>
+            <span class="name">患者日记</span>
             <span class="value">{{item.diaryDesc}}</span>
           </div>
           <div class="text line-3">
-            <span class="name">统一异动症: </span>
+            <span class="name">统一异动症</span>
             <span class="value">{{item.dyskinesiaDesc}}</span>
           </div>
           <div class="text line-4">
-            <span class="name">非运动症状: </span>
+            <span class="name">非运动症状</span>
             <span class="value">{{item.nonMotorDesc}}</span>
           </div>
           <div class="text line-5">
-            <span class="name">运动症状: </span>
+            <span class="name">运动症状</span>
             <span class="value">{{item.motorDesc}}</span>
           </div>
           <div class="text line-6">
-            <span class="name">手术意愿: </span>
+            <span class="name">手术意愿</span>
             <span class="value">{{item.intensionDesc}}</span>
           </div>
           <div class="text line-7">
-            <span class="name">评估时间: </span>
+            <span class="name">评估时间</span>
             <span class="value">{{item.preopsTime}}</span>
           </div>
         </card>
@@ -69,15 +69,15 @@
           :title="'手术方案'" v-on:editCurrentCard="editSurgicalRecord(item)"
           v-on:deleteCurrentCard="deleteSurgicalRecord(item)" v-on:viewCurrentCard="viewSurgicalRecord(item)">
           <div class="text line-1">
-            <span class="name">手术类型: </span>
+            <span class="name">手术类型</span>
             <span class="value">{{transformSurgicalType(item.surgicalInfoId)}}</span>
           </div>
           <div class="text line-2 single-line-ellipsis">
-            <span class="name">备注: </span>
+            <span class="name">备注</span>
             <span class="value">{{item.remarks}}</span>
           </div>
           <div class="text line-3">
-            <span class="name">手术时间: </span>
+            <span class="name">手术时间</span>
             <span class="value">{{item.surgicalDate}}</span>
           </div>
         </card>
@@ -85,19 +85,19 @@
           :title="'术后并发症'" v-on:editCurrentCard="editPostComplicationRecord(item)"
           v-on:deleteCurrentCard="deletePostComplicationRecord(item)" v-on:viewCurrentCard="viewPostComplicationRecord(item)">
           <div class="text line-1">
-            <span class="name">并发症细类: </span>
+            <span class="name">并发症细类</span>
             <span class="value">{{transformComplicationType(item.minorComplicationType)}}</span>
           </div>
           <div class="text line-2">
-            <span class="name">处理: </span>
+            <span class="name">处理</span>
             <span class="value">{{transformTypeGroupId(item.treatment, 'treatment')}}</span>
           </div>
           <div class="text line-3 single-line-ellipsis">
-            <span class="name">备注: </span>
+            <span class="name">备注</span>
             <span class="value">{{item.remarks}}</span>
           </div>
           <div class="text line-4">
-            <span class="name">出现时间: </span>
+            <span class="name">出现时间</span>
             <span class="value">{{item.occurrenceTime}}</span>
           </div>
         </card>
@@ -106,22 +106,22 @@
           :title="'程控记录'" v-on:editCurrentCard="editDbsRecord(item)"
           v-on:deleteCurrentCard="deleteDbsRecord(item)" v-on:viewCurrentCard="viewDbsRecord(item)">
           <div class="text line-1">
-            <span class="name">首次开机: </span>
+            <span class="name">首次开机</span>
             <span class="value">{{item.dbsTimes}}</span>
           </div>
           <div class="text line-2">
-            <span class="name">开机参数: </span>
+            <span class="name">开机参数</span>
             <br>
             <span class="value higher">{{item.dbsParam.split('$')[0]}}</span>
             <br>
             <span class="value higher">{{item.dbsParam.split('$')[1]}}</span>
           </div>
           <div class="text line-6 single-line-ellipsis">
-            <span class="name">备注: </span>
+            <span class="name">备注</span>
             <span class="value">{{item.remarks}}</span>
           </div>
           <div class="text line-7">
-            <span class="name">记录时间: </span>
+            <span class="name">记录时间</span>
             <span class="value">{{item.programDate}}</span>
           </div>
         </card>
@@ -129,22 +129,22 @@
          :title="'程控记录'" v-on:editCurrentCard="editDbsRecord(item)" v-on:viewCurrentCard="viewDbsRecord(item)"
          v-on:deleteCurrentCard="deleteDbsRecord(item)">
           <div class="text line-1">
-            <span class="name">首次开机: </span>
+            <span class="name">首次开机</span>
             <span class="value">{{item.dbsTimes}}</span>
           </div>
           <div class="text line-2">
-            <span class="name">最后参数: </span>
+            <span class="name">最后参数</span>
             <br>
             <span class="value higher">{{item.dbsParam.split('$')[0]}}</span>
             <br>
             <span class="value higher">{{item.dbsParam.split('$')[1]}}</span>
           </div>
           <div class="text line-6 single-line-ellipsis">
-            <span class="name">备注: </span>
+            <span class="name">备注</span>
             <span class="value">{{item.remarks}}</span>
           </div>
           <div class="text line-7">
-            <span class="name">记录时间: </span>
+            <span class="name">记录时间</span>
             <span class="value">{{item.programDate}}</span>
           </div>
         </card>
@@ -156,23 +156,23 @@
           :title="transformPhysiType(item.physiType)" v-on:editCurrentCard="editPhysiontherapy(item)"
           v-on:deleteCurrentCard="deletePhysiontherapy(item)" v-on:viewCurrentCard="viewPhysiontherapy(item)">
           <div class="text line-1">
-            <span class="name">治疗前阈值： </span>
+            <span class="name">治疗前阈值</span>
             <span class="value">左{{item.leftThresholdBefore}}，右{{item.rightThresholdBefore}}</span>
           </div>
           <div class="text line-2">
-            <span class="name">治疗后阈值： </span>
+            <span class="name">治疗后阈值</span>
             <span class="value">左 {{item.leftThresholdAfter ? item.leftThresholdAfter : '-'}}，右 {{item.rightThresholdAfter ? item.rightThresholdAfter : '-' }}</span>
           </div>
           <div class="text line-3" v-if="item.reactionFlag=== 1">
-            <span class="name">不良反应： </span>
+            <span class="name">不良反应</span>
             <span class="value">{{'无'}}</span>
           </div>
           <div class="text line-3" v-else="item.reactionFlag=== 0">
-            <span class="name">不良反应： </span>
+            <span class="name">不良反应</span>
             <span class="value">{{getReaction(item.patientPhytheReaction)}}</span>
           </div>
           <div class="text line-4">
-            <span class="name">记录时间： </span>
+            <span class="name">记录时间</span>
             <span class="value">{{item.recordDate}}</span>
           </div>
         </card>
@@ -181,23 +181,23 @@
           :title="'治疗评估'" v-on:editCurrentCard="editTreatmentEvaluation(item)"
           v-on:deleteCurrentCard="deleteTreatmentEvaluation(item)" v-on:viewCurrentCard="viewTreatmentEvaluation(item)">
           <div class="text line-1" v-if="item.situationType === 1">
-            <span class="name">治疗后阈值： </span>
+            <span class="name">治疗后阈值</span>
             <span class="value">左 {{item.leftThreshold}}，右 {{item.rightThreshold}}</span>
           </div>
           <div class="text line-1" v-if="item.situationType === 2">
-            <span class="name">治疗后情况描述： </span>
+            <span class="name">治疗后情况描述</span>
             <span class="value">{{item.situationRemark}}</span>
           </div>
           <div class="text line-2" v-if="item.reactionFlag === 1">
-            <span class="name">不良反应： </span>
+            <span class="name">不良反应</span>
             <span class="value">{{'无'}}</span>
           </div>
           <div class="text line-2" v-else="item.reactionFlag === 0">
-            <span class="name">不良反应： </span>
+            <span class="name">不良反应</span>
             <span class="value">{{getReaction(item.patientPhytheReaction)}}</span>
           </div>
           <div class="text line-3">
-            <span class="name">记录时间： </span>
+            <span class="name">记录时间</span>
             <span class="value">{{item.recordDate}}</span>
           </div>
         </card>
