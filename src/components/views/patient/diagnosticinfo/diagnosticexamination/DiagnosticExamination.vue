@@ -1,7 +1,7 @@
 <template lang="html">
   <folding-panel :title="'检验检查'" :mode="mutableMode"  v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit" :editable="canEdit">
     <div class="diagnostic-examination" ref="diagnosticExamination">
-    <extensible-panel class="panel vitalSigns-panel" :mode="mutableMode" :title="vitalSignsTitle" v-on:addNewCard="addVitalSigns" :editable="canEdit">
+    <extensible-panel class="panel vital-signs-panel" :mode="mutableMode" :title="vitalSignsTitle" v-on:addNewCard="addVitalSigns" :editable="canEdit">
         <card class="card vitalSigns-card" :class="cardWidth" :mode="mutableMode" v-for="item in diagnosticVitalSigns" :key="item.patientVitalSign"
           :title="item.title" v-on:editCurrentCard="editVitalSigns(item)"
           v-on:deleteCurrentCard="deleteVitalSigns(item)" v-on:viewCurrentCard="viewVitalSigns(item)">
@@ -436,7 +436,7 @@ export default {
         height: auto;
       }
     }
-     &.vitalSigns-panel .content {
+     &.vital-signs-panel .content {
       height: @image-card-height + @card-vertical-margin * 2 + 5px * 2;
       &.extended {
         height: auto;
@@ -444,6 +444,9 @@ export default {
     }
     &.neuroelectric-panel .content {
       height: @neuroelectric-card-height + @card-vertical-margin * 2 + 5px * 2;
+      &.extended {
+        height: auto;
+      }
     }
     .card {
       display: inline-block;
