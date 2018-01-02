@@ -322,7 +322,7 @@ export default {
         this.listType === this.OTHER_PATIENTS_TYPE ||
         this.listType === this.SUBJECT_PATIENTS_TYPE) {
         if (this.$store.state.showSensitiveInfo === false) {
-          return '请输入患者姓名编码或ID';
+          return '请输入患者姓名编码';
         } else {
           return '请输入姓名/身份证号/手机号';
         }
