@@ -483,7 +483,8 @@ export default {
       let w = parseFloat(this.copyInfo.weight, 10);
       if (h && w) {
         let res = w / ((h / 100) * (h / 100));
-        this.copyInfo.bmi = res.toFixed(2);
+        res = parseFloat(res.toFixed(1), 10);
+        this.copyInfo.bmi = res;
       } else {
         this.copyInfo.bmi = '';
       }
@@ -494,7 +495,8 @@ export default {
       let w = parseFloat(val, 10);
       if (h && w) {
         let res = w / ((h / 100) * (h / 100));
-        this.copyInfo.bmi = res.toFixed(2);
+        res = parseFloat(res.toFixed(1), 10);
+        this.copyInfo.bmi = res;
       } else {
         this.copyInfo.bmi = '';
       }
@@ -609,6 +611,9 @@ export default {
           }
         }
         .el-select {
+          width: 100%;
+        }
+        .el-autocomplete {
           width: 100%;
         }
         .el-date-editor {
