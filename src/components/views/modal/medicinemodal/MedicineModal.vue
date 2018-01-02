@@ -132,13 +132,13 @@
                 :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)"
                 :maxlength="500">
               </el-input>
-              <el-select v-else-if="getUIType(field.fieldName)===3" v-model="medicine[field.fieldName]" clearable  :class="{'warning': warningResults[field.fieldName]}"
+              <el-select v-else-if="getUIType(field.fieldName)===3" v-model="medicine[field.fieldName]" clearable :class="{'warning': warningResults[field.fieldName]}"
                 :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
                 <el-option v-for="option in getOptions(field.fieldName)" :label="option.name"
                   :value="option.code" :key="option.code"></el-option>
               </el-select>
               <el-date-picker v-else-if="getUIType(field.fieldName)===6" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-                :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
+                :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)" clearable>
              </el-date-picker>
             </span>
           </div>
@@ -148,7 +148,7 @@
             v-show="checkIfHidden(field.fieldName)">
             <span class="field-name" :class="{'long-field-name': isLongName(field.fieldName)}">
               {{field.cnfieldName}}
-              <span class="required-mark" v-show="field.must===1 || hasSideEffect">*</span>
+              <span class="required-mark" v-show="field.must===1 || (hasSideEffect && checkIfSideEffectField(field.fieldName))">*</span>
             </span>
             <span v-if="mode===VIEW_CURRENT_CARD" class="field-input" :class="{'long-field-name': isLongName(field.fieldName)}">
               <span v-if="getUIType(field.fieldName)===3">{{getFieldValue(field)}}</span>
@@ -160,13 +160,13 @@
                 :class="{'warning': warningResults[field.fieldName]}" :type="getInputType(field.fieldName)"
                 :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)" :maxlength="500">
               </el-input>
-              <el-select v-else-if="getUIType(field.fieldName)===3" clearable v-model="medicine[field.fieldName]" clearable  :class="{'warning': warningResults[field.fieldName]}"
-                :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
+              <el-select v-else-if="getUIType(field.fieldName)===3" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
+                :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)" clearable>
                 <el-option v-for="option in getOptions(field.fieldName)" :label="option.name"
                   :value="option.code" :key="option.code"></el-option>
               </el-select>
               <el-date-picker v-else-if="getUIType(field.fieldName)===6" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-                :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
+                :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)" clearable>
              </el-date-picker>
             </span>
           </div>
@@ -445,7 +445,7 @@ export default {
 
       // 然后更新一下 warningResults，因为有的组件初始化的时候并不会做校验
       for (let field of [].concat(this.firstTemplateGroup, this.thirdTemplateGroup,
-       this.fourthTemplateGroup, this.fifthTemplateGroup)) {
+        this.fourthTemplateGroup, this.fifthTemplateGroup)) {
         this.updateWarning(field);
       }
       for (var i = 0; i < this.medicine.patientMedicineDetail.length; i++) {
@@ -483,12 +483,12 @@ export default {
       // 准备提交了
       this.medicine.patientId = this.$route.params.id;
       this.medicine.patientCaseId = this.$route.params.caseId;
-      if (this.title === '新增药物方案') {
+      if (this.mode === this.ADD_NEW_CARD) {
         addPatientMedicine(this.medicine).then(() => {
           this.updateAndClose();
         }, this._handleError);
 
-      } else if (this.title === '药物方案') {
+      } else if (this.mode === this.EDIT_CURRENT_CARD) {
         modifyPatientMedicine(this.medicine).then(() => {
           this.updateAndClose();
         }, this._handleError);
@@ -594,18 +594,18 @@ export default {
         this.medicine.medicalSpecUsed = '';
       }
 
-      // // 如果将 “停药原因” 设置为 “药物副反应”，则后续的药物副反应变为必填项
-      // if (field.fieldName === 'stopReason') {
-      //   var reason = Util.getElement('id', this.medicine.stopReason, this.medicineStopReason);
-      //   if (reason.effectMust === 1) {
-      //     this.hasSideEffect = true;
-      //   } else {
-      //     this.hasSideEffect = false;
-      //     for (let templateField of this.fifthTemplateGroup) {
-      //       this.updateWarning(templateField);
-      //     }
-      //   }
-      // }
+      // 如果将 “停药原因” 设置为 “药物副反应”，则后续的药物副反应(时间，类型，描述三个字段)变为必填项
+      if (field.fieldName === 'stopReason') {
+        var reason = Util.getElement('id', this.medicine.stopReason, this.medicineStopReason);
+        if (reason.effectMust === 1) {
+          this.hasSideEffect = true;
+        } else {
+          this.hasSideEffect = false;
+          for (let templateField of this.fifthTemplateGroup) {
+            this.updateWarning(templateField);
+          }
+        }
+      }
 
       this.updateWarning(field);
     },
@@ -636,6 +636,13 @@ export default {
         });
       });
     },
+    checkIfSideEffectField(fieldName) {
+      if (['sideeffectDate', 'sideeffectType', 'sideeffectRemark'].indexOf(fieldName) >= 0) {
+        return true;
+      } else {
+        return false;
+      }
+    },
     updateWarning(field) {
       var fieldName = field.fieldName;
 
@@ -645,12 +652,8 @@ export default {
       }
 
       var fieldValue = this.medicine[fieldName];
-      var isSideEffectField = false;
-      for (let templateField of this.fifthTemplateGroup) {
-        if (fieldName === templateField.fieldName) {
-          isSideEffectField = true;
-        }
-      }
+      var isSideEffectField = this.checkIfSideEffectField(fieldName);
+
       if (field.must === 1 || (isSideEffectField && this.hasSideEffect)) {
         // must 为 1 代表必填，为 2 代表选填
         var isEmptyValue = !fieldValue && fieldValue !== 0;
