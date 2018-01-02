@@ -83,7 +83,7 @@ export default {
       panelWidth += 10 * 2;
       var devideNum = 1.0;
       // 10px 是卡片的横向间距，定义在了 varaibles.less 中，260px 是卡片的最小宽度
-      while (panelWidth / devideNum > 160 + 10) {
+      while (panelWidth / devideNum > 260 + 10) {
         devideNum += 1.0;
       }
       devideNum -= 1;
