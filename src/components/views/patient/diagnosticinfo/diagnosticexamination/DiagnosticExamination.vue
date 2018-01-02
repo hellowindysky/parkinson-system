@@ -90,19 +90,19 @@
           v-on:deleteCurrentCard="deleteNeuroelectricRecord(item)">
           <div class="text first-line">
             <span class="name">RDI</span>
-            <span class="value">待定</span>
+            <span class="value">{{item.patientFieldCode[3][11][0].fieldValue}}</span>
           </div>
           <div class="text second-line">
             <span class="name">睡眠效率</span>
-            <span class="value">待定</span>
+            <span class="value">{{item.patientFieldCode[3][7][0].fieldValue}}%</span>
           </div>
           <div class="text third-line">
-            <span class="name">结论</span>
-            <span class="value">待定</span>
+            <span class="name">检查结果</span>
+            <span class="value">{{item.examResult}}</span>
           </div>
           <div class="text fourth-line">
-            <span class="name">记录时间</span>
-            <span class="value">待定</span>
+            <span class="name">记录开始</span>
+            <span class="value">{{item.recordStart}}</span>
           </div>
         </card>
       </extensible-panel>
