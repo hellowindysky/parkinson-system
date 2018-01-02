@@ -25,7 +25,7 @@
               <span v-else-if="field.fieldName==='medicalType'">{{medicalType}}</span>
               <span v-else>{{medicine[field.fieldName]}}</span>
             </span>
-            <el-select v-else-if="getUIType(field.fieldName)===3" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
+            <el-select v-else-if="getUIType(field.fieldName)===3" v-model="medicine[field.fieldName]" clearable :class="{'warning': warningResults[field.fieldName]}"
               :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
               <el-option v-for="option in getOptions(field.fieldName)" :label="option.name"
               :value="option.code" :key="option.code"></el-option>
@@ -54,8 +54,8 @@
             <tr v-for="i in rowArray" class="row">
               <td class="col col-id">{{i}}</td>
               <td class="col col-time">
-                <span v-if="mode===VIEW_CURRENT_CARD">{{medicine.patientMedicineDetail[i - 1].takeTime}}</span>
-                <el-time-select v-else v-model="medicine.patientMedicineDetail[i - 1].takeTime" @change="updateTime(i - 1)"
+                <span v-if="mode===VIEW_CURRENT_CARD" clearable>{{medicine.patientMedicineDetail[i - 1].takeTime}}</span>
+                <el-time-select v-else clearable  v-model="medicine.patientMedicineDetail[i - 1].takeTime" @change="updateTime(i - 1)"
                  :class="{'warning': false}" placeholder="具体时间点"
                  :editable="false" :picker-options="{start: '00:00', step: '00:30', end: '23:30'}">
                 </el-time-select>
@@ -132,7 +132,7 @@
                 :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)"
                 :maxlength="500">
               </el-input>
-              <el-select v-else-if="getUIType(field.fieldName)===3" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
+              <el-select v-else-if="getUIType(field.fieldName)===3" v-model="medicine[field.fieldName]" clearable  :class="{'warning': warningResults[field.fieldName]}"
                 :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
                 <el-option v-for="option in getOptions(field.fieldName)" :label="option.name"
                   :value="option.code" :key="option.code"></el-option>
@@ -160,7 +160,7 @@
                 :class="{'warning': warningResults[field.fieldName]}" :type="getInputType(field.fieldName)"
                 :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)" :maxlength="500">
               </el-input>
-              <el-select v-else-if="getUIType(field.fieldName)===3" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
+              <el-select v-else-if="getUIType(field.fieldName)===3" clearable v-model="medicine[field.fieldName]" clearable  :class="{'warning': warningResults[field.fieldName]}"
                 :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)">
                 <el-option v-for="option in getOptions(field.fieldName)" :label="option.name"
                   :value="option.code" :key="option.code"></el-option>
@@ -594,18 +594,18 @@ export default {
         this.medicine.medicalSpecUsed = '';
       }
 
-      // 如果将 “停药原因” 设置为 “药物副反应”，则后续的药物副反应变为必填项
-      if (field.fieldName === 'stopReason') {
-        var reason = Util.getElement('id', this.medicine.stopReason, this.medicineStopReason);
-        if (reason.effectMust === 1) {
-          this.hasSideEffect = true;
-        } else {
-          this.hasSideEffect = false;
-          for (let templateField of this.fifthTemplateGroup) {
-            this.updateWarning(templateField);
-          }
-        }
-      }
+      // // 如果将 “停药原因” 设置为 “药物副反应”，则后续的药物副反应变为必填项
+      // if (field.fieldName === 'stopReason') {
+      //   var reason = Util.getElement('id', this.medicine.stopReason, this.medicineStopReason);
+      //   if (reason.effectMust === 1) {
+      //     this.hasSideEffect = true;
+      //   } else {
+      //     this.hasSideEffect = false;
+      //     for (let templateField of this.fifthTemplateGroup) {
+      //       this.updateWarning(templateField);
+      //     }
+      //   }
+      // }
 
       this.updateWarning(field);
     },

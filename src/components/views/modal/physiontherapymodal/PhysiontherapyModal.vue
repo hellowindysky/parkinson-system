@@ -80,7 +80,7 @@
             <el-input v-model="stimulusFrequency" placeholder="请输入刺激频率"></el-input>
           </span>
         </div>
-          <div class="field">
+        <div class="field">
           <span class="field-name">
            刺激侧:
           </span>
@@ -203,7 +203,7 @@
             </td>
             <td class="col narrow-col">
               <span v-if="mode===VIEW_CURRENT_CARD">{{transform(reaction.severityLevel,'reactionLevel')}}</span>
-              <el-select v-else v-model="reaction.severityLevel" clearable>
+              <el-select v-else v-model="reaction.severityLevel" clearable :disabled="hasNoReaction">
                 <el-option
                   v-for="item in getOptions('reactionLevel')"
                   :key="item.code"
