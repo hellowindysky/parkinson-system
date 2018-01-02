@@ -862,6 +862,9 @@ export default {
         margin-left:0;
         margin-right:0;
         height: @disease-card-height + @card-vertical-margin * 2 + 5px * 2;
+        &.extended {
+          height: auto;
+        }
       }
       .card {
         display: inline-block;
