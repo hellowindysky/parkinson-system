@@ -177,6 +177,9 @@ export default {
         code: this.verificationCode,
         businessType: this.businessType
       };
+      if (this.businessType === 4) {
+        verificationInfo.accountNumber = this.doctorAccountNumber;;
+      }
       verifyMessageCode(verificationInfo).then(() => {
         if (this.businessType === 3) {
           Bus.$emit(this.PERMIT_DISPLAYING_SENSITIVE_INFO);
