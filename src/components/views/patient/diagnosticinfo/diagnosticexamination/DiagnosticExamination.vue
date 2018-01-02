@@ -6,23 +6,23 @@
           :title="item.title" v-on:editCurrentCard="editVitalSigns(item)"
           v-on:deleteCurrentCard="deleteVitalSigns(item)" v-on:viewCurrentCard="viewVitalSigns(item)">
           <div class="text line-1">
-            <span class="name">检查时间: </span>
+            <span class="name">检查时间</span>
             <span class="value">{{item.checkTime}}</span>
           </div>
           <div class="text line-2">
-            <span class="name">呼吸（次/分）: </span>
+            <span class="name">呼吸（次/分）</span>
             <span class="value">{{item.breathing}}</span>
           </div>
            <div class="text line-3">
-            <span class="name">体温（℃）: </span>
+            <span class="name">体温（℃）</span>
             <span class="value">{{item.temperature}}</span>
           </div>
            <div class="text line-4">
-            <span class="name">脉搏（次/分）: </span>
+            <span class="name">脉搏（次/分）</span>
             <span class="value">{{item.pulse}}</span>
           </div>
            <div class="text line-5">
-            <span class="name">心率情况: </span>
+            <span class="name">心率情况</span>
             <span class="value">{{transform(item.rhythm, 'rhythm')}}</span>
           </div>
          </card>
@@ -33,11 +33,11 @@
           :title="transform(item.checkType, 'neurologicExam')" v-on:editCurrentCard="editNeurologicCheckRecord(item)"
           v-on:deleteCurrentCard="deleteNeurologicCheckRecord(item)" v-on:viewCurrentCard="viewNeurologicCheckRecord(item)">
           <div class="text first-line">
-            <span class="name">诊断结果: </span>
+            <span class="name">诊断结果</span>
             <span class="value">{{item.spephysicalResult}}</span>
           </div>
           <div class="text second-line">
-            <span class="name">诊断时间: </span>
+            <span class="name">诊断时间</span>
             <span class="value">{{item.ariseTime}}</span>
           </div>
          </card>
@@ -48,11 +48,11 @@
           :title="item.checkName" v-on:editCurrentCard="editGeneCheckRecord(item)"
           v-on:deleteCurrentCard="deleteGeneCheckRecord(item)" v-on:viewCurrentCard="viewGeneCheckRecord(item)">
           <div class="text first-line">
-            <span class="name">检查结果: </span>
+            <span class="name">检查结果</span>
             <span class="value">{{item.checkResult}}</span>
           </div>
           <div class="text second-line">
-            <span class="name">检查时间: </span>
+            <span class="name">检查时间</span>
             <span class="value">{{item.checkDate}}</span>
           </div>
          </card>
@@ -66,14 +66,14 @@
             <span class="value"></span>
           </div>
           <div class="text second-line">
-            <span class="name">检查时间: </span>
+            <span class="name">检查时间</span>
             <span class="value">{{item.checkDate}}</span>
           </div>
         </card>
       </extensible-panel>
 
-      <extensible-panel class="panel" :mode="mutableMode" :title="neuroelectricTitle" v-on:addNewCard="addEmgRecord" :editable="canEdit">
-        <card class="card" :class="cardWidth" :mode="mutableMode" v-for="item in emgList" :key="item.pcaseId"
+      <extensible-panel class="panel neuroelectric-panel" :mode="mutableMode" :title="neuroelectricTitle" v-on:addNewCard="addEmgRecord" :editable="canEdit">
+        <card class="card neuroelectric-card" :class="cardWidth" :mode="mutableMode" v-for="item in emgList" :key="item.pcaseId"
           :title="item.etgName" v-on:editCurrentCard="editNeuroelectricRecord(item)" v-on:viewCurrentCard="viewNeuroelectricRecord(item)"
           v-on:deleteCurrentCard="deleteNeuroelectricRecord(item)">
           <div class="text first-line">
@@ -85,15 +85,23 @@
             <span class="value">{{item.patEleResule}}</span>
           </div>
         </card>
-        <card class="card" :class="cardWidth" :mode="mutableMode" v-for="item in sleepMonitoringList" :key="item.patientCaseId"
+        <card class="card neuroelectric-card" :class="cardWidth" :mode="mutableMode" v-for="item in sleepMonitoringList" :key="item.patientCaseId"
           :title="transform(item.elecExamType, 'elecExam')" v-on:editCurrentCard="editNeuroelectricRecord(item)" v-on:viewCurrentCard="viewNeuroelectricRecord(item)"
           v-on:deleteCurrentCard="deleteNeuroelectricRecord(item)">
           <div class="text first-line">
-            <span class="name">字段一</span>
+            <span class="name">RDI</span>
             <span class="value">待定</span>
           </div>
           <div class="text second-line">
-            <span class="name">字段二</span>
+            <span class="name">睡眠效率</span>
+            <span class="value">待定</span>
+          </div>
+          <div class="text third-line">
+            <span class="name">结论</span>
+            <span class="value">待定</span>
+          </div>
+          <div class="text fourth-line">
+            <span class="name">记录时间</span>
             <span class="value">待定</span>
           </div>
         </card>
@@ -414,6 +422,7 @@ export default {
 @import "~styles/variables.less";
 
 @image-card-height: 130px;
+@neuroelectric-card-height: 155px;
 @field-item-width: 150px;
 @field-height: 45px;
 @vitalSigns-card-height: 130px;
@@ -433,13 +442,18 @@ export default {
         height: auto;
       }
     }
+    &.neuroelectric-panel .content {
+      height: @neuroelectric-card-height + @card-vertical-margin * 2 + 5px * 2;
+    }
     .card {
       display: inline-block;
       position: relative;
-      margin: @card-vertical-margin @card-horizontal-margin; // min-width: 200px;
-      // max-width: 250px;
-      &.image-card{
+      margin: @card-vertical-margin @card-horizontal-margin;
+      &.image-card {
         height: @image-card-height;
+      }
+      &.neuroelectric-card {
+        height: @neuroelectric-card-height;
       }
       &.width-1-1,
       &.width-1-0 {
@@ -500,6 +514,9 @@ export default {
       }
       .third-line {
         top: 100px;
+      }
+      .fourth-line {
+        top: 125px;
       }
       .line-1 {
         top: 10px;
