@@ -14,15 +14,16 @@
     <div class="search-line">
       <div class="area shadow" :class="devideWidth">
         <span class="text">地区</span>
-        <el-select v-model="district" :clearable="true">
+        <el-select v-model="district" :clearable="true" @change="searchDoctor">
           <el-option v-for="option in getOptions('homeProvince')" :label="option.typeName"
             :value="option.typeCode" :key="option.typeCode"></el-option>
         </el-select>
       </div>
       <div class="search-input-wrapper shadow" :class="searchInputWrapperLeft">
         <span class="iconfont icon-search"></span>
-        <el-input v-model="searchKeyword" placeholder="请输入医院名称、医生姓名、医生睿云账号或手机号码"></el-input>
-        <span class="button" @click="searchDoctor">搜索</span>
+        <el-input v-model="searchKeyword" placeholder="请输入医院名称、医生姓名、医生睿云账号或手机号码"
+          @change="searchWithDelay"></el-input>
+        <!-- <span class="button" @click="searchDoctor">搜索</span> -->
       </div>
     </div>
     <div class="card-wrapper" ref="cardWrapper">
@@ -32,7 +33,7 @@
           <span class="value">{{doctor.doctorName}}</span>
         </span>
         <span class="text second-line">
-          <span class="name">医生姓名</span>
+          <span class="name">医生账号</span>
           <span class="value">{{doctor.userName}}</span>
         </span>
         <span class="text third-line">
@@ -57,6 +58,7 @@ export default {
   data() {
     return {
       district: '',
+      timeout: null,
       searchKeyword: '',
       refreshing: false,
       devideWidth: '',
@@ -168,6 +170,12 @@ export default {
           suppressScrollX: true
         });
       });
+    },
+    searchWithDelay() {
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        this.searchDoctor();
+      }, 300);
     },
     searchDoctor() {
       // 相当于带条件地刷新
@@ -352,7 +360,8 @@ export default {
       }
       .el-input {
         display: inline-block;
-        width: calc(~"100% - 120px");
+        // width: calc(~"100% - 120px");
+        width: calc(~"100% - 40px");
         .el-input__inner {
           height: 30px;
           border: none;
