@@ -367,7 +367,7 @@ export default {
       this.subTableCode = code;
       this.tableMode = this.SON_OPEN;
       this.updateScrollbar();
-      console.log(this.itemGroups);
+      // console.log(this.itemGroups);
     },
     submit() {
       if (this.lockSubmitButton) {
