@@ -67,7 +67,7 @@
 
     <transition name="slide-fade">
       <el-form class="filter-panel" :model="filterPatientsForm" :rules="rules" ref="filterPatientsForm"
-      label-width="20%"  v-show="panelDisplay && (listType === MY_PATIENTS_TYPE || listType === OTHER_PATIENTS_TYPE)">
+      label-width="20%"  v-show="panelDisplay && (listType === MY_PATIENTS_TYPE || listType === OTHER_PATIENTS_TYPE || listType === SUBJECT_PATIENTS_TYPE)">
         <el-form-item label="分组" prop="group" class="item">
           <el-select v-model="filterPatientsForm.group">
             <el-option label="不限" :value="-1"></el-option>
@@ -593,7 +593,10 @@ export default {
     },
     togglePanelDisplay() {
       this.panelDisplay = !this.panelDisplay;
-      if (this.panelDisplay && (this.listType === this.MY_PATIENTS_TYPE || this.listType === this.OTHER_PATIENTS_TYPE)) {
+      if (this.panelDisplay &&
+        (this.listType === this.MY_PATIENTS_TYPE ||
+        this.listType === this.OTHER_PATIENTS_TYPE ||
+        this.listType === this.SUBJECT_PATIENTS_TYPE)) {
         // 在患者管理列表，每次打开筛选面板的时候，都要去更新一次 groupList，
         // 因为有一个筛选框是筛选分组的，而分组信息需要经常更新
         this.updateGroupList();
