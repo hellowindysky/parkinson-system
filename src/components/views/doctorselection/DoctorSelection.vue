@@ -33,7 +33,7 @@
       </div>
     </div>
     <div class="card-wrapper" ref="cardWrapper">
-      <div class="card shadow" :class="devideWidth" v-for="doctor in doctorList" @click="selectDoctor(doctor)">
+      <div class="card shadow" :class="devideWidth" v-for="doctor in doctorList" @click="clickDoctorCard(doctor)">
         <span class="text first-line">
           <span class="name">医生姓名</span>
           <span class="value">{{doctor.doctorName}}</span>
@@ -49,16 +49,22 @@
       </div>
     </div>
     <water-mark></water-mark>
+    <message-modal></message-modal>
+    <secret-agreement-modal></secret-agreement-modal>
   </div>
 </template>
 
 <script>
 import Ps from 'perfect-scrollbar';
 import { mapGetters } from 'vuex';
+import Bus from 'utils/bus.js';
 import { setRequestToken } from 'api/common.js';
 import { getSupportMessage, getSupportedDoctorList } from 'api/user.js';
 import Util from 'utils/util.js';
+
 import waterMark from 'components/public/watermark/WaterMark';
+import messageModal from 'components/views/modal/messagemodal/MessageModal';
+import secretAgreementModal from 'components/views/modal/secretagreementmodal/SecretAgreementModal';
 
 export default {
   data() {
@@ -197,6 +203,14 @@ export default {
       }
       this.updateDoctorList(condition);
     },
+    clickDoctorCard(doctor) {
+      Bus.$emit(this.SHOW_MESSAGE_MODAL, 4, '提醒', '需要医生验证后才能为其提供技术支持', doctor.mobileNumber);
+
+      Bus.$off(this.PERMIT_SUPPORT_THE_DOCTOR);
+      Bus.$on(this.PERMIT_SUPPORT_THE_DOCTOR, () => {
+        this.selectDoctor(doctor);
+      });
+    },
     selectDoctor(doctor) {
       var commonRequest = JSON.parse(sessionStorage.getItem('commonRequest'));
       commonRequest.supportNumber = doctor.mobileNumber;
@@ -234,8 +248,13 @@ export default {
       next(from.path);
     }
   },
+  beforeDestroy() {
+    Bus.$off(this.PERMIT_SUPPORT_THE_DOCTOR);
+  },
   components: {
-    waterMark
+    waterMark,
+    messageModal,
+    secretAgreementModal
   }
 };
 </script>

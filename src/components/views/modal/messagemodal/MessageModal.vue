@@ -3,7 +3,7 @@
     <div class="message-modal">
       <div class="title">{{title}}</div>
       <div class="desc">{{desc}}</div>
-      <div class="field account">当前账号手机: {{accountNumberWithPartialHiding}}</div>
+      <div class="field account">{{accountNumberInfo}}</div>
       <div class="field">
         <span class="warning-text">{{verificationCodeWarning}}</span>
         <el-input class="verification-code" :class="{'warning': verificationCodeWarning}"
@@ -42,6 +42,7 @@ export default {
       verificationCode: '',
       verificationCodeWarning: '',
       readAgreement: false,
+      doctorAccountNumber: '',
 
       codeButtonStatus: 0,
       codeButtonCount: 0,
@@ -59,8 +60,18 @@ export default {
         return '重新获取';
       }
     },
+    accountNumberInfo() {
+      if (this.businessType === 4) {
+        return '医生账号手机: ' + this.accountNumberWithPartialHiding;
+      } else {
+        return '当前账号手机: ' + this.accountNumberWithPartialHiding;
+      }
+    },
     accountNumberWithPartialHiding() {
       var accountNumber = sessionStorage.getItem('accountNumber');
+      if (this.businessType === 4) {
+        accountNumber = this.doctorAccountNumber;
+      }
       if (accountNumber) {
         var accountNumberStr = String(accountNumber);
         var length = accountNumberStr.length;
@@ -72,15 +83,19 @@ export default {
     }
   },
   methods: {
-    showModal(businessType, title, desc) {
+    showModal(businessType, title, desc, doctorAccountNumber) {
       if (this.businessType !== businessType || this.codeButtonStatus === 2) {
         // 如果更换了验证码对应的业务类型，或者发送按钮的文字已经是“重新发送”，则将发送按钮还原成初始状态
         this.codeButtonStatus = 0;
       }
 
-      this.businessType = businessType;    // 1.修改密码业务 2.授权技术支持业务 3.脱敏业务
+      // 1.修改密码业务 2.授权技术支持业务 3.脱敏业务 4.技术支持业务(录入员为医生提供支持前输入医生的验证码)
+      this.businessType = businessType;
+
       this.title = title;
       this.desc = desc;
+      this.doctorAccountNumber = doctorAccountNumber ? doctorAccountNumber : '';
+
       this.verificationCode = '';
       this.verificationCodeWarning = '';
       this.readAgreement = false;
@@ -95,6 +110,9 @@ export default {
       var verificationInfo = {
         businessType: this.businessType
       };
+      if (this.businessType === 4) {
+        verificationInfo.accountNumber = this.doctorAccountNumber;
+      }
       sendVerificationCode(verificationInfo).then(() => {
         this.lockSendButton = false;
         this.codeButtonStatus = 1;
@@ -160,7 +178,12 @@ export default {
         businessType: this.businessType
       };
       verifyMessageCode(verificationInfo).then(() => {
-        Bus.$emit(this.PERMIT_DISPLAYING_SENSITIVE_INFO);
+        if (this.businessType === 3) {
+          Bus.$emit(this.PERMIT_DISPLAYING_SENSITIVE_INFO);
+        } else if (this.businessType === 4) {
+          Bus.$emit(this.PERMIT_SUPPORT_THE_DOCTOR);
+        }
+
         this.displayModal = false;
         this.lockSubmitButton = false;
 

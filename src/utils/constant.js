@@ -35,6 +35,7 @@ export default {
   REQUEST_CONFIRMATION: 'requestConfirmation',
   NOTICE: 'notice',
   PERMIT_DISPLAYING_SENSITIVE_INFO: 'permitDisplayingSensitiveInfo',
+  PERMIT_SUPPORT_THE_DOCTOR: 'permitSupportTheDoctor',
 
   ADD_DATA: 'addData',
   EDIT_DATA: 'editData',
