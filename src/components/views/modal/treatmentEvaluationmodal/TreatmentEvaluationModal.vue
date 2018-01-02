@@ -115,7 +115,7 @@
           </td>
           <td class="col narrow-col">
             <span v-if="mode===VIEW_CURRENT_CARD">{{transformSituationType(reaction.severityLevel,'reactionLevel')}}</span>
-            <el-select v-else v-model="reaction.severityLevel" clearable  @change="updateWarning('severityLevel')">
+            <el-select v-else v-model="reaction.severityLevel" clearable  :disabled="hasNoReaction"  @change="updateWarning('severityLevel')">
             <el-option
               v-for="item in getOptions('reactionLevel')"
               :key="item.code"
