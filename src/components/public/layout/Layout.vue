@@ -34,7 +34,7 @@
     <confirm-box></confirm-box>
     <notice-box></notice-box>
 
-    <water-mark v-show="isSupportAccount"></water-mark>
+    <water-mark></water-mark>
   </div>
 </template>
 

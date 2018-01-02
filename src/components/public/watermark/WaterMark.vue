@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="water-mark" ref="pic">
     <span class="text" v-for="i in array" :class="{'odd-row': checkIfInOddRow(i)}">
-      {{accountName}}（账号：{{accountNumber}}）
+      {{accountName}}（账号：{{userName}}）
     </span>
   </div>
 </template>
@@ -31,9 +31,9 @@ export default {
       var name = sessionStorage.getItem('name');
       return name ? name : '';
     },
-    accountNumber() {
-      var accountNumber = sessionStorage.getItem('accountNumber');
-      return accountNumber ? accountNumber : '';
+    userName() {
+      var userName = sessionStorage.getItem('userName');
+      return userName ? userName : '';
     }
   },
   methods: {
