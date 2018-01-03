@@ -1,14 +1,16 @@
 <template lang="html">
   <div class="patient-info">
     <div class="tabs-wrapper">
-      <div class="tab left-tab" :class="{'current-tab': currentTab === 'personalInfo'}"
-        @click="choosePersonal" v-show="existed">个人信息</div>
-      <div class="tab right-tab" :class="{'current-tab': currentTab === 'diagnosticInfo'}"
-        @click="chooseDiagnostic" v-show="existed">诊断信息</div>
-      <div class="patient-id" :class="{'left-shift': false}" v-show="existed">患者ID: {{patientId}}</div>
-      <!-- <div class="button" v-show="existed && listType==='myPatients'">导出病历</div> -->
-      <div class="tab-bottom-bar" :class="currentTabBottomBar" v-show="this.existed"></div>
-      <div class="title" v-show="!existed">新增患者</div>
+      <div class="tab first-tab" :class="{'current-tab': currentTab === 'personalInfo'}"
+        @click="choosePersonal" v-if="existed">个人信息</div>
+      <div class="tab second-tab" :class="{'current-tab': currentTab === 'diagnosticInfo'}"
+        @click="chooseDiagnostic" v-if="existed">诊断信息</div>
+      <div class="tab third-tab" :class="{'current-tab': currentTab === 'experimentInfo'}"
+        @click="chooseExperiment" v-if="existed && inSubject">实验记录</div>
+      <div class="patient-id" :class="{'left-shift': false}" v-if="existed">患者ID: {{patientId}}</div>
+      <!-- <div class="button" v-if="existed && listType==='myPatients'">导出病历</div> -->
+      <div class="tab-bottom-bar" :class="currentTabBottomBar" v-if="this.existed"></div>
+      <div class="title" v-if="!existed">新增患者</div>
     </div>
     <div class="info-wrapper" ref="scrollArea">
       <div class="shared-info" v-show="this.existed">
@@ -110,10 +112,13 @@ export default {
       var path = this.$route.path;
       var rePersonal = new RegExp(/\/personalInfo(\/|$)/);
       var reDiagnostic = new RegExp(/\/diagnosticInfo(\/|$)/);
+      var reExperiment = new RegExp(/\/experimentInfo(\/|$)/);
       if (rePersonal.test(path)) {
         return 'personalInfo';
       } else if (reDiagnostic.test(path)) {
         return 'diagnosticInfo';
+      } else if (reExperiment.test(path)) {
+        return 'experimentInfo';
       } else {
         // 逻辑正确的话，不会返回这行的。只是怕以后路由修改，出现问题。
         return 'something wrong here';
@@ -124,9 +129,14 @@ export default {
         return 'first-tab';
       } else if (this.currentTab === 'diagnosticInfo') {
         return 'second-tab';
+      } else if (this.currentTab === 'experimentInfo') {
+        return 'third-tab';
       } else {
         return 'Oops! check currentTab';
       }
+    },
+    inSubject() {
+      return this.$store.state.subjectId !== this.SUBJECT_ID_FOR_HOSPITAL;
     },
     showProjectTags() {
       // 课题标签这一栏的显示取决于:
@@ -145,6 +155,9 @@ export default {
     chooseDiagnostic() {
       this.$router.push('diagnosticInfo');
     },
+    chooseExperiment() {
+      this.$router.push('experimentInfo');
+    },
     checkRoute() {
       var path = this.$route.path;
 
@@ -156,15 +169,16 @@ export default {
 
       var rePersonal = new RegExp(/\/personalInfo(\/|$)/);
       var reDiagnostic = new RegExp(/\/diagnosticInfo(\/|$)/);
+      var reExperiment = new RegExp(/\/experimentInfo(\/|$)/);
 
-      var withoutPersonalOrDiagostic = !rePersonal.test(path) && !reDiagnostic.test(path);
+      var withoutDetail = !rePersonal.test(path) && !reDiagnostic.test(path) && !reExperiment.test(path);
 
-      // 路由还停留在在病患信息这一层，但没有指明是个人信息还是诊断信息，那么就默认跳转到个人信息
-      if (this.listType === 'myPatients' && withoutPersonalOrDiagostic) {
+      // 路由还停留在在病患信息这一层，但没有指明是个人信息还是诊断信息还是实验信息，那么就默认跳转到个人信息
+      if (this.listType === 'myPatients' && withoutDetail) {
         this.$router.replace({ name: 'personalInfo' });
-      } else if (this.listType === 'otherPatients' && withoutPersonalOrDiagostic) {
+      } else if (this.listType === 'otherPatients' && withoutDetail) {
         this.$router.replace({ name: 'otherPersonalInfo' });
-      } else if (this.listType === 'subjectPatients' && withoutPersonalOrDiagostic) {
+      } else if (this.listType === 'subjectPatients' && withoutDetail) {
         this.$router.replace({ name: 'subjectPersonalInfo' });
       }
     },
@@ -315,6 +329,7 @@ export default {
 @tab-width: 70px;
 @first-tab-x: 20px;
 @second-tab-x: 120px;
+@third-tab-x: 220px;
 
 @margin-right: 15px;
 
@@ -373,11 +388,14 @@ export default {
       &:hover {
         color: darken(@inverse-font-color, 10%);
       }
-      &.left-tab {
+      &.first-tab {
         left: @first-tab-x;
       }
-      &.right-tab {
+      &.second-tab {
         left: @second-tab-x;
+      }
+      &.third-tab {
+        left: @third-tab-x;
       }
       &.current-tab {
         color: @button-color;
@@ -396,6 +414,9 @@ export default {
       }
       &.second-tab {
         transform: translate3d(@second-tab-x - @first-tab-x, 0, 0);
+      }
+      &.third-tab {
+        transform: translate3d(@third-tab-x - @first-tab-x, 0, 0);
       }
     }
     .patient-id {
