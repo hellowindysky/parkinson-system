@@ -58,7 +58,7 @@ import operativeComplicationModal from 'components/views/modal/operativecomplica
 import dbsModal from 'components/views/modal/dbsmodal/DbsModal';
 import physiontherapyModal from 'components/views/modal/physiontherapymodal/PhysiontherapyModal';
 import treatmentEvaluationModal from 'components/views/modal/treatmentEvaluationmodal/TreatmentEvaluationModal';
-import vitalSignsModal from 'components/views/modal/vitalSignsmodal/VitalSignsModal';
+import vitalSignsModal from 'components/views/modal/vitalsignsmodal/VitalSignsModal';
 import neurologicModal from 'components/views/modal/neurologicmodal/NeurologicModal';
 import geneModal from 'components/views/modal/genemodal/GeneModal';
 import biochemicalExamModal from 'components/views/modal/biochemicalexammodal/BiochemicalExamModal';
