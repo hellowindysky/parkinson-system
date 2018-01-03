@@ -47,7 +47,7 @@
           </span>
           <span v-else>{{copyInfo[field.fieldName]}}</span>
         </span>
-        <span class="field-input" v-else :class="{doseInfo: field.fieldName === 'doseInfo'&&subModalType!==SMOKE_HISTORY_MODAL, unit: field.fieldName === 'unit'}">
+        <span class="field-input" v-else :class="{doseInfo: field.fieldName === 'doseInfo'&&subModalType!==SMOKE_HISTORY_MODAL}">
           <span class="warning-text">{{getWarningText(field.fieldName)}}</span>
           <span v-if="getUIType(field)===1">
             <el-input v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
@@ -861,6 +861,12 @@ export default {
       &.field-unit{
         min-height: 0;
         display: block;
+        .field-input{
+            width: 100px;
+            position: absolute;
+            top:-45px;
+            left: calc(~"96% - 100px");
+        }
       }
       .field-name {
         display: inline-block;
@@ -889,12 +895,12 @@ export default {
         &.doseInfo{
           width: calc(~"96% - @{field-name-width} - 110px");
         }
-        &.unit{
-          width: 100px;
-          position: absolute;
-          top:-45px;
-          left: calc(~"96% - 100px");
-        }
+        // &.unit{
+        //   width: 100px;
+        //   position: absolute;
+        //   top:-45px;
+        //   left: calc(~"96% - 100px");
+        // }
         .warning-text {
           position: absolute;
           top: 22px;
