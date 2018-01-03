@@ -9,7 +9,7 @@ import Layout from 'components/public/layout/Layout';
 // import Home from 'components/views/home/Home';   // 首页还没做
 import ListFrame from 'components/views/listframe/ListFrame';
 import Analytics from 'components/views/analytics/Analytics';
-import Configuration from 'components/views/configuration/Configuration';
+const Configuration = () => import(/* webpackChunkName: 'configuration' */ 'components/views/configuration/Configuration');
 
 import PatientInfo from 'components/views/patient/patientinfo/PatientInfo';
 import GroupInfo from 'components/views/patient/groupinfo/GroupInfo';
