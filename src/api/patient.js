@@ -511,6 +511,15 @@ export function modifyDiagnosticDisease(diagnosticDisease) {
 };
 
 // 诊断记录 主诉症状 ↓↓↓↓↓↓↓↓↓↓
+// 查询主诉症状
+export function queryPatientSymptom(complaintsInfo) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientSymptomModel = complaintsInfo;
+  var url = '/pdms/queryPatientSymptom';
+
+  return encapsulatePromise(url, request);
+};
+
 // 新增主诉症状
 export function addPatientSymptom(complaintsInfo) {
   var request = Object.assign({}, getCommonRequest());
