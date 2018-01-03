@@ -1,6 +1,6 @@
 <template lang="html">
-  <div class="endtreatment-modal-wrapper" v-show="displayModal">
-    <div class="endtreatment-modal">
+  <div class="followup-modal-wrapper" v-show="displayModal">
+    <div class="followup-modal">
       <h3 class="title">{{title}}</h3>
       <div class="content">
 
@@ -64,7 +64,7 @@ export default {
   data() {
     return {
       displayModal: false,
-      title: '结束治疗',
+      title: '处理意见',
       mode: '',
       test1: '',
       test2: ''
@@ -96,7 +96,7 @@ export default {
 @field-name-width: 110px;
 @long-field-name-width: 160px;
 
-.endtreatment-modal-wrapper{
+.followup-modal-wrapper{
   position: absolute;
   left: 0;
   top: 0;
@@ -104,7 +104,7 @@ export default {
   height: 100%;
   background-color: fadeout(@light-font-color, 30%);
   z-index: 500;
-  .endtreatment-modal{
+  .followup-modal{
     position: relative;
     margin: auto;
     padding: 0 40px;
