@@ -20,32 +20,32 @@ import ExperimentInfo from 'components/views/patient/experimentinfo/ExperimentIn
 
 import BasicAnalytics from 'components/views/analytics/basicanalytics/BasicAnalytics';
 
-import FeatureConfiguration from 'components/views/configuration/featureconfiguration/FeatureConfiguration';
-import SecondBar from 'components/views/configuration/featureconfiguration/configurationbar/SecondBar';
-import GroupConfiguration from 'components/views/configuration/featureconfiguration/groupconfiguration/GroupConfiguration';
-import DepartmentConfiguration from 'components/views/configuration/featureconfiguration/departmentconfiguration/DepartmentConfiguration';
-import AnalysisConfiguration from 'components/views/configuration/analysisconfiguration/AnalysisConfiguration';
+const FeatureConfiguration = () => import(/* webpackChunkName: 'configuration' */ 'components/views/configuration/featureconfiguration/FeatureConfiguration');
+const SecondBar = () => import(/* webpackChunkName: 'configuration' */ 'components/views/configuration/featureconfiguration/configurationbar/SecondBar');
+const GroupConfiguration = () => import(/* webpackChunkName: 'configuration' */ 'components/views/configuration/featureconfiguration/groupconfiguration/GroupConfiguration');
+const DepartmentConfiguration = () => import(/* webpackChunkName: 'configuration' */ 'components/views/configuration/featureconfiguration/departmentconfiguration/DepartmentConfiguration');
+const AnalysisConfiguration = () => import(/* webpackChunkName: 'configuration' */ 'components/views/configuration/analysisconfiguration/AnalysisConfiguration');
 
-import FeatureDiagnosticInfo from 'components/views/configuration/featureconfiguration/FeatureDiagnosticInfo';
-import FreaturePersonInfo from 'components/views/configuration/featureconfiguration/FreaturePersonInfo';
+const FeatureDiagnosticInfo = () => import(/* webpackChunkName: 'configuration' */ 'components/views/configuration/featureconfiguration/FeatureDiagnosticInfo');
+const FreaturePersonInfo = () => import(/* webpackChunkName: 'configuration' */ 'components/views/configuration/featureconfiguration/FreaturePersonInfo');
 
-import UserInfo from 'components/views/configuration/usermanagement/userinfo/UserInfo';
-import RoleInfo from 'components/views/configuration/rolemanagement/roleinfo/RoleInfo';
+const UserInfo = () => import(/* webpackChunkName: 'configuration' */ 'components/views/configuration/usermanagement/userinfo/UserInfo');
+const RoleInfo = () => import(/* webpackChunkName: 'configuration' */ 'components/views/configuration/rolemanagement/roleinfo/RoleInfo');
 
-import DictionaryManagement from 'components/views/configuration/dictionarymanagement/DictionaryManagement';
-import DictionSecondBar from 'components/views/configuration/dictionarymanagement/dictionsecondbar/DictionSecondBar';
+const DictionaryManagement = () => import(/* webpackChunkName: 'configuration' */ 'components/views/configuration/dictionarymanagement/DictionaryManagement');
+const DictionSecondBar = () => import(/* webpackChunkName: 'configuration' */ 'components/views/configuration/dictionarymanagement/dictionsecondbar/DictionSecondBar');
 
-import DictionTreatmentPlan from 'components/views/configuration/dictionarymanagement/dictiontreatmentplan/DictionTreatmentPlan';
-import DictionMedicalScale from 'components/views/configuration/dictionarymanagement/dictionmedicalscale/DictionMedicalScale';
-import DictionInspection from 'components/views/configuration/dictionarymanagement/dictioninspection/DictionInspection';
-import DictionImageDatas from 'components/views/configuration/dictionarymanagement/dictionimagedatas/DictionImageDatas';
+const DictionTreatmentPlan = () => import(/* webpackChunkName: 'configuration' */ 'components/views/configuration/dictionarymanagement/dictiontreatmentplan/DictionTreatmentPlan');
+const DictionMedicalScale = () => import(/* webpackChunkName: 'configuration' */ 'components/views/configuration/dictionarymanagement/dictionmedicalscale/DictionMedicalScale');
+const DictionInspection = () => import(/* webpackChunkName: 'configuration' */ 'components/views/configuration/dictionarymanagement/dictioninspection/DictionInspection');
+const DictionImageDatas = () => import(/* webpackChunkName: 'configuration' */ 'components/views/configuration/dictionarymanagement/dictionimagedatas/DictionImageDatas');
 
-import InformationSecondBar from 'components/views/configuration/dictionarymanagement/informationsecondbar/InformationSecondBar';
-import OtherMedicationHistory from 'components/views/configuration/dictionarymanagement/othermedicationhistory/OtherMedicationHistory';
-import PastHistory from 'components/views/configuration/dictionarymanagement/pasthistory/PastHistory';
-import FamilyHistory from 'components/views/configuration/dictionarymanagement/familyhistory/FamilyHistory';
-import PersonalHistory from 'components/views/configuration/dictionarymanagement/personalhistory/PersonalHistory';
-import ToxicExposure from 'components/views/configuration/dictionarymanagement/toxicexposure/ToxicExposure';
+const InformationSecondBar = () => import(/* webpackChunkName: 'configuration' */ 'components/views/configuration/dictionarymanagement/informationsecondbar/InformationSecondBar');
+const OtherMedicationHistory = () => import(/* webpackChunkName: 'configuration' */ 'components/views/configuration/dictionarymanagement/othermedicationhistory/OtherMedicationHistory');
+const PastHistory = () => import(/* webpackChunkName: 'configuration' */ 'components/views/configuration/dictionarymanagement/pasthistory/PastHistory');
+const FamilyHistory = () => import(/* webpackChunkName: 'configuration' */ 'components/views/configuration/dictionarymanagement/familyhistory/FamilyHistory');
+const PersonalHistory = () => import(/* webpackChunkName: 'configuration' */ 'components/views/configuration/dictionarymanagement/personalhistory/PersonalHistory');
+const ToxicExposure = () => import(/* webpackChunkName: 'configuration' */ 'components/views/configuration/dictionarymanagement/toxicexposure/ToxicExposure');
 
 Vue.use(Router);
 
