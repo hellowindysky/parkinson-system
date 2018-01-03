@@ -98,6 +98,10 @@ export default {
   SHOW_FIRSTSYMPTOMS_MODAL: 'showFirstSymptomsModal',
   SHOW_FIRSTTREATMENT_MODAL: 'showFirstTreatmentModal',
   SHOW_DIAGNOSTIC_RECORD_MODAL: 'showDiagnosticRecordModal',
+  SHOW_APPLICATION_MODAL: 'showApplicationModal',
+  SHOW_RETURN_APPLICATION_MODAL: 'showReturnApplicationModal',
+  SHOW_PASS_RATIFICATION_MODAL: 'showPassRatificationModal',
+  SHOW_ENDOF_FOLLOWUP_MODAL: 'showEndofFollowupModal',
 
   SHOW_CHOICE_PANEL: 'showChoicePanel',
 
