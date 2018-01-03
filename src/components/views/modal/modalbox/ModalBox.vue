@@ -800,7 +800,6 @@ export default {
   },
   mounted() {
     Bus.$on(this.SHOW_MODAL_BOX, this.showPanel);
-    console.log(this.wineHistoryTemplate);
   },
   watch: {
     template: function() {
