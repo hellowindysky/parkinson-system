@@ -16,6 +16,7 @@ import GroupInfo from 'components/views/patient/groupinfo/GroupInfo';
 
 import PersonalInfo from 'components/views/patient/personalinfo/PersonalInfo';
 import DiagnosticInfo from 'components/views/patient/diagnosticinfo/DiagnosticInfo';
+import ExperimentInfo from 'components/views/patient/experimentinfo/ExperimentInfo';
 
 import BasicAnalytics from 'components/views/analytics/basicanalytics/BasicAnalytics';
 
@@ -110,7 +111,7 @@ export default new Router({
                   path: 'diagnosticInfo/:caseId',
                   component: DiagnosticInfo,
                   name: 'diagnosticDetail'
-                }
+                },
                 // {
                 //   path: 'diagnosticInfo/updatescale',
                 //   component: DiagnosticInfo,
@@ -120,7 +121,12 @@ export default new Router({
                 //   path: 'diagnosticInfo/addscale',
                 //   component: DiagnosticInfo,
                 //   name: 'diagnosticaddscale'
-                // }
+                // },
+                {
+                  path: 'experimentInfo',
+                  component: ExperimentInfo,
+                  name: 'ExperimentInfo'
+                }
               ]
             },
             {
@@ -165,6 +171,11 @@ export default new Router({
                   path: 'diagnosticInfo/:caseId',
                   component: DiagnosticInfo,
                   name: 'otherDiagnosticDetail'
+                },
+                {
+                  path: 'experimentInfo',
+                  component: ExperimentInfo,
+                  name: 'ExperimentInfo'
                 }
               ]
             },
@@ -199,6 +210,11 @@ export default new Router({
                   path: 'diagnosticInfo/:caseId',
                   component: DiagnosticInfo,
                   name: 'subjectDiagnosticDetail'
+                },
+                {
+                  path: 'experimentInfo',
+                  component: ExperimentInfo,
+                  name: 'ExperimentInfo'
                 }
               ]
             }
