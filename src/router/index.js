@@ -24,7 +24,7 @@ import FeatureConfiguration from 'components/views/configuration/featureconfigur
 import SecondBar from 'components/views/configuration/featureconfiguration/configurationbar/SecondBar';
 import GroupConfiguration from 'components/views/configuration/featureconfiguration/groupconfiguration/GroupConfiguration';
 import DepartmentConfiguration from 'components/views/configuration/featureconfiguration/departmentconfiguration/DepartmentConfiguration';
-import AnalysisConfiguration from 'components/views/analytics/analysisconfiguration/AnalysisConfiguration';
+import AnalysisConfiguration from 'components/views/configuration/analysisconfiguration/AnalysisConfiguration';
 
 import FeatureDiagnosticInfo from 'components/views/configuration/featureconfiguration/FeatureDiagnosticInfo';
 import FreaturePersonInfo from 'components/views/configuration/featureconfiguration/FreaturePersonInfo';
