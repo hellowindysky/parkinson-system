@@ -115,7 +115,7 @@
           <div class="field-input" v-show="mode===EDITING_MODE">
             <span v-if="getUIType(field)===1">
               <el-input v-model="copyInfo[field.fieldName]"
-                :placeholder="getMatchedField(field.fieldName).cnFieldDesc"></el-input>
+                :placeholder="getMatchedField(field.fieldName).cnFieldDesc" :type="field.fieldName==='chiefComplaint'?'textarea':'text'"></el-input>
             </span>
             <span v-else-if="getUIType(field)===5">
               <el-checkbox-group v-model="copyInfo[field.fieldName]" @change="updateWarning(field)"
@@ -1067,6 +1067,14 @@ export default {
         .el-date-editor {
           width: 100%;
         }
+        .el-textarea {
+          margin-bottom: 15px;
+          // transform: translateY(-3px);
+          .el-textarea__inner {
+            border: none;
+            background-color: @screen-color;
+          }
+        }
         .el-checkbox-group {
           .el-checkbox {
             margin-left: 0;
@@ -1081,9 +1089,17 @@ export default {
         }
       }
       &.textarea-field{
+        transform: translateY(10px);
+        .field-name{
+          line-height:25px;
+        }
         .field-value{
           position: relative;
           line-height:25px;
+          width: calc(~"100% - 100px");
+        }
+        .field-input{
+          position: relative;
           width: calc(~"100% - 100px");
         }
       }
