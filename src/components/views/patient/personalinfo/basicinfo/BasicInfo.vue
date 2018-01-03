@@ -27,8 +27,8 @@
 
             <span v-else-if="getUIType(field)===1">
               <el-autocomplete v-if="field.fieldName==='nation'" v-model="copyInfo[field.fieldName]"
-               :fetch-suggestions="querySearchAsync" 
-               @select="handleSelect" 
+               :fetch-suggestions="querySearchAsync"
+               @select="handleSelect"
                :placeholder="getMatchedField(field).cnFieldDesc">
               </el-autocomplete>
               <el-input v-else v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}" :disabled="field.fieldName==='bmi'"
@@ -305,6 +305,12 @@ export default {
           } else if (error.code === 2007) {
             this.$message({
               message: '住院病例号重复',
+              type: 'error',
+              duration: 2000
+            });
+          } else if (error.code === 2008) {
+            this.$message({
+              message: '身份证号重复',
               type: 'error',
               duration: 2000
             });
