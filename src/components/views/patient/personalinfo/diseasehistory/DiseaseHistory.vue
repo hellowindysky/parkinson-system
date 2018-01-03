@@ -511,6 +511,10 @@ export default {
       if (this.getUIType(field) === 5) {
         classNameList.push('multiple-select');
       }
+      // 判断是否是textarea，好像没有对应的UIType
+      if (field.fieldName === 'chiefComplaint') {
+        classNameList.push('textarea-field');
+      };
       return classNameList.join(' ');
     },
     getUIType(field) {
@@ -841,6 +845,7 @@ export default {
       font-size:@large-font-size;
     }
     .disease-card{
+      margin-top:20px;
       >.header{
         padding-left:0;
         >.title{
@@ -1073,6 +1078,13 @@ export default {
         }
         .warning .el-input__inner {
           border: 1px solid red;
+        }
+      }
+      &.textarea-field{
+        .field-value{
+          position: relative;
+          line-height:25px;
+          width: calc(~"100% - 100px");
         }
       }
       &.custom-field{
