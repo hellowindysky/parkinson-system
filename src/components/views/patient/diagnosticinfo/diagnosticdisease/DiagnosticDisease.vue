@@ -183,7 +183,7 @@
       </div> -->
        <extensible-panel class="panel disease-panel" :mode="mutableMode" :title="subTitle" v-on:addNewCard="addFirstSymptomsRecord"
         :editable="canEdit">
-        <card class="card symptoms-card" :class="devideWidth" :mode="mutableMode" v-for="item in diagnosticDisease.patientSymptom" :key="item.diseaseId"
+        <card class="card symptoms-card" :class="devideWidth" :mode="mutableMode" v-for="item in complaintSympData" :key="item.diseaseId"
           :title="item.symType" :disable-delete="item.statusFlag===0" v-on:editCurrentCard="editFirstSymptomsRecord(item)"
           v-on:deleteCurrentCard="deleteDisease(item)" v-on:viewCurrentCard="viewFirstSymptomsRecord(item)">
           <div class="text first-line">
@@ -195,8 +195,8 @@
             <span class="value">{{item.whetherLaw ? item.whetherLaw : '未填写'}}</span>
           </div>
           <div class="text third-line">
-            <span class="name">{{item.ariseTime ? '出现时间：' : ''}}</span>
-            <span class="value">{{item.ariseTime}}</span>
+            <span class="name">出现时间：</span>
+            <span class="value">{{TheAriseTime(item)}}</span>
           </div>
         </card>
       </extensible-panel>
@@ -210,7 +210,7 @@ import { mapGetters } from 'vuex';
 import Util from 'utils/util.js';
 import Bus from 'utils/bus.js';
 import { vueCopy } from 'utils/helper';
-import { delPatientSymptom, modDiseaseSituation } from 'api/patient.js';
+import {queryPatientSymptom, delPatientSymptom, modDiseaseSituation } from 'api/patient.js';
 
 // import { reviseDateFormat } from 'utils/helper.js';
 
@@ -227,7 +227,8 @@ export default {
       warningResults: {},
       title: '主诉症状',
       devideWidth: '',
-      lockSubmitButton: false
+      lockSubmitButton: false,
+      complaintSympData: []
       // MS_SYMPTOM: '运动症状',
       // MC_SYMPTOM: '运动并发症',
       // NMS_SYMPTOM: '非运动症状'
@@ -247,7 +248,7 @@ export default {
       'typeGroup'
     ]),
     subTitle() {
-      var count = this.diagnosticDisease.patientSymptom.length;
+      var count = this.complaintSympData.length;
       return this.title + '（' + count + '条记录）';
     },
     // totalDictionary() {
@@ -277,6 +278,24 @@ export default {
     }
   },
   methods: {
+    TheAriseTime(item) {
+      if (item.ariseTime) {
+        return item.ariseTime;
+      } else {
+        let fieldNames = ['ariseTimeLeftDown', 'ariseTimeLeftUp', 'ariseTimeRightDown', 'ariseTimeRightUp'];
+        let nums = [];
+        fieldNames.forEach((elem) => {
+          if (item[elem]) {
+            nums.push(new Date(item[elem]).getTime());
+          };
+        });
+        if (nums.length > 0) {
+          return Util.simplifyDate(Math.min.apply(Math, nums));
+        } else {
+          return '未填写';
+        }
+      }
+    },
     startEditing() {
       this.mutableMode = this.EDITING_MODE;
       // this.foldedStatus = false;
@@ -371,6 +390,12 @@ export default {
         // });
       });
     },
+    updateComplaintSympCard() {
+      let caseId = this.$route.params.caseId;
+      queryPatientSymptom({patientCaseId: caseId}).then((data) => {
+        this.complaintSympData = data;
+      });
+    },
     addFirstSymptomsRecord() {
       Bus.$emit(this.SHOW_FIRSTSYMPTOMS_MODAL, this.ADD_NEW_CARD, {}, '主诉症状');
     },
@@ -437,7 +462,7 @@ export default {
     },
     _resolveDeletion() {
       // 如果成功删除记录，则重新发出请求，获取最新数据。同时解除 [确认对话框] 的 “确认” 回调函数
-      Bus.$emit(this.UPDATE_CASE_INFO);
+      this.updateComplaintSympCard();
       Bus.$off(this.CONFIRM);
     },
     _rejectDeletion() {
@@ -460,6 +485,10 @@ export default {
     }
   },
   mounted() {
+    // 更新主诉症状的卡片
+    this.updateComplaintSympCard();
+    Bus.$on(this.UPDATE_COMPLAINTSYMPTOMS_INFO, this.updateComplaintSympCard);
+
     Bus.$on(this.QUIT_DIAGNOSTIC_DETAIL, this.cancel);
     Bus.$on(this.EDIT_DIAGNOSTIC_DISEASE, this.startEditing);
     this.recalculateCardWidth();
@@ -651,6 +680,9 @@ export default {
         position: absolute;
         font-size: @small-font-size;
         color: @light-font-color;
+        .name {
+          color: @font-color;
+        }
       }
       .first-line {
         left: 10px;
