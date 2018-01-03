@@ -2,15 +2,15 @@
   <div class="patient-info">
     <div class="tabs-wrapper">
       <div class="tab first-tab" :class="{'current-tab': currentTab === 'personalInfo'}"
-        @click="choosePersonal" v-show="existed">个人信息</div>
+        @click="choosePersonal" v-if="existed">个人信息</div>
       <div class="tab second-tab" :class="{'current-tab': currentTab === 'diagnosticInfo'}"
-        @click="chooseDiagnostic" v-show="existed">诊断信息</div>
+        @click="chooseDiagnostic" v-if="existed">诊断信息</div>
       <div class="tab third-tab" :class="{'current-tab': currentTab === 'experimentInfo'}"
-        @click="chooseExperiment" v-show="existed">实验记录</div>
-      <div class="patient-id" :class="{'left-shift': false}" v-show="existed">患者ID: {{patientId}}</div>
-      <!-- <div class="button" v-show="existed && listType==='myPatients'">导出病历</div> -->
-      <div class="tab-bottom-bar" :class="currentTabBottomBar" v-show="this.existed"></div>
-      <div class="title" v-show="!existed">新增患者</div>
+        @click="chooseExperiment" v-if="existed && inSubject">实验记录</div>
+      <div class="patient-id" :class="{'left-shift': false}" v-if="existed">患者ID: {{patientId}}</div>
+      <!-- <div class="button" v-if="existed && listType==='myPatients'">导出病历</div> -->
+      <div class="tab-bottom-bar" :class="currentTabBottomBar" v-if="this.existed"></div>
+      <div class="title" v-if="!existed">新增患者</div>
     </div>
     <div class="info-wrapper" ref="scrollArea">
       <div class="shared-info" v-show="this.existed">
@@ -134,6 +134,9 @@ export default {
       } else {
         return 'Oops! check currentTab';
       }
+    },
+    inSubject() {
+      return this.$store.state.subjectId !== this.SUBJECT_ID_FOR_HOSPITAL;
     },
     showProjectTags() {
       // 课题标签这一栏的显示取决于:
