@@ -8,6 +8,7 @@ var CopyWebpackPlugin = require('copy-webpack-plugin')
 var HtmlWebpackPlugin = require('html-webpack-plugin')
 var ExtractTextPlugin = require('extract-text-webpack-plugin')
 var OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
+var ParallelUglifyPlugin = require('webpack-parallel-uglify-plugin')
 
 var env = config.build.prodEnv
 if (process.env.NODE_ENV === 'testing') {
@@ -40,11 +41,26 @@ var webpackConfig = merge(baseWebpackConfig, {
     new webpack.DefinePlugin({
       'process.env': env
     }),
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false
-      },
-      sourceMap: true
+    // new webpack.optimize.UglifyJsPlugin({
+    //   compress: {
+    //     warnings: false,
+    //     drop_console: true,
+    //     pure_funcs: ['console.log']   // 打包时移除 console.log
+    //   },
+    //   sourceMap: true
+    // }),
+    new ParallelUglifyPlugin({  // 这个插件相对于 UglifyJsPlugin，支持多线程，因此可以减少打包时间
+      cacheDir: '.cache/',
+      uglifyJS:{
+        output: {
+          comments: false
+        },
+        compress: {
+          warnings: false,
+          drop_console: true,
+          pure_funcs: ['console.log']
+        }
+      }
     }),
     // extract css into its own file
     new ExtractTextPlugin({
