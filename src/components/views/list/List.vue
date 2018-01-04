@@ -26,6 +26,12 @@
       <div v-else-if="listType === SUBJECT_PATIENTS_TYPE">
         <patient-list-item class="item" v-for="patient in subjectPatientsList" :patient="patient" :key="patient.patientId"></patient-list-item>
       </div>
+      <div v-else-if="listType === THERAPISTS_PATIENTS_TYPE">
+        <patient-list-item class="item" v-for="patient in therapistsPatientsList" :patient="patient" :key="patient.patientId"></patient-list-item>
+      </div>
+      <div v-else-if="listType === APPRAISERS_PATIENTS_TYPE">
+        <patient-list-item class="item" v-for="patient in appraisersPatientsList" :patient="patient" :key="patient.patientId"></patient-list-item>
+      </div>
       <div v-else-if="listType === 'users'">
         <user-list-item class="item" v-for="user in userList" :user="user" :key="user.id"></user-list-item>
       </div>
@@ -34,9 +40,8 @@
       </div>
     </div>
 
-    <div class="function-area"
-      v-if="listType === MY_PATIENTS_TYPE || listType === OTHER_PATIENTS_TYPE || listType === SUBJECT_PATIENTS_TYPE">
-      <div class="function-button whole-line" @click="addNewPatient" v-if="showAdd">
+    <div class="function-area" v-if="showAdd">
+      <div class="function-button whole-line" @click="addNewPatient">
         <span class="iconfont icon-new-patient"></span>
         <span class="text">新增患者</span>
       </div>
@@ -67,7 +72,8 @@
 
     <transition name="slide-fade">
       <el-form class="filter-panel" :model="filterPatientsForm" :rules="rules" ref="filterPatientsForm"
-      label-width="20%"  v-show="panelDisplay && (listType === MY_PATIENTS_TYPE || listType === OTHER_PATIENTS_TYPE || listType === SUBJECT_PATIENTS_TYPE)">
+      label-width="20%"  v-show="panelDisplay && (listType === MY_PATIENTS_TYPE || listType === OTHER_PATIENTS_TYPE ||
+        listType === SUBJECT_PATIENTS_TYPE || listType === THERAPISTS_PATIENTS_TYPE || listType === APPRAISERS_PATIENTS_TYPE)">
         <el-form-item label="分组" prop="group" class="item">
           <el-select v-model="filterPatientsForm.group">
             <el-option label="不限" :value="-1"></el-option>
@@ -231,6 +237,8 @@ export default {
       myPatientsList: [],
       otherPatientsList: [],
       subjectPatientsList: [],
+      therapistsPatientsList: [],
+      appraisersPatientsList: [],
       groupList: [],
       userList: [],
       roleList: [],
@@ -242,6 +250,8 @@ export default {
       MY_PATIENTS_TYPE: 'myPatients',
       OTHER_PATIENTS_TYPE: 'otherPatients',
       SUBJECT_PATIENTS_TYPE: 'subjectPatients',
+      THERAPISTS_PATIENTS_TYPE: 'therapistsPatients',
+      APPRAISERS_PATIENTS_TYPE: 'appraisersPatients',
       GROUP_TYPE: 'groups',
       USER_TYPE: 'users',
       ROLE_TYPE: 'roles',
@@ -294,7 +304,8 @@ export default {
       return this.$store.state.showSensitiveInfo;
     },
     showAdd() {
-      if (this.listType === this.OTHER_PATIENTS_TYPE || this.listType === this.SUBJECT_PATIENTS_TYPE) {
+      if (this.listType === this.OTHER_PATIENTS_TYPE || this.listType === this.SUBJECT_PATIENTS_TYPE ||
+        this.listType === this.THERAPISTS_PATIENTS_TYPE || this.listType === this.APPRAISERS_PATIENTS_TYPE) {
         return false;
       } else {
         return true;
@@ -311,6 +322,10 @@ export default {
         return this.OTHER_PATIENTS_TYPE;
       } else if (/^\/patients\/subjectList/.test(path)) {
         return this.SUBJECT_PATIENTS_TYPE;
+      } else if (/^\/patients\/therapistsPatientList/.test(path)) {
+        return this.THERAPISTS_PATIENTS_TYPE;
+      } else if (/^\/patients\/appraisersPatientList/.test(path)) {
+        return this.APPRAISERS_PATIENTS_TYPE;
       } else if (/^\/configuration\/userManagement/.test(path)) {
         return 'users';
       } else if (/^\/configuration\/roleManagement/.test(path)) {
@@ -320,7 +335,9 @@ export default {
     searchInputPlaceholder() {
       if (this.listType === this.MY_PATIENTS_TYPE ||
         this.listType === this.OTHER_PATIENTS_TYPE ||
-        this.listType === this.SUBJECT_PATIENTS_TYPE) {
+        this.listType === this.SUBJECT_PATIENTS_TYPE ||
+        this.listType === this.THERAPISTS_PATIENTS_TYPE ||
+        this.listType === this.APPRAISERS_PATIENTS_TYPE) {
         if (this.$store.state.showSensitiveInfo === false) {
           return '请输入患者姓名编码';
         } else {
@@ -340,6 +357,10 @@ export default {
         return '患者：' + this.otherPatientsList.length + '人';
       } else if (this.listType === this.SUBJECT_PATIENTS_TYPE) {
         return '患者：' + this.subjectPatientsList.length + '人';
+      } else if (this.listType === this.THERAPISTS_PATIENTS_TYPE) {
+        return '患者：' + this.therapistsPatientsList.length + '人';
+      } else if (this.listType === this.APPRAISERS_PATIENTS_TYPE) {
+        return '患者：' + this.appraisersPatientsList.length + '人';
       } else if (this.listType === 'users') {
         return '用户：86人';
       } else if (this.listType === 'roles') {
@@ -372,7 +393,10 @@ export default {
       this.timeout = setTimeout(() => {
         if (this.listType === this.MY_PATIENTS_TYPE ||
           this.listType === this.OTHER_PATIENTS_TYPE ||
-          this.listType === this.SUBJECT_PATIENTS_TYPE) {
+          this.listType === this.SUBJECT_PATIENTS_TYPE ||
+          this.listType === this.THERAPISTS_PATIENTS_TYPE ||
+          this.listType === this.APPRAISERS_PATIENTS_TYPE
+          ) {
           this.updatePatientsList();
         } else if (this.listType === this.GROUP_TYPE) {
           this.updateGroupList();
@@ -382,7 +406,9 @@ export default {
     updateCurrentList() {
       if (this.listType === this.MY_PATIENTS_TYPE ||
         this.listType === this.OTHER_PATIENTS_TYPE ||
-        this.listType === this.SUBJECT_PATIENTS_TYPE) {
+        this.listType === this.SUBJECT_PATIENTS_TYPE ||
+        this.listType === this.THERAPISTS_PATIENTS_TYPE ||
+        this.listType === this.APPRAISERS_PATIENTS_TYPE) {
         this.updatePatientsList(this.checkRoute);
       } else if (this.listType === this.GROUP_TYPE) {
         this.updateGroupList(this.checkRoute);
@@ -438,6 +464,10 @@ export default {
       } else if (this.listType === this.SUBJECT_PATIENTS_TYPE) {
         condition.type = 4;
         condition.taskId = this.$store.state.subjectId;
+      } else if (this.listType === this.THERAPISTS_PATIENTS_TYPE) {
+        delete condition.taskId;
+      } else if (this.listType === this.APPRAISERS_PATIENTS_TYPE) {
+        delete condition.taskId;
       }
 
       if (this.searchInput !== '') {
@@ -469,6 +499,10 @@ export default {
           this.otherPatientsList = data ? data : [];
         } else if (this.listType === this.SUBJECT_PATIENTS_TYPE) {
           this.subjectPatientsList = data ? data : [];
+        } else if (this.listType === this.THERAPISTS_PATIENTS_TYPE) {
+          this.therapistsPatientsList = data ? data : [];
+        } else if (this.listType === this.APPRAISERS_PATIENTS_TYPE) {
+          this.appraisersPatientsList = data ? data : [];
         }
         this.updateScrollbar();
         this.setScrollbarPosition();
@@ -530,6 +564,14 @@ export default {
       } else if (this.listType === this.SUBJECT_PATIENTS_TYPE) {
         this.$router.push({
           name: 'subjectPatientInfo', params: {id: 'newPatient'}
+        });
+      } else if (this.listType === this.THERAPISTS_PATIENTS_TYPE) {
+        this.$router.push({
+          name: 'therapistsPatientInfo', params: {id: 'newPatient'}
+        });
+      } else if (this.listType === this.APPRAISERS_PATIENTS_TYPE) {
+        this.$router.push({
+          name: 'appraisersPatientInfo', params: {id: 'newPatient'}
         });
       }
     },
@@ -596,7 +638,9 @@ export default {
       if (this.panelDisplay &&
         (this.listType === this.MY_PATIENTS_TYPE ||
         this.listType === this.OTHER_PATIENTS_TYPE ||
-        this.listType === this.SUBJECT_PATIENTS_TYPE)) {
+        this.listType === this.SUBJECT_PATIENTS_TYPE ||
+        this.listType === this.THERAPISTS_PATIENTS_TYPE ||
+        this.listType === this.APPRAISERS_PATIENTS_TYPE)) {
         // 在患者管理列表，每次打开筛选面板的时候，都要去更新一次 groupList，
         // 因为有一个筛选框是筛选分组的，而分组信息需要经常更新
         this.updateGroupList();
@@ -684,6 +728,24 @@ export default {
           });
         }
 
+      } else if (/^\/patients\/therapistsPatientList\/?$/.test(path)) {
+        if (this.therapistsPatientsList.length > 0) {
+          let firstPatientId = this.therapistsPatientsList[0].patientId;
+          this.$router.replace({
+            name: 'therapistsPatientInfo',
+            params: { id: firstPatientId }
+          });
+        }
+
+      } else if (/^\/patients\/appraisersPatientList\/?$/.test(path)) {
+        if (this.appraisersPatientsList.length > 0) {
+          let firstPatientId = this.appraisersPatientsList[0].patientId;
+          this.$router.replace({
+            name: 'appraisersPatientInfo',
+            params: { id: firstPatientId }
+          });
+        }
+
       } else if (/^\/configuration\/userManagement\/?$/.test(path)) {
         if (this.userList.length > 0) {
           let firstUserId = this.userList[0].id;
@@ -721,7 +783,9 @@ export default {
       // 同时清空各个筛选面板，重新获取列表
       if (this.listType === this.MY_PATIENTS_TYPE ||
         this.listType === this.OTHER_PATIENTS_TYPE ||
-        this.listType === this.SUBJECT_PATIENTS_TYPE) {
+        this.listType === this.SUBJECT_PATIENTS_TYPE ||
+        this.listType === this.THERAPISTS_PATIENTS_TYPE ||
+        this.listType === this.APPRAISERS_PATIENTS_TYPE) {
         this.resetForm('filterPatientsForm', this.checkRoute);
       } else if (this.listType === this.GROUP_TYPE) {
         this.resetForm('filterGroupsForm', this.checkRoute);

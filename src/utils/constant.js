@@ -58,6 +58,8 @@ export default {
   UPDATE_MY_PATIENTS_LIST: 'updateMyPatientsList',
   UPDATE_OTHER_PATIENTS_LIST: 'updateOtherPatientsList',
   UPDATE_SUBJECT_PATIENTS_LIST: 'updateSubjectPatientsList',
+  UPDATE_THERAPISTS_PATIENTS_LIST: 'updateTherapistsPatientsList',
+  UPDATE_APPRAISERS_PATIENTS_LIST: 'updateAppraisersPatientsList',
   UPDATE_GROUP_LIST: 'updateGroupList',
   UPDATE_PATIENT_INFO: 'updatePatientInfo',
   UPDATE_PATIENT_GROUP_INFO: 'updatePatientGroupInfo',
