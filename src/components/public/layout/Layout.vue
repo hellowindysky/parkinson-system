@@ -28,10 +28,14 @@
     <first-symptoms-modal></first-symptoms-modal>
     <first-treatment-modal></first-treatment-modal>
     <diagnostic-record-modal></diagnostic-record-modal>
+<<<<<<< HEAD
     <application-modal></application-modal>
     <!-- <return-application-modal></return-application-modal>
     <pass-ratification-modal></pass-ratification-modal>
     <endof-followup-modal></endof-followup-modal> -->
+=======
+    <end-the-treatment-modal></end-the-treatment-modal>
+>>>>>>> d6512d7f0b947539b7d5fff5a18f0bf7c7c090fe
 
     <filter-panel :showFilterPanel="showFilterPanel"></filter-panel>
     <choice-panel></choice-panel>
@@ -79,6 +83,7 @@ import applicationModal from 'components/views/modal/applicationmodal/Applicatio
 // import returnApplicationModal from 'components/views/modal/returnapplicationmodal/ReturnApplicationModal';
 // import passRatificationModal from 'components/views/modal/passratificationmodal/PassRatificationModal';
 // import endofFollowupModal from 'components/views/modal/endoffollowupmodal/EndofFollowupModal';
+import endTheTreatmentModal from 'components/views/modal/endthetreatmentmodal/EndTheTreatmentModal';
 
 import filterPanel from 'components/public/filterpanel/FilterPanel';
 import choicePanel from 'components/public/choicepanel/ChoicePanel';
@@ -121,10 +126,14 @@ export default {
     firstSymptomsModal,
     firstTreatmentModal,
     diagnosticRecordModal,
+<<<<<<< HEAD
     applicationModal,
     // returnApplicationModal,
     // passRatificationModal,
     // endofFollowupModal,
+=======
+    endTheTreatmentModal,
+>>>>>>> d6512d7f0b947539b7d5fff5a18f0bf7c7c090fe
 
     filterPanel,
     choicePanel,

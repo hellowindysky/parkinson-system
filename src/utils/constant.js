@@ -102,6 +102,7 @@ export default {
   SHOW_RETURN_APPLICATION_MODAL: 'showReturnApplicationModal',
   SHOW_PASS_RATIFICATION_MODAL: 'showPassRatificationModal',
   SHOW_ENDOF_FOLLOWUP_MODAL: 'showEndofFollowupModal',
+  SHOW_ENDTHETREATMENT_MODAL: 'showTheTreatmentModal',
 
   SHOW_CHOICE_PANEL: 'showChoicePanel',
 
