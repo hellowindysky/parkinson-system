@@ -29,9 +29,9 @@
     <first-treatment-modal></first-treatment-modal>
     <diagnostic-record-modal></diagnostic-record-modal>
     <application-modal></application-modal>
-    <!-- <return-application-modal></return-application-modal>
+    <return-application-modal></return-application-modal>
     <pass-ratification-modal></pass-ratification-modal>
-    <endof-followup-modal></endof-followup-modal> -->
+    <endof-followup-modal></endof-followup-modal>
     <end-the-treatment-modal></end-the-treatment-modal>
     <followup-summary-modal></followup-summary-modal>
 
@@ -78,9 +78,9 @@ const neuroelectricModal = () => import(/* webpackChunkName: 'examinationModal' 
 const imageModal = () => import(/* webpackChunkName: 'examinationModal' */ 'components/views/modal/imagemodal/ImageModal');
 
 import applicationModal from 'components/views/modal/applicationmodal/ApplicationModal';
-// import returnApplicationModal from 'components/views/modal/returnapplicationmodal/ReturnApplicationModal';
-// import passRatificationModal from 'components/views/modal/passratificationmodal/PassRatificationModal';
-// import endofFollowupModal from 'components/views/modal/endoffollowupmodal/EndofFollowupModal';
+import returnApplicationModal from 'components/views/modal/returnapplicationmodal/ReturnApplicationModal';
+import passRatificationModal from 'components/views/modal/passratificationmodal/PassRatificationModal';
+import endofFollowupModal from 'components/views/modal/endoffollowupmodal/EndofFollowupModal';
 import endTheTreatmentModal from 'components/views/modal/endthetreatmentmodal/EndTheTreatmentModal';
 import followupSummaryModal from 'components/views/modal/followupsummarymodal/FollowupSummaryModal';
 
@@ -126,9 +126,9 @@ export default {
     firstTreatmentModal,
     diagnosticRecordModal,
     applicationModal,
-    // returnApplicationModal,
-    // passRatificationModal,
-    // endofFollowupModal,
+    returnApplicationModal,
+    passRatificationModal,
+    endofFollowupModal,
     endTheTreatmentModal,
     followupSummaryModal,
 
