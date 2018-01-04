@@ -99,6 +99,7 @@ export default {
   SHOW_FIRSTTREATMENT_MODAL: 'showFirstTreatmentModal',
   SHOW_DIAGNOSTIC_RECORD_MODAL: 'showDiagnosticRecordModal',
   SHOW_ENDTHETREATMENT_MODAL: 'showTheTreatmentModal',
+  SHOW_FOLLOWUPSUMMARY_MODAL: 'showFollowupSummaryModal',
 
   SHOW_CHOICE_PANEL: 'showChoicePanel',
 

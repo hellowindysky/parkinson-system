@@ -136,6 +136,7 @@ export default {
         name: routeName,
         params: { caseId: item.patientCaseId }
       });
+      console.log(this.$route);
     },
     deleteRecord(item) {
       Bus.$on(this.CONFIRM, () => {

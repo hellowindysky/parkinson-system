@@ -29,6 +29,7 @@
     <first-treatment-modal></first-treatment-modal>
     <diagnostic-record-modal></diagnostic-record-modal>
     <end-the-treatment-modal></end-the-treatment-modal>
+    <followup-summary-modal></followup-summary-modal>
 
     <filter-panel :showFilterPanel="showFilterPanel"></filter-panel>
     <choice-panel></choice-panel>
@@ -69,6 +70,7 @@ import firstSymptomsModal from 'components/views/modal/firstsymptomsmodal/FirstS
 import firstTreatmentModal from 'components/views/modal/firsttreatmentmodal/FirstTreatmentModal';
 import diagnosticRecordModal from 'components/views/modal/diagnosticrecordmodal/DiagnosticRecordModal';
 import endTheTreatmentModal from 'components/views/modal/endthetreatmentmodal/EndTheTreatmentModal';
+import followupSummaryModal from 'components/views/modal/followupsummarymodal/FollowupSummaryModal';
 
 import filterPanel from 'components/public/filterpanel/FilterPanel';
 import choicePanel from 'components/public/choicepanel/ChoicePanel';
@@ -112,6 +114,7 @@ export default {
     firstTreatmentModal,
     diagnosticRecordModal,
     endTheTreatmentModal,
+    followupSummaryModal,
 
     filterPanel,
     choicePanel,
