@@ -266,9 +266,9 @@ export default {
     position: relative;
     margin: auto;
     padding: 0 40px;
-    top: 3%;
+    top: 10%;
     width: 660px;
-    max-height: 94%;
+    max-height: 80%;
     background-color: @background-color;
     overflow: hidden;
     .title {
