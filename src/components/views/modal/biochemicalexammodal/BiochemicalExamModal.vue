@@ -36,9 +36,9 @@
             <span class="required-mark"></span>
           </span>
           <span class="field-input">
-            <!-- <span class="warning-text">{{warningResults.checkDate}}</span> -->
-            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.checkDate}}</span>
-            <el-input v-else placeholder="请输入血液标本编号" v-model="copyInfo.checkDate"></el-input>
+            <!-- <span class="warning-text">{{warningResults.bloodCode}}</span> -->
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.bloodCode}}</span>
+            <el-input v-else placeholder="请输入血液标本编号" v-model="copyInfo.bloodCode"></el-input>
           </span>
         </div>
         <div class="form-wrapper" ref="formWrapper">

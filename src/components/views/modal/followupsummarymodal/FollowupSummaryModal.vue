@@ -6,7 +6,7 @@
 
         <div class="field whole-line">
           <span class="field-name">
-            下一节点:
+            实验阶段:
             <!-- <span class="required-mark">*</span> -->
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -14,23 +14,7 @@
           </span>
           <span class="field-input" v-else>
             <!-- <span class="warning-text">{{warningResults.name}}</span> -->
-            <el-select v-model="test1" placeholder="请选择下一节点" clearable>
-              <el-option :label="'随访期'" :value="1"></el-option>
-              <el-option :label="'实验结束（等待揭盲）'" :value="2"></el-option>
-            </el-select>
-          </span>
-        </div>
-
-        <div class="field whole-line">
-          <span class="field-name">
-            接收人:
-            <!-- <span class="required-mark">*</span> -->
-          </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>view状态接收人</span>
-          </span>
-          <span class="field-input" v-else>
-            <span>edit状态接收人</span>
+            <el-input v-model="test1" placeholder="实验阶段" :maxlength="50"></el-input>
           </span>
         </div>
 
@@ -48,6 +32,86 @@
         </div>
 
         <hr class="seperate-line">
+
+        <div v-show="true">
+          <h4 class="sm-title">本期随访总结</h4>
+          <div class="field whole-line">
+            <span class="field-name">
+              随访形式:
+              <!-- <span class="required-mark">*</span> -->
+            </span>
+            <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+              <span>view状态随访形式</span>
+            </span>
+            <span class="field-input" v-else>
+              <el-input v-model="test3" placeholder="请输入随访形式" :maxlength="50"></el-input>
+            </span>
+          </div>
+
+          <div class="field whole-line">
+            <span class="field-name long-field-name">
+              受访者是否正常完成随访:
+              <!-- <span class="required-mark">*</span> -->
+            </span>
+            <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+              <span>view状态下受访者是否正常完成让随访</span>
+            </span>
+            <span class="field-input long-field-name" v-else>
+              <!-- <span class="warning-text">{{warningResults.name}}</span> -->
+              <el-select v-model="test4" placeholder="请选择是否正常完成随访" clearable>
+                <el-option :label="'是'" :value="1"></el-option>
+                <el-option :label="'否'" :value="0"></el-option>
+              </el-select>
+            </span>
+          </div>
+
+          <div class="field whole-line">
+            <span class="field-name long-field-name">
+              未能正常完成随访原因:
+              <!-- <span class="required-mark">*</span> -->
+            </span>
+            <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+              <span>view状态下未能正常完成随访原因</span>
+            </span>
+            <span class="field-input long-field-name" v-else>
+              <!-- <span class="warning-text">{{warningResults.name}}</span> -->
+              <el-input v-model="test5" placeholder="请输入未能正常完成随访原因" :maxlength="50"></el-input>
+            </span>
+          </div>
+
+          <div class="field whole-line">
+            <span class="field-name">
+              原因详述:
+              <!-- <span class="required-mark">*</span> -->
+            </span>
+            <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+              <span>view状态下原因详述</span>
+            </span>
+            <span class="field-input" v-else>
+              <!-- <span class="warning-text">{{warningResults.name}}</span> -->
+              <el-input v-model="test6" placeholder="请输入原因详述" :maxlength="50"></el-input>
+            </span>
+          </div>
+
+          <div class="field whole-line">
+            <span class="field-name long-field-name">
+              受访者是否愿意继续随访:
+              <!-- <span class="required-mark">*</span> -->
+            </span>
+            <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+              <span>view状态下受访者是否愿意继续随访</span>
+            </span>
+            <span class="field-input long-field-name" v-else>
+              <!-- <span class="warning-text">{{warningResults.name}}</span> -->
+              <el-select v-model="test7" placeholder="请选择是否愿意继续随访" clearable>
+                <el-option :label="'是'" :value="1"></el-option>
+                <el-option :label="'否'" :value="0"></el-option>
+              </el-select>
+            </span>
+          </div>
+
+        </div>
+
       </div>
 
       <div class="button cancel-button btn-margin" @click="cancel">取消</div>
@@ -67,7 +131,12 @@ export default {
       title: '处理意见',
       mode: '',
       test1: '',
-      test2: ''
+      test2: '',
+      test3: '',
+      test4: '',
+      test5: '',
+      test6: '',
+      test7: ''
     };
   },
   methods: {
@@ -80,12 +149,12 @@ export default {
     }
   },
   mounted() {
-    /* setTimeout(() => {
-      Bus.$emit(this.SHOW_ENDTHETREATMENT_MODAL, {
-        cardOperation: this.ADD_NEW_CARD
-      });
-    }, 5000); */
-    Bus.$on(this.SHOW_ENDTHETREATMENT_MODAL, this.showModal);
+    // setTimeout(() => {
+    //   Bus.$emit(this.SHOW_FOLLOWUPSUMMARY_MODAL, {
+    //     cardOperation: this.ADD_NEW_CARD
+    //   });
+    // }, 5000);
+    Bus.$on(this.SHOW_FOLLOWUPSUMMARY_MODAL, this.showModal);
   }
 };
 </script>
@@ -94,7 +163,7 @@ export default {
 @import "~styles/variables.less";
 @field-line-height: 25px;
 @field-name-width: 110px;
-@long-field-name-width: 160px;
+@long-field-name-width: 180px;
 
 .followup-modal-wrapper{
   position: absolute;
@@ -126,6 +195,10 @@ export default {
         margin-top: 5px;
         margin-bottom: 15px;
       }
+      .sm-title{
+        font-size: @normal-font-size;
+        transform: translate3d(10px, 5px, 0);
+      }
       .field {
         display: inline-block;
         position: relative;
@@ -151,9 +224,9 @@ export default {
           line-height: @field-line-height;
           font-size: @normal-font-size;
           color: @font-color;
-          // &.long-field-name {
-          //   width: @long-field-name-width;
-          // }
+          &.long-field-name {
+            width: @long-field-name-width;
+          }
           .required-mark {
             color: red;
             font-size: 20px;
@@ -164,13 +237,14 @@ export default {
           display: inline-block;
           position: relative;
           left: @field-name-width;
-          width: calc(~"92% - @{field-name-width}");
+          width: calc(~"96% - @{field-name-width}");
           line-height: @field-line-height;
           font-size: @normal-font-size;
           color: @light-font-color;
-          // &.long-field-name {
-          //   left: @long-field-name-width;
-          // }
+          &.long-field-name {
+            left: @long-field-name-width;
+            width: calc(~"96% - @{long-field-name-width}");
+          }
           .warning-text {
             position: absolute;
             top: 22px;

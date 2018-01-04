@@ -104,6 +104,10 @@ export default {
         return 'otherPatients';
       } else if (this.$route.matched.some(record => record.meta.subjectPatients)) {
         return 'subjectPatients';
+      } else if (this.$route.matched.some(record => record.meta.therapistsPatients)) {
+        return 'therapistsPatients';
+      } else if (this.$route.matched.some(record => record.meta.appraisersPatients)) {
+        return 'appraisersPatients';
       } else {
         return 'unknown';
       }
@@ -180,6 +184,10 @@ export default {
         this.$router.replace({ name: 'otherPersonalInfo' });
       } else if (this.listType === 'subjectPatients' && withoutDetail) {
         this.$router.replace({ name: 'subjectPersonalInfo' });
+      } else if (this.listType === 'therapistsPatients' && withoutDetail) {
+        this.$router.replace({ name: 'therapistsPatientsPersonalInfo' });
+      } else if (this.listType === 'appraisersPatients' && withoutDetail) {
+        this.$router.replace({ name: 'appraisersPatientsPersonalInfo' });
       }
     },
     updateScrollbar() {

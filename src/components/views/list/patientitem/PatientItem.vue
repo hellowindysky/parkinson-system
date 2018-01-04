@@ -58,6 +58,10 @@ export default {
         routeName = 'otherPatientInfo';
       } else if (this.$route.matched.some(record => record.meta.subjectPatients)) {
         routeName = 'subjectPatientInfo';
+      } else if (this.$route.matched.some(record => record.meta.therapistsPatients)) {
+        routeName = 'therapistsPatientInfo';
+      } else if (this.$route.matched.some(record => record.meta.appraisersPatients)) {
+        routeName = 'appraisersPatientInfo';
       } else {
         return;
       }

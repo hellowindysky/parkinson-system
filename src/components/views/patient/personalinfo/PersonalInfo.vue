@@ -1,7 +1,6 @@
 <template lang="html">
   <div class="personal-info-wrapper">
     <basic-info class="component" :basic-info="basicInfo"></basic-info>
-    <disease-info class="component" :disease-info="diseaseInfo" :birthday="birthday" v-if="false"></disease-info>
     <disease-history class="component" :disease-info="diseaseInfo" :birthday="birthday"></disease-history>
     <other-info class="component" :med-history-list="medHistoryList" :disease-history-list="diseaseHistoryList"
       :family-history-list="familyHistoryList" :coffee-history-list="coffeeHistoryList" :tea-history-list="teaHistoryList"
@@ -13,7 +12,6 @@
 
 <script>
 import BasicInfo from 'components/views/patient/personalinfo/basicinfo/BasicInfo';
-import DiseaseInfo from 'components/views/patient/personalinfo/diseaseinfo/DiseaseInfo';
 import DiseaseHistory from 'components/views/patient/personalinfo/diseasehistory/DiseaseHistory';
 import OtherInfo from 'components/views/patient/personalinfo/otherinfo/OtherInfo';
 
@@ -80,7 +78,6 @@ export default {
   },
   components: {
     BasicInfo,
-    DiseaseInfo,
     DiseaseHistory,
     OtherInfo
   }

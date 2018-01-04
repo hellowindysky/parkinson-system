@@ -36,6 +36,20 @@
         高级统计
       </li>
     </ul>
+    <li class="item" :class="{'current-item': currentItem === 'experiment'}" @click="toggleExperimentList"
+      v-show="showExperiment">
+      <div class="menu-icon iconfont icon-experiment"></div>
+      <div class="title">实验研究</div>
+      <div class="fold-icon iconfont" :class="showExperimentList ? 'icon-up' : 'icon-down'"></div>
+    </li>
+    <ul class="sub-item-list" :class="{'folded': !showExperimentList}" v-show="showExperiment">
+      <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'therapistsPatients'}" @click="chooseTherapist">
+        治疗者
+      </li>
+      <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'appraisersPatients'}" @click="chooseAppraiser">
+        评估者
+      </li>
+    </ul>
     <li class="item" :class="{'current-item': currentItem === 'configuration'}" @click="toggleConfigurationList"
       v-show="showConfiguration">
       <div class="menu-icon iconfont icon-configuration"></div>
@@ -88,6 +102,7 @@ export default {
     return {
       showPatientsList: true,
       showAnalyticsList: false,
+      showExperimentList: false,
       showConfigurationList: false,
       showInstitutionList: false
     };
@@ -96,7 +111,12 @@ export default {
     currentItem() {
       var path = this.$route.path;
       if (/^\/patients/.test(path)) {
-        return 'patients';
+        if (this.$route.matched.some(record => record.meta.therapistsPatients) ||
+          this.$route.matched.some(record => record.meta.appraisersPatients)) {
+          return 'experiment';
+        } else {
+          return 'patients';
+        }
       } else if (/^\/analytics/.test(path)) {
         return 'analytics';
       } else if (/^\/configuration/.test(path)) {
@@ -116,6 +136,10 @@ export default {
         return 'otherPatients';
       } else if (/^\/patients\/subjectList/.test(path)) {
         return 'subjectPatients';
+      } else if (/^\/patients\/therapistsPatientList/.test(path)) {
+        return 'therapistsPatients';
+      } else if (/^\/patients\/appraisersPatientList/.test(path)) {
+        return 'appraisersPatients';
       } else if (/^\/analytics\/basic/.test(path)) {
         return 'basicAnalytics';
       } else if (/^\/analytics\/advanced/.test(path)) {
@@ -138,6 +162,9 @@ export default {
       var userType = Number(sessionStorage.getItem('userType'));
       return (userType === 2 || userType === 4 || userType === 5);
     },
+    showExperiment() {
+      return this.$store.state.subjectId !== this.SUBJECT_ID_FOR_HOSPITAL;
+    },
     showConfiguration() {
       var userType = Number(sessionStorage.getItem('userType'));
       return userType === 4;
@@ -153,6 +180,9 @@ export default {
     },
     toggleAnalyticsList() {
       this.showAnalyticsList = !this.showAnalyticsList;
+    },
+    toggleExperimentList() {
+      this.showExperimentList = !this.showExperimentList;
     },
     toggleConfigurationList() {
       this.showConfigurationList = !this.showConfigurationList;
@@ -191,6 +221,16 @@ export default {
       }
     },
     chooseAdvancedAnalytics() {},
+    chooseTherapist() {
+      if (!/^\/patients\/therapistsPatientList/.test(this.$route.path)) {
+        this.$router.push({name: 'therapistsPatients'});
+      }
+    },
+    chooseAppraiser() {
+      if (!/^\/patients\/appraisersPatientList/.test(this.$route.path)) {
+        this.$router.push({name: 'appraisersPatients'});
+      }
+    },
     chooseFeatureConfiguration() {
       // 如果当前路径不是以“/configuration/featureConfiguration”开头了，才发生跳转
       if (!/^\/configuration\/featureConfiguration/.test(this.$route.path)) {
