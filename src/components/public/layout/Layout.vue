@@ -33,6 +33,7 @@
     <pass-ratification-modal></pass-ratification-modal>
     <endof-followup-modal></endof-followup-modal> -->
     <end-the-treatment-modal></end-the-treatment-modal>
+    <followup-summary-modal></followup-summary-modal>
 
     <filter-panel :showFilterPanel="showFilterPanel"></filter-panel>
     <choice-panel></choice-panel>
@@ -81,6 +82,7 @@ import applicationModal from 'components/views/modal/applicationmodal/Applicatio
 // import passRatificationModal from 'components/views/modal/passratificationmodal/PassRatificationModal';
 // import endofFollowupModal from 'components/views/modal/endoffollowupmodal/EndofFollowupModal';
 import endTheTreatmentModal from 'components/views/modal/endthetreatmentmodal/EndTheTreatmentModal';
+import followupSummaryModal from 'components/views/modal/followupsummarymodal/FollowupSummaryModal';
 
 import filterPanel from 'components/public/filterpanel/FilterPanel';
 import choicePanel from 'components/public/choicepanel/ChoicePanel';
@@ -128,6 +130,7 @@ export default {
     // passRatificationModal,
     // endofFollowupModal,
     endTheTreatmentModal,
+    followupSummaryModal,
 
     filterPanel,
     choicePanel,

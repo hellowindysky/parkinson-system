@@ -2,7 +2,7 @@
   <div class="extensible-panel-wrapper">
     <div class="header">
       <h4 class="title">{{title}}</h4>
-      <div v-show="editable && !hideButtons" class="button add-button" @click="add">添加</div>
+      <div v-if="editable && !hideButtons" class="button add-button" @click="add">添加</div>
       <div v-show="status === NORMAL_STATUS && !hideButtons" class="button extend-button" @click="extend">展开</div>
       <div v-show="status === EXTENDED_STATUS && !hideButtons" class="button shrink-button" @click="shrink">收起</div>
     </div>

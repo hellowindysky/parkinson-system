@@ -105,6 +105,7 @@ export default {
   SHOW_PASS_RATIFICATION_MODAL: 'showPassRatificationModal',
   SHOW_ENDOF_FOLLOWUP_MODAL: 'showEndofFollowupModal',
   SHOW_ENDTHETREATMENT_MODAL: 'showTheTreatmentModal',
+  SHOW_FOLLOWUPSUMMARY_MODAL: 'showFollowupSummaryModal',
 
   SHOW_CHOICE_PANEL: 'showChoicePanel',
 
