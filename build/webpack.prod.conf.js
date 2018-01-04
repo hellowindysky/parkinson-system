@@ -49,7 +49,7 @@ var webpackConfig = merge(baseWebpackConfig, {
     //   },
     //   sourceMap: true
     // }),
-    new ParallelUglifyPlugin({
+    new ParallelUglifyPlugin({  // 这个插件相对于 UglifyJsPlugin，支持多线程，因此可以减少打包时间
       cacheDir: '.cache/',
       uglifyJS:{
         output: {
