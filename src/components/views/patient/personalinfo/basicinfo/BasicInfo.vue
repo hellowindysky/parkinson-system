@@ -27,8 +27,8 @@
 
             <span v-else-if="getUIType(field)===1">
               <el-autocomplete v-if="field.fieldName==='nation'" v-model="copyInfo[field.fieldName]"
-               :fetch-suggestions="querySearchAsync" 
-               @select="handleSelect" 
+               :fetch-suggestions="querySearchAsync"
+               @select="handleSelect"
                :placeholder="getMatchedField(field).cnFieldDesc">
               </el-autocomplete>
               <el-input v-else v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}" :disabled="field.fieldName==='bmi'"
@@ -308,6 +308,12 @@ export default {
               type: 'error',
               duration: 2000
             });
+          } else if (error.code === 2008) {
+            this.$message({
+              message: '身份证号重复',
+              type: 'error',
+              duration: 2000
+            });
           }
           this.lockSubmitButton = false;
         });
@@ -483,7 +489,8 @@ export default {
       let w = parseFloat(this.copyInfo.weight, 10);
       if (h && w) {
         let res = w / ((h / 100) * (h / 100));
-        this.copyInfo.bmi = res.toFixed(2);
+        res = parseFloat(res.toFixed(1), 10);
+        this.copyInfo.bmi = res;
       } else {
         this.copyInfo.bmi = '';
       }
@@ -494,7 +501,8 @@ export default {
       let w = parseFloat(val, 10);
       if (h && w) {
         let res = w / ((h / 100) * (h / 100));
-        this.copyInfo.bmi = res.toFixed(2);
+        res = parseFloat(res.toFixed(1), 10);
+        this.copyInfo.bmi = res;
       } else {
         this.copyInfo.bmi = '';
       }
@@ -609,6 +617,9 @@ export default {
           }
         }
         .el-select {
+          width: 100%;
+        }
+        .el-autocomplete {
           width: 100%;
         }
         .el-date-editor {

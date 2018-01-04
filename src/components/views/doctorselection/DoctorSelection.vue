@@ -2,37 +2,44 @@
   <div class="doctor-selection">
     <div class="top-bar shadow">
       <h2 class="title">{{title}}</h2>
+      <div class="quit" @click="reLogin">
+        <span class="iconfont icon-quit"></span>
+        退出
+      </div>
+    </div>
+    <div class="info-line">
+      <span class="desc">技术支持授权医生：
+        <span class="count">{{doctorNumber}}人</span>
+        （每次只能同时为1位医生提供技术支持服务）
+      </span>
       <el-button class="fresh-button" type="primary" :loading="refreshing" @click="updateDoctorList">
         <span class="iconfont icon-refresh" v-show="!refreshing"></span>
         <span class="text">刷新</span>
       </el-button>
     </div>
-    <div class="info-line">
-      <span class="desc">技术支持授权医生：（每次只能同时为1位医生提供技术支持服务）</span>
-      <span class="count">可选：{{doctorNumber}}人</span>
-    </div>
     <div class="search-line">
       <div class="area shadow" :class="devideWidth">
         <span class="text">地区</span>
-        <el-select v-model="district" :clearable="true">
+        <el-select v-model="district" :clearable="true" @change="searchDoctor">
           <el-option v-for="option in getOptions('homeProvince')" :label="option.typeName"
             :value="option.typeCode" :key="option.typeCode"></el-option>
         </el-select>
       </div>
       <div class="search-input-wrapper shadow" :class="searchInputWrapperLeft">
         <span class="iconfont icon-search"></span>
-        <el-input v-model="searchKeyword" placeholder="请输入医院名称、医生姓名、医生睿云账号或手机号码"></el-input>
-        <span class="button" @click="searchDoctor">搜索</span>
+        <el-input v-model="searchKeyword" placeholder="请输入医院名称、医生姓名、医生睿云账号或手机号码"
+          @change="searchWithDelay"></el-input>
+        <!-- <span class="button" @click="searchDoctor">搜索</span> -->
       </div>
     </div>
     <div class="card-wrapper" ref="cardWrapper">
-      <div class="card shadow" :class="devideWidth" v-for="doctor in doctorList" @click="selectDoctor(doctor)">
+      <div class="card shadow" :class="devideWidth" v-for="doctor in doctorList" @click="clickDoctorCard(doctor)">
         <span class="text first-line">
           <span class="name">医生姓名</span>
           <span class="value">{{doctor.doctorName}}</span>
         </span>
         <span class="text second-line">
-          <span class="name">医生姓名</span>
+          <span class="name">医生账号</span>
           <span class="value">{{doctor.userName}}</span>
         </span>
         <span class="text third-line">
@@ -42,21 +49,28 @@
       </div>
     </div>
     <water-mark></water-mark>
+    <message-modal></message-modal>
+    <secret-agreement-modal></secret-agreement-modal>
   </div>
 </template>
 
 <script>
 import Ps from 'perfect-scrollbar';
 import { mapGetters } from 'vuex';
+import Bus from 'utils/bus.js';
 import { setRequestToken } from 'api/common.js';
 import { getSupportMessage, getSupportedDoctorList } from 'api/user.js';
 import Util from 'utils/util.js';
+
 import waterMark from 'components/public/watermark/WaterMark';
+import messageModal from 'components/views/modal/messagemodal/MessageModal';
+import secretAgreementModal from 'components/views/modal/secretagreementmodal/SecretAgreementModal';
 
 export default {
   data() {
     return {
       district: '',
+      timeout: null,
       searchKeyword: '',
       refreshing: false,
       devideWidth: '',
@@ -94,6 +108,9 @@ export default {
       var typeInfo = Util.getElement('typegroupcode', fieldName, this.typeGroup);
       // console.log(this.typeGroup);
       return typeInfo.types ? typeInfo.types : [];
+    },
+    reLogin() {
+      this.$router.push({name: 'login'});
     },
     updateDoctorList(condition) {
       this.refreshing = true;
@@ -169,6 +186,12 @@ export default {
         });
       });
     },
+    searchWithDelay() {
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        this.searchDoctor();
+      }, 300);
+    },
     searchDoctor() {
       // 相当于带条件地刷新
       var condition = {};
@@ -179,6 +202,14 @@ export default {
         condition.keyword = this.searchKeyword;
       }
       this.updateDoctorList(condition);
+    },
+    clickDoctorCard(doctor) {
+      Bus.$emit(this.SHOW_MESSAGE_MODAL, 4, '提醒', '需要医生验证后才能为其提供技术支持', doctor.mobileNumber);
+
+      Bus.$off(this.PERMIT_SUPPORT_THE_DOCTOR);
+      Bus.$on(this.PERMIT_SUPPORT_THE_DOCTOR, () => {
+        this.selectDoctor(doctor);
+      });
     },
     selectDoctor(doctor) {
       var commonRequest = JSON.parse(sessionStorage.getItem('commonRequest'));
@@ -217,8 +248,13 @@ export default {
       next(from.path);
     }
   },
+  beforeDestroy() {
+    Bus.$off(this.PERMIT_SUPPORT_THE_DOCTOR);
+  },
   components: {
-    waterMark
+    waterMark,
+    messageModal,
+    secretAgreementModal
   }
 };
 </script>
@@ -252,12 +288,46 @@ export default {
       color: @button-color;
       font-size: 24px;
     }
+    .quit {
+      display: inline-block;
+      position: absolute;
+      top: 20px;
+      right: 3px;
+      width: 100px;
+      height: 40px;
+      line-height: 40px;
+      cursor: pointer;
+      &:hover {
+        opacity: 0.6;
+      }
+      &:active {
+        opacity: 0.8;
+      }
+      .iconfont {
+        margin-right: 6px;
+      }
+    }
+  }
+  .info-line {
+    position: relative;
+    width: 100%;
+    height: @this-info-line-height;
+    padding: 0 30px;
+    text-align: left;
+    line-height: 40px;
+    font-size: @normal-font-size;
+    .desc {
+    }
+    .count {
+      // color: @button-color;
+      font-weight: bold;
+    }
     .fresh-button {
       position: absolute;
       width: 100px;
       height: 30px;
-      top: 24px;
-      right: 15px;
+      top: 5px;
+      right: 55px;
       padding-left: 30px;
       font-size: @large-font-size;
       border: none;
@@ -288,22 +358,6 @@ export default {
       &:active {
         opacity: 0.8;
       }
-    }
-  }
-  .info-line {
-    width: 100%;
-    height: @this-info-line-height;
-    padding: 0 30px;
-    text-align: left;
-    line-height: 40px;
-    font-size: @normal-font-size;
-    .desc {
-    }
-    .count {
-      position: absolute;
-      right: 30px;
-      color: @button-color;
-      font-weight: bold;
     }
   }
   .search-line {
@@ -352,7 +406,8 @@ export default {
       }
       .el-input {
         display: inline-block;
-        width: calc(~"100% - 120px");
+        // width: calc(~"100% - 120px");
+        width: calc(~"100% - 40px");
         .el-input__inner {
           height: 30px;
           border: none;
@@ -384,31 +439,31 @@ export default {
         left: calc(~"100% + @{this-card-horizontal-margin}");
       }
       &.left-1-2 {
-        left: calc(~"50% + @{this-card-horizontal-margin}");
+        left: calc(~"49.4% + @{this-card-horizontal-margin}");
       }
       &.left-1-3 {
-        left: calc(~"33.3333% + @{this-card-horizontal-margin}");
+        left: calc(~"33.1% + @{this-card-horizontal-margin}");
       }
       &.left-1-4 {
         left: calc(~"25% + @{this-card-horizontal-margin}");
       }
       &.left-1-5 {
-        left: calc(~"20% + @{this-card-horizontal-margin}");
+        left: calc(~"20.08% + @{this-card-horizontal-margin}");
       }
       &.left-1-6 {
-        left: calc(~"16.6666% + @{this-card-horizontal-margin}");
+        left: calc(~"16.8% + @{this-card-horizontal-margin}");
       }
       &.left-1-7 {
-        left: calc(~"14.2857% + @{this-card-horizontal-margin}");
+        left: calc(~"14.48% + @{this-card-horizontal-margin}");
       }
       &.left-1-8 {
-        left: calc(~"12.5% + @{this-card-horizontal-margin}");
+        left: calc(~"12.65% + @{this-card-horizontal-margin}");
       }
       &.left-1-9 {
-        left: calc(~"11.1111% + @{this-card-horizontal-margin}");
+        left: calc(~"11.3% + @{this-card-horizontal-margin}");
       }
       &.left-1-10 {
-        left: calc(~"10% + @{this-card-horizontal-margin}");
+        left: calc(~"10.2% + @{this-card-horizontal-margin}");
       }
     }
   }

@@ -226,6 +226,12 @@ export default {
       margin: 3px @this-card-horizontal-margin;
       height: 130px;
       background-color: @background-color;
+      &:hover {
+        box-shadow: 0 0 5px @gray-color;
+      }
+      &:active {
+        box-shadow: 0 0 5px @light-gray-color;
+      }
       &.width-1-1, &.width-1-0 {
         width: calc(~"100% - @{this-card-horizontal-margin} * 2");
       }

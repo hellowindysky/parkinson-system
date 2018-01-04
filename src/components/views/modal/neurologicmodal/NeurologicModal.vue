@@ -118,7 +118,7 @@
                 <el-option v-for="option in getOptions(row[0].fieldEnumId)" :label="option.name" :key="option.code" :value="option.code"></el-option>
               </el-select>
               <el-date-picker v-else-if="row[0].uiType===6" v-model="copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue"></el-date-picker>
-              <el-date-picker v-else-if="row[0].uiType===7" type="datetime" v-model="copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue"></el-date-picker>
+              <el-date-picker v-else-if="row[0].uiType===7" type="datetime" format="yyyy-MM-dd HH:mm" v-model="copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue"></el-date-picker>
               <el-time-select v-else-if="row[0].uiType===8" v-model="copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue"
                 :picker-options="{start:'00:00', end:'24:00'}"></el-time-select>
             </td>
@@ -137,7 +137,7 @@
                 <el-option v-for="option in getOptions(row[1].fieldEnumId)" :label="option.name" :key="option.code" :value="option.code"></el-option>
               </el-select>
               <el-date-picker v-else-if="row[1].uiType===6" v-model="copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue"></el-date-picker>
-              <el-date-picker v-else-if="row[1].uiType===7" type="datetime" v-model="copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue"></el-date-picker>
+              <el-date-picker v-else-if="row[1].uiType===7" type="datetime" format="yyyy-MM-dd HH:mm" v-model="copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue"></el-date-picker>
               <el-time-select v-else-if="row[1].uiType===8" v-model="copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue"
                 :picker-options="{start:'00:00', end:'24:00'}"></el-time-select>
             </td>
@@ -172,7 +172,7 @@
                 <el-option v-for="option in getOptions(col.fieldEnumId)" :label="option.name" :key="option.code" :value="option.code"></el-option>
               </el-select>
               <el-date-picker v-else-if="col.uiType===6" v-model="copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue"></el-date-picker>
-              <el-date-picker v-else-if="col.uiType===7" type="datetime" v-model="copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue"></el-date-picker>
+              <el-date-picker v-else-if="col.uiType===7" type="datetime" format="yyyy-MM-dd HH:mm" v-model="copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue"></el-date-picker>
               <el-time-select v-else-if="col.uiType===8" v-model="copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue"
                 :picker-options="{start:'00:00', end:'24:00'}"></el-time-select>
             </td>
@@ -184,7 +184,7 @@
       <!-- <div class="seperate-line"></div> -->
       <div class="button cancel-button" v-if="tableMode===FATHER_OPEN" @click="cancel">取消</div>
       <div class="button cancel-button" v-if="tableMode===SON_OPEN && mode===VIEW_CURRENT_CARD" @click="closeSubTable">返回</div>
-      <div class="button edit-button" v-if="mode===VIEW_CURRENT_CARD && canEdit" @click="switchToEditingMode">编辑</div>
+      <div class="button edit-button" v-if="tableMode===FATHER_OPEN && mode===VIEW_CURRENT_CARD && canEdit" @click="switchToEditingMode">编辑</div>
       <div class="button submit-button" v-if="tableMode===FATHER_OPEN && mode!==VIEW_CURRENT_CARD" @click="submit">确认</div>
 
       <div class="button reset-button" v-if="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD && hasTableExisted"
@@ -367,7 +367,7 @@ export default {
       this.subTableCode = code;
       this.tableMode = this.SON_OPEN;
       this.updateScrollbar();
-      console.log(this.itemGroups);
+      // console.log(this.itemGroups);
     },
     submit() {
       if (this.lockSubmitButton) {

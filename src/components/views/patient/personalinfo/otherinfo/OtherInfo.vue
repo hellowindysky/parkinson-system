@@ -14,15 +14,23 @@
 
       <extensible-panel class="panel" :mode="mode" :title="medHistoryTitle" v-on:addNewCard="addMedRecord" :editable="canEdit">
         <card class="card" :class="devideWidth" :mode="mode" v-for="item in medHistoryList" :key="item.medName"
-          :title="item.medName" v-on:editCurrentCard="editMedRecord(item)"
+          :title="item.medType === 6 ? transform(item, 'medType', medHistoryDictionary) : item.medName" v-on:editCurrentCard="editMedRecord(item)"
           v-on:viewCurrentCard="viewMedRecord(item)"
           v-on:deleteCurrentCard="deleteMedRecord(item)">
-          <div class="text first-line">一天{{item.medDose}}次</div>
-          <div class="text start-time">{{item.medStart}}</div>
-          <div class="text end-time">
-            <span v-show="item.medEnd">~</span>
-            {{item.medEnd}}
-          </div>
+          <template v-if="item.medType!==6">
+            <div class="text first-line">
+              <span class="name">每日次数：</span>
+              <span class="value">{{item.medDose}}</span>
+            </div>
+            <div class="text second-line">
+              <span class="name">每次量：</span>
+              <span class="value">{{item.doseEachTime}} mg</span>
+            </div>
+            <div class="text third-line">
+              <span class="name">服药时间：</span>
+              <span class="value">{{item.medStart}}</span>
+            </div>
+          </template>
         </card>
       </extensible-panel>
 
@@ -30,21 +38,34 @@
         <card class="card" :class="devideWidth" :mode="mode" v-for="item in diseaseHistoryList" :key="item.diseaseRelationId"
           :title="transform(item, 'diseaseRelationId', diseaseHistoryDictionary)" v-on:editCurrentCard="editDiseaseRecord(item)"
           v-on:viewCurrentCard="viewDiseaseRecord(item)" v-on:deleteCurrentCard="deleteDiseaseRecord(item)">
-          <div class="text first-line">是否住院： {{transform(item, 'isHospitalization', diseaseHistoryDictionary)}}</div>
-          <div class="text start-time">{{item.beginTime}}</div>
-          <div class="text end-time">
-            <span v-show="item.endTime">~</span>
-            {{item.endTime}}
-          </div>
+          <template v-if="item.diseaseRelationId!==30">
+            <!-- <div class="text first-line">是否住院： {{transform(item, 'isHospitalization', diseaseHistoryDictionary)}}</div> -->
+            <div class="text first-line">
+              <span class="name">是否住院：</span>
+              <span class="value">{{transform(item, 'isHospitalization', diseaseHistoryDictionary)}}</span>
+            </div>
+            <div class="text second-line">
+              <span class="name">发病时间：</span>
+              <span class="value">{{item.beginTime}}</span>
+            </div>
+          </template>
         </card>
       </extensible-panel>
 
       <extensible-panel class="panel" :mode="mode" :title="familyHistoryTitle" v-on:addNewCard="addFamilyRecord" :editable="canEdit">
         <card class="card" :class="devideWidth" :mode="mode" v-for="item in familyHistoryList" :key="item.patientFamilyId"
-          :title="item.diseaseName" v-on:editCurrentCard="editFamilyRecord(item)" v-on:viewCurrentCard="viewFamilyRecord(item)"
+          :title="item.diseaseName?item.diseaseName:transform(item, 'similarRole', familyHistoryDictionary)" v-on:editCurrentCard="editFamilyRecord(item)" v-on:viewCurrentCard="viewFamilyRecord(item)"
           v-on:deleteCurrentCard="deleteFamilyRecord(item)">
-          <div class="text first-line">{{transform(item, 'similarRole', familyHistoryDictionary)}}</div>
-          <div class="text start-time">{{transform(item, 'diseaseType', familyHistoryDictionary)}}</div>
+          <template v-if="item.similarRole!==6">
+            <div class="text first-line">
+              <span class="name">家庭成员：</span>
+              <span class="value">{{transform(item, 'similarRole', familyHistoryDictionary)}}</span>
+            </div>
+            <div class="text second-line">
+              <span class="name">疾病类型：</span>
+              <span class="value">{{transform(item, 'diseaseType', familyHistoryDictionary)}}</span>
+            </div>
+          </template>
         </card>
       </extensible-panel>
 
@@ -54,39 +75,79 @@
           v-on:editCurrentCard="editPersonRecord(item, COFFEE_HISTORY_MODAL)"
           v-on:viewCurrentCard="viewPersonRecord(item, COFFEE_HISTORY_MODAL)"
           v-on:deleteCurrentCard="deleteCoffeeRecord(item)">
-          <div class="text first-line">{{item.doseInfo}} {{transform(item, 'unit', coffeeHistoryDictionary)}}/周 </div>
-          <div class="text start-time">{{item.startTime}}</div>
+          <template v-if="item.patientHabitId!==20">
+            <div class="text first-line">
+              <!-- <span class="name"></span>
+              <span class="value"></span> -->
+              <span class="name">每周饮用量：</span>
+              <span class="value">{{item.doseInfo}} {{transform(item, 'unit', coffeeHistoryDictionary)}}/周 </span>
+            </div>
+            <div class="text second-line">
+              <span class="name">开始时间：</span>
+              <span class="value">{{item.startTime}}</span>
+            </div>
+          </template>
         </card>
         <card class="card" :class="devideWidth" :mode="mode" v-for="item in teaHistoryList" :key="item.patientHabitId"
           :title="transform(item, 'patientHabitId', teaHistoryDictionary)"
           v-on:editCurrentCard="editPersonRecord(item, TEA_HISTORY_MODAL)"
           v-on:viewCurrentCard="viewPersonRecord(item, TEA_HISTORY_MODAL)"
           v-on:deleteCurrentCard="deleteTeaRecord(item)">
-          <div class="text first-line">{{item.doseInfo}} {{transform(item, 'unit', coffeeHistoryDictionary)}}/周</div>
-          <div class="text start-time">{{item.startTime}}</div>
+          <template v-if="item.patientHabitId!==21">
+            <div class="text first-line">
+              <span class="name">每周喝茶量：</span>
+              <span class="value">{{item.doseInfo}} {{transform(item, 'unit', coffeeHistoryDictionary)}}/周</span>
+            </div>
+            <div class="text second-line">
+              <span class="name">开始时间：</span>
+              <span class="value">{{item.startTime}}</span>
+            </div>
+          </template>
         </card>
         <card class="card" :class="devideWidth" :mode="mode" v-for="item in smokeHistoryList" :key="item.patientHabitId"
           :title="transform(item, 'patientHabitId', smokeHistoryDictionary)"
           v-on:editCurrentCard="editPersonRecord(item, SMOKE_HISTORY_MODAL)"
           v-on:viewCurrentCard="viewPersonRecord(item, SMOKE_HISTORY_MODAL)"
           v-on:deleteCurrentCard="deleteSmokeRecord(item)">
-          <div class="text first-line">{{item.doseInfo}} 支/天</div>
-          <div class="text start-time">{{item.startTime}}</div>
+          <template v-if="item.patientHabitId!==18">
+            <div class="text first-line" v-if="item.patientHabitId!==16">
+              <span class="name">每天吸烟支数：</span>
+              <span class="value">{{item.doseInfo}} 支</span>
+            </div>
+            <div class="text second-line">
+              <span class="name">开始时间：</span>
+              <span class="value">{{item.startTime}}</span>
+            </div>
+          </template>
         </card>
         <card class="card" :class="devideWidth" :mode="mode" v-for="item in wineHistoryList" :key="item.patientHabitId"
           :title="transform(item, 'patientHabitId', wineHistoryDictionary)"
           v-on:editCurrentCard="editPersonRecord(item, WINE_HISTORY_MODAL)"
           v-on:viewCurrentCard="viewPersonRecord(item, WINE_HISTORY_MODAL)"
           v-on:deleteCurrentCard="deleteWineRecord(item)">
-          <div class="text first-line">{{item.doseInfo}} {{transform(item, 'unit', coffeeHistoryDictionary)}}/周</div>
-          <div class="text start-time">{{item.startTime}}</div>
+          <template v-if="item.patientHabitId!==19">
+            <div class="text first-line">
+              <span class="name">每周饮酒量：</span>
+              <span class="value">{{item.doseInfo}} {{transform(item, 'unit', coffeeHistoryDictionary)}}/周</span>
+            </div>
+            <div class="text second-line">
+              <span class="name">开始时间：</span>
+              <span class="value">{{item.startTime}}</span>
+            </div>
+          </template>
         </card>
         <card class="card" :class="devideWidth" :mode="mode" v-for="item in exerciseHistoryList" :key="item.patientExerciseId"
           :title="item.exeName" v-on:editCurrentCard="editPersonRecord(item, EXERCISE_HISTORY_MODAL)"
           v-on:viewCurrentCard="viewPersonRecord(item, EXERCISE_HISTORY_MODAL)"
           v-on:deleteCurrentCard="deleteExerciseRecord(item)">
-          <div class="text first-line">{{transform(item, 'grade', exerciseHistoryDictionary)}}</div>
-          <div class="text second-line">{{transform(item, 'ageStage', exerciseHistoryDictionary)}}</div>
+          <div class="text first-line">
+            <span class="name">每周量：</span>
+            <span class="value">{{transform(item, 'grade', exerciseHistoryDictionary)}}</span>
+          </div>
+          <div class="text second-line">
+            <span class="name">年龄阶段：</span>
+            <span class="value">{{transform(item, 'ageStage', exerciseHistoryDictionary)}}</span>
+          </div>
         </card>
       </extensible-panel>
 
@@ -95,8 +156,16 @@
           :title="transform(item, 'exposedType', toxicExposureHistoryDictionary)" v-on:editCurrentCard="editToxicRecord(item)"
           v-on:viewCurrentCard="viewToxicRecord(item)"
           v-on:deleteCurrentCard="deleteToxicRecord(item)">
-          <div class="text first-line">{{item.exposedFrquency}}</div>
-          <div class="text second-line">{{transform(item, 'lifeStage', toxicExposureHistoryDictionary)}}</div>
+          <template v-if="item.exposedType!==8">
+            <div class="text first-line">
+              <span class="name">接触频率：</span>
+              <span class="value">{{item.exposedFrquency}} 次/周</span>
+            </div>
+            <div class="text second-line">
+              <span class="name">年龄阶段：</span>
+              <span class="value">{{transform(item, 'lifeStage', toxicExposureHistoryDictionary)}}</span>
+            </div>
+          </template>
         </card>
       </extensible-panel>
 
@@ -531,15 +600,30 @@ export default {
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        .name {
+          color: @font-color;
+        }
+        .value {
+          // padding-left: 10px;
+          color: @light-font-color;
+        }
       }
       .first-line {
         left: 10px;
         right: 10px;
-        top: 50px;
+        top: 40px;
       }
-      .start-time, .second-line {
+      .start-time {
         left: 10px;
         top: 75px;
+      }
+      .second-line {
+        left: 10px;
+        top: 60px;
+      }
+      .third-line {
+        left: 10px;
+        top: 80px;
       }
       .end-time {
         left: 75px;

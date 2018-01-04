@@ -602,7 +602,8 @@ export default {
     },
     updateAndClose() {
       if (this.title2 === '主诉症状') {
-        Bus.$emit(this.UPDATE_CASE_INFO);
+        // Bus.$emit(this.UPDATE_CASE_INFO);
+        Bus.$emit(this.UPDATE_COMPLAINTSYMPTOMS_INFO);
       } else if (this.title2 === '首发症状') {
         Bus.$emit(this.UPDATE_FIRSTSYMPTOMS_INFO);
       }

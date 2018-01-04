@@ -35,6 +35,7 @@ export default {
   REQUEST_CONFIRMATION: 'requestConfirmation',
   NOTICE: 'notice',
   PERMIT_DISPLAYING_SENSITIVE_INFO: 'permitDisplayingSensitiveInfo',
+  PERMIT_SUPPORT_THE_DOCTOR: 'permitSupportTheDoctor',
 
   ADD_DATA: 'addData',
   EDIT_DATA: 'editData',
@@ -68,6 +69,7 @@ export default {
   UPDATE_FIRSTSYMPTOMS_INFO: 'updateFirstsymptomsInfo',
   UPDATE_FIRSTTREATMENT_INFO: 'updateFirstTreatmentInfo',
   UPDATE_VISITDIAGNOSTICRECORD_INFO: 'updateVisitDiagnosticRecordInfo',
+  UPDATE_COMPLAINTSYMPTOMS_INFO: 'updateComplaintSymptomsInfo',
 
   BLUR_ON_SCREEN: 'blurOnScreen',
 
@@ -100,6 +102,7 @@ export default {
   SHOW_RETURN_APPLICATION_MODAL: 'showReturnApplicationModal',
   SHOW_PASS_RATIFICATION_MODAL: 'showPassRatificationModal',
   SHOW_ENDOF_FOLLOWUP_MODAL: 'showEndofFollowupModal',
+  SHOW_ENDTHETREATMENT_MODAL: 'showTheTreatmentModal',
 
   SHOW_CHOICE_PANEL: 'showChoicePanel',
 

@@ -29,16 +29,17 @@
     <first-treatment-modal></first-treatment-modal>
     <diagnostic-record-modal></diagnostic-record-modal>
     <application-modal></application-modal>
-    <return-application-modal></return-application-modal>
+    <!-- <return-application-modal></return-application-modal>
     <pass-ratification-modal></pass-ratification-modal>
-    <endof-followup-modal></endof-followup-modal>
+    <endof-followup-modal></endof-followup-modal> -->
+    <end-the-treatment-modal></end-the-treatment-modal>
 
     <filter-panel :showFilterPanel="showFilterPanel"></filter-panel>
     <choice-panel></choice-panel>
     <confirm-box></confirm-box>
     <notice-box></notice-box>
 
-    <water-mark v-show="isSupportAccount"></water-mark>
+    <water-mark></water-mark>
   </div>
 </template>
 
@@ -54,27 +55,32 @@ import authorizationModal from 'components/views/modal/authorizationmodal/Author
 import secretAgreementModal from 'components/views/modal/secretagreementmodal/SecretAgreementModal';
 import messageModal from 'components/views/modal/messagemodal/MessageModal';
 import groupModal from 'components/views/modal/groupmodal/GroupModal';
-import modalBox from 'components/views/modal/modalbox/ModalBox';
-import medicineModal from 'components/views/modal/medicinemodal/MedicineModal';
-import preEvaluationModal from 'components/views/modal/preevaluationmodal/PreEvaluationModal';
-import surgicalMethodModal from 'components/views/modal/surgicalmethodmodal/SurgicalMethodModal';
-import operativeComplicationModal from 'components/views/modal/operativecomplicationmodal/OperativeComplicationModal';
-import dbsModal from 'components/views/modal/dbsmodal/DbsModal';
-import physiontherapyModal from 'components/views/modal/physiontherapymodal/PhysiontherapyModal';
-import treatmentEvaluationModal from 'components/views/modal/treatmentEvaluationmodal/TreatmentEvaluationModal';
-import vitalSignsModal from 'components/views/modal/vitalSignsmodal/VitalSignsModal';
-import neurologicModal from 'components/views/modal/neurologicmodal/NeurologicModal';
-import geneModal from 'components/views/modal/genemodal/GeneModal';
-import biochemicalExamModal from 'components/views/modal/biochemicalexammodal/BiochemicalExamModal';
-import neuroelectricModal from 'components/views/modal/neuroelectricmodal/NeuroelectricModal';
-import imageModal from 'components/views/modal/imagemodal/ImageModal';
-import firstSymptomsModal from 'components/views/modal/firstsymptomsmodal/FirstSymptomsModal';
-import firstTreatmentModal from 'components/views/modal/firsttreatmentmodal/FirstTreatmentModal';
-import diagnosticRecordModal from 'components/views/modal/diagnosticrecordmodal/DiagnosticRecordModal';
+
+const modalBox = () => import(/* webpackChunkName: 'modal' */ 'components/views/modal/modalbox/ModalBox');
+const firstSymptomsModal = () => import(/* webpackChunkName: 'modal' */ 'components/views/modal/firstsymptomsmodal/FirstSymptomsModal');
+const firstTreatmentModal = () => import(/* webpackChunkName: 'modal' */ 'components/views/modal/firsttreatmentmodal/FirstTreatmentModal');
+const diagnosticRecordModal = () => import(/* webpackChunkName: 'modal' */ 'components/views/modal/diagnosticrecordmodal/DiagnosticRecordModal');
+
+const medicineModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'components/views/modal/medicinemodal/MedicineModal');
+const preEvaluationModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'components/views/modal/preevaluationmodal/PreEvaluationModal');
+const surgicalMethodModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'components/views/modal/surgicalmethodmodal/SurgicalMethodModal');
+const operativeComplicationModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'components/views/modal/operativecomplicationmodal/OperativeComplicationModal');
+const dbsModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'components/views/modal/dbsmodal/DbsModal');
+const physiontherapyModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'components/views/modal/physiontherapymodal/PhysiontherapyModal');
+const treatmentEvaluationModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'components/views/modal/treatmentEvaluationmodal/TreatmentEvaluationModal');
+
+const vitalSignsModal = () => import(/* webpackChunkName: 'examinationModal' */ 'components/views/modal/vitalsignsmodal/VitalSignsModal');
+const neurologicModal = () => import(/* webpackChunkName: 'examinationModal' */ 'components/views/modal/neurologicmodal/NeurologicModal');
+const geneModal = () => import(/* webpackChunkName: 'examinationModal' */ 'components/views/modal/genemodal/GeneModal');
+const biochemicalExamModal = () => import(/* webpackChunkName: 'examinationModal' */ 'components/views/modal/biochemicalexammodal/BiochemicalExamModal');
+const neuroelectricModal = () => import(/* webpackChunkName: 'examinationModal' */ 'components/views/modal/neuroelectricmodal/NeuroelectricModal');
+const imageModal = () => import(/* webpackChunkName: 'examinationModal' */ 'components/views/modal/imagemodal/ImageModal');
+
 import applicationModal from 'components/views/modal/applicationmodal/ApplicationModal';
-import returnApplicationModal from 'components/views/modal/returnapplicationmodal/ReturnApplicationModal';
-import passRatificationModal from 'components/views/modal/passratificationmodal/PassRatificationModal';
-import endofFollowupModal from 'components/views/modal/endoffollowupmodal/EndofFollowupModal';
+// import returnApplicationModal from 'components/views/modal/returnapplicationmodal/ReturnApplicationModal';
+// import passRatificationModal from 'components/views/modal/passratificationmodal/PassRatificationModal';
+// import endofFollowupModal from 'components/views/modal/endoffollowupmodal/EndofFollowupModal';
+import endTheTreatmentModal from 'components/views/modal/endthetreatmentmodal/EndTheTreatmentModal';
 
 import filterPanel from 'components/public/filterpanel/FilterPanel';
 import choicePanel from 'components/public/choicepanel/ChoicePanel';
@@ -118,9 +124,10 @@ export default {
     firstTreatmentModal,
     diagnosticRecordModal,
     applicationModal,
-    returnApplicationModal,
-    passRatificationModal,
-    endofFollowupModal,
+    // returnApplicationModal,
+    // passRatificationModal,
+    // endofFollowupModal,
+    endTheTreatmentModal,
 
     filterPanel,
     choicePanel,
