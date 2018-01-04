@@ -28,14 +28,11 @@
     <first-symptoms-modal></first-symptoms-modal>
     <first-treatment-modal></first-treatment-modal>
     <diagnostic-record-modal></diagnostic-record-modal>
-<<<<<<< HEAD
     <application-modal></application-modal>
     <!-- <return-application-modal></return-application-modal>
     <pass-ratification-modal></pass-ratification-modal>
     <endof-followup-modal></endof-followup-modal> -->
-=======
     <end-the-treatment-modal></end-the-treatment-modal>
->>>>>>> d6512d7f0b947539b7d5fff5a18f0bf7c7c090fe
 
     <filter-panel :showFilterPanel="showFilterPanel"></filter-panel>
     <choice-panel></choice-panel>
@@ -126,14 +123,11 @@ export default {
     firstSymptomsModal,
     firstTreatmentModal,
     diagnosticRecordModal,
-<<<<<<< HEAD
     applicationModal,
     // returnApplicationModal,
     // passRatificationModal,
     // endofFollowupModal,
-=======
     endTheTreatmentModal,
->>>>>>> d6512d7f0b947539b7d5fff5a18f0bf7c7c090fe
 
     filterPanel,
     choicePanel,
