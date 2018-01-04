@@ -468,7 +468,7 @@ export default {
     background-color: rgba(24,34,48,0.95);
     color: #fff;
     font-size: 0;
-    transition: 0.3s linear;
+    transition: 0.3s linear 0.3s;
     z-index: -1;
     &.hide {
       color: rgba(0, 0, 0, 0);

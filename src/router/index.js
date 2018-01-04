@@ -217,6 +217,116 @@ export default new Router({
                   name: 'subjectExperimentInfo'
                 }
               ]
+            },
+            {
+              path: 'therapistsPatientList',
+              name: 'therapistsPatients',
+              meta: {
+                therapistsPatients: true
+              },
+              beforeEnter: (to, from, next) => {
+                var subjectId = sessionStorage.getItem('subjectId');
+                if (subjectId > 0) {
+                  next();
+                } else {
+                  next(from.path);
+                }
+              }
+            },
+            {
+              path: 'therapistsPatientList/:id',
+              components: {
+                content: PatientInfo
+              },
+              name: 'therapistsPatientInfo',
+              meta: {
+                therapistsPatients: true
+              },
+              beforeEnter: (to, from, next) => {
+                var subjectId = sessionStorage.getItem('subjectId');
+                if (subjectId > 0) {
+                  next();
+                } else {
+                  next(from.path);
+                }
+              },
+              children: [
+                {
+                  path: 'personalInfo',
+                  component: PersonalInfo,
+                  name: 'therapistsPatientsPersonalInfo'
+                },
+                {
+                  path: 'diagnosticInfo',
+                  component: DiagnosticInfo,
+                  name: 'therapistsPatientsDiagnosticInfo'
+                },
+                {
+                  path: 'diagnosticInfo/:caseId',
+                  component: DiagnosticInfo,
+                  name: 'therapistsPatientsDiagnosticDetail'
+                },
+                {
+                  path: 'experimentInfo',
+                  component: ExperimentInfo,
+                  name: 'therapistsPatientsExperimentInfo'
+                }
+              ]
+            },
+            {
+              path: 'appraisersPatientList',
+              name: 'appraisersPatients',
+              meta: {
+                appraisersPatients: true
+              },
+              beforeEnter: (to, from, next) => {
+                var subjectId = sessionStorage.getItem('subjectId');
+                if (subjectId > 0) {
+                  next();
+                } else {
+                  next(from.path);
+                }
+              }
+            },
+            {
+              path: 'appraisersPatientList/:id',
+              components: {
+                content: PatientInfo
+              },
+              name: 'appraisersPatientInfo',
+              meta: {
+                appraisersPatients: true
+              },
+              beforeEnter: (to, from, next) => {
+                var subjectId = sessionStorage.getItem('subjectId');
+                if (subjectId > 0) {
+                  next();
+                } else {
+                  next(from.path);
+                }
+              },
+              children: [
+                {
+                  path: 'personalInfo',
+                  component: PersonalInfo,
+                  name: 'appraisersPatientsPersonalInfo'
+                },
+                {
+                  path: 'diagnosticInfo',
+                  component: DiagnosticInfo,
+                  name: 'appraisersPatientsDiagnosticInfo'
+                },
+                {
+                  path: 'diagnosticInfo/:caseId',
+                  component: DiagnosticInfo,
+                  name: 'appraisersPatientsDiagnosticDetail'
+                },
+                {
+                  path: 'experimentInfo',
+                  component: ExperimentInfo,
+                  name: 'appraisersPatientsExperimentInfo'
+                }
+              ]
             }
           ]
         },
