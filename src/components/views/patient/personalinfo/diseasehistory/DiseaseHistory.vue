@@ -129,7 +129,7 @@
         </div>
         <!-- template 第二部分 ↑↑↑ -->
 
-        <extensible-panel class="disease-card" :title="firstSymTitle" @addNewCard="addFirstSymptomsRecord">
+        <extensible-panel class="disease-card" :title="firstSymTitle" @addNewCard="addFirstSymptomsRecord" :editable="canEdit">
           <Card class="card symptoms-card" :mode="mode" :class="cardWidth"
            v-for="item in firstSymbolData" :key="item.id" :title="item.symType"
            v-on:editCurrentCard="editFirstSymptomsRecord(item)" 
@@ -190,7 +190,7 @@
         </div>
         <!-- template 第三部分 ↑↑↑ -->
 
-        <extensible-panel class="disease-card" :title="firstTreatmentsTitle" @addNewCard="addFirstTreatmentRecord">
+        <extensible-panel class="disease-card" :title="firstTreatmentsTitle" @addNewCard="addFirstTreatmentRecord" :editable="canEdit">
           <Card class="card symptoms-card" :mode="mode" :class="cardWidth"
            v-for="item in firstVisitTreatmentData" :key="item.id" :title="transform(item.firstVisitType, allFirstVisitType)"
            v-on:editCurrentCard="editFirstTreatmentRecord(item)" 
@@ -211,7 +211,7 @@
           </Card>
         </extensible-panel>
 
-        <extensible-panel class="disease-card" :title="visitRecordTitle" @addNewCard="addVisitRecord">
+        <extensible-panel class="disease-card" :title="visitRecordTitle" @addNewCard="addVisitRecord" :editable="canEdit">
           <Card class="card symptoms-card" :mode="mode" :class="cardWidth"
            v-for="item in patientHistorysData" :key="item.patientHistoryId" :title="item.diagnosis"
            v-on:editCurrentCard="editVisitRecord(item)" 
