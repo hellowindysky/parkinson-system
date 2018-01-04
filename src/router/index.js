@@ -125,7 +125,7 @@ export default new Router({
                 {
                   path: 'experimentInfo',
                   component: ExperimentInfo,
-                  name: 'ExperimentInfo'
+                  name: 'experimentInfo'
                 }
               ]
             },
@@ -175,7 +175,7 @@ export default new Router({
                 {
                   path: 'experimentInfo',
                   component: ExperimentInfo,
-                  name: 'ExperimentInfo'
+                  name: 'otherExperimentInfo'
                 }
               ]
             },
@@ -214,7 +214,7 @@ export default new Router({
                 {
                   path: 'experimentInfo',
                   component: ExperimentInfo,
-                  name: 'ExperimentInfo'
+                  name: 'subjectExperimentInfo'
                 }
               ]
             }

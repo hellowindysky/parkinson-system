@@ -13,11 +13,11 @@
             <span class="name">呼吸 (次/分)</span>
             <span class="value">{{item.breathing}}</span>
           </div>
-           <div class="text line-3">
+          <div class="text line-3">
             <span class="name">体温 (℃)</span>
             <span class="value">{{item.temperature}}</span>
           </div>
-           <div class="text line-4">
+          <div class="text line-4">
             <span class="name">脉搏 (次/分)</span>
             <span class="value">{{item.pulse}}</span>
           </div>
@@ -90,11 +90,11 @@
           v-on:deleteCurrentCard="deleteNeuroelectricRecord(item)">
           <div class="text first-line">
             <span class="name">RDI</span>
-            <span class="value">{{item.patientFieldCode[3][11][0].fieldValue}}</span>
+            <span class="value">{{getRDI(item)}}</span>
           </div>
           <div class="text second-line">
             <span class="name">睡眠效率</span>
-            <span class="value">{{item.patientFieldCode[3][7][0].fieldValue}}%</span>
+            <span class="value">{{getSleepEfficiency(item)}}</span>
           </div>
           <div class="text third-line">
             <span class="name">检查结果</span>
@@ -260,6 +260,22 @@ export default {
       var types = typeInfo.types ? typeInfo.types : [];
       var name = Util.getElement('typeCode', parseInt(typeId, 10), types).typeName;
       return name;
+    },
+    getRDI(item) {
+      return item.patientFieldCode &&
+        item.patientFieldCode[3] &&
+        item.patientFieldCode[3][11] &&
+        item.patientFieldCode[3][11][0] &&
+        item.patientFieldCode[3][11][0].fieldValue
+        ? item.patientFieldCode[3][11][0].fieldValue : '';
+    },
+    getSleepEfficiency(item) {
+      return item.patientFieldCode &&
+        item.patientFieldCode[3] &&
+        item.patientFieldCode[3][7] &&
+        item.patientFieldCode[3][7][0] &&
+        item.patientFieldCode[3][7][0].fieldValue
+        ? item.patientFieldCode[3][7][0].fieldValue + '%' : '';
     },
     addNeurologicCheckRecord() {
       Bus.$emit(this.SHOW_NEUROLOGIC_MODAL, this.ADD_NEW_CARD, {}, !this.archived);

@@ -69,11 +69,10 @@
           <span class="required-mark mark">*</span>
         </span>
         <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-          <span class="warning-text"></span>
           <span>{{situationRemark}}</span>
         </span>
         <span class="field-input" v-else>
-          <span class="warning-text">{{warningResults.situationRemark}}</span>
+          <span class="warning-text text">{{warningResults.situationRemark}}</span>
           <el-input v-model="situationRemark" placeholder="请输入治疗后情况描述" :class="{'warning': warningResults.situationRemark}" type="textarea" @change="updateWarning('situationRemark')" :maxlength="500"></el-input>
         </span>
       </div>
@@ -332,7 +331,7 @@ export default {
       return options;
     },
     updateWarning(fieldName) {
-      var list = ['recordDate', 'situationType', 'leftThreshold', 'rightThreshold'];
+      var list = ['recordDate', 'situationType', 'leftThreshold', 'rightThreshold', 'situationRemark'];
       if (list.indexOf(fieldName) >= 0 && !this[fieldName]) {
         this.warningResults[fieldName] = '必填项';
       } else {
@@ -521,6 +520,10 @@ export default {
             left: calc(~"60% + 10px");
           }
         }
+        .text {
+           position: absolute;
+           top: 46px;
+         }
         .el-input {
           transform: translateY(-3px);
           .el-input__inner {

@@ -2,6 +2,7 @@
   <div class="experiment-info">
     <div class="top-bar">
       <span class="title">实验流程</span>
+      <div class="button light-button application-button" @click="applyTojoin">申请入组</div>
     </div>
     <div class="content">
       <table class="process-table">
@@ -29,7 +30,17 @@
 </template>
 
 <script>
+import Bus from 'utils/bus';
+
 export default {
+  data() {
+    return {};
+  },
+  methods: {
+    applyTojoin() {
+      Bus.$emit(this.SHOW_APPLICATION_MODAL, this.ADD_NEW_CARD, {}, true);
+    }
+  },
   beforeRouteEnter(to, from, next) {
     var subjectId = sessionStorage.getItem('subjectId');
     if (subjectId > 0) {
@@ -61,6 +72,32 @@ export default {
       line-height: 40px;
       font-size: @large-font-size;
       font-weight: bold;
+    }
+    .button {
+      position: absolute;
+      top: 6px;
+      width: @small-button-width;
+      height: @small-button-height;
+      line-height: @small-button-height;
+      font-size: @normal-font-size;
+      text-align: center;
+      cursor: pointer;
+      color: #fff;
+      &:hover {
+        opacity: 0.6;
+      }
+      &:active {
+        opacity: 0.8;
+      }
+      &.light-button {
+        background-color: @button-color;
+      }
+      &.light-blue-button {
+        background-color: @light-font-color;
+      }
+      &.application-button {
+        right: 10px;
+      }
     }
   }
   .content {
