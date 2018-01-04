@@ -124,8 +124,7 @@ export default {
       return options;
     },
     updateWarning(fieldName) {
-      var list = ['recordDate', 'physiType', 'leftThresholdBefore', 'rightThresholdBefore'];
-      if (list.indexOf(fieldName) >= 0 && !this[fieldName]) {
+      if (this[fieldName] === '') {
         this.warningResults[fieldName] = '必填项';
       } else {
         this.warningResults[fieldName] = '';
