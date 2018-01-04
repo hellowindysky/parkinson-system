@@ -114,7 +114,6 @@ import { addBiochemical, modifyBiochemical } from 'api/patient.js';
 export default {
   data() {
     return {
-      test1: '',
       displayModal: false,
       mode: '',
       modalType: '',

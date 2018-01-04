@@ -136,7 +136,7 @@ export default {
         name: routeName,
         params: { caseId: item.patientCaseId }
       });
-      console.log(this.$route);
+      Bus.$emit(this.UPDATE_COMPLAINTSYMPTOMS_INFO);
     },
     deleteRecord(item) {
       Bus.$on(this.CONFIRM, () => {
