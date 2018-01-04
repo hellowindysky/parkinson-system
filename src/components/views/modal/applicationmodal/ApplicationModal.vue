@@ -9,90 +9,86 @@
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-          <span>{{transform(mmp,'mmp')}}</span>
+            {{transform(experimentalGroup,'experimentalGroup')}}
           </span>
           <span class="field-input" v-else>
-          <span class="warning-text">{{warningResults.mmp}}</span>
-          <el-select v-model="mmp" clearable placeholder="请选择希望把患者加入的实验组" @change="updateWarning('mmp')"
-          :class="{'warning': warningResults.mmp}">
-          <el-option
-              v-for="item in getOptions('mmp')"
-              :key="item.code"
-              :label="item.name"
-              :value="item.code">
-          </el-option>
-          </el-select>
+            <span class="warning-text">{{warningResults.experimentalGroup}}</span>
+            <el-select v-model="experimentalGroup" clearable placeholder="请选择希望把患者加入的实验组"
+              @change="updateWarning('experimentalGroup')" :class="{'warning': warningResults.experimentalGroup}">
+              <el-option v-for="item in getOptions('experimentalGroup')"
+                :key="item.code"
+                :label="item.name"
+                :value="item.code">
+              </el-option>
+            </el-select>
           </span>
-          </div>
+        </div>
         <div class="field whole-line">
           <span class="field-name">
             治疗者
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-          <span>{{transform(mmp,'mmp')}}</span>
+            {{transform(curer,'curer')}}
           </span>
           <span class="field-input" v-else>
-          <span class="warning-text">{{warningResults.mmp}}</span>
-          <el-select v-model="mmp" clearable placeholder="请选择本次实验的治疗者" @change="updateWarning('mmp')"
-          :class="{'warning': warningResults.mmp}">
-          <el-option
-              v-for="item in getOptions('mmp')"
-              :key="item.code"
-              :label="item.name"
-              :value="item.code">
-          </el-option>
-          </el-select>
+            <span class="warning-text">{{warningResults.curer}}</span>
+            <el-select v-model="curer" clearable placeholder="请选择本次实验的治疗者" @change="updateWarning('curer')"
+              :class="{'warning': warningResults.curer}">
+              <el-option v-for="item in getOptions('curer')"
+                :key="item.code"
+                :label="item.name"
+                :value="item.code">
+              </el-option>
+            </el-select>
           </span>
-          </div>
+        </div>
         <div class="field whole-line">
           <span class="field-name">
             评估者
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-          <span>{{transform(mmp,'mmp')}}</span>
+            {{transform(appraiser,'appraiser')}}
           </span>
           <span class="field-input" v-else>
-          <span class="warning-text">{{warningResults.mmp}}</span>
-          <el-select v-model="mmp" clearable placeholder="请选择本次实验的评估者" @change="updateWarning('mmp')"
-          :class="{'warning': warningResults.mmp}">
-          <el-option
-            v-for="item in getOptions('mmp')"
-            :key="item.code"
-            :label="item.name"
-            :value="item.code">
-          </el-option>
-          </el-select>
+            <span class="warning-text">{{warningResults.curer}}</span>
+            <el-select v-model="appraiser" clearable placeholder="请选择本次实验的评估者" @change="updateWarning('appraiser')"
+              :class="{'warning': warningResults.appraiser}">
+              <el-option v-for="item in getOptions('appraiser')"
+                :key="item.code"
+                :label="item.name"
+                :value="item.code">
+              </el-option>
+            </el-select>
           </span>
-          </div>
+        </div>
         <div class="field whole-line">
           <span class="field-name">
             处理意见
             <span class="required-mark"></span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-          <span>{{remark}}</span>
+            {{remark}}
           </span>
           <span class="field-input" v-else>
-          <el-input
-            v-model="remark"
-            type="textarea"
-            :rows="2"
-            :maxlength="500"
-            placeholder="请输入处理意见">
-          </el-input>
+            <el-input v-model="remark"
+              type="textarea"
+              :rows="2"
+              :maxlength="500"
+              placeholder="请输入处理意见">
+            </el-input>
           </span>
-          </div>
+        </div>
         <div class="check-field">
-          <el-checkbox v-model="hasNoReaction" @change="checkAll" :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
+          <el-checkbox v-model="hasCheckedBox" :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
           确认患者已经签署《知情同意书》
         </div>
       </div>
       <div class="seperate-line"></div>
-      <div class="button cancel-button btn-margin" @click="cancel">取消</div>
-      <div v-if="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD" class="button submit-button btn-margin" @click="submit">确定</div>
-      <div v-else-if="mode===VIEW_CURRENT_CARD && canEdit" class="button submit-button btn-margin" @click="switchToEditingMode">编辑</div>
+      <div class="button cancel-button" @click="cancel">取消</div>
+      <div v-if="mode!==VIEW_CURRENT_CARD" class="button submit-button" @click="submit">确定</div>
+      <div v-else-if="mode===VIEW_CURRENT_CARD && canEdit" class="button submit-button" @click="switchToEditingMode">编辑</div>
     </div>
   </div>
 </template>
@@ -102,7 +98,7 @@ import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import { deepCopy, pruneObj } from 'utils/helper.js';
+// import { deepCopy, pruneObj } from 'utils/helper.js';
 // import { addPhysiontherapy, modifyPhysiontherapy } from 'api/patient.js';
 
 export default {
@@ -111,18 +107,16 @@ export default {
       displayModal: false,
       mode: '',
       completeInit: false,
-      hasNoReaction: false,
-      mmp: '',
+
+      experimentalGroup: '',
+      curer: '',
+      appraiser: '',
+      hasCheckedBox: false,
       remark: '',
       warningResults: {
-        recordDate: '',
-        leftThresholdBefore: '',
-        rightThresholdBefore: ''
-      },
-      pickerOptions: {
-        disabledDate(time) {
-          return time.getTime() > Date.now();
-        }
+        experimentalGroup: '',
+        curer: '',
+        appraiser: ''
       },
       showEdit: true
     };
@@ -169,9 +163,6 @@ export default {
       var targetOption = Util.getElement('code', code, options);
       return targetOption.name;
     },
-    checkAll() {
-
-    },
     getOptions(fieldName) {
       var options = [];
       var types = Util.getElement('typegroupcode', fieldName, this.typeGroup).types;
@@ -185,8 +176,7 @@ export default {
       return options;
     },
     updateWarning(fieldName) {
-      var list = ['recordDate', 'mmp', 'leftThresholdBefore', 'rightThresholdBefore'];
-      if (list.indexOf(fieldName) >= 0 && !this[fieldName]) {
+      if (this[fieldName] === '') {
         this.warningResults[fieldName] = '必填项';
       } else {
         this.warningResults[fieldName] = '';
@@ -216,13 +206,6 @@ export default {
           return;
         }
       }
-      var physicsInfo = {};
-      physicsInfo.patientCaseId = this.$route.params.caseId;
-      physicsInfo.patientId = this.patientId;
-      physicsInfo.remark = this.remark;
-      physicsInfo.patientPhytheReaction = deepCopy(this.patientPhytheReaction);
-
-      pruneObj(physicsInfo);
 
     //   if (this.mode === this.ADD_NEW_CARD) {
     //     addPhysiontherapy(physicsInfo).then(() => {
@@ -241,7 +224,6 @@ export default {
       this.lockSubmitButton = false;
     },
     updateAndClose() {
-      Bus.$emit(this.UPDATE_CASE_INFO);
       this.lockSubmitButton = false;
       this.displayModal = false;
     },
@@ -289,13 +271,6 @@ export default {
     max-height: 94%;
     background-color: @background-color;
     overflow: hidden;
-    .check-field {
-      margin-left: @field-name-width + 10px;
-      height: 25px;
-      line-height: 25px;
-      text-align: left;
-      font-size: @normal-font-size
-    }
     .title {
       padding: 30px 0 10px;
       font-size: @large-font-size;
@@ -380,6 +355,13 @@ export default {
         }
       }
     }
+    .check-field {
+      margin-left: @field-name-width + 10px;
+      height: 25px;
+      line-height: 25px;
+      text-align: left;
+      font-size: @normal-font-size
+    }
     .seperate-line {
       width: 90%;
       height: 1px;
@@ -405,9 +387,6 @@ export default {
       }
       &:active {
         opacity: 0.9;
-      }
-      &.btn-margin {
-        margin-top: 10px;
       }
     }
     .ps__scrollbar-y-rail {
