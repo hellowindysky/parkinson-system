@@ -29,13 +29,13 @@
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            {{transform(curer,'curer')}}
+            {{transform(therapist,'therapist')}}
           </span>
           <span class="field-input" v-else>
-            <span class="warning-text">{{warningResults.curer}}</span>
-            <el-select v-model="curer" clearable placeholder="请选择本次实验的治疗者" @change="updateWarning('curer')"
-              :class="{'warning': warningResults.curer}">
-              <el-option v-for="item in getOptions('curer')"
+            <span class="warning-text">{{warningResults.therapist}}</span>
+            <el-select v-model="therapist" clearable placeholder="请选择本次实验的治疗者" @change="updateWarning('therapist')"
+              :class="{'warning': warningResults.therapist}">
+              <el-option v-for="item in getOptions('therapist')"
                 :key="item.code"
                 :label="item.name"
                 :value="item.code">
@@ -52,7 +52,7 @@
             {{transform(appraiser,'appraiser')}}
           </span>
           <span class="field-input" v-else>
-            <span class="warning-text">{{warningResults.curer}}</span>
+            <span class="warning-text">{{warningResults.therapist}}</span>
             <el-select v-model="appraiser" clearable placeholder="请选择本次实验的评估者" @change="updateWarning('appraiser')"
               :class="{'warning': warningResults.appraiser}">
               <el-option v-for="item in getOptions('appraiser')"
@@ -109,13 +109,13 @@ export default {
       completeInit: false,
 
       experimentalGroup: '',
-      curer: '',
+      therapist: '',
       appraiser: '',
       hasCheckedBox: false,
       remark: '',
       warningResults: {
         experimentalGroup: '',
-        curer: '',
+        therapist: '',
         appraiser: ''
       },
       showEdit: true
