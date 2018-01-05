@@ -17,3 +17,11 @@ export function queryExperimentMember(subjectId, experimentGroupId, roleType) {
   var url = '/pdms/queryTreaterAndAssessor';
   return encapsulatePromise(url, request);
 };
+
+// 申请加入实验组
+export function applyToEnterExperiment(experimentInfo) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientExperimentModel = experimentInfo;
+  var url = '/pdms/addPatientExperiment';
+  return encapsulatePromise(url, request);
+};
