@@ -27,7 +27,13 @@
         </span>
         <span class="field-input">
           <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.ariseTime}}</span>
-          <el-date-picker v-else v-model="copyInfo.ariseTime" placeholder="请输入检查时间" type="date" format="yyyy-MM-dd"></el-date-picker>
+          <el-date-picker v-else 
+          v-model="copyInfo.ariseTime" 
+          placeholder="请输入检查时间" 
+          type="date" 
+          format="yyyy-MM-dd"
+          :picker-options="pickerOptions">
+          </el-date-picker>
         </span>
       </div>
       <div class="field">
@@ -219,6 +225,11 @@ export default {
       subTableCode: '',
       warningResults: {
         checkType: ''
+      },
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        }
       }
     };
   },
