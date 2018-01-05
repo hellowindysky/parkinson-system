@@ -50,7 +50,8 @@
               type="date"
               placeholder="选择日期"
               :class="{'warning': warningResults.checkDate}"
-              @change="updateWarning('checkDate')">
+              @change="updateWarning('checkDate')"
+              :picker-options="pickerOptions">
             </el-date-picker>
           </span>
         </div>
@@ -137,6 +138,11 @@ export default {
         checkDate: '',
         checkName: '',
         checkResult: ''
+      },
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        }
       },
       showEdit: true
     };
