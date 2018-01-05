@@ -154,6 +154,9 @@ export default {
           color: #fff;
         }
         .col {
+          overflow: hidden;
+          text-overflow:ellipsis;
+          white-space: nowrap;
           &.col-number {
             width: 10%;
           }

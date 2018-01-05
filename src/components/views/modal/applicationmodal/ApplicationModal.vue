@@ -150,6 +150,10 @@ export default {
       this.showEdit = showEdit;
 
       this.experimentalGroup = '';
+      this.therapist = '';
+      this.appraiser = '';
+      this.remark = '';
+      this.hasCheckedBox = false;
       // console.log('item: ', item);
       this.$nextTick(() => {
         for (var property in this.warningResults) {
