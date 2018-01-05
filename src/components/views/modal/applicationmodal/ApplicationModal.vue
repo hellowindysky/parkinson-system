@@ -220,18 +220,6 @@ export default {
           return;
         }
       }
-
-    //   if (this.mode === this.ADD_NEW_CARD) {
-    //     addPhysiontherapy(physicsInfo).then(() => {
-    //       this.updateAndClose();
-    //     }, this._handleError);
-
-    //   } else if (this.mode === this.EDIT_CURRENT_CARD) {
-    //     physicsInfo.patientPhytheTmsId = this.patientPhytheTmsId;
-    //     modifyPhysiontherapy(physicsInfo).then(() => {
-    //       this.updateAndClose();
-    //     }, this._handleError);
-    //   }
     },
     _handleError(error) {
       console.log(error);
