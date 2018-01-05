@@ -42,6 +42,7 @@
 
 <script>
 import Bus from 'utils/bus';
+import { queryExperimentProgress } from 'api/experiment.js';
 
 export default {
   data() {
@@ -77,6 +78,17 @@ export default {
     completeTherapy() {
 
     }
+  },
+  mounted() {
+    var experimentInfo = {
+      'patientId': this.$route.params.id,
+      'tcTaskId': this.$store.state.subjectId
+    };
+    queryExperimentProgress(experimentInfo).then((data) => {
+      console.log(data);
+    }, (error) => {
+      console.log(error);
+    });
   },
   beforeRouteEnter(to, from, next) {
     var subjectId = sessionStorage.getItem('subjectId');

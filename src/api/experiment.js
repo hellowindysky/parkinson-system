@@ -1,6 +1,14 @@
 /* eslint-disable quotes */
 import { encapsulatePromise, getCommonRequest } from 'api/common.js';
 
+// 查询实验流程
+export function queryExperimentProgress(experimentInfo) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientExperimentModel = experimentInfo;
+  var url = '/pdms/queryPatientExperiment';
+  return encapsulatePromise(url, request);
+};
+
 // 查询所属医生/治疗者/评估者
 export function queryExperimentMember(subjectId, experimentGroupId, roleType) {
   var request = Object.assign({}, getCommonRequest());

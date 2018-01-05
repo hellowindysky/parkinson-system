@@ -8,7 +8,7 @@
             下一节点
           </span>
           <span class="field-input">
-            治疗期(n)
+            治疗期(1)
           </span>
         </div>
         <div class="field whole-line">
