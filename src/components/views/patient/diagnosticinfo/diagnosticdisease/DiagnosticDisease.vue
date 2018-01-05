@@ -181,11 +181,11 @@
           </table>
         </div>
       </div> -->
-       <extensible-panel class="panel disease-panel" :mode="mutableMode" :title="subTitle" v-on:addNewCard="addFirstSymptomsRecord"
+       <extensible-panel class="panel disease-panel" :mode="mutableMode" :title="subTitle" v-on:addNewCard="addChiefComplaintSymptomsRecord"
         :editable="canEdit">
         <card class="card symptoms-card" :class="devideWidth" :mode="mutableMode" v-for="item in complaintSympData" :key="item.diseaseId"
-          :title="item.symType" :disable-delete="item.statusFlag===0" v-on:editCurrentCard="editFirstSymptomsRecord(item)"
-          v-on:deleteCurrentCard="deleteDisease(item)" v-on:viewCurrentCard="viewFirstSymptomsRecord(item)">
+          :title="item.symType" :disable-delete="item.statusFlag===0" v-on:editCurrentCard="editChiefComplaintSymptomsRecord(item)"
+          v-on:deleteCurrentCard="deleteDisease(item)" v-on:viewCurrentCard="viewChiefComplaintSymptomsRecord(item)">
           <div class="text first-line">
             <span class="name">症状名称：</span>
             <span class="value">{{item.symName}}</span>
@@ -396,14 +396,14 @@ export default {
         this.complaintSympData = data;
       });
     },
-    addFirstSymptomsRecord() {
-      Bus.$emit(this.SHOW_FIRSTSYMPTOMS_MODAL, this.ADD_NEW_CARD, {}, '主诉症状');
+    addChiefComplaintSymptomsRecord() {
+      Bus.$emit(this.SHOW_CHIEFCOMPLAINTSYMPTOMS_MODAL, this.ADD_NEW_CARD, {}, '主诉症状');
     },
-    viewFirstSymptomsRecord(item) {
-      Bus.$emit(this.SHOW_FIRSTSYMPTOMS_MODAL, this.VIEW_CURRENT_CARD, item, '主诉症状');
+    viewChiefComplaintSymptomsRecord(item) {
+      Bus.$emit(this.SHOW_CHIEFCOMPLAINTSYMPTOMS_MODAL, this.VIEW_CURRENT_CARD, item, '主诉症状');
     },
-    editFirstSymptomsRecord(item) {
-      Bus.$emit(this.SHOW_FIRSTSYMPTOMS_MODAL, this.EDIT_CURRENT_CARD, item, '主诉症状');
+    editChiefComplaintSymptomsRecord(item) {
+      Bus.$emit(this.SHOW_CHIEFCOMPLAINTSYMPTOMS_MODAL, this.EDIT_CURRENT_CARD, item, '主诉症状');
     },
     deleteDisease(item) {
       var patientDisease = {

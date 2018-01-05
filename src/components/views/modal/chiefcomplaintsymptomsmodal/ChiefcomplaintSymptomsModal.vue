@@ -612,7 +612,7 @@ export default {
     }
   },
   mounted() {
-    Bus.$on(this.SHOW_FIRSTSYMPTOMS_MODAL, this.showModal);
+    Bus.$on(this.SHOW_CHIEFCOMPLAINTSYMPTOMS_MODAL, this.showModal);
   }
 };
 </script>

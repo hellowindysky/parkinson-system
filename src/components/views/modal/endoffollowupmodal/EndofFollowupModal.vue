@@ -64,7 +64,7 @@
         </div>
         <div class="field whole-line">
           <span class="field-name">
-            原因描述： 
+            原因描述：
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             {{remark}}
@@ -78,7 +78,7 @@
               placeholder="请详述具体原因">
             </el-input>
           </span>
-        </div>            
+        </div>
         <div class="field whole-line">
           <span class="field-name">
             受访者是否愿意继续随访：
@@ -96,7 +96,7 @@
               </el-option>
             </el-select>
           </span>
-        </div>      
+        </div>
         <div class="seperate-line"></div>
         <div class="field whole-line">
           <span class="field-name">
@@ -139,7 +139,7 @@
             请确认患者已经完成所有随访点，结束实验后，实验期间记录将会归档
           </span>
         </div>
-      </div> 
+      </div>
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
       <div v-if="mode!==VIEW_CURRENT_CARD" class="button submit-button" @click="submit">确定</div>
@@ -157,7 +157,7 @@ import Util from 'utils/util.js';
 export default {
   data() {
     return {
-      displayModal: true,
+      displayModal: false,
       mode: '',
       completeInit: false,
       remark: '',

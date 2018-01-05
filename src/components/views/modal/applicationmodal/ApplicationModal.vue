@@ -9,13 +9,13 @@
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            {{transform(experimentalGroup,'experimentalGroup')}}
+            {{transform(experimentalGroup,'taskGroupType')}}
           </span>
           <span class="field-input" v-else>
             <span class="warning-text">{{warningResults.experimentalGroup}}</span>
             <el-select v-model="experimentalGroup" clearable placeholder="请选择希望把患者加入的实验组"
               @change="updateWarning('experimentalGroup')" :class="{'warning': warningResults.experimentalGroup}">
-              <el-option v-for="item in getOptions('experimentalGroup')"
+              <el-option v-for="item in getOptions('taskGroupType')"
                 :key="item.code"
                 :label="item.name"
                 :value="item.code">
@@ -99,7 +99,7 @@ import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 // import { deepCopy, pruneObj } from 'utils/helper.js';
-// import { addPhysiontherapy, modifyPhysiontherapy } from 'api/patient.js';
+import { queryExperimentMember } from 'api/experiment.js';
 
 export default {
   data() {
@@ -113,6 +113,9 @@ export default {
       appraiser: '',
       hasCheckedBox: false,
       remark: '',
+
+      therapistsList: [],
+      appraisersList: [],
       warningResults: {
         experimentalGroup: '',
         therapist: '',
@@ -145,6 +148,8 @@ export default {
       this.completeInit = false;
       this.mode = cardOperation;
       this.showEdit = showEdit;
+
+      this.experimentalGroup = '';
       // console.log('item: ', item);
       this.$nextTick(() => {
         for (var property in this.warningResults) {
@@ -165,14 +170,23 @@ export default {
     },
     getOptions(fieldName) {
       var options = [];
-      var types = Util.getElement('typegroupcode', fieldName, this.typeGroup).types;
-      types = types ? types : [];
-      for (let type of types) {
-        options.push({
-          name: type.typeName,
-          code: type.typeCode
-        });
-      };
+      if (fieldName === 'therapist') {
+        for (let member of this.therapistsList) {
+          options.push({
+            name: member.name,
+            code: member.id
+          });
+        }
+      } else {
+        var typeInfo = Util.getElement('typegroupcode', fieldName, this.typeGroup);
+        var types = typeInfo.types ? typeInfo.types : [];
+        for (let type of types) {
+          options.push({
+            name: type.typeName,
+            code: type.typeCode
+          });
+        };
+      }
       return options;
     },
     updateWarning(fieldName) {
@@ -244,6 +258,20 @@ export default {
   },
   beforeDestroy() {
     Bus.$off(this.SHOW_APPLICATION_MODAL);
+  },
+  watch: {
+    experimentalGroup: function(val) {
+      queryExperimentMember(this.$store.state.subjectId, val, 1).then((data) => {
+        this.therapistsList = data;
+      }, (error) => {
+        console.log(error);
+      });
+      queryExperimentMember(this.$store.state.subjectId, val, 2).then((data) => {
+        this.appraisersList = data;
+      }, (error) => {
+        console.log(error);
+      });
+    }
   }
 };
 </script>
