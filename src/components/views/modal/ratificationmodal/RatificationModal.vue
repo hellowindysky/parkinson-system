@@ -25,12 +25,12 @@
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            {{testNumber}}
+            {{experimentNumber}}
           </span>
           <span class="field-input" v-else>
             <el-input
-              v-model="testNumber"
-              @change="updateWarning('testNumber')"
+              v-model="experimentNumber"
+              @change="updateWarning('experimentNumber')"
               placeholder="请输入实验编号">
             </el-input>
           </span>
@@ -61,10 +61,8 @@
   </div>
 </template>
 <script>
-import { mapGetters } from 'vuex';
-import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
-import Util from 'utils/util.js';
+import { agreeEnteringExperiment } from 'api/experiment.js';
 
 export default {
   data() {
@@ -73,19 +71,11 @@ export default {
       mode: '',
       completeInit: false,
       remark: '',
-      testNumber: '',
-      pickerOptions: {
-        disabledDate(time) {
-          return time.getTime() > Date.now();
-        }
-      },
+      experimentNumber: '',
       showEdit: true
     };
   },
   computed: {
-    ...mapGetters([
-      'typeGroup'
-    ]),
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
         return '通过';
@@ -118,7 +108,6 @@ export default {
 
       this.completeInit = true;
       this.displayModal = true;
-      this.updateScrollbar();
     },
     updateWarning(fieldName) {
       if (this[fieldName] === '') {
@@ -133,7 +122,6 @@ export default {
     },
     switchToEditingMode() {
       this.mode = this.EDIT_CURRENT_CARD;
-      this.updateScrollbar();
     },
     submit() {
       if (this.lockSubmitButton) {
@@ -151,30 +139,28 @@ export default {
           return;
         }
       }
+
+      var experimentInfo = {
+        'taskGroupId': this.experimentalGroup,
+        'treaterId': this.therapist,
+        'assessorId': this.appraiser,
+        'remark': this.remark,
+        'patientId': this.$route.params.id,
+        'tcTaskId': this.$store.state.subjectId
+      };
+      agreeEnteringExperiment(experimentInfo).then(this.updateAndClose, this._handleError);
     },
     _handleError(error) {
       console.log(error);
       this.lockSubmitButton = false;
     },
     updateAndClose() {
-      Bus.$emit(this.UPDATE_CASE_INFO);
       this.lockSubmitButton = false;
       this.displayModal = false;
-    },
-    updateScrollbar() {
-      this.$nextTick(() => {
-        Ps.destroy(this.$refs.scrollArea);
-        Ps.initialize(this.$refs.scrollArea, {
-          wheelSpeed: 1,
-          minScrollbarLength: 40,
-          suppressScrollX: true
-        });
-      });
     }
   },
   mounted() {
     Bus.$on(this.SHOW_RATIFICATION_MODAL, this.showPanel);
-    this.updateScrollbar();
   },
   beforeDestroy() {
     Bus.$off(this.SHOW_RATIFICATION_MODAL);

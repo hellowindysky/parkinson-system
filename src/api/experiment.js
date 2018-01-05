@@ -25,3 +25,11 @@ export function applyToEnterExperiment(experimentInfo) {
   var url = '/pdms/addPatientExperiment';
   return encapsulatePromise(url, request);
 };
+
+// 同意加入实验组
+export function agreeEnteringExperiment(experimentInfo) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientExperimentModel = experimentInfo;
+  var url = '/pdms/agreePatientExperiment';
+  return encapsulatePromise(url, request);
+};
