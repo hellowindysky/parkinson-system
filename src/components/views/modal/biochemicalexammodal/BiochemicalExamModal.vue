@@ -26,8 +26,8 @@
           <span class="field-input">
             <span class="warning-text">{{warningResults.checkDate}}</span>
             <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.checkDate}}</span>
-            <el-date-picker v-else 
-            :class="{'warning': warningResults.checkDate}" 
+            <el-date-picker v-else
+            :class="{'warning': warningResults.checkDate}"
             @change="updateWarning('checkDate')"
             placeholder="请输入检查时间"
             v-model="copyInfo.checkDate"
@@ -129,8 +129,8 @@ export default {
         checkDate: ''
       },
       pickerOptions: {
-      disabledDate(time) {
-        return time.getTime() > Date.now();
+        disabledDate(time) {
+          return time.getTime() > Date.now();
         }
       },
       copyInfo: {},
