@@ -51,9 +51,9 @@ export function getPatientSimpleInfo(patientId) {
 };
 
 // 获取特定患者的所属分组信息
-export function getPatientGroupInfo(patientInfo) {
+export function getPatientGroupInfo(condition) {
   var request = Object.assign({}, getCommonRequest());
-  request.patientInfo = patientInfo;
+  request.groupCond = condition;
   var url = '/pdms/queryPatientGroup';
 
   return encapsulatePromise(url, request);

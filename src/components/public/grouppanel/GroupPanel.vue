@@ -85,7 +85,9 @@ export default {
   watch: {
     display: function(val) {
       if (val === true) {
-        getGroupList().then((data) => {
+        var condition = {};
+        condition.groupModule = this.$store.state.subjectId === this.SUBJECT_ID_FOR_HOSPITAL ? 1 : 2;
+        getGroupList(condition).then((data) => {
           this.allGroups = data;
           let length = this.allGroups.length;
           this.groupSelectedList = [];

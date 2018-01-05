@@ -1593,11 +1593,12 @@ export default {
       }
 
       this.patientId = patientId;
-      let patientInfo = {
+      let condition = {
         'patientId': this.patientId
       };
+      condition.groupModule = this.$store.state.subjectId === this.SUBJECT_ID_FOR_HOSPITAL ? 1 : 2;
       this.belongGroups = [];
-      getPatientGroupInfo(patientInfo).then((data) => {
+      getPatientGroupInfo(condition).then((data) => {
         this.belongGroups = data;
         this.$nextTick(() => {
           this.displayGroupPanel = true;

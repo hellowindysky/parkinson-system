@@ -516,7 +516,9 @@ export default {
     }, (error) => {
       console.log(error);
     });
-    getGroupList().then((data) => {
+    var condition = {};
+    condition.groupModule = this.$store.state.subjectId === this.SUBJECT_ID_FOR_HOSPITAL ? 1 : 2;
+    getGroupList(condition).then((data) => {
       var groups = [];
       for (let group of data) {
         var obj = {
