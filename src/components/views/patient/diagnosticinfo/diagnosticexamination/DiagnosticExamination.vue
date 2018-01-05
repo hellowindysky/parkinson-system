@@ -42,6 +42,20 @@
           </div>
          </card>
       </extensible-panel>
+      <extensible-panel class="panel" :mode="mutableMode" :title="biochemicalExamTitle" v-on:addNewCard="addBiochemicalExamRecord" :editable="canEdit">
+        <card class="card" :class="cardWidth" :mode="mutableMode" v-for="item in biochemicalExamList" :key="item.patientCaseId"
+          :title="transformBiochemicalExamType(item.bioexamId)" v-on:editCurrentCard="editBiochemicalExamRecord(item)"
+          v-on:deleteCurrentCard="deleteBiochemicalExamRecord(item)" v-on:viewCurrentCard="viewBiochemicalExamRecord(item)">
+          <div class="text first-line">
+            <span class="name"></span>
+            <span class="value"></span>
+          </div>
+          <div class="text second-line">
+            <span class="name">检查时间</span>
+            <span class="value">{{item.checkDate}}</span>
+          </div>
+        </card>
+      </extensible-panel>
       <!-- 基因检查 -->
       <extensible-panel class="panel" :mode="mutableMode" :title="geneCheckTitle" v-on:addNewCard="addGeneCheckRecord" :editable="canEdit">
         <card class="card" :class="cardWidth" :mode="mutableMode" v-for="(item,idx) in geneCheckList" :key="idx"
@@ -57,21 +71,6 @@
           </div>
          </card>
       </extensible-panel>
-      <extensible-panel class="panel" :mode="mutableMode" :title="biochemicalExamTitle" v-on:addNewCard="addBiochemicalExamRecord" :editable="canEdit">
-        <card class="card" :class="cardWidth" :mode="mutableMode" v-for="item in biochemicalExamList" :key="item.patientCaseId"
-          :title="transformBiochemicalExamType(item.bioexamId)" v-on:editCurrentCard="editBiochemicalExamRecord(item)"
-          v-on:deleteCurrentCard="deleteBiochemicalExamRecord(item)" v-on:viewCurrentCard="viewBiochemicalExamRecord(item)">
-          <div class="text first-line">
-            <span class="name"></span>
-            <span class="value"></span>
-          </div>
-          <div class="text second-line">
-            <span class="name">检查时间</span>
-            <span class="value">{{item.checkDate}}</span>
-          </div>
-        </card>
-      </extensible-panel>
-
       <extensible-panel class="panel neuroelectric-panel" :mode="mutableMode" :title="neuroelectricTitle" v-on:addNewCard="addEmgRecord" :editable="canEdit">
         <card class="card neuroelectric-card" :class="cardWidth" :mode="mutableMode" v-for="item in emgList" :key="item.pcaseId"
           :title="item.etgName" v-on:editCurrentCard="editNeuroelectricRecord(item)" v-on:viewCurrentCard="viewNeuroelectricRecord(item)"

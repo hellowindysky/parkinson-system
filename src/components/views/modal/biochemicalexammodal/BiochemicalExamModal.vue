@@ -26,8 +26,13 @@
           <span class="field-input">
             <span class="warning-text">{{warningResults.checkDate}}</span>
             <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.checkDate}}</span>
-            <el-date-picker v-else :class="{'warning': warningResults.checkDate}" @change="updateWarning('checkDate')"
-              placeholder="请输入检查时间" v-model="copyInfo.checkDate"></el-date-picker>
+            <el-date-picker v-else 
+            :class="{'warning': warningResults.checkDate}" 
+            @change="updateWarning('checkDate')"
+            placeholder="请输入检查时间"
+            v-model="copyInfo.checkDate"
+            :picker-options="pickerOptions">
+            </el-date-picker>
           </span>
         </div>
         <div class="field">
@@ -122,6 +127,11 @@ export default {
       warningResults: {
         bioexamId: '',
         checkDate: ''
+      },
+      pickerOptions: {
+      disabledDate(time) {
+        return time.getTime() > Date.now();
+        }
       },
       copyInfo: {},
       targetBioexam: [],

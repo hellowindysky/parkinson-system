@@ -92,8 +92,7 @@
                 v-for="item in willingness"
                 :key="item.code"
                 :label="item.name"
-                :value="item.code"
-                filterable>
+                :value="item.code">
               </el-option>
             </el-select>
           </span>
