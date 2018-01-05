@@ -40,7 +40,7 @@
       </div>
     </div>
 
-    <div class="function-area" v-if="showAdd">
+    <div class="function-area" v-if="listType===MY_PATIENTS_TYPE">
       <div class="function-button whole-line" @click="addNewPatient">
         <span class="iconfont icon-new-patient"></span>
         <span class="text">新增患者</span>
@@ -50,7 +50,7 @@
         <span class="text">批量导入</span>
       </div>
     </div>
-    <div class="function-area" v-else-if="listType === GROUP_TYPE">
+    <div class="function-area" v-else-if="listType===GROUP_TYPE">
       <div class="function-button left" v-show="listMode===READING_MODE" @click="addNewGroup">
         <span class="iconfont icon-new-group"></span>
         <span class="text">新增分组</span>
