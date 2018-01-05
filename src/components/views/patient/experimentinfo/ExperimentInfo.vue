@@ -2,7 +2,15 @@
   <div class="experiment-info">
     <div class="top-bar">
       <span class="title">实验流程</span>
-      <div class="button light-button application-button" v-if="listType==='myPatients'" @click="applyTojoin">申请入组</div>
+      <div class="button light-button application-button" v-if="listType==='myPatients'" @click="applyTojoin">
+        申请入组
+      </div>
+      <div class="button light-blue-button refuse-button" v-if="listType==='appraisersPatients'" @click="refuseApplication">
+        退回
+      </div>
+      <div class="button light-button agree-button" v-if="listType==='appraisersPatients'" @click="agreeApplication">
+        通过
+      </div>
     </div>
     <div class="content">
       <table class="process-table">
@@ -56,6 +64,12 @@ export default {
   methods: {
     applyTojoin() {
       Bus.$emit(this.SHOW_APPLICATION_MODAL, this.ADD_NEW_CARD, {}, true);
+    },
+    refuseApplication() {
+
+    },
+    agreeApplication() {
+
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -113,6 +127,12 @@ export default {
         background-color: @light-font-color;
       }
       &.application-button {
+        right: 10px;
+      }
+      &.refuse-button {
+        right: 30px + @small-button-width;
+      }
+      &.agree-button {
         right: 10px;
       }
     }

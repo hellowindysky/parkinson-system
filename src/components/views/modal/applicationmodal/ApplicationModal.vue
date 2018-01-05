@@ -261,18 +261,10 @@ export default {
   },
   watch: {
     experimentalGroup: function(val) {
-      queryExperimentMember(this.$store.state.subjectId, val, 1).then((data) => {
-        this.therapistsList = data;
-      }, (error) => {
-        console.log(error);
-      });
-      queryExperimentMember(this.$store.state.subjectId, val, 2).then((data) => {
-        this.appraisersList = data;
-      }, (error) => {
-        console.log(error);
-      });
       queryExperimentMember(this.$store.state.subjectId, val).then((data) => {
         console.log(data);
+        this.therapistsList = data.treater ? data.treater : [];
+        this.appraisersList = data.assessor ? data.assessor : [];
       }, (error) => {
         console.log(error);
       });
