@@ -31,7 +31,7 @@
     <chiefcomplaint-symptoms-modal></chiefcomplaint-symptoms-modal>
     <application-modal></application-modal>
     <return-application-modal></return-application-modal>
-    <pass-ratification-modal></pass-ratification-modal>
+    <ratification-modal></ratification-modal>
     <endof-followup-modal></endof-followup-modal>
     <end-the-treatment-modal></end-the-treatment-modal>
     <followup-summary-modal></followup-summary-modal>
@@ -81,7 +81,7 @@ const imageModal = () => import(/* webpackChunkName: 'examinationModal' */ 'comp
 
 import applicationModal from 'components/views/modal/applicationmodal/ApplicationModal';
 import returnApplicationModal from 'components/views/modal/returnapplicationmodal/ReturnApplicationModal';
-import passRatificationModal from 'components/views/modal/passratificationmodal/PassRatificationModal';
+import ratificationModal from 'components/views/modal/ratificationmodal/RatificationModal';
 import endofFollowupModal from 'components/views/modal/endoffollowupmodal/EndofFollowupModal';
 import endTheTreatmentModal from 'components/views/modal/endthetreatmentmodal/EndTheTreatmentModal';
 import followupSummaryModal from 'components/views/modal/followupsummarymodal/FollowupSummaryModal';
@@ -130,7 +130,7 @@ export default {
     chiefcomplaintSymptomsModal,
     applicationModal,
     returnApplicationModal,
-    passRatificationModal,
+    ratificationModal,
     endofFollowupModal,
     endTheTreatmentModal,
     followupSummaryModal,

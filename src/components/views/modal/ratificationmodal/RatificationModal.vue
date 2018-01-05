@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="pass-ratification-modal-wrapper" v-show="displayModal">
     <div class="pass-ratification-modal" ref="scrollArea">
-      <h3 class="title">{{title}}</h3>  
+      <h3 class="title">{{title}}</h3>
       <div class="content">
         <div class="field whole-line">
           <span class="field-name">
@@ -18,7 +18,7 @@
               placeholder="请输入实验编号">
             </el-input>
           </span>
-        </div> 
+        </div>
         <div class="field whole-line">
           <span class="field-name">
             处理意见：
@@ -36,7 +36,7 @@
             </el-input>
           </span>
         </div>
-      </div>    
+      </div>
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
       <div v-if="mode!==VIEW_CURRENT_CARD" class="button submit-button" @click="submit">确定</div>
@@ -90,9 +90,7 @@ export default {
       this.completeInit = false;
       this.mode = cardOperation;
       this.showEdit = showEdit;
-      for (let reaction of this.patientPhytheReaction) {
-        reaction.severityLevel = '';
-      }
+
       this.$nextTick(() => {
         this.$refs.scrollArea.scrollTop = 0;
         for (var property in this.warningResults) {
@@ -176,11 +174,11 @@ export default {
     }
   },
   mounted() {
-    Bus.$on(this.SHOW_PASS_RATIFICATION_MODAL, this.showPanel);
+    Bus.$on(this.SHOW_RATIFICATION_MODAL, this.showPanel);
     this.updateScrollbar();
   },
   beforeDestroy() {
-    Bus.$off(this.SHOW_PASS_RATIFICATION_MODAL);
+    Bus.$off(this.SHOW_RATIFICATION_MODAL);
   }
 };
 </script>
@@ -344,4 +342,3 @@ export default {
   }
 }
 </style>
-

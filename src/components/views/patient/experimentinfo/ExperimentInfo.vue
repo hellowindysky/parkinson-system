@@ -72,7 +72,7 @@ export default {
 
     },
     agreeApplication() {
-
+      Bus.$emit(this.SHOW_RATIFICATION_MODAL, this.ADD_NEW_CARD, {}, true);
     },
     completeTherapy() {
 
