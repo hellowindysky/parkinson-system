@@ -99,7 +99,7 @@ import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 // import { deepCopy, pruneObj } from 'utils/helper.js';
-import { queryExperimentMember } from 'api/experiment.js';
+import { queryExperimentMember, applyToEnterExperiment } from 'api/experiment.js';
 
 export default {
   data() {
@@ -177,6 +177,13 @@ export default {
             code: member.id
           });
         }
+      } else if (fieldName === 'appraiser') {
+        for (let member of this.appraisersList) {
+          options.push({
+            name: member.name,
+            code: member.id
+          });
+        }
       } else {
         var typeInfo = Util.getElement('typegroupcode', fieldName, this.typeGroup);
         var types = typeInfo.types ? typeInfo.types : [];
@@ -220,12 +227,42 @@ export default {
           return;
         }
       }
+      if (!this.hasCheckedBox) {
+        this.$message({
+          message: '确认患者已经签署《知情同意书》',
+          type: 'warning',
+          duration: 2000
+        });
+        this.lockSubmitButton = false;
+        return;
+      }
+      var experimentInfo = {
+        'taskGroupId': this.experimentalGroup,
+        'treaterId': this.therapist,
+        'assessorId': this.appraiser,
+        'remark': this.remark,
+        'patientId': this.$route.params.id,
+        'tcTaskId': this.$store.state.subjectId
+      };
+      applyToEnterExperiment(experimentInfo).then(this.updateAndClose, this._handleError);
     },
     _handleError(error) {
       console.log(error);
+      if (error.code === 10) {
+        this.$message({
+          message: '该患者已在其它课题的实验中，待其完成后才能重新申请入组',
+          type: 'error',
+          duration: 2000
+        });
+      }
       this.lockSubmitButton = false;
     },
     updateAndClose() {
+      this.$message({
+        message: '已成功发起申请，请等待评估者通过',
+        type: 'success',
+        duration: 2000
+      });
       this.lockSubmitButton = false;
       this.displayModal = false;
     },
@@ -250,7 +287,6 @@ export default {
   watch: {
     experimentalGroup: function(val) {
       queryExperimentMember(this.$store.state.subjectId, val).then((data) => {
-        console.log(data);
         this.therapistsList = data.treater ? data.treater : [];
         this.appraisersList = data.assessor ? data.assessor : [];
       }, (error) => {
