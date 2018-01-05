@@ -2,7 +2,7 @@
   <div class="experiment-info">
     <div class="top-bar">
       <span class="title">实验流程</span>
-      <div class="button light-button application-button" @click="applyTojoin">申请入组</div>
+      <div class="button light-button application-button" v-if="listType==='myPatients'" @click="applyTojoin">申请入组</div>
     </div>
     <div class="content">
       <table class="process-table">
@@ -35,6 +35,23 @@ import Bus from 'utils/bus';
 export default {
   data() {
     return {};
+  },
+  computed: {
+    listType() {
+      if (this.$route.matched.some(record => record.meta.myPatients)) {
+        return 'myPatients';
+      } else if (this.$route.matched.some(record => record.meta.otherPatients)) {
+        return 'otherPatients';
+      } else if (this.$route.matched.some(record => record.meta.subjectPatients)) {
+        return 'subjectPatients';
+      } else if (this.$route.matched.some(record => record.meta.therapistsPatients)) {
+        return 'therapistsPatients';
+      } else if (this.$route.matched.some(record => record.meta.appraisersPatients)) {
+        return 'appraisersPatients';
+      } else {
+        return 'unknown';
+      }
+    }
   },
   methods: {
     applyTojoin() {
