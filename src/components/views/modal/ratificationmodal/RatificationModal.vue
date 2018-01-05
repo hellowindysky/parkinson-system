@@ -1,11 +1,27 @@
 <template lang="html">
-  <div class="pass-ratification-modal-wrapper" v-show="displayModal">
-    <div class="pass-ratification-modal" ref="scrollArea">
+  <div class="ratification-modal-wrapper" v-show="displayModal">
+    <div class="ratification-modal" ref="scrollArea">
       <h3 class="title">{{title}}</h3>
       <div class="content">
         <div class="field whole-line">
           <span class="field-name">
-            实验编号:
+            下一节点
+          </span>
+          <span class="field-input">
+            治疗期(n)
+          </span>
+        </div>
+        <div class="field whole-line">
+          <span class="field-name">
+            接收点
+          </span>
+          <span class="field-input">
+            XXX
+          </span>
+        </div>
+        <div class="field whole-line">
+          <span class="field-name">
+            实验编号
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -21,7 +37,7 @@
         </div>
         <div class="field whole-line">
           <span class="field-name">
-            处理意见：
+            处理意见
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             {{remark}}
@@ -104,23 +120,6 @@ export default {
       this.displayModal = true;
       this.updateScrollbar();
     },
-    transform(code, fieldName) {
-      var options = this.getOptions(fieldName);
-      var targetOption = Util.getElement('code', code, options);
-      return targetOption.name;
-    },
-    getOptions(fieldName) {
-      var options = [];
-      var types = Util.getElement('typegroupcode', fieldName, this.typeGroup).types;
-      types = types ? types : [];
-      for (let type of types) {
-        options.push({
-          name: type.typeName,
-          code: type.typeCode
-        });
-      };
-      return options;
-    },
     updateWarning(fieldName) {
       if (this[fieldName] === '') {
         this.warningResults[fieldName] = '必填项';
@@ -187,9 +186,9 @@ export default {
 @import "~styles/variables.less";
 
 @field-line-height: 25px;
-@field-name-width: 150px;
+@field-name-width: 120px;
 
-.pass-ratification-modal-wrapper {
+.ratification-modal-wrapper {
   position: absolute;
   left: 0;
   top: 0;
@@ -197,13 +196,13 @@ export default {
   height: 100%;
   background-color: fadeout(@light-font-color, 30%);
   z-index: 500;
-  .pass-ratification-modal {
+  .ratification-modal {
     position: relative;
     margin: auto;
     padding: 0 40px;
-    top: 3%;
+    top: 10%;
     width: 660px;
-    max-height: 94%;
+    max-height: 80%;
     background-color: @background-color;
     overflow: hidden;
     .title {
