@@ -52,7 +52,7 @@
             {{transform(appraiser,'appraiser')}}
           </span>
           <span class="field-input" v-else>
-            <span class="warning-text">{{warningResults.therapist}}</span>
+            <span class="warning-text">{{warningResults.appraiser}}</span>
             <el-select v-model="appraiser" clearable placeholder="请选择本次实验的评估者" @change="updateWarning('appraiser')"
               :class="{'warning': warningResults.appraiser}">
               <el-option v-for="item in getOptions('appraiser')"
@@ -268,6 +268,11 @@ export default {
       });
       queryExperimentMember(this.$store.state.subjectId, val, 2).then((data) => {
         this.appraisersList = data;
+      }, (error) => {
+        console.log(error);
+      });
+      queryExperimentMember(this.$store.state.subjectId, val).then((data) => {
+        console.log(data);
       }, (error) => {
         console.log(error);
       });
