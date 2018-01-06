@@ -18,6 +18,7 @@
     <operative-complication-modal></operative-complication-modal>
     <physiontherapy-modal></physiontherapy-modal>
     <treatmentEvaluation-modal></treatmentEvaluation-modal>
+    <adverseEvent-modal></adverseEvent-modal>
     <vitalSigns-modal></vitalSigns-modal>
     <dbs-modal></dbs-modal>
     <neurologic-modal></neurologic-modal>
@@ -71,7 +72,7 @@ const operativeComplicationModal = () => import(/* webpackChunkName: 'treatmentM
 const dbsModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'components/views/modal/dbsmodal/DbsModal');
 const physiontherapyModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'components/views/modal/physiontherapymodal/PhysiontherapyModal');
 const treatmentEvaluationModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'components/views/modal/treatmentEvaluationmodal/TreatmentEvaluationModal');
-
+const adverseEventModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'components/views/modal/adverseEventmodal/AdverseEventModal');
 const vitalSignsModal = () => import(/* webpackChunkName: 'examinationModal' */ 'components/views/modal/vitalsignsmodal/VitalSignsModal');
 const neurologicModal = () => import(/* webpackChunkName: 'examinationModal' */ 'components/views/modal/neurologicmodal/NeurologicModal');
 const geneModal = () => import(/* webpackChunkName: 'examinationModal' */ 'components/views/modal/genemodal/GeneModal');
@@ -118,6 +119,7 @@ export default {
     dbsModal,
     physiontherapyModal,
     treatmentEvaluationModal,
+    adverseEventModal,
     vitalSignsModal,
     neurologicModal,
     geneModal,
