@@ -1052,6 +1052,32 @@ export function deleteTreatmentEvaluation(patientPhytheAssess) {
 
   return encapsulatePromise(url, request);
 };
+// 新增不良事件
+export function addAdverseEvent(patientAdverse) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientAdverse = patientAdverse;
+  var url = '/pdms/addPatientAdverse';
+
+  return encapsulatePromise(url, request);
+};
+
+// 修改不良事件
+export function modifyAdverseEvent(patientAdverse) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientAdverse = patientAdverse;
+  var url = '/pdms/modPatientAdverse';
+
+  return encapsulatePromise(url, request);
+};
+
+// 删除不良事件
+export function deleteAdverseEvent(patientAdverse) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientAdverse = patientAdverse;
+  var url = '/pdms/delPatientAdverse';
+
+  return encapsulatePromise(url, request);
+};
 // 新增生命体征
 export function addVitalSigns(patientVitalSign) {
   var request = Object.assign({}, getCommonRequest());
