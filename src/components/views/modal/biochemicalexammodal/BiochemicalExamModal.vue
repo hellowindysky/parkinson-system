@@ -129,8 +129,8 @@ export default {
         checkDate: ''
       },
       pickerOptions: {
-      disabledDate(time) {
-        return time.getTime() > Date.now();
+        disabledDate(time) {
+          return time.getTime() > Date.now();
         }
       },
       copyInfo: {},
