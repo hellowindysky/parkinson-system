@@ -30,7 +30,7 @@
     <diagnostic-record-modal></diagnostic-record-modal>
     <chiefcomplaint-symptoms-modal></chiefcomplaint-symptoms-modal>
     <application-modal></application-modal>
-    <return-application-modal></return-application-modal>
+    <rejection-modal></rejection-modal>
     <ratification-modal></ratification-modal>
     <endof-followup-modal></endof-followup-modal>
     <end-the-treatment-modal></end-the-treatment-modal>
@@ -80,7 +80,7 @@ const neuroelectricModal = () => import(/* webpackChunkName: 'examinationModal' 
 const imageModal = () => import(/* webpackChunkName: 'examinationModal' */ 'components/views/modal/imagemodal/ImageModal');
 
 import applicationModal from 'components/views/modal/applicationmodal/ApplicationModal';
-import returnApplicationModal from 'components/views/modal/returnapplicationmodal/ReturnApplicationModal';
+import rejectionModal from 'components/views/modal/rejectionmodal/RejectionModal';
 import ratificationModal from 'components/views/modal/ratificationmodal/RatificationModal';
 import endofFollowupModal from 'components/views/modal/endoffollowupmodal/EndofFollowupModal';
 import endTheTreatmentModal from 'components/views/modal/endthetreatmentmodal/EndTheTreatmentModal';
@@ -129,7 +129,7 @@ export default {
     diagnosticRecordModal,
     chiefcomplaintSymptomsModal,
     applicationModal,
-    returnApplicationModal,
+    rejectionModal,
     ratificationModal,
     endofFollowupModal,
     endTheTreatmentModal,
