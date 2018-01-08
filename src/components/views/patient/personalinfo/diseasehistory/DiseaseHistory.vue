@@ -131,20 +131,21 @@
 
         <extensible-panel class="disease-card" :title="firstSymTitle" @addNewCard="addFirstSymptomsRecord" :editable="canEdit">
           <Card class="card symptoms-card" :mode="mode" :class="cardWidth"
-           v-for="item in firstSymbolData" :key="item.id" :title="item.symType"
+           v-for="item in firstSymbolData" :key="item.id" :title="transform(item.symType, allFirstSymptomsType)"
            v-on:editCurrentCard="editFirstSymptomsRecord(item)" 
            v-on:viewCurrentCard="viewFirstSymptomsRecord(item)"
            v-on:deleteCurrentCard="deleteFirstSymptomsRecord(item)">
             <div class="text first-line">
               <span class="name">症状名称：</span>
-              <span class="value">{{item.symName}}</span>
+              <span class="value" v-if="item.symType === 2">{{transform(item.symName, getNoSportOptions(item.notSportTypeId))}}</span>
+              <span class="value" v-else >{{transform(item.symName, getSymOptions(item.symType))}}</span>
             </div>
             <div class="text second-line">
               <span class="name">是否规律出现：</span>
-              <span class="value">{{item.whetherLaw ? item.whetherLaw : '未填写'}}</span>
+              <span class="value" v-if="item.whetherLaw === undefined">未填写</span>
+              <span class="value" v-else >{{transform(item.whetherLaw, getTypeGroupitem('digitYN'))}}</span>
             </div>
             <div class="text third-line">
-              <!-- <span class="name">{{item.ariseTime ? '出现时间：' : ''}}</span> -->
               <span class="name">出现时间：</span>
               <span class="value">{{TheAriseTime(item)}}</span>
             </div>
@@ -320,6 +321,8 @@ export default {
       'diseaseInfoDictionaryGroups',
       'diseaseInfoTemplateGroups',
       'typeGroup',
+      'symptomType',
+      'noSportType',
       'medicineInfo'
     ]),
     patientId() {
@@ -362,6 +365,10 @@ export default {
     },
     visitRecordTitle() {
       return '就诊记录（' + (this.patientHistorysData ? this.patientHistorysData : []).length + '条记录）';
+    },
+    allFirstSymptomsType() {
+      // 首发症状类型的集合
+      return this.getTypeGroupitem('SympType');
     },
     allFirstVisitType() {
       // 初诊治疗类型的集合
@@ -448,6 +455,26 @@ export default {
       let opt = Util.getElement('typegroupcode', fieldName, this.typeGroup).types;
       return (opt ? opt : []);
     },
+    getSymOptions(fieldType) {
+      return this.symptomType.filter((obj) => {
+        return obj.symptomtype === fieldType;
+      }).map((obj) => {
+        return {
+          typeName: obj.sympName,
+          typeCode: obj.id
+        };
+      });
+    },
+    getNoSportOptions(fieldType) {
+      return this.noSportType.filter((obj) => {
+        return obj.noSportType === fieldType;
+      }).map((obj) => {
+        return {
+          typeName: obj.noSportName,
+          typeCode: obj.id
+        };
+      });
+    },
     getMedNameOptions(fieldType) {
       return this.medicineInfo.filter((obj) => {
         return obj.firstTreatMedicalType === fieldType;
@@ -466,6 +493,7 @@ export default {
       })[0];
     },
     transform(id, arr) {
+      id = parseInt(id, 10);
       return arr.filter((obj) => {
         return parseInt(obj.typeCode, 10) === id;
       }).map((obj) => {
