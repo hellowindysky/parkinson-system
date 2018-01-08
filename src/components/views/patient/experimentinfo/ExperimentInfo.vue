@@ -5,7 +5,7 @@
       <div class="button light-button application-button" v-if="listType==='myPatients'" @click="applyTojoin">
         申请入组
       </div>
-      <div class="button light-blue-button refuse-button" v-if="listType==='appraisersPatients'" @click="refuseApplication">
+      <div class="button light-blue-button reject-button" v-if="listType==='appraisersPatients'" @click="rejectApplication">
         退回
       </div>
       <div class="button light-button agree-button" v-if="listType==='appraisersPatients'" @click="agreeApplication">
@@ -69,8 +69,8 @@ export default {
     applyTojoin() {
       Bus.$emit(this.SHOW_APPLICATION_MODAL, this.ADD_NEW_CARD, {}, true);
     },
-    refuseApplication() {
-
+    rejectApplication() {
+      Bus.$emit(this.SHOW_REJECTION_MODAL, this.ADD_NEW_CARD, {}, true);
     },
     agreeApplication() {
       Bus.$emit(this.SHOW_RATIFICATION_MODAL, this.ADD_NEW_CARD, {}, true);
@@ -147,7 +147,7 @@ export default {
       &.application-button {
         right: 10px;
       }
-      &.refuse-button {
+      &.reject-button {
         right: 30px + @small-button-width;
       }
       &.agree-button {

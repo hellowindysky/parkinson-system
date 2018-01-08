@@ -102,7 +102,7 @@ export default {
   SHOW_DIAGNOSTIC_RECORD_MODAL: 'showDiagnosticRecordModal',
   SHOW_CHIEFCOMPLAINTSYMPTOMS_MODAL: 'showChiefComplaintSymptomsModal',
   SHOW_APPLICATION_MODAL: 'showApplicationModal',
-  SHOW_RETURN_APPLICATION_MODAL: 'showReturnApplicationModal',
+  SHOW_REJECTION_MODAL: 'showRejectionModal',
   SHOW_RATIFICATION_MODAL: 'showRatificationModal',
   SHOW_ENDOF_FOLLOWUP_MODAL: 'showEndofFollowupModal',
   SHOW_ENDTHETREATMENT_MODAL: 'showTheTreatmentModal',

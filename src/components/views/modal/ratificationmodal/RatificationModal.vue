@@ -13,7 +13,7 @@
         </div>
         <div class="field whole-line">
           <span class="field-name">
-            接收点
+            接收人
           </span>
           <span class="field-input">
             XXX
