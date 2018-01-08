@@ -83,7 +83,7 @@
                 </el-select>
               </span>
               <span class="sub-item">
-                <el-date-picker v-model="item.time" type="date" placeholder="选择发生日期" clearable ></el-date-picker>
+                <el-date-picker v-model="item.time" type="month" placeholder="选择发生年月" clearable ></el-date-picker>
               </span>
             </div>
 
@@ -197,18 +197,35 @@
            v-on:editCurrentCard="editFirstTreatmentRecord(item)" 
            v-on:viewCurrentCard="viewFirstTreatmentRecord(item)"
            v-on:deleteCurrentCard="deleteFirstTreatmentRecord(item)">
-            <div class="text first-line">
-              <span class="name">{{item.firstVisitType ===1?'药物名称':item.firstVisitType ===2?'治疗类型':''}}</span>
-              <span class="value">{{item.firstVisitType ===1 ? transform(item.medicineName, getMedNameOptions(item.medicineClassification)) : item.firstVisitType ===2 ? transform(item.treatmentType,treatmentTypeOpt): ''}}</span>
-            </div>
-            <div class="text second-line">
-              <span class="name">{{item.firstVisitType ===1 ? '每日用量' : item.firstVisitType ===2 ? '治疗手段': ''}}</span>
-              <span class="value">{{item.firstVisitType ===1 ? item.dailyDosage+'mg/日' : item.firstVisitType ===2 ? transform(item.treatmentMethod, getTreatment(item.treatmentType)): ''}}</span>
-            </div>
-            <div class="text third-line">
-              <span class="name">{{item.firstVisitType ===1 ? '初次用药时间' : item.firstVisitType ===2 ? '治疗时间': ''}}</span>
-              <span class="value">{{item.firstVisitType ===1 ? item.firstTime : item.firstVisitType ===2 ? item.treatmentTime: ''}}</span>
-            </div>
+            <template v-if="item.firstVisitType === 1">
+              <div class="text first-line">
+                <span class="name">药物名称</span>
+                <span class="value">{{transform(item.medicineName, getMedNameOptions(item.medicineClassification))}}</span>
+              </div>
+              <div class="text second-line">
+                <span class="name">每日用量</span>
+                <span class="value">{{item.dailyDosage}} mg/日</span>
+              </div>
+              <div class="text third-line">
+                <span class="name">初次用药时间</span>
+                <span class="value">{{item.firstTime}}</span>
+              </div>
+            </template>
+            <template v-else-if="item.firstVisitType === 2">
+              <div class="text first-line">
+                <span class="name">治疗类型</span>
+                <span class="value">{{transform(item.treatmentType,treatmentTypeOpt)}}</span>
+              </div>
+              <div class="text second-line">
+                <span class="name">治疗手段</span>
+                <span class="value">{{transform(item.treatmentMethod, getTreatment(item.treatmentType))}}</span>
+              </div>
+              <div class="text third-line">
+                <span class="name">治疗时间</span>
+                <span class="value">{{item.treatmentTime}}</span>
+              </div>
+            </template>
+            
           </Card>
         </extensible-panel>
 
