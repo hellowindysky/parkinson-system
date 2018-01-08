@@ -47,7 +47,6 @@
 
 <script>
 import Bus from 'utils/bus.js';
-import Util from 'utils/util.js';
 
 export default {
   data() {
