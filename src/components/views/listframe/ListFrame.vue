@@ -4,6 +4,7 @@
     <div class="toggle-list-button" :class="{'hide-list-status': !listDisplay}" @click="toggleList">
       <div class="iconfont" :class="toggleIconClass"></div>
     </div>
+    <div class="content-area content-background" :class="{'hide-list-status': !listDisplay}"></div>
     <router-view class="content-area" :class="{'hide-list-status': !listDisplay}" name="content" :key="key"></router-view>
   </div>
 </template>
@@ -92,6 +93,10 @@ export default {
     &.hide-list-status {
       left: @bar-width;
       width: calc(~"100% - @{bar-width}");
+    }
+    &.content-background {
+      background: @screen-color;
+      z-index: 150;
     }
   }
 }

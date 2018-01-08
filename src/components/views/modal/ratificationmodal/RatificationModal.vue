@@ -1,27 +1,43 @@
 <template lang="html">
-  <div class="pass-ratification-modal-wrapper" v-show="displayModal">
-    <div class="pass-ratification-modal" ref="scrollArea">
-      <h3 class="title">{{title}}</h3>  
+  <div class="ratification-modal-wrapper" v-show="displayModal">
+    <div class="ratification-modal" ref="scrollArea">
+      <h3 class="title">{{title}}</h3>
       <div class="content">
         <div class="field whole-line">
           <span class="field-name">
-            实验编号:
+            下一节点
+          </span>
+          <span class="field-input">
+            治疗期(1)
+          </span>
+        </div>
+        <div class="field whole-line">
+          <span class="field-name">
+            接收点
+          </span>
+          <span class="field-input">
+            XXX
+          </span>
+        </div>
+        <div class="field whole-line">
+          <span class="field-name">
+            实验编号
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            {{testNumber}}
+            {{experimentNumber}}
           </span>
           <span class="field-input" v-else>
             <el-input
-              v-model="testNumber"
-              @change="updateWarning('testNumber')"
+              v-model="experimentNumber"
+              @change="updateWarning('experimentNumber')"
               placeholder="请输入实验编号">
             </el-input>
           </span>
-        </div> 
+        </div>
         <div class="field whole-line">
           <span class="field-name">
-            处理意见：
+            处理意见
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             {{remark}}
@@ -36,7 +52,7 @@
             </el-input>
           </span>
         </div>
-      </div>    
+      </div>
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
       <div v-if="mode!==VIEW_CURRENT_CARD" class="button submit-button" @click="submit">确定</div>
@@ -45,10 +61,8 @@
   </div>
 </template>
 <script>
-import { mapGetters } from 'vuex';
-import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
-import Util from 'utils/util.js';
+import { agreeEnteringExperiment } from 'api/experiment.js';
 
 export default {
   data() {
@@ -57,19 +71,11 @@ export default {
       mode: '',
       completeInit: false,
       remark: '',
-      testNumber: '',
-      pickerOptions: {
-        disabledDate(time) {
-          return time.getTime() > Date.now();
-        }
-      },
+      experimentNumber: '',
       showEdit: true
     };
   },
   computed: {
-    ...mapGetters([
-      'typeGroup'
-    ]),
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
         return '通过';
@@ -90,9 +96,7 @@ export default {
       this.completeInit = false;
       this.mode = cardOperation;
       this.showEdit = showEdit;
-      for (let reaction of this.patientPhytheReaction) {
-        reaction.severityLevel = '';
-      }
+
       this.$nextTick(() => {
         this.$refs.scrollArea.scrollTop = 0;
         for (var property in this.warningResults) {
@@ -104,24 +108,6 @@ export default {
 
       this.completeInit = true;
       this.displayModal = true;
-      this.updateScrollbar();
-    },
-    transform(code, fieldName) {
-      var options = this.getOptions(fieldName);
-      var targetOption = Util.getElement('code', code, options);
-      return targetOption.name;
-    },
-    getOptions(fieldName) {
-      var options = [];
-      var types = Util.getElement('typegroupcode', fieldName, this.typeGroup).types;
-      types = types ? types : [];
-      for (let type of types) {
-        options.push({
-          name: type.typeName,
-          code: type.typeCode
-        });
-      };
-      return options;
     },
     updateWarning(fieldName) {
       if (this[fieldName] === '') {
@@ -136,7 +122,6 @@ export default {
     },
     switchToEditingMode() {
       this.mode = this.EDIT_CURRENT_CARD;
-      this.updateScrollbar();
     },
     submit() {
       if (this.lockSubmitButton) {
@@ -154,33 +139,31 @@ export default {
           return;
         }
       }
+
+      var experimentInfo = {
+        'taskGroupId': this.experimentalGroup,
+        'treaterId': this.therapist,
+        'assessorId': this.appraiser,
+        'remark': this.remark,
+        'patientId': this.$route.params.id,
+        'tcTaskId': this.$store.state.subjectId
+      };
+      agreeEnteringExperiment(experimentInfo).then(this.updateAndClose, this._handleError);
     },
     _handleError(error) {
       console.log(error);
       this.lockSubmitButton = false;
     },
     updateAndClose() {
-      Bus.$emit(this.UPDATE_CASE_INFO);
       this.lockSubmitButton = false;
       this.displayModal = false;
-    },
-    updateScrollbar() {
-      this.$nextTick(() => {
-        Ps.destroy(this.$refs.scrollArea);
-        Ps.initialize(this.$refs.scrollArea, {
-          wheelSpeed: 1,
-          minScrollbarLength: 40,
-          suppressScrollX: true
-        });
-      });
     }
   },
   mounted() {
-    Bus.$on(this.SHOW_PASS_RATIFICATION_MODAL, this.showPanel);
-    this.updateScrollbar();
+    Bus.$on(this.SHOW_RATIFICATION_MODAL, this.showPanel);
   },
   beforeDestroy() {
-    Bus.$off(this.SHOW_PASS_RATIFICATION_MODAL);
+    Bus.$off(this.SHOW_RATIFICATION_MODAL);
   }
 };
 </script>
@@ -189,9 +172,9 @@ export default {
 @import "~styles/variables.less";
 
 @field-line-height: 25px;
-@field-name-width: 150px;
+@field-name-width: 120px;
 
-.pass-ratification-modal-wrapper {
+.ratification-modal-wrapper {
   position: absolute;
   left: 0;
   top: 0;
@@ -199,13 +182,13 @@ export default {
   height: 100%;
   background-color: fadeout(@light-font-color, 30%);
   z-index: 500;
-  .pass-ratification-modal {
+  .ratification-modal {
     position: relative;
     margin: auto;
     padding: 0 40px;
-    top: 3%;
+    top: 10%;
     width: 660px;
-    max-height: 94%;
+    max-height: 80%;
     background-color: @background-color;
     overflow: hidden;
     .title {
@@ -344,4 +327,3 @@ export default {
   }
 }
 </style>
-

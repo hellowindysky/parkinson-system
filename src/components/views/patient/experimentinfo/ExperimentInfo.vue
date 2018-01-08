@@ -2,7 +2,18 @@
   <div class="experiment-info">
     <div class="top-bar">
       <span class="title">实验流程</span>
-      <div class="button light-button application-button" @click="applyTojoin">申请入组</div>
+      <div class="button light-button application-button" v-if="listType==='myPatients'" @click="applyTojoin">
+        申请入组
+      </div>
+      <div class="button light-blue-button refuse-button" v-if="listType==='appraisersPatients'" @click="refuseApplication">
+        退回
+      </div>
+      <div class="button light-button agree-button" v-if="listType==='appraisersPatients'" @click="agreeApplication">
+        通过
+      </div>
+      <div class="button light-button complete-therapy-button" v-if="listType==='therapistsPatients'" @click="completeTherapy">
+        结束治疗
+      </div>
     </div>
     <div class="content">
       <table class="process-table">
@@ -31,15 +42,53 @@
 
 <script>
 import Bus from 'utils/bus';
+import { queryExperimentProgress } from 'api/experiment.js';
 
 export default {
   data() {
     return {};
   },
+  computed: {
+    listType() {
+      if (this.$route.matched.some(record => record.meta.myPatients)) {
+        return 'myPatients';
+      } else if (this.$route.matched.some(record => record.meta.otherPatients)) {
+        return 'otherPatients';
+      } else if (this.$route.matched.some(record => record.meta.subjectPatients)) {
+        return 'subjectPatients';
+      } else if (this.$route.matched.some(record => record.meta.therapistsPatients)) {
+        return 'therapistsPatients';
+      } else if (this.$route.matched.some(record => record.meta.appraisersPatients)) {
+        return 'appraisersPatients';
+      } else {
+        return 'unknown';
+      }
+    }
+  },
   methods: {
     applyTojoin() {
       Bus.$emit(this.SHOW_APPLICATION_MODAL, this.ADD_NEW_CARD, {}, true);
+    },
+    refuseApplication() {
+
+    },
+    agreeApplication() {
+      Bus.$emit(this.SHOW_RATIFICATION_MODAL, this.ADD_NEW_CARD, {}, true);
+    },
+    completeTherapy() {
+
     }
+  },
+  mounted() {
+    var experimentInfo = {
+      'patientId': this.$route.params.id,
+      'tcTaskId': this.$store.state.subjectId
+    };
+    queryExperimentProgress(experimentInfo).then((data) => {
+      console.log(data);
+    }, (error) => {
+      console.log(error);
+    });
   },
   beforeRouteEnter(to, from, next) {
     var subjectId = sessionStorage.getItem('subjectId');
@@ -98,6 +147,15 @@ export default {
       &.application-button {
         right: 10px;
       }
+      &.refuse-button {
+        right: 30px + @small-button-width;
+      }
+      &.agree-button {
+        right: 10px;
+      }
+      &.complete-therapy-button {
+        right: 10px;
+      }
     }
   }
   .content {
@@ -117,6 +175,9 @@ export default {
           color: #fff;
         }
         .col {
+          overflow: hidden;
+          text-overflow:ellipsis;
+          white-space: nowrap;
           &.col-number {
             width: 10%;
           }

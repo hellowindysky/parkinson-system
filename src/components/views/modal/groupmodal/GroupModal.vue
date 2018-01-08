@@ -104,6 +104,7 @@ export default {
           'groupType': this.groupType,
           'remarks': this.groupRemarks
         };
+        groupInfo.groupModule = this.$store.state.subjectId === this.SUBJECT_ID_FOR_HOSPITAL ? 1 : 2;
         addGroup(groupInfo).then(() => {
           Bus.$emit(this.UPDATE_GROUP_LIST);
           this.displayModal = false;

@@ -240,10 +240,11 @@ export default {
       if (!this.existed) {
         return;
       }
-      var patientInfo = {
+      var condition = {
         'patientId': this.patientId
       };
-      getPatientGroupInfo(patientInfo).then((data) => {
+      condition.groupModule = this.inSubject ? 2 : 1;
+      getPatientGroupInfo(condition).then((data) => {
         this.belongGroups = data;
       }, (error) => {
         console.log(error);
