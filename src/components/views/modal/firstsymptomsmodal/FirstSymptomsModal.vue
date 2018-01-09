@@ -113,7 +113,7 @@
               <span>{{transform(copyInfo.whetherLaw, 'digitYN')}}</span>
             </span>
             <span class="field-input" v-else>
-              <el-select v-model="copyInfo.whetherLaw" placeholder="请选择是否规律出现">
+              <el-select v-model="copyInfo.whetherLaw" placeholder="请选择是否规律出现" clearable >
                 <el-option
                  v-for="item in getOptions('digitYN')"
                  :key="item.code"
@@ -192,7 +192,7 @@
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-select v-model="copyInfo.whetherLaw" placeholder="请选择是否规律出现">
+              <el-select v-model="copyInfo.whetherLaw" placeholder="请选择是否规律出现" clearable >
                 <el-option
                  v-for="item in getOptions('digitYN')"
                  :key="item.code"
@@ -306,7 +306,7 @@
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-select v-model="copyInfo.whetherLaw" placeholder="请选择是否规律出现">
+              <el-select v-model="copyInfo.whetherLaw" placeholder="请选择是否规律出现" clearable >
                 <el-option
                  v-for="item in getOptions('digitYN')"
                  :key="item.code"
@@ -531,7 +531,7 @@ export default {
       });
     },
     getNoSportOptions(fieldType) {
-      return this.noSportType.filter((obj) => {
+      let noSportArr = this.noSportType.filter((obj) => {
         return obj.noSportType === fieldType;
       }).map((obj) => {
         return {
@@ -539,6 +539,11 @@ export default {
           code: obj.id
         };
       });
+      // 特殊要求：如果select列表只有一项自动把这一项显示出来
+      if (noSportArr.length === 1) {
+        this.$set(this.copyInfo, 'symName', noSportArr[0].code);
+      }
+      return noSportArr;
     },
     updateWarning(fieldName) {
       if (this.completeInit && (this.copyInfo[fieldName] === undefined || this.copyInfo[fieldName] === '')) {
@@ -638,8 +643,8 @@ export default {
   },
   mounted() {
     Bus.$on(this.SHOW_FIRSTSYMPTOMS_MODAL, this.showModal);
-    console.log(this.typeGroup);
-    console.log(this.getOptions('SympType'));
+    // console.log(this.typeGroup);
+    // console.log(this.getOptions('SympType'));
   }
 };
 </script>

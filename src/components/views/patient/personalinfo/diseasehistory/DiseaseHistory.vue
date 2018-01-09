@@ -78,7 +78,8 @@
                   <el-option
                    v-for="item in diseaseOrderOpt" :key="item.typeCode" 
                    :label="item.typeName"
-                   :value="item.typeCode">
+                   :value="item.typeCode"
+                   :disabled="item.disabled">
                   </el-option>
                 </el-select>
               </span>
@@ -397,7 +398,18 @@ export default {
     },
     diseaseOrderOpt() {
       // 发病顺序集合
-      return this.getTypeGroupitem('firBody');
+      let firBody = this.getTypeGroupitem('firBody');
+      let part = this.copyInfo.patientDiseaseOrders.map((option) => {
+        return option.arisePart;
+      });
+      firBody.forEach((item) => {
+        if (part.indexOf(item.typeCode) !== -1) {
+          item.disabled = true;
+        } else {
+          item.disabled = false;
+        }
+      });
+      return firBody;
     },
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients)) {
@@ -884,9 +896,11 @@ export default {
 .disease-info {
   padding: 0 25px 20px;
   .group {
+    margin-left:20px;
     padding: 0;
     text-align: left;
     >h3{
+      margin-left:-20px;
       font-size:@large-font-size;
     }
     .disease-card{

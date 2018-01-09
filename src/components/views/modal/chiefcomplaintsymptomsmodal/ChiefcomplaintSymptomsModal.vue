@@ -113,7 +113,7 @@
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-select v-model="copyInfo.whetherLaw" placeholder="请选择是否规律出现">
+              <el-select v-model="copyInfo.whetherLaw" placeholder="请选择是否规律出现" clearable >
                 <el-option label="是" :value="'是'"></el-option>
                 <el-option label="否" :value="'否'"></el-option>
             </el-select>
@@ -188,7 +188,7 @@
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
               <el-select v-model="copyInfo.whetherLaw"
-                placeholder="请选择是否规律出现">
+                placeholder="请选择是否规律出现" clearable >
                   <el-option label="是" :value="'是'"></el-option>
                   <el-option label="否" :value="'否'"></el-option>
               </el-select>
@@ -298,7 +298,7 @@
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
               <el-select v-model="copyInfo.whetherLaw"
-                placeholder="请选择是否规律出现">
+                placeholder="请选择是否规律出现" clearable >
                   <el-option label="是" :value="'是'"></el-option>
                   <el-option label="否" :value="'否'"></el-option>
               </el-select>
@@ -425,7 +425,7 @@ export default {
     },
     showModal(cardOperation, item, title2) {
       this.completeInit = false;
-      console.log(cardOperation, item);
+      // console.log(cardOperation, item);
       this.mode = cardOperation;
       this.title2 = title2;
       // ******************************
@@ -510,7 +510,7 @@ export default {
       });
     },
     getNoSportOptions(fieldType) {
-      return this.noSportType.filter((obj) => {
+      let noSportArr = this.noSportType.filter((obj) => {
         return obj.noSportType === fieldType;
       }).map((obj) => {
         return {
@@ -518,6 +518,11 @@ export default {
           code: obj.id
         };
       });
+      // 特殊要求：如果select列表只有一项自动把这一项显示出来
+      if (noSportArr.length === 1) {
+        this.$set(this.copyInfo, 'symName', noSportArr[0].name);
+      }
+      return noSportArr;
     },
     updateWarning(fieldName) {
       if (this.completeInit && !this.copyInfo[fieldName]) {
