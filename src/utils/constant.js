@@ -106,7 +106,7 @@ export default {
   SHOW_REJECTION_MODAL: 'showRejectionModal',
   SHOW_RATIFICATION_MODAL: 'showRatificationModal',
   SHOW_ENDOF_FOLLOWUP_MODAL: 'showEndofFollowupModal',
-  SHOW_ENDTHETREATMENT_MODAL: 'showTheTreatmentModal',
+  SHOW_TERMINATION_MODAL: 'showTerminationModal',
   SHOW_FOLLOWUPSUMMARY_MODAL: 'showFollowupSummaryModal',
 
   SHOW_CHOICE_PANEL: 'showChoicePanel',

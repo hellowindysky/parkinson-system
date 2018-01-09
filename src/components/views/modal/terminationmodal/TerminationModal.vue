@@ -1,6 +1,6 @@
 <template lang="html">
-  <div class="endtreatment-modal-wrapper" v-show="displayModal">
-    <div class="endtreatment-modal">
+  <div class="termination-modal-wrapper" v-show="displayModal">
+    <div class="termination-modal">
       <h3 class="title">{{title}}</h3>
       <div class="content">
 
@@ -13,7 +13,6 @@
             <span>view状态下一节点文本</span>
           </span>
           <span class="field-input" v-else>
-            <!-- <span class="warning-text">{{warningResults.name}}</span> -->
             <el-select v-model="test1" placeholder="请选择下一节点" clearable>
               <el-option :label="'随访期'" :value="1"></el-option>
               <el-option :label="'实验结束（等待揭盲）'" :value="2"></el-option>
@@ -66,13 +65,28 @@ export default {
       displayModal: false,
       title: '结束治疗',
       mode: '',
+      showEdit: '',
+      warningResults: {},
       test1: '',
       test2: ''
     };
   },
   methods: {
-    showModal(options) {
-      this.mode = options.cardOperation;
+    showPanel(cardOperation, item, showEdit) {
+      this.completeInit = false;
+      this.mode = cardOperation;
+      this.showEdit = showEdit;
+      // console.log('item: ', item);
+
+      this.$nextTick(() => {
+        for (var property in this.warningResults) {
+          if (this.warningResults.hasOwnProperty(property)) {
+            this.warningResults[property] = '';
+          }
+        }
+      });
+
+      this.completeInit = true;
       this.displayModal = true;
     },
     cancel() {
@@ -80,12 +94,7 @@ export default {
     }
   },
   mounted() {
-    /* setTimeout(() => {
-      Bus.$emit(this.SHOW_ENDTHETREATMENT_MODAL, {
-        cardOperation: this.ADD_NEW_CARD
-      });
-    }, 5000); */
-    Bus.$on(this.SHOW_ENDTHETREATMENT_MODAL, this.showModal);
+    Bus.$on(this.SHOW_TERMINATION_MODAL, this.showPanel);
   }
 };
 </script>
@@ -96,7 +105,7 @@ export default {
 @field-name-width: 110px;
 @long-field-name-width: 160px;
 
-.endtreatment-modal-wrapper{
+.termination-modal-wrapper{
   position: absolute;
   left: 0;
   top: 0;
@@ -104,7 +113,7 @@ export default {
   height: 100%;
   background-color: fadeout(@light-font-color, 30%);
   z-index: 500;
-  .endtreatment-modal{
+  .termination-modal{
     position: relative;
     margin: auto;
     padding: 0 40px;

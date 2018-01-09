@@ -78,7 +78,7 @@ export default {
       Bus.$emit(this.SHOW_RATIFICATION_MODAL, this.ADD_NEW_CARD, {}, true);
     },
     completeTherapy() {
-
+      Bus.$emit(this.SHOW_TERMINATION_MODAL, this.ADD_NEW_CARD, {}, true);
     }
   },
   mounted() {
@@ -89,9 +89,9 @@ export default {
     queryExperimentProgress(experimentInfo).then((data) => {
       console.log(data);
       if (data && data.length > 0) {
-        this.progressList = [];
-      } else {
         this.progressList = data;
+      } else {
+        this.progressList = [];
       }
     }, (error) => {
       console.log(error);

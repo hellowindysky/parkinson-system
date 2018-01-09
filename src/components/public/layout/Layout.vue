@@ -18,7 +18,7 @@
     <operative-complication-modal></operative-complication-modal>
     <physiontherapy-modal></physiontherapy-modal>
     <treatmentEvaluation-modal></treatmentEvaluation-modal>
-    <adverseEvent-modal></adverseEvent-modal>
+    <adverse-event-modal></adverse-event-modal>
     <vitalSigns-modal></vitalSigns-modal>
     <dbs-modal></dbs-modal>
     <neurologic-modal></neurologic-modal>
@@ -34,7 +34,7 @@
     <rejection-modal></rejection-modal>
     <ratification-modal></ratification-modal>
     <endof-followup-modal></endof-followup-modal>
-    <end-the-treatment-modal></end-the-treatment-modal>
+    <termination-modal></termination-modal>
     <followup-summary-modal></followup-summary-modal>
 
     <filter-panel :showFilterPanel="showFilterPanel"></filter-panel>
@@ -72,7 +72,7 @@ const operativeComplicationModal = () => import(/* webpackChunkName: 'treatmentM
 const dbsModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'components/views/modal/dbsmodal/DbsModal');
 const physiontherapyModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'components/views/modal/physiontherapymodal/PhysiontherapyModal');
 const treatmentEvaluationModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'components/views/modal/treatmentEvaluationmodal/TreatmentEvaluationModal');
-const adverseEventModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'components/views/modal/adverseEventmodal/AdverseEventModal');
+const adverseEventModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'components/views/modal/adverseeventmodal/AdverseEventModal');
 const vitalSignsModal = () => import(/* webpackChunkName: 'examinationModal' */ 'components/views/modal/vitalsignsmodal/VitalSignsModal');
 const neurologicModal = () => import(/* webpackChunkName: 'examinationModal' */ 'components/views/modal/neurologicmodal/NeurologicModal');
 const geneModal = () => import(/* webpackChunkName: 'examinationModal' */ 'components/views/modal/genemodal/GeneModal');
@@ -84,7 +84,7 @@ import applicationModal from 'components/views/modal/applicationmodal/Applicatio
 import rejectionModal from 'components/views/modal/rejectionmodal/RejectionModal';
 import ratificationModal from 'components/views/modal/ratificationmodal/RatificationModal';
 import endofFollowupModal from 'components/views/modal/endoffollowupmodal/EndofFollowupModal';
-import endTheTreatmentModal from 'components/views/modal/endthetreatmentmodal/EndTheTreatmentModal';
+import terminationModal from 'components/views/modal/terminationmodal/TerminationModal';
 import followupSummaryModal from 'components/views/modal/followupsummarymodal/FollowupSummaryModal';
 
 import filterPanel from 'components/public/filterpanel/FilterPanel';
@@ -134,7 +134,7 @@ export default {
     rejectionModal,
     ratificationModal,
     endofFollowupModal,
-    endTheTreatmentModal,
+    terminationModal,
     followupSummaryModal,
 
     filterPanel,
