@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="adverse-event-modal-wrapper" v-show="displayModal">
     <div class="adverse-event-modal" ref="scrollArea">
-      <h3 class="title">{{title}}</h3>  
+      <h3 class="title">{{title}}</h3>
       <div class="content">
         <div class="field whole-line">
           <span class="field-name">
@@ -36,7 +36,7 @@
               placeholder="请输入不良事件名称">
             </el-input>
           </span>
-        </div>  
+        </div>
         <div class="field whole-line">
           <span class="field-name">
             不良事件描述：
@@ -132,46 +132,46 @@
           严重不良事件：
           </span>
           <div class="moveLeft lead-death">
-            <el-checkbox 
+            <el-checkbox
               v-model="hasNoReaction"
               :disabled="mode===VIEW_CURRENT_CARD">
             </el-checkbox>
             导致死亡
           </div>
           <div class="moveLeft life-threatening">
-            <el-checkbox 
+            <el-checkbox
               v-model="hasNoReaction"
               :disabled="mode===VIEW_CURRENT_CARD">
             </el-checkbox>
-            威胁生命  
+            威胁生命
           </div>
           <div class="moveLeft cause-hospital">
-            <el-checkbox 
+            <el-checkbox
               v-model="hasNoReaction"
               :disabled="mode===VIEW_CURRENT_CARD">
             </el-checkbox>
-            导致住院  
+            导致住院
           </div>
           <div class="moveLeft lead-continuous">
-            <el-checkbox 
-              v-model="hasNoReaction"
-              :disabled="mode===VIEW_CURRENT_CARD"> 
-            </el-checkbox>  
-            导致持续或验证残疾/能力丧失  
-          </div>
-          <div class="moveLeft cause-exception">
-            <el-checkbox 
+            <el-checkbox
               v-model="hasNoReaction"
               :disabled="mode===VIEW_CURRENT_CARD">
             </el-checkbox>
-            导致先天性异常或出生障碍  
+            导致持续或验证残疾/能力丧失
           </div>
-          <div class="moveLeft medical-events">
-            <el-checkbox 
+          <div class="moveLeft cause-exception">
+            <el-checkbox
               v-model="hasNoReaction"
               :disabled="mode===VIEW_CURRENT_CARD">
-            </el-checkbox>  
-            重要医学事件  
+            </el-checkbox>
+            导致先天性异常或出生障碍
+          </div>
+          <div class="moveLeft medical-events">
+            <el-checkbox
+              v-model="hasNoReaction"
+              :disabled="mode===VIEW_CURRENT_CARD">
+            </el-checkbox>
+            重要医学事件
           </div>
         </div>
         <div class="field whole-line">
@@ -292,7 +292,7 @@
             </el-select>
           </span>
         </div>
-      </div>  
+      </div>
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
       <div v-if="mode!==VIEW_CURRENT_CARD" class="button submit-button" @click="submit">确定</div>
@@ -309,7 +309,7 @@ import Util from 'utils/util.js';
 export default {
   data() {
     return {
-      displayModal: true,
+      displayModal: false,
       mode: '',
       completeInit: false,
 
@@ -497,8 +497,8 @@ export default {
       padding-right: 10px;
       margin-bottom: 10px;
     }
-    // .lead-death, 
-    // .life-threatening, 
+    // .lead-death,
+    // .life-threatening,
     // .cause-hospital,
     // .lead-continuous,
     // .cause-exception,
