@@ -7,13 +7,14 @@
         <div class="field whole-line">
           <span class="field-name">
             下一节点:
-            <!-- <span class="required-mark">*</span> -->
+            <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span>view状态下一节点文本</span>
           </span>
           <span class="field-input" v-else>
-            <el-select v-model="test1" placeholder="请选择下一节点" clearable>
+            <span class="warning-text">{{warningResults.nextStep}}</span>
+            <el-select v-model="nextStep" placeholder="请选择下一节点" clearable>
               <el-option :label="'随访期'" :value="1"></el-option>
               <el-option :label="'实验结束（等待揭盲）'" :value="2"></el-option>
             </el-select>
@@ -42,7 +43,13 @@
             <span>view状态处理意见文本</span>
           </span>
           <span class="field-input" v-else>
-            <el-input v-model="test2" placeholder="请输入处理意见" :maxlength="50"></el-input>
+            <el-input
+              v-model="remark"
+              type="textarea"
+              :rows="2"
+              :maxlength="500"
+              placeholder="请输入处理意见">
+            </el-input>
           </span>
         </div>
 
@@ -66,9 +73,12 @@ export default {
       title: '结束治疗',
       mode: '',
       showEdit: '',
-      warningResults: {},
-      test1: '',
-      test2: ''
+      warningResults: {
+        nextStep: ''
+      },
+
+      nextStep: '',
+      remark: ''
     };
   },
   methods: {
@@ -117,9 +127,9 @@ export default {
     position: relative;
     margin: auto;
     padding: 0 40px;
-    top: 3%;
+    top: 10%;
     width: 660px;
-    max-height: 94%;
+    max-height: 80%;
     background-color: @background-color;
     overflow: hidden;
     .title {
