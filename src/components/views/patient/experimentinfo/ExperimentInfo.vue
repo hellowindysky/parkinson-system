@@ -26,14 +26,14 @@
           <td class="col col-end-time">结束时间</td>
           <td class="col col-remarks">处理意见</td>
         </tr>
-        <tr class="row">
-          <td class="col col-number">1</td>
-          <td class="col col-progress">筛选入组</td>
-          <td class="col col-executor">增增增</td>
+        <tr class="row" v-for="(step, index) in progressList">
+          <td class="col col-number">{{index + 1}}</td>
+          <td class="col col-progress">{{step.milestone}}</td>
+          <td class="col col-executor">{{step.executeBy}}</td>
           <td class="col col-status">完成</td>
-          <td class="col col-start-time">2017-12-12 19:00</td>
-          <td class="col col-end-time">2017-1-7 18:00</td>
-          <td class="col col-remarks">该患者符合课题要求，申请入组</td>
+          <td class="col col-start-time">{{step.startDate}}</td>
+          <td class="col col-end-time">{{step.endDate}}</td>
+          <td class="col col-remarks">{{step.remark}}</td>
         </tr>
       </table>
     </div>
@@ -46,7 +46,9 @@ import { queryExperimentProgress } from 'api/experiment.js';
 
 export default {
   data() {
-    return {};
+    return {
+      progressList: []
+    };
   },
   computed: {
     listType() {
@@ -86,6 +88,11 @@ export default {
     };
     queryExperimentProgress(experimentInfo).then((data) => {
       console.log(data);
+      if (data && data.length > 0) {
+        this.progressList = [];
+      } else {
+        this.progressList = data;
+      }
     }, (error) => {
       console.log(error);
     });
