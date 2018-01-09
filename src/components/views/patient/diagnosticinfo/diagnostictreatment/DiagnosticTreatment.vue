@@ -201,8 +201,27 @@
             <span class="value">{{item.recordDate}}</span>
           </div>
         </card>
+        <card class="card physiontherapy-card" :class="bigCardWidth" :mode="mutableMode" v-for="item in diagnosticAdverseEvent" :key="item.adverseName"
+          :title="'不良事件'" v-on:editCurrentCard="editAdverseEvent(item)"
+          v-on:deleteCurrentCard="deleteAdverseEvent(item)" v-on:viewCurrentCard="viewAdverseEvent(item)">
+          <div class="text line-1">
+            <span class="name">事件名称</span>
+            <span class="value">{{item.adverseName}}</span>
+          </div>
+          <div class="text line-2">
+            <span class="name">开始发生时间</span>
+            <span class="value">{{item.occurTime}}</span>
+          </div>
+          <div class="text line-3">
+            <span class="name">是否采取措施</span>
+            <span class="value">{{item.measureFlag}}</span>
+          </div>
+          <div class="text line-4">
+            <span class="name">不良事件结局</span>
+            <span class="value">{{item.adverseResult}}</span>
+          </div>
+        </card>
       </extensible-panel>
-
     </div>
   </folding-panel>
 </template>
@@ -212,6 +231,7 @@ import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import {
+  deleteAdverseEvent,
   deleteTreatmentEvaluation,
   deletePhysiontherapy,
   deletePatientMedicine,
@@ -263,6 +283,12 @@ export default {
         return [];
       }
     },
+    diagnosticAdverseEvent: {
+      type: Array,
+      default: () => {
+        return [];
+      }
+    },
     archived: {
       type: Boolean,
       default: true
@@ -301,7 +327,7 @@ export default {
       return '程控记录（' + amount + '条记录）';
     },
     physiontherapyTitle() {
-      var totalCount = this.diagnosticPhysiontherapy.length + this.diagnosticTreatmentEvaluation.length;
+      var totalCount = this.diagnosticPhysiontherapy.length + this.diagnosticTreatmentEvaluation.length + this.diagnosticAdverseEvent.length;
       return '物理治疗（' + totalCount + '条记录）';
     },
     preEvaluationList() {
@@ -563,6 +589,10 @@ export default {
         {
           text: '治疗评估',
           callback: this.addTreatmentEvaluation
+        },
+        {
+          text: '不良事件',
+          callback: this.addAdverseEvent
         }
       ];
       Bus.$emit(this.SHOW_CHOICE_PANEL, list);
@@ -600,6 +630,24 @@ export default {
       };
       Bus.$on(this.CONFIRM, () => {
         deleteTreatmentEvaluation(patientTreatmentEvaluation).then(this._resolveDeletion, this._rejectDeletion);
+      });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
+    },
+    addAdverseEvent() {
+      Bus.$emit(this.SHOW_ADVERSE_EVENT_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
+    },
+    viewAdverseEvent(item) {
+      Bus.$emit(this.SHOW_ADVERSE_EVENT_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived);
+    },
+    editAdverseEvent(item) {
+      Bus.$emit(this.SHOW_ADVERSE_EVENT_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
+    },
+    deleteAdverseEvent(item) {
+      var patientAdverseEvent = {
+        patientAdverseId: item.patientAdverseId
+      };
+      Bus.$on(this.CONFIRM, () => {
+        deleteAdverseEvent(patientAdverseEvent).then(this._resolveDeletion, this._rejectDeletion);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },

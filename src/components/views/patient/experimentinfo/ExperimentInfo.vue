@@ -5,7 +5,7 @@
       <div class="button light-button application-button" v-if="listType==='myPatients'" @click="applyTojoin">
         申请入组
       </div>
-      <div class="button light-blue-button refuse-button" v-if="listType==='appraisersPatients'" @click="refuseApplication">
+      <div class="button light-blue-button reject-button" v-if="listType==='appraisersPatients'" @click="rejectApplication">
         退回
       </div>
       <div class="button light-button agree-button" v-if="listType==='appraisersPatients'" @click="agreeApplication">
@@ -26,14 +26,14 @@
           <td class="col col-end-time">结束时间</td>
           <td class="col col-remarks">处理意见</td>
         </tr>
-        <tr class="row">
-          <td class="col col-number">1</td>
-          <td class="col col-progress">筛选入组</td>
-          <td class="col col-executor">增增增</td>
+        <tr class="row" v-for="(step, index) in progressList">
+          <td class="col col-number">{{index + 1}}</td>
+          <td class="col col-progress">{{step.milestone}}</td>
+          <td class="col col-executor">{{step.executeBy}}</td>
           <td class="col col-status">完成</td>
-          <td class="col col-start-time">2017-12-12 19:00</td>
-          <td class="col col-end-time">2017-1-7 18:00</td>
-          <td class="col col-remarks">该患者符合课题要求，申请入组</td>
+          <td class="col col-start-time">{{step.startDate}}</td>
+          <td class="col col-end-time">{{step.endDate}}</td>
+          <td class="col col-remarks">{{step.remark}}</td>
         </tr>
       </table>
     </div>
@@ -46,7 +46,9 @@ import { queryExperimentProgress } from 'api/experiment.js';
 
 export default {
   data() {
-    return {};
+    return {
+      progressList: []
+    };
   },
   computed: {
     listType() {
@@ -69,14 +71,14 @@ export default {
     applyTojoin() {
       Bus.$emit(this.SHOW_APPLICATION_MODAL, this.ADD_NEW_CARD, {}, true);
     },
-    refuseApplication() {
-
+    rejectApplication() {
+      Bus.$emit(this.SHOW_REJECTION_MODAL, this.ADD_NEW_CARD, {}, true);
     },
     agreeApplication() {
       Bus.$emit(this.SHOW_RATIFICATION_MODAL, this.ADD_NEW_CARD, {}, true);
     },
     completeTherapy() {
-
+      Bus.$emit(this.SHOW_TERMINATION_MODAL, this.ADD_NEW_CARD, {}, true);
     }
   },
   mounted() {
@@ -86,6 +88,11 @@ export default {
     };
     queryExperimentProgress(experimentInfo).then((data) => {
       console.log(data);
+      if (data && data.length > 0) {
+        this.progressList = data;
+      } else {
+        this.progressList = [];
+      }
     }, (error) => {
       console.log(error);
     });
@@ -147,7 +154,7 @@ export default {
       &.application-button {
         right: 10px;
       }
-      &.refuse-button {
+      &.reject-button {
         right: 30px + @small-button-width;
       }
       &.agree-button {
