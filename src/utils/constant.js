@@ -96,6 +96,7 @@ export default {
   SHOW_PASSWORD_MODAL: 'showPasswordModal',
   SHOW_PHYSIONTHERAPY_MODAL: 'showPhysiontherapyModal',
   SHOW_TREATMENT_EVALUATION_MODAL: 'showTreatmentEvaluationModal',
+  SHOW_ADVERSE_EVENT_MODAL: 'showAdverseEventModal',
   SHOW_VITALSIGNS_MODAL: 'showVitalSignsModal',
   SHOW_FIRSTSYMPTOMS_MODAL: 'showFirstSymptomsModal',
   SHOW_FIRSTTREATMENT_MODAL: 'showFirstTreatmentModal',
