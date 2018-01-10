@@ -26,7 +26,7 @@
         </div>
 
         <!-- 以下是 运动症状才有的序列 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
-        <div v-show="copyInfo.symType===0">
+        <div v-if="copyInfo.symType===0">
           <div class="field">
             <span class="field-name long-field-name">
               症状名称:
@@ -151,7 +151,7 @@
 
 
         <!-- 以下是 运动并发症才有的序列 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
-        <div v-show="copyInfo.symType===1">
+        <div v-if="copyInfo.symType===1">
           
           <div class="field">
             <span class="field-name long-field-name">
@@ -245,7 +245,7 @@
         <!-- 以上是 运动并发症才有的序列 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ -->
 
         <!-- 以下是 非运动症状才有的序列 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
-        <div v-show="copyInfo.symType===2">
+        <div v-if="copyInfo.symType===2">
 
           <div class="field">
             <span class="field-name long-field-name">
@@ -453,17 +453,34 @@ export default {
       this.mode = cardOperation;
       this.title2 = title2;
       // ******************************
-      this.copyInfo.symType = item.symType;
-      this.copyInfo.symName = item.symName;
-      this.copyInfo.ariseTimeLeftDown = item.ariseTimeLeftDown;
-      this.copyInfo.ariseTimeLeftUp = item.ariseTimeLeftUp;
-      this.copyInfo.ariseTimeRightDown = item.ariseTimeRightDown;
-      this.copyInfo.ariseTimeRightUp = item.ariseTimeRightUp;
-      this.copyInfo.whetherLaw = item.whetherLaw;
-      this.copyInfo.remarks = item.remarks;
-      this.copyInfo.ariseTime = item.ariseTime;
-      this.copyInfo.lastTime = item.lastTime;
-      this.copyInfo.notSportTypeId = item.notSportTypeId;
+      // this.copyInfo.symType = item.symType;
+      // this.$nextTick(() => {
+      //   this.copyInfo.symName = item.symName;
+      //   this.copyInfo.ariseTimeLeftDown = item.ariseTimeLeftDown;
+      //   this.copyInfo.ariseTimeLeftUp = item.ariseTimeLeftUp;
+      //   this.copyInfo.ariseTimeRightDown = item.ariseTimeRightDown;
+      //   this.copyInfo.ariseTimeRightUp = item.ariseTimeRightUp;
+      //   this.copyInfo.whetherLaw = item.whetherLaw;
+      //   this.copyInfo.remarks = item.remarks;
+      //   this.copyInfo.ariseTime = item.ariseTime;
+      //   this.copyInfo.lastTime = item.lastTime;
+      //   this.copyInfo.notSportTypeId = item.notSportTypeId;
+      // });
+
+      this.$set(this.copyInfo, 'symType', item.symType);
+
+      this.$nextTick(() => {
+        this.$set(this.copyInfo, 'symName', item.symName);
+        this.$set(this.copyInfo, 'ariseTimeLeftDown', item.ariseTimeLeftDown);
+        this.$set(this.copyInfo, 'ariseTimeLeftUp', item.ariseTimeLeftUp);
+        this.$set(this.copyInfo, 'ariseTimeRightDown', item.ariseTimeRightDown);
+        this.$set(this.copyInfo, 'ariseTimeRightUp', item.ariseTimeRightUp);
+        this.$set(this.copyInfo, 'whetherLaw', item.whetherLaw);
+        this.$set(this.copyInfo, 'remarks', item.remarks);
+        this.$set(this.copyInfo, 'ariseTime', item.ariseTime);
+        this.$set(this.copyInfo, 'lastTime', item.lastTime);
+        this.$set(this.copyInfo, 'notSportTypeId', item.notSportTypeId);
+      });
       // ---------
       this.id = item.id;
       // ********************************
