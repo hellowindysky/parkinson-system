@@ -353,6 +353,7 @@ export default {
         reaction.severityLevel = '';
       }
       // console.log('item: ', item);
+
       this.patientPhytheTmsId = item.patientPhytheTmsId ? item.patientPhytheTmsId : '';
       this.recordDate = item.recordDate ? item.recordDate : '';
       this.physiType = item.physiType ? item.physiType : '';
@@ -364,7 +365,6 @@ export default {
       this.rightThresholdBefore = item.rightThresholdBefore ? item.rightThresholdBefore : '';
       this.leftThresholdAfter = item.leftThresholdAfter ? item.leftThresholdAfter : '';
       this.rightThresholdAfter = item.rightThresholdAfter ? item.rightThresholdAfter : '';
-      this.patientId = item.patientId ? item.patientId : '';
       this.remark = item.remark ? item.remark : '';
       this.hasNoReaction = item.reactionFlag === 1;
       vueCopy(item.patientPhytheReaction, this.patientPhytheReaction);
@@ -440,8 +440,8 @@ export default {
         }
       }
       var physicsInfo = {};
+      physicsInfo.patientId = this.$route.params.id;
       physicsInfo.patientCaseId = this.$route.params.caseId;
-      
       physicsInfo.physiType = this.physiType;
       physicsInfo.recordDate = this.recordDate;
       physicsInfo.deviceType = this.deviceType;
@@ -453,7 +453,6 @@ export default {
       physicsInfo.rightThresholdBefore = this.rightThresholdBefore;
       physicsInfo.leftThresholdAfter = this.leftThresholdAfter;
       physicsInfo.rightThresholdAfter = this.rightThresholdAfter;
-      physicsInfo.patientId = this.patientId;
       physicsInfo.remark = this.remark;
       physicsInfo.reactionFlag = this.hasNoReaction ? 1 : 0;
       physicsInfo.patientPhytheReaction = deepCopy(this.patientPhytheReaction);
