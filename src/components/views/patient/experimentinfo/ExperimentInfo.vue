@@ -44,7 +44,7 @@
           <td class="col col-number">{{index + 1}}</td>
           <td class="col col-progress">{{step.milestone}}</td>
           <td class="col col-executor">{{step.executeBy}}</td>
-          <td class="col col-status">完成</td>
+          <td class="col col-status" :class="getStatusColor(step)">{{getStatusText(step)}}</td>
           <td class="col col-start-time">{{step.startDate}}</td>
           <td class="col col-end-time">{{step.endDate}}</td>
           <td class="col col-remarks">{{step.remark}}</td>
@@ -104,6 +104,36 @@ export default {
     },
     completeTherapy() {
       Bus.$emit(this.SHOW_TERMINATION_MODAL, this.ADD_NEW_CARD, {}, true);
+    },
+    getStatus(step) {
+      var phase = step.phase;
+      if (phase) {
+        var status = phase.split('.')[1];
+        if (status !== undefined) {
+          return Number(status);
+        }
+      }
+      return '';
+    },
+    getStatusText(step) {
+      var status = this.getStatus(step);
+      if (status === 1) {
+        return '进行中';
+      } else if (status === 2) {
+        return '完成';
+      } else if (status === 3) {
+        return '退回';
+      }
+    },
+    getStatusColor(step) {
+      var status = this.getStatus(step);
+      if (status === 1) {
+        return 'waiting';
+      } else if (status === 2) {
+        return 'finished';
+      } else if (status === 3) {
+        return 'rejected';
+      }
     },
     updateExperimentProgress() {
       var experimentInfo = {
@@ -176,7 +206,7 @@ export default {
         color: @button-color;
       }
       .experiment-number {
-        color: @button-color;
+        color: @green-color;
       }
     }
     .button {
@@ -255,6 +285,15 @@ export default {
           }
           &.col-remarks {
             width: 30%;
+          }
+          &.waiting {
+            color: @green-color;
+          }
+          &.finished {
+            color: @font-color;
+          }
+          &.rejected {
+            color: @alert-color;
           }
         }
       }

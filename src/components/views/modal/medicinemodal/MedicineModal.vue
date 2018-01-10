@@ -814,7 +814,7 @@ export default {
             display: inline-block;
             margin-left: 2px;
             width: 60px;
-            color: #208040;
+            color: @green-color;
             text-align: center;
           }
           .warning-text {
