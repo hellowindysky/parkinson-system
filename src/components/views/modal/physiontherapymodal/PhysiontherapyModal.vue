@@ -260,55 +260,55 @@ export default {
       patientPhytheReaction: [
         {
           'reactionType': 1,
-          'severityLevel': '',
+          'severityLevel': ''
         },
         {
           'reactionType': 2,
-          'severityLevel': '',
+          'severityLevel': ''
         },
         {
           'reactionType': 3,
-          'severityLevel': '',
+          'severityLevel': ''
         },
         {
           'reactionType': 4,
-          'severityLevel': '',
+          'severityLevel': ''
         },
         {
           'reactionType': 5,
-          'severityLevel': '',
+          'severityLevel': ''
         },
         {
           'reactionType': 6,
-          'severityLevel': '',
+          'severityLevel': ''
         },
         {
           'reactionType': 7,
-          'severityLevel': '',
+          'severityLevel': ''
         },
         {
           'reactionType': 8,
-          'severityLevel': '',
+          'severityLevel': ''
         },
         {
           'reactionType': 9,
-          'severityLevel': '',
+          'severityLevel': ''
         },
         {
           'reactionType': 10,
-          'severityLevel': '',
+          'severityLevel': ''
         },
         {
           'reactionType': 11,
-          'severityLevel': '',
+          'severityLevel': ''
         },
         {
           'reactionType': 12,
-          'severityLevel': '',
+          'severityLevel': ''
         },
         {
           'reactionType': 13,
-          'severityLevel': '',
+          'severityLevel': ''
         }
       ],
       warningResults: {
@@ -441,7 +441,7 @@ export default {
       }
       var physicsInfo = {};
       physicsInfo.patientCaseId = this.$route.params.caseId;
-
+      
       physicsInfo.physiType = this.physiType;
       physicsInfo.recordDate = this.recordDate;
       physicsInfo.deviceType = this.deviceType;
