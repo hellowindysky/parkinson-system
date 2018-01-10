@@ -57,7 +57,9 @@
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-date-picker v-model="copyInfo.ariseTimeLeftUp" type="date" placeholder="请选择左上肢出现时间" clearable ></el-date-picker>
+              <el-date-picker v-model="copyInfo.ariseTimeLeftUp" type="date" placeholder="请选择左上肢出现时间" clearable
+               :picker-options="pickerOptions"> 
+              </el-date-picker>
             </span>
           </div>
 
@@ -71,7 +73,9 @@
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-date-picker v-model="copyInfo.ariseTimeRightUp" type="date" placeholder="请选择右上肢出现时间" clearable ></el-date-picker>
+              <el-date-picker v-model="copyInfo.ariseTimeRightUp" type="date" placeholder="请选择右上肢出现时间" clearable
+               :picker-options="pickerOptions">
+              </el-date-picker>
             </span>
           </div>
 
@@ -85,7 +89,9 @@
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-date-picker v-model="copyInfo.ariseTimeLeftDown" type="date" placeholder="请选择左下肢出现时间" clearable ></el-date-picker>
+              <el-date-picker v-model="copyInfo.ariseTimeLeftDown" type="date" placeholder="请选择左下肢出现时间" clearable
+               :picker-options="pickerOptions">
+              </el-date-picker>
             </span>
           </div>
 
@@ -99,7 +105,9 @@
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-date-picker v-model="copyInfo.ariseTimeRightDown" type="date" placeholder="请选择右下肢出现时间" clearable ></el-date-picker>
+              <el-date-picker v-model="copyInfo.ariseTimeRightDown" type="date" placeholder="请选择右下肢出现时间" clearable
+               :picker-options="pickerOptions">
+              </el-date-picker>
             </span>
           </div>
 
@@ -113,7 +121,7 @@
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-select v-model="copyInfo.whetherLaw" placeholder="请选择是否规律出现">
+              <el-select v-model="copyInfo.whetherLaw" placeholder="请选择是否规律出现" clearable >
                 <el-option label="是" :value="'是'"></el-option>
                 <el-option label="否" :value="'否'"></el-option>
             </el-select>
@@ -173,7 +181,9 @@
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-date-picker v-model="copyInfo.ariseTime" type="date" placeholder="请选择出现时间" clearable ></el-date-picker>
+              <el-date-picker v-model="copyInfo.ariseTime" type="date" placeholder="请选择出现时间" clearable
+               :picker-options="pickerOptions">
+              </el-date-picker>
             </span>
           </div>
 
@@ -188,7 +198,7 @@
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
               <el-select v-model="copyInfo.whetherLaw"
-                placeholder="请选择是否规律出现">
+                placeholder="请选择是否规律出现" clearable >
                   <el-option label="是" :value="'是'"></el-option>
                   <el-option label="否" :value="'否'"></el-option>
               </el-select>
@@ -283,7 +293,9 @@
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-date-picker v-model="copyInfo.ariseTime" type="date" placeholder="请选择出现时间" clearable ></el-date-picker>
+              <el-date-picker v-model="copyInfo.ariseTime" type="date" placeholder="请选择出现时间" clearable
+               :picker-options="pickerOptions">
+              </el-date-picker>
             </span>
           </div>
 
@@ -298,7 +310,7 @@
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
               <el-select v-model="copyInfo.whetherLaw"
-                placeholder="请选择是否规律出现">
+                placeholder="请选择是否规律出现" clearable >
                   <el-option label="是" :value="'是'"></el-option>
                   <el-option label="否" :value="'否'"></el-option>
               </el-select>
@@ -370,6 +382,11 @@ export default {
         symName: '',
         notSportType: ''
       },
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        }
+      },
       lockSubmitButton: false,
       showEdit: true
     };
@@ -425,7 +442,7 @@ export default {
     },
     showModal(cardOperation, item, title2) {
       this.completeInit = false;
-      console.log(cardOperation, item);
+      // console.log(cardOperation, item);
       this.mode = cardOperation;
       this.title2 = title2;
       // ******************************
@@ -510,7 +527,7 @@ export default {
       });
     },
     getNoSportOptions(fieldType) {
-      return this.noSportType.filter((obj) => {
+      let noSportArr = this.noSportType.filter((obj) => {
         return obj.noSportType === fieldType;
       }).map((obj) => {
         return {
@@ -518,6 +535,11 @@ export default {
           code: obj.id
         };
       });
+      // 特殊要求：如果select列表只有一项自动把这一项显示出来
+      if (noSportArr.length === 1) {
+        this.$set(this.copyInfo, 'symName', noSportArr[0].name);
+      }
+      return noSportArr;
     },
     updateWarning(fieldName) {
       if (this.completeInit && !this.copyInfo[fieldName]) {

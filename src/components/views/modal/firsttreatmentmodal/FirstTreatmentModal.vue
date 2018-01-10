@@ -110,7 +110,9 @@
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-date-picker v-model="copyInfo.firstTime" type="date" placeholder="请选择初次用药时间" clearable ></el-date-picker>
+              <el-date-picker v-model="copyInfo.firstTime" type="date" placeholder="请选择初次用药时间" clearable
+               :picker-options="pickerOptions">
+              </el-date-picker>
             </span>
           </div>
 
@@ -190,7 +192,9 @@
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-date-picker v-model="copyInfo.treatmentTime" type="date" placeholder="请选择治疗时间" clearable ></el-date-picker>
+              <el-date-picker v-model="copyInfo.treatmentTime" type="date" placeholder="请选择治疗时间" clearable
+               :picker-options="pickerOptions">
+              </el-date-picker>
             </span>
           </div>
 
@@ -256,6 +260,11 @@ export default {
         firstVisitType: '',
         treatmentType: '',
         medicineClassification: ''
+      },
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        }
       },
       lockSubmitButton: false,
       showEdit: true
