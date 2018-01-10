@@ -358,7 +358,7 @@ export default {
       treatmentEvaluationInfo.rightThreshold = this.rightThreshold;
       treatmentEvaluationInfo.situationRemark = this.situationRemark;
       treatmentEvaluationInfo.remark = this.remark;
-      treatmentEvaluationInfo.patientId = this.patientId;
+      treatmentEvaluationInfo.patientId = this.$route.params.id;
       treatmentEvaluationInfo.reactionFlag = this.hasNoReaction ? 1 : 0;
       treatmentEvaluationInfo.patientPhytheReaction = deepCopy(this.patientPhytheReaction);
       reviseDateFormat(treatmentEvaluationInfo);
