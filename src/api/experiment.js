@@ -41,3 +41,11 @@ export function agreeEnteringExperiment(experimentInfo) {
   var url = '/pdms/agreePatientExperiment';
   return encapsulatePromise(url, request);
 };
+
+// 结束治疗
+export function completeExperiment(experimentInfo) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientExperimentModel = experimentInfo;
+  var url = 'pdms/completePatientExperiment';
+  return encapsulatePromise(url, request);
+};

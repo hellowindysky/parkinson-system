@@ -521,7 +521,7 @@ export default {
       if (this.searchInput !== '' && this.listType === this.GROUP_TYPE) {
         condition.groupeName = this.searchInput.trim();
       }
-      condition.groupModule = this.inSubject ? 2 : 1;
+      condition.groupModule = this.inSubject ? this.$store.state.subjectId : 0;
       this.hasFirstUpdatedList = true;
       getGroupList(condition).then((data) => {
         this.groupList = data ? data : [];
