@@ -59,7 +59,9 @@
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-date-picker v-model="copyInfo.ariseTimeLeftUp" type="date" placeholder="请选择左上肢出现时间" clearable ></el-date-picker>
+              <el-date-picker v-model="copyInfo.ariseTimeLeftUp" type="date" placeholder="请选择左上肢出现时间" clearable
+               :picker-options="pickerOptions">
+              </el-date-picker>
             </span>
           </div>
 
@@ -73,7 +75,9 @@
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-date-picker v-model="copyInfo.ariseTimeRightUp" type="date" placeholder="请选择右上肢出现时间" clearable ></el-date-picker>
+              <el-date-picker v-model="copyInfo.ariseTimeRightUp" type="date" placeholder="请选择右上肢出现时间" clearable
+               :picker-options="pickerOptions">
+              </el-date-picker>
             </span>
           </div>
 
@@ -87,7 +91,9 @@
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-date-picker v-model="copyInfo.ariseTimeLeftDown" type="date" placeholder="请选择左下肢出现时间" clearable ></el-date-picker>
+              <el-date-picker v-model="copyInfo.ariseTimeLeftDown" type="date" placeholder="请选择左下肢出现时间" clearable
+               :picker-options="pickerOptions">
+              </el-date-picker>
             </span>
           </div>
 
@@ -101,7 +107,9 @@
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-date-picker v-model="copyInfo.ariseTimeRightDown" type="date" placeholder="请选择右下肢出现时间" clearable ></el-date-picker>
+              <el-date-picker v-model="copyInfo.ariseTimeRightDown" type="date" placeholder="请选择右下肢出现时间" clearable
+               :picker-options="pickerOptions">
+              </el-date-picker>
             </span>
           </div>
 
@@ -178,7 +186,9 @@
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-date-picker v-model="copyInfo.ariseTime" type="date" placeholder="请选择出现时间" clearable ></el-date-picker>
+              <el-date-picker v-model="copyInfo.ariseTime" type="date" placeholder="请选择出现时间" clearable
+               :picker-options="pickerOptions">
+              </el-date-picker>
             </span>
           </div>
 
@@ -292,7 +302,9 @@
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-date-picker v-model="copyInfo.ariseTime" type="date" placeholder="请选择出现时间" clearable ></el-date-picker>
+              <el-date-picker v-model="copyInfo.ariseTime" type="date" placeholder="请选择出现时间" clearable
+               :picker-options="pickerOptions">
+              </el-date-picker>
             </span>
           </div>
 
@@ -380,6 +392,11 @@ export default {
         symType: '',
         symName: '',
         notSportTypeId: ''
+      },
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        }
       },
       lockSubmitButton: false,
       showEdit: true
