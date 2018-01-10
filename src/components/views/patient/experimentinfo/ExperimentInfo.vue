@@ -88,8 +88,8 @@ export default {
     };
     queryExperimentProgress(experimentInfo).then((data) => {
       console.log(data);
-      if (data && data.length > 0) {
-        this.progressList = data;
+      if (data && data.patientExperiment && data.patientExperiment.length > 0) {
+        this.progressList = data.patientExperiment;
       } else {
         this.progressList = [];
       }

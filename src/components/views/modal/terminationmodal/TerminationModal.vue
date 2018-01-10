@@ -53,7 +53,7 @@
       </div>
 
       <div class="button cancel-button" @click="cancel">取消</div>
-      <div v-if="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD" class="button submit-button">确定</div>
+      <div v-if="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD" class="button submit-button" @click="submit">确定</div>
       <div v-else-if="mode===VIEW_CURRENT_CARD" class="button submit-button">编辑</div>
 
     </div>
@@ -61,9 +61,10 @@
 </template>
 
 <script>
-import Bus from 'utils/bus.js';
-import Util from 'utils/util.js';
+import Bus from 'utils/bus';
+import Util from 'utils/util';
 import { mapGetters } from 'vuex';
+import { completeExperiment } from 'api/experiment';
 
 export default {
   data() {
@@ -122,6 +123,31 @@ export default {
         });
       };
       return options;
+    },
+    submit() {
+      if (this.lockSubmitButton) {
+        return;
+      }
+      this.lockSubmitButton = true;
+      for (let property in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(property)) {
+          this.updateWarning(property);
+        }
+      }
+      for (let property in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(property) && this.warningResults[property]) {
+          this.lockSubmitButton = false;
+          return;
+        }
+      }
+    },
+    _handleError(error) {
+      console.log(error);
+      this.lockSubmitButton = false;
+    },
+    updateAndClose() {
+      this.lockSubmitButton = false;
+      this.displayModal = false;
     }
   },
   mounted() {
