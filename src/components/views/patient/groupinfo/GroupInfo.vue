@@ -155,6 +155,7 @@ export default {
         'patientGroupId': this.groupId,
         'includeType': 1  // 1代表组内，2代表非组内
       };
+      groupCondition.groupModule = this.$store.state.subjectId === this.SUBJECT_ID_FOR_HOSPITAL ? 0 : this.$store.state.subjectId;
       getGroupMembers(groupCondition).then((data) => {
         this.groupPatients = data;
         let length = this.groupPatients.length;
@@ -186,6 +187,7 @@ export default {
           'patientGroupId': this.groupId,
           'includeType': 2  // 1代表组内，2代表非组内
         };
+        groupCondition.groupModule = this.$store.state.subjectId === this.SUBJECT_ID_FOR_HOSPITAL ? 0 : this.$store.state.subjectId;
         getGroupMembers(groupCondition).then((data) => {
           this.nonGroupPatients = data;
           let length = this.nonGroupPatients.length;
