@@ -5,13 +5,13 @@
       <div class="button light-button application-button" v-if="listType==='myPatients'" @click="applyTojoin">
         申请入组
       </div>
-      <div class="button light-blue-button reject-button" v-if="listType==='appraisersPatients'" @click="rejectApplication">
+      <div class="button light-blue-button reject-button" v-if="listType==='appraisersPatients' && progressList.length>0" @click="rejectApplication">
         退回
       </div>
-      <div class="button light-button agree-button" v-if="listType==='appraisersPatients'" @click="agreeApplication">
+      <div class="button light-button agree-button" v-if="listType==='appraisersPatients' && progressList.length>0" @click="agreeApplication">
         通过
       </div>
-      <div class="button light-button complete-therapy-button" v-if="listType==='therapistsPatients'" @click="completeTherapy">
+      <div class="button light-button complete-therapy-button" v-if="listType==='therapistsPatients' && progressList.length>0" @click="completeTherapy">
         结束治疗
       </div>
     </div>

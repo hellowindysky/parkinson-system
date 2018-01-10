@@ -15,8 +15,10 @@
           <span class="field-input" v-else>
             <span class="warning-text">{{warningResults.nextStep}}</span>
             <el-select v-model="nextStep" placeholder="请选择下一节点" clearable>
-              <el-option :label="'随访期'" :value="1"></el-option>
-              <el-option :label="'实验结束（等待揭盲）'" :value="2"></el-option>
+              <el-option v-for="option in getOptions('taskStatus')" :value="option.code"
+                :label="option.name" :key="option.code"></el-option>
+              <!-- <el-option :label="'随访期'" :value="4"></el-option>
+              <el-option :label="'实验结束（等待揭盲）'" :value="5"></el-option> -->
             </el-select>
           </span>
         </div>
@@ -66,6 +68,9 @@
 
 <script>
 import Bus from 'utils/bus.js';
+import Util from 'utils/util.js';
+import { mapGetters } from 'vuex';
+
 export default {
   data() {
     return {
@@ -80,6 +85,11 @@ export default {
       nextStep: '',
       remark: ''
     };
+  },
+  computed: {
+    ...mapGetters([
+      'typeGroup'
+    ])
   },
   methods: {
     showPanel(cardOperation, item, showEdit) {
@@ -101,6 +111,23 @@ export default {
     },
     cancel() {
       this.displayModal = false;
+    },
+    transform(code, fieldName) {
+      var options = this.getOptions(fieldName);
+      var targetOption = Util.getElement('code', code, options);
+      return targetOption.name;
+    },
+    getOptions(fieldName) {
+      var options = [];
+      var typeInfo = Util.getElement('typegroupcode', fieldName, this.typeGroup);
+      var types = typeInfo.types ? typeInfo.types : [];
+      for (let type of types) {
+        options.push({
+          name: type.typeName,
+          code: type.typeCode
+        });
+      };
+      return options;
     }
   },
   mounted() {

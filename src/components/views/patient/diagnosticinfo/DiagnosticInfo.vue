@@ -48,6 +48,10 @@ export default {
         return 'otherPatients';
       } else if (this.$route.matched.some(record => record.meta.subjectPatients)) {
         return 'subjectPatients';
+      } else if (this.$route.matched.some(record => record.meta.therapistsPatients)) {
+        return 'therapistsPatients';
+      } else if (this.$route.matched.some(record => record.meta.appraisersPatients)) {
+        return 'appraisersPatients';
       } else {
         return 'unknown';
       }
@@ -131,6 +135,10 @@ export default {
         routeName = 'otherDiagnosticDetail';
       } else if (this.listType === 'subjectPatients') {
         routeName = 'subjectDiagnosticDetail';
+      } else if (this.listType === 'therapistsPatients') {
+        routeName = 'therapistsPatientsDiagnosticDetail';
+      } else if (this.listType === 'appraisersPatients') {
+        routeName = 'appraisersPatientsDiagnosticDetail';
       }
       this.$router.push({
         name: routeName,
@@ -169,6 +177,16 @@ export default {
       } else if (this.listType === 'subjectPatients') {
         this.$router.push({
           name: 'subjectrDiagnosticDetail',
+          params: {'caseId': 'newCase'}
+        });
+      } else if (this.listType === 'therapistsPatients') {
+        this.$router.push({
+          name: 'therapistsPatientsDiagnosticDetail',
+          params: {'caseId': 'newCase'}
+        });
+      } else if (this.listType === 'appraisersPatients') {
+        this.$router.push({
+          name: 'appraisersPatientsDiagnosticDetail',
           params: {'caseId': 'newCase'}
         });
       }
