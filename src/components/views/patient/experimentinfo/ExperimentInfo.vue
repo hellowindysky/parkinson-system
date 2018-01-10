@@ -2,6 +2,12 @@
   <div class="experiment-info">
     <div class="top-bar">
       <span class="title">实验流程</span>
+      <span v-if="status > 2" class="info-text">
+        实验方式 <span class="value experiment-mode">{{experimentModeText}}</span>
+        治疗者 <span class="value therapist">{{therapist}}</span>
+        评估者 <span class="value appraiser">{{appraiser}}</span>
+        实验编号 <span class="value experiment-number">{{experimentNumber}}</span>
+      </span>
       <div class="button light-button application-button"
         v-if="listType==='myPatients'"
         @click="applyTojoin">
@@ -55,7 +61,11 @@ import { queryExperimentProgress } from 'api/experiment.js';
 export default {
   data() {
     return {
-      progressList: []
+      progressList: [],
+      status: '',
+      experimentMode: '',
+      therapist: '',
+      appraiser: ''
     };
   },
   computed: {
@@ -72,6 +82,13 @@ export default {
         return 'appraisersPatients';
       } else {
         return 'unknown';
+      }
+    },
+    experimentModeText() {
+      if (this.experimentMode === 1) {
+        return '双盲实验';
+      } else {
+        return '';
       }
     }
   },
@@ -100,6 +117,11 @@ export default {
         } else {
           this.progressList = [];
         }
+        this.status = data.status ? data.status : '';
+        this.experimentMode = data.taskMode ? data.taskMode : 1;
+        this.therapist = data.treater ? data.treater : '';
+        this.appraiser = data.assessor ? data.assessor : '';
+        this.experimentNumber = data.taskCode ? data.taskCode : '';
       }, (error) => {
         console.log(error);
       });
@@ -140,6 +162,22 @@ export default {
       line-height: 40px;
       font-size: @large-font-size;
       font-weight: bold;
+    }
+    .info-text {
+      margin-left: 20px;
+      .value {
+        margin-left: 5px;
+        margin-right: 10px;
+      }
+      .experiment-mode {
+        color: @light-font-color;
+      }
+      .therapist, .appraiser {
+        color: @button-color;
+      }
+      .experiment-number {
+        color: @button-color;
+      }
     }
     .button {
       position: absolute;

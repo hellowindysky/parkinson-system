@@ -148,12 +148,10 @@ export default {
       }
 
       var experimentInfo = {
-        'taskGroupId': this.experimentalGroup,
-        'treaterId': this.therapist,
-        'assessorId': this.appraiser,
-        'remark': this.remark,
-        'patientId': this.$route.params.id,
-        'tcTaskId': this.$store.state.subjectId
+        taskCode: this.experimentNumber,
+        remark: this.remark,
+        patientId: this.$route.params.id,
+        tcTaskId: this.$store.state.subjectId
       };
       agreeEnteringExperiment(experimentInfo).then(this.updateAndClose, this._handleError);
     },
