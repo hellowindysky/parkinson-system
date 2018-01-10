@@ -165,68 +165,55 @@ export default {
       patientPhytheReaction: [
         {
           'reactionType': 1,
-          'severityLevel': '',
-          'assessType': 1
+          'severityLevel': ''
         },
         {
           'reactionType': 2,
-          'severityLevel': '',
-          'assessType': 1
+          'severityLevel': ''
         },
         {
           'reactionType': 3,
-          'severityLevel': '',
-          'assessType': 1
+          'severityLevel': ''
         },
         {
           'reactionType': 4,
-          'severityLevel': '',
-          'assessType': 1
+          'severityLevel': ''
         },
         {
           'reactionType': 5,
-          'severityLevel': '',
-          'assessType': 1
+          'severityLevel': ''
         },
         {
           'reactionType': 6,
-          'severityLevel': '',
-          'assessType': 1
+          'severityLevel': ''
         },
         {
           'reactionType': 7,
-          'severityLevel': '',
-          'assessType': 1
+          'severityLevel': ''
         },
         {
           'reactionType': 8,
-          'severityLevel': '',
-          'assessType': 1
+          'severityLevel': ''
         },
         {
           'reactionType': 9,
-          'severityLevel': '',
-          'assessType': 1
+          'severityLevel': ''
         },
         {
           'reactionType': 10,
-          'severityLevel': '',
-          'assessType': 1
+          'severityLevel': ''
         },
         {
           'reactionType': 11,
-          'severityLevel': '',
-          'assessType': 1
+          'severityLevel': ''
         },
         {
           'reactionType': 12,
-          'severityLevel': '',
-          'assessType': 1
+          'severityLevel': ''
         },
         {
           'reactionType': 13,
-          'severityLevel': '',
-          'assessType': 1
+          'severityLevel': ''
         }
       ],
       warningResults: {
