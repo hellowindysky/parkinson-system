@@ -79,23 +79,27 @@ export default {
     },
     completeTherapy() {
       Bus.$emit(this.SHOW_TERMINATION_MODAL, this.ADD_NEW_CARD, {}, true);
+    },
+    updateExperimentProgress() {
+      var experimentInfo = {
+        'patientId': this.$route.params.id,
+        'tcTaskId': this.$store.state.subjectId
+      };
+      queryExperimentProgress(experimentInfo).then((data) => {
+        console.log(data);
+        if (data && data.patientExperiment && data.patientExperiment.length > 0) {
+          this.progressList = data.patientExperiment;
+        } else {
+          this.progressList = [];
+        }
+      }, (error) => {
+        console.log(error);
+      });
     }
   },
   mounted() {
-    var experimentInfo = {
-      'patientId': this.$route.params.id,
-      'tcTaskId': this.$store.state.subjectId
-    };
-    queryExperimentProgress(experimentInfo).then((data) => {
-      console.log(data);
-      if (data && data.patientExperiment && data.patientExperiment.length > 0) {
-        this.progressList = data.patientExperiment;
-      } else {
-        this.progressList = [];
-      }
-    }, (error) => {
-      console.log(error);
-    });
+    Bus.$on(this.UPDATE_EXPERIMENT_INFO, this.updateExperimentProgress);
+    this.updateExperimentProgress();
   },
   beforeRouteEnter(to, from, next) {
     var subjectId = sessionStorage.getItem('subjectId');

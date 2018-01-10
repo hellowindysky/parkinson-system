@@ -147,6 +147,7 @@ export default {
     },
     updateAndClose() {
       this.lockSubmitButton = false;
+      Bus.$emit(this.UPDATE_EXPERIMENT_INFO);
       this.displayModal = false;
     }
   },
