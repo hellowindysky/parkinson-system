@@ -6,7 +6,7 @@
 
         <div class="field whole-line">
           <span class="field-name">
-            下一节点:
+            下一节点
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -15,30 +15,24 @@
           <span class="field-input" v-else>
             <span class="warning-text">{{warningResults.nextStep}}</span>
             <el-select v-model="nextStep" placeholder="请选择下一节点" clearable>
-              <el-option v-for="option in getOptions('taskStatus')" :value="option.code"
+              <el-option v-for="option in getOptions('nextStatus')" :value="option.code"
                 :label="option.name" :key="option.code"></el-option>
-              <!-- <el-option :label="'随访期'" :value="4"></el-option>
-              <el-option :label="'实验结束（等待揭盲）'" :value="5"></el-option> -->
             </el-select>
           </span>
         </div>
 
         <div class="field whole-line">
           <span class="field-name">
-            接收人:
-            <!-- <span class="required-mark">*</span> -->
+            接收人
           </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>view状态接收人</span>
-          </span>
-          <span class="field-input" v-else>
-            <span>edit状态接收人</span>
+          <span class="field-input">
+            view状态接收人
           </span>
         </div>
 
         <div class="field whole-line">
           <span class="field-name">
-            处理意见:
+            处理意见
             <!-- <span class="required-mark">*</span> -->
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -58,9 +52,9 @@
         <hr class="seperate-line">
       </div>
 
-      <div class="button cancel-button btn-margin" @click="cancel">取消</div>
-      <div v-if="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD" class="button submit-button btn-margin">确定</div>
-      <div v-else-if="mode===VIEW_CURRENT_CARD" class="button submit-button btn-margin">编辑</div>
+      <div class="button cancel-button" @click="cancel">取消</div>
+      <div v-if="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD" class="button submit-button">确定</div>
+      <div v-else-if="mode===VIEW_CURRENT_CARD" class="button submit-button">编辑</div>
 
     </div>
   </div>
@@ -139,7 +133,7 @@ export default {
 <style lang="less">
 @import "~styles/variables.less";
 @field-line-height: 25px;
-@field-name-width: 110px;
+@field-name-width: 100px;
 @long-field-name-width: 160px;
 
 .termination-modal-wrapper{
@@ -155,7 +149,7 @@ export default {
     margin: auto;
     padding: 0 40px;
     top: 10%;
-    width: 660px;
+    width: 600px;
     max-height: 80%;
     background-color: @background-color;
     overflow: hidden;
@@ -169,8 +163,8 @@ export default {
       .seperate-line {
         border-style: none;
         border-top: 1px solid @light-gray-color;
-        margin-top: 5px;
-        margin-bottom: 15px;
+        margin-top: 10px;
+        margin-bottom: 10px;
       }
       .field {
         display: inline-block;
@@ -274,9 +268,6 @@ export default {
       }
       &:active {
         opacity: 0.9;
-      }
-      &.btn-margin {
-        margin-top: 30px;
       }
     }
   }
