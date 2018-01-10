@@ -854,6 +854,7 @@ export default {
     // this.changeCopyInfo();
   },
   mounted() {
+    Bus.$on(this.EDIT_DISEASE_INFO, this.startEditing);
     this.updatafirstSymbolCard();
     Bus.$on(this.UPDATE_FIRSTSYMPTOMS_INFO, this.updatafirstSymbolCard);
     this.updatafirstVisitTreatmentCard();
