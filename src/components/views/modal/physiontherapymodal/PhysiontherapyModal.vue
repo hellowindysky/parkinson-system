@@ -261,67 +261,54 @@ export default {
         {
           'reactionType': 1,
           'severityLevel': '',
-          'assessType': 1
         },
         {
           'reactionType': 2,
           'severityLevel': '',
-          'assessType': 1
         },
         {
           'reactionType': 3,
           'severityLevel': '',
-          'assessType': 1
         },
         {
           'reactionType': 4,
           'severityLevel': '',
-          'assessType': 1
         },
         {
           'reactionType': 5,
           'severityLevel': '',
-          'assessType': 1
         },
         {
           'reactionType': 6,
           'severityLevel': '',
-          'assessType': 1
         },
         {
           'reactionType': 7,
           'severityLevel': '',
-          'assessType': 1
         },
         {
           'reactionType': 8,
           'severityLevel': '',
-          'assessType': 1
         },
         {
           'reactionType': 9,
           'severityLevel': '',
-          'assessType': 1
         },
         {
           'reactionType': 10,
           'severityLevel': '',
-          'assessType': 1
         },
         {
           'reactionType': 11,
           'severityLevel': '',
-          'assessType': 1
         },
         {
           'reactionType': 12,
           'severityLevel': '',
-          'assessType': 1
         },
         {
           'reactionType': 13,
           'severityLevel': '',
-          'assessType': 1
         }
       ],
       warningResults: {
@@ -399,18 +386,6 @@ export default {
       var targetOption = Util.getElement('code', code, options);
       return targetOption.name;
     },
-    // otherCheck() {
-    //   console.log(this.hasNoReaction);
-    //   for (var i = 0 ; i < this.patientPhytheReaction.length ; i++) {
-    //     if (this.patientPhytheReaction[i].severityLevel !== 0) {
-    //       this.hasNoReaction === false;
-    //       // console.log(this.patientPhytheReaction[i]);
-    //       // console.log(this.hasNoReaction);
-    //     } else {
-    //       this.hasNoReaction === true;
-    //     }
-    //   };
-    // },
     checkAll() {
       for (var i = 0; i < this.patientPhytheReaction.length ; i++) {
         if (this.hasNoReaction === true) {
