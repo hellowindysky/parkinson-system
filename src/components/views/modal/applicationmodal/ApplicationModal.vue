@@ -267,6 +267,7 @@ export default {
         type: 'success',
         duration: 2000
       });
+      Bus.$emit(this.UPDATE_EXPERIMENT_INFO);
       this.lockSubmitButton = false;
       this.displayModal = false;
     },

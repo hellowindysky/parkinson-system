@@ -8,7 +8,7 @@
             下一节点
           </span>
           <span class="field-input">
-            治疗期(1)
+            治疗期
           </span>
         </div>
         <div class="field whole-line">
@@ -30,6 +30,7 @@
           <span class="field-input" v-else>
             <el-input
               v-model="experimentNumber"
+              :class="{'warning': warningResults.experimentNumber}"
               @change="updateWarning('experimentNumber')"
               placeholder="请输入实验编号">
             </el-input>
@@ -72,6 +73,9 @@ export default {
       completeInit: false,
       remark: '',
       experimentNumber: '',
+      warningResults: {
+        experimentNumber: ''
+      },
       showEdit: true
     };
   },
@@ -97,8 +101,11 @@ export default {
       this.mode = cardOperation;
       this.showEdit = showEdit;
 
+      this.experimentNumber = '';
+      this.remark = '';
+
       this.$nextTick(() => {
-        this.$refs.scrollArea.scrollTop = 0;
+        // this.$refs.scrollArea.scrollTop = 0;
         for (var property in this.warningResults) {
           if (this.warningResults.hasOwnProperty(property)) {
             this.warningResults[property] = '';
@@ -110,10 +117,10 @@ export default {
       this.displayModal = true;
     },
     updateWarning(fieldName) {
-      if (this[fieldName] === '') {
-        this.warningResults[fieldName] = '必填项';
+      if (this && this[fieldName] === '') {
+        this.$set(this.warningResults, fieldName, '必填项');
       } else {
-        this.warningResults[fieldName] = '';
+        this.$set(this.warningResults, fieldName, '');
       }
     },
     cancel() {
@@ -152,9 +159,22 @@ export default {
     },
     _handleError(error) {
       console.log(error);
+      if (error.code === 2009) {
+        this.$message({
+          message: '该患者已加入实验组，不能重复操作',
+          type: 'error',
+          duration: 2000
+        });
+      }
       this.lockSubmitButton = false;
     },
     updateAndClose() {
+      this.$message({
+        message: '已同意将该患者加入实验组',
+        type: 'success',
+        duration: 2000
+      });
+      Bus.$emit(this.UPDATE_EXPERIMENT_INFO);
       this.lockSubmitButton = false;
       this.displayModal = false;
     }
