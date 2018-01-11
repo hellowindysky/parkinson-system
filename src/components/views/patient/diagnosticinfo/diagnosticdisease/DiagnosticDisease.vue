@@ -349,7 +349,6 @@ export default {
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
     Bus.$on(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
     Bus.$on(this.RECALCULATE_CARD_WIDTH, this.recalculateCardWidth);
-    console.log(this.diagnosticDiseaseTemplate);
   },
   beforeDestroy() {
     Bus.$off(this.SCREEN_SIZE_CHANGE);
