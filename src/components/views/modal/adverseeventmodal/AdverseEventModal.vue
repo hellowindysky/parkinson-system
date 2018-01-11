@@ -548,6 +548,13 @@ export default {
       this.adverseEffect = item.adverseEffect ? item.adverseEffect : '';
       this.medicineMethod = item.medicineMethod ? item.medicineMethod : '';
       this.relieveDate = item.relieveDate ? item.relieveDate : '';
+      this.leadFeath = item.seriousAdverse === 1;
+      this.lifeThreatening = item.seriousAdverse === 1;
+      this.causeHospital = item.seriousAdverse === 1;
+      this.leadContinuous = item.seriousAdverse === 1;
+      this.causeException = item.seriousAdverse === 1;
+      this.medicalEvents = item.seriousAdverse === 1;
+      
 
       this.completeInit = true;
       this.displayModal = true;
@@ -623,6 +630,12 @@ export default {
       adverseEventInfo.adverseResult = this.adverseResult;
       adverseEventInfo.relieveDate = this.relieveDate;
       adverseEventInfo.adverseEffect = this.adverseEffect;
+      adverseEventInfo.seriousAdverse = this.leadFeath ? 1 : 0;
+      adverseEventInfo.seriousAdverse = this.lifeThreatening ? 1 : 0;
+      adverseEventInfo.seriousAdverse = this.causeHospital ? 1 : 0;
+      adverseEventInfo.seriousAdverse = this.leadContinuous ? 1 : 0;
+      adverseEventInfo.seriousAdverse = this.causeException ? 1 : 0;
+      adverseEventInfo.seriousAdverse = this.medicalEvents ? 1 : 0;
 
       reviseMinuteFormat(adverseEventInfo);
       pruneObj(adverseEventInfo);
