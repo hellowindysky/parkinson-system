@@ -895,6 +895,9 @@ export default {
 
       vueCopy(item, this.copyInfo);
       this.copyInfo.elecExamType = this.copyInfo.elecExamType ? Number(this.copyInfo.elecExamType) : '';
+      if (item.imageType !== undefined) {
+        this.copyInfo.elecExamType = item.imageType;
+      }
 
       this.newOther = [];
 
@@ -1018,11 +1021,13 @@ export default {
       }
     },
     clearWarning() {
-      for (let p in this.warningResults) {
-        if (this.warningResults.hasOwnProperty(p)) {
-          this.warningResults[p] = '';
+      this.$nextTick(() => {
+        for (var property in this.warningResults) {
+          if (this.warningResults.hasOwnProperty(property)) {
+            this.warningResults[property] = '';
+          }
         }
-      }
+      });
     },
     selectEmg() {
       var emg = Util.getElement('id', this.copyInfo.elecTroGramId, this.emgTypeList);
@@ -1340,8 +1345,8 @@ export default {
         submitData.patientId = this.$route.params.id;
         submitData.patientCaseId = this.$route.params.caseId;
         submitData.imageType = submitData.elecExamType;
-        submitData.other = this.copyInfo.newOther;
-        delete submitData.newOther;
+        submitData.other = this.newOther;
+        // delete submitData.newOther;
         pruneObj(submitData);
 
         if (this.mode === this.ADD_NEW_CARD) {
@@ -1360,6 +1365,7 @@ export default {
       if (this.$refs.upload4) {
         this.$refs.upload4.clearFiles();
       }
+      Bus.$emit(this.UPDATE_CASE_INFO);
       this.lockSubmitButton = false;
       this.displayModal = false;
     },

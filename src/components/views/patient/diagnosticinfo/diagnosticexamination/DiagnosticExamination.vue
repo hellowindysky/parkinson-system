@@ -106,7 +106,7 @@
         </card>
         <card class="card neuroelectric-card" :class="cardWidth" :mode="mutableMode" v-for="item in electricImagingList" :key="item.patientCaseId"
           :title="transform(item.imageType, 'elecExam')" v-on:editCurrentCard="editNeuroelectricRecord(item)" v-on:viewCurrentCard="viewNeuroelectricRecord(item)"
-          v-on:deleteCurrentCard="deleteNeuroelectricRecord(item)">
+          v-on:deleteCurrentCard="deleteImageRecord(item)">
           <div class="text first-line">
             <span class="name">检查编号</span>
             <span class="value">{{item.checkNum}}</span>
@@ -126,10 +126,10 @@
         </card>
       </extensible-panel>
 <!-- 医学影像 -->
-      <extensible-panel class="panel image-panel" :mode="mutableMode" :title="medicalImagingTitle" v-on:addNewCard="addImgRecord" :editable="canEdit">
+      <extensible-panel class="panel image-panel" :mode="mutableMode" :title="medicalImagingTitle" v-on:addNewCard="addImageRecord" :editable="canEdit">
         <card class="card image-card" :class="cardWidth" :mode="mutableMode" v-for="(item,idx) in medicalImagingList" :key="idx"
-          :title="item.title" v-on:editCurrentCard="editImgRecord(item)" v-on:viewCurrentCard="viewImgRecord(item)"
-          v-on:deleteCurrentCard="deleteImgRecord(item)">
+          :title="item.title" v-on:editCurrentCard="editImageRecord(item)" v-on:viewCurrentCard="viewImageRecord(item)"
+          v-on:deleteCurrentCard="deleteImageRecord(item)">
           <div class="text first-line">
             <span class="name">类型</span>
             <span class="value">{{transform(item.imageType, 'examType')}}</span>
@@ -246,7 +246,7 @@ export default {
       return '生化指标（' + this.biochemicalExamList.length + '条记录）';
     },
     neuroelectricTitle() {
-      let count = this.emgList.length + this.sleepMonitoringList.length;
+      let count = this.emgList.length + this.sleepMonitoringList.length + this.electricImagingList.length;
       return '电生理检查（' + count + '条记录）';
     },
     medicalImagingTitle() {
@@ -374,16 +374,16 @@ export default {
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
-    addImgRecord() {
+    addImageRecord() {
       Bus.$emit(this.SHOW_IMG_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
     },
-    viewImgRecord(item) {
+    viewImageRecord(item) {
       Bus.$emit(this.SHOW_IMG_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived);
     },
-    editImgRecord(item) {
+    editImageRecord(item) {
       Bus.$emit(this.SHOW_IMG_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
     },
-    deleteImgRecord(item) {
+    deleteImageRecord(item) {
       let imageInfo = {
         id: item.id
       };
