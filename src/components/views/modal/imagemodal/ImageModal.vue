@@ -493,9 +493,6 @@ export default {
     }
   },
   methods: {
-    aaa() {
-      console.log(this.magneticIntensity);
-    },
     showPanel(cardOperation, item, showEdit) {
       this.completeInit = false;
       this.mode = cardOperation;
