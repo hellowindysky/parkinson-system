@@ -29,13 +29,14 @@
     <div class="shadow-border"></div>
     <div class="organization-panel" :class="{'hide': !showOranizationPanel}">
       <div class="hospital-items">
-        <div class="item" @click="chooseSubject({})">{{orgName}}</div>
+        <div class="item" @click.stop="chooseSubject({})">{{orgName}}</div>
       </div>
       <div class="seperate-line"></div>
       <div class="subject-items">
         <div v-for="item in subjects">
-          <span class="item" @click="chooseSubject(item)">{{item.taskName}}</span>
-          <span class="item sub-item" v-for="subItem in item.tasks" @click="chooseSubject(subItem)">
+          <span class="item" :class="{'not-optional': item.tasks && item.tasks.length>0}"
+            @click.stop="chooseSubject(item)">{{item.taskName}}</span>
+          <span class="item sub-item" v-for="subItem in item.tasks" @click.stop="chooseSubject(subItem)">
             {{subItem.taskName}}
           </span>
         </div>
@@ -121,6 +122,10 @@ export default {
   },
   methods: {
     chooseSubject(subject) {
+      if (subject.tasks && subject.tasks.length > 0) {
+        return;
+      }
+
       var subjectId = subject.id ? subject.id : this.SUBJECT_ID_FOR_HOSPITAL;
       var subjectName = subject.taskName ? subject.taskName : '';
 
@@ -490,6 +495,12 @@ export default {
       }
       &:active {
         background-color: fade(@font-color, 90%);
+      }
+      &.not-optional {
+        cursor: default;
+        &:hover, &:active {
+          background-color: rgba(0, 0, 0, 0);
+        }
       }
     }
     .sub-item {

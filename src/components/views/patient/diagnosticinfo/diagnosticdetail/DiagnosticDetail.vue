@@ -64,6 +64,10 @@ export default {
         return 'otherPatients';
       } else if (this.$route.matched.some(record => record.meta.subjectPatients)) {
         return 'subjectPatients';
+      } else if (this.$route.matched.some(record => record.meta.therapistsPatients)) {
+        return 'therapistsPatients';
+      } else if (this.$route.matched.some(record => record.meta.appraisersPatients)) {
+        return 'appraisersPatients';
       } else {
         return 'unknown';
       }
@@ -115,15 +119,27 @@ export default {
       var regMyPatientsWithoutCase = new RegExp(/^\/patients\/list\/[0-9]+\/diagnosticInfo\/?$/);
       var regOtherPatientsWithoutCase = new RegExp(/^\/patients\/otherList\/[0-9]+\/diagnosticInfo\/?$/);
       var regSubjectPatientsWithoutCase = new RegExp(/^\/patients\/subjectList\/[0-9]+\/diagnosticInfo\/?$/);
+      var regTherapistsPatientsWithoutCase = new RegExp(/^\/patients\/therapistsPatientList\/[0-9]+\/diagnosticInfo\/?$/);
+      var regAppraisersPatientsWithoutCase = new RegExp(/^\/patients\/appraisersPatientList\/[0-9]+\/diagnosticInfo\/?$/);
 
       var regMyPatientsWithCase = new RegExp(/^\/patients\/list\/[0-9]+\/diagnosticInfo\/[0-9a-zA-Z]+$/);
       var regOtherPatientsWithCase = new RegExp(/^\/patients\/otherList\/[0-9]+\/diagnosticInfo\/[0-9a-zA-Z]+$/);
       var regSubjectPatientsWithCase = new RegExp(/^\/patients\/subjectList\/[0-9]+\/diagnosticInfo\/[0-9a-zA-Z]+$/);
+      var regTherapistsPatientsWithCase = new RegExp(/^\/patients\/therapistsPatientList\/[0-9]+\/diagnosticInfo\/[0-9a-zA-Z]+$/);
+      var regAppraisersPatientsWithCase = new RegExp(/^\/patients\/appraisersPatientList\/[0-9]+\/diagnosticInfo\/[0-9a-zA-Z]+$/);
 
-      if (regMyPatientsWithoutCase.test(path) || regOtherPatientsWithoutCase.test(path) || regSubjectPatientsWithoutCase.test(path)) {
+      if (regMyPatientsWithoutCase.test(path) ||
+        regOtherPatientsWithoutCase.test(path) ||
+        regSubjectPatientsWithoutCase.test(path) ||
+        regTherapistsPatientsWithoutCase.test(path) ||
+        regAppraisersPatientsWithoutCase.test(path)) {
         // 一旦发现路由地址中还没有 caseId，则不显示诊断详情面板
         this.closePanel();
-      } else if (regMyPatientsWithCase.test(path) || regOtherPatientsWithCase.test(path) || regSubjectPatientsWithCase.test(path)) {
+      } else if (regMyPatientsWithCase.test(path) ||
+        regOtherPatientsWithCase.test(path) ||
+        regSubjectPatientsWithCase.test(path) ||
+        regTherapistsPatientsWithCase.test(path) ||
+        regAppraisersPatientsWithCase.test(path)) {
         // 如果路由地址中有 caseId，则显示面板并获取对应的诊断数据
         this.caseId = this.$route.params.caseId;
         this.showDetailPanel();
@@ -169,6 +185,10 @@ export default {
         this.$router.push({name: 'otherDiagnosticInfo'});
       } else if (this.listType === 'subjectPatients') {
         this.$router.push({name: 'subjectDiagnosticInfo'});
+      } else if (this.listType === 'therapistsPatients') {
+        this.$router.push({name: 'therapistsPatientsDiagnosticInfo'});
+      } else if (this.listType === 'appraisersPatients') {
+        this.$router.push({name: 'appraisersPatientsDiagnosticInfo'});
       }
 
       // 同时，告诉它的子页面，放弃当前修改

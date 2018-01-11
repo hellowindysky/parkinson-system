@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="adverse-event-modal-wrapper" v-show="displayModal">
     <div class="adverse-event-modal" ref="scrollArea">
-      <h3 class="title">{{title}}</h3>  
+      <h3 class="title">{{title}}</h3>
       <div class="content">
         <div class="field whole-line">
           <span class="field-name">
@@ -138,46 +138,46 @@
           严重不良事件：
           </span>
           <div class="moveLeft">
-            <el-checkbox 
+            <el-checkbox
               v-model="leadFeath"
               :disabled="mode===VIEW_CURRENT_CARD">
             </el-checkbox>
             导致死亡
           </div>
           <div class="moveLeft">
-            <el-checkbox 
+            <el-checkbox
               v-model="lifeThreatening"
               :disabled="mode===VIEW_CURRENT_CARD">
             </el-checkbox>
-            威胁生命  
+            威胁生命
           </div>
           <div class="moveLeft">
-            <el-checkbox 
+            <el-checkbox
               v-model="causeHospital"
               :disabled="mode===VIEW_CURRENT_CARD">
             </el-checkbox>
-            导致住院  
+            导致住院
           </div>
           <div class="moveLeft">
-            <el-checkbox 
+            <el-checkbox
               v-model="leadContinuous"
-              :disabled="mode===VIEW_CURRENT_CARD"> 
-            </el-checkbox>  
-            导致持续或验证残疾/能力丧失  
+              :disabled="mode===VIEW_CURRENT_CARD">
+            </el-checkbox>
+            导致持续或验证残疾/能力丧失
           </div>
           <div class="moveLeft">
-            <el-checkbox 
+            <el-checkbox
               v-model="causeException"
               :disabled="mode===VIEW_CURRENT_CARD">
             </el-checkbox>
-            导致先天性异常或出生障碍  
+            导致先天性异常或出生障碍
           </div>
           <div class="moveLeft">
-            <el-checkbox 
+            <el-checkbox
               v-model="medicalEvents"
               :disabled="mode===VIEW_CURRENT_CARD">
-            </el-checkbox>  
-            重要医学事件  
+            </el-checkbox>
+            重要医学事件
           </div>
         </div>
         <div class="form-wrapper" ref="form4">
@@ -415,8 +415,8 @@
               </el-select>
             </span>
           </div>
-        </div>  
-      </div>  
+        </div>
+      </div>
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
       <div v-if="mode!==VIEW_CURRENT_CARD" class="button submit-button" @click="submit">确定</div>

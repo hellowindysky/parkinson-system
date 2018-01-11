@@ -1,91 +1,164 @@
 <template lang="html">
-  <div class="endtreatment-modal-wrapper" v-show="displayModal">
-    <div class="endtreatment-modal">
+  <div class="termination-modal-wrapper" v-show="displayModal">
+    <div class="termination-modal">
       <h3 class="title">{{title}}</h3>
       <div class="content">
 
         <div class="field whole-line">
           <span class="field-name">
-            下一节点:
-            <!-- <span class="required-mark">*</span> -->
+            下一节点
+            <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span>view状态下一节点文本</span>
           </span>
           <span class="field-input" v-else>
-            <!-- <span class="warning-text">{{warningResults.name}}</span> -->
-            <el-select v-model="test1" placeholder="请选择下一节点" clearable>
-              <el-option :label="'随访期'" :value="1"></el-option>
-              <el-option :label="'实验结束（等待揭盲）'" :value="2"></el-option>
+            <span class="warning-text">{{warningResults.nextStep}}</span>
+            <el-select v-model="nextStep" placeholder="请选择下一节点" clearable>
+              <el-option v-for="option in getOptions('nextStatus')" :value="option.code"
+                :label="option.name" :key="option.code"></el-option>
             </el-select>
           </span>
         </div>
 
         <div class="field whole-line">
           <span class="field-name">
-            接收人:
-            <!-- <span class="required-mark">*</span> -->
+            接收人
           </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>view状态接收人</span>
-          </span>
-          <span class="field-input" v-else>
-            <span>edit状态接收人</span>
+          <span class="field-input">
+            view状态接收人
           </span>
         </div>
 
         <div class="field whole-line">
           <span class="field-name">
-            处理意见:
+            处理意见
             <!-- <span class="required-mark">*</span> -->
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span>view状态处理意见文本</span>
           </span>
           <span class="field-input" v-else>
-            <el-input v-model="test2" placeholder="请输入处理意见" :maxlength="50"></el-input>
+            <el-input
+              v-model="remark"
+              type="textarea"
+              :rows="2"
+              :maxlength="500"
+              placeholder="请输入处理意见">
+            </el-input>
           </span>
         </div>
 
         <hr class="seperate-line">
       </div>
 
-      <div class="button cancel-button btn-margin" @click="cancel">取消</div>
-      <div v-if="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD" class="button submit-button btn-margin">确定</div>
-      <div v-else-if="mode===VIEW_CURRENT_CARD" class="button submit-button btn-margin">编辑</div>
+      <div class="button cancel-button" @click="cancel">取消</div>
+      <div v-if="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD" class="button submit-button" @click="submit">确定</div>
+      <div v-else-if="mode===VIEW_CURRENT_CARD" class="button submit-button">编辑</div>
 
     </div>
   </div>
 </template>
 
 <script>
-import Bus from 'utils/bus.js';
+import Bus from 'utils/bus';
+import Util from 'utils/util';
+import { mapGetters } from 'vuex';
+import { completeExperiment } from 'api/experiment';
+
 export default {
   data() {
     return {
       displayModal: false,
       title: '结束治疗',
       mode: '',
-      test1: '',
-      test2: ''
+      showEdit: '',
+      warningResults: {
+        nextStep: ''
+      },
+
+      nextStep: '',
+      remark: ''
     };
   },
+  computed: {
+    ...mapGetters([
+      'typeGroup'
+    ])
+  },
   methods: {
-    showModal(options) {
-      this.mode = options.cardOperation;
+    showPanel(cardOperation, item, showEdit) {
+      this.completeInit = false;
+      this.mode = cardOperation;
+      this.showEdit = showEdit;
+      // console.log('item: ', item);
+
+      this.$nextTick(() => {
+        for (var property in this.warningResults) {
+          if (this.warningResults.hasOwnProperty(property)) {
+            this.warningResults[property] = '';
+          }
+        }
+      });
+
+      this.completeInit = true;
       this.displayModal = true;
     },
     cancel() {
       this.displayModal = false;
+    },
+    transform(code, fieldName) {
+      var options = this.getOptions(fieldName);
+      var targetOption = Util.getElement('code', code, options);
+      return targetOption.name;
+    },
+    getOptions(fieldName) {
+      var options = [];
+      var typeInfo = Util.getElement('typegroupcode', fieldName, this.typeGroup);
+      var types = typeInfo.types ? typeInfo.types : [];
+      for (let type of types) {
+        options.push({
+          name: type.typeName,
+          code: type.typeCode
+        });
+      };
+      return options;
+    },
+    submit() {
+      if (this.lockSubmitButton) {
+        return;
+      }
+      this.lockSubmitButton = true;
+      for (let property in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(property)) {
+          this.updateWarning(property);
+        }
+      }
+      for (let property in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(property) && this.warningResults[property]) {
+          this.lockSubmitButton = false;
+          return;
+        }
+      }
+      completeExperiment().then(this.updateAndClose, this._handleError);
+    },
+    _handleError(error) {
+      console.log(error);
+      this.lockSubmitButton = false;
+    },
+    updateAndClose() {
+      this.$message({
+        message: '已结束治疗过程',
+        type: 'success',
+        duration: 2000
+      });
+      Bus.$emit(this.UPDATE_EXPERIMENT_INFO);
+      this.lockSubmitButton = false;
+      this.displayModal = false;
     }
   },
   mounted() {
-    /* setTimeout(() => {
-      Bus.$emit(this.SHOW_ENDTHETREATMENT_MODAL, {
-        cardOperation: this.ADD_NEW_CARD
-      });
-    }, 5000); */
-    Bus.$on(this.SHOW_ENDTHETREATMENT_MODAL, this.showModal);
+    Bus.$on(this.SHOW_TERMINATION_MODAL, this.showPanel);
   }
 };
 </script>
@@ -93,10 +166,10 @@ export default {
 <style lang="less">
 @import "~styles/variables.less";
 @field-line-height: 25px;
-@field-name-width: 110px;
+@field-name-width: 100px;
 @long-field-name-width: 160px;
 
-.endtreatment-modal-wrapper{
+.termination-modal-wrapper{
   position: absolute;
   left: 0;
   top: 0;
@@ -104,13 +177,13 @@ export default {
   height: 100%;
   background-color: fadeout(@light-font-color, 30%);
   z-index: 500;
-  .endtreatment-modal{
+  .termination-modal{
     position: relative;
     margin: auto;
     padding: 0 40px;
-    top: 3%;
-    width: 660px;
-    max-height: 94%;
+    top: 10%;
+    width: 600px;
+    max-height: 80%;
     background-color: @background-color;
     overflow: hidden;
     .title {
@@ -123,8 +196,8 @@ export default {
       .seperate-line {
         border-style: none;
         border-top: 1px solid @light-gray-color;
-        margin-top: 5px;
-        margin-bottom: 15px;
+        margin-top: 10px;
+        margin-bottom: 10px;
       }
       .field {
         display: inline-block;
@@ -228,9 +301,6 @@ export default {
       }
       &:active {
         opacity: 0.9;
-      }
-      &.btn-margin {
-        margin-top: 30px;
       }
     }
   }

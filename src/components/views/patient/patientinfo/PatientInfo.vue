@@ -243,7 +243,7 @@ export default {
       var condition = {
         'patientId': this.patientId
       };
-      condition.groupModule = this.inSubject ? 2 : 1;
+      condition.groupModule = this.inSubject ? this.$store.state.subjectId : 0;
       getPatientGroupInfo(condition).then((data) => {
         this.belongGroups = data;
       }, (error) => {

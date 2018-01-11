@@ -26,7 +26,7 @@
         </div>
 
         <!-- 以下是 药物治疗才有的序列 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
-        <div v-show="copyInfo.firstVisitType===1">
+        <div v-if="copyInfo.firstVisitType===1">
           <div class="field">
             <span class="field-name long-field-name">
               药物分类:
@@ -110,7 +110,9 @@
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-date-picker v-model="copyInfo.firstTime" type="date" placeholder="请选择初次用药时间" clearable ></el-date-picker>
+              <el-date-picker v-model="copyInfo.firstTime" type="date" placeholder="请选择初次用药时间" clearable
+               :picker-options="pickerOptions">
+              </el-date-picker>
             </span>
           </div>
 
@@ -133,7 +135,7 @@
 
 
         <!-- 以下是 非药物治疗才有的序列 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
-        <div v-show="copyInfo.firstVisitType===2">
+        <div v-if="copyInfo.firstVisitType===2">
 
           <div class="field">
             <span class="field-name long-field-name">
@@ -190,7 +192,9 @@
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-date-picker v-model="copyInfo.treatmentTime" type="date" placeholder="请选择治疗时间" clearable ></el-date-picker>
+              <el-date-picker v-model="copyInfo.treatmentTime" type="date" placeholder="请选择治疗时间" clearable
+               :picker-options="pickerOptions">
+              </el-date-picker>
             </span>
           </div>
 
@@ -256,6 +260,12 @@ export default {
         firstVisitType: '',
         treatmentType: '',
         medicineClassification: ''
+      },
+      runClearVal: true, // 是否执行clearVal方法中的置空copyInfo操作
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        }
       },
       lockSubmitButton: false,
       showEdit: true
@@ -325,7 +335,7 @@ export default {
   methods: {
     clearVal(fieldName) {
       for (let key in this.copyInfo) {
-        if (fieldName.indexOf(key) === -1) {
+        if (fieldName.indexOf(key) === -1 && this.runClearVal) {
           this.$set(this.copyInfo, key, '');
         };
       };
@@ -347,20 +357,23 @@ export default {
     },
     showModal(cardOperation, item) {
       this.completeInit = false;
+      this.runClearVal = false;
       console.log(cardOperation, item);
       this.mode = cardOperation;
       // ----------------------
-      this.copyInfo.firstVisitType = item.firstVisitType;
-      this.copyInfo.treatmentType = item.treatmentType;
-      this.copyInfo.treatmentMethod = item.treatmentMethod;
-      this.copyInfo.treatmentTime = item.treatmentTime;
-      this.copyInfo.remarks = item.remarks;
-      this.copyInfo.medicineClassification = item.medicineClassification;
-      this.copyInfo.medicineName = item.medicineName;
-      this.copyInfo.dailyDosage = item.dailyDosage;
-      this.copyInfo.firstTime = item.firstTime;
+      this.$set(this.copyInfo, 'firstVisitType', item.firstVisitType);
+      this.$set(this.copyInfo, 'treatmentType', item.treatmentType);
+      this.$set(this.copyInfo, 'treatmentMethod', item.treatmentMethod);
+      this.$set(this.copyInfo, 'treatmentTime', item.treatmentTime);
+      this.$set(this.copyInfo, 'remarks', item.remarks);
+      this.$set(this.copyInfo, 'medicineClassification', item.medicineClassification);
+      this.$set(this.copyInfo, 'medicineName', item.medicineName);
+      this.$set(this.copyInfo, 'dailyDosage', item.dailyDosage);
+      this.$set(this.copyInfo, 'firstTime', item.firstTime);
+
       // 编辑时的id
       this.id = item.id;
+      console.log(this.copyInfo);
       // -------------------------
       if (this.mode === this.ADD_NEW_CARD) {
         for (let key in this.copyInfo) {
@@ -378,6 +391,9 @@ export default {
       this.completeInit = true;
       this.displayModal = true;
       this.updateScrollbar();
+      this.$nextTick(() => {
+        this.runClearVal = true;
+      });
     },
     updateScrollbar() {
       this.$nextTick(() => {

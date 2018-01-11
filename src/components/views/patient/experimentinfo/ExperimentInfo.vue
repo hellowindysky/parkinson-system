@@ -2,17 +2,41 @@
   <div class="experiment-info">
     <div class="top-bar">
       <span class="title">实验流程</span>
-      <div class="button light-button application-button" v-if="listType==='myPatients'" @click="applyTojoin">
+      <span v-if="status > 2" class="info-text">
+        实验方式 <span class="value experiment-mode">{{experimentModeText}}</span>
+        治疗者 <span class="value therapist">{{therapist}}</span>
+        评估者 <span class="value appraiser">{{appraiser}}</span>
+        实验编号 <span class="value experiment-number">{{experimentNumber}}</span>
+      </span>
+      <div class="button light-button application-button"
+        v-if="listType==='myPatients' && progressList.length===0"
+        @click="applyTojoin">
         申请入组
       </div>
-      <div class="button light-blue-button refuse-button" v-if="listType==='appraisersPatients'" @click="refuseApplication">
+      <div class="button light-button application-button"
+        v-if="listType==='myPatients' && isApplicationRejected"
+        @click="applyTojoin">
+        重新申请
+      </div>
+      <div class="button light-blue-button reject-button"
+        v-if="listType==='appraisersPatients' && progressList.length>0 && status===2"
+        @click="rejectApplication">
         退回
       </div>
-      <div class="button light-button agree-button" v-if="listType==='appraisersPatients'" @click="agreeApplication">
+      <div class="button light-button agree-button"
+        v-if="listType==='appraisersPatients' && progressList.length>0 && status===2"
+        @click="agreeApplication">
         通过
       </div>
-      <div class="button light-button complete-therapy-button" v-if="listType==='therapistsPatients'" @click="completeTherapy">
+      <div class="button light-button complete-therapy-button"
+        v-if="listType==='therapistsPatients' && progressList.length>0 && status===3"
+        @click="completeTherapy">
         结束治疗
+      </div>
+      <div class="button light-button complete-follow-up-button"
+        v-if="listType==='appraisersPatients' && progressList.length>0 && status===3"
+        @click="completeFollowUp">
+        本期随访结束
       </div>
     </div>
     <div class="content">
@@ -26,14 +50,14 @@
           <td class="col col-end-time">结束时间</td>
           <td class="col col-remarks">处理意见</td>
         </tr>
-        <tr class="row">
-          <td class="col col-number">1</td>
-          <td class="col col-progress">筛选入组</td>
-          <td class="col col-executor">增增增</td>
-          <td class="col col-status">完成</td>
-          <td class="col col-start-time">2017-12-12 19:00</td>
-          <td class="col col-end-time">2017-1-7 18:00</td>
-          <td class="col col-remarks">该患者符合课题要求，申请入组</td>
+        <tr class="row" v-for="(step, index) in progressList">
+          <td class="col col-number">{{index + 1}}</td>
+          <td class="col col-progress">{{step.milestone}}</td>
+          <td class="col col-executor">{{step.executeBy}}</td>
+          <td class="col col-status" :class="getStatusColor(step)">{{getStatusText(step)}}</td>
+          <td class="col col-start-time">{{step.startDate}}</td>
+          <td class="col col-end-time">{{step.endDate}}</td>
+          <td class="col col-remarks">{{step.remark}}</td>
         </tr>
       </table>
     </div>
@@ -46,7 +70,13 @@ import { queryExperimentProgress } from 'api/experiment.js';
 
 export default {
   data() {
-    return {};
+    return {
+      progressList: [],
+      status: '',
+      experimentMode: '',
+      therapist: '',
+      appraiser: ''
+    };
   },
   computed: {
     listType() {
@@ -63,32 +93,97 @@ export default {
       } else {
         return 'unknown';
       }
+    },
+    isApplicationRejected() {
+      var length = this.progressList.length;
+      if (length > 0) {
+        var theLastStep = this.progressList[length - 1];
+        var status = this.getStatus(theLastStep);
+        if (status === 3) {
+          return true;
+        }
+      }
+      return false;
+    },
+    experimentModeText() {
+      if (this.experimentMode === 1) {
+        return '双盲实验';
+      } else {
+        return '';
+      }
     }
   },
   methods: {
     applyTojoin() {
       Bus.$emit(this.SHOW_APPLICATION_MODAL, this.ADD_NEW_CARD, {}, true);
     },
-    refuseApplication() {
-
+    rejectApplication() {
+      Bus.$emit(this.SHOW_REJECTION_MODAL, this.ADD_NEW_CARD, {}, true);
     },
     agreeApplication() {
       Bus.$emit(this.SHOW_RATIFICATION_MODAL, this.ADD_NEW_CARD, {}, true);
     },
     completeTherapy() {
-
+      Bus.$emit(this.SHOW_TERMINATION_MODAL, this.ADD_NEW_CARD, {}, true);
+    },
+    completeFollowUp() {
+      Bus.$emit(this.SHOW_FOLLOW_UP_SUMMARY_MODAL, this.ADD_NEW_CARD, {}, true);
+    },
+    getStatus(step) {
+      var phase = step.phase;
+      if (phase) {
+        var status = phase.split('.')[1];
+        if (status !== undefined) {
+          return Number(status);
+        }
+      }
+      return '';
+    },
+    getStatusText(step) {
+      var status = this.getStatus(step);
+      if (status === 1) {
+        return '进行中';
+      } else if (status === 2) {
+        return '完成';
+      } else if (status === 3) {
+        return '退回';
+      }
+    },
+    getStatusColor(step) {
+      var status = this.getStatus(step);
+      if (status === 1) {
+        return 'waiting';
+      } else if (status === 2) {
+        return 'finished';
+      } else if (status === 3) {
+        return 'rejected';
+      }
+    },
+    updateExperimentProgress() {
+      var experimentInfo = {
+        'patientId': this.$route.params.id,
+        'tcTaskId': this.$store.state.subjectId
+      };
+      queryExperimentProgress(experimentInfo).then((data) => {
+        console.log(data);
+        if (data && data.patientExperiment && data.patientExperiment.length > 0) {
+          this.progressList = data.patientExperiment;
+        } else {
+          this.progressList = [];
+        }
+        this.status = data.status ? data.status : '';
+        this.experimentMode = data.taskMode ? data.taskMode : 1;
+        this.therapist = data.treater ? data.treater : '';
+        this.appraiser = data.assessor ? data.assessor : '';
+        this.experimentNumber = data.taskCode ? data.taskCode : '';
+      }, (error) => {
+        console.log(error);
+      });
     }
   },
   mounted() {
-    var experimentInfo = {
-      'patientId': this.$route.params.id,
-      'tcTaskId': this.$store.state.subjectId
-    };
-    queryExperimentProgress(experimentInfo).then((data) => {
-      console.log(data);
-    }, (error) => {
-      console.log(error);
-    });
+    Bus.$on(this.UPDATE_EXPERIMENT_INFO, this.updateExperimentProgress);
+    this.updateExperimentProgress();
   },
   beforeRouteEnter(to, from, next) {
     var subjectId = sessionStorage.getItem('subjectId');
@@ -122,6 +217,22 @@ export default {
       font-size: @large-font-size;
       font-weight: bold;
     }
+    .info-text {
+      margin-left: 20px;
+      .value {
+        margin-left: 5px;
+        margin-right: 10px;
+      }
+      .experiment-mode {
+        color: @light-font-color;
+      }
+      .therapist, .appraiser {
+        color: @button-color;
+      }
+      .experiment-number {
+        color: @green-color;
+      }
+    }
     .button {
       position: absolute;
       top: 6px;
@@ -147,7 +258,7 @@ export default {
       &.application-button {
         right: 10px;
       }
-      &.refuse-button {
+      &.reject-button {
         right: 30px + @small-button-width;
       }
       &.agree-button {
@@ -155,6 +266,10 @@ export default {
       }
       &.complete-therapy-button {
         right: 10px;
+      }
+      &.complete-follow-up-button {
+        right: 10px;
+        width: 100px;
       }
     }
   }
@@ -198,6 +313,15 @@ export default {
           }
           &.col-remarks {
             width: 30%;
+          }
+          &.waiting {
+            color: @green-color;
+          }
+          &.finished {
+            color: @font-color;
+          }
+          &.rejected {
+            color: @alert-color;
           }
         }
       }

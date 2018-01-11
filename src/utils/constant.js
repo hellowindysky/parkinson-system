@@ -71,6 +71,7 @@ export default {
   UPDATE_FIRSTTREATMENT_INFO: 'updateFirstTreatmentInfo',
   UPDATE_VISITDIAGNOSTICRECORD_INFO: 'updateVisitDiagnosticRecordInfo',
   UPDATE_COMPLAINTSYMPTOMS_INFO: 'updateComplaintSymptomsInfo',
+  UPDATE_EXPERIMENT_INFO: 'updateExperimentInfo',
 
   BLUR_ON_SCREEN: 'blurOnScreen',
 
@@ -103,11 +104,11 @@ export default {
   SHOW_DIAGNOSTIC_RECORD_MODAL: 'showDiagnosticRecordModal',
   SHOW_CHIEFCOMPLAINTSYMPTOMS_MODAL: 'showChiefComplaintSymptomsModal',
   SHOW_APPLICATION_MODAL: 'showApplicationModal',
-  SHOW_RETURN_APPLICATION_MODAL: 'showReturnApplicationModal',
+  SHOW_REJECTION_MODAL: 'showRejectionModal',
   SHOW_RATIFICATION_MODAL: 'showRatificationModal',
   SHOW_ENDOF_FOLLOWUP_MODAL: 'showEndofFollowupModal',
-  SHOW_ENDTHETREATMENT_MODAL: 'showTheTreatmentModal',
-  SHOW_FOLLOWUPSUMMARY_MODAL: 'showFollowupSummaryModal',
+  SHOW_TERMINATION_MODAL: 'showTerminationModal',
+  SHOW_FOLLOW_UP_SUMMARY_MODAL: 'showFollowUpSummaryModal',
 
   SHOW_CHOICE_PANEL: 'showChoicePanel',
 

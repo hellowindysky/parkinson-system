@@ -1,8 +1,24 @@
 <template lang="html">
-  <div class="return-application-modal-wrapper" v-show="displayModal">
-    <div class="return-application-modal" ref="scrollArea">
+  <div class="rejection-modal-wrapper" v-show="displayModal">
+    <div class="rejection-modal">
       <h3 class="title">{{title}}</h3>
       <div class="content">
+        <div class="field whole-line">
+          <span class="field-name">
+            退回节点
+          </span>
+          <span class="field-input">
+            筛选入组
+          </span>
+        </div>
+        <div class="field whole-line">
+          <span class="field-name">
+            接收人
+          </span>
+          <span class="field-input">
+            XXX
+          </span>
+        </div>
         <div class="field whole-line">
           <span class="field-name">
             处理意见：
@@ -28,11 +44,10 @@
     </div>
   </div>
 </template>
+
 <script>
-import { mapGetters } from 'vuex';
-import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
-import Util from 'utils/util.js';
+import { rejectEnteringExperiment } from 'api/experiment';
 
 export default {
   data() {
@@ -41,19 +56,10 @@ export default {
       mode: '',
       completeInit: false,
       remark: '',
-      testNumber: '',
-      pickerOptions: {
-        disabledDate(time) {
-          return time.getTime() > Date.now();
-        }
-      },
       showEdit: true
     };
   },
   computed: {
-    ...mapGetters([
-      'typeGroup'
-    ]),
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
         return '退回';
@@ -74,14 +80,9 @@ export default {
       this.completeInit = false;
       this.mode = cardOperation;
       this.showEdit = showEdit;
-      for (let reaction of this.patientPhytheReaction) {
-        reaction.severityLevel = '';
-      }
       // console.log('item: ', item);
-      this.patientId = item.patientId ? item.patientId : '';
-      this.remark = item.remark ? item.remark : '';
+
       this.$nextTick(() => {
-        this.$refs.scrollArea.scrollTop = 0;
         for (var property in this.warningResults) {
           if (this.warningResults.hasOwnProperty(property)) {
             this.warningResults[property] = '';
@@ -91,24 +92,6 @@ export default {
 
       this.completeInit = true;
       this.displayModal = true;
-      this.updateScrollbar();
-    },
-    transform(code, fieldName) {
-      var options = this.getOptions(fieldName);
-      var targetOption = Util.getElement('code', code, options);
-      return targetOption.name;
-    },
-    getOptions(fieldName) {
-      var options = [];
-      var types = Util.getElement('typegroupcode', fieldName, this.typeGroup).types;
-      types = types ? types : [];
-      for (let type of types) {
-        options.push({
-          name: type.typeName,
-          code: type.typeCode
-        });
-      };
-      return options;
     },
     updateWarning(fieldName) {
       var list = ['recordDate', 'physiType', 'leftThresholdBefore', 'rightThresholdBefore'];
@@ -124,13 +107,13 @@ export default {
     },
     switchToEditingMode() {
       this.mode = this.EDIT_CURRENT_CARD;
-      this.updateScrollbar();
     },
     submit() {
       if (this.lockSubmitButton) {
         return;
       }
       this.lockSubmitButton = true;
+
       for (let property in this.warningResults) {
         if (this.warningResults.hasOwnProperty(property)) {
           this.updateWarning(property);
@@ -142,33 +125,34 @@ export default {
           return;
         }
       }
+
+      var experimentInfo = {
+        remark: this.remark,
+        patientId: this.$route.params.id,
+        tcTaskId: this.$store.state.subjectId
+      };
+      rejectEnteringExperiment(experimentInfo).then(this.updateAndClose, this._handleError);
     },
     _handleError(error) {
       console.log(error);
       this.lockSubmitButton = false;
     },
     updateAndClose() {
-      Bus.$emit(this.UPDATE_CASE_INFO);
+      this.$message({
+        message: '已拒绝将该患者加入实验组',
+        type: 'warning',
+        duration: 2000
+      });
+      Bus.$emit(this.UPDATE_EXPERIMENT_INFO);
       this.lockSubmitButton = false;
       this.displayModal = false;
-    },
-    updateScrollbar() {
-      this.$nextTick(() => {
-        Ps.destroy(this.$refs.scrollArea);
-        Ps.initialize(this.$refs.scrollArea, {
-          wheelSpeed: 1,
-          minScrollbarLength: 40,
-          suppressScrollX: true
-        });
-      });
     }
   },
   mounted() {
-    Bus.$on(this.SHOW_BACKSPACE_MODAL, this.showPanel);
-    this.updateScrollbar();
+    Bus.$on(this.SHOW_REJECTION_MODAL, this.showPanel);
   },
   beforeDestroy() {
-    Bus.$off(this.SHOW_BACKSPACE_MODAL);
+    Bus.$off(this.SHOW_REJECTION_MODAL);
   }
 };
 </script>
@@ -179,7 +163,7 @@ export default {
 @field-line-height: 25px;
 @field-name-width: 150px;
 
-.return-application-modal-wrapper {
+.rejection-modal-wrapper {
   position: absolute;
   left: 0;
   top: 0;
@@ -187,13 +171,13 @@ export default {
   height: 100%;
   background-color: fadeout(@light-font-color, 30%);
   z-index: 500;
-  .return-application-modal {
+  .rejection-modal {
     position: relative;
     margin: auto;
     padding: 0 40px;
-    top: 3%;
+    top: 10%;
     width: 660px;
-    max-height: 94%;
+    max-height: 80%;
     background-color: @background-color;
     overflow: hidden;
     .title {

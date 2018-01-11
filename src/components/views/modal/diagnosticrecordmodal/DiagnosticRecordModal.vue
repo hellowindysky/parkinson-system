@@ -13,7 +13,9 @@
           <span class="warning-text">{{warningResults.ariseTime}}</span>
           <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.ariseTime}}</span>
           <el-date-picker v-else v-model="copyInfo.ariseTime" placeholder="请选择就诊时间" type="date" format="yyyy-MM-dd"
-           @change="updateWarning('ariseTime')" :class="{'warning': warningResults.ariseTime}" ></el-date-picker>
+           @change="updateWarning('ariseTime')" :class="{'warning': warningResults.ariseTime}"
+           :picker-options="pickerOptions">
+          </el-date-picker>
         </span>
       </div>
 
@@ -125,6 +127,11 @@ export default {
       warningResults: {
         ariseTime: '', // 就诊时间
         chiefComplaint: '' // 主诉
+      },
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        }
       },
       lockSubmitButton: false,
       showEdit: true

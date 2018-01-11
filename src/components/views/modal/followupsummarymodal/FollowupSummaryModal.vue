@@ -154,7 +154,7 @@ export default {
     //     cardOperation: this.ADD_NEW_CARD
     //   });
     // }, 5000);
-    Bus.$on(this.SHOW_FOLLOWUPSUMMARY_MODAL, this.showModal);
+    Bus.$on(this.SHOW_FOLLOW_UP_SUMMARY_MODAL, this.showModal);
   }
 };
 </script>

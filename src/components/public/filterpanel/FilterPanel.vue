@@ -1596,7 +1596,7 @@ export default {
       let condition = {
         'patientId': this.patientId
       };
-      condition.groupModule = this.$store.state.subjectId === this.SUBJECT_ID_FOR_HOSPITAL ? 1 : 2;
+      condition.groupModule = this.$store.state.subjectId === this.SUBJECT_ID_FOR_HOSPITAL ? 0 : this.$store.state.subjectId;
       this.belongGroups = [];
       getPatientGroupInfo(condition).then((data) => {
         this.belongGroups = data;
