@@ -414,6 +414,7 @@ export default {
       mode: '',
       completeInit: false,
 
+      id: '',
       name: '',
       patientAttachmentId: '',
       imageType: '',

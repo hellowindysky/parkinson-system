@@ -694,9 +694,9 @@
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import { mapGetters } from 'vuex';
-import { vueCopy, deepCopy } from 'utils/helper';
+import { vueCopy, deepCopy, pruneObj, reviseDateFormat } from 'utils/helper';
 import { baseUrl, getCommonRequest } from 'api/common.js';
-import { addEmg, modEmg, addSleepMonitoring, modSleepMonitoring } from 'api/patient.js';
+import { addEmg, modEmg, addSleepMonitoring, modSleepMonitoring, addImage, modifyImage } from 'api/patient.js';
 import Util from 'utils/util.js';
 
 export default {
@@ -895,6 +895,15 @@ export default {
 
       vueCopy(item, this.copyInfo);
       this.copyInfo.elecExamType = this.copyInfo.elecExamType ? Number(this.copyInfo.elecExamType) : '';
+
+      this.newOther = [];
+
+      this.other = item.other ? item.other : [];
+      for (let fileItem of this.other) {
+        this.newOther.push({
+          id: fileItem.id
+        });
+      }
 
       this.selectEmg();
       this.updateScrollbar();
@@ -1277,6 +1286,7 @@ export default {
         }
       }
 
+      reviseDateFormat(this.copyInfo);
       let submitData = deepCopy(this.copyInfo);
 
       if (submitData.elecExamType === 1) {
@@ -1313,6 +1323,29 @@ export default {
             Bus.$emit(this.UPDATE_CASE_INFO);
             this.cancel();
           }, this._handleError);
+        }
+      } else if (submitData.elecExamType === 9 || submitData.elecExamType === 10) {
+        if (this.uploadingFilesNum > 0) {
+          this.$message({
+            message: '请等待文件上传后再提交',
+            type: 'warning',
+            duration: 2000
+          });
+          this.lockSubmitButton = false;
+          return;
+        }
+
+        submitData.patientId = this.$route.params.id;
+        submitData.patientCaseId = this.$route.params.caseId;
+        submitData.imageType = submitData.elecExamType;
+        submitData.other = this.copyInfo.newOther;
+        delete submitData.newOther;
+        pruneObj(submitData);
+
+        if (this.mode === this.ADD_NEW_CARD) {
+          addImage(submitData).then(this.updateAndClose, this._handleError);
+        } else if (this.mode === this.EDIT_CURRENT_CARD) {
+          modifyImage(submitData).then(this.updateAndClose, this._handleError);
         }
       }
 
