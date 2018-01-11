@@ -3,7 +3,7 @@
     <div class="application-modal" ref="scrollArea">
       <h3 class="title">{{title}}</h3>
       <div class="content">
-        <div class="field whole-line">
+        <!-- <div class="field whole-line">
           <span class="field-name">
             实验组
             <span class="required-mark">*</span>
@@ -22,7 +22,7 @@
               </el-option>
             </el-select>
           </span>
-        </div>
+        </div> -->
         <div class="field whole-line">
           <span class="field-name">
             治疗者
@@ -95,7 +95,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import Ps from 'perfect-scrollbar';
+// import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 // import { deepCopy, pruneObj } from 'utils/helper.js';
@@ -117,7 +117,7 @@ export default {
       therapistsList: [],
       appraisersList: [],
       warningResults: {
-        experimentalGroup: '',
+        // experimentalGroup: '',
         therapist: '',
         appraiser: ''
       },
@@ -165,7 +165,7 @@ export default {
 
       this.completeInit = true;
       this.displayModal = true;
-      this.updateScrollbar();
+      // this.updateScrollbar();
     },
     transform(code, fieldName) {
       var options = this.getOptions(fieldName);
@@ -213,7 +213,7 @@ export default {
     },
     switchToEditingMode() {
       this.mode = this.EDIT_CURRENT_CARD;
-      this.updateScrollbar();
+      // this.updateScrollbar();
     },
     submit() {
       if (this.lockSubmitButton) {
@@ -267,36 +267,34 @@ export default {
         type: 'success',
         duration: 2000
       });
+      Bus.$emit(this.UPDATE_EXPERIMENT_INFO);
       this.lockSubmitButton = false;
       this.displayModal = false;
     },
     updateScrollbar() {
-      this.$nextTick(() => {
-        Ps.destroy(this.$refs.scrollArea);
-        Ps.initialize(this.$refs.scrollArea, {
-          wheelSpeed: 1,
-          minScrollbarLength: 40,
-          suppressScrollX: true
-        });
-      });
+      // this.$nextTick(() => {
+      //   Ps.destroy(this.$refs.scrollArea);
+      //   Ps.initialize(this.$refs.scrollArea, {
+      //     wheelSpeed: 1,
+      //     minScrollbarLength: 40,
+      //     suppressScrollX: true
+      //   });
+      // });
     }
   },
   mounted() {
     Bus.$on(this.SHOW_APPLICATION_MODAL, this.showPanel);
-    this.updateScrollbar();
+    // this.updateScrollbar();
+
+    queryExperimentMember(this.$store.state.subjectId).then((data) => {
+      this.therapistsList = data.treater ? data.treater : [];
+      this.appraisersList = data.assessor ? data.assessor : [];
+    }, (error) => {
+      console.log(error);
+    });
   },
   beforeDestroy() {
     Bus.$off(this.SHOW_APPLICATION_MODAL);
-  },
-  watch: {
-    experimentalGroup: function(val) {
-      queryExperimentMember(this.$store.state.subjectId, val).then((data) => {
-        this.therapistsList = data.treater ? data.treater : [];
-        this.appraisersList = data.assessor ? data.assessor : [];
-      }, (error) => {
-        console.log(error);
-      });
-    }
   }
 };
 </script>

@@ -2,16 +2,30 @@
   <div class="experiment-info">
     <div class="top-bar">
       <span class="title">实验流程</span>
-      <div class="button light-button application-button" v-if="listType==='myPatients'" @click="applyTojoin">
+      <span v-if="status > 2" class="info-text">
+        实验方式 <span class="value experiment-mode">{{experimentModeText}}</span>
+        治疗者 <span class="value therapist">{{therapist}}</span>
+        评估者 <span class="value appraiser">{{appraiser}}</span>
+        实验编号 <span class="value experiment-number">{{experimentNumber}}</span>
+      </span>
+      <div class="button light-button application-button"
+        v-if="listType==='myPatients'"
+        @click="applyTojoin">
         申请入组
       </div>
-      <div class="button light-blue-button reject-button" v-if="listType==='appraisersPatients' && progressList.length>0" @click="rejectApplication">
+      <div class="button light-blue-button reject-button"
+        v-if="listType==='appraisersPatients' && progressList.length>0"
+        @click="rejectApplication">
         退回
       </div>
-      <div class="button light-button agree-button" v-if="listType==='appraisersPatients' && progressList.length>0" @click="agreeApplication">
+      <div class="button light-button agree-button"
+        v-if="listType==='appraisersPatients' && progressList.length>0"
+        @click="agreeApplication">
         通过
       </div>
-      <div class="button light-button complete-therapy-button" v-if="listType==='therapistsPatients' && progressList.length>0" @click="completeTherapy">
+      <div class="button light-button complete-therapy-button"
+        v-if="listType==='therapistsPatients' && progressList.length>0"
+        @click="completeTherapy">
         结束治疗
       </div>
     </div>
@@ -30,7 +44,7 @@
           <td class="col col-number">{{index + 1}}</td>
           <td class="col col-progress">{{step.milestone}}</td>
           <td class="col col-executor">{{step.executeBy}}</td>
-          <td class="col col-status">完成</td>
+          <td class="col col-status" :class="getStatusColor(step)">{{getStatusText(step)}}</td>
           <td class="col col-start-time">{{step.startDate}}</td>
           <td class="col col-end-time">{{step.endDate}}</td>
           <td class="col col-remarks">{{step.remark}}</td>
@@ -47,7 +61,11 @@ import { queryExperimentProgress } from 'api/experiment.js';
 export default {
   data() {
     return {
-      progressList: []
+      progressList: [],
+      status: '',
+      experimentMode: '',
+      therapist: '',
+      appraiser: ''
     };
   },
   computed: {
@@ -65,6 +83,13 @@ export default {
       } else {
         return 'unknown';
       }
+    },
+    experimentModeText() {
+      if (this.experimentMode === 1) {
+        return '双盲实验';
+      } else {
+        return '';
+      }
     }
   },
   methods: {
@@ -79,23 +104,62 @@ export default {
     },
     completeTherapy() {
       Bus.$emit(this.SHOW_TERMINATION_MODAL, this.ADD_NEW_CARD, {}, true);
+    },
+    getStatus(step) {
+      var phase = step.phase;
+      if (phase) {
+        var status = phase.split('.')[1];
+        if (status !== undefined) {
+          return Number(status);
+        }
+      }
+      return '';
+    },
+    getStatusText(step) {
+      var status = this.getStatus(step);
+      if (status === 1) {
+        return '进行中';
+      } else if (status === 2) {
+        return '完成';
+      } else if (status === 3) {
+        return '退回';
+      }
+    },
+    getStatusColor(step) {
+      var status = this.getStatus(step);
+      if (status === 1) {
+        return 'waiting';
+      } else if (status === 2) {
+        return 'finished';
+      } else if (status === 3) {
+        return 'rejected';
+      }
+    },
+    updateExperimentProgress() {
+      var experimentInfo = {
+        'patientId': this.$route.params.id,
+        'tcTaskId': this.$store.state.subjectId
+      };
+      queryExperimentProgress(experimentInfo).then((data) => {
+        console.log(data);
+        if (data && data.patientExperiment && data.patientExperiment.length > 0) {
+          this.progressList = data.patientExperiment;
+        } else {
+          this.progressList = [];
+        }
+        this.status = data.status ? data.status : '';
+        this.experimentMode = data.taskMode ? data.taskMode : 1;
+        this.therapist = data.treater ? data.treater : '';
+        this.appraiser = data.assessor ? data.assessor : '';
+        this.experimentNumber = data.taskCode ? data.taskCode : '';
+      }, (error) => {
+        console.log(error);
+      });
     }
   },
   mounted() {
-    var experimentInfo = {
-      'patientId': this.$route.params.id,
-      'tcTaskId': this.$store.state.subjectId
-    };
-    queryExperimentProgress(experimentInfo).then((data) => {
-      console.log(data);
-      if (data && data.patientExperiment && data.patientExperiment.length > 0) {
-        this.progressList = data.patientExperiment;
-      } else {
-        this.progressList = [];
-      }
-    }, (error) => {
-      console.log(error);
-    });
+    Bus.$on(this.UPDATE_EXPERIMENT_INFO, this.updateExperimentProgress);
+    this.updateExperimentProgress();
   },
   beforeRouteEnter(to, from, next) {
     var subjectId = sessionStorage.getItem('subjectId');
@@ -128,6 +192,22 @@ export default {
       line-height: 40px;
       font-size: @large-font-size;
       font-weight: bold;
+    }
+    .info-text {
+      margin-left: 20px;
+      .value {
+        margin-left: 5px;
+        margin-right: 10px;
+      }
+      .experiment-mode {
+        color: @light-font-color;
+      }
+      .therapist, .appraiser {
+        color: @button-color;
+      }
+      .experiment-number {
+        color: @green-color;
+      }
     }
     .button {
       position: absolute;
@@ -205,6 +285,15 @@ export default {
           }
           &.col-remarks {
             width: 30%;
+          }
+          &.waiting {
+            color: @green-color;
+          }
+          &.finished {
+            color: @font-color;
+          }
+          &.rejected {
+            color: @alert-color;
           }
         }
       }

@@ -71,6 +71,7 @@ export default {
   UPDATE_FIRSTTREATMENT_INFO: 'updateFirstTreatmentInfo',
   UPDATE_VISITDIAGNOSTICRECORD_INFO: 'updateVisitDiagnosticRecordInfo',
   UPDATE_COMPLAINTSYMPTOMS_INFO: 'updateComplaintSymptomsInfo',
+  UPDATE_EXPERIMENT_INFO: 'updateExperimentInfo',
 
   BLUR_ON_SCREEN: 'blurOnScreen',
 

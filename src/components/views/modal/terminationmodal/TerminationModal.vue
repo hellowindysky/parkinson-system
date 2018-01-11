@@ -146,6 +146,12 @@ export default {
       this.lockSubmitButton = false;
     },
     updateAndClose() {
+      this.$message({
+        message: '已结束治疗过程',
+        type: 'success',
+        duration: 2000
+      });
+      Bus.$emit(this.UPDATE_EXPERIMENT_INFO);
       this.lockSubmitButton = false;
       this.displayModal = false;
     }

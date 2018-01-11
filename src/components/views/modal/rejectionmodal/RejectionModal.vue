@@ -47,6 +47,7 @@
 
 <script>
 import Bus from 'utils/bus.js';
+import { rejectEnteringExperiment } from 'api/experiment';
 
 export default {
   data() {
@@ -112,6 +113,7 @@ export default {
         return;
       }
       this.lockSubmitButton = true;
+
       for (let property in this.warningResults) {
         if (this.warningResults.hasOwnProperty(property)) {
           this.updateWarning(property);
@@ -123,12 +125,25 @@ export default {
           return;
         }
       }
+
+      var experimentInfo = {
+        remark: this.remark,
+        patientId: this.$route.params.id,
+        tcTaskId: this.$store.state.subjectId
+      };
+      rejectEnteringExperiment(experimentInfo).then(this.updateAndClose, this._handleError);
     },
     _handleError(error) {
       console.log(error);
       this.lockSubmitButton = false;
     },
     updateAndClose() {
+      this.$message({
+        message: '已拒绝将该患者加入实验组',
+        type: 'warning',
+        duration: 2000
+      });
+      Bus.$emit(this.UPDATE_EXPERIMENT_INFO);
       this.lockSubmitButton = false;
       this.displayModal = false;
     }
