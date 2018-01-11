@@ -52,7 +52,7 @@
         </tr>
         <tr class="row" v-for="(step, index) in progressList">
           <td class="col col-number">{{index + 1}}</td>
-          <td class="col col-progress">{{step.milestone}}</td>
+          <td class="col col-progress">{{getMilestone(step)}}</td>
           <td class="col col-executor">{{step.executeBy}}</td>
           <td class="col col-status" :class="getStatusColor(step)">{{getStatusText(step)}}</td>
           <td class="col col-start-time">{{step.startDate}}</td>
@@ -129,6 +129,15 @@ export default {
     completeFollowUp() {
       Bus.$emit(this.SHOW_FOLLOW_UP_SUMMARY_MODAL, this.ADD_NEW_CARD, {}, true);
     },
+    getMilestone(step) {
+      var milestoneNum = 0;
+      var phase = step.phase;
+      if (phase && phase.split('.').length > 0) {
+        milestoneNum = Number(phase.split('.')[0]);
+      }
+      let milestoneList = ['', '筛选入组', '基线评估', '治疗期', '随访期', '实验结束'];
+      return milestoneList[milestoneNum];
+    },
     getStatus(step) {
       var phase = step.phase;
       if (phase) {
@@ -171,7 +180,9 @@ export default {
         } else {
           this.progressList = [];
         }
-        this.status = data.status ? data.status : '';
+        var status = data.status ? data.status : '';
+        status = status.split('.')[1] ? status.split('.')[1] : 0;
+        this.status = Number(status);
         this.experimentMode = data.taskMode ? data.taskMode : 1;
         this.therapist = data.treater ? data.treater : '';
         this.appraiser = data.assessor ? data.assessor : '';
