@@ -140,6 +140,7 @@ export default {
           return;
         }
       }
+      completeExperiment().then(this.updateAndClose, this._handleError);
     },
     _handleError(error) {
       console.log(error);

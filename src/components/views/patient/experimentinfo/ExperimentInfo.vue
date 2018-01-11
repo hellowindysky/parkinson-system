@@ -9,24 +9,34 @@
         实验编号 <span class="value experiment-number">{{experimentNumber}}</span>
       </span>
       <div class="button light-button application-button"
-        v-if="listType==='myPatients'"
+        v-if="listType==='myPatients' && progressList.length===0"
         @click="applyTojoin">
         申请入组
       </div>
+      <div class="button light-button application-button"
+        v-if="listType==='myPatients' && isApplicationRejected"
+        @click="applyTojoin">
+        重新申请
+      </div>
       <div class="button light-blue-button reject-button"
-        v-if="listType==='appraisersPatients' && progressList.length>0"
+        v-if="listType==='appraisersPatients' && progressList.length>0 && status===2"
         @click="rejectApplication">
         退回
       </div>
       <div class="button light-button agree-button"
-        v-if="listType==='appraisersPatients' && progressList.length>0"
+        v-if="listType==='appraisersPatients' && progressList.length>0 && status===2"
         @click="agreeApplication">
         通过
       </div>
       <div class="button light-button complete-therapy-button"
-        v-if="listType==='therapistsPatients' && progressList.length>0"
+        v-if="listType==='therapistsPatients' && progressList.length>0 && status===3"
         @click="completeTherapy">
         结束治疗
+      </div>
+      <div class="button light-button complete-follow-up-button"
+        v-if="listType==='appraisersPatients' && progressList.length>0 && status===3"
+        @click="completeFollowUp">
+        本期随访结束
       </div>
     </div>
     <div class="content">
@@ -84,6 +94,17 @@ export default {
         return 'unknown';
       }
     },
+    isApplicationRejected() {
+      var length = this.progressList.length;
+      if (length > 0) {
+        var theLastStep = this.progressList[length - 1];
+        var status = this.getStatus(theLastStep);
+        if (status === 3) {
+          return true;
+        }
+      }
+      return false;
+    },
     experimentModeText() {
       if (this.experimentMode === 1) {
         return '双盲实验';
@@ -104,6 +125,9 @@ export default {
     },
     completeTherapy() {
       Bus.$emit(this.SHOW_TERMINATION_MODAL, this.ADD_NEW_CARD, {}, true);
+    },
+    completeFollowUp() {
+      Bus.$emit(this.SHOW_FOLLOW_UP_SUMMARY_MODAL, this.ADD_NEW_CARD, {}, true);
     },
     getStatus(step) {
       var phase = step.phase;
@@ -242,6 +266,10 @@ export default {
       }
       &.complete-therapy-button {
         right: 10px;
+      }
+      &.complete-follow-up-button {
+        right: 10px;
+        width: 100px;
       }
     }
   }

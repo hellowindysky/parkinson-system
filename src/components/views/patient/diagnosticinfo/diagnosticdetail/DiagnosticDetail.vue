@@ -89,7 +89,7 @@ export default {
     },
     diagnosticDisease() {
       var obj = {};
-      var propertyList = ['diseaseType', 'caseSymptom', 'patientSymptom'];
+      var propertyList = ['diseaseType', 'caseSymptom', 'patientSymptom', 'diagnoseState'];
       for (let propertyName of propertyList) {
         obj[propertyName] = this.caseDetail[propertyName] ? this.caseDetail[propertyName] : '';
       }

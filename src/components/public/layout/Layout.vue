@@ -35,7 +35,7 @@
     <ratification-modal></ratification-modal>
     <endof-followup-modal></endof-followup-modal>
     <termination-modal></termination-modal>
-    <followup-summary-modal></followup-summary-modal>
+    <follow-up-summary-modal></follow-up-summary-modal>
 
     <filter-panel :showFilterPanel="showFilterPanel"></filter-panel>
     <choice-panel></choice-panel>
@@ -85,7 +85,7 @@ import rejectionModal from 'components/views/modal/rejectionmodal/RejectionModal
 import ratificationModal from 'components/views/modal/ratificationmodal/RatificationModal';
 import endofFollowupModal from 'components/views/modal/endoffollowupmodal/EndofFollowupModal';
 import terminationModal from 'components/views/modal/terminationmodal/TerminationModal';
-import followupSummaryModal from 'components/views/modal/followupsummarymodal/FollowupSummaryModal';
+import followUpSummaryModal from 'components/views/modal/followupsummarymodal/FollowUpSummaryModal';
 
 import filterPanel from 'components/public/filterpanel/FilterPanel';
 import choicePanel from 'components/public/choicepanel/ChoicePanel';
@@ -135,7 +135,7 @@ export default {
     ratificationModal,
     endofFollowupModal,
     terminationModal,
-    followupSummaryModal,
+    followUpSummaryModal,
 
     filterPanel,
     choicePanel,

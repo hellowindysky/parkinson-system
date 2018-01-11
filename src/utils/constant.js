@@ -108,7 +108,7 @@ export default {
   SHOW_RATIFICATION_MODAL: 'showRatificationModal',
   SHOW_ENDOF_FOLLOWUP_MODAL: 'showEndofFollowupModal',
   SHOW_TERMINATION_MODAL: 'showTerminationModal',
-  SHOW_FOLLOWUPSUMMARY_MODAL: 'showFollowupSummaryModal',
+  SHOW_FOLLOW_UP_SUMMARY_MODAL: 'showFollowUpSummaryModal',
 
   SHOW_CHOICE_PANEL: 'showChoicePanel',
 
