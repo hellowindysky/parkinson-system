@@ -555,7 +555,6 @@ export default {
       this.causeException = item.seriousAdverse === 1;
       this.medicalEvents = item.seriousAdverse === 1;
 
-
       this.completeInit = true;
       this.displayModal = true;
       this.updateScrollbar();
