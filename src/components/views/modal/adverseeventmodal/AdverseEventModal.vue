@@ -131,44 +131,44 @@
           <span class="field-name">
           严重不良事件：
           </span>
-          <div class="moveLeft lead-death">
+          <div class="moveLeft">
             <el-checkbox
-              v-model="hasNoReaction"
+              v-model="leadFeath"
               :disabled="mode===VIEW_CURRENT_CARD">
             </el-checkbox>
             导致死亡
           </div>
-          <div class="moveLeft life-threatening">
+          <div class="moveLeft">
             <el-checkbox
-              v-model="hasNoReaction"
+              v-model="lifeThreatening"
               :disabled="mode===VIEW_CURRENT_CARD">
             </el-checkbox>
             威胁生命
           </div>
-          <div class="moveLeft cause-hospital">
+          <div class="moveLeft">
             <el-checkbox
-              v-model="hasNoReaction"
+              v-model="causeHospital"
               :disabled="mode===VIEW_CURRENT_CARD">
             </el-checkbox>
             导致住院
           </div>
-          <div class="moveLeft lead-continuous">
+          <div class="moveLeft">
             <el-checkbox
-              v-model="hasNoReaction"
+              v-model="leadContinuous"
               :disabled="mode===VIEW_CURRENT_CARD">
             </el-checkbox>
             导致持续或验证残疾/能力丧失
           </div>
-          <div class="moveLeft cause-exception">
+          <div class="moveLeft">
             <el-checkbox
-              v-model="hasNoReaction"
+              v-model="causeException"
               :disabled="mode===VIEW_CURRENT_CARD">
             </el-checkbox>
             导致先天性异常或出生障碍
           </div>
-          <div class="moveLeft medical-events">
+          <div class="moveLeft">
             <el-checkbox
-              v-model="hasNoReaction"
+              v-model="medicalEvents"
               :disabled="mode===VIEW_CURRENT_CARD">
             </el-checkbox>
             重要医学事件
@@ -192,12 +192,12 @@
           </span>
         </div>
         <div class="seperate-line">
-          <div class="toggle-fold-button" @click="toggleContentFolded">
+          <div class="toggle-fold-button" @click="toggleContentFoldedMeasures">
             治疗措施
-            <span class="iconfont" :class="iconToggleFolded"></span>
+            <span class="iconfont" :class="iconToggleFoldedMeasures"></span>
           </div>
         </div>
-        <div class="foldable-content" :class="{'folded': foldedConditionalContent}">
+        <div class="foldable-content" :class="{'folded': foldedConditionalContentMeasures}">
           <div class="field whole-line">
               <span class="field-name">
               其他治疗措施：
@@ -234,63 +234,65 @@
           </div>
         </div>
         <div class="seperate-line">
-          <div class="toggle-fold-button" @click="toggleContentFolded">
+          <div class="toggle-fold-button" @click="toggleContentFoldedEndEvent">
             不良事件结束
-            <span class="iconfont" :class="iconToggleFolded"></span>
+            <span class="iconfont" :class="iconToggleFoldedMeasures"></span>
           </div>
         </div>
-        <div class="field whole-line">
-          <span class="field-name">
-           不良事件结局：
-          </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{transform(adverseResult,'adverseResult')}}</span>
-          </span>
-          <span class="field-input" v-else>
-            <el-select v-model="adverseResult" clearable placeholder="请选择发生不良事件的结局" @change="updateWarning('adverseResult')">
-              <el-option
-                v-for="item in getOptions('adverseResult')"
-                :key="item.code"
-                :label="item.name"
-                :value="item.code">
-              </el-option>
-            </el-select>
-          </span>
-        </div>
-        <div class="field whole-line">
-          <span class="field-name">
-            缓解日期：
-          </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{relieveDate}}</span>
-          </span>
-          <span class="field-input" v-else>
-            <el-date-picker
-              v-model="relieveDate"
-              type="datetime"
-              placeholder="请选择缓解日期  "
-              :picker-options="pickerOptions"
-              @change="updateWarning('relieveDate')">
-            </el-date-picker>
-          </span>
-        </div>
-        <div class="field whole-line">
-          <span class="field-name">
-           不良事件影响：
-          </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{transform(adverseEffect,'adverseEffect')}}</span>
-          </span>
-          <span class="field-input" v-else>
-            <el-select v-model="adverseEffect" clearable placeholder="请选择" @change="updateWarning('adverseEffect')">
-              <el-option
-                v-for="item in getOptions('adverseEffect')"
-                :key="item.code"
-                :label="item.name"
-                :value="item.code">
-              </el-option>
-            </el-select>
-          </span>
+        <div class="foldable-content" :class="{'folded': foldedConditionalContentEndEvent}">
+          <div class="field whole-line">
+            <span class="field-name">
+              不良事件结局：
+            </span>
+            <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+              <span>{{transform(adverseResult,'adverseResult')}}</span>
+            </span>
+            <span class="field-input" v-else>
+              <el-select v-model="adverseResult" clearable placeholder="请选择发生不良事件的结局" @change="updateWarning('adverseResult')">
+                <el-option
+                  v-for="item in getOptions('adverseResult')"
+                  :key="item.code"
+                  :label="item.name"
+                  :value="item.code">
+                </el-option>
+              </el-select>
+            </span>
+          </div>
+          <div class="field whole-line">
+            <span class="field-name">
+              缓解日期：
+            </span>
+            <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+              <span>{{relieveDate}}</span>
+            </span>
+            <span class="field-input" v-else>
+              <el-date-picker
+                v-model="relieveDate"
+                type="datetime"
+                placeholder="请选择缓解日期  "
+                :picker-options="pickerOptions"
+                @change="updateWarning('relieveDate')">
+              </el-date-picker>
+            </span>
+          </div>
+          <div class="field whole-line">
+            <span class="field-name">
+              不良事件影响：
+            </span>
+            <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+              <span>{{transform(adverseEffect,'adverseEffect')}}</span>
+            </span>
+            <span class="field-input" v-else>
+              <el-select v-model="adverseEffect" clearable placeholder="请选择" @change="updateWarning('adverseEffect')">
+                <el-option
+                  v-for="item in getOptions('adverseEffect')"
+                  :key="item.code"
+                  :label="item.name"
+                  :value="item.code">
+                </el-option>
+              </el-select>
+            </span>
+          </div>
         </div>
       </div>
       <div class="seperate-line"></div>
@@ -327,8 +329,14 @@ export default {
       adverseResult: '',
       relieveDate: '',
       adverseEffect: '',
-      hasNoReaction: false,
-      foldedConditionalContent: false,   // 这个变量用来控制是否显示治疗措施和不良时间结束
+      leadFeath: false,
+      lifeThreatening: false,
+      causeHospital: false,
+      leadContinuous: false,
+      causeException: false,
+      medicalEvents: false,
+      foldedConditionalContentMeasures: false,
+      foldedConditionalContentEndEvent: false,
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now();
@@ -341,8 +349,8 @@ export default {
     ...mapGetters([
       'typeGroup'
     ]),
-    iconToggleFolded() {
-      return this.folded ? 'doubleArrow-up' : 'doubleArrow-down';
+    iconToggleFoldedMeasures() {
+      return this.folded ? 'icon-arrow-down' : 'icon-arrow-up';
     },
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
@@ -364,9 +372,6 @@ export default {
       this.completeInit = false;
       this.mode = cardOperation;
       this.showEdit = showEdit;
-      for (let reaction of this.patientPhytheReaction) {
-        reaction.severityLevel = '';
-      }
       this.$nextTick(() => {
         this.$refs.scrollArea.scrollTop = 0;
         for (var property in this.warningResults) {
@@ -378,7 +383,8 @@ export default {
 
       this.completeInit = true;
       this.displayModal = true;
-      this.foldedConditionalContent = true;
+      this.foldedConditionalContentMeasures = true;
+      this.foldedConditionalContentEndEvent = true;
       this.updateScrollbar();
     },
     transform(code, fieldName) {
@@ -434,11 +440,19 @@ export default {
       console.log(error);
       this.lockSubmitButton = false;
     },
-    toggleContentFolded() {
-      this.foldedConditionalContent = !this.foldedConditionalContent;
+    toggleContentFoldedMeasures() {
+      this.foldedConditionalContentMeasures = !this.foldedConditionalContentMeasures;
       setTimeout(() => {
         this.updateScrollbar();
       }, 150);
+      this.folded = !this.folded;
+    },
+    toggleContentFoldedEndEvent() {
+      this.foldedConditionalContentEndEvent = !this.foldedConditionalContentEndEvent;
+      setTimeout(() => {
+        this.updateScrollbar();
+      }, 150);
+      this.folded = !this.folded;
     },
     updateAndClose() {
       Bus.$emit(this.UPDATE_CASE_INFO);
@@ -497,13 +511,6 @@ export default {
       padding-right: 10px;
       margin-bottom: 10px;
     }
-    // .lead-death,
-    // .life-threatening,
-    // .cause-hospital,
-    // .lead-continuous,
-    // .cause-exception,
-    // .medical-events {
-    // }
     .title {
       padding: 30px 0 10px;
       font-size: @large-font-size;
@@ -511,6 +518,17 @@ export default {
     .content {
       text-align: left;
       font-size: 0;
+      .foldable-content {
+        padding: 5px 0;
+        margin-bottom: 20px;
+        height: auto;
+        overflow: hidden;
+        transition: 0.15s;
+        &.folded {
+          padding: 0;
+          height: 0;
+        }
+      }
       .field {
         display: inline-block;
         position: relative;
@@ -595,22 +613,32 @@ export default {
       margin: 10px auto;
       background-color: @light-gray-color;
       text-align: center;
-      .foldable-content {
-       padding: 5px 0;
-        height: auto;
-        overflow: hidden;
-        transition: 0.15s;
-        &.folded {
-          padding: 0;
-          height: 0;
+      .toggle-fold-button {
+        display: inline-block;
+        width: 180px;
+        height: 21px;
+        line-height: 21px;
+        background-color: @background-color;
+        font-size: @small-font-size;
+        color: @gray-color;
+        transform: translateY(-10px);
+        cursor: pointer;
+        &:hover {
+          color: fade(@gray-color, 50%);
+        }
+        &:active {
+          color: fade(@gray-color, 75%);
         }
       }
       .iconfont {
+        position: absolute;
         display: inline-block;
         margin-left: 10px;
+        width: @field-line-height;
         height: @field-line-height;
         line-height: @field-line-height;
         color: @button-color;
+        vertical-align: middle;
       }
     }
     .button {

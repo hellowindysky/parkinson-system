@@ -260,68 +260,55 @@ export default {
       patientPhytheReaction: [
         {
           'reactionType': 1,
-          'severityLevel': '',
-          'assessType': 1
+          'severityLevel': ''
         },
         {
           'reactionType': 2,
-          'severityLevel': '',
-          'assessType': 1
+          'severityLevel': ''
         },
         {
           'reactionType': 3,
-          'severityLevel': '',
-          'assessType': 1
+          'severityLevel': ''
         },
         {
           'reactionType': 4,
-          'severityLevel': '',
-          'assessType': 1
+          'severityLevel': ''
         },
         {
           'reactionType': 5,
-          'severityLevel': '',
-          'assessType': 1
+          'severityLevel': ''
         },
         {
           'reactionType': 6,
-          'severityLevel': '',
-          'assessType': 1
+          'severityLevel': ''
         },
         {
           'reactionType': 7,
-          'severityLevel': '',
-          'assessType': 1
+          'severityLevel': ''
         },
         {
           'reactionType': 8,
-          'severityLevel': '',
-          'assessType': 1
+          'severityLevel': ''
         },
         {
           'reactionType': 9,
-          'severityLevel': '',
-          'assessType': 1
+          'severityLevel': ''
         },
         {
           'reactionType': 10,
-          'severityLevel': '',
-          'assessType': 1
+          'severityLevel': ''
         },
         {
           'reactionType': 11,
-          'severityLevel': '',
-          'assessType': 1
+          'severityLevel': ''
         },
         {
           'reactionType': 12,
-          'severityLevel': '',
-          'assessType': 1
+          'severityLevel': ''
         },
         {
           'reactionType': 13,
-          'severityLevel': '',
-          'assessType': 1
+          'severityLevel': ''
         }
       ],
       warningResults: {
@@ -366,6 +353,7 @@ export default {
         reaction.severityLevel = '';
       }
       // console.log('item: ', item);
+
       this.patientPhytheTmsId = item.patientPhytheTmsId ? item.patientPhytheTmsId : '';
       this.recordDate = item.recordDate ? item.recordDate : '';
       this.physiType = item.physiType ? item.physiType : '';
@@ -377,7 +365,6 @@ export default {
       this.rightThresholdBefore = item.rightThresholdBefore ? item.rightThresholdBefore : '';
       this.leftThresholdAfter = item.leftThresholdAfter ? item.leftThresholdAfter : '';
       this.rightThresholdAfter = item.rightThresholdAfter ? item.rightThresholdAfter : '';
-      this.patientId = item.patientId ? item.patientId : '';
       this.remark = item.remark ? item.remark : '';
       this.hasNoReaction = item.reactionFlag === 1;
       vueCopy(item.patientPhytheReaction, this.patientPhytheReaction);
@@ -399,18 +386,6 @@ export default {
       var targetOption = Util.getElement('code', code, options);
       return targetOption.name;
     },
-    // otherCheck() {
-    //   console.log(this.hasNoReaction);
-    //   for (var i = 0 ; i < this.patientPhytheReaction.length ; i++) {
-    //     if (this.patientPhytheReaction[i].severityLevel !== 0) {
-    //       this.hasNoReaction === false;
-    //       // console.log(this.patientPhytheReaction[i]);
-    //       // console.log(this.hasNoReaction);
-    //     } else {
-    //       this.hasNoReaction === true;
-    //     }
-    //   };
-    // },
     checkAll() {
       for (var i = 0; i < this.patientPhytheReaction.length ; i++) {
         if (this.hasNoReaction === true) {
@@ -465,8 +440,8 @@ export default {
         }
       }
       var physicsInfo = {};
+      physicsInfo.patientId = this.$route.params.id;
       physicsInfo.patientCaseId = this.$route.params.caseId;
-
       physicsInfo.physiType = this.physiType;
       physicsInfo.recordDate = this.recordDate;
       physicsInfo.deviceType = this.deviceType;
@@ -478,7 +453,6 @@ export default {
       physicsInfo.rightThresholdBefore = this.rightThresholdBefore;
       physicsInfo.leftThresholdAfter = this.leftThresholdAfter;
       physicsInfo.rightThresholdAfter = this.rightThresholdAfter;
-      physicsInfo.patientId = this.patientId;
       physicsInfo.remark = this.remark;
       physicsInfo.reactionFlag = this.hasNoReaction ? 1 : 0;
       physicsInfo.patientPhytheReaction = deepCopy(this.patientPhytheReaction);
