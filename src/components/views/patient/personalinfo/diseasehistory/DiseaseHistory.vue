@@ -74,7 +74,7 @@
             <div class="custom-item" v-for="(item,index) in copyInfo['patientDiseaseOrders']" :key="index">
               <i class="iconfont icon-remove" @click="reduceOrder(index)"></i>
               <span class="sub-item">
-                <el-select v-model="item.arisePart" placeholder="请选择" clearable >
+                <el-select v-model="item.arisePart" placeholder="请选择">
                   <el-option
                    v-for="item in diseaseOrderOpt" :key="item.typeCode" 
                    :label="item.typeName"
@@ -84,7 +84,7 @@
                 </el-select>
               </span>
               <span class="sub-item">
-                <el-date-picker v-model="item.time" type="month" placeholder="选择发生年月" clearable ></el-date-picker>
+                <el-date-picker v-model="item.time" type="month" placeholder="选择发生年月"></el-date-picker>
               </span>
             </div>
 
@@ -294,7 +294,7 @@
 import { mapGetters } from 'vuex';
 import Util from 'utils/util.js';
 import Bus from 'utils/bus.js';
-import { deepCopy, vueCopy, pruneObj } from 'utils/helper.js';
+import { deepCopy, vueCopy, pruneObj, reviseDateFormat } from 'utils/helper.js';
 import FoldingPanel from 'components/public/foldingpanel/FoldingPanel';
 import ExtensiblePanel from 'components/public/extensiblepanel/ExtensiblePanel';
 import Card from 'components/public/card/Card';
@@ -515,6 +515,7 @@ export default {
       });
     },
     getTreatment(fieldType) {
+      console.log(this.treatmentTypeOpt);
       return this.treatmentTypeOpt.filter((obj) => {
         return obj.typeCode === fieldType;
       }).map((obj) => {
@@ -523,6 +524,7 @@ export default {
     },
     transform(id, arr) {
       id = parseInt(id, 10);
+      arr = arr ? arr : [];
       return arr.filter((obj) => {
         return parseInt(obj.typeCode, 10) === id;
       }).map((obj) => {
@@ -538,7 +540,7 @@ export default {
     formatDate(d) {
       // 阅读状态下发病顺序的日期
       if (d) {
-        return '（' + Util.simplifyDate(d) + '）';
+        return '（' + Util.simplifyDate(d).slice(0, -3) + '）';
       } else {
         return '';
       }
@@ -686,6 +688,8 @@ export default {
       };
     },
     submit() {
+      console.log(this.copyInfo);
+      reviseDateFormat(this.copyInfo);
       for (let group of this.diseaseInfoTemplateGroups) {
         for (let field of group) {
           // 首先检查是否每个字段都合格，检查一遍之后，如果 warningResults 的所有属性值都为空，就证明表单符合要求
@@ -705,20 +709,29 @@ export default {
       delete submitData.patientFirstVisitTreatments;
       delete submitData.patientHistorys;
       pruneObj(submitData);
-      // reviseDateFormat(submitData);
       // submitData.ariTime = Util.simplifyDate(submitData.ariTime);
 
       for (let key in submitData) {
         if (Array.isArray(submitData[key]) && key !== 'patientDiseaseOrders') {
           let valStr = submitData[key].join(',');
           valStr = valStr[0] === ',' ? valStr.slice(1) : valStr;
-          // submitData[key] = submitData[key].join(',').slice(1);
           submitData[key] = valStr;
+        } else if (key === 'patientDiseaseOrders') {
+          console.log(submitData[key]);
+          let transferArr = [];
+          submitData[key].forEach((item) => {
+            if (Object.keys(item).length > 0) {
+              transferArr.push(item);
+            };
+          });
+          submitData[key] = transferArr;
+          this.$set(this.copyInfo, key, transferArr);
+          console.log(submitData[key]);
         };
       };
       submitData.courseOfDisease = this.courseOfDiseaseInfo;
       submitData.patientId = this.$route.params.id;
-
+      // console.log(submitData);
       modDiseaseHistory(submitData).then(() => {
         Bus.$emit(this.UPDATE_PATIENT_INFO);
         this.mode = this.READING_MODE;

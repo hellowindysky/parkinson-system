@@ -526,7 +526,7 @@ export default {
     cancel() {
       this.lockSubmitButton = false;
       if (this.modalType === this.FAMILY_HISTORY_MODAL && this.mode !== this.VIEW_CURRENT_CARD) {
-        this.$refs.uploadTag[0] && this.$refs.uploadTag[0].clearFiles();
+        this.$refs.uploadTag && this.$refs.uploadTag[0] && this.$refs.uploadTag[0].clearFiles();
       };
       this.displayModal = false;
     },
@@ -681,8 +681,8 @@ export default {
       }
     },
     updateAndClose() {
-      if (this.modalType === this.FAMILY_HISTORY_MODAL && this.$refs.uploadTag[0]) {
-        this.$refs.uploadTag[0].clearFiles();
+      if (this.modalType === this.FAMILY_HISTORY_MODAL && this.$refs.uploadTag) {
+        this.$refs.uploadTag[0] && this.$refs.uploadTag[0].clearFiles();
       };
       Bus.$emit(this.UPDATE_PATIENT_INFO);
       this.displayModal = false;
