@@ -1263,7 +1263,9 @@ export default {
       this.displayModal = false;
       this.copyInfo = {};
       this.tableMode = '';
-      this.$refs.upload4.clearFiles();
+      if (this.$refs.upload4) {
+        this.$refs.upload4.clearFiles();
+      }
     },
     switchToEditingMode() {
       this.mode = this.EDIT_CURRENT_CARD;
@@ -1355,7 +1357,9 @@ export default {
       this.lockSubmitButton = false;
     },
     updateAndClose() {
-      this.$refs.upload4.clearFiles();
+      if (this.$refs.upload4) {
+        this.$refs.upload4.clearFiles();
+      }
       this.lockSubmitButton = false;
       this.displayModal = false;
     },

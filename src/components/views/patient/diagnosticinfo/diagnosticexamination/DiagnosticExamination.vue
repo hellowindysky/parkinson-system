@@ -104,6 +104,26 @@
             <span class="value">{{item.recordStart}}</span>
           </div>
         </card>
+        <card class="card neuroelectric-card" :class="cardWidth" :mode="mutableMode" v-for="item in electricImagingList" :key="item.patientCaseId"
+          :title="transform(item.imageType, 'elecExam')" v-on:editCurrentCard="editNeuroelectricRecord(item)" v-on:viewCurrentCard="viewNeuroelectricRecord(item)"
+          v-on:deleteCurrentCard="deleteNeuroelectricRecord(item)">
+          <div class="text first-line">
+            <span class="name">检查编号</span>
+            <span class="value">{{item.checkNum}}</span>
+          </div>
+          <div class="text second-line">
+            <span class="name">检查设备</span>
+            <span class="value">{{item.checkDevice}}</span>
+          </div>
+          <div class="text third-line">
+            <span class="name">检查结论</span>
+            <span class="value">{{item.checkConclusion}}</span>
+          </div>
+          <div class="text fourth-line">
+            <span class="name">检查日期</span>
+            <span class="value">{{item.checkDate}}</span>
+          </div>
+        </card>
       </extensible-panel>
 <!-- 医学影像 -->
       <extensible-panel class="panel image-panel" :mode="mutableMode" :title="medicalImagingTitle" v-on:addNewCard="addImgRecord" :editable="canEdit">
@@ -177,6 +197,12 @@ export default {
       }
     },
     sleepMonitoringList: {
+      type: Array,
+      default: () => {
+        return [];
+      }
+    },
+    electricImagingList: {
       type: Array,
       default: () => {
         return [];
