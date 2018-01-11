@@ -66,10 +66,10 @@
            是否采取措施：
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{transform(digitYN,'digitYN')}}</span>
+            <span>{{transform(measureFlag,'digitYN')}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-select v-model="digitYN" clearable placeholder="请选择" @change="updateWarning('digitYN')">
+            <el-select v-model="measureFlag" clearable placeholder="请选择" @change="updateWarning('digitYN')">
               <el-option
                 v-for="item in getOptions('digitYN')"
                 :key="item.code"
@@ -84,10 +84,10 @@
            严重程度：
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{transform(adverseSeverity,'adverseSeverity')}}</span>
+            <span>{{transform(severity,'adverseSeverity')}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-select v-model="adverseSeverity" clearable placeholder="请选择" @change="updateWarning('adverseSeverity')">
+            <el-select v-model="severity" clearable placeholder="请选择" @change="updateWarning('adverseSeverity')">
               <el-option
                 v-for="item in getOptions('adverseSeverity')"
                 :key="item.code"
@@ -120,10 +120,10 @@
            是否严重不良事件：
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{transform(digitYN,'digitYN')}}</span>
+            <span>{{transform(seriousFlag,'digitYN')}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-select v-model="digitYN" clearable placeholder="请选择" @change="updateWarning('digitYN')">
+            <el-select v-model="seriousFlag" clearable placeholder="请选择" @change="updateWarning('digitYN')">
               <el-option
                 v-for="item in getOptions('digitYN')"
                 :key="item.code"
@@ -439,11 +439,14 @@ export default {
       mode: '',
       completeInit: false,
 
+      patientAdverse: '',
+      patientAdverseId: '',
       occurTime: '',
       adverseName: '',
       adverseDescribe: '',
-      digitYN: '',
-      adverseSeverity: '',
+      measureFlag: '',
+      seriousFlag: '',
+      severity: '',
       treatmentRelate: '',
       seriousAdverse: '',
       remark: '',
@@ -532,8 +535,9 @@ export default {
       this.occurTime = item.occurTime ? item.occurTime : '';
       this.adverseName = item.adverseName ? item.adverseName : '';
       this.adverseDescribe = item.adverseDescribe ? item.adverseDescribe : '';
-      this.digitYN = item.digitYN ? item.digitYN : '';
-      this.adverseSeverity = item.adverseSeverity ? item.adverseSeverity : '';
+      this.measureFlag = item.measureFlag ? item.measureFlag : '';
+      this.seriousFlag = item.seriousFlag ? item.seriousFlag : '';
+      this.severity = item.severity ? item.severity : '';
       this.treatmentRelate = item.treatmentRelate ? item.treatmentRelate : '';
       this.seriousAdverse = item.seriousAdverse ? item.seriousAdverse : '';
       this.remark = item.remark ? item.remark : '';
@@ -606,12 +610,12 @@ export default {
       adverseEventInfo.occurTime = this.occurTime;
       adverseEventInfo.adverseName = this.adverseName;
       adverseEventInfo.adverseDescribe = this.adverseDescribe;
-      adverseEventInfo.digitYN = this.digitYN;
+      adverseEventInfo.measureFlag = this.measureFlag;
       adverseEventInfo.adverseSeverity = this.adverseSeverity;
       adverseEventInfo.treatmentRelate = this.treatmentRelate;
-      // adverseEventInfo.severity = this.severity;
-      // adverseEventInfo.seriousFlag = this.seriousFlag;
-      // adverseEventInfo.measureFlag = this.measureFlag;
+      adverseEventInfo.severity = this.severity;
+      adverseEventInfo.seriousFlag = this.seriousFlag;
+      adverseEventInfo.measureFlag = this.measureFlag;
       adverseEventInfo.seriousAdverse = this.seriousAdverse;
       adverseEventInfo.remark = this.remark;
       adverseEventInfo.otherMeasure = this.otherMeasure;
