@@ -554,7 +554,7 @@ export default {
       this.leadContinuous = item.seriousAdverse === 1;
       this.causeException = item.seriousAdverse === 1;
       this.medicalEvents = item.seriousAdverse === 1;
-      
+
 
       this.completeInit = true;
       this.displayModal = true;
