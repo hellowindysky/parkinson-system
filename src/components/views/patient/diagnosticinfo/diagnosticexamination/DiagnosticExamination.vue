@@ -221,7 +221,7 @@ export default {
     },
     neuroelectricTitle() {
       let count = this.emgList.length + this.sleepMonitoringList.length;
-      return '神经电生理检查（' + count + '条记录）';
+      return '电生理检查（' + count + '条记录）';
     },
     medicalImagingTitle() {
       return '医学影像（' + this.medicalImagingList.length + '条记录）';

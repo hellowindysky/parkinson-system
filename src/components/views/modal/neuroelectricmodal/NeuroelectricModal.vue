@@ -5,13 +5,13 @@
       <div class="content">
         <div class="field whole-line">
           <span class="field-name long-field-name">
-            神经电检查类型
+            电检查类型
             <span class="required-mark">*</span>
           </span>
           <span class="field-input long-field-name">
             <span class="warning-text">{{warningResults.elecExamType}}</span>
             <span v-if="mode===VIEW_CURRENT_CARD">{{getFieldValue(copyInfo.elecExamType, 'elecExam')}}</span>
-            <el-select v-else placeholder="请选择神经电生理检查类型" v-model="copyInfo.elecExamType" @change="chooseElecExamType"
+            <el-select v-else placeholder="请选择电生理检查类型" v-model="copyInfo.elecExamType" @change="chooseElecExamType"
               :class="{'warning': warningResults.elecExamType}" :disabled="mode!==ADD_NEW_CARD" size="small">
               <el-option v-for="option in getOptions('elecExam')" :key="option.code" :label="option.name" :value="option.code" ></el-option>
             </el-select>
@@ -656,9 +656,9 @@ export default {
     ]),
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
-        return '新增神经电生理检查';
+        return '新增电生理检查';
       } else {
-        return '神经电生理检查';
+        return '电生理检查';
       }
     },
     currentTableName() {
@@ -861,7 +861,7 @@ export default {
     chooseElecExamType() {
       if (this.copyInfo.elecExamType && Number(this.copyInfo.elecExamType) === 1) {
         // 肌电图本来也是个列表，只是目前这里面只有“肌电图”这一个选项，所以这里就默认直接选上了
-        // 而且这个下拉框在 2.1 版本的更新中被去掉了，现在选择了神经电检查下的肌电图，就默认选中 emgTypeList 的第一项
+        // 而且这个下拉框在 2.1 版本的更新中被去掉了，现在选择了电检查下的肌电图，就默认选中 emgTypeList 的第一项
         this.copyInfo.elecTroGramId = this.emgTypeList[0].id;
         this.selectEmg();
         this.updateWarning('elecExamType');
