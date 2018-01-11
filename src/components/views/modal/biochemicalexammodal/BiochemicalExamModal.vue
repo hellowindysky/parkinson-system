@@ -81,8 +81,13 @@
                 {{item.englishAbbreviation}}
               </td>
               <td class="col col-result">
-                <span class="warning-text" v-show="warningResults.checkDate&&copyInfo.bioexamId===12&&checkRequired(item.id)">必填项</span>
-                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.bioexamResult[index].result}}</span>
+                <span class="warning-text" v-show="warningResults.checkDate&&copyInfo.bioexamId===12&&checkRequired(item.id)">
+                  必填项
+                </span>
+                <span v-if="mode===VIEW_CURRENT_CARD">
+                  {{copyInfo.bioexamResult[index].result}}
+                  <span class="iconfont" :class="getComparisonIcon(copyInfo.bioexamResult[index].result, item.referenceRanges)"></span>
+                </span>
                 <el-input v-else v-model="copyInfo.bioexamResult[index].result" :class="{'warning': warningResults.checkDate&&copyInfo.bioexamId===12&&checkRequired(item.id)}"
                   placeholder="请输入检查结果" :maxlength="500"></el-input>
               </td>
@@ -205,6 +210,16 @@ export default {
         }
       }
       this.updateScrollbar();
+    },
+    getComparisonIcon(value, rangeText) {
+      var range = rangeText.split('--');
+      var min = Number(range[0]);
+      var max = Number(range[1]);
+      if (value !== '' && value < min) {
+        return 'icon-down';
+      } else if (value !== '' && value > max) {
+        return 'icon-up';
+      }
     },
     changeBioexam() {
       console.log(this.targetBioexam);
@@ -502,6 +517,18 @@ export default {
                 color: red;
                 font-size: 20px;
                 vertical-align: middle;
+              }
+              .iconfont {
+                display: inline-block;
+                position: absolute;
+                right: 40px;
+                transform: translateY(-1px);
+                &.icon-up {
+                  color: @green-color;
+                }
+                &.icon-down {
+                  color: @alert-color;
+                }
               }
               .el-input {
                 margin-left: 2%;
