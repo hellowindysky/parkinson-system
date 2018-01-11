@@ -12,8 +12,10 @@
             <span>{{occurTime}}</span>
           </span>
           <span class="field-input" v-else>
+            <span class="warning-text">{{warningResults.occurTime}}</span>
             <el-date-picker
               v-model="occurTime"
+              :class="{'warning': warningResults.occurTime}"
               type="datetime"
               placeholder="请选择开始发生时间"
               :picker-options="pickerOptions"
@@ -30,8 +32,10 @@
             {{adverseName}}
           </span>
           <span class="field-input" v-else>
+            <span class="warning-text">{{warningResults.adverseName}}</span>
             <el-input
               v-model="adverseName"
+              :class="{'warning': warningResults.adverseName}"
               @change="updateWarning('adverseName')"
               placeholder="请输入不良事件名称">
             </el-input>
@@ -46,8 +50,10 @@
             {{adverseDescribe}}
           </span>
           <span class="field-input" v-else>
+            <span class="warning-text event-text">{{warningResults.adverseDescribe}}</span>
             <el-input
               v-model="adverseDescribe"
+              :class="{'warning': warningResults.adverseDescribe}"
               type="textarea"
               :rows="2"
               :maxlength="500"
@@ -60,12 +66,12 @@
            是否采取措施：
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{transform(measureFlag,'measureFlag')}}</span>
+            <span>{{transform(digitYN,'digitYN')}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-select v-model="measureFlag" clearable placeholder="请选择" @change="updateWarning('measureFlag')">
+            <el-select v-model="digitYN" clearable placeholder="请选择" @change="updateWarning('digitYN')">
               <el-option
-                v-for="item in getOptions('measureFlag')"
+                v-for="item in getOptions('digitYN')"
                 :key="item.code"
                 :label="item.name"
                 :value="item.code">
@@ -78,12 +84,12 @@
            严重程度：
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{transform(severity,'severity')}}</span>
+            <span>{{transform(adverseSeverity,'adverseSeverity')}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-select v-model="severity" clearable placeholder="请选择" @change="updateWarning('severity')">
+            <el-select v-model="adverseSeverity" clearable placeholder="请选择" @change="updateWarning('adverseSeverity')">
               <el-option
-                v-for="item in getOptions('severity')"
+                v-for="item in getOptions('adverseSeverity')"
                 :key="item.code"
                 :label="item.name"
                 :value="item.code">
@@ -114,12 +120,12 @@
            是否严重不良事件：
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{transform(seriousFlag,'seriousFlag')}}</span>
+            <span>{{transform(digitYN,'digitYN')}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-select v-model="seriousFlag" clearable placeholder="请选择" @change="updateWarning('seriousFlag')">
+            <el-select v-model="digitYN" clearable placeholder="请选择" @change="updateWarning('digitYN')">
               <el-option
-                v-for="item in getOptions('seriousFlag')"
+                v-for="item in getOptions('digitYN')"
                 :key="item.code"
                 :label="item.name"
                 :value="item.code">
@@ -174,6 +180,64 @@
             重要医学事件  
           </div>
         </div>
+        <div class="form-wrapper" ref="form4">
+          <table class="form form4">
+            <tr class="row top-row">
+              <td class="col along-medicine" colspan="21">
+                伴随用药
+              </td>
+            </tr>
+            <tr class="row title-row">
+              <td class="col w1" colspan="1">
+                <span class="iconfont icon-plus" @click="addParam('adjointMedicine')"v-show="adjointMedicine.length < 8 && mode !== VIEW_CURRENT_CARD"></span>
+              </td>
+              <td class="col w2" colspan="2">
+                序号
+              </td>
+              <td class="col w3" colspan="3">药物名称</td>
+              <td class="col w3" colspan="3">日总剂量（mg/d）</td>
+              <td class="col w3" colspan="3">给药途径</td>
+            </tr>
+            <tr class="row">
+              <td class="col w1" colspan="1">
+                <span class="iconfont icon-remove" v-show="mode!==VIEW_CURRENT_CARD"></span>
+              </td>
+              <td class="col w2" colspan="2">
+              </td>
+              <td class="col w2" colspan="3">
+                <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                  {{(adjointMedicine.medicineName)}}
+                </span>
+                <span class="field-input" v-else>
+                  <el-input v-model="adjointMedicine.medicineName" placeholder="请输入药物名称"></el-input>
+                </span>
+              </td>
+              <td class="col w2" colspan="3">
+                <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                  {{(adjointMedicine.totalDailyDose)}}
+                </span>
+                <span class="field-input" v-else>
+                  <el-input v-model="adjointMedicine.totalDailyDose" placeholder="请输入日总剂量"></el-input>
+                </span>
+              </td>
+              <td class="col w3" colspan="3">
+                <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                  <span>{{transform(adjointMedicine.medicineMethod,'medicineMethod')}}</span>
+                </span>
+                <span class="field-input" v-else>
+                  <el-select v-model="medicineMethod" clearable placeholder="请选择给药途径" @change="updateWarning('medicineMethod')">
+                    <el-option
+                      v-for="item in getOptions('medicineMethod')"
+                      :key="item.code"
+                      :label="item.name"
+                      :value="item.code">
+                    </el-option>
+                  </el-select>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </div>
         <div class="field whole-line">
           <span class="field-name">
             备注：
@@ -198,6 +262,64 @@
           </div>
         </div>
         <div class="foldable-content" :class="{'folded': foldedConditionalContentMeasures}">
+          <div class="form-wrapper" ref="form4">
+            <table class="form form4">
+              <tr class="row top-row">
+                <td class="col along-medicine" colspan="21">
+                  药物治疗
+                </td>
+              </tr>
+              <tr class="row title-row">
+                <td class="col w1" colspan="1">
+                  <span class="iconfont icon-plus" @click="addParam('followDbsAdjustAfter')"></span>
+                </td>
+                <td class="col w2" colspan="2">
+                  序号
+                </td>
+                <td class="col w3" colspan="3">药物名称</td>
+                <td class="col w3" colspan="3">日总剂量（mg/d）</td>
+                <td class="col w3" colspan="3">给药途径</td>
+              </tr>
+              <tr class="row">
+                <td class="col w1" colspan="1">
+                  <span class="iconfont icon-remove" v-show="mode!==VIEW_CURRENT_CARD"></span>
+                </td>
+                <td class="col w2" colspan="2">
+                </td>
+                <td class="col w2" colspan="3">
+                  <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                    {{(adjointMedicine.medicineName)}}
+                  </span>
+                  <span class="field-input" v-else>
+                    <el-input v-model="adjointMedicine.medicineName" placeholder="请输入药物名称"></el-input>
+                  </span>
+                </td>
+                <td class="col w2" colspan="3">
+                  <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                    {{(adjointMedicine.totalDailyDose)}}
+                  </span>
+                  <span class="field-input" v-else>
+                    <el-input v-model="adjointMedicine.totalDailyDose" placeholder="请输入日总剂量"></el-input>
+                  </span>
+                </td>
+                <td class="col w3" colspan="3">
+                  <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                    <span>{{transform(adjointMedicine.medicineMethod,'medicineMethod')}}</span>
+                  </span>
+                  <span class="field-input" v-else>
+                    <el-select v-model="medicineMethod" clearable placeholder="请选择给药途径" @change="updateWarning('medicineMethod')">
+                      <el-option
+                        v-for="item in getOptions('medicineMethod')"
+                        :key="item.code"
+                        :label="item.name"
+                        :value="item.code">
+                      </el-option>
+                    </el-select>
+                  </span>
+                </td>
+              </tr>
+            </table>
+          </div>
           <div class="field whole-line">
               <span class="field-name">
               其他治疗措施：
@@ -307,21 +429,22 @@ import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
+import {reviseMinuteFormat, pruneObj} from 'utils/helper';
+import { addAdverseEvent, modifyAdverseEvent } from 'api/patient.js';
 
 export default {
   data() {
     return {
-      displayModal: true,
+      displayModal: false,
       mode: '',
       completeInit: false,
 
       occurTime: '',
       adverseName: '',
       adverseDescribe: '',
-      measureFlag: '',
-      severity: '',
+      digitYN: '',
+      adverseSeverity: '',
       treatmentRelate: '',
-      seriousFlag: '',
       seriousAdverse: '',
       remark: '',
       otherMeasure: '',
@@ -329,6 +452,7 @@ export default {
       adverseResult: '',
       relieveDate: '',
       adverseEffect: '',
+      medicineMethod: '',
       leadFeath: false,
       lifeThreatening: false,
       causeHospital: false,
@@ -337,6 +461,30 @@ export default {
       medicalEvents: false,
       foldedConditionalContentMeasures: false,
       foldedConditionalContentEndEvent: false,
+      adjointMedicine: [
+        {
+          'medicineName': '',
+          'totalDailyDose': '',
+          'medicineMethod': 3
+        }
+      ],
+      warningResults: {
+        occurTime: '',
+        adverseName: '',
+        adverseDescribe: ''
+      },
+      treatMedicine: [
+        {
+          'medicineName': '',
+          'totalDailyDose': '',
+          'medicineMethod': 4
+        },
+        {
+          'medicineName': '',
+          'totalDailyDose': '',
+          'medicineMethod': 2
+        }
+      ],
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now();
@@ -372,9 +520,6 @@ export default {
       this.completeInit = false;
       this.mode = cardOperation;
       this.showEdit = showEdit;
-      for (let reaction of this.patientPhytheReaction) {
-        reaction.severityLevel = '';
-      }
       this.$nextTick(() => {
         this.$refs.scrollArea.scrollTop = 0;
         for (var property in this.warningResults) {
@@ -383,12 +528,28 @@ export default {
           }
         }
       });
+      this.patientAdverseId = item.patientAdverseId ? item.patientAdverseId : '';
+      this.occurTime = item.occurTime ? item.occurTime : '';
+      this.adverseName = item.adverseName ? item.adverseName : '';
+      this.adverseDescribe = item.adverseDescribe ? item.adverseDescribe : '';
+      this.digitYN = item.digitYN ? item.digitYN : '';
+      this.adverseSeverity = item.adverseSeverity ? item.adverseSeverity : '';
+      this.treatmentRelate = item.treatmentRelate ? item.treatmentRelate : '';
+      this.seriousAdverse = item.seriousAdverse ? item.seriousAdverse : '';
+      this.remark = item.remark ? item.remark : '';
+      this.otherMeasure = item.otherMeasure ? item.otherMeasure : '';
+      this.aboratoryExam = item.aboratoryExam ? item.aboratoryExam : '';
+      this.adverseResult = item.adverseResult ? item.adverseResult : '';
+      this.relieveDate = item.relieveDate ? item.relieveDate : '';
+      this.adverseEffect = item.adverseEffect ? item.adverseEffect : '';
+      this.medicineMethod = item.medicineMethod ? item.medicineMethod : '';
+      this.relieveDate = item.relieveDate ? item.relieveDate : '';
 
       this.completeInit = true;
       this.displayModal = true;
+      this.updateScrollbar();
       this.foldedConditionalContentMeasures = true;
       this.foldedConditionalContentEndEvent = true;
-      this.updateScrollbar();
     },
     transform(code, fieldName) {
       var options = this.getOptions(fieldName);
@@ -408,7 +569,8 @@ export default {
       return options;
     },
     updateWarning(fieldName) {
-      if (this[fieldName] === '') {
+      var list = ['occurTime', 'adverseName', 'adverseDescribe'];
+      if (list.indexOf(fieldName) >= 0 && !this[fieldName]) {
         this.warningResults[fieldName] = '必填项';
       } else {
         this.warningResults[fieldName] = '';
@@ -437,6 +599,40 @@ export default {
           this.lockSubmitButton = false;
           return;
         }
+      }
+      var adverseEventInfo = {};
+      adverseEventInfo.patientId = this.$route.params.id;
+      adverseEventInfo.patientCaseId = this.$route.params.caseId;
+      adverseEventInfo.occurTime = this.occurTime;
+      adverseEventInfo.adverseName = this.adverseName;
+      adverseEventInfo.adverseDescribe = this.adverseDescribe;
+      adverseEventInfo.digitYN = this.digitYN;
+      adverseEventInfo.adverseSeverity = this.adverseSeverity;
+      adverseEventInfo.treatmentRelate = this.treatmentRelate;
+      // adverseEventInfo.severity = this.severity;
+      // adverseEventInfo.seriousFlag = this.seriousFlag;
+      // adverseEventInfo.measureFlag = this.measureFlag;
+      adverseEventInfo.seriousAdverse = this.seriousAdverse;
+      adverseEventInfo.remark = this.remark;
+      adverseEventInfo.otherMeasure = this.otherMeasure;
+      adverseEventInfo.aboratoryExam = this.aboratoryExam;
+      adverseEventInfo.adverseResult = this.adverseResult;
+      adverseEventInfo.relieveDate = this.relieveDate;
+      adverseEventInfo.adverseEffect = this.adverseEffect;
+
+      reviseMinuteFormat(adverseEventInfo);
+      pruneObj(adverseEventInfo);
+
+      if (this.mode === this.ADD_NEW_CARD) {
+        addAdverseEvent(adverseEventInfo).then(() => {
+          this.updateAndClose();
+        }, this._handleError);
+
+      } else if (this.mode === this.EDIT_CURRENT_CARD) {
+        adverseEventInfo.patientAdverseId = this.patientAdverseId;
+        modifyAdverseEvent(adverseEventInfo).then(() => {
+          this.updateAndClose();
+        }, this._handleError);
       }
     },
     _handleError(error) {
@@ -471,6 +667,94 @@ export default {
           suppressScrollX: true
         });
       });
+    },
+    addParam(formType) {
+      if (formType === 'firstDbsAdjustAfter') {
+        let paramList = this.copyInfo.firstDbsParams.adjustAfterParameter;
+        let count = paramList.length;
+        let order = count / 2 + 1;
+        let propertyList = ['exciteMod', 'negativePole', 'positivePole', 'frequency', 'pulseWidth', 'voltage', 'resistance', 'electric'];
+        for (let limbSideNum of [1, 2]) {
+          let index = count - 1 + limbSideNum;
+          this.$set(paramList, (index), {});
+          this.$set(paramList[index], 'paramType', 1);
+          this.$set(paramList[index], 'schemeOrder', order);
+          this.$set(paramList[index], 'limbSide', limbSideNum);
+          for (let property of propertyList) {
+            let defaultValue = '';
+            if (property === 'frequency') {
+              defaultValue = 130;
+            } else if (property === 'pulseWidth') {
+              defaultValue = 60;
+            }
+            this.$set(paramList[index], property, defaultValue);
+          }
+          if (this.copyInfo.patientDbsFirstId) {
+            this.$set(paramList[index], 'patientDbsFirstId', this.copyInfo.patientDbsFirstId);
+          }
+        }
+      } else if (formType === 'followDbsAdjustVoltage') {
+        let paramList = this.copyInfo.followDbsParams.adjustVoltageParameter;
+        let count = paramList.length;
+        let order = count / 2 + 1;
+        let propertyList = ['exciteMod', 'negativePole', 'positivePole', 'frequency', 'pulseWidth', 'voltage', 'effectInfo'];
+        for (let limbSideNum of [1, 2]) {
+          let index = count - 1 + limbSideNum;
+          this.$set(paramList, (index), {});
+          this.$set(paramList[index], 'paramType', 3);
+          this.$set(paramList[index], 'schemeOrder', order);
+          this.$set(paramList[index], 'limbSide', limbSideNum);
+          for (let property of propertyList) {
+            this.$set(paramList[index], property, '');
+          }
+          if (this.copyInfo.patientDbsFollowId) {
+            this.$set(paramList[index], 'patientDbsFollowId', this.copyInfo.patientDbsFollowId);
+          }
+        }
+      } else if (formType === 'followDbsAdjustMore') {
+        let paramList = this.copyInfo.followDbsParams.adjustMoreParameter;
+        let count = paramList.length;
+        let order = count / 2 + 1;
+        let propertyList = ['exciteMod', 'negativePole', 'positivePole', 'frequency', 'pulseWidth', 'voltage', 'resistance', 'electric'];
+        for (let limbSideNum of [1, 2]) {
+          let index = count - 1 + limbSideNum;
+          this.$set(paramList, (index), {});
+          this.$set(paramList[index], 'paramType', 4);
+          this.$set(paramList[index], 'schemeOrder', order);
+          this.$set(paramList[index], 'limbSide', limbSideNum);
+          for (let property of propertyList) {
+            this.$set(paramList[index], property, '');
+          }
+          if (this.copyInfo.patientDbsFollowId) {
+            this.$set(paramList[index], 'patientDbsFollowId', this.copyInfo.patientDbsFollowId);
+          }
+        }
+      } else if (formType === 'followDbsAdjustAfter') {
+        let paramList = this.copyInfo.followDbsParams.adjustAfterParameter;
+        let count = paramList.length;
+        let order = Math.floor(count / 2) + 1;
+        let propertyList = ['exciteMod', 'negativePole', 'positivePole', 'frequency', 'pulseWidth', 'voltage', 'resistance', 'electric'];
+        for (let limbSideNum of [1, 2]) {
+          let index = count - 1 + limbSideNum;
+          this.$set(paramList, (index), {});
+          this.$set(paramList[index], 'paramType', 1);
+          this.$set(paramList[index], 'schemeOrder', order);
+          this.$set(paramList[index], 'limbSide', limbSideNum);
+          for (let property of propertyList) {
+            let defaultValue = '';
+            if (property === 'frequency') {
+              defaultValue = 130;
+            } else if (property === 'pulseWidth') {
+              defaultValue = 60;
+            }
+            this.$set(paramList[index], property, defaultValue);
+          }
+          if (this.copyInfo.patientDbsFollowId) {
+            this.$set(paramList[index], 'patientDbsFollowId', this.copyInfo.patientDbsFollowId);
+          }
+        }
+      }
+      // this.updateCheckBoxModel(formType);
     }
   },
   mounted() {
@@ -488,6 +772,8 @@ export default {
 
 @field-line-height: 25px;
 @field-name-width: 170px;
+@scroll-bar-height: 10px;
+@unit-width: 54px;
 
 .adverse-event-modal-wrapper {
   position: absolute;
@@ -580,6 +866,10 @@ export default {
             color: red;
             font-size: @small-font-size;
           }
+          .event-text {
+            position: absolute;
+            top: 46px;
+            }
           .el-input {
             transform: translateY(-3px);
             .el-input__inner {
@@ -589,7 +879,7 @@ export default {
             }
           }
           .el-textarea {
-            margin-bottom: 10px;
+            margin-bottom: 14px;
             vertical-align: middle;
             transform: translateY(-3px);
             .el-textarea__inner {
@@ -607,6 +897,140 @@ export default {
           .warning .el-textarea__inner {
             border: 1px solid red;
           }
+        }
+      }
+    }
+    .form-wrapper {
+      position: relative;
+      margin-bottom: 30px;
+      width: 100%;
+      padding-bottom: 10px;
+      overflow: hidden;
+      .form {
+        margin: 10px auto 0;
+        border-spacing: 0;
+        table-layout: fixed;
+        border: 1px solid @light-gray-color;
+        border-collapse:collapse;
+        text-align: center;
+        .along-medicine {
+          text-align: left;
+        }
+        &.form4 {
+          width: @unit-width * 21;
+        }
+        .row {
+          height: 35px;
+          font-size: @normal-font-size;
+          &.title-row {
+            background-color: @font-color;
+            color: #fff;
+          }
+          .col {
+            position: relative;
+            width: 10%;
+            border: 1px solid @light-gray-color;
+            .iconfont {
+              position: absolute;
+              top: 8px;
+              left: 20px;
+              cursor: pointer;
+              &:hover {
+                opacity: 0.6;
+              }
+              &:active {
+                opacity: 0.8;
+              }
+            }
+            &.w1 {
+              width: @unit-width;
+            }
+            &.w2 {
+              width: @unit-width * 2;
+            }
+            &.w3 {
+              width: @unit-width * 3;
+            }
+            &.sort-info {
+              padding-left: 20px;
+              text-align: left;
+              .contact {
+                display: inline-block;
+                margin: 0 15px;
+                width: 65px;
+                &.narrow {
+                  width: 15px;
+                }
+                .el-input {
+                  .el-input__icon {
+                    width: 20px;
+                  }
+                  .el-input__inner {
+                    padding-right: 20px;
+                    height: 30px;
+                    background-color: rgba(0,0,0,0);
+                    border: none;
+                    border-radius: 0;
+                    border-bottom: 1px solid @font-color;
+                  }
+                }
+              }
+            }
+            .el-checkbox-group {
+              .el-checkbox + .el-checkbox {
+                margin-left: 5px;
+              }
+              .is-disabled {
+                .el-checkbox__inner {
+                  background-color: @light-font-color;
+                  border-color: @light-font-color;
+                }
+              }
+            }
+            .el-input {
+              width: 100%;
+              .el-input__inner {
+                padding: 0;
+                border: none;
+                text-align: center;
+              }
+              .el-icon-date {
+                display: none;
+              }
+              &.is-disabled {
+                .el-input__inner {
+                  background-color: rgba(0,0,0,0);
+                  color: @font-color;
+                }
+                .el-input__icon {
+                  display: none;
+                }
+              }
+            }
+            .el-select {
+              width: 100%;
+            }
+          }
+        }
+      }
+      .ps__scrollbar-x-rail {
+        position: absolute;
+        height: @scroll-bar-height;
+        width: 100%;
+        bottom: 0;
+        box-sizing: border-box;
+        opacity: 0.3;
+        transition: opacity 0.3s;
+        .ps__scrollbar-x {
+          position: relative;
+          height: @scroll-bar-height;
+          background-color: @gray-color;
+          border-radius: 20px;
+        }
+      }
+      &:hover {
+        .ps__scrollbar-x-rail {
+          opacity: 0.6;
         }
       }
     }
