@@ -1,6 +1,6 @@
 <template lang="html">
-  <div class="endof-followup-modal-wrapper" v-show="displayModal">
-    <div class="endof-followup-modal" ref="scrollArea">
+  <div class="follow-up-termination-modal-wrapper" v-show="displayModal">
+    <div class="follow-up-termination-modal" ref="scrollArea">
       <h3 class="title">{{title}}</h3>
       <div class="content">
         <div class="field">
@@ -328,7 +328,7 @@ export default {
     }
   },
   mounted() {
-    Bus.$on(this.SHOW_ENDOF_FOLLOWUP_MODAL, this.showPanel);
+    Bus.$on(this.FOLLOW_UP_TERMINATION_MODAL, this.showPanel);
     this.updateScrollbar();
   },
   beforeDestroy() {
@@ -343,7 +343,7 @@ export default {
 @field-line-height: 25px;
 @field-name-width: 200px;
 
-.endof-followup-modal-wrapper {
+.follow-up-termination-modal-wrapper {
   position: absolute;
   left: 0;
   top: 0;
@@ -351,7 +351,7 @@ export default {
   height: 100%;
   background-color: fadeout(@light-font-color, 30%);
   z-index: 500;
-  .endof-followup-modal {
+  .follow-up-termination-modal {
     position: relative;
     margin: auto;
     padding: 0 40px;

@@ -33,7 +33,7 @@
     <application-modal></application-modal>
     <rejection-modal></rejection-modal>
     <ratification-modal></ratification-modal>
-    <endof-followup-modal></endof-followup-modal>
+    <follow-up-termination-modal></follow-up-termination-modal>
     <termination-modal></termination-modal>
     <follow-up-summary-modal></follow-up-summary-modal>
 
@@ -83,8 +83,8 @@ const imageModal = () => import(/* webpackChunkName: 'examinationModal' */ 'comp
 import applicationModal from 'components/views/modal/applicationmodal/ApplicationModal';
 import rejectionModal from 'components/views/modal/rejectionmodal/RejectionModal';
 import ratificationModal from 'components/views/modal/ratificationmodal/RatificationModal';
-import endofFollowupModal from 'components/views/modal/endoffollowupmodal/EndofFollowupModal';
 import terminationModal from 'components/views/modal/terminationmodal/TerminationModal';
+import followUpTerminationModal from 'components/views/modal/followupterminationmodal/FollowUpTerminationModal';
 import followUpSummaryModal from 'components/views/modal/followupsummarymodal/FollowUpSummaryModal';
 
 import filterPanel from 'components/public/filterpanel/FilterPanel';
@@ -133,8 +133,8 @@ export default {
     applicationModal,
     rejectionModal,
     ratificationModal,
-    endofFollowupModal,
     terminationModal,
+    followUpTerminationModal,
     followUpSummaryModal,
 
     filterPanel,

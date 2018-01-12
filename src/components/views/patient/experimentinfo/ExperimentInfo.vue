@@ -128,7 +128,7 @@ export default {
       Bus.$emit(this.SHOW_TERMINATION_MODAL, this.ADD_NEW_CARD, {}, true, this.appraiser);
     },
     completeFollowUp() {
-      Bus.$emit(this.SHOW_FOLLOW_UP_SUMMARY_MODAL, this.ADD_NEW_CARD, {}, true);
+      Bus.$emit(this.SHOW_FOLLOW_UP_TERMINATION_MODAL, this.ADD_NEW_CARD, {}, true);
     },
     getMilestone(step) {
       var milestoneNum = 0;
