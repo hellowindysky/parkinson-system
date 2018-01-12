@@ -129,7 +129,7 @@ export default {
       Bus.$emit(this.SHOW_TERMINATION_MODAL, this.ADD_NEW_CARD, {}, true, this.appraiser);
     },
     completeFollowUp() {
-      Bus.$emit(this.SHOW_FOLLOW_UP_TERMINATION_MODAL, this.ADD_NEW_CARD, {}, true);
+      Bus.$emit(this.SHOW_FOLLOW_UP_TERMINATION_MODAL, this.ADD_NEW_CARD, {}, true, this.appraiser);
     },
     getMilestone(step) {
       var milestoneNum = 0;
@@ -311,6 +311,7 @@ export default {
           color: #fff;
         }
         .col {
+          padding: 0 3px;
           overflow: hidden;
           text-overflow:ellipsis;
           white-space: nowrap;

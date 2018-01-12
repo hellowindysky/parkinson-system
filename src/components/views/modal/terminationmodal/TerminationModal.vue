@@ -176,6 +176,9 @@ export default {
   },
   mounted() {
     Bus.$on(this.SHOW_TERMINATION_MODAL, this.showPanel);
+  },
+  beforeDestroy() {
+    Bus.$off(this.SHOW_TERMINATION_MODAL);
   }
 };
 </script>
