@@ -28,8 +28,8 @@
             {{experimentNumber}}
           </span>
           <span class="field-input" v-else>
-            <el-input
-              v-model="experimentNumber"
+            <span class="warning-text">{{warningResults.experimentNumber}}</span>
+            <el-input v-model="experimentNumber"
               :class="{'warning': warningResults.experimentNumber}"
               @change="updateWarning('experimentNumber')"
               placeholder="请输入实验编号">
@@ -119,7 +119,7 @@ export default {
       this.displayModal = true;
     },
     updateWarning(fieldName) {
-      if (this && this[fieldName] === '') {
+      if (this[fieldName] === '') {
         this.$set(this.warningResults, fieldName, '必填项');
       } else {
         this.$set(this.warningResults, fieldName, '');

@@ -190,7 +190,7 @@ export default {
         this.experimentMode = data.taskMode ? data.taskMode : 1;
         this.therapist = data.treater ? data.treater : '';
         this.appraiser = data.assessor ? data.assessor : '';
-        this.doctor = '所属医生';
+        this.doctor = data.doctor ? data.doctor : '';
         this.experimentNumber = data.taskCode ? data.taskCode : '';
 
         Bus.$emit(this.SCROLL_AREA_SIZE_CHANGE);
