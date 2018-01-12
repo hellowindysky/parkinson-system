@@ -148,7 +148,7 @@
             </div>
             <div class="text third-line">
               <span class="name">出现时间：</span>
-              <span class="value">{{TheAriseTime(item)}}</span>
+              <span class="value">{{theAriseTime(item)}}</span>
             </div>
           </Card>
         </extensible-panel>
@@ -300,7 +300,7 @@ import ExtensiblePanel from 'components/public/extensiblepanel/ExtensiblePanel';
 import Card from 'components/public/card/Card';
 import {queryPatientFirstSymbol, deletePatientFirstSymbol, queryPatientFirstVisitTreatment, delPatientFirstVisitTreatment, queryVisitDignosticRecord, delVisitDignosticRecord, modDiseaseHistory } from 'api/patient.js';
 
-const HALF_LINE_FIELD_LIST = ['diseaseType', 'specificDisease', 'ariTime', 'courseOfDisease', 'firTime', 'surTime', 'firMedinfo',
+const HALF_LINE_FIELD_LIST = ['diseaseType', 'specificDisease', 'diagnoseState', 'ariTime', 'courseOfDisease', 'firTime', 'surTime', 'firMedinfo',
   'firMedtime', 'ariAge', 'symmetries', 'symmetriesTime', 'firHosp', 'surHosp'];
 
 export default {
@@ -321,7 +321,7 @@ export default {
       mode: this.READING_MODE,
       foldedStatus: true,
       cardWidth: '',
-      specificDiseaseState: true
+      specificDiseaseState: false
     };
   },
   props: {
@@ -420,7 +420,7 @@ export default {
     }
   },
   methods: {
-    TheAriseTime(item) {
+    theAriseTime(item) {
       if (item.ariseTime) {
         return item.ariseTime;
       } else {
@@ -515,7 +515,6 @@ export default {
       });
     },
     getTreatment(fieldType) {
-      console.log(this.treatmentTypeOpt);
       return this.treatmentTypeOpt.filter((obj) => {
         return obj.typeCode === fieldType;
       }).map((obj) => {
@@ -586,18 +585,14 @@ export default {
         let targetTypeList = types.filter((type) => {
           return type.typeCode === Number(this.copyInfo.diseaseType);
         });
-        if (targetTypeList.length > 0 && !targetTypeList[0].childType) {
-          // this.copyInfo['specificDisease'] = '';
+        let childType = (targetTypeList.length > 0 && targetTypeList[0].childType) ? targetTypeList[0].childType : [];
+        if (childType.length > 0) {
+          this.specificDiseaseState = true;
+        } else {
           this.$set(this.copyInfo, 'specificDisease', '');
           this.specificDiseaseState = false;
-          // console.log(this.copyInfo, 'false时');
-        } else {
-          this.specificDiseaseState = true;
-          // this.copyInfo['specificDisease'] = '';
-          // this.$set(this.copyInfo, 'specificDisease', '');
-          // console.log(this.copyInfo, 'true时');
         };
-        return targetTypeList.length > 0 ? targetTypeList[0].childType : [];
+        return childType;
 
       } else {
         // 在 typegroup 里面查找到 field 所对应的 types（选项组）
