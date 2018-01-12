@@ -2,7 +2,7 @@
   <div class="experiment-info">
     <div class="top-bar">
       <span class="title">实验流程</span>
-      <span v-if="status > 2" class="info-text">
+      <span v-if="milestoneNum > 2" class="info-text">
         实验方式 <span class="value experiment-mode">{{experimentModeText}}</span>
         治疗者 <span class="value therapist">{{therapist}}</span>
         评估者 <span class="value appraiser">{{appraiser}}</span>
@@ -19,22 +19,22 @@
         重新申请
       </div>
       <div class="button light-blue-button reject-button"
-        v-if="listType==='appraisersPatients' && progressList.length>0 && status===2"
+        v-if="listType==='appraisersPatients' && progressList.length>0 && milestoneNum===2"
         @click="rejectApplication">
         退回
       </div>
       <div class="button light-button agree-button"
-        v-if="listType==='appraisersPatients' && progressList.length>0 && status===2"
+        v-if="listType==='appraisersPatients' && progressList.length>0 && milestoneNum===2"
         @click="agreeApplication">
         通过
       </div>
       <div class="button light-button complete-therapy-button"
-        v-if="listType==='therapistsPatients' && progressList.length>0 && status===3"
+        v-if="listType==='therapistsPatients' && progressList.length>0 && milestoneNum===3"
         @click="completeTherapy">
         结束治疗
       </div>
       <div class="button light-button complete-follow-up-button"
-        v-if="listType==='appraisersPatients' && progressList.length>0 && status===3"
+        v-if="listType==='appraisersPatients' && progressList.length>0 && milestoneNum===3"
         @click="completeFollowUp">
         本期随访结束
       </div>
@@ -73,6 +73,7 @@ export default {
     return {
       progressList: [],
       status: '',
+      milestoneNum: '',
       experimentMode: '',
       therapist: '',
       appraiser: ''
@@ -180,9 +181,11 @@ export default {
         } else {
           this.progressList = [];
         }
-        var status = data.status ? data.status : '';
-        status = status.split('.')[1] ? status.split('.')[1] : 0;
+        var currentPhase = data.status ? data.status : '';
+        var status = currentPhase.split('.')[1] ? currentPhase.split('.')[1] : 0;
+        var milestoneNum = currentPhase.split('.')[0] ? currentPhase.split('.')[0] : 0;
         this.status = Number(status);
+        this.milestoneNum = Number(milestoneNum);
         this.experimentMode = data.taskMode ? data.taskMode : 1;
         this.therapist = data.treater ? data.treater : '';
         this.appraiser = data.assessor ? data.assessor : '';
