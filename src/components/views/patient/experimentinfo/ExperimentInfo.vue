@@ -19,12 +19,12 @@
         重新申请
       </div>
       <div class="button light-blue-button reject-button"
-        v-if="listType==='appraisersPatients' && progressList.length>0 && milestoneNum===2"
+        v-if="listType==='appraisersPatients' && progressList.length>0 && milestoneNum===2 && status===1"
         @click="rejectApplication">
         退回
       </div>
       <div class="button light-button agree-button"
-        v-if="listType==='appraisersPatients' && progressList.length>0 && milestoneNum===2"
+        v-if="listType==='appraisersPatients' && progressList.length>0 && milestoneNum===2 && status===1"
         @click="agreeApplication">
         通过
       </div>
@@ -34,7 +34,7 @@
         结束治疗
       </div>
       <div class="button light-button complete-follow-up-button"
-        v-if="listType==='appraisersPatients' && progressList.length>0 && milestoneNum===3"
+        v-if="listType==='appraisersPatients' && progressList.length>0 && milestoneNum===4"
         @click="completeFollowUp">
         本期随访结束
       </div>
@@ -125,7 +125,7 @@ export default {
       Bus.$emit(this.SHOW_RATIFICATION_MODAL, this.ADD_NEW_CARD, {}, true);
     },
     completeTherapy() {
-      Bus.$emit(this.SHOW_TERMINATION_MODAL, this.ADD_NEW_CARD, {}, true);
+      Bus.$emit(this.SHOW_TERMINATION_MODAL, this.ADD_NEW_CARD, {}, true, this.appraiser);
     },
     completeFollowUp() {
       Bus.$emit(this.SHOW_FOLLOW_UP_SUMMARY_MODAL, this.ADD_NEW_CARD, {}, true);
