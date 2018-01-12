@@ -253,11 +253,26 @@
             <td class="col">严重程度</td>
           </tr>
           <tr class="row" v-for="(reaction, index) in patientPhytheReaction">
-            <td class="col narrow-col">{{index + 1}}</td>
-            <td class="col wide-col">
+            <td class="col narrow-col" v-show="index <=2">{{index + 1}}</td>
+            <td class="col wide-col" v-show="index <=2">
               {{transform(reaction.reactionType, 'reactionType')}}
             </td>
-            <td class="col narrow-col">
+            <td class="col narrow-col" v-show="index <=2">
+              <span v-if="mode===VIEW_CURRENT_CARD">{{transform(reaction.severityLevel,'haveType')}}</span>
+              <el-select v-else v-model="reaction.severityLevel" clearable :disabled="hasNoReaction">
+                <el-option
+                  v-for="item in getOptions('haveType')"
+                  :key="item.code"
+                  :label="item.name"
+                  :value="item.code">
+                </el-option>
+              </el-select>
+            </td>
+             <td class="col narrow-col" v-show="index >=3">{{index + 1}}</td>
+            <td class="col wide-col" v-show="index >=3">
+              {{transform(reaction.reactionType, 'reactionType')}}
+            </td>
+            <td class="col narrow-col" v-show="index >=3">
               <span v-if="mode===VIEW_CURRENT_CARD">{{transform(reaction.severityLevel,'reactionLevel')}}</span>
               <el-select v-else v-model="reaction.severityLevel" clearable :disabled="hasNoReaction">
                 <el-option
@@ -445,7 +460,6 @@ export default {
           }
         }
       });
-
       this.completeInit = true;
       this.displayModal = true;
       this.updateScrollbar();
