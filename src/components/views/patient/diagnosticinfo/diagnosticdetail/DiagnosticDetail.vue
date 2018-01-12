@@ -23,6 +23,7 @@
         :biochemicalExamList="caseDetail.patientBioexam"
         :emgList="caseDetail.patientElecTroGram"
         :sleepMonitoringList="caseDetail.patientNerveSleep"
+        :electricImagingList="caseDetail.patientElecVideoList"
         :medicalImagingList="caseDetail.patientVideoList"
         :diagnosticVitalSigns="caseDetail.patientVitalSign">
       </diagnostic-examination>

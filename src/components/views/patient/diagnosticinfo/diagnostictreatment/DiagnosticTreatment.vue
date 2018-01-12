@@ -201,7 +201,7 @@
             <span class="value">{{item.recordDate}}</span>
           </div>
         </card>
-        <card class="card physiontherapy-card" :class="bigCardWidth" :mode="mutableMode" v-for="item in diagnosticAdverseEvent" :key="item.adverseName"
+        <card class="card physiontherapy-card" :class="bigCardWidth" :mode="mutableMode" v-for="item in diagnosticAdverseEvent" :key="item.patientAdverse"
           :title="'不良事件'" v-on:editCurrentCard="editAdverseEvent(item)"
           v-on:deleteCurrentCard="deleteAdverseEvent(item)" v-on:viewCurrentCard="viewAdverseEvent(item)">
           <div class="text line-1">
@@ -214,7 +214,7 @@
           </div>
           <div class="text line-3">
             <span class="name">是否采取措施</span>
-            <span class="value">{{item.measureFlag}}</span>
+            <span class="value">{{item.digitYN}}</span>
           </div>
           <div class="text line-4">
             <span class="name">不良事件结局</span>

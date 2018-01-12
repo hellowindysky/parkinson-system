@@ -2,7 +2,7 @@
   <div class="experiment-info">
     <div class="top-bar">
       <span class="title">实验流程</span>
-      <span v-if="status > 2" class="info-text">
+      <span v-if="milestoneNum > 2" class="info-text">
         实验方式 <span class="value experiment-mode">{{experimentModeText}}</span>
         治疗者 <span class="value therapist">{{therapist}}</span>
         评估者 <span class="value appraiser">{{appraiser}}</span>
@@ -19,22 +19,22 @@
         重新申请
       </div>
       <div class="button light-blue-button reject-button"
-        v-if="listType==='appraisersPatients' && progressList.length>0 && status===2"
+        v-if="listType==='appraisersPatients' && progressList.length>0 && milestoneNum===2"
         @click="rejectApplication">
         退回
       </div>
       <div class="button light-button agree-button"
-        v-if="listType==='appraisersPatients' && progressList.length>0 && status===2"
+        v-if="listType==='appraisersPatients' && progressList.length>0 && milestoneNum===2"
         @click="agreeApplication">
         通过
       </div>
       <div class="button light-button complete-therapy-button"
-        v-if="listType==='therapistsPatients' && progressList.length>0 && status===3"
+        v-if="listType==='therapistsPatients' && progressList.length>0 && milestoneNum===3"
         @click="completeTherapy">
         结束治疗
       </div>
       <div class="button light-button complete-follow-up-button"
-        v-if="listType==='appraisersPatients' && progressList.length>0 && status===3"
+        v-if="listType==='appraisersPatients' && progressList.length>0 && milestoneNum===3"
         @click="completeFollowUp">
         本期随访结束
       </div>
@@ -52,7 +52,7 @@
         </tr>
         <tr class="row" v-for="(step, index) in progressList">
           <td class="col col-number">{{index + 1}}</td>
-          <td class="col col-progress">{{step.milestone}}</td>
+          <td class="col col-progress">{{getMilestone(step)}}</td>
           <td class="col col-executor">{{step.executeBy}}</td>
           <td class="col col-status" :class="getStatusColor(step)">{{getStatusText(step)}}</td>
           <td class="col col-start-time">{{step.startDate}}</td>
@@ -73,6 +73,7 @@ export default {
     return {
       progressList: [],
       status: '',
+      milestoneNum: '',
       experimentMode: '',
       therapist: '',
       appraiser: ''
@@ -129,6 +130,15 @@ export default {
     completeFollowUp() {
       Bus.$emit(this.SHOW_FOLLOW_UP_SUMMARY_MODAL, this.ADD_NEW_CARD, {}, true);
     },
+    getMilestone(step) {
+      var milestoneNum = 0;
+      var phase = step.phase;
+      if (phase && phase.split('.').length > 0) {
+        milestoneNum = Number(phase.split('.')[0]);
+      }
+      let milestoneList = ['', '筛选入组', '基线评估', '治疗期', '随访期', '实验结束'];
+      return milestoneList[milestoneNum];
+    },
     getStatus(step) {
       var phase = step.phase;
       if (phase) {
@@ -171,7 +181,11 @@ export default {
         } else {
           this.progressList = [];
         }
-        this.status = data.status ? data.status : '';
+        var currentPhase = data.status ? data.status : '';
+        var status = currentPhase.split('.')[1] ? currentPhase.split('.')[1] : 0;
+        var milestoneNum = currentPhase.split('.')[0] ? currentPhase.split('.')[0] : 0;
+        this.status = Number(status);
+        this.milestoneNum = Number(milestoneNum);
         this.experimentMode = data.taskMode ? data.taskMode : 1;
         this.therapist = data.treater ? data.treater : '';
         this.appraiser = data.assessor ? data.assessor : '';

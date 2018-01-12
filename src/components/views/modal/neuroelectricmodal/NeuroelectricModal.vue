@@ -5,13 +5,13 @@
       <div class="content">
         <div class="field whole-line">
           <span class="field-name long-field-name">
-            神经电检查类型
+            电检查类型
             <span class="required-mark">*</span>
           </span>
           <span class="field-input long-field-name">
             <span class="warning-text">{{warningResults.elecExamType}}</span>
             <span v-if="mode===VIEW_CURRENT_CARD">{{getFieldValue(copyInfo.elecExamType, 'elecExam')}}</span>
-            <el-select v-else placeholder="请选择神经电生理检查类型" v-model="copyInfo.elecExamType" @change="chooseElecExamType"
+            <el-select v-else placeholder="请选择电生理检查类型" v-model="copyInfo.elecExamType" @change="chooseElecExamType"
               :class="{'warning': warningResults.elecExamType}" :disabled="mode!==ADD_NEW_CARD" size="small">
               <el-option v-for="option in getOptions('elecExam')" :key="option.code" :label="option.name" :value="option.code" ></el-option>
             </el-select>
@@ -131,8 +131,10 @@
           </span>
         </div>
 
-        <h3 class="form-title" v-if="tableMode===SON_OPEN">{{currentTableName}}</h3>
-        <div class="form-wrapper" ref="formWrapper">
+        <h3 class="form-title" v-if="tableMode===SON_OPEN && (copyInfo.elecExamType===1 || copyInfo.elecExamType===2)">
+          {{currentTableName}}
+        </h3>
+        <div class="form-wrapper" v-if="copyInfo.elecExamType===1 || copyInfo.elecExamType===2" ref="formWrapper">
           <table class="form" v-if="tableMode===FATHER_OPEN">
             <tr class="row first-row">
               <td class="col col-width-10">
@@ -564,9 +566,117 @@
                   :picker-options="{start:'00:00', end:'24:00'}"></el-time-select>
               </td>
             </tr>
-
           </table>
         </div>
+
+        <div v-if="copyInfo.elecExamType===9 || copyInfo.elecExamType===10">
+          <div class="field">
+            <span class="field-name">
+              检查时间:
+              <span class="required-mark">*</span>
+            </span>
+            <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+              <span>{{copyInfo.checkDate}}</span>
+            </span>
+            <span class="field-input" v-else>
+              <span class="warning-text">{{warningResults.checkDate}}</span>
+              <el-date-picker
+                v-model="copyInfo.checkDate"
+                :class="{'warning': warningResults.checkDate}"
+                type="date"
+                placeholder="选择日期"
+                :picker-options="pickerOptions"
+                @change="updateWarning('checkDate')">
+              </el-date-picker>
+            </span>
+          </div>
+          <div class="field">
+            <span class="field-name">
+              检查编号:
+            </span>
+            <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+              <span>{{copyInfo.checkNum}}</span>
+            </span>
+            <span class="field-input" v-else>
+              <span class="warning-text"></span>
+              <el-input v-model="copyInfo.checkNum" placeholder="请输入患者检查编号"></el-input>
+            </span>
+          </div>
+          <div class="field">
+            <span class="field-name">
+              检查设备:
+            </span>
+            <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+              <span class="warning-text"></span>
+              <span>{{copyInfo.checkDevice}}</span>
+            </span>
+            <span class="field-input" v-else>
+              <el-input v-model="copyInfo.checkDevice" placeholder="请输入检查设备编号"></el-input>
+            </span>
+          </div>
+          <div class="field whole-line">
+            <span class="field-name">
+              检查结论:
+            </span>
+            <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+              <span class="warning-text"></span>
+              <span>{{copyInfo.checkConclusion}}</span>
+            </span>
+            <span class="field-input" v-else>
+              <el-input v-model="copyInfo.checkConclusion" placeholder="请输入检查结论" type="textarea" :maxlength="500"></el-input>
+            </span>
+          </div>
+          <div class="field whole-line">
+            <span class="field-name">
+              备注:
+            </span>
+            <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+              <span class="warning-text"></span>
+              <span>{{copyInfo.remarks}}</span>
+            </span>
+            <span class="field-input" v-else>
+              <el-input v-model="copyInfo.remarks" placeholder="请输入备注信息" type="textarea" :maxlength="500"></el-input>
+            </span>
+          </div>
+          <div class="seperate-line"></div>
+          <div class="field-file">
+            <span class="field-name">
+              其它文件:
+            </span>
+            <span class="field-input">
+              <div class="last-files">
+                <div class="last-files-title">已上传的其它文件</div>
+                <div class="file" :class="{'editing': mode!==VIEW_CURRENT_CARD}" v-for="file in other">
+                  <i class="el-icon-document icon"></i>
+                  <span class="file-name" @click="downloadFile(file)">{{file.fileName}}</span>
+                  <i class="close-button iconfont icon-cancel" @click="removeFile(file, other, newOther)"></i>
+                </div>
+              </div>
+              <el-upload
+                class="upload-area"
+                :action="uploadUrl"
+                ref="upload4"
+                :disabled="mode===VIEW_CURRENT_CARD"
+                :data="fileParam"
+                :multiple="true"
+                :auto-upload="true"
+                :on-change="fileChange"
+                :on-preview="handlePreview"
+                :on-remove="handleOtherRemove"
+                :on-success="uploadOtherSuccess"
+                :on-error="uploadErr"
+                :before-upload="beforeUpload"
+                :file-list="fileList4">
+                <el-button slot="trigger" size="small" type="text" :disabled="mode===VIEW_CURRENT_CARD" v-show="mode!==VIEW_CURRENT_CARD">
+                  点击上传其它文件
+                </el-button>
+                <div slot="tip" class="el-upload__tip"></div>
+              </el-upload>
+            </span>
+          </div>
+          <div class="seperate-line"></div>
+        </div>
+
       </div>
       <div class="button cancel-button" v-if="tableMode!==SON_OPEN" @click="cancel">取消</div>
       <div class="button cancel-button" v-if="tableMode===SON_OPEN && mode===VIEW_CURRENT_CARD" @click="closeSubTable">返回</div>
@@ -584,8 +694,9 @@
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import { mapGetters } from 'vuex';
-import { vueCopy, deepCopy } from 'utils/helper';
-import { addEmg, modEmg, addSleepMonitoring, modSleepMonitoring } from 'api/patient.js';
+import { vueCopy, deepCopy, pruneObj, reviseDateFormat } from 'utils/helper';
+import { baseUrl, getCommonRequest } from 'api/common.js';
+import { addEmg, modEmg, addSleepMonitoring, modSleepMonitoring, addImage, modifyImage } from 'api/patient.js';
 import Util from 'utils/util.js';
 
 export default {
@@ -608,7 +719,8 @@ export default {
       SLEEP_MONITORING_ITEM: 'sleepMonitoringItem',
 
       warningResults: {
-        elecExamType: ''
+        elecExamType: '',
+        checkDate: ''
       },
 
       copyInfo: {},
@@ -645,6 +757,22 @@ export default {
       sleepMonitoringSubTableCode: '',
       sleepMonitoringTables: [],
 
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        }
+      },
+      other: [],
+      newOther: [],
+      fileList4: [],
+      uploadingFilesNum: 0,
+      uploadUrl: baseUrl + '/upload/uploadAttachment',
+      downloadUrl: baseUrl + '/download/',
+      header: {
+        'Content-Type': 'multipart/form-data'
+      },
+      fileParam: getCommonRequest(),
+
       showEdit: true
     };
   },
@@ -656,9 +784,9 @@ export default {
     ]),
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
-        return '新增神经电生理检查';
+        return '新增电生理检查';
       } else {
-        return '神经电生理检查';
+        return '电生理检查';
       }
     },
     currentTableName() {
@@ -767,6 +895,18 @@ export default {
 
       vueCopy(item, this.copyInfo);
       this.copyInfo.elecExamType = this.copyInfo.elecExamType ? Number(this.copyInfo.elecExamType) : '';
+      if (item.imageType !== undefined) {
+        this.copyInfo.elecExamType = item.imageType;
+      }
+
+      this.newOther = [];
+
+      this.other = item.other ? item.other : [];
+      for (let fileItem of this.other) {
+        this.newOther.push({
+          id: fileItem.id
+        });
+      }
 
       this.selectEmg();
       this.updateScrollbar();
@@ -794,6 +934,12 @@ export default {
       this.$set(this.copyInfo, 'weight', '');
       this.$set(this.copyInfo, 'examResult', '');
       this.$set(this.copyInfo, 'typeGroupCode', 'elecExam');
+
+      this.$set(this.copyInfo, 'checkDate', '');
+      this.$set(this.copyInfo, 'checkNum', '');
+      this.$set(this.copyInfo, 'checkDevice', '');
+      this.$set(this.copyInfo, 'checkConclusion', '');
+      this.$set(this.copyInfo, 'remarks', '');
 
       this.$set(this.copyInfo, 'patientFieldCode', {});
       for (let type of this.sleepMonitoringTypes) {
@@ -861,11 +1007,11 @@ export default {
     chooseElecExamType() {
       if (this.copyInfo.elecExamType && Number(this.copyInfo.elecExamType) === 1) {
         // 肌电图本来也是个列表，只是目前这里面只有“肌电图”这一个选项，所以这里就默认直接选上了
-        // 而且这个下拉框在 2.1 版本的更新中被去掉了，现在选择了神经电检查下的肌电图，就默认选中 emgTypeList 的第一项
+        // 而且这个下拉框在 2.1 版本的更新中被去掉了，现在选择了电检查下的肌电图，就默认选中 emgTypeList 的第一项
         this.copyInfo.elecTroGramId = this.emgTypeList[0].id;
         this.selectEmg();
-        this.updateWarning('elecExamType');
       }
+      this.updateWarning('elecExamType');
     },
     updateWarning(fieldName) {
       if (this.copyInfo[fieldName] === undefined || this.copyInfo[fieldName] === '') {
@@ -875,11 +1021,13 @@ export default {
       }
     },
     clearWarning() {
-      for (let p in this.warningResults) {
-        if (this.warningResults.hasOwnProperty(p)) {
-          this.warningResults[p] = '';
+      this.$nextTick(() => {
+        for (var property in this.warningResults) {
+          if (this.warningResults.hasOwnProperty(property)) {
+            this.warningResults[property] = '';
+          }
         }
-      }
+      });
     },
     selectEmg() {
       var emg = Util.getElement('id', this.copyInfo.elecTroGramId, this.emgTypeList);
@@ -1120,6 +1268,9 @@ export default {
       this.displayModal = false;
       this.copyInfo = {};
       this.tableMode = '';
+      if (this.$refs.upload4) {
+        this.$refs.upload4.clearFiles();
+      }
     },
     switchToEditingMode() {
       this.mode = this.EDIT_CURRENT_CARD;
@@ -1132,6 +1283,9 @@ export default {
       this.lockSubmitButton = true;
 
       this.updateWarning('elecExamType');
+      if (this.copyInfo.elecExamType === 9 || this.copyInfo.elecExamType === 10) {
+        this.updateWarning('checkDate');
+      }
       for (var p in this.warningResults) {
         if (this.warningResults.hasOwnProperty(p) && this.warningResults[p] !== '') {
           this.lockSubmitButton = false;
@@ -1139,6 +1293,7 @@ export default {
         }
       }
 
+      reviseDateFormat(this.copyInfo);
       let submitData = deepCopy(this.copyInfo);
 
       if (submitData.elecExamType === 1) {
@@ -1176,6 +1331,29 @@ export default {
             this.cancel();
           }, this._handleError);
         }
+      } else if (submitData.elecExamType === 9 || submitData.elecExamType === 10) {
+        if (this.uploadingFilesNum > 0) {
+          this.$message({
+            message: '请等待文件上传后再提交',
+            type: 'warning',
+            duration: 2000
+          });
+          this.lockSubmitButton = false;
+          return;
+        }
+
+        submitData.patientId = this.$route.params.id;
+        submitData.patientCaseId = this.$route.params.caseId;
+        submitData.imageType = submitData.elecExamType;
+        submitData.other = this.newOther;
+        // delete submitData.newOther;
+        pruneObj(submitData);
+
+        if (this.mode === this.ADD_NEW_CARD) {
+          addImage(submitData).then(this.updateAndClose, this._handleError);
+        } else if (this.mode === this.EDIT_CURRENT_CARD) {
+          modifyImage(submitData).then(this.updateAndClose, this._handleError);
+        }
       }
 
     },
@@ -1184,6 +1362,10 @@ export default {
       this.lockSubmitButton = false;
     },
     updateAndClose() {
+      if (this.$refs.upload4) {
+        this.$refs.upload4.clearFiles();
+      }
+      Bus.$emit(this.UPDATE_CASE_INFO);
       this.lockSubmitButton = false;
       this.displayModal = false;
     },
@@ -1217,18 +1399,104 @@ export default {
       var typeInfo = Util.getElement('typegroupcode', name, this.typeGroup);
       return typeInfo.types ? typeInfo.types : [];
     },
+    downloadFile(file) {
+      window.location.href = this.downloadUrl + file.realPath;
+    },
+    removeFile(file, showingList, transferringList) {
+      // console.log(file);
+      for (let i = 0; i < showingList.length; i++) {
+        if (file.id === showingList[i].id) {
+          showingList.splice(i, 1);
+          break;
+        }
+      }
+      for (let i = 0; i < transferringList.length; i++) {
+        if (file.id === transferringList[i].id) {
+          transferringList.splice(i, 1);
+          break;
+        }
+      }
+      this.updateScrollbar();
+    },
+    uploadOtherSuccess(response, file, fileList) {
+      this.uploadSuccess(response, file, fileList, this.newOther);
+    },
+    uploadSuccess(response, file, fileList, list) {
+      this.uploadingFilesNum -= 1;
+      if (response.code === 0) {
+        let id = response.data.patientAttachmentId;
+        list.push({
+          'id': id
+        });
+      } else {
+        this.$message({
+          message: '文件上传出错',
+          type: 'warning',
+          duration: 2000
+        });
+        console.log('response: ', response);
+        console.log('file: ', file);
+        console.log('fileList', fileList);
+      }
+    },
+    uploadErr(err, file, fileList) {
+      this.uploadingFilesNum -= 1;
+      console.log('upload error: ', err);
+      console.log('file: ', file);
+      console.log('fileList', fileList);
+    },
+    beforeUpload(file) {
+      const isUnderLimit = file.size / 1024 / 1024 < 300;
+      if (!isUnderLimit) {
+        this.$message({
+          message: '上传文件大小不能超过 300MB',
+          type: 'error',
+          duration: 2000
+        });
+      } else {
+        this.uploadingFilesNum += 1;
+      }
+      return isUnderLimit;
+    },
+    fileChange() {
+      this.updateScrollbar();
+    },
+    handleOtherRemove(file) {
+      this.handleRemove(file, this.newOther);
+    },
+    handleRemove(file, list) {
+      console.log(file);
+      if (file.status === 'uploading') {
+        this.uploadingFilesNum -= 1;
+      }
+      for (var i = 0; i < list.length; i++) {
+        if (file.response.data.attachmentId === list[i].id) {
+          list.splice(i, 1);
+          break;
+        }
+      }
+      this.updateScrollbar();
+    },
+    handlePreview(file) {
+      console.log(file);
+      // window.location.href = file.url;
+    },
     updateScrollbar() {
       this.$nextTick(() => {
-        Ps.destroy(this.$refs.formWrapper);
-        Ps.initialize(this.$refs.formWrapper, {
-          wheelSpeed: 1,
-          minScrollbarLength: 40
-        });
-        Ps.destroy(this.$refs.neuroelectricModal);
-        Ps.initialize(this.$refs.neuroelectricModal, {
-          wheelSpeed: 1,
-          minScrollbarLength: 40
-        });
+        if (this.$refs && this.$refs.formWrapper) {
+          Ps.destroy(this.$refs.formWrapper);
+          Ps.initialize(this.$refs.formWrapper, {
+            wheelSpeed: 1,
+            minScrollbarLength: 40
+          });
+        }
+        if (this.$refs && this.$refs.neuroelectricModal) {
+          Ps.destroy(this.$refs.neuroelectricModal);
+          Ps.initialize(this.$refs.neuroelectricModal, {
+            wheelSpeed: 1,
+            minScrollbarLength: 40
+          });
+        }
       });
     }
   },
@@ -1370,6 +1638,119 @@ export default {
           .warning .el-input__inner,
           .warning .el-textarea__inner {
             border: 1px solid red;
+          }
+        }
+      }
+      .field-file {
+        margin-bottom: 10px;
+        transform: translateX(10px);
+        .field-name {
+          display: inline-block;
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: @field-name-width;
+          line-height: 20px;
+          font-size: @normal-font-size;
+          color: @font-color;
+        }
+        .field-input {
+          display: block;
+          position: relative;
+          left: @field-name-width;
+          width: 96%;
+          padding-right: @field-name-width;
+          box-sizing: border-box;
+          font-size: @normal-font-size;
+          .last-files {
+            margin-bottom: 10px;
+            width: 100%;
+            .last-files-title {
+              transform: translateY(-5px);
+              margin-bottom: 5px;
+              height: 30px;
+              line-height: 30px;
+              background-color: @font-color;
+              color: #fff;
+              text-align: center;
+              cursor: default;
+            }
+            .file {
+              position: relative;
+              padding-left: 5px;
+              height: 30px;
+              line-height: 30px;
+              transition: 0.2s;
+              cursor: default;
+              .icon {
+                display: inline-block;
+                width: 20px;
+              }
+              .file-name {
+                display: inline-block;
+                padding: 0 3px;
+                line-height: 20px;
+                transform: translateX(-3px);
+                cursor: pointer;
+                &:hover {
+                  border-bottom: 1px solid @font-color;
+                }
+              }
+              .close-button {
+                display: none;
+                position: absolute;
+                right: 0;
+                width: 22px;
+                text-align: center;
+                color: @light-font-color;
+                font-size: 13px;
+              }
+              &.editing {
+                cursor: pointer;
+                &:hover {
+                  background-color: @screen-color;
+                  .close-button {
+                    display: inline-block;
+                    &:hover {
+                      color: @font-color;
+                    }
+                  }
+                }
+              }
+            }
+          }
+          .upload-area {
+            .el-upload {
+              width: 100%;
+              text-align: left;
+              .el-button {
+                width: 100%;
+                height: 30px;
+                border-radius: 10px;
+                &:hover {
+                  opacity: 0.7;
+                }
+                &:active {
+                  opacity: 0.85;
+                }
+                &.el-button--text {
+                  background-color: @light-font-color;
+                  color: #fff;
+                  &:disabled {
+                    background-color: @gray-color;
+                    cursor: not-allowed;
+                  }
+                }
+              }
+            }
+            .el-upload__tip {
+              line-height: normal;
+              margin-top:0;
+            }
+            .el-upload-list {
+              // max-height: 80px;
+              // overflow-y: scroll;
+            }
           }
         }
       }
