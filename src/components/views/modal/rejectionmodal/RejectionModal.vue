@@ -16,7 +16,7 @@
             接收人
           </span>
           <span class="field-input">
-            XXX
+            {{doctor}}
           </span>
         </div>
         <div class="field whole-line">
@@ -56,6 +56,7 @@ export default {
       mode: '',
       completeInit: false,
       remark: '',
+      doctor: '',
       showEdit: true
     };
   },
@@ -69,13 +70,14 @@ export default {
     }
   },
   methods: {
-    showPanel(cardOperation, item, showEdit) {
+    showPanel(cardOperation, item, showEdit, doctor) {
       this.completeInit = false;
       this.mode = cardOperation;
       this.showEdit = showEdit;
       // console.log('item: ', item);
 
       this.remark = '';
+      this.doctor = doctor;
 
       this.$nextTick(() => {
         for (var property in this.warningResults) {

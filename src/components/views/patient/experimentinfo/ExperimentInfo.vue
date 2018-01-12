@@ -76,7 +76,8 @@ export default {
       milestoneNum: '',
       experimentMode: '',
       therapist: '',
-      appraiser: ''
+      appraiser: '',
+      doctor: ''
     };
   },
   computed: {
@@ -119,10 +120,10 @@ export default {
       Bus.$emit(this.SHOW_APPLICATION_MODAL, this.ADD_NEW_CARD, {}, true);
     },
     rejectApplication() {
-      Bus.$emit(this.SHOW_REJECTION_MODAL, this.ADD_NEW_CARD, {}, true);
+      Bus.$emit(this.SHOW_REJECTION_MODAL, this.ADD_NEW_CARD, {}, true, this.doctor);
     },
     agreeApplication() {
-      Bus.$emit(this.SHOW_RATIFICATION_MODAL, this.ADD_NEW_CARD, {}, true);
+      Bus.$emit(this.SHOW_RATIFICATION_MODAL, this.ADD_NEW_CARD, {}, true, this.therapist);
     },
     completeTherapy() {
       Bus.$emit(this.SHOW_TERMINATION_MODAL, this.ADD_NEW_CARD, {}, true, this.appraiser);
@@ -189,6 +190,7 @@ export default {
         this.experimentMode = data.taskMode ? data.taskMode : 1;
         this.therapist = data.treater ? data.treater : '';
         this.appraiser = data.assessor ? data.assessor : '';
+        this.doctor = '所属医生';
         this.experimentNumber = data.taskCode ? data.taskCode : '';
       }, (error) => {
         console.log(error);

@@ -16,7 +16,7 @@
             接收人
           </span>
           <span class="field-input">
-            XXX
+            {{therapist}}
           </span>
         </div>
         <div class="field whole-line">
@@ -71,6 +71,7 @@ export default {
       displayModal: false,
       mode: '',
       completeInit: false,
+      therapist: '',
       remark: '',
       experimentNumber: '',
       warningResults: {
@@ -96,13 +97,14 @@ export default {
     }
   },
   methods: {
-    showPanel(cardOperation, item, showEdit) {
+    showPanel(cardOperation, item, showEdit, therapist) {
       this.completeInit = false;
       this.mode = cardOperation;
       this.showEdit = showEdit;
 
       this.experimentNumber = '';
       this.remark = '';
+      this.therapist = therapist;
 
       this.$nextTick(() => {
         // this.$refs.scrollArea.scrollTop = 0;
