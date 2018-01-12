@@ -29,7 +29,7 @@
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{ transformSituationType(situationType,'situationType')}}</span>
+            <span>{{ transform(situationType,'situationType')}}</span>
           </span>
           <span class="field-input" v-else>
             <span class="warning-text">{{warningResults.situationType}}</span>
@@ -44,7 +44,23 @@
             </el-select>
           </span>
         </div>
-        <div class="field" v-show="situationType===1">
+        <div class="field">
+          <span class="field-name">
+            实验编码:
+            <span class="required-mark"></span>
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span>{{remark}}</span>
+          </span>
+          <span class="field-input" v-else>
+            <el-input
+              v-model="remark"
+
+              placeholder="自动获取实验编号">
+            </el-input>
+          </span>
+        </div>
+        <div class="field whole-line" v-show="situationType===1">
           <span class="field-name">
             左侧/右侧阈值:
             <span class="required-mark">*</span>
@@ -62,38 +78,38 @@
             <el-input class="right" v-model="rightThreshold" placeholder="请输入右侧运动阈值" :class="{'warning': warningResults.rightThreshold}" @change="updateWarning('rightThreshold')" ></el-input>
           </span>
         </div>
-      </div>
-      <div class="field" v-show="situationType===2">
-        <span class="field-name">
+        <div class="field whole-line" v-show="situationType===2">
+          <span class="field-name">
           治疗后情况描述:
           <span class="required-mark mark">*</span>
-        </span>
-        <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
           <span>{{situationRemark}}</span>
-        </span>
-        <span class="field-input" v-else>
+          </span>
+          <span class="field-input" v-else>
           <span class="warning-text text">{{warningResults.situationRemark}}</span>
           <el-input v-model="situationRemark" placeholder="请输入治疗后情况描述" :class="{'warning': warningResults.situationRemark}" type="textarea" @change="updateWarning('situationRemark')" :maxlength="500"></el-input>
-        </span>
-      </div>
-      <div class="field whole-line">
-        <span class="field-name">
-          备注:
-          <span class="required-mark"></span>
-        </span>
-        <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-          <span>{{remark}}</span>
-        </span>
-        <span class="field-input" v-else>
-          <el-input
-            v-model="remark"
-            type="textarea"
-            :rows="2"
-            :maxlength="500"
-            placeholder="请输入备注">
-          </el-input>
-        </span>
-      </div>
+          </span>
+        </div>
+        <div class="field whole-line">
+          <span class="field-name">
+            备注:
+            <span class="required-mark"></span>
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span>{{remark}}</span>
+          </span>
+          <span class="field-input" v-else>
+            <el-input
+              v-model="remark"
+              type="textarea"
+              :rows="2"
+              :maxlength="500"
+              placeholder="请输入备注">
+            </el-input>
+          </span>
+        </div>
+      </div>  
       <div class="seperate-line"></div>
       <div class="moveLeft">
              无不良反应: 
@@ -108,21 +124,36 @@
           <td class="col">严重程度</td>
         </tr>
         <tr class="row" v-for="(reaction, index) in patientPhytheReaction">
-          <td class="col narrow-col">{{index + 1}}</td>
-          <td class="col wide-col">
-              {{transformSituationType(reaction.reactionType, 'reactionType')}}
+          <td class="col narrow-col" v-show="index <=2">{{index + 1}}</td>
+          <td class="col wide-col" v-show="index <=2">
+            {{transform(reaction.reactionType, 'reactionType')}}
           </td>
-          <td class="col narrow-col">
-            <span v-if="mode===VIEW_CURRENT_CARD">{{transformSituationType(reaction.severityLevel,'reactionLevel')}}</span>
-            <el-select v-else v-model="reaction.severityLevel" clearable  :disabled="hasNoReaction"  @change="updateWarning('severityLevel')">
-            <el-option
-              v-for="item in getOptions('reactionLevel')"
-              :key="item.code"
-              :label="item.name"
-              :value="item.code">
-            </el-option>
+          <td class="col narrow-col" v-show="index <=2">
+            <span v-if="mode===VIEW_CURRENT_CARD">{{transform(reaction.severityLevel,'haveType')}}</span>
+            <el-select v-else v-model="reaction.severityLevel" clearable :disabled="hasNoReaction">
+              <el-option
+                v-for="item in getOptions('haveType')"
+                :key="item.code"
+                :label="item.name"
+                :value="item.code">
+              </el-option>
             </el-select>
           </td>
+          <td class="col narrow-col" v-show="index >=3">{{index + 1}}</td>
+            <td class="col wide-col" v-show="index >=3">
+              {{transform(reaction.reactionType, 'reactionType')}}
+            </td>
+            <td class="col narrow-col" v-show="index >=3">
+              <span v-if="mode===VIEW_CURRENT_CARD">{{transform(reaction.severityLevel,'reactionLevel')}}</span>
+              <el-select v-else v-model="reaction.severityLevel" clearable :disabled="hasNoReaction">
+                <el-option
+                  v-for="item in getOptions('reactionLevel')"
+                  :key="item.code"
+                  :label="item.name"
+                  :value="item.code">
+                </el-option>
+              </el-select>
+            </td>
         </tr>
       </table> 
       </div>
@@ -291,7 +322,7 @@ export default {
       this.displayModal = true;
       this.updateScrollbar();
     },
-    transformSituationType(code, fieldName) {
+    transform(code, fieldName) {
       var options = this.getOptions(fieldName);
       var targetOption = Util.getElement('code', code, options);
       return targetOption.name;
@@ -436,15 +467,26 @@ export default {
       padding: 30px 0 10px;
       font-size: @large-font-size;
     }
+    .content {
+      text-align: left;
+      font-size: 0;
     .field {
       display: inline-block;
       position: relative;
-      width: 100%;
+      width: 50%;
       min-height: 45px;
+      line-height: @field-line-height;
+      box-sizing: border-box;
       text-align: left;
       vertical-align: top;
       transform: translate3d(10px, 5px, 0);
       // overflow: hidden;
+      &.whole-line {
+          width: 100%;
+          .field-input {
+            width: calc(~"96% - @{field-name-width}");
+          }
+        }
       .field-name {
         display: inline-block;
         position: absolute;
@@ -463,9 +505,8 @@ export default {
       .field-input {
         display: inline-block;
         position: relative;
-        top: 0;
         left: @field-name-width;
-        width: calc(~"96% - @{field-name-width}");
+        width: calc(~"92% - @{field-name-width}");
         line-height: @field-line-height;
         font-size: @normal-font-size;
         color: @light-font-color;
@@ -521,6 +562,7 @@ export default {
         }
         .el-textarea {
           margin-bottom: 15px;
+          vertical-align: middle;
           transform: translateY(-3px);
           .el-textarea__inner {
             border: none;
@@ -635,6 +677,7 @@ export default {
         }
       }
     }
+  }  
     .seperate-line {
       width: 90%;
       height: 1px;
