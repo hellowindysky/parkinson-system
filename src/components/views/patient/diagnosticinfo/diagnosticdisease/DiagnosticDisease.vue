@@ -2,7 +2,7 @@
   <folding-panel :title="'病症情况'" :mode="mutableMode" :folded-status="foldedStatus" v-on:edit="startEditing"
     v-on:cancel="cancel" v-on:submit="submit" v-on:toggleFoldedPanel="updateScrollbar" :editable="canEdit">
     <div class="diagnostic-disease" ref="diagnosticDisease">
-      <div v-for="field in diagnosticDiseaseTemplate" class="field"
+      <div v-for="field in diagnosticDiseaseTemplate" class="field" v-show="field.fieldName!=='specificDisease'||specificDiseaseState"
         :class="{'whole-line': field.fieldName === 'caseSymptom'}">
         <span class="field-name">
           {{field.cnfieldName}}
@@ -49,7 +49,7 @@
           </div>
           <div class="text third-line">
             <span class="name">出现时间：</span>
-            <span class="value">{{TheAriseTime(item)}}</span>
+            <span class="value">{{theAriseTime(item)}}</span>
           </div>
         </card>
       </extensible-panel>
@@ -65,7 +65,7 @@ import Bus from 'utils/bus.js';
 import { vueCopy } from 'utils/helper';
 import {queryPatientSymptom, delPatientSymptom, modDiseaseSituation } from 'api/patient.js';
 
-// import { reviseDateFormat } from 'utils/helper.js';
+import { pruneObj } from 'utils/helper.js';
 
 import FoldingPanel from 'components/public/foldingpanel/FoldingPanel';
 import ExtensiblePanel from 'components/public/extensiblepanel/ExtensiblePanel';
@@ -81,7 +81,8 @@ export default {
       title: '主诉症状',
       devideWidth: '',
       lockSubmitButton: false,
-      complaintSympData: []
+      complaintSympData: [],
+      specificDiseaseState: false
       // MS_SYMPTOM: '运动症状',
       // MC_SYMPTOM: '运动并发症',
       // NMS_SYMPTOM: '非运动症状'
@@ -104,10 +105,6 @@ export default {
       var count = this.complaintSympData.length;
       return this.title + '（' + count + '条记录）';
     },
-    // totalDictionary() {
-    //   return [].concat(this.diagnosticDiseaseDictionary, this.diagnosticDiseaseMsDictionary,
-    //   this.diagnosticDiseaseMcDictionary, this.diagnosticDiseaseNmsDictionary);
-    // },
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients) && !this.archived) {
         return true;
@@ -131,7 +128,7 @@ export default {
     }
   },
   methods: {
-    TheAriseTime(item) {
+    theAriseTime(item) {
       if (item.ariseTime) {
         return item.ariseTime;
       } else {
@@ -155,11 +152,8 @@ export default {
       // Bus.$emit(this.SCROLL_AREA_SIZE_CHANGE);
     },
     cancel() {
-      // this.copyInfo = {};
-      // vueCopy(this.diagnosticDisease, this.copyInfo);
-      // this.warningResults = {};
+      vueCopy(this.diagnosticDisease, this.copyInfo);
       this.mutableMode = this.READING_MODE;
-      // Bus.$emit(this.SCROLL_AREA_SIZE_CHANGE);
     },
     getMatchedField(fieldName) {
       // 在字典项中查询该名字所对应的字段，从而方便我们得到该字段的详细信息
@@ -207,13 +201,12 @@ export default {
       // -------------
       var submitData = Object.assign({}, this.copyInfo);
       delete submitData.patientSymptom;
+      pruneObj(submitData);
       submitData.patientCaseId = this.$route.params.caseId;
       modDiseaseSituation(submitData).then(() => {
         this.updateAndClose();
         this.lockSubmitButton = false;
       }, this._handleError);
-      // 把 this.copyInfo.patientSymptom 下的日期对象转换为符合传输格式的字符串
-      // reviseDateFormat(this.copyInfo);
     },
     _handleError(error) {
       console.log(error);
@@ -226,21 +219,6 @@ export default {
     },
     updateScrollbar() {
       this.$nextTick(() => {
-        // Ps.destroy(this.$refs.scrollArea1);
-        // Ps.destroy(this.$refs.scrollArea2);
-        // Ps.destroy(this.$refs.scrollArea3);
-        // Ps.initialize(this.$refs.scrollArea1, {
-        //   wheelSpeed: 1,
-        //   minScrollbarLength: 40
-        // });
-        // Ps.initialize(this.$refs.scrollArea2, {
-        //   wheelSpeed: 1,
-        //   minScrollbarLength: 40
-        // });
-        // Ps.initialize(this.$refs.scrollArea3, {
-        //   wheelSpeed: 1,
-        //   minScrollbarLength: 40
-        // });
       });
     },
     updateComplaintSympCard() {
@@ -260,9 +238,6 @@ export default {
     },
     deleteDisease(item) {
       var patientDisease = {
-        // patientId: parseInt(this.$route.params.id, 10),
-        // patientCaseId: this.$route.params.caseId,
-        // patientDiseaseId: item.patientDiseaseId
         id: item.id
       };
       Bus.$on(this.CONFIRM, () => {
@@ -293,6 +268,21 @@ export default {
         }
         return options;
 
+      } else if (fieldName === 'specificDisease') {
+        let types = this.getOptions('diseaseType');
+        let targetTypeList = types.filter((type) => {
+          return type.typeCode === Number(this.copyInfo.diseaseType);
+        });
+        let childType = (targetTypeList.length > 0 && targetTypeList[0].childType) ? targetTypeList[0].childType : [];
+        // --具体病症的显示与隐藏--
+        if (childType.length > 0) {
+          this.specificDiseaseState = true;
+        } else {
+          this.$set(this.copyInfo, 'specificDisease', '');
+          this.specificDiseaseState = false;
+        };
+        // ---
+        return childType;
       } else {
         var dictionaryField = Util.getElement('fieldName', fieldName, this.diagnosticDiseaseDictionary);
         var fieldEnumId = dictionaryField.fieldEnumId;
@@ -303,7 +293,17 @@ export default {
 
     },
     transformTypeCode(typeCode, fieldName) {
-      return Util.getElement('typeCode', typeCode, this.getOptions(fieldName)).typeName;
+      if (fieldName === 'specificDisease') {
+        let types = this.getOptions('diseaseType');
+        let targetTypeList = types.filter((type) => {
+          return type.typeCode === Number(this.copyInfo.diseaseType);
+        });
+        let childType = (targetTypeList.length > 0 && targetTypeList[0].childType) ? targetTypeList[0].childType : [];
+        let matchedType = Util.getElement('typeCode', typeCode, childType);
+        return matchedType.typeName ? matchedType.typeName : '';
+      } else {
+        return Util.getElement('typeCode', typeCode, this.getOptions(fieldName)).typeName;
+      }
     },
     updateWarning(field) {
       var fieldName = field.fieldName;
@@ -371,7 +371,6 @@ export default {
       // 每次传过来的数据发生变化，就重新初始化 copyInfo
       this.copyInfo = {};
       vueCopy(this.diagnosticDisease, this.copyInfo);
-
       // 传过来的数据可能会没有某些字段属性，我们接下来将通过 template 来补齐
       // this.supplementCopyInfo();
     }
