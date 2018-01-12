@@ -192,6 +192,8 @@ export default {
         this.appraiser = data.assessor ? data.assessor : '';
         this.doctor = '所属医生';
         this.experimentNumber = data.taskCode ? data.taskCode : '';
+
+        Bus.$emit(this.SCROLL_AREA_SIZE_CHANGE);
       }, (error) => {
         console.log(error);
       });
@@ -208,6 +210,9 @@ export default {
     } else {
       next(from.path);
     }
+  },
+  beforeDestroy() {
+    Bus.$off(this.UPDATE_EXPERIMENT_INFO);
   }
 };
 </script>
