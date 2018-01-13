@@ -300,6 +300,7 @@ export default {
         this.reasonDetail = '';
         this.warningResults.reasonDetail = '';
       }
+      this.updateScrollbar();
     },
     cancel() {
       this.lockSubmitButton = false;
@@ -354,7 +355,7 @@ export default {
       this.lockSubmitButton = false;
     },
     updateAndClose() {
-      Bus.$emit(this.UPDATE_CASE_INFO);
+      Bus.$emit(this.UPDATE_EXPERIMENT_INFO);
       this.lockSubmitButton = false;
       this.displayModal = false;
     },
