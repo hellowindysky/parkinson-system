@@ -11,12 +11,15 @@
         <div class="field whole-line">
           <span class="field-name">
             随访形式
+            <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            {{followUpForm}}
+            {{followUpType}}
           </span>
           <span class="field-input" v-else>
-            <el-select v-model="followUpForm" clearable placeholder="请选择">
+            <span class="warning-text">{{warningResults.followUpType}}</span>
+            <el-select v-model="followUpType" clearable placeholder="请选择" @change="updateWarning('followUpType')"
+              :class="{'warning': warningResults.followUpType}">
               <el-option
                 v-for="item in getOptions('followUpType')"
                 :key="item.code"
@@ -29,12 +32,15 @@
         <div class="field whole-line">
           <span class="field-name">
             受访者是否正常完成随访
+            <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             {{followUpComplete}}
           </span>
           <span class="field-input" v-else>
-            <el-select v-model="followUpComplete" clearable placeholder="请选择">
+            <span class="warning-text">{{warningResults.followUpComplete}}</span>
+            <el-select v-model="followUpComplete" clearable placeholder="请选择" @change="updateWarning('followUpComplete')"
+              :class="{'warning': warningResults.followUpComplete}">
               <el-option
                 v-for="item in getOptions('followUpComplete')"
                 :key="item.code"
@@ -47,12 +53,15 @@
         <div class="field whole-line" v-if="followUpComplete===0">
           <span class="field-name">
             未能正常完成随访原因
+            <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            {{reason}}
+            {{followUpReason}}
           </span>
           <span class="field-input" v-else>
-            <el-select v-model="reason" clearable placeholder="请选择">
+            <span class="warning-text">{{warningResults.followUpReason}}</span>
+            <el-select v-model="followUpReason" clearable placeholder="请选择" @change="updateWarning('followUpReason')"
+              :class="{'warning': warningResults.followUpReason}">
               <el-option
                 v-for="item in getOptions('followUpReason')"
                 :key="item.code"
@@ -62,17 +71,21 @@
             </el-select>
           </span>
         </div>
-        <div class="field whole-line" v-if="reason===6">
+        <div class="field whole-line" v-if="followUpReason===6">
           <span class="field-name">
             原因描述
+            <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             {{remark}}
           </span>
           <span class="field-input" v-else>
+            <span class="warning-text">{{warningResults.remark}}</span>
             <el-input
               v-model="remark"
               type="textarea"
+              :class="{'warning': warningResults.remark}"
+              @change="updateWarning('remark')"
               :rows="2"
               :maxlength="500"
               placeholder="请详述具体原因">
@@ -82,12 +95,15 @@
         <div class="field whole-line">
           <span class="field-name">
             受访者是否愿意继续随访
+            <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             {{followUpContinue}}
           </span>
           <span class="field-input" v-else>
-            <el-select v-model="followUpContinue" clearable placeholder="请选择">
+            <span class="warning-text">{{warningResults.followUpContinue}}</span>
+            <el-select v-model="followUpContinue" clearable placeholder="请选择" @change="updateWarning('followUpContinue')"
+              :class="{'warning': warningResults.followUpContinue}">
               <el-option
                 v-for="item in getOptions('followUpContinue')"
                 :key="item.code"
@@ -101,12 +117,15 @@
         <div class="field whole-line">
           <span class="field-name">
             下一节点
+            <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span>{{nextStep}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-select v-model="nextStep" clearable placeholder="请选择下一节点">
+            <span class="warning-text">{{warningResults.nextStep}}</span>
+            <el-select v-model="nextStep" clearable placeholder="请选择下一节点" @change="updateWarning('nextStep')"
+              :class="{'warning': warningResults.nextStep}">
               <el-option
                 v-for="item in getOptions('nextStatus')"
                 :key="item.code"
@@ -119,6 +138,7 @@
         <div class="field whole-line" v-if="nextStep===4">
           <span class="field-name">
             接收人
+            <span class="required-mark">*</span>
           </span>
           <span class="field-input">
             {{appraiser}}
@@ -168,14 +188,22 @@ export default {
       displayModal: false,
       mode: '',
       completeInit: false,
+      showEdit: true,
+
       appraiser: '',
       remark: '',
-      followUpForm: '',
+      followUpType: '',
       followUpComplete: '',
-      reason: '',
+      followUpReason: '',
       followUpContinue: '',
       nextStep: '',
-      showEdit: true
+      warningResults: {
+        followUpType: '',
+        followUpComplete: '',
+        followUpReason: '',
+        followUpContinue: '',
+        nextStep: ''
+      }
     };
   },
   computed: {
@@ -205,9 +233,9 @@ export default {
 
       this.appraiser = appraiser;
       this.remark = '';
-      this.followUpForm = '';
+      this.followUpType = '';
       this.followUpComplete = '';
-      this.reason = '';
+      this.followUpReason = '';
       this.followUpContinue = '';
       this.nextStep = '';
 
@@ -246,6 +274,14 @@ export default {
         this.warningResults[fieldName] = '必填项';
       } else {
         this.warningResults[fieldName] = '';
+      }
+      if (this.followUpComplete !== 0) {
+        this.followUpReason = '';
+        this.warningResults.followUpReason = '';
+      }
+      if (this.followUpReason !== 6) {
+        this.remark = '';
+        this.warningResults.remark = '';
       }
     },
     cancel() {
