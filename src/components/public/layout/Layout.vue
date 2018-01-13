@@ -35,7 +35,7 @@
     <ratification-modal></ratification-modal>
     <follow-up-termination-modal></follow-up-termination-modal>
     <termination-modal></termination-modal>
-    <follow-up-summary-modal></follow-up-summary-modal>
+    <experiment-step-modal></experiment-step-modal>
 
     <filter-panel :showFilterPanel="showFilterPanel"></filter-panel>
     <choice-panel></choice-panel>
@@ -73,6 +73,7 @@ const dbsModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'componen
 const physiontherapyModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'components/views/modal/physiontherapymodal/PhysiontherapyModal');
 const treatmentEvaluationModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'components/views/modal/treatmentEvaluationmodal/TreatmentEvaluationModal');
 const adverseEventModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'components/views/modal/adverseeventmodal/AdverseEventModal');
+
 const vitalSignsModal = () => import(/* webpackChunkName: 'examinationModal' */ 'components/views/modal/vitalsignsmodal/VitalSignsModal');
 const neurologicModal = () => import(/* webpackChunkName: 'examinationModal' */ 'components/views/modal/neurologicmodal/NeurologicModal');
 const geneModal = () => import(/* webpackChunkName: 'examinationModal' */ 'components/views/modal/genemodal/GeneModal');
@@ -85,7 +86,7 @@ import rejectionModal from 'components/views/modal/rejectionmodal/RejectionModal
 import ratificationModal from 'components/views/modal/ratificationmodal/RatificationModal';
 import terminationModal from 'components/views/modal/terminationmodal/TerminationModal';
 import followUpTerminationModal from 'components/views/modal/followupterminationmodal/FollowUpTerminationModal';
-import followUpSummaryModal from 'components/views/modal/followupsummarymodal/FollowUpSummaryModal';
+import experimentStepModal from 'components/views/modal/experimentstepmodal/ExperimentStepModal';
 
 import filterPanel from 'components/public/filterpanel/FilterPanel';
 import choicePanel from 'components/public/choicepanel/ChoicePanel';
@@ -135,7 +136,7 @@ export default {
     ratificationModal,
     terminationModal,
     followUpTerminationModal,
-    followUpSummaryModal,
+    experimentStepModal,
 
     filterPanel,
     choicePanel,
