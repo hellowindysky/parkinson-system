@@ -487,6 +487,7 @@ export default {
     }
   }
   >.extensible-panel-wrapper.disease-panel{
+    margin-top:20px;
     >.content{
       height:@disease-card-height + @card-vertical-margin * 2 + 5px * 2;
     }
