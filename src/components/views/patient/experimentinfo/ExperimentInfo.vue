@@ -52,14 +52,15 @@
         </tr>
         <tr class="row" v-for="(step, index) in progressList">
           <td class="col col-number">{{index + 1}}</td>
-          <td class="col col-progress">{{getMilestone(step)}}</td>
+          <td class="col col-progress">{{getMilestone(step, index)}}</td>
           <td class="col col-executor">{{step.executeBy}}</td>
           <td class="col col-status" :class="getStatusColor(step)">{{getStatusText(step)}}</td>
           <td class="col col-start-time">{{step.startDate}}</td>
           <td class="col col-end-time">{{step.endDate}}</td>
           <td class="col col-remarks">
             {{step.remark}}
-            <span class="iconfont icon-detail" @click="seeDetail(step)"></span>
+            <span class="iconfont icon-detail" @click="seeDetail(step)"
+              v-if="index < progressList.length - 1"></span>
           </td>
         </tr>
       </table>
@@ -137,14 +138,34 @@ export default {
     seeDetail(step) {
       Bus.$emit(this.SHOW_EXPERIMENT_STEP_MODAL, this.VIEW_CURRENT_CARD, step, false);
     },
-    getMilestone(step) {
+    getMilestoneNum(step) {
       var milestoneNum = 0;
       var phase = step.phase;
       if (phase && phase.split('.').length > 0) {
         milestoneNum = Number(phase.split('.')[0]);
       }
+      return milestoneNum;
+    },
+    getMilestone(step, currentIndex) {
+      var milestoneNum = this.getMilestoneNum(step);
+
+      // 因为存在多个随访期，所以需要知道到底是第几个随访期
+      if (milestoneNum === 4) {
+        var count = 0;
+        for (var i = 0; i <= currentIndex; i++) {
+          if (this.getMilestoneNum(this.progressList[i]) === 4) {
+            count += 1;
+          }
+        }
+      }
+
       let milestoneList = ['', '筛选入组', '基线评估', '治疗期', '随访期', '实验结束'];
-      return milestoneList[milestoneNum];
+
+      if (milestoneNum === 4) {
+        return milestoneList[milestoneNum] + '(' + count + ')';
+      } else {
+        return milestoneList[milestoneNum];
+      }
     },
     getStatus(step) {
       var phase = step.phase;
@@ -158,7 +179,9 @@ export default {
     },
     getStatusText(step) {
       var status = this.getStatus(step);
-      if (status === 1) {
+      if (status === 0) {
+        return '等待揭盲';
+      } else if (status === 1) {
         return '进行中';
       } else if (status === 2) {
         return '完成';
@@ -168,8 +191,10 @@ export default {
     },
     getStatusColor(step) {
       var status = this.getStatus(step);
-      if (status === 1) {
+      if (status === 0) {
         return 'waiting';
+      } else if (status === 1) {
+        return 'ongoing';
       } else if (status === 2) {
         return 'finished';
       } else if (status === 3) {
@@ -182,7 +207,7 @@ export default {
         'tcTaskId': this.$store.state.subjectId
       };
       queryExperimentProgress(experimentInfo).then((data) => {
-        console.log(data);
+        // console.log(data);
         if (data && data.patientExperiment && data.patientExperiment.length > 0) {
           this.progressList = data.patientExperiment;
         } else {
@@ -341,7 +366,7 @@ export default {
           }
           &.col-remarks {
             width: 30%;
-            padding-right: 12px;
+            padding-right: 15px;
             .iconfont {
               position: absolute;
               right: 3px;
@@ -357,6 +382,9 @@ export default {
             }
           }
           &.waiting {
+            color: @light-font-color;
+          }
+          &.ongoing {
             color: @green-color;
           }
           &.finished {
