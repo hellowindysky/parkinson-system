@@ -81,12 +81,12 @@ const biochemicalExamModal = () => import(/* webpackChunkName: 'examinationModal
 const neuroelectricModal = () => import(/* webpackChunkName: 'examinationModal' */ 'components/views/modal/neuroelectricmodal/NeuroelectricModal');
 const imageModal = () => import(/* webpackChunkName: 'examinationModal' */ 'components/views/modal/imagemodal/ImageModal');
 
-import applicationModal from 'components/views/modal/applicationmodal/ApplicationModal';
-import rejectionModal from 'components/views/modal/rejectionmodal/RejectionModal';
-import ratificationModal from 'components/views/modal/ratificationmodal/RatificationModal';
-import terminationModal from 'components/views/modal/terminationmodal/TerminationModal';
-import followUpTerminationModal from 'components/views/modal/followupterminationmodal/FollowUpTerminationModal';
-import experimentStepModal from 'components/views/modal/experimentstepmodal/ExperimentStepModal';
+const applicationModal = () => import(/* webpackChunkName: 'experimentModal' */ 'components/views/modal/applicationmodal/ApplicationModal');
+const rejectionModal = () => import(/* webpackChunkName: 'experimentModal' */ 'components/views/modal/rejectionmodal/RejectionModal');
+const ratificationModal = () => import(/* webpackChunkName: 'experimentModal' */ 'components/views/modal/ratificationmodal/RatificationModal');
+const terminationModal = () => import(/* webpackChunkName: 'experimentModal' */ 'components/views/modal/terminationmodal/TerminationModal');
+const followUpTerminationModal = () => import(/* webpackChunkName: 'experimentModal' */ 'components/views/modal/followupterminationmodal/FollowUpTerminationModal');
+const experimentStepModal = () => import(/* webpackChunkName: 'experimentModal' */ 'components/views/modal/experimentstepmodal/ExperimentStepModal');
 
 import filterPanel from 'components/public/filterpanel/FilterPanel';
 import choicePanel from 'components/public/choicepanel/ChoicePanel';
