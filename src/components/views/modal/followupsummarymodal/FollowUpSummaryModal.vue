@@ -149,12 +149,10 @@ export default {
     }
   },
   mounted() {
-    // setTimeout(() => {
-    //   Bus.$emit(this.SHOW_FOLLOWUPSUMMARY_MODAL, {
-    //     cardOperation: this.ADD_NEW_CARD
-    //   });
-    // }, 5000);
     Bus.$on(this.SHOW_FOLLOW_UP_SUMMARY_MODAL, this.showModal);
+  },
+  beforeDestroy() {
+    Bus.$off(this.SHOW_FOLLOW_UP_SUMMARY_MODAL);
   }
 };
 </script>

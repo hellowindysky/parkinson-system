@@ -19,12 +19,12 @@
         重新申请
       </div>
       <div class="button light-blue-button reject-button"
-        v-if="listType==='appraisersPatients' && progressList.length>0 && milestoneNum===2"
+        v-if="listType==='appraisersPatients' && progressList.length>0 && milestoneNum===2 && status===1"
         @click="rejectApplication">
         退回
       </div>
       <div class="button light-button agree-button"
-        v-if="listType==='appraisersPatients' && progressList.length>0 && milestoneNum===2"
+        v-if="listType==='appraisersPatients' && progressList.length>0 && milestoneNum===2 && status===1"
         @click="agreeApplication">
         通过
       </div>
@@ -34,7 +34,7 @@
         结束治疗
       </div>
       <div class="button light-button complete-follow-up-button"
-        v-if="listType==='appraisersPatients' && progressList.length>0 && milestoneNum===3"
+        v-if="listType==='appraisersPatients' && progressList.length>0 && milestoneNum===4"
         @click="completeFollowUp">
         本期随访结束
       </div>
@@ -76,7 +76,8 @@ export default {
       milestoneNum: '',
       experimentMode: '',
       therapist: '',
-      appraiser: ''
+      appraiser: '',
+      doctor: ''
     };
   },
   computed: {
@@ -119,16 +120,16 @@ export default {
       Bus.$emit(this.SHOW_APPLICATION_MODAL, this.ADD_NEW_CARD, {}, true);
     },
     rejectApplication() {
-      Bus.$emit(this.SHOW_REJECTION_MODAL, this.ADD_NEW_CARD, {}, true);
+      Bus.$emit(this.SHOW_REJECTION_MODAL, this.ADD_NEW_CARD, {}, true, this.doctor);
     },
     agreeApplication() {
-      Bus.$emit(this.SHOW_RATIFICATION_MODAL, this.ADD_NEW_CARD, {}, true);
+      Bus.$emit(this.SHOW_RATIFICATION_MODAL, this.ADD_NEW_CARD, {}, true, this.therapist);
     },
     completeTherapy() {
-      Bus.$emit(this.SHOW_TERMINATION_MODAL, this.ADD_NEW_CARD, {}, true);
+      Bus.$emit(this.SHOW_TERMINATION_MODAL, this.ADD_NEW_CARD, {}, true, this.appraiser);
     },
     completeFollowUp() {
-      Bus.$emit(this.SHOW_FOLLOW_UP_SUMMARY_MODAL, this.ADD_NEW_CARD, {}, true);
+      Bus.$emit(this.SHOW_FOLLOW_UP_TERMINATION_MODAL, this.ADD_NEW_CARD, {}, true, this.appraiser);
     },
     getMilestone(step) {
       var milestoneNum = 0;
@@ -189,7 +190,10 @@ export default {
         this.experimentMode = data.taskMode ? data.taskMode : 1;
         this.therapist = data.treater ? data.treater : '';
         this.appraiser = data.assessor ? data.assessor : '';
+        this.doctor = data.doctor ? data.doctor : '';
         this.experimentNumber = data.taskCode ? data.taskCode : '';
+
+        Bus.$emit(this.SCROLL_AREA_SIZE_CHANGE);
       }, (error) => {
         console.log(error);
       });
@@ -206,6 +210,9 @@ export default {
     } else {
       next(from.path);
     }
+  },
+  beforeDestroy() {
+    Bus.$off(this.UPDATE_EXPERIMENT_INFO);
   }
 };
 </script>
@@ -304,6 +311,7 @@ export default {
           color: #fff;
         }
         .col {
+          padding: 0 3px;
           overflow: hidden;
           text-overflow:ellipsis;
           white-space: nowrap;

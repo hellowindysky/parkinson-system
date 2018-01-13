@@ -14,19 +14,20 @@
           </span>
           <span class="field-input" v-else>
             <span class="warning-text">{{warningResults.nextStep}}</span>
-            <el-select v-model="nextStep" placeholder="请选择下一节点" clearable>
+            <el-select v-model="nextStep" placeholder="请选择下一节点" clearable
+              :class="{'warning': warningResults.nextStep}" @change="updateWarning('nextStep')">
               <el-option v-for="option in getOptions('nextStatus')" :value="option.code"
                 :label="option.name" :key="option.code"></el-option>
             </el-select>
           </span>
         </div>
 
-        <div class="field whole-line">
+        <div class="field whole-line" v-if="nextStep===4">
           <span class="field-name">
             接收人
           </span>
           <span class="field-input">
-            view状态接收人
+            {{appraiser}}
           </span>
         </div>
 
@@ -36,7 +37,7 @@
             <!-- <span class="required-mark">*</span> -->
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>view状态处理意见文本</span>
+            <span>{{remark}}</span>
           </span>
           <span class="field-input" v-else>
             <el-input
@@ -78,6 +79,7 @@ export default {
       },
 
       nextStep: '',
+      appraiser: '',
       remark: ''
     };
   },
@@ -87,11 +89,13 @@ export default {
     ])
   },
   methods: {
-    showPanel(cardOperation, item, showEdit) {
+    showPanel(cardOperation, item, showEdit, appraiser) {
       this.completeInit = false;
       this.mode = cardOperation;
       this.showEdit = showEdit;
       // console.log('item: ', item);
+
+      this.appraiser = appraiser;
 
       this.$nextTick(() => {
         for (var property in this.warningResults) {
@@ -124,6 +128,13 @@ export default {
       };
       return options;
     },
+    updateWarning(fieldName) {
+      if (this[fieldName] === '') {
+        this.warningResults[fieldName] = '必填项';
+      } else {
+        this.warningResults[fieldName] = '';
+      }
+    },
     submit() {
       if (this.lockSubmitButton) {
         return;
@@ -140,7 +151,13 @@ export default {
           return;
         }
       }
-      completeExperiment().then(this.updateAndClose, this._handleError);
+      var experimentInfo = {
+        remark: this.remark,
+        patientId: this.$route.params.id,
+        tcTaskId: this.$store.state.subjectId,
+        nextMileStone: this.nextStep
+      };
+      completeExperiment(experimentInfo).then(this.updateAndClose, this._handleError);
     },
     _handleError(error) {
       console.log(error);
@@ -159,6 +176,9 @@ export default {
   },
   mounted() {
     Bus.$on(this.SHOW_TERMINATION_MODAL, this.showPanel);
+  },
+  beforeDestroy() {
+    Bus.$off(this.SHOW_TERMINATION_MODAL);
   }
 };
 </script>

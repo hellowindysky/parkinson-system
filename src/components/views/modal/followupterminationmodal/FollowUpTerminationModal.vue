@@ -1,6 +1,6 @@
 <template lang="html">
-  <div class="endof-followup-modal-wrapper" v-show="displayModal">
-    <div class="endof-followup-modal" ref="scrollArea">
+  <div class="follow-up-termination-modal-wrapper" v-show="displayModal">
+    <div class="follow-up-termination-modal" ref="scrollArea">
       <h3 class="title">{{title}}</h3>
       <div class="content">
         <div class="field">
@@ -10,15 +10,15 @@
         </div>
         <div class="field whole-line">
           <span class="field-name">
-            随访形式：
+            随访形式
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            {{followupForm}}
+            {{followUpForm}}
           </span>
           <span class="field-input" v-else>
-            <el-select v-model="followupForm" clearable placeholder="请选择">
+            <el-select v-model="followUpForm" clearable placeholder="请选择">
               <el-option
-                v-for="item in followupForms"
+                v-for="item in getOptions('followUpType')"
                 :key="item.code"
                 :label="item.name"
                 :value="item.code">
@@ -28,15 +28,15 @@
         </div>
         <div class="field whole-line">
           <span class="field-name">
-            受访者是否正常完成随访：
+            受访者是否正常完成随访
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            {{nomalFollowup}}
+            {{followUpComplete}}
           </span>
           <span class="field-input" v-else>
-            <el-select v-model="nomalFollowup" clearable placeholder="请选择">
+            <el-select v-model="followUpComplete" clearable placeholder="请选择">
               <el-option
-                v-for="item in nomalFollowups"
+                v-for="item in getOptions('followUpComplete')"
                 :key="item.code"
                 :label="item.name"
                 :value="item.code">
@@ -44,9 +44,9 @@
             </el-select>
           </span>
         </div>
-        <div class="field whole-line">
+        <div class="field whole-line" v-if="followUpComplete===0">
           <span class="field-name">
-            未能正常完成随访原因：
+            未能正常完成随访原因
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             {{reason}}
@@ -54,7 +54,7 @@
           <span class="field-input" v-else>
             <el-select v-model="reason" clearable placeholder="请选择">
               <el-option
-                v-for="item in reasons"
+                v-for="item in getOptions('followUpReason')"
                 :key="item.code"
                 :label="item.name"
                 :value="item.code">
@@ -62,9 +62,9 @@
             </el-select>
           </span>
         </div>
-        <div class="field whole-line">
+        <div class="field whole-line" v-if="reason===6">
           <span class="field-name">
-            原因描述：
+            原因描述
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             {{remark}}
@@ -81,15 +81,15 @@
         </div>
         <div class="field whole-line">
           <span class="field-name">
-            受访者是否愿意继续随访：
+            受访者是否愿意继续随访
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            {{willing}}
+            {{followUpContinue}}
           </span>
           <span class="field-input" v-else>
-            <el-select v-model="willing" clearable placeholder="请选择">
+            <el-select v-model="followUpContinue" clearable placeholder="请选择">
               <el-option
-                v-for="item in willingness"
+                v-for="item in getOptions('followUpContinue')"
                 :key="item.code"
                 :label="item.name"
                 :value="item.code">
@@ -100,15 +100,15 @@
         <div class="seperate-line"></div>
         <div class="field whole-line">
           <span class="field-name">
-            下一节点：
+            下一节点
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{node}}</span>
+            <span>{{nextStep}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-select v-model="node" clearable placeholder="请选择下一节点">
+            <el-select v-model="nextStep" clearable placeholder="请选择下一节点">
               <el-option
-                v-for="item in nextNodes"
+                v-for="item in getOptions('nextStatus')"
                 :key="item.code"
                 :label="item.name"
                 :value="item.code">
@@ -116,9 +116,17 @@
             </el-select>
           </span>
         </div>
+        <div class="field whole-line" v-if="nextStep===4">
+          <span class="field-name">
+            接收人
+          </span>
+          <span class="field-input">
+            {{appraiser}}
+          </span>
+        </div>
         <div class="field whole-line">
           <span class="field-name">
-            处理意见：
+            处理意见
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             {{remark}}
@@ -133,7 +141,7 @@
             </el-input>
           </span>
         </div>
-        <div class="field">
+        <div class="field" v-if="nextStep===5">
           <div class="menu-icon iconfont icon-caution"></div>
           <span class="field-name foot-section">
             请确认患者已经完成所有随访点，结束实验后，实验期间记录将会归档
@@ -160,64 +168,13 @@ export default {
       displayModal: false,
       mode: '',
       completeInit: false,
+      appraiser: '',
       remark: '',
-      followupForm: '',
-      nomalFollowup: '',
+      followUpForm: '',
+      followUpComplete: '',
       reason: '',
-      willing: '',
-      node: '',
-      followupForms: [{
-        code: '1',
-        name: '访视'
-      }, {
-        code: '2',
-        name: '电话访视'
-      }],
-      nomalFollowups: [{
-        code: '1',
-        name: '是'
-      }, {
-        code: '2',
-        name: '否'
-      }],
-      reasons: [{
-        code: '1',
-        name: '失访'
-      }, {
-        code: '2',
-        name: '因其它疾病原因导致无法正常随访'
-      }, {
-        code: '3',
-        name: '因经济等客观因素导致无法正常随访'
-      }, {
-        code: '4',
-        name: '家人不支持'
-      }, {
-        code: '5',
-        name: '觉得随访无意义'
-      }, {
-        code: '6',
-        name: '其它'
-      }],
-      willingness: [{
-        code: '1',
-        name: '是'
-      }, {
-        code: '2',
-        name: '否'
-      }],
-      nextNodes: [{
-        code: '1',
-        name: '随访期'
-      }, {
-        code: '2',
-        name: '实验结束（等待揭盲）'
-      }],
-      pickerOptions: {
-        disabledDate(time) {
-          return time.getTime() > Date.now();
-        }
-      },
+      followUpContinue: '',
+      nextStep: '',
       showEdit: true
     };
   },
@@ -241,10 +198,19 @@ export default {
     }
   },
   methods: {
-    showPanel(cardOperation, item, showEdit) {
+    showPanel(cardOperation, item, showEdit, appraiser) {
       this.completeInit = false;
       this.mode = cardOperation;
       this.showEdit = showEdit;
+
+      this.appraiser = appraiser;
+      this.remark = '';
+      this.followUpForm = '';
+      this.followUpComplete = '';
+      this.reason = '';
+      this.followUpContinue = '';
+      this.nextStep = '';
+
       this.$nextTick(() => {
         this.$refs.scrollArea.scrollTop = 0;
         for (var property in this.warningResults) {
@@ -328,11 +294,11 @@ export default {
     }
   },
   mounted() {
-    Bus.$on(this.SHOW_ENDOF_FOLLOWUP_MODAL, this.showPanel);
+    Bus.$on(this.SHOW_FOLLOW_UP_TERMINATION_MODAL, this.showPanel);
     this.updateScrollbar();
   },
   beforeDestroy() {
-    Bus.$off(this.SHOW_ENDOF_FOLLOWUP_MODAL);
+    Bus.$off(this.SHOW_FOLLOW_UP_TERMINATION_MODAL);
   }
 };
 </script>
@@ -341,9 +307,9 @@ export default {
 @import "~styles/variables.less";
 
 @field-line-height: 25px;
-@field-name-width: 200px;
+@field-name-width: 170px;
 
-.endof-followup-modal-wrapper {
+.follow-up-termination-modal-wrapper {
   position: absolute;
   left: 0;
   top: 0;
@@ -351,13 +317,13 @@ export default {
   height: 100%;
   background-color: fadeout(@light-font-color, 30%);
   z-index: 500;
-  .endof-followup-modal {
+  .follow-up-termination-modal {
     position: relative;
     margin: auto;
     padding: 0 40px;
-    top: 3%;
+    top: 5%;
     width: 660px;
-    max-height: 94%;
+    max-height: 90%;
     background-color: @background-color;
     overflow: hidden;
     .title {
