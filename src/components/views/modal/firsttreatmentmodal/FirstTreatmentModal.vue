@@ -358,7 +358,6 @@ export default {
     showModal(cardOperation, item) {
       this.completeInit = false;
       this.runClearVal = false;
-      console.log(cardOperation, item);
       this.mode = cardOperation;
       // ----------------------
       this.$set(this.copyInfo, 'firstVisitType', item.firstVisitType);
@@ -373,7 +372,6 @@ export default {
 
       // 编辑时的id
       this.id = item.id;
-      console.log(this.copyInfo);
       // -------------------------
       if (this.mode === this.ADD_NEW_CARD) {
         for (let key in this.copyInfo) {
