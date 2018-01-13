@@ -101,15 +101,7 @@ export default {
       return flattenedGroup;
     },
     listType() {
-      if (this.$route.matched.some(record => record.meta.myPatients)) {
-        return 'myPatients';
-      } else if (this.$route.matched.some(record => record.meta.otherPatients)) {
-        return 'otherPatients';
-      } else if (this.$route.matched.some(record => record.meta.subjectPatients)) {
-        return 'subjectPatients';
-      } else {
-        return 'unknown';
-      }
+      return this.$store.state.listType;
     },
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients)) {
@@ -140,9 +132,9 @@ export default {
       // 如果是新增患者界面，点击取消按钮，则回到患者列表的第一个患者
       if (this.$route.params.id === 'newPatient') {
         Bus.$on(this.CONFIRM, () => {
-          if (this.listType === 'myPatients') {
+          if (this.listType === this.MY_PATIENTS_TYPE) {
             this.$router.push({name: 'myPatients'});
-          } else if (this.listType === 'otherPatients') {
+          } else if (this.listType === this.OTHER_PATIENTS_TYPE) {
             this.$router.push({name: 'otherPatients'});
           }
           Bus.$off(this.CONFIRM);
@@ -205,21 +197,21 @@ export default {
         }
         addPatientInfo(submitData).then((data) => {
           var newId = data.patientId;
-          if (this.listType === 'myPatients') {
+          if (this.listType === this.MY_PATIENTS_TYPE) {
             this.$router.push({
               name: 'patientInfo',
               params: {id: newId}
             });
             Bus.$emit(this.UPDATE_MY_PATIENTS_LIST);
 
-          } else if (this.listType === 'otherPatients') {
+          } else if (this.listType === this.OTHER_PATIENTS_TYPE) {
             this.$router.push({
               name: 'otherPatientInfo',
               params: {id: newId}
             });
             Bus.$emit(this.UPDATE_OTHER_PATIENTS_LIST);
 
-          } else if (this.listType === 'subjectPatients') {
+          } else if (this.listType === this.SUBJECT_PATIENTS_TYPE) {
             this.$router.push({
               name: 'subjectPatientInfo',
               params: {id: newId}
@@ -272,11 +264,11 @@ export default {
           Bus.$emit(this.UPDATE_PATIENT_INFO);
 
           // 即使是编辑已有记录，也要更新患者列表（因为列表中存在年龄，性别等信息）
-          if (this.listType === 'myPatients') {
+          if (this.listType === this.MY_PATIENTS_TYPE) {
             Bus.$emit(this.UPDATE_MY_PATIENTS_LIST);
-          } else if (this.listType === 'otherPatients') {
+          } else if (this.listType === this.OTHER_PATIENTS_TYPE) {
             Bus.$emit(this.UPDATE_OTHER_PATIENTS_LIST);
-          } else if (this.listType === 'subjectPatients') {
+          } else if (this.listType === this.SUBJECT_PATIENTS_TYPE) {
             Bus.$emit(this.UPDATE_SUBJECT_PATIENTS_LIST);
           }
 

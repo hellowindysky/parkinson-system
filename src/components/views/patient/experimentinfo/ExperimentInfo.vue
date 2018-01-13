@@ -9,32 +9,32 @@
         实验编号 <span class="value experiment-number">{{experimentNumber}}</span>
       </span>
       <div class="button light-button application-button"
-        v-if="listType==='myPatients' && progressList.length===0"
+        v-if="listType===MY_PATIENTS_TYPE && progressList.length===0"
         @click="applyTojoin">
         申请入组
       </div>
       <div class="button light-button application-button"
-        v-if="listType==='myPatients' && isApplicationRejected"
+        v-if="listType===MY_PATIENTS_TYPE && isApplicationRejected"
         @click="applyTojoin">
         重新申请
       </div>
       <div class="button light-blue-button reject-button"
-        v-if="listType==='appraisersPatients' && progressList.length>0 && milestoneNum===2 && status===1"
+        v-if="listType===APPRAISERS_PATIENTS_TYPE && progressList.length>0 && milestoneNum===2 && status===1"
         @click="rejectApplication">
         退回
       </div>
       <div class="button light-button agree-button"
-        v-if="listType==='appraisersPatients' && progressList.length>0 && milestoneNum===2 && status===1"
+        v-if="listType===APPRAISERS_PATIENTS_TYPE && progressList.length>0 && milestoneNum===2 && status===1"
         @click="agreeApplication">
         通过
       </div>
       <div class="button light-button complete-therapy-button"
-        v-if="listType==='therapistsPatients' && progressList.length>0 && milestoneNum===3"
+        v-if="listType===THERAPISTS_PATIENTS_TYPE && progressList.length>0 && milestoneNum===3"
         @click="completeTherapy">
         结束治疗
       </div>
       <div class="button light-button complete-follow-up-button"
-        v-if="listType==='appraisersPatients' && progressList.length>0 && milestoneNum===4"
+        v-if="listType===APPRAISERS_PATIENTS_TYPE && progressList.length>0 && milestoneNum===4"
         @click="completeFollowUp">
         本期随访结束
       </div>
@@ -86,19 +86,7 @@ export default {
   },
   computed: {
     listType() {
-      if (this.$route.matched.some(record => record.meta.myPatients)) {
-        return 'myPatients';
-      } else if (this.$route.matched.some(record => record.meta.otherPatients)) {
-        return 'otherPatients';
-      } else if (this.$route.matched.some(record => record.meta.subjectPatients)) {
-        return 'subjectPatients';
-      } else if (this.$route.matched.some(record => record.meta.therapistsPatients)) {
-        return 'therapistsPatients';
-      } else if (this.$route.matched.some(record => record.meta.appraisersPatients)) {
-        return 'appraisersPatients';
-      } else {
-        return 'unknown';
-      }
+      return this.$store.state.listType;
     },
     isApplicationRejected() {
       var length = this.progressList.length;

@@ -32,10 +32,10 @@
       <div v-else-if="listType === APPRAISERS_PATIENTS_TYPE">
         <patient-list-item class="item" v-for="patient in appraisersPatientsList" :patient="patient" :key="patient.patientId"></patient-list-item>
       </div>
-      <div v-else-if="listType === 'users'">
+      <div v-else-if="listType === GROUP_TYPE">
         <user-list-item class="item" v-for="user in userList" :user="user" :key="user.id"></user-list-item>
       </div>
-      <div v-else-if="listType === 'roles'">
+      <div v-else-if="listType === ROLE_TYPE">
         <role-list-item class="item" v-for="role in roleList" :role="role" :key="role.id"></role-list-item>
       </div>
     </div>
@@ -144,7 +144,7 @@
     </transition>
     <transition name="slide-fade">
       <el-form class="filter-panel" :model="filterUsersForm" :rules="rules" ref="filterUsersForm"
-        label-width="20%" v-show="panelDisplay && listType === 'users'">
+        label-width="20%" v-show="panelDisplay && listType === USER_TYPE">
         <el-form-item label="分组" prop="type" class="item">
           <el-select v-model="filterUsersForm.type">
             <el-option label="全部" value="all"></el-option>
@@ -177,7 +177,7 @@
     </transition>
     <transition name="slide-fade">
       <el-form class="filter-panel" :model="filterRolesForm" :rules="rules" ref="filterRolesForm"
-      label-width="20%"  v-show="panelDisplay && listType === 'roles'">
+      label-width="20%"  v-show="panelDisplay && listType === ROLE_TYPE">
         <el-form-item label="分类" prop="type" class="item">
           <el-select v-model="filterUsersForm.type">
             <el-option label="全部" value="all"></el-option>
@@ -247,14 +247,6 @@ export default {
       hasFirstUpdatedList: false,
       listMode: this.READING_MODE,
 
-      MY_PATIENTS_TYPE: 'myPatients',
-      OTHER_PATIENTS_TYPE: 'otherPatients',
-      SUBJECT_PATIENTS_TYPE: 'subjectPatients',
-      THERAPISTS_PATIENTS_TYPE: 'therapistsPatients',
-      APPRAISERS_PATIENTS_TYPE: 'appraisersPatients',
-      GROUP_TYPE: 'groups',
-      USER_TYPE: 'users',
-      ROLE_TYPE: 'roles',
       selectedGroupList: [],
       filterPatientsForm: {
         group: -1,
@@ -315,22 +307,25 @@ export default {
     listType() {
       var path = this.$route.path;
       if (/^\/patients\/list/.test(path)) {
-        return this.MY_PATIENTS_TYPE;
+        this.$store.commit('UPDATE_LIST_TYPE', this.MY_PATIENTS_TYPE);
       } else if (/^\/patients\/groups/.test(path)) {
-        return this.GROUP_TYPE;
+        this.$store.commit('UPDATE_LIST_TYPE', this.GROUP_TYPE);
       } else if (/^\/patients\/otherList/.test(path)) {
-        return this.OTHER_PATIENTS_TYPE;
+        this.$store.commit('UPDATE_LIST_TYPE', this.OTHER_PATIENTS_TYPE);
       } else if (/^\/patients\/subjectList/.test(path)) {
-        return this.SUBJECT_PATIENTS_TYPE;
+        this.$store.commit('UPDATE_LIST_TYPE', this.SUBJECT_PATIENTS_TYPE);
       } else if (/^\/patients\/therapistsPatientList/.test(path)) {
-        return this.THERAPISTS_PATIENTS_TYPE;
+        this.$store.commit('UPDATE_LIST_TYPE', this.THERAPISTS_PATIENTS_TYPE);
       } else if (/^\/patients\/appraisersPatientList/.test(path)) {
-        return this.APPRAISERS_PATIENTS_TYPE;
+        this.$store.commit('UPDATE_LIST_TYPE', this.APPRAISERS_PATIENTS_TYPE);
       } else if (/^\/configuration\/userManagement/.test(path)) {
-        return 'users';
+        this.$store.commit('UPDATE_LIST_TYPE', this.USER_TYPE);
       } else if (/^\/configuration\/roleManagement/.test(path)) {
-        return 'roles';
+        this.$store.commit('UPDATE_LIST_TYPE', this.ROLE_TYPE);
+      } else {
+        this.$store.commit('UPDATE_LIST_TYPE', '');
       }
+      return this.$store.state.listType;
     },
     searchInputPlaceholder() {
       if (this.listType === this.MY_PATIENTS_TYPE ||
@@ -361,9 +356,9 @@ export default {
         return '患者：' + this.therapistsPatientsList.length + '人';
       } else if (this.listType === this.APPRAISERS_PATIENTS_TYPE) {
         return '患者：' + this.appraisersPatientsList.length + '人';
-      } else if (this.listType === 'users') {
+      } else if (this.listType === this.USER_TYPE) {
         return '用户：86人';
-      } else if (this.listType === 'roles') {
+      } else if (this.listType === this.USER_TYPE) {
         return '角色：3种';
       }
     },

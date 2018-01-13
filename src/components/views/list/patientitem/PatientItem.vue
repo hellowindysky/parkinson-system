@@ -21,15 +21,7 @@ export default {
   },
   computed: {
     listType() {
-      if (this.$route.matched.some(record => record.meta.myPatients)) {
-        return 'myPatients';
-      } else if (this.$route.matched.some(record => record.meta.otherPatients)) {
-        return 'otherPatients';
-      } else if (this.$route.matched.some(record => record.meta.subjectPatients)) {
-        return 'subjectPatients';
-      } else {
-        return 'unknown';
-      }
+      return this.$store.state.listType;
     },
     // 根据路由信息对象提供的当前路径，来判断自己是否被选择
     selected() {
