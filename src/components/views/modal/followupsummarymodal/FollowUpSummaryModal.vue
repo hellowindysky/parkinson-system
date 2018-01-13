@@ -149,10 +149,10 @@ export default {
     }
   },
   mounted() {
-    Bus.$on(this.SHOW_FOLLOW_UP_SUMMARY_MODAL, this.showModal);
+    Bus.$on(this.SHOW_EXPERIMENT_STEP_MODAL, this.showModal);
   },
   beforeDestroy() {
-    Bus.$off(this.SHOW_FOLLOW_UP_SUMMARY_MODAL);
+    Bus.$off(this.SHOW_EXPERIMENT_STEP_MODAL);
   }
 };
 </script>

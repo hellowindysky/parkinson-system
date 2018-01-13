@@ -57,7 +57,10 @@
           <td class="col col-status" :class="getStatusColor(step)">{{getStatusText(step)}}</td>
           <td class="col col-start-time">{{step.startDate}}</td>
           <td class="col col-end-time">{{step.endDate}}</td>
-          <td class="col col-remarks">{{step.remark}}</td>
+          <td class="col col-remarks">
+            {{step.remark}}
+            <span class="iconfont icon-detail" @click="seeDetail(step)"></span>
+          </td>
         </tr>
       </table>
     </div>
@@ -130,6 +133,9 @@ export default {
     },
     completeFollowUp() {
       Bus.$emit(this.SHOW_FOLLOW_UP_TERMINATION_MODAL, this.ADD_NEW_CARD, {}, true, this.appraiser);
+    },
+    seeDetail(step) {
+      Bus.$emit(this.SHOW_EXPERIMENT_STEP_MODAL, this.VIEW_CURRENT_CARD, step, false);
     },
     getMilestone(step) {
       var milestoneNum = 0;
@@ -335,6 +341,20 @@ export default {
           }
           &.col-remarks {
             width: 30%;
+            padding-right: 12px;
+            .iconfont {
+              position: absolute;
+              right: 3px;
+              font-size: @normal-font-size;
+              // font-weight: bold;
+              cursor: pointer;
+              &:hover {
+                opacity: 0.6;
+              }
+              &:active {
+                opacity: 0.8;
+              }
+            }
           }
           &.waiting {
             color: @green-color;
