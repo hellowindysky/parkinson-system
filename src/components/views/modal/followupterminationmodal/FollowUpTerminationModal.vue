@@ -77,15 +77,15 @@
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            {{remark}}
+            {{reasonDetail}}
           </span>
           <span class="field-input" v-else>
-            <span class="warning-text">{{warningResults.remark}}</span>
+            <span class="warning-text textarea-warning">{{warningResults.reasonDetail}}</span>
             <el-input
-              v-model="remark"
+              v-model="reasonDetail"
               type="textarea"
-              :class="{'warning': warningResults.remark}"
-              @change="updateWarning('remark')"
+              :class="{'warning': warningResults.reasonDetail}"
+              @change="updateWarning('reasonDetail')"
               :rows="2"
               :maxlength="500"
               placeholder="请详述具体原因">
@@ -144,6 +144,17 @@
             {{appraiser}}
           </span>
         </div>
+        <div class="field whole-line" v-if="nextStep===4">
+          <span class="field-name">
+            下次随访时间
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span>{{nextTime}}</span>
+          </span>
+          <span class="field-input" v-else>
+            <el-date-picker v-model="nextTime" clearable placeholder="请选择下次随访时间"></el-date-picker>
+          </span>
+        </div>
         <div class="field whole-line">
           <span class="field-name">
             处理意见
@@ -181,6 +192,7 @@ import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
+import { completeFollowUp } from 'api/experiment.js';
 
 export default {
   data() {
@@ -191,12 +203,15 @@ export default {
       showEdit: true,
 
       appraiser: '',
-      remark: '',
+      reasonDetail: '',
       followUpType: '',
       followUpComplete: '',
       followUpReason: '',
       followUpContinue: '',
       nextStep: '',
+      nextTime: '',
+      remark: '',
+
       warningResults: {
         followUpType: '',
         followUpComplete: '',
@@ -232,12 +247,14 @@ export default {
       this.showEdit = showEdit;
 
       this.appraiser = appraiser;
-      this.remark = '';
       this.followUpType = '';
       this.followUpComplete = '';
       this.followUpReason = '';
+      this.reasonDetail = '';
       this.followUpContinue = '';
       this.nextStep = '';
+      this.nextTime = '';
+      this.remark = '';
 
       this.$nextTick(() => {
         this.$refs.scrollArea.scrollTop = 0;
@@ -280,8 +297,8 @@ export default {
         this.warningResults.followUpReason = '';
       }
       if (this.followUpReason !== 6) {
-        this.remark = '';
-        this.warningResults.remark = '';
+        this.reasonDetail = '';
+        this.warningResults.reasonDetail = '';
       }
     },
     cancel() {
@@ -308,9 +325,32 @@ export default {
           return;
         }
       }
+
+      var experimentInfo = {
+        patientId: this.$route.params.id,
+        tcTaskId: this.$store.state.subjectId,
+        nextMileStone: this.nextStep,
+        remark: this.remark,
+        followUpModel: {
+          followUpType: this.followUpType,
+          followUpComplete: this.followUpComplete,
+          followUpReason: this.followUpReason,
+          reasonDetail: this.reasonDetail,
+          followUpContinue: this.followUpContinue,
+          nextTime: Util.simplifyDate(this.nextTime)
+        }
+      };
+      completeFollowUp(experimentInfo).then(this.updateAndClose, this._handleError);
     },
     _handleError(error) {
       console.log(error);
+      if (error.code === 2009) {
+        this.$message({
+          message: '当前操作无法完成，请刷新页面后再试',
+          type: 'error',
+          duration: 2000
+        });
+      }
       this.lockSubmitButton = false;
     },
     updateAndClose() {
@@ -434,6 +474,9 @@ export default {
             height: 15px;
             color: red;
             font-size: @small-font-size;
+            &.textarea-warning {
+              top: 46px;
+            }
           }
           .el-input {
             transform: translateY(-3px);
@@ -444,12 +487,15 @@ export default {
             }
           }
           .el-textarea {
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             vertical-align: middle;
             transform: translateY(-3px);
             .el-textarea__inner {
               border: none;
               background-color: @screen-color;
+            }
+            textarea {
+              height: 54px;
             }
           }
           .el-select {
