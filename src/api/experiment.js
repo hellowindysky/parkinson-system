@@ -57,3 +57,11 @@ export function completeExperiment(experimentInfo) {
   var url = 'pdms/completePatientExperiment';
   return encapsulatePromise(url, request);
 };
+
+// 结束随访
+export function completeFollowUp(experimentInfo) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientExperimentModel = experimentInfo;
+  var url = 'pdms/completeFollowUp';
+  return encapsulatePromise(url, request);
+};

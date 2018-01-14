@@ -47,6 +47,16 @@ export default {
   DELETE_CURRENT_CARD: 'deleteCurrentCard',
   RECALCULATE_CARD_WIDTH: 'recalculateCardWidth',
 
+  MY_PATIENTS_TYPE: 'myPatients',
+  OTHER_PATIENTS_TYPE: 'otherPatients',
+  SUBJECT_PATIENTS_TYPE: 'subjectPatients',
+  THERAPISTS_PATIENTS_TYPE: 'therapistsPatients',
+  APPRAISERS_PATIENTS_TYPE: 'appraisersPatients',
+
+  GROUP_TYPE: 'groups',
+  USER_TYPE: 'users',
+  ROLE_TYPE: 'roles',
+
   FOLD_BASIC_INFO: 'foldBasicInfo',
   EDIT_DISEASE_INFO: 'editDiseaseInfo',
   EDIT_OTHER_INFO: 'editOtherInfo',
@@ -108,7 +118,7 @@ export default {
   SHOW_RATIFICATION_MODAL: 'showRatificationModal',
   SHOW_FOLLOW_UP_TERMINATION_MODAL: 'showFollowUpTerminationModal',
   SHOW_TERMINATION_MODAL: 'showTerminationModal',
-  SHOW_FOLLOW_UP_SUMMARY_MODAL: 'showFollowUpSummaryModal',
+  SHOW_EXPERIMENT_STEP_MODAL: 'showExperimentStepModal',
 
   SHOW_CHOICE_PANEL: 'showChoicePanel',
 

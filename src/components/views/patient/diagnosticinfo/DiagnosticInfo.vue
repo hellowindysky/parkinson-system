@@ -42,19 +42,7 @@ export default {
   },
   computed: {
     listType() {
-      if (this.$route.matched.some(record => record.meta.myPatients)) {
-        return 'myPatients';
-      } else if (this.$route.matched.some(record => record.meta.otherPatients)) {
-        return 'otherPatients';
-      } else if (this.$route.matched.some(record => record.meta.subjectPatients)) {
-        return 'subjectPatients';
-      } else if (this.$route.matched.some(record => record.meta.therapistsPatients)) {
-        return 'therapistsPatients';
-      } else if (this.$route.matched.some(record => record.meta.appraisersPatients)) {
-        return 'appraisersPatients';
-      } else {
-        return 'unknown';
-      }
+      return this.$store.state.listType;
     },
     title() {
       return '看诊记录（' + this.patientCaseList.length + '条记录）';
@@ -128,23 +116,31 @@ export default {
       }
     },
     seeDetail(item) {
+      this.routerJumpWithCaseId(item.patientCaseId);
+      Bus.$emit(this.UPDATE_COMPLAINTSYMPTOMS_INFO);
+    },
+    addRecord() {
+      this.routerJumpWithCaseId('newCase');
+    },
+    routerJumpWithCaseId(caseId) {
       var routeName = '';
-      if (this.listType === 'myPatients') {
+      if (this.listType === this.MY_PATIENTS_TYPE) {
         routeName = 'diagnosticDetail';
-      } else if (this.listType === 'otherPatients') {
+      } else if (this.listType === this.OTHER_PATIENTS_TYPE) {
         routeName = 'otherDiagnosticDetail';
-      } else if (this.listType === 'subjectPatients') {
+      } else if (this.listType === this.SUBJECT_PATIENTS_TYPE) {
         routeName = 'subjectDiagnosticDetail';
-      } else if (this.listType === 'therapistsPatients') {
+      } else if (this.listType === this.THERAPISTS_PATIENTS_TYPE) {
         routeName = 'therapistsPatientsDiagnosticDetail';
-      } else if (this.listType === 'appraisersPatients') {
+      } else if (this.listType === this.APPRAISERS_PATIENTS_TYPE) {
         routeName = 'appraisersPatientsDiagnosticDetail';
       }
       this.$router.push({
         name: routeName,
-        params: { caseId: item.patientCaseId }
+        params: {
+          'caseId': caseId
+        }
       });
-      Bus.$emit(this.UPDATE_COMPLAINTSYMPTOMS_INFO);
     },
     deleteRecord(item) {
       Bus.$on(this.CONFIRM, () => {
@@ -162,34 +158,6 @@ export default {
     _rejectDeletion() {
       // 即使删除不成功，也要解除 [确认对话框] 的 “确认” 回调函数
       Bus.$off(this.CONFIRM);
-    },
-    addRecord() {
-      if (this.listType === 'myPatients') {
-        this.$router.push({
-          name: 'diagnosticDetail',
-          params: {'caseId': 'newCase'}
-        });
-      } else if (this.listType === 'otherPatients') {
-        this.$router.push({
-          name: 'otherDiagnosticDetail',
-          params: {'caseId': 'newCase'}
-        });
-      } else if (this.listType === 'subjectPatients') {
-        this.$router.push({
-          name: 'subjectrDiagnosticDetail',
-          params: {'caseId': 'newCase'}
-        });
-      } else if (this.listType === 'therapistsPatients') {
-        this.$router.push({
-          name: 'therapistsPatientsDiagnosticDetail',
-          params: {'caseId': 'newCase'}
-        });
-      } else if (this.listType === 'appraisersPatients') {
-        this.$router.push({
-          name: 'appraisersPatientsDiagnosticDetail',
-          params: {'caseId': 'newCase'}
-        });
-      }
     }
   },
   components: {

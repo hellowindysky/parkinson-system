@@ -7,7 +7,10 @@ const state = {
   hasRightToDisplaySensitiveInfo: false,
 
   // 表示是否显示脱敏字段，默认为“否”，即处于脱敏状态
-  showSensitiveInfo: false
+  showSensitiveInfo: false,
+
+  // 列表类型，默认为空
+  listType: ''
 };
 
 export default state;

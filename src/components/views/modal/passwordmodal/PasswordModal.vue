@@ -174,12 +174,15 @@ export default {
       // 运行到这里，说明满足所有条件，可以更新代码了
       resetPassword(this.originalPassword, this.newPassword, this.verificationCode).then(() => {
         this.$message({
-          message: '已成功修改密码',
+          message: '已成功修改密码，请重新登录系统',
           type: 'success',
           duration: 2000
         });
         this.displayModal = false;
         this.lockSubmitButton = false;
+        setTimeout(() => {
+          this.$router.push({name: 'login'});
+        }, 1000);
       }, (error) => {
         if (error.code === 25) {
           this.originalPasswordWarning = '当前密码不正确，请重新输入';

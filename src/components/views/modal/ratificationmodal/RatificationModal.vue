@@ -161,7 +161,7 @@ export default {
       console.log(error);
       if (error.code === 2009) {
         this.$message({
-          message: '该患者已加入实验组，不能重复操作',
+          message: '当前操作无法完成，请刷新页面后再试',
           type: 'error',
           duration: 2000
         });

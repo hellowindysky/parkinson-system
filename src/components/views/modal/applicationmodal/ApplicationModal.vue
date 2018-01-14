@@ -268,6 +268,12 @@ export default {
           type: 'error',
           duration: 2000
         });
+      } else if (error.code === 2009) {
+        this.$message({
+          message: '当前操作无法完成，请刷新页面后再试',
+          type: 'error',
+          duration: 2000
+        });
       }
       this.lockSubmitButton = false;
     },

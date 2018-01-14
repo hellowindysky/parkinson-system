@@ -86,7 +86,7 @@
         </card>
         <card class="card neuroelectric-card" :class="cardWidth" :mode="mutableMode" v-for="item in sleepMonitoringList" :key="item.patientCaseId"
           :title="transform(item.elecExamType, 'elecExam')" v-on:editCurrentCard="editNeuroelectricRecord(item)" v-on:viewCurrentCard="viewNeuroelectricRecord(item)"
-          v-on:deleteCurrentCard="deleteNeuroelectricRecord(item)">
+          v-on:deleteCurrentCard="deleteSleepMonitoringRecord(item)">
           <div class="text first-line">
             <span class="name">RDI</span>
             <span class="value">{{getRDI(item)}}</span>
@@ -153,7 +153,8 @@
 import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import { deleteEmg, deleteBiochemical, deleteNeurologicCheck, deleteGeneCheck, deleteImage, deleteVitalSigns } from 'api/patient.js';
+import { deleteEmg, deleteBiochemical, deleteNeurologicCheck, deleteSleepMonitoring,
+  deleteGeneCheck, deleteImage, deleteVitalSigns } from 'api/patient.js';
 // import { vueCopy } from 'utils/helper';
 
 import FoldingPanel from 'components/public/foldingpanel/FoldingPanel';
@@ -366,11 +367,20 @@ export default {
       Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
     },
     deleteNeuroelectricRecord(item) { // 删除肌电图
-      let EmgInfo = {
+      let emgInfo = {
         id: item.id
       };
       Bus.$on(this.CONFIRM, () => {
-        deleteEmg(EmgInfo).then(this._resolveDeletion, this._rejectDeletion);
+        deleteEmg(emgInfo).then(this._resolveDeletion, this._rejectDeletion);
+      });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
+    },
+    deleteSleepMonitoringRecord(item) {
+      let sleepMonitoringInfo = {
+        patientNerveSleepId: item.patientNerveSleepId
+      };
+      Bus.$on(this.CONFIRM, () => {
+        deleteSleepMonitoring(sleepMonitoringInfo).then(this._resolveDeletion, this._rejectDeletion);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },

@@ -23,6 +23,10 @@ const mutations = {
 
   [types.HIDE_SENSITIVE_INFO](state) {
     state.showSensitiveInfo = false;
+  },
+
+  [types.UPDATE_LIST_TYPE](state, type) {
+    state.listType = type;
   }
 };
 
