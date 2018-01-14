@@ -159,7 +159,7 @@
           <template v-if="item.exposedType!==8">
             <div class="text first-line">
               <span class="name">接触频率：</span>
-              <span class="value">{{item.exposedFrquency}} 次/周</span>
+              <span class="value">{{item.exposedFrquency}}</span>
             </div>
             <div class="text second-line">
               <span class="name">年龄阶段：</span>
