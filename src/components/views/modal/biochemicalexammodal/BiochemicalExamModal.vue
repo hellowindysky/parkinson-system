@@ -181,7 +181,6 @@ export default {
     showPanel(cardOperation, item, showEdit) {
       this.displayModal = true;
       this.mode = cardOperation;
-      // console.log('item', item);
       this.showEdit = showEdit;
       this.copyInfo = {};
       this.$set(this.copyInfo, 'bioexamId', '');
@@ -206,16 +205,12 @@ export default {
       this.$nextTick(() => {
         this.clearWarning();
       });
-      console.log(this.targetBioexam);
-      console.log(this.copyInfo);
-      console.log(this.warningResults);
     },
     updateTemplate() {
       // this.targetBioexam = [];
       for (let bioexam of this.bioexamTypeList) {
         if (bioexam.id === this.copyInfo.bioexamId) {
           vueCopy(bioexam.projects, this.targetBioexam);
-          // console.log('targetBioexam', this.targetBioexam);
         }
       }
       this.updateScrollbar();
@@ -233,7 +228,6 @@ export default {
     changeBioexam() {
       this.updateWarning('bioexamId');
       this.updateTemplate();
-      console.log(this.targetBioexam);
       // 接下来要根据新的 targetBioexam 重置 this.copyInfo.bioexamResult
       this.$set(this.copyInfo, 'bioexamResult', []);
       for (let i = 0; i < this.targetBioexam.length; i++) {
@@ -247,7 +241,6 @@ export default {
         this.$set(this.copyInfo.bioexamResult[i], 'remarks', '');
         this.$set(this.copyInfo.bioexamResult[i], 'result', '');
       }
-      // console.log('current', this.copyInfo['bioexamResult']);
 
       if (this.copyInfo.bioexamId === 12) {
         // 12 为全血
@@ -260,7 +253,6 @@ export default {
       } else {
         this.$delete(this.warningResults, 'bioexamResult');
       };
-      console.log(this.warningResults);
     },
     cancel() {
       this.lockSubmitButton = false;
@@ -293,12 +285,13 @@ export default {
 
       for (let fieldName in this.warningResults) {
         if (Array.isArray(this.warningResults[fieldName])) {
-          this.warningResults[fieldName].forEach((item) => {
-            if (item.result !== '') {
+          for (let i = 0; i < this.warningResults[fieldName].length; i++) {
+            const element = this.warningResults[fieldName][i];
+            if (element.result !== '') {
               this.lockSubmitButton = false;
               return;
             }
-          });
+          }
         } else {
           if (this.warningResults[fieldName] !== '') {
             this.lockSubmitButton = false;
@@ -350,10 +343,10 @@ export default {
       for (let key in this.warningResults) {
         if (Array.isArray(this.warningResults[key])) {
           this.warningResults[key].forEach((item) => {
-            item.result = null;
+            item.result = '';
           });
         } else {
-          this.warningResults[key] = null;
+          this.warningResults[key] = '';
         }
       }
     },
@@ -381,7 +374,7 @@ export default {
     }
   },
   mounted() {
-    console.log(this.bioexamTypeList);
+    // console.log(this.bioexamTypeList);
     this.updateScrollbar();
     Bus.$on(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.showPanel);
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
