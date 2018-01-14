@@ -67,6 +67,9 @@
               <td class="col col-range">
                 参考范围
               </td>
+              <td class="col col-clinical">
+                临床意义
+              </td>
               <td class="col col-remarks">
                 备注
               </td>
@@ -98,6 +101,17 @@
               </td>
               <td class="col col-range">
                 {{item.referenceRanges}}
+              </td>
+              <td class="col col-clinical">
+                <span v-if="mode===VIEW_CURRENT_CARD">
+                  {{transform(copyInfo.bioexamResult[index].isReference, 'isReference')}}
+                </span>
+                <el-select v-else placeholder="请选择" v-model="copyInfo.bioexamResult[index].isReference">
+                  <el-option v-for="item in getOptions('isReference')" :key="item.code"
+                   :label="item.name" 
+                   :value="item.code">
+                  </el-option>
+                </el-select>
               </td>
               <td class="col col-remarks">
                 <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.bioexamResult[index].remarks}}</span>
@@ -148,7 +162,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'bioexamTypeList'
+      'bioexamTypeList',
+      'typeGroup'
     ]),
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
@@ -183,6 +198,7 @@ export default {
       this.mode = cardOperation;
       this.showEdit = showEdit;
       this.copyInfo = {};
+
       this.$set(this.copyInfo, 'bioexamId', '');
       this.$set(this.copyInfo, 'bioexamResult', []);
       this.$set(this.copyInfo, 'checkDate', '');
@@ -194,6 +210,12 @@ export default {
 
       } else {
         vueCopy(item, this.copyInfo);
+        this.copyInfo.bioexamResult.forEach((item, i) => {
+          if (item.isReference === undefined) {
+            this.$set(this.copyInfo.bioexamResult[i], 'isReference', '');
+          }
+        });
+
         if (item.bioexamId === 12) {
           this.$set(this.warningResults, 'bioexamResult', []);
           vueCopy(item.bioexamResult.map((elem) => {return {bioexamProjectId: elem.bioexamProjectId, result: elem.result};}), this.warningResults.bioexamResult);
@@ -207,7 +229,7 @@ export default {
       });
     },
     updateTemplate() {
-      // this.targetBioexam = [];
+      this.targetBioexam = [];
       for (let bioexam of this.bioexamTypeList) {
         if (bioexam.id === this.copyInfo.bioexamId) {
           vueCopy(bioexam.projects, this.targetBioexam);
@@ -240,6 +262,7 @@ export default {
         }
         this.$set(this.copyInfo.bioexamResult[i], 'remarks', '');
         this.$set(this.copyInfo.bioexamResult[i], 'result', '');
+        this.$set(this.copyInfo.bioexamResult[i], 'isReference', '');
       }
 
       if (this.copyInfo.bioexamId === 12) {
@@ -253,6 +276,24 @@ export default {
       } else {
         this.$delete(this.warningResults, 'bioexamResult');
       };
+    },
+    transform(id, fieldName) {
+      id = parseInt(id, 10);
+      let typesArr = this.getOptions(fieldName);
+      let item = Util.getElement('code', id, typesArr);
+      return item.name ? item.name : '';
+    },
+    getOptions(fieldName) {
+      var options = [];
+      var types = Util.getElement('typegroupcode', fieldName, this.typeGroup).types;
+      types = types ? types : [];
+      for (let type of types) {
+        options.push({
+          name: type.typeName,
+          code: type.typeCode
+        });
+      };
+      return options;
     },
     cancel() {
       this.lockSubmitButton = false;
@@ -329,13 +370,13 @@ export default {
         if (this.copyInfo[fieldName][index].result) {
           this.$set(this.warningResults[fieldName][index], 'result', '');
         } else {
-          this.$set(this.warningResults[fieldName][index], 'result', '必填项111');
+          this.$set(this.warningResults[fieldName][index], 'result', '必填项');
         };
       } else {
         if (this.copyInfo[fieldName]) {
           this.$set(this.warningResults, fieldName, '');
         } else {
-          this.$set(this.warningResults, fieldName, '必填项22');
+          this.$set(this.warningResults, fieldName, '必填项');
         }
       }
     },
@@ -375,6 +416,7 @@ export default {
   },
   mounted() {
     // console.log(this.bioexamTypeList);
+    // console.log(JSON.stringify(this.typeGroup));
     this.updateScrollbar();
     Bus.$on(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.showPanel);
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
@@ -399,6 +441,7 @@ export default {
 @col-result-width: 160px;
 @col-unit-width: 70px;
 @col-range-width: 100px;
+@col-clinical-width:100px;
 @col-remarks-width: 180px;
 
 .biochemical-modal-wrapper {
@@ -414,7 +457,7 @@ export default {
     margin: auto;
     padding: 0 40px;
     top: 3%;
-    width: 800px;
+    width: 900px;
     max-height: 94%;
     background-color: @background-color;
     overflow: hidden;
@@ -556,6 +599,9 @@ export default {
               }
               &.col-range {
                 width: @col-range-width;
+              }
+              &.col-clinical {
+                width: @col-clinical-width;
               }
               &.col-remarks {
                 padding-right: 5px;
