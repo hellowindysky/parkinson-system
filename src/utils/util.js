@@ -138,10 +138,48 @@ function checkId(ID) {
   return city[ID.substr(0, 2)] + ',' + birthday + ',' + (ID.substr(16, 1) % 2 ? '男' : '女');
 }
 
+// 检查 num 是否为正整数
+function checkIfPositiveInteger(num) {
+  var reg = /^[1-9][0-9]*$/;
+  return reg.test(num);
+}
+
+// 检查 num 是否为非负整数
+function checkIfNonNegativeInteger(num) {
+  var reg = /^([1-9][0-9]*|0)$/;
+  return reg.test(num);
+}
+
+// 检查 num 是否为非负实数（至多 n 位小数）
+function checkIfNotMoreThanNDecimalNums(num, n) {
+  n = checkIfPositiveInteger(n) ? n : 1;
+  var reg = new RegExp('^[0-9]+(\.[0-9]{1,' + n + '})?$');
+  return reg.test(num);
+}
+
+// 检查 num 是否为电话号码（由数字和短横线组成，且第一位是数字）
+function checkIfValidPhoneNum(num) {
+  var reg = /^[0-9][0-9-]*/;
+  return reg.test(num);
+}
+
+// 检查 num 是否为纯数字 （首位可以是 0，第二个参数是最少的位数，第三个参数是最多的位数，如果没有该参数则不设限制）
+function checkIfPureNum(num, minDigit, maxDigit) {
+  minDigit = checkIfPositiveInteger(num) ? minDigit : 0;
+  maxDigit = checkIfPositiveInteger(num) ? maxDigit : '';
+  var reg = new RegExp('^\d{' + minDigit + ',' + maxDigit + '}$');
+  return reg.test(num);
+}
+
 export default {
   getElement,
   simplifyDate,
   simplifyTime,
   calculateYearsBetween,
-  checkId
+  checkId,
+  checkIfPositiveInteger,
+  checkIfNonNegativeInteger,
+  checkIfNotMoreThanNDecimalNums,
+  checkIfValidPhoneNum,
+  checkIfPureNum
 };
