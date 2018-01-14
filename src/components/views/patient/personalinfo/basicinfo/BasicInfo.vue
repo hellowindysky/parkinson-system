@@ -407,11 +407,6 @@ export default {
             this.copyInfo.sex = gender === '男' ? 0 : 1;
           }
         }
-      } else if (fieldName === 'height' || fieldName === 'weight') {
-        if (parseFloat(this.copyInfo[fieldName], 10) < 0) {
-          this.$set(this.warningResults, fieldName, '身高和体重必须大于0');
-          return;
-        };
       }
 
       if (this.getUIType(field) === 6) {
@@ -425,15 +420,38 @@ export default {
         // 但是 0 是有意义的值，所以要把 0 排除掉
         // 下面这个方法将响应属性添加到嵌套的对象上，这样 Vue 才能实时检测和渲染
         this.$set(this.warningResults, fieldName, '必填项');
+        return;
 
       } else if (copyFieldValue && copyFieldValue.toString().indexOf(' ') > -1) {
         this.$set(this.warningResults, fieldName, '不能包含空格');
+        return;
 
-      } else {
-        // 初始化组件的时候，对应字段的警告文本为 undefined，判断之后，就为实际文本或 null
-        // null 代表该字段项的填写没有毛病
-        this.$set(this.warningResults, fieldName, null);
+      } else if (copyFieldValue !== '' && ['height', 'weight'].indexOf(fieldName) >= 0) {
+        if (copyFieldValue === 0 || copyFieldValue === '0') {
+          this.$set(this.warningResults, fieldName, '身高和体重必须大于0');
+          return;
+        } else if (!Util.checkIfNotMoreThanNDecimalNums(copyFieldValue, 2)) {
+          this.$set(this.warningResults, fieldName, '必须为数字，且不超过2位小数');
+          return;
+        }
+
+      } else if (copyFieldValue !== '' && ['phone', 'phone2'].indexOf(fieldName) >= 0) {
+        if (!Util.checkIfValidPhoneNum(copyFieldValue)) {
+          this.$set(this.warningResults, fieldName, '只能由数字和短横线组成');
+          return;
+        }
+
+      } else if (copyFieldValue !== '' && ['yearsOfEducation'].indexOf(fieldName) >= 0) {
+        if (!Util.checkIfNonNegativeInteger(copyFieldValue)) {
+          this.$set(this.warningResults, fieldName, '只能填入非负整数');
+          return;
+        }
+
       }
+
+      // 初始化组件的时候，对应字段的警告文本为 undefined，判断之后，就为实际文本或 null
+      // null 代表该字段项的填写没有毛病
+      this.$set(this.warningResults, fieldName, null);
     },
     getWarningText(fieldName) {
       var warningResult = this.warningResults[fieldName];
@@ -606,6 +624,9 @@ export default {
             height: 30px;
             border: none;
             background-color: @screen-color;
+          }
+          &.is-disabled  .el-input__inner{
+            color: @light-font-color;
           }
         }
         .el-select {
