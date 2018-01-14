@@ -1736,6 +1736,7 @@ export default {
                 &.el-button--text {
                   background-color: @light-font-color;
                   color: #fff;
+                  font-size: @normal-font-size;
                   &:disabled {
                     background-color: @gray-color;
                     cursor: not-allowed;
