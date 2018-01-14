@@ -267,6 +267,7 @@ export default {
       this.initSymptomList();
       this.scaleAnswer = [];
 
+      this.fileList4 = [];
       this.newOther = [];
 
       this.other = item.scaleFiles ? item.scaleFiles : [];
