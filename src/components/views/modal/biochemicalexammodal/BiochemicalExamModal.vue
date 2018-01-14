@@ -71,7 +71,7 @@
                 备注
               </td>
             </tr>
-             <tr v-for="(item, index) in targetBioexam" class="row">
+            <tr v-for="(item, index) in targetBioexam" class="row">
               <td class="col col-id">{{index + 1}}</td>
               <td class="col col-name">
                 {{item.projectName}}
@@ -81,15 +81,17 @@
                 {{item.englishAbbreviation}}
               </td>
               <td class="col col-result">
-                <span class="warning-text" v-show="warningResults.checkDate&&copyInfo.bioexamId===12&&checkRequired(item.id)">
-                  必填项
+                <span class="warning-text" v-if="copyInfo.bioexamId===12&&checkRequired(item.id)&&warningResults.bioexamResult[index].result">
+                  {{warningResults.bioexamResult[index].result}}
                 </span>
                 <span v-if="mode===VIEW_CURRENT_CARD">
                   {{copyInfo.bioexamResult[index].result}}
                   <span class="iconfont" :class="getComparisonIcon(copyInfo.bioexamResult[index].result, item.referenceRanges)"></span>
                 </span>
-                <el-input v-else v-model="copyInfo.bioexamResult[index].result" :class="{'warning': warningResults.checkDate&&copyInfo.bioexamId===12&&checkRequired(item.id)}"
-                  placeholder="请输入检查结果" :maxlength="500"></el-input>
+                <el-input v-else v-model="copyInfo.bioexamResult[index].result"
+                 :class="{'warning': copyInfo.bioexamId===12&&checkRequired(item.id)&&warningResults.bioexamResult[index].result}"
+                 @change="updateWarning('bioexamResult', index)"
+                 placeholder="请输入检查结果" :maxlength="500"></el-input>
               </td>
               <td class="col col-unit">
                 {{item.projectUnit}}
@@ -193,6 +195,10 @@ export default {
 
       } else {
         vueCopy(item, this.copyInfo);
+        if (item.bioexamId === 12) {
+          this.$set(this.warningResults, 'bioexamResult', []);
+          vueCopy(item.bioexamResult.map((elem) => {return {bioexamProjectId: elem.bioexamProjectId, result: elem.result};}), this.warningResults.bioexamResult);
+        }
       }
 
       this.updateTemplate();
@@ -200,9 +206,12 @@ export default {
       this.$nextTick(() => {
         this.clearWarning();
       });
+      console.log(this.targetBioexam);
+      console.log(this.copyInfo);
+      console.log(this.warningResults);
     },
     updateTemplate() {
-      this.targetBioexam = [];
+      // this.targetBioexam = [];
       for (let bioexam of this.bioexamTypeList) {
         if (bioexam.id === this.copyInfo.bioexamId) {
           vueCopy(bioexam.projects, this.targetBioexam);
@@ -222,10 +231,9 @@ export default {
       }
     },
     changeBioexam() {
-      console.log(this.targetBioexam);
       this.updateWarning('bioexamId');
       this.updateTemplate();
-
+      console.log(this.targetBioexam);
       // 接下来要根据新的 targetBioexam 重置 this.copyInfo.bioexamResult
       this.$set(this.copyInfo, 'bioexamResult', []);
       for (let i = 0; i < this.targetBioexam.length; i++) {
@@ -240,6 +248,19 @@ export default {
         this.$set(this.copyInfo.bioexamResult[i], 'result', '');
       }
       // console.log('current', this.copyInfo['bioexamResult']);
+
+      if (this.copyInfo.bioexamId === 12) {
+        // 12 为全血
+        this.$set(this.warningResults, 'bioexamResult', []);
+        this.targetBioexam.forEach((item, i) => {
+          this.$set(this.warningResults.bioexamResult, i, {});
+          this.$set(this.warningResults.bioexamResult[i], 'bioexamProjectId', this.targetBioexam[i].id);
+          this.$set(this.warningResults.bioexamResult[i], 'result', '');
+        });
+      } else {
+        this.$delete(this.warningResults, 'bioexamResult');
+      };
+      console.log(this.warningResults);
     },
     cancel() {
       this.lockSubmitButton = false;
@@ -258,7 +279,27 @@ export default {
 
       for (var fieldName in this.warningResults) {
         if (this.warningResults.hasOwnProperty(fieldName)) {
-          this.updateWarning(fieldName);
+          if (Array.isArray(this.warningResults[fieldName])) {
+            this.warningResults[fieldName].forEach((item, i) => {
+              if (this.checkRequired(item.bioexamProjectId)) {
+                this.updateWarning(fieldName, i);
+              }
+            });
+          } else {
+            this.updateWarning(fieldName);
+          };
+        }
+      }
+
+      for (let fieldName in this.warningResults) {
+        if (Array.isArray(this.warningResults[fieldName])) {
+          this.warningResults[fieldName].forEach((item) => {
+            if (item.result !== '') {
+              this.lockSubmitButton = false;
+              return;
+            }
+          });
+        } else {
           if (this.warningResults[fieldName] !== '') {
             this.lockSubmitButton = false;
             return;
@@ -268,7 +309,6 @@ export default {
 
       let submitData = deepCopy(this.copyInfo);
       submitData.checkDate = Util.simplifyDate(submitData.checkDate);
-      // console.log(submitData.checkDate instanceof Date);
 
       if (this.mode === this.EDIT_CURRENT_CARD) {
         modifyBiochemical(submitData).then(() => {
@@ -291,16 +331,30 @@ export default {
     updateAndClose() {
       this.displayModal = false;
     },
-    updateWarning(fieldName) {
-      if (this.copyInfo[fieldName]) {
-        this.$set(this.warningResults, fieldName, '');
+    updateWarning(fieldName, index) {
+      if (Array.isArray(this.copyInfo[fieldName]) && this.copyInfo.bioexamId === 12) {
+        if (this.copyInfo[fieldName][index].result) {
+          this.$set(this.warningResults[fieldName][index], 'result', '');
+        } else {
+          this.$set(this.warningResults[fieldName][index], 'result', '必填项111');
+        };
       } else {
-        this.$set(this.warningResults, fieldName, '必填项');
+        if (this.copyInfo[fieldName]) {
+          this.$set(this.warningResults, fieldName, '');
+        } else {
+          this.$set(this.warningResults, fieldName, '必填项22');
+        }
       }
     },
     clearWarning() {
       for (let key in this.warningResults) {
-        this.warningResults[key] = null;
+        if (Array.isArray(this.warningResults[key])) {
+          this.warningResults[key].forEach((item) => {
+            item.result = null;
+          });
+        } else {
+          this.warningResults[key] = null;
+        }
       }
     },
     chooseSubModal() {
@@ -327,6 +381,7 @@ export default {
     }
   },
   mounted() {
+    console.log(this.bioexamTypeList);
     this.updateScrollbar();
     Bus.$on(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.showPanel);
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
