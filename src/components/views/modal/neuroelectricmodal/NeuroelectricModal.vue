@@ -69,7 +69,7 @@
           <span class="field-input">
             <span class="warning-text">{{warningResults.recordStart}}</span>
             <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.recordStart}}</span>
-            <el-date-picker v-else type="datetime" format="yyyy-MM-dd HH:mm" :class="{'warning': warningResults.recordStart}"
+            <el-date-picker v-else type="datetime" format="yyyy-MM-dd HH:mm:ss" :class="{'warning': warningResults.recordStart}"
               v-model="copyInfo.recordStart" placeholder="请输入记录开始时间" @change="updateWarning('recordStart')"></el-date-picker>
           </span>
         </div>
@@ -91,7 +91,7 @@
           <span class="field-input">
             <span class="warning-text">{{warningResults.recordEnd}}</span>
             <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.recordEnd}}</span>
-            <el-date-picker v-else type="datetime" format="yyyy-MM-dd HH:mm" :class="{'warning': warningResults.End}"
+            <el-date-picker v-else type="datetime" format="yyyy-MM-dd HH:mm:ss" :class="{'warning': warningResults.End}"
               v-model="copyInfo.recordEnd" placeholder="请输入记录结束时间" @change="updateWarning('recordEnd')"></el-date-picker>
           </span>
         </div>
@@ -532,7 +532,7 @@
                 <el-input v-else-if="row[0].uiType===1" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"></el-input>
                 <el-select v-else-if="row[0].uiType===3" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"></el-select>
                 <el-date-picker v-else-if="row[0].uiType===6" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"></el-date-picker>
-                <el-date-picker v-else-if="row[0].uiType===7" type="datetime" format="yyyy-MM-dd HH:mm" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"></el-date-picker>
+                <el-date-picker v-else-if="row[0].uiType===7" format="yyyy-MM-dd HH:mm:ss" type="datetime" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"></el-date-picker>
                 <el-time-select v-else-if="row[0].uiType===8" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"
                   :picker-options="{start:'00:00', end:'24:00'}"></el-time-select>
               </td>
@@ -544,7 +544,7 @@
                 <el-input v-else-if="row[1].uiType===1" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"></el-input>
                 <el-select v-else-if="row[1].uiType===3" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"></el-select>
                 <el-date-picker v-else-if="row[1].uiType===6" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"></el-date-picker>
-                <el-date-picker v-else-if="row[1].uiType===7" type="datetime" format="yyyy-MM-dd HH:mm" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"></el-date-picker>
+                <el-date-picker v-else-if="row[1].uiType===7" format="yyyy-MM-dd HH:mm:ss" type="datetime" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"></el-date-picker>
                 <el-time-select v-else-if="row[1].uiType===8" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"
                   :picker-options="{start:'00:00', end:'24:00'}"></el-time-select>
               </td>
@@ -565,7 +565,7 @@
                 <el-input v-else-if="col.uiType===1" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"></el-input>
                 <el-select v-else-if="col.uiType===3" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"></el-select>
                 <el-date-picker v-else-if="col.uiType===6" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"></el-date-picker>
-                <el-date-picker v-else-if="col.uiType===7" type="datetime" format="yyyy-MM-dd HH:mm" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"></el-date-picker>
+                <el-date-picker v-else-if="col.uiType===7" type="datetime" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"></el-date-picker>
                 <el-time-select v-else-if="col.uiType===8" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"
                   :picker-options="{start:'00:00', end:'24:00'}"></el-time-select>
               </td>
@@ -838,7 +838,7 @@ export default {
         var hour = parseInt(interval / 3600, 10);
         var minute = parseInt((interval % 3600) / 60, 10);
         minute = minute >= 10 ? minute : '0' + minute;
-        var second = parseInt((interval % 60) / 60, 10);
+        var second = parseInt((interval % 60), 10);
         second = second >= 10 ? second : '0' + second;
         this.recordTotal = hour + ':' + minute + ':' + second;
       } else {
@@ -1329,12 +1329,12 @@ export default {
         }
       }
 
-      reviseDateFormat(this.copyInfo);
       let submitData = deepCopy(this.copyInfo);
 
       if (submitData.elecExamType === 1) {
         submitData.pinfoId = this.$route.params.id;
         submitData.pcaseId = this.$route.params.caseId;
+        submitData.checkDate = Util.simplifyDate(submitData.checkDate);
         if (this.mode === this.ADD_NEW_CARD) {
           // 新增肌电图
           addEmg(submitData).then(() => {
@@ -1352,8 +1352,8 @@ export default {
       } else if (submitData.elecExamType === 2) {
         submitData.patientId = this.$route.params.id;
         submitData.patientCaseId = this.$route.params.caseId;
-        submitData.recordStart = Util.simplifyTime(submitData.recordStart);
-        submitData.recordEnd = Util.simplifyTime(submitData.recordEnd);
+        submitData.recordStart = Util.simplifyTime(submitData.recordStart, true);
+        submitData.recordEnd = Util.simplifyTime(submitData.recordEnd, true);
         if (this.mode === this.ADD_NEW_CARD) {
           // 新增睡眠监测
           addSleepMonitoring(submitData).then(() => {
