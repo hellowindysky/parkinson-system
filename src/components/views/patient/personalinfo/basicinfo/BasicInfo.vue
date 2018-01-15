@@ -431,8 +431,8 @@ export default {
         if (copyFieldValue === 0 || copyFieldValue === '0') {
           this.$set(this.warningResults, fieldName, '身高和体重必须大于0');
           return;
-        } else if (!Util.checkIfNotMoreThanNDecimalNums(copyFieldValue, 2)) {
-          this.$set(this.warningResults, fieldName, '必须为数字，且不超过2位小数');
+        } else if (!Util.checkIfNotMoreThanNDecimalNums(copyFieldValue, 1)) {
+          this.$set(this.warningResults, fieldName, '必须为数字，且不超过1位小数');
           return;
         }
 
