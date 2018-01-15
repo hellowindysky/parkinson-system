@@ -1558,7 +1558,7 @@ export default {
     padding: 0 40px;
     top: 3%;
     width: 80%;
-    min-width: 830px;
+    min-width: 720px;
     max-width: 1000px;
     max-height: 94%;
     background-color: @background-color;
