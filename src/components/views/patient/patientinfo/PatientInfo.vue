@@ -50,7 +50,9 @@
         <basic-info v-else ref="newPatientWindow" :basic-info="{}"></basic-info>
       </div>
     </div>
-    <diagnostic-detail class="diagnostic-detail"></diagnostic-detail>
+    <diagnostic-detail class="diagnostic-detail"
+      :patient-info="patientInfo.patientInfo ? patientInfo.patientInfo : {}">
+    </diagnostic-detail>
     <scale-modal class="diagnostic-handle-scale"></scale-modal>
     <group-panel class="group-panel" :class="{'hide': !displayGroupPanel}" :belongGroups="belongGroups"
       :display="displayGroupPanel" :patientId="Number(patientId)" @hideGroupPanel="hideGroupPanel"

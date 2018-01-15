@@ -887,7 +887,7 @@ export default {
     }
   },
   methods: {
-    showPanel(cardOperation, item, showEdit) {
+    showPanel(cardOperation, item, showEdit, heightAndWeight) {
       this.displayModal = true;
       this.mode = cardOperation;
       this.tableMode = this.FATHER_OPEN;
@@ -897,6 +897,9 @@ export default {
       // console.log('typeField: ', this.typeField);
 
       this.initCopyInfo();
+
+      this.$set(this.copyInfo, 'height', heightAndWeight.height / 10);
+      this.$set(this.copyInfo, 'weight', heightAndWeight.weight / 10);
 
       vueCopy(item, this.copyInfo);
       this.copyInfo.elecExamType = this.copyInfo.elecExamType ? Number(this.copyInfo.elecExamType) : '';
