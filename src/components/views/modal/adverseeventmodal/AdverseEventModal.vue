@@ -61,6 +61,18 @@
             </el-input>
           </span>
         </div>
+        <!-- <div class="field whole-line">
+          <span class="field-name">
+            实验编号:
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span class="warning-text"></span>
+            <span>{{stimulusIntensity}}</span>
+          </span>
+          <span class="field-input" v-else>
+            <el-input v-model="stimulusIntensity" placeholder="自动获取实验编号"></el-input>
+          </span>
+        </div> -->
         <div class="field">
           <span class="field-name">
            是否采取措施：
@@ -87,7 +99,7 @@
             <span>{{transform(severity,'adverseSeverity')}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-select v-model="severity" clearable placeholder="请选择" @change="updateWarning('adverseSeverity')">
+            <el-select v-model="severity" clearable placeholder="请选择">
               <el-option
                 v-for="item in getOptions('adverseSeverity')"
                 :key="item.code"
@@ -105,7 +117,7 @@
             <span>{{transform(treatmentRelate,'treatmentRelate')}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-select v-model="treatmentRelate" clearable placeholder="请选择" @change="updateWarning('treatmentRelate')">
+            <el-select v-model="treatmentRelate" clearable placeholder="请选择">
               <el-option
                 v-for="item in getOptions('treatmentRelate')"
                 :key="item.code"
@@ -123,7 +135,7 @@
             <span>{{transform(seriousFlag,'digitYN')}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-select v-model="seriousFlag" clearable placeholder="请选择" @change="updateWarning('digitYN')">
+            <el-select v-model="seriousFlag" clearable placeholder="请选择">
               <el-option
                 v-for="item in getOptions('digitYN')"
                 :key="item.code"
@@ -141,17 +153,18 @@
             <el-checkbox v-for="(item, index) in getOptions('seriousAdverse')"
               v-model="seriousAdverseEvents[index]"
               :key="item.code"
-              :label="item.name">
+              :label="item.name"
+              :disabled="mode===VIEW_CURRENT_CARD">
             </el-checkbox>
           </div>
+        </div>
+        <div class="field whole-line">
+          伴随用药
         </div>
         <table class="table">
           <tr class="row title-row">
             <td class="col">
-              <span class="iconfont icon-plus" @click="addMedicine" v-show="adjointMedicine.length <15 && mode !== VIEW_CURRENT_CARD"></span>
-              伴随用药
-            </td>
-          <td class="col">
+              <span class="iconfont icon-plus" @click="addAdjointMedicine" v-show="adjointMedicine.length <15 && mode !== VIEW_CURRENT_CARD"></span>
               序号
             </td>
             <td class="col">
@@ -162,35 +175,31 @@
           </tr>
           <tr class="row" v-for="(medicine, index) in adjointMedicine">
             <td class="col">
-              <span v-show="mode!==VIEW_CURRENT_CARD" class="iconfont icon-remove" @click="removeMedicine(index)"></span>
+              <span v-show="mode!==VIEW_CURRENT_CARD" class="iconfont icon-remove" @click="removeAdjointMedicine(index)"></span>
+              {{String.fromCharCode(64 + parseInt(index+1))}}
             </td>
             <td class="col">
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                {{index + 1}}
-              </span>
-            </td>
-            <td class="col">
-              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                {{(adjointMedicine.medicineName)}}
+                {{(medicine.medicineName)}}
               </span>
               <span class="field-input" v-else>
-                <el-input v-model="adjointMedicine.medicineName" placeholder="请输入药物名称"></el-input>
+                <el-input v-model="medicine.medicineName" placeholder="请输入药物名称"></el-input>
               </span>
             </td>
             <td class="col">
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                {{(adjointMedicine.totalDailyDose)}}
+                {{(medicine.totalDailyDose)}}
               </span>
               <span class="field-input" v-else>
-                <el-input v-model="adjointMedicine.totalDailyDose" placeholder="请输入日总剂量"></el-input>
+                <el-input v-model="medicine.totalDailyDose" placeholder="请输入日总剂量"></el-input>
               </span>
             </td>
             <td class="col">
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span>{{transform(adjointMedicine.medicineMethod,'medicineMethod')}}</span>
+                <span>{{transform(medicine.medicineMethod,'medicineMethod')}}</span>
               </span>
               <span class="field-input" v-else>
-                <el-select v-model="medicineMethod" clearable placeholder="请选择给药途径" @change="updateWarning('medicineMethod')">
+                <el-select v-model="medicine.medicineMethod" clearable placeholder="请选择给药途径">
                   <el-option
                     v-for="item in getOptions('medicineMethod')"
                     :key="item.code"
@@ -226,73 +235,69 @@
           </div>
         </div>
         <div class="foldable-content" :class="{'folded': foldedConditionalContentMeasures}">
+          <div class="field whole-line">
+          药物治疗
+          </div>
           <table class="table">
-          <tr class="row title-row">
+            <tr class="row title-row">
             <td class="col">
-              <span class="iconfont icon-plus" @click="addMedicine" v-show="treatMedicine.length <15 && mode !== VIEW_CURRENT_CARD"></span>
-              药物治疗
-            </td>
-          <td class="col">
-              序号
-            </td>
-            <td class="col">
-              药物名称
-            </td>
-            <td class="col">日总剂量（mg/d）</td>
-            <td class="col">给药途径</td>
-          </tr>
-          <tr class="row" v-for="(medicine, index) in treatMedicine">
-            <td class="col">
-              <span v-show="mode!==VIEW_CURRENT_CARD" class="iconfont icon-remove" @click="removeMedicine(index)"></span>
-            </td>
-            <td class="col">
-              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                {{index + 1}}
-              </span>
-            </td>
-            <td class="col">
-              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                {{(treatMedicine.medicineName)}}
-              </span>
-              <span class="field-input" v-else>
-                <el-input v-model="treatMedicine.medicineName" placeholder="请输入药物名称"></el-input>
-              </span>
-            </td>
-            <td class="col">
-              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                {{(treatMedicine.totalDailyDose)}}
-              </span>
-              <span class="field-input" v-else>
-                <el-input v-model="treatMedicine.totalDailyDose" placeholder="请输入日总剂量"></el-input>
-              </span>
-            </td>
-            <td class="col">
-              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span>{{transform(treatMedicine.medicineMethod,'medicineMethod')}}</span>
-              </span>
-              <span class="field-input" v-else>
-                <el-select v-model="medicineMethod" clearable placeholder="请选择给药途径" @change="updateWarning('medicineMethod')">
-                  <el-option
-                    v-for="item in getOptions('medicineMethod')"
-                    :key="item.code"
-                    :label="item.name"
-                    :value="item.code">
-                  </el-option>
-                </el-select>
-              </span>
-            </td>
-          </tr>
-        </table>
+              <span class="iconfont icon-plus" @click="addTreatMedicine" v-show="treatMedicine.length <15 && mode !== VIEW_CURRENT_CARD"></span>
+                序号
+              </td>
+              <td class="col">
+                药物名称
+              </td>
+              <td class="col">日总剂量（mg/d）</td>
+              <td class="col">给药途径</td>
+            </tr>
+            <tr class="row" v-for="(reaction, index) in treatMedicine">
+              <td class="col">
+                <span v-show="mode!==VIEW_CURRENT_CARD" class="iconfont icon-remove" @click="removeTreatMedicine(index)"></span>
+                {{String.fromCharCode(64 + parseInt(index+1))}}
+              </td>
+              <td class="col">
+                <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                  {{(reaction.medicineName)}}
+                </span>
+                <span class="field-input" v-else>
+                  <el-input v-model="reaction.medicineName" placeholder="请输入药物名称"></el-input>
+                </span>
+              </td>
+              <td class="col">
+                <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                  {{(reaction.totalDailyDose)}}
+                </span>
+                <span class="field-input" v-else>
+                  <el-input v-model="reaction.totalDailyDose" placeholder="请输入日总剂量"></el-input>
+                </span>
+              </td>
+              <td class="col">
+                <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                  <span>{{transform(reaction.medicineMethod,'medicineMethod')}}</span>
+                </span>
+                <span class="field-input" v-else>
+                  <el-select v-model="reaction.medicineMethod" clearable placeholder="请选择给药途径">
+                    <el-option
+                      v-for="item in getOptions('medicineMethod')"
+                      :key="item.code"
+                      :label="item.name"
+                      :value="item.code">
+                    </el-option>
+                  </el-select>
+                </span>
+              </td>
+            </tr>
+          </table>
           <div class="field whole-line">
               <span class="field-name">
               其他治疗措施：
               </span>
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-              {{remark}}
+              {{otherMeasure}}
               </span>
               <span class="field-input" v-else>
               <el-input
-                  v-model="remark"
+                  v-model="otherMeasure"
                   type="textarea"
                   :rows="2"
                   :maxlength="500"
@@ -305,11 +310,11 @@
               实验室检查：
             </span>
             <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-              {{remark}}
+              {{aboratoryExam}}
             </span>
             <span class="field-input" v-else>
               <el-input
-                v-model="remark"
+                v-model="aboratoryExam"
                 type="textarea"
                 :rows="2"
                 :maxlength="500"
@@ -333,7 +338,7 @@
               <span>{{transform(adverseResult,'adverseResult')}}</span>
             </span>
             <span class="field-input" v-else>
-              <el-select v-model="adverseResult" clearable placeholder="请选择发生不良事件的结局" @change="updateWarning('adverseResult')">
+              <el-select v-model="adverseResult" clearable placeholder="请选择发生不良事件的结局">
                 <el-option
                   v-for="item in getOptions('adverseResult')"
                   :key="item.code"
@@ -353,10 +358,9 @@
             <span class="field-input" v-else>
               <el-date-picker
                 v-model="relieveDate"
-                type="datetime"
+                type="date"
                 placeholder="请选择缓解日期  "
-                :picker-options="pickerOptions"
-                @change="updateWarning('relieveDate')">
+                :picker-options="pickerOptions">
               </el-date-picker>
             </span>
           </div>
@@ -368,7 +372,7 @@
               <span>{{transform(adverseEffect,'adverseEffect')}}</span>
             </span>
             <span class="field-input" v-else>
-              <el-select v-model="adverseEffect" clearable placeholder="请选择" @change="updateWarning('adverseEffect')">
+              <el-select v-model="adverseEffect" clearable placeholder="请选择">
                 <el-option
                   v-for="item in getOptions('adverseEffect')"
                   :key="item.code"
@@ -482,6 +486,11 @@ export default {
         medicine.totalDailyDose = '';
         medicine.medicineMethod = '';
       }
+      for (let reaction of this.treatMedicine) {
+        reaction.medicineName = '';
+        reaction.totalDailyDose = '';
+        reaction.medicineMethod = '';
+      }
       this.$nextTick(() => {
         this.$refs.scrollArea.scrollTop = 0;
         for (var property in this.warningResults) {
@@ -510,25 +519,15 @@ export default {
       this.medicineMethod = item.medicineMethod ? item.medicineMethod : '';
       this.relieveDate = item.relieveDate ? item.relieveDate : '';
       vueCopy(item.adjointMedicine, this.adjointMedicine);
+      vueCopy(item.treatMedicine, this.treatMedicine);
+
       this.completeInit = true;
       this.displayModal = true;
       this.updateScrollbar();
       this.foldedConditionalContentMeasures = true;
       this.foldedConditionalContentEndEvent = true;
     },
-    // getSeriousAdverseEvents(fieldName) {
-    //   var options = [];
-    //   var types = Util.getElement('typegroupcode', fieldName, this.typeGroup).types;
-    //   types = types ? types : [];
-    //   for (let type of types) {
-    //     options.push({
-    //       name: type.typeName,
-    //       code: type.typeCode
-    //     });
-    //   };
-    //   return options;
-    // },
-    addMedicine() {
+    addAdjointMedicine() {
       var medicineList = this.adjointMedicine;
       var index = medicineList.length;
       this.$set(medicineList, index, {});
@@ -537,8 +536,34 @@ export default {
         this.$set(medicineList[index], property, '');
       }
     },
-    removeMedicine(index) {
+    addTreatMedicine() {
+      var medicineList = this.treatMedicine;
+      var index = medicineList.length;
+      this.$set(medicineList, index, {});
+      let propertyList = ['medicineName', 'totalDailyDose', 'medicineMethod'];
+      for (let property of propertyList) {
+        this.$set(medicineList[index], property, '');
+      }
+    },
+    removeAdjointMedicine(index) {
       var medicineList = this.adjointMedicine;
+      var oldList = [];
+      for (let medicine of medicineList) {
+        oldList.push({
+          medicineName: medicine.medicineName,
+          totalDailyDose: medicine.totalDailyDose
+        });
+      }
+      medicineList.splice(index, 1);
+      this.$nextTick(() => {
+        for (var i = 0; i < medicineList.length; i++) {
+          medicineList[i].medicineName = oldList[i].medicineName;
+          medicineList[i].totalDailyDose = oldList[i].totalDailyDose;
+        }
+      });
+    },
+    removeTreatMedicine(index) {
+      var medicineList = this.treatMedicine;
       var oldList = [];
       for (let medicine of medicineList) {
         oldList.push({
@@ -644,6 +669,7 @@ export default {
       adverseEventInfo.relieveDate = this.relieveDate;
       adverseEventInfo.adverseEffect = this.adverseEffect;
       adverseEventInfo.adjointMedicine = deepCopy(this.adjointMedicine);
+      adverseEventInfo.treatMedicine = deepCopy(this.treatMedicine);
       reviseMinuteFormat(adverseEventInfo);
       pruneObj(adverseEventInfo);
 
@@ -848,7 +874,7 @@ export default {
         }
       }
       .table {
-        margin: 10px 0 20px;
+        margin: -15px 0 20px;
         width: 100%;
         border: 1px solid @light-gray-color;
         border-collapse: collapse;
