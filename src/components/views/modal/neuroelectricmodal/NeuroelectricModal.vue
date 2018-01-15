@@ -678,14 +678,19 @@
         </div>
 
       </div>
-      <div class="button cancel-button" v-if="tableMode!==SON_OPEN" @click="cancel">取消</div>
-      <div class="button cancel-button" v-if="tableMode===SON_OPEN && mode===VIEW_CURRENT_CARD" @click="closeSubTable">返回</div>
-      <div class="button submit-button" v-if="tableMode===FATHER_OPEN && mode===VIEW_CURRENT_CARD && canEdit" @click="switchToEditingMode">编辑</div>
-      <div class="button submit-button" v-if="tableMode===FATHER_OPEN && mode!==VIEW_CURRENT_CARD" @click="submit">确认</div>
 
-      <div class="button reset-button" v-if="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD && copyInfo.elecExamType===1" @click="resetEmgTableData">重置</div>
-      <div class="button reset-button" v-if="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD && copyInfo.elecExamType===2" @click="resetSleepMonitoringSubTable">重置</div>
-      <div class="button submit-button" v-if="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD" @click="closeSubTable">完成</div>
+      <span v-if="tableMode===FATHER_OPEN">
+        <div class="button cancel-button" @click="cancel">取消</div>
+        <div class="button edit-button" v-if="mode===VIEW_CURRENT_CARD && canEdit" @click="switchToEditingMode">编辑</div>
+        <div class="button submit-button" v-else-if="mode!==VIEW_CURRENT_CARD" @click="submit">确认</div>
+      </span>
+      <span v-else-if="tableMode===SON_OPEN">
+        <div class="button cancel-button" v-if="mode===VIEW_CURRENT_CARD" @click="closeSubTable">返回</div>
+        <span v-else-if="mode!==VIEW_CURRENT_CARD">
+          <div class="button reset-button" @click="resetSubTable">重置</div>
+          <div class="button submit-button" @click="closeSubTable">完成</div>
+        </span>
+      </span>
     </div>
   </div>
 </template>
@@ -1246,10 +1251,17 @@ export default {
         }
       }
     },
+    resetSubTable() {
+      if (this.copyInfo.elecExamType === 1) {
+        this.resetEmgTableData();
+      } else if (this.copyInfo.elecExamType === 2) {
+        this.resetSleepMonitoringSubTable();
+      }
+    },
     closeSubTable() {
       this.tableMode = this.FATHER_OPEN;
       this.updateScrollbar();
-      this.$refs.formWrapper.scrollTop = 0;
+      this.$refs.neuroelectricModal.scrollTop = 0;
     },
     getOptions(fieldName) {
       var options = [];
@@ -1889,7 +1901,7 @@ export default {
       &.cancel-button {
         background-color: @light-font-color;
       }
-      &.submit-button {
+      &.submit-button, &.edit-button {
         background-color: @button-color;
       }
       &.reset-button {
