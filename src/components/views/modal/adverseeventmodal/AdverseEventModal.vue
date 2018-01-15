@@ -61,6 +61,18 @@
             </el-input>
           </span>
         </div>
+        <!-- <div class="field whole-line">
+          <span class="field-name">
+            实验编号:
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span class="warning-text"></span>
+            <span>{{stimulusIntensity}}</span>
+          </span>
+          <span class="field-input" v-else>
+            <el-input v-model="stimulusIntensity" placeholder="自动获取实验编号"></el-input>
+          </span>
+        </div> -->
         <div class="field">
           <span class="field-name">
            是否采取措施：
@@ -87,7 +99,7 @@
             <span>{{transform(severity,'adverseSeverity')}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-select v-model="severity" clearable placeholder="请选择" @change="updateWarning('adverseSeverity')">
+            <el-select v-model="severity" clearable placeholder="请选择">
               <el-option
                 v-for="item in getOptions('adverseSeverity')"
                 :key="item.code"
@@ -105,7 +117,7 @@
             <span>{{transform(treatmentRelate,'treatmentRelate')}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-select v-model="treatmentRelate" clearable placeholder="请选择" @change="updateWarning('treatmentRelate')">
+            <el-select v-model="treatmentRelate" clearable placeholder="请选择">
               <el-option
                 v-for="item in getOptions('treatmentRelate')"
                 :key="item.code"
@@ -123,7 +135,7 @@
             <span>{{transform(seriousFlag,'digitYN')}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-select v-model="seriousFlag" clearable placeholder="请选择" @change="updateWarning('digitYN')">
+            <el-select v-model="seriousFlag" clearable placeholder="请选择">
               <el-option
                 v-for="item in getOptions('digitYN')"
                 :key="item.code"
@@ -133,111 +145,72 @@
             </el-select>
           </span>
         </div>
-        <div class="field">
+        <div class="field" v-show="seriousFlag===1">
           <span class="field-name">
-          严重不良事件：
+            严重不良事件：
           </span>
-          <div class="moveLeft">
-            <el-checkbox
-              v-model="leadFeath"
+          <div class="serious-adverse-event">
+            <el-checkbox v-for="(item, index) in getOptions('seriousAdverse')"
+              v-model="seriousAdverseEvents[index]"
+              :key="item.code"
+              :label="item.name"
               :disabled="mode===VIEW_CURRENT_CARD">
             </el-checkbox>
-            导致死亡
-          </div>
-          <div class="moveLeft">
-            <el-checkbox
-              v-model="lifeThreatening"
-              :disabled="mode===VIEW_CURRENT_CARD">
-            </el-checkbox>
-            威胁生命
-          </div>
-          <div class="moveLeft">
-            <el-checkbox
-              v-model="causeHospital"
-              :disabled="mode===VIEW_CURRENT_CARD">
-            </el-checkbox>
-            导致住院
-          </div>
-          <div class="moveLeft">
-            <el-checkbox
-              v-model="leadContinuous"
-              :disabled="mode===VIEW_CURRENT_CARD">
-            </el-checkbox>
-            导致持续或验证残疾/能力丧失
-          </div>
-          <div class="moveLeft">
-            <el-checkbox
-              v-model="causeException"
-              :disabled="mode===VIEW_CURRENT_CARD">
-            </el-checkbox>
-            导致先天性异常或出生障碍
-          </div>
-          <div class="moveLeft">
-            <el-checkbox
-              v-model="medicalEvents"
-              :disabled="mode===VIEW_CURRENT_CARD">
-            </el-checkbox>
-            重要医学事件
           </div>
         </div>
-        <div class="form-wrapper" ref="form4">
-          <table class="form form4">
-            <tr class="row top-row">
-              <td class="col along-medicine" colspan="21">
-                伴随用药
-              </td>
-            </tr>
-            <tr class="row title-row">
-              <td class="col w1" colspan="1">
-                <span class="iconfont icon-plus" @click="addParam('adjointMedicine')"v-show="adjointMedicine.length < 8 && mode !== VIEW_CURRENT_CARD"></span>
-              </td>
-              <td class="col w2" colspan="2">
-                序号
-              </td>
-              <td class="col w3" colspan="3">药物名称</td>
-              <td class="col w3" colspan="3">日总剂量（mg/d）</td>
-              <td class="col w3" colspan="3">给药途径</td>
-            </tr>
-            <tr class="row">
-              <td class="col w1" colspan="1">
-                <span class="iconfont icon-remove" v-show="mode!==VIEW_CURRENT_CARD"></span>
-              </td>
-              <td class="col w2" colspan="2">
-              </td>
-              <td class="col w2" colspan="3">
-                <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                  {{(adjointMedicine.medicineName)}}
-                </span>
-                <span class="field-input" v-else>
-                  <el-input v-model="adjointMedicine.medicineName" placeholder="请输入药物名称"></el-input>
-                </span>
-              </td>
-              <td class="col w2" colspan="3">
-                <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                  {{(adjointMedicine.totalDailyDose)}}
-                </span>
-                <span class="field-input" v-else>
-                  <el-input v-model="adjointMedicine.totalDailyDose" placeholder="请输入日总剂量"></el-input>
-                </span>
-              </td>
-              <td class="col w3" colspan="3">
-                <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                  <span>{{transform(adjointMedicine.medicineMethod,'medicineMethod')}}</span>
-                </span>
-                <span class="field-input" v-else>
-                  <el-select v-model="medicineMethod" clearable placeholder="请选择给药途径" @change="updateWarning('medicineMethod')">
-                    <el-option
-                      v-for="item in getOptions('medicineMethod')"
-                      :key="item.code"
-                      :label="item.name"
-                      :value="item.code">
-                    </el-option>
-                  </el-select>
-                </span>
-              </td>
-            </tr>
-          </table>
+        <div class="field whole-line">
+          伴随用药
         </div>
+        <table class="table">
+          <tr class="row title-row">
+            <td class="col">
+              <span class="iconfont icon-plus" @click="addAdjointMedicine" v-show="adjointMedicine.length <15 && mode !== VIEW_CURRENT_CARD"></span>
+              序号
+            </td>
+            <td class="col">
+              药物名称
+            </td>
+            <td class="col">日总剂量（mg/d）</td>
+            <td class="col">给药途径</td>
+          </tr>
+          <tr class="row" v-for="(medicine, index) in adjointMedicine">
+            <td class="col">
+              <span v-show="mode!==VIEW_CURRENT_CARD" class="iconfont icon-remove" @click="removeAdjointMedicine(index)"></span>
+              {{String.fromCharCode(64 + parseInt(index+1))}}
+            </td>
+            <td class="col">
+              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                {{(medicine.medicineName)}}
+              </span>
+              <span class="field-input" v-else>
+                <el-input v-model="medicine.medicineName" placeholder="请输入药物名称"></el-input>
+              </span>
+            </td>
+            <td class="col">
+              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                {{(medicine.totalDailyDose)}}
+              </span>
+              <span class="field-input" v-else>
+                <el-input v-model="medicine.totalDailyDose" placeholder="请输入日总剂量"></el-input>
+              </span>
+            </td>
+            <td class="col">
+              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                <span>{{transform(medicine.medicineMethod,'medicineMethod')}}</span>
+              </span>
+              <span class="field-input" v-else>
+                <el-select v-model="medicine.medicineMethod" clearable placeholder="请选择给药途径">
+                  <el-option
+                    v-for="item in getOptions('medicineMethod')"
+                    :key="item.code"
+                    :label="item.name"
+                    :value="item.code">
+                  </el-option>
+                </el-select>
+              </span>
+            </td>
+          </tr>
+        </table>
         <div class="field whole-line">
           <span class="field-name">
             备注：
@@ -255,59 +228,56 @@
             </el-input>
           </span>
         </div>
-        <div class="seperate-line">
-          <div class="toggle-fold-button" @click="toggleContentFoldedMeasures">
-            治疗措施
-            <span class="iconfont" :class="iconToggleFoldedMeasures"></span>
+        <div v-show="measureFlag===1">
+          <div class="seperate-line">
+            <div class="toggle-fold-button" @click="toggleContentFoldedMeasures">
+              治疗措施
+              <span class="iconfont" :class="iconToggleFoldedMeasures"></span>
+            </div>
           </div>
-        </div>
-        <div class="foldable-content" :class="{'folded': foldedConditionalContentMeasures}">
-          <div class="form-wrapper" ref="form4">
-            <table class="form form4">
-              <tr class="row top-row">
-                <td class="col along-medicine" colspan="21">
-                  药物治疗
-                </td>
-              </tr>
+          <div class="foldable-content" :class="{'folded': foldedConditionalContentMeasures}">
+            <div class="field whole-line">
+            药物治疗
+            </div>
+            <table class="table">
               <tr class="row title-row">
-                <td class="col w1" colspan="1">
-                  <span class="iconfont icon-plus" @click="addParam('followDbsAdjustAfter')"></span>
-                </td>
-                <td class="col w2" colspan="2">
+              <td class="col">
+                <span class="iconfont icon-plus" @click="addTreatMedicine" v-show="treatMedicine.length <15 && mode !== VIEW_CURRENT_CARD"></span>
                   序号
                 </td>
-                <td class="col w3" colspan="3">药物名称</td>
-                <td class="col w3" colspan="3">日总剂量（mg/d）</td>
-                <td class="col w3" colspan="3">给药途径</td>
+                <td class="col">
+                  药物名称
+                </td>
+                <td class="col">日总剂量（mg/d）</td>
+                <td class="col">给药途径</td>
               </tr>
-              <tr class="row">
-                <td class="col w1" colspan="1">
-                  <span class="iconfont icon-remove" v-show="mode!==VIEW_CURRENT_CARD"></span>
+              <tr class="row" v-for="(reaction, index) in treatMedicine">
+                <td class="col">
+                  <span v-show="mode!==VIEW_CURRENT_CARD" class="iconfont icon-remove" @click="removeTreatMedicine(index)"></span>
+                  {{String.fromCharCode(64 + parseInt(index+1))}}
                 </td>
-                <td class="col w2" colspan="2">
-                </td>
-                <td class="col w2" colspan="3">
+                <td class="col">
                   <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                    {{(adjointMedicine.medicineName)}}
+                    {{(reaction.medicineName)}}
                   </span>
                   <span class="field-input" v-else>
-                    <el-input v-model="adjointMedicine.medicineName" placeholder="请输入药物名称"></el-input>
+                    <el-input v-model="reaction.medicineName" placeholder="请输入药物名称"></el-input>
                   </span>
                 </td>
-                <td class="col w2" colspan="3">
+                <td class="col">
                   <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                    {{(adjointMedicine.totalDailyDose)}}
+                    {{(reaction.totalDailyDose)}}
                   </span>
                   <span class="field-input" v-else>
-                    <el-input v-model="adjointMedicine.totalDailyDose" placeholder="请输入日总剂量"></el-input>
+                    <el-input v-model="reaction.totalDailyDose" placeholder="请输入日总剂量"></el-input>
                   </span>
                 </td>
-                <td class="col w3" colspan="3">
+                <td class="col">
                   <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                    <span>{{transform(adjointMedicine.medicineMethod,'medicineMethod')}}</span>
+                    <span>{{transform(reaction.medicineMethod,'medicineMethod')}}</span>
                   </span>
                   <span class="field-input" v-else>
-                    <el-select v-model="medicineMethod" clearable placeholder="请选择给药途径" @change="updateWarning('medicineMethod')">
+                    <el-select v-model="reaction.medicineMethod" clearable placeholder="请选择给药途径">
                       <el-option
                         v-for="item in getOptions('medicineMethod')"
                         :key="item.code"
@@ -319,45 +289,45 @@
                 </td>
               </tr>
             </table>
-          </div>
-          <div class="field whole-line">
+            <div class="field whole-line">
+                <span class="field-name">
+                其他治疗措施：
+                </span>
+                <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                {{otherMeasure}}
+                </span>
+                <span class="field-input" v-else>
+                <el-input
+                    v-model="otherMeasure"
+                    type="textarea"
+                    :rows="2"
+                    :maxlength="500"
+                    placeholder="请输入其他治疗措施">
+                </el-input>
+                </span>
+            </div>
+            <div class="field whole-line">
               <span class="field-name">
-              其他治疗措施：
+                实验室检查：
               </span>
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-              {{remark}}
+                {{aboratoryExam}}
               </span>
               <span class="field-input" v-else>
-              <el-input
-                  v-model="remark"
+                <el-input
+                  v-model="aboratoryExam"
                   type="textarea"
                   :rows="2"
                   :maxlength="500"
-                  placeholder="请输入其他治疗措施">
-              </el-input>
+                  placeholder="请输入实验室检查详情">
+                </el-input>
               </span>
-          </div>
-          <div class="field whole-line">
-            <span class="field-name">
-              实验室检查：
-            </span>
-            <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-              {{remark}}
-            </span>
-            <span class="field-input" v-else>
-              <el-input
-                v-model="remark"
-                type="textarea"
-                :rows="2"
-                :maxlength="500"
-                placeholder="请输入实验室检查详情">
-              </el-input>
-            </span>
+            </div>
           </div>
         </div>
         <div class="seperate-line">
           <div class="toggle-fold-button" @click="toggleContentFoldedEndEvent">
-            不良事件结束
+            不良事件结局
             <span class="iconfont" :class="iconToggleFoldedMeasures"></span>
           </div>
         </div>
@@ -370,7 +340,7 @@
               <span>{{transform(adverseResult,'adverseResult')}}</span>
             </span>
             <span class="field-input" v-else>
-              <el-select v-model="adverseResult" clearable placeholder="请选择发生不良事件的结局" @change="updateWarning('adverseResult')">
+              <el-select v-model="adverseResult" clearable placeholder="请选择发生不良事件的结局">
                 <el-option
                   v-for="item in getOptions('adverseResult')"
                   :key="item.code"
@@ -380,7 +350,7 @@
               </el-select>
             </span>
           </div>
-          <div class="field whole-line">
+          <div class="field whole-line" v-show="adverseResult===3">
             <span class="field-name">
               缓解日期：
             </span>
@@ -390,10 +360,9 @@
             <span class="field-input" v-else>
               <el-date-picker
                 v-model="relieveDate"
-                type="datetime"
+                type="date"
                 placeholder="请选择缓解日期  "
-                :picker-options="pickerOptions"
-                @change="updateWarning('relieveDate')">
+                :picker-options="pickerOptions">
               </el-date-picker>
             </span>
           </div>
@@ -405,7 +374,7 @@
               <span>{{transform(adverseEffect,'adverseEffect')}}</span>
             </span>
             <span class="field-input" v-else>
-              <el-select v-model="adverseEffect" clearable placeholder="请选择" @change="updateWarning('adverseEffect')">
+              <el-select v-model="adverseEffect" clearable placeholder="请选择">
                 <el-option
                   v-for="item in getOptions('adverseEffect')"
                   :key="item.code"
@@ -429,7 +398,7 @@ import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import {reviseMinuteFormat, pruneObj} from 'utils/helper';
+import { deepCopy, vueCopy, reviseMinuteFormat, pruneObj } from 'utils/helper';
 import { addAdverseEvent, modifyAdverseEvent } from 'api/patient.js';
 
 export default {
@@ -449,6 +418,7 @@ export default {
       severity: '',
       treatmentRelate: '',
       seriousAdverse: '',
+      seriousAdverseEvents: [],
       remark: '',
       otherMeasure: '',
       aboratoryExam: '',
@@ -456,19 +426,21 @@ export default {
       relieveDate: '',
       adverseEffect: '',
       medicineMethod: '',
-      leadFeath: false,
-      lifeThreatening: false,
-      causeHospital: false,
-      leadContinuous: false,
-      causeException: false,
-      medicalEvents: false,
+      hasNoReaction: '',
       foldedConditionalContentMeasures: false,
       foldedConditionalContentEndEvent: false,
       adjointMedicine: [
         {
           'medicineName': '',
           'totalDailyDose': '',
-          'medicineMethod': 3
+          'medicineMethod': ''
+        }
+      ],
+      treatMedicine: [
+        {
+          'medicineName': '',
+          'totalDailyDose': '',
+          'medicineMethod': ''
         }
       ],
       warningResults: {
@@ -476,18 +448,6 @@ export default {
         adverseName: '',
         adverseDescribe: ''
       },
-      treatMedicine: [
-        {
-          'medicineName': '',
-          'totalDailyDose': '',
-          'medicineMethod': 4
-        },
-        {
-          'medicineName': '',
-          'totalDailyDose': '',
-          'medicineMethod': 2
-        }
-      ],
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now();
@@ -523,6 +483,16 @@ export default {
       this.completeInit = false;
       this.mode = cardOperation;
       this.showEdit = showEdit;
+      for (let medicine of this.adjointMedicine) {
+        medicine.medicineName = '';
+        medicine.totalDailyDose = '';
+        medicine.medicineMethod = '';
+      }
+      for (let reaction of this.treatMedicine) {
+        reaction.medicineName = '';
+        reaction.totalDailyDose = '';
+        reaction.medicineMethod = '';
+      }
       this.$nextTick(() => {
         this.$refs.scrollArea.scrollTop = 0;
         for (var property in this.warningResults) {
@@ -540,6 +510,8 @@ export default {
       this.severity = item.severity ? item.severity : '';
       this.treatmentRelate = item.treatmentRelate ? item.treatmentRelate : '';
       this.seriousAdverse = item.seriousAdverse ? item.seriousAdverse : '';
+      this.prepareSeriousAdverseEvent();
+
       this.remark = item.remark ? item.remark : '';
       this.otherMeasure = item.otherMeasure ? item.otherMeasure : '';
       this.aboratoryExam = item.aboratoryExam ? item.aboratoryExam : '';
@@ -548,18 +520,74 @@ export default {
       this.adverseEffect = item.adverseEffect ? item.adverseEffect : '';
       this.medicineMethod = item.medicineMethod ? item.medicineMethod : '';
       this.relieveDate = item.relieveDate ? item.relieveDate : '';
-      this.leadFeath = item.seriousAdverse === 1;
-      this.lifeThreatening = item.seriousAdverse === 1;
-      this.causeHospital = item.seriousAdverse === 1;
-      this.leadContinuous = item.seriousAdverse === 1;
-      this.causeException = item.seriousAdverse === 1;
-      this.medicalEvents = item.seriousAdverse === 1;
+      vueCopy(item.adjointMedicine, this.adjointMedicine);
+      vueCopy(item.treatMedicine, this.treatMedicine);
 
       this.completeInit = true;
       this.displayModal = true;
       this.updateScrollbar();
       this.foldedConditionalContentMeasures = true;
       this.foldedConditionalContentEndEvent = true;
+    },
+    // getUIType(field) {
+    //   // uiType类型 0/无 1/输入框 2/数字箭头 3/单选下拉框 4/单选按纽 5/多选复选框 6/日期 7/日期时间
+    //   return this.getMatchedField(field.fieldName).uiType;
+    // },
+    // getMatchedField(fieldName) {
+    //   // 这个函数根据实际数据，在字典项中查询到对应的字段，从而方便我们得到其 uiType 等信息
+    //   return Util.getElement('fieldName', fieldName, this.diseaseInfoDictionary);
+    // },
+    addAdjointMedicine() {
+      var medicineList = this.adjointMedicine;
+      var index = medicineList.length;
+      this.$set(medicineList, index, {});
+      let propertyList = ['medicineName', 'totalDailyDose', 'medicineMethod'];
+      for (let property of propertyList) {
+        this.$set(medicineList[index], property, '');
+      }
+    },
+    addTreatMedicine() {
+      var medicineList = this.treatMedicine;
+      var index = medicineList.length;
+      this.$set(medicineList, index, {});
+      let propertyList = ['medicineName', 'totalDailyDose', 'medicineMethod'];
+      for (let property of propertyList) {
+        this.$set(medicineList[index], property, '');
+      }
+    },
+    removeAdjointMedicine(index) {
+      var medicineList = this.adjointMedicine;
+      var oldList = [];
+      for (let medicine of medicineList) {
+        oldList.push({
+          medicineName: medicine.medicineName,
+          totalDailyDose: medicine.totalDailyDose
+        });
+      }
+      medicineList.splice(index, 1);
+      this.$nextTick(() => {
+        for (var i = 0; i < medicineList.length; i++) {
+          medicineList[i].medicineName = oldList[i].medicineName;
+          medicineList[i].totalDailyDose = oldList[i].totalDailyDose;
+        }
+      });
+    },
+    removeTreatMedicine(index) {
+      var medicineList = this.treatMedicine;
+      var oldList = [];
+      for (let medicine of medicineList) {
+        oldList.push({
+          medicineName: medicine.medicineName,
+          totalDailyDose: medicine.totalDailyDose
+        });
+      }
+      medicineList.splice(index, 1);
+      this.$nextTick(() => {
+        for (var i = 0; i < medicineList.length; i++) {
+          medicineList[i].medicineName = oldList[i].medicineName;
+          medicineList[i].totalDailyDose = oldList[i].totalDailyDose;
+        }
+      });
     },
     transform(code, fieldName) {
       var options = this.getOptions(fieldName);
@@ -577,6 +605,26 @@ export default {
         });
       };
       return options;
+    },
+    initSeriousAdverseEvents() {
+      var options = this.getOptions('seriousAdverse');
+      this.seriousAdverseEvents = [];
+      for (let i = 0; i < options.length; i++) {
+        this.$set(this.seriousAdverseEvents, i, false);
+      }
+    },
+    prepareSeriousAdverseEvent() {
+      var list = this.seriousAdverse.split('');
+      for (let i = 0; i < this.seriousAdverseEvents.length; i++) {
+        this.seriousAdverseEvents[i] = list[i] === '1';
+      }
+    },
+    concatenateSeriousAdverse() {
+      var result = '';
+      for (let event of this.seriousAdverseEvents) {
+        result += (event ? '1' : '0');
+      }
+      return result;
     },
     updateWarning(fieldName) {
       var list = ['occurTime', 'adverseName', 'adverseDescribe'];
@@ -622,20 +670,16 @@ export default {
       adverseEventInfo.severity = this.severity;
       adverseEventInfo.seriousFlag = this.seriousFlag;
       adverseEventInfo.measureFlag = this.measureFlag;
-      adverseEventInfo.seriousAdverse = this.seriousAdverse;
+      adverseEventInfo.seriousAdverse = this.concatenateSeriousAdverse();
+
       adverseEventInfo.remark = this.remark;
       adverseEventInfo.otherMeasure = this.otherMeasure;
       adverseEventInfo.aboratoryExam = this.aboratoryExam;
       adverseEventInfo.adverseResult = this.adverseResult;
       adverseEventInfo.relieveDate = this.relieveDate;
       adverseEventInfo.adverseEffect = this.adverseEffect;
-      adverseEventInfo.seriousAdverse = this.leadFeath ? 1 : 0;
-      adverseEventInfo.seriousAdverse = this.lifeThreatening ? 1 : 0;
-      adverseEventInfo.seriousAdverse = this.causeHospital ? 1 : 0;
-      adverseEventInfo.seriousAdverse = this.leadContinuous ? 1 : 0;
-      adverseEventInfo.seriousAdverse = this.causeException ? 1 : 0;
-      adverseEventInfo.seriousAdverse = this.medicalEvents ? 1 : 0;
-
+      adverseEventInfo.adjointMedicine = deepCopy(this.adjointMedicine);
+      adverseEventInfo.treatMedicine = deepCopy(this.treatMedicine);
       reviseMinuteFormat(adverseEventInfo);
       pruneObj(adverseEventInfo);
 
@@ -683,102 +727,21 @@ export default {
           suppressScrollX: true
         });
       });
-    },
-    addParam(formType) {
-      if (formType === 'firstDbsAdjustAfter') {
-        let paramList = this.copyInfo.firstDbsParams.adjustAfterParameter;
-        let count = paramList.length;
-        let order = count / 2 + 1;
-        let propertyList = ['exciteMod', 'negativePole', 'positivePole', 'frequency', 'pulseWidth', 'voltage', 'resistance', 'electric'];
-        for (let limbSideNum of [1, 2]) {
-          let index = count - 1 + limbSideNum;
-          this.$set(paramList, (index), {});
-          this.$set(paramList[index], 'paramType', 1);
-          this.$set(paramList[index], 'schemeOrder', order);
-          this.$set(paramList[index], 'limbSide', limbSideNum);
-          for (let property of propertyList) {
-            let defaultValue = '';
-            if (property === 'frequency') {
-              defaultValue = 130;
-            } else if (property === 'pulseWidth') {
-              defaultValue = 60;
-            }
-            this.$set(paramList[index], property, defaultValue);
-          }
-          if (this.copyInfo.patientDbsFirstId) {
-            this.$set(paramList[index], 'patientDbsFirstId', this.copyInfo.patientDbsFirstId);
-          }
-        }
-      } else if (formType === 'followDbsAdjustVoltage') {
-        let paramList = this.copyInfo.followDbsParams.adjustVoltageParameter;
-        let count = paramList.length;
-        let order = count / 2 + 1;
-        let propertyList = ['exciteMod', 'negativePole', 'positivePole', 'frequency', 'pulseWidth', 'voltage', 'effectInfo'];
-        for (let limbSideNum of [1, 2]) {
-          let index = count - 1 + limbSideNum;
-          this.$set(paramList, (index), {});
-          this.$set(paramList[index], 'paramType', 3);
-          this.$set(paramList[index], 'schemeOrder', order);
-          this.$set(paramList[index], 'limbSide', limbSideNum);
-          for (let property of propertyList) {
-            this.$set(paramList[index], property, '');
-          }
-          if (this.copyInfo.patientDbsFollowId) {
-            this.$set(paramList[index], 'patientDbsFollowId', this.copyInfo.patientDbsFollowId);
-          }
-        }
-      } else if (formType === 'followDbsAdjustMore') {
-        let paramList = this.copyInfo.followDbsParams.adjustMoreParameter;
-        let count = paramList.length;
-        let order = count / 2 + 1;
-        let propertyList = ['exciteMod', 'negativePole', 'positivePole', 'frequency', 'pulseWidth', 'voltage', 'resistance', 'electric'];
-        for (let limbSideNum of [1, 2]) {
-          let index = count - 1 + limbSideNum;
-          this.$set(paramList, (index), {});
-          this.$set(paramList[index], 'paramType', 4);
-          this.$set(paramList[index], 'schemeOrder', order);
-          this.$set(paramList[index], 'limbSide', limbSideNum);
-          for (let property of propertyList) {
-            this.$set(paramList[index], property, '');
-          }
-          if (this.copyInfo.patientDbsFollowId) {
-            this.$set(paramList[index], 'patientDbsFollowId', this.copyInfo.patientDbsFollowId);
-          }
-        }
-      } else if (formType === 'followDbsAdjustAfter') {
-        let paramList = this.copyInfo.followDbsParams.adjustAfterParameter;
-        let count = paramList.length;
-        let order = Math.floor(count / 2) + 1;
-        let propertyList = ['exciteMod', 'negativePole', 'positivePole', 'frequency', 'pulseWidth', 'voltage', 'resistance', 'electric'];
-        for (let limbSideNum of [1, 2]) {
-          let index = count - 1 + limbSideNum;
-          this.$set(paramList, (index), {});
-          this.$set(paramList[index], 'paramType', 1);
-          this.$set(paramList[index], 'schemeOrder', order);
-          this.$set(paramList[index], 'limbSide', limbSideNum);
-          for (let property of propertyList) {
-            let defaultValue = '';
-            if (property === 'frequency') {
-              defaultValue = 130;
-            } else if (property === 'pulseWidth') {
-              defaultValue = 60;
-            }
-            this.$set(paramList[index], property, defaultValue);
-          }
-          if (this.copyInfo.patientDbsFollowId) {
-            this.$set(paramList[index], 'patientDbsFollowId', this.copyInfo.patientDbsFollowId);
-          }
-        }
-      }
-      // this.updateCheckBoxModel(formType);
     }
   },
   mounted() {
     Bus.$on(this.SHOW_ADVERSE_EVENT_MODAL, this.showPanel);
     this.updateScrollbar();
+    this.initSeriousAdverseEvents();
   },
   beforeDestroy() {
     Bus.$off(this.SHOW_ADVERSE_EVENT_MODAL);
+  },
+  watch: {
+    typeGroup() {
+      this.initSeriousAdverseEvents();
+      this.prepareSeriousAdverseEvent();
+    }
   }
 };
 </script>
@@ -790,6 +753,7 @@ export default {
 @field-name-width: 170px;
 @scroll-bar-height: 10px;
 @unit-width: 54px;
+@computed-cell-color: lighten(@font-color, 55%);
 
 .adverse-event-modal-wrapper {
   position: absolute;
@@ -808,13 +772,17 @@ export default {
     max-height: 94%;
     background-color: @background-color;
     overflow: hidden;
-    .moveLeft {
+    .serious-adverse-event {
       position: relative;
       top: 0;
       left: @field-name-width;
-      float: left;
-      padding-right: 10px;
-      margin-bottom: 10px;
+      .el-checkbox {
+        padding-right: 15px;
+        margin-left: 0;
+        .el-checkbox__label {
+          padding-left: 5px;
+        }
+      }
     }
     .title {
       padding: 30px 0 10px;
@@ -915,26 +883,12 @@ export default {
           }
         }
       }
-    }
-    .form-wrapper {
-      position: relative;
-      margin-bottom: 30px;
-      width: 100%;
-      padding-bottom: 10px;
-      overflow: hidden;
-      .form {
-        margin: 10px auto 0;
-        border-spacing: 0;
-        table-layout: fixed;
+      .table {
+        margin: -15px 0 20px;
+        width: 100%;
         border: 1px solid @light-gray-color;
-        border-collapse:collapse;
+        border-collapse: collapse;
         text-align: center;
-        .along-medicine {
-          text-align: left;
-        }
-        &.form4 {
-          width: @unit-width * 21;
-        }
         .row {
           height: 35px;
           font-size: @normal-font-size;
@@ -946,11 +900,47 @@ export default {
             position: relative;
             width: 10%;
             border: 1px solid @light-gray-color;
+            .required-mark {
+              position: absolute;
+              right: 5px;
+              top: 8px;
+              color: red;
+              font-size: 25px;
+              vertical-align: middle;
+            }
+            &.title-col {
+              background-color: @font-color;
+              color: #fff;
+            }
+            &.computed-cell {
+              background-color: @computed-cell-color;
+              &.warning {
+                background-color: @alert-color;
+                color: #fff;
+              }
+              .warning-text {
+                position: absolute;
+                top: 35px;
+                left: 0;
+                color: @alert-color;
+                font-size: @small-font-size;
+              }
+            }
+            &.wide-col {
+              width: 30%;
+            }
+            &.narrow-col {
+              width: 5%;
+            }
             .iconfont {
               position: absolute;
-              top: 8px;
-              left: 20px;
+              left: 5px;
+              top: 9px;
               cursor: pointer;
+              z-index: 20;
+              &.icon-remove {
+                color: @alert-color;
+              }
               &:hover {
                 opacity: 0.6;
               }
@@ -958,60 +948,30 @@ export default {
                 opacity: 0.8;
               }
             }
-            &.w1 {
-              width: @unit-width;
-            }
-            &.w2 {
-              width: @unit-width * 2;
-            }
-            &.w3 {
-              width: @unit-width * 3;
-            }
-            &.sort-info {
-              padding-left: 20px;
-              text-align: left;
-              .contact {
-                display: inline-block;
-                margin: 0 15px;
-                width: 65px;
-                &.narrow {
-                  width: 15px;
-                }
-                .el-input {
-                  .el-input__icon {
-                    width: 20px;
-                  }
-                  .el-input__inner {
-                    padding-right: 20px;
-                    height: 30px;
-                    background-color: rgba(0,0,0,0);
-                    border: none;
-                    border-radius: 0;
-                    border-bottom: 1px solid @font-color;
-                  }
-                }
-              }
-            }
-            .el-checkbox-group {
-              .el-checkbox + .el-checkbox {
-                margin-left: 5px;
-              }
-              .is-disabled {
-                .el-checkbox__inner {
-                  background-color: @light-font-color;
-                  border-color: @light-font-color;
-                }
-              }
-            }
             .el-input {
               width: 100%;
+              &.warning {
+                margin: -1px;
+                border: 1px solid red;
+              }
               .el-input__inner {
                 padding: 0;
                 border: none;
                 text-align: center;
               }
-              .el-icon-date {
-                display: none;
+              .el-input__icon {
+                &.el-icon-date {
+                  width: 12px;
+                  height: 12px;
+                  padding: 0 0 18px 10px;
+                  opacity: 0.3;
+                }
+                &.el-icon-close {
+                  width: 12px;
+                  height: 12px;
+                  padding: 0 0 18px 10px;
+                  color: @alert-color;
+                }
               }
               &.is-disabled {
                 .el-input__inner {
@@ -1024,29 +984,14 @@ export default {
               }
             }
             .el-select {
-              width: 100%;
+              &.warning {
+                .el-input {
+                  margin: -1px;
+                  border: 1px solid red;
+                }
+              }
             }
           }
-        }
-      }
-      .ps__scrollbar-x-rail {
-        position: absolute;
-        height: @scroll-bar-height;
-        width: 100%;
-        bottom: 0;
-        box-sizing: border-box;
-        opacity: 0.3;
-        transition: opacity 0.3s;
-        .ps__scrollbar-x {
-          position: relative;
-          height: @scroll-bar-height;
-          background-color: @gray-color;
-          border-radius: 20px;
-        }
-      }
-      &:hover {
-        .ps__scrollbar-x-rail {
-          opacity: 0.6;
         }
       }
     }
@@ -1076,11 +1021,10 @@ export default {
       .iconfont {
         position: absolute;
         display: inline-block;
-        margin-left: 10px;
+        margin-left: 8px;
         width: @field-line-height;
         height: @field-line-height;
-        line-height: @field-line-height;
-        color: @button-color;
+        color:#aaa;
         vertical-align: middle;
       }
     }

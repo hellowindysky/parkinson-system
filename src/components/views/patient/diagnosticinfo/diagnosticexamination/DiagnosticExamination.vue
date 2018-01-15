@@ -71,7 +71,7 @@
           </div>
          </card>
       </extensible-panel>
-      <extensible-panel class="panel neuroelectric-panel" :mode="mutableMode" :title="neuroelectricTitle" v-on:addNewCard="addEmgRecord" :editable="canEdit">
+      <extensible-panel class="panel neuroelectric-panel" :mode="mutableMode" :title="neuroelectricTitle" v-on:addNewCard="addNeuroelectricRecordRecord" :editable="canEdit">
         <card class="card neuroelectric-card" :class="cardWidth" :mode="mutableMode" v-for="item in emgList" :key="item.pcaseId"
           :title="item.etgName" v-on:editCurrentCard="editNeuroelectricRecord(item)" v-on:viewCurrentCard="viewNeuroelectricRecord(item)"
           v-on:deleteCurrentCard="deleteNeuroelectricRecord(item)">
@@ -221,6 +221,12 @@ export default {
         return [];
       }
     },
+    patientInfo: {
+      tyep: Object,
+      default: () => {
+        return {};
+      }
+    },
     archived: {
       type: Boolean,
       default: true
@@ -256,6 +262,12 @@ export default {
     heartRate() {
       var info = Util.getElement('typegroupcode', 'rhythm', this.typeGroup);
       return info.types ? info.types : [];
+    },
+    heightAndWeight() {
+      var info = {};
+      info.height = this.patientInfo.height ? this.patientInfo.height : '';
+      info.weight = this.patientInfo.weight ? this.patientInfo.weight : '';
+      return info;
     },
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients) && !this.archived) {
@@ -357,14 +369,14 @@ export default {
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
-    addEmgRecord() {
-      Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
+    addNeuroelectricRecordRecord() {
+      Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.ADD_NEW_CARD, {}, !this.archived, this.heightAndWeight);
     },
     viewNeuroelectricRecord(item) {
-      Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived);
+      Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived, this.heightAndWeight);
     },
     editNeuroelectricRecord(item) {
-      Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
+      Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived, this.heightAndWeight);
     },
     deleteNeuroelectricRecord(item) { // 删除肌电图
       let emgInfo = {

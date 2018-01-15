@@ -28,8 +28,10 @@ function simplifyDate(dateStr) {
   return year + '-' + month + '-' + date;
 }
 
-function simplifyTime(dateStr) {
-  // 如果参数本身就为空，那么直接返回 undefined
+function simplifyTime(dateStr, accurateToSecond) {
+  // 如果第一个参数本身就为空，那么直接返回 undefined
+  // 如果第二个参数没有给，则返回格式为 yyyy-MM-dd HH:mm
+  // 如果第二个参数为 true, 则返回格式为 yyyy-MM-dd HH:mm:ss
   if (!dateStr) {
     return undefined;
   }
@@ -43,7 +45,14 @@ function simplifyTime(dateStr) {
   hour = hour < 10 ? '0' + hour : hour;
   var min = dateObj.getMinutes();
   min = min < 10 ? '0' + min : min;
-  return year + '-' + month + '-' + date + ' ' + hour + ':' + min;
+  var second = dateObj.getSeconds();
+  second = second < 10 ? '0' + second : second;
+
+  var resultString = year + '-' + month + '-' + date + ' ' + hour + ':' + min;
+  if (accurateToSecond) {
+    resultString += ':' + second;
+  }
+  return resultString;
 }
 
 function calculateYearsBetween(fromDate, toDate) {

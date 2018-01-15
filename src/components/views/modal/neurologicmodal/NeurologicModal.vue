@@ -188,14 +188,18 @@
       </div>
 
       <!-- <div class="seperate-line"></div> -->
-      <div class="button cancel-button" v-if="tableMode===FATHER_OPEN" @click="cancel">取消</div>
-      <div class="button cancel-button" v-if="tableMode===SON_OPEN && mode===VIEW_CURRENT_CARD" @click="closeSubTable">返回</div>
-      <div class="button edit-button" v-if="tableMode===FATHER_OPEN && mode===VIEW_CURRENT_CARD && canEdit" @click="switchToEditingMode">编辑</div>
-      <div class="button submit-button" v-if="tableMode===FATHER_OPEN && mode!==VIEW_CURRENT_CARD" @click="submit">确认</div>
-
-      <div class="button reset-button" v-if="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD && hasTableExisted"
-        @click="initSubTableDataForTypeCode(subTableCode)">重置</div>
-      <div class="button submit-button" v-if="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD && hasTableExisted" @click="closeSubTable">完成</div>
+      <span v-if="tableMode===FATHER_OPEN">
+        <div class="button cancel-button" @click="cancel">取消</div>
+        <div class="button edit-button" v-if="mode===VIEW_CURRENT_CARD && canEdit" @click="switchToEditingMode">编辑</div>
+        <div class="button submit-button" v-else-if="mode!==VIEW_CURRENT_CARD" @click="submit">确认</div>
+      </span>
+      <span v-else-if="tableMode===SON_OPEN">
+        <div class="button cancel-button" v-if="mode===VIEW_CURRENT_CARD" @click="closeSubTable">返回</div>
+        <span v-else-if="mode!==VIEW_CURRENT_CARD && hasTableExisted">
+          <div class="button reset-button" @click="initSubTableDataForTypeCode(subTableCode)">重置</div>
+          <div class="button submit-button" @click="closeSubTable">完成</div>
+        </span>
+      </span>
     </div>
   </div>
 </template>
@@ -440,7 +444,8 @@ export default {
     closeSubTable() {
       this.tableMode = this.FATHER_OPEN;
       this.updateScrollbar();
-      this.$refs.formWrapper.scrollTop = 0;
+      this.$refs.neurologicModal.scrollTop = 0;
+      // this.$refs.formWrapper.scrollTop = 0;
     },
     getOptions(fieldName) {
       var options = [];

@@ -67,9 +67,10 @@
             记录开始
           </span>
           <span class="field-input">
-            <span class="warning-text"></span>
+            <span class="warning-text">{{warningResults.recordStart}}</span>
             <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.recordStart}}</span>
-            <el-date-picker v-else type="datetime" format="yyyy-MM-dd HH:mm" v-model="copyInfo.recordStart" placeholder="请输入记录开始时间"></el-date-picker>
+            <el-date-picker v-else type="datetime" format="yyyy-MM-dd HH:mm:ss" :class="{'warning': warningResults.recordStart}"
+              v-model="copyInfo.recordStart" placeholder="请输入记录开始时间" @change="updateWarning('recordStart')"></el-date-picker>
           </span>
         </div>
         <div class="field" v-if="copyInfo.elecExamType===2">
@@ -77,9 +78,10 @@
             身高 (cm)
           </span>
           <span class="field-input">
-            <span class="warning-text"></span>
+            <span class="warning-text">{{warningResults.height}}</span>
             <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.height}}</span>
-            <el-input v-else v-model="copyInfo.height" placeholder="请输入身高"></el-input>
+            <el-input v-else v-model="copyInfo.height" placeholder="请输入身高" :class="{'warning': warningResults.height}"
+              @change="updateWarning('height')"></el-input>
           </span>
         </div>
         <div class="field" v-if="copyInfo.elecExamType===2">
@@ -87,9 +89,10 @@
             记录结束
           </span>
           <span class="field-input">
-            <span class="warning-text"></span>
+            <span class="warning-text">{{warningResults.recordEnd}}</span>
             <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.recordEnd}}</span>
-            <el-date-picker v-else type="datetime" format="yyyy-MM-dd HH:mm" v-model="copyInfo.recordEnd" placeholder="请输入记录结束时间"></el-date-picker>
+            <el-date-picker v-else type="datetime" format="yyyy-MM-dd HH:mm:ss" :class="{'warning': warningResults.End}"
+              v-model="copyInfo.recordEnd" placeholder="请输入记录结束时间" @change="updateWarning('recordEnd')"></el-date-picker>
           </span>
         </div>
         <div class="field" v-if="copyInfo.elecExamType===2">
@@ -97,9 +100,10 @@
             体重 (kg)
           </span>
           <span class="field-input">
-            <span class="warning-text"></span>
+            <span class="warning-text">{{warningResults.weight}}</span>
             <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.weight}}</span>
-            <el-input v-else v-model="copyInfo.weight" placeholder="请输入体重"></el-input>
+            <el-input v-else v-model="copyInfo.weight" placeholder="请输入体重" :class="{'warning': warningResults.weight}"
+              @change="updateWarning('weight')"></el-input>
           </span>
         </div>
         <div class="field" v-if="copyInfo.elecExamType===2">
@@ -528,7 +532,7 @@
                 <el-input v-else-if="row[0].uiType===1" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"></el-input>
                 <el-select v-else-if="row[0].uiType===3" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"></el-select>
                 <el-date-picker v-else-if="row[0].uiType===6" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"></el-date-picker>
-                <el-date-picker v-else-if="row[0].uiType===7" type="datetime" format="yyyy-MM-dd HH:mm" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"></el-date-picker>
+                <el-date-picker v-else-if="row[0].uiType===7" format="yyyy-MM-dd HH:mm:ss" type="datetime" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"></el-date-picker>
                 <el-time-select v-else-if="row[0].uiType===8" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"
                   :picker-options="{start:'00:00', end:'24:00'}"></el-time-select>
               </td>
@@ -540,7 +544,7 @@
                 <el-input v-else-if="row[1].uiType===1" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"></el-input>
                 <el-select v-else-if="row[1].uiType===3" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"></el-select>
                 <el-date-picker v-else-if="row[1].uiType===6" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"></el-date-picker>
-                <el-date-picker v-else-if="row[1].uiType===7" type="datetime" format="yyyy-MM-dd HH:mm" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"></el-date-picker>
+                <el-date-picker v-else-if="row[1].uiType===7" format="yyyy-MM-dd HH:mm:ss" type="datetime" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"></el-date-picker>
                 <el-time-select v-else-if="row[1].uiType===8" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"
                   :picker-options="{start:'00:00', end:'24:00'}"></el-time-select>
               </td>
@@ -561,7 +565,7 @@
                 <el-input v-else-if="col.uiType===1" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"></el-input>
                 <el-select v-else-if="col.uiType===3" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"></el-select>
                 <el-date-picker v-else-if="col.uiType===6" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"></el-date-picker>
-                <el-date-picker v-else-if="col.uiType===7" type="datetime" format="yyyy-MM-dd HH:mm" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"></el-date-picker>
+                <el-date-picker v-else-if="col.uiType===7" type="datetime" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"></el-date-picker>
                 <el-time-select v-else-if="col.uiType===8" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"
                   :picker-options="{start:'00:00', end:'24:00'}"></el-time-select>
               </td>
@@ -678,14 +682,19 @@
         </div>
 
       </div>
-      <div class="button cancel-button" v-if="tableMode!==SON_OPEN" @click="cancel">取消</div>
-      <div class="button cancel-button" v-if="tableMode===SON_OPEN && mode===VIEW_CURRENT_CARD" @click="closeSubTable">返回</div>
-      <div class="button submit-button" v-if="tableMode===FATHER_OPEN && mode===VIEW_CURRENT_CARD && canEdit" @click="switchToEditingMode">编辑</div>
-      <div class="button submit-button" v-if="tableMode===FATHER_OPEN && mode!==VIEW_CURRENT_CARD" @click="submit">确认</div>
 
-      <div class="button reset-button" v-if="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD && copyInfo.elecExamType===1" @click="resetEmgTableData">重置</div>
-      <div class="button reset-button" v-if="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD && copyInfo.elecExamType===2" @click="resetSleepMonitoringSubTable">重置</div>
-      <div class="button submit-button" v-if="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD" @click="closeSubTable">完成</div>
+      <span v-if="tableMode===FATHER_OPEN">
+        <div class="button cancel-button" @click="cancel">取消</div>
+        <div class="button edit-button" v-if="mode===VIEW_CURRENT_CARD && canEdit" @click="switchToEditingMode">编辑</div>
+        <div class="button submit-button" v-else-if="mode!==VIEW_CURRENT_CARD" @click="submit">确认</div>
+      </span>
+      <span v-else-if="tableMode===SON_OPEN">
+        <div class="button cancel-button" v-if="mode===VIEW_CURRENT_CARD" @click="closeSubTable">返回</div>
+        <span v-else-if="mode!==VIEW_CURRENT_CARD">
+          <div class="button reset-button" @click="resetSubTable">重置</div>
+          <div class="button submit-button" @click="closeSubTable">完成</div>
+        </span>
+      </span>
     </div>
   </div>
 </template>
@@ -829,7 +838,7 @@ export default {
         var hour = parseInt(interval / 3600, 10);
         var minute = parseInt((interval % 3600) / 60, 10);
         minute = minute >= 10 ? minute : '0' + minute;
-        var second = parseInt((interval % 60) / 60, 10);
+        var second = parseInt((interval % 60), 10);
         second = second >= 10 ? second : '0' + second;
         this.recordTotal = hour + ':' + minute + ':' + second;
       } else {
@@ -882,7 +891,7 @@ export default {
     }
   },
   methods: {
-    showPanel(cardOperation, item, showEdit) {
+    showPanel(cardOperation, item, showEdit, heightAndWeight) {
       this.displayModal = true;
       this.mode = cardOperation;
       this.tableMode = this.FATHER_OPEN;
@@ -892,6 +901,11 @@ export default {
       // console.log('typeField: ', this.typeField);
 
       this.initCopyInfo();
+
+      var height = heightAndWeight.height === '' ? '' : heightAndWeight.height / 10;
+      var weight = heightAndWeight.weight === '' ? '' : heightAndWeight.weight / 10;
+      this.$set(this.copyInfo, 'height', height);
+      this.$set(this.copyInfo, 'weight', weight);
 
       vueCopy(item, this.copyInfo);
       this.copyInfo.elecExamType = this.copyInfo.elecExamType ? Number(this.copyInfo.elecExamType) : '';
@@ -1014,11 +1028,21 @@ export default {
       this.updateWarning('elecExamType');
     },
     updateWarning(fieldName) {
-      if (this.copyInfo[fieldName] === undefined || this.copyInfo[fieldName] === '') {
+      var copyFieldValue = this.copyInfo[fieldName];
+      if (copyFieldValue === undefined || copyFieldValue === '') {
         this.$set(this.warningResults, fieldName, '必填项');
-      } else {
-        this.$set(this.warningResults, fieldName, '');
+        return;
+
+      } else if (['height', 'weight'].indexOf(fieldName) >= 0) {
+        if (copyFieldValue === 0 || copyFieldValue === '0') {
+          this.$set(this.warningResults, fieldName, '身高和体重必须大于0');
+          return;
+        } else if (!Util.checkIfNotMoreThanNDecimalNums(copyFieldValue, 1)) {
+          this.$set(this.warningResults, fieldName, '必须为数字，且不超过1位小数');
+          return;
+        }
       }
+      this.$set(this.warningResults, fieldName, '');
     },
     clearWarning() {
       this.$nextTick(() => {
@@ -1246,10 +1270,17 @@ export default {
         }
       }
     },
+    resetSubTable() {
+      if (this.copyInfo.elecExamType === 1) {
+        this.resetEmgTableData();
+      } else if (this.copyInfo.elecExamType === 2) {
+        this.resetSleepMonitoringSubTable();
+      }
+    },
     closeSubTable() {
       this.tableMode = this.FATHER_OPEN;
       this.updateScrollbar();
-      this.$refs.formWrapper.scrollTop = 0;
+      this.$refs.neuroelectricModal.scrollTop = 0;
     },
     getOptions(fieldName) {
       var options = [];
@@ -1283,7 +1314,12 @@ export default {
       this.lockSubmitButton = true;
 
       this.updateWarning('elecExamType');
-      if (this.copyInfo.elecExamType === 9 || this.copyInfo.elecExamType === 10) {
+      if (this.copyInfo.elecExamType === 2) {
+        this.updateWarning('height');
+        this.updateWarning('weight');
+        this.updateWarning('recordStart');
+        this.updateWarning('recordEnd');
+      } else if (this.copyInfo.elecExamType === 9 || this.copyInfo.elecExamType === 10) {
         this.updateWarning('checkDate');
       }
       for (var p in this.warningResults) {
@@ -1293,12 +1329,12 @@ export default {
         }
       }
 
-      reviseDateFormat(this.copyInfo);
       let submitData = deepCopy(this.copyInfo);
 
       if (submitData.elecExamType === 1) {
         submitData.pinfoId = this.$route.params.id;
         submitData.pcaseId = this.$route.params.caseId;
+        submitData.checkDate = Util.simplifyDate(submitData.checkDate);
         if (this.mode === this.ADD_NEW_CARD) {
           // 新增肌电图
           addEmg(submitData).then(() => {
@@ -1316,8 +1352,8 @@ export default {
       } else if (submitData.elecExamType === 2) {
         submitData.patientId = this.$route.params.id;
         submitData.patientCaseId = this.$route.params.caseId;
-        submitData.recordStart = Util.simplifyTime(submitData.recordStart);
-        submitData.recordEnd = Util.simplifyTime(submitData.recordEnd);
+        submitData.recordStart = Util.simplifyTime(submitData.recordStart, true);
+        submitData.recordEnd = Util.simplifyTime(submitData.recordEnd, true);
         if (this.mode === this.ADD_NEW_CARD) {
           // 新增睡眠监测
           addSleepMonitoring(submitData).then(() => {
@@ -1546,7 +1582,7 @@ export default {
     padding: 0 40px;
     top: 3%;
     width: 80%;
-    min-width: 830px;
+    min-width: 720px;
     max-width: 1000px;
     max-height: 94%;
     background-color: @background-color;
@@ -1889,7 +1925,7 @@ export default {
       &.cancel-button {
         background-color: @light-font-color;
       }
-      &.submit-button {
+      &.submit-button, &.edit-button {
         background-color: @button-color;
       }
       &.reset-button {

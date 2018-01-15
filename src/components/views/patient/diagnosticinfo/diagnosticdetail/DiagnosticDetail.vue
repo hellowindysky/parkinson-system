@@ -12,12 +12,15 @@
       <diagnostic-disease :archived="hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
         :diagnosticDisease="diagnosticDisease"></diagnostic-disease>
       <diagnostic-treatment :archived="hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
-        :diagnosticSurgery="caseDetail.patientSurgicalDbs" :diagnosticMedicine="caseDetail.patientMedicineNew"
-        :diagnosticPhysiontherapy="caseDetail.patientPhytheTms" :diagnosticTreatmentEvaluation="caseDetail.patientPhytheAssess">
+        :diagnosticSurgery="caseDetail.patientSurgicalDbs"
+        :diagnosticMedicine="caseDetail.patientMedicineNew"
+        :diagnosticPhysiontherapy="caseDetail.patientPhytheTms" :diagnosticTreatmentEvaluation="caseDetail.patientPhytheAssess"
+        :diagnosticAdverseEvent="caseDetail.patientAdverse">
       </diagnostic-treatment>
       <diagnostic-scale :archived="hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
         :patientScale="caseDetail.patientScale"></diagnostic-scale>
       <diagnostic-examination :archived="hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
+        :patientInfo="patientInfo"
         :neurologicCheckList="caseDetail.patientSpephysical"
         :geneCheckList="caseDetail.patientGene"
         :biochemicalExamList="caseDetail.patientBioexam"
@@ -44,6 +47,14 @@ import DiagnosticScale from 'components/views/patient/diagnosticinfo/diagnostics
 import DiagnosticExamination from 'components/views/patient/diagnosticinfo/diagnosticexamination/DiagnosticExamination';
 
 export default {
+  props: {
+    patientInfo: {
+      type: Object,
+      default: () => {
+        return {};
+      }
+    }
+  },
   data() {
     return {
       displayDetail: false,

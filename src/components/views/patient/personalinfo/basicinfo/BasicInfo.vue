@@ -379,7 +379,8 @@ export default {
       if (fieldName === 'cardId') {
         // 这里插入一段特殊逻辑，如果是修改病患信息（不是新增），而且处于脱敏显示状态下，
         // 那么由于服务器返回的加密字段是连续18个星号，这里就得让其通过校验
-        if (this.$route.params.id !== 'newPatient' && !this.$store.state.showSensitiveInfo &&
+        if (this.$route.params.id !== 'newPatient' &&
+          !this.$store.state.showSensitiveInfo &&
           /^[*]{18}$/.test(copyFieldValue)) {
           this.$set(this.warningResults, fieldName, null);
           return;
@@ -430,13 +431,19 @@ export default {
         if (copyFieldValue === 0 || copyFieldValue === '0') {
           this.$set(this.warningResults, fieldName, '身高和体重必须大于0');
           return;
-        } else if (!Util.checkIfNotMoreThanNDecimalNums(copyFieldValue, 2)) {
-          this.$set(this.warningResults, fieldName, '必须为数字，且不超过2位小数');
+        } else if (!Util.checkIfNotMoreThanNDecimalNums(copyFieldValue, 1)) {
+          this.$set(this.warningResults, fieldName, '必须为数字，且不超过1位小数');
           return;
         }
 
       } else if (copyFieldValue !== '' && ['phone', 'phone2'].indexOf(fieldName) >= 0) {
-        if (!Util.checkIfValidPhoneNum(copyFieldValue)) {
+        if (this.$route.params.id !== 'newPatient' &&
+          !this.$store.state.showSensitiveInfo &&
+          /^[*]{11}$/.test(copyFieldValue)) {
+          this.$set(this.warningResults, fieldName, null);
+          return;
+
+        } else if (!Util.checkIfValidPhoneNum(copyFieldValue)) {
           this.$set(this.warningResults, fieldName, '只能由数字和短横线组成');
           return;
         }
