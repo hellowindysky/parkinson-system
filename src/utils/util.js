@@ -28,14 +28,14 @@ function simplifyDate(dateStr) {
   return year + '-' + month + '-' + date;
 }
 
-function simplifyTime(dateStr, accurateToSecond) {
+function simplifyTime(timeStr, accurateToSecond) {
   // 如果第一个参数本身就为空，那么直接返回 undefined
-  // 如果第二个参数没有给，则返回格式为 yyyy-MM-dd HH:mm
+  // 如果第二个参数没有给或者为 false，则返回格式为 yyyy-MM-dd HH:mm
   // 如果第二个参数为 true, 则返回格式为 yyyy-MM-dd HH:mm:ss
-  if (!dateStr) {
+  if (!timeStr) {
     return undefined;
   }
-  var dateObj = new Date(dateStr);
+  var dateObj = new Date(timeStr);
   var year = dateObj.getFullYear();
   var month = dateObj.getMonth() + 1;
   month = month < 10 ? '0' + month : month;
@@ -53,6 +53,13 @@ function simplifyTime(dateStr, accurateToSecond) {
     resultString += ':' + second;
   }
   return resultString;
+}
+
+function simplifyTimeWithoutDate(timeStr, accurateToSecond) {
+  // 如果第一个参数本身就为空，那么直接返回 undefined
+  // 如果第二个参数没有给或者为 false，则返回格式为 HH:mm
+  // 如果第二个参数为 true, 则返回格式为 HH:mm:ss
+  return simplifyTime(timeStr, accurateToSecond).substring(11);
 }
 
 function calculateYearsBetween(fromDate, toDate) {
@@ -184,6 +191,7 @@ export default {
   getElement,
   simplifyDate,
   simplifyTime,
+  simplifyTimeWithoutDate,
   calculateYearsBetween,
   checkId,
   checkIfPositiveInteger,
