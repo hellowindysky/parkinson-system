@@ -522,7 +522,6 @@ export default {
       // });
       console.log(this.stimulateSideEvents1);
       return incident.concat(this.stimulateSideEvents1, this.stimulateSideEvents2, this.stimulateSideEvents3).join('');
-      
     },
     updateWarning(fieldName) {
       var list = ['recordDate', 'physiType', 'deviceType', 'leftThresholdBefore', 'rightThresholdBefore'];

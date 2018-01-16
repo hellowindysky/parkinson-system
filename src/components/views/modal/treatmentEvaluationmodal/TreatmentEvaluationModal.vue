@@ -315,13 +315,13 @@ export default {
       this.displayModal = true;
       this.updateScrollbar();
     // 获取患者的 DBS 编码
-    getPatientSimpleInfo(this.$route.params.id).then((data) => {
-      if (data && data.patientInfo && data.patientInfo && data.patientInfo.dbsPatientCode) {
-        this.dbsPatientCode = data.patientInfo.dbsPatientCode;
-      }
-    }, (error) => {
-      console.log(error);
-    });
+      getPatientSimpleInfo(this.$route.params.id).then((data) => {
+        if (data && data.patientInfo && data.patientInfo && data.patientInfo.dbsPatientCode) {
+          this.dbsPatientCode = data.patientInfo.dbsPatientCode;
+        }
+      }, (error) => {
+        console.log(error);
+      });
     },
     transform(code, fieldName) {
       var options = this.getOptions(fieldName);

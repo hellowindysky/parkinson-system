@@ -526,13 +526,13 @@ export default {
       this.foldedConditionalContentMeasures = true;
       this.foldedConditionalContentEndEvent = true;
     // 获取患者的 DBS 编码
-    getPatientSimpleInfo(this.$route.params.id).then((data) => {
-      if (data && data.patientInfo && data.patientInfo && data.patientInfo.dbsPatientCode) {
-        this.dbsPatientCode = data.patientInfo.dbsPatientCode;
-      }
-    }, (error) => {
-      console.log(error);
-    });
+      getPatientSimpleInfo(this.$route.params.id).then((data) => {
+        if (data && data.patientInfo && data.patientInfo && data.patientInfo.dbsPatientCode) {
+          this.dbsPatientCode = data.patientInfo.dbsPatientCode;
+        }
+      }, (error) => {
+        console.log(error);
+      });
     },
     getUIType(field) {
       // uiType类型 0/无 1/输入框 2/数字箭头 3/单选下拉框 4/单选按纽 5/多选复选框 6/日期 7/日期时间
