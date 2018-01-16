@@ -68,12 +68,8 @@
           <span class="field-name">
             实验编号:
           </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span class="warning-text"></span>
-            <span></span>
-          </span>
-          <span class="field-input" v-else>
-            <el-input placeholder="自动获取实验编号"></el-input>
+          <span class="field-input">
+            {{dbsPatientCode}}
           </span>
         </div>
         <div class="field">
@@ -308,7 +304,7 @@ import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import { deepCopy, vueCopy, reviseDateFormat, pruneObj } from 'utils/helper.js';
-import { addPhysiontherapy, modifyPhysiontherapy } from 'api/patient.js';
+import { getPatientSimpleInfo, addPhysiontherapy, modifyPhysiontherapy } from 'api/patient.js';
 
 export default {
   data() {
@@ -316,6 +312,7 @@ export default {
       displayModal: false,
       mode: '',
       completeInit: false,
+      dbsPatientCode: '',
 
       patientPhytheTmsId: '',
       patientPhytheTms: '',
@@ -465,6 +462,14 @@ export default {
       this.completeInit = true;
       this.displayModal = true;
       this.updateScrollbar();
+      // 获取患者的 DBS 编码
+      getPatientSimpleInfo(this.$route.params.id).then((data) => {
+        if (data && data.patientInfo && data.patientInfo && data.patientInfo.dbsPatientCode) {
+          this.dbsPatientCode = data.patientInfo.dbsPatientCode;
+        }
+      }, (error) => {
+        console.log(error);
+      });
     },
     transform(code, fieldName) {
       var options = this.getOptions(fieldName);
