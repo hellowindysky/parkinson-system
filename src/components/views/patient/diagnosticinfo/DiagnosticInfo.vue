@@ -49,7 +49,9 @@ export default {
       return '看诊记录（' + this.patientCaseList.length + '条记录）';
     },
     canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients)) {
+      if (this.$route.matched.some(record => record.meta.myPatients) ||
+        this.$route.matched.some(record => record.meta.therapistsPatients) ||
+        this.$route.matched.some(record => record.meta.appraisersPatients)) {
         return true;
       } else {
         return false;

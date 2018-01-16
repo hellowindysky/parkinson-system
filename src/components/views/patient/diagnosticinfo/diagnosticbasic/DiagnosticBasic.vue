@@ -85,7 +85,10 @@ export default {
       return this.$store.state.listType;
     },
     canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients) && (!this.archived || this.$route.params.caseId === 'newCase')) {
+      if ((this.$route.matched.some(record => record.meta.myPatients) ||
+        this.$route.matched.some(record => record.meta.therapistsPatients) ||
+        this.$route.matched.some(record => record.meta.appraisersPatients)) &&
+        (!this.archived || this.$route.params.caseId === 'newCase')) {
         return true;
       } else {
         return false;

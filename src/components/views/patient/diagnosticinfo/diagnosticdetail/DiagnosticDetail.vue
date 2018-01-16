@@ -96,7 +96,10 @@ export default {
       return obj;
     },
     canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients)) {
+      if ((this.$route.matched.some(record => record.meta.myPatients) ||
+        this.$route.matched.some(record => record.meta.therapistsPatients) ||
+        this.$route.matched.some(record => record.meta.appraisersPatients)) &&
+        !this.archived) {
         return true;
       } else {
         return false;
