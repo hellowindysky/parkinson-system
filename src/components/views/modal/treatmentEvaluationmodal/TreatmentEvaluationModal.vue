@@ -462,6 +462,7 @@ export default {
     overflow: hidden;
     .moveLeft {
       text-align: left;
+      margin-top: 10px;
     }
     .title {
       padding: 30px 0 10px;
