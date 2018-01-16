@@ -422,8 +422,13 @@ export default {
       }
     },
     notSportTypeId() {
-      // 非运动症状类型的id
+      // 非运动症状类型的id    symName
       return this.transId(this.copyInfo.notSportType, 'noSportSymType');
+    },
+    symId() {
+      let symNameArr = this.getNoSportOptions(this.transId(this.copyInfo.notSportType, 'noSportSymType'));
+      let code = Util.getElement('name', this.copyInfo.symName, symNameArr).code;
+      return code;
     }
   },
   methods: {
@@ -585,7 +590,7 @@ export default {
         var ComplaintsInfo = Object.assign({}, this.copyInfo); // 主诉症状数据
         ComplaintsInfo.patientId = this.$route.params.id;
         ComplaintsInfo.patientCaseId = this.$route.params.caseId;
-        ComplaintsInfo.notSportTypeId = this.notSportTypeId;
+        ComplaintsInfo.notSportTypeId = this.symId;
 
         reviseDateFormat(ComplaintsInfo);
         pruneObj(ComplaintsInfo);

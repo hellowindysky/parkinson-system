@@ -861,10 +861,10 @@ export default {
         min-height: 0;
         display: block;
         .field-input{
-            width: 100px;
+            width: 120px;
             position: absolute;
             top:-45px;
-            left: calc(~"96% - 100px");
+            left: calc(~"96% - 120px");
         }
       }
       .field-name {
@@ -892,7 +892,7 @@ export default {
         font-size: @normal-font-size;
         color: @light-font-color;
         &.doseInfo{
-          width: calc(~"96% - @{field-name-width} - 110px");
+          width: calc(~"96% - @{field-name-width} - 130px");
         }
         // &.unit{
         //   width: 100px;
