@@ -1,6 +1,7 @@
 <template lang="html">
   <div class="item" :class="{'current': selected}" @click="select">
     <img class="image" src="~img/profile.png" alt="">
+    <span class="experiment-icon iconfont" :class="experimentStatusIcon"></span>
     <div class="name">{{patient.name}}</div>
     <div class="date">{{patient.createDate}}</div>
     <div class="age">{{patient.age}}岁</div>
@@ -37,6 +38,26 @@ export default {
       } else if (this.patient.sex === 1) {
         return 'icon-female';
       }
+    },
+    experimentStatusIcon() {
+      if (this.$store.state.subjectId !== this.SUBJECT_ID_FOR_HOSPITAL) {
+        if (this.patient.status !== undefined &&
+          ([this.MY_PATIENTS_TYPE, this.SUBJECT_PATIENTS_TYPE].indexOf(this.listType) >= 0)) {
+          return 'icon-experiment';
+        } else if (this.patient.status !== undefined &&
+          ([this.THERAPISTS_PATIENTS_TYPE, this.APPRAISERS_PATIENTS_TYPE].indexOf(this.listType) >= 0)) {
+          if (this.patient.status === 2) {
+            return 'icon-shai';
+          } else if (this.patient.status === 3) {
+            return 'icon-zhi';
+          } else if (this.patient.status === 4) {
+            return 'icon-sui';
+          } else if (this.patient.status === 5) {
+            return 'icon-wan';
+          }
+        }
+      }
+      return '';
     }
   },
   mounted() {
@@ -80,6 +101,30 @@ export default {
     top: 10px;
     width: 35px;
     height: 35px;
+  }
+  .experiment-icon {
+    display: inline-block;
+    position: absolute;
+    left: 27px;
+    top: 27px;
+    width: 25px;
+    height: 25px;
+    line-height: 25px;
+    font-size: 25px;
+    border-radius: 50%;
+    background-color: #fff;
+    &.icon-shai {
+      color: @alert-color;
+    }
+    &.icon-zhi {
+      color: @light-font-color;
+    }
+    &.icon-sui {
+      color: @button-color;
+    }
+    &.icon-wan {
+      color: @green-color;
+    }
   }
   .name {
     position: absolute;
