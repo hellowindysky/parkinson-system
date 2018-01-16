@@ -13,6 +13,7 @@
             {{ getArchiveStatus(item) }}
           </span>
         </div>
+        <div class="experiment-description">{{item.experimentDescription}}</div>
       </card>
     </folding-panel>
   </div>
@@ -280,6 +281,14 @@ export default {
             }
           }
         }
+      }
+      .experiment-description {
+        position: absolute;
+        right: 20px;
+        top: 15px;
+        font-size: @normal-font-size;
+        font-weight: bold;
+        color: @theme-color;
       }
     }
   }

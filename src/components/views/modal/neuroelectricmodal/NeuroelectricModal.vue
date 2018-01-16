@@ -91,7 +91,7 @@
           <span class="field-input">
             <span class="warning-text">{{warningResults.recordEnd}}</span>
             <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.recordEnd}}</span>
-            <el-date-picker v-else type="datetime" format="yyyy-MM-dd HH:mm:ss" :class="{'warning': warningResults.End}"
+            <el-date-picker v-else type="datetime" format="yyyy-MM-dd HH:mm:ss" :class="{'warning': warningResults.recordEnd}"
               v-model="copyInfo.recordEnd" placeholder="请输入记录结束时间" @change="updateWarning('recordEnd')"></el-date-picker>
           </span>
         </div>
@@ -528,25 +528,59 @@
                 {{row[0].fieldName}}
               </td>
               <td class="col col-width-10">
-                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue}}</span>
-                <el-input v-else-if="row[0].uiType===1" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"></el-input>
-                <el-select v-else-if="row[0].uiType===3" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"></el-select>
-                <el-date-picker v-else-if="row[0].uiType===6" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"></el-date-picker>
-                <el-date-picker v-else-if="row[0].uiType===7" format="yyyy-MM-dd HH:mm:ss" type="datetime" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"></el-date-picker>
-                <el-time-select v-else-if="row[0].uiType===8" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"
-                  :picker-options="{start:'00:00', end:'24:00'}"></el-time-select>
+                <span v-if="mode===VIEW_CURRENT_CARD">
+                  {{copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue}}
+                </span>
+                <el-input v-else-if="row[0].uiType===1"
+                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue">
+                </el-input>
+                <el-input v-else-if="row[0].uiType===2" type="number"
+                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue">
+                </el-input>
+                <el-select v-else-if="row[0].uiType===3"
+                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue">
+                </el-select>
+                <el-date-picker v-else-if="row[0].uiType===6"
+                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"
+                  @change="recordValuePath(['patientFieldCode',sleepMonitoringSubTableCode,row[0].id,0], 6)">
+                </el-date-picker>
+                <el-date-picker v-else-if="row[0].uiType===7" format="yyyy-MM-dd HH:mm:ss" type="datetime"
+                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"
+                  @change="recordValuePath(['patientFieldCode',sleepMonitoringSubTableCode,row[0].id,0], 7)">
+                </el-date-picker>
+                <el-time-picker v-else-if="row[0].uiType===8"
+                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"
+                  @change="recordValuePath(['patientFieldCode',sleepMonitoringSubTableCode,row[0].id,0], 8)">
+                </el-time-picker>
               </td>
               <td class="col col-width-10" v-if="row.length===2">
                 {{row[1].fieldName}}
               </td>
               <td class="col col-width-10" v-if="row.length===2">
-                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue}}</span>
-                <el-input v-else-if="row[1].uiType===1" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"></el-input>
-                <el-select v-else-if="row[1].uiType===3" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"></el-select>
-                <el-date-picker v-else-if="row[1].uiType===6" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"></el-date-picker>
-                <el-date-picker v-else-if="row[1].uiType===7" format="yyyy-MM-dd HH:mm:ss" type="datetime" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"></el-date-picker>
-                <el-time-select v-else-if="row[1].uiType===8" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"
-                  :picker-options="{start:'00:00', end:'24:00'}"></el-time-select>
+                <span v-if="mode===VIEW_CURRENT_CARD">
+                  {{copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue}}
+                </span>
+                <el-input v-else-if="row[1].uiType===1"
+                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue">
+                </el-input>
+                <el-input v-else-if="row[1].uiType===2" type="number"
+                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue">
+                </el-input>
+                <el-select v-else-if="row[1].uiType===3"
+                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue">
+                </el-select>
+                <el-date-picker v-else-if="row[1].uiType===6"
+                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"
+                  @change="recordValuePath(['patientFieldCode',sleepMonitoringSubTableCode,row[1].id,0], 6)">
+                </el-date-picker>
+                <el-date-picker v-else-if="row[1].uiType===7" format="yyyy-MM-dd HH:mm:ss" type="datetime"
+                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"
+                  @change="recordValuePath(['patientFieldCode',sleepMonitoringSubTableCode,row[1].id,0], 7)">
+                </el-date-picker>
+                <el-time-picker v-else-if="row[1].uiType===8"
+                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"
+                  @change="recordValuePath(['patientFieldCode',sleepMonitoringSubTableCode,row[1].id,0], 8)">
+                </el-time-picker>
               </td>
             </tr>
 
@@ -561,13 +595,31 @@
                 {{row.fieldName}}
               </td>
               <td class="col col-width-10" v-for="col in group.colItems">
-                <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue}}</span>
-                <el-input v-else-if="col.uiType===1" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"></el-input>
-                <el-select v-else-if="col.uiType===3" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"></el-select>
-                <el-date-picker v-else-if="col.uiType===6" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"></el-date-picker>
-                <el-date-picker v-else-if="col.uiType===7" type="datetime" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"></el-date-picker>
-                <el-time-select v-else-if="col.uiType===8" v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"
-                  :picker-options="{start:'00:00', end:'24:00'}"></el-time-select>
+                <span v-if="mode===VIEW_CURRENT_CARD">
+                  {{copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue}}
+                </span>
+                <el-input v-else-if="col.uiType===1 || (col.uiType===undefined && row.uiType===1)"
+                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue">
+                </el-input>
+                <el-input v-else-if="col.uiType===2 || (col.uiType===undefined && row.uiType===2)" type="number"
+                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue">
+                </el-input>
+                <el-select v-else-if="col.uiType===3 || (col.uiType===undefined && row.uiType===3)"
+                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue">
+                </el-select>
+                <el-date-picker v-else-if="col.uiType===6 || (col.uiType===undefined && row.uiType===6)"
+                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"
+                  @change="recordValuePath(['patientFieldCode',sleepMonitoringSubTableCode,row.id,col.id], 6)">
+                </el-date-picker>
+                <el-date-picker v-else-if="col.uiType===7 || (col.uiType===undefined && row.uiType===7)"
+                  format="yyyy-MM-dd HH:mm:ss" type="datetime"
+                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"
+                  @change="recordValuePath(['patientFieldCode',sleepMonitoringSubTableCode,row.id,col.id], 7)">
+                </el-date-picker>
+                <el-time-picker v-else-if="col.uiType===8 || (col.uiType===undefined && row.uiType===8)"
+                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"
+                  @change="recordValuePath(['patientFieldCode',sleepMonitoringSubTableCode,row.id,col.id], 8)">
+                </el-time-picker>
               </td>
             </tr>
           </table>
@@ -703,7 +755,7 @@
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import { mapGetters } from 'vuex';
-import { vueCopy, deepCopy, pruneObj, reviseDateFormat } from 'utils/helper';
+import { vueCopy, deepCopy, pruneObj } from 'utils/helper';
 import { baseUrl, getCommonRequest } from 'api/common.js';
 import { addEmg, modEmg, addSleepMonitoring, modSleepMonitoring, addImage, modifyImage } from 'api/patient.js';
 import Util from 'utils/util.js';
@@ -771,6 +823,9 @@ export default {
           return time.getTime() > Date.now();
         }
       },
+
+      valuePathList: [],
+
       other: [],
       newOther: [],
       fileList4: [],
@@ -897,8 +952,6 @@ export default {
       this.tableMode = this.FATHER_OPEN;
       this.showEdit = showEdit;
       console.log('item: ', item);
-      // console.log('emgTypeList: ', this.emgTypeList);
-      // console.log('typeField: ', this.typeField);
 
       this.initCopyInfo();
 
@@ -922,9 +975,10 @@ export default {
         });
       }
 
+      this.valuePathList = [];
       this.selectEmg();
-      this.updateScrollbar();
       this.clearWarning();
+      this.updateScrollbar();
     },
     initCopyInfo() {
       this.$set(this.copyInfo, 'elecExamType', '');
@@ -1307,6 +1361,27 @@ export default {
       this.mode = this.EDIT_CURRENT_CARD;
       this.updateScrollbar();
     },
+    recordValuePath(path, uiType) {
+      var obj = this.copyInfo;
+      for (let propertyName of path) {
+        obj = obj[propertyName];
+      }
+      if (obj.fieldValue instanceof Date) {
+        var pathString = path.toString();
+        var existed = false;
+        for (let pathInfo of this.valuePathList) {
+          if (pathString === pathInfo.path.toString()) {
+            existed = true;
+          }
+        }
+        if (!existed) {
+          this.valuePathList.push({
+            path: path,
+            uiType: uiType
+          });
+        }
+      }
+    },
     submit() {
       if (this.lockSubmitButton) {
         return;
@@ -1354,6 +1429,24 @@ export default {
         submitData.patientCaseId = this.$route.params.caseId;
         submitData.recordStart = Util.simplifyTime(submitData.recordStart, true);
         submitData.recordEnd = Util.simplifyTime(submitData.recordEnd, true);
+
+        for (let pathInfo of this.valuePathList) {
+          let path = pathInfo.path;
+          let uiType = pathInfo.uiType;
+
+          var obj = submitData;
+          for (let propertyName of path) {
+            obj = obj[propertyName];
+          }
+          if (uiType === 6) {
+            obj.fieldValue = Util.simplifyDate(obj.fieldValue);
+          } else if (uiType === 7) {
+            obj.fieldValue = Util.simplifyTime(obj.fieldValue, true);
+          } else if (uiType === 8) {
+            obj.fieldValue = Util.simplifyTimeWithoutDate(obj.fieldValue, true);
+          }
+        }
+
         if (this.mode === this.ADD_NEW_CARD) {
           // 新增睡眠监测
           addSleepMonitoring(submitData).then(() => {
@@ -1582,7 +1675,7 @@ export default {
     padding: 0 40px;
     top: 3%;
     width: 80%;
-    min-width: 720px;
+    min-width: 750px;
     max-width: 1000px;
     max-height: 94%;
     background-color: @background-color;
@@ -1813,6 +1906,7 @@ export default {
           margin-bottom: 5px;
           width: 100%;
           border-spacing: 0;
+          border-collapse: collapse;
           font-size: 14px;
           &.small-font {
             font-size: @small-font-size !important;
@@ -1821,7 +1915,7 @@ export default {
             height: 40px;
             &.first-row {
               background-color: @screen-color;
-              height: 30px;
+              height: 35px;
               .col {
                 padding: 0 3px;
               }
@@ -1830,6 +1924,7 @@ export default {
               text-align: center;
               padding: 0;
               margin: 0;
+              border: 1px solid @light-gray-color;
               .text-button {
                 margin: 0 5px;
                 color: @theme-color;
@@ -1872,11 +1967,10 @@ export default {
               }
               .el-input {
                 margin-left: 2%;
-                width: 90%;
+                width: 98%;
                 .el-input__inner {
                   height: 30px;
                   border: none;
-                  background-color: @screen-color;
                   text-align: center;
                 }
               }

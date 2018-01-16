@@ -305,7 +305,7 @@ export default {
     ]),
     medicineTitle() {
       var count = this.diagnosticMedicine.length;
-      var ledd = this.calcTotalLevodopaDoseOfAllOtherMedicine({}).toFixed(5);
+      var ledd = Number(this.calcTotalLevodopaDoseOfAllOtherMedicine({}).toFixed(5));
       return '药物治疗' + '（' + count + '条记录） LEDD: ' + ledd + ' mg';
     },
     surgeryTitle() {
