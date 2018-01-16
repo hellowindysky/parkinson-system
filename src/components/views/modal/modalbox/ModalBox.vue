@@ -763,8 +763,8 @@ export default {
         }
       }
       // -----
-      if (fieldName === 'doseInfo' && !Number(fieldValue)) {
-        this.$set(this.warningResults, fieldName, '请输入数字');
+      if (fieldName === 'doseInfo' && !Util.checkIfNotMoreThanNDecimalNums(fieldValue, 2)) {
+        this.$set(this.warningResults, fieldName, '请输入正数，最多保留两位小数');
         return;
       };
       // -----

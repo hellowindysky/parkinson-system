@@ -26,7 +26,7 @@
           <span class="field-input">
             <span class="warning-text">{{warningResults.checkDate}}</span>
             <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.checkDate}}</span>
-            <el-date-picker v-else
+            <el-date-picker v-else type="datetime"
             :class="{'warning': warningResults.checkDate}"
             @change="updateWarning('checkDate')"
             placeholder="请输入检查时间"
@@ -342,7 +342,7 @@ export default {
       }
 
       let submitData = deepCopy(this.copyInfo);
-      submitData.checkDate = Util.simplifyDate(submitData.checkDate);
+      submitData.checkDate = Util.simplifyTime(submitData.checkDate, true);
 
       if (this.mode === this.EDIT_CURRENT_CARD) {
         modifyBiochemical(submitData).then(() => {
