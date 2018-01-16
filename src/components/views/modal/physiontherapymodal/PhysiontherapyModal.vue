@@ -66,14 +66,14 @@
         </div>
         <div class="field">
           <span class="field-name">
-            实验编码:
+            实验编号:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span class="warning-text"></span>
-            <span>{{stimulusIntensity}}</span>
+            <span></span>
           </span>
           <span class="field-input" v-else>
-            <el-input v-model="stimulusIntensity" placeholder="自动获取实验编号"></el-input>
+            <el-input placeholder="自动获取实验编号"></el-input>
           </span>
         </div>
         <div class="field">
@@ -114,59 +114,66 @@
         </div>
         <div class="field whole-line">
           <span class="field-name">
-          刺激部位:
+            刺激部位:
           </span>
-          <div class="forehead">
-            前额叶背外侧区
-            <div class="left-side">
-              <el-checkbox
-                v-model="foreheadLeftSide"
-                :disabled="mode===VIEW_CURRENT_CARD">
-              </el-checkbox>
-              左侧
-            </div>
-            <div class="right-side">
-              <el-checkbox
-                v-model="foreheadRightSide"
-                :disabled="mode===VIEW_CURRENT_CARD">
-              </el-checkbox>
-              右侧
-            </div>
-          </div>  
-          <div class="supplementary-area">
-            辅助运动区
-            <div class="left-side">
-              <el-checkbox
-                v-model="supplementaryAreaLeftSide"
-                :disabled="mode===VIEW_CURRENT_CARD">
-              </el-checkbox>
-              左侧
-            </div>
-            <div class="right-side">
-              <el-checkbox
-                v-model="supplementaryAreaRightSide"
-                :disabled="mode===VIEW_CURRENT_CARD">
-              </el-checkbox>
-              右侧
-            </div>
+          <div class="stimulate-part">
+            <el-checkbox
+              v-for="item in getOptions('stimulusPart')"
+              :key="item.code"
+              :label="item.name"
+              :value="item.code">
+            </el-checkbox>
           </div>
-          <div class="primary-area">
-            主要运动区
-            <div class="left-side">
-              <el-checkbox
-                v-model="primaryAreaLeftSide"
+           <div class="stimulate-side"> 
+              <el-checkbox v-model="stimulateSideEvents1[index]"
+                v-for="(item, index) in getOptions('stimulusSide')"
+                :label="item.name"
+                :key="item.code"  
                 :disabled="mode===VIEW_CURRENT_CARD">
               </el-checkbox>
-              左侧
             </div>
-            <div class="right-side">
-              <el-checkbox
-                v-model="primaryAreaRightSide"
+            <div class="stimulate-side"> 
+              <el-checkbox v-model="stimulateSideEvents2[index]"
+                v-for="(item, index) in getOptions('stimulusSide')"
+                :label="item.name"
+                :key="item.code"
                 :disabled="mode===VIEW_CURRENT_CARD">
               </el-checkbox>
-              右侧
             </div>
-          </div>
+            <div class="stimulate-side"> 
+              <el-checkbox v-model="stimulateSideEvents3[index]"
+                v-for="(item, index) in getOptions('stimulusSide')"
+                :label="item.name"
+                :key="item.code"        
+                :disabled="mode===VIEW_CURRENT_CARD">
+              </el-checkbox>
+            </div>
+          <!-- <div class="stimulate-side"> 
+            <el-checkbox-group v-model="stimulateSideEvents1">
+              <el-checkbox 
+                v-for="(item, index) in getOptions('stimulusSide')"
+                :label="item.name"
+                :key="item.code"  
+                :disabled="mode===VIEW_CURRENT_CARD">
+              </el-checkbox>
+            </el-checkbox-group>
+            <el-checkbox-group v-model="stimulateSideEvents2">
+              <el-checkbox 
+                v-for="(item, index) in getOptions('stimulusSide')"
+                :label="item.name"
+                :key="item.code"
+                :disabled="mode===VIEW_CURRENT_CARD">
+              </el-checkbox>
+            </el-checkbox-group>
+            <el-checkbox-group v-model="stimulateSideEvents3">
+              <el-checkbox 
+                v-for="(item, index) in getOptions('stimulusSide')"
+                :label="item.name"
+                :key="item.code"        
+                :disabled="mode===VIEW_CURRENT_CARD">
+              </el-checkbox>
+            </el-checkbox-group>
+          </div> -->
         </div>
         <div class="field">
           <span class="field-name">
@@ -246,45 +253,45 @@
           :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
         </div>
         <div class="content">
-        <table class="table">
-          <tr class="row title-row">
-            <td class="col narrow-col">序号</td>
-            <td class="col wide-col">不良反应程度评估</td>
-            <td class="col">严重程度</td>
-          </tr>
-          <tr class="row" v-for="(reaction, index) in patientPhytheReaction">
-            <td class="col narrow-col" v-show="index <=2">{{index + 1}}</td>
-            <td class="col wide-col" v-show="index <=2">
-              {{transform(reaction.reactionType, 'reactionType')}}
-            </td>
-            <td class="col narrow-col" v-show="index <=2">
-              <span v-if="mode===VIEW_CURRENT_CARD">{{transform(reaction.severityLevel,'haveType')}}</span>
-              <el-select v-else v-model="reaction.severityLevel" clearable :disabled="hasNoReaction">
-                <el-option
-                  v-for="item in getOptions('haveType')"
-                  :key="item.code"
-                  :label="item.name"
-                  :value="item.code">
-                </el-option>
-              </el-select>
-            </td>
-             <td class="col narrow-col" v-show="index >=3">{{index + 1}}</td>
-            <td class="col wide-col" v-show="index >=3">
-              {{transform(reaction.reactionType, 'reactionType')}}
-            </td>
-            <td class="col narrow-col" v-show="index >=3">
-              <span v-if="mode===VIEW_CURRENT_CARD">{{transform(reaction.severityLevel,'reactionLevel')}}</span>
-              <el-select v-else v-model="reaction.severityLevel" clearable :disabled="hasNoReaction">
-                <el-option
-                  v-for="item in getOptions('reactionLevel')"
-                  :key="item.code"
-                  :label="item.name"
-                  :value="item.code">
-                </el-option>
-              </el-select>
-            </td>
-          </tr>
-        </table>
+          <table class="table">
+            <tr class="row title-row">
+              <td class="col narrow-col">序号</td>
+              <td class="col wide-col">不良反应程度评估</td>
+              <td class="col">严重程度</td>
+            </tr>
+            <tr class="row" v-for="(reaction, index) in patientPhytheReaction">
+              <td class="col narrow-col" v-show="index <=2">{{index + 1}}</td>
+              <td class="col wide-col" v-show="index <=2">
+                {{transform(reaction.reactionType, 'reactionType')}}
+              </td>
+              <td class="col narrow-col" v-show="index <=2">
+                <span v-if="mode===VIEW_CURRENT_CARD">{{transform(reaction.severityLevel,'haveType')}}</span>
+                <el-select v-else v-model="reaction.severityLevel" clearable :disabled="hasNoReaction">
+                  <el-option
+                    v-for="item in getOptions('haveType')"
+                    :key="item.code"
+                    :label="item.name"
+                    :value="item.code">
+                  </el-option>
+                </el-select>
+              </td>
+              <td class="col narrow-col" v-show="index >=3">{{index + 1}}</td>
+              <td class="col wide-col" v-show="index >=3">
+                {{transform(reaction.reactionType, 'reactionType')}}
+              </td>
+              <td class="col narrow-col" v-show="index >=3">
+                <span v-if="mode===VIEW_CURRENT_CARD">{{transform(reaction.severityLevel,'reactionLevel')}}</span>
+                <el-select v-else v-model="reaction.severityLevel" clearable :disabled="hasNoReaction">
+                  <el-option
+                    v-for="item in getOptions('reactionLevel')"
+                    :key="item.code"
+                    :label="item.name"
+                    :value="item.code">
+                  </el-option>
+                </el-select>
+              </td>
+            </tr>
+          </table>
       </div>
        <P>无该症状 0；轻度 1-3；中度 4-7；重度 8-10；数值越大越严重</p>
       <div class="seperate-line"></div>
@@ -318,6 +325,10 @@ export default {
       stimulusIntensity: '',
       stimulusFrequency: '',
       stimulusSide: '',
+      stimulateSideEvents1: [],
+      stimulateSideEvents2: [],
+      stimulateSideEvents3: [],
+      stimulusPart: '',
       stimulusDuration: '',
       leftThresholdBefore: '',
       rightThresholdBefore: '',
@@ -328,12 +339,6 @@ export default {
       remark: '',
       reactionFlag: '',
       hasNoReaction: false,
-      foreheadLeftSide: false,
-      foreheadRightSide: false,
-      supplementaryAreaLeftSide: false,
-      supplementaryAreaRightSide: false,
-      primaryAreaLeftSide: false,
-      primaryAreaRightSide: false,
       patientPhytheReaction: [
         {
           'reactionType': 1,
@@ -438,19 +443,16 @@ export default {
       this.deviceType = item.deviceType ? item.deviceType : '';
       this.stimulusIntensity = item.stimulusIntensity ? item.stimulusIntensity : '';
       this.stimulusSide = item.stimulusSide ? item.stimulusSide : '';
+
       this.stimulusDuration = item.stimulusDuration ? item.stimulusDuration : '';
       this.leftThresholdBefore = item.leftThresholdBefore ? item.leftThresholdBefore : '';
       this.rightThresholdBefore = item.rightThresholdBefore ? item.rightThresholdBefore : '';
       this.leftThresholdAfter = item.leftThresholdAfter ? item.leftThresholdAfter : '';
       this.rightThresholdAfter = item.rightThresholdAfter ? item.rightThresholdAfter : '';
       this.remark = item.remark ? item.remark : '';
+      this.stimulusPart = item.stimulusPart ? item.stimulusPart : '';
       this.hasNoReaction = item.reactionFlag === 1;
-      this.foreheadLeftSide = item.stimulusSide === 1;
-      this.foreheadRightSide = item.stimulusSide === 1;
-      this.supplementaryAreaLeftSide = item.stimulusSide === 1;
-      this.supplementaryAreaRightSide = item.stimulusSide === 1;
-      this.primaryAreaLeftSide = item.stimulusSide === 1;
-      this.primaryAreaRightSide = item.stimulusSide === 1;
+
       vueCopy(item.patientPhytheReaction, this.patientPhytheReaction);
       this.$nextTick(() => {
         this.$refs.scrollArea.scrollTop = 0;
@@ -489,6 +491,33 @@ export default {
         });
       };
       return options;
+    },
+    concatenateStimulusSide() {
+      var incident = [];
+      var list = this.stimulusSide.split('');
+      for (let i = 0; i < this.stimulateSideEvents1.length; i++) {
+        this.stimulateSideEvents1[i] = list[i];
+      }
+      var event = this.stimulusSide.split('');
+      for (let i = 0; i < this.stimulateSideEvents2.length; i++) {
+        this.stimulateSideEvents2[i] = event[i];
+      }
+      var affair = this.stimulusSide.split('');
+      for (let i = 0; i < this.stimulateSideEvents3.length; i++) {
+        this.stimulateSideEvents3[i] = affair[i];
+      }
+      // this.stimulateSideEvents1.map((item) => {
+      //   if (item === '左侧') {
+      //     return '10';
+      //   } else if (item === '右侧') {
+      //     return '01';
+      //   } else {
+      //     return '11';
+      //   }
+      // });
+      console.log(this.stimulateSideEvents1);
+      return incident.concat(this.stimulateSideEvents1, this.stimulateSideEvents2, this.stimulateSideEvents3).join('');
+      
     },
     updateWarning(fieldName) {
       var list = ['recordDate', 'physiType', 'deviceType', 'leftThresholdBefore', 'rightThresholdBefore'];
@@ -530,20 +559,16 @@ export default {
       physicsInfo.deviceType = this.deviceType;
       physicsInfo.stimulusIntensity = this.stimulusIntensity;
       physicsInfo.stimulusFrequency = this.stimulusFrequency;
-      physicsInfo.stimulusSide = this.stimulusSide;
+      physicsInfo.stimulusSide = this.concatenateStimulusSide();
+
       physicsInfo.stimulusDuration = this.stimulusDuration;
       physicsInfo.leftThresholdBefore = this.leftThresholdBefore;
       physicsInfo.rightThresholdBefore = this.rightThresholdBefore;
       physicsInfo.leftThresholdAfter = this.leftThresholdAfter;
       physicsInfo.rightThresholdAfter = this.rightThresholdAfter;
       physicsInfo.remark = this.remark;
+      physicsInfo.stimulusPart = this.stimulusPart;
       physicsInfo.reactionFlag = this.hasNoReaction ? 1 : 0;
-      physicsInfo.stimulusSide = this.foreheadLeftSide ? 1 : 0;
-      physicsInfo.stimulusSide = this.foreheadRightSide ? 1 : 0;
-      physicsInfo.stimulusSide = this.supplementaryAreaLeftSide ? 1 : 0;
-      physicsInfo.stimulusSide = this.supplementaryAreaRightSide ? 1 : 0;
-      physicsInfo.stimulusSide = this.primaryAreaLeftSide ? 1 : 0;
-      physicsInfo.stimulusSide = this.primaryAreaRightSide ? 1 : 0;
       physicsInfo.patientPhytheReaction = deepCopy(this.patientPhytheReaction);
 
       reviseDateFormat(physicsInfo);
@@ -615,27 +640,29 @@ export default {
     max-height: 94%;
     background-color: @background-color;
     overflow: hidden;
-    .forehead, .supplementary-area, .primary-area {
-      font-size: @normal-font-size;
-      position: relative;
+    .stimulate-part {
+      position: absolute;
       top: 0;
       left: @field-name-width;
-      padding-right: 10px;
-      margin-bottom: 10px;
-      .left-side {
-        position: absolute;
-        top: 0;
-        left: @field-name-width;
-      }
-      .right-side {
-        position: absolute;
-        top: 0;
-        left: 250px;
-      }
       .el-checkbox {
+        display: block;
+        margin-left: 0;
         .el-checkbox__inner {
-        border-radius: 20px;
-        margin-right: 10px;     
+          border: 0;
+          width: 0;
+          height: 0;
+        }
+      }
+    }
+    .stimulate-side {
+      position: relative;
+      top: 0;
+      left: 2*@field-name-width;
+      .el-checkbox {
+        margin-left: 30px;
+        .el-checkbox__inner {
+          margin-right: 10px;
+          margin-top: -6px;
         }
       }
     }
