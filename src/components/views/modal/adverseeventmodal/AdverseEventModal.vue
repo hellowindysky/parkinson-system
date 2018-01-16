@@ -61,18 +61,18 @@
             </el-input>
           </span>
         </div>
-        <!-- <div class="field whole-line">
+        <div class="field whole-line">
           <span class="field-name">
             实验编号:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span class="warning-text"></span>
-            <span>{{stimulusIntensity}}</span>
+            <span></span>
           </span>
           <span class="field-input" v-else>
-            <el-input v-model="stimulusIntensity" placeholder="自动获取实验编号"></el-input>
+            <el-input  placeholder="自动获取实验编号"></el-input>
           </span>
-        </div> -->
+        </div>
         <div class="field">
           <span class="field-name">
            是否采取措施：
@@ -81,7 +81,7 @@
             <span>{{transform(measureFlag,'digitYN')}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-select v-model="measureFlag" clearable placeholder="请选择" @change="updateWarning('digitYN')">
+            <el-select v-model="measureFlag" clearable placeholder="请选择">
               <el-option
                 v-for="item in getOptions('digitYN')"
                 :key="item.code"
@@ -156,7 +156,7 @@
               :label="item.name"
               :disabled="mode===VIEW_CURRENT_CARD">
             </el-checkbox>
-          </div>
+          </div> 
         </div>
         <div class="field whole-line">
           伴随用药
@@ -529,14 +529,14 @@ export default {
       this.foldedConditionalContentMeasures = true;
       this.foldedConditionalContentEndEvent = true;
     },
-    // getUIType(field) {
-    //   // uiType类型 0/无 1/输入框 2/数字箭头 3/单选下拉框 4/单选按纽 5/多选复选框 6/日期 7/日期时间
-    //   return this.getMatchedField(field.fieldName).uiType;
-    // },
-    // getMatchedField(fieldName) {
-    //   // 这个函数根据实际数据，在字典项中查询到对应的字段，从而方便我们得到其 uiType 等信息
-    //   return Util.getElement('fieldName', fieldName, this.diseaseInfoDictionary);
-    // },
+    getUIType(field) {
+      // uiType类型 0/无 1/输入框 2/数字箭头 3/单选下拉框 4/单选按纽 5/多选复选框 6/日期 7/日期时间
+      return this.getMatchedField(field.fieldName).uiType;
+    },
+    getMatchedField(fieldName) {
+      // 这个函数根据实际数据，在字典项中查询到对应的字段，从而方便我们得到其 uiType 等信息
+      return Util.getElement('fieldName', fieldName, this.diseaseInfoDictionary);
+    },
     addAdjointMedicine() {
       var medicineList = this.adjointMedicine;
       var index = medicineList.length;
