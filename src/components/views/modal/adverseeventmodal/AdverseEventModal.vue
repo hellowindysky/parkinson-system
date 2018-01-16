@@ -65,12 +65,8 @@
           <span class="field-name">
             实验编号:
           </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span class="warning-text"></span>
-            <span></span>
-          </span>
-          <span class="field-input" v-else>
-            <el-input  placeholder="自动获取实验编号"></el-input>
+          <span class="field-input">
+            {{dbsPatientCode}}
           </span>
         </div>
         <div class="field">
@@ -399,7 +395,7 @@ import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import { deepCopy, vueCopy, reviseMinuteFormat, pruneObj } from 'utils/helper';
-import { addAdverseEvent, modifyAdverseEvent } from 'api/patient.js';
+import { getPatientSimpleInfo, addAdverseEvent, modifyAdverseEvent } from 'api/patient.js';
 
 export default {
   data() {
@@ -407,6 +403,7 @@ export default {
       displayModal: false,
       mode: '',
       completeInit: false,
+      dbsPatientCode: '',
 
       patientAdverse: '',
       patientAdverseId: '',
@@ -528,6 +525,14 @@ export default {
       this.updateScrollbar();
       this.foldedConditionalContentMeasures = true;
       this.foldedConditionalContentEndEvent = true;
+    // 获取患者的 DBS 编码
+    getPatientSimpleInfo(this.$route.params.id).then((data) => {
+      if (data && data.patientInfo && data.patientInfo && data.patientInfo.dbsPatientCode) {
+        this.dbsPatientCode = data.patientInfo.dbsPatientCode;
+      }
+    }, (error) => {
+      console.log(error);
+    });
     },
     getUIType(field) {
       // uiType类型 0/无 1/输入框 2/数字箭头 3/单选下拉框 4/单选按纽 5/多选复选框 6/日期 7/日期时间
