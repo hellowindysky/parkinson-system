@@ -14,12 +14,12 @@ function getElement(keyName, value, array) {
 }
 
 // 将完整的时间字符串（包含时分秒，时区等信息）简化为适合 element-ui 控件的 yyyy-MM-dd 的形式
-function simplifyDate(dateStr) {
-  // 如果参数本身就为空，那么直接返回 undefined
-  if (!dateStr) {
-    return undefined;
+function simplifyDate(time) {
+  // 如果参数本身就为空，那么直接返回 ''
+  if (!time) {
+    return '';
   }
-  var dateObj = new Date(dateStr);
+  var dateObj = new Date(time);
   var year = dateObj.getFullYear();
   var month = dateObj.getMonth() + 1;
   month = month < 10 ? '0' + month : month;
@@ -28,24 +28,27 @@ function simplifyDate(dateStr) {
   return year + '-' + month + '-' + date;
 }
 
-function simplifyTime(timeStr, accurateToSecond) {
-  // 如果第一个参数本身就为空，那么直接返回 undefined
+function simplifyTime(time, accurateToSecond) {
+  // 如果第一个参数本身就为空，那么直接返回 ''
   // 如果第二个参数没有给或者为 false，则返回格式为 yyyy-MM-dd HH:mm
   // 如果第二个参数为 true, 则返回格式为 yyyy-MM-dd HH:mm:ss
-  if (!timeStr) {
-    return undefined;
+  if (!time) {
+    return '';
   }
-  var dateObj = new Date(timeStr);
-  var year = dateObj.getFullYear();
-  var month = dateObj.getMonth() + 1;
+  var timeObj = new Date(time);
+  if (timeObj === undefined) {
+    return '';
+  }
+  var year = timeObj.getFullYear();
+  var month = timeObj.getMonth() + 1;
   month = month < 10 ? '0' + month : month;
-  var date = dateObj.getDate();
+  var date = timeObj.getDate();
   date = date < 10 ? '0' + date : date;
-  var hour = dateObj.getHours();
+  var hour = timeObj.getHours();
   hour = hour < 10 ? '0' + hour : hour;
-  var min = dateObj.getMinutes();
+  var min = timeObj.getMinutes();
   min = min < 10 ? '0' + min : min;
-  var second = dateObj.getSeconds();
+  var second = timeObj.getSeconds();
   second = second < 10 ? '0' + second : second;
 
   var resultString = year + '-' + month + '-' + date + ' ' + hour + ':' + min;
@@ -56,7 +59,7 @@ function simplifyTime(timeStr, accurateToSecond) {
 }
 
 function simplifyTimeWithoutDate(timeStr, accurateToSecond) {
-  // 如果第一个参数本身就为空，那么直接返回 undefined
+  // 如果第一个参数本身就为空，那么直接返回 ''
   // 如果第二个参数没有给或者为 false，则返回格式为 HH:mm
   // 如果第二个参数为 true, 则返回格式为 HH:mm:ss
   return simplifyTime(timeStr, accurateToSecond).substring(11);
