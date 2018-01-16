@@ -460,9 +460,11 @@ export default {
         condition.type = 4;
         condition.taskId = this.$store.state.subjectId;
       } else if (this.listType === this.THERAPISTS_PATIENTS_TYPE) {
-        delete condition.taskId;
+        condition.type = 5;
+        condition.taskId = this.$store.state.subjectId;
       } else if (this.listType === this.APPRAISERS_PATIENTS_TYPE) {
-        delete condition.taskId;
+        condition.type = 6;
+        condition.taskId = this.$store.state.subjectId;
       }
 
       if (this.searchInput !== '') {
