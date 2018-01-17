@@ -672,21 +672,9 @@ export default {
           transDiseaseInfo[item] = [{arisePart: '', time: ''}];
         };
       });
-      console.log(transDiseaseInfo);
-      // -----
+      this.$set(this.copyInfo, 'patientDiseaseOrders', []);
       vueCopy(transDiseaseInfo, this.copyInfo);
-      // this.$set(this.copyInfo, 'patientDiseaseOrders', Object.assign([], transDiseaseInfo.patientDiseaseOrders));
-      // this.copyInfo.patientDiseaseOrders = Object.assign([], transDiseaseInfo.patientDiseaseOrders);
 
-      // --
-      // let obj1 = [{a: 8, b: 9}];
-      // let obj2 = [{a: 1, b: 2}, {c: 3, d: 4}];
-      // vueCopy(obj1, obj2);
-      // console.log(obj2);
-      // --
-
-      // vueCopy(this.diseaseInfo, this.copyInfo);
-      console.log(this.diseaseInfo, this.copyInfo);
       this.changeCopyInfo();
       this.mode = this.READING_MODE;
     },
@@ -739,7 +727,6 @@ export default {
       delete submitData.patientFirstVisitTreatments;
       delete submitData.patientHistorys;
       pruneObj(submitData);
-      // submitData.ariTime = Util.simplifyDate(submitData.ariTime);
 
       for (let key in submitData) {
         if (Array.isArray(submitData[key]) && key !== 'patientDiseaseOrders') {
