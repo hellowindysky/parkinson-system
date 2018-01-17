@@ -46,13 +46,13 @@ export default {
           return 'icon-experiment';
         } else if (this.patient.status !== undefined &&
           ([this.THERAPISTS_PATIENTS_TYPE, this.APPRAISERS_PATIENTS_TYPE].indexOf(this.listType) >= 0)) {
-          if (this.patient.status === 2) {
+          if (this.patient.status === this.EXPERIMENT_STEP_SCREENING) {
             return 'icon-shai';
-          } else if (this.patient.status === 3) {
+          } else if (this.patient.status === this.EXPERIMENT_STEP_THERAPY) {
             return 'icon-zhi';
-          } else if (this.patient.status === 4) {
+          } else if (this.patient.status === this.EXPERIMENT_STEP_FOLLOW_UP) {
             return 'icon-sui';
-          } else if (this.patient.status === 5) {
+          } else if (this.patient.status === this.EXPERIMENT_STEP_COMPLETE) {
             return 'icon-wan';
           }
         }

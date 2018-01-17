@@ -227,6 +227,10 @@ export default {
         return {};
       }
     },
+    experimentStep: {
+      type: Number,
+      default: 0
+    },
     archived: {
       type: Boolean,
       default: true

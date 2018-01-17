@@ -61,6 +61,10 @@ export default {
       type: Array,
       default: () => []
     },
+    experimentStep: {
+      type: Number,
+      default: 0
+    },
     archived: {
       type: Boolean,
       default: true
