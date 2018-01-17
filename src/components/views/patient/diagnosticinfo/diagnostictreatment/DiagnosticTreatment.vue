@@ -214,11 +214,11 @@
           </div>
           <div class="text line-3">
             <span class="name">是否采取措施</span>
-            <span class="value">{{item.digitYN}}</span>
+            <span class="value">{{item.measureFlag == 1 ? '是' : '否'}}</span>
           </div>
           <div class="text line-4">
             <span class="name">不良事件结局</span>
-            <span class="value">{{item.adverseResult}}</span>
+            <span class="value">{{transformComplicationType(item.adverseResult)}}</span>
           </div>
         </card>
       </extensible-panel>
@@ -289,6 +289,10 @@ export default {
         return [];
       }
     },
+    experimentStep: {
+      type: Number,
+      default: 0
+    },
     archived: {
       type: Boolean,
       default: true
@@ -346,7 +350,10 @@ export default {
       return this.diagnosticSurgery.patientDbsFollowList ? this.diagnosticSurgery.patientDbsFollowList : [];
     },
     canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients) && !this.archived) {
+      if ((this.$route.matched.some(record => record.meta.myPatients) ||
+        this.$route.matched.some(record => record.meta.therapistsPatients) ||
+        this.$route.matched.some(record => record.meta.appraisersPatients)) &&
+        !this.archived) {
         return true;
       } else {
         return false;
