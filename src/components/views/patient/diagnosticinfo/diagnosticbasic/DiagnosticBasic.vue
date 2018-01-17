@@ -305,7 +305,7 @@ export default {
 @field-name-width: 100px;
 
 .diagnostic-basic {
-  padding: 0 25px 18px;
+  padding: 0 25px 20px;
   text-align: left;
   .field {
     display: inline-block;
@@ -315,12 +315,12 @@ export default {
     text-align: left;
     &.whole-line {
       width: 100%;
-      .field-input {
-        right: 2%;
+      .field-value, .field-input {
+        width: calc(~"98% - @{field-name-width}");
       }
     }
     &.multi-line {
-      height: @field-height * 1.5;
+      // height: @field-height * 1.5;
     }
     .field-name {
       display: inline-block;
@@ -348,10 +348,10 @@ export default {
     }
     .field-input {
       display: inline-block;
-      position: absolute;
+      position: relative;
       top: 0;
       left: @field-name-width;
-      right: 4%;
+      width: calc(~"96% - @{field-name-width}");
       line-height: @field-height;
       overflow: visible;
       .read-only-text {
@@ -377,6 +377,7 @@ export default {
         vertical-align: middle;
         transform: translateY(10px);
         .el-textarea__inner {
+          height: 60px;
           border: none;
           background-color: @screen-color;
         }
