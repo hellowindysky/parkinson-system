@@ -61,18 +61,14 @@
             </el-input>
           </span>
         </div>
-        <!-- <div class="field whole-line">
+        <div class="field whole-line">
           <span class="field-name">
             实验编号:
           </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span class="warning-text"></span>
-            <span>{{stimulusIntensity}}</span>
+          <span class="field-input">
+            {{dbsPatientCode}}
           </span>
-          <span class="field-input" v-else>
-            <el-input v-model="stimulusIntensity" placeholder="自动获取实验编号"></el-input>
-          </span>
-        </div> -->
+        </div>
         <div class="field">
           <span class="field-name">
            是否采取措施：
@@ -81,7 +77,7 @@
             <span>{{transform(measureFlag,'digitYN')}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-select v-model="measureFlag" clearable placeholder="请选择" @change="updateWarning('digitYN')">
+            <el-select v-model="measureFlag" clearable placeholder="请选择">
               <el-option
                 v-for="item in getOptions('digitYN')"
                 :key="item.code"
@@ -156,7 +152,7 @@
               :label="item.name"
               :disabled="mode===VIEW_CURRENT_CARD">
             </el-checkbox>
-          </div>
+          </div> 
         </div>
         <div class="field whole-line">
           伴随用药
@@ -399,7 +395,7 @@ import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import { deepCopy, vueCopy, reviseMinuteFormat, pruneObj } from 'utils/helper';
-import { addAdverseEvent, modifyAdverseEvent } from 'api/patient.js';
+import { getPatientSimpleInfo, addAdverseEvent, modifyAdverseEvent } from 'api/patient.js';
 
 export default {
   data() {
@@ -407,6 +403,7 @@ export default {
       displayModal: false,
       mode: '',
       completeInit: false,
+      dbsPatientCode: '',
 
       patientAdverse: '',
       patientAdverseId: '',
@@ -528,15 +525,23 @@ export default {
       this.updateScrollbar();
       this.foldedConditionalContentMeasures = true;
       this.foldedConditionalContentEndEvent = true;
+    // 获取患者的 DBS 编码
+      getPatientSimpleInfo(this.$route.params.id).then((data) => {
+        if (data && data.patientInfo && data.patientInfo && data.patientInfo.dbsPatientCode) {
+          this.dbsPatientCode = data.patientInfo.dbsPatientCode;
+        }
+      }, (error) => {
+        console.log(error);
+      });
     },
-    // getUIType(field) {
-    //   // uiType类型 0/无 1/输入框 2/数字箭头 3/单选下拉框 4/单选按纽 5/多选复选框 6/日期 7/日期时间
-    //   return this.getMatchedField(field.fieldName).uiType;
-    // },
-    // getMatchedField(fieldName) {
-    //   // 这个函数根据实际数据，在字典项中查询到对应的字段，从而方便我们得到其 uiType 等信息
-    //   return Util.getElement('fieldName', fieldName, this.diseaseInfoDictionary);
-    // },
+    getUIType(field) {
+      // uiType类型 0/无 1/输入框 2/数字箭头 3/单选下拉框 4/单选按纽 5/多选复选框 6/日期 7/日期时间
+      return this.getMatchedField(field.fieldName).uiType;
+    },
+    getMatchedField(fieldName) {
+      // 这个函数根据实际数据，在字典项中查询到对应的字段，从而方便我们得到其 uiType 等信息
+      return Util.getElement('fieldName', fieldName, this.diseaseInfoDictionary);
+    },
     addAdjointMedicine() {
       var medicineList = this.adjointMedicine;
       var index = medicineList.length;

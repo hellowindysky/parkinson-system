@@ -46,18 +46,10 @@
         </div>
         <div class="field">
           <span class="field-name">
-            实验编码:
-            <span class="required-mark"></span>
+            实验编号:
           </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{remark}}</span>
-          </span>
-          <span class="field-input" v-else>
-            <el-input
-              v-model="remark"
-
-              placeholder="自动获取实验编号">
-            </el-input>
+          <span class="field-input">
+            {{dbsPatientCode}}
           </span>
         </div>
         <div class="field whole-line" v-show="situationType===1">
@@ -172,7 +164,7 @@ import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import { deepCopy, vueCopy, reviseDateFormat, pruneObj } from 'utils/helper.js';
-import { addTreatmentEvaluation, modifyTreatmentEvaluation } from 'api/patient.js';
+import { getPatientSimpleInfo, addTreatmentEvaluation, modifyTreatmentEvaluation } from 'api/patient.js';
 
 export default {
   data() {
@@ -181,6 +173,7 @@ export default {
       mode: '',
       completeInit: false,
       checked: true,
+      dbsPatientCode: '',
 
       patientPhytheAssessId: '',
       patientPhytheAssess: '',
@@ -321,6 +314,14 @@ export default {
       this.completeInit = true;
       this.displayModal = true;
       this.updateScrollbar();
+    // 获取患者的 DBS 编码
+      getPatientSimpleInfo(this.$route.params.id).then((data) => {
+        if (data && data.patientInfo && data.patientInfo && data.patientInfo.dbsPatientCode) {
+          this.dbsPatientCode = data.patientInfo.dbsPatientCode;
+        }
+      }, (error) => {
+        console.log(error);
+      });
     },
     transform(code, fieldName) {
       var options = this.getOptions(fieldName);
@@ -462,6 +463,7 @@ export default {
     overflow: hidden;
     .moveLeft {
       text-align: left;
+      margin-top: 10px;
     }
     .title {
       padding: 30px 0 10px;
