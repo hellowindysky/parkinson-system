@@ -20,7 +20,7 @@
               {{warningResults.scaleInfoId}}
             </span>
             <el-select placeholder="请选择量表" v-model="copyInfo.scaleInfoId" :class="{'warning': warningResults.scaleInfoId}"
-              :disabled="copyInfo.scaleInfoId!==''" @change="selectScale">
+              :disabled="copyInfo.scaleInfoId!==''" @change="selectScale" size="small">
               <el-option v-for="scale in allScale" :key="scale.scaleInfoId" :label="scale.gaugeName"
                 :value="scale.scaleInfoId" v-show="getScaleTypeCode(scale.scaleInfoId)===scaleTypeCode"></el-option>
             </el-select>
@@ -84,6 +84,42 @@
         </div>
       </div>
 
+      <div class="field-file whole-line">
+        <span class="field-name">
+          附件上传:
+        </span>
+        <span class="field-input">
+          <div class="last-files">
+            <div class="last-files-title">已上传的附件</div>
+            <div class="file" :class="{'editing': mode!==VIEW_CURRENT_CARD}" v-for="file in other">
+              <i class="el-icon-document icon"></i>
+              <span class="file-name" @click="downloadFile(file)">{{file.fileName}}</span>
+              <i class="close-button iconfont icon-cancel" @click="removeFile(file, other, newOther)"></i>
+            </div>
+          </div>
+          <el-upload
+            class="upload-area"
+            :action="uploadUrl"
+            ref="upload4"
+            :disabled="mode===VIEW_CURRENT_CARD"
+            :data="fileParam"
+            :multiple="true"
+            :auto-upload="true"
+            :on-change="fileChange"
+            :on-preview="handlePreview"
+            :on-remove="handleOtherRemove"
+            :on-success="uploadOtherSuccess"
+            :on-error="uploadErr"
+            :before-upload="beforeUpload"
+            :file-list="fileList4">
+            <el-button slot="trigger" size="small" type="text" :disabled="mode===VIEW_CURRENT_CARD" v-show="mode!==VIEW_CURRENT_CARD">
+              点击上传附件
+            </el-button>
+            <div slot="tip" class="el-upload__tip"></div>
+          </el-upload>
+        </span>
+      </div>
+
       <folding-panel :title="'关联症状'" :folded-status="true" class="associated-symptom" :editable="canEdit">
         <div class="symptom-item" v-for="(symptom, index) in scaleSymptomList">
           <el-checkbox class="symptom-item-title" v-model="symptom.status" :disabled="mode===VIEW_CURRENT_CARD">
@@ -120,11 +156,12 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
+import { baseUrl, getCommonRequest } from 'api/common.js';
 import { modifyScaleInfo, addScaleInfo } from 'api/patient';
-import { mapGetters } from 'vuex';
 import { vueCopy, deepCopy } from 'utils/helper';
 
 import FoldingPanel from 'components/public/foldingpanel/FoldingPanel';
@@ -136,6 +173,7 @@ export default {
       mode: '',
       showEdit: true,
       lockSubmitButton: false,
+
       copyInfo: {},
       warningResults: {
         scaleInfoId: ''
@@ -143,7 +181,18 @@ export default {
       scaleTypeCode: '',
 
       scaleSymptomList: [], // 关联症状列表，长度由 typeGroup 决定
-      scaleAnswer: []       // 放筛选出来的量表病人填写答案的数组
+      scaleAnswer: [],       // 放筛选出来的量表病人填写答案的数组
+
+      other: [],
+      newOther: [],
+      fileList4: [],
+      uploadingFilesNum: 0,
+      uploadUrl: baseUrl + '/upload/uploadScaleFile',
+      downloadUrl: baseUrl + '/download/',
+      header: {
+        'Content-Type': 'multipart/form-data'
+      },
+      fileParam: getCommonRequest()
     };
   },
   computed: {
@@ -218,6 +267,16 @@ export default {
       this.initSymptomList();
       this.scaleAnswer = [];
 
+      this.fileList4 = [];
+      this.newOther = [];
+
+      this.other = item.scaleFiles ? item.scaleFiles : [];
+      for (let fileItem of this.other) {
+        this.newOther.push({
+          id: fileItem.id
+        });
+      }
+
       // console.log('item', item);
 
       // 只有阅读和修改的状态下，item.scaleOptionIds 才可能不为空
@@ -283,15 +342,25 @@ export default {
         }
       }
 
+      if (this.uploadingFilesNum > 0) {
+        this.$message({
+          message: '请等待文件上传后再提交',
+          type: 'warning',
+          duration: 2000
+        });
+        this.lockSubmitButton = false;
+        return;
+      }
+      submitData.scaleFiles = this.newOther;
+
       if (this.mode === this.ADD_NEW_CARD) {
-        // 新增量表的接口
         // console.log('add', submitData);
         addScaleInfo(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
           this.closePanel();
         }, this._handleError);
+
       } else if (this.mode === this.EDIT_CURRENT_CARD) {
-        // 修改量表的接口
         // console.log('modify', submitData);
         modifyScaleInfo(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
@@ -384,6 +453,88 @@ export default {
           }
         }
       }
+    },
+    downloadFile(file) {
+      window.location.href = this.downloadUrl + file.realPath;
+    },
+    removeFile(file, showingList, transferringList) {
+      // console.log(file);
+      for (let i = 0; i < showingList.length; i++) {
+        if (file.id === showingList[i].id) {
+          showingList.splice(i, 1);
+          break;
+        }
+      }
+      for (let i = 0; i < transferringList.length; i++) {
+        if (file.id === transferringList[i].id) {
+          transferringList.splice(i, 1);
+          break;
+        }
+      }
+      this.updateScrollbar();
+    },
+    uploadOtherSuccess(response, file, fileList) {
+      this.uploadSuccess(response, file, fileList, this.newOther);
+    },
+    uploadSuccess(response, file, fileList, list) {
+      this.uploadingFilesNum -= 1;
+      if (response.code === 0) {
+        let id = response.data.scaleFileId;
+        list.push({
+          'id': id
+        });
+      } else {
+        this.$message({
+          message: '文件上传出错',
+          type: 'warning',
+          duration: 2000
+        });
+        console.log('response: ', response);
+        console.log('file: ', file);
+        console.log('fileList', fileList);
+      }
+    },
+    uploadErr(err, file, fileList) {
+      this.uploadingFilesNum -= 1;
+      console.log('upload error: ', err);
+      console.log('file: ', file);
+      console.log('fileList', fileList);
+    },
+    beforeUpload(file) {
+      const isUnderLimit = file.size / 1024 / 1024 < 300;
+      if (!isUnderLimit) {
+        this.$message({
+          message: '上传文件大小不能超过 300MB',
+          type: 'error',
+          duration: 2000
+        });
+      } else {
+        this.uploadingFilesNum += 1;
+      }
+      return isUnderLimit;
+    },
+    fileChange() {
+      this.updateScrollbar();
+    },
+    handleOtherRemove(file) {
+      this.handleRemove(file, this.newOther);
+    },
+    handleRemove(file, list) {
+      console.log(file);
+      if (file.status === 'uploading') {
+        this.uploadingFilesNum -= 1;
+      }
+      for (var i = 0; i < list.length; i++) {
+        if (file.response.data.attachmentId === list[i].id) {
+          list.splice(i, 1);
+          break;
+        }
+      }
+      this.updateScrollbar();
+    },
+    handlePreview(file) {
+      console.log(file);
+      // window.location.href = file.url;
     }
   },
   mounted() {
@@ -588,6 +739,7 @@ export default {
           transform: translateY(-3px);
           .el-input__inner {
             height: 30px;
+            font-size: @normal-font-size;
             border: none;
             background-color: @screen-color;
           }
@@ -607,9 +759,128 @@ export default {
         }
         .el-select {
           width: 100%;
+          .el-input__inner {
+            height: 30px;
+          }
         }
         .el-date-editor {
           width: 100%;
+        }
+      }
+    }
+    .field-file {
+      position: relative;
+      padding: @select-top-padding @title-left-padding;
+      background-color: @background-color;
+      margin-bottom: 10px;
+      .field-name {
+        display: inline-block;
+        position: absolute;
+        left: 13px;
+        top: 13px;
+        width: @field-name-width;
+        line-height: 20px;
+        font-size: @normal-font-size;
+        color: @font-color;
+      }
+      .field-input {
+        display: block;
+        position: relative;
+        left: @field-name-width;
+        width: 98%;
+        padding-right: @field-name-width;
+        box-sizing: border-box;
+        font-size: @normal-font-size;
+        .last-files {
+          margin-bottom: 10px;
+          width: 100%;
+          .last-files-title {
+            transform: translateY(-5px);
+            margin-bottom: 5px;
+            height: 30px;
+            line-height: 30px;
+            background-color: @font-color;
+            color: #fff;
+            text-align: center;
+            cursor: default;
+          }
+          .file {
+            position: relative;
+            padding-left: 5px;
+            height: 30px;
+            line-height: 30px;
+            transition: 0.2s;
+            cursor: default;
+            .icon {
+              display: inline-block;
+              width: 20px;
+            }
+            .file-name {
+              display: inline-block;
+              padding: 0 3px;
+              line-height: 20px;
+              transform: translateX(-3px);
+              cursor: pointer;
+              &:hover {
+                border-bottom: 1px solid @font-color;
+              }
+            }
+            .close-button {
+              display: none;
+              position: absolute;
+              right: 0;
+              width: 22px;
+              text-align: center;
+              color: @light-font-color;
+              font-size: 13px;
+            }
+            &.editing {
+              cursor: pointer;
+              &:hover {
+                background-color: @screen-color;
+                .close-button {
+                  display: inline-block;
+                  &:hover {
+                    color: @font-color;
+                  }
+                }
+              }
+            }
+          }
+        }
+        .upload-area {
+          .el-upload {
+            width: 100%;
+            text-align: left;
+            .el-button {
+              width: 100%;
+              height: 30px;
+              border-radius: 10px;
+              &:hover {
+                opacity: 0.7;
+              }
+              &:active {
+                opacity: 0.85;
+              }
+              &.el-button--text {
+                background-color: @light-font-color;
+                color: #fff;
+                font-size: @normal-font-size;
+                &:disabled {
+                  background-color: @gray-color;
+                  cursor: not-allowed;
+                }
+              }
+            }
+          }
+          .el-upload__tip {
+            line-height: normal;
+            margin-top:0;
+          }
+          .el-upload-list {
+            // max-height: 80px;
+            // overflow-y: scroll;
+          }
         }
       }
     }

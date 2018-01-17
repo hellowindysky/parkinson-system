@@ -16,7 +16,7 @@
             接收人
           </span>
           <span class="field-input">
-            XXX
+            {{therapist}}
           </span>
         </div>
         <div class="field whole-line">
@@ -28,8 +28,8 @@
             {{experimentNumber}}
           </span>
           <span class="field-input" v-else>
-            <el-input
-              v-model="experimentNumber"
+            <span class="warning-text">{{warningResults.experimentNumber}}</span>
+            <el-input v-model="experimentNumber"
               :class="{'warning': warningResults.experimentNumber}"
               @change="updateWarning('experimentNumber')"
               placeholder="请输入实验编号">
@@ -71,6 +71,7 @@ export default {
       displayModal: false,
       mode: '',
       completeInit: false,
+      therapist: '',
       remark: '',
       experimentNumber: '',
       warningResults: {
@@ -96,13 +97,14 @@ export default {
     }
   },
   methods: {
-    showPanel(cardOperation, item, showEdit) {
+    showPanel(cardOperation, item, showEdit, therapist) {
       this.completeInit = false;
       this.mode = cardOperation;
       this.showEdit = showEdit;
 
       this.experimentNumber = '';
       this.remark = '';
+      this.therapist = therapist;
 
       this.$nextTick(() => {
         // this.$refs.scrollArea.scrollTop = 0;
@@ -117,7 +119,7 @@ export default {
       this.displayModal = true;
     },
     updateWarning(fieldName) {
-      if (this && this[fieldName] === '') {
+      if (this[fieldName] === '') {
         this.$set(this.warningResults, fieldName, '必填项');
       } else {
         this.$set(this.warningResults, fieldName, '');
@@ -159,7 +161,7 @@ export default {
       console.log(error);
       if (error.code === 2009) {
         this.$message({
-          message: '该患者已加入实验组，不能重复操作',
+          message: '当前操作无法完成，请刷新页面后再试',
           type: 'error',
           duration: 2000
         });

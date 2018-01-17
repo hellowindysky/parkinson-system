@@ -14,12 +14,12 @@ function getElement(keyName, value, array) {
 }
 
 // 将完整的时间字符串（包含时分秒，时区等信息）简化为适合 element-ui 控件的 yyyy-MM-dd 的形式
-function simplifyDate(dateStr) {
-  // 如果参数本身就为空，那么直接返回 undefined
-  if (!dateStr) {
-    return undefined;
+function simplifyDate(time) {
+  // 如果参数本身就为空，那么直接返回 ''
+  if (!time) {
+    return '';
   }
-  var dateObj = new Date(dateStr);
+  var dateObj = new Date(time);
   var year = dateObj.getFullYear();
   var month = dateObj.getMonth() + 1;
   month = month < 10 ? '0' + month : month;
@@ -28,22 +28,41 @@ function simplifyDate(dateStr) {
   return year + '-' + month + '-' + date;
 }
 
-function simplifyTime(dateStr) {
-  // 如果参数本身就为空，那么直接返回 undefined
-  if (!dateStr) {
-    return undefined;
+function simplifyTime(time, accurateToSecond) {
+  // 如果第一个参数本身就为空，那么直接返回 ''
+  // 如果第二个参数没有给或者为 false，则返回格式为 yyyy-MM-dd HH:mm
+  // 如果第二个参数为 true, 则返回格式为 yyyy-MM-dd HH:mm:ss
+  if (!time) {
+    return '';
   }
-  var dateObj = new Date(dateStr);
-  var year = dateObj.getFullYear();
-  var month = dateObj.getMonth() + 1;
+  var timeObj = new Date(time);
+  if (timeObj === undefined) {
+    return '';
+  }
+  var year = timeObj.getFullYear();
+  var month = timeObj.getMonth() + 1;
   month = month < 10 ? '0' + month : month;
-  var date = dateObj.getDate();
+  var date = timeObj.getDate();
   date = date < 10 ? '0' + date : date;
-  var hour = dateObj.getHours();
+  var hour = timeObj.getHours();
   hour = hour < 10 ? '0' + hour : hour;
-  var min = dateObj.getMinutes();
+  var min = timeObj.getMinutes();
   min = min < 10 ? '0' + min : min;
-  return year + '-' + month + '-' + date + ' ' + hour + ':' + min;
+  var second = timeObj.getSeconds();
+  second = second < 10 ? '0' + second : second;
+
+  var resultString = year + '-' + month + '-' + date + ' ' + hour + ':' + min;
+  if (accurateToSecond) {
+    resultString += ':' + second;
+  }
+  return resultString;
+}
+
+function simplifyTimeWithoutDate(timeStr, accurateToSecond) {
+  // 如果第一个参数本身就为空，那么直接返回 ''
+  // 如果第二个参数没有给或者为 false，则返回格式为 HH:mm
+  // 如果第二个参数为 true, 则返回格式为 HH:mm:ss
+  return simplifyTime(timeStr, accurateToSecond).substring(11);
 }
 
 function calculateYearsBetween(fromDate, toDate) {
@@ -138,10 +157,49 @@ function checkId(ID) {
   return city[ID.substr(0, 2)] + ',' + birthday + ',' + (ID.substr(16, 1) % 2 ? '男' : '女');
 }
 
+// 检查 num 是否为正整数
+function checkIfPositiveInteger(num) {
+  var reg = /^[1-9][0-9]*$/;
+  return reg.test(num);
+}
+
+// 检查 num 是否为非负整数
+function checkIfNonNegativeInteger(num) {
+  var reg = /^([1-9][0-9]*|0)$/;
+  return reg.test(num);
+}
+
+// 检查 num 是否为非负实数（至多 n 位小数）
+function checkIfNotMoreThanNDecimalNums(num, n) {
+  n = checkIfPositiveInteger(n) ? n : 1;
+  var reg = new RegExp('^[0-9]+(\.[0-9]{1,' + n + '})?$');
+  return reg.test(num);
+}
+
+// 检查 num 是否为电话号码（由数字和短横线组成，且第一位是数字）
+function checkIfValidPhoneNum(num) {
+  var reg = /^[0-9][0-9-]*/;
+  return reg.test(num);
+}
+
+// 检查 num 是否为纯数字 （首位可以是 0，第二个参数是最少的位数，第三个参数是最多的位数，如果没有该参数则不设限制）
+function checkIfPureNum(num, minDigit, maxDigit) {
+  minDigit = checkIfPositiveInteger(num) ? minDigit : 0;
+  maxDigit = checkIfPositiveInteger(num) ? maxDigit : '';
+  var reg = new RegExp('^\d{' + minDigit + ',' + maxDigit + '}$');
+  return reg.test(num);
+}
+
 export default {
   getElement,
   simplifyDate,
   simplifyTime,
+  simplifyTimeWithoutDate,
   calculateYearsBetween,
-  checkId
+  checkId,
+  checkIfPositiveInteger,
+  checkIfNonNegativeInteger,
+  checkIfNotMoreThanNDecimalNums,
+  checkIfValidPhoneNum,
+  checkIfPureNum
 };

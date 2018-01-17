@@ -101,15 +101,7 @@ export default {
       return flattenedGroup;
     },
     listType() {
-      if (this.$route.matched.some(record => record.meta.myPatients)) {
-        return 'myPatients';
-      } else if (this.$route.matched.some(record => record.meta.otherPatients)) {
-        return 'otherPatients';
-      } else if (this.$route.matched.some(record => record.meta.subjectPatients)) {
-        return 'subjectPatients';
-      } else {
-        return 'unknown';
-      }
+      return this.$store.state.listType;
     },
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients)) {
@@ -140,9 +132,9 @@ export default {
       // 如果是新增患者界面，点击取消按钮，则回到患者列表的第一个患者
       if (this.$route.params.id === 'newPatient') {
         Bus.$on(this.CONFIRM, () => {
-          if (this.listType === 'myPatients') {
+          if (this.listType === this.MY_PATIENTS_TYPE) {
             this.$router.push({name: 'myPatients'});
-          } else if (this.listType === 'otherPatients') {
+          } else if (this.listType === this.OTHER_PATIENTS_TYPE) {
             this.$router.push({name: 'otherPatients'});
           }
           Bus.$off(this.CONFIRM);
@@ -205,21 +197,21 @@ export default {
         }
         addPatientInfo(submitData).then((data) => {
           var newId = data.patientId;
-          if (this.listType === 'myPatients') {
+          if (this.listType === this.MY_PATIENTS_TYPE) {
             this.$router.push({
               name: 'patientInfo',
               params: {id: newId}
             });
             Bus.$emit(this.UPDATE_MY_PATIENTS_LIST);
 
-          } else if (this.listType === 'otherPatients') {
+          } else if (this.listType === this.OTHER_PATIENTS_TYPE) {
             this.$router.push({
               name: 'otherPatientInfo',
               params: {id: newId}
             });
             Bus.$emit(this.UPDATE_OTHER_PATIENTS_LIST);
 
-          } else if (this.listType === 'subjectPatients') {
+          } else if (this.listType === this.SUBJECT_PATIENTS_TYPE) {
             this.$router.push({
               name: 'subjectPatientInfo',
               params: {id: newId}
@@ -272,11 +264,11 @@ export default {
           Bus.$emit(this.UPDATE_PATIENT_INFO);
 
           // 即使是编辑已有记录，也要更新患者列表（因为列表中存在年龄，性别等信息）
-          if (this.listType === 'myPatients') {
+          if (this.listType === this.MY_PATIENTS_TYPE) {
             Bus.$emit(this.UPDATE_MY_PATIENTS_LIST);
-          } else if (this.listType === 'otherPatients') {
+          } else if (this.listType === this.OTHER_PATIENTS_TYPE) {
             Bus.$emit(this.UPDATE_OTHER_PATIENTS_LIST);
-          } else if (this.listType === 'subjectPatients') {
+          } else if (this.listType === this.SUBJECT_PATIENTS_TYPE) {
             Bus.$emit(this.UPDATE_SUBJECT_PATIENTS_LIST);
           }
 
@@ -387,7 +379,8 @@ export default {
       if (fieldName === 'cardId') {
         // 这里插入一段特殊逻辑，如果是修改病患信息（不是新增），而且处于脱敏显示状态下，
         // 那么由于服务器返回的加密字段是连续18个星号，这里就得让其通过校验
-        if (this.$route.params.id !== 'newPatient' && !this.$store.state.showSensitiveInfo &&
+        if (this.$route.params.id !== 'newPatient' &&
+          !this.$store.state.showSensitiveInfo &&
           /^[*]{18}$/.test(copyFieldValue)) {
           this.$set(this.warningResults, fieldName, null);
           return;
@@ -415,11 +408,6 @@ export default {
             this.copyInfo.sex = gender === '男' ? 0 : 1;
           }
         }
-      } else if (fieldName === 'height' || fieldName === 'weight') {
-        if (parseFloat(this.copyInfo[fieldName], 10) < 0) {
-          this.$set(this.warningResults, fieldName, '身高和体重必须大于0');
-          return;
-        };
       }
 
       if (this.getUIType(field) === 6) {
@@ -433,15 +421,44 @@ export default {
         // 但是 0 是有意义的值，所以要把 0 排除掉
         // 下面这个方法将响应属性添加到嵌套的对象上，这样 Vue 才能实时检测和渲染
         this.$set(this.warningResults, fieldName, '必填项');
+        return;
 
       } else if (copyFieldValue && copyFieldValue.toString().indexOf(' ') > -1) {
         this.$set(this.warningResults, fieldName, '不能包含空格');
+        return;
 
-      } else {
-        // 初始化组件的时候，对应字段的警告文本为 undefined，判断之后，就为实际文本或 null
-        // null 代表该字段项的填写没有毛病
-        this.$set(this.warningResults, fieldName, null);
+      } else if (copyFieldValue !== '' && ['height', 'weight'].indexOf(fieldName) >= 0) {
+        if (copyFieldValue === 0 || copyFieldValue === '0') {
+          this.$set(this.warningResults, fieldName, '身高和体重必须大于0');
+          return;
+        } else if (!Util.checkIfNotMoreThanNDecimalNums(copyFieldValue, 1)) {
+          this.$set(this.warningResults, fieldName, '必须为数字，且不超过1位小数');
+          return;
+        }
+
+      } else if (copyFieldValue !== '' && ['phone', 'phone2'].indexOf(fieldName) >= 0) {
+        if (this.$route.params.id !== 'newPatient' &&
+          !this.$store.state.showSensitiveInfo &&
+          /^[*]{11}$/.test(copyFieldValue)) {
+          this.$set(this.warningResults, fieldName, null);
+          return;
+
+        } else if (!Util.checkIfValidPhoneNum(copyFieldValue)) {
+          this.$set(this.warningResults, fieldName, '只能由数字和短横线组成');
+          return;
+        }
+
+      } else if (copyFieldValue !== '' && ['yearsOfEducation'].indexOf(fieldName) >= 0) {
+        if (!Util.checkIfNonNegativeInteger(copyFieldValue)) {
+          this.$set(this.warningResults, fieldName, '只能填入非负整数');
+          return;
+        }
+
       }
+
+      // 初始化组件的时候，对应字段的警告文本为 undefined，判断之后，就为实际文本或 null
+      // null 代表该字段项的填写没有毛病
+      this.$set(this.warningResults, fieldName, null);
     },
     getWarningText(fieldName) {
       var warningResult = this.warningResults[fieldName];
@@ -614,6 +631,9 @@ export default {
             height: 30px;
             border: none;
             background-color: @screen-color;
+          }
+          &.is-disabled  .el-input__inner{
+            color: @light-font-color;
           }
         }
         .el-select {

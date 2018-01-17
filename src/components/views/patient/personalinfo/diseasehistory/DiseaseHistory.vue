@@ -31,7 +31,7 @@
             <span v-if="field.fieldName==='ariAge'">{{ariAge}}{{theUnit(field.fieldName)}}</span>
             <span v-else-if="field.fieldName==='courseOfDisease'">{{courseOfDiseaseInfo}}{{theUnit(field.fieldName)}}</span>
             <span v-else-if="getUIType(field)===1">
-              <el-input v-model="copyInfo[field.fieldName]"
+              <el-input v-model="copyInfo[field.fieldName]" :disabled="field.fieldName==='ariAge'||field.fieldName==='courseOfDisease'"
                 :placeholder="getMatchedField(field.fieldName).cnFieldDesc"></el-input>
             </span>
             <span v-else-if="getUIType(field)===3">
@@ -74,7 +74,7 @@
             <div class="custom-item" v-for="(item,index) in copyInfo['patientDiseaseOrders']" :key="index">
               <i class="iconfont icon-remove" @click="reduceOrder(index)"></i>
               <span class="sub-item">
-                <el-select v-model="item.arisePart" placeholder="请选择" clearable >
+                <el-select v-model="item.arisePart" placeholder="请选择">
                   <el-option
                    v-for="item in diseaseOrderOpt" :key="item.typeCode" 
                    :label="item.typeName"
@@ -84,7 +84,7 @@
                 </el-select>
               </span>
               <span class="sub-item">
-                <el-date-picker v-model="item.time" type="month" placeholder="选择发生年月" clearable ></el-date-picker>
+                <el-date-picker v-model="item.time" type="month" placeholder="选择发生年月"></el-date-picker>
               </span>
             </div>
 
@@ -148,7 +148,7 @@
             </div>
             <div class="text third-line">
               <span class="name">出现时间：</span>
-              <span class="value">{{TheAriseTime(item)}}</span>
+              <span class="value">{{theAriseTime(item)}}</span>
             </div>
           </Card>
         </extensible-panel>
@@ -294,13 +294,13 @@
 import { mapGetters } from 'vuex';
 import Util from 'utils/util.js';
 import Bus from 'utils/bus.js';
-import { deepCopy, vueCopy, pruneObj } from 'utils/helper.js';
+import { deepCopy, vueCopy, pruneObj, reviseDateFormat } from 'utils/helper.js';
 import FoldingPanel from 'components/public/foldingpanel/FoldingPanel';
 import ExtensiblePanel from 'components/public/extensiblepanel/ExtensiblePanel';
 import Card from 'components/public/card/Card';
 import {queryPatientFirstSymbol, deletePatientFirstSymbol, queryPatientFirstVisitTreatment, delPatientFirstVisitTreatment, queryVisitDignosticRecord, delVisitDignosticRecord, modDiseaseHistory } from 'api/patient.js';
 
-const HALF_LINE_FIELD_LIST = ['diseaseType', 'specificDisease', 'ariTime', 'courseOfDisease', 'firTime', 'surTime', 'firMedinfo',
+const HALF_LINE_FIELD_LIST = ['diseaseType', 'specificDisease', 'diagnoseState', 'ariTime', 'courseOfDisease', 'firTime', 'surTime', 'firMedinfo',
   'firMedtime', 'ariAge', 'symmetries', 'symmetriesTime', 'firHosp', 'surHosp'];
 
 export default {
@@ -310,7 +310,12 @@ export default {
       firstVisitTreatmentData: [], // 初诊治疗
       patientHistorysData: [], // 就诊记录
       copyInfo: {
-        patientDiseaseOrders: []
+        patientDiseaseOrders: [
+          {
+            arisePart: '',
+            time: ''
+          }
+        ]
       },
       warningResults: {},
       pickerOptions0: {
@@ -321,7 +326,7 @@ export default {
       mode: this.READING_MODE,
       foldedStatus: true,
       cardWidth: '',
-      specificDiseaseState: true
+      specificDiseaseState: false
     };
   },
   props: {
@@ -355,7 +360,8 @@ export default {
         this.$set(this.copyInfo, 'ariAge', years);
         return years;
       } else {
-        return '';
+        return this.getMatchedField('ariAge').cnFieldDesc;
+        // return '——选择起病时间自动计算——';
       }
     },
     courseOfDiseaseInfo() {
@@ -363,7 +369,8 @@ export default {
       if (this.copyInfo['ariTime']) {
         return Util.calculateYearsBetween(this.copyInfo['ariTime'], new Date());
       } else {
-        return '';
+        return this.getMatchedField('courseOfDisease').cnFieldDesc;
+        // return '——选择起病时间自动计算——';
       }
 
     },
@@ -420,7 +427,7 @@ export default {
     }
   },
   methods: {
-    TheAriseTime(item) {
+    theAriseTime(item) {
       if (item.ariseTime) {
         return item.ariseTime;
       } else {
@@ -523,6 +530,7 @@ export default {
     },
     transform(id, arr) {
       id = parseInt(id, 10);
+      arr = arr ? arr : [];
       return arr.filter((obj) => {
         return parseInt(obj.typeCode, 10) === id;
       }).map((obj) => {
@@ -538,7 +546,7 @@ export default {
     formatDate(d) {
       // 阅读状态下发病顺序的日期
       if (d) {
-        return '（' + Util.simplifyDate(d) + '）';
+        return '（' + Util.simplifyDate(d).slice(0, -3) + '）';
       } else {
         return '';
       }
@@ -584,18 +592,14 @@ export default {
         let targetTypeList = types.filter((type) => {
           return type.typeCode === Number(this.copyInfo.diseaseType);
         });
-        if (targetTypeList.length > 0 && !targetTypeList[0].childType) {
-          // this.copyInfo['specificDisease'] = '';
+        let childType = (targetTypeList.length > 0 && targetTypeList[0].childType) ? targetTypeList[0].childType : [];
+        if (childType.length > 0) {
+          this.specificDiseaseState = true;
+        } else {
           this.$set(this.copyInfo, 'specificDisease', '');
           this.specificDiseaseState = false;
-          // console.log(this.copyInfo, 'false时');
-        } else {
-          this.specificDiseaseState = true;
-          // this.copyInfo['specificDisease'] = '';
-          // this.$set(this.copyInfo, 'specificDisease', '');
-          // console.log(this.copyInfo, 'true时');
         };
-        return targetTypeList.length > 0 ? targetTypeList[0].childType : [];
+        return childType;
 
       } else {
         // 在 typegroup 里面查找到 field 所对应的 types（选项组）
@@ -653,7 +657,24 @@ export default {
     },
     cancel() {
       // 点击取消按钮，将我们对 copyInfo 所做的临时修改全部放弃，还原其为 diseaseInfo 的复制对象，同时不要忘了重新对其进行特殊处理
-      vueCopy(this.diseaseInfo, this.copyInfo);
+      let field = ['diseaseType', 'specificDisease', 'diagnoseState',
+        'ariTime', 'ariAge', 'courseOfDisease', 'symmetries', 'patientDiseaseOrders',
+        'firBody', 'chiefComplaint', 'diagMode', 'getDisFac', 'getDisFac0'];
+      let transDiseaseInfo = Object.assign({}, this.diseaseInfo);
+      field.forEach((item) => {
+        if (!transDiseaseInfo.hasOwnProperty(item)) {
+          if (item === 'patientDiseaseOrders') {
+            transDiseaseInfo[item] = [];
+          } else {
+            transDiseaseInfo[item] = '';
+          }
+        } else if (item === 'patientDiseaseOrders' && transDiseaseInfo[item].length === 0) {
+          transDiseaseInfo[item] = [{arisePart: '', time: ''}];
+        };
+      });
+      this.$set(this.copyInfo, 'patientDiseaseOrders', []);
+      vueCopy(transDiseaseInfo, this.copyInfo);
+
       this.changeCopyInfo();
       this.mode = this.READING_MODE;
     },
@@ -686,6 +707,7 @@ export default {
       };
     },
     submit() {
+      reviseDateFormat(this.copyInfo);
       for (let group of this.diseaseInfoTemplateGroups) {
         for (let field of group) {
           // 首先检查是否每个字段都合格，检查一遍之后，如果 warningResults 的所有属性值都为空，就证明表单符合要求
@@ -705,20 +727,25 @@ export default {
       delete submitData.patientFirstVisitTreatments;
       delete submitData.patientHistorys;
       pruneObj(submitData);
-      // reviseDateFormat(submitData);
-      // submitData.ariTime = Util.simplifyDate(submitData.ariTime);
 
       for (let key in submitData) {
         if (Array.isArray(submitData[key]) && key !== 'patientDiseaseOrders') {
           let valStr = submitData[key].join(',');
           valStr = valStr[0] === ',' ? valStr.slice(1) : valStr;
-          // submitData[key] = submitData[key].join(',').slice(1);
           submitData[key] = valStr;
+        } else if (key === 'patientDiseaseOrders') {
+          let transferArr = [];
+          submitData[key].forEach((item) => {
+            if (Object.keys(item).length > 0) {
+              transferArr.push(item);
+            };
+          });
+          submitData[key] = transferArr;
+          this.$set(this.copyInfo, key, transferArr);
         };
       };
       submitData.courseOfDisease = this.courseOfDiseaseInfo;
       submitData.patientId = this.$route.params.id;
-
       modDiseaseHistory(submitData).then(() => {
         Bus.$emit(this.UPDATE_PATIENT_INFO);
         this.mode = this.READING_MODE;
@@ -827,7 +854,7 @@ export default {
     diseaseInfo: function(newBasicInfo) {
       // 当 diseaseInfo这个属性变量发生变化时（包括第一次传递进来），我们都对其进行浅复制，复制到 copyInfo 对象中。
       // 这样一来，编辑状态下修改 copyInfo 对象的属性时，就不会影响到 diseaseInfo 对象本身。
-      // 如果组件的 diseaseInfo 属性发生变化，copyInfo 对象就会重置，而我们对 copyInfo 所做的还未提交的修改则会丢失。
+      // 如果组件的 diseaseInfo 属性发生变化，copyInfo 对象就会重置，而我们对 copyInfo 所做的还未提交的修改则会丢失
       vueCopy(newBasicInfo, this.copyInfo);
       // 这里对 copyInfo 的某些字段进行特殊处理
       // 因为要等到 diseaseInfo 和 diseaseInfoDictionaryGroups 这两个对象都异步调用成功才能有效执行
@@ -854,6 +881,8 @@ export default {
     // this.changeCopyInfo();
   },
   mounted() {
+    // console.log(this.diseaseInfoTemplateGroups[0]);
+    // console.log(this.diseaseInfoDictionary);
     Bus.$on(this.EDIT_DISEASE_INFO, this.startEditing);
     this.updatafirstSymbolCard();
     Bus.$on(this.UPDATE_FIRSTSYMPTOMS_INFO, this.updatafirstSymbolCard);

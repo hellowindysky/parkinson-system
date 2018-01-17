@@ -27,10 +27,10 @@
         </span>
         <span class="field-input">
           <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.ariseTime}}</span>
-          <el-date-picker v-else 
-          v-model="copyInfo.ariseTime" 
-          placeholder="请输入检查时间" 
-          type="date" 
+          <el-date-picker v-else
+          v-model="copyInfo.ariseTime"
+          placeholder="请输入检查时间"
+          type="date"
           format="yyyy-MM-dd"
           :picker-options="pickerOptions">
           </el-date-picker>
@@ -188,14 +188,18 @@
       </div>
 
       <!-- <div class="seperate-line"></div> -->
-      <div class="button cancel-button" v-if="tableMode===FATHER_OPEN" @click="cancel">取消</div>
-      <div class="button cancel-button" v-if="tableMode===SON_OPEN && mode===VIEW_CURRENT_CARD" @click="closeSubTable">返回</div>
-      <div class="button edit-button" v-if="tableMode===FATHER_OPEN && mode===VIEW_CURRENT_CARD && canEdit" @click="switchToEditingMode">编辑</div>
-      <div class="button submit-button" v-if="tableMode===FATHER_OPEN && mode!==VIEW_CURRENT_CARD" @click="submit">确认</div>
-
-      <div class="button reset-button" v-if="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD && hasTableExisted"
-        @click="initSubTableDataForTypeCode(subTableCode)">重置</div>
-      <div class="button submit-button" v-if="tableMode===SON_OPEN && mode!==VIEW_CURRENT_CARD && hasTableExisted" @click="closeSubTable">完成</div>
+      <span v-if="tableMode===FATHER_OPEN">
+        <div class="button cancel-button" @click="cancel">取消</div>
+        <div class="button edit-button" v-if="mode===VIEW_CURRENT_CARD && canEdit" @click="switchToEditingMode">编辑</div>
+        <div class="button submit-button" v-else-if="mode!==VIEW_CURRENT_CARD" @click="submit">确认</div>
+      </span>
+      <span v-else-if="tableMode===SON_OPEN">
+        <div class="button cancel-button" v-if="mode===VIEW_CURRENT_CARD" @click="closeSubTable">返回</div>
+        <span v-else-if="mode!==VIEW_CURRENT_CARD && hasTableExisted">
+          <div class="button reset-button" @click="initSubTableDataForTypeCode(subTableCode)">重置</div>
+          <div class="button submit-button" @click="closeSubTable">完成</div>
+        </span>
+      </span>
     </div>
   </div>
 </template>
@@ -440,7 +444,8 @@ export default {
     closeSubTable() {
       this.tableMode = this.FATHER_OPEN;
       this.updateScrollbar();
-      this.$refs.formWrapper.scrollTop = 0;
+      this.$refs.neurologicModal.scrollTop = 0;
+      // this.$refs.formWrapper.scrollTop = 0;
     },
     getOptions(fieldName) {
       var options = [];
@@ -560,9 +565,9 @@ export default {
     position: relative;
     margin: auto;
     padding: 0 40px;
-    top: 6%;
-    width: 800px;
-    max-height: 90%;
+    top: 3%;
+    width: 700px;
+    max-height: 94%;
     background-color: @background-color;
     overflow: hidden;
     .title {
@@ -661,6 +666,7 @@ export default {
         margin-bottom: 5px;
         width: 100%;
         border-spacing: 0;
+        border-collapse: collapse;
         font-size: 14px;
         &.small-font {
           font-size: @small-font-size !important;
@@ -669,7 +675,7 @@ export default {
           height: 40px;
           &.first-row {
             background-color: @screen-color;
-            height: 30px;
+            height: 35px;
             .col {
               padding: 0 3px;
             }
@@ -678,6 +684,7 @@ export default {
             text-align: center;
             padding: 0;
             margin: 0;
+            border: 1px solid @light-gray-color;
             .text-button {
               margin: 0 5px;
               color: @theme-color;
@@ -721,11 +728,11 @@ export default {
             }
             .el-input {
               margin-left: 2%;
-              width: 90%;
+              width: 98%;
               .el-input__inner {
                 height: 30px;
                 border: none;
-                background-color: @screen-color;
+                background-color: rgba(0, 0, 0, 0);
                 text-align: center;
               }
             }

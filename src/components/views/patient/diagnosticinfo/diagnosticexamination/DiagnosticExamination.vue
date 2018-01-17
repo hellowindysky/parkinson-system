@@ -71,7 +71,7 @@
           </div>
          </card>
       </extensible-panel>
-      <extensible-panel class="panel neuroelectric-panel" :mode="mutableMode" :title="neuroelectricTitle" v-on:addNewCard="addEmgRecord" :editable="canEdit">
+      <extensible-panel class="panel neuroelectric-panel" :mode="mutableMode" :title="neuroelectricTitle" v-on:addNewCard="addNeuroelectricRecordRecord" :editable="canEdit">
         <card class="card neuroelectric-card" :class="cardWidth" :mode="mutableMode" v-for="item in emgList" :key="item.pcaseId"
           :title="item.etgName" v-on:editCurrentCard="editNeuroelectricRecord(item)" v-on:viewCurrentCard="viewNeuroelectricRecord(item)"
           v-on:deleteCurrentCard="deleteNeuroelectricRecord(item)">
@@ -86,7 +86,7 @@
         </card>
         <card class="card neuroelectric-card" :class="cardWidth" :mode="mutableMode" v-for="item in sleepMonitoringList" :key="item.patientCaseId"
           :title="transform(item.elecExamType, 'elecExam')" v-on:editCurrentCard="editNeuroelectricRecord(item)" v-on:viewCurrentCard="viewNeuroelectricRecord(item)"
-          v-on:deleteCurrentCard="deleteNeuroelectricRecord(item)">
+          v-on:deleteCurrentCard="deleteSleepMonitoringRecord(item)">
           <div class="text first-line">
             <span class="name">RDI</span>
             <span class="value">{{getRDI(item)}}</span>
@@ -104,12 +104,32 @@
             <span class="value">{{item.recordStart}}</span>
           </div>
         </card>
+        <card class="card neuroelectric-card" :class="cardWidth" :mode="mutableMode" v-for="item in electricImagingList" :key="item.patientCaseId"
+          :title="transform(item.imageType, 'elecExam')" v-on:editCurrentCard="editNeuroelectricRecord(item)" v-on:viewCurrentCard="viewNeuroelectricRecord(item)"
+          v-on:deleteCurrentCard="deleteImageRecord(item)">
+          <div class="text first-line">
+            <span class="name">检查编号</span>
+            <span class="value">{{item.checkNum}}</span>
+          </div>
+          <div class="text second-line">
+            <span class="name">检查设备</span>
+            <span class="value">{{item.checkDevice}}</span>
+          </div>
+          <div class="text third-line">
+            <span class="name">检查结论</span>
+            <span class="value">{{item.checkConclusion}}</span>
+          </div>
+          <div class="text fourth-line">
+            <span class="name">检查日期</span>
+            <span class="value">{{item.checkDate}}</span>
+          </div>
+        </card>
       </extensible-panel>
 <!-- 医学影像 -->
-      <extensible-panel class="panel image-panel" :mode="mutableMode" :title="medicalImagingTitle" v-on:addNewCard="addImgRecord" :editable="canEdit">
+      <extensible-panel class="panel image-panel" :mode="mutableMode" :title="medicalImagingTitle" v-on:addNewCard="addImageRecord" :editable="canEdit">
         <card class="card image-card" :class="cardWidth" :mode="mutableMode" v-for="(item,idx) in medicalImagingList" :key="idx"
-          :title="item.title" v-on:editCurrentCard="editImgRecord(item)" v-on:viewCurrentCard="viewImgRecord(item)"
-          v-on:deleteCurrentCard="deleteImgRecord(item)">
+          :title="item.title" v-on:editCurrentCard="editImageRecord(item)" v-on:viewCurrentCard="viewImageRecord(item)"
+          v-on:deleteCurrentCard="deleteImageRecord(item)">
           <div class="text first-line">
             <span class="name">类型</span>
             <span class="value">{{transform(item.imageType, 'examType')}}</span>
@@ -133,7 +153,8 @@
 import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import { deleteEmg, deleteBiochemical, deleteNeurologicCheck, deleteGeneCheck, deleteImage, deleteVitalSigns } from 'api/patient.js';
+import { deleteEmg, deleteBiochemical, deleteNeurologicCheck, deleteSleepMonitoring,
+  deleteGeneCheck, deleteImage, deleteVitalSigns } from 'api/patient.js';
 // import { vueCopy } from 'utils/helper';
 
 import FoldingPanel from 'components/public/foldingpanel/FoldingPanel';
@@ -182,6 +203,12 @@ export default {
         return [];
       }
     },
+    electricImagingList: {
+      type: Array,
+      default: () => {
+        return [];
+      }
+    },
     medicalImagingList: {
       type: Array,
       default: () => {
@@ -192,6 +219,12 @@ export default {
       type: Array,
       default: () => {
         return [];
+      }
+    },
+    patientInfo: {
+      tyep: Object,
+      default: () => {
+        return {};
       }
     },
     archived: {
@@ -220,8 +253,8 @@ export default {
       return '生化指标（' + this.biochemicalExamList.length + '条记录）';
     },
     neuroelectricTitle() {
-      let count = this.emgList.length + this.sleepMonitoringList.length;
-      return '神经电生理检查（' + count + '条记录）';
+      let count = this.emgList.length + this.sleepMonitoringList.length + this.electricImagingList.length;
+      return '电生理检查（' + count + '条记录）';
     },
     medicalImagingTitle() {
       return '医学影像（' + this.medicalImagingList.length + '条记录）';
@@ -229,6 +262,12 @@ export default {
     heartRate() {
       var info = Util.getElement('typegroupcode', 'rhythm', this.typeGroup);
       return info.types ? info.types : [];
+    },
+    heightAndWeight() {
+      var info = {};
+      info.height = this.patientInfo.height ? this.patientInfo.height : '';
+      info.weight = this.patientInfo.weight ? this.patientInfo.weight : '';
+      return info;
     },
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients) && !this.archived) {
@@ -330,34 +369,43 @@ export default {
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
-    addEmgRecord() {
-      Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
+    addNeuroelectricRecordRecord() {
+      Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.ADD_NEW_CARD, {}, !this.archived, this.heightAndWeight);
     },
     viewNeuroelectricRecord(item) {
-      Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived);
+      Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived, this.heightAndWeight);
     },
     editNeuroelectricRecord(item) {
-      Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
+      Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived, this.heightAndWeight);
     },
     deleteNeuroelectricRecord(item) { // 删除肌电图
-      let EmgInfo = {
+      let emgInfo = {
         id: item.id
       };
       Bus.$on(this.CONFIRM, () => {
-        deleteEmg(EmgInfo).then(this._resolveDeletion, this._rejectDeletion);
+        deleteEmg(emgInfo).then(this._resolveDeletion, this._rejectDeletion);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
-    addImgRecord() {
+    deleteSleepMonitoringRecord(item) {
+      let sleepMonitoringInfo = {
+        patientNerveSleepId: item.patientNerveSleepId
+      };
+      Bus.$on(this.CONFIRM, () => {
+        deleteSleepMonitoring(sleepMonitoringInfo).then(this._resolveDeletion, this._rejectDeletion);
+      });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
+    },
+    addImageRecord() {
       Bus.$emit(this.SHOW_IMG_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
     },
-    viewImgRecord(item) {
+    viewImageRecord(item) {
       Bus.$emit(this.SHOW_IMG_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived);
     },
-    editImgRecord(item) {
+    editImageRecord(item) {
       Bus.$emit(this.SHOW_IMG_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
     },
-    deleteImgRecord(item) {
+    deleteImageRecord(item) {
       let imageInfo = {
         id: item.id
       };

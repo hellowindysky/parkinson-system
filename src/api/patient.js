@@ -488,7 +488,7 @@ export function addDiagnosticBasic(diagnosticBasic) {
 export function modifyDiagnosticBasic(diagnosticBasic) {
   var request = Object.assign({}, getCommonRequest());
   request.patientCase = diagnosticBasic;
-  var url = '/pdms/modPatientCase';
+  var url = '/pdms/modPatientCaseBaseInfo';
 
   return encapsulatePromise(url, request);
 };
@@ -551,7 +551,7 @@ export function delPatientSymptom(complaintsInfo) {
 export function modDiseaseSituation(diseaseSituation) {
   var request = Object.assign({}, getCommonRequest());
   request.patientCase = diseaseSituation;
-  var url = '/pdms/modPatientCase';
+  var url = '/pdms/modPatientCaseDiseaseInfo';
 
   return encapsulatePromise(url, request);
 };

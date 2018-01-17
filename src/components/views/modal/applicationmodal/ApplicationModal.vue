@@ -163,6 +163,8 @@ export default {
         }
       });
 
+      this.updateMemberList();
+
       this.completeInit = true;
       this.displayModal = true;
       // this.updateScrollbar();
@@ -199,6 +201,14 @@ export default {
         };
       }
       return options;
+    },
+    updateMemberList() {
+      queryExperimentMember(this.$store.state.subjectId).then((data) => {
+        this.therapistsList = data.treater ? data.treater : [];
+        this.appraisersList = data.assessor ? data.assessor : [];
+      }, (error) => {
+        console.log(error);
+      });
     },
     updateWarning(fieldName) {
       if (this[fieldName] === '') {
@@ -258,6 +268,12 @@ export default {
           type: 'error',
           duration: 2000
         });
+      } else if (error.code === 2009) {
+        this.$message({
+          message: '当前操作无法完成，请刷新页面后再试',
+          type: 'error',
+          duration: 2000
+        });
       }
       this.lockSubmitButton = false;
     },
@@ -285,13 +301,6 @@ export default {
   mounted() {
     Bus.$on(this.SHOW_APPLICATION_MODAL, this.showPanel);
     // this.updateScrollbar();
-
-    queryExperimentMember(this.$store.state.subjectId).then((data) => {
-      this.therapistsList = data.treater ? data.treater : [];
-      this.appraisersList = data.assessor ? data.assessor : [];
-    }, (error) => {
-      console.log(error);
-    });
   },
   beforeDestroy() {
     Bus.$off(this.SHOW_APPLICATION_MODAL);

@@ -52,7 +52,7 @@
 
           <div class="field">
             <span class="field-name long-field-name">
-              药物名称:
+              药物商品名:
               <!-- <span class="required-mark">*</span> -->
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
@@ -74,7 +74,7 @@
 
           <div class="field">
             <span class="field-name long-field-name">
-              通用名:
+              化学名:
               <!-- <span class="required-mark">*</span> -->
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
@@ -358,7 +358,6 @@ export default {
     showModal(cardOperation, item) {
       this.completeInit = false;
       this.runClearVal = false;
-      console.log(cardOperation, item);
       this.mode = cardOperation;
       // ----------------------
       this.$set(this.copyInfo, 'firstVisitType', item.firstVisitType);
@@ -373,7 +372,6 @@ export default {
 
       // 编辑时的id
       this.id = item.id;
-      console.log(this.copyInfo);
       // -------------------------
       if (this.mode === this.ADD_NEW_CARD) {
         for (let key in this.copyInfo) {
@@ -641,6 +639,28 @@ export default {
       }
       &:active {
         opacity: 0.9;
+      }
+    }
+    .ps__scrollbar-y-rail {
+      position: absolute;
+      width: 15px;
+      right: 0;
+      padding: 0 3px;
+      box-sizing: border-box;
+      opacity: 0.3;
+      transition: opacity 0.3s, padding 0.2s;
+      .ps__scrollbar-y {
+        position: relative;
+        background-color: #aaa;
+        border-radius: 20px;
+      }
+    }
+    &:hover {
+      .ps__scrollbar-y-rail {
+        opacity: 0.6;
+        &:hover {
+          padding: 0;
+        }
       }
     }
   }

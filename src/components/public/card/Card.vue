@@ -81,5 +81,11 @@ export default {
       }
     }
   }
+  &:hover {
+    box-shadow: 0 0 3px @gray-color;
+  }
+  &:active {
+    box-shadow: 0 0 3px @light-gray-color;
+  }
 }
 </style>

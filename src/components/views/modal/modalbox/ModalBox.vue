@@ -526,7 +526,7 @@ export default {
     cancel() {
       this.lockSubmitButton = false;
       if (this.modalType === this.FAMILY_HISTORY_MODAL && this.mode !== this.VIEW_CURRENT_CARD) {
-        this.$refs.uploadTag[0] && this.$refs.uploadTag[0].clearFiles();
+        this.$refs.uploadTag && this.$refs.uploadTag[0] && this.$refs.uploadTag[0].clearFiles();
       };
       this.displayModal = false;
     },
@@ -681,8 +681,8 @@ export default {
       }
     },
     updateAndClose() {
-      if (this.modalType === this.FAMILY_HISTORY_MODAL && this.$refs.uploadTag[0]) {
-        this.$refs.uploadTag[0].clearFiles();
+      if (this.modalType === this.FAMILY_HISTORY_MODAL && this.$refs.uploadTag) {
+        this.$refs.uploadTag[0] && this.$refs.uploadTag[0].clearFiles();
       };
       Bus.$emit(this.UPDATE_PATIENT_INFO);
       this.displayModal = false;
@@ -763,8 +763,8 @@ export default {
         }
       }
       // -----
-      if (fieldName === 'doseInfo' && !Number(fieldValue)) {
-        this.$set(this.warningResults, fieldName, '请输入数字');
+      if (fieldName === 'doseInfo' && !Util.checkIfNotMoreThanNDecimalNums(fieldValue, 2)) {
+        this.$set(this.warningResults, fieldName, '请输入正数，最多保留两位小数');
         return;
       };
       // -----
@@ -861,10 +861,10 @@ export default {
         min-height: 0;
         display: block;
         .field-input{
-            width: 100px;
+            width: 120px;
             position: absolute;
             top:-45px;
-            left: calc(~"96% - 100px");
+            left: calc(~"96% - 120px");
         }
       }
       .field-name {
@@ -892,7 +892,7 @@ export default {
         font-size: @normal-font-size;
         color: @light-font-color;
         &.doseInfo{
-          width: calc(~"96% - @{field-name-width} - 110px");
+          width: calc(~"96% - @{field-name-width} - 130px");
         }
         // &.unit{
         //   width: 100px;

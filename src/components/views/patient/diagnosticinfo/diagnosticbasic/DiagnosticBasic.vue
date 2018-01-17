@@ -82,15 +82,7 @@ export default {
       return this.patientCaseTemplateGroups[0] ? this.patientCaseTemplateGroups[0] : [];
     },
     listType() {
-      if (this.$route.matched.some(record => record.meta.myPatients)) {
-        return 'myPatients';
-      } else if (this.$route.matched.some(record => record.meta.otherPatients)) {
-        return 'otherPatients';
-      } else if (this.$route.matched.some(record => record.meta.subjectPatients)) {
-        return 'subjectPatients';
-      } else {
-        return 'unknown';
-      }
+      return this.$store.state.listType;
     },
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients) && (!this.archived || this.$route.params.caseId === 'newCase')) {
@@ -115,12 +107,16 @@ export default {
           this.copyInfo = Object.assign({}, this.diagnosticBasic);
           this.warningResults = {};
           this.mutableMode = this.READING_MODE;
-          if (this.listType === 'myPatients') {
+          if (this.listType === this.MY_PATIENTS_TYPE) {
             this.$router.push({name: 'diagnosticInfo'});
-          } else if (this.listType === 'otherPatients') {
+          } else if (this.listType === this.OTHER_PATIENTS_TYPE) {
             this.$router.push({name: 'otherDiagnosticInfo'});
-          } else if (this.listType === 'subjectPatients') {
+          } else if (this.listType === this.SUBJECT_PATIENTS_TYPE) {
             this.$router.push({name: 'subjectDiagnosticInfo'});
+          } else if (this.listType === this.THERAPISTS_PATIENTS_TYPE) {
+            this.$router.push({name: 'therapistsPatientsDiagnosticInfo'});
+          } else if (this.listType === this.APPRAISERS_PATIENTS_TYPE) {
+            this.$router.push({name: 'appraisersPatientsDiagnosticInfo'});
           }
           Bus.$off(this.CONFIRM);
           Bus.$off(this.GIVE_UP);
@@ -168,12 +164,16 @@ export default {
         this.copyInfo.patientId = this.$route.params.id;
         addDiagnosticBasic(this.copyInfo).then((data) => {
           var routeName;
-          if (this.listType === 'myPatients') {
+          if (this.listType === this.MY_PATIENTS_TYPE) {
             routeName = 'diagnosticDetail';
-          } else if (this.listType === 'otherPatients') {
+          } else if (this.listType === this.OTHER_PATIENTS_TYPE) {
             routeName = 'otherDiagnosticDetail';
-          } else if (this.listType === 'subjectPatients') {
+          } else if (this.listType === this.SUBJECT_PATIENTS_TYPE) {
             routeName = 'subjectDiagnosticDetail';
+          } else if (this.listType === this.THERAPISTS_PATIENTS_TYPE) {
+            routeName = 'therapistsPatientsDiagnosticDetail';
+          } else if (this.listType === this.APPRAISERS_PATIENTS_TYPE) {
+            routeName = 'appraisersPatientsDiagnosticDetail';
           }
           this.$router.push({
             name: routeName,

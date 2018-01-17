@@ -8,7 +8,7 @@
       <div class="tab third-tab" :class="{'current-tab': currentTab === 'experimentInfo'}"
         @click="chooseExperiment" v-if="existed && inSubject">实验记录</div>
       <div class="patient-id" :class="{'left-shift': false}" v-if="existed">患者ID: {{patientId}}</div>
-      <!-- <div class="button" v-if="existed && listType==='myPatients'">导出病历</div> -->
+      <!-- <div class="button" v-if="existed && listType===MY_PATIENTS_TYPE">导出病历</div> -->
       <div class="tab-bottom-bar" :class="currentTabBottomBar" v-if="this.existed"></div>
       <div class="title" v-if="!existed">新增患者</div>
     </div>
@@ -22,7 +22,7 @@
           <span class="info-title">创建时间: </span>
           <span class="info-text">{{ createDate }}</span>
         </div>
-        <div class="info whole-line" v-show="listType!=='subjectPatients'">
+        <div class="info whole-line" v-show="listType!==SUBJECT_PATIENTS_TYPE">
           <span class="info-title">分组情况: </span>
           <span class="info-text">
             <span class="tags-wrapper">
@@ -40,7 +40,7 @@
             <span class="iconfont icon-subject" @click="toggleSubjectPanel"></span>
           </span>
         </div>
-        <div class="info" v-show="listType==='subjectPatients'">
+        <div class="info" v-show="listType===SUBJECT_PATIENTS_TYPE">
           <span class="info-title">所属医院: </span>
           <span class="info-text">{{ belongHospital }}</span>
         </div>
@@ -50,7 +50,9 @@
         <basic-info v-else ref="newPatientWindow" :basic-info="{}"></basic-info>
       </div>
     </div>
-    <diagnostic-detail class="diagnostic-detail"></diagnostic-detail>
+    <diagnostic-detail class="diagnostic-detail"
+      :patient-info="patientInfo.patientInfo ? patientInfo.patientInfo : {}">
+    </diagnostic-detail>
     <scale-modal class="diagnostic-handle-scale"></scale-modal>
     <group-panel class="group-panel" :class="{'hide': !displayGroupPanel}" :belongGroups="belongGroups"
       :display="displayGroupPanel" :patientId="Number(patientId)" @hideGroupPanel="hideGroupPanel"
@@ -98,19 +100,7 @@ export default {
       return !(this.patientId === 'newPatient');
     },
     listType() {
-      if (this.$route.matched.some(record => record.meta.myPatients)) {
-        return 'myPatients';
-      } else if (this.$route.matched.some(record => record.meta.otherPatients)) {
-        return 'otherPatients';
-      } else if (this.$route.matched.some(record => record.meta.subjectPatients)) {
-        return 'subjectPatients';
-      } else if (this.$route.matched.some(record => record.meta.therapistsPatients)) {
-        return 'therapistsPatients';
-      } else if (this.$route.matched.some(record => record.meta.appraisersPatients)) {
-        return 'appraisersPatients';
-      } else {
-        return 'unknown';
-      }
+      return this.$store.state.listType;
     },
     currentTab() {
       var path = this.$route.path;
@@ -178,15 +168,15 @@ export default {
       var withoutDetail = !rePersonal.test(path) && !reDiagnostic.test(path) && !reExperiment.test(path);
 
       // 路由还停留在在病患信息这一层，但没有指明是个人信息还是诊断信息还是实验信息，那么就默认跳转到个人信息
-      if (this.listType === 'myPatients' && withoutDetail) {
+      if (this.listType === this.MY_PATIENTS_TYPE && withoutDetail) {
         this.$router.replace({ name: 'personalInfo' });
-      } else if (this.listType === 'otherPatients' && withoutDetail) {
+      } else if (this.listType === this.OTHER_PATIENTS_TYPE && withoutDetail) {
         this.$router.replace({ name: 'otherPersonalInfo' });
-      } else if (this.listType === 'subjectPatients' && withoutDetail) {
+      } else if (this.listType === this.SUBJECT_PATIENTS_TYPE && withoutDetail) {
         this.$router.replace({ name: 'subjectPersonalInfo' });
-      } else if (this.listType === 'therapistsPatients' && withoutDetail) {
+      } else if (this.listType === this.THERAPISTS_PATIENTS_TYPE && withoutDetail) {
         this.$router.replace({ name: 'therapistsPatientsPersonalInfo' });
-      } else if (this.listType === 'appraisersPatients' && withoutDetail) {
+      } else if (this.listType === this.APPRAISERS_PATIENTS_TYPE && withoutDetail) {
         this.$router.replace({ name: 'appraisersPatientsPersonalInfo' });
       }
     },

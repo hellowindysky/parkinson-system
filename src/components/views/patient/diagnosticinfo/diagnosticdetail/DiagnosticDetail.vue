@@ -20,11 +20,13 @@
       <diagnostic-scale :archived="hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
         :patientScale="caseDetail.patientScale"></diagnostic-scale>
       <diagnostic-examination :archived="hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
+        :patientInfo="patientInfo"
         :neurologicCheckList="caseDetail.patientSpephysical"
         :geneCheckList="caseDetail.patientGene"
         :biochemicalExamList="caseDetail.patientBioexam"
         :emgList="caseDetail.patientElecTroGram"
         :sleepMonitoringList="caseDetail.patientNerveSleep"
+        :electricImagingList="caseDetail.patientElecVideoList"
         :medicalImagingList="caseDetail.patientVideoList"
         :diagnosticVitalSigns="caseDetail.patientVitalSign">
       </diagnostic-examination>
@@ -45,6 +47,14 @@ import DiagnosticScale from 'components/views/patient/diagnosticinfo/diagnostics
 import DiagnosticExamination from 'components/views/patient/diagnosticinfo/diagnosticexamination/DiagnosticExamination';
 
 export default {
+  props: {
+    patientInfo: {
+      type: Object,
+      default: () => {
+        return {};
+      }
+    }
+  },
   data() {
     return {
       displayDetail: false,
@@ -60,19 +70,7 @@ export default {
       return this.existed === true ? this.caseDetail.caseName : '新增诊断信息';
     },
     listType() {
-      if (this.$route.matched.some(record => record.meta.myPatients)) {
-        return 'myPatients';
-      } else if (this.$route.matched.some(record => record.meta.otherPatients)) {
-        return 'otherPatients';
-      } else if (this.$route.matched.some(record => record.meta.subjectPatients)) {
-        return 'subjectPatients';
-      } else if (this.$route.matched.some(record => record.meta.therapistsPatients)) {
-        return 'therapistsPatients';
-      } else if (this.$route.matched.some(record => record.meta.appraisersPatients)) {
-        return 'appraisersPatients';
-      } else {
-        return 'unknown';
-      }
+      return this.$store.state.listType;
     },
     isNewCase() {
       if (this.$route.params.caseId && this.$route.params.caseId === 'newCase') {
@@ -91,7 +89,7 @@ export default {
     },
     diagnosticDisease() {
       var obj = {};
-      var propertyList = ['diseaseType', 'caseSymptom', 'patientSymptom'];
+      var propertyList = ['diseaseType', 'caseSymptom', 'diagnoseState', 'specificDisease'];
       for (let propertyName of propertyList) {
         obj[propertyName] = this.caseDetail[propertyName] ? this.caseDetail[propertyName] : '';
       }
@@ -181,15 +179,15 @@ export default {
     },
     goBack() {
       // 按下返回按钮，实际上是修改的路由地址 ———— 因为我们是监控路由地址来决定这个详情窗口是否显示的
-      if (this.listType === 'myPatients') {
+      if (this.listType === this.MY_PATIENTS_TYPE) {
         this.$router.push({name: 'diagnosticInfo'});
-      } else if (this.listType === 'otherPatients') {
+      } else if (this.listType === this.OTHER_PATIENTS_TYPE) {
         this.$router.push({name: 'otherDiagnosticInfo'});
-      } else if (this.listType === 'subjectPatients') {
+      } else if (this.listType === this.SUBJECT_PATIENTS_TYPE) {
         this.$router.push({name: 'subjectDiagnosticInfo'});
-      } else if (this.listType === 'therapistsPatients') {
+      } else if (this.listType === this.THERAPISTS_PATIENTS_TYPE) {
         this.$router.push({name: 'therapistsPatientsDiagnosticInfo'});
-      } else if (this.listType === 'appraisersPatients') {
+      } else if (this.listType === this.APPRAISERS_PATIENTS_TYPE) {
         this.$router.push({name: 'appraisersPatientsDiagnosticInfo'});
       }
 

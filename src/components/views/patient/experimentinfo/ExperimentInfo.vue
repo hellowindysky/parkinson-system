@@ -2,39 +2,39 @@
   <div class="experiment-info">
     <div class="top-bar">
       <span class="title">实验流程</span>
-      <span v-if="status > 2" class="info-text">
+      <span v-if="milestoneNum > 2" class="info-text">
         实验方式 <span class="value experiment-mode">{{experimentModeText}}</span>
         治疗者 <span class="value therapist">{{therapist}}</span>
         评估者 <span class="value appraiser">{{appraiser}}</span>
         实验编号 <span class="value experiment-number">{{experimentNumber}}</span>
       </span>
       <div class="button light-button application-button"
-        v-if="listType==='myPatients' && progressList.length===0"
+        v-if="listType===MY_PATIENTS_TYPE && progressList.length===0"
         @click="applyTojoin">
         申请入组
       </div>
       <div class="button light-button application-button"
-        v-if="listType==='myPatients' && isApplicationRejected"
+        v-if="listType===MY_PATIENTS_TYPE && isApplicationRejected"
         @click="applyTojoin">
         重新申请
       </div>
       <div class="button light-blue-button reject-button"
-        v-if="listType==='appraisersPatients' && progressList.length>0 && status===2"
+        v-if="listType===APPRAISERS_PATIENTS_TYPE && progressList.length>0 && milestoneNum===2 && status===1"
         @click="rejectApplication">
         退回
       </div>
       <div class="button light-button agree-button"
-        v-if="listType==='appraisersPatients' && progressList.length>0 && status===2"
+        v-if="listType===APPRAISERS_PATIENTS_TYPE && progressList.length>0 && milestoneNum===2 && status===1"
         @click="agreeApplication">
         通过
       </div>
       <div class="button light-button complete-therapy-button"
-        v-if="listType==='therapistsPatients' && progressList.length>0 && status===3"
+        v-if="listType===THERAPISTS_PATIENTS_TYPE && progressList.length>0 && milestoneNum===3"
         @click="completeTherapy">
         结束治疗
       </div>
       <div class="button light-button complete-follow-up-button"
-        v-if="listType==='appraisersPatients' && progressList.length>0 && status===3"
+        v-if="listType===APPRAISERS_PATIENTS_TYPE && progressList.length>0 && milestoneNum===4"
         @click="completeFollowUp">
         本期随访结束
       </div>
@@ -52,12 +52,16 @@
         </tr>
         <tr class="row" v-for="(step, index) in progressList">
           <td class="col col-number">{{index + 1}}</td>
-          <td class="col col-progress">{{step.milestone}}</td>
+          <td class="col col-progress">{{getMilestone(step, index)}}</td>
           <td class="col col-executor">{{step.executeBy}}</td>
           <td class="col col-status" :class="getStatusColor(step)">{{getStatusText(step)}}</td>
           <td class="col col-start-time">{{step.startDate}}</td>
           <td class="col col-end-time">{{step.endDate}}</td>
-          <td class="col col-remarks">{{step.remark}}</td>
+          <td class="col col-remarks">
+            {{step.remark}}
+            <span class="iconfont icon-detail" @click="seeDetail(step)"
+              v-if="index < progressList.length - 1"></span>
+          </td>
         </tr>
       </table>
     </div>
@@ -73,26 +77,16 @@ export default {
     return {
       progressList: [],
       status: '',
+      milestoneNum: '',
       experimentMode: '',
       therapist: '',
-      appraiser: ''
+      appraiser: '',
+      doctor: ''
     };
   },
   computed: {
     listType() {
-      if (this.$route.matched.some(record => record.meta.myPatients)) {
-        return 'myPatients';
-      } else if (this.$route.matched.some(record => record.meta.otherPatients)) {
-        return 'otherPatients';
-      } else if (this.$route.matched.some(record => record.meta.subjectPatients)) {
-        return 'subjectPatients';
-      } else if (this.$route.matched.some(record => record.meta.therapistsPatients)) {
-        return 'therapistsPatients';
-      } else if (this.$route.matched.some(record => record.meta.appraisersPatients)) {
-        return 'appraisersPatients';
-      } else {
-        return 'unknown';
-      }
+      return this.$store.state.listType;
     },
     isApplicationRejected() {
       var length = this.progressList.length;
@@ -118,16 +112,48 @@ export default {
       Bus.$emit(this.SHOW_APPLICATION_MODAL, this.ADD_NEW_CARD, {}, true);
     },
     rejectApplication() {
-      Bus.$emit(this.SHOW_REJECTION_MODAL, this.ADD_NEW_CARD, {}, true);
+      Bus.$emit(this.SHOW_REJECTION_MODAL, this.ADD_NEW_CARD, {}, true, this.doctor);
     },
     agreeApplication() {
-      Bus.$emit(this.SHOW_RATIFICATION_MODAL, this.ADD_NEW_CARD, {}, true);
+      Bus.$emit(this.SHOW_RATIFICATION_MODAL, this.ADD_NEW_CARD, {}, true, this.therapist);
     },
     completeTherapy() {
-      Bus.$emit(this.SHOW_TERMINATION_MODAL, this.ADD_NEW_CARD, {}, true);
+      Bus.$emit(this.SHOW_TERMINATION_MODAL, this.ADD_NEW_CARD, {}, true, this.appraiser);
     },
     completeFollowUp() {
-      Bus.$emit(this.SHOW_FOLLOW_UP_SUMMARY_MODAL, this.ADD_NEW_CARD, {}, true);
+      Bus.$emit(this.SHOW_FOLLOW_UP_TERMINATION_MODAL, this.ADD_NEW_CARD, {}, true, this.appraiser);
+    },
+    seeDetail(step) {
+      Bus.$emit(this.SHOW_EXPERIMENT_STEP_MODAL, this.VIEW_CURRENT_CARD, step, false);
+    },
+    getMilestoneNum(step) {
+      var milestoneNum = 0;
+      var phase = step.phase;
+      if (phase && phase.split('.').length > 0) {
+        milestoneNum = Number(phase.split('.')[0]);
+      }
+      return milestoneNum;
+    },
+    getMilestone(step, currentIndex) {
+      var milestoneNum = this.getMilestoneNum(step);
+
+      // 因为存在多个随访期，所以需要知道到底是第几个随访期
+      if (milestoneNum === 4) {
+        var count = 0;
+        for (var i = 0; i <= currentIndex; i++) {
+          if (this.getMilestoneNum(this.progressList[i]) === 4) {
+            count += 1;
+          }
+        }
+      }
+
+      let milestoneList = ['', '筛选入组', '基线评估', '治疗期', '随访期', '实验结束'];
+
+      if (milestoneNum === 4) {
+        return milestoneList[milestoneNum] + '(' + count + ')';
+      } else {
+        return milestoneList[milestoneNum];
+      }
     },
     getStatus(step) {
       var phase = step.phase;
@@ -141,7 +167,9 @@ export default {
     },
     getStatusText(step) {
       var status = this.getStatus(step);
-      if (status === 1) {
+      if (status === 0) {
+        return '等待揭盲';
+      } else if (status === 1) {
         return '进行中';
       } else if (status === 2) {
         return '完成';
@@ -151,8 +179,10 @@ export default {
     },
     getStatusColor(step) {
       var status = this.getStatus(step);
-      if (status === 1) {
+      if (status === 0) {
         return 'waiting';
+      } else if (status === 1) {
+        return 'ongoing';
       } else if (status === 2) {
         return 'finished';
       } else if (status === 3) {
@@ -165,17 +195,24 @@ export default {
         'tcTaskId': this.$store.state.subjectId
       };
       queryExperimentProgress(experimentInfo).then((data) => {
-        console.log(data);
+        // console.log(data);
         if (data && data.patientExperiment && data.patientExperiment.length > 0) {
           this.progressList = data.patientExperiment;
         } else {
           this.progressList = [];
         }
-        this.status = data.status ? data.status : '';
+        var currentPhase = data.status ? data.status : '';
+        var status = currentPhase.split('.')[1] ? currentPhase.split('.')[1] : 0;
+        var milestoneNum = currentPhase.split('.')[0] ? currentPhase.split('.')[0] : 0;
+        this.status = Number(status);
+        this.milestoneNum = Number(milestoneNum);
         this.experimentMode = data.taskMode ? data.taskMode : 1;
         this.therapist = data.treater ? data.treater : '';
         this.appraiser = data.assessor ? data.assessor : '';
+        this.doctor = data.doctor ? data.doctor : '';
         this.experimentNumber = data.taskCode ? data.taskCode : '';
+
+        Bus.$emit(this.SCROLL_AREA_SIZE_CHANGE);
       }, (error) => {
         console.log(error);
       });
@@ -192,6 +229,9 @@ export default {
     } else {
       next(from.path);
     }
+  },
+  beforeDestroy() {
+    Bus.$off(this.UPDATE_EXPERIMENT_INFO);
   }
 };
 </script>
@@ -290,6 +330,7 @@ export default {
           color: #fff;
         }
         .col {
+          padding: 0 3px;
           overflow: hidden;
           text-overflow:ellipsis;
           white-space: nowrap;
@@ -313,8 +354,25 @@ export default {
           }
           &.col-remarks {
             width: 30%;
+            padding-right: 15px;
+            .iconfont {
+              position: absolute;
+              right: 3px;
+              font-size: @normal-font-size;
+              // font-weight: bold;
+              cursor: pointer;
+              &:hover {
+                opacity: 0.6;
+              }
+              &:active {
+                opacity: 0.8;
+              }
+            }
           }
           &.waiting {
+            color: @light-font-color;
+          }
+          &.ongoing {
             color: @green-color;
           }
           &.finished {

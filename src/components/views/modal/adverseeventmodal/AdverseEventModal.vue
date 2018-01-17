@@ -320,7 +320,7 @@
               </span>
             </div>
           </div>
-        </div> 
+        </div>
         <div class="seperate-line">
           <div class="toggle-fold-button" @click="toggleContentFoldedEndEvent">
             不良事件结局

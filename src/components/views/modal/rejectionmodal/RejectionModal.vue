@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="rejection-modal-wrapper" v-show="displayModal">
     <div class="rejection-modal">
-      <h3 class="title">{{title}}</h3>
+      <h3 class="title">退回</h3>
       <div class="content">
         <div class="field whole-line">
           <span class="field-name">
@@ -16,7 +16,7 @@
             接收人
           </span>
           <span class="field-input">
-            XXX
+            {{doctor}}
           </span>
         </div>
         <div class="field whole-line">
@@ -56,17 +56,11 @@ export default {
       mode: '',
       completeInit: false,
       remark: '',
+      doctor: '',
       showEdit: true
     };
   },
   computed: {
-    title() {
-      if (this.mode === this.ADD_NEW_CARD) {
-        return '退回';
-      } else {
-        return '退回';
-      }
-    },
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
         return true;
@@ -76,11 +70,14 @@ export default {
     }
   },
   methods: {
-    showPanel(cardOperation, item, showEdit) {
+    showPanel(cardOperation, item, showEdit, doctor) {
       this.completeInit = false;
       this.mode = cardOperation;
       this.showEdit = showEdit;
       // console.log('item: ', item);
+
+      this.remark = '';
+      this.doctor = doctor;
 
       this.$nextTick(() => {
         for (var property in this.warningResults) {
@@ -94,8 +91,7 @@ export default {
       this.displayModal = true;
     },
     updateWarning(fieldName) {
-      var list = ['recordDate', 'physiType', 'leftThresholdBefore', 'rightThresholdBefore'];
-      if (list.indexOf(fieldName) >= 0 && !this[fieldName]) {
+      if (this[fieldName] === '') {
         this.warningResults[fieldName] = '必填项';
       } else {
         this.warningResults[fieldName] = '';
@@ -135,6 +131,13 @@ export default {
     },
     _handleError(error) {
       console.log(error);
+      if (error.code === 2009) {
+        this.$message({
+          message: '当前操作无法完成，请刷新页面后再试',
+          type: 'warning',
+          duration: 2000
+        });
+      }
       this.lockSubmitButton = false;
     },
     updateAndClose() {
