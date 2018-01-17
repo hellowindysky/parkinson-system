@@ -143,12 +143,21 @@
         <p class="question-title">
           <span>{{item.subjectName}}</span>
         </p>
-        <el-radio-group class="question-body" :key="index" v-model="copyInfo.scaleOptionIds[index]">
+        <el-radio-group v-if="item.questionType===0 || item.questionType===1"
+          class="question-body" :key="index" v-model="copyInfo.patientOptions[index].scaleOptionId">
           <el-radio class="question-selection" v-for="(option, i) in item.options"
             :label="option.scaleOptionId" :key="i" :disabled="mode===VIEW_CURRENT_CARD">
               {{option.optionName}}
+            <el-input v-if="item.questionType===1 && option.scaleOptionId===copyInfo.patientOptions[index].scaleOptionId"
+              v-model="copyInfo.patientOptions[index].remarks" :disabled="mode===VIEW_CURRENT_CARD">
+            </el-input>
           </el-radio>
         </el-radio-group>
+        <el-input v-model="copyInfo.patientOptions[index].remarks" :disabled="mode===VIEW_CURRENT_CARD"
+          class="question-body" v-if="item.questionType===2"></el-input>
+        <el-input v-model="copyInfo.patientOptions[index].optionPoint" :disabled="mode===VIEW_CURRENT_CARD"
+          class="question-body" v-if="item.questionType===3"
+          @blur="transformToNum(copyInfo.patientOptions[index], 'optionPoint')"></el-input>
       </div>
 
     </div>
@@ -203,7 +212,7 @@ export default {
     ]),
     targetScale() {
       let scale = Util.getElement('scaleInfoId', this.copyInfo.scaleInfoId, this.allScale);
-      return scale;
+      return scale ? scale : {};
     },
     scaleName() {
       return this.targetScale.gaugeName ? this.targetScale.gaugeName : '';
@@ -265,7 +274,6 @@ export default {
       this.initPatientScale(item);
       this.scaleTypeCode = scaleTypeCode;
       this.initSymptomList();
-      this.scaleAnswer = [];
 
       this.fileList4 = [];
       this.newOther = [];
@@ -279,12 +287,10 @@ export default {
 
       // console.log('item', item);
 
-      // 只有阅读和修改的状态下，item.scaleOptionIds 才可能不为空
-      if (item.scaleOptionIds) {
-        for (let i = 0; i < item.scaleOptionIds.length; i++) {
-          let answer = item.scaleOptionIds[i];
-          this.$set(this.scaleAnswer, i, answer);
-        }
+      this.scaleAnswer = [];
+      // 只有阅读和修改的状态下，item.patientOptions 才可能不为空
+      if (item.patientOptions) {
+        this.scaleAnswer = item.patientOptions;
       }
 
       this.getCorrectAnswer();
@@ -321,13 +327,26 @@ export default {
       // console.log('submitData', submitData);
 
       // 去掉空答案
-      var optionIds = [];
-      for (let i = 0; i < submitData.scaleOptionIds.length; i++) {
-        if (submitData.scaleOptionIds[i] !== '') {
-          optionIds.push(submitData.scaleOptionIds[i]);
+      var options = [];
+      for (let i = 0; i < submitData.patientOptions.length; i++) {
+        let questionType = this.targetScale.questions[i].questionType;
+        if (questionType === 0 || questionType === 1) {
+          if (submitData.patientOptions[i].scaleOptionId !== '') {
+            options.push(submitData.patientOptions[i]);
+          }
+        } else if (questionType === 2) {
+          if (submitData.patientOptions[i].remarks !== '') {
+            submitData.patientOptions[i].scaleOptionId = this.targetScale.questions[i].options[0].scaleOptionId;
+            options.push(submitData.patientOptions[i]);
+          }
+        } else if (questionType === 3) {
+          if (submitData.patientOptions[i].optionPoint !== '') {
+            submitData.patientOptions[i].scaleOptionId = this.targetScale.questions[i].options[0].scaleOptionId;
+            options.push(submitData.patientOptions[i]);
+          }
         }
       }
-      submitData.scaleOptionIds = optionIds;
+      submitData.patientOptions = options;
 
       submitData.inspectTime = Util.simplifyTime(submitData.inspectTime);
       submitData.lastTakingTime = Util.simplifyTime(submitData.lastTakingTime);
@@ -353,6 +372,7 @@ export default {
       }
       submitData.scaleFiles = this.newOther;
 
+      this.lockSubmitButton = false;
       if (this.mode === this.ADD_NEW_CARD) {
         // console.log('add', submitData);
         addScaleInfo(submitData).then(() => {
@@ -376,28 +396,49 @@ export default {
       this.lockSubmitButton = false;
       this.displayScaleModal = false;
     },
+    transformToNum(obj, propertyName) {
+      var value = parseFloat(obj[propertyName]);
+      obj[propertyName] = (obj[propertyName] !== '' && !isNaN(value)) ? Number(value.toFixed(1)) : '';
+    },
     getCorrectAnswer() {
       // 取出量表的选中答案以及对应的分数
       if (!this.targetScale.questions) {
         return;
       }
-      this.$set(this.copyInfo, 'scaleOptionIds', []);
+
+      if (this.targetScale.questions && this.copyInfo.patientOptions &&
+        this.copyInfo.patientOptions.length !== this.targetScale.questions.length) {
+        this.copyInfo.patientOptions = [];
+        for (let i = 0; i < this.targetScale.questions.length; i++) {
+          this.$set(this.copyInfo.patientOptions, i, {});
+          this.$set(this.copyInfo.patientOptions[i], 'scaleOptionId', '');
+          this.$set(this.copyInfo.patientOptions[i], 'remarks', '');
+          this.$set(this.copyInfo.patientOptions[i], 'optionPoint', '');
+        }
+      }
+
       for (var i = 0; i < this.targetScale.questions.length; i++) {
         let options = this.targetScale.questions[i].options;
-        let isNull = true;
-        let targetAnswer = '';
+        let notExisted = true;
+        let targetOptionId = '';
+        let remarks = '';
+        let optionPoint = '';
         for (let option of options) {
           for (let answer of this.scaleAnswer) {
-            if (option.scaleOptionId === answer) {
-              isNull = false;
-              targetAnswer = option.scaleOptionId;
+            if (option.scaleOptionId === answer.scaleOptionId) {
+              notExisted = false;
+              targetOptionId = option.scaleOptionId;
+              remarks = answer.remarks ? answer.remarks : '';
+              optionPoint = answer.optionPoint ? answer.optionPoint : '';
             }
           }
         }
-        if (isNull) {
-          this.$set(this.copyInfo.scaleOptionIds, i, '');
+        if (notExisted) {
+          this.$set(this.copyInfo.patientOptions[i], 'scaleOptionId', '');
         } else {
-          this.$set(this.copyInfo.scaleOptionIds, i, targetAnswer);
+          this.$set(this.copyInfo.patientOptions[i], 'scaleOptionId', targetOptionId);
+          this.$set(this.copyInfo.patientOptions[i], 'remarks', remarks);
+          this.$set(this.copyInfo.patientOptions[i], 'optionPoint', optionPoint);
         }
       }
     },
@@ -425,11 +466,14 @@ export default {
       this.$set(this.copyInfo, 'inspectTime', '');
       this.$set(this.copyInfo, 'lastTakingTime', '');
       this.$set(this.copyInfo, 'scaleExtraInfo', '');
-      this.$set(this.copyInfo, 'scaleOptionIds', []);
+      this.$set(this.copyInfo, 'patientOptions', []);
       this.$set(this.copyInfo, 'scaleSympInfoList', []);
       this.$set(this.copyInfo, 'patientCaseId', this.$route.params.caseId);
       this.$set(this.copyInfo, 'patientId', this.$route.params.id);
       vueCopy(item, this.copyInfo);
+      if (item.id !== undefined) {
+        this.copyInfo.id = item.id;
+      }
     },
     initSymptomList() {
       var typesInfo = Util.getElement('typegroupcode', 'scaleSymp', this.typeGroup);
@@ -666,9 +710,33 @@ export default {
         color: @secondary-button-color;
         font-weight: normal;
         .question-selection {
-          margin: 0;
-          line-height: 38px;
           display: block;
+          margin: 0;
+          height: auto;
+          line-height: 40px;
+          .el-radio__label {
+            display: inline-block;
+            width: 80%;
+            height: 40px;
+            // white-space: pre-wrap;
+            // word-wrap: break-word;
+            // word-break: normal;
+            .el-input {
+              margin-left: 20px;
+              width: 300px;
+              .el-input__inner {
+                height: 30px;
+                border: 1px solid @inverse-font-color;
+                background-color: @screen-color;
+              }
+              &.is-disabled {
+                .el-input__inner {
+                  background-color: #f6f7f8;
+                  color: @gray-color;
+                }
+              }
+            }
+          }
           .is-disabled {
             .el-radio__inner {
               background-color: @inverse-font-color;
@@ -676,6 +744,20 @@ export default {
             }
             &+.el-radio__label {
               color: @inverse-font-color;
+            }
+          }
+        }
+        &.el-input {
+          width: 90%;
+          .el-input__inner {
+            height: 30px;
+            border: 1px solid @inverse-font-color;
+            background-color: @screen-color;
+          }
+          &.is-disabled {
+            .el-input__inner {
+              background-color: #f6f7f8;
+              color: @gray-color;
             }
           }
         }
@@ -745,7 +827,7 @@ export default {
           }
           &.is-disabled {
             .el-input__inner {
-              background-color: #f0f1f2;
+              background-color: #f6f7f8;
               color: @gray-color;
             }
           }
@@ -906,7 +988,7 @@ export default {
           }
           &.is-disabled {
             .el-input__inner {
-              background-color: #f0f1f2;
+              background-color: #f6f7f8;
               color: @gray-color;
             }
           }
