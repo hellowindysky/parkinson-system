@@ -440,7 +440,7 @@ export default {
       this.deviceType = item.deviceType ? item.deviceType : '';
       this.stimulusIntensity = item.stimulusIntensity ? item.stimulusIntensity : '';
       this.stimulusSide = item.stimulusSide ? item.stimulusSide : '';
-
+      this.stimulusFrequency = item.stimulusFrequency ? item.stimulusFrequency : '';
       this.stimulusDuration = item.stimulusDuration ? item.stimulusDuration : '';
       this.leftThresholdBefore = item.leftThresholdBefore ? item.leftThresholdBefore : '';
       this.rightThresholdBefore = item.rightThresholdBefore ? item.rightThresholdBefore : '';
