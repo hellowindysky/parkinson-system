@@ -17,6 +17,7 @@
               v-model="occurTime"
               :class="{'warning': warningResults.occurTime}"
               type="datetime"
+              format="yyyy-MM-dd HH:mm" 
               placeholder="请选择开始发生时间"
               :picker-options="pickerOptions"
               @change="updateWarning('occurTime')">
