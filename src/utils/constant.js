@@ -3,6 +3,11 @@ export default {
   // variables
   SUBJECT_ID_FOR_HOSPITAL: -1,
 
+  EXPERIMENT_STEP_SCREENING: 2,
+  EXPERIMENT_STEP_THERAPY: 3,
+  EXPERIMENT_STEP_FOLLOW_UP: 4,
+  EXPERIMENT_STEP_COMPLETE: 5,
+
   // mode
   READING_MODE: 'reading',
   EDITING_MODE: 'editing',

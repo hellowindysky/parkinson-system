@@ -2,33 +2,41 @@
   <folding-panel :title="'基本情况'" :mode="mutableMode" :folded-status="foldedStatus"
     v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit" :editable="canEdit">
     <div class="diagnostic-basic">
-      <div v-for="field in diagnosticBasicTemplate" class="field"
+      <div v-for="field in diagnosticBasicTemplate" class="field" v-if="isShown(field.fieldName)"
        :class="{'whole-line': field.fieldName === 'remarks', 'multi-line': field.fieldName === 'remarks'}">
-        <span class="field-name ">
+        <span class="field-name">
           {{field.cnfieldName}}
           <span class="required-mark" v-show="field.must===1">*</span>
         </span>
 
-        <div class="field-value" v-show="mutableMode===READING_MODE">
+        <div class="field-value" v-if="mutableMode===READING_MODE">
           <span v-if="getUIType(field.fieldName)===3">
-            {{ transformTypeCode(copyInfo[field.fieldName], field.fieldName) }}
+            {{ transform(copyInfo[field.fieldName], field.fieldName) }}
           </span>
           <span v-else>
-            {{copyInfo[field.fieldName]}}
+            {{ copyInfo[field.fieldName] }}
           </span>
         </div>
 
-        <div class="field-input" v-show="mutableMode===EDITING_MODE">
-          <span class="warning-text" v-show="true">
+        <div class="field-input" v-else-if="mutableMode===EDITING_MODE">
+          <span class="warning-text">
             {{warningResults[field.fieldName]}}
           </span>
-          <el-select v-if="getUIType(field.fieldName)===3" v-model="copyInfo[field.fieldName]"
-           :class="{'warning': warningResults[field.fieldName]}" :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)">
+          <span v-if="getMatchedField(field.fieldName).readOnlyType===2" class="read-only-text">
+            <span v-if="getUIType(field.fieldName)===3">
+              {{ transform(copyInfo[field.fieldName], field.fieldName) }}
+            </span>
+            <span v-else>
+              {{ copyInfo[field.fieldName] }}
+            </span>
+          </span>
+          <el-select v-else-if="getUIType(field.fieldName)===3" v-model="copyInfo[field.fieldName]" @change="updateWarning(field)"
+           :class="{'warning': warningResults[field.fieldName]}" :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
             <el-option v-for="option in getOptions(field.fieldName)" :label="option.typeName"
              :value="option.typeCode" :key="option.typeCode"></el-option>
           </el-select>
           <el-date-picker v-else-if="getUIType(field.fieldName)===6" v-model="copyInfo[field.fieldName]" type="date"
-           :class="{'warning': warningResults[field.fieldName]}" :placeholder="getMatchedField(field).cnFieldDesc"
+           :class="{'warning': warningResults[field.fieldName]}" :placeholder="getMatchedField(field.fieldName).cnFieldDesc"
            :editable="true" @change="updateWarning(field)">
           </el-date-picker>
           <el-input v-else-if="getUIType(field.fieldName)===1" v-model="copyInfo[field.fieldName]"
@@ -55,6 +63,7 @@ export default {
       foldedStatus: false,
       copyInfo: {},
       warningResults: {},
+      inSubject: true,
       lockSubmitButton: false
     };
   },
@@ -66,6 +75,10 @@ export default {
     diagnosticBasic: {
       type: Object,
       default: {}
+    },
+    experimentStep: {
+      type: Number,
+      default: 0
     },
     archived: {
       type: Boolean,
@@ -81,15 +94,23 @@ export default {
     diagnosticBasicTemplate() {
       return this.patientCaseTemplateGroups[0] ? this.patientCaseTemplateGroups[0] : [];
     },
+    subjectId() {
+      return this.$store.state.subjectId;
+    },
     listType() {
       return this.$store.state.listType;
     },
     canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients) && (!this.archived || this.$route.params.caseId === 'newCase')) {
+      var isMyPatientsLits = this.$route.matched.some(record => record.meta.myPatients);
+      var isExperimentPatientsList = this.$route.matched.some(record => {
+        return record.meta.therapistsPatients || record.meta.appraisersPatients;
+      });
+      var duringExperiment = this.experimentStep > 0;
+      if ((isMyPatientsLits || (isExperimentPatientsList && duringExperiment)) &&
+        (!this.archived || this.$route.params.caseId === 'newCase')) {
         return true;
-      } else {
-        return false;
       }
+      return false;
     }
   },
   methods: {
@@ -203,6 +224,14 @@ export default {
       this.lockSubmitButton = false;
       this.mutableMode = this.READING_MODE;
     },
+    isShown(fieldName) {
+      if (['taskCode', 'taskName', 'createUser', 'status'].indexOf(fieldName) >= 0) {
+        if (this.inSubject || !this.copyInfo.taskCode) {
+          return false;
+        }
+      }
+      return true;
+    },
     getMatchedField(fieldName) {
       // 在字典项中查询该名字所对应的字段，从而方便我们得到该字段的详细信息
       return Util.getElement('fieldName', fieldName, this.patientCaseDictionary);
@@ -215,8 +244,10 @@ export default {
       types = types ? types : [];
       return types;
     },
-    transformTypeCode(typeCode, fieldName) {
-      return Util.getElement('typeCode', typeCode, this.getOptions(fieldName)).typeName;
+    transform(typeCode, fieldName) {
+      typeCode = parseInt(typeCode, 10);
+      var fieldEnumId = this.getMatchedField(fieldName).fieldEnumId;
+      return Util.getElement('typeCode', typeCode, this.getOptions(fieldEnumId)).typeName;
     },
     updateWarning(field) {
       var fieldName = field.fieldName;
@@ -231,11 +262,13 @@ export default {
     FoldingPanel
   },
   mounted() {
-    setTimeout(() => {
-      // console.log(this.diagnosticBasic);
-      // console.log(this.diagnosticBasicTemplate);
-      // console.log(this.patientCaseDictionary);
-    }, 2000);
+    // setTimeout(() => {
+    //   console.log(this.diagnosticBasic);
+    //   console.log(this.diagnosticBasicTemplate);
+    //   console.log(this.patientCaseDictionary);
+    // }, 2000);
+
+    this.inSubject = this.subjectId !== this.SUBJECT_ID_FOR_HOSPITAL;
 
     // 添加新的诊断记录时，父组件会传递 EDIT 事件给本组件（子组件），因此需要对此进行监听
     this.$on(this.EDIT, this.startEditing);
@@ -249,6 +282,14 @@ export default {
   watch: {
     diagnosticBasic: function() {
       this.copyInfo = Object.assign({}, this.diagnosticBasic);
+    },
+    subjectId: function() {
+      // 为什么要大费周章，又监听，又延时处理，而不直接写成计算属性呢？
+      // 目的就在于这个“延时”上面，因为切换 医院／项目 入口的时候页面有个短暂的延时，我们不希望此时触发页面变化
+      // 因此在切换入口之后，不会马上影响到 this.inSubject 的值，也就不会立刻影响字段的显示
+      setTimeout(() => {
+        this.inSubject = this.subjectId !== this.SUBJECT_ID_FOR_HOSPITAL;
+      }, 500);
     }
   },
   beforeDestroy() {
@@ -313,6 +354,10 @@ export default {
       right: 4%;
       line-height: @field-height;
       overflow: visible;
+      .read-only-text {
+        font-size: @normal-font-size;
+        color: @light-font-color;
+      }
       .warning-text {
         position: absolute;
         top: 25px;

@@ -106,7 +106,10 @@ export default {
       return this.title + '（' + count + '条记录）';
     },
     canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients) && !this.archived) {
+      if ((this.$route.matched.some(record => record.meta.myPatients) ||
+        this.$route.matched.some(record => record.meta.therapistsPatients) ||
+        this.$route.matched.some(record => record.meta.appraisersPatients)) &&
+        !this.archived) {
         return true;
       } else {
         return false;
@@ -121,6 +124,10 @@ export default {
     diagnosticDisease: {
       type: Object,
       default: {}
+    },
+    experimentStep: {
+      type: Number,
+      default: 0
     },
     archived: {
       type: Boolean,

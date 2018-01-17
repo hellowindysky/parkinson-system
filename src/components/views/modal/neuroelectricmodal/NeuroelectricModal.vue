@@ -534,8 +534,9 @@
                 <el-input v-else-if="row[0].uiType===1"
                   v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue">
                 </el-input>
-                <el-input v-else-if="row[0].uiType===2" type="number"
-                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue">
+                <el-input v-else-if="row[0].uiType===2"
+                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"
+                  @blur="transformToNumber(copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0])">
                 </el-input>
                 <el-select v-else-if="row[0].uiType===3"
                   v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue">
@@ -563,8 +564,9 @@
                 <el-input v-else-if="row[1].uiType===1"
                   v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue">
                 </el-input>
-                <el-input v-else-if="row[1].uiType===2" type="number"
-                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue">
+                <el-input v-else-if="row[1].uiType===2"
+                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"
+                  @blur="transformToNumber(copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0])">
                 </el-input>
                 <el-select v-else-if="row[1].uiType===3"
                   v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue">
@@ -601,8 +603,9 @@
                 <el-input v-else-if="col.uiType===1 || (col.uiType===undefined && row.uiType===1)"
                   v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue">
                 </el-input>
-                <el-input v-else-if="col.uiType===2 || (col.uiType===undefined && row.uiType===2)" type="number"
-                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue">
+                <el-input v-else-if="col.uiType===2 || (col.uiType===undefined && row.uiType===2)"
+                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"
+                  @blur="transformToNumber(copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id])">
                 </el-input>
                 <el-select v-else-if="col.uiType===3 || (col.uiType===undefined && row.uiType===3)"
                   v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue">
@@ -1347,6 +1350,12 @@ export default {
         });
       };
       return options;
+    },
+    transformToNumber(obj) {
+      var value = parseFloat(obj.fieldValue);
+      if (obj.fieldValue !== '' && obj.fieldValue !== value) {
+        obj.fieldValue = isNaN(value) ? '' : value;
+      }
     },
     cancel() {
       this.lockSubmitButton = false;

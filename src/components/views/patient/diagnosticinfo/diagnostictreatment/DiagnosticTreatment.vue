@@ -289,6 +289,10 @@ export default {
         return [];
       }
     },
+    experimentStep: {
+      type: Number,
+      default: 0
+    },
     archived: {
       type: Boolean,
       default: true
@@ -346,7 +350,10 @@ export default {
       return this.diagnosticSurgery.patientDbsFollowList ? this.diagnosticSurgery.patientDbsFollowList : [];
     },
     canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients) && !this.archived) {
+      if ((this.$route.matched.some(record => record.meta.myPatients) ||
+        this.$route.matched.some(record => record.meta.therapistsPatients) ||
+        this.$route.matched.some(record => record.meta.appraisersPatients)) &&
+        !this.archived) {
         return true;
       } else {
         return false;
