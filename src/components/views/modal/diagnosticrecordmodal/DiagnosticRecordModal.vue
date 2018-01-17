@@ -156,7 +156,7 @@ export default {
   methods: {
     showModal(cardOperation, item) {
       this.completeInit = false;
-      console.log(cardOperation, item);
+      // console.log(cardOperation, item);
       this.mode = cardOperation;
       // -------------------
       this.copyInfo.ariseTime = item.ariseTime;
@@ -263,6 +263,9 @@ export default {
   },
   mounted() {
     Bus.$on(this.SHOW_DIAGNOSTIC_RECORD_MODAL, this.showModal);
+  },
+  beforeDestroy() {
+    Bus.$off(this.SHOW_DIAGNOSTIC_RECORD_MODAL);
   }
 };
 </script>

@@ -370,6 +370,7 @@ export default {
     Bus.$off(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
     Bus.$off(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
     Bus.$off(this.RECALCULATE_CARD_WIDTH, this.recalculateCardWidth);
+    Bus.$off(this.UPDATE_COMPLAINTSYMPTOMS_INFO);
   },
   components: {
     FoldingPanel,
