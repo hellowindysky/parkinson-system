@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="item" :class="{'current': selected}" @click="select">
     <img class="image" src="~img/profile.png" alt="">
-    <span class="experiment-icon iconfont" :class="experimentStatusIcon"></span>
+    <span class="experiment-icon iconfont" :class="experimentStatusIcon" v-if="experimentStatusIcon"></span>
     <div class="name">{{patient.name}}</div>
     <div class="date">{{patient.createDate}}</div>
     <div class="age">{{patient.age}}岁</div>
