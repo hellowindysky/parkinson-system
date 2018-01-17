@@ -84,7 +84,7 @@
                 </el-select>
               </span>
               <span class="sub-item">
-                <el-date-picker v-model="item.time" type="month" placeholder="选择发生年月"></el-date-picker>
+                <el-date-picker v-model="item.time" type="month" placeholder="选择发生年月" :clearable="false"></el-date-picker>
               </span>
             </div>
 
@@ -742,6 +742,23 @@ export default {
           });
           submitData[key] = transferArr;
           this.$set(this.copyInfo, key, transferArr);
+          for (let i = 0; i < transferArr.length; i++) {
+            let item = transferArr[i];
+            if (item.arisePart === '' || item.arisePart === undefined) {
+              this.$message({
+                message: '请选择发病部位',
+                type: 'warning'
+              });
+              return;
+            };
+            if (item.time === '' || item.time === undefined) {
+              this.$message({
+                message: '请填写发病年月',
+                type: 'warning'
+              });
+              return;
+            };
+          };
         };
       };
       submitData.courseOfDisease = this.courseOfDiseaseInfo;
@@ -881,7 +898,7 @@ export default {
     // this.changeCopyInfo();
   },
   mounted() {
-    // console.log(this.diseaseInfoTemplateGroups[0]);
+    // console.log(this.diseaseInfoTemplateGroups);
     // console.log(this.diseaseInfoDictionary);
     Bus.$on(this.EDIT_DISEASE_INFO, this.startEditing);
     this.updatafirstSymbolCard();
