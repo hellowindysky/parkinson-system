@@ -155,8 +155,14 @@ export default {
     },
     startEditing() {
       this.mutableMode = this.EDITING_MODE;
-      // this.foldedStatus = false;
-      // Bus.$emit(this.SCROLL_AREA_SIZE_CHANGE);
+      this.foldedStatus = false;
+      Bus.$emit(this.SCROLL_AREA_SIZE_CHANGE);
+
+      for (var p in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(p)) {
+          this.warningResults[p] = '';
+        }
+      }
     },
     cancel() {
       vueCopy(this.diagnosticDisease, this.copyInfo);
@@ -317,7 +323,7 @@ export default {
       if (field.must === 1 && !this.copyInfo[fieldName]) {
         this.$set(this.warningResults, fieldName, '必填项');
       } else {
-        this.$set(this.warningResults, fieldName, null);
+        this.$set(this.warningResults, fieldName, '');
       }
     },
     _resolveDeletion() {
