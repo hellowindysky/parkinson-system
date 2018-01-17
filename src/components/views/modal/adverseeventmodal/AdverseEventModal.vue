@@ -154,7 +154,7 @@
             </el-checkbox>
           </div> 
         </div>
-        <div class="field whole-line">
+        <div class="field whole-line excursion">
           伴随用药
         </div>
         <table class="table">
@@ -232,7 +232,7 @@
             </div>
           </div>
           <div class="foldable-content" :class="{'folded': foldedConditionalContentMeasures}">
-            <div class="field whole-line">
+            <div class="field whole-line excursion">
             药物治疗
             </div>
             <table class="table">
@@ -797,7 +797,7 @@ export default {
       text-align: left;
       font-size: 0;
       .foldable-content {
-        padding: 5px 0;
+        // padding: 5px 0;
         margin-bottom: 20px;
         height: auto;
         overflow: hidden;
@@ -888,8 +888,11 @@ export default {
           }
         }
       }
+      .excursion {
+        margin-bottom: -4px;
+      }
       .table {
-        margin: -15px 0 20px;
+        margin: 10px 20px;
         width: 100%;
         border: 1px solid @light-gray-color;
         border-collapse: collapse;
@@ -907,7 +910,7 @@ export default {
             border: 1px solid @light-gray-color;
             .required-mark {
               position: absolute;
-              right: 5px;
+              right: px;
               top: 8px;
               color: red;
               font-size: 25px;
