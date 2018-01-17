@@ -88,7 +88,8 @@ export default {
     },
     diagnosticBasic() {
       var obj = {};
-      var propertyList = ['caseType', 'diagTime', 'remarks'];
+      var propertyList = ['caseType', 'diagTime', 'taskCode', 'taskName', 'createUser',
+        'status', 'remarks'];
       for (let propertyName of propertyList) {
         obj[propertyName] = this.caseDetail[propertyName] ? this.caseDetail[propertyName] : '';
       }
