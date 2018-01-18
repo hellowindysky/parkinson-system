@@ -142,18 +142,23 @@
             </el-select>
           </span>
         </div>
-        <div class="field" v-show="seriousFlag===1">
+        <div class="field whole-line" v-show="seriousFlag===1">
           <span class="field-name">
             严重不良事件：
           </span>
-          <div class="serious-adverse-event">
-            <el-checkbox v-for="(item, index) in getOptions('seriousAdverse')"
-              v-model="seriousAdverseEvents[index]"
-              :key="item.code"
-              :label="item.name"
-              :disabled="mode===VIEW_CURRENT_CARD">
-            </el-checkbox>
-          </div> 
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+           {{translateToName()}}
+          </span>
+          <span class="field-input" v-else>
+            <div class="serious-adverse-event">
+              <el-checkbox v-for="(item, index) in getOptions('seriousAdverse')"
+                v-model="seriousAdverseEvents[index]"
+                :key="item.code"
+                :label="item.name"
+                :disabled="mode===VIEW_CURRENT_CARD">
+              </el-checkbox>
+            </div> 
+          </span>
         </div>
         <div class="field whole-line excursion">
           伴随用药
@@ -477,6 +482,16 @@ export default {
     }
   },
   methods: {
+    translateToName() {
+      let typeArr = this.getOptions('seriousAdverse');
+      let str = [];
+      this.seriousAdverseEvents.forEach((item, i) => {
+        if (item === true) {
+          str.push(typeArr[i].name);
+        }
+      });
+      return str.join('，');
+    },
     showPanel(cardOperation, item, showEdit) {
       this.completeInit = false;
       this.mode = cardOperation;
@@ -781,7 +796,7 @@ export default {
     .serious-adverse-event {
       position: relative;
       top: 0;
-      left: @field-name-width;
+      // left: @field-name-width;
       .el-checkbox {
         padding-right: 15px;
         margin-left: 0;
