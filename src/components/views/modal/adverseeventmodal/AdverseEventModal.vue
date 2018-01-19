@@ -539,8 +539,8 @@ export default {
       this.completeInit = true;
       this.displayModal = true;
       this.updateScrollbar();
-      this.foldedConditionalContentMeasures = true;
-      this.foldedConditionalContentEndEvent = true;
+      this.foldedConditionalContentMeasures = false;
+      this.foldedConditionalContentEndEvent = false;
     // 获取患者的 DBS 编码
       getPatientSimpleInfo(this.$route.params.id).then((data) => {
         if (data && data.patientInfo && data.patientInfo && data.patientInfo.dbsPatientCode) {
