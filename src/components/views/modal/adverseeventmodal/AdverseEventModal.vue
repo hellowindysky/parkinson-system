@@ -518,8 +518,9 @@ export default {
       this.occurTime = item.occurTime ? item.occurTime : '';
       this.adverseName = item.adverseName ? item.adverseName : '';
       this.adverseDescribe = item.adverseDescribe ? item.adverseDescribe : '';
-      this.measureFlag = item.measureFlag ? item.measureFlag : '';
-      this.seriousFlag = item.seriousFlag ? item.seriousFlag : '';
+      this.measureFlag = item.measureFlag;
+      this.seriousFlag = item.seriousFlag;
+      // this.digitYN = item.digitYN ? item.digitYN : '';
       this.severity = item.severity ? item.severity : '';
       this.treatmentRelate = item.treatmentRelate ? item.treatmentRelate : '';
       this.seriousAdverse = item.seriousAdverse ? item.seriousAdverse : '';
@@ -685,12 +686,12 @@ export default {
       adverseEventInfo.occurTime = this.occurTime;
       adverseEventInfo.adverseName = this.adverseName;
       adverseEventInfo.adverseDescribe = this.adverseDescribe;
-      adverseEventInfo.measureFlag = this.measureFlag;
       adverseEventInfo.adverseSeverity = this.adverseSeverity;
       adverseEventInfo.treatmentRelate = this.treatmentRelate;
       adverseEventInfo.severity = this.severity;
       adverseEventInfo.seriousFlag = this.seriousFlag;
       adverseEventInfo.measureFlag = this.measureFlag;
+      adverseEventInfo.digitYN = this.digitYN;
       adverseEventInfo.seriousAdverse = this.concatenateSeriousAdverse();
 
       adverseEventInfo.remark = this.remark;
