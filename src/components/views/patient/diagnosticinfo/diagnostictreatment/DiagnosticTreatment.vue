@@ -218,7 +218,7 @@
           </div>
           <div class="text line-4">
             <span class="name">不良事件结局</span>
-            <span class="value">{{transformComplicationType(item.adverseResult)}}</span>
+            <span class="value">{{transform(item.adverseResult, 'adverseResult')}}</span>
           </div>
         </card>
       </extensible-panel>
@@ -445,6 +445,12 @@ export default {
       var complicationData = Util.getElement('id', typeId, this.complicationTypeList);
       var complicationName = complicationData.minorComplicationName ? complicationData.minorComplicationName : '';
       return complicationName;
+    },
+    transform(typeId, fieldName) {
+      var typeInfo = Util.getElement('typegroupcode', fieldName, this.typeGroup);
+      var types = typeInfo.types ? typeInfo.types : [];
+      var name = Util.getElement('typeCode', parseInt(typeId, 10), types).typeName;
+      return name;
     },
     transformTypeGroupId(typeId, fieldName) {
       var types = Util.getElement('typegroupcode', fieldName, this.typeGroup).types;
