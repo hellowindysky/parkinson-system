@@ -17,6 +17,7 @@
               v-model="checkTime"
               :class="{'warning': warningResults.checkTime}"
               type="datetime"
+              format="yyyy-MM-dd HH:mm"
               placeholder="请输入检查时间"
               :picker-options="pickerOptions"
               @change="updateWarning('checkTime')">
