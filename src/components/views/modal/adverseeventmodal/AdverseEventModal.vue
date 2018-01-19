@@ -520,7 +520,6 @@ export default {
       this.adverseDescribe = item.adverseDescribe ? item.adverseDescribe : '';
       this.measureFlag = item.measureFlag;
       this.seriousFlag = item.seriousFlag;
-      // this.digitYN = item.digitYN ? item.digitYN : '';
       this.severity = item.severity ? item.severity : '';
       this.treatmentRelate = item.treatmentRelate ? item.treatmentRelate : '';
       this.seriousAdverse = item.seriousAdverse ? item.seriousAdverse : '';
