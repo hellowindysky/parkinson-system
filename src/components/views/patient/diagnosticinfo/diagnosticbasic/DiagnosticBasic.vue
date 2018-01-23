@@ -85,7 +85,7 @@ export default {
       type: Object,
       default: {}
     },
-    experimentStep: {
+    diagnosticExperimentStep: {
       type: Number,
       default: 0
     },
@@ -114,7 +114,7 @@ export default {
       var isExperimentPatientsList = this.$route.matched.some(record => {
         return record.meta.therapistsPatients || record.meta.appraisersPatients;
       });
-      var duringExperiment = this.experimentStep > 0;
+      var duringExperiment = this.diagnosticExperimentStep > 0;
       if (((isMyPatientsList ||
         (isExperimentPatientsList && duringExperiment)) &&
         !this.archived) || this.$route.params.caseId === 'newCase') {

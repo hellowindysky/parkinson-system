@@ -61,7 +61,7 @@ export default {
       type: Array,
       default: () => []
     },
-    experimentStep: {
+    diagnosticExperimentStep: {
       type: Number,
       default: 0
     },

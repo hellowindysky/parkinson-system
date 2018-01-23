@@ -125,7 +125,7 @@ export default {
       type: Object,
       default: {}
     },
-    experimentStep: {
+    diagnosticExperimentStep: {
       type: Number,
       default: 0
     },

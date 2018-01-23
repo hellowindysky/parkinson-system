@@ -8,10 +8,10 @@
     </div>
     <div class="scroll-area" ref="scrollArea">
       <diagnostic-basic :archived="hasBeenArchived" class="folding-panel" :mode="mode" ref="diagnosticBasic"
-        :diagnosticBasic="diagnosticBasic" :experimentStep="getExperimentStep(caseDetail.status)">
+        :diagnosticBasic="diagnosticBasic" :diagnosticExperimentStep="getDiagnosticExperimentStep(caseDetail.status)">
       </diagnostic-basic>
       <diagnostic-disease :archived="hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
-        :diagnosticDisease="diagnosticDisease" :experimentStep="getExperimentStep(caseDetail.status)">
+        :diagnosticDisease="diagnosticDisease" :diagnosticExperimentStep="getDiagnosticExperimentStep(caseDetail.status)">
       </diagnostic-disease>
       <diagnostic-treatment :archived="hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
         :diagnosticSurgery="caseDetail.patientSurgicalDbs"
@@ -19,10 +19,10 @@
         :diagnosticPhysiontherapy="caseDetail.patientPhytheTms"
         :diagnosticTreatmentEvaluation="caseDetail.patientPhytheAssess"
         :diagnosticAdverseEvent="caseDetail.patientAdverse"
-        :experimentStep="getExperimentStep(caseDetail.status)">
+        :diagnosticExperimentStep="getDiagnosticExperimentStep(caseDetail.status)">
       </diagnostic-treatment>
       <diagnostic-scale :archived="hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
-        :patientScale="caseDetail.patientScale" :experimentStep="getExperimentStep(caseDetail.status)">
+        :patientScale="caseDetail.patientScale" :diagnosticExperimentStep="getDiagnosticExperimentStep(caseDetail.status)">
       </diagnostic-scale>
       <diagnostic-examination :archived="hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
         :patientInfo="patientInfo"
@@ -34,7 +34,7 @@
         :electricImagingList="caseDetail.patientElecVideoList"
         :medicalImagingList="caseDetail.patientVideoList"
         :diagnosticVitalSigns="caseDetail.patientVitalSign"
-        :experimentStep="getExperimentStep(caseDetail.status)">
+        :diagnosticExperimentStep="getDiagnosticExperimentStep(caseDetail.status)">
       </diagnostic-examination>
       <!-- 空白区域是为了让最后的内容能够滚动到脱离屏幕最下方 -->
       <div class="blank-area"></div>
@@ -210,7 +210,10 @@ export default {
       this.displayDetail = false;
       this.caseDetail = {};
     },
-    getExperimentStep(status) {
+    getDiagnosticExperimentStep(status) {
+      return status !== undefined && Number(status) > 0 ? Number(status) : 0;
+    },
+    getPatientExperimentStep(status) {
       return status !== undefined && Number(status) > 0 ? Number(status) : 0;
     },
     archiveCase() {

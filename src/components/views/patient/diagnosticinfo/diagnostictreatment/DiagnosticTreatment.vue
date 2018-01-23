@@ -289,7 +289,7 @@ export default {
         return [];
       }
     },
-    experimentStep: {
+    diagnosticExperimentStep: {
       type: Number,
       default: 0
     },
