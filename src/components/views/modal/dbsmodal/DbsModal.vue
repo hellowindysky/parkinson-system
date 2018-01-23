@@ -812,7 +812,7 @@
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
       <div class="button submit-button" @click="submit" v-if="mode!==VIEW_CURRENT_CARD">确定</div>
-      <div class="button edit-button" @click="switchToEditingMode" v-else-if="mode===VIEW_CURRENT_CARD && canEdit">编辑</div>
+      <div class="button edit-button" @click="switchToEditingMode" v-else-if="mode===VIEW_CURRENT_CARD && showEdit">编辑</div>
     </div>
   </div>
 </template>
@@ -915,7 +915,7 @@ export default {
       lastProgramDate: '',
       lastDbsParameter: [],
       lockSubmitButton: false,
-      showEdit: true
+      showEdit: false
     };
   },
   computed: {
@@ -940,13 +940,6 @@ export default {
     },
     rightContactCount() {
       return this.getSideDeviceContact('right').length;
-    },
-    canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
-        return true;
-      } else {
-        return false;
-      }
     }
   },
   methods: {

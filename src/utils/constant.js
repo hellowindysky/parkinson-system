@@ -118,7 +118,7 @@ export default {
   SHOW_FIRSTSYMPTOMS_MODAL: 'showFirstSymptomsModal',
   SHOW_FIRSTTREATMENT_MODAL: 'showFirstTreatmentModal',
   SHOW_DIAGNOSTIC_RECORD_MODAL: 'showDiagnosticRecordModal',
-  SHOW_CHIEFCOMPLAINTSYMPTOMS_MODAL: 'showChiefComplaintSymptomsModal',
+  SHOW_CHIEF_COMPLAINT_SYMPTOMS_MODAL: 'showChiefComplaintSymptomsModal',
   SHOW_APPLICATION_MODAL: 'showApplicationModal',
   SHOW_REJECTION_MODAL: 'showRejectionModal',
   SHOW_RATIFICATION_MODAL: 'showRatificationModal',

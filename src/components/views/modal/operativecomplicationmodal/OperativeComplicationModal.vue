@@ -40,7 +40,7 @@
       </div>
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
-      <div class="button edit-button" v-if="mode===VIEW_CURRENT_CARD && canEdit" @click="switchToEditingMode">编辑</div>
+      <div class="button edit-button" v-if="mode===VIEW_CURRENT_CARD && showEdit" @click="switchToEditingMode">编辑</div>
       <div class="button submit-button" v-else-if="mode!==VIEW_CURRENT_CARD" @click="submit">确定</div>
     </div>
   </div>
@@ -64,7 +64,7 @@ export default {
       warningResults: {},
       completeInit: false,
       lockSubmitButton: false,
-      showEdit: true,
+      showEdit: false,
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now();
@@ -84,13 +84,6 @@ export default {
         return '新增术后并发症';
       } else {
         return '术后并发症';
-      }
-    },
-    canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
-        return true;
-      } else {
-        return false;
       }
     }
   },

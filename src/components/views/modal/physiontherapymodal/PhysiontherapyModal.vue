@@ -120,15 +120,15 @@
               :value="item.code">
             </el-checkbox>
           </div>
-           <div class="stimulate-side"> 
+           <div class="stimulate-side">
               <el-checkbox v-model="stimulateSideEvents1[index]"
                 v-for="(item, index) in getOptions('stimulusSide')"
                 :label="item.name"
-                :key="item.code"  
+                :key="item.code"
                 :disabled="mode===VIEW_CURRENT_CARD">
               </el-checkbox>
             </div>
-            <div class="stimulate-side"> 
+            <div class="stimulate-side">
               <el-checkbox v-model="stimulateSideEvents2[index]"
                 v-for="(item, index) in getOptions('stimulusSide')"
                 :label="item.name"
@@ -136,25 +136,25 @@
                 :disabled="mode===VIEW_CURRENT_CARD">
               </el-checkbox>
             </div>
-            <div class="stimulate-side"> 
+            <div class="stimulate-side">
               <el-checkbox v-model="stimulateSideEvents3[index]"
                 v-for="(item, index) in getOptions('stimulusSide')"
                 :label="item.name"
-                :key="item.code"        
+                :key="item.code"
                 :disabled="mode===VIEW_CURRENT_CARD">
               </el-checkbox>
             </div>
-          <!-- <div class="stimulate-side"> 
+          <!-- <div class="stimulate-side">
             <el-checkbox-group v-model="stimulateSideEvents1">
-              <el-checkbox 
+              <el-checkbox
                 v-for="(item, index) in getOptions('stimulusSide')"
                 :label="item.name"
-                :key="item.code"  
+                :key="item.code"
                 :disabled="mode===VIEW_CURRENT_CARD">
               </el-checkbox>
             </el-checkbox-group>
             <el-checkbox-group v-model="stimulateSideEvents2">
-              <el-checkbox 
+              <el-checkbox
                 v-for="(item, index) in getOptions('stimulusSide')"
                 :label="item.name"
                 :key="item.code"
@@ -162,10 +162,10 @@
               </el-checkbox>
             </el-checkbox-group>
             <el-checkbox-group v-model="stimulateSideEvents3">
-              <el-checkbox 
+              <el-checkbox
                 v-for="(item, index) in getOptions('stimulusSide')"
                 :label="item.name"
-                :key="item.code"        
+                :key="item.code"
                 :disabled="mode===VIEW_CURRENT_CARD">
               </el-checkbox>
             </el-checkbox-group>
@@ -244,7 +244,7 @@
         </div>
         <div class="seperate-line"></div>
         <div class="check-field">
-          无不良反应： 
+          无不良反应：
           <el-checkbox v-model="hasNoReaction" @change="checkAll"
           :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
         </div>
@@ -293,7 +293,7 @@
       <div class="seperate-line"></div>
       <div class="button cancel-button btn-margin" @click="cancel">取消</div>
       <div v-if="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD" class="button submit-button btn-margin" @click="submit">确定</div>
-      <div v-else-if="mode===VIEW_CURRENT_CARD && canEdit" class="button submit-button btn-margin" @click="switchToEditingMode">编辑</div>
+      <div v-else-if="mode===VIEW_CURRENT_CARD && showEdit" class="button submit-button btn-margin" @click="switchToEditingMode">编辑</div>
     </div>
   </div>
 </template>
@@ -402,7 +402,7 @@ export default {
           return time.getTime() > Date.now();
         }
       },
-      showEdit: true
+      showEdit: false
     };
   },
   computed: {
@@ -414,13 +414,6 @@ export default {
         return '新增物理疗法';
       } else {
         return '物理疗法';
-      }
-    },
-    canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
-        return true;
-      } else {
-        return false;
       }
     }
   },

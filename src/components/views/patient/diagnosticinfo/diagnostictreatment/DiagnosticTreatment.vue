@@ -364,64 +364,57 @@ export default {
     dbsFollowList() {
       return this.diagnosticSurgery.patientDbsFollowList ? this.diagnosticSurgery.patientDbsFollowList : [];
     },
-    showMedicinePanel() {
-      var isExperimentPatientsList = this.$route.matched.some(record => {
+    isMyPatientsList() {
+      return this.$route.matched.some(record => record.meta.myPatients);
+    },
+    isExperimentPatientsList() {
+      return this.$route.matched.some(record => {
         return record.meta.therapistsPatients || record.meta.appraisersPatients;
       });
+    },
+    showMedicinePanel() {
       var duringExperiment = this.diagnosticExperimentStep > 0;
       var diagnosticExperimentStatus = parseInt(this.diagnosticExperimentStep, 10);
       var atOtherStatus = diagnosticExperimentStatus !== 2 && diagnosticExperimentStatus !== 4;
-      if (isExperimentPatientsList && duringExperiment && atOtherStatus) {
+      if (this.isExperimentPatientsList && duringExperiment && atOtherStatus) {
         return false;
       } else {
         return true;
       }
     },
     showSurgeryPanel() {
-      var isExperimentPatientsList = this.$route.matched.some(record => {
-        return record.meta.therapistsPatients || record.meta.appraisersPatients;
-      });
       var duringExperiment = this.diagnosticExperimentStep > 0;
-      if (isExperimentPatientsList && duringExperiment) {
+      if (this.isExperimentPatientsList && duringExperiment) {
         return false;
       } else {
         return true;
       }
     },
     showPhysiontherapy() {
-      var isExperimentPatientsList = this.$route.matched.some(record => {
-        return record.meta.therapistsPatients || record.meta.appraisersPatients;
-      });
       var duringExperiment = this.diagnosticExperimentStep > 0;
       var diagnosticExperimentStatus = parseInt(this.diagnosticExperimentStep, 10);
       var atOtherStatus = diagnosticExperimentStatus !== 3;
-      if (isExperimentPatientsList && duringExperiment && atOtherStatus) {
+      if (this.isExperimentPatientsList && duringExperiment && atOtherStatus) {
         return false;
       } else {
         return true;
       }
     },
     showTreatmentEvaluation() {
-      var isExperimentPatientsList = this.$route.matched.some(record => {
-        return record.meta.therapistsPatients || record.meta.appraisersPatients;
-      });
       var duringExperiment = this.diagnosticExperimentStep > 0;
       var diagnosticExperimentStatus = parseInt(this.diagnosticExperimentStep, 10);
       var atOtherStatus = diagnosticExperimentStatus !== 4;
-      if (isExperimentPatientsList && duringExperiment && atOtherStatus) {
+      if (this.isExperimentPatientsList && duringExperiment && atOtherStatus) {
         return false;
       } else {
         return true;
       }
     },
     showAdverseEvent() {
-      var isExperimentPatientsList = this.$route.matched.some(record => {
-        return record.meta.therapistsPatients || record.meta.appraisersPatients;
-      });
       var duringExperiment = this.diagnosticExperimentStep > 0;
       var diagnosticExperimentStatus = parseInt(this.diagnosticExperimentStep, 10);
       var atOtherStatus = diagnosticExperimentStatus !== 3 && diagnosticExperimentStatus !== 4;
-      if (isExperimentPatientsList && duringExperiment && atOtherStatus) {
+      if (this.isExperimentPatientsList && duringExperiment && atOtherStatus) {
         return false;
       } else {
         return true;
@@ -429,13 +422,9 @@ export default {
     },
     canEdit() {
       var createByCurrentUser = this.diagnosisCreator === sessionStorage.getItem('userName');
-      var isMyPatientsList = this.$route.matched.some(record => record.meta.myPatients);
-      var isExperimentPatientsList = this.$route.matched.some(record => {
-        return record.meta.therapistsPatients || record.meta.appraisersPatients;
-      });
       var duringExperiment = this.diagnosticExperimentStep > 0;
       var atSameStep = this.diagnosticExperimentStep === this.patientExperimentStep;
-      if ((isMyPatientsList || (isExperimentPatientsList && duringExperiment)) &&
+      if ((this.isMyPatientsList || (this.isExperimentPatientsList && duringExperiment)) &&
         atSameStep && createByCurrentUser && !this.archived) {
         return true;
       }
@@ -542,15 +531,18 @@ export default {
     },
     addMedicine() {
       var hasCOMT = this.checkIfComtExistsAmongOtherMedicine({});
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.ADD_NEW_CARD, {}, !this.archived, hasCOMT);
+      var showEdit = this.canEdit && this.showMedicinePanel && !this.archived;
+      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.ADD_NEW_CARD, {}, showEdit, hasCOMT);
     },
     viewMedicine(item) {
       var hasCOMT = this.checkIfComtExistsAmongOtherMedicine(item);
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived, hasCOMT);
+      var showEdit = this.canEdit && this.showMedicinePanel && !this.archived;
+      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.VIEW_CURRENT_CARD, item, showEdit, hasCOMT);
     },
     editMedicine(item) {
       var hasCOMT = this.checkIfComtExistsAmongOtherMedicine(item);
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived, hasCOMT);
+      var showEdit = this.canEdit && this.showMedicinePanel && !this.archived;
+      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.EDIT_CURRENT_CARD, item, showEdit, hasCOMT);
     },
     deleteMedicine(item) {
       var patientMedicine = {
@@ -585,13 +577,16 @@ export default {
       Bus.$emit(this.SHOW_CHOICE_PANEL, list);
     },
     addPreEvaluationRecord() {
-      Bus.$emit(this.SHOW_PRE_EVALUATION_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
+      var showEdit = this.canEdit && this.showSurgeryPanel && !this.archived;
+      Bus.$emit(this.SHOW_PRE_EVALUATION_MODAL, this.ADD_NEW_CARD, {}, showEdit);
     },
     viewPreEvaluationRecord(item) {
-      Bus.$emit(this.SHOW_PRE_EVALUATION_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived);
+      var showEdit = this.canEdit && this.showSurgeryPanel && !this.archived;
+      Bus.$emit(this.SHOW_PRE_EVALUATION_MODAL, this.VIEW_CURRENT_CARD, item, showEdit);
     },
     editPreEvaluationRecord(item) {
-      Bus.$emit(this.SHOW_PRE_EVALUATION_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
+      var showEdit = this.canEdit && this.showSurgeryPanel && !this.archived;
+      Bus.$emit(this.SHOW_PRE_EVALUATION_MODAL, this.EDIT_CURRENT_CARD, item, showEdit);
     },
     deletePreEvaluationRecord(item) {
       var preEvaluation = {
@@ -603,13 +598,16 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addSurgicalRecord() {
-      Bus.$emit(this.SHOW_SURGICAL_METHOD_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
+      var showEdit = this.canEdit && this.showSurgeryPanel && !this.archived;
+      Bus.$emit(this.SHOW_SURGICAL_METHOD_MODAL, this.ADD_NEW_CARD, {}, showEdit);
     },
     viewSurgicalRecord(item) {
-      Bus.$emit(this.SHOW_SURGICAL_METHOD_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived);
+      var showEdit = this.canEdit && this.showSurgeryPanel && !this.archived;
+      Bus.$emit(this.SHOW_SURGICAL_METHOD_MODAL, this.VIEW_CURRENT_CARD, item, showEdit);
     },
     editSurgicalRecord(item) {
-      Bus.$emit(this.SHOW_SURGICAL_METHOD_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
+      var showEdit = this.canEdit && this.showSurgeryPanel && !this.archived;
+      Bus.$emit(this.SHOW_SURGICAL_METHOD_MODAL, this.EDIT_CURRENT_CARD, item, showEdit);
     },
     deleteSurgicalRecord(item) {
       var surgicalMethod = {
@@ -621,13 +619,16 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addPostComplicationRecord() {
-      Bus.$emit(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
+      var showEdit = this.canEdit && this.showSurgeryPanel && !this.archived;
+      Bus.$emit(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.ADD_NEW_CARD, {}, showEdit);
     },
     viewPostComplicationRecord(item) {
-      Bus.$emit(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived);
+      var showEdit = this.canEdit && this.showSurgeryPanel && !this.archived;
+      Bus.$emit(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.VIEW_CURRENT_CARD, item, showEdit);
     },
     editPostComplicationRecord(item) {
-      Bus.$emit(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
+      var showEdit = this.canEdit && this.showSurgeryPanel && !this.archived;
+      Bus.$emit(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.EDIT_CURRENT_CARD, item, showEdit);
     },
     deletePostComplicationRecord(item) {
       var operativeComplication = {
@@ -639,14 +640,16 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addDbsRecord() {
-      // 这里要传递 2 个参数，一个是模式（新增／阅读／修改），一个是当前数据对象（新建的时候为空）
-      Bus.$emit(this.SHOW_DBS_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
+      var showEdit = this.canEdit && this.showSurgeryPanel && !this.archived;
+      Bus.$emit(this.SHOW_DBS_MODAL, this.ADD_NEW_CARD, {}, showEdit);
     },
     viewDbsRecord(item) {
-      Bus.$emit(this.SHOW_DBS_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived);
+      var showEdit = this.canEdit && this.showSurgeryPanel && !this.archived;
+      Bus.$emit(this.SHOW_DBS_MODAL, this.VIEW_CURRENT_CARD, item, showEdit);
     },
     editDbsRecord(item) {
-      Bus.$emit(this.SHOW_DBS_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
+      var showEdit = this.canEdit && this.showSurgeryPanel && !this.archived;
+      Bus.$emit(this.SHOW_DBS_MODAL, this.EDIT_CURRENT_CARD, item, showEdit);
     },
     deleteDbsRecord(item) {
       // 先判断这条程控记录是首次还是非首次，从而决定调用哪个 api
@@ -698,13 +701,16 @@ export default {
       Bus.$emit(this.SHOW_CHOICE_PANEL, list);
     },
     addPhysiontherapy() {
-      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
+      var showEdit = this.canEdit && this.showPhysiontherapy && !this.archived;
+      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.ADD_NEW_CARD, {}, showEdit);
     },
     viewPhysiontherapy(item) {
-      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived);
+      var showEdit = this.canEdit && this.showPhysiontherapy && !this.archived;
+      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.VIEW_CURRENT_CARD, item, showEdit);
     },
     editPhysiontherapy(item) {
-      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
+      var showEdit = this.canEdit && this.showPhysiontherapy && !this.archived;
+      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.EDIT_CURRENT_CARD, item, showEdit);
     },
     deletePhysiontherapy(item) {
       var patientPhysiontherapy = {
@@ -716,13 +722,16 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addTreatmentEvaluation() {
-      Bus.$emit(this.SHOW_TREATMENT_EVALUATION_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
+      var showEdit = this.canEdit && this.showTreatmentEvaluation && !this.archived;
+      Bus.$emit(this.SHOW_TREATMENT_EVALUATION_MODAL, this.ADD_NEW_CARD, {}, showEdit);
     },
     viewTreatmentEvaluation(item) {
-      Bus.$emit(this.SHOW_TREATMENT_EVALUATION_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived);
+      var showEdit = this.canEdit && this.showTreatmentEvaluation && !this.archived;
+      Bus.$emit(this.SHOW_TREATMENT_EVALUATION_MODAL, this.VIEW_CURRENT_CARD, item, showEdit);
     },
     editTreatmentEvaluation(item) {
-      Bus.$emit(this.SHOW_TREATMENT_EVALUATION_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
+      var showEdit = this.canEdit && this.showTreatmentEvaluation && !this.archived;
+      Bus.$emit(this.SHOW_TREATMENT_EVALUATION_MODAL, this.EDIT_CURRENT_CARD, item, showEdit);
     },
     deleteTreatmentEvaluation(item) {
       var patientTreatmentEvaluation = {
@@ -734,13 +743,16 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addAdverseEvent() {
-      Bus.$emit(this.SHOW_ADVERSE_EVENT_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
+      var showEdit = this.canEdit && this.showAdverseEvent && !this.archived;
+      Bus.$emit(this.SHOW_ADVERSE_EVENT_MODAL, this.ADD_NEW_CARD, {}, showEdit);
     },
     viewAdverseEvent(item) {
-      Bus.$emit(this.SHOW_ADVERSE_EVENT_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived);
+      var showEdit = this.canEdit && this.showAdverseEvent && !this.archived;
+      Bus.$emit(this.SHOW_ADVERSE_EVENT_MODAL, this.VIEW_CURRENT_CARD, item, showEdit);
     },
     editAdverseEvent(item) {
-      Bus.$emit(this.SHOW_ADVERSE_EVENT_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
+      var showEdit = this.canEdit && this.showAdverseEvent && !this.archived;
+      Bus.$emit(this.SHOW_ADVERSE_EVENT_MODAL, this.EDIT_CURRENT_CARD, item, showEdit);
     },
     deleteAdverseEvent(item) {
       var patientAdverseEvent = {

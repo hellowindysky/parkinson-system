@@ -17,7 +17,7 @@
               v-model="occurTime"
               :class="{'warning': warningResults.occurTime}"
               type="datetime"
-              format="yyyy-MM-dd HH:mm" 
+              format="yyyy-MM-dd HH:mm"
               placeholder="请选择开始发生时间"
               :picker-options="pickerOptions"
               @change="updateWarning('occurTime')">
@@ -157,7 +157,7 @@
                 :label="item.name"
                 :disabled="mode===VIEW_CURRENT_CARD">
               </el-checkbox>
-            </div> 
+            </div>
           </span>
         </div>
         <div class="field whole-line excursion">
@@ -391,7 +391,7 @@
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
       <div v-if="mode!==VIEW_CURRENT_CARD" class="button submit-button" @click="submit">确定</div>
-      <div v-else-if="mode===VIEW_CURRENT_CARD && canEdit" class="button submit-button btn-margin" @click="switchToEditingMode">编辑</div>
+      <div v-else-if="mode===VIEW_CURRENT_CARD && showEdit" class="button submit-button btn-margin" @click="switchToEditingMode">编辑</div>
     </div>
   </div>
 </template>
@@ -470,7 +470,7 @@ export default {
           return time.getTime() > Date.now();
         }
       },
-      showEdit: true
+      showEdit: false
     };
   },
   computed: {
@@ -488,13 +488,6 @@ export default {
         return '新增不良事件';
       } else {
         return '不良事件';
-      }
-    },
-    canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
-        return true;
-      } else {
-        return false;
       }
     }
   },

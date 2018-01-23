@@ -253,13 +253,13 @@ export default {
       });
     },
     addChiefComplaintSymptomsRecord() {
-      Bus.$emit(this.SHOW_CHIEFCOMPLAINTSYMPTOMS_MODAL, this.ADD_NEW_CARD, {}, '主诉症状');
+      Bus.$emit(this.SHOW_CHIEF_COMPLAINT_SYMPTOMS_MODAL, this.ADD_NEW_CARD, {}, '主诉症状');
     },
     viewChiefComplaintSymptomsRecord(item) {
-      Bus.$emit(this.SHOW_CHIEFCOMPLAINTSYMPTOMS_MODAL, this.VIEW_CURRENT_CARD, item, '主诉症状');
+      Bus.$emit(this.SHOW_CHIEF_COMPLAINT_SYMPTOMS_MODAL, this.VIEW_CURRENT_CARD, item, '主诉症状');
     },
     editChiefComplaintSymptomsRecord(item) {
-      Bus.$emit(this.SHOW_CHIEFCOMPLAINTSYMPTOMS_MODAL, this.EDIT_CURRENT_CARD, item, '主诉症状');
+      Bus.$emit(this.SHOW_CHIEF_COMPLAINT_SYMPTOMS_MODAL, this.EDIT_CURRENT_CARD, item, '主诉症状');
     },
     deleteDisease(item) {
       var patientDisease = {

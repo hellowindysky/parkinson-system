@@ -648,7 +648,7 @@ export default {
     }
   },
   mounted() {
-    Bus.$on(this.SHOW_CHIEFCOMPLAINTSYMPTOMS_MODAL, this.showModal);
+    Bus.$on(this.SHOW_CHIEF_COMPLAINT_SYMPTOMS_MODAL, this.showModal);
   }
 };
 </script>

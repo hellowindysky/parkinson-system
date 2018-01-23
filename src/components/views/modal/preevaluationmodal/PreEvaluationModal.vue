@@ -528,7 +528,7 @@
 
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
-      <div class="button edit-button" v-if="mode===VIEW_CURRENT_CARD && canEdit" @click="switchToEditingMode">编辑</div>
+      <div class="button edit-button" v-if="mode===VIEW_CURRENT_CARD && showEdit" @click="switchToEditingMode">编辑</div>
       <div class="button submit-button" v-else-if="mode!==VIEW_CURRENT_CARD" @click="submit">确定</div>
     </div>
   </div>
@@ -872,7 +872,7 @@ export default {
         }
       },
       lockSubmitButton: false,
-      showEdit: true
+      showEdit: false
     };
   },
   computed: {
@@ -898,13 +898,6 @@ export default {
         return '(运动并发症早期≤3年)';
       } else {
         return '';
-      }
-    },
-    canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
-        return true;
-      } else {
-        return false;
       }
     }
   },

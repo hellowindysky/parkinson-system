@@ -761,7 +761,7 @@
 
       <span v-if="tableMode===FATHER_OPEN">
         <div class="button cancel-button" @click="cancel">取消</div>
-        <div class="button edit-button" v-if="mode===VIEW_CURRENT_CARD && canEdit" @click="switchToEditingMode">编辑</div>
+        <div class="button edit-button" v-if="mode===VIEW_CURRENT_CARD && showEdit" @click="switchToEditingMode">编辑</div>
         <div class="button submit-button" v-else-if="mode!==VIEW_CURRENT_CARD" @click="submit">确认</div>
       </span>
       <span v-else-if="tableMode===SON_OPEN">
@@ -861,7 +861,7 @@ export default {
       },
       fileParam: getCommonRequest(),
 
-      showEdit: true
+      showEdit: false
     };
   },
   computed: {
@@ -960,13 +960,6 @@ export default {
         resultGroups[i].colItems = groups[i].filter(item => item.fieldType === 1);
       }
       return resultGroups;
-    },
-    canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
-        return true;
-      } else {
-        return false;
-      }
     }
   },
   methods: {

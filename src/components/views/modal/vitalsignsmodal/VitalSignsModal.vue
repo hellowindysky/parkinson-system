@@ -142,7 +142,7 @@
         <div class="seperate-line"></div>
         <div class="button cancel-button btn-margin" @click="cancel">取消</div>
         <div v-show="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD" class="button submit-button btn-margin" @click="submit">确定</div>
-        <div v-show="mode===VIEW_CURRENT_CARD && canEdit" class="button submit-button btn-margin" @click="switchToEditingMode">编辑</div>
+        <div v-show="mode===VIEW_CURRENT_CARD && showEdit" class="button submit-button btn-margin" @click="switchToEditingMode">编辑</div>
     </div>
   </div>
 </template>
@@ -234,7 +234,7 @@ export default {
           return time.getTime() > Date.now();
         }
       },
-      showEdit: true
+      showEdit: false
     };
   },
   computed: {
@@ -246,13 +246,6 @@ export default {
         return '新增生命体征';
       } else {
         return '生命体征';
-      }
-    },
-    canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
-        return true;
-      } else {
-        return false;
       }
     }
   },
@@ -531,7 +524,7 @@ export default {
               background-color: @font-color;
               color: #fff;
             }
-            &.col-1, 
+            &.col-1,
             &.col-4,
             &.col-5 {
               width: 10%;

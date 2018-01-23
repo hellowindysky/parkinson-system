@@ -220,7 +220,7 @@
       <!-- <div class="seperate-line"></div> -->
       <span v-if="tableMode===FATHER_OPEN">
         <div class="button cancel-button" @click="cancel">取消</div>
-        <div class="button edit-button" v-if="mode===VIEW_CURRENT_CARD && canEdit" @click="switchToEditingMode">编辑</div>
+        <div class="button edit-button" v-if="mode===VIEW_CURRENT_CARD && showEdit" @click="switchToEditingMode">编辑</div>
         <div class="button submit-button" v-else-if="mode!==VIEW_CURRENT_CARD" @click="submit">确认</div>
       </span>
       <span v-else-if="tableMode===SON_OPEN">
@@ -248,7 +248,7 @@ export default {
       displayModal: false,
       mode: '',
       lockSubmitButton: false,
-      showEdit: true,
+      showEdit: false,
 
       FATHER_OPEN: 'fatherOpen',
       SON_OPEN: 'sonOpen',
@@ -317,13 +317,6 @@ export default {
         resultGroups[i].anotherColItems = groups[i].filter(item => item.fieldType === 2);
       }
       return resultGroups;
-    },
-    canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
-        return true;
-      } else {
-        return false;
-      }
     }
   },
   methods: {

@@ -4,7 +4,7 @@
       <h2 class="title" v-if="mode!==ADD_NEW_CARD">{{scaleName}}</h2>
       <h2 class="title" v-else>新增量表信息</h2>
       <div class="button back-button" @click="closePanel">返回</div>
-      <div class="button edit-button" @click="edit" v-if="mode===VIEW_CURRENT_CARD && canEdit">编辑</div>
+      <div class="button edit-button" @click="edit" v-if="mode===VIEW_CURRENT_CARD && showEdit">编辑</div>
       <div class="button save-button" @click="submit" v-else-if="mode!==VIEW_CURRENT_CARD">保存</div>
     </div>
 
@@ -130,7 +130,7 @@
         </span>
       </div>
 
-      <folding-panel :title="'关联症状'" :folded-status="true" class="associated-symptom" :editable="canEdit">
+      <folding-panel :title="'关联症状'" :folded-status="true" class="associated-symptom" :editable="showEdit">
         <div class="symptom-item" v-for="(symptom, index) in scaleSymptomList">
           <el-checkbox class="symptom-item-title" v-model="symptom.status" :disabled="mode===VIEW_CURRENT_CARD">
             {{symptom.sympName}}
@@ -194,7 +194,7 @@ export default {
     return {
       displayScaleModal: false,
       mode: '',
-      showEdit: true,
+      showEdit: false,
       lockSubmitButton: false,
 
       copyInfo: {},
@@ -240,13 +240,6 @@ export default {
       var options = this.getOptions('gaugeType');
       var option = Util.getElement('code', this.scaleTypeCode, options);
       return option.name ? option.name : '';
-    },
-    canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
-        return true;
-      } else {
-        return false;
-      }
     }
   },
   methods: {

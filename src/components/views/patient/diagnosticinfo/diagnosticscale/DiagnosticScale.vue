@@ -149,14 +149,17 @@ export default {
     },
     editScale(item) {
       var scaleTypeCode = this.getScaleTypeCode(item.scaleInfoId);
-      Bus.$emit(this.SHOW_SCALE_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived, scaleTypeCode);
+      var showEdit = this.canEdit && !this.archived;
+      Bus.$emit(this.SHOW_SCALE_MODAL, this.EDIT_CURRENT_CARD, item, showEdit, scaleTypeCode);
     },
     viewScale(item) {
       var scaleTypeCode = this.getScaleTypeCode(item.scaleInfoId);
-      Bus.$emit(this.SHOW_SCALE_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived, scaleTypeCode);
+      var showEdit = this.canEdit && !this.archived;
+      Bus.$emit(this.SHOW_SCALE_MODAL, this.VIEW_CURRENT_CARD, item, showEdit, scaleTypeCode);
     },
     addScale(scaleTypeCode) {
-      Bus.$emit(this.SHOW_SCALE_MODAL, this.ADD_NEW_CARD, {}, !this.archived, scaleTypeCode);
+      var showEdit = this.canEdit && !this.archived;
+      Bus.$emit(this.SHOW_SCALE_MODAL, this.ADD_NEW_CARD, {}, showEdit, scaleTypeCode);
     },
     deleteScaleRecord(item) {
       // console.log(item);

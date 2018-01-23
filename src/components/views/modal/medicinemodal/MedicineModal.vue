@@ -188,7 +188,7 @@
       <div class="button cancel-button" @click="cancel">取消</div>
       <div v-if="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD"
         class="button submit-button" @click="submit">确定</div>
-      <div v-else-if="mode===VIEW_CURRENT_CARD && canEdit"
+      <div v-else-if="mode===VIEW_CURRENT_CARD && showEdit"
         class="button edit-button" @click="switchToEditingMode">编辑</div>
     </div>
   </div>
@@ -214,7 +214,7 @@ export default {
       hasSideEffect: false,  // 这个变量用来控制是否有副反应
       hasComtAmongOtherMedicine: false,
       lockSubmitButton: false,
-      showEdit: true,
+      showEdit: false,
       foldedConditionalContent: false,   // 这个变量用来控制是否显示停药信息和副反应信息
       pickerOptions: {
         disabledDate(time) {
@@ -231,13 +231,6 @@ export default {
       'medicineStopReason',
       'typeGroup'
     ]),
-    canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
-        return true;
-      } else {
-        return false;
-      }
-    },
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
         return '新增药物治疗';
