@@ -55,7 +55,7 @@
           <td class="col col-progress">{{getMilestone(step, index)}}</td>
           <td class="col col-executor">{{step.executeBy}}</td>
           <td class="col col-status" :class="getStatusColor(step)">{{getStatusText(step)}}</td>
-          <td class="col col-start-time">{{step.startDate}}</td>
+          <td class="col col-start-time">{{step.startDate ? step.startDate : '——'}}</td>
           <td class="col col-end-time">{{step.endDate}}</td>
           <td class="col col-remarks">
             {{step.remark}}
