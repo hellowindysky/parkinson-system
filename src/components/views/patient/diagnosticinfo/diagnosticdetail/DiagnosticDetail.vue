@@ -9,13 +9,15 @@
     <div class="scroll-area" ref="scrollArea">
       <diagnostic-basic :archived="hasBeenArchived" class="folding-panel" :mode="mode" ref="diagnosticBasic"
         :diagnosticBasic="diagnosticBasic"
-        :diagnosticExperimentStep="getDiagnosticExperimentStep(caseDetail.status)"
-        :patientExperimentStep="getPatientExperimentStep(caseDetail.patientCurrentStatus)">
+        :diagnosticExperimentStep="diagnosticExperimentStep"
+        :patientExperimentStep="patientExperimentStep"
+        :diagnosisCreator="diagnosisCreator">
       </diagnostic-basic>
       <diagnostic-disease :archived="hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
         :diagnosticDisease="diagnosticDisease"
-        :diagnosticExperimentStep="getDiagnosticExperimentStep(caseDetail.status)"
-        :patientExperimentStep="getPatientExperimentStep(caseDetail.patientCurrentStatus)">
+        :diagnosticExperimentStep="diagnosticExperimentStep"
+        :patientExperimentStep="patientExperimentStep"
+        :diagnosisCreator="diagnosisCreator">
       </diagnostic-disease>
       <diagnostic-treatment :archived="hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
         :diagnosticSurgery="caseDetail.patientSurgicalDbs"
@@ -23,13 +25,15 @@
         :diagnosticPhysiontherapy="caseDetail.patientPhytheTms"
         :diagnosticTreatmentEvaluation="caseDetail.patientPhytheAssess"
         :diagnosticAdverseEvent="caseDetail.patientAdverse"
-        :diagnosticExperimentStep="getDiagnosticExperimentStep(caseDetail.status)"
-        :patientExperimentStep="getPatientExperimentStep(caseDetail.patientCurrentStatus)">
+        :diagnosticExperimentStep="diagnosticExperimentStep"
+        :patientExperimentStep="patientExperimentStep"
+        :diagnosisCreator="diagnosisCreator">
       </diagnostic-treatment>
       <diagnostic-scale :archived="hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
         :patientScale="caseDetail.patientScale"
-        :diagnosticExperimentStep="getDiagnosticExperimentStep(caseDetail.status)"
-        :patientExperimentStep="getPatientExperimentStep(caseDetail.patientCurrentStatus)">
+        :diagnosticExperimentStep="diagnosticExperimentStep"
+        :patientExperimentStep="patientExperimentStep"
+        :diagnosisCreator="diagnosisCreator">
       </diagnostic-scale>
       <diagnostic-examination :archived="hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
         :patientInfo="patientInfo"
@@ -41,8 +45,9 @@
         :electricImagingList="caseDetail.patientElecVideoList"
         :medicalImagingList="caseDetail.patientVideoList"
         :diagnosticVitalSigns="caseDetail.patientVitalSign"
-        :diagnosticExperimentStep="getDiagnosticExperimentStep(caseDetail.status)"
-        :patientExperimentStep="getPatientExperimentStep(caseDetail.patientCurrentStatus)">
+        :diagnosticExperimentStep="diagnosticExperimentStep"
+        :patientExperimentStep="patientExperimentStep"
+        :diagnosisCreator="diagnosisCreator">
       </diagnostic-examination>
       <!-- 空白区域是为了让最后的内容能够滚动到脱离屏幕最下方 -->
       <div class="blank-area"></div>
@@ -110,6 +115,27 @@ export default {
         obj[propertyName] = this.caseDetail[propertyName] ? this.caseDetail[propertyName] : '';
       }
       return obj;
+    },
+    diagnosisCreator() {
+      return this.caseDetail.createUserName ? this.caseDetail.createUserName : '';
+    },
+    diagnosticExperimentStep() {
+      var status = parseInt(this.caseDetail.status, 10);  // 实验阶段 (从 2 开始)
+      var stage = parseInt(this.caseDetail.stage, 10);  // 实验阶段的子阶段 (从 0 开始)
+      if (status > 0 && stage >= 0) {
+        return status + stage / 10.0;
+      } else {
+        return 0;
+      }
+    },
+    patientExperimentStep() {
+      var status = parseInt(this.caseDetail.patientCurrentStatus, 10);  // 实验阶段 (从 2 开始)
+      var stage = parseInt(this.caseDetail.patientCurrentStage, 10);  // 实验阶段的子阶段 (从 0 开始)
+      if (status > 0 && stage >= 0) {
+        return status + stage / 10.0;
+      } else {
+        return 0;
+      }
     },
     canEdit() {
       if ((this.$route.matched.some(record => record.meta.myPatients) ||
@@ -217,12 +243,6 @@ export default {
     closePanel() {
       this.displayDetail = false;
       this.caseDetail = {};
-    },
-    getDiagnosticExperimentStep(status) {
-      return status !== undefined && Number(status) > 0 ? Number(status) : 0;
-    },
-    getPatientExperimentStep(status) {
-      return status !== undefined && Number(status) > 0 ? Number(status) : 0;
     },
     archiveCase() {
       Bus.$on(this.CONFIRM, () => {

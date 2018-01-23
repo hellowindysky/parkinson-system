@@ -3,7 +3,7 @@
     v-on:cancel="cancel" v-on:submit="submit" :editable="canEdit">
     <div class="diagnostic-surgery" ref="diagnosticSurgery">
       <extensible-panel class="panel medicine-panel" :mode="mutableMode" :title="medicineTitle" v-on:addNewCard="addMedicine"
-        :editable="canEdit">
+        :editable="canEdit" v-if="showMedicinePanel">
         <card class="card medicine-card" :class="smallCardWidth" :mode="mutableMode" v-for="item in diagnosticMedicine" :key="item.medicineId"
           :title="getMedicineTitle(item.medicineId)" :disable-delete="item.statusFlag===0" v-on:editCurrentCard="editMedicine(item)"
           v-on:deleteCurrentCard="deleteMedicine(item)" v-on:viewCurrentCard="viewMedicine(item)">
@@ -29,7 +29,7 @@
           </div>
         </card>
       </extensible-panel>
-      <extensible-panel class="panel surgery-panel" :mode="mutableMode"
+      <extensible-panel class="panel surgery-panel" :mode="mutableMode" v-if="showSurgeryPanel"
         :title="surgeryTitle" v-on:addNewCard="addTreatmentRecord" :editable="canEdit">
         <card class="card surgery-card" :class="bigCardWidth" :mode="mutableMode"
           v-for="item in preEvaluationList" :key="item.preopsInfoId"
@@ -150,9 +150,12 @@
         </card>
       </extensible-panel>
 
-      <extensible-panel class="panel physiontherapy-panel" :mode="mutableMode" :title="physiontherapyTitle"
+      <extensible-panel class="panel physiontherapy-panel"
+        v-if="showPhysiontherapy || showTreatmentEvaluation || showAdverseEvent"
+        :mode="mutableMode" :title="physiontherapyTitle"
         v-on:addNewCard="addPhysiontherapyRecord" :editable="canEdit">
-        <card class="card physiontherapy-card" :class="bigCardWidth" :mode="mutableMode" v-for="item in diagnosticPhysiontherapy" :key="item.physiType"
+        <card class="card physiontherapy-card" v-if="showPhysiontherapy" :class="bigCardWidth"
+          :mode="mutableMode" v-for="item in diagnosticPhysiontherapy" :key="item.physiType"
           :title="transformPhysiType(item.physiType)" v-on:editCurrentCard="editPhysiontherapy(item)"
           v-on:deleteCurrentCard="deletePhysiontherapy(item)" v-on:viewCurrentCard="viewPhysiontherapy(item)">
           <div class="text line-1">
@@ -177,7 +180,9 @@
           </div>
         </card>
 
-        <card class="card physiontherapy-card" :class="bigCardWidth" :mode="mutableMode" v-for="item in diagnosticTreatmentEvaluation" :key="item.situationType"
+        <card class="card physiontherapy-card" v-if="showTreatmentEvaluation"
+          :class="bigCardWidth" :mode="mutableMode"
+          v-for="item in diagnosticTreatmentEvaluation" :key="item.situationType"
           :title="'治疗评估'" v-on:editCurrentCard="editTreatmentEvaluation(item)"
           v-on:deleteCurrentCard="deleteTreatmentEvaluation(item)" v-on:viewCurrentCard="viewTreatmentEvaluation(item)">
           <div class="text line-1" v-if="item.situationType === 1">
@@ -201,7 +206,9 @@
             <span class="value">{{item.recordDate}}</span>
           </div>
         </card>
-        <card class="card physiontherapy-card" :class="bigCardWidth" :mode="mutableMode" v-for="item in diagnosticAdverseEvent" :key="item.patientAdverse"
+        <card class="card physiontherapy-card" v-if="showAdverseEvent"
+          :class="bigCardWidth" :mode="mutableMode"
+          v-for="item in diagnosticAdverseEvent" :key="item.patientAdverse"
           :title="'不良事件'" v-on:editCurrentCard="editAdverseEvent(item)"
           v-on:deleteCurrentCard="deleteAdverseEvent(item)" v-on:viewCurrentCard="viewAdverseEvent(item)">
           <div class="text line-1">
@@ -289,6 +296,10 @@ export default {
         return [];
       }
     },
+    diagnosisCreator: {
+      type: String,
+      default: ''
+    },
     diagnosticExperimentStep: {
       type: Number,
       default: 0
@@ -353,15 +364,82 @@ export default {
     dbsFollowList() {
       return this.diagnosticSurgery.patientDbsFollowList ? this.diagnosticSurgery.patientDbsFollowList : [];
     },
-    canEdit() {
-      if ((this.$route.matched.some(record => record.meta.myPatients) ||
-        this.$route.matched.some(record => record.meta.therapistsPatients) ||
-        this.$route.matched.some(record => record.meta.appraisersPatients)) &&
-        !this.archived) {
-        return true;
-      } else {
+    showMedicinePanel() {
+      var isExperimentPatientsList = this.$route.matched.some(record => {
+        return record.meta.therapistsPatients || record.meta.appraisersPatients;
+      });
+      var duringExperiment = this.diagnosticExperimentStep > 0;
+      var diagnosticExperimentStatus = parseInt(this.diagnosticExperimentStep, 10);
+      var atOtherStatus = diagnosticExperimentStatus !== 2 && diagnosticExperimentStatus !== 4;
+      if (isExperimentPatientsList && duringExperiment && atOtherStatus) {
         return false;
+      } else {
+        return true;
       }
+    },
+    showSurgeryPanel() {
+      var isExperimentPatientsList = this.$route.matched.some(record => {
+        return record.meta.therapistsPatients || record.meta.appraisersPatients;
+      });
+      var duringExperiment = this.diagnosticExperimentStep > 0;
+      if (isExperimentPatientsList && duringExperiment) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+    showPhysiontherapy() {
+      var isExperimentPatientsList = this.$route.matched.some(record => {
+        return record.meta.therapistsPatients || record.meta.appraisersPatients;
+      });
+      var duringExperiment = this.diagnosticExperimentStep > 0;
+      var diagnosticExperimentStatus = parseInt(this.diagnosticExperimentStep, 10);
+      var atOtherStatus = diagnosticExperimentStatus !== 3;
+      if (isExperimentPatientsList && duringExperiment && atOtherStatus) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+    showTreatmentEvaluation() {
+      var isExperimentPatientsList = this.$route.matched.some(record => {
+        return record.meta.therapistsPatients || record.meta.appraisersPatients;
+      });
+      var duringExperiment = this.diagnosticExperimentStep > 0;
+      var diagnosticExperimentStatus = parseInt(this.diagnosticExperimentStep, 10);
+      var atOtherStatus = diagnosticExperimentStatus !== 4;
+      if (isExperimentPatientsList && duringExperiment && atOtherStatus) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+    showAdverseEvent() {
+      var isExperimentPatientsList = this.$route.matched.some(record => {
+        return record.meta.therapistsPatients || record.meta.appraisersPatients;
+      });
+      var duringExperiment = this.diagnosticExperimentStep > 0;
+      var diagnosticExperimentStatus = parseInt(this.diagnosticExperimentStep, 10);
+      var atOtherStatus = diagnosticExperimentStatus !== 3 && diagnosticExperimentStatus !== 4;
+      if (isExperimentPatientsList && duringExperiment && atOtherStatus) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+    canEdit() {
+      var createByCurrentUser = this.diagnosisCreator === sessionStorage.getItem('userName');
+      var isMyPatientsList = this.$route.matched.some(record => record.meta.myPatients);
+      var isExperimentPatientsList = this.$route.matched.some(record => {
+        return record.meta.therapistsPatients || record.meta.appraisersPatients;
+      });
+      var duringExperiment = this.diagnosticExperimentStep > 0;
+      var atSameStep = this.diagnosticExperimentStep === this.patientExperimentStep;
+      if ((isMyPatientsList || (isExperimentPatientsList && duringExperiment)) &&
+        atSameStep && createByCurrentUser && !this.archived) {
+        return true;
+      }
+      return false;
     }
   },
   methods: {
@@ -598,20 +676,25 @@ export default {
       return typeName ? typeName : '';
     },
     addPhysiontherapyRecord() {
-      var list = [
-        {
+      var list = [];
+      if (this.showPhysiontherapy) {
+        list.push({
           text: '物理疗法',
           callback: this.addPhysiontherapy
-        },
-        {
+        });
+      }
+      if (this.showTreatmentEvaluation) {
+        list.push({
           text: '治疗评估',
           callback: this.addTreatmentEvaluation
-        },
-        {
+        });
+      }
+      if (this.showAdverseEvent) {
+        list.push({
           text: '不良事件',
           callback: this.addAdverseEvent
-        }
-      ];
+        });
+      }
       Bus.$emit(this.SHOW_CHOICE_PANEL, list);
     },
     addPhysiontherapy() {

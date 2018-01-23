@@ -227,6 +227,10 @@ export default {
         return {};
       }
     },
+    diagnosisCreator: {
+      type: String,
+      default: ''
+    },
     diagnosticExperimentStep: {
       type: Number,
       default: 0
@@ -278,14 +282,18 @@ export default {
       return info;
     },
     canEdit() {
-      if ((this.$route.matched.some(record => record.meta.myPatients) ||
-        this.$route.matched.some(record => record.meta.therapistsPatients) ||
-        this.$route.matched.some(record => record.meta.appraisersPatients)) &&
-        !this.archived) {
+      var createByCurrentUser = this.diagnosisCreator === sessionStorage.getItem('userName');
+      var isMyPatientsList = this.$route.matched.some(record => record.meta.myPatients);
+      var isExperimentPatientsList = this.$route.matched.some(record => {
+        return record.meta.therapistsPatients || record.meta.appraisersPatients;
+      });
+      var duringExperiment = this.diagnosticExperimentStep > 0;
+      var atSameStep = this.diagnosticExperimentStep === this.patientExperimentStep;
+      if ((isMyPatientsList || (isExperimentPatientsList && duringExperiment)) &&
+        atSameStep && createByCurrentUser && !this.archived) {
         return true;
-      } else {
-        return false;
       }
+      return false;
     }
   },
   methods: {
