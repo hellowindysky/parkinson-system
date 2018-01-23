@@ -16,7 +16,7 @@
         <div class="text fourth-line" v-if="showRecordSource">
           数据来源
           <span class="fourth-line-content">
-            等兵兵
+            {{item.taskCode ? item.taskCode : '门诊'}}
           </span>
         </div>
         <div class="experiment-description">{{item.experimentDescription}}</div>
