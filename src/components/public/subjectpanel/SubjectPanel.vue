@@ -3,10 +3,15 @@
     <div class="iconfont icon-close" @click="closePanel"></div>
     <p class="title">添加课题（带颜色的为已加入的课题，点击标签即可加入或移出）</p>
     <div class="subject-wrapper" ref="scrollArea">
-      <div class="subject-item" v-for="(subject, index) in allSubjects"
-        :class="{'selected': subjectSelectedList[index]}" @click="toggleSelected(index)">
-        {{subject.taskName}}
-      </div>
+      <el-tooltip v-for="(subject, index) in allSubjects"
+        :key="subject.id"
+        class="subject-item"
+        :class="{'selected': subjectSelectedList[index]}"
+        effect="dark"
+        :content="subject.taskName"
+        placement="top">
+        <el-button @click="toggleSelected(index)">{{subject.taskName}}</el-button>
+      </el-tooltip>
     </div>
   </div>
 </template>
@@ -158,6 +163,7 @@ export default {
       box-sizing: border-box;
       background-color: #fff;
       color: @light-font-color;
+      border: 0;
       text-align: center;
       overflow: hidden;
       text-overflow: ellipsis;
