@@ -69,13 +69,13 @@
           <span class="field-input">
             <span class="warning-text">{{warningResults.recordStart}}</span>
             <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.recordStart}}</span>
-            <el-date-picker v-else 
-              type="datetime" 
-              format="yyyy-MM-dd HH:mm:ss" 
+            <el-date-picker v-else
+              type="datetime"
+              format="yyyy-MM-dd HH:mm:ss"
               :class="{'warning': warningResults.recordStart}"
-              v-model="copyInfo.recordStart" 
+              v-model="copyInfo.recordStart"
               placeholder="请输入记录开始时间"
-              :picker-options="pickerOptions" 
+              :picker-options="pickerOptions"
               @change="updateWarning('recordStart')"></el-date-picker>
           </span>
         </div>
@@ -97,13 +97,13 @@
           <span class="field-input">
             <span class="warning-text">{{warningResults.recordEnd}}</span>
             <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.recordEnd}}</span>
-            <el-date-picker v-else 
-              type="datetime" 
-              format="yyyy-MM-dd HH:mm:ss" 
+            <el-date-picker v-else
+              type="datetime"
+              format="yyyy-MM-dd HH:mm:ss"
               :class="{'warning': warningResults.recordEnd}"
-              v-model="copyInfo.recordEnd" 
+              v-model="copyInfo.recordEnd"
               placeholder="请输入记录结束时间"
-              :picker-options="pickerOptions" 
+              :picker-options="pickerOptions"
               @change="updateWarning('recordEnd')"></el-date-picker>
           </span>
         </div>

@@ -49,7 +49,7 @@
             <span class="warning-text">{{warningResults.programDate}}</span>
             <el-date-picker
               v-model="copyInfo.programDate"
-              @change="updateWarning('programDate')" 
+              @change="updateWarning('programDate')"
               placeholder="请选择程控时间"
               :picker-options="pickerOptions"
               :class="{'warning': warningResults.programDate}"></el-date-picker>
@@ -83,9 +83,9 @@
             {{lastProgramDate}}
           </span>
           <span class="field-input" v-else>
-            <el-date-picker 
+            <el-date-picker
             v-model="lastProgramDate"
-            :picker-options="pickerOptions" 
+            :picker-options="pickerOptions"
             placeholder="请选择上次程控时间"></el-date-picker>
           </span>
         </div>

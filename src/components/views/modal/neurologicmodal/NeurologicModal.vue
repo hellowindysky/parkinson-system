@@ -123,15 +123,15 @@
               <el-select v-else-if="row[0].uiType===3" v-model="copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue">
                 <el-option v-for="option in getOptions(row[0].fieldEnumId)" :label="option.name" :key="option.code" :value="option.code"></el-option>
               </el-select>
-              <el-date-picker 
-                v-else-if="row[0].uiType===6" 
+              <el-date-picker
+                v-else-if="row[0].uiType===6"
                 v-model="copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue"
                 :picker-options="pickerOptions">
               </el-date-picker>
-              <el-date-picker 
-                v-else-if="row[0].uiType===7" 
-                type="datetime" 
-                format="yyyy-MM-dd HH:mm" 
+              <el-date-picker
+                v-else-if="row[0].uiType===7"
+                type="datetime"
+                format="yyyy-MM-dd HH:mm"
                 v-model="copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue"
                 :picker-options="pickerOptions">
               </el-date-picker>
@@ -152,15 +152,15 @@
               <el-select v-else-if="row[1].uiType===3" v-model="copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue">
                 <el-option v-for="option in getOptions(row[1].fieldEnumId)" :label="option.name" :key="option.code" :value="option.code"></el-option>
               </el-select>
-              <el-date-picker 
-                v-else-if="row[1].uiType===6" 
+              <el-date-picker
+                v-else-if="row[1].uiType===6"
                 v-model="copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue"
                 :picker-options="pickerOptions">
               </el-date-picker>
-              <el-date-picker 
-                v-else-if="row[1].uiType===7" 
-                type="datetime" 
-                format="yyyy-MM-dd HH:mm" 
+              <el-date-picker
+                v-else-if="row[1].uiType===7"
+                type="datetime"
+                format="yyyy-MM-dd HH:mm"
                 v-model="copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue"
                 :picker-options="pickerOptions">
               </el-date-picker>
@@ -197,15 +197,15 @@
                 placeholder="">
                 <el-option v-for="option in getOptions(col.fieldEnumId)" :label="option.name" :key="option.code" :value="option.code"></el-option>
               </el-select>
-              <el-date-picker 
-                v-else-if="col.uiType===6" 
+              <el-date-picker
+                v-else-if="col.uiType===6"
                 v-model="copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue"
                 :picker-options="pickerOptions">
               </el-date-picker>
-              <el-date-picker 
-                v-else-if="col.uiType===7" 
-                type="datetime" 
-                format="yyyy-MM-dd HH:mm" 
+              <el-date-picker
+                v-else-if="col.uiType===7"
+                type="datetime"
+                format="yyyy-MM-dd HH:mm"
                 v-model="copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue"
                 :picker-options="pickerOptions">
               </el-date-picker>

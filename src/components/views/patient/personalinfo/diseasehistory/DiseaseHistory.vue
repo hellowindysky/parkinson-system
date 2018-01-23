@@ -3,10 +3,10 @@
     :folded-status="foldedStatus" :editable="canEdit">
     <!-- 现病史开始 ↓-->
     <div class="disease-info" ref="diseaseInfo">
-      
+
       <!-- 起病情况开始 ↓-->
       <div class="group">
-        
+
         <h3>起病情况</h3>
         <!-- template 第一部分 ↓↓↓↓ -->
         <div class="field" v-for="field in diseaseInfoTemplateGroups[0]" :class="checkField(field)" v-show="field.fieldName!=='specificDisease'||specificDiseaseState">
@@ -49,13 +49,13 @@
               </el-checkbox-group>
             </span>
             <span v-else-if="getUIType(field)===6">
-              <el-date-picker 
-                v-model="copyInfo[field.fieldName]" 
-                type="date" 
-                :class="{'warning': warningResults[field.fieldName]}" 
+              <el-date-picker
+                v-model="copyInfo[field.fieldName]"
+                type="date"
+                :class="{'warning': warningResults[field.fieldName]}"
                 :picker-options="pickerOptions"
-                :placeholder="getMatchedField(field.fieldName).cnFieldDesc" 
-                format="yyyy-MM-dd" 
+                :placeholder="getMatchedField(field.fieldName).cnFieldDesc"
+                format="yyyy-MM-dd"
                 @change="updateWarning(field)">
               </el-date-picker>
             </span>
@@ -83,7 +83,7 @@
               <span class="sub-item">
                 <el-select v-model="item.arisePart" placeholder="请选择">
                   <el-option
-                   v-for="item in diseaseOrderOpt" :key="item.typeCode" 
+                   v-for="item in diseaseOrderOpt" :key="item.typeCode"
                    :label="item.typeName"
                    :value="item.typeCode"
                    :disabled="item.disabled">
@@ -91,10 +91,10 @@
                 </el-select>
               </span>
               <span class="sub-item">
-                <el-date-picker 
-                  v-model="item.time" 
-                  type="month" 
-                  placeholder="选择发生年月" 
+                <el-date-picker
+                  v-model="item.time"
+                  type="month"
+                  placeholder="选择发生年月"
                   :clearable="false"
                   :picker-options="pickerOptions">
                 </el-date-picker>
@@ -146,7 +146,7 @@
         <extensible-panel class="disease-card" :title="firstSymTitle" @addNewCard="addFirstSymptomsRecord" :editable="canEdit">
           <Card class="card symptoms-card" :mode="mode" :class="cardWidth"
            v-for="item in firstSymbolData" :key="item.id" :title="transform(item.symType, allFirstSymptomsType)"
-           v-on:editCurrentCard="editFirstSymptomsRecord(item)" 
+           v-on:editCurrentCard="editFirstSymptomsRecord(item)"
            v-on:viewCurrentCard="viewFirstSymptomsRecord(item)"
            v-on:deleteCurrentCard="deleteFirstSymptomsRecord(item)">
             <div class="text first-line">
@@ -208,7 +208,7 @@
         <extensible-panel class="disease-card" :title="firstTreatmentsTitle" @addNewCard="addFirstTreatmentRecord" :editable="canEdit">
           <Card class="card symptoms-card" :mode="mode" :class="cardWidth"
            v-for="item in firstVisitTreatmentData" :key="item.id" :title="transform(item.firstVisitType, allFirstVisitType)"
-           v-on:editCurrentCard="editFirstTreatmentRecord(item)" 
+           v-on:editCurrentCard="editFirstTreatmentRecord(item)"
            v-on:viewCurrentCard="viewFirstTreatmentRecord(item)"
            v-on:deleteCurrentCard="deleteFirstTreatmentRecord(item)">
             <template v-if="item.firstVisitType === 1">
@@ -239,14 +239,14 @@
                 <span class="value">{{item.treatmentTime}}</span>
               </div>
             </template>
-            
+
           </Card>
         </extensible-panel>
 
         <extensible-panel class="disease-card" :title="visitRecordTitle" @addNewCard="addVisitRecord" :editable="canEdit">
           <Card class="card symptoms-card" :mode="mode" :class="cardWidth"
            v-for="item in patientHistorysData" :key="item.patientHistoryId" :title="item.diagnosis"
-           v-on:editCurrentCard="editVisitRecord(item)" 
+           v-on:editCurrentCard="editVisitRecord(item)"
            v-on:viewCurrentCard="viewVisitRecord(item)"
            v-on:deleteCurrentCard="deleteVisitRecord(item)">
             <div class="text first-line">

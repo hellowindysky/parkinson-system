@@ -23,10 +23,10 @@
               <el-option v-for="option in getOptions(field.fieldName)" :label="option.name"
                 :value="option.code" :key="option.code"></el-option>
             </el-select>
-            <el-date-picker 
-              v-else-if="getUIType(field.fieldName)===6" 
+            <el-date-picker
+              v-else-if="getUIType(field.fieldName)===6"
               v-model="copyInfo[field.fieldName]"
-              :class="{'warning': warningResults[field.fieldName]}"  
+              :class="{'warning': warningResults[field.fieldName]}"
               @change="updateWarning(field)"
               :placeholder="getMatchedField(field.fieldName).cnFieldDesc"
               :picker-options="pickerOptions">
