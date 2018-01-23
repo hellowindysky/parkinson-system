@@ -42,10 +42,10 @@
         <div class="field">
           <span class="field-name">量表填写时间:</span>
           <span class="field-value">
-            <el-date-picker 
-              type="datetime" 
-              format="yyyy-MM-dd HH:mm" 
-              v-model="copyInfo.inspectTime" 
+            <el-date-picker
+              type="datetime"
+              format="yyyy-MM-dd HH:mm"
+              v-model="copyInfo.inspectTime"
               placeholder="请选择量表填写时间"
               :picker-options="pickerOptions">
             </el-date-picker>
@@ -54,10 +54,10 @@
         <div class="field">
           <span class="field-name">末次服药时间:</span>
           <span class="field-value">
-            <el-date-picker 
-              type="datetime" 
-              format="yyyy-MM-dd HH:mm" 
-              v-model="copyInfo.lastTakingTime" 
+            <el-date-picker
+              type="datetime"
+              format="yyyy-MM-dd HH:mm"
+              v-model="copyInfo.lastTakingTime"
               placeholder="请选择末次服药时间"
               :picker-options="pickerOptions">
             </el-date-picker>
@@ -137,10 +137,10 @@
           </el-checkbox>
           <div class="symptom-item-start">
             <span class="field-name">出现时间:</span>
-            <el-date-picker 
-              format="yyyy-MM-dd" 
+            <el-date-picker
+              format="yyyy-MM-dd"
               v-model="symptom.ariseTime"
-              placeholder="请输入出现关联症状的时间" 
+              placeholder="请输入出现关联症状的时间"
               :disabled="mode===VIEW_CURRENT_CARD || !symptom.status"
               :picker-options="pickerOptions">
             </el-date-picker>

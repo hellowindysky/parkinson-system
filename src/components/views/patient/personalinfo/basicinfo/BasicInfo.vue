@@ -42,9 +42,9 @@
               </el-select>
             </span>
             <span v-else-if="getUIType(field)===6">
-              <el-date-picker 
-                v-model="copyInfo[field.fieldName]" 
-                type="date" 
+              <el-date-picker
+                v-model="copyInfo[field.fieldName]"
+                type="date"
                 :class="{'warning': warningResults[field.fieldName]}"
                 :placeholder="getMatchedField(field).cnFieldDesc"
                 @change="updateWarning(field)"

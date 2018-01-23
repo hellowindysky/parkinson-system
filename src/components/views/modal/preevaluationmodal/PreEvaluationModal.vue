@@ -17,11 +17,11 @@
           </span>
           <span class="field-input">
             <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.preopsTime}}</span>
-            <el-date-picker v-else 
-              v-model="copyInfo.preopsTime" 
-              :editable="false" 
+            <el-date-picker v-else
+              v-model="copyInfo.preopsTime"
+              :editable="false"
               @change="checkWarning(['preopsTime'], 'preopsTime')"
-              :class="{'warning': warningResults['preopsTime']}" 
+              :class="{'warning': warningResults['preopsTime']}"
               placeholder="请输入术前评估时间"
               :picker-options="pickerOptions">
             </el-date-picker>
@@ -45,10 +45,10 @@
           <span class="field-name long-field-name">剂末现象评估时间</span>
           <span class="field-input long-field-name">
             <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.preopsTerminalDTO.terminalTime}}</span>
-            <el-date-picker v-else 
-              v-model="copyInfo.preopsTerminalDTO.terminalTime" 
+            <el-date-picker v-else
+              v-model="copyInfo.preopsTerminalDTO.terminalTime"
               :default-value="copyInfo.preopsTime"
-              :editable="false" 
+              :editable="false"
               placeholder="请输入剂末现象评估时间"
               :picker-options="pickerOptions">
               </el-date-picker>
@@ -92,10 +92,10 @@
           <span class="field-name">初次出现时间</span>
           <span class="field-input">
             <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.preopsTerminalDTO.terminalFirstTime}}</span>
-            <el-date-picker v-else 
-              v-model="copyInfo.preopsTerminalDTO.terminalFirstTime" 
+            <el-date-picker v-else
+              v-model="copyInfo.preopsTerminalDTO.terminalFirstTime"
               placeholder="请输入初次出现剂末现象时间"
-              @change="updateField('terminalFirstTime')" 
+              @change="updateField('terminalFirstTime')"
               :editable="false"
               :picker-options="pickerOptions">
             </el-date-picker>
@@ -150,11 +150,11 @@
               <span v-if="mode===VIEW_CURRENT_CARD && isTimeEditable(listIndex)">
                 {{copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName]}}
               </span>
-              <el-date-picker v-else 
-                :ref="'r'+0+'c'+listIndex" 
+              <el-date-picker v-else
+                :ref="'r'+0+'c'+listIndex"
                 v-model="copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName]"
-                @change="updateDiaryDayTime()" 
-                :editable="false" 
+                @change="updateDiaryDayTime()"
+                :editable="false"
                 :disabled="!isTimeEditable(listIndex)"
                 :class="{'warning': listIndex === 0 && warningResults['firstDayTime']}"
                 :placeholder="isTimeEditable(listIndex) ? '请选择日期' : ''"
@@ -279,9 +279,9 @@
             </td>
             <td class="col">
               <span v-if="mode===VIEW_CURRENT_CARD">{{scale.ariseTime}}</span>
-              <el-date-picker v-else 
-                v-model="scale.ariseTime" 
-                :editable="false" 
+              <el-date-picker v-else
+                v-model="scale.ariseTime"
+                :editable="false"
                 :default-value="copyInfo.preopsTime"
                 :picker-options="pickerOptions">
               </el-date-picker>
@@ -320,9 +320,9 @@
             </td>
             <td class="col">
               <span v-if="mode===VIEW_CURRENT_CARD">{{scale.ariseTime}}</span>
-              <el-date-picker v-else 
-                v-model="scale.ariseTime" 
-                :editable="false" 
+              <el-date-picker v-else
+                v-model="scale.ariseTime"
+                :editable="false"
                 :default-value="copyInfo.preopsTime"
                 :picker-options="pickerOptions">
               </el-date-picker>
@@ -350,10 +350,10 @@
           <span class="field-name">试验日期时间</span>
           <span class="field-input">
             <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.preopsMotorDTO.motorTestTime}}</span>
-            <el-date-picker v-else 
-              v-model="copyInfo.preopsMotorDTO.motorTestTime" 
+            <el-date-picker v-else
+              v-model="copyInfo.preopsMotorDTO.motorTestTime"
               placeholder="请输入冲击试验日期"
-              :editable="false" 
+              :editable="false"
               :default-value="copyInfo.preopsTime"
               :picker-options="pickerOptions">
             </el-date-picker>
@@ -472,10 +472,10 @@
           <span class="field-name">表态时间</span>
           <span class="field-input">
             <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.preopsIntensionDTO.intensionAriseTime}}</span>
-            <el-date-picker v-else 
-              v-model="copyInfo.preopsIntensionDTO.intensionAriseTime" 
+            <el-date-picker v-else
+              v-model="copyInfo.preopsIntensionDTO.intensionAriseTime"
               placeholder="请输入意愿表达时间"
-              :editable="false" 
+              :editable="false"
               :default-value="copyInfo.preopsTime"
               :picker-options="pickerOptions">
               </el-date-picker>

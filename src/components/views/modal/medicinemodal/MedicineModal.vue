@@ -137,11 +137,11 @@
                 <el-option v-for="option in getOptions(field.fieldName)" :label="option.name"
                   :value="option.code" :key="option.code"></el-option>
               </el-select>
-              <el-date-picker 
-                v-else-if="getUIType(field.fieldName)===6" 
-                v-model="medicine[field.fieldName]" 
+              <el-date-picker
+                v-else-if="getUIType(field.fieldName)===6"
+                v-model="medicine[field.fieldName]"
                 :class="{'warning': warningResults[field.fieldName]}"
-                :placeholder="getMatchedField(field.fieldName).cnFieldDesc" 
+                :placeholder="getMatchedField(field.fieldName).cnFieldDesc"
                 @change="updateField(field)"
                 :picker-options="pickerOptions"
                 clearable>
@@ -171,13 +171,13 @@
                 <el-option v-for="option in getOptions(field.fieldName)" :label="option.name"
                   :value="option.code" :key="option.code"></el-option>
               </el-select>
-              <el-date-picker 
-                v-else-if="getUIType(field.fieldName)===6" 
-                v-model="medicine[field.fieldName]" 
+              <el-date-picker
+                v-else-if="getUIType(field.fieldName)===6"
+                v-model="medicine[field.fieldName]"
                 :class="{'warning': warningResults[field.fieldName]}"
-                :placeholder="getMatchedField(field.fieldName).cnFieldDesc" 
+                :placeholder="getMatchedField(field.fieldName).cnFieldDesc"
                 @change="updateField(field)"
-                :picker-options="pickerOptions" 
+                :picker-options="pickerOptions"
                 clearable>
              </el-date-picker>
             </span>
