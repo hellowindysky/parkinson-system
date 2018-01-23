@@ -286,7 +286,7 @@ export default {
       }
       .experiment-description {
         position: absolute;
-        right: 20px;
+        right: 35px;
         top: 15px;
         font-size: @normal-font-size;
         font-weight: bold;

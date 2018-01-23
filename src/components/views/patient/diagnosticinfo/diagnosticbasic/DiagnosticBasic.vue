@@ -101,13 +101,14 @@ export default {
       return this.$store.state.listType;
     },
     canEdit() {
-      var isMyPatientsLits = this.$route.matched.some(record => record.meta.myPatients);
+      var isMyPatientsList = this.$route.matched.some(record => record.meta.myPatients);
       var isExperimentPatientsList = this.$route.matched.some(record => {
         return record.meta.therapistsPatients || record.meta.appraisersPatients;
       });
       var duringExperiment = this.experimentStep > 0;
-      if ((isMyPatientsLits || (isExperimentPatientsList && duringExperiment)) &&
-        (!this.archived || this.$route.params.caseId === 'newCase')) {
+      if (((isMyPatientsList ||
+        (isExperimentPatientsList && duringExperiment)) &&
+        !this.archived) || this.$route.params.caseId === 'newCase') {
         return true;
       }
       return false;
