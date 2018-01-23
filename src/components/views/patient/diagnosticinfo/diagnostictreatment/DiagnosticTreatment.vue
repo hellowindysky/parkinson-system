@@ -154,7 +154,7 @@
         v-if="showPhysiontherapy || showTreatmentEvaluation || showAdverseEvent"
         :mode="mutableMode" :title="physiontherapyTitle"
         v-on:addNewCard="addPhysiontherapyRecord" :editable="canEdit">
-        <card class="card physiontherapy-card" v-if="showPhysiontherapy" :class="bigCardWidth"
+        <card class="card physiontherapy-card" :class="bigCardWidth"
           :mode="mutableMode" v-for="item in diagnosticPhysiontherapy" :key="item.physiType"
           :title="transformPhysiType(item.physiType)" v-on:editCurrentCard="editPhysiontherapy(item)"
           v-on:deleteCurrentCard="deletePhysiontherapy(item)" v-on:viewCurrentCard="viewPhysiontherapy(item)">
@@ -180,7 +180,7 @@
           </div>
         </card>
 
-        <card class="card physiontherapy-card" v-if="showTreatmentEvaluation"
+        <card class="card physiontherapy-card"
           :class="bigCardWidth" :mode="mutableMode"
           v-for="item in diagnosticTreatmentEvaluation" :key="item.situationType"
           :title="'治疗评估'" v-on:editCurrentCard="editTreatmentEvaluation(item)"
@@ -206,7 +206,7 @@
             <span class="value">{{item.recordDate}}</span>
           </div>
         </card>
-        <card class="card physiontherapy-card" v-if="showAdverseEvent"
+        <card class="card physiontherapy-card"
           :class="bigCardWidth" :mode="mutableMode"
           v-for="item in diagnosticAdverseEvent" :key="item.patientAdverse"
           :title="'不良事件'" v-on:editCurrentCard="editAdverseEvent(item)"
