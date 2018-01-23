@@ -40,22 +40,23 @@ export default {
       }
     },
     experimentStatusIcon() {
-      if (this.$store.state.subjectId !== this.SUBJECT_ID_FOR_HOSPITAL) {
-        if (this.patient.status !== undefined &&
-          ([this.MY_PATIENTS_TYPE, this.SUBJECT_PATIENTS_TYPE].indexOf(this.listType) >= 0)) {
-          return 'icon-experiment';
-        } else if (this.patient.status !== undefined &&
-          ([this.THERAPISTS_PATIENTS_TYPE, this.APPRAISERS_PATIENTS_TYPE].indexOf(this.listType) >= 0)) {
-          let status = Number(this.patient.status);
-          if (status === this.EXPERIMENT_STEP_SCREENING) {
-            return 'icon-shai';
-          } else if (status === this.EXPERIMENT_STEP_THERAPY) {
-            return 'icon-zhi';
-          } else if (status === this.EXPERIMENT_STEP_FOLLOW_UP) {
-            return 'icon-sui';
-          } else if (status === this.EXPERIMENT_STEP_COMPLETE) {
-            return 'icon-wan';
-          }
+      if (this.patient.status !== undefined &&
+        this.$store.state.subjectId === this.SUBJECT_ID_FOR_HOSPITAL &&
+        this.listType === this.MY_PATIENTS_TYPE) {
+        return 'icon-experiment';
+
+      } else if (this.patient.status !== undefined &&
+        this.$store.state.subjectId !== this.SUBJECT_ID_FOR_HOSPITAL &&
+        ([this.MY_PATIENTS_TYPE, this.THERAPISTS_PATIENTS_TYPE, this.APPRAISERS_PATIENTS_TYPE].indexOf(this.listType) >= 0)) {
+        let status = Number(this.patient.status);
+        if (status === this.EXPERIMENT_STEP_SCREENING) {
+          return 'icon-shai';
+        } else if (status === this.EXPERIMENT_STEP_THERAPY) {
+          return 'icon-zhi';
+        } else if (status === this.EXPERIMENT_STEP_FOLLOW_UP) {
+          return 'icon-sui';
+        } else if (status === this.EXPERIMENT_STEP_COMPLETE) {
+          return 'icon-wan';
         }
       }
       return '';
