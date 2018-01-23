@@ -137,8 +137,14 @@
                 <el-option v-for="option in getOptions(field.fieldName)" :label="option.name"
                   :value="option.code" :key="option.code"></el-option>
               </el-select>
-              <el-date-picker v-else-if="getUIType(field.fieldName)===6" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-                :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)" clearable>
+              <el-date-picker 
+                v-else-if="getUIType(field.fieldName)===6" 
+                v-model="medicine[field.fieldName]" 
+                :class="{'warning': warningResults[field.fieldName]}"
+                :placeholder="getMatchedField(field.fieldName).cnFieldDesc" 
+                @change="updateField(field)"
+                :picker-options="pickerOptions"
+                clearable>
              </el-date-picker>
             </span>
           </div>
@@ -165,8 +171,14 @@
                 <el-option v-for="option in getOptions(field.fieldName)" :label="option.name"
                   :value="option.code" :key="option.code"></el-option>
               </el-select>
-              <el-date-picker v-else-if="getUIType(field.fieldName)===6" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-                :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)" clearable>
+              <el-date-picker 
+                v-else-if="getUIType(field.fieldName)===6" 
+                v-model="medicine[field.fieldName]" 
+                :class="{'warning': warningResults[field.fieldName]}"
+                :placeholder="getMatchedField(field.fieldName).cnFieldDesc" 
+                @change="updateField(field)"
+                :picker-options="pickerOptions" 
+                clearable>
              </el-date-picker>
             </span>
           </div>
@@ -203,7 +215,12 @@ export default {
       hasComtAmongOtherMedicine: false,
       lockSubmitButton: false,
       showEdit: true,
-      foldedConditionalContent: false   // 这个变量用来控制是否显示停药信息和副反应信息
+      foldedConditionalContent: false,   // 这个变量用来控制是否显示停药信息和副反应信息
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        }
+      }
     };
   },
   computed: {
