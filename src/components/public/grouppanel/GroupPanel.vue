@@ -3,10 +3,15 @@
     <div class="iconfont icon-close" @click="closePanel"></div>
     <p class="title">添加分组（带颜色的为已加入的组，点击标签即可加入或移出）</p>
     <div class="group-wrapper" ref="scrollArea">
-      <div class="group-item" v-for="(group, index) in allGroups"
-        :class="{'selected': groupSelectedList[index]}" @click="toggleSelected(index)">
-        {{group.groupName}}
-      </div>
+      <el-tooltip v-for="(group, index) in allGroups"
+        :key="group.groupId"
+        class="group-item"
+        :class="{'selected': groupSelectedList[index]}"
+        effect="dark"
+        :content="group.groupName"
+        placement="top">
+        <el-button @click="toggleSelected(index)">{{group.groupName}}</el-button>
+      </el-tooltip>
     </div>
   </div>
 </template>
@@ -156,6 +161,7 @@ export default {
       box-sizing: border-box;
       background-color: #fff;
       color: @light-font-color;
+      border: 0;
       text-align: center;
       overflow: hidden;
       text-overflow: ellipsis;

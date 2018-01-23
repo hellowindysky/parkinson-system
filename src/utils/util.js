@@ -178,7 +178,7 @@ function checkIfNotMoreThanNDecimalNums(num, n) {
 
 // 检查 num 是否为电话号码（由数字和短横线组成，且第一位是数字）
 function checkIfValidPhoneNum(num) {
-  var reg = /^[0-9][0-9-]*/;
+  var reg = /^[0-9][0-9-]*$/;
   return reg.test(num);
 }
 

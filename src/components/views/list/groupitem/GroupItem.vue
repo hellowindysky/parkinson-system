@@ -2,7 +2,14 @@
   <div class="item" :class="{'current': chosen}" @click="choose">
     <el-checkbox class="checkbox" v-show="mode===EDITING_MODE" v-model="selected"
       @change="toggleSelected"></el-checkbox>
-    <div class="name" :class="{'right-shift': mode===EDITING_MODE}">{{groupName}}</div>
+    <!-- <div class="name" :class="{'right-shift': mode===EDITING_MODE}">{{groupName}}</div> -->
+    <el-tooltip class="name"
+      :class="{'right-shift': mode===EDITING_MODE}"
+      effect="dark"
+      :content="groupName"
+      placement="top">
+      <el-button>{{groupName}}</el-button>
+    </el-tooltip>
     <div class="number" :class="{'right-shift': mode===EDITING_MODE}">患者:  {{memberNumber}}人</div>
     <div class="tag">{{groupTypeName}}</div>
     <div class="bottom-line"></div>
@@ -102,11 +109,14 @@ export default {
   }
   .name {
     position: absolute;
-    font-size: @normal-font-size;
+    padding: 0;
     top: 10px;
     left: 15px;
-    right: 60px;
+    max-width: calc(~"100% - 80px");
     text-align: left;
+    border: 0;
+    background-color: rgba(0,0,0,0);
+    font-size: @normal-font-size;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
