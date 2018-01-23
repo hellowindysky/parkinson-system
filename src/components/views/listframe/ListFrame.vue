@@ -29,6 +29,9 @@ export default {
     }
   },
   mounted() {
+    Bus.$on(this.SHOW_LIST, () => {
+      this.listDisplay = true;
+    });
   },
   methods: {
     toggleList() {
@@ -45,7 +48,7 @@ export default {
     List
   },
   beforeDestroy() {
-    Bus.$off(this.TOGGLE_LIST_DISPLAY);
+    Bus.$off(this.SHOW_LIST);
   }
 };
 </script>

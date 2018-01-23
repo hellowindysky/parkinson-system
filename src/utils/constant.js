@@ -22,6 +22,7 @@ export default {
 
   // event
   SCREEN_SIZE_CHANGE: 'screenSizeChange',
+  SHOW_LIST: 'showList',
   TOGGLE_LIST_DISPLAY: 'toggleListDisplay',
   TOGGLE_FILTER_PANEL_DISPLAY: 'toggleFilterPanelDisplay',
   TOGGLE_FOLDED_PANEL: 'toggleFoldedPanel',
