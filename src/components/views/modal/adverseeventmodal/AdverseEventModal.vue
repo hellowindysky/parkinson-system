@@ -506,16 +506,28 @@ export default {
       this.completeInit = false;
       this.mode = cardOperation;
       this.showEdit = showEdit;
-      for (let medicine of this.adjointMedicine) {
-        medicine.medicineName = '';
-        medicine.totalDailyDose = '';
-        medicine.medicineMethod = '';
-      }
-      for (let reaction of this.treatMedicine) {
-        reaction.medicineName = '';
-        reaction.totalDailyDose = '';
-        reaction.medicineMethod = '';
-      }
+      this.adjointMedicine = [];
+      this.$set(this.adjointMedicine, 0, {});
+      this.$set(this.adjointMedicine[0], 'medicineName', '');
+      this.$set(this.adjointMedicine[0], 'totalDailyDose', '');
+      this.$set(this.adjointMedicine[0], 'totalDailyDose', '');
+
+      this.treatMedicine = [];
+      this.$set(this.treatMedicine, 0, {});
+      this.$set(this.treatMedicine[0], 'medicineName', '');
+      this.$set(this.treatMedicine[0], 'totalDailyDose', '');
+      this.$set(this.treatMedicine[0], 'totalDailyDose', '');
+
+      // for (let medicine of this.adjointMedicine) {
+      //   medicine.medicineName = '';
+      //   medicine.totalDailyDose = '';
+      //   medicine.medicineMethod = '';
+      // }
+      // for (let reaction of this.treatMedicine) {
+      //   reaction.medicineName = '';
+      //   reaction.totalDailyDose = '';
+      //   reaction.medicineMethod = '';
+      // }
       this.$nextTick(() => {
         this.$refs.scrollArea.scrollTop = 0;
         for (var property in this.warningResults) {
