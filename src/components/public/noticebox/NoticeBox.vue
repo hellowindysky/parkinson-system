@@ -14,7 +14,7 @@ import Bus from 'utils/bus.js';
 
 const DEFAULT_TITLE = '提示';
 const DEFAULT_CONTENT = '';
-const DEFAULT_CONFIRM_TEXT = '确定';
+const DEFAULT_CONFIRM_TEXT = '确认';
 
 export default {
   data() {
@@ -69,7 +69,7 @@ export default {
     .content {
       padding: 0 20px 10px;
       line-height: 20px;
-      text-align: left;
+      text-align: center;
     }
     .seperate-line {
       width: 90%;
@@ -78,7 +78,7 @@ export default {
       background-color: @light-gray-color;
     }
     .button {
-      margin: 0 auto;
+      margin: 10px auto 5px;
       width: 160px;
       height: 30px;
       line-height: 30px;

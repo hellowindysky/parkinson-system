@@ -18,6 +18,7 @@
 
 <script>
 import Ps from 'perfect-scrollbar';
+import Bus from 'utils/bus.js';
 import { getSubjectList, addPatientToSubject, removePatientFromSubject } from 'api/subject.js';
 
 var lockList = [];  // 这个数组用来标记正在发生状态改变的分组
@@ -65,7 +66,6 @@ export default {
       }
       lockList.push(index);
       var value = !this.subjectSelectedList[index];
-      this.$set(this.subjectSelectedList, index, value);
       var subjectId = this.allSubjects[index].id;
       var patientId = Number(this.patientId);
       var patientSubject = {
@@ -77,16 +77,25 @@ export default {
           let listIndex = lockList.indexOf(index);
           this.$emit(this.UPDATE_PATIENT_SUBJECT_INFO);
           lockList.splice(listIndex, 1);
+          this.$set(this.subjectSelectedList, index, value);
         }, (error) => {
           console.log(error);
+          let listIndex = lockList.indexOf(index);
+          lockList.splice(listIndex, 1);
         });
       } else {
         removePatientFromSubject([patientSubject]).then(() => {
           let listIndex = lockList.indexOf(index);
           this.$emit(this.UPDATE_PATIENT_SUBJECT_INFO);
           lockList.splice(listIndex, 1);
+          this.$set(this.subjectSelectedList, index, value);
         }, (error) => {
           console.log(error);
+          if (error.code === 2010) {
+            Bus.$emit(this.NOTICE, '注意', '患者正在该课题中进行实验，不允许移出课题');
+          }
+          let listIndex = lockList.indexOf(index);
+          lockList.splice(listIndex, 1);
         });
       }
     }

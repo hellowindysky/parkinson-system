@@ -65,24 +65,29 @@ export default {
       }
       lockList.push(index);
       var value = !this.groupSelectedList[index];
-      this.$set(this.groupSelectedList, index, value);
       var groupId = this.allGroups[index].groupId;
       var patientId = Number(this.patientId);
       if (value) {
         addGroupMembers(groupId, [patientId]).then(() => {
           let listIndex = lockList.indexOf(index);
-          this.$emit(this.UPDATE_PATIENT_GROUP_INFO);
           lockList.splice(listIndex, 1);
+          this.$set(this.groupSelectedList, index, value);
+          this.$emit(this.UPDATE_PATIENT_GROUP_INFO);
         }, (error) => {
           console.log(error);
+          let listIndex = lockList.indexOf(index);
+          lockList.splice(listIndex, 1);
         });
       } else {
         removeGroupMembers(groupId, [this.patientId]).then(() => {
           let listIndex = lockList.indexOf(index);
-          this.$emit(this.UPDATE_PATIENT_GROUP_INFO);
           lockList.splice(listIndex, 1);
+          this.$set(this.groupSelectedList, index, value);
+          this.$emit(this.UPDATE_PATIENT_GROUP_INFO);
         }, (error) => {
           console.log(error);
+          let listIndex = lockList.indexOf(index);
+          lockList.splice(listIndex, 1);
         });
       }
     }
