@@ -89,6 +89,10 @@ export default {
       type: Number,
       default: 0
     },
+    patientExperimentStep: {
+      type: Number,
+      default: 0
+    },
     archived: {
       type: Boolean,
       default: true
