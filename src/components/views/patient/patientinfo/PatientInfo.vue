@@ -213,8 +213,8 @@ export default {
       if (!this.existed) {
         return;
       }
-      var subjectType = this.inSubject ? 2 : 1;
-      getPatientInfo(this.patientId, subjectType).then((data) => {
+      var subjectNum = this.inSubject ? this.$store.state.subjectId : 0;
+      getPatientInfo(this.patientId, subjectNum).then((data) => {
         // console.log('patientInfo: ', data);
         this.patientInfo = data;
         this.createDate = data.createDate;
