@@ -53,7 +53,7 @@
         <tr class="row" v-for="(step, index) in progressList">
           <td class="col col-number">{{index + 1}}</td>
           <td class="col col-progress">{{getMilestone(step, index)}}</td>
-          <td class="col col-executor">{{step.executeBy}}</td>
+          <td class="col col-executor">{{step.executeBy ? step.executeBy : '——'}}</td>
           <td class="col col-status" :class="getStatusColor(step)">{{getStatusText(step)}}</td>
           <td class="col col-start-time">{{step.startDate ? step.startDate : '——'}}</td>
           <td class="col col-end-time">{{step.endDate}}</td>
