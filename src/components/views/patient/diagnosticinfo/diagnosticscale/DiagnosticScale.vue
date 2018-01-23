@@ -93,8 +93,8 @@ export default {
       var diagnosticExperimentStatus = parseInt(this.diagnosticExperimentStep, 10);
       var editableInExperiment = diagnosticExperimentStatus === 2 || diagnosticExperimentStatus === 4;
       var atSameStep = this.diagnosticExperimentStep === this.patientExperimentStep;
-      if ((isMyPatientsList || (isExperimentPatientsList && duringExperiment)) &&
-        atSameStep && editableInExperiment && createByCurrentUser && !this.archived) {
+      if ((isMyPatientsList || (isExperimentPatientsList && duringExperiment && editableInExperiment)) &&
+        atSameStep && createByCurrentUser && !this.archived) {
         return true;
       }
       return false;
