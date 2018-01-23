@@ -63,7 +63,7 @@
           </span>
           <span v-else-if="getUIType(field)===6">
             <el-date-picker v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}" type="date"
-              :placeholder="getMatchedField(field).cnFieldDesc" :picker-options="pickerOptions0" format="yyyy-MM-dd" @change="updateWarning(field)"></el-date-picker>
+              :placeholder="getMatchedField(field).cnFieldDesc" :picker-options="pickerOptions" format="yyyy-MM-dd" @change="updateWarning(field)"></el-date-picker>
           </span>
           <span v-else-if="getUIType(field)===9">
             <div class="last-files">
@@ -143,7 +143,7 @@ export default {
       downloadUrl: baseUrl + '/download/',
       fileParam: getCommonRequest(),
       fileList: [],
-      pickerOptions0: {
+      pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now();
         }

@@ -49,8 +49,15 @@
               </el-checkbox-group>
             </span>
             <span v-else-if="getUIType(field)===6">
-              <el-date-picker v-model="copyInfo[field.fieldName]" type="date" :class="{'warning': warningResults[field.fieldName]}" :picker-options="pickerOptions0"
-                :placeholder="getMatchedField(field.fieldName).cnFieldDesc" format="yyyy-MM-dd" @change="updateWarning(field)" ></el-date-picker>
+              <el-date-picker 
+                v-model="copyInfo[field.fieldName]" 
+                type="date" 
+                :class="{'warning': warningResults[field.fieldName]}" 
+                :picker-options="pickerOptions"
+                :placeholder="getMatchedField(field.fieldName).cnFieldDesc" 
+                format="yyyy-MM-dd" 
+                @change="updateWarning(field)">
+              </el-date-picker>
             </span>
             <span class="warning-text">{{getWarningText(field.fieldName)}}</span>
           </div>
@@ -84,7 +91,13 @@
                 </el-select>
               </span>
               <span class="sub-item">
-                <el-date-picker v-model="item.time" type="month" placeholder="选择发生年月" :clearable="false"></el-date-picker>
+                <el-date-picker 
+                  v-model="item.time" 
+                  type="month" 
+                  placeholder="选择发生年月" 
+                  :clearable="false"
+                  :picker-options="pickerOptions">
+                </el-date-picker>
               </span>
             </div>
 
@@ -318,7 +331,7 @@ export default {
         ]
       },
       warningResults: {},
-      pickerOptions0: {
+      pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now();
         }

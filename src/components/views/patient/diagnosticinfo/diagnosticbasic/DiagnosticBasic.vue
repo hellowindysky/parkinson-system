@@ -35,9 +35,13 @@
             <el-option v-for="option in getOptions(field.fieldName)" :label="option.typeName"
              :value="option.typeCode" :key="option.typeCode"></el-option>
           </el-select>
-          <el-date-picker v-else-if="getUIType(field.fieldName)===6" v-model="copyInfo[field.fieldName]" type="date"
-           :class="{'warning': warningResults[field.fieldName]}" :placeholder="getMatchedField(field.fieldName).cnFieldDesc"
-           :editable="true" @change="updateWarning(field)">
+          <el-date-picker 
+            v-else-if="getUIType(field.fieldName)===6" 
+            v-model="copyInfo[field.fieldName]" type="date"
+            :class="{'warning': warningResults[field.fieldName]}" 
+            :placeholder="getMatchedField(field.fieldName).cnFieldDesc"
+            :editable="true" @change="updateWarning(field)"
+            :picker-options="pickerOptions">
           </el-date-picker>
           <el-input v-else-if="getUIType(field.fieldName)===1" v-model="copyInfo[field.fieldName]"
            type="textarea" :rows="3" :placeholder="getMatchedField(field.fieldName).cnFieldDesc" :maxlength="500"></el-input>
@@ -64,7 +68,12 @@ export default {
       copyInfo: {},
       warningResults: {},
       inSubject: true,
-      lockSubmitButton: false
+      lockSubmitButton: false,
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        }
+      }
     };
   },
   props: {

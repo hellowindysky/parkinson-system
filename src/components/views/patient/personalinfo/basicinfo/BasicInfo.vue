@@ -42,9 +42,13 @@
               </el-select>
             </span>
             <span v-else-if="getUIType(field)===6">
-              <el-date-picker v-model="copyInfo[field.fieldName]" type="date" :class="{'warning': warningResults[field.fieldName]}"
+              <el-date-picker 
+                v-model="copyInfo[field.fieldName]" 
+                type="date" 
+                :class="{'warning': warningResults[field.fieldName]}"
                 :placeholder="getMatchedField(field).cnFieldDesc"
-                @change="updateWarning(field)">
+                @change="updateWarning(field)"
+                :picker-options="pickerOptions">
               </el-date-picker>
             </span>
           </div>
@@ -82,6 +86,11 @@ export default {
       foldedStatus: false,
       copyInfo: {},
       warningResults: {},
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        }
+      },
       lockSubmitButton: false,
       allNation: [] // 所有民族
     };
