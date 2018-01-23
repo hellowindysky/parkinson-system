@@ -42,9 +42,15 @@
               </el-checkbox-group>
             </span>
             <span v-else-if="getUIType(field)===6">
-              <el-date-picker v-model="copyInfo[field.fieldName]" type="date" :class="{'warning': warningResults[field.fieldName]}"
-                :placeholder="getMatchedField(field).cnFieldDesc" :picker-options="pickerOptions0" format="yyyy-MM-dd"
-                @change="updateWarning(field)" :disabled="field.fieldName==='symmetriesTime' && copyInfo.symmetries!==1"></el-date-picker>
+              <el-date-picker 
+                v-model="copyInfo[field.fieldName]" 
+                type="date" 
+                :class="{'warning': warningResults[field.fieldName]}"
+                :placeholder="getMatchedField(field).cnFieldDesc" 
+                :picker-options="pickerOptions" 
+                format="yyyy-MM-dd"
+                @change="updateWarning(field)" 
+                :disabled="field.fieldName==='symmetriesTime' && copyInfo.symmetries!==1"></el-date-picker>
             </span>
             <span class="warning-text">{{getWarningText(field.fieldName)}}</span>
           </div>
@@ -86,7 +92,7 @@ export default {
       foldedStatus: true,
       copyInfo: {},
       warningResults: {},
-      pickerOptions0: {
+      pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now();
         }
