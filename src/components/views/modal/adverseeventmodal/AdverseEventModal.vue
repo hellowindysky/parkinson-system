@@ -17,7 +17,7 @@
               v-model="occurTime"
               :class="{'warning': warningResults.occurTime}"
               type="datetime"
-              format="yyyy-MM-dd HH:mm" 
+              format="yyyy-MM-dd HH:mm"
               placeholder="请选择开始发生时间"
               :picker-options="pickerOptions"
               @change="updateWarning('occurTime')">
@@ -157,7 +157,7 @@
                 :label="item.name"
                 :disabled="mode===VIEW_CURRENT_CARD">
               </el-checkbox>
-            </div> 
+            </div>
           </span>
         </div>
         <div class="field whole-line excursion">
@@ -513,16 +513,28 @@ export default {
       this.completeInit = false;
       this.mode = cardOperation;
       this.showEdit = showEdit;
-      for (let medicine of this.adjointMedicine) {
-        medicine.medicineName = '';
-        medicine.totalDailyDose = '';
-        medicine.medicineMethod = '';
-      }
-      for (let reaction of this.treatMedicine) {
-        reaction.medicineName = '';
-        reaction.totalDailyDose = '';
-        reaction.medicineMethod = '';
-      }
+      this.adjointMedicine = [];
+      this.$set(this.adjointMedicine, 0, {});
+      this.$set(this.adjointMedicine[0], 'medicineName', '');
+      this.$set(this.adjointMedicine[0], 'totalDailyDose', '');
+      this.$set(this.adjointMedicine[0], 'totalDailyDose', '');
+
+      this.treatMedicine = [];
+      this.$set(this.treatMedicine, 0, {});
+      this.$set(this.treatMedicine[0], 'medicineName', '');
+      this.$set(this.treatMedicine[0], 'totalDailyDose', '');
+      this.$set(this.treatMedicine[0], 'totalDailyDose', '');
+
+      // for (let medicine of this.adjointMedicine) {
+      //   medicine.medicineName = '';
+      //   medicine.totalDailyDose = '';
+      //   medicine.medicineMethod = '';
+      // }
+      // for (let reaction of this.treatMedicine) {
+      //   reaction.medicineName = '';
+      //   reaction.totalDailyDose = '';
+      //   reaction.medicineMethod = '';
+      // }
       this.$nextTick(() => {
         this.$refs.scrollArea.scrollTop = 0;
         for (var property in this.warningResults) {
