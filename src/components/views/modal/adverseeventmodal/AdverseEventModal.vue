@@ -330,10 +330,10 @@
         <div class="seperate-line">
           <div class="toggle-fold-button" @click="toggleContentFoldedEndEvent">
             不良事件结局
-            <span class="iconfont" :class="iconToggleFoldedMeasures"></span>
+            <span class="iconfont" :class="iconToggleFoldedEvents"></span>
           </div>
         </div>
-        <div class="foldable-content" :class="{'folded': foldedConditionalContentEndEvent}">
+        <div class="foldable-content" :class="{'folded': foldedConditionalContentEndEvents}">
           <div class="field whole-line">
             <span class="field-name">
               不良事件结局：
@@ -404,12 +404,26 @@ import { deepCopy, vueCopy, reviseMinuteFormat, pruneObj } from 'utils/helper';
 import { getPatientSimpleInfo, addAdverseEvent, modifyAdverseEvent } from 'api/patient.js';
 
 export default {
+  props: {
+    foldedMeasuresStatus: {
+      required: false,
+      type: Boolean,
+      default: true   // 如果没有传入这个参数，默认状态下面板是折叠的
+    },
+    foldedEventsStatus: {
+      required: false,
+      type: Boolean,
+      default: true   // 如果没有传入这个参数，默认状态下面板是折叠的
+    }
+  },
   data() {
     return {
       displayModal: false,
       mode: '',
       completeInit: false,
       dbsPatientCode: '',
+      foldedMeasures: this.foldedMeasuresStatus,
+      foldedEvents: this.foldedEventsStatus,
 
       patientAdverse: '',
       patientAdverseId: '',
@@ -431,7 +445,7 @@ export default {
       medicineMethod: '',
       hasNoReaction: '',
       foldedConditionalContentMeasures: false,
-      foldedConditionalContentEndEvent: false,
+      foldedConditionalContentEndEvents: false,
       adjointMedicine: [
         {
           'medicineName': '',
@@ -464,7 +478,10 @@ export default {
       'typeGroup'
     ]),
     iconToggleFoldedMeasures() {
-      return this.folded ? 'icon-arrow-down' : 'icon-arrow-up';
+      return this.foldedMeasures ? 'icon-arrow-down' : 'icon-arrow-up';
+    },
+    iconToggleFoldedEvents() {
+      return this.foldedEvents ? 'icon-arrow-down' : 'icon-arrow-up';
     },
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
@@ -540,7 +557,7 @@ export default {
       this.displayModal = true;
       this.updateScrollbar();
       this.foldedConditionalContentMeasures = false;
-      this.foldedConditionalContentEndEvent = false;
+      this.foldedConditionalContentEndEvents = false;
     // 获取患者的 DBS 编码
       getPatientSimpleInfo(this.$route.params.id).then((data) => {
         if (data && data.patientInfo && data.patientInfo && data.patientInfo.dbsPatientCode) {
@@ -725,14 +742,14 @@ export default {
       setTimeout(() => {
         this.updateScrollbar();
       }, 150);
-      this.folded = !this.folded;
+      this.foldedMeasures = !this.foldedMeasures;
     },
     toggleContentFoldedEndEvent() {
-      this.foldedConditionalContentEndEvent = !this.foldedConditionalContentEndEvent;
+      this.foldedConditionalContentEndEvents = !this.foldedConditionalContentEndEvents;
       setTimeout(() => {
         this.updateScrollbar();
       }, 150);
-      this.folded = !this.folded;
+      this.foldedEvents = !this.foldedEvents;
     },
     updateAndClose() {
       Bus.$emit(this.UPDATE_CASE_INFO);
@@ -762,6 +779,26 @@ export default {
     typeGroup() {
       this.initSeriousAdverseEvents();
       this.prepareSeriousAdverseEvent();
+    },
+    foldedMeasures: function() {
+      // 每当面板的折叠状态发生变化，就会通知所在的滚动区域，需要重新计算高度
+      setTimeout(() => {
+        // 之所以要延时发送事件，是为了等待折叠动画结束
+        Bus.$emit(this.SCROLL_AREA_SIZE_CHANGE);
+      }, 300);
+    },
+    foldedMeasuresStatus: function(newFoldedMeasuresStatus) {
+      this.foldedMeasures = newFoldedMeasuresStatus;
+    },
+    foldedEvents: function() {
+      // 每当面板的折叠状态发生变化，就会通知所在的滚动区域，需要重新计算高度
+      setTimeout(() => {
+        // 之所以要延时发送事件，是为了等待折叠动画结束
+        Bus.$emit(this.SCROLL_AREA_SIZE_CHANGE);
+      }, 300);
+    },
+    foldedEventsStatus: function(newFoldedEventsStatus) {
+      this.foldedEvents = newFoldedEventsStatus;
     }
   }
 };
@@ -926,7 +963,7 @@ export default {
             border: 1px solid @light-gray-color;
             .required-mark {
               position: absolute;
-              right: px;
+              right: 0px;
               top: 8px;
               color: red;
               font-size: 25px;
