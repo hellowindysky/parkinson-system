@@ -95,8 +95,9 @@
               <span>{{copyInfo.dailyDosage}}</span>
             </span>
             <span class="field-input" v-else>
-              <!-- <span class="warning-text">必填项</span> -->
-              <el-input v-model="copyInfo.dailyDosage" placeholder="请输入每日用量"></el-input>
+              <span class="warning-text">{{warningResults.dailyDosage}}</span>
+              <el-input v-model="copyInfo.dailyDosage" placeholder="请输入每日用量" :class="{'warning': warningResults.dailyDosage}"
+               @change="updateWarning('dailyDosage')"></el-input>
             </span>
           </div>
 
@@ -259,7 +260,8 @@ export default {
       warningResults: {
         firstVisitType: '',
         treatmentType: '',
-        medicineClassification: ''
+        medicineClassification: '',
+        dailyDosage: ''
       },
       runClearVal: true, // 是否执行clearVal方法中的置空copyInfo操作
       pickerOptions: {
@@ -403,11 +405,19 @@ export default {
       });
     },
     updateWarning(fieldName) {
-      if (this.completeInit && !this.copyInfo[fieldName] && this.copyInfo[fieldName] !== 0) {
+      if (fieldName === 'dailyDosage') {
+        let fieldVal = this.copyInfo[fieldName];
+        if (fieldVal !== '' && !Util.checkIfNotMoreThanNDecimalNums(fieldVal, 7)) {
+          this.$set(this.warningResults, fieldName, '请填入正数');
+        } else {
+          this.$set(this.warningResults, fieldName, '');
+        };
+      } else if (this.completeInit && !this.copyInfo[fieldName] && this.copyInfo[fieldName] !== 0) {
         this.warningResults[fieldName] = '必填项';
       } else {
         this.warningResults[fieldName] = '';
       }
+      // this.$set(this.warningResults, fieldName, null);
     },
     getOptions(fieldName) {
       var options = [];
