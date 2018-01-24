@@ -342,7 +342,7 @@
 
       <div class="button cancel-button" @click="cancel">取消</div>
       <div v-show="mode!==VIEW_CURRENT_CARD" class="button submit-button" @click="submit">确定</div>
-      <div v-show="mode===VIEW_CURRENT_CARD && canEdit" class="button edit-button" @click="switchToEditingMode">编辑</div>
+      <div v-show="mode===VIEW_CURRENT_CARD && showEdit" class="button edit-button" @click="switchToEditingMode">编辑</div>
 
     </div>
   </div>
@@ -387,7 +387,7 @@ export default {
         }
       },
       lockSubmitButton: false,
-      showEdit: true
+      showEdit: false
     };
   },
   computed: {
@@ -401,13 +401,6 @@ export default {
         return '新增主诉症状';
       } else {
         return '主诉症状';
-      }
-    },
-    canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
-        return true;
-      } else {
-        return false;
       }
     },
     verificationFieldList() {
@@ -444,10 +437,11 @@ export default {
         }
       });
     },
-    showModal(cardOperation, item) {
+    showModal(cardOperation, item, showEdit) {
       this.completeInit = false;
       this.runClearVal = false;
       this.mode = cardOperation;
+      this.showEdit = showEdit;
       // ******************************
       this.$set(this.copyInfo, 'symType', item.symType);
       this.$set(this.copyInfo, 'symName', item.symName);
