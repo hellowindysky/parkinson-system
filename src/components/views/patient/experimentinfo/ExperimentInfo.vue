@@ -325,6 +325,7 @@ export default {
       .row {
         width: 100%;
         height: 35px;
+        line-height: 35px;
         &.title-row {
           background-color: @light-font-color;
           color: #fff;
@@ -353,10 +354,12 @@ export default {
             width: 20%;
           }
           &.col-remarks {
+            position: relative;
             width: 30%;
             padding-right: 15px;
             .iconfont {
               position: absolute;
+              top: 1px;
               right: 3px;
               font-size: @normal-font-size;
               // font-weight: bold;
