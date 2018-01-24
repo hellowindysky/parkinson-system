@@ -240,6 +240,8 @@ export default {
     },
     updateAndClose() {
       Bus.$emit(this.UPDATE_CASE_INFO);
+      // 重新查询一下主诉症状
+      Bus.$emit(this.UPDATE_COMPLAINTSYMPTOMS_INFO);
       this.lockSubmitButton = false;
       this.mutableMode = this.READING_MODE;
     },
