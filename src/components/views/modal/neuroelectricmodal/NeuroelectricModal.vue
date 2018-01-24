@@ -531,7 +531,7 @@
             </tr>
           </table>
 
-          <table class="form" :class="{'small-font':tableMode===SON_OPEN}"
+          <table class="form"
             v-if="tableMode===SON_OPEN && currentTable===SLEEP_MONITORING_ITEM"
             v-for="(group, groupIndex) in sleepMonitoringItemGroups">
             <tr class="row" v-if="group.colItems.length===0"
@@ -617,6 +617,9 @@
               <td class="col col-width-10" v-for="col in group.colItems">
                 <span v-if="mode===VIEW_CURRENT_CARD">
                   {{copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue}}
+                </span>
+                <span v-else-if="col.fieldCode==='total'">
+                  {{calcTotalOfRow(copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id], col.id, group.colItems, row.uiType, row.fieldCode)}}
                 </span>
                 <el-input v-else-if="col.uiType===1 || (col.uiType===undefined && row.uiType===1)"
                   v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue">
@@ -968,7 +971,7 @@ export default {
       this.mode = cardOperation;
       this.tableMode = this.FATHER_OPEN;
       this.showEdit = showEdit;
-      console.log('item: ', item);
+      // console.log('item: ', item);
 
       this.initCopyInfo();
 
@@ -1370,6 +1373,80 @@ export default {
       if (obj.fieldValue !== '' && obj.fieldValue !== value) {
         obj.fieldValue = isNaN(value) ? '' : value;
       }
+    },
+    calcTotalOfRow(obj, colId, cols, uiType, rowFieldCode) {
+      if (rowFieldCode === 'inapplicable') {
+        obj[colId].fieldValue = '不适用';
+      } else {
+        var total = 0;
+        for (let col of cols) {
+          if (col.fieldCode !== 'total') {
+            if (uiType === 2) {
+              var num = parseFloat(obj[col.id].fieldValue);
+              num = isNaN(num) ? 0 : num;
+              total += num;
+            } else if (uiType === 8) {
+              var value = obj[col.id].fieldValue;
+              if (total === 0) {
+                total = '00:00:00';
+              }
+              if (value !== undefined && value !== '') {
+                total = this.addTime(total, value);
+              }
+            }
+          }
+        }
+        obj[colId].fieldValue = total;
+      }
+      return obj[colId].fieldValue;
+    },
+    addTime(total, time) {
+      // 用来计算增加的时长，第一个参数代表当前的总时间，为“HH:mm:ss”格式的字符串
+      // 第二个参数为传入的参数，为 Date 对象或者“HH:mm:ss”格式的字符串
+      // 如果第二个参数为 Date 对象，则只取其时分秒，而忽略其年月日
+      // 返回值是“HH:mm:ss”格式的字符串
+      var totalTimeStringList = total.split(':');
+      var totalHours = totalTimeStringList[0] ? totalTimeStringList[0] : 0;
+      var totalMinutes = totalTimeStringList[1] ? totalTimeStringList[1] : 0;
+      var totalSeconds = totalTimeStringList[2] ? totalTimeStringList[2] : 0;
+      totalHours = Number(totalHours);
+      totalMinutes = Number(totalMinutes);
+      totalSeconds = Number(totalSeconds);
+
+      var addHours = 0;
+      var addMinutes = 0;
+      var addSeconds = 0;
+      if (time instanceof Date) {
+        addHours = time.getHours();
+        addMinutes = time.getMinutes();
+        addSeconds = time.getSeconds();
+      } else if (time instanceof String) {
+        var timeStringList = time.split(':');
+        addHours = timeStringList[0] ? timeStringList[0] : 0;
+        addMinutes = timeStringList[1] ? timeStringList[1] : 0;
+        addSeconds = timeStringList[2] ? timeStringList[2] : 0;
+        addHours = Number(addHours);
+        addMinutes = Number(addMinutes);
+        addSeconds = Number(addSeconds);
+      }
+      totalHours += addHours;
+      totalMinutes += addMinutes;
+      totalSeconds += addSeconds;
+      if (totalSeconds >= 60) {
+        totalSeconds -= 60;
+        totalMinutes += 1;
+      }
+      if (totalMinutes >= 60) {
+        totalMinutes -= 60;
+        totalHours += 1;
+      }
+      if (totalSeconds < 10) {
+        totalSeconds = '0' + totalSeconds;
+      }
+      if (totalMinutes < 10) {
+        totalMinutes = '0' + totalMinutes;
+      }
+      return totalHours + ':' + totalMinutes + ':' + totalSeconds;
     },
     cancel() {
       this.lockSubmitButton = false;
