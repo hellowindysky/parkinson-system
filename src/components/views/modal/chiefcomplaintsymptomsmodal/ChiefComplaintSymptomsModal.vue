@@ -1,11 +1,11 @@
 <template lang="html">
   <div class="symptoms-modal-wrapper" v-show="displayModal">
     <div class="symptoms-modal" ref="scrollArea">
-      <h3 class="title">{{title+title2}}</h3>
+      <h3 class="title">{{title}}</h3>
       <div class="content">
         <div class="field">
           <span class="field-name long-field-name">
-            {{title2}}类型:
+            主诉症状类型:
             <span class="required-mark">*</span>
           </span>
           <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
@@ -342,7 +342,7 @@
 
       <div class="button cancel-button" @click="cancel">取消</div>
       <div v-show="mode!==VIEW_CURRENT_CARD" class="button submit-button" @click="submit">确定</div>
-      <div v-show="mode===VIEW_CURRENT_CARD && canEdit" class="button edit-button" @click="switchToEditingMode">编辑</div>
+      <div v-show="mode===VIEW_CURRENT_CARD && showEdit" class="button edit-button" @click="switchToEditingMode">编辑</div>
 
     </div>
   </div>
@@ -354,15 +354,13 @@ import Ps from 'perfect-scrollbar';
 import { mapGetters } from 'vuex';
 import Util from 'utils/util.js';
 import { reviseDateFormat, pruneObj } from 'utils/helper.js';
-// import {addPatientSymptom, modPatientSymptom} from 'api/patient.js';
-import { addPatientFirstSymbol, modPatientFirstSymbol, addPatientSymptom, modPatientSymptom} from 'api/patient.js';
+import { addPatientSymptom, modPatientSymptom} from 'api/patient.js';
 export default {
   data() {
     return {
       displayModal: false,
       mode: '',
       completeInit: false,
-      title2: 'ttt',
       copyInfo: {
         symType: '', //  首发症状类型 string
         symName: '', // 症状名称 string
@@ -389,7 +387,7 @@ export default {
         }
       },
       lockSubmitButton: false,
-      showEdit: true
+      showEdit: false
     };
   },
   computed: {
@@ -400,16 +398,9 @@ export default {
     ]),
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
-        return '新增';
+        return '新增主诉症状';
       } else {
-        return '';
-      }
-    },
-    canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
-        return true;
-      } else {
-        return false;
+        return '主诉症状';
       }
     },
     verificationFieldList() {
@@ -446,11 +437,11 @@ export default {
         }
       });
     },
-    showModal(cardOperation, item, title2) {
+    showModal(cardOperation, item, showEdit) {
       this.completeInit = false;
       this.runClearVal = false;
       this.mode = cardOperation;
-      this.title2 = title2;
+      this.showEdit = showEdit;
       // ******************************
       this.$set(this.copyInfo, 'symType', item.symType);
       this.$set(this.copyInfo, 'symName', item.symName);
@@ -586,49 +577,25 @@ export default {
       };
 
       // 验证完成，准备请求数据
-      if (this.title2 === '主诉症状') {
-        var ComplaintsInfo = Object.assign({}, this.copyInfo); // 主诉症状数据
-        ComplaintsInfo.patientId = this.$route.params.id;
-        ComplaintsInfo.patientCaseId = this.$route.params.caseId;
-        ComplaintsInfo.notSportTypeId = this.symId;
+      var ComplaintsInfo = Object.assign({}, this.copyInfo); // 主诉症状数据
+      ComplaintsInfo.patientId = this.$route.params.id;
+      ComplaintsInfo.patientCaseId = this.$route.params.caseId;
+      ComplaintsInfo.notSportTypeId = this.symId;
 
-        reviseDateFormat(ComplaintsInfo);
-        pruneObj(ComplaintsInfo);
-
-      } else if (this.title2 === '首发症状') {
-        var firstInfo = Object.assign({}, this.copyInfo); // 首发症状数据
-        firstInfo.patientId = this.$route.params.id;
-
-        reviseDateFormat(firstInfo);
-        pruneObj(firstInfo);
-      };
+      reviseDateFormat(ComplaintsInfo);
+      pruneObj(ComplaintsInfo);
 
       if (this.mode === this.ADD_NEW_CARD) {
-        if (this.title2 === '主诉症状') {
-          addPatientSymptom(ComplaintsInfo).then(() => {
-            this.updateAndClose();
-            this.lockSubmitButton = false;
-          }, this._handleError);
-        } else if (this.title2 === '首发症状') {
-          addPatientFirstSymbol(firstInfo).then(() => {
-            this.updateAndClose();
-            this.lockSubmitButton = false;
-          }, this._handleError);
-        };
+        addPatientSymptom(ComplaintsInfo).then(() => {
+          this.updateAndClose();
+          this.lockSubmitButton = false;
+        }, this._handleError);
       } else if (this.mode === this.EDIT_CURRENT_CARD) {
-        if (this.title2 === '主诉症状') {
-          ComplaintsInfo.id = this.id;
-          modPatientSymptom(ComplaintsInfo).then(() => {
-            this.updateAndClose();
-            this.lockSubmitButton = false;
-          }, this._handleError);
-        } else if (this.title2 === '首发症状') {
-          firstInfo.id = this.id;
-          modPatientFirstSymbol(firstInfo).then(() => {
-            this.updateAndClose();
-            this.lockSubmitButton = false;
-          }, this._handleError);
-        };
+        ComplaintsInfo.id = this.id;
+        modPatientSymptom(ComplaintsInfo).then(() => {
+          this.updateAndClose();
+          this.lockSubmitButton = false;
+        }, this._handleError);
       };
 
     },
@@ -637,12 +604,8 @@ export default {
       this.lockSubmitButton = false;
     },
     updateAndClose() {
-      if (this.title2 === '主诉症状') {
-        // Bus.$emit(this.UPDATE_CASE_INFO);
-        Bus.$emit(this.UPDATE_COMPLAINTSYMPTOMS_INFO);
-      } else if (this.title2 === '首发症状') {
-        Bus.$emit(this.UPDATE_FIRSTSYMPTOMS_INFO);
-      }
+      // Bus.$emit(this.UPDATE_CASE_INFO);
+      Bus.$emit(this.UPDATE_COMPLAINTSYMPTOMS_INFO);
 
       this.displayModal = false;
     }

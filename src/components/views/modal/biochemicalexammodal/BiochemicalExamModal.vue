@@ -361,13 +361,13 @@ export default {
     updateWarning(fieldName, index, id) {
       let fieldVal = this.copyInfo[fieldName];
       if (Array.isArray(this.copyInfo[fieldName])) {
-        if (this.copyInfo[fieldName][index].result && Util.checkIfNotMoreThanNDecimalNums(fieldVal[index].result, 7)) {
+        if (this.copyInfo[fieldName][index].result && Util.checkIfNotMoreThanNDecimalNums(fieldVal[index].result, 2)) {
           this.$set(this.warningResults[fieldName][index], 'result', '');
         } else {
           if (this.copyInfo.bioexamId === 12 && this.checkRequired(id) && !fieldVal[index].result) {
             this.$set(this.warningResults[fieldName][index], 'result', '必填项');
-          } else if (fieldVal[index].result !== '' && !Util.checkIfNotMoreThanNDecimalNums(fieldVal[index].result, 7)) {
-            this.$set(this.warningResults[fieldName][index], 'result', '请输入正数');
+          } else if (fieldVal[index].result !== '' && !Util.checkIfNotMoreThanNDecimalNums(fieldVal[index].result, 2)) {
+            this.$set(this.warningResults[fieldName][index], 'result', '请输入正数，最多2位小数');
           } else {
             this.$set(this.warningResults[fieldName][index], 'result', '');
           };
