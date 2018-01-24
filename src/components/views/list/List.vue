@@ -785,8 +785,10 @@ export default {
         this.listType === this.THERAPISTS_PATIENTS_TYPE ||
         this.listType === this.APPRAISERS_PATIENTS_TYPE) {
         this.resetForm('filterPatientsForm', this.checkRoute);
+        Bus.$emit(this.SHOW_LIST);
       } else if (this.listType === this.GROUP_TYPE) {
         this.resetForm('filterGroupsForm', this.checkRoute);
+        Bus.$emit(this.SHOW_LIST);
       }
     },
     showSensitiveInfo() {

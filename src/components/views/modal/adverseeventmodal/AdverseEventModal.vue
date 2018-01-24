@@ -17,6 +17,7 @@
               v-model="occurTime"
               :class="{'warning': warningResults.occurTime}"
               type="datetime"
+              format="yyyy-MM-dd HH:mm"
               placeholder="请选择开始发生时间"
               :picker-options="pickerOptions"
               @change="updateWarning('occurTime')">
@@ -141,20 +142,25 @@
             </el-select>
           </span>
         </div>
-        <div class="field" v-show="seriousFlag===1">
+        <div class="field whole-line" v-show="seriousFlag===1">
           <span class="field-name">
             严重不良事件：
           </span>
-          <div class="serious-adverse-event">
-            <el-checkbox v-for="(item, index) in getOptions('seriousAdverse')"
-              v-model="seriousAdverseEvents[index]"
-              :key="item.code"
-              :label="item.name"
-              :disabled="mode===VIEW_CURRENT_CARD">
-            </el-checkbox>
-          </div> 
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+           {{translateToName()}}
+          </span>
+          <span class="field-input" v-else>
+            <div class="serious-adverse-event">
+              <el-checkbox v-for="(item, index) in getOptions('seriousAdverse')"
+                v-model="seriousAdverseEvents[index]"
+                :key="item.code"
+                :label="item.name"
+                :disabled="mode===VIEW_CURRENT_CARD">
+              </el-checkbox>
+            </div>
+          </span>
         </div>
-        <div class="field whole-line">
+        <div class="field whole-line excursion">
           伴随用药
         </div>
         <table class="table">
@@ -232,7 +238,7 @@
             </div>
           </div>
           <div class="foldable-content" :class="{'folded': foldedConditionalContentMeasures}">
-            <div class="field whole-line">
+            <div class="field whole-line excursion">
             药物治疗
             </div>
             <table class="table">
@@ -324,10 +330,10 @@
         <div class="seperate-line">
           <div class="toggle-fold-button" @click="toggleContentFoldedEndEvent">
             不良事件结局
-            <span class="iconfont" :class="iconToggleFoldedMeasures"></span>
+            <span class="iconfont" :class="iconToggleFoldedEvents"></span>
           </div>
         </div>
-        <div class="foldable-content" :class="{'folded': foldedConditionalContentEndEvent}">
+        <div class="foldable-content" :class="{'folded': foldedConditionalContentEndEvents}">
           <div class="field whole-line">
             <span class="field-name">
               不良事件结局：
@@ -385,7 +391,7 @@
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
       <div v-if="mode!==VIEW_CURRENT_CARD" class="button submit-button" @click="submit">确定</div>
-      <div v-else-if="mode===VIEW_CURRENT_CARD && canEdit" class="button submit-button btn-margin" @click="switchToEditingMode">编辑</div>
+      <div v-else-if="mode===VIEW_CURRENT_CARD && showEdit" class="button submit-button btn-margin" @click="switchToEditingMode">编辑</div>
     </div>
   </div>
 </template>
@@ -398,12 +404,26 @@ import { deepCopy, vueCopy, reviseMinuteFormat, pruneObj } from 'utils/helper';
 import { getPatientSimpleInfo, addAdverseEvent, modifyAdverseEvent } from 'api/patient.js';
 
 export default {
+  props: {
+    foldedMeasuresStatus: {
+      required: false,
+      type: Boolean,
+      default: true   // 如果没有传入这个参数，默认状态下面板是折叠的
+    },
+    foldedEventsStatus: {
+      required: false,
+      type: Boolean,
+      default: true   // 如果没有传入这个参数，默认状态下面板是折叠的
+    }
+  },
   data() {
     return {
       displayModal: false,
       mode: '',
       completeInit: false,
       dbsPatientCode: '',
+      foldedMeasures: this.foldedMeasuresStatus,
+      foldedEvents: this.foldedEventsStatus,
 
       patientAdverse: '',
       patientAdverseId: '',
@@ -425,7 +445,7 @@ export default {
       medicineMethod: '',
       hasNoReaction: '',
       foldedConditionalContentMeasures: false,
-      foldedConditionalContentEndEvent: false,
+      foldedConditionalContentEndEvents: false,
       adjointMedicine: [
         {
           'medicineName': '',
@@ -450,7 +470,7 @@ export default {
           return time.getTime() > Date.now();
         }
       },
-      showEdit: true
+      showEdit: false
     };
   },
   computed: {
@@ -458,7 +478,10 @@ export default {
       'typeGroup'
     ]),
     iconToggleFoldedMeasures() {
-      return this.folded ? 'icon-arrow-down' : 'icon-arrow-up';
+      return this.foldedMeasures ? 'icon-arrow-down' : 'icon-arrow-up';
+    },
+    iconToggleFoldedEvents() {
+      return this.foldedEvents ? 'icon-arrow-down' : 'icon-arrow-up';
     },
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
@@ -466,30 +489,45 @@ export default {
       } else {
         return '不良事件';
       }
-    },
-    canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
-        return true;
-      } else {
-        return false;
-      }
     }
   },
   methods: {
+    translateToName() {
+      let typeArr = this.getOptions('seriousAdverse');
+      let str = [];
+      this.seriousAdverseEvents.forEach((item, i) => {
+        if (item === true) {
+          str.push(typeArr[i].name);
+        }
+      });
+      return str.join('，');
+    },
     showPanel(cardOperation, item, showEdit) {
       this.completeInit = false;
       this.mode = cardOperation;
       this.showEdit = showEdit;
-      for (let medicine of this.adjointMedicine) {
-        medicine.medicineName = '';
-        medicine.totalDailyDose = '';
-        medicine.medicineMethod = '';
-      }
-      for (let reaction of this.treatMedicine) {
-        reaction.medicineName = '';
-        reaction.totalDailyDose = '';
-        reaction.medicineMethod = '';
-      }
+      this.adjointMedicine = [];
+      this.$set(this.adjointMedicine, 0, {});
+      this.$set(this.adjointMedicine[0], 'medicineName', '');
+      this.$set(this.adjointMedicine[0], 'totalDailyDose', '');
+      this.$set(this.adjointMedicine[0], 'totalDailyDose', '');
+
+      this.treatMedicine = [];
+      this.$set(this.treatMedicine, 0, {});
+      this.$set(this.treatMedicine[0], 'medicineName', '');
+      this.$set(this.treatMedicine[0], 'totalDailyDose', '');
+      this.$set(this.treatMedicine[0], 'totalDailyDose', '');
+
+      // for (let medicine of this.adjointMedicine) {
+      //   medicine.medicineName = '';
+      //   medicine.totalDailyDose = '';
+      //   medicine.medicineMethod = '';
+      // }
+      // for (let reaction of this.treatMedicine) {
+      //   reaction.medicineName = '';
+      //   reaction.totalDailyDose = '';
+      //   reaction.medicineMethod = '';
+      // }
       this.$nextTick(() => {
         this.$refs.scrollArea.scrollTop = 0;
         for (var property in this.warningResults) {
@@ -502,8 +540,8 @@ export default {
       this.occurTime = item.occurTime ? item.occurTime : '';
       this.adverseName = item.adverseName ? item.adverseName : '';
       this.adverseDescribe = item.adverseDescribe ? item.adverseDescribe : '';
-      this.measureFlag = item.measureFlag ? item.measureFlag : '';
-      this.seriousFlag = item.seriousFlag ? item.seriousFlag : '';
+      this.measureFlag = item.measureFlag;
+      this.seriousFlag = item.seriousFlag;
       this.severity = item.severity ? item.severity : '';
       this.treatmentRelate = item.treatmentRelate ? item.treatmentRelate : '';
       this.seriousAdverse = item.seriousAdverse ? item.seriousAdverse : '';
@@ -523,8 +561,8 @@ export default {
       this.completeInit = true;
       this.displayModal = true;
       this.updateScrollbar();
-      this.foldedConditionalContentMeasures = true;
-      this.foldedConditionalContentEndEvent = true;
+      this.foldedConditionalContentMeasures = false;
+      this.foldedConditionalContentEndEvents = false;
     // 获取患者的 DBS 编码
       getPatientSimpleInfo(this.$route.params.id).then((data) => {
         if (data && data.patientInfo && data.patientInfo && data.patientInfo.dbsPatientCode) {
@@ -669,12 +707,12 @@ export default {
       adverseEventInfo.occurTime = this.occurTime;
       adverseEventInfo.adverseName = this.adverseName;
       adverseEventInfo.adverseDescribe = this.adverseDescribe;
-      adverseEventInfo.measureFlag = this.measureFlag;
       adverseEventInfo.adverseSeverity = this.adverseSeverity;
       adverseEventInfo.treatmentRelate = this.treatmentRelate;
       adverseEventInfo.severity = this.severity;
       adverseEventInfo.seriousFlag = this.seriousFlag;
       adverseEventInfo.measureFlag = this.measureFlag;
+      adverseEventInfo.digitYN = this.digitYN;
       adverseEventInfo.seriousAdverse = this.concatenateSeriousAdverse();
 
       adverseEventInfo.remark = this.remark;
@@ -709,14 +747,14 @@ export default {
       setTimeout(() => {
         this.updateScrollbar();
       }, 150);
-      this.folded = !this.folded;
+      this.foldedMeasures = !this.foldedMeasures;
     },
     toggleContentFoldedEndEvent() {
-      this.foldedConditionalContentEndEvent = !this.foldedConditionalContentEndEvent;
+      this.foldedConditionalContentEndEvents = !this.foldedConditionalContentEndEvents;
       setTimeout(() => {
         this.updateScrollbar();
       }, 150);
-      this.folded = !this.folded;
+      this.foldedEvents = !this.foldedEvents;
     },
     updateAndClose() {
       Bus.$emit(this.UPDATE_CASE_INFO);
@@ -746,6 +784,26 @@ export default {
     typeGroup() {
       this.initSeriousAdverseEvents();
       this.prepareSeriousAdverseEvent();
+    },
+    foldedMeasures: function() {
+      // 每当面板的折叠状态发生变化，就会通知所在的滚动区域，需要重新计算高度
+      setTimeout(() => {
+        // 之所以要延时发送事件，是为了等待折叠动画结束
+        Bus.$emit(this.SCROLL_AREA_SIZE_CHANGE);
+      }, 300);
+    },
+    foldedMeasuresStatus: function(newFoldedMeasuresStatus) {
+      this.foldedMeasures = newFoldedMeasuresStatus;
+    },
+    foldedEvents: function() {
+      // 每当面板的折叠状态发生变化，就会通知所在的滚动区域，需要重新计算高度
+      setTimeout(() => {
+        // 之所以要延时发送事件，是为了等待折叠动画结束
+        Bus.$emit(this.SCROLL_AREA_SIZE_CHANGE);
+      }, 300);
+    },
+    foldedEventsStatus: function(newFoldedEventsStatus) {
+      this.foldedEvents = newFoldedEventsStatus;
     }
   }
 };
@@ -780,7 +838,7 @@ export default {
     .serious-adverse-event {
       position: relative;
       top: 0;
-      left: @field-name-width;
+      // left: @field-name-width;
       .el-checkbox {
         padding-right: 15px;
         margin-left: 0;
@@ -797,7 +855,7 @@ export default {
       text-align: left;
       font-size: 0;
       .foldable-content {
-        padding: 5px 0;
+        // padding: 5px 0;
         margin-bottom: 20px;
         height: auto;
         overflow: hidden;
@@ -888,8 +946,11 @@ export default {
           }
         }
       }
+      .excursion {
+        margin-bottom: -4px;
+      }
       .table {
-        margin: -15px 0 20px;
+        margin: 10px 20px;
         width: 100%;
         border: 1px solid @light-gray-color;
         border-collapse: collapse;
@@ -907,7 +968,7 @@ export default {
             border: 1px solid @light-gray-color;
             .required-mark {
               position: absolute;
-              right: 5px;
+              right: 0px;
               top: 8px;
               color: red;
               font-size: 25px;

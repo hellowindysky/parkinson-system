@@ -35,9 +35,13 @@
             <el-option v-for="option in getOptions(field.fieldName)" :label="option.typeName"
              :value="option.typeCode" :key="option.typeCode"></el-option>
           </el-select>
-          <el-date-picker v-else-if="getUIType(field.fieldName)===6" v-model="copyInfo[field.fieldName]" type="date"
-           :class="{'warning': warningResults[field.fieldName]}" :placeholder="getMatchedField(field.fieldName).cnFieldDesc"
-           :editable="true" @change="updateWarning(field)">
+          <el-date-picker
+            v-else-if="getUIType(field.fieldName)===6"
+            v-model="copyInfo[field.fieldName]" type="date"
+            :class="{'warning': warningResults[field.fieldName]}"
+            :placeholder="getMatchedField(field.fieldName).cnFieldDesc"
+            :editable="true" @change="updateWarning(field)"
+            :picker-options="pickerOptions">
           </el-date-picker>
           <el-input v-else-if="getUIType(field.fieldName)===1" v-model="copyInfo[field.fieldName]"
            type="textarea" :rows="3" :placeholder="getMatchedField(field.fieldName).cnFieldDesc" :maxlength="500"></el-input>
@@ -64,7 +68,12 @@ export default {
       copyInfo: {},
       warningResults: {},
       inSubject: true,
-      lockSubmitButton: false
+      lockSubmitButton: false,
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        }
+      }
     };
   },
   props: {
@@ -76,7 +85,15 @@ export default {
       type: Object,
       default: {}
     },
-    experimentStep: {
+    diagnosisCreator: {
+      type: String,
+      default: ''
+    },
+    diagnosticExperimentStep: {
+      type: Number,
+      default: 0
+    },
+    patientExperimentStep: {
       type: Number,
       default: 0
     },
@@ -101,13 +118,15 @@ export default {
       return this.$store.state.listType;
     },
     canEdit() {
-      var isMyPatientsLits = this.$route.matched.some(record => record.meta.myPatients);
+      var createByCurrentUser = this.diagnosisCreator === sessionStorage.getItem('userName');
+      var isMyPatientsList = this.$route.matched.some(record => record.meta.myPatients);
       var isExperimentPatientsList = this.$route.matched.some(record => {
         return record.meta.therapistsPatients || record.meta.appraisersPatients;
       });
-      var duringExperiment = this.experimentStep > 0;
-      if ((isMyPatientsLits || (isExperimentPatientsList && duringExperiment)) &&
-        (!this.archived || this.$route.params.caseId === 'newCase')) {
+      var duringExperiment = this.diagnosticExperimentStep > 0;
+      var atSameStep = this.diagnosticExperimentStep === this.patientExperimentStep;
+      if (((isMyPatientsList || (isExperimentPatientsList && duringExperiment)) && atSameStep &&
+        createByCurrentUser && !this.archived) || this.$route.params.caseId === 'newCase') {
         return true;
       }
       return false;

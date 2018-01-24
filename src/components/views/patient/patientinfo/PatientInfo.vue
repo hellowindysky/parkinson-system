@@ -26,7 +26,14 @@
           <span class="info-title">分组情况: </span>
           <span class="info-text">
             <span class="tags-wrapper">
-              <span v-for="group in belongGroups" class="tag">{{ group.groupName }}</span>
+              <el-tooltip v-for="group in belongGroups"
+                :key="group.groupId"
+                class="tag"
+                effect="dark"
+                :content="group.groupName"
+                placement="top">
+                <el-button>{{group.groupName}}</el-button>
+              </el-tooltip>
             </span>
             <span class="iconfont icon-group" @click="toggleGroupPanel"></span>
           </span>
@@ -35,7 +42,14 @@
           <span class="info-title">课题标签: </span>
           <span class="info-text">
             <span class="tags-wrapper">
-              <span v-for="subject in belongSubjects" class="tag">{{ subject.fullTaskName }}</span>
+              <el-tooltip v-for="subject in belongSubjects"
+                :key="subject.id"
+                class="tag"
+                effect="dark"
+                :content="subject.fullTaskName"
+                placement="top">
+                <el-button>{{subject.fullTaskName}}</el-button>
+              </el-tooltip>
             </span>
             <span class="iconfont icon-subject" @click="toggleSubjectPanel"></span>
           </span>
@@ -199,7 +213,8 @@ export default {
       if (!this.existed) {
         return;
       }
-      getPatientInfo(this.patientId).then((data) => {
+      var subjectNum = this.inSubject ? this.$store.state.subjectId : 0;
+      getPatientInfo(this.patientId, subjectNum).then((data) => {
         // console.log('patientInfo: ', data);
         this.patientInfo = data;
         this.createDate = data.createDate;
@@ -489,11 +504,16 @@ export default {
           white-space: nowrap;
           .tag {
             display: inline-block;
-            padding: 0 5px;
-            margin-right: 8px;
+            padding: 0 10px;
+            height: 30px;
             background-color: @light-font-color;
+            border: 0;
             border-radius: 5px;
             color: #fff;
+            cursor: default;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
           }
         }
         .info-title {

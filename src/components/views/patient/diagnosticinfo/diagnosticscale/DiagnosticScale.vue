@@ -61,7 +61,15 @@ export default {
       type: Array,
       default: () => []
     },
-    experimentStep: {
+    diagnosisCreator: {
+      type: String,
+      default: ''
+    },
+    diagnosticExperimentStep: {
+      type: Number,
+      default: 0
+    },
+    patientExperimentStep: {
       type: Number,
       default: 0
     },
@@ -76,14 +84,20 @@ export default {
       'typeGroup'
     ]),
     canEdit() {
-      if ((this.$route.matched.some(record => record.meta.myPatients) ||
-        this.$route.matched.some(record => record.meta.therapistsPatients) ||
-        this.$route.matched.some(record => record.meta.appraisersPatients)) &&
-        !this.archived) {
+      var createByCurrentUser = this.diagnosisCreator === sessionStorage.getItem('userName');
+      var isMyPatientsList = this.$route.matched.some(record => record.meta.myPatients);
+      var isExperimentPatientsList = this.$route.matched.some(record => {
+        return record.meta.therapistsPatients || record.meta.appraisersPatients;
+      });
+      var duringExperiment = this.diagnosticExperimentStep > 0;
+      var diagnosticExperimentStatus = parseInt(this.diagnosticExperimentStep, 10);
+      var editableInExperiment = diagnosticExperimentStatus === 2 || diagnosticExperimentStatus === 4;
+      var atSameStep = this.diagnosticExperimentStep === this.patientExperimentStep;
+      if ((isMyPatientsList || (isExperimentPatientsList && duringExperiment && editableInExperiment)) &&
+        atSameStep && createByCurrentUser && !this.archived) {
         return true;
-      } else {
-        return false;
       }
+      return false;
     },
     allScaleTypes() {
       var typesInfo = Util.getElement('typegroupcode', 'gaugeType', this.typeGroup);
@@ -135,14 +149,17 @@ export default {
     },
     editScale(item) {
       var scaleTypeCode = this.getScaleTypeCode(item.scaleInfoId);
-      Bus.$emit(this.SHOW_SCALE_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived, scaleTypeCode);
+      var showEdit = this.canEdit && !this.archived;
+      Bus.$emit(this.SHOW_SCALE_MODAL, this.EDIT_CURRENT_CARD, item, showEdit, scaleTypeCode);
     },
     viewScale(item) {
       var scaleTypeCode = this.getScaleTypeCode(item.scaleInfoId);
-      Bus.$emit(this.SHOW_SCALE_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived, scaleTypeCode);
+      var showEdit = this.canEdit && !this.archived;
+      Bus.$emit(this.SHOW_SCALE_MODAL, this.VIEW_CURRENT_CARD, item, showEdit, scaleTypeCode);
     },
     addScale(scaleTypeCode) {
-      Bus.$emit(this.SHOW_SCALE_MODAL, this.ADD_NEW_CARD, {}, !this.archived, scaleTypeCode);
+      var showEdit = this.canEdit && !this.archived;
+      Bus.$emit(this.SHOW_SCALE_MODAL, this.ADD_NEW_CARD, {}, showEdit, scaleTypeCode);
     },
     deleteScaleRecord(item) {
       // console.log(item);

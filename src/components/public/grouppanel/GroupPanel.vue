@@ -3,10 +3,15 @@
     <div class="iconfont icon-close" @click="closePanel"></div>
     <p class="title">添加分组（带颜色的为已加入的组，点击标签即可加入或移出）</p>
     <div class="group-wrapper" ref="scrollArea">
-      <div class="group-item" v-for="(group, index) in allGroups"
-        :class="{'selected': groupSelectedList[index]}" @click="toggleSelected(index)">
-        {{group.groupName}}
-      </div>
+      <el-tooltip v-for="(group, index) in allGroups"
+        :key="group.groupId"
+        class="group-item"
+        :class="{'selected': groupSelectedList[index]}"
+        effect="dark"
+        :content="group.groupName"
+        placement="top">
+        <el-button @click="toggleSelected(index)">{{group.groupName}}</el-button>
+      </el-tooltip>
     </div>
   </div>
 </template>
@@ -60,24 +65,29 @@ export default {
       }
       lockList.push(index);
       var value = !this.groupSelectedList[index];
-      this.$set(this.groupSelectedList, index, value);
       var groupId = this.allGroups[index].groupId;
       var patientId = Number(this.patientId);
       if (value) {
         addGroupMembers(groupId, [patientId]).then(() => {
           let listIndex = lockList.indexOf(index);
-          this.$emit(this.UPDATE_PATIENT_GROUP_INFO);
           lockList.splice(listIndex, 1);
+          this.$set(this.groupSelectedList, index, value);
+          this.$emit(this.UPDATE_PATIENT_GROUP_INFO);
         }, (error) => {
           console.log(error);
+          let listIndex = lockList.indexOf(index);
+          lockList.splice(listIndex, 1);
         });
       } else {
         removeGroupMembers(groupId, [this.patientId]).then(() => {
           let listIndex = lockList.indexOf(index);
-          this.$emit(this.UPDATE_PATIENT_GROUP_INFO);
           lockList.splice(listIndex, 1);
+          this.$set(this.groupSelectedList, index, value);
+          this.$emit(this.UPDATE_PATIENT_GROUP_INFO);
         }, (error) => {
           console.log(error);
+          let listIndex = lockList.indexOf(index);
+          lockList.splice(listIndex, 1);
         });
       }
     }
@@ -156,6 +166,7 @@ export default {
       box-sizing: border-box;
       background-color: #fff;
       color: @light-font-color;
+      border: 0;
       text-align: center;
       overflow: hidden;
       text-overflow: ellipsis;

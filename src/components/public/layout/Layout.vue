@@ -29,7 +29,7 @@
     <first-symptoms-modal></first-symptoms-modal>
     <first-treatment-modal></first-treatment-modal>
     <diagnostic-record-modal></diagnostic-record-modal>
-    <chiefcomplaint-symptoms-modal></chiefcomplaint-symptoms-modal>
+    <chief-complaint-symptoms-modal></chief-complaint-symptoms-modal>
     <application-modal></application-modal>
     <rejection-modal></rejection-modal>
     <ratification-modal></ratification-modal>
@@ -63,7 +63,7 @@ const modalBox = () => import(/* webpackChunkName: 'modal' */ 'components/views/
 const firstSymptomsModal = () => import(/* webpackChunkName: 'modal' */ 'components/views/modal/firstsymptomsmodal/FirstSymptomsModal');
 const firstTreatmentModal = () => import(/* webpackChunkName: 'modal' */ 'components/views/modal/firsttreatmentmodal/FirstTreatmentModal');
 const diagnosticRecordModal = () => import(/* webpackChunkName: 'modal' */ 'components/views/modal/diagnosticrecordmodal/DiagnosticRecordModal');
-const chiefcomplaintSymptomsModal = () => import(/* webpackChunkName: 'modal' */ 'components/views/modal/chiefcomplaintsymptomsmodal/ChiefcomplaintSymptomsModal');
+const chiefComplaintSymptomsModal = () => import(/* webpackChunkName: 'modal' */ 'components/views/modal/chiefcomplaintsymptomsmodal/ChiefComplaintSymptomsModal');
 
 const medicineModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'components/views/modal/medicinemodal/MedicineModal');
 const preEvaluationModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'components/views/modal/preevaluationmodal/PreEvaluationModal');
@@ -130,7 +130,7 @@ export default {
     firstSymptomsModal,
     firstTreatmentModal,
     diagnosticRecordModal,
-    chiefcomplaintSymptomsModal,
+    chiefComplaintSymptomsModal,
     applicationModal,
     rejectionModal,
     ratificationModal,

@@ -3,14 +3,20 @@
     <folding-panel class="panel" :title="title" :mode="mode" :isCardsPanel="true" :folded-status="foldedStatus"
       v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit" v-on:addNewCard="addRecord"
       v-on:updateFilterCondition="changeFilterCondition" :editable="canEdit">
-      <card class="card" :class="devideWidth" :mode="mode" v-for="item in patientCaseList" :key="item.caseName"
+      <card class="card" :class="cardClass" :mode="mode" v-for="item in patientCaseList" :key="item.caseName"
         :title="item.caseName" :disable-delete="item.archiveStatus===1" v-on:editCurrentCard="seeDetail(item)" v-on:deleteCurrentCard="deleteRecord(item)"
         v-show="passFilter(item)" v-on:viewCurrentCard="seeDetail(item)">
-        <div class="text first-line">诊断内容：</div>
+        <div class="text first-line">诊断内容</div>
         <div class="text second-line">{{getDiagnosticContent(item)}}</div>
-        <div class="text third-line">归档情况：
+        <div class="text third-line">归档情况
           <span class="third-line-content" :class="{'unarchived': item.archiveStatus===2}">
             {{ getArchiveStatus(item) }}
+          </span>
+        </div>
+        <div class="text fourth-line" v-if="showRecordSource">
+          数据来源
+          <span class="fourth-line-content">
+            {{item.taskCode ? item.taskCode : '门诊'}}
           </span>
         </div>
         <div class="experiment-description">{{item.experimentDescription}}</div>
@@ -47,6 +53,12 @@ export default {
     },
     title() {
       return '看诊记录（' + this.patientCaseList.length + '条记录）';
+    },
+    showRecordSource() {
+      return this.$store.state.subjectId === this.SUBJECT_ID_FOR_HOSPITAL && this.listType === this.MY_PATIENTS_TYPE;
+    },
+    cardClass() {
+      return this.showRecordSource ? this.devideWidth + ' tall-card' : this.devideWidth;
     },
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients) ||
@@ -222,6 +234,9 @@ export default {
       &:active {
         box-shadow: 0 0 5px @light-gray-color;
       }
+      &.tall-card {
+        height: 150px;
+      }
       &.width-1-1, &.width-1-0 {
         width: calc(~"100% - @{this-card-horizontal-margin} * 2");
       }
@@ -277,16 +292,26 @@ export default {
           top: 100px;
           right: 20px;
           .third-line-content {
+            margin-left: 10px;
             color: @light-font-color;
             &.unarchived {
               color: @button-color;
             }
           }
         }
+        &.fourth-line {
+          left: 20px;
+          top: 125px;
+          right: 20px;
+          .fourth-line-content {
+            margin-left: 10px;
+            color: @light-font-color;
+          }
+        }
       }
       .experiment-description {
         position: absolute;
-        right: 20px;
+        right: 35px;
         top: 15px;
         font-size: @normal-font-size;
         font-weight: bold;

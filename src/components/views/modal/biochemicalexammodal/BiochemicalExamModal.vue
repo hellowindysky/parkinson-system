@@ -108,7 +108,7 @@
                 </span>
                 <el-select v-else placeholder="请选择" v-model="copyInfo.bioexamResult[index].isReference">
                   <el-option v-for="item in getOptions('isReference')" :key="item.code"
-                   :label="item.name" 
+                   :label="item.name"
                    :value="item.code">
                   </el-option>
                 </el-select>
@@ -124,7 +124,7 @@
       </div>
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
-      <div class="button edit-button" @click="switchToEditingMode" v-if="mode===VIEW_CURRENT_CARD && canEdit">编辑</div>
+      <div class="button edit-button" @click="switchToEditingMode" v-if="mode===VIEW_CURRENT_CARD && showEdit">编辑</div>
       <div class="button submit-button" @click="submit" v-else-if="mode!==VIEW_CURRENT_CARD">确定</div>
     </div>
   </div>
@@ -157,7 +157,7 @@ export default {
       copyInfo: {},
       targetBioexam: [],
       lockSubmitButton: false,
-      showEdit: true
+      showEdit: false
     };
   },
   computed: {
@@ -177,13 +177,6 @@ export default {
     },
     patientCaseId() {
       return this.$route.params.caseId;
-    },
-    canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
-        return true;
-      } else {
-        return false;
-      }
     }
   },
   methods: {

@@ -137,8 +137,14 @@
                 <el-option v-for="option in getOptions(field.fieldName)" :label="option.name"
                   :value="option.code" :key="option.code"></el-option>
               </el-select>
-              <el-date-picker v-else-if="getUIType(field.fieldName)===6" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-                :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)" clearable>
+              <el-date-picker
+                v-else-if="getUIType(field.fieldName)===6"
+                v-model="medicine[field.fieldName]"
+                :class="{'warning': warningResults[field.fieldName]}"
+                :placeholder="getMatchedField(field.fieldName).cnFieldDesc"
+                @change="updateField(field)"
+                :picker-options="pickerOptions"
+                clearable>
              </el-date-picker>
             </span>
           </div>
@@ -165,8 +171,14 @@
                 <el-option v-for="option in getOptions(field.fieldName)" :label="option.name"
                   :value="option.code" :key="option.code"></el-option>
               </el-select>
-              <el-date-picker v-else-if="getUIType(field.fieldName)===6" v-model="medicine[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-                :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateField(field)" clearable>
+              <el-date-picker
+                v-else-if="getUIType(field.fieldName)===6"
+                v-model="medicine[field.fieldName]"
+                :class="{'warning': warningResults[field.fieldName]}"
+                :placeholder="getMatchedField(field.fieldName).cnFieldDesc"
+                @change="updateField(field)"
+                :picker-options="pickerOptions"
+                clearable>
              </el-date-picker>
             </span>
           </div>
@@ -176,7 +188,7 @@
       <div class="button cancel-button" @click="cancel">取消</div>
       <div v-if="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD"
         class="button submit-button" @click="submit">确定</div>
-      <div v-else-if="mode===VIEW_CURRENT_CARD && canEdit"
+      <div v-else-if="mode===VIEW_CURRENT_CARD && showEdit"
         class="button edit-button" @click="switchToEditingMode">编辑</div>
     </div>
   </div>
@@ -202,8 +214,13 @@ export default {
       hasSideEffect: false,  // 这个变量用来控制是否有副反应
       hasComtAmongOtherMedicine: false,
       lockSubmitButton: false,
-      showEdit: true,
-      foldedConditionalContent: false   // 这个变量用来控制是否显示停药信息和副反应信息
+      showEdit: false,
+      foldedConditionalContent: false,   // 这个变量用来控制是否显示停药信息和副反应信息
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        }
+      }
     };
   },
   computed: {
@@ -214,13 +231,6 @@ export default {
       'medicineStopReason',
       'typeGroup'
     ]),
-    canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
-        return true;
-      } else {
-        return false;
-      }
-    },
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
         return '新增药物治疗';

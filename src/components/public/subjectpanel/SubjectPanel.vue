@@ -3,16 +3,22 @@
     <div class="iconfont icon-close" @click="closePanel"></div>
     <p class="title">添加课题（带颜色的为已加入的课题，点击标签即可加入或移出）</p>
     <div class="subject-wrapper" ref="scrollArea">
-      <div class="subject-item" v-for="(subject, index) in allSubjects"
-        :class="{'selected': subjectSelectedList[index]}" @click="toggleSelected(index)">
-        {{subject.taskName}}
-      </div>
+      <el-tooltip v-for="(subject, index) in allSubjects"
+        :key="subject.id"
+        class="subject-item"
+        :class="{'selected': subjectSelectedList[index]}"
+        effect="dark"
+        :content="subject.taskName"
+        placement="top">
+        <el-button @click="toggleSelected(index)">{{subject.taskName}}</el-button>
+      </el-tooltip>
     </div>
   </div>
 </template>
 
 <script>
 import Ps from 'perfect-scrollbar';
+import Bus from 'utils/bus.js';
 import { getSubjectList, addPatientToSubject, removePatientFromSubject } from 'api/subject.js';
 
 var lockList = [];  // 这个数组用来标记正在发生状态改变的分组
@@ -60,7 +66,6 @@ export default {
       }
       lockList.push(index);
       var value = !this.subjectSelectedList[index];
-      this.$set(this.subjectSelectedList, index, value);
       var subjectId = this.allSubjects[index].id;
       var patientId = Number(this.patientId);
       var patientSubject = {
@@ -72,16 +77,25 @@ export default {
           let listIndex = lockList.indexOf(index);
           this.$emit(this.UPDATE_PATIENT_SUBJECT_INFO);
           lockList.splice(listIndex, 1);
+          this.$set(this.subjectSelectedList, index, value);
         }, (error) => {
           console.log(error);
+          let listIndex = lockList.indexOf(index);
+          lockList.splice(listIndex, 1);
         });
       } else {
         removePatientFromSubject([patientSubject]).then(() => {
           let listIndex = lockList.indexOf(index);
           this.$emit(this.UPDATE_PATIENT_SUBJECT_INFO);
           lockList.splice(listIndex, 1);
+          this.$set(this.subjectSelectedList, index, value);
         }, (error) => {
           console.log(error);
+          if (error.code === 2010) {
+            Bus.$emit(this.NOTICE, '注意', '患者正在该课题中进行实验，不允许移出课题');
+          }
+          let listIndex = lockList.indexOf(index);
+          lockList.splice(listIndex, 1);
         });
       }
     }
@@ -158,6 +172,7 @@ export default {
       box-sizing: border-box;
       background-color: #fff;
       color: @light-font-color;
+      border: 0;
       text-align: center;
       overflow: hidden;
       text-overflow: ellipsis;

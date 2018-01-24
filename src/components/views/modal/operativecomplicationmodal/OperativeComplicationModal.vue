@@ -23,9 +23,13 @@
               <el-option v-for="option in getOptions(field.fieldName)" :label="option.name"
                 :value="option.code" :key="option.code"></el-option>
             </el-select>
-            <el-date-picker v-else-if="getUIType(field.fieldName)===6" v-model="copyInfo[field.fieldName]"
-              :class="{'warning': warningResults[field.fieldName]}"  @change="updateWarning(field)"
-              :placeholder="getMatchedField(field.fieldName).cnFieldDesc">
+            <el-date-picker
+              v-else-if="getUIType(field.fieldName)===6"
+              v-model="copyInfo[field.fieldName]"
+              :class="{'warning': warningResults[field.fieldName]}"
+              @change="updateWarning(field)"
+              :placeholder="getMatchedField(field.fieldName).cnFieldDesc"
+              :picker-options="pickerOptions">
             </el-date-picker>
             <el-input v-else-if="getUIType(field.fieldName)===1" v-model="copyInfo[field.fieldName]"
               :class="{'warning': warningResults[field.fieldName]}" :type="getType(field.fieldName)"
@@ -36,7 +40,7 @@
       </div>
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
-      <div class="button edit-button" v-if="mode===VIEW_CURRENT_CARD && canEdit" @click="switchToEditingMode">编辑</div>
+      <div class="button edit-button" v-if="mode===VIEW_CURRENT_CARD && showEdit" @click="switchToEditingMode">编辑</div>
       <div class="button submit-button" v-else-if="mode!==VIEW_CURRENT_CARD" @click="submit">确定</div>
     </div>
   </div>
@@ -60,7 +64,12 @@ export default {
       warningResults: {},
       completeInit: false,
       lockSubmitButton: false,
-      showEdit: true
+      showEdit: false,
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        }
+      }
     };
   },
   computed: {
@@ -75,13 +84,6 @@ export default {
         return '新增术后并发症';
       } else {
         return '术后并发症';
-      }
-    },
-    canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
-        return true;
-      } else {
-        return false;
       }
     }
   },

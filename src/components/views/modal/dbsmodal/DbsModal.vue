@@ -47,7 +47,11 @@
           </span>
           <span class="field-input" v-else>
             <span class="warning-text">{{warningResults.programDate}}</span>
-            <el-date-picker v-model="copyInfo.programDate" @change="updateWarning('programDate')" placeholder="请选择程控时间"
+            <el-date-picker
+              v-model="copyInfo.programDate"
+              @change="updateWarning('programDate')"
+              placeholder="请选择程控时间"
+              :picker-options="pickerOptions"
               :class="{'warning': warningResults.programDate}"></el-date-picker>
           </span>
         </div>
@@ -79,7 +83,10 @@
             {{lastProgramDate}}
           </span>
           <span class="field-input" v-else>
-            <el-date-picker v-model="lastProgramDate" placeholder="请选择上次程控时间"></el-date-picker>
+            <el-date-picker
+            v-model="lastProgramDate"
+            :picker-options="pickerOptions"
+            placeholder="请选择上次程控时间"></el-date-picker>
           </span>
         </div>
         <div class="field">
@@ -805,7 +812,7 @@
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
       <div class="button submit-button" @click="submit" v-if="mode!==VIEW_CURRENT_CARD">确定</div>
-      <div class="button edit-button" @click="switchToEditingMode" v-else-if="mode===VIEW_CURRENT_CARD && canEdit">编辑</div>
+      <div class="button edit-button" @click="switchToEditingMode" v-else-if="mode===VIEW_CURRENT_CARD && showEdit">编辑</div>
     </div>
   </div>
 </template>
@@ -892,6 +899,11 @@ export default {
         deviceId: '',
         programDate: ''
       },
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        }
+      },
       leftContactSortArray: [],
       rightContactSortArray: [],
       firstDbsAdjustAfterParamPole: [],
@@ -903,7 +915,7 @@ export default {
       lastProgramDate: '',
       lastDbsParameter: [],
       lockSubmitButton: false,
-      showEdit: true
+      showEdit: false
     };
   },
   computed: {
@@ -928,13 +940,6 @@ export default {
     },
     rightContactCount() {
       return this.getSideDeviceContact('right').length;
-    },
-    canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
-        return true;
-      } else {
-        return false;
-      }
     }
   },
   methods: {

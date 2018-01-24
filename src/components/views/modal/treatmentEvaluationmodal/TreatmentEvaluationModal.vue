@@ -101,10 +101,10 @@
             </el-input>
           </span>
         </div>
-      </div>  
+      </div>
       <div class="seperate-line"></div>
       <div class="moveLeft">
-             无不良反应: 
+             无不良反应:
          <el-checkbox v-model="hasNoReaction" @change="checkAll"
           :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
       </div>
@@ -147,13 +147,13 @@
               </el-select>
             </td>
         </tr>
-      </table> 
+      </table>
       </div>
       <p>0，无该症状；轻度 1-3；中度 4-7；重度 8-10；数值越大越严重</p>
       <div class="seperate-line"></div>
       <div class="button cancel-button btn-margin" @click="cancel">取消</div>
       <div v-show="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD" class="button submit-button btn-margin" @click="submit">确定</div>
-      <div v-show="mode===VIEW_CURRENT_CARD && canEdit" class="button submit-button btn-margin" @click="switchToEditingMode">编辑</div>
+      <div v-show="mode===VIEW_CURRENT_CARD && showEdit" class="button submit-button btn-margin" @click="switchToEditingMode">编辑</div>
     </div>
   </div>
 </template>
@@ -252,7 +252,7 @@ export default {
           return time.getTime() > Date.now();
         }
       },
-      showEdit: true
+      showEdit: false
     };
   },
   computed: {
@@ -274,13 +274,6 @@ export default {
         list = list.concat(['situationRemark']);
       }
       return list;
-    },
-    canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
-        return true;
-      } else {
-        return false;
-      }
     }
   },
   methods: {
@@ -679,7 +672,7 @@ export default {
         }
       }
     }
-  }  
+  }
     .seperate-line {
       width: 90%;
       height: 1px;

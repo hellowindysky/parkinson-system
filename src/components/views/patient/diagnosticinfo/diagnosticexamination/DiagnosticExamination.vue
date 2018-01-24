@@ -227,7 +227,15 @@ export default {
         return {};
       }
     },
-    experimentStep: {
+    diagnosisCreator: {
+      type: String,
+      default: ''
+    },
+    diagnosticExperimentStep: {
+      type: Number,
+      default: 0
+    },
+    patientExperimentStep: {
       type: Number,
       default: 0
     },
@@ -274,14 +282,18 @@ export default {
       return info;
     },
     canEdit() {
-      if ((this.$route.matched.some(record => record.meta.myPatients) ||
-        this.$route.matched.some(record => record.meta.therapistsPatients) ||
-        this.$route.matched.some(record => record.meta.appraisersPatients)) &&
-        !this.archived) {
+      var createByCurrentUser = this.diagnosisCreator === sessionStorage.getItem('userName');
+      var isMyPatientsList = this.$route.matched.some(record => record.meta.myPatients);
+      var isExperimentPatientsList = this.$route.matched.some(record => {
+        return record.meta.therapistsPatients || record.meta.appraisersPatients;
+      });
+      var duringExperiment = this.diagnosticExperimentStep > 0;
+      var atSameStep = this.diagnosticExperimentStep === this.patientExperimentStep;
+      if ((isMyPatientsList || (isExperimentPatientsList && duringExperiment)) &&
+        atSameStep && createByCurrentUser && !this.archived) {
         return true;
-      } else {
-        return false;
       }
+      return false;
     }
   },
   methods: {
@@ -323,13 +335,16 @@ export default {
         ? item.patientFieldCode[3][7][0].fieldValue + '%' : '';
     },
     addNeurologicCheckRecord() {
-      Bus.$emit(this.SHOW_NEUROLOGIC_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
+      var showEdit = this.canEdit && !this.archived;
+      Bus.$emit(this.SHOW_NEUROLOGIC_MODAL, this.ADD_NEW_CARD, {}, showEdit);
     },
     editNeurologicCheckRecord(item) {
-      Bus.$emit(this.SHOW_NEUROLOGIC_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
+      var showEdit = this.canEdit && !this.archived;
+      Bus.$emit(this.SHOW_NEUROLOGIC_MODAL, this.EDIT_CURRENT_CARD, item, showEdit);
     },
     viewNeurologicCheckRecord(item) {
-      Bus.$emit(this.SHOW_NEUROLOGIC_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived);
+      var showEdit = this.canEdit && !this.archived;
+      Bus.$emit(this.SHOW_NEUROLOGIC_MODAL, this.VIEW_CURRENT_CARD, item, showEdit);
     },
     deleteNeurologicCheckRecord(item) { // 删除神经检查
       let NeuroId = {
@@ -341,13 +356,16 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addGeneCheckRecord() {
-      Bus.$emit(this.SHOW_GENE_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
+      var showEdit = this.canEdit && !this.archived;
+      Bus.$emit(this.SHOW_GENE_MODAL, this.ADD_NEW_CARD, {}, showEdit);
     },
     editGeneCheckRecord(item) {
-      Bus.$emit(this.SHOW_GENE_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
+      var showEdit = this.canEdit && !this.archived;
+      Bus.$emit(this.SHOW_GENE_MODAL, this.EDIT_CURRENT_CARD, item, showEdit);
     },
     viewGeneCheckRecord(item) {
-      Bus.$emit(this.SHOW_GENE_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived);
+      var showEdit = this.canEdit && !this.archived;
+      Bus.$emit(this.SHOW_GENE_MODAL, this.VIEW_CURRENT_CARD, item, showEdit);
     },
     deleteGeneCheckRecord(item) {
       let geneInfo = {
@@ -359,13 +377,16 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addBiochemicalExamRecord() {
-      Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
+      var showEdit = this.canEdit && !this.archived;
+      Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.ADD_NEW_CARD, {}, showEdit);
     },
     editBiochemicalExamRecord(item) {
-      Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
+      var showEdit = this.canEdit && !this.archived;
+      Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.EDIT_CURRENT_CARD, item, showEdit);
     },
     viewBiochemicalExamRecord(item) {
-      Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived);
+      var showEdit = this.canEdit && !this.archived;
+      Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.VIEW_CURRENT_CARD, item, showEdit);
     },
     deleteBiochemicalExamRecord(item) { // 删除生化指标
       let BiochemicalInfo = {
@@ -377,13 +398,16 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addNeuroelectricRecordRecord() {
-      Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.ADD_NEW_CARD, {}, !this.archived, this.heightAndWeight);
+      var showEdit = this.canEdit && !this.archived;
+      Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.ADD_NEW_CARD, {}, showEdit, this.heightAndWeight);
     },
     viewNeuroelectricRecord(item) {
-      Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived, this.heightAndWeight);
+      var showEdit = this.canEdit && !this.archived;
+      Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.VIEW_CURRENT_CARD, item, showEdit, this.heightAndWeight);
     },
     editNeuroelectricRecord(item) {
-      Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived, this.heightAndWeight);
+      var showEdit = this.canEdit && !this.archived;
+      Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.EDIT_CURRENT_CARD, item, showEdit, this.heightAndWeight);
     },
     deleteNeuroelectricRecord(item) { // 删除肌电图
       let emgInfo = {
@@ -404,13 +428,16 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addImageRecord() {
-      Bus.$emit(this.SHOW_IMG_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
+      var showEdit = this.canEdit && !this.archived;
+      Bus.$emit(this.SHOW_IMG_MODAL, this.ADD_NEW_CARD, {}, showEdit);
     },
     viewImageRecord(item) {
-      Bus.$emit(this.SHOW_IMG_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived);
+      var showEdit = this.canEdit && !this.archived;
+      Bus.$emit(this.SHOW_IMG_MODAL, this.VIEW_CURRENT_CARD, item, showEdit);
     },
     editImageRecord(item) {
-      Bus.$emit(this.SHOW_IMG_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
+      var showEdit = this.canEdit && !this.archived;
+      Bus.$emit(this.SHOW_IMG_MODAL, this.EDIT_CURRENT_CARD, item, showEdit);
     },
     deleteImageRecord(item) {
       let imageInfo = {
@@ -422,13 +449,16 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addVitalSigns() {
-      Bus.$emit(this.SHOW_VITALSIGNS_MODAL, this.ADD_NEW_CARD, {}, !this.archived);
+      var showEdit = this.canEdit && !this.archived;
+      Bus.$emit(this.SHOW_VITALSIGNS_MODAL, this.ADD_NEW_CARD, {}, showEdit);
     },
     viewVitalSigns(item) {
-      Bus.$emit(this.SHOW_VITALSIGNS_MODAL, this.VIEW_CURRENT_CARD, item, !this.archived);
+      var showEdit = this.canEdit && !this.archived;
+      Bus.$emit(this.SHOW_VITALSIGNS_MODAL, this.VIEW_CURRENT_CARD, item, showEdit);
     },
     editVitalSigns(item) {
-      Bus.$emit(this.SHOW_VITALSIGNS_MODAL, this.EDIT_CURRENT_CARD, item, !this.archived);
+      var showEdit = this.canEdit && !this.archived;
+      Bus.$emit(this.SHOW_VITALSIGNS_MODAL, this.EDIT_CURRENT_CARD, item, showEdit);
     },
     deleteVitalSigns(item) {
       var patientVitalSign = {id: item.id
