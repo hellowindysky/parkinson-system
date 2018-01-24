@@ -26,7 +26,7 @@
           <span class="field-input">
             <span class="warning-text">{{warningResults.checkDate}}</span>
             <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.checkDate}}</span>
-            <el-date-picker v-else type="datetime"
+            <el-date-picker v-else type="datetime" format="yyyy-MM-dd HH:mm"
             :class="{'warning': warningResults.checkDate}"
             @change="updateWarning('checkDate')"
             placeholder="请输入检查时间"
@@ -84,7 +84,7 @@
                 {{item.englishAbbreviation}}
               </td>
               <td class="col col-result">
-                <span class="warning-text" v-if="copyInfo.bioexamId===12&&checkRequired(item.id)&&warningResults.bioexamResult[index].result">
+                <span class="warning-text" v-if="warningResults.bioexamResult[index].result">
                   {{warningResults.bioexamResult[index].result}}
                 </span>
                 <span v-if="mode===VIEW_CURRENT_CARD">
@@ -92,8 +92,8 @@
                   <span class="iconfont" :class="getComparisonIcon(copyInfo.bioexamResult[index].result, item.referenceRanges)"></span>
                 </span>
                 <el-input v-else v-model="copyInfo.bioexamResult[index].result"
-                 :class="{'warning': copyInfo.bioexamId===12&&checkRequired(item.id)&&warningResults.bioexamResult[index].result}"
-                 @change="updateWarning('bioexamResult', index)"
+                 :class="{'warning': warningResults.bioexamResult[index].result}"
+                 @change="updateWarning('bioexamResult', index, item.id)"
                  placeholder="请输入检查结果" :maxlength="500"></el-input>
               </td>
               <td class="col col-unit">
@@ -209,10 +209,10 @@ export default {
           }
         });
 
-        if (item.bioexamId === 12) {
-          this.$set(this.warningResults, 'bioexamResult', []);
-          vueCopy(item.bioexamResult.map((elem) => {return {bioexamProjectId: elem.bioexamProjectId, result: elem.result};}), this.warningResults.bioexamResult);
-        }
+        // if (item.bioexamId === 12) {
+        this.$set(this.warningResults, 'bioexamResult', []);
+        vueCopy(item.bioexamResult.map((elem) => {return {bioexamProjectId: elem.bioexamProjectId, result: elem.result};}), this.warningResults.bioexamResult);
+        // }
       }
 
       this.updateTemplate();
@@ -258,17 +258,17 @@ export default {
         this.$set(this.copyInfo.bioexamResult[i], 'isReference', '');
       }
 
-      if (this.copyInfo.bioexamId === 12) {
+      // if (this.copyInfo.bioexamId === 12) {
         // 12 为全血
-        this.$set(this.warningResults, 'bioexamResult', []);
-        this.targetBioexam.forEach((item, i) => {
-          this.$set(this.warningResults.bioexamResult, i, {});
-          this.$set(this.warningResults.bioexamResult[i], 'bioexamProjectId', this.targetBioexam[i].id);
-          this.$set(this.warningResults.bioexamResult[i], 'result', '');
-        });
-      } else {
-        this.$delete(this.warningResults, 'bioexamResult');
-      };
+      this.$set(this.warningResults, 'bioexamResult', []);
+      this.targetBioexam.forEach((item, i) => {
+        this.$set(this.warningResults.bioexamResult, i, {});
+        this.$set(this.warningResults.bioexamResult[i], 'bioexamProjectId', this.targetBioexam[i].id);
+        this.$set(this.warningResults.bioexamResult[i], 'result', '');
+      });
+      // } else {
+        // this.$delete(this.warningResults, 'bioexamResult');
+      // };
     },
     transform(id, fieldName) {
       id = parseInt(id, 10);
@@ -307,8 +307,8 @@ export default {
         if (this.warningResults.hasOwnProperty(fieldName)) {
           if (Array.isArray(this.warningResults[fieldName])) {
             this.warningResults[fieldName].forEach((item, i) => {
-              if (this.checkRequired(item.bioexamProjectId)) {
-                this.updateWarning(fieldName, i);
+              if (this.copyInfo.bioexamId === 12 && this.checkRequired(item.bioexamProjectId)) {
+                this.updateWarning(fieldName, i, item.bioexamProjectId);
               }
             });
           } else {
@@ -358,12 +358,19 @@ export default {
     updateAndClose() {
       this.displayModal = false;
     },
-    updateWarning(fieldName, index) {
-      if (Array.isArray(this.copyInfo[fieldName]) && this.copyInfo.bioexamId === 12) {
-        if (this.copyInfo[fieldName][index].result) {
+    updateWarning(fieldName, index, id) {
+      let fieldVal = this.copyInfo[fieldName];
+      if (Array.isArray(this.copyInfo[fieldName])) {
+        if (this.copyInfo[fieldName][index].result && Util.checkIfNotMoreThanNDecimalNums(fieldVal[index].result, 7)) {
           this.$set(this.warningResults[fieldName][index], 'result', '');
         } else {
-          this.$set(this.warningResults[fieldName][index], 'result', '必填项');
+          if (this.copyInfo.bioexamId === 12 && this.checkRequired(id) && !fieldVal[index].result) {
+            this.$set(this.warningResults[fieldName][index], 'result', '必填项');
+          } else if (fieldVal[index].result !== '' && !Util.checkIfNotMoreThanNDecimalNums(fieldVal[index].result, 7)) {
+            this.$set(this.warningResults[fieldName][index], 'result', '请输入正数');
+          } else {
+            this.$set(this.warningResults[fieldName][index], 'result', '');
+          };
         };
       } else {
         if (this.copyInfo[fieldName]) {
