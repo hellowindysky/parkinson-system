@@ -67,7 +67,7 @@
             实验编号:
           </span>
           <span class="field-input">
-            {{dbsPatientCode}}
+            {{patientTaskCode}}
           </span>
         </div>
         <div class="field">
@@ -421,7 +421,7 @@ export default {
       displayModal: false,
       mode: '',
       completeInit: false,
-      dbsPatientCode: '',
+      patientTaskCode: '',
       foldedMeasures: this.foldedMeasuresStatus,
       foldedEvents: this.foldedEventsStatus,
 
@@ -563,10 +563,10 @@ export default {
       this.updateScrollbar();
       this.foldedConditionalContentMeasures = false;
       this.foldedConditionalContentEndEvents = false;
-    // 获取患者的 DBS 编码
+    // 获取患者的 实验编号
       getPatientSimpleInfo(this.$route.params.id).then((data) => {
-        if (data && data.patientInfo && data.patientInfo && data.patientInfo.dbsPatientCode) {
-          this.dbsPatientCode = data.patientInfo.dbsPatientCode;
+        if (data.patientInfo.patientTaskCode) {
+          this.patientTaskCode = data.patientInfo.patientTaskCode;
         }
       }, (error) => {
         console.log(error);
