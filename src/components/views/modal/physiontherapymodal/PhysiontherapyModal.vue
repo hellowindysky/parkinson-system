@@ -128,9 +128,6 @@
               :disabled="mode===VIEW_CURRENT_CARD">
             </el-checkbox>
           </div>
-          <!-- <el-checkbox class="symptom-item-title" v-model="symptom.status" :disabled="mode===VIEW_CURRENT_CARD">
-            {{symptom.sympName}}
-          </el-checkbox> -->
           <div class="stimulate-side">
             <el-checkbox v-model="stimulateSideEvents2[index]"
               v-for="(item, index) in getOptions('stimulusSide')"

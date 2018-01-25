@@ -609,6 +609,7 @@ export default {
               .el-input__inner {
                 padding: 0;
                 border: none;
+                height: 34px;
                 text-align: center;
               }
               .el-input__icon {
