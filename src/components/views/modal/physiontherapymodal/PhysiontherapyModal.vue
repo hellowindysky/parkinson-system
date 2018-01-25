@@ -429,7 +429,7 @@ export default {
       this.completeInit = true;
       this.displayModal = true;
       this.updateScrollbar();
-      // 获取患者的患者编码
+      // 获取患者的 实验编号
       getPatientSimpleInfo(this.$route.params.id).then((data) => {
         console.log(data);
         if (data.patientInfo.patientTaskCode) {
