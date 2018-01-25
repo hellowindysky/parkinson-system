@@ -124,14 +124,14 @@
                 <span class="left">{{sign.systolic}}</span>
               </span>
               <span class="field-input" v-else>
-                <el-input class="left" v-model="sign.systolic"></el-input>
+                <el-input class="left" v-model="sign.systolic" @blur="transformToNumber(sign, 'systolic')"></el-input>
               </span>
               <span>/</span>
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
                 <span class="right">{{sign.diastolic}}</span>
               </span>
               <span class="field-input" v-else>
-                <el-input class="right" v-model="sign.diastolic"></el-input>
+                <el-input class="right" v-model="sign.diastolic" @blur="transformToNumber(sign, 'diastolic')"></el-input>
               </span>
             </td>
             <td class="col col-4">
@@ -139,7 +139,7 @@
                 <span>{{sign.heartrate}}</span>
               </span>
               <span class="field-input" v-else>
-                <el-input v-model="sign.heartrate"></el-input>
+                <el-input v-model="sign.heartrate" @blur="transformToNumber(sign, 'heartrate', 0)"></el-input>
               </span>
             </td>
             <td class="col col-5">
@@ -321,12 +321,15 @@ export default {
       };
       return options;
     },
-    // transformToNumber(obj) {
-    //   var value = parseFloat(obj.fieldValue);
-    //   if (obj.fieldValue !== '' && obj.fieldValue !== value) {
-    //     obj.fieldValue = isNaN(value) ? '' : value;
-    //   }
-    // },
+    transformToNumber(obj, property, decimalDigits) {
+      var value = parseFloat(obj[property]);
+      if (obj[property] !== '' && obj[property] !== value) {
+        obj[property] = isNaN(value) ? '' : value;
+      }
+      if (decimalDigits !== undefined && obj[property] !== '') {
+        obj[property] = Number(obj[property].toFixed(decimalDigits));
+      }
+    },
     updateWarning(fieldName) {
       var list = ['checkTime'];
       if (list.indexOf(fieldName) >= 0 && !this[fieldName]) {
@@ -606,6 +609,7 @@ export default {
               .el-input__inner {
                 padding: 0;
                 border: none;
+                height: 34px;
                 text-align: center;
               }
               .el-input__icon {
