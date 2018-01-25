@@ -100,32 +100,34 @@ export default new Router({
                 {
                   path: 'personalInfo',
                   component: PersonalInfo,
-                  name: 'personalInfo'
+                  name: 'personalInfo',
+                  meta: {
+                    personalInfo: true
+                  }
                 },
                 {
                   path: 'diagnosticInfo',
                   component: DiagnosticInfo,
-                  name: 'diagnosticInfo'
+                  name: 'diagnosticInfo',
+                  meta: {
+                    diagnosticInfo: true
+                  }
                 },
                 {
                   path: 'diagnosticInfo/:caseId',
                   component: DiagnosticInfo,
-                  name: 'diagnosticDetail'
+                  name: 'diagnosticDetail',
+                  meta: {
+                    diagnosticInfo: true
+                  }
                 },
-                // {
-                //   path: 'diagnosticInfo/updatescale',
-                //   component: DiagnosticInfo,
-                //   name: 'diagnosticupdatescale'
-                // },
-                // {
-                //   path: 'diagnosticInfo/addscale',
-                //   component: DiagnosticInfo,
-                //   name: 'diagnosticaddscale'
-                // },
                 {
                   path: 'experimentInfo',
                   component: ExperimentInfo,
-                  name: 'experimentInfo'
+                  name: 'experimentInfo',
+                  meta: {
+                    experimentInfo: true
+                  }
                 }
               ]
             },
@@ -160,22 +162,34 @@ export default new Router({
                 {
                   path: 'personalInfo',
                   component: PersonalInfo,
-                  name: 'otherPersonalInfo'
+                  name: 'otherPersonalInfo',
+                  meta: {
+                    personalInfo: true
+                  }
                 },
                 {
                   path: 'diagnosticInfo',
                   component: DiagnosticInfo,
-                  name: 'otherDiagnosticInfo'
+                  name: 'otherDiagnosticInfo',
+                  meta: {
+                    diagnosticInfo: true
+                  }
                 },
                 {
                   path: 'diagnosticInfo/:caseId',
                   component: DiagnosticInfo,
-                  name: 'otherDiagnosticDetail'
+                  name: 'otherDiagnosticDetail',
+                  meta: {
+                    diagnosticInfo: true
+                  }
                 },
                 {
                   path: 'experimentInfo',
                   component: ExperimentInfo,
-                  name: 'otherExperimentInfo'
+                  name: 'otherExperimentInfo',
+                  meta: {
+                    experimentInfo: true
+                  }
                 }
               ]
             },
@@ -199,22 +213,34 @@ export default new Router({
                 {
                   path: 'personalInfo',
                   component: PersonalInfo,
-                  name: 'subjectPersonalInfo'
+                  name: 'subjectPersonalInfo',
+                  meta: {
+                    personalInfo: true
+                  }
                 },
                 {
                   path: 'diagnosticInfo',
                   component: DiagnosticInfo,
-                  name: 'subjectDiagnosticInfo'
+                  name: 'subjectDiagnosticInfo',
+                  meta: {
+                    diagnosticInfo: true
+                  }
                 },
                 {
                   path: 'diagnosticInfo/:caseId',
                   component: DiagnosticInfo,
-                  name: 'subjectDiagnosticDetail'
+                  name: 'subjectDiagnosticDetail',
+                  meta: {
+                    diagnosticInfo: true
+                  }
                 },
                 {
                   path: 'experimentInfo',
                   component: ExperimentInfo,
-                  name: 'subjectExperimentInfo'
+                  name: 'subjectExperimentInfo',
+                  meta: {
+                    experimentInfo: true
+                  }
                 }
               ]
             },
@@ -254,22 +280,34 @@ export default new Router({
                 {
                   path: 'personalInfo',
                   component: PersonalInfo,
-                  name: 'therapistsPatientsPersonalInfo'
+                  name: 'therapistsPatientsPersonalInfo',
+                  meta: {
+                    personalInfo: true
+                  }
                 },
                 {
                   path: 'diagnosticInfo',
                   component: DiagnosticInfo,
-                  name: 'therapistsPatientsDiagnosticInfo'
+                  name: 'therapistsPatientsDiagnosticInfo',
+                  meta: {
+                    diagnosticInfo: true
+                  }
                 },
                 {
                   path: 'diagnosticInfo/:caseId',
                   component: DiagnosticInfo,
-                  name: 'therapistsPatientsDiagnosticDetail'
+                  name: 'therapistsPatientsDiagnosticDetail',
+                  meta: {
+                    diagnosticInfo: true
+                  }
                 },
                 {
                   path: 'experimentInfo',
                   component: ExperimentInfo,
-                  name: 'therapistsPatientsExperimentInfo'
+                  name: 'therapistsPatientsExperimentInfo',
+                  meta: {
+                    experimentInfo: true
+                  }
                 }
               ]
             },
@@ -309,22 +347,34 @@ export default new Router({
                 {
                   path: 'personalInfo',
                   component: PersonalInfo,
-                  name: 'appraisersPatientsPersonalInfo'
+                  name: 'appraisersPatientsPersonalInfo',
+                  meta: {
+                    personalInfo: true
+                  }
                 },
                 {
                   path: 'diagnosticInfo',
                   component: DiagnosticInfo,
-                  name: 'appraisersPatientsDiagnosticInfo'
+                  name: 'appraisersPatientsDiagnosticInfo',
+                  meta: {
+                    diagnosticInfo: true
+                  }
                 },
                 {
                   path: 'diagnosticInfo/:caseId',
                   component: DiagnosticInfo,
-                  name: 'appraisersPatientsDiagnosticDetail'
+                  name: 'appraisersPatientsDiagnosticDetail',
+                  meta: {
+                    diagnosticInfo: true
+                  }
                 },
                 {
                   path: 'experimentInfo',
                   component: ExperimentInfo,
-                  name: 'appraisersPatientsExperimentInfo'
+                  name: 'appraisersPatientsExperimentInfo',
+                  meta: {
+                    experimentInfo: true
+                  }
                 }
               ]
             }
