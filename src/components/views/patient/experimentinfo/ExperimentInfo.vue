@@ -75,6 +75,7 @@ import { queryExperimentProgress } from 'api/experiment.js';
 export default {
   data() {
     return {
+      subjectIdForOngoingExperiment: '',
       progressList: [],
       status: '',
       milestoneNum: '',
@@ -87,6 +88,15 @@ export default {
   computed: {
     listType() {
       return this.$store.state.listType;
+    },
+    notInAnyExperiment() {
+      return this.subjectIdForOngoingExperiment === '';
+    },
+    inExperimentWithinCurrentSubject() {
+      return this.subjectIdForOngoingExperiment === this.$store.state.subjectId;
+    },
+    inExperimentWithinOtherSubject() {
+      return !this.notInAnyExperiment && this.subjectIdForOngoingExperiment !== this.$store.state.subjectId;
     },
     isApplicationRejected() {
       var length = this.progressList.length;
@@ -109,7 +119,11 @@ export default {
   },
   methods: {
     applyTojoin() {
-      Bus.$emit(this.SHOW_APPLICATION_MODAL, this.ADD_NEW_CARD, {}, true);
+      if (this.notInAnyExperiment || this.inExperimentWithinCurrentSubject) {
+        Bus.$emit(this.SHOW_APPLICATION_MODAL, this.ADD_NEW_CARD, {}, true);
+      } else if (this.inExperimentWithinOtherSubject) {
+        Bus.$emit(this.NOTICE, '注意', '当前患者正在其它课题下进行实验，每个患者只能同时加入一个课题的实验');
+      }
     },
     rejectApplication() {
       Bus.$emit(this.SHOW_REJECTION_MODAL, this.ADD_NEW_CARD, {}, true, this.doctor);
@@ -196,6 +210,7 @@ export default {
       };
       queryExperimentProgress(experimentInfo).then((data) => {
         // console.log(data);
+        this.subjectIdForOngoingExperiment = data && data.patientCurrentTaskId ? data.patientCurrentTaskId : '';
         if (data && data.patientExperiment && data.patientExperiment.length > 0) {
           this.progressList = data.patientExperiment;
         } else {
