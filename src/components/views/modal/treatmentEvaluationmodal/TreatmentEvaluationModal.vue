@@ -49,7 +49,7 @@
             实验编号:
           </span>
           <span class="field-input">
-            {{dbsPatientCode}}
+            {{patientTaskCode}}
           </span>
         </div>
         <div class="field whole-line" v-show="situationType===1">
@@ -173,7 +173,7 @@ export default {
       mode: '',
       completeInit: false,
       checked: true,
-      dbsPatientCode: '',
+      patientTaskCode: '',
 
       patientPhytheAssessId: '',
       patientPhytheAssess: '',
@@ -307,10 +307,10 @@ export default {
       this.completeInit = true;
       this.displayModal = true;
       this.updateScrollbar();
-    // 获取患者的 DBS 编码
+    // 获取患者的 实验编号
       getPatientSimpleInfo(this.$route.params.id).then((data) => {
-        if (data && data.patientInfo && data.patientInfo && data.patientInfo.dbsPatientCode) {
-          this.dbsPatientCode = data.patientInfo.dbsPatientCode;
+        if (data.patientInfo.patientTaskCode) {
+          this.patientTaskCode = data.patientInfo.patientTaskCode;
         }
       }, (error) => {
         console.log(error);
