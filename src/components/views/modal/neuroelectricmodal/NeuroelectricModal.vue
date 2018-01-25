@@ -65,6 +65,7 @@
         <div class="field" v-if="copyInfo.elecExamType===2">
           <span class="field-name">
             记录开始
+            <span class="required-mark">*</span>
           </span>
           <span class="field-input">
             <span class="warning-text">{{warningResults.recordStart}}</span>
@@ -82,6 +83,7 @@
         <div class="field" v-if="copyInfo.elecExamType===2">
           <span class="field-name">
             身高 (cm)
+            <span class="required-mark">*</span>
           </span>
           <span class="field-input">
             <span class="warning-text">{{warningResults.height}}</span>
@@ -93,6 +95,7 @@
         <div class="field" v-if="copyInfo.elecExamType===2">
           <span class="field-name">
             记录结束
+            <span class="required-mark">*</span>
           </span>
           <span class="field-input">
             <span class="warning-text">{{warningResults.recordEnd}}</span>
@@ -110,6 +113,7 @@
         <div class="field" v-if="copyInfo.elecExamType===2">
           <span class="field-name">
             体重 (kg)
+            <span class="required-mark">*</span>
           </span>
           <span class="field-input">
             <span class="warning-text">{{warningResults.weight}}</span>
@@ -541,7 +545,15 @@
               </td>
               <td class="col col-width-10">
                 <span v-if="mode===VIEW_CURRENT_CARD">
-                  {{copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue}}
+                  <span v-if="row[0].uiType===8">
+                    {{simplifyTimeWithoutDate(copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue)}}
+                  </span>
+                  <span v-else>
+                    {{copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue}}
+                  </span>
+                </span>
+                <span v-else-if="row[0].fieldCode==='sleepEfficiency'">
+                  {{calcSleepEfficiency(copyInfo.patientFieldCode[sleepMonitoringSubTableCode], row[0].id, 0, group.rowItems)}}
                 </span>
                 <el-input v-else-if="row[0].uiType===1"
                   v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue">
@@ -563,7 +575,7 @@
                   @change="recordValuePath(['patientFieldCode',sleepMonitoringSubTableCode,row[0].id,0], 7)"
                   :picker-options="pickerOptions">
                 </el-date-picker>
-                <el-time-picker v-else-if="row[0].uiType===8"
+                <el-time-picker v-else-if="row[0].uiType===8" format="HH:mm:ss"
                   v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"
                   @change="recordValuePath(['patientFieldCode',sleepMonitoringSubTableCode,row[0].id,0], 8)"
                   :picker-options="pickerOptions">
@@ -574,7 +586,15 @@
               </td>
               <td class="col col-width-10" v-if="row.length===2">
                 <span v-if="mode===VIEW_CURRENT_CARD">
-                  {{copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue}}
+                  <span v-if="row[1].uiType===8">
+                    {{simplifyTimeWithoutDate(copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue)}}
+                  </span>
+                  <span v-else>
+                    {{copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue}}
+                  </span>
+                </span>
+                <span v-else-if="row[1].fieldCode==='sleepEfficiency'">
+                  {{calcSleepEfficiency(copyInfo.patientFieldCode[sleepMonitoringSubTableCode], row[1].id, 0, group.rowItems)}}
                 </span>
                 <el-input v-else-if="row[1].uiType===1"
                   v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue">
@@ -596,7 +616,7 @@
                   @change="recordValuePath(['patientFieldCode',sleepMonitoringSubTableCode,row[1].id,0], 7)"
                   :picker-options="pickerOptions">
                 </el-date-picker>
-                <el-time-picker v-else-if="row[1].uiType===8"
+                <el-time-picker v-else-if="row[1].uiType===8" format="HH:mm:ss"
                   v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"
                   @change="recordValuePath(['patientFieldCode',sleepMonitoringSubTableCode,row[1].id,0], 8)"
                   :picker-options="pickerOptions">
@@ -616,7 +636,12 @@
               </td>
               <td class="col col-width-10" v-for="col in group.colItems">
                 <span v-if="mode===VIEW_CURRENT_CARD">
-                  {{copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue}}
+                  <span v-if="col.uiType===8 || (col.uiType===undefined && row.uiType===8)">
+                    {{simplifyTimeWithoutDate(copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue)}}
+                  </span>
+                  <span v-else>
+                    {{copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue}}
+                  </span>
                 </span>
                 <span v-else-if="col.fieldCode==='total'">
                   {{calcTotalOfRow(copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id], col.id, group.colItems, row.uiType, row.fieldCode)}}
@@ -642,7 +667,7 @@
                   @change="recordValuePath(['patientFieldCode',sleepMonitoringSubTableCode,row.id,col.id], 7)"
                   :picker-options="pickerOptions">
                 </el-date-picker>
-                <el-time-picker v-else-if="col.uiType===8 || (col.uiType===undefined && row.uiType===8)"
+                <el-time-picker v-else-if="col.uiType===8 || (col.uiType===undefined && row.uiType===8)" format="HH:mm:ss"
                   v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"
                   @change="recordValuePath(['patientFieldCode',sleepMonitoringSubTableCode,row.id,col.id], 8)"
                   :picker-options="pickerOptions">
@@ -1368,11 +1393,40 @@ export default {
       };
       return options;
     },
+    simplifyTimeWithoutDate(time) {
+      return Util.simplifyTimeWithoutDate(time);
+    },
     transformToNumber(obj) {
       var value = parseFloat(obj.fieldValue);
       if (obj.fieldValue !== '' && obj.fieldValue !== value) {
         obj.fieldValue = isNaN(value) ? '' : value;
       }
+    },
+    calcSleepEfficiency(obj, rowId, colId, rows) {
+      var bedTime = '';
+      var totalSleepTime = '';
+      for (let row of rows) {
+        if (row.fieldCode === 'bedTime') {
+          bedTime = obj[row.id][colId].fieldValue;
+        } else if (row.fieldCode === 'totalSleepTime') {
+          totalSleepTime = obj[row.id][colId].fieldValue;
+        }
+      }
+      if (bedTime === undefined || bedTime === '' || totalSleepTime === undefined || totalSleepTime === '') {
+        obj[rowId][colId].fieldValue = '';
+        return obj[rowId][colId].fieldValue;
+      }
+
+      bedTime = this.addTime('00:00:00', bedTime);
+      totalSleepTime = this.addTime('00:00:00', totalSleepTime);
+      var bedTimeNumList = bedTime.split(':');
+      var totalSleepTimeNumList = totalSleepTime.split(':');
+      var bedTimeSeconds = bedTimeNumList[0] * 3600 + bedTimeNumList[1] * 60 + bedTimeNumList[2];
+      var totalSleepSeconds = totalSleepTimeNumList[0] * 3600 + totalSleepTimeNumList[1] * 60 + totalSleepTimeNumList[2];
+
+      var ratio = totalSleepSeconds / bedTimeSeconds;
+      obj[rowId][colId].fieldValue = (ratio * 100).toFixed(2);
+      return obj[rowId][colId].fieldValue;
     },
     calcTotalOfRow(obj, colId, cols, uiType, rowFieldCode) {
       if (rowFieldCode === 'inapplicable') {
@@ -1540,10 +1594,8 @@ export default {
           }
           if (uiType === 6) {
             obj.fieldValue = Util.simplifyDate(obj.fieldValue);
-          } else if (uiType === 7) {
+          } else if (uiType === 7 || uiType === 8) {
             obj.fieldValue = Util.simplifyTime(obj.fieldValue, true);
-          } else if (uiType === 8) {
-            obj.fieldValue = Util.simplifyTimeWithoutDate(obj.fieldValue, true);
           }
         }
 
