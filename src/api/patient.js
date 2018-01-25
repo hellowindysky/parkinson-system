@@ -13,13 +13,15 @@ export function getPatientList(condition) {
   return encapsulatePromise(url, request);
 };
 
-export function getPatientInfo(patientId, subjectNum) {
+export function getPatientInfo(patientId, subjectNum, type) {
   // 传进来的 patientId 可能是字符串，这里需要转化为数字
   // subjectId 为 0 代表医院入口，其它值代表课题编号
+  // type: 1我的患者, 2科室患者, 3项目中我的患者, 4项目中项目患者, 5实验研究中治疗者, 6实验研究中评估者
   var patientIdNum = parseInt(patientId, 10);
   var request = Object.assign({}, getCommonRequest());
   request.patientId = patientIdNum;
   request.groupModule = subjectNum !== undefined ? subjectNum : 0;
+  request.type = type;
   var url = '/pdms/queryPatientPerson';
 
   return encapsulatePromise(url, request);
