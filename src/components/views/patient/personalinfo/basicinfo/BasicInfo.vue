@@ -285,13 +285,7 @@ export default {
           this.lockSubmitButton = false;
         }, (error) => {
           console.log(error);
-          if (error.code === 23) {
-            this.$message({
-              message: '该用户已经存在',
-              type: 'error',
-              duration: 2000
-            });
-          } else if (error.code === 31) {
+          if (error.code === 31) {
             this.$message({
               message: '医院患者编码重复',
               type: 'error',
@@ -312,6 +306,13 @@ export default {
           } else if (error.code === 2008) {
             this.$message({
               message: '身份证号重复',
+              type: 'error',
+              duration: 2000
+            });
+          } else if (error.code === 2011) {
+            // 姓名相同，而且联系电话存在重复
+            this.$message({
+              message: '该患者已存在，请检查姓名和联系电话',
               type: 'error',
               duration: 2000
             });
