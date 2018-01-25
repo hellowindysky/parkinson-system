@@ -32,7 +32,13 @@
             <span>{{breathing}}</span>
           </span>
           <span class="field-input" v-else>
-           <el-input v-model="breathing" placeholder="请输入每分钟呼吸频率"></el-input>
+              <span class="warning-text">{{warningResults.breathing}}</span>
+              <el-input
+                v-model="breathing"
+                placeholder="请输入每分钟呼吸频率"
+                :class="{'warning': warningResults.breathing}"
+                @change="updateWarning('breathing')">
+              </el-input>
           </span>
         </div>
         <div class="field">
@@ -43,7 +49,13 @@
             <span>{{temperature}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-input v-model="temperature" placeholder="请输入体温"></el-input>
+            <span class="warning-text">{{warningResults.temperature}}</span>
+            <el-input
+              v-model="temperature"
+              placeholder="请输入体温"
+              :class="{'warning': warningResults.temperature}"
+              @change="updateWarning('temperature')">
+            </el-input>
           </span>
         </div>
         <div class="field">
@@ -54,7 +66,12 @@
           <span>{{pulse}}</span>
           </span>
           <span class="field-input" v-else>
-          <el-input v-model="pulse" placeholder="请输入每分钟脉搏频率"></el-input>
+            <span class="warning-text">{{warningResults.pulse}}</span>
+          <el-input
+            v-model="pulse"
+            placeholder="请输入每分钟脉搏频率"
+            :class="{'warning': warningResults.pulse}"
+            @change="updateWarning('pulse')"></el-input>
           </span>
         </div>
         <div class="field">
@@ -160,7 +177,6 @@ export default {
       displayModal: false,
       mode: '',
       completeInit: false,
-
       id: '',
       patientVitalSign: '',
       checkTime: '',
@@ -227,7 +243,12 @@ export default {
         }
       ],
       warningResults: {
-        checkTime: ''
+        checkTime: '',
+        breathing: '',
+        temperature: '',
+        heartrate: '',
+        diastolic: '',
+        pulse: ''
       },
       pickerOptions: {
         disabledDate(time) {
@@ -300,12 +321,37 @@ export default {
       };
       return options;
     },
+    // transformToNumber(obj) {
+    //   var value = parseFloat(obj.fieldValue);
+    //   if (obj.fieldValue !== '' && obj.fieldValue !== value) {
+    //     obj.fieldValue = isNaN(value) ? '' : value;
+    //   }
+    // },
     updateWarning(fieldName) {
       var list = ['checkTime'];
       if (list.indexOf(fieldName) >= 0 && !this[fieldName]) {
         this.warningResults[fieldName] = '必填项';
       } else {
         this.warningResults[fieldName] = '';
+      };
+      var menu = ['breathing', 'pulse'];
+      for (var i = 0 ; i < menu.length ; i++) {
+        if (fieldName === menu[i]) {
+          let fieldVal = this[fieldName];
+          if (fieldVal !== '' && !Util.checkIfPositiveInteger(fieldVal)) {
+            this.$set(this.warningResults, fieldName, '请填入正整数');
+          } else {
+            this.$set(this.warningResults, fieldName, '');
+          }
+        }
+      };
+      if (fieldName === 'temperature') {
+        let fieldVal = this[fieldName];
+        if (fieldVal !== '' && !Util.checkIfNotMoreThanNDecimalNums(fieldVal, 2)) {
+          this.$set(this.warningResults, fieldName, '请填入正数,仅保留两位小数');
+        } else {
+          this.$set(this.warningResults, fieldName, '');
+        }
       }
     },
     cancel() {
