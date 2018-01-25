@@ -228,6 +228,8 @@ export default {
         this.experimentNumber = data.taskCode ? data.taskCode : '';
 
         Bus.$emit(this.SCROLL_AREA_SIZE_CHANGE);
+        Bus.$emit(this.UPDATE_PATIENTS_LIST);
+
       }, (error) => {
         console.log(error);
       });

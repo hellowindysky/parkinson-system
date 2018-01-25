@@ -71,11 +71,7 @@ export default {
   EDIT_DIAGNOSTIC_DISEASE: 'editDiagnosticDisease',
 
   UPDATE_AUTHORIZED_STATUS: 'updateAuthorizedStatus',
-  UPDATE_MY_PATIENTS_LIST: 'updateMyPatientsList',
-  UPDATE_OTHER_PATIENTS_LIST: 'updateOtherPatientsList',
-  UPDATE_SUBJECT_PATIENTS_LIST: 'updateSubjectPatientsList',
-  UPDATE_THERAPISTS_PATIENTS_LIST: 'updateTherapistsPatientsList',
-  UPDATE_APPRAISERS_PATIENTS_LIST: 'updateAppraisersPatientsList',
+  UPDATE_PATIENTS_LIST: 'updatePatientsList',
   UPDATE_GROUP_LIST: 'updateGroupList',
   UPDATE_PATIENT_INFO: 'updatePatientInfo',
   UPDATE_PATIENT_GROUP_INFO: 'updatePatientGroupInfo',

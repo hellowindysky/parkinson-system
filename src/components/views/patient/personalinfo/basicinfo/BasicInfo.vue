@@ -211,22 +211,20 @@ export default {
               name: 'patientInfo',
               params: {id: newId}
             });
-            Bus.$emit(this.UPDATE_MY_PATIENTS_LIST);
 
           } else if (this.listType === this.OTHER_PATIENTS_TYPE) {
             this.$router.push({
               name: 'otherPatientInfo',
               params: {id: newId}
             });
-            Bus.$emit(this.UPDATE_OTHER_PATIENTS_LIST);
 
           } else if (this.listType === this.SUBJECT_PATIENTS_TYPE) {
             this.$router.push({
               name: 'subjectPatientInfo',
               params: {id: newId}
             });
-            Bus.$emit(this.UPDATE_SUBJECT_PATIENTS_LIST);
           }
+          Bus.$emit(this.UPDATE_PATIENTS_LIST);
 
           // 如果是新增患者，还要在确定之后，将个人信息的病症信息面板置为编辑状态，同时收起基础信息面板
           this.$nextTick(() => {
@@ -280,13 +278,7 @@ export default {
           Bus.$emit(this.UPDATE_PATIENT_INFO);
 
           // 即使是编辑已有记录，也要更新患者列表（因为列表中存在年龄，性别等信息）
-          if (this.listType === this.MY_PATIENTS_TYPE) {
-            Bus.$emit(this.UPDATE_MY_PATIENTS_LIST);
-          } else if (this.listType === this.OTHER_PATIENTS_TYPE) {
-            Bus.$emit(this.UPDATE_OTHER_PATIENTS_LIST);
-          } else if (this.listType === this.SUBJECT_PATIENTS_TYPE) {
-            Bus.$emit(this.UPDATE_SUBJECT_PATIENTS_LIST);
-          }
+          Bus.$emit(this.UPDATE_PATIENTS_LIST);
 
           this.mode = this.READING_MODE;
           this.lockSubmitButton = false;
