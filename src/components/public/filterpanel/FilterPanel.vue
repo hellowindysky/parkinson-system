@@ -89,6 +89,41 @@
                 </el-select>
               </span>
             </div>
+            <!-- <div class="item">
+              <el-checkbox class="item-checkbox" v-model="basicInfoSelectedStatus.ageFrom"></el-checkbox>
+              <span class="item-name">患者年龄</span>
+              <span class="item-value">
+                <el-input class="left-input" v-model="basicInfoCondition.ageFrom" placeholder="最小年龄"
+                  :disabled="!basicInfoSelectedStatus.ageFrom"></el-input>
+                <span class="middle-text">~</span>
+                <el-input class="right-input" v-model="basicInfoCondition.ageTo" placeholder="最大年龄"
+                  :disabled="!basicInfoSelectedStatus.ageFrom"></el-input>
+              </span>
+            </div> -->
+            <!-- 新加 未完 ↓↓↓↓ -->
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="basicInfoSelectedStatus.ageFrom"></el-checkbox>
+              <span class="item-name">受教育年限</span>
+              <span class="item-value">
+                <el-input class="left-input" v-model="basicInfoCondition.ageFrom" placeholder="最小年限"
+                  :disabled="!basicInfoSelectedStatus.ageFrom"></el-input>
+                <span class="middle-text">~</span>
+                <el-input class="right-input" v-model="basicInfoCondition.ageTo" placeholder="最大年限"
+                  :disabled="!basicInfoSelectedStatus.ageFrom"></el-input>
+              </span>
+            </div>
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="basicInfoSelectedStatus.ageFrom"></el-checkbox>
+              <span class="item-name">BMI</span>
+              <span class="item-value">
+                <el-input class="left-input" v-model="basicInfoCondition.ageFrom" placeholder="最小值"
+                  :disabled="!basicInfoSelectedStatus.ageFrom"></el-input>
+                <span class="middle-text">~</span>
+                <el-input class="right-input" v-model="basicInfoCondition.ageTo" placeholder="最大值"
+                  :disabled="!basicInfoSelectedStatus.ageFrom"></el-input>
+              </span>
+            </div>
+            <!-- 新加 未完 ↑↑↑↑ -->
             <div class="item">
               <el-checkbox class="item-checkbox" v-model="basicInfoSelectedStatus.bloodType"></el-checkbox>
               <span class="item-name">血型</span>
@@ -138,13 +173,13 @@
 
         <div class="folding-box" v-show="currentTab===PERSONAL_INFO">
           <div class="title" @click="toggleDiseaseInfoDisplay">
-            病症信息
+            现病史
             <span class="iconfont" :class="{'icon-up': displayDiseaseInfoCondition, 'icon-down': !displayDiseaseInfoCondition}"></span>
           </div>
           <div class="content" :class="{'folded': !displayDiseaseInfoCondition}">
             <div class="item">
               <el-checkbox class="item-checkbox" v-model="diseaseInfoSelectedStatus.diseaseType"></el-checkbox>
-              <span class="item-name">病症类型</span>
+              <span class="item-name">起病类型</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="diseaseInfoCondition.diseaseType"
                   :disabled="!diseaseInfoSelectedStatus.diseaseType">
@@ -164,6 +199,19 @@
                   :disabled="!diseaseInfoSelectedStatus.ariAgeFrom"></el-input>
               </span>
             </div>
+            <!-- 新加 未完 ↓↓↓↓ -->
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="diseaseInfoSelectedStatus.ariAgeFrom"></el-checkbox>
+              <span class="item-name">患者病程</span>
+              <span class="item-value">
+                <el-input class="left-input" v-model="diseaseInfoCondition.ariAgeFrom" placeholder="最小年龄"
+                  :disabled="!diseaseInfoSelectedStatus.ariAgeFrom"></el-input>
+                <span class="middle-text">~</span>
+                <el-input class="right-input" v-model="diseaseInfoCondition.ariAgeTo" placeholder="最大年龄"
+                  :disabled="!diseaseInfoSelectedStatus.ariAgeFrom"></el-input>
+              </span>
+            </div>
+            <!-- 新加 未完 ↑↑↑↑ -->
             <div class="item auto-resize">
               <el-checkbox class="item-checkbox" v-model="diseaseInfoSelectedStatus.firSym"></el-checkbox>
               <span class="item-name">首发症状</span>
@@ -706,7 +754,168 @@
             </div>
           </div>
         </div>
+        <!-- 物理治疗 ↓↓↓ -->
+        <div class="folding-box" v-show="currentTab===DIAGNOSTIC_INFO">
+          <div class="title" @click="toggleDiagnosticPhysicotherapeuticsDisplay">
+            物理治疗
+            <span class="iconfont" :class="{'icon-up': displayDiagnosticPhysiCondition, 'icon-down': !displayDiagnosticPhysiCondition}"></span>
+          </div>
+          <div class="content" :class="{'folded': !displayDiagnosticPhysiCondition}">
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="diagnosticPhysiSelectedStatus.physiType"></el-checkbox>
+              <span class="item-name long-name">物理疗法</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="diagnosticPhysiCondition.physiType"
+                 :disabled="!diagnosticPhysiSelectedStatus.physiType">
+                  <el-option v-for="option in getOptions('physiType')" :label="option.name" :value="option.code"
+                   :key="option.code"></el-option>
+                </el-select>
+              </span>
+            </div>
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="diagnosticPhysiSelectedStatus.recordDateStart"></el-checkbox>
+              <span class="item-name long-name">记录时间</span>
+              <span class="item-value">
+                <el-date-picker class="left-input" v-model="diagnosticPhysiCondition.recordDateStart" placeholder="开始时间"
+                  :disabled="!diagnosticPhysiSelectedStatus.recordDateStart"></el-date-picker>
+                <span class="middle-text">~</span>
+                <el-date-picker class="right-input" v-model="diagnosticPhysiCondition.recordDateEnd" placeholder="结束时间"
+                  :disabled="!diagnosticPhysiSelectedStatus.recordDateStart"></el-date-picker>
+              </span>
+            </div>
 
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="diagnosticPhysiSelectedStatus.leftThresholdBeforeMin"></el-checkbox>
+              <span class="item-name long-name">左前阈值</span>
+              <span class="item-value">
+                <el-input class="left-input" v-model="diagnosticPhysiCondition.leftThresholdBeforeMin" placeholder="最小值"
+                  :disabled="!diagnosticPhysiSelectedStatus.leftThresholdBeforeMin"></el-input>
+                <span class="middle-text">~</span>
+                <el-input class="right-input" v-model="diagnosticPhysiCondition.leftThresholdBeforeMax" placeholder="最大值"
+                  :disabled="!diagnosticPhysiSelectedStatus.leftThresholdBeforeMin"></el-input>
+              </span>
+            </div>
+
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="diagnosticPhysiSelectedStatus.rightThresholdBeforeMin"></el-checkbox>
+              <span class="item-name long-name">右前阈值</span>
+              <span class="item-value">
+                <el-input class="left-input" v-model="diagnosticPhysiCondition.rightThresholdBeforeMin" placeholder="最小值"
+                  :disabled="!diagnosticPhysiSelectedStatus.rightThresholdBeforeMin"></el-input>
+                <span class="middle-text">~</span>
+                <el-input class="right-input" v-model="diagnosticPhysiCondition.rightThresholdBeforeMax" placeholder="最大值"
+                  :disabled="!diagnosticPhysiSelectedStatus.rightThresholdBeforeMin"></el-input>
+              </span>
+            </div>
+
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="diagnosticPhysiSelectedStatus.leftThresholdAfterMin"></el-checkbox>
+              <span class="item-name long-name">左后阈值</span>
+              <span class="item-value">
+                <el-input class="left-input" v-model="diagnosticPhysiCondition.leftThresholdAfterMin" placeholder="最小值"
+                  :disabled="!diagnosticPhysiSelectedStatus.leftThresholdAfterMin"></el-input>
+                <span class="middle-text">~</span>
+                <el-input class="right-input" v-model="diagnosticPhysiCondition.leftThresholdAfterMax" placeholder="最大值"
+                  :disabled="!diagnosticPhysiSelectedStatus.leftThresholdAfterMin"></el-input>
+              </span>
+            </div>
+
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="diagnosticPhysiSelectedStatus.rightThresholdAfterMin"></el-checkbox>
+              <span class="item-name long-name">右后阈值</span>
+              <span class="item-value">
+                <el-input class="left-input" v-model="diagnosticPhysiCondition.rightThresholdAfterMin" placeholder="最小值"
+                  :disabled="!diagnosticPhysiSelectedStatus.rightThresholdAfterMin"></el-input>
+                <span class="middle-text">~</span>
+                <el-input class="right-input" v-model="diagnosticPhysiCondition.rightThresholdAfterMax" placeholder="最大值"
+                  :disabled="!diagnosticPhysiSelectedStatus.rightThresholdAfterMin"></el-input>
+              </span>
+            </div>
+
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="diagnosticPhysiSelectedStatus.reactionType"></el-checkbox>
+              <span class="item-name long-name">不良反应</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="diagnosticPhysiCondition.reactionType" placeholder="请选择不良反应"
+                 :disabled="!diagnosticPhysiSelectedStatus.reactionType">
+                  <el-option v-for="option in getOptions('reactionType')" :label="option.name" :value="option.code"
+                   :key="option.code"></el-option>
+                </el-select>
+              </span>
+            </div>
+
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="diagnosticPhysiSelectedStatus.adverseName"></el-checkbox>
+              <span class="item-name long-name">不良事件名称</span>
+              <span class="item-value">
+                <el-input class="normal-input" v-model="diagnosticPhysiCondition.adverseName" placeholder="请输入不良事件名称"
+                  :disabled="!diagnosticPhysiSelectedStatus.adverseName"></el-input>
+              </span>
+            </div>
+
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="diagnosticPhysiSelectedStatus.occurTimeStart"></el-checkbox>
+              <span class="item-name long-name">发生时间</span>
+              <span class="item-value">
+                <el-date-picker class="left-input" v-model="diagnosticPhysiCondition.occurTimeStart" placeholder="开始时间"
+                  :disabled="!diagnosticPhysiSelectedStatus.occurTimeStart"></el-date-picker>
+                <span class="middle-text">~</span>
+                <el-date-picker class="right-input" v-model="diagnosticPhysiCondition.occurTimeEnd" placeholder="结束时间"
+                  :disabled="!diagnosticPhysiSelectedStatus.occurTimeStart"></el-date-picker>
+              </span>
+            </div>
+
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="diagnosticPhysiSelectedStatus.severity"></el-checkbox>
+              <span class="item-name long-name">严重程度</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="diagnosticPhysiCondition.severity" placeholder="请选择"
+                 :disabled="!diagnosticPhysiSelectedStatus.severity">
+                  <el-option v-for="option in getOptions('adverseSeverity')" :label="option.name" :value="option.code"
+                   :key="option.code"></el-option>
+                </el-select>
+              </span>
+            </div>
+
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="diagnosticPhysiSelectedStatus.seriousFlag"></el-checkbox>
+              <span class="item-name long-name">严重不良事件</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="diagnosticPhysiCondition.seriousFlag" placeholder="请选择"
+                 :disabled="!diagnosticPhysiSelectedStatus.seriousFlag">
+                  <el-option v-for="option in getOptions('digitYN')" :label="option.name" :value="option.code"
+                   :key="option.code"></el-option>
+                </el-select>
+              </span>
+            </div>
+
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="diagnosticPhysiSelectedStatus.measureFlag"></el-checkbox>
+              <span class="item-name long-name">采取措施</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="diagnosticPhysiCondition.measureFlag" placeholder="请选择"
+                 :disabled="!diagnosticPhysiSelectedStatus.measureFlag">
+                  <el-option v-for="option in getOptions('digitYN')" :label="option.name" :value="option.code"
+                   :key="option.code"></el-option>
+                </el-select>
+              </span>
+            </div>
+
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="diagnosticPhysiSelectedStatus.adverseResult"></el-checkbox>
+              <span class="item-name long-name">不良事件结局</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="diagnosticPhysiCondition.adverseResult" placeholder="请选择不良事件结局"
+                 :disabled="!diagnosticPhysiSelectedStatus.adverseResult">
+                  <el-option v-for="option in getOptions('adverseResult')" :label="option.name" :value="option.code"
+                   :key="option.code"></el-option>
+                </el-select>
+              </span>
+            </div>
+
+          </div>
+        </div>
+        <!-- 物理治疗 ↑↑↑ -->
         <div class="folding-box" v-show="currentTab===DIAGNOSTIC_INFO">
           <div class="title" @click="toggleDiagnosticScaleDisplay">
             医学量表
@@ -950,6 +1159,14 @@ let diagnosticScaleFieldNames = ['inspectTimeFrom', 'inspectTimeTo', 'scaleType'
 let diagnosticScaleSelectedFieldNames = ['inspectTimeFrom', 'inspectTimeFrom', 'scaleType', 'scaleName',
   'scaleQuestionFrom', 'scaleQuestionFrom', 'scalePointFrom', 'scalePointFrom', 'switchType'];
 
+// 物理治疗
+let diagnosticPhysiFieldNames = ['physiType', 'recordDateStart', 'recordDateEnd', 'leftThresholdBeforeMin', 'leftThresholdBeforeMax',
+  'rightThresholdBeforeMin', 'rightThresholdBeforeMax', 'leftThresholdAfterMin', 'leftThresholdAfterMax', 'rightThresholdAfterMin',
+  'rightThresholdAfterMax', 'reactionType', 'adverseName', 'occurTimeStart', 'occurTimeEnd', 'severity', 'seriousFlag', 'measureFlag', 'adverseResult'];
+let diagnosticPhysiSelectedFieldNames = ['physiType', 'recordDateStart', 'recordDateStart', 'leftThresholdBeforeMin', 'leftThresholdBeforeMin',
+  'rightThresholdBeforeMin', 'rightThresholdBeforeMin', 'leftThresholdAfterMin', 'leftThresholdAfterMin', 'rightThresholdAfterMin',
+  'rightThresholdAfterMin', 'reactionType', 'adverseName', 'occurTimeStart', 'occurTimeStart', 'severity', 'seriousFlag', 'measureFlag', 'adverseResult'];
+
 let diagnosticExaminationFieldNames = ['spephysicalInfoId', 'bioexamId', 'emgType', 'examType'];
 let diagnosticExaminationSelectedFieldNames = ['spephysicalInfoId', 'bioexamId', 'emgType', 'examType'];
 
@@ -997,6 +1214,11 @@ export default {
       displayDiagnosticSurgeryCondition: true,
       diagnosticSurgeryCondition: {},
       diagnosticSurgerySelectedStatus: {},
+
+      // 物理治疗
+      displayDiagnosticPhysiCondition: true,
+      diagnosticPhysiCondition: {},
+      diagnosticPhysiSelectedStatus: {},
 
       displayDiagnosticScaleCondition: true,
       diagnosticScaleCondition: {},
@@ -1147,6 +1369,12 @@ export default {
         this.updateScrollList();
       }, 300);
     },
+    toggleDiagnosticPhysicotherapeuticsDisplay() {
+      this.displayDiagnosticPhysiCondition = !this.displayDiagnosticPhysiCondition;
+      setTimeout(() => {
+        this.updateScrollList();
+      }, 300);
+    },
     toggleDiagnosticScaleDisplay() {
       this.displayDiagnosticScaleCondition = !this.displayDiagnosticScaleCondition;
       setTimeout(() => {
@@ -1211,6 +1439,13 @@ export default {
       diagnosticSurgerySelectedFieldNames.forEach((fieldName) => {
         this.$set(this.diagnosticSurgerySelectedStatus, fieldName, false);
       });
+      // 物理治疗
+      diagnosticPhysiFieldNames.forEach((fieldName) => {
+        this.$set(this.diagnosticPhysiCondition, fieldName, '');
+      });
+      diagnosticPhysiSelectedFieldNames.forEach((fieldName) => {
+        this.$set(this.diagnosticPhysiSelectedStatus, fieldName, false);
+      });
       diagnosticScaleFieldNames.forEach((fieldName) => {
         this.$set(this.diagnosticScaleCondition, fieldName, '');
       });
@@ -1233,7 +1468,7 @@ export default {
         'diagMode', 'treatPro', 'firMed', 'getDisFac', 'getDisFac0', 'medType', 'diseaseRelationId',
         'sameRole', 'habitSmoke', 'habitWine', 'habitTea', 'habitCoffee', 'exeGrade', 'expType',
         'caseType', 'diseType', 'durgType', 'majorType', 'treatment', 'result', 'gaugeType',
-        'switchType', 'eleType', 'examType'];
+        'switchType', 'eleType', 'examType', 'physiType', 'reactionType', 'digitYN', 'adverseResult', 'adverseSeverity'];
       if (fieldNameListInTypeGroup.indexOf(fieldName) >= 0) {
         var types = Util.getElement('typegroupcode', fieldName, this.typeGroup).types;
         types = types ? types : [];
@@ -1455,6 +1690,23 @@ export default {
             value = value.join(',');
           }
           condition.caseSurgical[fieldName] = value;
+        }
+      }
+
+      // 物理治疗
+      // diagnosticPhysiCondition
+      // diagnosticPhysiSelectedStatus
+      condition.casePhythe = {};
+      for (let i = 0; i < diagnosticPhysiSelectedFieldNames.length; i++) {
+        let selectedFieldName = diagnosticPhysiSelectedFieldNames[i];
+        let fieldName = diagnosticPhysiFieldNames[i];
+        if (this.diagnosticPhysiSelectedStatus[selectedFieldName] && fieldName && this.diagnosticPhysiCondition[fieldName] !== undefined && this.diagnosticPhysiCondition[fieldName] !== '') {
+          let value = this.diagnosticPhysiCondition[fieldName];
+          if (value instanceof Array) {
+            value.sort((a, b) => a > b);
+            value = value.join(',');
+          }
+          condition.casePhythe[fieldName] = value;
         }
       }
 
