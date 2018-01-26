@@ -106,7 +106,8 @@ export default {
       return this.title + '（' + count + '条记录）';
     },
     canEdit() {
-      var createByCurrentUser = this.diagnosisCreator === sessionStorage.getItem('userName');
+      // var createByCurrentUser = this.diagnosisCreator === sessionStorage.getItem('userName');
+      var createByCurrentUser = true;
       var isMyPatientsList = this.$route.matched.some(record => record.meta.myPatients);
       var isExperimentPatientsList = this.$route.matched.some(record => {
         return record.meta.therapistsPatients || record.meta.appraisersPatients;

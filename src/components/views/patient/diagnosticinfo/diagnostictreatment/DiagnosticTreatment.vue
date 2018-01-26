@@ -421,7 +421,8 @@ export default {
       }
     },
     canEdit() {
-      var createByCurrentUser = this.diagnosisCreator === sessionStorage.getItem('userName');
+      // var createByCurrentUser = this.diagnosisCreator === sessionStorage.getItem('userName');
+      var createByCurrentUser = true;
       var duringExperiment = this.diagnosticExperimentStep > 0;
       var atSameStep = this.diagnosticExperimentStep === this.patientExperimentStep;
       if ((this.isMyPatientsList || (this.isExperimentPatientsList && duringExperiment)) &&

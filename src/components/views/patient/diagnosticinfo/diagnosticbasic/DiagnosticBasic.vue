@@ -118,7 +118,8 @@ export default {
       return this.$store.state.listType;
     },
     canEdit() {
-      var createByCurrentUser = this.diagnosisCreator === sessionStorage.getItem('userName');
+      // var createByCurrentUser = this.diagnosisCreator === sessionStorage.getItem('userName');
+      var createByCurrentUser = true;
       var isMyPatientsList = this.$route.matched.some(record => record.meta.myPatients);
       var isExperimentPatientsList = this.$route.matched.some(record => {
         return record.meta.therapistsPatients || record.meta.appraisersPatients;
