@@ -65,6 +65,7 @@
         <div class="field" v-if="copyInfo.elecExamType===2">
           <span class="field-name">
             记录开始
+            <span class="required-mark">*</span>
           </span>
           <span class="field-input">
             <span class="warning-text">{{warningResults.recordStart}}</span>
@@ -82,6 +83,7 @@
         <div class="field" v-if="copyInfo.elecExamType===2">
           <span class="field-name">
             身高 (cm)
+            <span class="required-mark">*</span>
           </span>
           <span class="field-input">
             <span class="warning-text">{{warningResults.height}}</span>
@@ -93,6 +95,7 @@
         <div class="field" v-if="copyInfo.elecExamType===2">
           <span class="field-name">
             记录结束
+            <span class="required-mark">*</span>
           </span>
           <span class="field-input">
             <span class="warning-text">{{warningResults.recordEnd}}</span>
@@ -110,6 +113,7 @@
         <div class="field" v-if="copyInfo.elecExamType===2">
           <span class="field-name">
             体重 (kg)
+            <span class="required-mark">*</span>
           </span>
           <span class="field-input">
             <span class="warning-text">{{warningResults.weight}}</span>
@@ -531,7 +535,7 @@
             </tr>
           </table>
 
-          <table class="form" :class="{'small-font':tableMode===SON_OPEN}"
+          <table class="form"
             v-if="tableMode===SON_OPEN && currentTable===SLEEP_MONITORING_ITEM"
             v-for="(group, groupIndex) in sleepMonitoringItemGroups">
             <tr class="row" v-if="group.colItems.length===0"
@@ -541,7 +545,15 @@
               </td>
               <td class="col col-width-10">
                 <span v-if="mode===VIEW_CURRENT_CARD">
-                  {{copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue}}
+                  <span v-if="row[0].uiType===8">
+                    {{simplifyTimeWithoutDate(copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue)}}
+                  </span>
+                  <span v-else>
+                    {{copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue}}
+                  </span>
+                </span>
+                <span v-else-if="row[0].fieldCode==='sleepEfficiency'">
+                  {{calcSleepEfficiency(copyInfo.patientFieldCode[sleepMonitoringSubTableCode], row[0].id, 0, group.rowItems)}}
                 </span>
                 <el-input v-else-if="row[0].uiType===1"
                   v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue">
@@ -563,7 +575,7 @@
                   @change="recordValuePath(['patientFieldCode',sleepMonitoringSubTableCode,row[0].id,0], 7)"
                   :picker-options="pickerOptions">
                 </el-date-picker>
-                <el-time-picker v-else-if="row[0].uiType===8"
+                <el-time-picker v-else-if="row[0].uiType===8" format="HH:mm:ss"
                   v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"
                   @change="recordValuePath(['patientFieldCode',sleepMonitoringSubTableCode,row[0].id,0], 8)"
                   :picker-options="pickerOptions">
@@ -574,7 +586,15 @@
               </td>
               <td class="col col-width-10" v-if="row.length===2">
                 <span v-if="mode===VIEW_CURRENT_CARD">
-                  {{copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue}}
+                  <span v-if="row[1].uiType===8">
+                    {{simplifyTimeWithoutDate(copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue)}}
+                  </span>
+                  <span v-else>
+                    {{copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue}}
+                  </span>
+                </span>
+                <span v-else-if="row[1].fieldCode==='sleepEfficiency'">
+                  {{calcSleepEfficiency(copyInfo.patientFieldCode[sleepMonitoringSubTableCode], row[1].id, 0, group.rowItems)}}
                 </span>
                 <el-input v-else-if="row[1].uiType===1"
                   v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue">
@@ -596,7 +616,7 @@
                   @change="recordValuePath(['patientFieldCode',sleepMonitoringSubTableCode,row[1].id,0], 7)"
                   :picker-options="pickerOptions">
                 </el-date-picker>
-                <el-time-picker v-else-if="row[1].uiType===8"
+                <el-time-picker v-else-if="row[1].uiType===8" format="HH:mm:ss"
                   v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"
                   @change="recordValuePath(['patientFieldCode',sleepMonitoringSubTableCode,row[1].id,0], 8)"
                   :picker-options="pickerOptions">
@@ -616,7 +636,15 @@
               </td>
               <td class="col col-width-10" v-for="col in group.colItems">
                 <span v-if="mode===VIEW_CURRENT_CARD">
-                  {{copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue}}
+                  <span v-if="col.uiType===8 || (col.uiType===undefined && row.uiType===8)">
+                    {{simplifyTimeWithoutDate(copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue)}}
+                  </span>
+                  <span v-else>
+                    {{copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue}}
+                  </span>
+                </span>
+                <span v-else-if="col.fieldCode==='total'">
+                  {{calcTotalOfRow(copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id], col.id, group.colItems, row.uiType, row.fieldCode)}}
                 </span>
                 <el-input v-else-if="col.uiType===1 || (col.uiType===undefined && row.uiType===1)"
                   v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue">
@@ -639,7 +667,7 @@
                   @change="recordValuePath(['patientFieldCode',sleepMonitoringSubTableCode,row.id,col.id], 7)"
                   :picker-options="pickerOptions">
                 </el-date-picker>
-                <el-time-picker v-else-if="col.uiType===8 || (col.uiType===undefined && row.uiType===8)"
+                <el-time-picker v-else-if="col.uiType===8 || (col.uiType===undefined && row.uiType===8)" format="HH:mm:ss"
                   v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"
                   @change="recordValuePath(['patientFieldCode',sleepMonitoringSubTableCode,row.id,col.id], 8)"
                   :picker-options="pickerOptions">
@@ -968,7 +996,7 @@ export default {
       this.mode = cardOperation;
       this.tableMode = this.FATHER_OPEN;
       this.showEdit = showEdit;
-      console.log('item: ', item);
+      // console.log('item: ', item);
 
       this.initCopyInfo();
 
@@ -1365,11 +1393,114 @@ export default {
       };
       return options;
     },
+    simplifyTimeWithoutDate(time) {
+      return Util.simplifyTimeWithoutDate(time);
+    },
     transformToNumber(obj) {
       var value = parseFloat(obj.fieldValue);
       if (obj.fieldValue !== '' && obj.fieldValue !== value) {
         obj.fieldValue = isNaN(value) ? '' : value;
       }
+    },
+    calcSleepEfficiency(obj, rowId, colId, rows) {
+      var bedTime = '';
+      var totalSleepTime = '';
+      for (let row of rows) {
+        if (row.fieldCode === 'bedTime') {
+          bedTime = obj[row.id][colId].fieldValue;
+        } else if (row.fieldCode === 'totalSleepTime') {
+          totalSleepTime = obj[row.id][colId].fieldValue;
+        }
+      }
+      if (bedTime === undefined || bedTime === '' || totalSleepTime === undefined || totalSleepTime === '') {
+        obj[rowId][colId].fieldValue = '';
+        return obj[rowId][colId].fieldValue;
+      }
+
+      bedTime = this.addTime('00:00:00', bedTime);
+      totalSleepTime = this.addTime('00:00:00', totalSleepTime);
+      var bedTimeNumList = bedTime.split(':');
+      var totalSleepTimeNumList = totalSleepTime.split(':');
+      var bedTimeSeconds = bedTimeNumList[0] * 3600 + bedTimeNumList[1] * 60 + bedTimeNumList[2];
+      var totalSleepSeconds = totalSleepTimeNumList[0] * 3600 + totalSleepTimeNumList[1] * 60 + totalSleepTimeNumList[2];
+
+      var ratio = totalSleepSeconds / bedTimeSeconds;
+      obj[rowId][colId].fieldValue = (ratio * 100).toFixed(2);
+      return obj[rowId][colId].fieldValue;
+    },
+    calcTotalOfRow(obj, colId, cols, uiType, rowFieldCode) {
+      if (rowFieldCode === 'inapplicable') {
+        obj[colId].fieldValue = '不适用';
+      } else {
+        var total = 0;
+        for (let col of cols) {
+          if (col.fieldCode !== 'total') {
+            if (uiType === 2) {
+              var num = parseFloat(obj[col.id].fieldValue);
+              num = isNaN(num) ? 0 : num;
+              total += num;
+            } else if (uiType === 8) {
+              var value = obj[col.id].fieldValue;
+              if (total === 0) {
+                total = '00:00:00';
+              }
+              if (value !== undefined && value !== '') {
+                total = this.addTime(total, value);
+              }
+            }
+          }
+        }
+        obj[colId].fieldValue = total;
+      }
+      return obj[colId].fieldValue;
+    },
+    addTime(total, time) {
+      // 用来计算增加的时长，第一个参数代表当前的总时间，为“HH:mm:ss”格式的字符串
+      // 第二个参数为传入的参数，为 Date 对象或者“HH:mm:ss”格式的字符串
+      // 如果第二个参数为 Date 对象，则只取其时分秒，而忽略其年月日
+      // 返回值是“HH:mm:ss”格式的字符串
+      var totalTimeStringList = total.split(':');
+      var totalHours = totalTimeStringList[0] ? totalTimeStringList[0] : 0;
+      var totalMinutes = totalTimeStringList[1] ? totalTimeStringList[1] : 0;
+      var totalSeconds = totalTimeStringList[2] ? totalTimeStringList[2] : 0;
+      totalHours = Number(totalHours);
+      totalMinutes = Number(totalMinutes);
+      totalSeconds = Number(totalSeconds);
+
+      var addHours = 0;
+      var addMinutes = 0;
+      var addSeconds = 0;
+      if (time instanceof Date) {
+        addHours = time.getHours();
+        addMinutes = time.getMinutes();
+        addSeconds = time.getSeconds();
+      } else if (time instanceof String) {
+        var timeStringList = time.split(':');
+        addHours = timeStringList[0] ? timeStringList[0] : 0;
+        addMinutes = timeStringList[1] ? timeStringList[1] : 0;
+        addSeconds = timeStringList[2] ? timeStringList[2] : 0;
+        addHours = Number(addHours);
+        addMinutes = Number(addMinutes);
+        addSeconds = Number(addSeconds);
+      }
+      totalHours += addHours;
+      totalMinutes += addMinutes;
+      totalSeconds += addSeconds;
+      if (totalSeconds >= 60) {
+        totalSeconds -= 60;
+        totalMinutes += 1;
+      }
+      if (totalMinutes >= 60) {
+        totalMinutes -= 60;
+        totalHours += 1;
+      }
+      if (totalSeconds < 10) {
+        totalSeconds = '0' + totalSeconds;
+      }
+      if (totalMinutes < 10) {
+        totalMinutes = '0' + totalMinutes;
+      }
+      return totalHours + ':' + totalMinutes + ':' + totalSeconds;
     },
     cancel() {
       this.lockSubmitButton = false;
@@ -1463,10 +1594,8 @@ export default {
           }
           if (uiType === 6) {
             obj.fieldValue = Util.simplifyDate(obj.fieldValue);
-          } else if (uiType === 7) {
+          } else if (uiType === 7 || uiType === 8) {
             obj.fieldValue = Util.simplifyTime(obj.fieldValue, true);
-          } else if (uiType === 8) {
-            obj.fieldValue = Util.simplifyTimeWithoutDate(obj.fieldValue, true);
           }
         }
 

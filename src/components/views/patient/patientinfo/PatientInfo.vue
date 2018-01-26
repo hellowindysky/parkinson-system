@@ -167,19 +167,16 @@ export default {
       this.$router.push('experimentInfo');
     },
     checkRoute() {
-      var path = this.$route.path;
-
       // 首先判断是不是新增患者
       if (!this.existed) {
         this.$refs.newPatientWindow.$emit(this.EDIT);
         return;
       }
 
-      var rePersonal = new RegExp(/\/personalInfo(\/|$)/);
-      var reDiagnostic = new RegExp(/\/diagnosticInfo(\/|$)/);
-      var reExperiment = new RegExp(/\/experimentInfo(\/|$)/);
-
-      var withoutDetail = !rePersonal.test(path) && !reDiagnostic.test(path) && !reExperiment.test(path);
+      var withDetail = this.$route.matched.some(record => {
+        return record.meta.personalInfo || record.meta.diagnosticInfo || record.meta.experimentInfo;
+      });
+      var withoutDetail = !withDetail;
 
       // 路由还停留在在病患信息这一层，但没有指明是个人信息还是诊断信息还是实验信息，那么就默认跳转到个人信息
       if (this.listType === this.MY_PATIENTS_TYPE && withoutDetail) {
@@ -214,7 +211,22 @@ export default {
         return;
       }
       var subjectNum = this.inSubject ? this.$store.state.subjectId : 0;
-      getPatientInfo(this.patientId, subjectNum).then((data) => {
+
+      // type: 1我的患者, 2科室患者, 3项目中我的患者, 4项目中项目患者, 5实验研究中治疗者, 6实验研究中评估者
+      var type = null;
+      if (this.listType === this.MY_PATIENTS_TYPE) {
+        type = this.inSubject ? 3 : 1;
+      } else if (this.listType === this.OTHER_PATIENTS_TYPE) {
+        type = 2;
+      } else if (this.listType === this.SUBJECT_PATIENTS_TYPE) {
+        type = 4;
+      } else if (this.listType === this.THERAPISTS_PATIENTS_TYPE) {
+        type = 5;
+      } else if (this.listType === this.APPRAISERS_PATIENTS_TYPE) {
+        type = 6;
+      }
+
+      getPatientInfo(this.patientId, subjectNum, type).then((data) => {
         // console.log('patientInfo: ', data);
         this.patientInfo = data;
         this.createDate = data.createDate;
@@ -320,6 +332,10 @@ export default {
     },
     showSensitiveInfo() {
       this.updatePatientInfo();
+    },
+    existed() {
+      // 因为 existed 这个变量变化时会导致几个子面板的 显示／隐藏，所以需要它们重新计算各自内部的卡片宽度
+      Bus.$emit(this.RECALCULATE_CARD_WIDTH);
     }
   },
   beforeDestroy() {
@@ -329,9 +345,10 @@ export default {
     Bus.$off(this.UPDATE_PATIENT_INFO, this.updatePatientInfo);
     Bus.$off(this.UPDATE_PATIENT_CASE_LIST, this.updatePatientCaseList);
   },
-  existed() {
-    // 因为 existed 这个变量变化时会导致几个子面板的 显示／隐藏，所以需要它们重新计算各自内部的卡片宽度
-    Bus.$emit(this.RECALCULATE_CARD_WIDTH);
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.checkRoute();
+    });
   }
 };
 </script>

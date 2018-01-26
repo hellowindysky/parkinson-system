@@ -961,7 +961,7 @@ export default {
 
       // 获取患者的 DBS 编码
       getPatientSimpleInfo(this.$route.params.id).then((data) => {
-        if (data && data.patientInfo && data.patientInfo && data.patientInfo.dbsPatientCode) {
+        if (data && data.patientInfo && data.patientInfo.dbsPatientCode) {
           this.dbsPatientCode = data.patientInfo.dbsPatientCode;
         }
       }, (error) => {

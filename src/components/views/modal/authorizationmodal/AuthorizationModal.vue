@@ -10,7 +10,7 @@
             :class="{'warning':supportAccountWarning}" :placeholder="'请输入技术支持员的睿云账号或手机号'"></el-input>
         </div>
         <div class="field">请输入短信验证码:
-          <span class="phone-num">【当前手机账号 {{accountNumber}}】</span>
+          <span class="phone-num">【当前手机账号 {{hidePartialPhoneNum(accountNumber)}}】</span>
         </div>
         <div class="field input">
           <span class="warning-text">{{verificationCodeWarning}}</span>
@@ -116,6 +116,13 @@ export default {
         this.verificationCodeWarning = '';
       } else {
         this.verificationCodeWarning = '请输入数字';
+      }
+    },
+    hidePartialPhoneNum(phoneNumString) {
+      if (/^[0-9]{11}$/.test(phoneNumString)) {
+        return phoneNumString.substring(0, 3) + '****' + phoneNumString.substring(7, 11);
+      } else {
+        return phoneNumString;
       }
     },
     updateSupportAccount() {

@@ -211,22 +211,20 @@ export default {
               name: 'patientInfo',
               params: {id: newId}
             });
-            Bus.$emit(this.UPDATE_MY_PATIENTS_LIST);
 
           } else if (this.listType === this.OTHER_PATIENTS_TYPE) {
             this.$router.push({
               name: 'otherPatientInfo',
               params: {id: newId}
             });
-            Bus.$emit(this.UPDATE_OTHER_PATIENTS_LIST);
 
           } else if (this.listType === this.SUBJECT_PATIENTS_TYPE) {
             this.$router.push({
               name: 'subjectPatientInfo',
               params: {id: newId}
             });
-            Bus.$emit(this.UPDATE_SUBJECT_PATIENTS_LIST);
           }
+          Bus.$emit(this.UPDATE_PATIENTS_LIST);
 
           // 如果是新增患者，还要在确定之后，将个人信息的病症信息面板置为编辑状态，同时收起基础信息面板
           this.$nextTick(() => {
@@ -238,60 +236,7 @@ export default {
 
         }, (error) => {
           console.log(error);
-          if (error.code === 23) {
-            this.$message({
-              message: '该用户已经存在',
-              type: 'error',
-              duration: 2000
-            });
-          } else if (error.code === 31) {
-            this.$message({
-              message: '医院患者编码重复',
-              type: 'error',
-              duration: 2000
-            });
-          } else if (error.code === 2006) {
-            this.$message({
-              message: '门诊病例号重复',
-              type: 'error',
-              duration: 2000
-            });
-          } else if (error.code === 2007) {
-            this.$message({
-              message: '住院病例号重复',
-              type: 'error',
-              duration: 2000
-            });
-          }
-          this.lockSubmitButton = false;
-        });
-
-      } else {
-        // 一旦提交成功，basicInfo也会更新，这个时候再切换回阅读状态
-        submitData.patientId = this.$route.params.id;
-        modifyPatientInfo(submitData).then(() => {
-          Bus.$emit(this.UPDATE_PATIENT_INFO);
-
-          // 即使是编辑已有记录，也要更新患者列表（因为列表中存在年龄，性别等信息）
-          if (this.listType === this.MY_PATIENTS_TYPE) {
-            Bus.$emit(this.UPDATE_MY_PATIENTS_LIST);
-          } else if (this.listType === this.OTHER_PATIENTS_TYPE) {
-            Bus.$emit(this.UPDATE_OTHER_PATIENTS_LIST);
-          } else if (this.listType === this.SUBJECT_PATIENTS_TYPE) {
-            Bus.$emit(this.UPDATE_SUBJECT_PATIENTS_LIST);
-          }
-
-          this.mode = this.READING_MODE;
-          this.lockSubmitButton = false;
-        }, (error) => {
-          console.log(error);
-          if (error.code === 23) {
-            this.$message({
-              message: '该用户已经存在',
-              type: 'error',
-              duration: 2000
-            });
-          } else if (error.code === 31) {
+          if (error.code === 31) {
             this.$message({
               message: '医院患者编码重复',
               type: 'error',
@@ -312,6 +257,61 @@ export default {
           } else if (error.code === 2008) {
             this.$message({
               message: '身份证号重复',
+              type: 'error',
+              duration: 2000
+            });
+          } else if (error.code === 2011) {
+            // 姓名相同，而且联系电话存在重复
+            this.$message({
+              message: '该患者已存在，请检查姓名和联系电话',
+              type: 'error',
+              duration: 2000
+            });
+          }
+          this.lockSubmitButton = false;
+        });
+
+      } else {
+        // 一旦提交成功，basicInfo也会更新，这个时候再切换回阅读状态
+        submitData.patientId = this.$route.params.id;
+        modifyPatientInfo(submitData).then(() => {
+          Bus.$emit(this.UPDATE_PATIENT_INFO);
+
+          // 即使是编辑已有记录，也要更新患者列表（因为列表中存在年龄，性别等信息）
+          Bus.$emit(this.UPDATE_PATIENTS_LIST);
+
+          this.mode = this.READING_MODE;
+          this.lockSubmitButton = false;
+        }, (error) => {
+          console.log(error);
+          if (error.code === 31) {
+            this.$message({
+              message: '医院患者编码重复',
+              type: 'error',
+              duration: 2000
+            });
+          } else if (error.code === 2006) {
+            this.$message({
+              message: '门诊病例号重复',
+              type: 'error',
+              duration: 2000
+            });
+          } else if (error.code === 2007) {
+            this.$message({
+              message: '住院病例号重复',
+              type: 'error',
+              duration: 2000
+            });
+          } else if (error.code === 2008) {
+            this.$message({
+              message: '身份证号重复',
+              type: 'error',
+              duration: 2000
+            });
+          } else if (error.code === 2011) {
+            // 姓名相同，而且联系电话存在重复
+            this.$message({
+              message: '该患者已存在，请检查姓名和联系电话',
               type: 'error',
               duration: 2000
             });

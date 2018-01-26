@@ -69,7 +69,7 @@
             实验编号:
           </span>
           <span class="field-input">
-            {{dbsPatientCode}}
+            {{patientTaskCode}}
           </span>
         </div>
         <div class="field">
@@ -120,56 +120,30 @@
               :value="item.code">
             </el-checkbox>
           </div>
-           <div class="stimulate-side">
-              <el-checkbox v-model="stimulateSideEvents1[index]"
-                v-for="(item, index) in getOptions('stimulusSide')"
-                :label="item.name"
-                :key="item.code"
-                :disabled="mode===VIEW_CURRENT_CARD">
-              </el-checkbox>
-            </div>
-            <div class="stimulate-side">
-              <el-checkbox v-model="stimulateSideEvents2[index]"
-                v-for="(item, index) in getOptions('stimulusSide')"
-                :label="item.name"
-                :key="item.code"
-                :disabled="mode===VIEW_CURRENT_CARD">
-              </el-checkbox>
-            </div>
-            <div class="stimulate-side">
-              <el-checkbox v-model="stimulateSideEvents3[index]"
-                v-for="(item, index) in getOptions('stimulusSide')"
-                :label="item.name"
-                :key="item.code"
-                :disabled="mode===VIEW_CURRENT_CARD">
-              </el-checkbox>
-            </div>
-          <!-- <div class="stimulate-side">
-            <el-checkbox-group v-model="stimulateSideEvents1">
-              <el-checkbox
-                v-for="(item, index) in getOptions('stimulusSide')"
-                :label="item.name"
-                :key="item.code"
-                :disabled="mode===VIEW_CURRENT_CARD">
-              </el-checkbox>
-            </el-checkbox-group>
-            <el-checkbox-group v-model="stimulateSideEvents2">
-              <el-checkbox
-                v-for="(item, index) in getOptions('stimulusSide')"
-                :label="item.name"
-                :key="item.code"
-                :disabled="mode===VIEW_CURRENT_CARD">
-              </el-checkbox>
-            </el-checkbox-group>
-            <el-checkbox-group v-model="stimulateSideEvents3">
-              <el-checkbox
-                v-for="(item, index) in getOptions('stimulusSide')"
-                :label="item.name"
-                :key="item.code"
-                :disabled="mode===VIEW_CURRENT_CARD">
-              </el-checkbox>
-            </el-checkbox-group>
-          </div> -->
+          <div class="stimulate-side">
+            <el-checkbox v-model="stimulateSideEvents1[index]"
+              v-for="(item, index) in getOptions('stimulusSide')"
+              :label="item.name"
+              :key="item.code"
+              :disabled="mode===VIEW_CURRENT_CARD">
+            </el-checkbox>
+          </div>
+          <div class="stimulate-side">
+            <el-checkbox v-model="stimulateSideEvents2[index]"
+              v-for="(item, index) in getOptions('stimulusSide')"
+              :label="item.name"
+              :key="item.code"
+              :disabled="mode===VIEW_CURRENT_CARD">
+            </el-checkbox>
+          </div>
+          <div class="stimulate-side">
+            <el-checkbox v-model="stimulateSideEvents3[index]"
+              v-for="(item, index) in getOptions('stimulusSide')"
+              :label="item.name"
+              :key="item.code"
+              :disabled="mode===VIEW_CURRENT_CARD">
+            </el-checkbox>
+          </div>
         </div>
         <div class="field">
           <span class="field-name">
@@ -312,7 +286,7 @@ export default {
       displayModal: false,
       mode: '',
       completeInit: false,
-      dbsPatientCode: '',
+      patientTaskCode: '',
 
       patientPhytheTmsId: '',
       patientPhytheTms: '',
@@ -422,8 +396,19 @@ export default {
       this.completeInit = false;
       this.mode = cardOperation;
       this.showEdit = showEdit;
+
       for (let reaction of this.patientPhytheReaction) {
         reaction.severityLevel = '';
+      }
+
+      for (let i = 0; i < this.stimulateSideEvents1.length; i++) {
+        this.stimulateSideEvents1[i] = false;
+      }
+      for (let i = 0; i < this.stimulateSideEvents2.length; i++) {
+        this.stimulateSideEvents2[i] = false;
+      }
+      for (let i = 0; i < this.stimulateSideEvents3.length; i++) {
+        this.stimulateSideEvents3[i] = false;
       }
       // console.log('item: ', item);
 
@@ -443,6 +428,10 @@ export default {
       this.stimulusPart = item.stimulusPart ? item.stimulusPart : '';
       this.hasNoReaction = item.reactionFlag === 1;
 
+      if (this.stimulusSide !== '') {
+        this.bindValueToStimulateSideEvents();
+      }
+
       vueCopy(item.patientPhytheReaction, this.patientPhytheReaction);
       this.$nextTick(() => {
         this.$refs.scrollArea.scrollTop = 0;
@@ -455,10 +444,10 @@ export default {
       this.completeInit = true;
       this.displayModal = true;
       this.updateScrollbar();
-      // 获取患者的 DBS 编码
+      // 获取患者的 实验编号
       getPatientSimpleInfo(this.$route.params.id).then((data) => {
-        if (data && data.patientInfo && data.patientInfo && data.patientInfo.dbsPatientCode) {
-          this.dbsPatientCode = data.patientInfo.dbsPatientCode;
+        if (data.patientInfo.patientTaskCode) {
+          this.patientTaskCode = data.patientInfo.patientTaskCode;
         }
       }, (error) => {
         console.log(error);
@@ -490,31 +479,35 @@ export default {
       };
       return options;
     },
+    prepareStimulateSideEvents() {
+      var length = this.getOptions('stimulusSide').length;
+      for (let i = 0; i < length; i++) {
+        if (this.stimulateSideEvents1[i] === undefined) {
+          this.$set(this.stimulateSideEvents1, i, false);
+        }
+        if (this.stimulateSideEvents2[i] === undefined) {
+          this.$set(this.stimulateSideEvents2, i, false);
+        }
+        if (this.stimulateSideEvents3[i] === undefined) {
+          this.$set(this.stimulateSideEvents3, i, false);
+        }
+      }
+    },
+    bindValueToStimulateSideEvents() {
+      var length = this.getOptions('stimulusSide').length;
+      for (let i = 0; i < length; i++) {
+        this.stimulateSideEvents1[i] = this.stimulusSide[i] === '1';
+        this.stimulateSideEvents2[i] = this.stimulusSide[length + i] === '1';
+        this.stimulateSideEvents3[i] = this.stimulusSide[length + length + i] === '1';
+      }
+    },
     concatenateStimulusSide() {
-      var incident = [];
-      var list = this.stimulusSide.split('');
-      for (let i = 0; i < this.stimulateSideEvents1.length; i++) {
-        this.stimulateSideEvents1[i] = list[i];
+      var list = [].concat(this.stimulateSideEvents1, this.stimulateSideEvents2, this.stimulateSideEvents3);
+      var result = '';
+      for (let value of list) {
+        result += value ? '1' : '0';
       }
-      var event = this.stimulusSide.split('');
-      for (let i = 0; i < this.stimulateSideEvents2.length; i++) {
-        this.stimulateSideEvents2[i] = event[i];
-      }
-      var affair = this.stimulusSide.split('');
-      for (let i = 0; i < this.stimulateSideEvents3.length; i++) {
-        this.stimulateSideEvents3[i] = affair[i];
-      }
-      // this.stimulateSideEvents1.map((item) => {
-      //   if (item === '左侧') {
-      //     return '10';
-      //   } else if (item === '右侧') {
-      //     return '01';
-      //   } else {
-      //     return '11';
-      //   }
-      // });
-      console.log(this.stimulateSideEvents1);
-      return incident.concat(this.stimulateSideEvents1, this.stimulateSideEvents2, this.stimulateSideEvents3).join('');
+      return result;
     },
     updateWarning(fieldName) {
       var list = ['recordDate', 'physiType', 'deviceType', 'leftThresholdBefore', 'rightThresholdBefore'];
@@ -605,10 +598,17 @@ export default {
   },
   mounted() {
     Bus.$on(this.SHOW_PHYSIONTHERAPY_MODAL, this.showPanel);
+    this.prepareStimulateSideEvents();
     this.updateScrollbar();
   },
   beforeDestroy() {
     Bus.$off(this.SHOW_PHYSIONTHERAPY_MODAL);
+  },
+  watch: {
+    typeGroup: function() {
+      this.prepareStimulateSideEvents();
+      this.bindValueToStimulateSideEvents();
+    }
   }
 };
 </script>

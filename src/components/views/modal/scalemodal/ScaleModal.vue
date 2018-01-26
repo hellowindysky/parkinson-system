@@ -169,9 +169,13 @@
         </el-radio-group>
         <el-input v-model="copyInfo.patientOptions[index].remarks" :disabled="mode===VIEW_CURRENT_CARD"
           class="question-body" v-if="item.questionType===2"></el-input>
-        <el-input v-model="copyInfo.patientOptions[index].optionPoint" :disabled="mode===VIEW_CURRENT_CARD"
-          class="question-body" v-if="item.questionType===3"
-          @blur="transformToNum(copyInfo.patientOptions[index], 'optionPoint')"></el-input>
+        <div v-if="item.questionType===3">
+          <el-input v-model="copyInfo.patientOptions[index].optionPoint"
+            :disabled="mode===VIEW_CURRENT_CARD" class="question-body point-input"
+            @blur="transformToNum(copyInfo.patientOptions[index], 'optionPoint', item.stepping, item.maxPoint)">
+          </el-input>
+          <span class="extra-info"> / {{item.maxPoint}}  (填写分数应为{{item.stepping}}的整数倍)</span>
+        </div>
       </div>
 
     </div>
@@ -408,9 +412,22 @@ export default {
       this.lockSubmitButton = false;
       this.displayScaleModal = false;
     },
-    transformToNum(obj, propertyName) {
-      var value = parseFloat(obj[propertyName]);
-      obj[propertyName] = (obj[propertyName] !== '' && !isNaN(value)) ? Number(value.toFixed(1)) : '';
+    transformToNum(obj, propertyName, stepping, maxValue) {
+      if (obj[propertyName] !== '') {
+        var value = parseFloat(obj[propertyName]);
+        if (isNaN(value)) {
+          obj[propertyName] = '';
+        } else {
+          var count = parseInt(value / stepping, 10);
+          var newValue = stepping * count;
+          if (newValue < 0) {
+            newValue = 0;
+          } else if (newValue > maxValue) {
+            newValue = maxValue;
+          }
+          obj[propertyName] = newValue;
+        }
+      }
     },
     getCorrectAnswer() {
       // 取出量表的选中答案以及对应的分数
@@ -716,7 +733,7 @@ export default {
         }
       }
       .question-body {
-        display: block;
+        display: inline-block;
         margin: 0;
         padding: 0;
         color: @secondary-button-color;
@@ -761,6 +778,9 @@ export default {
         }
         &.el-input {
           width: 90%;
+          &.point-input {
+            width: 100px;
+          }
           .el-input__inner {
             height: 30px;
             border: 1px solid @inverse-font-color;
@@ -773,6 +793,9 @@ export default {
             }
           }
         }
+      }
+      .extra-info {
+        white-space: pre-wrap;
       }
     }
     .scale-selector {
