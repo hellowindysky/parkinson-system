@@ -227,7 +227,7 @@ export default {
       }
 
       getPatientInfo(this.patientId, subjectNum, type).then((data) => {
-        // console.log('patientInfo: ', data);
+        console.log('patientInfo: ', data);
         this.patientInfo = data;
         this.createDate = data.createDate;
         this.belongDoctor = data.belongDoctor;
@@ -246,7 +246,7 @@ export default {
         return;
       }
       getPatientCaseList(this.patientId).then((data) => {
-        // console.log('patientCaseList: ', data);
+        console.log('patientCaseList: ', data);
         this.patientCaseList = data;
       }, (error) => {
         console.log(error);

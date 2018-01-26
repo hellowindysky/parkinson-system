@@ -4,7 +4,7 @@
       v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit" v-on:addNewCard="addRecord"
       v-on:updateFilterCondition="changeFilterCondition" :editable="canEdit">
       <card class="card" :class="cardClass" :mode="mode" v-for="item in patientCaseList" :key="item.caseName"
-        :title="item.caseName" :disable-delete="item.archiveStatus===1" v-on:editCurrentCard="seeDetail(item)" v-on:deleteCurrentCard="deleteRecord(item)"
+        :title="item.caseName" :disable-delete="checkIfDisabledToDelete(item)" v-on:editCurrentCard="seeDetail(item)" v-on:deleteCurrentCard="deleteRecord(item)"
         v-show="passFilter(item)" v-on:viewCurrentCard="seeDetail(item)">
         <div class="text first-line">诊断内容</div>
         <div class="text second-line">{{getDiagnosticContent(item)}}</div>
@@ -33,6 +33,11 @@ import { deleteDiagnosticInfo } from 'api/patient.js';
 
 export default {
   props: {
+    patientInfo: {
+      type: Object,
+      required: true,
+      default: () => {}
+    },
     patientCaseList: {
       type: Array,
       required: true,
@@ -59,6 +64,13 @@ export default {
     },
     cardClass() {
       return this.showRecordSource ? this.devideWidth + ' tall-card' : this.devideWidth;
+    },
+    patientCurrentExperimentStep() {
+      // -1 代表服务器没传这个值，这里指该患者不处于实验状态
+      return this.patientInfo.patientCurrentStatus !== undefined ? Number(this.patientInfo.patientCurrentStatus) : -1;
+    },
+    patientCurrentExperimentStage() {
+      return this.patientInfo.patientCurrentStage !== undefined ? Number(this.patientInfo.patientCurrentStage) : -1;
     },
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients) ||
@@ -136,6 +148,36 @@ export default {
     },
     addRecord() {
       this.routerJumpWithCaseId('newCase');
+    },
+    checkIfDisabledToDelete(item) {
+      // 返回值为 true 时，代表该诊断卡片不允许被删除
+      if (item.archiveStatus === 1) {
+        // 只要该诊断卡片已归档，就不允许被删除
+        return true;
+      }
+      var diagnosticExperimentStep = item.status !== undefined ? Number(item.status) : -1;
+      var diagnosticExperimentStage = item.stage !== undefined ? Number(item.stage) : -1;
+      if (this.patientCurrentExperimentStep !== -1) {
+        // 如果该患者正处在试验期，则只有当患者所处实验阶段和诊断记录的实验阶段相同时，该阶段的特定的角色才能删除该诊断卡片
+        if (this.patientCurrentExperimentStep === diagnosticExperimentStep &&
+          this.patientCurrentExperimentStage === diagnosticExperimentStage) {
+          if (this.patientCurrentExperimentStep === 2 && this.listType === this.APPRAISERS_PATIENTS_TYPE) {
+            return false;
+          } else if (this.patientCurrentExperimentStep === 3 && this.listType === this.THERAPISTS_PATIENTS_TYPE) {
+            return false;
+          } else if (this.patientCurrentExperimentStep === 4 && this.listType === this.APPRAISERS_PATIENTS_TYPE) {
+            return false;
+          }
+        }
+        return true;
+
+      } else {
+        // 如果该患者不处于实验期，只有所属医生在“我的患者”里面可以对非实验期添加的卡片进行删除
+        if (this.diagnosticExperimentStep !== -1 && this.listType === this.MY_PATIENTS_TYPE) {
+          return false;
+        }
+        return true;
+      }
     },
     routerJumpWithCaseId(caseId) {
       var routeName = '';
