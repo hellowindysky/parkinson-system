@@ -5,13 +5,22 @@
         <span class="title">{{title}}</span>
         <span class="iconfont" :class="iconToggleFolded"></span>
       </h2>
-      <div v-if="editable && mode===READING_MODE" class="button edit-button" @click="edit">编辑</div>
-      <div v-if="editable && mode===EDITING_MODE && !isCardsPanel" class="button cancel-button" @click="cancel">取消</div>
-      <div v-if="editable && isCardsPanel" class="button add-button" @click="add">添加</div>
-      <div v-if="editable && mode===EDITING_MODE" class="button submit-button" @click="submit">{{submitText}}</div>
+      <div v-if="editable && mode===READING_MODE" class="button edit-button" @click="edit">
+        编辑
+      </div>
+      <div v-if="editable && mode===EDITING_MODE && !isCardsPanel" class="button cancel-button" @click="cancel">
+        取消
+      </div>
+      <div v-if="editable && showAddButton && isCardsPanel" class="button add-button" @click="add">
+        添加
+      </div>
+      <div v-if="editable && mode===EDITING_MODE" class="button submit-button" @click="submit">
+        {{submitText}}
+      </div>
 
-      <el-select v-if="isCardsPanel" v-model="filterCondition" size="small" placeholder="筛选" class="button filter-button"
-        @change="filterCards" :class="{'without-other-button': !editable}">
+      <el-select v-if="isCardsPanel" v-model="filterCondition" size="small" placeholder="筛选"
+        class="button filter-button" @change="filterCards"
+        :class="{'without-other-button': !editable, 'without-one-button': editable && !showAddButton}">
         <el-option label="全部" :value="FILTER_ALL"></el-option>
         <el-option label="已归档" :value="FILTER_ARCHIVED"></el-option>
         <el-option label="未归档" :value="FILTER_UNARCHIVED"></el-option>
@@ -47,6 +56,11 @@ export default {
     },
     editable: {
       type: Boolean,
+      default: true
+    },
+    showAddButton: {
+      type: Boolean,
+      required: false,
       default: true
     }
   },
@@ -184,6 +198,9 @@ export default {
         right: 50px + @small-button-width * 2;
         &.without-other-button {
           right: 10px;
+        }
+        &.without-one-button {
+          right: 30px + @small-button-width;
         }
         .el-input {
           font-size: @normal-font-size;

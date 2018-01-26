@@ -228,7 +228,10 @@ export default {
         this.experimentNumber = data.taskCode ? data.taskCode : '';
 
         Bus.$emit(this.SCROLL_AREA_SIZE_CHANGE);
+
+        // 下面这两个事件会相应地更新其它模块下的实验信息
         Bus.$emit(this.UPDATE_PATIENTS_LIST);
+        Bus.$emit(this.UPDATE_PATIENT_INFO);
 
       }, (error) => {
         console.log(error);
