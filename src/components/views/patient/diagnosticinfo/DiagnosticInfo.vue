@@ -72,6 +72,11 @@ export default {
       } else if (this.patientCurrentExperimentStep === 4 && this.listType === this.APPRAISERS_PATIENTS_TYPE) {
         // 如果患者处于随访期，只有评估者才能添加诊断
         return true;
+
+      } else if (this.patientCurrentExperimentStep === 5 && this.listType === this.MY_PATIENTS_TYPE) {
+        // 如果患者处于实验结束状态，只有所属医生在“我的患者”下才能添加诊断
+        return true;
+
       }
       return false;
     },
@@ -187,6 +192,11 @@ export default {
           } else if (this.patientCurrentExperimentStep === 4 && this.listType === this.APPRAISERS_PATIENTS_TYPE) {
             return false;
           }
+        }
+        if (this.patientCurrentExperimentStep === 5 && diagnosticExperimentStep === -1 &&
+          this.listType === this.MY_PATIENTS_TYPE) {
+          // 如果患者处于实验结束阶段，那么非实验期间添加的诊断记录，其所属医生是可以在“我的患者”下进行删除操作的
+          return false;
         }
         return true;
 
