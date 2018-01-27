@@ -19,7 +19,9 @@
             {{item.taskCode ? item.taskCode : '门诊'}}
           </span>
         </div>
-        <div class="experiment-description">{{item.experimentDescription}}</div>
+        <div class="experiment-description" v-if="inSubject">
+          {{item.experimentDescription}}
+        </div>
       </card>
     </folding-panel>
   </div>
@@ -55,6 +57,9 @@ export default {
   computed: {
     listType() {
       return this.$store.state.listType;
+    },
+    inSubject() {
+      return this.$store.state.subjectId !== this.SUBJECT_ID_FOR_HOSPITAL;
     },
     showAddButton() {
       if (this.patientCurrentExperimentStep === -1 && this.listType === this.MY_PATIENTS_TYPE) {
