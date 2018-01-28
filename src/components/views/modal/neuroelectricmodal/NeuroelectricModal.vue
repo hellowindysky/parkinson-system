@@ -1421,8 +1421,8 @@ export default {
       totalSleepTime = this.addTime('00:00:00', totalSleepTime);
       var bedTimeNumList = bedTime.split(':');
       var totalSleepTimeNumList = totalSleepTime.split(':');
-      var bedTimeSeconds = bedTimeNumList[0] * 3600 + bedTimeNumList[1] * 60 + bedTimeNumList[2];
-      var totalSleepSeconds = totalSleepTimeNumList[0] * 3600 + totalSleepTimeNumList[1] * 60 + totalSleepTimeNumList[2];
+      var bedTimeSeconds = Number(bedTimeNumList[0]) * 3600 + Number(bedTimeNumList[1]) * 60 + Number(bedTimeNumList[2]);
+      var totalSleepSeconds = Number(totalSleepTimeNumList[0]) * 3600 + Number(totalSleepTimeNumList[1]) * 60 + Number(totalSleepTimeNumList[2]);
 
       var ratio = totalSleepSeconds / bedTimeSeconds;
       obj[rowId][colId].fieldValue = (ratio * 100).toFixed(2);
