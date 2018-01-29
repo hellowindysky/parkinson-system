@@ -155,7 +155,7 @@
 
       <div v-for="(item, index) in targetScale.questions" class="scale-questions">
         <p class="question-title">
-          <span>{{item.subjectName}}</span>
+          <span v-html="item.subjectName"></span>
         </p>
         <el-radio-group v-if="item.questionType===0 || item.questionType===1"
           class="question-body" :key="index" v-model="copyInfo.patientOptions[index].scaleOptionId">
