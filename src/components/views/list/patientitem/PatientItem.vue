@@ -41,8 +41,8 @@ export default {
     },
     experimentStatusIcon() {
       if (this.patient.status !== undefined &&
-        this.patient.status !== 0 &&
-        this.patient.status !== 5 &&
+        Number(this.patient.status) !== 0 &&
+        Number(this.patient.status) !== 5 &&
         this.$store.state.subjectId === this.SUBJECT_ID_FOR_HOSPITAL &&
         this.listType === this.MY_PATIENTS_TYPE) {
         return 'icon-experiment';
