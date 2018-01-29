@@ -654,32 +654,32 @@
                 </span>
                 <el-input v-else-if="col.uiType===1 || (col.uiType===undefined && row.uiType===1)"
                   v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"
-                  :placeholder="col.fieldDesc ? col.fieldDesc : row.fieldDesc">
+                  :placeholder="getPlaceHolder(col.fieldDesc, row.fieldDesc, '请输入')">
                 </el-input>
                 <el-input v-else-if="col.uiType===2 || (col.uiType===undefined && row.uiType===2)"
                   v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"
                   @blur="transformToNumber(copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id])"
-                  :placeholder="col.fieldDesc ? col.fieldDesc : row.fieldDesc">
+                  :placeholder="getPlaceHolder(col.fieldDesc, row.fieldDesc, '请输入')">
                 </el-input>
                 <el-select v-else-if="col.uiType===3 || (col.uiType===undefined && row.uiType===3)"
                   v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"
-                  :placeholder="col.fieldDesc ? col.fieldDesc : row.fieldDesc">
+                  :placeholder="getPlaceHolder(col.fieldDesc, row.fieldDesc, '请选择')">
                 </el-select>
                 <el-date-picker v-else-if="col.uiType===6 || (col.uiType===undefined && row.uiType===6)"
                   v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"
                   @change="recordValuePath(['patientFieldCode',sleepMonitoringSubTableCode,row.id,col.id], 6)"
-                  :picker-options="pickerOptions" :placeholder="col.fieldDesc ? col.fieldDesc : row.fieldDesc">
+                  :picker-options="pickerOptions" :placeholder="getPlaceHolder(col.fieldDesc, row.fieldDesc, '请输入')">
                 </el-date-picker>
                 <el-date-picker v-else-if="col.uiType===7 || (col.uiType===undefined && row.uiType===7)"
                   format="yyyy-MM-dd HH:mm:ss" type="datetime"
                   v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"
                   @change="recordValuePath(['patientFieldCode',sleepMonitoringSubTableCode,row.id,col.id], 7)"
-                  :picker-options="pickerOptions" :placeholder="col.fieldDesc ? col.fieldDesc : row.fieldDesc">
+                  :picker-options="pickerOptions" :placeholder="getPlaceHolder(col.fieldDesc, row.fieldDesc, '请输入')">
                 </el-date-picker>
                 <el-time-picker v-else-if="col.uiType===8 || (col.uiType===undefined && row.uiType===8)" format="HH:mm:ss"
                   v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"
                   @change="recordValuePath(['patientFieldCode',sleepMonitoringSubTableCode,row.id,col.id], 8)"
-                  :picker-options="pickerOptions" :placeholder="col.fieldDesc ? col.fieldDesc : row.fieldDesc">
+                  :picker-options="pickerOptions" :placeholder="getPlaceHolder(col.fieldDesc, row.fieldDesc, '请输入')">
                 </el-time-picker>
               </td>
             </tr>
@@ -1510,6 +1510,17 @@ export default {
         totalMinutes = '0' + totalMinutes;
       }
       return totalHours + ':' + totalMinutes + ':' + totalSeconds;
+    },
+    getPlaceHolder(val1, val2, val3) {
+      if (val1) {
+        return val1;
+      } else if (val2) {
+        return val2;
+      } else if (val3) {
+        return val3;
+      } else {
+        return '';
+      }
     },
     cancel() {
       this.lockSubmitButton = false;
