@@ -191,6 +191,10 @@ export default {
       return milestoneNum;
     },
     transform(code, fieldName) {
+      if (code === 1 && fieldName === 'taskStatus') {
+        // 特殊处理
+        return '筛选入组';
+      }
       var options = this.getOptions(fieldName);
       var targetOption = Util.getElement('code', code, options);
       return targetOption.name;
