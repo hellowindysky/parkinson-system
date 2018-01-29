@@ -102,13 +102,15 @@ export default {
       return this.patientInfo.patientCurrentStage !== undefined ? Number(this.patientInfo.patientCurrentStage) : -1;
     },
     canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients) ||
-        this.$route.matched.some(record => record.meta.therapistsPatients) ||
-        this.$route.matched.some(record => record.meta.appraisersPatients)) {
+      var isMyPatientsList = this.$route.matched.some(record => record.meta.myPatients);
+      var isExperimentPatientsList = this.$route.matched.some(record => {
+        return record.meta.therapistsPatients || record.meta.appraisersPatients;
+      });
+      var duringExperiment = this.patientCurrentExperimentStep > 0 && this.patientCurrentExperimentStep < 5;
+      if ((isMyPatientsList && !duringExperiment) || (isExperimentPatientsList && duringExperiment)) {
         return true;
-      } else {
-        return false;
       }
+      return false;
     }
   },
   methods: {
