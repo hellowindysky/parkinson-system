@@ -154,9 +154,7 @@
       </folding-panel>
 
       <div v-for="(item, index) in targetScale.questions" class="scale-questions">
-        <p class="question-title">
-          <span v-html="item.subjectName"></span>
-        </p>
+        <p class="question-title" v-html="item.subjectName"></p>
         <el-radio-group v-if="item.questionType===0 || item.questionType===1"
           class="question-body" :key="index" v-model="copyInfo.patientOptions[index].scaleOptionId">
           <el-radio class="question-selection" v-for="(option, i) in item.options"
@@ -737,12 +735,10 @@ export default {
         padding: 15px 0;
         line-height: 25px;
         font-weight: bold;
-        span {
-          color: @secondary-button-color;
-        }
-        span:nth-of-type(2) {
-          float: right;
-          margin-right: 50px;
+        color: @font-color;
+        &>u {
+          text-decoration: none;
+          border-bottom: 2px solid @font-color;
         }
       }
       .question-body {
