@@ -97,6 +97,9 @@ export default {
   computed: {
     groupId() {
       return this.$route.params.id;
+    },
+    showSensitiveInfo() {
+      return this.$store.state.showSensitiveInfo;
     }
   },
   methods: {
@@ -322,6 +325,11 @@ export default {
     Bus.$off(this.TOGGLE_LIST_DISPLAY);
     Bus.$off(this.CONFIRM);
     Bus.$off(this.GIVE_UP);
+  },
+  watch: {
+    showSensitiveInfo() {
+      this.updateGroupMembers();
+    }
   }
 };
 </script>

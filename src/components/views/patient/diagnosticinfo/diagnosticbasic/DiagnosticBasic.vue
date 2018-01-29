@@ -118,12 +118,13 @@ export default {
       return this.$store.state.listType;
     },
     canEdit() {
-      var createByCurrentUser = this.diagnosisCreator === sessionStorage.getItem('userName');
+      // var createByCurrentUser = this.diagnosisCreator === sessionStorage.getItem('userName');
+      var createByCurrentUser = true;
       var isMyPatientsList = this.$route.matched.some(record => record.meta.myPatients);
       var isExperimentPatientsList = this.$route.matched.some(record => {
         return record.meta.therapistsPatients || record.meta.appraisersPatients;
       });
-      var duringExperiment = this.diagnosticExperimentStep > 0;
+      var duringExperiment = this.diagnosticExperimentStep > 0 && this.diagnosticExperimentStep < 5;
       var atSameStep = this.diagnosticExperimentStep === this.patientExperimentStep;
       if (((isMyPatientsList || (isExperimentPatientsList && duringExperiment)) && atSameStep &&
         createByCurrentUser && !this.archived) || this.$route.params.caseId === 'newCase') {

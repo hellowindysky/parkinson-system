@@ -48,7 +48,7 @@
                 effect="dark"
                 :content="subject.fullTaskName"
                 placement="top">
-                <el-button>{{subject.fullTaskName}}</el-button>
+                <el-button>{{getSubjectName(subject)}}</el-button>
               </el-tooltip>
             </span>
             <span class="iconfont icon-subject" @click="toggleSubjectPanel"></span>
@@ -277,6 +277,13 @@ export default {
       }, (error) => {
         console.log(error);
       });
+    },
+    getSubjectName(subject) {
+      if (subject.tasks && subject.tasks.length > 0) {
+        return subject.tasks[0].taskName;
+      } else {
+        return subject.taskName;
+      }
     },
     toggleGroupPanel() {
       this.displayGroupPanel = !this.displayGroupPanel;

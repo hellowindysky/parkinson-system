@@ -235,9 +235,9 @@ export default {
       var min = Number(range[0]);
       var max = Number(range[1]);
       if (value !== '' && value < min) {
-        return 'icon-down';
+        return 'icon-long-arrow-down';
       } else if (value !== '' && value > max) {
-        return 'icon-up';
+        return 'icon-long-arrow-up';
       }
     },
     changeBioexam() {
@@ -539,6 +539,11 @@ export default {
           }
           .el-select {
             width: 100%;
+            .el-input {
+              .el-input__inner {
+                height: 30px !important;
+              }
+            }
           }
           .el-date-editor {
             width: 100%;
@@ -617,10 +622,10 @@ export default {
                 position: absolute;
                 right: 40px;
                 transform: translateY(-1px);
-                &.icon-up {
+                &.icon-long-arrow-up {
                   color: @green-color;
                 }
-                &.icon-down {
+                &.icon-long-arrow-down {
                   color: @alert-color;
                 }
               }

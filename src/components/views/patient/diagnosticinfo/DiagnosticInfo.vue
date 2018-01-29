@@ -2,9 +2,9 @@
   <div class="diagnostic-info-wrapper" ref="diagnosticInfo">
     <folding-panel class="panel" :title="title" :mode="mode" :isCardsPanel="true" :folded-status="foldedStatus"
       v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit" v-on:addNewCard="addRecord"
-      v-on:updateFilterCondition="changeFilterCondition" :editable="canEdit">
+      v-on:updateFilterCondition="changeFilterCondition" :editable="canEdit" :showAddButton="showAddButton">
       <card class="card" :class="cardClass" :mode="mode" v-for="item in patientCaseList" :key="item.caseName"
-        :title="item.caseName" :disable-delete="item.archiveStatus===1" v-on:editCurrentCard="seeDetail(item)" v-on:deleteCurrentCard="deleteRecord(item)"
+        :title="item.caseName" :disable-delete="checkIfDisabledToDelete(item)" v-on:editCurrentCard="seeDetail(item)" v-on:deleteCurrentCard="deleteRecord(item)"
         v-show="passFilter(item)" v-on:viewCurrentCard="seeDetail(item)">
         <div class="text first-line">诊断内容</div>
         <div class="text second-line">{{getDiagnosticContent(item)}}</div>
@@ -19,7 +19,9 @@
             {{item.taskCode ? item.taskCode : '门诊'}}
           </span>
         </div>
-        <div class="experiment-description">{{item.experimentDescription}}</div>
+        <div class="experiment-description" v-if="inSubject">
+          {{item.experimentDescription}}
+        </div>
       </card>
     </folding-panel>
   </div>
@@ -33,6 +35,11 @@ import { deleteDiagnosticInfo } from 'api/patient.js';
 
 export default {
   props: {
+    patientInfo: {
+      type: Object,
+      required: true,
+      default: () => {}
+    },
     patientCaseList: {
       type: Array,
       required: true,
@@ -51,6 +58,33 @@ export default {
     listType() {
       return this.$store.state.listType;
     },
+    inSubject() {
+      return this.$store.state.subjectId !== this.SUBJECT_ID_FOR_HOSPITAL;
+    },
+    showAddButton() {
+      if (this.patientCurrentExperimentStep === -1 && this.listType === this.MY_PATIENTS_TYPE) {
+        // 如果患者不处于实验期，只有所属医生在“我的患者”下才能添加诊断
+        return true;
+
+      } else if (this.patientCurrentExperimentStep === 2 && this.listType === this.APPRAISERS_PATIENTS_TYPE) {
+        // 如果患者处于筛选期，只有评估者才能添加诊断
+        return true;
+
+      } else if (this.patientCurrentExperimentStep === 3 && this.listType === this.THERAPISTS_PATIENTS_TYPE) {
+        // 如果患者处于治疗期，只有治疗者才能添加诊断
+        return true;
+
+      } else if (this.patientCurrentExperimentStep === 4 && this.listType === this.APPRAISERS_PATIENTS_TYPE) {
+        // 如果患者处于随访期，只有评估者才能添加诊断
+        return true;
+
+      } else if (this.patientCurrentExperimentStep === 5 && this.listType === this.MY_PATIENTS_TYPE) {
+        // 如果患者处于实验结束状态，只有所属医生在“我的患者”下才能添加诊断
+        return true;
+
+      }
+      return false;
+    },
     title() {
       return '看诊记录（' + this.patientCaseList.length + '条记录）';
     },
@@ -60,14 +94,23 @@ export default {
     cardClass() {
       return this.showRecordSource ? this.devideWidth + ' tall-card' : this.devideWidth;
     },
+    patientCurrentExperimentStep() {
+      // -1 代表服务器没传这个值，这里指该患者不处于实验状态
+      return this.patientInfo.patientCurrentStatus !== undefined ? Number(this.patientInfo.patientCurrentStatus) : -1;
+    },
+    patientCurrentExperimentStage() {
+      return this.patientInfo.patientCurrentStage !== undefined ? Number(this.patientInfo.patientCurrentStage) : -1;
+    },
     canEdit() {
-      if (this.$route.matched.some(record => record.meta.myPatients) ||
-        this.$route.matched.some(record => record.meta.therapistsPatients) ||
-        this.$route.matched.some(record => record.meta.appraisersPatients)) {
+      var isMyPatientsList = this.$route.matched.some(record => record.meta.myPatients);
+      var isExperimentPatientsList = this.$route.matched.some(record => {
+        return record.meta.therapistsPatients || record.meta.appraisersPatients;
+      });
+      var duringExperiment = this.patientCurrentExperimentStep > 0 && this.patientCurrentExperimentStep < 5;
+      if ((isMyPatientsList && !duringExperiment) || (isExperimentPatientsList && duringExperiment)) {
         return true;
-      } else {
-        return false;
       }
+      return false;
     }
   },
   methods: {
@@ -97,8 +140,9 @@ export default {
       var content = '';
       var diagnosticDictionary = [
         {fieldName: 'ps_count', cnName: '病症情况'},
-        {fieldName: 'pm_count', cnName: '药物方案'},
-        {fieldName: 'psur_count', cnName: '外科手术'},
+        {fieldName: 'pm_count', cnName: '药物治疗'},
+        {fieldName: 'psur_count', cnName: '外科治疗'},
+        {fieldName: 'phythe_count', cnName: '物理治疗'},
         {fieldName: 'psc_count', cnName: '医学量表'},
         {fieldName: 'inspect_count', cnName: '检验检查'}
       ];
@@ -136,6 +180,41 @@ export default {
     },
     addRecord() {
       this.routerJumpWithCaseId('newCase');
+    },
+    checkIfDisabledToDelete(item) {
+      // 返回值为 true 时，代表该诊断卡片不允许被删除
+      if (item.archiveStatus === 1) {
+        // 只要该诊断卡片已归档，就不允许被删除
+        return true;
+      }
+      var diagnosticExperimentStep = item.status !== undefined ? Number(item.status) : -1;
+      var diagnosticExperimentStage = item.stage !== undefined ? Number(item.stage) : -1;
+      if (this.patientCurrentExperimentStep !== -1) {
+        // 如果该患者正处在试验期，则只有当患者所处实验阶段和诊断记录的实验阶段相同时，该阶段的特定的角色才能删除该诊断卡片
+        if (this.patientCurrentExperimentStep === diagnosticExperimentStep &&
+          this.patientCurrentExperimentStage === diagnosticExperimentStage) {
+          if (this.patientCurrentExperimentStep === 2 && this.listType === this.APPRAISERS_PATIENTS_TYPE) {
+            return false;
+          } else if (this.patientCurrentExperimentStep === 3 && this.listType === this.THERAPISTS_PATIENTS_TYPE) {
+            return false;
+          } else if (this.patientCurrentExperimentStep === 4 && this.listType === this.APPRAISERS_PATIENTS_TYPE) {
+            return false;
+          }
+        }
+        if (this.patientCurrentExperimentStep === 5 && diagnosticExperimentStep === -1 &&
+          this.listType === this.MY_PATIENTS_TYPE) {
+          // 如果患者处于实验结束阶段，那么非实验期间添加的诊断记录，其所属医生是可以在“我的患者”下进行删除操作的
+          return false;
+        }
+        return true;
+
+      } else {
+        // 如果该患者不处于实验期，只有所属医生在“我的患者”里面可以对非实验期添加的卡片进行删除
+        if (this.diagnosticExperimentStep !== -1 && this.listType === this.MY_PATIENTS_TYPE) {
+          return false;
+        }
+        return true;
+      }
     },
     routerJumpWithCaseId(caseId) {
       var routeName = '';

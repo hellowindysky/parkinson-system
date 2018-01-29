@@ -1,6 +1,6 @@
 <template lang="html">
   <folding-panel :title="'医学量表'" :mode="mutableMode"  v-on:edit="startEditing"
-    v-on:cancel="cancel" v-on:submit="submit" :editable="canEdit">
+    v-on:cancel="cancel" v-on:submit="submit" :editable="canEdit" v-if="!hidePanel">
     <div class="diagnostic-scale" ref="diagnosticscale">
       <extensible-panel v-for="type in allScaleTypes" class="panel" :mode="mutableMode" :title="getTypeTitle(type.typeName)"
         v-on:addNewCard="addScale(type.typeCode)" :editable="canEdit" :key="type.typeCode">
@@ -11,7 +11,12 @@
           <div class="text first-line">
             <span class="name">量表得分:</span>
             <span class="value">
-              {{item.scalePoint}}
+              <span v-if="getScaleFormType(item.scaleInfoId)===3">
+                不记分
+              </span>
+              <span v-else>
+                {{item.scalePoint}}
+              </span>
               <span class="mark">{{getCompleteStatus(item)}}</span>
             </span>
           </div>
@@ -84,12 +89,13 @@ export default {
       'typeGroup'
     ]),
     canEdit() {
-      var createByCurrentUser = this.diagnosisCreator === sessionStorage.getItem('userName');
+      // var createByCurrentUser = this.diagnosisCreator === sessionStorage.getItem('userName');
+      var createByCurrentUser = true;
       var isMyPatientsList = this.$route.matched.some(record => record.meta.myPatients);
       var isExperimentPatientsList = this.$route.matched.some(record => {
         return record.meta.therapistsPatients || record.meta.appraisersPatients;
       });
-      var duringExperiment = this.diagnosticExperimentStep > 0;
+      var duringExperiment = this.diagnosticExperimentStep > 0 && this.diagnosticExperimentStep < 5;
       var diagnosticExperimentStatus = parseInt(this.diagnosticExperimentStep, 10);
       var editableInExperiment = diagnosticExperimentStatus === 2 || diagnosticExperimentStatus === 4;
       var atSameStep = this.diagnosticExperimentStep === this.patientExperimentStep;
@@ -102,6 +108,13 @@ export default {
     allScaleTypes() {
       var typesInfo = Util.getElement('typegroupcode', 'gaugeType', this.typeGroup);
       return typesInfo.types ? typesInfo.types : [];
+    },
+    hidePanel() {
+      var diagnosticExperimentStatus = parseInt(this.diagnosticExperimentStep, 10);
+      if (diagnosticExperimentStatus === 3) {
+        return true;
+      }
+      return false;
     }
   },
   methods: {
@@ -132,6 +145,10 @@ export default {
       // 通过量表的ID来找到量表的名字
       var targetScale = Util.getElement('scaleInfoId', scaleInfoId, this.allScale);
       return targetScale.gaugeName;
+    },
+    getScaleFormType(scaleInfoId) {
+      var targetScale = Util.getElement('scaleInfoId', scaleInfoId, this.allScale);
+      return targetScale.formType;
     },
     getTypeTitle(typeName) {
       var count = this.patientScale.filter((scale) => {

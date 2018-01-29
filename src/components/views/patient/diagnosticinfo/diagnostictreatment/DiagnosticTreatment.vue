@@ -373,7 +373,7 @@ export default {
       });
     },
     showMedicinePanel() {
-      var duringExperiment = this.diagnosticExperimentStep > 0;
+      var duringExperiment = this.diagnosticExperimentStep > 0 && this.diagnosticExperimentStep < 5;
       var diagnosticExperimentStatus = parseInt(this.diagnosticExperimentStep, 10);
       var atOtherStatus = diagnosticExperimentStatus !== 2 && diagnosticExperimentStatus !== 4;
       if (this.isExperimentPatientsList && duringExperiment && atOtherStatus) {
@@ -383,7 +383,7 @@ export default {
       }
     },
     showSurgeryPanel() {
-      var duringExperiment = this.diagnosticExperimentStep > 0;
+      var duringExperiment = this.diagnosticExperimentStep > 0 && this.diagnosticExperimentStep < 5;
       if (this.isExperimentPatientsList && duringExperiment) {
         return false;
       } else {
@@ -391,7 +391,7 @@ export default {
       }
     },
     showPhysiontherapy() {
-      var duringExperiment = this.diagnosticExperimentStep > 0;
+      var duringExperiment = this.diagnosticExperimentStep > 0 && this.diagnosticExperimentStep < 5;
       var diagnosticExperimentStatus = parseInt(this.diagnosticExperimentStep, 10);
       var atOtherStatus = diagnosticExperimentStatus !== 3;
       if (this.isExperimentPatientsList && duringExperiment && atOtherStatus) {
@@ -401,7 +401,7 @@ export default {
       }
     },
     showTreatmentEvaluation() {
-      var duringExperiment = this.diagnosticExperimentStep > 0;
+      var duringExperiment = this.diagnosticExperimentStep > 0 && this.diagnosticExperimentStep < 5;
       var diagnosticExperimentStatus = parseInt(this.diagnosticExperimentStep, 10);
       var atOtherStatus = diagnosticExperimentStatus !== 4;
       if (this.isExperimentPatientsList && duringExperiment && atOtherStatus) {
@@ -411,7 +411,7 @@ export default {
       }
     },
     showAdverseEvent() {
-      var duringExperiment = this.diagnosticExperimentStep > 0;
+      var duringExperiment = this.diagnosticExperimentStep > 0 && this.diagnosticExperimentStep < 5;
       var diagnosticExperimentStatus = parseInt(this.diagnosticExperimentStep, 10);
       var atOtherStatus = diagnosticExperimentStatus !== 3 && diagnosticExperimentStatus !== 4;
       if (this.isExperimentPatientsList && duringExperiment && atOtherStatus) {
@@ -421,8 +421,9 @@ export default {
       }
     },
     canEdit() {
-      var createByCurrentUser = this.diagnosisCreator === sessionStorage.getItem('userName');
-      var duringExperiment = this.diagnosticExperimentStep > 0;
+      // var createByCurrentUser = this.diagnosisCreator === sessionStorage.getItem('userName');
+      var createByCurrentUser = true;
+      var duringExperiment = this.diagnosticExperimentStep > 0 && this.diagnosticExperimentStep < 5;
       var atSameStep = this.diagnosticExperimentStep === this.patientExperimentStep;
       if ((this.isMyPatientsList || (this.isExperimentPatientsList && duringExperiment)) &&
         atSameStep && createByCurrentUser && !this.archived) {

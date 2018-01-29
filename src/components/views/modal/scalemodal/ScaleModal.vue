@@ -154,9 +154,7 @@
       </folding-panel>
 
       <div v-for="(item, index) in targetScale.questions" class="scale-questions">
-        <p class="question-title">
-          <span>{{item.subjectName}}</span>
-        </p>
+        <p class="question-title" v-html="item.subjectName"></p>
         <el-radio-group v-if="item.questionType===0 || item.questionType===1"
           class="question-body" :key="index" v-model="copyInfo.patientOptions[index].scaleOptionId">
           <el-radio class="question-selection" v-for="(option, i) in item.options"
@@ -174,7 +172,14 @@
             :disabled="mode===VIEW_CURRENT_CARD" class="question-body point-input"
             @blur="transformToNum(copyInfo.patientOptions[index], 'optionPoint', item.stepping, item.maxPoint)">
           </el-input>
-          <span class="extra-info"> / {{item.maxPoint}}  (填写分数应为{{item.stepping}}的整数倍)</span>
+          <span class="extra-info">
+            <span v-if="item.maxPoint !== undefined">
+              &nbsp;/ {{item.maxPoint}}
+            </span>
+            <span v-if="item.stepping !== undefined">
+              （填写分数应为{{item.stepping}}的整数倍）
+            </span>
+          </span>
         </div>
       </div>
 
@@ -413,16 +418,22 @@ export default {
       this.displayScaleModal = false;
     },
     transformToNum(obj, propertyName, stepping, maxValue) {
+      // 步进值 stepping 如果没有传值进来，则默认为 0.1
+      // 最大值 maxValue 如果没有传值进来，则不设最大值
       if (obj[propertyName] !== '') {
         var value = parseFloat(obj[propertyName]);
         if (isNaN(value)) {
           obj[propertyName] = '';
         } else {
+          stepping = stepping ? stepping : 0.1;
+          // 下面这行是为了确定小数位数，要不然在待会做乘法的时候可能会出现 .000000001 这样的问题
+          var decimalDigits = stepping.toString().split('.')[1].length;
           var count = parseInt(value / stepping, 10);
           var newValue = stepping * count;
+          newValue = Number(newValue.toFixed(decimalDigits));
           if (newValue < 0) {
             newValue = 0;
-          } else if (newValue > maxValue) {
+          } else if (maxValue !== undefined && newValue > maxValue) {
             newValue = maxValue;
           }
           obj[propertyName] = newValue;
@@ -724,12 +735,10 @@ export default {
         padding: 15px 0;
         line-height: 25px;
         font-weight: bold;
-        span {
-          color: @secondary-button-color;
-        }
-        span:nth-of-type(2) {
-          float: right;
-          margin-right: 50px;
+        color: @font-color;
+        &>u {
+          text-decoration: none;
+          border-bottom: 2px solid @font-color;
         }
       }
       .question-body {
@@ -795,7 +804,7 @@ export default {
         }
       }
       .extra-info {
-        white-space: pre-wrap;
+        white-space: nowrap;
       }
     }
     .scale-selector {
