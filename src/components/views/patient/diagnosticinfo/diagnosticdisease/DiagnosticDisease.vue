@@ -112,7 +112,7 @@ export default {
       var isExperimentPatientsList = this.$route.matched.some(record => {
         return record.meta.therapistsPatients || record.meta.appraisersPatients;
       });
-      var duringExperiment = this.diagnosticExperimentStep > 0;
+      var duringExperiment = this.diagnosticExperimentStep > 0 && this.diagnosticExperimentStep < 5;
       var atSameStep = this.diagnosticExperimentStep === this.patientExperimentStep;
       if ((isMyPatientsList || (isExperimentPatientsList && duringExperiment)) &&
         atSameStep && createByCurrentUser && !this.archived) {

@@ -95,7 +95,7 @@ export default {
       var isExperimentPatientsList = this.$route.matched.some(record => {
         return record.meta.therapistsPatients || record.meta.appraisersPatients;
       });
-      var duringExperiment = this.diagnosticExperimentStep > 0;
+      var duringExperiment = this.diagnosticExperimentStep > 0 && this.diagnosticExperimentStep < 5;
       var diagnosticExperimentStatus = parseInt(this.diagnosticExperimentStep, 10);
       var editableInExperiment = diagnosticExperimentStatus === 2 || diagnosticExperimentStatus === 4;
       var atSameStep = this.diagnosticExperimentStep === this.patientExperimentStep;
