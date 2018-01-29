@@ -48,7 +48,7 @@
                 effect="dark"
                 :content="subject.fullTaskName"
                 placement="top">
-                <el-button>{{subject.fullTaskName}}</el-button>
+                <el-button>{{subject.taskName}}</el-button>
               </el-tooltip>
             </span>
             <span class="iconfont icon-subject" @click="toggleSubjectPanel"></span>
