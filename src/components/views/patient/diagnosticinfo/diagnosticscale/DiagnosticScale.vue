@@ -1,6 +1,6 @@
 <template lang="html">
   <folding-panel :title="'医学量表'" :mode="mutableMode"  v-on:edit="startEditing"
-    v-on:cancel="cancel" v-on:submit="submit" :editable="canEdit">
+    v-on:cancel="cancel" v-on:submit="submit" :editable="canEdit" v-if="!hidePanel">
     <div class="diagnostic-scale" ref="diagnosticscale">
       <extensible-panel v-for="type in allScaleTypes" class="panel" :mode="mutableMode" :title="getTypeTitle(type.typeName)"
         v-on:addNewCard="addScale(type.typeCode)" :editable="canEdit" :key="type.typeCode">
@@ -108,6 +108,13 @@ export default {
     allScaleTypes() {
       var typesInfo = Util.getElement('typegroupcode', 'gaugeType', this.typeGroup);
       return typesInfo.types ? typesInfo.types : [];
+    },
+    hidePanel() {
+      var diagnosticExperimentStatus = parseInt(this.diagnosticExperimentStep, 10);
+      if (diagnosticExperimentStatus === 3) {
+        return true;
+      }
+      return false;
     }
   },
   methods: {
@@ -141,7 +148,6 @@ export default {
     },
     getScaleFormType(scaleInfoId) {
       var targetScale = Util.getElement('scaleInfoId', scaleInfoId, this.allScale);
-      console.log(targetScale);
       return targetScale.formType;
     },
     getTypeTitle(typeName) {
