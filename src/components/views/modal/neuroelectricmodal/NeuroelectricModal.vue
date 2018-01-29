@@ -556,29 +556,32 @@
                   {{calcSleepEfficiency(copyInfo.patientFieldCode[sleepMonitoringSubTableCode], row[0].id, 0, group.rowItems)}}
                 </span>
                 <el-input v-else-if="row[0].uiType===1"
-                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue">
+                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"
+                  :placeholder="row[0].fieldDesc">
                 </el-input>
                 <el-input v-else-if="row[0].uiType===2"
                   v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"
-                  @blur="transformToNumber(copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0])">
+                  @blur="transformToNumber(copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0])"
+                  :placeholder="row[0].fieldDesc">
                 </el-input>
                 <el-select v-else-if="row[0].uiType===3"
-                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue">
+                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"
+                  :placeholder="row[0].fieldDesc">
                 </el-select>
                 <el-date-picker v-else-if="row[0].uiType===6"
                   v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"
                   @change="recordValuePath(['patientFieldCode',sleepMonitoringSubTableCode,row[0].id,0], 6)"
-                  :picker-options="pickerOptions">
+                  :picker-options="pickerOptions" :placeholder="row[0].fieldDesc">
                 </el-date-picker>
                 <el-date-picker v-else-if="row[0].uiType===7" format="yyyy-MM-dd HH:mm:ss" type="datetime"
                   v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"
                   @change="recordValuePath(['patientFieldCode',sleepMonitoringSubTableCode,row[0].id,0], 7)"
-                  :picker-options="pickerOptions">
+                  :picker-options="pickerOptions" :placeholder="row[0].fieldDesc">
                 </el-date-picker>
                 <el-time-picker v-else-if="row[0].uiType===8" format="HH:mm:ss"
                   v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"
                   @change="recordValuePath(['patientFieldCode',sleepMonitoringSubTableCode,row[0].id,0], 8)"
-                  :picker-options="pickerOptions">
+                  :picker-options="pickerOptions" :placeholder="row[0].fieldDesc">
                 </el-time-picker>
               </td>
               <td class="col col-width-10" v-if="row.length===2">
@@ -597,29 +600,32 @@
                   {{calcSleepEfficiency(copyInfo.patientFieldCode[sleepMonitoringSubTableCode], row[1].id, 0, group.rowItems)}}
                 </span>
                 <el-input v-else-if="row[1].uiType===1"
-                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue">
+                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"
+                  :placeholder="row[1].fieldDesc">
                 </el-input>
                 <el-input v-else-if="row[1].uiType===2"
                   v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"
-                  @blur="transformToNumber(copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0])">
+                  @blur="transformToNumber(copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0])"
+                  :placeholder="row[1].fieldDesc">
                 </el-input>
                 <el-select v-else-if="row[1].uiType===3"
-                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue">
+                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"
+                  :placeholder="row[1].fieldDesc">
                 </el-select>
                 <el-date-picker v-else-if="row[1].uiType===6"
                   v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"
                   @change="recordValuePath(['patientFieldCode',sleepMonitoringSubTableCode,row[1].id,0], 6)"
-                  :picker-options="pickerOptions">
+                  :picker-options="pickerOptions" :placeholder="row[1].cnFieldDesc">
                 </el-date-picker>
                 <el-date-picker v-else-if="row[1].uiType===7" format="yyyy-MM-dd HH:mm:ss" type="datetime"
                   v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"
                   @change="recordValuePath(['patientFieldCode',sleepMonitoringSubTableCode,row[1].id,0], 7)"
-                  :picker-options="pickerOptions">
+                  :picker-options="pickerOptions" :placeholder="row[1].fieldDesc">
                 </el-date-picker>
                 <el-time-picker v-else-if="row[1].uiType===8" format="HH:mm:ss"
                   v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"
                   @change="recordValuePath(['patientFieldCode',sleepMonitoringSubTableCode,row[1].id,0], 8)"
-                  :picker-options="pickerOptions">
+                  :picker-options="pickerOptions" :placeholder="row[1].fieldDesc">
                 </el-time-picker>
               </td>
             </tr>
@@ -647,30 +653,33 @@
                   {{calcTotalOfRow(copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id], col.id, group.colItems, row.uiType, row.fieldCode)}}
                 </span>
                 <el-input v-else-if="col.uiType===1 || (col.uiType===undefined && row.uiType===1)"
-                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue">
+                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"
+                  :placeholder="col.fieldDesc ? col.fieldDesc : row.fieldDesc">
                 </el-input>
                 <el-input v-else-if="col.uiType===2 || (col.uiType===undefined && row.uiType===2)"
                   v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"
-                  @blur="transformToNumber(copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id])">
+                  @blur="transformToNumber(copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id])"
+                  :placeholder="col.fieldDesc ? col.fieldDesc : row.fieldDesc">
                 </el-input>
                 <el-select v-else-if="col.uiType===3 || (col.uiType===undefined && row.uiType===3)"
-                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue">
+                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"
+                  :placeholder="col.fieldDesc ? col.fieldDesc : row.fieldDesc">
                 </el-select>
                 <el-date-picker v-else-if="col.uiType===6 || (col.uiType===undefined && row.uiType===6)"
                   v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"
                   @change="recordValuePath(['patientFieldCode',sleepMonitoringSubTableCode,row.id,col.id], 6)"
-                  :picker-options="pickerOptions">
+                  :picker-options="pickerOptions" :placeholder="col.fieldDesc ? col.fieldDesc : row.fieldDesc">
                 </el-date-picker>
                 <el-date-picker v-else-if="col.uiType===7 || (col.uiType===undefined && row.uiType===7)"
                   format="yyyy-MM-dd HH:mm:ss" type="datetime"
                   v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"
                   @change="recordValuePath(['patientFieldCode',sleepMonitoringSubTableCode,row.id,col.id], 7)"
-                  :picker-options="pickerOptions">
+                  :picker-options="pickerOptions" :placeholder="col.fieldDesc ? col.fieldDesc : row.fieldDesc">
                 </el-date-picker>
                 <el-time-picker v-else-if="col.uiType===8 || (col.uiType===undefined && row.uiType===8)" format="HH:mm:ss"
                   v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"
                   @change="recordValuePath(['patientFieldCode',sleepMonitoringSubTableCode,row.id,col.id], 8)"
-                  :picker-options="pickerOptions">
+                  :picker-options="pickerOptions" :placeholder="col.fieldDesc ? col.fieldDesc : row.fieldDesc">
                 </el-time-picker>
               </td>
             </tr>
@@ -1827,7 +1836,7 @@ export default {
     padding: 0 40px;
     top: 3%;
     width: 80%;
-    min-width: 750px;
+    min-width: 760px;
     max-width: 1000px;
     max-height: 94%;
     background-color: @background-color;
