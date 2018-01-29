@@ -138,8 +138,9 @@ export default {
       var content = '';
       var diagnosticDictionary = [
         {fieldName: 'ps_count', cnName: '病症情况'},
-        {fieldName: 'pm_count', cnName: '药物方案'},
-        {fieldName: 'psur_count', cnName: '外科手术'},
+        {fieldName: 'pm_count', cnName: '药物治疗'},
+        {fieldName: 'psur_count', cnName: '外科治疗'},
+        {fieldName: 'phythe_count', cnName: '物理治疗'},
         {fieldName: 'psc_count', cnName: '医学量表'},
         {fieldName: 'inspect_count', cnName: '检验检查'}
       ];
