@@ -289,7 +289,7 @@ export default {
       this.breathing = item.breathing ? item.breathing : '';
       this.temperature = item.temperature ? item.temperature : '';
       this.pulse = item.pulse ? item.pulse : '';
-      this.rhythm = item.rhythm ? item.rhythm : '';
+      this.rhythm = item.rhythm;
       vueCopy(item.patientVitalSignDetail, this.patientVitalSignDetail);
 
       this.$nextTick(() => {
