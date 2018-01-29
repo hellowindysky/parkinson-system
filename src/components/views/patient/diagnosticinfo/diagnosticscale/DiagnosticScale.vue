@@ -11,7 +11,12 @@
           <div class="text first-line">
             <span class="name">量表得分:</span>
             <span class="value">
-              {{item.scalePoint}}
+              <span v-if="getScaleFormType(item.scaleInfoId)===3">
+                不记分
+              </span>
+              <span v-else>
+                {{item.scalePoint}}
+              </span>
               <span class="mark">{{getCompleteStatus(item)}}</span>
             </span>
           </div>
@@ -133,6 +138,11 @@ export default {
       // 通过量表的ID来找到量表的名字
       var targetScale = Util.getElement('scaleInfoId', scaleInfoId, this.allScale);
       return targetScale.gaugeName;
+    },
+    getScaleFormType(scaleInfoId) {
+      var targetScale = Util.getElement('scaleInfoId', scaleInfoId, this.allScale);
+      console.log(targetScale);
+      return targetScale.formType;
     },
     getTypeTitle(typeName) {
       var count = this.patientScale.filter((scale) => {
