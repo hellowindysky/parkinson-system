@@ -637,7 +637,9 @@ export default {
   },
   watch: {
     $route() {
-      this.displayScaleModal = false;
+      if (this.displayScaleModal) {
+        this.closePanel();
+      }
     },
     typeGroup: function() {
       this.initSymptomList();
