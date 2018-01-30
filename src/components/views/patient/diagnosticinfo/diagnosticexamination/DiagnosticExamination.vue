@@ -239,7 +239,7 @@ export default {
       type: Number,
       default: 0
     },
-    archived: {
+    canEdit: {
       type: Boolean,
       default: true
     }
@@ -280,21 +280,6 @@ export default {
       info.height = this.patientInfo.height ? this.patientInfo.height : '';
       info.weight = this.patientInfo.weight ? this.patientInfo.weight : '';
       return info;
-    },
-    canEdit() {
-      // var createByCurrentUser = this.diagnosisCreator === sessionStorage.getItem('userName');
-      var createByCurrentUser = true;
-      var isMyPatientsList = this.$route.matched.some(record => record.meta.myPatients);
-      var isExperimentPatientsList = this.$route.matched.some(record => {
-        return record.meta.therapistsPatients || record.meta.appraisersPatients;
-      });
-      var duringExperiment = this.diagnosticExperimentStep > 0 && this.diagnosticExperimentStep < 5;
-      var atSameStep = this.diagnosticExperimentStep === this.patientExperimentStep;
-      if ((isMyPatientsList || (isExperimentPatientsList && duringExperiment)) &&
-        atSameStep && createByCurrentUser && !this.archived) {
-        return true;
-      }
-      return false;
     }
   },
   methods: {
