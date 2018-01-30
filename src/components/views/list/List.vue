@@ -72,7 +72,7 @@
 
     <transition name="slide-fade">
       <el-form class="filter-panel" :model="filterPatientsForm" :rules="rules" ref="filterPatientsForm"
-      label-width="20%"  v-show="panelDisplay && (listType === MY_PATIENTS_TYPE || listType === OTHER_PATIENTS_TYPE ||
+      label-width="25%"  v-show="panelDisplay && (listType === MY_PATIENTS_TYPE || listType === OTHER_PATIENTS_TYPE ||
         listType === SUBJECT_PATIENTS_TYPE || listType === THERAPISTS_PATIENTS_TYPE || listType === APPRAISERS_PATIENTS_TYPE)">
         <el-form-item label="分组" prop="group" class="item">
           <el-select v-model="filterPatientsForm.group">
@@ -92,7 +92,7 @@
             <el-option v-for="option in getOptions('homeProvince')" :label="option.name" :value="option.code" :key="option.code"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="病程" class="item" v-show='false'>
+        <el-form-item label="病程" class="item" v-if="false">
           <el-col :span="8">
             <el-form-item prop="minCourseYear">
               <el-input v-model.number="filterPatientsForm.minCourseYear" :min="0" :max="120" placeholder="不限"></el-input>
@@ -119,6 +119,12 @@
             </el-form-item>
           </el-col>
           <el-col :span="3">岁</el-col>
+        </el-form-item>
+        <el-form-item label="实验期" prop="experimentStatus" class="item" v-if="inSubject">
+          <el-select v-model="filterPatientsForm.experimentStatus">
+            <el-option label="不限" :value="-1"></el-option>
+            <el-option v-for="option in getOptions('taskStatus')" :label="option.name" :value="option.code" :key="option.code"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item class="item" label-width="0">
           <el-button @click="resetForm('filterPatientsForm')" class="button reset">重置</el-button>
@@ -220,7 +226,7 @@ export default {
       }
       setTimeout(() => {
         if (!Number.isInteger(value)) {
-          callback(new Error('请输入数字'));
+          callback(new Error('输入数字'));
         } else {
           if (value < 0 || value > 120) {
             callback(new Error('0~120之间'));
@@ -256,7 +262,8 @@ export default {
         maxAge: '',
         minCourseYear: '',
         maxCourseYear: '',
-        followUp: false
+        followUp: false,
+        experimentStatus: -1
       },
       filterGroupsForm: {
         groupType: -1
@@ -486,6 +493,9 @@ export default {
       if (filterForm.maxAge !== '') {
         condition.ageTo = filterForm.maxAge;
       }
+      if (filterForm.experimentStatus !== -1) {
+        condition.status = filterForm.experimentStatus;
+      }
 
       this.hasFirstUpdatedList = true;   // 这个变量用来阻止初次登录界面时，发出重复请求
       getPatientList(condition).then((data) => {
@@ -652,7 +662,7 @@ export default {
             code: group.groupId
           });
         }
-      } else if (fieldName === 'sex' || fieldName === 'homeProvince') {
+      } else {
         var types = Util.getElement('typegroupcode', fieldName, this.typeGroup).types;
         types = types ? types : [];
         for (let type of types) {
