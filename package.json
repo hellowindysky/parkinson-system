@@ -20,7 +20,6 @@
   "dependencies": {
     "axios": "^0.16.2",
     "babel-runtime": "^6.25.0",
-    "echarts": "^3.7.2",
     "element-ui": "^1.4.12",
     "es6-promise": "^4.1.1",
     "md5": "^2.2.1",
