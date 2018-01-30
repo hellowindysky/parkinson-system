@@ -216,6 +216,11 @@ export default {
   watch: {
     surgicalMethodTemplate: function() {
       this.initCopyInfo();
+    },
+    $route() {
+      if (this.displayModal) {
+        this.cancel();
+      }
     }
   }
 };

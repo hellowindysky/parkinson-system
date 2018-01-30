@@ -376,6 +376,13 @@ export default {
   },
   beforeDestroy() {
     Bus.$off(this.SHOW_FOLLOW_UP_TERMINATION_MODAL);
+  },
+  watch: {
+    $route() {
+      if (this.displayModal) {
+        this.cancel();
+      }
+    }
   }
 };
 </script>

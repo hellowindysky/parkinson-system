@@ -270,6 +270,13 @@ export default {
     Bus.$off(this.SHOW_AUTHORIZATION_MODAL);
     Bus.$off(this.CONFIRM);
     Bus.$off(this.GIVE_UP);
+  },
+  watch: {
+    $route() {
+      if (this.displayModal) {
+        this.cancel();
+      }
+    }
   }
 };
 </script>

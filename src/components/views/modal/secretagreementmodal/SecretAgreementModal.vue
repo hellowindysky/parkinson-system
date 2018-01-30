@@ -48,7 +48,7 @@ import Bus from 'utils/bus.js';
 export default {
   data() {
     return {
-      displayModal: false
+      displayModal: true
     };
   },
   computed: {
@@ -90,6 +90,13 @@ export default {
   mounted() {
     Bus.$on(this.SHOW_SECRET_AGREEMENT_MODAL, this.showModal);
     this.updateScrollbar();
+  },
+  watch: {
+    $route() {
+      if (this.displayModal) {
+        this.hideModal();
+      }
+    }
   }
 };
 </script>

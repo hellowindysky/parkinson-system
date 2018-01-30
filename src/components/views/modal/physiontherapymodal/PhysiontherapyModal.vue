@@ -608,6 +608,11 @@ export default {
     typeGroup: function() {
       this.prepareStimulateSideEvents();
       this.bindValueToStimulateSideEvents();
+    },
+    $route() {
+      if (this.displayModal) {
+        this.cancel();
+      }
     }
   }
 };

@@ -284,6 +284,13 @@ export default {
   },
   mounted() {
     Bus.$on(this.SHOW_GENE_MODAL, this.showModal);
+  },
+  watch: {
+    $route() {
+      if (this.displayModal) {
+        this.cancel();
+      }
+    }
   }
 };
 </script>

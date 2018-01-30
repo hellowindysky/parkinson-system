@@ -1815,6 +1815,11 @@ export default {
   watch: {
     emgTypeList: function() {
       this.selectEmg();
+    },
+    $route() {
+      if (this.displayModal) {
+        this.cancel();
+      }
     }
   },
   beforeDestroy() {
