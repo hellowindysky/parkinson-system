@@ -145,11 +145,12 @@ export default {
       // var createByCurrentUser = this.diagnosisCreator === sessionStorage.getItem('userName');
 
       var diagnosticExperimentStatus = parseInt(this.diagnosticExperimentStep, 10);
+      var patientCurrentExperimentStatus = parseInt(this.patientExperimentStep, 10);
 
       // 以下条件要控制，诊断添加时的实验阶段，和病人当前所处的实验阶段，要相一致。
       // 唯一的例外情况是，病人处于实验结束阶段（5）时，诊断卡片如果是实验之外（0）添加的，也是可以编辑的
       var atSameStep = this.diagnosticExperimentStep === this.patientExperimentStep ||
-        (diagnosticExperimentStatus === 0 && this.patientExperimentStep === 5);
+        (diagnosticExperimentStatus === 0 && patientCurrentExperimentStatus === 5);
 
       // 只有当患者在非实验状态下时，所属医生才可以编辑其在非实验状态下添加的诊断记录
       var canEditInMyPatientsList = this.listType === this.MY_PATIENTS_TYPE && !this.patientDuringExperiment;
@@ -171,6 +172,7 @@ export default {
         return true;
 
       } else {
+        console.log(diagnosticExperimentStatus, this.patientExperimentStep);
         return false;
       }
     }
