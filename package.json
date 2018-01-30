@@ -5,6 +5,7 @@
   "author": "zhongli <neozl24@hotmail.com>",
   "private": true,
   "scripts": {
+    "dll": "webpack -p --config build/webpack.dll.config.js --progress --profile --colors",
     "dev": "node build/dev-server.js",
     "start": "node build/dev-server.js",
     "build:beta": "cross-env NODE_ENV=beta node build/build.js",
