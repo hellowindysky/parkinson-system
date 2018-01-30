@@ -44,7 +44,7 @@
             </el-date-picker>
           </span>
         </div>
-        <div class="field">
+        <div class="field" v-if ="!isTherapistsList">
           <span class="field-name">
             设备型号:
             <span class="required-mark">*</span>
@@ -72,7 +72,7 @@
             {{patientTaskCode}}
           </span>
         </div>
-        <div class="field">
+        <div class="field" v-if ="!isTherapistsList">
           <span class="field-name">
             刺激时长（分钟）:
           </span>
@@ -84,7 +84,7 @@
             <el-input v-model="stimulusDuration" placeholder="请输入刺激时长"></el-input>
           </span>
         </div>
-        <div class="field">
+        <div class="field" v-if ="!isTherapistsList">
           <span class="field-name">
             刺激强度（T）:
           </span>
@@ -96,7 +96,7 @@
             <el-input v-model="stimulusIntensity" placeholder="请输入刺激强度"></el-input>
           </span>
         </div>
-        <div class="field">
+        <div class="field" v-if ="!isTherapistsList">
           <span class="field-name">
             刺激频率（HZ）:
           </span>
@@ -108,7 +108,7 @@
             <el-input v-model="stimulusFrequency" placeholder="请输入刺激频率"></el-input>
           </span>
         </div>
-        <div class="field whole-line">
+        <div class="field whole-line" v-if ="!isTherapistsList">
           <span class="field-name">
             刺激部位:
           </span>
@@ -389,6 +389,12 @@ export default {
       } else {
         return '物理疗法';
       }
+    },
+    listType() {
+      return this.$store.state.listType;
+    },
+    isTherapistsList() {
+      return this.listType === this.THERAPISTS_PATIENTS_TYPE;
     }
   },
   methods: {
@@ -536,7 +542,9 @@ export default {
         }
       }
       for (let property in this.warningResults) {
-        if (this.warningResults.hasOwnProperty(property) && this.warningResults[property]) {
+        if (this.listType === this.THERAPISTS_PATIENTS_TYPE && property === 'deviceType') {
+          // do nothing
+        } else if (this.warningResults[property]) {
           this.lockSubmitButton = false;
           return;
         }
