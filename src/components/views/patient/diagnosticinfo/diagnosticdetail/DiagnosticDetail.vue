@@ -7,19 +7,19 @@
         v-if="hasBeenArchived===false && !isNewCase && canEdit">归档</div>
     </div>
     <div class="scroll-area" ref="scrollArea">
-      <diagnostic-basic :archived="hasBeenArchived" class="folding-panel" :mode="mode" ref="diagnosticBasic"
+      <diagnostic-basic :canEdit="canEdit" class="folding-panel" :mode="mode" ref="diagnosticBasic"
         :diagnosticBasic="diagnosticBasic"
         :diagnosticExperimentStep="diagnosticExperimentStep"
         :patientExperimentStep="patientExperimentStep"
         :diagnosisCreator="diagnosisCreator">
       </diagnostic-basic>
-      <diagnostic-disease :archived="hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
+      <diagnostic-disease :canEdit="canEdit" class="folding-panel" :mode="mode" v-show="existed"
         :diagnosticDisease="diagnosticDisease"
         :diagnosticExperimentStep="diagnosticExperimentStep"
         :patientExperimentStep="patientExperimentStep"
         :diagnosisCreator="diagnosisCreator">
       </diagnostic-disease>
-      <diagnostic-treatment :archived="hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
+      <diagnostic-treatment :canEdit="canEdit" class="folding-panel" :mode="mode" v-show="existed"
         :diagnosticSurgery="caseDetail.patientSurgicalDbs"
         :diagnosticMedicine="caseDetail.patientMedicineNew"
         :diagnosticPhysiontherapy="caseDetail.patientPhytheTms"
@@ -29,13 +29,13 @@
         :patientExperimentStep="patientExperimentStep"
         :diagnosisCreator="diagnosisCreator">
       </diagnostic-treatment>
-      <diagnostic-scale :archived="hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
+      <diagnostic-scale :canEdit="canEdit" class="folding-panel" :mode="mode" v-show="existed"
         :patientScale="caseDetail.patientScale"
         :diagnosticExperimentStep="diagnosticExperimentStep"
         :patientExperimentStep="patientExperimentStep"
         :diagnosisCreator="diagnosisCreator">
       </diagnostic-scale>
-      <diagnostic-examination :archived="hasBeenArchived" class="folding-panel" :mode="mode" v-show="existed"
+      <diagnostic-examination :canEdit="canEdit" class="folding-panel" :mode="mode" v-show="existed"
         :patientInfo="patientInfo"
         :neurologicCheckList="caseDetail.patientSpephysical"
         :geneCheckList="caseDetail.patientGene"
@@ -138,14 +138,30 @@ export default {
       }
     },
     canEdit() {
-      if ((this.$route.matched.some(record => record.meta.myPatients) ||
-        this.$route.matched.some(record => record.meta.therapistsPatients) ||
-        this.$route.matched.some(record => record.meta.appraisersPatients)) &&
-        !this.archived) {
+      // var createByCurrentUser = this.diagnosisCreator === sessionStorage.getItem('userName');
+      var isMyPatientsList = this.$route.matched.some(record => record.meta.myPatients);
+      var isTherapistsPatientsList = this.$route.matched.some(record => record.meta.therapistsPatients);
+      var isAppraisersPatientsList = this.$route.matched.some(record => record.meta.appraisersPatients);
+
+      var diagnosticExperimentStatus = parseInt(this.caseDetail.status, 10);
+      var patientCurrentExperimentStatus = parseInt(this.caseDetail.patientCurrentStatus, 10);
+
+      // 2, 3, 4分别对应筛选阶段，治疗期，随访期
+      var patientDuringExperiment = [2, 3, 4].indexOf(patientCurrentExperimentStatus) >= 0;
+      var atSameStep = this.diagnosticExperimentStep === this.patientExperimentStep;
+
+      // 只有当患者在非实验状态下时，所属医生才可以编辑其在非实验状态下添加的诊断记录
+      var canEditInMyPatientsList = isMyPatientsList && !patientDuringExperiment;
+
+      // 只有当患者在实验状态下时，特定参与者（评估者和治疗者）才可以编辑特定阶段添加的诊断记录
+      var canEditInTherapistsList = isTherapistsPatientsList && diagnosticExperimentStatus === 3;
+      var canEditInAppraisersList = isAppraisersPatientsList && (diagnosticExperimentStatus === 2 || diagnosticExperimentStatus === 4);
+
+      if (((canEditInMyPatientsList || canEditInTherapistsList || canEditInAppraisersList) &&
+        atSameStep && !this.hasBeenArchived) || this.$route.params.caseId === 'newCase') {
         return true;
-      } else {
-        return false;
       }
+      return false;
     }
   },
   methods: {
@@ -218,6 +234,9 @@ export default {
           } else if (data.patientCase.archiveStatus === 2) {
             this.hasBeenArchived = false;
           }
+        }, (error) => {
+          console.log(error);
+          this.hasBeenArchived = true;
         });
       }
       this.updateScrollbar();

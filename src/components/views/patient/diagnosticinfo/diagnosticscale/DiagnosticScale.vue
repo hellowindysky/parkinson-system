@@ -78,7 +78,7 @@ export default {
       type: Number,
       default: 0
     },
-    archived: {
+    canEdit: {
       type: Boolean,
       default: true
     }
@@ -88,23 +88,6 @@ export default {
       'allScale',
       'typeGroup'
     ]),
-    canEdit() {
-      // var createByCurrentUser = this.diagnosisCreator === sessionStorage.getItem('userName');
-      var createByCurrentUser = true;
-      var isMyPatientsList = this.$route.matched.some(record => record.meta.myPatients);
-      var isExperimentPatientsList = this.$route.matched.some(record => {
-        return record.meta.therapistsPatients || record.meta.appraisersPatients;
-      });
-      var duringExperiment = this.diagnosticExperimentStep > 0 && this.diagnosticExperimentStep < 5;
-      var diagnosticExperimentStatus = parseInt(this.diagnosticExperimentStep, 10);
-      var editableInExperiment = diagnosticExperimentStatus === 2 || diagnosticExperimentStatus === 4;
-      var atSameStep = this.diagnosticExperimentStep === this.patientExperimentStep;
-      if ((isMyPatientsList || (isExperimentPatientsList && duringExperiment && editableInExperiment)) &&
-        atSameStep && createByCurrentUser && !this.archived) {
-        return true;
-      }
-      return false;
-    },
     allScaleTypes() {
       var typesInfo = Util.getElement('typegroupcode', 'gaugeType', this.typeGroup);
       return typesInfo.types ? typesInfo.types : [];

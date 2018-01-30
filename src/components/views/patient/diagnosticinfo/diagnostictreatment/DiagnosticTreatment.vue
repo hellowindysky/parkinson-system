@@ -308,7 +308,7 @@ export default {
       type: Number,
       default: 0
     },
-    archived: {
+    canEdit: {
       type: Boolean,
       default: true
     }
@@ -419,17 +419,6 @@ export default {
       } else {
         return true;
       }
-    },
-    canEdit() {
-      // var createByCurrentUser = this.diagnosisCreator === sessionStorage.getItem('userName');
-      var createByCurrentUser = true;
-      var duringExperiment = this.diagnosticExperimentStep > 0 && this.diagnosticExperimentStep < 5;
-      var atSameStep = this.diagnosticExperimentStep === this.patientExperimentStep;
-      if ((this.isMyPatientsList || (this.isExperimentPatientsList && duringExperiment)) &&
-        atSameStep && createByCurrentUser && !this.archived) {
-        return true;
-      }
-      return false;
     }
   },
   methods: {
