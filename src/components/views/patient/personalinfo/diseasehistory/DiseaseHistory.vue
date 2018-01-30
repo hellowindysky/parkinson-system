@@ -245,7 +245,7 @@
 
         <extensible-panel class="disease-card" :title="visitRecordTitle" @addNewCard="addVisitRecord" :editable="canEdit">
           <Card class="card symptoms-card" :mode="mode" :class="cardWidth"
-           v-for="item in patientHistorysData" :key="item.patientHistoryId" :title="item.diagnosis"
+           v-for="item in patientHistorysData" :key="item.patientHistoryId" :title="item.ariseTime"
            v-on:editCurrentCard="editVisitRecord(item)"
            v-on:viewCurrentCard="viewVisitRecord(item)"
            v-on:deleteCurrentCard="deleteVisitRecord(item)">
@@ -254,13 +254,17 @@
               <span class="value">{{item.hospName}}</span>
             </div>
             <div class="text second-line">
+              <span class="name">患者主诉：</span>
+              <span class="value">{{item.chiefComplaint}}</span>
+            </div>
+            <!-- <div class="text second-line">
               <span class="name">就诊时间：</span>
               <span class="value">{{item.ariseTime}}</span>
-            </div>
-            <div class="text third-line">
-              <!-- <span class="name">日期</span> -->
+            </div> -->
+            <!-- <div class="text third-line">
+              <span class="name">日期</span>
               <span class="value"></span>
-            </div>
+            </div> -->
           </Card>
         </extensible-panel>
 
