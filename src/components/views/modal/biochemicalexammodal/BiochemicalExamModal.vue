@@ -425,6 +425,13 @@ export default {
   beforeDestroy() {
     Bus.$off(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.showPanel);
     Bus.$off(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
+  },
+  watch: {
+    $route() {
+      if (this.displayModal) {
+        this.cancel();
+      }
+    }
   }
 };
 </script>

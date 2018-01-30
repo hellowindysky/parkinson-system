@@ -220,7 +220,7 @@
 
       <div class="seperate-line" v-show="true"></div>
 
-      
+
 
       <div class="button cancel-button" @click="cancel">取消</div>
       <div v-show="mode!==VIEW_CURRENT_CARD" class="button submit-button" @click="submit">确定</div>
@@ -501,6 +501,13 @@ export default {
   },
   mounted() {
     Bus.$on(this.SHOW_FIRSTTREATMENT_MODAL, this.showModal);
+  },
+  watch: {
+    $route() {
+      if (this.displayModal) {
+        this.cancel();
+      }
+    }
   }
 };
 </script>

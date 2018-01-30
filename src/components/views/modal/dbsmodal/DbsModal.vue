@@ -1710,6 +1710,13 @@ export default {
   beforeDestroy() {
     Bus.$off(this.SHOW_DBS_MODAL, this.showModal);
     Bus.$off(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
+  },
+  watch: {
+    $route() {
+      if (this.displayModal) {
+        this.cancel();
+      }
+    }
   }
 };
 </script>

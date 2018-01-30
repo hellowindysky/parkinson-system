@@ -804,6 +804,11 @@ export default {
     },
     foldedEventsStatus: function(newFoldedEventsStatus) {
       this.foldedEvents = newFoldedEventsStatus;
+    },
+    $route() {
+      if (this.displayModal) {
+        this.cancel();
+      }
     }
   }
 };

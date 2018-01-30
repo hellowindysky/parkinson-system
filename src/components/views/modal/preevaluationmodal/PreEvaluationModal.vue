@@ -1613,6 +1613,13 @@ export default {
   },
   beforeDestroy() {
     Bus.$off(this.SHOW_PRE_EVALUATION_MODAL, this.showModal);
+  },
+  watch: {
+    $route() {
+      if (this.displayModal) {
+        this.cancel();
+      }
+    }
   }
 };
 </script>
