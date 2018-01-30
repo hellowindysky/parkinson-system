@@ -36,16 +36,20 @@
       </div>
 
       <extensible-panel class="panel disease-panel" :mode="mutableMode" :title="subTitle" v-on:addNewCard="addChiefComplaintSymptomsRecord" :editable="canEdit">
-        <card class="card symptoms-card" :class="devideWidth" :mode="mutableMode" v-for="item in complaintSympData" :key="item.diseaseId"
-          :title="item.symType" :disable-delete="item.statusFlag===0" v-on:editCurrentCard="editChiefComplaintSymptomsRecord(item)"
-          v-on:deleteCurrentCard="deleteDisease(item)" v-on:viewCurrentCard="viewChiefComplaintSymptomsRecord(item)">
+        <card class="card symptoms-card" :class="devideWidth" :mode="mutableMode"
+         v-for="item in complaintSympData" :key="item.diseaseId" :title="transform(item.symType, allFirstSymptomsType)" :disable-delete="item.statusFlag===0"
+         v-on:editCurrentCard="editChiefComplaintSymptomsRecord(item)"
+         v-on:deleteCurrentCard="deleteDisease(item)"
+         v-on:viewCurrentCard="viewChiefComplaintSymptomsRecord(item)">
           <div class="text first-line">
             <span class="name">症状名称：</span>
-            <span class="value">{{item.symName}}</span>
+            <span class="value" v-if="item.symType === 2">{{transform(item.symName, getNoSportOptions(item.notSportTypeId))}}</span>
+            <span class="value" v-else >{{transform(item.symName, getSymOptions(item.symType))}}</span>
           </div>
           <div class="text second-line">
             <span class="name">是否规律出现：</span>
-            <span class="value">{{item.whetherLaw ? item.whetherLaw : '未填写'}}</span>
+            <span class="value" v-if="item.whetherLaw === undefined">未填写</span>
+            <span class="value" v-else >{{transform(item.whetherLaw, getTypeGroupitem('digitYN'))}}</span>
           </div>
           <div class="text third-line">
             <span class="name">出现时间：</span>
@@ -98,12 +102,17 @@ export default {
       // 'diagnosticDiseaseMsTemplate',
       // 'diagnosticDiseaseMcTemplate',
       // 'diagnosticDiseaseNmsTemplate',
-      // 'symptomType',
+      'symptomType',
+      'noSportType',
       'typeGroup'
     ]),
     subTitle() {
       var count = this.complaintSympData.length;
       return this.title + '（' + count + '条记录）';
+    },
+    allFirstSymptomsType() {
+      // 首发症状（主诉症状）类型的集合
+      return this.getTypeGroupitem('SympType');
     }
   },
   props: {
@@ -178,10 +187,43 @@ export default {
       var typeInfo = Util.getElement('typegroupcode', value, this.typeGroup);
       return typeInfo.types ? typeInfo.types : [];
     },
-    transform(item, fieldName) {
-      var types = this.getTypes(fieldName);
-      var diseaseType = Util.getElement('typeCode', item[fieldName], types);
-      return diseaseType.typeName ? diseaseType.typeName : '';
+    // transform(item, fieldName) {
+    //   var types = this.getTypes(fieldName);
+    //   var diseaseType = Util.getElement('typeCode', item[fieldName], types);
+    //   return diseaseType.typeName ? diseaseType.typeName : '';
+    // },
+    transform(id, arr) {
+      id = parseInt(id, 10);
+      arr = arr ? arr : [];
+      return arr.filter((obj) => {
+        return parseInt(obj.typeCode, 10) === id;
+      }).map((obj) => {
+        return obj.typeName;
+      })[0];
+    },
+    getTypeGroupitem(fieldName) {
+      let opt = Util.getElement('typegroupcode', fieldName, this.typeGroup).types;
+      return (opt ? opt : []);
+    },
+    getSymOptions(fieldType) {
+      return this.symptomType.filter((obj) => {
+        return obj.symptomtype === fieldType;
+      }).map((obj) => {
+        return {
+          typeName: obj.sympName,
+          typeCode: obj.id
+        };
+      });
+    },
+    getNoSportOptions(fieldType) {
+      return this.noSportType.filter((obj) => {
+        return obj.noSportType === fieldType;
+      }).map((obj) => {
+        return {
+          typeName: obj.noSportName,
+          typeCode: obj.id
+        };
+      });
     },
     getDisease(diseaseId) {
       // 根据药物 id，在相应的 tableData 里面寻找对应的 药物详情
