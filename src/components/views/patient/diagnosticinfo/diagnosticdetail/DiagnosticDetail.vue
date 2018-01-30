@@ -138,7 +138,7 @@ export default {
       }
     },
     patientDuringExperiment() {
-      var patientCurrentExperimentStatus = parseInt(this.caseDetail.patientCurrentStatus, 10);
+      var patientCurrentExperimentStatus = parseInt(this.patientExperimentStep, 10);
       return [2, 3, 4].indexOf(patientCurrentExperimentStatus) >= 0;    // 2, 3, 4分别对应筛选阶段，治疗期，随访期
     },
     canEdit() {
