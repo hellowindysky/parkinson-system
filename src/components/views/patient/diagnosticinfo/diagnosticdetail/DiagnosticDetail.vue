@@ -1,10 +1,10 @@
 <template lang="html">
-  <div class="diagnostic-detail-wrapper" v-show="displayDetail">
+  <div class="diagnostic-detail-wrapper" :class="{'slide-outside':!displayDetail}">
     <div class="title-bar">
       <h2 class="title">{{title}}</h2>
       <div class="button back-button" @click="goBack" v-show="!isNewCase">返回</div>
       <div class="button archive-button" :class="{'disabled': !existed}" @click="archiveCase"
-        v-if="hasBeenArchived===false && !isNewCase && canEdit">归档</div>
+        v-if="!isNewCase && canEdit && !patientDuringExperiment">归档</div>
     </div>
     <div class="scroll-area" ref="scrollArea">
       <diagnostic-basic :canEdit="canEdit" class="folding-panel" :mode="mode" ref="diagnosticBasic"
@@ -137,31 +137,44 @@ export default {
         return 0;
       }
     },
+    patientDuringExperiment() {
+      var patientCurrentExperimentStatus = parseInt(this.patientExperimentStep, 10);
+      return [2, 3, 4].indexOf(patientCurrentExperimentStatus) >= 0;    // 2, 3, 4分别对应筛选阶段，治疗期，随访期
+    },
     canEdit() {
       // var createByCurrentUser = this.diagnosisCreator === sessionStorage.getItem('userName');
-      var isMyPatientsList = this.$route.matched.some(record => record.meta.myPatients);
-      var isTherapistsPatientsList = this.$route.matched.some(record => record.meta.therapistsPatients);
-      var isAppraisersPatientsList = this.$route.matched.some(record => record.meta.appraisersPatients);
 
-      var diagnosticExperimentStatus = parseInt(this.caseDetail.status, 10);
-      var patientCurrentExperimentStatus = parseInt(this.caseDetail.patientCurrentStatus, 10);
+      var diagnosticExperimentStatus = parseInt(this.diagnosticExperimentStep, 10);
+      var patientCurrentExperimentStatus = parseInt(this.patientExperimentStep, 10);
 
-      // 2, 3, 4分别对应筛选阶段，治疗期，随访期
-      var patientDuringExperiment = [2, 3, 4].indexOf(patientCurrentExperimentStatus) >= 0;
-      var atSameStep = this.diagnosticExperimentStep === this.patientExperimentStep;
+      // 以下条件要控制，诊断添加时的实验阶段，和病人当前所处的实验阶段，要相一致。
+      // 唯一的例外情况是，病人处于实验结束阶段（5）时，诊断卡片如果是实验之外（0）添加的，也是可以编辑的
+      var atSameStep = this.diagnosticExperimentStep === this.patientExperimentStep ||
+        (diagnosticExperimentStatus === 0 && patientCurrentExperimentStatus === 5);
 
       // 只有当患者在非实验状态下时，所属医生才可以编辑其在非实验状态下添加的诊断记录
-      var canEditInMyPatientsList = isMyPatientsList && !patientDuringExperiment;
+      var canEditInMyPatientsList = this.listType === this.MY_PATIENTS_TYPE && !this.patientDuringExperiment;
 
       // 只有当患者在实验状态下时，特定参与者（评估者和治疗者）才可以编辑特定阶段添加的诊断记录
-      var canEditInTherapistsList = isTherapistsPatientsList && diagnosticExperimentStatus === 3;
-      var canEditInAppraisersList = isAppraisersPatientsList && (diagnosticExperimentStatus === 2 || diagnosticExperimentStatus === 4);
+      var canEditInTherapistsList = this.listType === this.THERAPISTS_PATIENTS_TYPE &&
+        diagnosticExperimentStatus === 3;
+      var canEditInAppraisersList = this.listType === this.APPRAISERS_PATIENTS_TYPE &&
+        (diagnosticExperimentStatus === 2 || diagnosticExperimentStatus === 4);
 
-      if (((canEditInMyPatientsList || canEditInTherapistsList || canEditInAppraisersList) &&
-        atSameStep && !this.hasBeenArchived) || this.$route.params.caseId === 'newCase') {
+      var caseId = this.$route.params.caseId;
+      if (caseId === 'newCase') {
         return true;
+
+      } else if (caseId === undefined || this.hasBeenArchived) {
+        return false;
+
+      } else if ((canEditInMyPatientsList || canEditInTherapistsList || canEditInAppraisersList) && atSameStep) {
+        return true;
+
+      } else {
+        console.log(diagnosticExperimentStatus, this.patientExperimentStep);
+        return false;
       }
-      return false;
     }
   },
   methods: {
@@ -341,6 +354,10 @@ export default {
 
 .diagnostic-detail-wrapper {
   background-color: @screen-color;
+  transition: 0.5s linear;
+  &.slide-outside {
+    transform: translate3d(100%, 0, 0);
+  }
   .title-bar {
     position: relative;
     height: @title-bar-height;

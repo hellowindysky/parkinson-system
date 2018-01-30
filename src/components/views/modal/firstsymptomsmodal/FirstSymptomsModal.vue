@@ -41,8 +41,8 @@
                @change="updateWarning('symName')" :class="{'warning': warningResults.symName}" >
                 <el-option
                  v-for="item in getSymOptions(copyInfo.symType)"
-                 :key="item.code" 
-                 :label="item.name" 
+                 :key="item.code"
+                 :label="item.name"
                  :value="item.code">
                 </el-option>
               </el-select>
@@ -152,7 +152,7 @@
 
         <!-- 以下是 运动并发症才有的序列 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
         <div v-if="copyInfo.symType===1">
-          
+
           <div class="field">
             <span class="field-name long-field-name">
               症状名称:
@@ -167,8 +167,8 @@
                @change="updateWarning('symName')" :class="{'warning': warningResults.symName}" >
                 <el-option
                  v-for="item in getSymOptions(copyInfo.symType)"
-                 :key="item.code" 
-                 :label="item.name" 
+                 :key="item.code"
+                 :label="item.name"
                  :value="item.code">
                 </el-option>
               </el-select>
@@ -256,7 +256,7 @@
             </span>
             <span class="field-input" v-else>
               <span class="warning-text">{{warningResults.notSportTypeId}}</span>
-              <el-select v-model="copyInfo.notSportTypeId" placeholder="请选择非运动症状类型" clearable 
+              <el-select v-model="copyInfo.notSportTypeId" placeholder="请选择非运动症状类型" clearable
                @change="updateWarning('notSportTypeId'),clearVal(['symType','notSportTypeId'])" :class="{'warning': warningResults.notSportTypeId}" >
                 <el-option
                  v-for="item in getOptions('noSportSymType')"
@@ -283,8 +283,8 @@
                @change="updateWarning('symName')" :class="{'warning': warningResults.symName}" >
                 <el-option
                  v-for="item in getNoSportOptions(copyInfo.notSportTypeId)"
-                 :key="item.code" 
-                 :label="item.name" 
+                 :key="item.code"
+                 :label="item.name"
                  :value="item.code">
                 </el-option>
               </el-select>
@@ -349,7 +349,7 @@
 
       <div class="seperate-line" v-show="true"></div>
 
-      
+
 
       <div class="button cancel-button" @click="cancel">取消</div>
       <div v-show="mode!==VIEW_CURRENT_CARD" class="button submit-button" @click="submit">确定</div>
@@ -634,6 +634,13 @@ export default {
     Bus.$on(this.SHOW_FIRSTSYMPTOMS_MODAL, this.showModal);
     // console.log(this.typeGroup);
     // console.log(this.getOptions('SympType'));
+  },
+  watch: {
+    $route() {
+      if (this.displayModal) {
+        this.cancel();
+      }
+    }
   }
 };
 </script>

@@ -266,6 +266,13 @@ export default {
   },
   beforeDestroy() {
     Bus.$off(this.SHOW_DIAGNOSTIC_RECORD_MODAL);
+  },
+  watch: {
+    $route() {
+      if (this.displayModal) {
+        this.cancel();
+      }
+    }
   }
 };
 </script>

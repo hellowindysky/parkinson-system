@@ -184,6 +184,13 @@ export default {
   },
   beforeDestroy() {
     Bus.$off(this.SHOW_RATIFICATION_MODAL);
+  },
+  watch: {
+    $route() {
+      if (this.displayModal) {
+        this.cancel();
+      }
+    }
   }
 };
 </script>

@@ -59,7 +59,7 @@
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
               <el-date-picker v-model="copyInfo.ariseTimeLeftUp" type="date" placeholder="请选择左上肢出现时间" clearable
-               :picker-options="pickerOptions"> 
+               :picker-options="pickerOptions">
               </el-date-picker>
             </span>
           </div>
@@ -349,7 +349,7 @@
 
       <div class="seperate-line" v-show="true"></div>
 
-      
+
 
       <div class="button cancel-button" @click="cancel">取消</div>
       <div v-show="mode!==VIEW_CURRENT_CARD" class="button submit-button" @click="submit">确定</div>
@@ -627,6 +627,13 @@ export default {
   },
   mounted() {
     Bus.$on(this.SHOW_CHIEF_COMPLAINT_SYMPTOMS_MODAL, this.showModal);
+  },
+  watch: {
+    $route() {
+      if (this.displayModal) {
+        this.cancel();
+      }
+    }
   }
 };
 </script>

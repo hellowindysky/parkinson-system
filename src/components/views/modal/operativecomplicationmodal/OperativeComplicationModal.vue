@@ -247,6 +247,11 @@ export default {
   watch: {
     operativeComplicationTemplate: function() {
       this.initCopyInfo();
+    },
+    $route() {
+      if (this.displayModal) {
+        this.cancel();
+      }
     }
   }
 };

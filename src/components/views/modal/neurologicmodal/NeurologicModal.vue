@@ -565,6 +565,11 @@ export default {
     tableTypes() {
       this.initSubTableData();
       vueCopy(this.copyItem, this.copyInfo);
+    },
+    $route() {
+      if (this.displayModal) {
+        this.cancel();
+      }
     }
   }
 };
