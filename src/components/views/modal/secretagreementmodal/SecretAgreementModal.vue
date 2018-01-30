@@ -48,7 +48,7 @@ import Bus from 'utils/bus.js';
 export default {
   data() {
     return {
-      displayModal: true
+      displayModal: false
     };
   },
   computed: {
