@@ -364,9 +364,10 @@ export default {
         if (this.copyInfo[fieldName][index].result && Util.checkIfNotMoreThanNDecimalNums(fieldVal[index].result, 2)) {
           this.$set(this.warningResults[fieldName][index], 'result', '');
         } else {
+          let indexArr = [0, 2, 3];
           if (this.copyInfo.bioexamId === 12 && this.checkRequired(id) && !fieldVal[index].result) {
             this.$set(this.warningResults[fieldName][index], 'result', '必填项');
-          } else if (fieldVal[index].result !== '' && !Util.checkIfNotMoreThanNDecimalNums(fieldVal[index].result, 2)) {
+          } else if (fieldVal[index].result !== '' && !(this.copyInfo.bioexamId === 14 && indexArr.indexOf(index) !== -1) && !Util.checkIfNotMoreThanNDecimalNums(fieldVal[index].result, 2)) {
             this.$set(this.warningResults[fieldName][index], 'result', '请输入正数，最多2位小数');
           } else {
             this.$set(this.warningResults[fieldName][index], 'result', '');
@@ -415,7 +416,7 @@ export default {
     }
   },
   mounted() {
-    // console.log(this.bioexamTypeList);
+    console.log(this.bioexamTypeList);
     // console.log(JSON.stringify(this.typeGroup));
     this.updateScrollbar();
     Bus.$on(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.showPanel);
