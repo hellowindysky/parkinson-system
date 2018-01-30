@@ -100,7 +100,7 @@
                   :disabled="!basicInfoSelectedStatus.ageFrom"></el-input>
               </span>
             </div> -->
-            <!-- 新加 未完 ↓↓↓↓ -->
+            <!-- 新加 ↓↓↓↓ -->
             <div class="item">
               <el-checkbox class="item-checkbox" v-model="basicInfoSelectedStatus.yearsOfEducationMin"></el-checkbox>
               <span class="item-name">受教育年限</span>
@@ -123,7 +123,7 @@
                   :disabled="!basicInfoSelectedStatus.bmiMin"></el-input>
               </span>
             </div>
-            <!-- 新加 未完 ↑↑↑↑ -->
+            <!-- 新加 ↑↑↑↑ -->
             <div class="item">
               <el-checkbox class="item-checkbox" v-model="basicInfoSelectedStatus.bloodType"></el-checkbox>
               <span class="item-name">血型</span>
@@ -221,7 +221,7 @@
                   :disabled="!diseaseInfoSelectedStatus.ariAgeFrom"></el-input>
               </span>
             </div>
-            <!-- 新加 未完 ↓↓↓↓ -->
+            <!-- 新加 ↓↓↓↓ -->
             <div class="item">
               <el-checkbox class="item-checkbox" v-model="diseaseInfoSelectedStatus.diseaseProcessFrom"></el-checkbox>
               <span class="item-name">患者病程</span>
@@ -233,7 +233,7 @@
                   :disabled="!diseaseInfoSelectedStatus.diseaseProcessFrom"></el-input>
               </span>
             </div>
-            <!-- 新加 未完 ↑↑↑↑ -->
+            <!-- 新加 ↑↑↑↑ -->
             <div class="item">
               <el-checkbox class="item-checkbox" v-model="diseaseInfoSelectedStatus.symmetries"></el-checkbox>
               <span class="item-name">对称起病</span>
@@ -268,14 +268,14 @@
                 </el-select>
               </span>
             </div> -->
-            <!-- 新加 未完 ↓↓↓ -->
+            <!-- 新加 ↓↓↓ -->
             <div class="item auto-resize">
               <el-checkbox class="item-checkbox" v-model="diseaseInfoSelectedStatus.motorSymptom"></el-checkbox>
               <span class="item-name">运动症状</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="diseaseInfoCondition.motorSymptom"
                   :disabled="!diseaseInfoSelectedStatus.motorSymptom">
-                  <el-option v-for="option in getOptions('motorSymptom')" :label="option.name" :value="option.code"
+                  <el-option v-for="option in getOptions('symptomTypeId', 'ms')" :label="option.name" :value="option.code"
                     :key="option.code"></el-option>
                 </el-select>
               </span>
@@ -286,7 +286,7 @@
               <span class="item-value">
                 <el-select class="normal-input" v-model="diseaseInfoCondition.motorComplication"
                   :disabled="!diseaseInfoSelectedStatus.motorComplication">
-                  <el-option v-for="option in getOptions('motorComplication')" :label="option.name" :value="option.code"
+                  <el-option v-for="option in getOptions('symptomTypeId', 'ms')" :label="option.name" :value="option.code"
                     :key="option.code"></el-option>
                 </el-select>
               </span>
@@ -302,7 +302,7 @@
                 </el-select>
               </span>
             </div>
-            <!-- 新加 未完 ↑↑↑ -->
+            <!-- 新加 ↑↑↑ -->
             <!-- <div class="item">
               <el-checkbox class="item-checkbox" v-model="diseaseInfoSelectedStatus.symmetriesTimeFrom"></el-checkbox>
               <span class="item-name long-name">对称起病时间</span>
@@ -347,7 +347,7 @@
                 </el-select>
               </span>
             </div>
-            <!-- 新加 未完 ↓↓↓ -->
+            <!-- 新加 ↓↓↓ -->
             <div class="item auto-resize">
               <el-checkbox class="item-checkbox" v-model="diseaseInfoSelectedStatus.medType"></el-checkbox>
               <span class="item-name">药物治疗</span>
@@ -392,7 +392,7 @@
                 </el-select>
               </span>
             </div>
-            <!-- 新加 未完 ↑↑↑ -->
+            <!-- 新加 ↑↑↑ -->
             <!-- 新需求 无  诊断项目和初次用药-->
             <!-- <div class="item auto-resize">
               <el-checkbox class="item-checkbox" v-model="diseaseInfoSelectedStatus.treatPro"></el-checkbox>
@@ -636,7 +636,7 @@
               <span class="item-value">
                 <el-select class="normal-input" v-model="diagnosticDiseaseCondition.nonMotorSymptomTypeId"
                   :disabled="!diagnosticDiseaseSelectedStatus.nonMotorSymptomTypeId">
-                  <el-option v-for="option in getOptions('symptomTypeId', 'nms')" :label="option.name" :value="option.code"
+                  <el-option v-for="option in getOptions('nonMotorSymptom')" :label="option.name" :value="option.code"
                     :key="option.code"></el-option>
                 </el-select>
               </span>
@@ -958,15 +958,33 @@
               </span>
             </div>
 
-            <div class="item high-item">
+            <!-- <div class="item high-item">
               <el-checkbox class="item-checkbox" v-model="diagnosticPhysiSelectedStatus.occurTimeStart"></el-checkbox>
               <span class="item-name long-name">发生时间</span>
               <span class="item-value">
                 <el-date-picker type="datetime" class="left-input" v-model="diagnosticPhysiCondition.occurTimeStart" placeholder="开始时间" format="yyyy-MM-dd HH:mm"
                   :disabled="!diagnosticPhysiSelectedStatus.occurTimeStart"></el-date-picker>
-                <!-- <span class="middle-text">~</span> -->
+                <span class="middle-text">~</span>
                 <el-date-picker type="datetime" class="right-input" v-model="diagnosticPhysiCondition.occurTimeEnd" placeholder="结束时间" format="yyyy-MM-dd HH:mm"
                   :disabled="!diagnosticPhysiSelectedStatus.occurTimeStart"></el-date-picker>
+              </span>
+            </div> -->
+
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="diagnosticPhysiSelectedStatus.occurTimeStart"></el-checkbox>
+              <span class="item-name long-name double-line">发生时间  （开始）</span>
+              <span class="item-value">
+                <el-date-picker type="datetime" class="" v-model="diagnosticPhysiCondition.occurTimeStart" placeholder="开始时间" format="yyyy-MM-dd HH:mm"
+                  :disabled="!diagnosticPhysiSelectedStatus.occurTimeStart"></el-date-picker>
+              </span>
+            </div>
+
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="diagnosticPhysiSelectedStatus.occurTimeEnd"></el-checkbox>
+              <span class="item-name long-name double-line">发生时间  （结束）</span>
+              <span class="item-value">
+                <el-date-picker type="datetime" class="" v-model="diagnosticPhysiCondition.occurTimeEnd" placeholder="结束时间" format="yyyy-MM-dd HH:mm"
+                  :disabled="!diagnosticPhysiSelectedStatus.occurTimeEnd"></el-date-picker>
               </span>
             </div>
 
@@ -1272,7 +1290,7 @@ let diagnosticPhysiFieldNames = ['physiType', 'recordDateStart', 'recordDateEnd'
   'rightThresholdAfterMax', 'reactionType', 'adverseName', 'occurTimeStart', 'occurTimeEnd', 'severity', 'seriousFlag', 'measureFlag', 'adverseResult'];
 let diagnosticPhysiSelectedFieldNames = ['physiType', 'recordDateStart', 'recordDateStart', 'leftThresholdBeforeMin', 'leftThresholdBeforeMin',
   'rightThresholdBeforeMin', 'rightThresholdBeforeMin', 'leftThresholdAfterMin', 'leftThresholdAfterMin', 'rightThresholdAfterMin',
-  'rightThresholdAfterMin', 'reactionType', 'adverseName', 'occurTimeStart', 'occurTimeStart', 'severity', 'seriousFlag', 'measureFlag', 'adverseResult'];
+  'rightThresholdAfterMin', 'reactionType', 'adverseName', 'occurTimeStart', 'occurTimeEnd', 'severity', 'seriousFlag', 'measureFlag', 'adverseResult'];
 
 let diagnosticExaminationFieldNames = ['checkType', 'spephysicalInfoId', 'bioexamId', 'emgType', 'examType'];
 let diagnosticExaminationSelectedFieldNames = ['checkType', 'spephysicalInfoId', 'bioexamId', 'emgType', 'examType'];
@@ -1348,6 +1366,7 @@ export default {
     ...mapGetters([
       'typeGroup',
       'symptomType',
+      'noSportType',
       'medicineInfo',
       'deviceInfo',
       'surgicalTypeList',
@@ -1695,12 +1714,10 @@ export default {
             code: type.typeCode
           });
         }
-      } else if (fieldName === 'motorSymptom') {
-        options = this.symptomType.filter((obj) => {
-          return obj.symptomtype === 0;
-        }).map((obj) => {
+      } else if (fieldName === 'nonMotorSymptom') {
+        options = this.noSportType.map((obj) => {
           return {
-            name: obj.sympName,
+            name: obj.noSportName,
             code: obj.id
           };
         });
@@ -2190,24 +2207,6 @@ export default {
             height: 40px;
             line-height: 40px;
             text-align: left;
-            &.high-item{
-              height: 80px;
-              position: relative;
-              .item-checkbox{
-                top:20px;
-              }
-              .item-name{
-                top:20px;
-              }
-              .item-value{
-                .el-input{
-                  width:100%;
-                  &.right-input{
-                    top:40px;
-                  }
-                }
-              }
-            }
             &.auto-resize {
               height: auto;
               .item-value {
@@ -2275,6 +2274,9 @@ export default {
                 }
               }
               .el-select {
+                width: 100%;
+              }
+              .el-date-editor{
                 width: 100%;
               }
             }
