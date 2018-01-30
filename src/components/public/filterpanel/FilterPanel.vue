@@ -612,7 +612,7 @@
               <el-checkbox class="item-checkbox" v-model="diagnosticDiseaseSelectedStatus.motorSymptomTypeId"></el-checkbox>
               <span class="item-name">运动症状</span>
               <span class="item-value">
-                <el-select class="normal-input" v-model="diagnosticDiseaseCondition.motorSymptomTypeId" multiple
+                <el-select class="normal-input" v-model="diagnosticDiseaseCondition.motorSymptomTypeId"
                   :disabled="!diagnosticDiseaseSelectedStatus.motorSymptomTypeId">
                   <el-option v-for="option in getOptions('symptomTypeId', 'ms')" :label="option.name" :value="option.code"
                     :key="option.code"></el-option>
