@@ -427,7 +427,11 @@ export default {
         } else {
           stepping = stepping ? stepping : 0.1;
           // 下面这行是为了确定小数位数，要不然在待会做乘法的时候可能会出现 .000000001 这样的问题
-          var decimalDigits = stepping.toString().split('.')[1].length;
+          var decimalDigits = 0;
+          if (stepping.toString().split('.')[1] !== undefined) {
+            decimalDigits = stepping.toString().split('.')[1].length;
+          }
+
           var count = parseInt(value / stepping, 10);
           var newValue = stepping * count;
           newValue = Number(newValue.toFixed(decimalDigits));
