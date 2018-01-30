@@ -122,10 +122,8 @@ var webpackConfig = merge(baseWebpackConfig, {
     ]),
     new webpack.DllReferencePlugin({
       context: __dirname,
-      /**
-        下面这个地址对应 webpack.dll.config.js 中生成的那个 json 文件的路径
-        这样 webpack 打包时，就先直接去这个json文件中把那些预编译的资源弄进来
-      **/
+      // 下面这个地址对应 webpack.dll.config.js 中生成的那个 json 文件的路径
+      // 这样 webpack 打包时，就先直接去这个json文件中把那些预编译的资源弄进来
       manifest: require('./vendor-manifest.json')
     })
   ]

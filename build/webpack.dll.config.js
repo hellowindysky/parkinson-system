@@ -24,7 +24,7 @@ module.exports = {
     // 使用 DllPlugin 插件编译上面配置的 NPM 包
     new webpack.DllPlugin({
       // 会生成一个json文件，里面是关于 dll.js 的一些配置信息
-      path: path.join(__dirname, '.', '[name]-manifest.json'),
+      path: path.join(__dirname, '[name]-manifest.json'),
       name: '[name]_library', // 与上面 output 中配置对应
       context: __dirname
     })
