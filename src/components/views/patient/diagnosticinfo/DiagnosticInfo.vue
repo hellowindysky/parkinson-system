@@ -2,7 +2,7 @@
   <div class="diagnostic-info-wrapper" ref="diagnosticInfo">
     <folding-panel class="panel" :title="title" :mode="mode" :isCardsPanel="true" :folded-status="foldedStatus"
       v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit" v-on:addNewCard="addRecord"
-      v-on:updateFilterCondition="changeFilterCondition" :editable="canEdit" :showAddButton="showAddButton">
+      v-on:updateFilterCondition="changeFilterCondition" :editable="canEdit">
       <card class="card" :class="cardClass" :mode="mode" v-for="item in patientCaseList" :key="item.caseName"
         :title="item.caseName" :disable-delete="checkIfDisabledToDelete(item)" v-on:editCurrentCard="seeDetail(item)" v-on:deleteCurrentCard="deleteRecord(item)"
         v-show="passFilter(item)" v-on:viewCurrentCard="seeDetail(item)">
@@ -61,30 +61,6 @@ export default {
     inSubject() {
       return this.$store.state.subjectId !== this.SUBJECT_ID_FOR_HOSPITAL;
     },
-    showAddButton() {
-      if (this.patientCurrentExperimentStep === -1 && this.listType === this.MY_PATIENTS_TYPE) {
-        // 如果患者不处于实验期，只有所属医生在“我的患者”下才能添加诊断
-        return true;
-
-      } else if (this.patientCurrentExperimentStep === 2 && this.listType === this.APPRAISERS_PATIENTS_TYPE) {
-        // 如果患者处于筛选期，只有评估者才能添加诊断
-        return true;
-
-      } else if (this.patientCurrentExperimentStep === 3 && this.listType === this.THERAPISTS_PATIENTS_TYPE) {
-        // 如果患者处于治疗期，只有治疗者才能添加诊断
-        return true;
-
-      } else if (this.patientCurrentExperimentStep === 4 && this.listType === this.APPRAISERS_PATIENTS_TYPE) {
-        // 如果患者处于随访期，只有评估者才能添加诊断
-        return true;
-
-      } else if (this.patientCurrentExperimentStep === 5 && this.listType === this.MY_PATIENTS_TYPE) {
-        // 如果患者处于实验结束状态，只有所属医生在“我的患者”下才能添加诊断
-        return true;
-
-      }
-      return false;
-    },
     title() {
       return '看诊记录（' + this.patientCaseList.length + '条记录）';
     },
@@ -102,13 +78,26 @@ export default {
       return this.patientInfo.patientCurrentStage !== undefined ? Number(this.patientInfo.patientCurrentStage) : -1;
     },
     canEdit() {
-      var isMyPatientsList = this.$route.matched.some(record => record.meta.myPatients);
-      var isExperimentPatientsList = this.$route.matched.some(record => {
-        return record.meta.therapistsPatients || record.meta.appraisersPatients;
-      });
-      var duringExperiment = this.patientCurrentExperimentStep > 0 && this.patientCurrentExperimentStep < 5;
-      if ((isMyPatientsList && !duringExperiment) || (isExperimentPatientsList && duringExperiment)) {
+      if (this.patientCurrentExperimentStep === -1 && this.listType === this.MY_PATIENTS_TYPE) {
+        // 如果患者不处于实验期，只有所属医生在“我的患者”下才能 添加／删除 诊断卡片
         return true;
+
+      } else if (this.patientCurrentExperimentStep === 2 && this.listType === this.APPRAISERS_PATIENTS_TYPE) {
+        // 如果患者处于筛选期，只有评估者才能 添加／删除 诊断卡片
+        return true;
+
+      } else if (this.patientCurrentExperimentStep === 3 && this.listType === this.THERAPISTS_PATIENTS_TYPE) {
+        // 如果患者处于治疗期，只有治疗者才能 添加／删除 诊断卡片
+        return true;
+
+      } else if (this.patientCurrentExperimentStep === 4 && this.listType === this.APPRAISERS_PATIENTS_TYPE) {
+        // 如果患者处于随访期，只有评估者才能 添加／删除 诊断卡片
+        return true;
+
+      } else if (this.patientCurrentExperimentStep === 5 && this.listType === this.MY_PATIENTS_TYPE) {
+        // 如果患者处于实验结束状态，只有所属医生在“我的患者”下才能 添加／删除 诊断卡片
+        return true;
+
       }
       return false;
     }

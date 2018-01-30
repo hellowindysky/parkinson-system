@@ -143,9 +143,6 @@ export default {
     },
     canEdit() {
       // var createByCurrentUser = this.diagnosisCreator === sessionStorage.getItem('userName');
-      var isMyPatientsList = this.$route.matched.some(record => record.meta.myPatients);
-      var isTherapistsPatientsList = this.$route.matched.some(record => record.meta.therapistsPatients);
-      var isAppraisersPatientsList = this.$route.matched.some(record => record.meta.appraisersPatients);
 
       var diagnosticExperimentStatus = parseInt(this.diagnosticExperimentStep, 10);
 
@@ -155,18 +152,27 @@ export default {
         (diagnosticExperimentStatus === 0 && this.patientExperimentStep === 5);
 
       // 只有当患者在非实验状态下时，所属医生才可以编辑其在非实验状态下添加的诊断记录
-      var canEditInMyPatientsList = isMyPatientsList && !this.patientDuringExperiment;
+      var canEditInMyPatientsList = this.listType === this.MY_PATIENTS_TYPE && !this.patientDuringExperiment;
 
       // 只有当患者在实验状态下时，特定参与者（评估者和治疗者）才可以编辑特定阶段添加的诊断记录
-      var canEditInTherapistsList = isTherapistsPatientsList && diagnosticExperimentStatus === 3;
-      var canEditInAppraisersList = isAppraisersPatientsList && (diagnosticExperimentStatus === 2 || diagnosticExperimentStatus === 4);
+      var canEditInTherapistsList = this.listType === this.THERAPISTS_PATIENTS_TYPE &&
+        diagnosticExperimentStatus === 3;
+      var canEditInAppraisersList = this.listType === this.APPRAISERS_PATIENTS_TYPE &&
+        (diagnosticExperimentStatus === 2 || diagnosticExperimentStatus === 4);
 
       var caseId = this.$route.params.caseId;
-      if (((canEditInMyPatientsList || canEditInTherapistsList || canEditInAppraisersList) &&
-        atSameStep && !this.hasBeenArchived && caseId) || caseId === 'newCase') {
+      if (caseId === 'newCase') {
         return true;
+
+      } else if (caseId === undefined || this.hasBeenArchived) {
+        return false;
+
+      } else if ((canEditInMyPatientsList || canEditInTherapistsList || canEditInAppraisersList) && atSameStep) {
+        return true;
+
+      } else {
+        return false;
       }
-      return false;
     }
   },
   methods: {
