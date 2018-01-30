@@ -416,7 +416,7 @@ export default {
     }
   },
   mounted() {
-    console.log(this.bioexamTypeList);
+    // console.log(this.bioexamTypeList);
     // console.log(JSON.stringify(this.typeGroup));
     this.updateScrollbar();
     Bus.$on(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.showPanel);
