@@ -566,7 +566,7 @@ export default {
       this.initSubTableData();
       vueCopy(this.copyItem, this.copyInfo);
     },
-    $route() {
+    '$route.path'() {
       if (this.displayModal) {
         this.cancel();
       }

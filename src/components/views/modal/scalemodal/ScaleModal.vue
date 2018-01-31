@@ -640,7 +640,7 @@ export default {
     FoldingPanel
   },
   watch: {
-    $route() {
+    '$route.path'() {
       if (this.displayModal) {
         this.closePanel();
       }

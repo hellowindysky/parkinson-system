@@ -268,7 +268,7 @@ export default {
     Bus.$off(this.SHOW_DIAGNOSTIC_RECORD_MODAL);
   },
   watch: {
-    $route() {
+    '$route.path'() {
       if (this.displayModal) {
         this.cancel();
       }

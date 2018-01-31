@@ -186,7 +186,7 @@ export default {
     Bus.$off(this.SHOW_RATIFICATION_MODAL);
   },
   watch: {
-    $route() {
+    '$route.path'() {
       if (this.displayModal) {
         this.cancel();
       }

@@ -729,7 +729,7 @@ export default {
     Bus.$off(this.SHOW_MEDICINE_MODAL, this.showModal);
   },
   watch: {
-    $route() {
+    '$route.path'() {
       if (this.displayModal) {
         this.cancel();
       }

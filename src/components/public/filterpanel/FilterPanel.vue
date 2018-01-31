@@ -2091,7 +2091,7 @@ export default {
     this.queryPatients();
   },
   watch: {
-    $route() {
+    '$route.path'() {
       if (this.showFilterPanel) {
         // 在面板打开的情况下，一旦路由发生变化，则自动收起面板
         Bus.$emit(this.TOGGLE_FILTER_PANEL_DISPLAY);

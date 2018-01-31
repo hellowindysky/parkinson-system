@@ -629,7 +629,7 @@ export default {
     Bus.$on(this.SHOW_CHIEF_COMPLAINT_SYMPTOMS_MODAL, this.showModal);
   },
   watch: {
-    $route() {
+    '$route.path'() {
       if (this.displayModal) {
         this.cancel();
       }

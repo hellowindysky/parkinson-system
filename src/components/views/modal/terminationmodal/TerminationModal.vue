@@ -188,7 +188,7 @@ export default {
     Bus.$off(this.SHOW_TERMINATION_MODAL);
   },
   watch: {
-    $route() {
+    '$route.path'() {
       if (this.displayModal) {
         this.cancel();
       }

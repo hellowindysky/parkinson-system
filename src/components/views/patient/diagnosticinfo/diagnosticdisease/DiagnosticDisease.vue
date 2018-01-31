@@ -418,7 +418,7 @@ export default {
     Card
   },
   watch: {
-    $route() {
+    '$route.path'() {
       this.updateScrollbar();
     },
     diagnosticDisease: function() {

@@ -248,7 +248,7 @@ export default {
     operativeComplicationTemplate: function() {
       this.initCopyInfo();
     },
-    $route() {
+    '$route.path'() {
       if (this.displayModal) {
         this.cancel();
       }

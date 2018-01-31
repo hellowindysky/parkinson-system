@@ -158,7 +158,7 @@ export default {
     Bus.$off(this.SHOW_REJECTION_MODAL);
   },
   watch: {
-    $route() {
+    '$route.path'() {
       if (this.displayModal) {
         this.cancel();
       }

@@ -805,7 +805,7 @@ export default {
     foldedEventsStatus: function(newFoldedEventsStatus) {
       this.foldedEvents = newFoldedEventsStatus;
     },
-    $route() {
+    '$route.path'() {
       if (this.displayModal) {
         this.cancel();
       }

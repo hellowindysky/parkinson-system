@@ -617,7 +617,7 @@ export default {
       this.prepareStimulateSideEvents();
       this.bindValueToStimulateSideEvents();
     },
-    $route() {
+    '$route.path'() {
       if (this.displayModal) {
         this.cancel();
       }

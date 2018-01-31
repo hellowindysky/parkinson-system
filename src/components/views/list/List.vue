@@ -780,7 +780,7 @@ export default {
     roleListItem
   },
   watch: {
-    $route() {
+    '$route.path'() {
       // 路由一旦发生变化，就关闭筛选面板
       this.panelDisplay = false;
     },

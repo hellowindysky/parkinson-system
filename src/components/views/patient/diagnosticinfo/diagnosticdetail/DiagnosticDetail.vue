@@ -331,7 +331,7 @@ export default {
     Bus.$off(this.CONFIRM);
   },
   watch: {
-    $route() {
+    '$route.path'() {
       this.checkRoute();
     },
     displayDetail: function() {

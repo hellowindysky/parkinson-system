@@ -636,7 +636,7 @@ export default {
     // console.log(this.getOptions('SympType'));
   },
   watch: {
-    $route() {
+    '$route.path'() {
       if (this.displayModal) {
         this.cancel();
       }
