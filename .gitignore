@@ -6,7 +6,6 @@ dist_beta/
 dist_pre/
 dist_prod/
 dist_alone/
-build/vendor-manifest.json
 static/js/vendor.dll.js
 npm-debug.log*
 yarn-debug.log*
