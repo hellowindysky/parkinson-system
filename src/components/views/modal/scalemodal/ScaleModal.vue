@@ -176,7 +176,7 @@
             <span v-if="item.maxPoint !== undefined">
               &nbsp;/ {{item.maxPoint}}
             </span>
-            <span v-if="item.stepping !== undefined">
+            <span v-if="item.stepping !== undefined && false">
               （填写分数应为{{item.stepping}}的整数倍）
             </span>
           </span>
@@ -427,14 +427,14 @@ export default {
         } else {
           stepping = stepping ? stepping : 0.1;
           // 下面这行是为了确定小数位数，要不然在待会做乘法的时候可能会出现 .000000001 这样的问题
-          var decimalDigits = 0;
-          if (stepping.toString().split('.')[1] !== undefined) {
-            decimalDigits = stepping.toString().split('.')[1].length;
-          }
-
-          var count = parseInt(value / stepping, 10);
-          var newValue = stepping * count;
-          newValue = Number(newValue.toFixed(decimalDigits));
+          var decimalDigits = 2;
+          // if (stepping.toString().split('.')[1] !== undefined) {
+          //   decimalDigits = stepping.toString().split('.')[1].length;
+          // }
+          //
+          // var count = Math.round(value / stepping);
+          // var newValue = stepping * count;
+          var newValue = Number(value.toFixed(decimalDigits));
           if (newValue < 0) {
             newValue = 0;
           } else if (maxValue !== undefined && newValue > maxValue) {
