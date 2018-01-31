@@ -286,7 +286,7 @@
               <span class="item-value">
                 <el-select class="normal-input" v-model="diseaseInfoCondition.motorComplication"
                   :disabled="!diseaseInfoSelectedStatus.motorComplication">
-                  <el-option v-for="option in getOptions('symptomTypeId', 'ms')" :label="option.name" :value="option.code"
+                  <el-option v-for="option in getOptions('symptomTypeId', 'mc')" :label="option.name" :value="option.code"
                     :key="option.code"></el-option>
                 </el-select>
               </span>
@@ -1225,7 +1225,8 @@
               <td class="col col-gender">{{getNameByCode(patient.sex, 'sex')}}</td>
               <td class="col col-age">{{patient.age}}</td>
               <td class="col col-disease">{{getNameByCode(patient.diseaseType, 'diseType')}}</td>
-              <td class="col col-symptom">{{getNameByCodeListString(patient.firSym, 'firSym')}}</td>
+              <!-- <td class="col col-symptom">{{getNameByCodeListString(patient.firSym, 'firSym')}}</td> -->
+              <td class="col col-symptom">{{patient.firSym}}</td>
               <td class="col col-operation">
                 <span class="text-button" @click="seePatientDetail(patient.patientId)">查看</span>
                 <span class="text-button" @click="manageGroup(patient.patientId)">分组</span>
