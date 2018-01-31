@@ -286,7 +286,7 @@
               <span class="item-value">
                 <el-select class="normal-input" v-model="diseaseInfoCondition.motorComplication"
                   :disabled="!diseaseInfoSelectedStatus.motorComplication">
-                  <el-option v-for="option in getOptions('symptomTypeId', 'ms')" :label="option.name" :value="option.code"
+                  <el-option v-for="option in getOptions('symptomTypeId', 'mc')" :label="option.name" :value="option.code"
                     :key="option.code"></el-option>
                 </el-select>
               </span>
