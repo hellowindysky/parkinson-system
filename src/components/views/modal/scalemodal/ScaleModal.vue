@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="diagnostic-update-wrapper" v-show="displayScaleModal">
+  <div class="diagnostic-update-wrapper" :class="{'slide-outside':!displayModal}">
     <div class="title-bar">
       <h2 class="title" v-if="mode!==ADD_NEW_CARD">{{scaleName}}</h2>
       <h2 class="title" v-else>新增量表信息</h2>
@@ -201,7 +201,7 @@ import FoldingPanel from 'components/public/foldingpanel/FoldingPanel';
 export default {
   data() {
     return {
-      displayScaleModal: false,
+      displayModal: false,
       mode: '',
       showEdit: false,
       lockSubmitButton: false,
@@ -316,7 +316,7 @@ export default {
 
       this.getCorrectAnswer();
 
-      this.displayScaleModal = true;
+      this.displayModal = true;
       this.updateScrollbar();
       this.$nextTick(() => {
         this.$refs.scrollArea.scrollTop = 0;
@@ -415,7 +415,7 @@ export default {
     },
     closePanel() {
       this.lockSubmitButton = false;
-      this.displayScaleModal = false;
+      this.displayModal = false;
     },
     transformToNum(obj, propertyName, stepping, maxValue) {
       // 步进值 stepping 如果没有传值进来，则默认为 0.1
@@ -641,7 +641,7 @@ export default {
   },
   watch: {
     $route() {
-      if (this.displayScaleModal) {
+      if (this.displayModal) {
         this.closePanel();
       }
     },
@@ -673,6 +673,10 @@ export default {
 .diagnostic-update-wrapper {
   width: 100%;
   background-color: @screen-color;
+  transition: 0.5s linear;
+  &.slide-outside {
+    transform: translate3d(100%, 0, 0);
+  }
   .title-bar {
     position: relative;
     height: @title-bar-height;
