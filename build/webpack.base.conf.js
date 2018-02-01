@@ -1,6 +1,7 @@
 'use strict'
 const path = require('path')
 const utils = require('./utils')
+const webpack = require('webpack')
 const config = require('../config')
 const vueLoaderConfig = require('./vue-loader.conf')
 
@@ -21,13 +22,21 @@ module.exports = {
       ? config.build.assetsPublicPath
       : config.dev.assetsPublicPath
   },
+  plugins: [
+    new webpack.DllReferencePlugin({
+      context: __dirname,
+      // 下面这个地址对应 webpack.dll.config.js 中生成的那个 json 文件的路径
+      // 这样 webpack 打包时，就先直接去这个json文件中把那些预编译的资源弄进来
+      manifest: require('./vendor-manifest.json')
+    })
+  ],
   externals: {
     'echarts': 'echarts'
   },
   resolve: {
     extensions: ['.js', '.vue', '.json'],
     alias: {
-      'vue$': 'vue/dist/vue.esm.js',
+      // 'vue$': 'vue/dist/vue.esm.js',
       '@': resolve('src'),
       'styles': resolve('src/assets/styles'),
       'iconfont': resolve('src/assets/styles/iconfont'),
