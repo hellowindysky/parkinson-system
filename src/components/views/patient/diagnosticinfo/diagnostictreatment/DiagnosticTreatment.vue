@@ -692,15 +692,15 @@ export default {
     },
     addPhysiontherapy() {
       var showEdit = this.canEdit && this.showPhysiontherapy;
-      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.ADD_NEW_CARD, {}, showEdit);
+      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.ADD_NEW_CARD, {}, showEdit, this.diagnosticExperimentStep);
     },
     viewPhysiontherapy(item) {
       var showEdit = this.canEdit && this.showPhysiontherapy;
-      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.VIEW_CURRENT_CARD, item, showEdit);
+      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.VIEW_CURRENT_CARD, item, showEdit, this.diagnosticExperimentStep);
     },
     editPhysiontherapy(item) {
       var showEdit = this.canEdit && this.showPhysiontherapy;
-      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.EDIT_CURRENT_CARD, item, showEdit);
+      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.EDIT_CURRENT_CARD, item, showEdit, this.diagnosticExperimentStep);
     },
     deletePhysiontherapy(item) {
       var patientPhysiontherapy = {
