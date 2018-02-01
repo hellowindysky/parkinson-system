@@ -311,7 +311,11 @@ export default {
     },
     medicineNameOpt() {
       // 药物名称的select
-      return this.getMedNameOptions(this.copyInfo.medicineClassification);
+      let transArr = this.getMedNameOptions(this.copyInfo.medicineClassification);
+      if (this.copyInfo.medicineClassification === 9) {
+        transArr[0].name = transArr[0].name + '（请在备注中说明）';
+      }
+      return transArr;
     },
     commonMedicineName() {
       // 通用名

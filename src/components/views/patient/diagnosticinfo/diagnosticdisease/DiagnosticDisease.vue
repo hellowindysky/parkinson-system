@@ -48,8 +48,7 @@
           </div>
           <div class="text second-line">
             <span class="name">是否规律出现：</span>
-            <span class="value" v-if="item.whetherLaw === undefined">未填写</span>
-            <span class="value" v-else >{{transform(item.whetherLaw, getTypeGroupitem('digitYN'))}}</span>
+            <span class="value">{{transform(item.whetherLaw, getTypeGroupitem('digitYN'))}}</span>
           </div>
           <div class="text third-line">
             <span class="name">出现时间：</span>
@@ -160,7 +159,7 @@ export default {
         if (nums.length > 0) {
           return Util.simplifyDate(Math.min.apply(Math, nums));
         } else {
-          return '未填写';
+          return '';
         }
       }
     },
