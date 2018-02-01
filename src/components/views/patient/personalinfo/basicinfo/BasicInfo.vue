@@ -461,6 +461,9 @@ export default {
         if (!Util.checkIfNonNegativeInteger(copyFieldValue)) {
           this.$set(this.warningResults, fieldName, '只能填入非负整数');
           return;
+        } else if (copyFieldValue > 30) {
+          this.$set(this.warningResults, fieldName, '不能超过30');
+          return;
         }
 
       }
