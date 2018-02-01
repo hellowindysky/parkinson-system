@@ -272,7 +272,7 @@ export default {
     Bus.$off(this.GIVE_UP);
   },
   watch: {
-    $route() {
+    '$route.path'() {
       if (this.displayModal) {
         this.cancel();
       }

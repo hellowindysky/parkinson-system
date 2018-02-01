@@ -11,9 +11,9 @@
 </template>
 
 <script>
-import BasicInfo from 'components/views/patient/personalinfo/basicinfo/BasicInfo';
-import DiseaseHistory from 'components/views/patient/personalinfo/diseasehistory/DiseaseHistory';
-import OtherInfo from 'components/views/patient/personalinfo/otherinfo/OtherInfo';
+import BasicInfo from 'patient/personalinfo/basicinfo/BasicInfo';
+import DiseaseHistory from 'patient/personalinfo/diseasehistory/DiseaseHistory';
+import OtherInfo from 'patient/personalinfo/otherinfo/OtherInfo';
 
 export default {
   props: {

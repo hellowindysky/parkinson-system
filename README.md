@@ -72,7 +72,7 @@ npm test
 npm run dll
 ```
 
-对应的配置文件是 **build/webpack.dll.config.js**，DllReferencePlugin 插件的使用在 **build/webpack.prod.conf.js** 文件内。更多内容参看[这里](http://www.css88.com/doc/webpack/plugins/dll-plugin/)
+对应的配置文件是 **build/webpack.dll.config.js**，DllReferencePlugin 插件的使用在 **build/webpack.base.conf.js** 文件内。更多内容参看[这里](http://www.css88.com/doc/webpack/plugins/dll-plugin/)
 
 ## 打包方式
 项目会通过 `npm run build` 命令打包成静态的代码，由于涉及到不同的发布环境，而不同的发布环境会影响到一些全局变量的取值（例如 API 的公共部分，以及整个项目的页面标题等等），因此需要在该命令后面加上 `:beta`，`:pre` 或者 `:prod` 来指定打包方式（命令写在 package.json 文件中）。如果你想知道这些全局变量是如何根据打包方式变化的，以及这几条命令是如何改变打包方式的，需要参看 **build/build.js**，**build/webpack.prod.conf.js**，和 **config** 下的各个文件。

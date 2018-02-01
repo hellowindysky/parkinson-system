@@ -1816,7 +1816,7 @@ export default {
     emgTypeList: function() {
       this.selectEmg();
     },
-    $route() {
+    '$route.path'() {
       if (this.displayModal) {
         this.cancel();
       }

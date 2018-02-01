@@ -15,6 +15,7 @@
       </diagnostic-basic>
       <diagnostic-disease :canEdit="canEdit" class="folding-panel" :mode="mode" v-show="existed"
         :diagnosticDisease="diagnosticDisease"
+        :diagnosticChiefComplaint="caseDetail.patientSymptom"
         :diagnosticExperimentStep="diagnosticExperimentStep"
         :patientExperimentStep="patientExperimentStep"
         :diagnosisCreator="diagnosisCreator">
@@ -60,11 +61,11 @@ import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import { getPatientCase, archivePatientCase } from 'api/patient.js';
 
-import DiagnosticBasic from 'components/views/patient/diagnosticinfo/diagnosticbasic/DiagnosticBasic';
-import DiagnosticDisease from 'components/views/patient/diagnosticinfo/diagnosticdisease/DiagnosticDisease';
-import DiagnosticTreatment from 'components/views/patient/diagnosticinfo/diagnostictreatment/DiagnosticTreatment';
-import DiagnosticScale from 'components/views/patient/diagnosticinfo/diagnosticscale/DiagnosticScale';
-import DiagnosticExamination from 'components/views/patient/diagnosticinfo/diagnosticexamination/DiagnosticExamination';
+import DiagnosticBasic from 'patient/diagnosticinfo/diagnosticbasic/DiagnosticBasic';
+import DiagnosticDisease from 'patient/diagnosticinfo/diagnosticdisease/DiagnosticDisease';
+import DiagnosticTreatment from 'patient/diagnosticinfo/diagnostictreatment/DiagnosticTreatment';
+import DiagnosticScale from 'patient/diagnosticinfo/diagnosticscale/DiagnosticScale';
+import DiagnosticExamination from 'patient/diagnosticinfo/diagnosticexamination/DiagnosticExamination';
 
 export default {
   props: {
@@ -139,27 +140,30 @@ export default {
     },
     patientDuringExperiment() {
       var patientCurrentExperimentStatus = parseInt(this.patientExperimentStep, 10);
-      return [2, 3, 4].indexOf(patientCurrentExperimentStatus) >= 0;    // 2, 3, 4分别对应筛选阶段，治疗期，随访期
+      return [this.EXPERIMENT_STEP_SCREENING, this.EXPERIMENT_STEP_THERAPY,
+        this.EXPERIMENT_STEP_FOLLOW_UP].indexOf(patientCurrentExperimentStatus) >= 0;
     },
     canEdit() {
-      // var createByCurrentUser = this.diagnosisCreator === sessionStorage.getItem('userName');
+      var createByCurrentUser = this.diagnosisCreator === sessionStorage.getItem('userName');
+      var isExperimentPatientsList = this.listType === this.THERAPISTS_PATIENTS_TYPE || this.listType === this.APPRAISERS_PATIENTS_TYPE;
 
       var diagnosticExperimentStatus = parseInt(this.diagnosticExperimentStep, 10);
       var patientCurrentExperimentStatus = parseInt(this.patientExperimentStep, 10);
 
       // 以下条件要控制，诊断添加时的实验阶段，和病人当前所处的实验阶段，要相一致。
-      // 唯一的例外情况是，病人处于实验结束阶段（5）时，诊断卡片如果是实验之外（0）添加的，也是可以编辑的
+      // 唯一的例外情况是，病人处于实验结束阶段时，诊断卡片如果是实验之外（0）添加的，也是可以编辑的
       var atSameStep = this.diagnosticExperimentStep === this.patientExperimentStep ||
-        (diagnosticExperimentStatus === 0 && patientCurrentExperimentStatus === 5);
+        (diagnosticExperimentStatus === 0 && patientCurrentExperimentStatus === this.EXPERIMENT_STEP_COMPLETE);
 
       // 只有当患者在非实验状态下时，所属医生才可以编辑其在非实验状态下添加的诊断记录
       var canEditInMyPatientsList = this.listType === this.MY_PATIENTS_TYPE && !this.patientDuringExperiment;
 
       // 只有当患者在实验状态下时，特定参与者（评估者和治疗者）才可以编辑特定阶段添加的诊断记录
       var canEditInTherapistsList = this.listType === this.THERAPISTS_PATIENTS_TYPE &&
-        diagnosticExperimentStatus === 3;
+        diagnosticExperimentStatus === this.EXPERIMENT_STEP_THERAPY;
       var canEditInAppraisersList = this.listType === this.APPRAISERS_PATIENTS_TYPE &&
-        (diagnosticExperimentStatus === 2 || diagnosticExperimentStatus === 4);
+        (diagnosticExperimentStatus === this.EXPERIMENT_STEP_SCREENING ||
+        diagnosticExperimentStatus === this.EXPERIMENT_STEP_FOLLOW_UP);
 
       var caseId = this.$route.params.caseId;
       if (caseId === 'newCase') {
@@ -168,11 +172,16 @@ export default {
       } else if (caseId === undefined || this.hasBeenArchived) {
         return false;
 
+      } else if (isExperimentPatientsList && !createByCurrentUser) {
+        // 如果当前处于“评估者”和“诊断者”的患者列表，则需要检查该诊断记录是否是由当前登录用户创建的，不是则不允许编辑
+        // 为什么要限定是以上两个列表，而不限制“我的患者”列表呢？
+        // 因为“我的患者”中，存在录入员这个角色，他们和医生是能够互相编辑对方创建的诊断卡片的
+        return false;
+
       } else if ((canEditInMyPatientsList || canEditInTherapistsList || canEditInAppraisersList) && atSameStep) {
         return true;
 
       } else {
-        console.log(diagnosticExperimentStatus, this.patientExperimentStep);
         return false;
       }
     }
@@ -331,7 +340,7 @@ export default {
     Bus.$off(this.CONFIRM);
   },
   watch: {
-    $route() {
+    '$route.path'() {
       this.checkRoute();
     },
     displayDetail: function() {

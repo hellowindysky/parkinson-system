@@ -268,7 +268,7 @@ export default {
     }
   },
   watch: {
-    $route() {
+    '$route.path'() {
       // 如果路由变为'/'，则自动跳转到病患管理
       if (/^\/$/.test(this.$route.path)) {
         this.$router.replace({ name: 'myPatients' });

@@ -92,7 +92,7 @@ export default {
     this.updateScrollbar();
   },
   watch: {
-    $route() {
+    '$route.path'() {
       if (this.displayModal) {
         this.hideModal();
       }

@@ -50,50 +50,51 @@
 import Bus from 'utils/bus.js';
 import { setRequestToken } from 'api/common.js';
 
-import topbar from 'components/views/topbar/Topbar';
-import sidebar from 'components/views/sidebar/Sidebar';
+import topbar from 'views/topbar/Topbar';
+import sidebar from 'views/sidebar/Sidebar';
 
-import passwordModal from 'components/views/modal/passwordmodal/PasswordModal';
-import authorizationModal from 'components/views/modal/authorizationmodal/AuthorizationModal';
-import secretAgreementModal from 'components/views/modal/secretagreementmodal/SecretAgreementModal';
-import messageModal from 'components/views/modal/messagemodal/MessageModal';
-import groupModal from 'components/views/modal/groupmodal/GroupModal';
+const passwordModal = () => import(/* webpackChunkName: 'modal' */ 'modal/passwordmodal/PasswordModal');
+const authorizationModal = () => import(/* webpackChunkName: 'modal' */ 'modal/authorizationmodal/AuthorizationModal');
+const secretAgreementModal = () => import(/* webpackChunkName: 'modal' */ 'modal/secretagreementmodal/SecretAgreementModal');
+const messageModal = () => import(/* webpackChunkName: 'modal' */ 'modal/messagemodal/MessageModal');
+const groupModal = () => import(/* webpackChunkName: 'modal' */ 'modal/groupmodal/GroupModal');
 
-const modalBox = () => import(/* webpackChunkName: 'modal' */ 'components/views/modal/modalbox/ModalBox');
-const firstSymptomsModal = () => import(/* webpackChunkName: 'modal' */ 'components/views/modal/firstsymptomsmodal/FirstSymptomsModal');
-const firstTreatmentModal = () => import(/* webpackChunkName: 'modal' */ 'components/views/modal/firsttreatmentmodal/FirstTreatmentModal');
-const diagnosticRecordModal = () => import(/* webpackChunkName: 'modal' */ 'components/views/modal/diagnosticrecordmodal/DiagnosticRecordModal');
-const chiefComplaintSymptomsModal = () => import(/* webpackChunkName: 'modal' */ 'components/views/modal/chiefcomplaintsymptomsmodal/ChiefComplaintSymptomsModal');
+const modalBox = () => import(/* webpackChunkName: 'personalInfoModal' */ 'modal/modalbox/ModalBox');
+const firstSymptomsModal = () => import(/* webpackChunkName: 'personalInfoModal' */ 'modal/firstsymptomsmodal/FirstSymptomsModal');
+const firstTreatmentModal = () => import(/* webpackChunkName: 'personalInfoModal' */ 'modal/firsttreatmentmodal/FirstTreatmentModal');
+const diagnosticRecordModal = () => import(/* webpackChunkName: 'personalInfoModal' */ 'modal/diagnosticrecordmodal/DiagnosticRecordModal');
+const chiefComplaintSymptomsModal = () => import(/* webpackChunkName: 'personalInfoModal' */ 'modal/chiefcomplaintsymptomsmodal/ChiefComplaintSymptomsModal');
 
-const medicineModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'components/views/modal/medicinemodal/MedicineModal');
-const preEvaluationModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'components/views/modal/preevaluationmodal/PreEvaluationModal');
-const surgicalMethodModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'components/views/modal/surgicalmethodmodal/SurgicalMethodModal');
-const operativeComplicationModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'components/views/modal/operativecomplicationmodal/OperativeComplicationModal');
-const dbsModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'components/views/modal/dbsmodal/DbsModal');
-const physiontherapyModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'components/views/modal/physiontherapymodal/PhysiontherapyModal');
-const treatmentEvaluationModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'components/views/modal/treatmentEvaluationmodal/TreatmentEvaluationModal');
-const adverseEventModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'components/views/modal/adverseeventmodal/AdverseEventModal');
+const medicineModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/medicinemodal/MedicineModal');
+const preEvaluationModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/preevaluationmodal/PreEvaluationModal');
+const surgicalMethodModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/surgicalmethodmodal/SurgicalMethodModal');
+const operativeComplicationModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/operativecomplicationmodal/OperativeComplicationModal');
+const dbsModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/dbsmodal/DbsModal');
+const physiontherapyModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/physiontherapymodal/PhysiontherapyModal');
+const treatmentEvaluationModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/treatmentEvaluationmodal/TreatmentEvaluationModal');
+const adverseEventModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/adverseeventmodal/AdverseEventModal');
 
-const vitalSignsModal = () => import(/* webpackChunkName: 'examinationModal' */ 'components/views/modal/vitalsignsmodal/VitalSignsModal');
-const neurologicModal = () => import(/* webpackChunkName: 'examinationModal' */ 'components/views/modal/neurologicmodal/NeurologicModal');
-const geneModal = () => import(/* webpackChunkName: 'examinationModal' */ 'components/views/modal/genemodal/GeneModal');
-const biochemicalExamModal = () => import(/* webpackChunkName: 'examinationModal' */ 'components/views/modal/biochemicalexammodal/BiochemicalExamModal');
-const neuroelectricModal = () => import(/* webpackChunkName: 'examinationModal' */ 'components/views/modal/neuroelectricmodal/NeuroelectricModal');
-const imageModal = () => import(/* webpackChunkName: 'examinationModal' */ 'components/views/modal/imagemodal/ImageModal');
+const vitalSignsModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/vitalsignsmodal/VitalSignsModal');
+const neurologicModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/neurologicmodal/NeurologicModal');
+const geneModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/genemodal/GeneModal');
+const biochemicalExamModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/biochemicalexammodal/BiochemicalExamModal');
+const neuroelectricModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/neuroelectricmodal/NeuroelectricModal');
+const imageModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/imagemodal/ImageModal');
 
-const applicationModal = () => import(/* webpackChunkName: 'experimentModal' */ 'components/views/modal/applicationmodal/ApplicationModal');
-const rejectionModal = () => import(/* webpackChunkName: 'experimentModal' */ 'components/views/modal/rejectionmodal/RejectionModal');
-const ratificationModal = () => import(/* webpackChunkName: 'experimentModal' */ 'components/views/modal/ratificationmodal/RatificationModal');
-const terminationModal = () => import(/* webpackChunkName: 'experimentModal' */ 'components/views/modal/terminationmodal/TerminationModal');
-const followUpTerminationModal = () => import(/* webpackChunkName: 'experimentModal' */ 'components/views/modal/followupterminationmodal/FollowUpTerminationModal');
-const experimentStepModal = () => import(/* webpackChunkName: 'experimentModal' */ 'components/views/modal/experimentstepmodal/ExperimentStepModal');
+const applicationModal = () => import(/* webpackChunkName: 'experimentModal' */ 'modal/applicationmodal/ApplicationModal');
+const rejectionModal = () => import(/* webpackChunkName: 'experimentModal' */ 'modal/rejectionmodal/RejectionModal');
+const ratificationModal = () => import(/* webpackChunkName: 'experimentModal' */ 'modal/ratificationmodal/RatificationModal');
+const terminationModal = () => import(/* webpackChunkName: 'experimentModal' */ 'modal/terminationmodal/TerminationModal');
+const followUpTerminationModal = () => import(/* webpackChunkName: 'experimentModal' */ 'modal/followupterminationmodal/FollowUpTerminationModal');
+const experimentStepModal = () => import(/* webpackChunkName: 'experimentModal' */ 'modal/experimentstepmodal/ExperimentStepModal');
 
-import filterPanel from 'components/public/filterpanel/FilterPanel';
-import choicePanel from 'components/public/choicepanel/ChoicePanel';
-import confirmBox from 'components/public/confirmbox/ConfirmBox';
-import noticeBox from 'components/public/noticebox/NoticeBox';
+const filterPanel = () => import(/* webpackChunkName: 'filterPanel' */ 'public/filterpanel/FilterPanel');
 
-import waterMark from 'components/public/watermark/WaterMark';
+import choicePanel from 'public/choicepanel/ChoicePanel';
+import confirmBox from 'public/confirmbox/ConfirmBox';
+import noticeBox from 'public/noticebox/NoticeBox';
+
+import waterMark from 'public/watermark/WaterMark';
 
 // 设定多长时间不操作，就返回登录界面
 const RELOGIN_TIME_FOR_NO_OPERATION = 1000 * 60 * 60;

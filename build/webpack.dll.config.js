@@ -1,19 +1,15 @@
-var path = require('path');
-var webpack = require('webpack');
+const path = require('path');
+const webpack = require('webpack');
+const package = require('../package.json')
 
 module.exports = {
   entry: {
-    vendor: [
-      'axios',
-      'element-ui',
-      'es6-promise',
-      'md5',
-      'particles.js',
-      'perfect-scrollbar',
-      'vue',
-      'vue-router',
-      'vuex'
-    ]
+    // 读取 package.json 里的依赖，normalize.css除外，打包会报错
+    vendor: Object.keys(package.dependencies).filter((dependencyName) => {
+      return dependencyName.indexOf('normalize') < 0 &&
+        dependencyName.indexOf('babel-runtime') < 0 &&
+        dependencyName.indexOf('particles') < 0;
+    })
   },
   output: {
     path: path.join(__dirname, '../static/js'),

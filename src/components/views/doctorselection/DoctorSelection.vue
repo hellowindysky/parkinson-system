@@ -62,9 +62,9 @@ import { setRequestToken } from 'api/common.js';
 import { getSupportMessage, getSupportedDoctorList } from 'api/user.js';
 import Util from 'utils/util.js';
 
-import waterMark from 'components/public/watermark/WaterMark';
-import messageModal from 'components/views/modal/messagemodal/MessageModal';
-import secretAgreementModal from 'components/views/modal/secretagreementmodal/SecretAgreementModal';
+import waterMark from 'public/watermark/WaterMark';
+import messageModal from 'modal/messagemodal/MessageModal';
+import secretAgreementModal from 'modal/secretagreementmodal/SecretAgreementModal';
 
 export default {
   data() {

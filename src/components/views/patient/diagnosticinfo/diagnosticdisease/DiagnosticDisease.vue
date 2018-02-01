@@ -71,9 +71,9 @@ import {queryPatientSymptom, delPatientSymptom, modDiseaseSituation } from 'api/
 
 import { pruneObj } from 'utils/helper.js';
 
-import FoldingPanel from 'components/public/foldingpanel/FoldingPanel';
-import ExtensiblePanel from 'components/public/extensiblepanel/ExtensiblePanel';
-import Card from 'components/public/card/Card';
+import FoldingPanel from 'public/foldingpanel/FoldingPanel';
+import ExtensiblePanel from 'public/extensiblepanel/ExtensiblePanel';
+import Card from 'public/card/Card';
 
 export default {
   data() {
@@ -122,7 +122,7 @@ export default {
     },
     diagnosticDisease: {
       type: Object,
-      default: {}
+      default: () => {}
     },
     diagnosisCreator: {
       type: String,
@@ -139,6 +139,10 @@ export default {
     canEdit: {
       type: Boolean,
       default: true
+    },
+    diagnosticChiefComplaint: {
+      type: Array,
+      default: () => []
     }
   },
   methods: {
@@ -392,7 +396,7 @@ export default {
   },
   mounted() {
     // 更新主诉症状的卡片
-    this.updateComplaintSympCard();
+    // this.updateComplaintSympCard();
     Bus.$on(this.UPDATE_COMPLAINTSYMPTOMS_INFO, this.updateComplaintSympCard);
 
     Bus.$on(this.QUIT_DIAGNOSTIC_DETAIL, this.cancel);
@@ -418,8 +422,11 @@ export default {
     Card
   },
   watch: {
-    $route() {
+    '$route.path'() {
       this.updateScrollbar();
+    },
+    diagnosticChiefComplaint: function(newlist) {
+      this.complaintSympData = newlist;
     },
     diagnosticDisease: function() {
       // 每次传过来的数据发生变化，就重新初始化 copyInfo

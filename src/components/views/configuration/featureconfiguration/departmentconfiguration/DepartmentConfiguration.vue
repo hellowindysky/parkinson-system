@@ -13,10 +13,10 @@
 </template>
 
 <script>
-import FeatureTableHead from 'components/views/configuration/featureconfiguration/tablehead/FeatureTableHead';
-import BasicInfoConfig from 'components/views/configuration/featureconfiguration/basicinfoconfig/BasicInfoConfig';
-import DiseageInfoConfig from 'components/views/configuration/featureconfiguration/diseageinfoconfig/DiseageInfoConfig';
-import OtherInfoConfig from 'components/views/configuration/featureconfiguration/otherinfoconfig/OtherInfoConfig';
+import FeatureTableHead from 'views/configuration/featureconfiguration/tablehead/FeatureTableHead';
+import BasicInfoConfig from 'views/configuration/featureconfiguration/basicinfoconfig/BasicInfoConfig';
+import DiseageInfoConfig from 'views/configuration/featureconfiguration/diseageinfoconfig/DiseageInfoConfig';
+import OtherInfoConfig from 'views/configuration/featureconfiguration/otherinfoconfig/OtherInfoConfig';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 

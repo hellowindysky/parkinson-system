@@ -1,13 +1,17 @@
-var path = require('path')
-var utils = require('./utils')
-var config = require('../config')
-var vueLoaderConfig = require('./vue-loader.conf')
-console.log(path.resolve(__dirname, '../src/styles'))
+'use strict'
+const path = require('path')
+const utils = require('./utils')
+const webpack = require('webpack')
+const config = require('../config')
+const vueLoaderConfig = require('./vue-loader.conf')
+
+// console.log(path.resolve(__dirname, '../src/styles'))
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
 }
 
 module.exports = {
+  context: path.resolve(__dirname, '../'),
   entry: {
     app: './src/main.js'
   },
@@ -18,6 +22,14 @@ module.exports = {
       ? config.build.assetsPublicPath
       : config.dev.assetsPublicPath
   },
+  plugins: [
+    new webpack.DllReferencePlugin({
+      context: __dirname,
+      // 下面这个地址对应 webpack.dll.config.js 中生成的那个 json 文件的路径
+      // 这样 webpack 打包时，就先直接去这个json文件中把那些预编译的资源弄进来
+      manifest: require('./vendor-manifest.json')
+    })
+  ],
   externals: {
     'echarts': 'echarts'
   },
@@ -32,6 +44,10 @@ module.exports = {
       'js': resolve('src/assets/js'),
       'api': resolve('src/api'),
       'components': resolve('src/components'),
+      'public': resolve('src/components/public'),
+      'views': resolve('src/components/views'),
+      'modal': resolve('src/components/views/modal'),
+      'patient': resolve('src/components/views/patient'),
       'router': resolve('src/router'),
       'store': resolve('src/store'),
       'utils': resolve('src/utils'),
@@ -57,7 +73,7 @@ module.exports = {
       {
         test: /\.js$/,
         loader: 'babel-loader',
-        include: [resolve('src'), resolve('test')]
+        include: [resolve('src'), resolve('test'), resolve('node_modules/webpack-dev-server/client')]
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
@@ -76,5 +92,17 @@ module.exports = {
         }
       }
     ]
+  },
+  node: {
+    // prevent webpack from injecting useless setImmediate polyfill because Vue
+    // source contains it (although only uses it if it's native).
+    setImmediate: false,
+    // prevent webpack from injecting mocks to Node native modules
+    // that does not make sense for the client
+    dgram: 'empty',
+    fs: 'empty',
+    net: 'empty',
+    tls: 'empty',
+    child_process: 'empty'
   }
 }

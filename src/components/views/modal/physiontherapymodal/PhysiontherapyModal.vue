@@ -44,7 +44,7 @@
             </el-date-picker>
           </span>
         </div>
-        <div class="field" v-if ="!isTherapistsList">
+        <div class="field" v-if ="!createdByTherapist">
           <span class="field-name">
             设备型号:
             <span class="required-mark">*</span>
@@ -72,7 +72,7 @@
             {{patientTaskCode}}
           </span>
         </div>
-        <div class="field" v-if ="!isTherapistsList">
+        <div class="field" v-if ="!createdByTherapist">
           <span class="field-name">
             刺激时长（分钟）:
           </span>
@@ -84,7 +84,7 @@
             <el-input v-model="stimulusDuration" placeholder="请输入刺激时长"></el-input>
           </span>
         </div>
-        <div class="field" v-if ="!isTherapistsList">
+        <div class="field" v-if ="!createdByTherapist">
           <span class="field-name">
             刺激强度（T）:
           </span>
@@ -96,7 +96,7 @@
             <el-input v-model="stimulusIntensity" placeholder="请输入刺激强度"></el-input>
           </span>
         </div>
-        <div class="field" v-if ="!isTherapistsList">
+        <div class="field" v-if ="!createdByTherapist">
           <span class="field-name">
             刺激频率（HZ）:
           </span>
@@ -108,7 +108,7 @@
             <el-input v-model="stimulusFrequency" placeholder="请输入刺激频率"></el-input>
           </span>
         </div>
-        <div class="field whole-line" v-if ="!isTherapistsList">
+        <div class="field whole-line" v-if ="!createdByTherapist">
           <span class="field-name">
             刺激部位:
           </span>
@@ -288,6 +288,8 @@ export default {
       completeInit: false,
       patientTaskCode: '',
 
+      diagnosticExperimentStatus: 0,
+
       patientPhytheTmsId: '',
       patientPhytheTms: '',
       physiType: '',
@@ -390,18 +392,19 @@ export default {
         return '物理疗法';
       }
     },
-    listType() {
-      return this.$store.state.listType;
-    },
-    isTherapistsList() {
-      return this.listType === this.THERAPISTS_PATIENTS_TYPE;
+    createdByTherapist() {
+      return this.diagnosticExperimentStatus === this.EXPERIMENT_STEP_THERAPY;
     }
   },
   methods: {
-    showPanel(cardOperation, item, showEdit) {
+    showPanel(cardOperation, item, showEdit, diagnosticExperimentStep) {
       this.completeInit = false;
       this.mode = cardOperation;
       this.showEdit = showEdit;
+
+      if (diagnosticExperimentStep !== undefined) {
+        this.diagnosticExperimentStatus = parseInt(diagnosticExperimentStep, 10);
+      }
 
       for (let reaction of this.patientPhytheReaction) {
         reaction.severityLevel = '';
@@ -617,7 +620,7 @@ export default {
       this.prepareStimulateSideEvents();
       this.bindValueToStimulateSideEvents();
     },
-    $route() {
+    '$route.path'() {
       if (this.displayModal) {
         this.cancel();
       }

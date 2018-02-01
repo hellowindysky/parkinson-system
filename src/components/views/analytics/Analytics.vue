@@ -21,7 +21,7 @@ export default {
     this.checkRoute();
   },
   watch: {
-    $route() {
+    '$route.path'() {
       this.checkRoute();
     }
   }

@@ -28,8 +28,8 @@
 </template>
 
 <script>
-import FoldingPanel from 'components/public/foldingpanel/FoldingPanel';
-import Card from 'components/public/card/Card';
+import FoldingPanel from 'public/foldingpanel/FoldingPanel';
+import Card from 'public/card/Card';
 import Bus from 'utils/bus.js';
 import { deleteDiagnosticInfo } from 'api/patient.js';
 
@@ -165,7 +165,7 @@ export default {
     },
     seeDetail(item) {
       this.routerJumpWithCaseId(item.patientCaseId);
-      Bus.$emit(this.UPDATE_COMPLAINTSYMPTOMS_INFO);
+      // Bus.$emit(this.UPDATE_COMPLAINTSYMPTOMS_INFO);
     },
     addRecord() {
       this.routerJumpWithCaseId('newCase');
@@ -182,15 +182,19 @@ export default {
         // 如果该患者正处在试验期，则只有当患者所处实验阶段和诊断记录的实验阶段相同时，该阶段的特定的角色才能删除该诊断卡片
         if (this.patientCurrentExperimentStep === diagnosticExperimentStep &&
           this.patientCurrentExperimentStage === diagnosticExperimentStage) {
-          if (this.patientCurrentExperimentStep === 2 && this.listType === this.APPRAISERS_PATIENTS_TYPE) {
+          if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_SCREENING &&
+            this.listType === this.APPRAISERS_PATIENTS_TYPE) {
             return false;
-          } else if (this.patientCurrentExperimentStep === 3 && this.listType === this.THERAPISTS_PATIENTS_TYPE) {
+          } else if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_THERAPY &&
+            this.listType === this.THERAPISTS_PATIENTS_TYPE) {
             return false;
-          } else if (this.patientCurrentExperimentStep === 4 && this.listType === this.APPRAISERS_PATIENTS_TYPE) {
+          } else if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_FOLLOW_UP &&
+            this.listType === this.APPRAISERS_PATIENTS_TYPE) {
             return false;
           }
         }
-        if (this.patientCurrentExperimentStep === 5 && diagnosticExperimentStep === -1 &&
+        if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_COMPLETE &&
+          diagnosticExperimentStep === -1 &&
           this.listType === this.MY_PATIENTS_TYPE) {
           // 如果患者处于实验结束阶段，那么非实验期间添加的诊断记录，其所属医生是可以在“我的患者”下进行删除操作的
           return false;

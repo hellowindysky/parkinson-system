@@ -12,8 +12,8 @@
 <script>
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
-import GroupConfigDetails from 'components/views/configuration/featureconfiguration/groupconfigdetails/GroupConfigDetails';
-import FeatureTableHead from 'components/views/configuration/featureconfiguration/tablehead/FeatureTableHead';
+import GroupConfigDetails from 'views/configuration/featureconfiguration/groupconfigdetails/GroupConfigDetails';
+import FeatureTableHead from 'views/configuration/featureconfiguration/tablehead/FeatureTableHead';
 import { getTemplate } from 'api/user';
 
 export default {

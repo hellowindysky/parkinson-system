@@ -93,7 +93,7 @@
                 </span>
                 <el-input v-else v-model="copyInfo.bioexamResult[index].result"
                  :class="{'warning': warningResults.bioexamResult[index].result}"
-                 @change="updateWarning('bioexamResult', index, item.id)"
+                 @change="updateWarning('bioexamResult', index, item.id, item.regularExpression, item.message)"
                  placeholder="请输入检查结果" :maxlength="500"></el-input>
               </td>
               <td class="col col-unit">
@@ -209,10 +209,8 @@ export default {
           }
         });
 
-        // if (item.bioexamId === 12) {
         this.$set(this.warningResults, 'bioexamResult', []);
         vueCopy(item.bioexamResult.map((elem) => {return {bioexamProjectId: elem.bioexamProjectId, result: elem.result};}), this.warningResults.bioexamResult);
-        // }
       }
 
       this.updateTemplate();
@@ -358,17 +356,17 @@ export default {
     updateAndClose() {
       this.displayModal = false;
     },
-    updateWarning(fieldName, index, id) {
+    updateWarning(fieldName, index, id, reg, txt) {
       let fieldVal = this.copyInfo[fieldName];
+      let regObj = new RegExp(reg);
       if (Array.isArray(this.copyInfo[fieldName])) {
-        if (this.copyInfo[fieldName][index].result && Util.checkIfNotMoreThanNDecimalNums(fieldVal[index].result, 2)) {
+        if (fieldVal[index].result && regObj.test(fieldVal[index].result)) {
           this.$set(this.warningResults[fieldName][index], 'result', '');
         } else {
-          let indexArr = [0, 2, 3];
           if (this.copyInfo.bioexamId === 12 && this.checkRequired(id) && !fieldVal[index].result) {
             this.$set(this.warningResults[fieldName][index], 'result', '必填项');
-          } else if (fieldVal[index].result !== '' && !(this.copyInfo.bioexamId === 14 && indexArr.indexOf(index) !== -1) && !Util.checkIfNotMoreThanNDecimalNums(fieldVal[index].result, 2)) {
-            this.$set(this.warningResults[fieldName][index], 'result', '请输入正数，最多2位小数');
+          } else if ((fieldVal[index].result !== '') && !regObj.test(fieldVal[index].result)) {
+            this.$set(this.warningResults[fieldName][index], 'result', txt);
           } else {
             this.$set(this.warningResults[fieldName][index], 'result', '');
           };
@@ -427,7 +425,7 @@ export default {
     Bus.$off(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
   },
   watch: {
-    $route() {
+    '$route.path'() {
       if (this.displayModal) {
         this.cancel();
       }

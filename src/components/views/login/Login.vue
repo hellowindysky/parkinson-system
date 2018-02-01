@@ -70,7 +70,7 @@ import { getLoginInfo } from 'api/login';
 import { setRequestToken, clearRequestToken } from 'api/common';
 import { sendVerificationCode, resetPassword } from 'api/user';
 
-// import particles from 'components/views/login/particles/Particles';
+// import particles from 'views/login/particles/Particles';
 
 const ACCOUNT_LOGIN = 1;
 

@@ -65,7 +65,7 @@ import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import { reviseDateFormat, pruneObj, deepCopy } from 'utils/helper.js';
 
-import FoldingPanel from 'components/public/foldingpanel/FoldingPanel';
+import FoldingPanel from 'public/foldingpanel/FoldingPanel';
 
 const WHOLE_LINE_FIELD_LIST = ['homeAddress'];
 const CONVERT_TO_DECIMAL_LIST = ['height', 'weight'];
@@ -460,6 +460,9 @@ export default {
       } else if (copyFieldValue !== '' && ['yearsOfEducation'].indexOf(fieldName) >= 0) {
         if (!Util.checkIfNonNegativeInteger(copyFieldValue)) {
           this.$set(this.warningResults, fieldName, '只能填入非负整数');
+          return;
+        } else if (copyFieldValue > 30) {
+          this.$set(this.warningResults, fieldName, '不能超过30');
           return;
         }
 

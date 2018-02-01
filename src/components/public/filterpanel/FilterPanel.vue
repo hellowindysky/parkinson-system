@@ -181,7 +181,7 @@
               <el-checkbox class="item-checkbox" v-model="diseaseInfoSelectedStatus.diseaseType"></el-checkbox>
               <span class="item-name">起病类型</span>
               <span class="item-value">
-                <el-select class="normal-input" v-model="diseaseInfoCondition.diseaseType" @change="clearVal"
+                <el-select class="normal-input" v-model="diseaseInfoCondition.diseaseType" @change="clearVal('specificDisease')"
                   :disabled="!diseaseInfoSelectedStatus.diseaseType">
                   <el-option v-for="option in getOptions('diseType')" :label="option.name" :value="option.code"
                     :key="option.code"></el-option>
@@ -286,7 +286,7 @@
               <span class="item-value">
                 <el-select class="normal-input" v-model="diseaseInfoCondition.motorComplication"
                   :disabled="!diseaseInfoSelectedStatus.motorComplication">
-                  <el-option v-for="option in getOptions('symptomTypeId', 'ms')" :label="option.name" :value="option.code"
+                  <el-option v-for="option in getOptions('symptomTypeId', 'mc')" :label="option.name" :value="option.code"
                     :key="option.code"></el-option>
                 </el-select>
               </span>
@@ -601,9 +601,31 @@
               <el-checkbox class="item-checkbox" v-model="diagnosticDiseaseSelectedStatus.diseaseType"></el-checkbox>
               <span class="item-name">病症类型</span>
               <span class="item-value">
-                <el-select class="normal-input" v-model="diagnosticDiseaseCondition.diseaseType"
+                <el-select class="normal-input" v-model="diagnosticDiseaseCondition.diseaseType" @change="clearVal('specificDisease2')"
                   :disabled="!diagnosticDiseaseSelectedStatus.diseaseType">
                   <el-option v-for="option in getOptions('diseType')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
+              </span>
+            </div>
+            <div class="item" v-show="getOptions('specificDisease2').length !== 0">
+              <el-checkbox class="item-checkbox" v-model="diagnosticDiseaseSelectedStatus.specificDisease"></el-checkbox>
+              <span class="item-name">具体病症</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="diagnosticDiseaseCondition.specificDisease"
+                  :disabled="!diagnosticDiseaseSelectedStatus.specificDisease">
+                  <el-option v-for="option in getOptions('specificDisease2')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
+              </span>
+            </div>
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="diagnosticDiseaseSelectedStatus.diagnoseState"></el-checkbox>
+              <span class="item-name">确诊情况</span>
+              <span class="item-value">
+                <el-select class="normal-input" v-model="diagnosticDiseaseCondition.diagnoseState"
+                  :disabled="!diagnosticDiseaseSelectedStatus.diagnoseState">
+                  <el-option v-for="option in getOptions('diagnoseState')" :label="option.name" :value="option.code"
                     :key="option.code"></el-option>
                 </el-select>
               </span>
@@ -1203,7 +1225,8 @@
               <td class="col col-gender">{{getNameByCode(patient.sex, 'sex')}}</td>
               <td class="col col-age">{{patient.age}}</td>
               <td class="col col-disease">{{getNameByCode(patient.diseaseType, 'diseType')}}</td>
-              <td class="col col-symptom">{{getNameByCodeListString(patient.firSym, 'firSym')}}</td>
+              <!-- <td class="col col-symptom">{{getNameByCodeListString(patient.firSym, 'firSym')}}</td> -->
+              <td class="col col-symptom">{{patient.firSym}}</td>
               <td class="col col-operation">
                 <span class="text-button" @click="seePatientDetail(patient.patientId)">查看</span>
                 <span class="text-button" @click="manageGroup(patient.patientId)">分组</span>
@@ -1227,7 +1250,7 @@ import { baseUrl } from 'api/common.js';
 import { vueCopy, pruneObj, reviseDateFormat, isEmptyObject } from 'utils/helper.js';
 import Util from 'utils/util.js';
 
-import GroupPanel from 'components/public/grouppanel/GroupPanel';
+import GroupPanel from 'public/grouppanel/GroupPanel';
 
 const PERSONAL_INFO = 'personalInfo';
 const DIAGNOSTIC_INFO = 'diagnosticInfo';
@@ -1260,9 +1283,9 @@ let diagnosticBasicFieldNames = ['caseType', 'diagTimeFrom', 'diagTimeTo',
 let diagnosticBasicSelectedFieldNames = ['caseType', 'diagTimeFrom', 'diagTimeFrom',
   'diseaseYearFrom', 'diseaseYearFrom'];
 
-let diagnosticDiseaseFieldNames = ['diseaseType', 'motorSymptomTypeId',
+let diagnosticDiseaseFieldNames = ['diseaseType', 'specificDisease', 'diagnoseState', 'motorSymptomTypeId',
   'motorComplicationsSymptomTypeId', 'nonMotorSymptomTypeId'];
-let diagnosticDiseaseSelectedFieldNames = ['diseaseType', 'motorSymptomTypeId',
+let diagnosticDiseaseSelectedFieldNames = ['diseaseType', 'specificDisease', 'diagnoseState', 'motorSymptomTypeId',
   'motorComplicationsSymptomTypeId', 'nonMotorSymptomTypeId'];
 
 let diagnosticMedicineFieldNames = ['medicineType', 'medicineId', 'medicineSpecId',
@@ -1412,8 +1435,12 @@ export default {
     }
   },
   methods: {
-    clearVal() {
-      this.$set(this.diseaseInfoCondition, 'specificDisease', '');
+    clearVal(flag) {
+      if (flag === 'specificDisease') {
+        this.$set(this.diseaseInfoCondition, 'specificDisease', '');
+      } else if (flag === 'specificDisease2') {
+        this.$set(this.diagnosticDiseaseCondition, 'specificDisease', '');
+      };
     },
     choosePersonalInfo() {
       this.currentTab = PERSONAL_INFO;
@@ -1704,9 +1731,14 @@ export default {
             code: type.typeCode
           });
         }
-      } else if (fieldName === 'specificDisease') {
+      } else if (fieldName === 'specificDisease' || fieldName === 'specificDisease2') {
         let types = Util.getElement('typegroupcode', 'diseType', this.typeGroup).types;
-        let childType = Util.getElement('typeCode', this.diseaseInfoCondition.diseaseType, types).childType;
+        let childType = [];
+        if (fieldName === 'specificDisease') {
+          childType = Util.getElement('typeCode', this.diseaseInfoCondition.diseaseType, types).childType;
+        } else if (fieldName === 'specificDisease2') {
+          childType = Util.getElement('typeCode', this.diagnosticDiseaseCondition.diseaseType, types).childType;
+        }
         childType = childType ? childType : [];
         for (let type of childType) {
           options.push({
@@ -2059,7 +2091,7 @@ export default {
     this.queryPatients();
   },
   watch: {
-    $route() {
+    '$route.path'() {
       if (this.showFilterPanel) {
         // 在面板打开的情况下，一旦路由发生变化，则自动收起面板
         Bus.$emit(this.TOGGLE_FILTER_PANEL_DISPLAY);

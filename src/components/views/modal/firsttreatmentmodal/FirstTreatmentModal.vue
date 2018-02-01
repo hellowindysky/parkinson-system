@@ -503,7 +503,7 @@ export default {
     Bus.$on(this.SHOW_FIRSTTREATMENT_MODAL, this.showModal);
   },
   watch: {
-    $route() {
+    '$route.path'() {
       if (this.displayModal) {
         this.cancel();
       }

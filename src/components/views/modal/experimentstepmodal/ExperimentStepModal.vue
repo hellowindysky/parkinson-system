@@ -230,7 +230,7 @@ export default {
     Bus.$off(this.SHOW_EXPERIMENT_STEP_MODAL);
   },
   watch: {
-    $route() {
+    '$route.path'() {
       if (this.displayModal) {
         this.cancel();
       }

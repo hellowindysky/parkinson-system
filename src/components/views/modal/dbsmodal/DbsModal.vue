@@ -1712,7 +1712,7 @@ export default {
     Bus.$off(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
   },
   watch: {
-    $route() {
+    '$route.path'() {
       if (this.displayModal) {
         this.cancel();
       }

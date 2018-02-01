@@ -83,11 +83,11 @@ import Bus from 'utils/bus.js';
 
 import { getPatientInfo, getPatientGroupInfo, getPatientSubjectInfo, getPatientCaseList } from 'api/patient';
 
-import DiagnosticDetail from 'components/views/patient/diagnosticinfo/diagnosticdetail/DiagnosticDetail';
-import ScaleModal from 'components/views/modal/scalemodal/ScaleModal';
-import BasicInfo from 'components/views/patient/personalinfo/basicinfo/BasicInfo';
-import GroupPanel from 'components/public/grouppanel/GroupPanel';
-import SubjectPanel from 'components/public/subjectpanel/SubjectPanel';
+import DiagnosticDetail from 'patient/diagnosticinfo/diagnosticdetail/DiagnosticDetail';
+import ScaleModal from 'modal/scalemodal/ScaleModal';
+import BasicInfo from 'patient/personalinfo/basicinfo/BasicInfo';
+import GroupPanel from 'public/grouppanel/GroupPanel';
+import SubjectPanel from 'public/subjectpanel/SubjectPanel';
 
 export default {
   data() {
@@ -331,7 +331,7 @@ export default {
     Bus.$on(this.UPDATE_PATIENT_CASE_LIST, this.updatePatientCaseList);
   },
   watch: {
-    $route() {
+    '$route.path'() {
       this.checkRoute();
       this.displayGroupPanel = false;  // 路由变化时，关闭分组面板
       this.$refs.scrollArea.scrollTop = 0;  // 切换自组件时，滚动条还原到顶部
