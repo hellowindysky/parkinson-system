@@ -122,7 +122,7 @@ export default {
     },
     diagnosticDisease: {
       type: Object,
-      default: {}
+      default: () => {}
     },
     diagnosisCreator: {
       type: String,
@@ -139,6 +139,10 @@ export default {
     canEdit: {
       type: Boolean,
       default: true
+    },
+    diagnosticChiefComplaint: {
+      type: Array,
+      default: () => []
     }
   },
   methods: {
@@ -392,7 +396,7 @@ export default {
   },
   mounted() {
     // 更新主诉症状的卡片
-    this.updateComplaintSympCard();
+    // this.updateComplaintSympCard();
     Bus.$on(this.UPDATE_COMPLAINTSYMPTOMS_INFO, this.updateComplaintSympCard);
 
     Bus.$on(this.QUIT_DIAGNOSTIC_DETAIL, this.cancel);
@@ -420,6 +424,9 @@ export default {
   watch: {
     '$route.path'() {
       this.updateScrollbar();
+    },
+    diagnosticChiefComplaint: function(newlist) {
+      this.complaintSympData = newlist;
     },
     diagnosticDisease: function() {
       // 每次传过来的数据发生变化，就重新初始化 copyInfo
