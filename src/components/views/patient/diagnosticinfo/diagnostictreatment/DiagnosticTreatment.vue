@@ -384,7 +384,7 @@ export default {
     },
     showSurgeryPanel() {
       var duringExperiment = this.diagnosticExperimentStep > 0 && this.diagnosticExperimentStep < 5;
-      if (this.isExperimentPatientsList && duringExperiment) {
+      if (duringExperiment) {
         return false;
       } else {
         return true;
