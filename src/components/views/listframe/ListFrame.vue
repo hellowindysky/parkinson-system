@@ -11,7 +11,7 @@
 
 <script>
 import Bus from 'utils/bus.js';
-import List from 'components/views/list/List';
+import List from 'views/list/List';
 
 export default {
   data() {

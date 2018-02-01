@@ -157,9 +157,9 @@ import { deleteEmg, deleteBiochemical, deleteNeurologicCheck, deleteSleepMonitor
   deleteGeneCheck, deleteImage, deleteVitalSigns } from 'api/patient.js';
 // import { vueCopy } from 'utils/helper';
 
-import FoldingPanel from 'components/public/foldingpanel/FoldingPanel';
-import ExtensiblePanel from 'components/public/extensiblepanel/ExtensiblePanel';
-import Card from 'components/public/card/Card';
+import FoldingPanel from 'public/foldingpanel/FoldingPanel';
+import ExtensiblePanel from 'public/extensiblepanel/ExtensiblePanel';
+import Card from 'public/card/Card';
 
 export default {
   data() {

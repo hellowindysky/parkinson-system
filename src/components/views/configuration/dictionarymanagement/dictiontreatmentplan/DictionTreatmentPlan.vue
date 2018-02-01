@@ -11,11 +11,11 @@
 <script>
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
-import CommonDrugs from 'components/views/configuration/dictionarymanagement/commondrugs/CommonDrugs';
-import ReasonsWithDrawal from 'components/views/configuration/dictionarymanagement/reasonswithdrawal/ReasonsWithDrawal';
-import SideEffects from 'components/views/configuration/dictionarymanagement/sideeffects/SideEffects';
-import SurgicalProgram from 'components/views/configuration/dictionarymanagement/surgicalprogram/SurgicalProgram';
-// import FeatureFoldingPanel from 'components/public/featurefoldingpanel/FeatureFoldingPanel';
+import CommonDrugs from 'views/configuration/dictionarymanagement/commondrugs/CommonDrugs';
+import ReasonsWithDrawal from 'views/configuration/dictionarymanagement/reasonswithdrawal/ReasonsWithDrawal';
+import SideEffects from 'views/configuration/dictionarymanagement/sideeffects/SideEffects';
+import SurgicalProgram from 'views/configuration/dictionarymanagement/surgicalprogram/SurgicalProgram';
+// import FeatureFoldingPanel from 'public/featurefoldingpanel/FeatureFoldingPanel';
 import { getDictionary } from 'api/user';
 
 export default {

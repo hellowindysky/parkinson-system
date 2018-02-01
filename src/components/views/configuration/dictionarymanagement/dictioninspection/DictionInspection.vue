@@ -11,11 +11,11 @@
 <script>
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
-import LifeCharacteristics from 'components/views/configuration/dictionarymanagement/lifecharacteristics/LifeCharacteristics';
-import NervousSystem from 'components/views/configuration/dictionarymanagement/nervoussystem/NervousSystem';
-import BiochemicalIndexes from 'components/views/configuration/dictionarymanagement/biochemicalindexes/BiochemicalIndexes';
-import Electromyogram from 'components/views/configuration/dictionarymanagement/electromyogram/Electromyogram';
-// import FeatureFoldingPanel from 'components/public/featurefoldingpanel/FeatureFoldingPanel';
+import LifeCharacteristics from 'views/configuration/dictionarymanagement/lifecharacteristics/LifeCharacteristics';
+import NervousSystem from 'views/configuration/dictionarymanagement/nervoussystem/NervousSystem';
+import BiochemicalIndexes from 'views/configuration/dictionarymanagement/biochemicalindexes/BiochemicalIndexes';
+import Electromyogram from 'views/configuration/dictionarymanagement/electromyogram/Electromyogram';
+// import FeatureFoldingPanel from 'public/featurefoldingpanel/FeatureFoldingPanel';
 import { getDictionary } from 'api/user';
 
 export default {

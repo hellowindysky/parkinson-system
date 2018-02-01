@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import FeatureFoldingPanel from 'components/public/featurefoldingpanel/FeatureFoldingPanel';
+import FeatureFoldingPanel from 'public/featurefoldingpanel/FeatureFoldingPanel';
 
 export default {
   components: {

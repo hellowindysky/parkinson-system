@@ -312,9 +312,9 @@ import { mapGetters } from 'vuex';
 import Util from 'utils/util.js';
 import Bus from 'utils/bus.js';
 import { deepCopy, vueCopy, pruneObj, reviseDateFormat } from 'utils/helper.js';
-import FoldingPanel from 'components/public/foldingpanel/FoldingPanel';
-import ExtensiblePanel from 'components/public/extensiblepanel/ExtensiblePanel';
-import Card from 'components/public/card/Card';
+import FoldingPanel from 'public/foldingpanel/FoldingPanel';
+import ExtensiblePanel from 'public/extensiblepanel/ExtensiblePanel';
+import Card from 'public/card/Card';
 import {queryPatientFirstSymbol, deletePatientFirstSymbol, queryPatientFirstVisitTreatment, delPatientFirstVisitTreatment, queryVisitDignosticRecord, delVisitDignosticRecord, modDiseaseHistory } from 'api/patient.js';
 
 const HALF_LINE_FIELD_LIST = ['diseaseType', 'specificDisease', 'diagnoseState', 'ariTime', 'courseOfDisease', 'firTime', 'surTime', 'firMedinfo',

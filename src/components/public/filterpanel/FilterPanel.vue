@@ -1250,7 +1250,7 @@ import { baseUrl } from 'api/common.js';
 import { vueCopy, pruneObj, reviseDateFormat, isEmptyObject } from 'utils/helper.js';
 import Util from 'utils/util.js';
 
-import GroupPanel from 'components/public/grouppanel/GroupPanel';
+import GroupPanel from 'public/grouppanel/GroupPanel';
 
 const PERSONAL_INFO = 'personalInfo';
 const DIAGNOSTIC_INFO = 'diagnosticInfo';

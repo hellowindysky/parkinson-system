@@ -196,7 +196,7 @@ import { baseUrl, getCommonRequest } from 'api/common.js';
 import { modifyScaleInfo, addScaleInfo } from 'api/patient';
 import { vueCopy, deepCopy } from 'utils/helper';
 
-import FoldingPanel from 'components/public/foldingpanel/FoldingPanel';
+import FoldingPanel from 'public/foldingpanel/FoldingPanel';
 
 export default {
   data() {

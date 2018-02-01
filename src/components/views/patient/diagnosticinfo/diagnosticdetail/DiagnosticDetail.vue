@@ -60,11 +60,11 @@ import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import { getPatientCase, archivePatientCase } from 'api/patient.js';
 
-import DiagnosticBasic from 'components/views/patient/diagnosticinfo/diagnosticbasic/DiagnosticBasic';
-import DiagnosticDisease from 'components/views/patient/diagnosticinfo/diagnosticdisease/DiagnosticDisease';
-import DiagnosticTreatment from 'components/views/patient/diagnosticinfo/diagnostictreatment/DiagnosticTreatment';
-import DiagnosticScale from 'components/views/patient/diagnosticinfo/diagnosticscale/DiagnosticScale';
-import DiagnosticExamination from 'components/views/patient/diagnosticinfo/diagnosticexamination/DiagnosticExamination';
+import DiagnosticBasic from 'patient/diagnosticinfo/diagnosticbasic/DiagnosticBasic';
+import DiagnosticDisease from 'patient/diagnosticinfo/diagnosticdisease/DiagnosticDisease';
+import DiagnosticTreatment from 'patient/diagnosticinfo/diagnostictreatment/DiagnosticTreatment';
+import DiagnosticScale from 'patient/diagnosticinfo/diagnosticscale/DiagnosticScale';
+import DiagnosticExamination from 'patient/diagnosticinfo/diagnosticexamination/DiagnosticExamination';
 
 export default {
   props: {

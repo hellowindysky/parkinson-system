@@ -44,9 +44,9 @@ import Util from 'utils/util.js';
 import { mapGetters } from 'vuex';
 import { deleteScaleInfo } from 'api/patient.js';
 
-import FoldingPanel from 'components/public/foldingpanel/FoldingPanel';
-import ExtensiblePanel from 'components/public/extensiblepanel/ExtensiblePanel';
-import Card from 'components/public/card/Card';
+import FoldingPanel from 'public/foldingpanel/FoldingPanel';
+import ExtensiblePanel from 'public/extensiblepanel/ExtensiblePanel';
+import Card from 'public/card/Card';
 
 export default {
   data() {

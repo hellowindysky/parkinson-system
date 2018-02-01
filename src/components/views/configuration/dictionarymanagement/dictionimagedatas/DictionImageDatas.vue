@@ -9,8 +9,8 @@
 <script>
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
-import ImageType from 'components/views/configuration/dictionarymanagement/imagetype/ImageType';
-import VideoUploadType from 'components/views/configuration/dictionarymanagement/videouploadtype/VideoUploadType';
+import ImageType from 'views/configuration/dictionarymanagement/imagetype/ImageType';
+import VideoUploadType from 'views/configuration/dictionarymanagement/videouploadtype/VideoUploadType';
 import { getDictionary } from 'api/user';
 
 export default {

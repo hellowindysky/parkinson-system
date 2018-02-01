@@ -65,7 +65,7 @@ import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import { reviseDateFormat, pruneObj, deepCopy } from 'utils/helper.js';
 
-import FoldingPanel from 'components/public/foldingpanel/FoldingPanel';
+import FoldingPanel from 'public/foldingpanel/FoldingPanel';
 
 const WHOLE_LINE_FIELD_LIST = ['homeAddress'];
 const CONVERT_TO_DECIMAL_LIST = ['height', 'weight'];

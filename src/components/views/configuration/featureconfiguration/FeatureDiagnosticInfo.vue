@@ -9,8 +9,8 @@
 <script>
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
-import AttendanceRecord from 'components/views/configuration/featureconfiguration/attendancerecord/AttendanceRecord';
-import TreatmentPlan from 'components/views/configuration/featureconfiguration/treatmentplan/TreatmentPlan';
+import AttendanceRecord from 'views/configuration/featureconfiguration/attendancerecord/AttendanceRecord';
+import TreatmentPlan from 'views/configuration/featureconfiguration/treatmentplan/TreatmentPlan';
 import { getTemplate } from 'api/user';
 
 export default {
