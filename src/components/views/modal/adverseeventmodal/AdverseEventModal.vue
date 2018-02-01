@@ -58,6 +58,7 @@
               type="textarea"
               :rows="2"
               :maxlength="500"
+              @change="updateWarning('adverseDescribe')"
               placeholder="请输入不良事件描述">
             </el-input>
           </span>
