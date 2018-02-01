@@ -15,6 +15,7 @@
       </diagnostic-basic>
       <diagnostic-disease :canEdit="canEdit" class="folding-panel" :mode="mode" v-show="existed"
         :diagnosticDisease="diagnosticDisease"
+        :diagnosticChiefComplaint="caseDetail.patientSymptom"
         :diagnosticExperimentStep="diagnosticExperimentStep"
         :patientExperimentStep="patientExperimentStep"
         :diagnosisCreator="diagnosisCreator">
