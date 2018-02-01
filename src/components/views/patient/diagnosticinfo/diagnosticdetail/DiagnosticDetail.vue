@@ -142,7 +142,8 @@ export default {
       return [2, 3, 4].indexOf(patientCurrentExperimentStatus) >= 0;    // 2, 3, 4分别对应筛选阶段，治疗期，随访期
     },
     canEdit() {
-      // var createByCurrentUser = this.diagnosisCreator === sessionStorage.getItem('userName');
+      var createByCurrentUser = this.diagnosisCreator === sessionStorage.getItem('userName');
+      var isExperimentPatientsList = this.listType === this.THERAPISTS_PATIENTS_TYPE || this.listType === this.APPRAISERS_PATIENTS_TYPE;
 
       var diagnosticExperimentStatus = parseInt(this.diagnosticExperimentStep, 10);
       var patientCurrentExperimentStatus = parseInt(this.patientExperimentStep, 10);
@@ -168,11 +169,16 @@ export default {
       } else if (caseId === undefined || this.hasBeenArchived) {
         return false;
 
+      } else if (isExperimentPatientsList && !createByCurrentUser) {
+        // 如果当前处于“评估者”和“诊断者”的患者列表，则需要检查该诊断记录是否是由当前登录用户创建的，不是则不允许编辑
+        // 为什么要限定是以上两个列表，而不限制“我的患者”列表呢？
+        // 因为“我的患者”中，存在录入员这个角色，他们和医生是能够互相编辑对方创建的诊断卡片的
+        return false;
+
       } else if ((canEditInMyPatientsList || canEditInTherapistsList || canEditInAppraisersList) && atSameStep) {
         return true;
 
       } else {
-        console.log(diagnosticExperimentStatus, this.patientExperimentStep);
         return false;
       }
     }
