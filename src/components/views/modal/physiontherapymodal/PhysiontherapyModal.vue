@@ -547,7 +547,7 @@ export default {
         }
       }
       for (let property in this.warningResults) {
-        if (this.listType === this.THERAPISTS_PATIENTS_TYPE && property === 'deviceType') {
+        if (this.createdByTherapist && property === 'deviceType') {
           // do nothing
         } else if (this.warningResults[property]) {
           this.lockSubmitButton = false;
