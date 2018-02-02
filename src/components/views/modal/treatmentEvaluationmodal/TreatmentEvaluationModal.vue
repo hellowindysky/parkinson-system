@@ -284,7 +284,15 @@ export default {
       for (let reaction of this.patientPhytheReaction) {
         reaction.severityLevel = '';
       }
-
+      // 获取患者的 实验编号
+      this.patientTaskCode = '';
+      getPatientSimpleInfo(this.$route.params.id).then((data) => {
+        if (data.patientInfo && data.patientInfo.patientTaskCode) {
+          this.patientTaskCode = data.patientInfo.patientTaskCode;
+        }
+      }, (error) => {
+        console.log(error);
+      });
       // console.log('item: ', item);
       this.patientPhytheAssessId = item.patientPhytheAssessId ? item. patientPhytheAssessId : '';
       this.recordDate = item.recordDate ? item.recordDate : '';
@@ -307,14 +315,6 @@ export default {
       this.completeInit = true;
       this.displayModal = true;
       this.updateScrollbar();
-    // 获取患者的 实验编号
-      getPatientSimpleInfo(this.$route.params.id).then((data) => {
-        if (data.patientInfo.patientTaskCode) {
-          this.patientTaskCode = data.patientInfo.patientTaskCode;
-        }
-      }, (error) => {
-        console.log(error);
-      });
     },
     transform(code, fieldName) {
       var options = this.getOptions(fieldName);
