@@ -406,6 +406,16 @@ export default {
         this.diagnosticExperimentStatus = parseInt(diagnosticExperimentStep, 10);
       }
 
+      // 获取患者的 实验编号
+      this.patientTaskCode = '';
+      getPatientSimpleInfo(this.$route.params.id).then((data) => {
+        if (data.patientInfo && data.patientInfo.patientTaskCode) {
+          this.patientTaskCode = data.patientInfo.patientTaskCode;
+        }
+      }, (error) => {
+        console.log(error);
+      });
+
       for (let reaction of this.patientPhytheReaction) {
         reaction.severityLevel = '';
       }
@@ -453,14 +463,6 @@ export default {
       this.completeInit = true;
       this.displayModal = true;
       this.updateScrollbar();
-      // 获取患者的 实验编号
-      getPatientSimpleInfo(this.$route.params.id).then((data) => {
-        if (data.patientInfo.patientTaskCode) {
-          this.patientTaskCode = data.patientInfo.patientTaskCode;
-        }
-      }, (error) => {
-        console.log(error);
-      });
     },
     transform(code, fieldName) {
       var options = this.getOptions(fieldName);

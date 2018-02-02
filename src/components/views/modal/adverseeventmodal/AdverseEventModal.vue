@@ -518,17 +518,16 @@ export default {
       this.$set(this.treatMedicine[0], 'medicineName', '');
       this.$set(this.treatMedicine[0], 'totalDailyDose', '');
       this.$set(this.treatMedicine[0], 'totalDailyDose', '');
+       // 获取患者的 实验编号
+      this.patientTaskCode = '';
+      getPatientSimpleInfo(this.$route.params.id).then((data) => {
+        if (data.patientInfo && data.patientInfo.patientTaskCode) {
+          this.patientTaskCode = data.patientInfo.patientTaskCode;
+        }
+      }, (error) => {
+        console.log(error);
+      });
 
-      // for (let medicine of this.adjointMedicine) {
-      //   medicine.medicineName = '';
-      //   medicine.totalDailyDose = '';
-      //   medicine.medicineMethod = '';
-      // }
-      // for (let reaction of this.treatMedicine) {
-      //   reaction.medicineName = '';
-      //   reaction.totalDailyDose = '';
-      //   reaction.medicineMethod = '';
-      // }
       this.$nextTick(() => {
         this.$refs.scrollArea.scrollTop = 0;
         for (var property in this.warningResults) {
@@ -564,14 +563,6 @@ export default {
       this.updateScrollbar();
       this.foldedConditionalContentMeasures = false;
       this.foldedConditionalContentEndEvents = false;
-    // 获取患者的 实验编号
-      getPatientSimpleInfo(this.$route.params.id).then((data) => {
-        if (data.patientInfo.patientTaskCode) {
-          this.patientTaskCode = data.patientInfo.patientTaskCode;
-        }
-      }, (error) => {
-        console.log(error);
-      });
     },
     getUIType(field) {
       // uiType类型 0/无 1/输入框 2/数字箭头 3/单选下拉框 4/单选按纽 5/多选复选框 6/日期 7/日期时间
