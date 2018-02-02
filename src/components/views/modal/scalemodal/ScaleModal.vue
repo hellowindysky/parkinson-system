@@ -14,7 +14,7 @@
 
     <div class="scroll-area" ref="scrollArea">
       <div class="scale-selector" v-if="mode!==VIEW_CURRENT_CARD">
-        <div class="field whole-line" v-show="mode===ADD_NEW_CARD">
+        <div class="field whole-line" v-if="mode===ADD_NEW_CARD">
           <span class="field-name">
             选择量表:
             <span class="required-mark">*</span>
@@ -24,7 +24,7 @@
               {{warningResults.scaleInfoId}}
             </span>
             <el-select placeholder="请选择量表" v-model="copyInfo.scaleInfoId" :class="{'warning': warningResults.scaleInfoId}"
-              :disabled="copyInfo.scaleInfoId!==''" @change="selectScale" size="small">
+              @change="selectScale" size="small">
               <el-option v-for="scale in allScale" :key="scale.scaleInfoId" :label="scale.gaugeName"
                 :value="scale.scaleInfoId" v-show="getScaleTypeCode(scale.scaleInfoId)===scaleTypeCode"></el-option>
             </el-select>
@@ -687,6 +687,10 @@ export default {
       this.initSymptomList();
     },
     targetScale: function() {
+      if (this.mode === this.ADD_NEW_CARD) {
+        // 只有在新增模式下，才允许更换量表，一旦这样做，就要清空答题信息
+        this.$set(this.copyInfo, 'patientOptions', []);
+      }
       this.getCorrectAnswer();
     }
   }
