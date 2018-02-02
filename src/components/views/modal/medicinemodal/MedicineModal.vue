@@ -82,7 +82,7 @@
             <span v-if="getMatchedField(field.fieldName).readOnlyType===2">
               <span v-if="field.fieldName==='levodopaDose'">
                 {{levodopaDose}}
-                <span class="enhance" v-show="enhanceEffect">( +33% )</span>
+                <span class="enhance" v-show="enhanceEffect && levodopaDose!==0">( +33% )</span>
               </span>
               <span v-else-if="field.fieldName==='levodopaFactorUsed'">{{levodopaFactor}}</span>
               <span v-else-if="field.fieldName==='totalMeasure'">{{medicine.totalMeasure}} mg</span>
@@ -95,7 +95,7 @@
             <span v-if="getMatchedField(field.fieldName).readOnlyType===2">
               <span v-if="field.fieldName==='levodopaDose'">
                 {{levodopaDose}}
-                <span class="enhance" v-show="enhanceEffect">( +33% )</span>
+                <span class="enhance" v-show="enhanceEffect && levodopaDose!==0">( +33% )</span>
               </span>
               <span v-else-if="field.fieldName==='levodopaFactorUsed'">{{levodopaFactor}}</span>
               <span v-else-if="field.fieldName==='totalMeasure'">{{totalMeasure}} mg</span>
