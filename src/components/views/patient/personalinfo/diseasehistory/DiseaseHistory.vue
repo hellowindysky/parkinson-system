@@ -383,7 +383,9 @@ export default {
     courseOfDiseaseInfo() {
       // 病程 特殊的字段特殊处理
       if (this.copyInfo['ariTime']) {
-        return Util.calculateYearsBetween(this.copyInfo['ariTime'], new Date());
+        let years = Util.calculateYearsBetween(this.copyInfo['ariTime'], new Date());
+        this.$set(this.copyInfo, 'courseOfDisease', years);
+        return years;
       } else {
         return this.getMatchedField('courseOfDisease').cnFieldDesc;
         // return '——选择起病时间自动计算——';
@@ -743,7 +745,6 @@ export default {
       delete submitData.patientFirstVisitTreatments;
       delete submitData.patientHistorys;
       pruneObj(submitData);
-
       for (let key in submitData) {
         if (Array.isArray(submitData[key]) && key !== 'patientDiseaseOrders') {
           let valStr = submitData[key].join(',');
@@ -765,6 +766,8 @@ export default {
                 message: '请选择发病部位',
                 type: 'warning'
               });
+              // 此时发病部位没填，当点击确定之后，不知为什么这个arisePart就被删了，再填就填不了了，不得已加了下面一句话
+              this.$set(this.copyInfo['patientDiseaseOrders'][i], 'arisePart', '');
               return;
             };
             if (item.time === '' || item.time === undefined) {
@@ -772,6 +775,8 @@ export default {
                 message: '请填写发病年月',
                 type: 'warning'
               });
+              // 此时发病年月没填，当点击确定之后，不知为什么这个time就变成undefined了，再填就填不了了，不得已加了下面一句话
+              this.$set(this.copyInfo['patientDiseaseOrders'][i], 'time', '');
               return;
             };
           };
