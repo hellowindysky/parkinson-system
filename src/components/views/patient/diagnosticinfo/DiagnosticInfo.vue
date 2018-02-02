@@ -176,12 +176,17 @@ export default {
         // 只要该诊断卡片已归档，就不允许被删除
         return true;
       }
+
+      var createdByCurrentUser = item.createUser === sessionStorage.getItem('userName');
+
       var diagnosticExperimentStep = item.status !== undefined ? Number(item.status) : -1;
       var diagnosticExperimentStage = item.stage !== undefined ? Number(item.stage) : -1;
       if (this.patientCurrentExperimentStep !== -1) {
-        // 如果该患者正处在试验期，则只有当患者所处实验阶段和诊断记录的实验阶段相同时，该阶段的特定的角色才能删除该诊断卡片
+        // 如果该患者正处在试验期，则只有当患者所处实验阶段和诊断记录的实验阶段相同，
+        // 而且该诊断的创建人和当前登录账号一致时，该阶段的特定的角色才能删除该诊断卡片
         if (this.patientCurrentExperimentStep === diagnosticExperimentStep &&
-          this.patientCurrentExperimentStage === diagnosticExperimentStage) {
+          this.patientCurrentExperimentStage === diagnosticExperimentStage &&
+          createdByCurrentUser) {
           if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_SCREENING &&
             this.listType === this.APPRAISERS_PATIENTS_TYPE) {
             return false;
