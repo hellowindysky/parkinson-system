@@ -1,8 +1,12 @@
 <template lang="html">
   <div class="diagnostic-update-wrapper" :class="{'slide-outside':!displayModal}">
     <div class="title-bar">
-      <h2 class="title" v-if="mode!==ADD_NEW_CARD">{{scaleName}}</h2>
-      <h2 class="title" v-else>新增量表信息</h2>
+      <h2 class="title">
+        {{title}}
+        <span class="complete-status" v-if="totalNumOfQuestions > 0">
+          【已完成 {{numOfCompletedQuestions}} / {{totalNumOfQuestions}} 题】
+        </span>
+      </h2>
       <div class="button back-button" @click="closePanel">返回</div>
       <div class="button edit-button" @click="edit" v-if="mode===VIEW_CURRENT_CARD && showEdit">编辑</div>
       <div class="button save-button" @click="submit" v-else-if="mode!==VIEW_CURRENT_CARD">保存</div>
@@ -238,6 +242,13 @@ export default {
       'typeGroup',
       'allScale'
     ]),
+    title() {
+      if (this.mode === this.ADD_NEW_CARD) {
+        return '新增量表';
+      } else {
+        return this.scaleName;
+      }
+    },
     targetScale() {
       let scale = Util.getElement('scaleInfoId', this.copyInfo.scaleInfoId, this.allScale);
       return scale ? scale : {};
@@ -249,6 +260,33 @@ export default {
       var options = this.getOptions('gaugeType');
       var option = Util.getElement('code', this.scaleTypeCode, options);
       return option.name ? option.name : '';
+    },
+    totalNumOfQuestions() {
+      return this.targetScale.questions ? this.targetScale.questions.length : 0;
+    },
+    numOfCompletedQuestions() {
+      var num = 0;
+      if (this.targetScale.questions === undefined) {
+        return num;
+      }
+      for (var i = 0; i < this.targetScale.questions.length; i++) {
+        var question = this.targetScale.questions[i];
+        var questionType = question.questionType;
+        if (questionType === 0 || questionType === 1) {
+          if (this.copyInfo.patientOptions[i].scaleOptionId !== '') {
+            num += 1;
+          }
+        } else if (questionType === 2) {
+          if (this.copyInfo.patientOptions[i].remarks !== '') {
+            num += 1;
+          }
+        } else if (questionType === 3) {
+          if (this.copyInfo.patientOptions[i].optionPoint !== '') {
+            num += 1;
+          }
+        }
+      }
+      return num;
     }
   },
   methods: {
@@ -696,6 +734,9 @@ export default {
       font-size: @large-font-size;
       cursor: pointer;
       color: @font-color;
+      .complete-status {
+        color: light-font-color;
+      }
     }
     .button {
       position: absolute;

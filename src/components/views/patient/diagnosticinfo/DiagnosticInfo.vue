@@ -203,7 +203,7 @@ export default {
 
       } else {
         // 如果该患者不处于实验期，只有所属医生在“我的患者”里面可以对非实验期添加的卡片进行删除
-        if (this.diagnosticExperimentStep !== -1 && this.listType === this.MY_PATIENTS_TYPE) {
+        if (diagnosticExperimentStep === -1 && this.listType === this.MY_PATIENTS_TYPE) {
           return false;
         }
         return true;
