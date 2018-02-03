@@ -5,11 +5,14 @@
 </template>
 
 <script>
+import Stomp from 'stompjs';
 
 export default {
   name: 'app',
   created() {
-
+    console.log(Stomp);
+    var client = Stomp.client('ws://apitest.gyenno.com/webSocketServer');
+    console.log(client);
   }
 };
 </script>
