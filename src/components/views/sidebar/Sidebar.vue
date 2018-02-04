@@ -43,10 +43,12 @@
       <div class="fold-icon iconfont" :class="showExperimentList ? 'icon-up' : 'icon-down'"></div>
     </li>
     <ul class="sub-item-list" :class="{'folded': !showExperimentList}" v-show="showExperiment">
-      <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'therapistsPatients'}" @click="chooseTherapist">
+      <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'therapistsPatients'}"
+        @click="chooseTherapist" v-if="subjectRole===1">
         治疗者
       </li>
-      <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'appraisersPatients'}" @click="chooseAppraiser">
+      <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'appraisersPatients'}"
+        @click="chooseAppraiser" v-if="subjectRole===2">
         评估者
       </li>
     </ul>
@@ -97,6 +99,8 @@
 </template>
 
 <script>
+import Util from 'utils/util.js';
+
 export default {
   data() {
     return {
@@ -125,6 +129,16 @@ export default {
     },
     inSubject() {
       return this.$store.state.subjectId !== this.SUBJECT_ID_FOR_HOSPITAL;
+    },
+    subjectId() {
+      return this.$store.state.subjectId;
+    },
+    subjectRole() {
+      var subjects = sessionStorage.getItem('subjects');
+      subjects = JSON.parse(subjects);
+
+      var currentSubject = Util.findTargetObj(subjects, 'taskRoleType', 'id', this.subjectId);
+      return currentSubject ? Number(currentSubject.taskRoleType) : 0;
     },
     currentSubItem() {
       var path = this.$route.path;

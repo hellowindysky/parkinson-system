@@ -13,6 +13,22 @@ function getElement(keyName, value, array) {
   return target ? target : {};
 }
 
+// 递归寻找数组中的目标对象（给定了某个键值对）
+// 遍历的时候，如果该对象不是我们要找的，而且其特定的属性值是一个数组，则继续递归遍历该数组
+var findTargetObj = function(array, propertyName, key, value) {
+  for (let item of array) {
+    if (item[key] === value) {
+      return item;
+    } else if (item[propertyName] instanceof Array) {
+      var temp = findTargetObj(item[propertyName]);
+      if (temp) {
+        return temp;
+      }
+    }
+  }
+  return null;
+};
+
 // 将完整的时间字符串（包含时分秒，时区等信息）简化为适合 element-ui 控件的 yyyy-MM-dd 的形式
 function simplifyDate(time) {
   // 如果参数本身就为空，那么直接返回 ''
@@ -192,6 +208,7 @@ function checkIfPureNum(num, minDigit, maxDigit) {
 
 export default {
   getElement,
+  findTargetObj,
   simplifyDate,
   simplifyTime,
   simplifyTimeWithoutDate,
