@@ -8,6 +8,8 @@ export default {
   EXPERIMENT_STEP_FOLLOW_UP: 4,
   EXPERIMENT_STEP_COMPLETE: 5,
 
+  MAX_NO_OPERATION_TIME: 1000 * 60 * 60,
+
   // mode
   READING_MODE: 'reading',
   EDITING_MODE: 'editing',

@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="doctor-selection">
+  <div class="doctor-selection" @click="clickScreen">
     <div class="top-bar shadow">
       <h2 class="title">{{title}}</h2>
       <div class="quit" @click="reLogin">
@@ -226,6 +226,23 @@ export default {
         });
       }, 3000);
       this.$router.push('/');
+    },
+    clickScreen() {
+      this.checkIfNoOperationForTooLong(this.$store.state.lastOperationTime);
+    },
+    checkIfNoOperationForTooLong(lastOperationTime) {
+      this.$store.commit('UPDATE_LAST_OPERATION_TIME');
+      var thisOperationTime = this.$store.state.lastOperationTime;
+
+      // 如果本次点击的时间离上一次的点击时间间隔过长，则返回登录界面
+      if (thisOperationTime - lastOperationTime > this.MAX_NO_OPERATION_TIME) {
+        this.$message({
+          message: '长时间未操作，请重新登录',
+          type: 'warning',
+          duration: 2000
+        });
+        this.$router.push('/login');
+      }
     }
   },
   mounted() {

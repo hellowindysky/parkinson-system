@@ -96,9 +96,6 @@ import noticeBox from 'public/noticebox/NoticeBox';
 
 import waterMark from 'public/watermark/WaterMark';
 
-// 设定多长时间不操作，就返回登录界面
-const RELOGIN_TIME_FOR_NO_OPERATION = 1000 * 60 * 60;
-
 export default {
   data() {
     return {
@@ -163,10 +160,9 @@ export default {
     checkIfNoOperationForTooLong(lastOperationTime) {
       this.$store.commit('UPDATE_LAST_OPERATION_TIME');
       var thisOperationTime = this.$store.state.lastOperationTime;
-      sessionStorage.setItem('lastOperationTime', thisOperationTime);
 
       // 如果本次点击的时间离上一次的点击时间间隔过长，则返回登录界面
-      if (thisOperationTime - lastOperationTime > RELOGIN_TIME_FOR_NO_OPERATION) {
+      if (thisOperationTime - lastOperationTime > this.MAX_NO_OPERATION_TIME) {
         this.$message({
           message: '长时间未操作，请重新登录',
           type: 'warning',
