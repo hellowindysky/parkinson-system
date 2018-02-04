@@ -237,6 +237,9 @@ export default {
     this.recalculateCardWidth();
     this.$store.dispatch('getWholeDictionary');
     sessionStorage.removeItem('supportedDoctor');
+
+    Bus.$on(this.AUTHORIZED_BY_DOCTOR, this.updateDoctorList);
+    Bus.$on(this.DEPRIVED_OF_AUTHORITY_BY_DOCTOR, this.updateDoctorList);
   },
   beforeRouteEnter(to, from, next) {
     var userType = parseInt(sessionStorage.getItem('userType'), 10);
@@ -250,6 +253,8 @@ export default {
   },
   beforeDestroy() {
     Bus.$off(this.PERMIT_SUPPORT_THE_DOCTOR);
+    Bus.$off(this.AUTHORIZED_BY_DOCTOR);
+    Bus.$off(this.DEPRIVED_OF_AUTHORITY_BY_DOCTOR);
   },
   components: {
     waterMark,

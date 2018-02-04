@@ -5,14 +5,68 @@
 </template>
 
 <script>
-import Stomp from 'stompjs';
+import Bus from 'utils/bus.js';
 
 export default {
   name: 'app',
-  created() {
-    console.log(Stomp);
-    var client = Stomp.client('ws://apitest.gyenno.com/webSocketServer');
-    console.log(client);
+  data() {
+    return {
+      userId: ''
+    };
+  },
+  methods: {
+    connectCallback(frame) {
+      console.log('连接成功');
+      console.log('frame is: \n', frame);
+      this.subscribe();
+    },
+    errorCallback(error) {
+      console.log(error);
+    },
+    subscribe() {
+      let url = '/user/' + this.userId + '/msg';
+      this.StompClient.subscribe(url, (response) => {
+        console.log('已成功订阅');
+        console.log('response is: \n' + response);
+        let body = JSON.parse(response.body);
+        if (body.operateType === 0) {
+          Bus.$emit(this.AUTHORIZED_BY_DOCTOR);
+        } else if (body.operateType === 1) {
+          Bus.$emit(this.DEPRIVED_OF_AUTHORITY_BY_DOCTOR);
+        }
+      });
+    },
+    disconnectStomp(callback) {
+      // 先取消订阅，再断开连接
+      this.StompClient.unsubscribe();
+      this.StompClient.disconnect(() => {
+        console.log('断开连接');
+        callback && callback();
+      });
+    },
+    reconnectStomp() {
+      // 先断开之前的 stomp 连接（如果有的话）
+      this.disconnectStomp(() => {
+        this.StompClient.connect({}, this.connectCallback, this.errorCallback);
+      });
+    }
+  },
+  mounted() {
+    let userId = sessionStorage.getItem('userId');
+    if (userId) {
+      this.userId = userId;
+      this.StompClient.connect({}, this.connectCallback, this.errorCallback);
+    }
+
+    // 如果 userId 还没有，则等别的组件通知，userId 到了就开始连接
+    Bus.$on(this.UPDATE_USER_ID, () => {
+      this.userId = sessionStorage.getItem('userId');
+      this.reconnectStomp();
+    });
+  },
+  beforeDestroy() {
+    this.disconnectStomp();
+    Bus.$off(this.UPDATE_USER_ID);
   }
 };
 </script>

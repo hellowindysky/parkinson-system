@@ -179,6 +179,15 @@ export default {
       // 为什么 FilterPanel 的状态需要由 Layout 来控制呢？
       // 因为 Header 组件需要知道它的开关情况，所以由 Header 的父组件 Layout 来控制，会方便一些
       this.showFilterPanel = !this.showFilterPanel;
+    },
+    handleDeprivationOfAuthority() {
+      // 如果已经登录后，被医生取消了授权，则录入员这边要回到登录界面
+      this.$message({
+        message: '当前支持医生取消了对你的授权，请重新登录',
+        type: 'warning',
+        duration: 2000
+      });
+      this.$router.push('/login');
     }
   },
   mounted() {
@@ -191,6 +200,7 @@ export default {
     this.checkIfNoOperationForTooLong(lastOperationTime);
 
     Bus.$on(this.TOGGLE_FILTER_PANEL_DISPLAY, this.toggleFilterPanelDisplay);
+    Bus.$on(this.DEPRIVED_OF_AUTHORITY_BY_DOCTOR, this.handleDeprivationOfAuthority);
   },
   beforeRouteEnter(to, from, next) {
     let token = sessionStorage.getItem('token');
@@ -213,6 +223,7 @@ export default {
   },
   beforeDestroy() {
     Bus.$off(this.TOGGLE_FILTER_PANEL_DISPLAY);
+    Bus.$off(this.DEPRIVED_OF_AUTHORITY_BY_DOCTOR);
   }
 };
 </script>

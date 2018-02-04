@@ -69,6 +69,7 @@ import md5 from 'md5';
 import { getLoginInfo } from 'api/login';
 import { setRequestToken, clearRequestToken } from 'api/common';
 import { sendVerificationCode, resetPassword } from 'api/user';
+import Bus from 'utils/bus';
 
 // import particles from 'views/login/particles/Particles';
 
@@ -132,6 +133,7 @@ export default {
       loginType: 1,
 
       token: '',
+      userId: '',
       accountNumber: '',
       name: '',
       userName: '',
@@ -296,12 +298,16 @@ export default {
     },
     enterApp() {
       sessionStorage.setItem('token', this.token);
+      sessionStorage.setItem('userId', this.userId);
       sessionStorage.setItem('accountNumber', this.accountNumber);
       sessionStorage.setItem('name', this.name);
       sessionStorage.setItem('userName', this.userName);
       sessionStorage.setItem('userType', this.userType);
       sessionStorage.setItem('orgName', this.orgName);
       sessionStorage.setItem('subjects', JSON.stringify(this.subjects));
+
+      // 提醒控件 userId 已经更新（涉及到 stomp 连接的重新订阅）
+      Bus.$emit(this.UPDATE_USER_ID);
 
       // 登录时默认进入医院入口
       this.$store.commit('UPDATE_SUBJECT_ID', this.SUBJECT_ID_FOR_HOSPITAL);
@@ -331,6 +337,7 @@ export default {
           getLoginInfo(this.loginForm.account, this.loginForm.password).then((data) => {
             this.lockSubmitButton = false;
             this.token = data.loginToken;
+            this.userId = data.user.userIdV1;
             this.accountNumber = data.user.accountNumber;
             this.name = data.user.name;
             this.userName = data.user.userName;

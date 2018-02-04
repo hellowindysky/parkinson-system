@@ -21,6 +21,10 @@ export default {
   EXTENDED_STATUS: 'extended',
 
   // event
+  UPDATE_USER_ID: 'updateUserId',
+  AUTHORIZED_BY_DOCTOR: 'authorizedByDoctor',
+  DEPRIVED_OF_AUTHORITY_BY_DOCTOR: 'deprivedOfAuthorityByDoctor',
+
   SCREEN_SIZE_CHANGE: 'screenSizeChange',
   SHOW_LIST: 'showList',
   TOGGLE_LIST_DISPLAY: 'toggleListDisplay',
