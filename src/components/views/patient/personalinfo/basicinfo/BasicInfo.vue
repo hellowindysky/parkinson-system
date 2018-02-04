@@ -27,9 +27,9 @@
 
             <span v-else-if="getUIType(field)===1">
               <el-autocomplete v-if="field.fieldName==='nation'" v-model="copyInfo[field.fieldName]"
-               :fetch-suggestions="querySearchAsync"
-               @select="handleSelect"
-               :placeholder="getMatchedField(field).cnFieldDesc">
+                :fetch-suggestions="querySearchAsync"
+                @select="handleSelect"
+                :placeholder="getMatchedField(field).cnFieldDesc">
               </el-autocomplete>
               <el-input v-else v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}" :disabled="field.fieldName==='bmi'"
                 :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)" :maxlength="50" @input="inputing(field)"></el-input>
@@ -91,6 +91,7 @@ export default {
           return time.getTime() > Date.now();
         }
       },
+      completeEditingForTheFirstTime: false,  // 用来控制某些字段是否需要校验
       lockSubmitButton: false,
       allNation: [] // 所有民族
     };
@@ -124,6 +125,7 @@ export default {
     startEditing() {
       this.shallowCopy(this.basicInfo);
       this.mode = this.EDITING_MODE;
+      this.completeEditingForTheFirstTime = false;
       this.clearWarning();
     },
     checkIfBlocking(fieldName) {
@@ -168,6 +170,7 @@ export default {
         return;
       }
       this.lockSubmitButton = true;
+      this.completeEditingForTheFirstTime = true;
 
       // 首先检查是否每个字段都合格，检查一遍之后，如果 warningResults 的所有属性值都为空，就证明表单符合要求
       for (let group of this.basicInfoTemplateGroups) {
@@ -400,8 +403,11 @@ export default {
           this.$set(this.warningResults, fieldName, null);
           return;
         } else if (result.length <= 1) {
-          this.$set(this.warningResults, fieldName, result[0]);
-          return;
+          // 下面这句 if 是为了提升体验，在第一次输入且还没输完的时候，避免显示“非法身份证”的警告文字
+          if (result[0] !== '非法身份证' || this.completeEditingForTheFirstTime) {
+            this.$set(this.warningResults, fieldName, result[0]);
+            return;
+          }
         } else {
           // 这里插入一段逻辑,如果身份证信息变化，而且输入合法，则相应地更新出生日期和性别（应该还加上籍贯信息）
           this.$set(this.warningResults, fieldName, null);
