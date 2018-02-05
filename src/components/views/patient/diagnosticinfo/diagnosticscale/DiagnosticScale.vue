@@ -74,10 +74,6 @@ export default {
       type: Number,
       default: 0
     },
-    patientExperimentStep: {
-      type: Number,
-      default: 0
-    },
     canEdit: {
       type: Boolean,
       default: true
@@ -93,8 +89,7 @@ export default {
       return typesInfo.types ? typesInfo.types : [];
     },
     hidePanel() {
-      var diagnosticExperimentStatus = parseInt(this.diagnosticExperimentStep, 10);
-      if (diagnosticExperimentStatus === 3) {
+      if (this.diagnosticExperimentStep === this.EXPERIMENT_STEP_THERAPY) {
         return true;
       }
       return false;

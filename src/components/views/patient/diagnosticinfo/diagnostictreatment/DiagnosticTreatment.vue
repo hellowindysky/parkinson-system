@@ -304,10 +304,6 @@ export default {
       type: Number,
       default: 0
     },
-    patientExperimentStep: {
-      type: Number,
-      default: 0
-    },
     canEdit: {
       type: Boolean,
       default: true
@@ -372,49 +368,46 @@ export default {
         return record.meta.therapistsPatients || record.meta.appraisersPatients;
       });
     },
+    diagnosisDuringExperiment() {
+      return [this.EXPERIMENT_STEP_SCREENING, this.EXPERIMENT_STEP_THERAPY,
+        this.EXPERIMENT_STEP_FOLLOW_UP].indexOf(this.diagnosticExperimentStep) >= 0;
+    },
     showMedicinePanel() {
-      var duringExperiment = this.diagnosticExperimentStep > 0 && this.diagnosticExperimentStep < 5;
-      var diagnosticExperimentStatus = parseInt(this.diagnosticExperimentStep, 10);
-      var atOtherStatus = diagnosticExperimentStatus !== 2 && diagnosticExperimentStatus !== 4;
-      if (this.isExperimentPatientsList && duringExperiment && atOtherStatus) {
+      var atOtherStatus = this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_SCREENING &&
+        this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_FOLLOW_UP;
+      if (this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
         return false;
       } else {
         return true;
       }
     },
     showSurgeryPanel() {
-      var duringExperiment = this.diagnosticExperimentStep > 0 && this.diagnosticExperimentStep < 5;
-      if (duringExperiment) {
+      if (this.diagnosisDuringExperiment) {
         return false;
       } else {
         return true;
       }
     },
     showPhysiontherapy() {
-      var duringExperiment = this.diagnosticExperimentStep > 0 && this.diagnosticExperimentStep < 5;
-      var diagnosticExperimentStatus = parseInt(this.diagnosticExperimentStep, 10);
-      var atOtherStatus = diagnosticExperimentStatus !== 3;
-      if (this.isExperimentPatientsList && duringExperiment && atOtherStatus) {
+      var atOtherStatus = this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_THERAPY;
+      if (this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
         return false;
       } else {
         return true;
       }
     },
     showTreatmentEvaluation() {
-      var duringExperiment = this.diagnosticExperimentStep > 0 && this.diagnosticExperimentStep < 5;
-      var diagnosticExperimentStatus = parseInt(this.diagnosticExperimentStep, 10);
-      var atOtherStatus = diagnosticExperimentStatus !== 4;
-      if (this.isExperimentPatientsList && duringExperiment && atOtherStatus) {
+      var atOtherStatus = this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_FOLLOW_UP;
+      if (this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
         return false;
       } else {
         return true;
       }
     },
     showAdverseEvent() {
-      var duringExperiment = this.diagnosticExperimentStep > 0 && this.diagnosticExperimentStep < 5;
-      var diagnosticExperimentStatus = parseInt(this.diagnosticExperimentStep, 10);
-      var atOtherStatus = diagnosticExperimentStatus !== 3 && diagnosticExperimentStatus !== 4;
-      if (this.isExperimentPatientsList && duringExperiment && atOtherStatus) {
+      var atOtherStatus = this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_THERAPY &&
+        this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_FOLLOW_UP;
+      if (this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
         return false;
       } else {
         return true;

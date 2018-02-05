@@ -23,13 +23,11 @@
         :diagnosticTreatmentEvaluation="caseDetail.patientPhytheAssess"
         :diagnosticAdverseEvent="caseDetail.patientAdverse"
         :diagnosticExperimentStep="diagnosticExperimentStep"
-        :patientExperimentStep="patientExperimentStep"
         :diagnosisCreator="diagnosisCreator">
       </diagnostic-treatment>
       <diagnostic-scale :canEdit="canEdit" class="folding-panel" :mode="mode" v-show="existed"
         :patientScale="caseDetail.patientScale"
         :diagnosticExperimentStep="diagnosticExperimentStep"
-        :patientExperimentStep="patientExperimentStep"
         :diagnosisCreator="diagnosisCreator">
       </diagnostic-scale>
       <diagnostic-examination :canEdit="canEdit" class="folding-panel" :mode="mode" v-show="existed"
@@ -116,48 +114,44 @@ export default {
     },
     diagnosticExperimentStep() {
       var status = parseInt(this.caseDetail.status, 10);  // 实验阶段 (从 2 开始)
+      return status > 0 ? status : this.EXPERIMENT_STEP_OUT;
+    },
+    diagnosticExperimentStage() {
       var stage = parseInt(this.caseDetail.stage, 10);  // 实验阶段的子阶段 (从 0 开始)
-      if (status > 0 && stage >= 0) {
-        return status + stage / 10.0;
-      } else {
-        return 0;
-      }
+      return stage >= 0 ? stage : this.EXPERIMENT_STEP_OUT;
     },
     patientExperimentStep() {
-      var status = parseInt(this.caseDetail.patientCurrentStatus, 10);  // 实验阶段 (从 2 开始)
+      var status = parseInt(this.caseDetail.patientCurrentStatus, 10);   // 实验阶段 (从 2 开始)
+      return status > 0 ? status : this.EXPERIMENT_STEP_OUT;
+    },
+    patientExperimentStage() {
       var stage = parseInt(this.caseDetail.patientCurrentStage, 10);  // 实验阶段的子阶段 (从 0 开始)
-      if (status > 0 && stage >= 0) {
-        return status + stage / 10.0;
-      } else {
-        return 0;
-      }
+      return stage >= 0 ? stage : this.EXPERIMENT_STEP_OUT;
     },
     patientDuringExperiment() {
-      var patientCurrentExperimentStatus = parseInt(this.patientExperimentStep, 10);
       return [this.EXPERIMENT_STEP_SCREENING, this.EXPERIMENT_STEP_THERAPY,
-        this.EXPERIMENT_STEP_FOLLOW_UP].indexOf(patientCurrentExperimentStatus) >= 0;
+        this.EXPERIMENT_STEP_FOLLOW_UP].indexOf(this.patientExperimentStep) >= 0;
     },
     canEdit() {
       var createdByCurrentUser = this.diagnosisCreator === sessionStorage.getItem('userName');
       var isExperimentPatientsList = this.listType === this.THERAPISTS_PATIENTS_TYPE || this.listType === this.APPRAISERS_PATIENTS_TYPE;
 
-      var diagnosticExperimentStatus = parseInt(this.diagnosticExperimentStep, 10);
-      var patientCurrentExperimentStatus = parseInt(this.patientExperimentStep, 10);
-
       // 以下条件要控制，诊断添加时的实验阶段，和病人当前所处的实验阶段，要相一致。
-      // 唯一的例外情况是，病人处于实验结束阶段时，诊断卡片如果是实验之外（0）添加的，也是可以编辑的
-      var atSameStep = this.diagnosticExperimentStep === this.patientExperimentStep ||
-        (diagnosticExperimentStatus === 0 && patientCurrentExperimentStatus === this.EXPERIMENT_STEP_COMPLETE);
+      // 唯一的例外情况是，病人处于实验结束阶段时，诊断卡片如果是实验之外添加的，也是可以编辑的
+      var atSameStep = (this.diagnosticExperimentStep === this.patientExperimentStep &&
+        this.diagnosticExperimentStage === this.patientExperimentStage) ||
+        (this.diagnosticExperimentStep === this.EXPERIMENT_STEP_OUT &&
+        this.patientExperimentStep === this.EXPERIMENT_STEP_COMPLETE);
 
       // 只有当患者在非实验状态下时，所属医生才可以编辑其在非实验状态下添加的诊断记录
       var canEditInMyPatientsList = this.listType === this.MY_PATIENTS_TYPE && !this.patientDuringExperiment;
 
       // 只有当患者在实验状态下时，特定参与者（评估者和治疗者）才可以编辑特定阶段添加的诊断记录
       var canEditInTherapistsList = this.listType === this.THERAPISTS_PATIENTS_TYPE &&
-        diagnosticExperimentStatus === this.EXPERIMENT_STEP_THERAPY;
+        this.diagnosticExperimentStep === this.EXPERIMENT_STEP_THERAPY;
       var canEditInAppraisersList = this.listType === this.APPRAISERS_PATIENTS_TYPE &&
-        (diagnosticExperimentStatus === this.EXPERIMENT_STEP_SCREENING ||
-        diagnosticExperimentStatus === this.EXPERIMENT_STEP_FOLLOW_UP);
+        (this.diagnosticExperimentStep === this.EXPERIMENT_STEP_SCREENING ||
+        this.diagnosticExperimentStep === this.EXPERIMENT_STEP_FOLLOW_UP);
 
       var caseId = this.$route.params.caseId;
       if (caseId === 'newCase') {

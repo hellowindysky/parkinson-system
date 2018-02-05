@@ -71,14 +71,13 @@ export default {
       return this.showRecordSource ? this.devideWidth + ' tall-card' : this.devideWidth;
     },
     patientCurrentExperimentStep() {
-      // -1 代表服务器没传这个值，这里指该患者不处于实验状态
-      return this.patientInfo.patientCurrentStatus !== undefined ? Number(this.patientInfo.patientCurrentStatus) : -1;
+      return this.patientInfo.patientCurrentStatus !== undefined ? Number(this.patientInfo.patientCurrentStatus) : this.EXPERIMENT_STEP_OUT;
     },
     patientCurrentExperimentStage() {
-      return this.patientInfo.patientCurrentStage !== undefined ? Number(this.patientInfo.patientCurrentStage) : -1;
+      return this.patientInfo.patientCurrentStage !== undefined ? Number(this.patientInfo.patientCurrentStage) : this.EXPERIMENT_STEP_OUT;
     },
     canEdit() {
-      if (this.patientCurrentExperimentStep === -1 && this.listType === this.MY_PATIENTS_TYPE) {
+      if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_OUT && this.listType === this.MY_PATIENTS_TYPE) {
         // 如果患者不处于实验期，只有所属医生在“我的患者”下才能 添加／删除 诊断卡片
         return true;
 
@@ -179,9 +178,9 @@ export default {
 
       var createdByCurrentUser = item.createUser === sessionStorage.getItem('userName');
 
-      var diagnosticExperimentStep = item.status !== undefined ? Number(item.status) : -1;
-      var diagnosticExperimentStage = item.stage !== undefined ? Number(item.stage) : -1;
-      if (this.patientCurrentExperimentStep !== -1) {
+      var diagnosticExperimentStep = item.status !== undefined ? Number(item.status) : this.EXPERIMENT_STEP_OUT;
+      var diagnosticExperimentStage = item.stage !== undefined ? Number(item.stage) : this.EXPERIMENT_STEP_OUT;
+      if (this.patientCurrentExperimentStep !== this.EXPERIMENT_STEP_OUT) {
         // 如果该患者正处在试验期，则只有当患者所处实验阶段和诊断记录的实验阶段相同，
         // 而且该诊断的创建人和当前登录账号一致时，该阶段的特定的角色才能删除该诊断卡片
         if (this.patientCurrentExperimentStep === diagnosticExperimentStep &&
@@ -199,7 +198,7 @@ export default {
           }
         }
         if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_COMPLETE &&
-          diagnosticExperimentStep === -1 &&
+          diagnosticExperimentStep === this.EXPERIMENT_STEP_OUT &&
           this.listType === this.MY_PATIENTS_TYPE) {
           // 如果患者处于实验结束阶段，那么非实验期间添加的诊断记录，其所属医生是可以在“我的患者”下进行删除操作的
           return false;
@@ -208,7 +207,7 @@ export default {
 
       } else {
         // 如果该患者不处于实验期，只有所属医生在“我的患者”里面可以对非实验期添加的卡片进行删除
-        if (diagnosticExperimentStep === -1 && this.listType === this.MY_PATIENTS_TYPE) {
+        if (diagnosticExperimentStep === this.EXPERIMENT_STEP_OUT && this.listType === this.MY_PATIENTS_TYPE) {
           return false;
         }
         return true;
