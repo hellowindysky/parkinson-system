@@ -9,15 +9,11 @@
     <div class="scroll-area" ref="scrollArea">
       <diagnostic-basic :canEdit="canEdit" class="folding-panel" :mode="mode" ref="diagnosticBasic"
         :diagnosticBasic="diagnosticBasic"
-        :diagnosticExperimentStep="diagnosticExperimentStep"
-        :patientExperimentStep="patientExperimentStep"
         :diagnosisCreator="diagnosisCreator">
       </diagnostic-basic>
       <diagnostic-disease :canEdit="canEdit" class="folding-panel" :mode="mode" v-show="existed"
         :diagnosticDisease="diagnosticDisease"
         :diagnosticChiefComplaint="caseDetail.patientSymptom"
-        :diagnosticExperimentStep="diagnosticExperimentStep"
-        :patientExperimentStep="patientExperimentStep"
         :diagnosisCreator="diagnosisCreator">
       </diagnostic-disease>
       <diagnostic-treatment :canEdit="canEdit" class="folding-panel" :mode="mode" v-show="existed"
@@ -46,8 +42,6 @@
         :electricImagingList="caseDetail.patientElecVideoList"
         :medicalImagingList="caseDetail.patientVideoList"
         :diagnosticVitalSigns="caseDetail.patientVitalSign"
-        :diagnosticExperimentStep="diagnosticExperimentStep"
-        :patientExperimentStep="patientExperimentStep"
         :diagnosisCreator="diagnosisCreator">
       </diagnostic-examination>
       <!-- 空白区域是为了让最后的内容能够滚动到脱离屏幕最下方 -->

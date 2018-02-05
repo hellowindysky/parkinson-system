@@ -127,14 +127,6 @@ export default {
       type: String,
       default: ''
     },
-    diagnosticExperimentStep: {
-      type: Number,
-      default: 0
-    },
-    patientExperimentStep: {
-      type: Number,
-      default: 0
-    },
     canEdit: {
       type: Boolean,
       default: true

@@ -82,19 +82,19 @@ export default {
         // 如果患者不处于实验期，只有所属医生在“我的患者”下才能 添加／删除 诊断卡片
         return true;
 
-      } else if (this.patientCurrentExperimentStep === 2 && this.listType === this.APPRAISERS_PATIENTS_TYPE) {
+      } else if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_SCREENING && this.listType === this.APPRAISERS_PATIENTS_TYPE) {
         // 如果患者处于筛选期，只有评估者才能 添加／删除 诊断卡片
         return true;
 
-      } else if (this.patientCurrentExperimentStep === 3 && this.listType === this.THERAPISTS_PATIENTS_TYPE) {
+      } else if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_THERAPY && this.listType === this.THERAPISTS_PATIENTS_TYPE) {
         // 如果患者处于治疗期，只有治疗者才能 添加／删除 诊断卡片
         return true;
 
-      } else if (this.patientCurrentExperimentStep === 4 && this.listType === this.APPRAISERS_PATIENTS_TYPE) {
+      } else if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_FOLLOW_UP && this.listType === this.APPRAISERS_PATIENTS_TYPE) {
         // 如果患者处于随访期，只有评估者才能 添加／删除 诊断卡片
         return true;
 
-      } else if (this.patientCurrentExperimentStep === 5 && this.listType === this.MY_PATIENTS_TYPE) {
+      } else if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_COMPLETE && this.listType === this.MY_PATIENTS_TYPE) {
         // 如果患者处于实验结束状态，只有所属医生在“我的患者”下才能 添加／删除 诊断卡片
         return true;
 
