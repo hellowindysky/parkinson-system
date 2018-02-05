@@ -3,7 +3,7 @@
     <folding-panel class="panel" :title="title" :mode="mode" :isCardsPanel="true" :folded-status="foldedStatus"
       v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit" v-on:addNewCard="addRecord"
       v-on:updateFilterCondition="changeFilterCondition" :editable="canEdit">
-      <card class="card" :class="cardClass" :mode="mode" v-for="item in patientCaseList" :key="item.caseName"
+      <card class="card" :class="cardClass" :mode="mode" v-for="item in patientCaseList" :key="item.patientCaseId"
         :title="item.caseName" :disable-delete="checkIfDisabledToDelete(item)" v-on:editCurrentCard="seeDetail(item)" v-on:deleteCurrentCard="deleteRecord(item)"
         v-show="passFilter(item)" v-on:viewCurrentCard="seeDetail(item)">
         <div class="text first-line">诊断内容</div>
@@ -62,6 +62,7 @@ export default {
       return this.$store.state.subjectId !== this.SUBJECT_ID_FOR_HOSPITAL;
     },
     title() {
+      console.log(this.patientCaseList);
       return '看诊记录（' + this.patientCaseList.length + '条记录）';
     },
     showRecordSource() {

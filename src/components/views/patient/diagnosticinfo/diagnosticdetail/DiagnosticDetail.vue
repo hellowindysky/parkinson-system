@@ -118,7 +118,7 @@ export default {
     },
     diagnosticExperimentStage() {
       var stage = parseInt(this.caseDetail.stage, 10);  // 实验阶段的子阶段 (从 0 开始)
-      return stage >= 0 ? stage : this.EXPERIMENT_STEP_OUT;
+      return stage >= 0 ? stage : 0;
     },
     patientExperimentStep() {
       var status = parseInt(this.caseDetail.patientCurrentStatus, 10);   // 实验阶段 (从 2 开始)
@@ -126,7 +126,7 @@ export default {
     },
     patientExperimentStage() {
       var stage = parseInt(this.caseDetail.patientCurrentStage, 10);  // 实验阶段的子阶段 (从 0 开始)
-      return stage >= 0 ? stage : this.EXPERIMENT_STEP_OUT;
+      return stage >= 0 ? stage : 0;
     },
     patientDuringExperiment() {
       return [this.EXPERIMENT_STEP_SCREENING, this.EXPERIMENT_STEP_THERAPY,
