@@ -49,16 +49,6 @@ export default {
         callback && callback();
       });
     },
-    reconnectStomp() {
-      // 先断开之前的 stomp 连接（如果有的话）
-      this.disconnectStomp(() => {
-        console.log(this.StompClient.connected);
-        console.log(this.userId);
-      });
-      setTimeout(() => {
-        this.StompClient.connect({}, this.connectCallback, this.errorCallback);
-      }, 5000);
-    },
     initializeClientObj() {
       // 建立连接对象（还未发起连接）
       var socket = new SockJS(baseUrl + '/webSocketServer');
@@ -86,7 +76,7 @@ export default {
         }
         // console.log(this.StompClient);
         if (this.StompClient.connected) {
-          this.reconnectStomp();
+          this.subscribe();
         } else {
           this.StompClient.connect({}, this.connectCallback, this.errorCallback);
         }
