@@ -62,7 +62,6 @@ export default {
       return this.$store.state.subjectId !== this.SUBJECT_ID_FOR_HOSPITAL;
     },
     title() {
-      console.log(this.patientCaseList);
       return '看诊记录（' + this.patientCaseList.length + '条记录）';
     },
     showRecordSource() {
@@ -273,11 +272,6 @@ export default {
     Bus.$off(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
     Bus.$off(this.CONFIRM);
     Bus.$off(this.GIVE_UP);
-  },
-  watch: {
-    patientCaseList: function() {
-      // console.log(this.patientCaseList);
-    }
   }
 };
 </script>
