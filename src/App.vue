@@ -18,21 +18,23 @@ export default {
     return {
       userId: '',
       StompClient: {},
-      hasInitializedClientObj: false
+      hasInitializedClientObj: false,
+      subscriptionList: []
     };
   },
   methods: {
     connectCallback(frame) {
       console.log('连接成功');
       console.log('frame is: \n', frame);
-      this.subscribe();
+      this.subscribe(this.userId);
     },
     errorCallback(error) {
       console.log(error);
     },
-    subscribe() {
-      let url = '/user/' + this.userId + '/msg';
-      this.StompClient.subscribe(url, (response) => {
+    subscribe(id) {
+      let url = '/user/' + id + '/msg';
+      // 进行订阅，同时将返回对象存到 subscriptionList 数组中，方便以后取消订阅
+      var subscription = this.StompClient.subscribe(url, (response) => {
         console.log('已成功订阅');
         console.log('response is: \n' + response);
         let body = JSON.parse(response.body);
@@ -42,6 +44,7 @@ export default {
           Bus.$emit(this.DEPRIVED_OF_AUTHORITY_BY_DOCTOR);
         }
       });
+      this.subscriptionList.push(subscription);
     },
     disconnectStomp(callback) {
       this.StompClient.disconnect(() => {
@@ -70,21 +73,23 @@ export default {
     } else {
       // 如果 userId 还没有，则等别的组件通知，userId 到了就开始连接
       Bus.$on(this.UPDATE_USER_ID, () => {
+        // 先取消之前的订阅（如果有的话）
+        for (let subscription of this.subscriptionList) {
+          subscription.unsubscribe();
+        }
+
         this.userId = sessionStorage.getItem('userId');
         if (!this.hasInitializedClientObj) {
           this.initializeClientObj();
         }
         // console.log(this.StompClient);
         if (this.StompClient.connected) {
-          this.subscribe();
+          this.subscribe(this.userId);
         } else {
           this.StompClient.connect({}, this.connectCallback, this.errorCallback);
         }
       });
     }
-  },
-  created() {
-
   },
   beforeDestroy() {
     if (this.hasInitializedClientObj) {
