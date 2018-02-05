@@ -5,13 +5,20 @@
 </template>
 
 <script>
+// 引入关于 webSocket 连接所需要的对象
+import Stomp from 'stompjs';
+import SockJS from 'sockjs-client';
+
 import Bus from 'utils/bus.js';
+import { baseUrl } from 'api/common.js';
 
 export default {
   name: 'app',
   data() {
     return {
-      userId: ''
+      userId: '',
+      StompClient: {},
+      hasInitializedClientObj: false
     };
   },
   methods: {
@@ -37,8 +44,6 @@ export default {
       });
     },
     disconnectStomp(callback) {
-      // 先取消订阅，再断开连接
-      this.StompClient.unsubscribe();
       this.StompClient.disconnect(() => {
         console.log('断开连接');
         callback && callback();
@@ -47,25 +52,54 @@ export default {
     reconnectStomp() {
       // 先断开之前的 stomp 连接（如果有的话）
       this.disconnectStomp(() => {
-        this.StompClient.connect({}, this.connectCallback, this.errorCallback);
+        console.log(this.StompClient.connected);
+        console.log(this.userId);
       });
+      setTimeout(() => {
+        this.StompClient.connect({}, this.connectCallback, this.errorCallback);
+      }, 5000);
+    },
+    initializeClientObj() {
+      // 建立连接对象（还未发起连接）
+      var socket = new SockJS(baseUrl + '/webSocketServer');
+      // 获取 STOMP 子协议的客户端对象
+      this.StompClient = Stomp.over(socket);
+      this.StompClient.reconnectDelay = 5000;
+      this.hasInitializedClientObj = true;
     }
   },
   mounted() {
     let userId = sessionStorage.getItem('userId');
     if (userId) {
       this.userId = userId;
+      if (!this.hasInitializedClientObj) {
+        this.initializeClientObj();
+      }
       this.StompClient.connect({}, this.connectCallback, this.errorCallback);
-    }
 
-    // 如果 userId 还没有，则等别的组件通知，userId 到了就开始连接
-    Bus.$on(this.UPDATE_USER_ID, () => {
-      this.userId = sessionStorage.getItem('userId');
-      this.reconnectStomp();
-    });
+    } else {
+      // 如果 userId 还没有，则等别的组件通知，userId 到了就开始连接
+      Bus.$on(this.UPDATE_USER_ID, () => {
+        this.userId = sessionStorage.getItem('userId');
+        if (!this.hasInitializedClientObj) {
+          this.initializeClientObj();
+        }
+        // console.log(this.StompClient);
+        if (this.StompClient.connected) {
+          this.reconnectStomp();
+        } else {
+          this.StompClient.connect({}, this.connectCallback, this.errorCallback);
+        }
+      });
+    }
+  },
+  created() {
+
   },
   beforeDestroy() {
-    this.disconnectStomp();
+    if (this.hasInitializedClientObj) {
+      this.disconnectStomp();
+    }
     Bus.$off(this.UPDATE_USER_ID);
   }
 };

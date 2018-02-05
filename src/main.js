@@ -5,10 +5,6 @@ import Vue from 'vue';
 import ElementUI from 'element-ui';
 import axios from 'axios';
 
-// 引入关于 webSocket 连接所需要的对象
-import Stomp from 'stompjs';
-import SockJS from 'sockjs-client';
-
 import 'normalize.css';  // 引入normalize.css
 // import 'element-ui/lib/theme-default/index.css';  // 放弃默认的element-theme
 import 'styles/element-theme/index.css';  // 改用自定义配置生成的css
@@ -20,19 +16,12 @@ import App from './App';
 import router from './router';
 import store from './store';
 
-import { baseUrl } from 'api/common.js';
-
 import globalVariables from 'utils/constant.js'; // 引入常量
 
 // 将这些常量注入到每一个组件里面，就成了全局常量，这样在子组件里面就能用形如 this.READING_MODE 的方式读取常量了
 for (let name in globalVariables) {
   Vue.prototype[name] = globalVariables[name];
 }
-
-// 建立连接对象（还未发起连接）
-var socket = new SockJS(baseUrl + '/webSocketServer');
-// 获取 STOMP 子协议的客户端对象，并注入到组件里面，成为全局对象
-Vue.prototype.StompClient = Stomp.over(socket);
 
 // 添加全局的路由守卫，如果请求头里没有 token 信息，则返回登录界面
 router.afterEach(() => {
