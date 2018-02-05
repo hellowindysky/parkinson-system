@@ -64,32 +64,35 @@ export default {
   mounted() {
     let userId = sessionStorage.getItem('userId');
     if (userId) {
+      // 如果在根组件的 mounted 钩子里就已经存在 userId，说明用户刚刚刷新页面
       this.userId = userId;
       if (!this.hasInitializedClientObj) {
         this.initializeClientObj();
       }
       this.StompClient.connect({}, this.connectCallback, this.errorCallback);
-
-    } else {
-      // 如果 userId 还没有，则等别的组件通知，userId 到了就开始连接
-      Bus.$on(this.UPDATE_USER_ID, () => {
-        // 先取消之前的订阅（如果有的话）
-        for (let subscription of this.subscriptionList) {
-          subscription.unsubscribe();
-        }
-
-        this.userId = sessionStorage.getItem('userId');
-        if (!this.hasInitializedClientObj) {
-          this.initializeClientObj();
-        }
-        // console.log(this.StompClient);
-        if (this.StompClient.connected) {
-          this.subscribe(this.userId);
-        } else {
-          this.StompClient.connect({}, this.connectCallback, this.errorCallback);
-        }
-      });
     }
+
+    // 如果 userId 还没有（一般情况是首次打开浏览器标签，并进入 login 页面）
+    // 则等别的组件（目前就是 login 组件）通知，userId 到了就开始连接
+    Bus.$on(this.UPDATE_USER_ID, () => {
+      this.userId = sessionStorage.getItem('userId');
+      if (!this.hasInitializedClientObj) {
+        this.initializeClientObj();
+      }
+      // console.log(this.StompClient);
+      if (this.StompClient.connected) {
+        this.subscribe(this.userId);
+      } else {
+        this.StompClient.connect({}, this.connectCallback, this.errorCallback);
+      }
+    });
+
+    Bus.$on(this.UNSUBSCRIBE, () => {
+      // 取消之前的订阅（如果有的话），这种情况一般发生在用户回到 login 页面，也就是退出登录
+      for (let subscription of this.subscriptionList) {
+        subscription.unsubscribe();
+      }
+    });
   },
   beforeDestroy() {
     if (this.hasInitializedClientObj) {

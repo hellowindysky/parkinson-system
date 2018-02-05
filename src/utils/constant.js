@@ -25,6 +25,7 @@ export default {
 
   // event
   UPDATE_USER_ID: 'updateUserId',
+  UNSUBSCRIBE: 'unsubscribe',
   AUTHORIZED_BY_DOCTOR: 'authorizedByDoctor',
   DEPRIVED_OF_AUTHORITY_BY_DOCTOR: 'deprivedOfAuthorityByDoctor',
 
