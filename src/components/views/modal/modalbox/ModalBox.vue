@@ -341,7 +341,7 @@ export default {
             return this.smokeHistoryTemplate.filter((obj) => {
               return obj.fieldName === 'patientHabitId' || obj.fieldName === 'remarks';
             });
-          } else if (this.copyInfo['patientHabitId'] === 16) {
+          } else if (this.copyInfo['patientHabitId'] === 17) { // 16
             for (let key in this.warningResults) {
               if (key === 'doseInfo') {
                 delete this.warningResults[key];
