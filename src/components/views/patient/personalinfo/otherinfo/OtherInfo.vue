@@ -3,18 +3,27 @@
     :folded-status="foldedStatus" :editable="canEdit">
     <div class="other-info" ref="otherInfo">
 
-      <extensible-panel v-if="false" class="panel" :mode="mode" :title="presentHistoryTitle" v-on:addNewCard="addPresentRecord" :editable="canEdit">
-        <card class="card" :class="devideWidth" :mode="mode" v-for="item in presentHistoryList" :key="item.medName"
-          :title="item.chiefComplaint" v-on:editCurrentCard="editPresentRecord(item)" v-on:viewCurrentCard="viewPresentRecord(item)"
+      <extensible-panel v-if="false" class="panel" :mode="mode" :title="presentHistoryTitle"
+        v-on:addNewCard="addPresentRecord" :editable="canEdit">
+        <card class="card" :class="devideWidth" :mode="mode"
+          v-for="(item, index) in presentHistoryList"
+          :title="item.chiefComplaint"
+          :key="'presentHistory' + index"
+          v-on:editCurrentCard="editPresentRecord(item)"
+          v-on:viewCurrentCard="viewPresentRecord(item)"
           v-on:deleteCurrentCard="deletePresentRecord(item)">
           <div class="text first-line">{{item.hospName}}</div>
           <div class="text start-time">{{item.ariseTime}}</div>
         </card>
       </extensible-panel>
 
-      <extensible-panel class="panel" :mode="mode" :title="medHistoryTitle" v-on:addNewCard="addMedRecord" :editable="canEdit">
-        <card class="card" :class="devideWidth" :mode="mode" v-for="item in medHistoryList" :key="item.medName"
-          :title="item.medType === 6 ? transform(item, 'medType', medHistoryDictionary) : item.medName" v-on:editCurrentCard="editMedRecord(item)"
+      <extensible-panel class="panel" :mode="mode" :title="medHistoryTitle"
+        v-on:addNewCard="addMedRecord" :editable="canEdit">
+        <card class="card" :class="devideWidth" :mode="mode"
+          v-for="(item, index) in medHistoryList"
+          :key="'medHistory' + index"
+          :title="item.medType === 6 ? transform(item, 'medType', medHistoryDictionary) : item.medName"
+          v-on:editCurrentCard="editMedRecord(item)"
           v-on:viewCurrentCard="viewMedRecord(item)"
           v-on:deleteCurrentCard="deleteMedRecord(item)">
           <template v-if="item.medType!==6">
@@ -34,10 +43,15 @@
         </card>
       </extensible-panel>
 
-      <extensible-panel class="panel" :mode="mode" :title="diseaseHistoryTitle" v-on:addNewCard="addDiseaseRecord" :editable="canEdit">
-        <card class="card" :class="devideWidth" :mode="mode" v-for="item in diseaseHistoryList" :key="item.diseaseRelationId"
-          :title="transform(item, 'diseaseRelationId', diseaseHistoryDictionary)" v-on:editCurrentCard="editDiseaseRecord(item)"
-          v-on:viewCurrentCard="viewDiseaseRecord(item)" v-on:deleteCurrentCard="deleteDiseaseRecord(item)">
+      <extensible-panel class="panel" :mode="mode" :title="diseaseHistoryTitle"
+        v-on:addNewCard="addDiseaseRecord" :editable="canEdit">
+        <card class="card" :class="devideWidth" :mode="mode"
+          v-for="(item, index) in diseaseHistoryList"
+          :key="'diseaseHistory' + index"
+          :title="transform(item, 'diseaseRelationId', diseaseHistoryDictionary)"
+          v-on:editCurrentCard="editDiseaseRecord(item)"
+          v-on:viewCurrentCard="viewDiseaseRecord(item)"
+          v-on:deleteCurrentCard="deleteDiseaseRecord(item)">
           <template v-if="item.diseaseRelationId!==30">
             <!-- <div class="text first-line">是否住院： {{transform(item, 'isHospitalization', diseaseHistoryDictionary)}}</div> -->
             <div class="text first-line">
@@ -52,9 +66,14 @@
         </card>
       </extensible-panel>
 
-      <extensible-panel class="panel" :mode="mode" :title="familyHistoryTitle" v-on:addNewCard="addFamilyRecord" :editable="canEdit">
-        <card class="card" :class="devideWidth" :mode="mode" v-for="item in familyHistoryList" :key="item.patientFamilyId"
-          :title="item.diseaseName?item.diseaseName:transform(item, 'similarRole', familyHistoryDictionary)" v-on:editCurrentCard="editFamilyRecord(item)" v-on:viewCurrentCard="viewFamilyRecord(item)"
+      <extensible-panel class="panel" :mode="mode" :title="familyHistoryTitle"
+        v-on:addNewCard="addFamilyRecord" :editable="canEdit">
+        <card class="card" :class="devideWidth" :mode="mode"
+          v-for="(item, index) in familyHistoryList"
+          :key="'familyHistory' + index"
+          :title="item.diseaseName ? item.diseaseName:transform(item, 'similarRole', familyHistoryDictionary)"
+          v-on:editCurrentCard="editFamilyRecord(item)"
+          v-on:viewCurrentCard="viewFamilyRecord(item)"
           v-on:deleteCurrentCard="deleteFamilyRecord(item)">
           <template v-if="item.similarRole!==6">
             <div class="text first-line">
@@ -69,8 +88,11 @@
         </card>
       </extensible-panel>
 
-      <extensible-panel class="panel" :mode="mode" :title="personHistoryTitle" v-on:addNewCard="addPersonRecord" :editable="canEdit">
-        <card class="card" :class="devideWidth" :mode="mode" v-for="item in coffeeHistoryList" :key="item.patientHabitId"
+      <extensible-panel class="panel" :mode="mode" :title="personHistoryTitle"
+        v-on:addNewCard="addPersonRecord" :editable="canEdit">
+        <card class="card" :class="devideWidth" :mode="mode"
+          v-for="(item, index) in coffeeHistoryList"
+          :key="'coffeeHistory' + index"
           :title="transform(item, 'patientHabitId', coffeeHistoryDictionary)"
           v-on:editCurrentCard="editPersonRecord(item, COFFEE_HISTORY_MODAL)"
           v-on:viewCurrentCard="viewPersonRecord(item, COFFEE_HISTORY_MODAL)"
@@ -88,7 +110,9 @@
             </div>
           </template>
         </card>
-        <card class="card" :class="devideWidth" :mode="mode" v-for="item in teaHistoryList" :key="item.patientHabitId"
+        <card class="card" :class="devideWidth" :mode="mode"
+          v-for="(item, index) in teaHistoryList"
+          :key="'teaHistory' + index"
           :title="transform(item, 'patientHabitId', teaHistoryDictionary)"
           v-on:editCurrentCard="editPersonRecord(item, TEA_HISTORY_MODAL)"
           v-on:viewCurrentCard="viewPersonRecord(item, TEA_HISTORY_MODAL)"
@@ -104,7 +128,9 @@
             </div>
           </template>
         </card>
-        <card class="card" :class="devideWidth" :mode="mode" v-for="item in smokeHistoryList" :key="item.patientHabitId"
+        <card class="card" :class="devideWidth" :mode="mode"
+          v-for="(item, index) in smokeHistoryList"
+          :key="'smokeHistory' + index"
           :title="transform(item, 'patientHabitId', smokeHistoryDictionary)"
           v-on:editCurrentCard="editPersonRecord(item, SMOKE_HISTORY_MODAL)"
           v-on:viewCurrentCard="viewPersonRecord(item, SMOKE_HISTORY_MODAL)"
@@ -120,7 +146,9 @@
             </div>
           </template>
         </card>
-        <card class="card" :class="devideWidth" :mode="mode" v-for="item in wineHistoryList" :key="item.patientHabitId"
+        <card class="card" :class="devideWidth" :mode="mode"
+          v-for="(item, index) in wineHistoryList"
+          :key="'wineHistory' + index"
           :title="transform(item, 'patientHabitId', wineHistoryDictionary)"
           v-on:editCurrentCard="editPersonRecord(item, WINE_HISTORY_MODAL)"
           v-on:viewCurrentCard="viewPersonRecord(item, WINE_HISTORY_MODAL)"
@@ -136,8 +164,11 @@
             </div>
           </template>
         </card>
-        <card class="card" :class="devideWidth" :mode="mode" v-for="item in exerciseHistoryList" :key="item.patientExerciseId"
-          :title="item.exeName" v-on:editCurrentCard="editPersonRecord(item, EXERCISE_HISTORY_MODAL)"
+        <card class="card" :class="devideWidth" :mode="mode"
+          v-for="(item, index) in exerciseHistoryList"
+          :key="'exerciseHistory' + index"
+          :title="item.exeName"
+          v-on:editCurrentCard="editPersonRecord(item, EXERCISE_HISTORY_MODAL)"
           v-on:viewCurrentCard="viewPersonRecord(item, EXERCISE_HISTORY_MODAL)"
           v-on:deleteCurrentCard="deleteExerciseRecord(item)">
           <div class="text first-line">
@@ -151,9 +182,13 @@
         </card>
       </extensible-panel>
 
-      <extensible-panel class="panel" :mode="mode" :title="toxicHistoryTitle" v-on:addNewCard="addToxicRecord" :editable="canEdit">
-        <card class="card" :class="devideWidth" :mode="mode" v-for="item in processedToxicList" :key="item.expmaterialName"
-          :title="transform(item, 'exposedType', toxicExposureHistoryDictionary)" v-on:editCurrentCard="editToxicRecord(item)"
+      <extensible-panel class="panel" :mode="mode" :title="toxicHistoryTitle"
+        v-on:addNewCard="addToxicRecord" :editable="canEdit">
+        <card class="card" :class="devideWidth" :mode="mode"
+          v-for="(item, index) in processedToxicList"
+          :key="'processedToxic' + index"
+          :title="transform(item, 'exposedType', toxicExposureHistoryDictionary)"
+          v-on:editCurrentCard="editToxicRecord(item)"
           v-on:viewCurrentCard="viewToxicRecord(item)"
           v-on:deleteCurrentCard="deleteToxicRecord(item)">
           <template v-if="item.exposedType!==8">
