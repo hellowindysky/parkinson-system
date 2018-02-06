@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="diagnostic-detail-wrapper" :class="{'slide-outside':!displayDetail}">
+  <div class="diagnostic-detail-wrapper" :class="{'slide-outside':!displayDetail, 'with-animation':withAnimation}">
     <div class="title-bar">
       <h2 class="title">{{title}}</h2>
       <div class="button back-button" @click="goBack" v-show="!isNewCase">返回</div>
@@ -71,6 +71,7 @@ export default {
   data() {
     return {
       displayDetail: false,
+      withAnimation: false,
       caseId: 0,
       caseDetail: {},
       mode: this.READING_MODE,
@@ -319,6 +320,11 @@ export default {
     Bus.$on(this.SCROLL_AREA_SIZE_CHANGE, this.updateScrollbar);
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
     Bus.$on(this.UPDATE_CASE_INFO, this.updatePatientCase);
+
+    // 为了让页面刷新的时候不出现多余的滑动效果，我们在页面加载之后才加上对应的 CSS
+    setTimeout(() => {
+      this.withAnimation = true;
+    }, 500);
   },
   beforeDestroy() {
     Bus.$off(this.SCROLL_AREA_SIZE_CHANGE);
@@ -351,7 +357,9 @@ export default {
 
 .diagnostic-detail-wrapper {
   background-color: @screen-color;
-  transition: 0.5s linear;
+  &.with-animation {
+    transition: 0.5s ease-in-out;
+  }
   &.slide-outside {
     transform: translate3d(100%, 0, 0);
   }

@@ -715,7 +715,7 @@ export default {
 .diagnostic-update-wrapper {
   width: 100%;
   background-color: @screen-color;
-  transition: 0.5s linear;
+  transition: 0.5s ease-in-out;
   &.slide-outside {
     transform: translate3d(100%, 0, 0);
   }
