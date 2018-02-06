@@ -288,7 +288,7 @@ export default {
       completeInit: false,
       patientTaskCode: '',
 
-      diagnosticExperimentStatus: 0,
+      diagnosticExperimentStep: this.EXPERIMENT_STEP_OUT,
 
       patientPhytheTmsId: '',
       patientPhytheTms: '',
@@ -393,7 +393,7 @@ export default {
       }
     },
     createdByTherapist() {
-      return this.diagnosticExperimentStatus === this.EXPERIMENT_STEP_THERAPY;
+      return this.diagnosticExperimentStep === this.EXPERIMENT_STEP_THERAPY;
     }
   },
   methods: {
@@ -403,7 +403,7 @@ export default {
       this.showEdit = showEdit;
 
       if (diagnosticExperimentStep !== undefined) {
-        this.diagnosticExperimentStatus = parseInt(diagnosticExperimentStep, 10);
+        this.diagnosticExperimentStep = diagnosticExperimentStep;
       }
 
       // 获取患者的 实验编号

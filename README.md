@@ -59,6 +59,14 @@ npm test
 
 > 依然类似于上面的解决办法，借助淘宝镜像来下载依赖模块。将 'registry = https://registry.npm.taobao.org' 写入 **~/.npmrc** 文件，再 npm install 就会快很多。不过还是因为 **package-lockage.json** 的存在，你一般不会遇到这个问题。
 
+---
+
+> #### 如果安装过程出现 chromedriver 的报错，怎么办？
+
+> 某些版本下，chromedriver 的 zip 文件 url 的响应是 302 跳转，而在 install.js 里使用的是 Node.js 内置的 http 对象的 get 方法无法处理 302 跳转的情况；而在另外一些情况下，则是因为 googleapis.com 被墙了，此时即使采用科学上网的方法也仍然无法获取文件。采用 cnpm 安装或者执行下面这行命令都可以
+
+> npm install chromedriver --chromedriver_cdnurl=http://cdn.npm.taobao.org/dist/chromedrive --save-dev
+
 ## 项目结构
 对于最外层的组件，是按照路由信息进行加载的。比方说你点击了菜单中的选项，就会直接改变路由，再根据 **src/router/index.js** 找到到底该加载哪些组件，而如果你直接在浏览器地址栏改变路由，也会起到同样的作用。也就是说，这些外层组件加载的决定因素就是路由地址。但是对于层级很深的子组件来说，并没有路由信息去表达这个状态。例如在毒物接触史当中添加一个新记录，这个时候路由信息是不会有变化的，一旦点击网页刷新，就会回到路由地址所能控制到的最深层级，而放弃这些层级过深的子组件。更多详情需要参看 [Vue-Router 官网](https://router.vuejs.org/zh-cn/) 。
 

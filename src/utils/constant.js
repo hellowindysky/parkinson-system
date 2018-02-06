@@ -7,6 +7,7 @@ export default {
   EXPERIMENT_STEP_THERAPY: 3,
   EXPERIMENT_STEP_FOLLOW_UP: 4,
   EXPERIMENT_STEP_COMPLETE: 5,
+  EXPERIMENT_STEP_OUT: -1,
 
   MAX_NO_OPERATION_TIME: 1000 * 60 * 60,
 
@@ -24,6 +25,7 @@ export default {
 
   // event
   UPDATE_USER_ID: 'updateUserId',
+  UNSUBSCRIBE: 'unsubscribe',
   AUTHORIZED_BY_DOCTOR: 'authorizedByDoctor',
   DEPRIVED_OF_AUTHORITY_BY_DOCTOR: 'deprivedOfAuthorityByDoctor',
 

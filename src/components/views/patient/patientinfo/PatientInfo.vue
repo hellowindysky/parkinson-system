@@ -27,7 +27,7 @@
           <span class="info-text">
             <span class="tags-wrapper">
               <el-tooltip v-for="group in belongGroups"
-                :key="group.groupId"
+                :key="group.groupName"
                 class="tag"
                 effect="dark"
                 :content="group.groupName"
@@ -43,7 +43,7 @@
           <span class="info-text">
             <span class="tags-wrapper">
               <el-tooltip v-for="subject in belongSubjects"
-                :key="subject.id"
+                :key="subject.fullTaskName"
                 class="tag"
                 effect="dark"
                 :content="subject.fullTaskName"

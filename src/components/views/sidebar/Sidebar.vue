@@ -1,12 +1,12 @@
 <template lang="html">
   <ul class="sidebar">
     <li class="item" :class="{'current-item': currentItem === 'patients'}" @click="togglePatientsList"
-      v-show="showPatientsManagement">
+      v-if="showPatientsManagement">
       <div class="menu-icon iconfont icon-patients-management"></div>
       <div class="title">患者管理</div>
       <div class="fold-icon iconfont" :class="showPatientsList ? 'icon-up' : 'icon-down'"></div>
     </li>
-    <ul class="sub-item-list" :class="{'folded': !showPatientsList}" v-show="showPatientsManagement">
+    <ul class="sub-item-list" :class="{'folded': !showPatientsList}" v-if="showPatientsManagement">
       <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'myPatients'}" @click="chooseMyPatients">
         我的患者
       </li>
@@ -14,35 +14,36 @@
         分组管理
       </li>
       <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'otherPatients'}"
-        @click="chooseOtherPatients" v-show="!inSubject">
+        @click="chooseOtherPatients" v-if="!inSubject">
         科室患者
       </li>
       <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'subjectPatients'}"
-        @click="chooseSubjectPatients" v-show="inSubject">
+        @click="chooseSubjectPatients" v-if="inSubject">
         项目患者
       </li>
     </ul>
-    <li class="item" :class="{'current-item': currentItem === 'analytics'}" @click="toggleAnalyticsList" v-show="showAnalytics">
+    <li class="item" :class="{'current-item': currentItem === 'analytics'}" @click="toggleAnalyticsList" v-if="showAnalytics">
       <div class="menu-icon iconfont icon-analytics"></div>
       <div class="title">统计分析</div>
       <div class="fold-icon iconfont" :class="showAnalyticsList ? 'icon-up' : 'icon-down'"></div>
     </li>
-    <ul class="sub-item-list" :class="{'folded': !showAnalyticsList}" v-show="showAnalytics">
+    <ul class="sub-item-list" :class="{'folded': !showAnalyticsList}" v-if="showAnalytics">
       <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'basicAnalytics'}" @click="chooseBasicAnalytics">
         基础统计
       </li>
       <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'advancedAnalytics'}"
-        @click="chooseAdvancedAnalytics" v-show="false">
+        @click="chooseAdvancedAnalytics" v-if="false">
         高级统计
       </li>
     </ul>
     <li class="item" :class="{'current-item': currentItem === 'experiment'}" @click="toggleExperimentList"
-      v-show="showExperiment">
+      v-if="showExperiment && subjectRole > 0">
       <div class="menu-icon iconfont icon-experiment"></div>
       <div class="title">实验研究</div>
       <div class="fold-icon iconfont" :class="showExperimentList ? 'icon-up' : 'icon-down'"></div>
     </li>
-    <ul class="sub-item-list" :class="{'folded': !showExperimentList}" v-show="showExperiment">
+    <ul class="sub-item-list" :class="{'folded': !showExperimentList}"
+      v-if="showExperiment && subjectRole > 0">
       <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'therapistsPatients'}"
         @click="chooseTherapist" v-if="subjectRole===1">
         治疗者
@@ -53,12 +54,12 @@
       </li>
     </ul>
     <li class="item" :class="{'current-item': currentItem === 'configuration'}" @click="toggleConfigurationList"
-      v-show="showConfiguration">
+      v-if="showConfiguration">
       <div class="menu-icon iconfont icon-configuration"></div>
       <div class="title">系统配置</div>
       <div class="fold-icon iconfont" :class="showConfigurationList ? 'icon-up' : 'icon-down'"></div>
     </li>
-    <ul class="sub-item-list" :class="{'folded': !showConfigurationList}" v-show="showConfiguration">
+    <ul class="sub-item-list" :class="{'folded': !showConfigurationList}" v-if="showConfiguration">
       <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'featureConfiguration'}" @click="chooseFeatureConfiguration">
         功能配置
       </li>
@@ -73,12 +74,12 @@
       </li>
     </ul>
     <li class="item" :class="{'current-item': currentItem === 'institutionConfiguration'}" @click="toggleInstitutionList"
-      v-show="showInstitutionConfiguration">
+      v-if="showInstitutionConfiguration">
       <div class="menu-icon iconfont icon-organization"></div>
       <div class="title">机构配置</div>
       <div class="fold-icon iconfont" :class="showInstitutionList ? 'icon-up' : 'icon-down'"></div>
     </li>
-    <ul class="sub-item-list" :class="{'folded': !showInstitutionList}" v-show="showInstitutionConfiguration">
+    <ul class="sub-item-list" :class="{'folded': !showInstitutionList}" v-if="showInstitutionConfiguration">
       <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'institutionInfo'}" @click="chooseInstitutionInfo">
         机构信息
       </li>
