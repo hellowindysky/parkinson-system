@@ -372,16 +372,18 @@ export default {
     },
     recalculateCardWidth() {
       this.$nextTick(() => {
-        var panelWidth = this.$refs.diagnosticDisease.clientWidth;
-        var devideNum = 1.0;
-        // 20px 是卡片的横向间距，定义在了 varaibles.less 中，200px 是卡片的最小宽度
-        while (panelWidth / devideNum > 200 + 20) {
-          devideNum += 1.0;
+        if (this.$refs.diagnosticDisease) {
+          var panelWidth = this.$refs.diagnosticDisease.clientWidth;
+          var devideNum = 1.0;
+          // 20px 是卡片的横向间距，定义在了 varaibles.less 中，200px 是卡片的最小宽度
+          while (panelWidth / devideNum > 200 + 20) {
+            devideNum += 1.0;
+          }
+          devideNum -= 1;
+          // 一排最多显示 10 个卡片
+          devideNum = devideNum <= 10 ? devideNum : 10;
+          this.devideWidth = 'width-1-' + parseInt(devideNum, 10);
         }
-        devideNum -= 1;
-        // 一排最多显示 10 个卡片
-        devideNum = devideNum <= 10 ? devideNum : 10;
-        this.devideWidth = 'width-1-' + parseInt(devideNum, 10);
       });
     }
   },
@@ -542,6 +544,9 @@ export default {
     margin-top:20px;
     >.content{
       height:@disease-card-height + @card-vertical-margin * 2 + 5px * 2;
+      &.extended {
+        height: auto;
+      }
     }
   }
   .card {
