@@ -229,7 +229,7 @@ export default {
           return this.medHistoryTemplate;
         }
       } else if (this.modalType === this.DISEASE_HISTORY_MODAL) {
-        if (this.copyInfo['diseaseRelationId'] === 30) {
+        if (this.copyInfo['diseaseRelationId'] === 10) { // 30 10
           // 疾病名称 选择 否认存在既往史 时，把不必要的提交字段,不要的验证删了，此处没有不要的验证
           for (let key in this.copyInfo) {
             if (key !== 'diseaseRelationId' && key !== 'remarks' && key !== 'patientDiseaseId') {
@@ -266,7 +266,7 @@ export default {
       } else if (this.modalType === this.PERSON_HISTORY_MODAL) {
         // 如果是个人史面板，则有几个子模版，需要在选择个人史类型后，自动确定新的模版
         if (this.subModalType === this.WINE_HISTORY_MODAL) {
-          if (this.copyInfo['patientHabitId'] === 19) {
+          if (this.copyInfo['patientHabitId'] === 13) { // 19
             // 饮酒类型 选择 否认存在饮酒史 时，把不必要的提交字段,不要的验证删了
             for (let key in this.copyInfo) {
               if (key !== 'patientHabitId' && key !== 'remarks' && key !== 'patientWineId') {
@@ -286,7 +286,7 @@ export default {
           }
 
         } else if (this.subModalType === this.TEA_HISTORY_MODAL) {
-          if (this.copyInfo['patientHabitId'] === 21) {
+          if (this.copyInfo['patientHabitId'] === 14) { // 21
             // 喝茶类型 选择 否认存在喝茶史 时，把不必要的提交字段,不要的验证删了
             for (let key in this.copyInfo) {
               if (key !== 'patientHabitId' && key !== 'remarks' && key !== 'patientTeaId') {
@@ -306,7 +306,7 @@ export default {
           }
 
         } else if (this.subModalType === this.COFFEE_HISTORY_MODAL) {
-          if (this.copyInfo['patientHabitId'] === 20) {
+          if (this.copyInfo['patientHabitId'] === 15) { // 20
             // 咖啡类型 选择 否认存在咖啡史 时，把不必要的提交字段,不要的验证删了
             for (let key in this.copyInfo) {
               if (key !== 'patientHabitId' && key !== 'remarks' && key !== 'patientCoffeeId') {
@@ -326,7 +326,7 @@ export default {
           }
 
         } else if (this.subModalType === this.SMOKE_HISTORY_MODAL) {
-          if (this.copyInfo['patientHabitId'] === 18) {
+          if (this.copyInfo['patientHabitId'] === 12) { // 18
             // 吸烟类型 选择 否认存在吸烟史 时，把不必要的提交字段,不要的验证删了
             for (let key in this.copyInfo) {
               if (key !== 'patientHabitId' && key !== 'remarks' && key !== 'patientSmokeId') {
@@ -791,6 +791,11 @@ export default {
         this.warningResults['subModal'] = null;
       }
       this.updateScrollbar();
+      this.$set(this.copyInfo, 'patientHabitId', '');
+      this.$nextTick(() => {
+        this.$set(this.warningResults, 'patientHabitId', '');
+        this.$set(this.warningResults, 'doseInfo', '');
+      });
     },
     _handleError(error) {
       // 当调用 api 发生错误时，执行此函数，注意在此时需要为“确定”按钮解锁

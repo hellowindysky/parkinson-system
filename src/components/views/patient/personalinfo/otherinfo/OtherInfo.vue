@@ -38,7 +38,7 @@
         <card class="card" :class="devideWidth" :mode="mode" v-for="item in diseaseHistoryList" :key="item.diseaseRelationId"
           :title="transform(item, 'diseaseRelationId', diseaseHistoryDictionary)" v-on:editCurrentCard="editDiseaseRecord(item)"
           v-on:viewCurrentCard="viewDiseaseRecord(item)" v-on:deleteCurrentCard="deleteDiseaseRecord(item)">
-          <template v-if="item.diseaseRelationId!==30">
+          <template v-if="item.diseaseRelationId!==10">
             <!-- <div class="text first-line">是否住院： {{transform(item, 'isHospitalization', diseaseHistoryDictionary)}}</div> -->
             <div class="text first-line">
               <span class="name">是否住院：</span>
@@ -75,10 +75,8 @@
           v-on:editCurrentCard="editPersonRecord(item, COFFEE_HISTORY_MODAL)"
           v-on:viewCurrentCard="viewPersonRecord(item, COFFEE_HISTORY_MODAL)"
           v-on:deleteCurrentCard="deleteCoffeeRecord(item)">
-          <template v-if="item.patientHabitId!==20">
+          <template v-if="item.patientHabitId!==15">
             <div class="text first-line">
-              <!-- <span class="name"></span>
-              <span class="value"></span> -->
               <span class="name">每周饮用量：</span>
               <span class="value">{{item.doseInfo}} {{transform(item, 'unit', coffeeHistoryDictionary)}}/周 </span>
             </div>
@@ -93,7 +91,7 @@
           v-on:editCurrentCard="editPersonRecord(item, TEA_HISTORY_MODAL)"
           v-on:viewCurrentCard="viewPersonRecord(item, TEA_HISTORY_MODAL)"
           v-on:deleteCurrentCard="deleteTeaRecord(item)">
-          <template v-if="item.patientHabitId!==21">
+          <template v-if="item.patientHabitId!==14">
             <div class="text first-line">
               <span class="name">每周喝茶量：</span>
               <span class="value">{{item.doseInfo}} {{transform(item, 'unit', coffeeHistoryDictionary)}}/周</span>
@@ -109,7 +107,7 @@
           v-on:editCurrentCard="editPersonRecord(item, SMOKE_HISTORY_MODAL)"
           v-on:viewCurrentCard="viewPersonRecord(item, SMOKE_HISTORY_MODAL)"
           v-on:deleteCurrentCard="deleteSmokeRecord(item)">
-          <template v-if="item.patientHabitId!==18">
+          <template v-if="item.patientHabitId!==12">
             <div class="text first-line" v-if="item.patientHabitId!==16">
               <span class="name">每天吸烟支数：</span>
               <span class="value">{{item.doseInfo}} 支</span>
@@ -125,7 +123,7 @@
           v-on:editCurrentCard="editPersonRecord(item, WINE_HISTORY_MODAL)"
           v-on:viewCurrentCard="viewPersonRecord(item, WINE_HISTORY_MODAL)"
           v-on:deleteCurrentCard="deleteWineRecord(item)">
-          <template v-if="item.patientHabitId!==19">
+          <template v-if="item.patientHabitId!==13">
             <div class="text first-line">
               <span class="name">每周饮酒量：</span>
               <span class="value">{{item.doseInfo}} {{transform(item, 'unit', coffeeHistoryDictionary)}}/周</span>
