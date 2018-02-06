@@ -686,7 +686,7 @@
           </table>
         </div>
 
-        <div v-if="copyInfo.elecExamType===9 || copyInfo.elecExamType===10">
+        <div v-if="copyInfo.elecExamType===100 || copyInfo.elecExamType===101">
           <div class="field">
             <span class="field-name">
               检查时间:
@@ -1568,7 +1568,7 @@ export default {
         this.updateWarning('weight');
         this.updateWarning('recordStart');
         this.updateWarning('recordEnd');
-      } else if (this.copyInfo.elecExamType === 9 || this.copyInfo.elecExamType === 10) {
+      } else if (this.copyInfo.elecExamType === 100 || this.copyInfo.elecExamType === 101) {
         this.updateWarning('checkDate');
       }
       for (var p in this.warningResults) {
@@ -1632,7 +1632,7 @@ export default {
             this.cancel();
           }, this._handleError);
         }
-      } else if (submitData.elecExamType === 9 || submitData.elecExamType === 10) {
+      } else if (submitData.elecExamType === 100 || submitData.elecExamType === 101) {
         if (this.uploadingFilesNum > 0) {
           this.$message({
             message: '请等待文件上传后再提交',
