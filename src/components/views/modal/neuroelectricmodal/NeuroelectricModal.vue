@@ -686,7 +686,7 @@
           </table>
         </div>
 
-        <div v-if="copyInfo.elecExamType===100 || copyInfo.elecExamType===101">
+        <div v-if="copyInfo.elecExamType===EEG_CODE || copyInfo.elecExamType===ECG_CODE">
           <div class="field">
             <span class="field-name">
               检查时间:
@@ -839,6 +839,9 @@ export default {
       SEN_NER_COND_ITEM: 'senNerCondItem',
 
       SLEEP_MONITORING_ITEM: 'sleepMonitoringItem',
+
+      EEG_CODE: 100,  // 脑电图的检查类型 id
+      ECG_CODE: 101,  // 心电图的检查类型 id
 
       warningResults: {
         elecExamType: '',
@@ -1568,7 +1571,8 @@ export default {
         this.updateWarning('weight');
         this.updateWarning('recordStart');
         this.updateWarning('recordEnd');
-      } else if (this.copyInfo.elecExamType === 100 || this.copyInfo.elecExamType === 101) {
+      } else if (this.copyInfo.elecExamType === this.EEG_CODE ||
+          this.copyInfo.elecExamType === this.ECG_CODE) {
         this.updateWarning('checkDate');
       }
       for (var p in this.warningResults) {
@@ -1632,7 +1636,8 @@ export default {
             this.cancel();
           }, this._handleError);
         }
-      } else if (submitData.elecExamType === 100 || submitData.elecExamType === 101) {
+      } else if (submitData.elecExamType === this.EEG_CODE ||
+          submitData.elecExamType === this.ECG_CODE) {
         if (this.uploadingFilesNum > 0) {
           this.$message({
             message: '请等待文件上传后再提交',
