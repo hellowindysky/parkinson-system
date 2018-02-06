@@ -27,7 +27,7 @@
           <span class="info-text">
             <span class="tags-wrapper">
               <el-tooltip v-for="group in belongGroups"
-                :key="groun.groupName"
+                :key="group.groupName"
                 class="tag"
                 effect="dark"
                 :content="group.groupName"
