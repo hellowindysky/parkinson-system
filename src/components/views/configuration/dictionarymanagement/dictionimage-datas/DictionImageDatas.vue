@@ -1,21 +1,16 @@
 <template>
   <div class="scroll-wrapper">
     <div class="freature-person-conf-wrapper" ref="scrollArea">
-      <LifeCharacteristics></LifeCharacteristics>
-      <NervousSystem></NervousSystem>
-      <BiochemicalIndexes></BiochemicalIndexes>
-      <Electromyogram></Electromyogram>
+      <ImageType></ImageType>
+      <VideoUploadType></VideoUploadType>
     </div>
   </div>
 </template>
 <script>
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
-import LifeCharacteristics from 'views/configuration/dictionarymanagement/life-characteristics/LifeCharacteristics';
-import NervousSystem from 'views/configuration/dictionarymanagement/nervous-system/NervousSystem';
-import BiochemicalIndexes from 'views/configuration/dictionarymanagement/biochemicalindexes/BiochemicalIndexes';
-import Electromyogram from 'views/configuration/dictionarymanagement/electromyogram/Electromyogram';
-// import FeatureFoldingPanel from 'public/feature-folding-panel/FeatureFoldingPanel';
+import ImageType from 'views/configuration/dictionarymanagement/image-type/ImageType';
+import VideoUploadType from 'views/configuration/dictionarymanagement/video-upload-type/VideoUploadType';
 import { getDictionary } from 'api/user';
 
 export default {
@@ -27,10 +22,8 @@ export default {
     };
   },
   components: {
-    LifeCharacteristics,
-    NervousSystem,
-    BiochemicalIndexes,
-    Electromyogram
+    ImageType,
+    VideoUploadType
   },
   methods: {
     updateUserInfo() {

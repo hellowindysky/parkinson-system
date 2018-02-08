@@ -1,11 +1,11 @@
 <template>
-  <feature-folding-panel class="common-drugs" :title="'生化指标'" >
+  <feature-folding-panel class="common-drugs" :title="'影像上传类型'" >
     <el-table :data="tableData">
       <el-table-column prop="xuhao" label="序号" align="center" width="80">
       </el-table-column>
-      <el-table-column prop="name" label="检查名称" align="center" width="350">
+      <el-table-column prop="name" label="类型名称" align="center" width="350">
       </el-table-column>
-      <el-table-column prop="tname" label="检查类型" align="center" width="350">
+      <el-table-column prop="type" label="类型说明" align="center" width="350">
       </el-table-column>
       <el-table-column prop="denxiao" label="属性" align="center" width="200">
       </el-table-column>
@@ -25,20 +25,20 @@ export default {
       tableData: [
         {
           xuhao: '01',
-          name: '头部前倾',
-          tname: 'ew',
+          name: '肌电图',
+          type: '普通',
           denxiao: '系统默认'
         },
         {
           xuhao: '02',
-          name: '肝功能八项',
-          tname: 'ew',
+          name: '肌电图',
+          type: '普通',
           denxiao: '系统默认'
         },
         {
           xuhao: '03',
-          name: '共济（闭目难立症）',
-          tname: 'ew',
+          name: '肌电图',
+          type: '普通',
           denxiao: '系统默认'
         }
       ]

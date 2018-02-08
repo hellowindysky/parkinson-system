@@ -1,13 +1,11 @@
 <template>
-  <feature-folding-panel class="common-drugs" :title="'生化指标'" >
+  <feature-folding-panel class="common-drugs" :title="'手术方案'" >
     <el-table :data="tableData">
       <el-table-column prop="xuhao" label="序号" align="center" width="80">
       </el-table-column>
-      <el-table-column prop="name" label="检查名称" align="center" width="350">
+      <el-table-column prop="name" label="手术名称" align="center" width="600">
       </el-table-column>
-      <el-table-column prop="tname" label="检查类型" align="center" width="350">
-      </el-table-column>
-      <el-table-column prop="denxiao" label="属性" align="center" width="200">
+      <el-table-column prop="tname" label="属性" align="center" width="300">
       </el-table-column>
     </el-table>
   </feature-folding-panel>
@@ -24,22 +22,24 @@ export default {
     return {
       tableData: [
         {
-          xuhao: '01',
-          name: '头部前倾',
-          tname: 'ew',
-          denxiao: '系统默认'
+          xuhao: 1,
+          name: '立体定向损坏',
+          tname: '系统默认'
         },
         {
-          xuhao: '02',
-          name: '肝功能八项',
-          tname: 'ew',
-          denxiao: '系统默认'
+          xuhao: 1,
+          name: '脑深部电刺激',
+          tname: '系统默认'
         },
         {
-          xuhao: '03',
-          name: '共济（闭目难立症）',
-          tname: 'ew',
-          denxiao: '系统默认'
+          xuhao: 1,
+          name: '干细胞疗法',
+          tname: '系统默认'
+        },
+        {
+          xuhao: 1,
+          name: '干细胞疗法',
+          tname: '系统默认'
         }
       ]
     };
@@ -59,6 +59,13 @@ export default {
        .cell {
          text-align: center;
        }
+  }
+  .el-table__row {
+    td {
+      .cell {
+        text-align: left;
+      }
+    }
   }
 }
 </style>

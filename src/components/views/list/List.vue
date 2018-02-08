@@ -203,10 +203,10 @@
 <script>
 import Ps from 'perfect-scrollbar';
 
-import patientListItem from 'views/list/patientitem/PatientItem';
-import groupListItem from 'views/list/groupitem/GroupItem';
-import userListItem from 'views/configuration/usermanagement/useritem/UserItem';
-import roleListItem from 'views/configuration/rolemanagement/roleitem/RoleItem';
+import patientListItem from 'views/list/patient-item/PatientItem';
+import groupListItem from 'views/list/group-item/GroupItem';
+import userListItem from 'views/configuration/usermanagement/user-item/UserItem';
+import roleListItem from 'views/configuration/rolemanagement/role-item/RoleItem';
 
 // import axios from 'axios';
 import { mapGetters } from 'vuex';

@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import FeatureFoldingPanel from 'public/featurefoldingpanel/FeatureFoldingPanel';
+import FeatureFoldingPanel from 'public/feature-folding-panel/FeatureFoldingPanel';
 
 export default {
   components: {
@@ -60,7 +60,7 @@ export default {
   box-sizing: border-box;
   .el-table {
     width: 981px;
-    margin-top: 12px; 
+    margin-top: 12px;
        .cell {
          text-align: center;
        }

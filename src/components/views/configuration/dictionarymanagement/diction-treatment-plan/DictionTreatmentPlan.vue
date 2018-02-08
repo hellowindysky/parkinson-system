@@ -1,20 +1,20 @@
 <template>
   <div class="scroll-wrapper">
     <div class="freature-person-conf-wrapper" ref="scrollArea">
-      <LifeCharacteristics></LifeCharacteristics>
-      <NervousSystem></NervousSystem>
-      <BiochemicalIndexes></BiochemicalIndexes>
-      <Electromyogram></Electromyogram>
+      <common-drugs></common-drugs>
+      <ReasonsWithDrawal></ReasonsWithDrawal>
+      <SideEffects></SideEffects>
+      <SurgicalProgram></SurgicalProgram>
     </div>
   </div>
 </template>
 <script>
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
-import LifeCharacteristics from 'views/configuration/dictionarymanagement/life-characteristics/LifeCharacteristics';
-import NervousSystem from 'views/configuration/dictionarymanagement/nervous-system/NervousSystem';
-import BiochemicalIndexes from 'views/configuration/dictionarymanagement/biochemicalindexes/BiochemicalIndexes';
-import Electromyogram from 'views/configuration/dictionarymanagement/electromyogram/Electromyogram';
+import CommonDrugs from 'views/configuration/dictionarymanagement/common-drugs/CommonDrugs';
+import ReasonsWithDrawal from 'views/configuration/dictionarymanagement/reasons-with-drawal/ReasonsWithDrawal';
+import SideEffects from 'views/configuration/dictionarymanagement/side-effects/SideEffects';
+import SurgicalProgram from 'views/configuration/dictionarymanagement/surgical-program/SurgicalProgram';
 // import FeatureFoldingPanel from 'public/feature-folding-panel/FeatureFoldingPanel';
 import { getDictionary } from 'api/user';
 
@@ -27,10 +27,10 @@ export default {
     };
   },
   components: {
-    LifeCharacteristics,
-    NervousSystem,
-    BiochemicalIndexes,
-    Electromyogram
+    CommonDrugs,
+    ReasonsWithDrawal,
+    SideEffects,
+    SurgicalProgram
   },
   methods: {
     updateUserInfo() {
