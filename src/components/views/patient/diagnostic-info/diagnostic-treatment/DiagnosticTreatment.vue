@@ -2,11 +2,19 @@
   <folding-panel :title="'治疗方案'" :mode="mutableMode"  v-on:edit="startEditing"
     v-on:cancel="cancel" v-on:submit="submit" :editable="canEdit">
     <div class="diagnostic-surgery" ref="diagnosticSurgery">
-      <extensible-panel class="panel medicine-panel" :mode="mutableMode" :title="medicineTitle" v-on:addNewCard="addMedicine"
-        :editable="canEdit" v-if="showMedicinePanel">
-        <card class="card medicine-card" :class="smallCardWidth" :mode="mutableMode" v-for="item in diagnosticMedicine" :key="item.medicineId"
-          :title="getMedicineTitle(item.medicineId)" :disable-delete="item.statusFlag===0" v-on:editCurrentCard="editMedicine(item)"
-          v-on:deleteCurrentCard="deleteMedicine(item)" v-on:viewCurrentCard="viewMedicine(item)">
+      <extensible-panel class="panel medicine-panel" :mode="mutableMode"
+        :title="medicineTitle"
+        v-on:addNewCard="addMedicine"
+        :editable="canEdit"
+        v-if="showMedicinePanel">
+        <card class="card medicine-card" :class="smallCardWidth" :mode="mutableMode"
+          v-for="(item, index) in diagnosticMedicine"
+          :key="'diagnosticMedicine'+index"
+          :title="getMedicineTitle(item.medicineId)"
+          :disable-delete="item.statusFlag===0"
+          v-on:editCurrentCard="editMedicine(item)"
+          v-on:deleteCurrentCard="deleteMedicine(item)"
+          v-on:viewCurrentCard="viewMedicine(item)">
           <div class="text line-1">
             <span class="name">用药频率</span>
             <span class="value">{{transformMedicineField(item, 'usages')}}</span>
@@ -32,8 +40,10 @@
       <extensible-panel class="panel surgery-panel" :mode="mutableMode" v-if="showSurgeryPanel"
         :title="surgeryTitle" v-on:addNewCard="addTreatmentRecord" :editable="canEdit">
         <card class="card surgery-card" :class="bigCardWidth" :mode="mutableMode"
-          v-for="item in preEvaluationList" :key="item.preopsInfoId"
-          :title="'术前评估'" v-on:editCurrentCard="editPreEvaluationRecord(item)"
+          v-for="(item, index) in preEvaluationList"
+          :key="'preEvaluation'+index"
+          :title="'术前评估'"
+          v-on:editCurrentCard="editPreEvaluationRecord(item)"
           v-on:viewCurrentCard="viewPreEvaluationRecord(item)"
           v-on:deleteCurrentCard="deletePreEvaluationRecord(item)">
           <div class="text line-1">
@@ -65,9 +75,13 @@
             <span class="value">{{item.preopsTime}}</span>
           </div>
         </card>
-        <card class="card surgery-card" :class="bigCardWidth" :mode="mutableMode" v-for="item in surgicalMethodList" :key="item.patientCaseId"
-          :title="'手术方案'" v-on:editCurrentCard="editSurgicalRecord(item)"
-          v-on:deleteCurrentCard="deleteSurgicalRecord(item)" v-on:viewCurrentCard="viewSurgicalRecord(item)">
+        <card class="card surgery-card" :class="bigCardWidth" :mode="mutableMode"
+          v-for="(item, index) in surgicalMethodList"
+          :key="'surgicalMethod'+index"
+          :title="'手术方案'"
+          v-on:editCurrentCard="editSurgicalRecord(item)"
+          v-on:deleteCurrentCard="deleteSurgicalRecord(item)"
+          v-on:viewCurrentCard="viewSurgicalRecord(item)">
           <div class="text line-1">
             <span class="name">手术类型</span>
             <span class="value">{{transformSurgicalType(item.surgicalInfoId)}}</span>
@@ -81,9 +95,13 @@
             <span class="value">{{item.surgicalDate}}</span>
           </div>
         </card>
-        <card class="card surgery-card" :class="bigCardWidth" :mode="mutableMode" v-for="item in postComplicationList" :key="item.patientCaseId"
-          :title="'术后并发症'" v-on:editCurrentCard="editPostComplicationRecord(item)"
-          v-on:deleteCurrentCard="deletePostComplicationRecord(item)" v-on:viewCurrentCard="viewPostComplicationRecord(item)">
+        <card class="card surgery-card" :class="bigCardWidth" :mode="mutableMode"
+          v-for="(item, index) in postComplicationList"
+          :key="'postComplication'+index"
+          :title="'术后并发症'"
+          v-on:editCurrentCard="editPostComplicationRecord(item)"
+          v-on:deleteCurrentCard="deletePostComplicationRecord(item)"
+          v-on:viewCurrentCard="viewPostComplicationRecord(item)">
           <div class="text line-1">
             <span class="name">并发症细类</span>
             <span class="value">{{transformComplicationType(item.minorComplicationType)}}</span>
@@ -102,9 +120,11 @@
           </div>
         </card>
         <card class="card surgery-card" :class="bigCardWidth" :mode="mutableMode"
-          v-for="item in dbsFirstList" :key="item.patientDbsFirstId"
+          v-for="(item, index) in dbsFirstList"
+          :key="'dbsFirst'+index"
           :title="'程控记录'" v-on:editCurrentCard="editDbsRecord(item)"
-          v-on:deleteCurrentCard="deleteDbsRecord(item)" v-on:viewCurrentCard="viewDbsRecord(item)">
+          v-on:deleteCurrentCard="deleteDbsRecord(item)"
+          v-on:viewCurrentCard="viewDbsRecord(item)">
           <div class="text line-1">
             <span class="name">首次开机</span>
             <span class="value">{{item.dbsTimes}}</span>
@@ -125,9 +145,13 @@
             <span class="value">{{item.programDate}}</span>
           </div>
         </card>
-        <card class="card surgery-card" :class="bigCardWidth" :mode="mutableMode" v-for="item in dbsFollowList" :key="item.patientDbsFollowId"
-         :title="'程控记录'" v-on:editCurrentCard="editDbsRecord(item)" v-on:viewCurrentCard="viewDbsRecord(item)"
-         v-on:deleteCurrentCard="deleteDbsRecord(item)">
+        <card class="card surgery-card" :class="bigCardWidth" :mode="mutableMode"
+          v-for="(item, index) in dbsFollowList"
+          :key="'dbsFollow'+index"
+          :title="'程控记录'"
+          v-on:editCurrentCard="editDbsRecord(item)"
+          v-on:viewCurrentCard="viewDbsRecord(item)"
+          v-on:deleteCurrentCard="deleteDbsRecord(item)">
           <div class="text line-1">
             <span class="name">首次开机</span>
             <span class="value">{{item.dbsTimes}}</span>
@@ -155,9 +179,13 @@
         :mode="mutableMode" :title="physiontherapyTitle"
         v-on:addNewCard="addPhysiontherapyRecord" :editable="canEdit">
         <card class="card physiontherapy-card" :class="bigCardWidth"
-          :mode="mutableMode" v-for="item in diagnosticPhysiontherapy" :key="item.physiType"
-          :title="transformPhysiType(item.physiType)" v-on:editCurrentCard="editPhysiontherapy(item)"
-          v-on:deleteCurrentCard="deletePhysiontherapy(item)" v-on:viewCurrentCard="viewPhysiontherapy(item)">
+          :mode="mutableMode"
+          v-for="(item, index) in diagnosticPhysiontherapy"
+          :key="'diagnosticPhysiontherapy'+index"
+          :title="transformPhysiType(item.physiType)"
+          v-on:editCurrentCard="editPhysiontherapy(item)"
+          v-on:deleteCurrentCard="deletePhysiontherapy(item)"
+          v-on:viewCurrentCard="viewPhysiontherapy(item)">
           <div class="text line-1">
             <span class="name">治疗前阈值</span>
             <span class="value">左{{item.leftThresholdBefore}}，右{{item.rightThresholdBefore}}</span>
@@ -182,9 +210,11 @@
 
         <card class="card physiontherapy-card"
           :class="bigCardWidth" :mode="mutableMode"
-          v-for="item in diagnosticTreatmentEvaluation" :key="item.situationType"
+          v-for="(item, index) in diagnosticTreatmentEvaluation"
+          :key="'diagnosticTreatmentEvaluation'+index"
           :title="'治疗评估'" v-on:editCurrentCard="editTreatmentEvaluation(item)"
-          v-on:deleteCurrentCard="deleteTreatmentEvaluation(item)" v-on:viewCurrentCard="viewTreatmentEvaluation(item)">
+          v-on:deleteCurrentCard="deleteTreatmentEvaluation(item)"
+          v-on:viewCurrentCard="viewTreatmentEvaluation(item)">
           <div class="text line-1" v-if="item.situationType === 1">
             <span class="name">治疗后阈值</span>
             <span class="value">左 {{item.leftThreshold}}，右 {{item.rightThreshold}}</span>
@@ -208,9 +238,11 @@
         </card>
         <card class="card physiontherapy-card"
           :class="bigCardWidth" :mode="mutableMode"
-          v-for="item in diagnosticAdverseEvent" :key="item.patientAdverse"
+          v-for="(item, index) in diagnosticAdverseEvent"
+          :key="'diagnosticAdverseEvent'+index"
           :title="'不良事件'" v-on:editCurrentCard="editAdverseEvent(item)"
-          v-on:deleteCurrentCard="deleteAdverseEvent(item)" v-on:viewCurrentCard="viewAdverseEvent(item)">
+          v-on:deleteCurrentCard="deleteAdverseEvent(item)"
+          v-on:viewCurrentCard="viewAdverseEvent(item)">
           <div class="text line-1">
             <span class="name">事件名称</span>
             <span class="value">{{item.adverseName}}</span>
