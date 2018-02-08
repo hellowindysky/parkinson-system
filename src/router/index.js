@@ -5,8 +5,7 @@ import Login from 'views/login/Login';
 
 import DoctorSelection from 'views/doctor-selection/DoctorSelection';
 
-import Layout from 'public/layout/Layout';
-// import Home from 'viewshome/Home';   // 首页还没做
+import Layout from 'views/layout/Layout';
 import ListFrame from 'views/list-frame/ListFrame';
 import Analytics from 'views/analytics/Analytics';
 const Configuration = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/Configuration');
