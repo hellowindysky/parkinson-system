@@ -1,5 +1,5 @@
 <template>
-  <feature-folding-panel class="common-drugs" :title="'生化指标'" >
+  <feature-folding-panel class="common-drugs" :title="'神经系统'" >
     <el-table :data="tableData">
       <el-table-column prop="xuhao" label="序号" align="center" width="80">
       </el-table-column>

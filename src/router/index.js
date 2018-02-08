@@ -3,49 +3,49 @@ import Router from 'vue-router';
 
 import Login from 'views/login/Login';
 
-import DoctorSelection from 'views/doctorselection/DoctorSelection';
+import DoctorSelection from 'views/doctor-selection/DoctorSelection';
 
 import Layout from 'public/layout/Layout';
 // import Home from 'viewshome/Home';   // 首页还没做
-import ListFrame from 'views/listframe/ListFrame';
+import ListFrame from 'views/list-frame/ListFrame';
 import Analytics from 'views/analytics/Analytics';
 const Configuration = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/Configuration');
 
-import PatientInfo from 'patient/patientinfo/PatientInfo';
-import GroupInfo from 'patient/groupinfo/GroupInfo';
+import PatientInfo from 'patient/patient-info/PatientInfo';
+import GroupInfo from 'patient/group-info/GroupInfo';
 
-import PersonalInfo from 'patient/personalinfo/PersonalInfo';
-import DiagnosticInfo from 'patient/diagnosticinfo/DiagnosticInfo';
-import ExperimentInfo from 'patient/experimentinfo/ExperimentInfo';
+import PersonalInfo from 'patient/personal-info/PersonalInfo';
+import DiagnosticInfo from 'patient/diagnostic-info/DiagnosticInfo';
+import ExperimentInfo from 'patient/experiment-info/ExperimentInfo';
 
-import BasicAnalytics from 'views/analytics/basicanalytics/BasicAnalytics';
+import BasicAnalytics from 'views/analytics/basic-analytics/BasicAnalytics';
 
 const FeatureConfiguration = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/featureconfiguration/FeatureConfiguration');
-const SecondBar = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/featureconfiguration/configurationbar/SecondBar');
-const GroupConfiguration = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/featureconfiguration/groupconfiguration/GroupConfiguration');
-const DepartmentConfiguration = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/featureconfiguration/departmentconfiguration/DepartmentConfiguration');
-const AnalysisConfiguration = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/analysisconfiguration/AnalysisConfiguration');
+const SecondBar = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/featureconfiguration/configuration-bar/SecondBar');
+const GroupConfiguration = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/featureconfiguration/group-configuration/GroupConfiguration');
+const DepartmentConfiguration = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/featureconfiguration/department-configuration/DepartmentConfiguration');
+const AnalysisConfiguration = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/analysis-configuration/AnalysisConfiguration');
 
 const FeatureDiagnosticInfo = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/featureconfiguration/FeatureDiagnosticInfo');
 const FreaturePersonInfo = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/featureconfiguration/FreaturePersonInfo');
 
-const UserInfo = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/usermanagement/userinfo/UserInfo');
-const RoleInfo = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/rolemanagement/roleinfo/RoleInfo');
+const UserInfo = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/usermanagement/user-info/UserInfo');
+const RoleInfo = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/rolemanagement/role-info/RoleInfo');
 
 const DictionaryManagement = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/dictionarymanagement/DictionaryManagement');
-const DictionSecondBar = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/dictionarymanagement/dictionsecondbar/DictionSecondBar');
+const DictionSecondBar = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/dictionarymanagement/diction-second-bar/DictionSecondBar');
 
-const DictionTreatmentPlan = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/dictionarymanagement/dictiontreatmentplan/DictionTreatmentPlan');
-const DictionMedicalScale = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/dictionarymanagement/dictionmedicalscale/DictionMedicalScale');
+const DictionTreatmentPlan = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/dictionarymanagement/diction-treatment-plan/DictionTreatmentPlan');
+const DictionMedicalScale = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/dictionarymanagement/diction-medical-scale/DictionMedicalScale');
 const DictionInspection = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/dictionarymanagement/dictioninspection/DictionInspection');
-const DictionImageDatas = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/dictionarymanagement/dictionimagedatas/DictionImageDatas');
+const DictionImageDatas = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/dictionarymanagement/dictionimage-datas/DictionImageDatas');
 
-const InformationSecondBar = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/dictionarymanagement/informationsecondbar/InformationSecondBar');
-const OtherMedicationHistory = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/dictionarymanagement/othermedicationhistory/OtherMedicationHistory');
-const PastHistory = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/dictionarymanagement/pasthistory/PastHistory');
-const FamilyHistory = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/dictionarymanagement/familyhistory/FamilyHistory');
-const PersonalHistory = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/dictionarymanagement/personalhistory/PersonalHistory');
-const ToxicExposure = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/dictionarymanagement/toxicexposure/ToxicExposure');
+const InformationSecondBar = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/dictionarymanagement/information-second-bar/InformationSecondBar');
+const OtherMedicationHistory = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/dictionarymanagement/other-medication-history/OtherMedicationHistory');
+const PastHistory = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/dictionarymanagement/past-history/PastHistory');
+const FamilyHistory = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/dictionarymanagement/family-history/FamilyHistory');
+const PersonalHistory = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/dictionarymanagement/personal-history/PersonalHistory');
+const ToxicExposure = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/dictionarymanagement/toxic-exposure/ToxicExposure');
 
 Vue.use(Router);
 
@@ -475,13 +475,13 @@ export default new Router({
                   component: DictionSecondBar,
                   children: [
                     {
-                      path: 'dictiontreatmentplan',
-                      name: 'dictiontreatmentplan',
+                      path: 'diction-treatment-plan',
+                      name: 'diction-treatment-plan',
                       component: DictionTreatmentPlan
                     },
                     {
-                      path: 'dictionmedicalscale',
-                      name: 'dictionmedicalscale',
+                      path: 'diction-medical-scale',
+                      name: 'diction-medical-scale',
                       component: DictionMedicalScale
                     },
                     {
@@ -490,8 +490,8 @@ export default new Router({
                       component: DictionInspection
                     },
                     {
-                      path: 'dictionimagedatas',
-                      name: 'dictionimagedatas',
+                      path: 'dictionimage-datas',
+                      name: 'dictionimage-datas',
                       component: DictionImageDatas
                     }
                   ]
@@ -502,28 +502,28 @@ export default new Router({
                   component: InformationSecondBar,
                   children: [
                     {
-                      path: 'othermedicationhistory',
-                      name: 'othermedicationhistory',
+                      path: 'other-medication-history',
+                      name: 'other-medication-history',
                       component: OtherMedicationHistory
                     },
                     {
-                      path: 'pasthistory',
-                      name: 'pasthistory',
+                      path: 'past-history',
+                      name: 'past-history',
                       component: PastHistory
                     },
                     {
-                      path: 'familyhistory',
-                      name: 'familyhistory',
+                      path: 'family-history',
+                      name: 'family-history',
                       component: FamilyHistory
                     },
                     {
-                      path: 'personalhistory',
-                      name: 'personalhistory',
+                      path: 'personal-history',
+                      name: 'personal-history',
                       component: PersonalHistory
                     },
                     {
-                      path: 'toxicexposure',
-                      name: 'toxicexposure',
+                      path: 'toxic-exposure',
+                      name: 'toxic-exposure',
                       component: ToxicExposure
                     }
                   ]

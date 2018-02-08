@@ -1,13 +1,15 @@
 <template>
-  <feature-folding-panel class="common-drugs" :title="'生化指标'" >
+  <feature-folding-panel class="common-drugs" :title="'停药原因'" >
     <el-table :data="tableData">
       <el-table-column prop="xuhao" label="序号" align="center" width="80">
       </el-table-column>
-      <el-table-column prop="name" label="检查名称" align="center" width="350">
+      <el-table-column prop="name" label="停药原因" align="center" width="150" >
       </el-table-column>
-      <el-table-column prop="tname" label="检查类型" align="center" width="350">
+      <el-table-column prop="tname" label="停药类型" align="center"width="150" >
       </el-table-column>
-      <el-table-column prop="denxiao" label="属性" align="center" width="200">
+      <el-table-column prop="guige" label="药物副作用是否必填" align="center" width="450" >
+      </el-table-column>
+      <el-table-column prop="denxiao" label="属性" align="center" width="150" >
       </el-table-column>
     </el-table>
   </feature-folding-panel>
@@ -25,20 +27,30 @@ export default {
       tableData: [
         {
           xuhao: '01',
-          name: '头部前倾',
-          tname: 'ew',
+          name: '药物副反应',
+          tname: '药物原因',
+          guige: '是',
           denxiao: '系统默认'
         },
         {
           xuhao: '02',
-          name: '肝功能八项',
-          tname: 'ew',
+          name: '药物副反应',
+          tname: '药物原因',
+          guige: '否',
           denxiao: '系统默认'
         },
         {
           xuhao: '03',
-          name: '共济（闭目难立症）',
-          tname: 'ew',
+          name: '效果不佳',
+          tname: '病情变化',
+          guige: '是',
+          denxiao: '系统默认'
+        },
+        {
+          xuhao: '04',
+          name: '价格太贵',
+          tname: '个人原因',
+          guige: '是',
           denxiao: '系统默认'
         }
       ]
@@ -56,9 +68,10 @@ export default {
   .el-table {
     width: 981px;
     margin-top: 12px;
-       .cell {
-         text-align: center;
-       }
+
   }
+  .table-line {
+      background: red;
+    }
 }
 </style>
