@@ -60,7 +60,7 @@
         </el-form-item>
       </el-form>
     </div>
-    <div class="version-info">版本 V2.0</div>
+    <div class="version-info">版本 V2.1.1</div>
   </div>
 </template>
 
