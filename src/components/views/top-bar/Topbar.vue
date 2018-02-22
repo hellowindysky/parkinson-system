@@ -60,7 +60,7 @@ import { getAuthenticationList } from 'api/user.js';
 
 const WAITING_TO_CHANGE = 'waitingToChange';
 const NEED_TO_QUERY_AGAIN = 'needToQueryAgain';
-
+const passwordModal = () => import(/* webpackChunkName: 'modal' */ 'modal/password-modal/PasswordModal');
 export default {
   props: {
     showFilterPanel: {
@@ -239,7 +239,8 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION, '确认提醒', message, '确定');
     },
     resetPassword() {
-      Bus.$emit(this.SHOW_PASSWORD_MODAL);
+      // Bus.$emit(this.SHOW_PASSWORD_MODAL);
+      Bus.$emit(this.SHOW_DYNAMIC_MODAL, passwordModal, this.SHOW_PASSWORD_MODAL);
     },
     logout() {
       Bus.$on(this.CONFIRM, () => {

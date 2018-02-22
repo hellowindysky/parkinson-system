@@ -123,7 +123,7 @@ import { addGeneCheck, modifyGeneCheck } from 'api/patient.js';
 export default {
   data() {
     return {
-      displayModal: false,
+      displayModal: true,
       mode: '',
       completeInit: false,
       lockSubmitButton: false,
@@ -161,6 +161,7 @@ export default {
   },
   methods: {
     showModal(cardOperation, item, showEdit) {
+      console.log(cardOperation, 2223);
       this.completeInit = false;
       this.mode = cardOperation;
       this.showEdit = showEdit;
@@ -186,16 +187,18 @@ export default {
         }
       });
       this.completeInit = true;
-      this.displayModal = true;
+      // this.displayModal = true;
       this.updateScrollbar();
     },
     updateScrollbar() {
       this.$nextTick(() => {
-        Ps.destroy(this.$refs.scrollArea);
-        Ps.initialize(this.$refs.scrollArea, {
-          wheelSpeed: 1,
-          minScrollbarLength: 40
-        });
+        if (this.$refs.scrollArea) {
+          Ps.destroy(this.$refs.scrollArea);
+          Ps.initialize(this.$refs.scrollArea, {
+            wheelSpeed: 1,
+            minScrollbarLength: 40
+          });
+        }
       });
     },
     getOptions(fieldName) {
@@ -224,7 +227,8 @@ export default {
       }
     },
     cancel() {
-      this.displayModal = false;
+      // this.displayModal = false;
+      Bus.$emit(this.SHOW_DYNAMIC_MODAL, '');
       this.lockSubmitButton = false;
     },
     switchToEditingMode() {
@@ -279,7 +283,8 @@ export default {
     updateAndClose() {
       Bus.$emit(this.UPDATE_CASE_INFO);
       this.lockSubmitButton = false;
-      this.displayModal = false;
+      // this.displayModal = false;
+      Bus.$emit(this.SHOW_DYNAMIC_MODAL, '');
     }
   },
   mounted() {
@@ -287,9 +292,10 @@ export default {
   },
   watch: {
     '$route.path'() {
-      if (this.displayModal) {
-        this.cancel();
-      }
+      // if (this.displayModal) {
+      //   this.cancel();
+      // }
+      this.cancel();
     }
   }
 };

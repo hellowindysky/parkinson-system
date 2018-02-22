@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="password-modal-wrapper" v-show="displayModal">
+  <div class="password-modal-wrapper" v-if="displayModal">
     <div class="password-modal">
       <h3 class="title">修改密码</h3>
       <div class="field">
@@ -69,7 +69,7 @@ import { sendVerificationCode, resetPassword } from 'api/user.js';
 export default {
   data() {
     return {
-      displayModal: false,
+      displayModal: true,
       originalPassword: '',
       originalPasswordWarning: '',
       newPassword: '',
@@ -118,6 +118,7 @@ export default {
   },
   methods: {
     showModal() {
+      console.log(888888);
       this.originalPassword = '';
       this.newPassword = '';
       this.repeatedNewPassword = '';
@@ -129,12 +130,13 @@ export default {
       if (this.codeButtonStatus === 2) {
         this.codeButtonStatus = 0;
       }
-      this.displayModal = true;
+      // this.displayModal = true;
     },
     cancel() {
       this.lockSubmitButton = false;
       this.lockSendButton = false;
-      this.displayModal = false;
+      // this.displayModal = false;
+      Bus.$emit(this.SHOW_DYNAMIC_MODAL, '');
     },
     submit() {
       if (this.lockSubmitButton) {
@@ -178,7 +180,8 @@ export default {
           type: 'success',
           duration: 2000
         });
-        this.displayModal = false;
+        // this.displayModal = false;
+        Bus.$emit(this.SHOW_DYNAMIC_MODAL, '');
         this.lockSubmitButton = false;
         setTimeout(() => {
           this.$router.push({name: 'login'});
@@ -301,9 +304,10 @@ export default {
   },
   watch: {
     '$route.path'() {
-      if (this.displayModal) {
-        this.cancel();
-      }
+      // if (this.displayModal) {
+      //   this.cancel();
+      // }
+      this.cancel();
     }
   }
 };

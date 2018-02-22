@@ -147,5 +147,6 @@ export default {
   COFFEE_HISTORY_MODAL: 'coffeeHistoryModal',
   WINE_HISTORY_MODAL: 'wineHistoryModal',
   SMOKE_HISTORY_MODAL: 'smokeHistoryModal',
-  EXERCISE_HISTORY_MODAL: 'exerciseHistoryModal'
+  EXERCISE_HISTORY_MODAL: 'exerciseHistoryModal',
+  SHOW_DYNAMIC_MODAL: 'showDynamicModal'
 };

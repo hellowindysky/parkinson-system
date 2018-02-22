@@ -160,7 +160,7 @@ import { deleteEmg, deleteBiochemical, deleteNeurologicCheck, deleteSleepMonitor
 import FoldingPanel from 'public/folding-panel/FoldingPanel';
 import ExtensiblePanel from 'public/extensible-panel/ExtensiblePanel';
 import Card from 'public/card/Card';
-
+const geneModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/gene-modal/GeneModal');
 export default {
   data() {
     return {
@@ -331,13 +331,16 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addGeneCheckRecord() {
-      Bus.$emit(this.SHOW_GENE_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
+      // Bus.$emit(this.SHOW_GENE_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
+      Bus.$emit(this.SHOW_DYNAMIC_MODAL, geneModal, this.SHOW_GENE_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
     },
     editGeneCheckRecord(item) {
-      Bus.$emit(this.SHOW_GENE_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit);
+      // Bus.$emit(this.SHOW_GENE_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit);
+      Bus.$emit(this.SHOW_DYNAMIC_MODAL, geneModal, this.SHOW_GENE_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit);
     },
     viewGeneCheckRecord(item) {
-      Bus.$emit(this.SHOW_GENE_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit);
+      // Bus.$emit(this.SHOW_GENE_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit);
+      Bus.$emit(this.SHOW_DYNAMIC_MODAL, geneModal, this.SHOW_GENE_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit);
     },
     deleteGeneCheckRecord(item) {
       let geneInfo = {

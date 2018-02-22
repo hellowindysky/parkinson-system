@@ -3,8 +3,11 @@
     <topbar class="topbar" :showFilterPanel="showFilterPanel"></topbar>
     <sidebar class="sidebar"></sidebar>
     <router-view class="content"></router-view>
-
-    <password-modal></password-modal>
+    <keep-alive>
+      <component :is="componentName"></component>
+    </keep-alive>
+    <!-- <component :is="componentName"></component> -->
+    <!-- <password-modal></password-modal> -->
     <authorization-modal></authorization-modal>
     <secret-agreement-modal></secret-agreement-modal>
     <message-modal></message-modal>
@@ -22,7 +25,7 @@
     <vital-Signs-modal></vital-Signs-modal>
     <dbs-modal></dbs-modal>
     <neurologic-modal></neurologic-modal>
-    <gene-modal></gene-modal>
+    <!-- <gene-modal></gene-modal> -->
     <biochemical-exam-modal></biochemical-exam-modal>
     <neuroelectric-modal></neuroelectric-modal>
     <image-modal></image-modal>
@@ -53,7 +56,7 @@ import { setRequestToken } from 'api/common.js';
 import topbar from 'views/top-bar/Topbar';
 import sidebar from 'views/side-bar/Sidebar';
 
-const passwordModal = () => import(/* webpackChunkName: 'modal' */ 'modal/password-modal/PasswordModal');
+// const passwordModal = () => import(/* webpackChunkName: 'modal' */ 'modal/password-modal/PasswordModal');
 const authorizationModal = () => import(/* webpackChunkName: 'modal' */ 'modal/authorization-modal/AuthorizationModal');
 const secretAgreementModal = () => import(/* webpackChunkName: 'modal' */ 'modal/secret-agreement-modal/SecretAgreementModal');
 const messageModal = () => import(/* webpackChunkName: 'modal' */ 'modal/message-modal/MessageModal');
@@ -76,7 +79,7 @@ const adverseEventModal = () => import(/* webpackChunkName: 'treatmentModal' */ 
 
 const vitalSignsModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/vital-signs-modal/VitalSignsModal');
 const neurologicModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/neurologic-modal/NeurologicModal');
-const geneModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/gene-modal/GeneModal');
+// const geneModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/gene-modal/GeneModal');
 const biochemicalExamModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/biochemical-exam-modal/BiochemicalExamModal');
 const neuroelectricModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/neuroelectric-modal/NeuroelectricModal');
 const imageModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/image-modal/ImageModal');
@@ -99,13 +102,14 @@ import waterMark from 'public/water-mark/WaterMark';
 export default {
   data() {
     return {
-      showFilterPanel: false
+      showFilterPanel: false,
+      componentName: ''
     };
   },
   components: {
     topbar,
     sidebar,
-    passwordModal,
+    // passwordModal,
     authorizationModal,
     secretAgreementModal,
     messageModal,
@@ -121,7 +125,7 @@ export default {
     adverseEventModal,
     vitalSignsModal,
     neurologicModal,
-    geneModal,
+    // geneModal,
     biochemicalExamModal,
     neuroelectricModal,
     imageModal,
@@ -197,6 +201,16 @@ export default {
 
     Bus.$on(this.TOGGLE_FILTER_PANEL_DISPLAY, this.toggleFilterPanelDisplay);
     Bus.$on(this.DEPRIVED_OF_AUTHORITY_BY_DOCTOR, this.handleDeprivationOfAuthority);
+
+    Bus.$on(this.SHOW_DYNAMIC_MODAL, (componentName, whichModal, cardOperation, item, showEdit) => {
+      this.componentName = componentName;
+      if (whichModal !== undefined) {
+        console.log(componentName, whichModal, cardOperation, item, showEdit);
+        setTimeout(() => {
+          Bus.$emit(whichModal, cardOperation, item, showEdit);
+        }, 0);
+      }
+    });
   },
   beforeRouteEnter(to, from, next) {
     let token = sessionStorage.getItem('token');
