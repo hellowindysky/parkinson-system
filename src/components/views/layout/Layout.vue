@@ -17,9 +17,9 @@
     <surgical-method-modal></surgical-method-modal>
     <operative-complication-modal></operative-complication-modal>
     <physiontherapy-modal></physiontherapy-modal>
-    <treatmentEvaluation-modal></treatmentEvaluation-modal>
+    <treatment-evaluation-modal></treatment-evaluation-modal>
     <adverse-event-modal></adverse-event-modal>
-    <vital-Signs-modal></vital-Signs-modal>
+    <vital-signs-modal></vital-signs-modal>
     <dbs-modal></dbs-modal>
     <neurologic-modal></neurologic-modal>
     <gene-modal></gene-modal>
