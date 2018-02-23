@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="password-modal-wrapper" v-if="displayModal">
+  <div class="password-modal-wrapper">
     <div class="password-modal">
       <h3 class="title">修改密码</h3>
       <div class="field">
@@ -69,7 +69,6 @@ import { sendVerificationCode, resetPassword } from 'api/user.js';
 export default {
   data() {
     return {
-      displayModal: true,
       originalPassword: '',
       originalPasswordWarning: '',
       newPassword: '',
@@ -136,7 +135,7 @@ export default {
       this.lockSubmitButton = false;
       this.lockSendButton = false;
       // this.displayModal = false;
-      Bus.$emit(this.SHOW_DYNAMIC_MODAL, '');
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     submit() {
       if (this.lockSubmitButton) {
@@ -181,7 +180,7 @@ export default {
           duration: 2000
         });
         // this.displayModal = false;
-        Bus.$emit(this.SHOW_DYNAMIC_MODAL, '');
+        Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
         this.lockSubmitButton = false;
         setTimeout(() => {
           this.$router.push({name: 'login'});

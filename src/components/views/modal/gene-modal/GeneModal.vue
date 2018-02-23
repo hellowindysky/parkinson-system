@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="gene-modal-wrapper" v-show="displayModal">
+  <div class="gene-modal-wrapper">
     <div class="gene-modal" ref="scrollArea">
       <h3 class="title">{{title}}</h3>
       <div class="content">
@@ -123,7 +123,6 @@ import { addGeneCheck, modifyGeneCheck } from 'api/patient.js';
 export default {
   data() {
     return {
-      displayModal: true,
       mode: '',
       completeInit: false,
       lockSubmitButton: false,
@@ -228,7 +227,7 @@ export default {
     },
     cancel() {
       // this.displayModal = false;
-      Bus.$emit(this.SHOW_DYNAMIC_MODAL, '');
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
       this.lockSubmitButton = false;
     },
     switchToEditingMode() {
@@ -284,7 +283,7 @@ export default {
       Bus.$emit(this.UPDATE_CASE_INFO);
       this.lockSubmitButton = false;
       // this.displayModal = false;
-      Bus.$emit(this.SHOW_DYNAMIC_MODAL, '');
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     }
   },
   mounted() {

@@ -240,7 +240,7 @@ export default {
     },
     resetPassword() {
       // Bus.$emit(this.SHOW_PASSWORD_MODAL);
-      Bus.$emit(this.SHOW_DYNAMIC_MODAL, passwordModal, this.SHOW_PASSWORD_MODAL);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, passwordModal, this.SHOW_PASSWORD_MODAL);
     },
     logout() {
       Bus.$on(this.CONFIRM, () => {

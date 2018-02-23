@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="img-modal-wrapper" v-show="displayModal">
+  <div class="img-modal-wrapper">
     <div class="img-modal" ref="scrollArea">
       <h3 class="title">{{title}}</h3>
       <div class="content">
@@ -410,7 +410,6 @@ import { addImage, modifyImage } from 'api/patient.js';
 export default {
   data() {
     return {
-      displayModal: false,
       mode: '',
       completeInit: false,
 
@@ -562,7 +561,7 @@ export default {
       });
 
       this.completeInit = true;
-      this.displayModal = true;
+      // this.displayModal = true;
       this.updateScrollbar();
     },
     getOptions(fieldName) {
@@ -603,7 +602,8 @@ export default {
       this.$refs.upload5.clearFiles();
       this.$refs.upload6.clearFiles();
       this.$refs.upload7.clearFiles();
-      this.displayModal = false;
+      // this.displayModal = false;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     switchToEditingMode() {
       this.mode = this.EDIT_CURRENT_CARD;
@@ -681,7 +681,8 @@ export default {
       this.$refs.upload3.clearFiles();
       this.$refs.upload4.clearFiles();
       Bus.$emit(this.UPDATE_CASE_INFO);
-      this.displayModal = false;
+      // this.displayModal = false;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     removeFile(file, showingList, transferringList) {
       // console.log(file);
@@ -821,9 +822,10 @@ export default {
   },
   watch: {
     '$route.path'() {
-      if (this.displayModal) {
-        this.cancel();
-      }
+      // if (this.displayModal) {
+      //   this.cancel();
+      // }
+      this.cancel();
     }
   }
 };

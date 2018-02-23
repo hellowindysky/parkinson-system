@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="neurologic-modal-wrapper" v-show="displayModal">
+  <div class="neurologic-modal-wrapper">
     <div class="neurologic-modal" ref="neurologicModal">
       <h3 class="title">{{title}}</h3>
 
@@ -245,7 +245,6 @@ import { addNeurologicCheck, modifyNeurologicCheck } from 'api/patient.js';
 export default {
   data() {
     return {
-      displayModal: false,
       mode: '',
       lockSubmitButton: false,
       showEdit: false,
@@ -321,7 +320,7 @@ export default {
   },
   methods: {
     showPanel(cardOperation, item, showEdit) {
-      this.displayModal = true;
+      // this.displayModal = true;
       this.mode = cardOperation;
       this.showEdit = showEdit;
 
@@ -332,8 +331,6 @@ export default {
         this.copyItem.checkType = Number(this.copyItem.checkType);
       }
       vueCopy(this.copyItem, this.copyInfo);
-
-      console.log('item: ', item);
 
       this.$nextTick(() => {
         this.clearWarning();
@@ -454,7 +451,8 @@ export default {
     },
     updateAndClose() {
       this.lockSubmitButton = false;
-      this.displayModal = false;
+      // this.displayModal = false;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     switchToEditingMode() {
       this.mode = this.EDIT_CURRENT_CARD;
@@ -462,7 +460,8 @@ export default {
     },
     cancel() {
       this.lockSubmitButton = false;
-      this.displayModal = false;
+      // this.displayModal = false;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     closeSubTable() {
       this.tableMode = this.FATHER_OPEN;
@@ -567,9 +566,10 @@ export default {
       vueCopy(this.copyItem, this.copyInfo);
     },
     '$route.path'() {
-      if (this.displayModal) {
-        this.cancel();
-      }
+      // if (this.displayModal) {
+      //   this.cancel();
+      // }
+      this.cancel();
     }
   }
 };

@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="neuroelectric-modal-wrapper" v-show="displayModal">
+  <div class="neuroelectric-modal-wrapper">
     <div class="neuroelectric-modal" ref="neuroelectricModal">
       <h3 class="title">{{title}}</h3>
       <div class="content">
@@ -827,7 +827,6 @@ export default {
       FATHER_OPEN: 'fatherOpen',
       SON_OPEN: 'sonOpen',
       tableMode: '',
-      displayModal: false,
       mode: '',
       lockSubmitButton: false,
 
@@ -1004,7 +1003,7 @@ export default {
   },
   methods: {
     showPanel(cardOperation, item, showEdit, heightAndWeight) {
-      this.displayModal = true;
+      // this.displayModal = true;
       this.mode = cardOperation;
       this.tableMode = this.FATHER_OPEN;
       this.showEdit = showEdit;
@@ -1527,7 +1526,8 @@ export default {
     },
     cancel() {
       this.lockSubmitButton = false;
-      this.displayModal = false;
+      // this.displayModal = false;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
       this.copyInfo = {};
       this.tableMode = '';
       if (this.$refs.upload4) {
@@ -1673,7 +1673,8 @@ export default {
       }
       Bus.$emit(this.UPDATE_CASE_INFO);
       this.lockSubmitButton = false;
-      this.displayModal = false;
+      // this.displayModal = false;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     chooseSubModal() {
       if (this.subModalType !== '') {
@@ -1822,9 +1823,10 @@ export default {
       this.selectEmg();
     },
     '$route.path'() {
-      if (this.displayModal) {
-        this.cancel();
-      }
+      // if (this.displayModal) {
+      //   this.cancel();
+      // }
+      this.cancel();
     }
   },
   beforeDestroy() {

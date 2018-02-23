@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="vital-signs-modal-wrapper" v-show="displayModal">
+  <div class="vital-signs-modal-wrapper">
     <div class="vital-signs-modal" ref="scrollArea">
       <h3 class="title">{{title}}</h3>
       <div class="content">
@@ -174,7 +174,6 @@ import { addVitalSigns, modifyVitalSigns } from 'api/patient.js';
 export default {
   data() {
     return {
-      displayModal: false,
       mode: '',
       completeInit: false,
       id: '',
@@ -301,7 +300,7 @@ export default {
       });
 
       this.completeInit = true;
-      this.displayModal = true;
+      // this.displayModal = true;
       this.updateScrollbar();
     },
     transform(code, fieldName) {
@@ -359,7 +358,8 @@ export default {
     },
     cancel() {
       this.lockSubmitButton = false;
-      this.displayModal = false;
+      // this.displayModal = false;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     switchToEditingMode() {
       this.mode = this.EDIT_CURRENT_CARD;
@@ -409,7 +409,8 @@ export default {
     updateAndClose() {
       Bus.$emit(this.UPDATE_CASE_INFO);
       this.lockSubmitButton = false;
-      this.displayModal = false;
+      // this.displayModal = false;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     updateScrollbar() {
       this.$nextTick(() => {
@@ -431,9 +432,10 @@ export default {
   },
   watch: {
     '$route.path'() {
-      if (this.displayModal) {
-        this.cancel();
-      }
+      // if (this.displayModal) {
+      //   this.cancel();
+      // }
+      this.cancel();
     }
   }
 };

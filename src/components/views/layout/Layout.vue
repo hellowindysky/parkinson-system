@@ -6,7 +6,7 @@
     <keep-alive>
       <component :is="componentName"></component>
     </keep-alive>
-    <!-- <component :is="componentName"></component> -->
+
     <!-- <password-modal></password-modal> -->
     <authorization-modal></authorization-modal>
     <secret-agreement-modal></secret-agreement-modal>
@@ -22,13 +22,13 @@
     <physiontherapy-modal></physiontherapy-modal>
     <treatmentEvaluation-modal></treatmentEvaluation-modal>
     <adverse-event-modal></adverse-event-modal>
-    <vital-Signs-modal></vital-Signs-modal>
+    <!-- <vital-Signs-modal></vital-Signs-modal> -->
     <dbs-modal></dbs-modal>
-    <neurologic-modal></neurologic-modal>
+    <!-- <neurologic-modal></neurologic-modal> -->
     <!-- <gene-modal></gene-modal> -->
-    <biochemical-exam-modal></biochemical-exam-modal>
-    <neuroelectric-modal></neuroelectric-modal>
-    <image-modal></image-modal>
+    <!-- <biochemical-exam-modal></biochemical-exam-modal> -->
+    <!-- <neuroelectric-modal></neuroelectric-modal> -->
+    <!-- <image-modal></image-modal> -->
     <first-symptoms-modal></first-symptoms-modal>
     <first-treatment-modal></first-treatment-modal>
     <diagnostic-record-modal></diagnostic-record-modal>
@@ -77,12 +77,12 @@ const physiontherapyModal = () => import(/* webpackChunkName: 'treatmentModal' *
 const treatmentEvaluationModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/treatment-Evaluation-modal/TreatmentEvaluationModal');
 const adverseEventModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/adverse-event-modal/AdverseEventModal');
 
-const vitalSignsModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/vital-signs-modal/VitalSignsModal');
-const neurologicModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/neurologic-modal/NeurologicModal');
+// const vitalSignsModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/vital-signs-modal/VitalSignsModal');
+// const neurologicModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/neurologic-modal/NeurologicModal');
 // const geneModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/gene-modal/GeneModal');
-const biochemicalExamModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/biochemical-exam-modal/BiochemicalExamModal');
-const neuroelectricModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/neuroelectric-modal/NeuroelectricModal');
-const imageModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/image-modal/ImageModal');
+// const biochemicalExamModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/biochemical-exam-modal/BiochemicalExamModal');
+// const neuroelectricModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/neuroelectric-modal/NeuroelectricModal');
+// const imageModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/image-modal/ImageModal');
 
 const applicationModal = () => import(/* webpackChunkName: 'experimentModal' */ 'modal/application-modal/ApplicationModal');
 const rejectionModal = () => import(/* webpackChunkName: 'experimentModal' */ 'modal/rejection-modal/RejectionModal');
@@ -123,12 +123,12 @@ export default {
     physiontherapyModal,
     treatmentEvaluationModal,
     adverseEventModal,
-    vitalSignsModal,
-    neurologicModal,
+    // vitalSignsModal,
+    // neurologicModal,
     // geneModal,
-    biochemicalExamModal,
-    neuroelectricModal,
-    imageModal,
+    // biochemicalExamModal,
+    // neuroelectricModal,
+    // imageModal,
     firstSymptomsModal,
     firstTreatmentModal,
     diagnosticRecordModal,
@@ -202,12 +202,12 @@ export default {
     Bus.$on(this.TOGGLE_FILTER_PANEL_DISPLAY, this.toggleFilterPanelDisplay);
     Bus.$on(this.DEPRIVED_OF_AUTHORITY_BY_DOCTOR, this.handleDeprivationOfAuthority);
 
-    Bus.$on(this.SHOW_DYNAMIC_MODAL, (componentName, whichModal, cardOperation, item, showEdit) => {
+    Bus.$on(this.MOUNT_DYNAMIC_COMPONENT, (componentName, showWhichModal, cardOperation, item, showEdit, heightAndWeight) => {
       this.componentName = componentName;
-      if (whichModal !== undefined) {
-        console.log(componentName, whichModal, cardOperation, item, showEdit);
+      if (showWhichModal !== undefined) {
+        console.log(componentName, showWhichModal, cardOperation, item, showEdit, heightAndWeight);
         setTimeout(() => {
-          Bus.$emit(whichModal, cardOperation, item, showEdit);
+          Bus.$emit(showWhichModal, cardOperation, item, showEdit, heightAndWeight);
         }, 0);
       }
     });

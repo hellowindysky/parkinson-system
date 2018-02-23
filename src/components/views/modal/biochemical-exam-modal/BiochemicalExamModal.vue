@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="biochemical-modal-wrapper" v-show="displayModal">
+  <div class="biochemical-modal-wrapper">
     <div class="biochemical-modal" ref="biochemicalModal">
       <h3 class="title">{{title}}</h3>
       <div class="content">
@@ -140,7 +140,6 @@ import { addBiochemical, modifyBiochemical } from 'api/patient.js';
 export default {
   data() {
     return {
-      displayModal: false,
       mode: '',
       modalType: '',
       subModalType: '',
@@ -187,7 +186,7 @@ export default {
       return false;
     },
     showPanel(cardOperation, item, showEdit) {
-      this.displayModal = true;
+      // this.displayModal = true;
       this.mode = cardOperation;
       this.showEdit = showEdit;
       this.copyInfo = {};
@@ -288,7 +287,8 @@ export default {
     },
     cancel() {
       this.lockSubmitButton = false;
-      this.displayModal = false;
+      // this.displayModal = false;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
       this.targetBioexam = [];
     },
     switchToEditingMode() {
@@ -354,7 +354,8 @@ export default {
       this.lockSubmitButton = false;
     },
     updateAndClose() {
-      this.displayModal = false;
+      // this.displayModal = false;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     updateWarning(fieldName, index, id, reg, txt) {
       let fieldVal = this.copyInfo[fieldName];
@@ -426,9 +427,7 @@ export default {
   },
   watch: {
     '$route.path'() {
-      if (this.displayModal) {
-        this.cancel();
-      }
+      this.cancel();
     }
   }
 };

@@ -43,7 +43,7 @@
          </card>
       </extensible-panel>
       <extensible-panel class="panel" :mode="mutableMode" :title="biochemicalExamTitle" v-on:addNewCard="addBiochemicalExamRecord" :editable="canEdit">
-        <card class="card" :class="cardWidth" :mode="mutableMode" v-for="item in biochemicalExamList" :key="item.patientCaseId"
+        <card class="card" :class="cardWidth" :mode="mutableMode" v-for="(item,index) in biochemicalExamList" :key="index"
           :title="transformBiochemicalExamType(item.bioexamId)" v-on:editCurrentCard="editBiochemicalExamRecord(item)"
           v-on:deleteCurrentCard="deleteBiochemicalExamRecord(item)" v-on:viewCurrentCard="viewBiochemicalExamRecord(item)">
           <div class="text first-line">
@@ -160,7 +160,12 @@ import { deleteEmg, deleteBiochemical, deleteNeurologicCheck, deleteSleepMonitor
 import FoldingPanel from 'public/folding-panel/FoldingPanel';
 import ExtensiblePanel from 'public/extensible-panel/ExtensiblePanel';
 import Card from 'public/card/Card';
+const vitalSignsModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/vital-signs-modal/VitalSignsModal');
+const neurologicModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/neurologic-modal/NeurologicModal');
+const biochemicalExamModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/biochemical-exam-modal/BiochemicalExamModal');
 const geneModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/gene-modal/GeneModal');
+const neuroelectricModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/neuroelectric-modal/NeuroelectricModal');
+const imageModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/image-modal/ImageModal');
 export default {
   data() {
     return {
@@ -313,13 +318,15 @@ export default {
         ? item.patientFieldCode[3][7][0].fieldValue + '%' : '';
     },
     addNeurologicCheckRecord() {
-      Bus.$emit(this.SHOW_NEUROLOGIC_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
+      // Bus.$emit(this.SHOW_NEUROLOGIC_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, neurologicModal, this.SHOW_NEUROLOGIC_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
     },
     editNeurologicCheckRecord(item) {
-      Bus.$emit(this.SHOW_NEUROLOGIC_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit);
+      // Bus.$emit(this.SHOW_NEUROLOGIC_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, neurologicModal, this.SHOW_NEUROLOGIC_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit);
     },
     viewNeurologicCheckRecord(item) {
-      Bus.$emit(this.SHOW_NEUROLOGIC_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, neurologicModal, this.SHOW_NEUROLOGIC_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit);
     },
     deleteNeurologicCheckRecord(item) { // 删除神经检查
       let NeuroId = {
@@ -332,15 +339,15 @@ export default {
     },
     addGeneCheckRecord() {
       // Bus.$emit(this.SHOW_GENE_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
-      Bus.$emit(this.SHOW_DYNAMIC_MODAL, geneModal, this.SHOW_GENE_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, geneModal, this.SHOW_GENE_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
     },
     editGeneCheckRecord(item) {
       // Bus.$emit(this.SHOW_GENE_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit);
-      Bus.$emit(this.SHOW_DYNAMIC_MODAL, geneModal, this.SHOW_GENE_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, geneModal, this.SHOW_GENE_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit);
     },
     viewGeneCheckRecord(item) {
       // Bus.$emit(this.SHOW_GENE_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit);
-      Bus.$emit(this.SHOW_DYNAMIC_MODAL, geneModal, this.SHOW_GENE_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, geneModal, this.SHOW_GENE_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit);
     },
     deleteGeneCheckRecord(item) {
       let geneInfo = {
@@ -352,13 +359,16 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addBiochemicalExamRecord() {
-      Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
+      // Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, biochemicalExamModal, this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
     },
     editBiochemicalExamRecord(item) {
-      Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit);
+      // Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, biochemicalExamModal, this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit);
     },
     viewBiochemicalExamRecord(item) {
-      Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit);
+      // Bus.$emit(this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, biochemicalExamModal, this.SHOW_BIOCHEMICAL_EXAM_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit);
     },
     deleteBiochemicalExamRecord(item) { // 删除生化指标
       let BiochemicalInfo = {
@@ -370,13 +380,16 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addNeuroelectricRecordRecord() {
-      Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.ADD_NEW_CARD, {}, this.canEdit, this.heightAndWeight);
+      // Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.ADD_NEW_CARD, {}, this.canEdit, this.heightAndWeight);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, neuroelectricModal, this.SHOW_NEUROELECTRIC_MODAL, this.ADD_NEW_CARD, {}, this.canEdit, this.heightAndWeight);
     },
     viewNeuroelectricRecord(item) {
-      Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit, this.heightAndWeight);
+      // Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit, this.heightAndWeight);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, neuroelectricModal, this.SHOW_NEUROELECTRIC_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit, this.heightAndWeight);
     },
     editNeuroelectricRecord(item) {
-      Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit, this.heightAndWeight);
+      // Bus.$emit(this.SHOW_NEUROELECTRIC_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit, this.heightAndWeight);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, neuroelectricModal, this.SHOW_NEUROELECTRIC_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit, this.heightAndWeight);
     },
     deleteNeuroelectricRecord(item) { // 删除肌电图
       let emgInfo = {
@@ -397,13 +410,16 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addImageRecord() {
-      Bus.$emit(this.SHOW_IMG_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
+      // Bus.$emit(this.SHOW_IMG_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, imageModal, this.SHOW_IMG_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
     },
     viewImageRecord(item) {
-      Bus.$emit(this.SHOW_IMG_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit);
+      // Bus.$emit(this.SHOW_IMG_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, imageModal, this.SHOW_IMG_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit);
     },
     editImageRecord(item) {
-      Bus.$emit(this.SHOW_IMG_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit);
+      // Bus.$emit(this.SHOW_IMG_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, imageModal, this.SHOW_IMG_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit);
     },
     deleteImageRecord(item) {
       let imageInfo = {
@@ -415,13 +431,16 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addVitalSigns() {
-      Bus.$emit(this.SHOW_VITALSIGNS_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
+      // Bus.$emit(this.SHOW_VITALSIGNS_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, vitalSignsModal, this.SHOW_VITALSIGNS_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
     },
     viewVitalSigns(item) {
-      Bus.$emit(this.SHOW_VITALSIGNS_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit);
+      // Bus.$emit(this.SHOW_VITALSIGNS_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, vitalSignsModal, this.SHOW_VITALSIGNS_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit);
     },
     editVitalSigns(item) {
-      Bus.$emit(this.SHOW_VITALSIGNS_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit);
+      // Bus.$emit(this.SHOW_VITALSIGNS_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, vitalSignsModal, this.SHOW_VITALSIGNS_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit);
     },
     deleteVitalSigns(item) {
       var patientVitalSign = {id: item.id
