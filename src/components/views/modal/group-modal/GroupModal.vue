@@ -98,28 +98,31 @@ export default {
       this.lockSubmitButton = true;
 
       this.checked = true;
-      if (this.groupNameWarning === '' && this.groupTypeWarning === '') {
-        var groupInfo = {
-          'groupeName': this.groupName,   // 拼写错误是数据库的问题
-          'groupType': this.groupType,
-          'remarks': this.groupRemarks
-        };
-        groupInfo.groupModule = this.$store.state.subjectId === this.SUBJECT_ID_FOR_HOSPITAL ? 0 : this.$store.state.subjectId;
-        addGroup(groupInfo).then(() => {
-          Bus.$emit(this.UPDATE_GROUP_LIST);
-          this.displayModal = false;
-          this.lockSubmitButton = false;
-        }, (error) => {
-          if (error.code === 8) {
-            this.$message({
-              message: '新增分组失败，当前组名已存在！',
-              type: 'error',
-              duration: 2000
-            });
-          }
-          this.lockSubmitButton = false;
-        });
+      if (this.groupNameWarning !== '' || this.groupTypeWarning !== '') {
+        this.lockSubmitButton = false;
+        return;
       }
+
+      var groupInfo = {
+        'groupeName': this.groupName,   // 拼写错误是数据库的问题
+        'groupType': this.groupType,
+        'remarks': this.groupRemarks
+      };
+      groupInfo.groupModule = this.$store.state.subjectId === this.SUBJECT_ID_FOR_HOSPITAL ? 0 : this.$store.state.subjectId;
+      addGroup(groupInfo).then(() => {
+        Bus.$emit(this.UPDATE_GROUP_LIST);
+        this.displayModal = false;
+        this.lockSubmitButton = false;
+      }, (error) => {
+        if (error.code === 8) {
+          this.$message({
+            message: '新增分组失败，当前组名已存在！',
+            type: 'error',
+            duration: 2000
+          });
+        }
+        this.lockSubmitButton = false;
+      });
     },
     showModal() {
       this.checked = false;

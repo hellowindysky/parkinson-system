@@ -20,7 +20,7 @@
     <surgical-method-modal></surgical-method-modal>
     <operative-complication-modal></operative-complication-modal>
     <physiontherapy-modal></physiontherapy-modal>
-    <treatmentEvaluation-modal></treatmentEvaluation-modal>
+    <treatment-evaluation-modal></treatment-evaluation-modal>
     <adverse-event-modal></adverse-event-modal>
     <!-- <vital-Signs-modal></vital-Signs-modal> -->
     <dbs-modal></dbs-modal>
@@ -74,7 +74,7 @@ const surgicalMethodModal = () => import(/* webpackChunkName: 'treatmentModal' *
 const operativeComplicationModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/operative-complication-modal/OperativeComplicationModal');
 const dbsModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/dbs-modal/DbsModal');
 const physiontherapyModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/physiontherapy-modal/PhysiontherapyModal');
-const treatmentEvaluationModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/treatment-Evaluation-modal/TreatmentEvaluationModal');
+const treatmentEvaluationModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/treatment-evaluation-modal/TreatmentEvaluationModal');
 const adverseEventModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/adverse-event-modal/AdverseEventModal');
 
 const vitalSignsModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/vital-signs-modal/VitalSignsModal');
