@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="authorization-modal-wrapper" v-show="displayModal">
+  <div class="authorization-modal-wrapper">
     <div class="authorization-modal" :class="{'narrow': hasAuthorized}">
       <div v-show="!hasAuthorized" class="unauthorized">
         <div class="title">授权技术支持</div>
@@ -52,7 +52,6 @@ import { sendVerificationCode, getTechnicalSupport, addAuthentication, removeAut
 export default {
   data() {
     return {
-      displayModal: false,
       hasAuthorized: false,
       lockSubmitButton: false,
 
@@ -109,7 +108,7 @@ export default {
       if (this.codeButtonStatus === 2) {
         this.codeButtonStatus = 0;
       }
-      this.displayModal = true;
+      // this.displayModal = true;
     },
     updateVerificationCode() {
       if (/^[0-9]*$/.test(this.verificationCode)) {
@@ -164,7 +163,8 @@ export default {
       this.lockSubmitButton = false;
       this.lockSendButton = false;
       this.lockTerminateButton = false;
-      this.displayModal = false;
+      // this.displayModal = false;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     submit() {
       if (this.lockSubmitButton) {
@@ -208,7 +208,8 @@ export default {
             });
             this.lockSubmitButton = false;
             Bus.$emit(this.UPDATE_AUTHORIZED_STATUS);
-            this.displayModal = false;
+            // this.displayModal = false;
+            Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
 
           }, (error) => {
             if (error.code === 33) {
@@ -229,7 +230,8 @@ export default {
         return;
       }
       this.lockTerminateButton = true;
-      this.displayModal = false;
+      // this.displayModal = false;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
 
       Bus.$on(this.CONFIRM, () => {
         let supportAccountList = [this.technicalSupportAccountInfo.id];
@@ -261,7 +263,11 @@ export default {
     }
   },
   mounted() {
+    // 先在本组件注册该事件，等待Layout组件接收动态组件挂载完毕的通知，再在本组件执行 showPanel 或 showModal
     Bus.$on(this.SHOW_AUTHORIZATION_MODAL, this.showModal);
+
+    // 动态组件挂载完毕，通知Layout组件，动态组件已挂载完毕
+    Bus.$emit(this.DYNAMIC_COMPONENT_MOUNTED);
     Bus.$on(this.GIVE_UP, () => {
       Bus.$off(this.CONFIRM);
     });
@@ -273,9 +279,7 @@ export default {
   },
   watch: {
     '$route.path'() {
-      if (this.displayModal) {
-        this.cancel();
-      }
+      this.cancel();
     }
   }
 };

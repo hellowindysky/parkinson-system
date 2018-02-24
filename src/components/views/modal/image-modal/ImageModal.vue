@@ -804,17 +804,22 @@ export default {
     },
     updateScrollbar() {
       this.$nextTick(() => {
-        Ps.destroy(this.$refs.scrollArea);
-        Ps.initialize(this.$refs.scrollArea, {
-          wheelSpeed: 1,
-          minScrollbarLength: 40,
-          suppressScrollX: true
-        });
+        if (this.$refs.scrollArea) {
+          Ps.destroy(this.$refs.scrollArea);
+          Ps.initialize(this.$refs.scrollArea, {
+            wheelSpeed: 1,
+            minScrollbarLength: 40,
+            suppressScrollX: true
+          });
+        }
       });
     }
   },
   mounted() {
+    // 先在本组件注册该事件，等待Layout组件接收动态组件挂载完毕的通知，再在本组件执行 showPanel 或 showModal
     Bus.$on(this.SHOW_IMG_MODAL, this.showPanel);
+    // 动态组件挂载完毕，通知Layout组件，动态组件已挂载完毕
+    Bus.$emit(this.DYNAMIC_COMPONENT_MOUNTED);
     this.updateScrollbar();
   },
   beforeDestroy() {

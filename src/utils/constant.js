@@ -148,5 +148,6 @@ export default {
   WINE_HISTORY_MODAL: 'wineHistoryModal',
   SMOKE_HISTORY_MODAL: 'smokeHistoryModal',
   EXERCISE_HISTORY_MODAL: 'exerciseHistoryModal',
-  MOUNT_DYNAMIC_COMPONENT: 'mountDynamicComponent'
+  MOUNT_DYNAMIC_COMPONENT: 'mountDynamicComponent',
+  DYNAMIC_COMPONENT_MOUNTED: 'dynamicComponentMounted'
 };

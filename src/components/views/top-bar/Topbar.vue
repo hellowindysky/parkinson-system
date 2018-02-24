@@ -60,7 +60,6 @@ import { getAuthenticationList } from 'api/user.js';
 
 const WAITING_TO_CHANGE = 'waitingToChange';
 const NEED_TO_QUERY_AGAIN = 'needToQueryAgain';
-const passwordModal = () => import(/* webpackChunkName: 'modal' */ 'modal/password-modal/PasswordModal');
 export default {
   props: {
     showFilterPanel: {
@@ -214,7 +213,8 @@ export default {
 
       } else {
         // 只有当支持员账户信息的更新过程完成之后，才打开模态框
-        Bus.$emit(this.SHOW_AUTHORIZATION_MODAL, this.technicalSupportAccountInfo);
+        // Bus.$emit(this.SHOW_AUTHORIZATION_MODAL, this.technicalSupportAccountInfo);
+        Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'authorizationModal', this.SHOW_AUTHORIZATION_MODAL, this.technicalSupportAccountInfo);
       }
     },
     updateAuthorizedStatus() {
@@ -239,8 +239,8 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION, '确认提醒', message, '确定');
     },
     resetPassword() {
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'passwordModal', this.SHOW_PASSWORD_MODAL);
       // Bus.$emit(this.SHOW_PASSWORD_MODAL);
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, passwordModal, this.SHOW_PASSWORD_MODAL);
     },
     logout() {
       Bus.$on(this.CONFIRM, () => {

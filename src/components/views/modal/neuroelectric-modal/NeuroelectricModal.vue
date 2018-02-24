@@ -1811,7 +1811,11 @@ export default {
     this.initCopyInfo();
 
     this.updateScrollbar();
+    // 先在本组件注册该事件，等待Layout组件接收动态组件挂载完毕的通知，再在本组件执行 showPanel 或 showModal
     Bus.$on(this.SHOW_NEUROELECTRIC_MODAL, this.showPanel);
+
+    // 动态组件挂载完毕，通知Layout组件，动态组件已挂载完毕
+    Bus.$emit(this.DYNAMIC_COMPONENT_MOUNTED);
     // 监听折叠面板，如果发生状态的改变，就需要重新计算滚动区域的高度
     Bus.$on(this.SCROLL_AREA_SIZE_CHANGE, this.updateScrollbar);
 

@@ -296,7 +296,11 @@ export default {
     }
   },
   mounted() {
+    // 先在本组件注册该事件，等待Layout组件接收动态组件挂载完毕的通知，再在本组件执行 showPanel 或 showModal
     Bus.$on(this.SHOW_PASSWORD_MODAL, this.showModal);
+
+    // 动态组件挂载完毕，通知Layout组件，动态组件已挂载完毕
+    Bus.$emit(this.DYNAMIC_COMPONENT_MOUNTED);
   },
   beforeDestroy() {
     Bus.$off(this.SHOW_PASSWORD_MODAL);

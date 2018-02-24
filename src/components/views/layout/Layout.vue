@@ -3,12 +3,12 @@
     <topbar class="topbar" :showFilterPanel="showFilterPanel"></topbar>
     <sidebar class="sidebar"></sidebar>
     <router-view class="content"></router-view>
-    <keep-alive>
+    <!-- <keep-alive>
       <component :is="componentName"></component>
-    </keep-alive>
-
+    </keep-alive> -->
+    <component :is="componentName"></component>
     <!-- <password-modal></password-modal> -->
-    <authorization-modal></authorization-modal>
+    <!-- <authorization-modal></authorization-modal> -->
     <secret-agreement-modal></secret-agreement-modal>
     <message-modal></message-modal>
 
@@ -56,7 +56,7 @@ import { setRequestToken } from 'api/common.js';
 import topbar from 'views/top-bar/Topbar';
 import sidebar from 'views/side-bar/Sidebar';
 
-// const passwordModal = () => import(/* webpackChunkName: 'modal' */ 'modal/password-modal/PasswordModal');
+const passwordModal = () => import(/* webpackChunkName: 'modal' */ 'modal/password-modal/PasswordModal');
 const authorizationModal = () => import(/* webpackChunkName: 'modal' */ 'modal/authorization-modal/AuthorizationModal');
 const secretAgreementModal = () => import(/* webpackChunkName: 'modal' */ 'modal/secret-agreement-modal/SecretAgreementModal');
 const messageModal = () => import(/* webpackChunkName: 'modal' */ 'modal/message-modal/MessageModal');
@@ -77,12 +77,12 @@ const physiontherapyModal = () => import(/* webpackChunkName: 'treatmentModal' *
 const treatmentEvaluationModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/treatment-Evaluation-modal/TreatmentEvaluationModal');
 const adverseEventModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/adverse-event-modal/AdverseEventModal');
 
-// const vitalSignsModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/vital-signs-modal/VitalSignsModal');
-// const neurologicModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/neurologic-modal/NeurologicModal');
-// const geneModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/gene-modal/GeneModal');
-// const biochemicalExamModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/biochemical-exam-modal/BiochemicalExamModal');
-// const neuroelectricModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/neuroelectric-modal/NeuroelectricModal');
-// const imageModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/image-modal/ImageModal');
+const vitalSignsModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/vital-signs-modal/VitalSignsModal');
+const neurologicModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/neurologic-modal/NeurologicModal');
+const geneModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/gene-modal/GeneModal');
+const biochemicalExamModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/biochemical-exam-modal/BiochemicalExamModal');
+const neuroelectricModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/neuroelectric-modal/NeuroelectricModal');
+const imageModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/image-modal/ImageModal');
 
 const applicationModal = () => import(/* webpackChunkName: 'experimentModal' */ 'modal/application-modal/ApplicationModal');
 const rejectionModal = () => import(/* webpackChunkName: 'experimentModal' */ 'modal/rejection-modal/RejectionModal');
@@ -109,7 +109,7 @@ export default {
   components: {
     topbar,
     sidebar,
-    // passwordModal,
+    passwordModal,
     authorizationModal,
     secretAgreementModal,
     messageModal,
@@ -123,12 +123,12 @@ export default {
     physiontherapyModal,
     treatmentEvaluationModal,
     adverseEventModal,
-    // vitalSignsModal,
-    // neurologicModal,
-    // geneModal,
-    // biochemicalExamModal,
-    // neuroelectricModal,
-    // imageModal,
+    vitalSignsModal,
+    neurologicModal,
+    geneModal,
+    biochemicalExamModal,
+    neuroelectricModal,
+    imageModal,
     firstSymptomsModal,
     firstTreatmentModal,
     diagnosticRecordModal,
@@ -202,14 +202,16 @@ export default {
     Bus.$on(this.TOGGLE_FILTER_PANEL_DISPLAY, this.toggleFilterPanelDisplay);
     Bus.$on(this.DEPRIVED_OF_AUTHORITY_BY_DOCTOR, this.handleDeprivationOfAuthority);
 
+    let dynamicArr = [];
+    // 等待挂载动态组件
     Bus.$on(this.MOUNT_DYNAMIC_COMPONENT, (componentName, showWhichModal, cardOperation, item, showEdit, heightAndWeight) => {
+      dynamicArr = [showWhichModal, cardOperation, item, showEdit, heightAndWeight];
       this.componentName = componentName;
-      if (showWhichModal !== undefined) {
-        console.log(componentName, showWhichModal, cardOperation, item, showEdit, heightAndWeight);
-        setTimeout(() => {
-          Bus.$emit(showWhichModal, cardOperation, item, showEdit, heightAndWeight);
-        }, 0);
-      }
+    });
+    // 等待动态组件完成挂载
+    Bus.$on(this.DYNAMIC_COMPONENT_MOUNTED, () => {
+      console.log(dynamicArr);
+      Bus.$emit(dynamicArr[0], dynamicArr[1], dynamicArr[2], dynamicArr[3], dynamicArr[4]);
     });
   },
   beforeRouteEnter(to, from, next) {
