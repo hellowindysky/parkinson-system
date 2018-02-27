@@ -185,7 +185,6 @@ export default {
         }
       });
       this.completeInit = true;
-      // this.displayModal = true;
       this.updateScrollbar();
     },
     updateScrollbar() {
@@ -225,7 +224,6 @@ export default {
       }
     },
     cancel() {
-      // this.displayModal = false;
       Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
       this.lockSubmitButton = false;
     },
@@ -281,7 +279,6 @@ export default {
     updateAndClose() {
       Bus.$emit(this.UPDATE_CASE_INFO);
       this.lockSubmitButton = false;
-      // this.displayModal = false;
       Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     }
   },
@@ -294,9 +291,6 @@ export default {
   },
   watch: {
     '$route.path'() {
-      // if (this.displayModal) {
-      //   this.cancel();
-      // }
       this.cancel();
     }
   }

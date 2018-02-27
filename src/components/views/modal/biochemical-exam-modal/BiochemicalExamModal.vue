@@ -186,7 +186,6 @@ export default {
       return false;
     },
     showPanel(cardOperation, item, showEdit) {
-      // this.displayModal = true;
       this.mode = cardOperation;
       this.showEdit = showEdit;
       this.copyInfo = {};
@@ -287,7 +286,6 @@ export default {
     },
     cancel() {
       this.lockSubmitButton = false;
-      // this.displayModal = false;
       Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
       this.targetBioexam = [];
     },
@@ -354,7 +352,6 @@ export default {
       this.lockSubmitButton = false;
     },
     updateAndClose() {
-      // this.displayModal = false;
       Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     updateWarning(fieldName, index, id, reg, txt) {

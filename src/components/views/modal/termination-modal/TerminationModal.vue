@@ -105,10 +105,8 @@ export default {
       });
 
       this.completeInit = true;
-      // this.displayModal = true;
     },
     cancel() {
-      // this.displayModal = false;
       Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     transform(code, fieldName) {
@@ -178,7 +176,6 @@ export default {
       });
       Bus.$emit(this.UPDATE_EXPERIMENT_INFO);
       this.lockSubmitButton = false;
-      // this.displayModal = false;
       Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     }
   },
@@ -194,9 +191,6 @@ export default {
   },
   watch: {
     '$route.path'() {
-      // if (this.displayModal) {
-      //   this.cancel();
-      // }
       this.cancel();
     }
   }

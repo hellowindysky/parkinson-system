@@ -108,7 +108,6 @@ export default {
       if (this.codeButtonStatus === 2) {
         this.codeButtonStatus = 0;
       }
-      // this.displayModal = true;
     },
     updateVerificationCode() {
       if (/^[0-9]*$/.test(this.verificationCode)) {
@@ -163,7 +162,6 @@ export default {
       this.lockSubmitButton = false;
       this.lockSendButton = false;
       this.lockTerminateButton = false;
-      // this.displayModal = false;
       Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     submit() {
@@ -208,7 +206,6 @@ export default {
             });
             this.lockSubmitButton = false;
             Bus.$emit(this.UPDATE_AUTHORIZED_STATUS);
-            // this.displayModal = false;
             Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
 
           }, (error) => {
@@ -230,7 +227,6 @@ export default {
         return;
       }
       this.lockTerminateButton = true;
-      // this.displayModal = false;
       Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
 
       Bus.$on(this.CONFIRM, () => {

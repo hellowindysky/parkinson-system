@@ -1003,7 +1003,6 @@ export default {
   },
   methods: {
     showPanel(cardOperation, item, showEdit, heightAndWeight) {
-      // this.displayModal = true;
       this.mode = cardOperation;
       this.tableMode = this.FATHER_OPEN;
       this.showEdit = showEdit;
@@ -1526,7 +1525,6 @@ export default {
     },
     cancel() {
       this.lockSubmitButton = false;
-      // this.displayModal = false;
       Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
       this.copyInfo = {};
       this.tableMode = '';
@@ -1673,7 +1671,6 @@ export default {
       }
       Bus.$emit(this.UPDATE_CASE_INFO);
       this.lockSubmitButton = false;
-      // this.displayModal = false;
       Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     chooseSubModal() {
@@ -1827,9 +1824,6 @@ export default {
       this.selectEmg();
     },
     '$route.path'() {
-      // if (this.displayModal) {
-      //   this.cancel();
-      // }
       this.cancel();
     }
   },

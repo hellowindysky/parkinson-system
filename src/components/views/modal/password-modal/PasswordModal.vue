@@ -129,12 +129,10 @@ export default {
       if (this.codeButtonStatus === 2) {
         this.codeButtonStatus = 0;
       }
-      // this.displayModal = true;
     },
     cancel() {
       this.lockSubmitButton = false;
       this.lockSendButton = false;
-      // this.displayModal = false;
       Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     submit() {
@@ -179,7 +177,6 @@ export default {
           type: 'success',
           duration: 2000
         });
-        // this.displayModal = false;
         Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
         this.lockSubmitButton = false;
         setTimeout(() => {
@@ -307,9 +304,6 @@ export default {
   },
   watch: {
     '$route.path'() {
-      // if (this.displayModal) {
-      //   this.cancel();
-      // }
       this.cancel();
     }
   }

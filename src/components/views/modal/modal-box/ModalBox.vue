@@ -473,7 +473,6 @@ export default {
       console.log('fileList', fileList);
     },
     showPanel(cardOperation, title, originalInfo, modalType) {
-      // this.displayModal = true;
       // 由 cardOperation 来决定，到底是新增记录，浏览记录，还是修改记录
       // 这三个值分别为 this.ADD_NEW_CARD, this.VIEW_CURRENT_CARD, this.EDIT_CURRENT_CARD
       this.mode = cardOperation;
@@ -527,7 +526,6 @@ export default {
       if (this.modalType === this.FAMILY_HISTORY_MODAL && this.mode !== this.VIEW_CURRENT_CARD) {
         this.$refs.uploadTag && this.$refs.uploadTag[0] && this.$refs.uploadTag[0].clearFiles();
       };
-      // this.displayModal = false;
       Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     submit() {
@@ -685,7 +683,6 @@ export default {
         this.$refs.uploadTag[0] && this.$refs.uploadTag[0].clearFiles();
       };
       Bus.$emit(this.UPDATE_PATIENT_INFO);
-      // this.displayModal = false;
       Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
       this.lockSubmitButton = false;  // 为按钮解锁
     },

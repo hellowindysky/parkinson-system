@@ -473,7 +473,6 @@ export default {
         }
       });
       this.completeInit = true;
-      // this.displayModal = true;
       this.updateScrollbar();
       this.$nextTick(() => {
         this.runClearVal = true;
@@ -567,7 +566,6 @@ export default {
     },
     cancel() {
       this.lockSubmitButton = false;
-      // this.displayModal = false;
       Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     switchToEditingMode() {
@@ -621,10 +619,8 @@ export default {
       this.lockSubmitButton = false;
     },
     updateAndClose() {
-      // Bus.$emit(this.UPDATE_CASE_INFO);
       Bus.$emit(this.UPDATE_COMPLAINTSYMPTOMS_INFO);
 
-      // this.displayModal = false;
       Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     }
   },
@@ -637,9 +633,6 @@ export default {
   },
   watch: {
     '$route.path'() {
-      // if (this.displayModal) {
-      //   this.cancel();
-      // }
       this.cancel();
     }
   }

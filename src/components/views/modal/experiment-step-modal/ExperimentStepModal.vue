@@ -175,11 +175,9 @@ export default {
           ? item.followUpModel[property] : '';
       }
 
-      // this.displayModal = true;
       this.updateScrollbar();
     },
     cancel() {
-      // this.displayModal = false;
       Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     getMilestoneNum(step) {
@@ -235,9 +233,6 @@ export default {
   },
   watch: {
     '$route.path'() {
-      // if (this.displayModal) {
-      //   this.cancel();
-      // }
       this.cancel();
     }
   }

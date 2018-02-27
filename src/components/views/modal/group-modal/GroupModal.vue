@@ -88,7 +88,6 @@ export default {
   methods: {
     cancel() {
       this.lockSubmitButton = false;
-      // this.displayModal = false;
       Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     submit() {
@@ -111,7 +110,6 @@ export default {
       groupInfo.groupModule = this.$store.state.subjectId === this.SUBJECT_ID_FOR_HOSPITAL ? 0 : this.$store.state.subjectId;
       addGroup(groupInfo).then(() => {
         Bus.$emit(this.UPDATE_GROUP_LIST);
-        // this.displayModal = false;
         Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
         this.lockSubmitButton = false;
       }, (error) => {
@@ -130,7 +128,6 @@ export default {
       this.groupName = '';
       this.groupType = '';
       this.groupRemarks = '';
-      // this.displayModal = true;
     }
   },
   mounted() {
@@ -145,9 +142,6 @@ export default {
   },
   watch: {
     '$route.path'() {
-      // if (this.displayModal) {
-      //   this.cancel();
-      // }
       this.cancel();
     }
   }

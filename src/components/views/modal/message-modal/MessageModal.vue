@@ -99,7 +99,6 @@ export default {
       this.verificationCodeWarning = '';
       this.readAgreement = false;
 
-      // this.displayModal = true;
     },
     sendCode() {
       if (this.lockSendButton) {
@@ -144,7 +143,6 @@ export default {
     },
     cancel() {
       this.lockSubmitButton = false;
-      // this.displayModal = false;
       Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     submit() {
@@ -187,7 +185,6 @@ export default {
           Bus.$emit(this.PERMIT_SUPPORT_THE_DOCTOR);
         }
 
-        // this.displayModal = false;
         Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
         this.lockSubmitButton = false;
 
@@ -215,9 +212,6 @@ export default {
   },
   watch: {
     '$route.path'() {
-      // if (this.displayModal) {
-      //   this.cancel();
-      // }
       this.cancel();
     }
   }

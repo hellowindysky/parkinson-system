@@ -320,7 +320,6 @@ export default {
   },
   methods: {
     showPanel(cardOperation, item, showEdit) {
-      // this.displayModal = true;
       this.mode = cardOperation;
       this.showEdit = showEdit;
 
@@ -451,7 +450,6 @@ export default {
     },
     updateAndClose() {
       this.lockSubmitButton = false;
-      // this.displayModal = false;
       Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     switchToEditingMode() {
@@ -460,7 +458,6 @@ export default {
     },
     cancel() {
       this.lockSubmitButton = false;
-      // this.displayModal = false;
       Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     closeSubTable() {
@@ -570,9 +567,6 @@ export default {
       vueCopy(this.copyItem, this.copyInfo);
     },
     '$route.path'() {
-      // if (this.displayModal) {
-      //   this.cancel();
-      // }
       this.cancel();
     }
   }

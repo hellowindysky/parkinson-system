@@ -115,7 +115,6 @@ export default {
       });
 
       this.completeInit = true;
-      // this.displayModal = true;
     },
     updateWarning(fieldName) {
       if (this[fieldName] === '') {
@@ -126,7 +125,6 @@ export default {
     },
     cancel() {
       this.lockSubmitButton = false;
-      // this.displayModal = false;
       Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     switchToEditingMode() {
@@ -176,7 +174,6 @@ export default {
       });
       Bus.$emit(this.UPDATE_EXPERIMENT_INFO);
       this.lockSubmitButton = false;
-      // this.displayModal = false;
       Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     }
   },
@@ -192,9 +189,6 @@ export default {
   },
   watch: {
     '$route.path'() {
-      // if (this.displayModal) {
-      //   this.cancel();
-      // }
       this.cancel();
     }
   }

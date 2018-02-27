@@ -561,7 +561,6 @@ export default {
       });
 
       this.completeInit = true;
-      // this.displayModal = true;
       this.updateScrollbar();
     },
     getOptions(fieldName) {
@@ -602,7 +601,6 @@ export default {
       this.$refs.upload5.clearFiles();
       this.$refs.upload6.clearFiles();
       this.$refs.upload7.clearFiles();
-      // this.displayModal = false;
       Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     switchToEditingMode() {
@@ -681,7 +679,6 @@ export default {
       this.$refs.upload3.clearFiles();
       this.$refs.upload4.clearFiles();
       Bus.$emit(this.UPDATE_CASE_INFO);
-      // this.displayModal = false;
       Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     removeFile(file, showingList, transferringList) {
@@ -827,9 +824,6 @@ export default {
   },
   watch: {
     '$route.path'() {
-      // if (this.displayModal) {
-      //   this.cancel();
-      // }
       this.cancel();
     }
   }

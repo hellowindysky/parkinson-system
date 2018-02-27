@@ -178,7 +178,6 @@ export default {
     });
     // 等待动态组件完成挂载
     Bus.$on(this.DYNAMIC_COMPONENT_MOUNTED, () => {
-      console.log(dynamicArr);
       Bus.$emit(dynamicArr[0], dynamicArr[1], dynamicArr[2], dynamicArr[3], dynamicArr[4]);
     });
   },

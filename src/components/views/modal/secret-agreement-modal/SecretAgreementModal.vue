@@ -78,12 +78,14 @@ export default {
     },
     updateScrollbar() {
       this.$nextTick(() => {
-        Ps.destroy(this.$refs.scrollArea);
-        Ps.initialize(this.$refs.scrollArea, {
-          wheelSpeed: 1,
-          minScrollbarLength: 40,
-          suppressScrollX: true
-        });
+        if (this.$refs.scrollArea) {
+          Ps.destroy(this.$refs.scrollArea);
+          Ps.initialize(this.$refs.scrollArea, {
+            wheelSpeed: 1,
+            minScrollbarLength: 40,
+            suppressScrollX: true
+          });
+        }
       });
     }
   },

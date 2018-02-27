@@ -393,7 +393,6 @@ export default {
   methods: {
     showModal(cardOperation, item, showEdit, hasComtAmongOtherMedicine) {
       this.mode = cardOperation;
-      // this.displayModal = true;
       this.completeInit = false;
       this.showEdit = showEdit;
       this.foldedConditionalContent = true;
@@ -435,7 +434,6 @@ export default {
     },
     cancel() {
       this.lockSubmitButton = false;
-      // this.displayModal = false;
       Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     switchToEditingMode() {
@@ -511,7 +509,6 @@ export default {
     updateAndClose() {
       Bus.$emit(this.UPDATE_CASE_INFO);
       this.lockSubmitButton = false;
-      // this.displayModal = false;
       Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     initMedicine(item) {
@@ -731,9 +728,6 @@ export default {
   },
   watch: {
     '$route.path'() {
-      // if (this.displayModal) {
-      //   this.cancel();
-      // }
       this.cancel();
     }
   }
