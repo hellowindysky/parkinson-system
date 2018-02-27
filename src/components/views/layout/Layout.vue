@@ -6,9 +6,13 @@
 
     <component :is="componentName"></component>
     
-    <secret-agreement-modal></secret-agreement-modal>
+    <transition name="fade">
+      <keep-alive>
+        <filter-panel v-if="showFilterPanel" :showFilterPanel="showFilterPanel"></filter-panel>
+      </keep-alive>
+    </transition>
 
-    <filter-panel :showFilterPanel="showFilterPanel"></filter-panel>
+    <secret-agreement-modal></secret-agreement-modal>
     <choice-panel></choice-panel>
     <confirm-box></confirm-box>
     <notice-box></notice-box>
@@ -209,7 +213,15 @@ export default {
 
 <style lang="less" scoped>
 @import "~styles/variables.less";
-
+.fade-enter-active,.fade-leave{
+  opacity:1;
+  transition:all 0.5s linear;
+}
+.fade-leave-active,.fade-enter{
+  transform: translateY(-130%);
+  opacity:0;
+  transition:all 0.5s linear;
+}
 .app-wrapper {
   position: relative;
   width: 100%;
