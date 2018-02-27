@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="group-modal-wrapper" v-show="displayModal">
+  <div class="group-modal-wrapper">
     <div class="group-modal">
       <h3 class="title">新增分组</h3>
       <div class="field">
@@ -54,7 +54,6 @@ import { addGroup } from 'api/group.js';
 export default {
   data() {
     return {
-      displayModal: false,
       groupName: '',
       groupType: '',
       groupRemarks: '',
@@ -89,7 +88,8 @@ export default {
   methods: {
     cancel() {
       this.lockSubmitButton = false;
-      this.displayModal = false;
+      // this.displayModal = false;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     submit() {
       if (this.lockSubmitButton) {
@@ -111,7 +111,8 @@ export default {
       groupInfo.groupModule = this.$store.state.subjectId === this.SUBJECT_ID_FOR_HOSPITAL ? 0 : this.$store.state.subjectId;
       addGroup(groupInfo).then(() => {
         Bus.$emit(this.UPDATE_GROUP_LIST);
-        this.displayModal = false;
+        // this.displayModal = false;
+        Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
         this.lockSubmitButton = false;
       }, (error) => {
         if (error.code === 8) {
@@ -129,20 +130,25 @@ export default {
       this.groupName = '';
       this.groupType = '';
       this.groupRemarks = '';
-      this.displayModal = true;
+      // this.displayModal = true;
     }
   },
   mounted() {
+    // 先在本组件注册该事件，等待Layout组件接收动态组件挂载完毕的通知，再在本组件执行 showPanel 或 showModal
     Bus.$on(this.SHOW_GROUP_MODAL, this.showModal);
+
+    // 动态组件挂载完毕，通知Layout组件，动态组件已挂载完毕
+    Bus.$emit(this.DYNAMIC_COMPONENT_MOUNTED);
   },
   beforeDestroy() {
     Bus.$off(this.SHOW_GROUP_MODAL);
   },
   watch: {
     '$route.path'() {
-      if (this.displayModal) {
-        this.cancel();
-      }
+      // if (this.displayModal) {
+      //   this.cancel();
+      // }
+      this.cancel();
     }
   }
 };

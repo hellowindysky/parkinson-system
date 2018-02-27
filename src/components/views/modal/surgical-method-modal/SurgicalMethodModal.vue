@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="surgical-method-modal-wrapper" v-show="displayModal">
+  <div class="surgical-method-modal-wrapper">
     <div class="surgical-method-modal">
       <h3 class="title">{{title}}</h3>
       <div class="content">
@@ -56,7 +56,6 @@ import { addSurgicalMethod, modifySurgicalMethod } from 'api/patient.js';
 export default {
   data() {
     return {
-      displayModal: false,
       mode: '',
       warningResults: {},
       copyInfo: {},
@@ -91,12 +90,8 @@ export default {
       this.showEdit = showEdit;
       this.initCopyInfo();
       // console.log(this.copyInfo);
-      setTimeout(() => {
-        // console.log(this.surgicalMethodDictionary);
-        // console.log(this.surgicalMethodTemplate);
-        // console.log(this.surgicalTypeList);
-      }, 2000);
-      this.displayModal = true;
+
+      // this.displayModal = true;
     },
     initCopyInfo() {
       this.copyInfo = {};
@@ -112,7 +107,8 @@ export default {
     },
     cancel() {
       this.lockSubmitButton = false;
-      this.displayModal = false;
+      // this.displayModal = false;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     switchToEditingMode() {
       this.mode = this.EDIT_CURRENT_CARD;
@@ -158,7 +154,8 @@ export default {
     updateAndClose() {
       Bus.$emit(this.UPDATE_CASE_INFO);
       this.lockSubmitButton = false;
-      this.displayModal = false;
+      // this.displayModal = false;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     getMatchedField(fieldName) {
       // 在字典项中查询该名字所对应的字段，从而方便我们得到该字段的详细信息
@@ -208,7 +205,11 @@ export default {
     }
   },
   mounted() {
+    // 先在本组件注册该事件，等待Layout组件接收动态组件挂载完毕的通知，再在本组件执行 showPanel 或 showModal
     Bus.$on(this.SHOW_SURGICAL_METHOD_MODAL, this.showModal);
+
+    // 动态组件挂载完毕，通知Layout组件，动态组件已挂载完毕
+    Bus.$emit(this.DYNAMIC_COMPONENT_MOUNTED);
   },
   beforeDestroy() {
     Bus.$off(this.SHOW_SURGICAL_METHOD_MODAL, this.showModal);
@@ -218,9 +219,10 @@ export default {
       this.initCopyInfo();
     },
     '$route.path'() {
-      if (this.displayModal) {
-        this.cancel();
-      }
+      // if (this.displayModal) {
+      //   this.cancel();
+      // }
+      this.cancel();
     }
   }
 };

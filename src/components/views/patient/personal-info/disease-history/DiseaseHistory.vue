@@ -790,13 +790,13 @@ export default {
       });
     },
     addFirstSymptomsRecord() {
-      Bus.$emit(this.SHOW_FIRSTSYMPTOMS_MODAL, this.ADD_NEW_CARD, {}, '首发症状');
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'firstSymptomsModal', this.SHOW_FIRSTSYMPTOMS_MODAL, this.ADD_NEW_CARD, {});
     },
     editFirstSymptomsRecord(item) {
-      Bus.$emit(this.SHOW_FIRSTSYMPTOMS_MODAL, this.EDIT_CURRENT_CARD, item, '首发症状');
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'firstSymptomsModal', this.SHOW_FIRSTSYMPTOMS_MODAL, this.EDIT_CURRENT_CARD, item);
     },
     viewFirstSymptomsRecord(item) {
-      Bus.$emit(this.SHOW_FIRSTSYMPTOMS_MODAL, this.VIEW_CURRENT_CARD, item, '首发症状');
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'firstSymptomsModal', this.SHOW_FIRSTSYMPTOMS_MODAL, this.VIEW_CURRENT_CARD, item);
     },
     deleteFirstSymptomsRecord(item) {
       var firSymId = {
@@ -808,13 +808,13 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addFirstTreatmentRecord() {
-      Bus.$emit(this.SHOW_FIRSTTREATMENT_MODAL, this.ADD_NEW_CARD, {});
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'firstTreatmentModal', this.SHOW_FIRSTTREATMENT_MODAL, this.ADD_NEW_CARD, {});
     },
     editFirstTreatmentRecord(item) {
-      Bus.$emit(this.SHOW_FIRSTTREATMENT_MODAL, this.EDIT_CURRENT_CARD, item);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'firstTreatmentModal', this.SHOW_FIRSTTREATMENT_MODAL, this.EDIT_CURRENT_CARD, item);
     },
     viewFirstTreatmentRecord(item) {
-      Bus.$emit(this.SHOW_FIRSTTREATMENT_MODAL, this.VIEW_CURRENT_CARD, item);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'firstTreatmentModal', this.SHOW_FIRSTTREATMENT_MODAL, this.VIEW_CURRENT_CARD, item);
     },
     deleteFirstTreatmentRecord(item) {
       var firTreatmentId = {
@@ -826,13 +826,13 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addVisitRecord() {
-      Bus.$emit(this.SHOW_DIAGNOSTIC_RECORD_MODAL, this.ADD_NEW_CARD, {});
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'diagnosticRecordModal', this.SHOW_DIAGNOSTIC_RECORD_MODAL, this.ADD_NEW_CARD, {});
     },
     editVisitRecord(item) {
-      Bus.$emit(this.SHOW_DIAGNOSTIC_RECORD_MODAL, this.EDIT_CURRENT_CARD, item);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'diagnosticRecordModal', this.SHOW_DIAGNOSTIC_RECORD_MODAL, this.EDIT_CURRENT_CARD, item);
     },
     viewVisitRecord(item) {
-      Bus.$emit(this.SHOW_DIAGNOSTIC_RECORD_MODAL, this.VIEW_CURRENT_CARD, item);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'diagnosticRecordModal', this.SHOW_DIAGNOSTIC_RECORD_MODAL, this.VIEW_CURRENT_CARD, item);
     },
     deleteVisitRecord(item) {
       var patientHistory = {

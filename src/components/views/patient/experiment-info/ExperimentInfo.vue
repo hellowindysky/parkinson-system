@@ -120,25 +120,25 @@ export default {
   methods: {
     applyTojoin() {
       if (this.notInAnyExperiment || this.inExperimentWithinCurrentSubject) {
-        Bus.$emit(this.SHOW_APPLICATION_MODAL, this.ADD_NEW_CARD, {}, true);
+        Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'applicationModal', this.SHOW_APPLICATION_MODAL, this.ADD_NEW_CARD, {}, true);
       } else if (this.inExperimentWithinOtherSubject) {
         Bus.$emit(this.NOTICE, '注意', '当前患者正在其它课题下进行实验，每个患者只能同时加入一个课题的实验');
       }
     },
     rejectApplication() {
-      Bus.$emit(this.SHOW_REJECTION_MODAL, this.ADD_NEW_CARD, {}, true, this.doctor);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'rejectionModal', this.SHOW_REJECTION_MODAL, this.ADD_NEW_CARD, {}, true, this.doctor);
     },
     agreeApplication() {
-      Bus.$emit(this.SHOW_RATIFICATION_MODAL, this.ADD_NEW_CARD, {}, true, this.therapist);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'ratificationModal', this.SHOW_RATIFICATION_MODAL, this.ADD_NEW_CARD, {}, true, this.therapist);
     },
     completeTherapy() {
-      Bus.$emit(this.SHOW_TERMINATION_MODAL, this.ADD_NEW_CARD, {}, true, this.appraiser);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'terminationModal', this.SHOW_TERMINATION_MODAL, this.ADD_NEW_CARD, {}, true, this.appraiser);
     },
     completeFollowUp() {
-      Bus.$emit(this.SHOW_FOLLOW_UP_TERMINATION_MODAL, this.ADD_NEW_CARD, {}, true, this.appraiser);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'followUpTerminationModal', this.SHOW_FOLLOW_UP_TERMINATION_MODAL, this.ADD_NEW_CARD, {}, true, this.appraiser);
     },
     seeDetail(step) {
-      Bus.$emit(this.SHOW_EXPERIMENT_STEP_MODAL, this.VIEW_CURRENT_CARD, step, false);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'experimentStepModal', this.SHOW_EXPERIMENT_STEP_MODAL, this.VIEW_CURRENT_CARD, step, false);
     },
     getMilestoneNum(step) {
       var milestoneNum = 0;

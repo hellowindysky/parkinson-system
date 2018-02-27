@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="modal-box-wrapper" v-show="displayModal">
+  <div class="modal-box-wrapper">
     <div class="modal-box" :class="{'high-box': modalType === DISEASE_HISTORY_MODAL}" ref="scrollArea">
       <h3 class="title">{{title}}</h3>
 
@@ -128,7 +128,6 @@ import { addPatientPresentHistory, modifyPatientPresentHistory,
 export default {
   data() {
     return {
-      displayModal: false,
       mode: '',
       modalType: '',
       subModalType: '',
@@ -474,7 +473,7 @@ export default {
       console.log('fileList', fileList);
     },
     showPanel(cardOperation, title, originalInfo, modalType) {
-      this.displayModal = true;
+      // this.displayModal = true;
       // 由 cardOperation 来决定，到底是新增记录，浏览记录，还是修改记录
       // 这三个值分别为 this.ADD_NEW_CARD, this.VIEW_CURRENT_CARD, this.EDIT_CURRENT_CARD
       this.mode = cardOperation;
@@ -528,7 +527,8 @@ export default {
       if (this.modalType === this.FAMILY_HISTORY_MODAL && this.mode !== this.VIEW_CURRENT_CARD) {
         this.$refs.uploadTag && this.$refs.uploadTag[0] && this.$refs.uploadTag[0].clearFiles();
       };
-      this.displayModal = false;
+      // this.displayModal = false;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     submit() {
       // 如果确定按钮被锁住了，则不执行下面的逻辑，防止重复点击
@@ -685,7 +685,8 @@ export default {
         this.$refs.uploadTag[0] && this.$refs.uploadTag[0].clearFiles();
       };
       Bus.$emit(this.UPDATE_PATIENT_INFO);
-      this.displayModal = false;
+      // this.displayModal = false;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
       this.lockSubmitButton = false;  // 为按钮解锁
     },
     initCopyInfo() {
@@ -804,7 +805,11 @@ export default {
     }
   },
   mounted() {
+    // 先在本组件注册该事件，等待Layout组件接收动态组件挂载完毕的通知，再在本组件执行 showPanel 或 showModal
     Bus.$on(this.SHOW_MODAL_BOX, this.showPanel);
+
+    // 动态组件挂载完毕，通知Layout组件，动态组件已挂载完毕
+    Bus.$emit(this.DYNAMIC_COMPONENT_MOUNTED);
   },
   watch: {
     template: function() {

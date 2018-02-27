@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="diagnostic-record-wrapper" v-show="displayModal">
+  <div class="diagnostic-record-wrapper">
 
     <div class="modal-box" ref="scrollArea">
       <h3 class="title">{{title}}</h3>
@@ -110,7 +110,6 @@ import {addVisitDignosticRecord, modVisitDignosticRecord} from 'api/patient.js';
 export default {
   data() {
     return {
-      displayModal: false,
       mode: '',
       completeInit: false,
       copyInfo: {
@@ -186,16 +185,18 @@ export default {
       });
 
       this.completeInit = true;
-      this.displayModal = true;
+      // this.displayModal = true;
       this.updateScrollbar();
     },
     updateScrollbar() {
       this.$nextTick(() => {
-        Ps.destroy(this.$refs.scrollArea);
-        Ps.initialize(this.$refs.scrollArea, {
-          wheelSpeed: 1,
-          minScrollbarLength: 40
-        });
+        if (this.$refs.scrollArea) {
+          Ps.destroy(this.$refs.scrollArea);
+          Ps.initialize(this.$refs.scrollArea, {
+            wheelSpeed: 1,
+            minScrollbarLength: 40
+          });
+        }
       });
     },
     updateWarning(fieldName) {
@@ -207,7 +208,8 @@ export default {
     },
     cancel() {
       this.lockSubmitButton = false;
-      this.displayModal = false;
+      // this.displayModal = false;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     switchToEditingMode() {
       this.mode = this.EDIT_CURRENT_CARD;
@@ -258,20 +260,26 @@ export default {
     },
     updateAndClose() {
       Bus.$emit(this.UPDATE_VISITDIAGNOSTICRECORD_INFO);
-      this.displayModal = false;
+      // this.displayModal = false;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     }
   },
   mounted() {
+    // 先在本组件注册该事件，等待Layout组件接收动态组件挂载完毕的通知，再在本组件执行 showPanel 或 showModal
     Bus.$on(this.SHOW_DIAGNOSTIC_RECORD_MODAL, this.showModal);
+
+    // 动态组件挂载完毕，通知Layout组件，动态组件已挂载完毕
+    Bus.$emit(this.DYNAMIC_COMPONENT_MOUNTED);
   },
   beforeDestroy() {
     Bus.$off(this.SHOW_DIAGNOSTIC_RECORD_MODAL);
   },
   watch: {
     '$route.path'() {
-      if (this.displayModal) {
-        this.cancel();
-      }
+      // if (this.displayModal) {
+      //   this.cancel();
+      // }
+      this.cancel();
     }
   }
 };

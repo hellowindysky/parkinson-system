@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="operative-complication-modal-wrapper" v-show="displayModal">
+  <div class="operative-complication-modal-wrapper">
     <div class="operative-complication-modal">
       <h3 class="title">{{title}}</h3>
       <div class="content">
@@ -57,7 +57,6 @@ import { addOperativeCompliation, modifyOperativeCompliation } from 'api/patient
 export default {
   data() {
     return {
-      displayModal: false,
       mode: '',
       copyInfo: {},
       originalInfo: {},
@@ -93,11 +92,8 @@ export default {
       this.originalInfo = info;
       this.initCopyInfo();
       this.showEdit = showEdit;
-      setTimeout(() => {
-        // console.log(this.operativeComplicationDictionary);
-        // console.log(this.operativeComplicationTemplate);
-      }, 2000);
-      this.displayModal = true;
+
+      // this.displayModal = true;
     },
     initCopyInfo() {
       this.completeInit = false;
@@ -115,7 +111,8 @@ export default {
     },
     cancel() {
       this.lockSubmitButton = false;
-      this.displayModal = false;
+      // this.displayModal = false;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     switchToEditingMode() {
       this.mode = this.EDIT_CURRENT_CARD;
@@ -161,7 +158,8 @@ export default {
     updateAndClose() {
       Bus.$emit(this.UPDATE_CASE_INFO);
       this.lockSubmitButton = false;
-      this.displayModal = false;
+      // this.displayModal = false;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     getMatchedField(fieldName) {
       // 在字典项中查询该名字所对应的字段，从而方便我们得到该字段的详细信息
@@ -239,7 +237,11 @@ export default {
     }
   },
   mounted() {
+    // 先在本组件注册该事件，等待Layout组件接收动态组件挂载完毕的通知，再在本组件执行 showPanel 或 showModal
     Bus.$on(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.showModal);
+
+    // 动态组件挂载完毕，通知Layout组件，动态组件已挂载完毕
+    Bus.$emit(this.DYNAMIC_COMPONENT_MOUNTED);
   },
   beforeDestroy() {
     Bus.$off(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.showModal);
@@ -249,9 +251,10 @@ export default {
       this.initCopyInfo();
     },
     '$route.path'() {
-      if (this.displayModal) {
-        this.cancel();
-      }
+      // if (this.displayModal) {
+      //   this.cancel();
+      // }
+      this.cancel();
     }
   }
 };

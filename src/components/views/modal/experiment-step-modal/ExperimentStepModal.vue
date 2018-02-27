@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="experiment-step-modal-wrapper" v-show="displayModal">
+  <div class="experiment-step-modal-wrapper">
     <div class="experiment-step-modal" :class="{'follow-up-modal': milestoneNum===4}" ref="scrollArea">
       <h3 class="title">{{title}}</h3>
       <div class="content">
@@ -142,7 +142,6 @@ import Util from 'utils/util.js';
 export default {
   data() {
     return {
-      displayModal: false,
       title: '处理意见',
       mode: '',
       milestoneNum: '',
@@ -176,11 +175,12 @@ export default {
           ? item.followUpModel[property] : '';
       }
 
-      this.displayModal = true;
+      // this.displayModal = true;
       this.updateScrollbar();
     },
     cancel() {
-      this.displayModal = false;
+      // this.displayModal = false;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     getMilestoneNum(step) {
       var milestoneNum = 0;
@@ -223,7 +223,11 @@ export default {
     }
   },
   mounted() {
+    // 先在本组件注册该事件，等待Layout组件接收动态组件挂载完毕的通知，再在本组件执行 showPanel 或 showModal
     Bus.$on(this.SHOW_EXPERIMENT_STEP_MODAL, this.showModal);
+
+    // 动态组件挂载完毕，通知Layout组件，动态组件已挂载完毕
+    Bus.$emit(this.DYNAMIC_COMPONENT_MOUNTED);
     this.updateScrollbar();
   },
   beforeDestroy() {
@@ -231,9 +235,10 @@ export default {
   },
   watch: {
     '$route.path'() {
-      if (this.displayModal) {
-        this.cancel();
-      }
+      // if (this.displayModal) {
+      //   this.cancel();
+      // }
+      this.cancel();
     }
   }
 };

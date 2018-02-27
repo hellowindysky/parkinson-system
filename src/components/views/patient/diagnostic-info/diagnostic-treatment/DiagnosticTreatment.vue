@@ -547,17 +547,18 @@ export default {
     addMedicine() {
       var hasCOMT = this.checkIfComtExistsAmongOtherMedicine({});
       var showEdit = this.canEdit && this.showMedicinePanel;
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.ADD_NEW_CARD, {}, showEdit, hasCOMT);
+      // Bus.$emit(this.SHOW_MEDICINE_MODAL, this.ADD_NEW_CARD, {}, showEdit, hasCOMT);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'medicineModal', this.SHOW_MEDICINE_MODAL, this.ADD_NEW_CARD, {}, showEdit, hasCOMT);
     },
     viewMedicine(item) {
       var hasCOMT = this.checkIfComtExistsAmongOtherMedicine(item);
       var showEdit = this.canEdit && this.showMedicinePanel;
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.VIEW_CURRENT_CARD, item, showEdit, hasCOMT);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'medicineModal', this.SHOW_MEDICINE_MODAL, this.VIEW_CURRENT_CARD, item, showEdit, hasCOMT);
     },
     editMedicine(item) {
       var hasCOMT = this.checkIfComtExistsAmongOtherMedicine(item);
       var showEdit = this.canEdit && this.showMedicinePanel;
-      Bus.$emit(this.SHOW_MEDICINE_MODAL, this.EDIT_CURRENT_CARD, item, showEdit, hasCOMT);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'medicineModal', this.SHOW_MEDICINE_MODAL, this.EDIT_CURRENT_CARD, item, showEdit, hasCOMT);
     },
     deleteMedicine(item) {
       var patientMedicine = {
@@ -593,15 +594,16 @@ export default {
     },
     addPreEvaluationRecord() {
       var showEdit = this.canEdit && this.showSurgeryPanel;
-      Bus.$emit(this.SHOW_PRE_EVALUATION_MODAL, this.ADD_NEW_CARD, {}, showEdit);
+      // Bus.$emit(this.SHOW_PRE_EVALUATION_MODAL, this.ADD_NEW_CARD, {}, showEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'preEvaluationModal', this.SHOW_PRE_EVALUATION_MODAL, this.ADD_NEW_CARD, {}, showEdit);
     },
     viewPreEvaluationRecord(item) {
       var showEdit = this.canEdit && this.showSurgeryPanel;
-      Bus.$emit(this.SHOW_PRE_EVALUATION_MODAL, this.VIEW_CURRENT_CARD, item, showEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'preEvaluationModal', this.SHOW_PRE_EVALUATION_MODAL, this.VIEW_CURRENT_CARD, item, showEdit);
     },
     editPreEvaluationRecord(item) {
       var showEdit = this.canEdit && this.showSurgeryPanel;
-      Bus.$emit(this.SHOW_PRE_EVALUATION_MODAL, this.EDIT_CURRENT_CARD, item, showEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'preEvaluationModal', this.SHOW_PRE_EVALUATION_MODAL, this.EDIT_CURRENT_CARD, item, showEdit);
     },
     deletePreEvaluationRecord(item) {
       var preEvaluation = {
@@ -614,15 +616,16 @@ export default {
     },
     addSurgicalRecord() {
       var showEdit = this.canEdit && this.showSurgeryPanel;
-      Bus.$emit(this.SHOW_SURGICAL_METHOD_MODAL, this.ADD_NEW_CARD, {}, showEdit);
+      // Bus.$emit(this.SHOW_SURGICAL_METHOD_MODAL, this.ADD_NEW_CARD, {}, showEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'surgicalMethodModal', this.SHOW_SURGICAL_METHOD_MODAL, this.ADD_NEW_CARD, {}, showEdit);
     },
     viewSurgicalRecord(item) {
       var showEdit = this.canEdit && this.showSurgeryPanel;
-      Bus.$emit(this.SHOW_SURGICAL_METHOD_MODAL, this.VIEW_CURRENT_CARD, item, showEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'surgicalMethodModal', this.SHOW_SURGICAL_METHOD_MODAL, this.VIEW_CURRENT_CARD, item, showEdit);
     },
     editSurgicalRecord(item) {
       var showEdit = this.canEdit && this.showSurgeryPanel;
-      Bus.$emit(this.SHOW_SURGICAL_METHOD_MODAL, this.EDIT_CURRENT_CARD, item, showEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'surgicalMethodModal', this.SHOW_SURGICAL_METHOD_MODAL, this.EDIT_CURRENT_CARD, item, showEdit);
     },
     deleteSurgicalRecord(item) {
       var surgicalMethod = {
@@ -635,15 +638,16 @@ export default {
     },
     addPostComplicationRecord() {
       var showEdit = this.canEdit && this.showSurgeryPanel;
-      Bus.$emit(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.ADD_NEW_CARD, {}, showEdit);
+      // Bus.$emit(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.ADD_NEW_CARD, {}, showEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'operativeComplicationModal', this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.ADD_NEW_CARD, {}, showEdit);
     },
     viewPostComplicationRecord(item) {
       var showEdit = this.canEdit && this.showSurgeryPanel;
-      Bus.$emit(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.VIEW_CURRENT_CARD, item, showEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'operativeComplicationModal', this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.VIEW_CURRENT_CARD, item, showEdit);
     },
     editPostComplicationRecord(item) {
       var showEdit = this.canEdit && this.showSurgeryPanel;
-      Bus.$emit(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.EDIT_CURRENT_CARD, item, showEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'operativeComplicationModal', this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.EDIT_CURRENT_CARD, item, showEdit);
     },
     deletePostComplicationRecord(item) {
       var operativeComplication = {
@@ -656,15 +660,15 @@ export default {
     },
     addDbsRecord() {
       var showEdit = this.canEdit && this.showSurgeryPanel;
-      Bus.$emit(this.SHOW_DBS_MODAL, this.ADD_NEW_CARD, {}, showEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'dbsModal', this.SHOW_DBS_MODAL, this.ADD_NEW_CARD, {}, showEdit);
     },
     viewDbsRecord(item) {
       var showEdit = this.canEdit && this.showSurgeryPanel;
-      Bus.$emit(this.SHOW_DBS_MODAL, this.VIEW_CURRENT_CARD, item, showEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'dbsModal', this.SHOW_DBS_MODAL, this.VIEW_CURRENT_CARD, item, showEdit);
     },
     editDbsRecord(item) {
       var showEdit = this.canEdit && this.showSurgeryPanel;
-      Bus.$emit(this.SHOW_DBS_MODAL, this.EDIT_CURRENT_CARD, item, showEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'dbsModal', this.SHOW_DBS_MODAL, this.EDIT_CURRENT_CARD, item, showEdit);
     },
     deleteDbsRecord(item) {
       // 先判断这条程控记录是首次还是非首次，从而决定调用哪个 api
@@ -717,15 +721,15 @@ export default {
     },
     addPhysiontherapy() {
       var showEdit = this.canEdit && this.showPhysiontherapy;
-      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.ADD_NEW_CARD, {}, showEdit, this.diagnosticExperimentStep);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'physiontherapyModal', this.SHOW_PHYSIONTHERAPY_MODAL, this.ADD_NEW_CARD, {}, showEdit, this.diagnosticExperimentStep);
     },
     viewPhysiontherapy(item) {
       var showEdit = this.canEdit && this.showPhysiontherapy;
-      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.VIEW_CURRENT_CARD, item, showEdit, this.diagnosticExperimentStep);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'physiontherapyModal', this.SHOW_PHYSIONTHERAPY_MODAL, this.VIEW_CURRENT_CARD, item, showEdit, this.diagnosticExperimentStep);
     },
     editPhysiontherapy(item) {
       var showEdit = this.canEdit && this.showPhysiontherapy;
-      Bus.$emit(this.SHOW_PHYSIONTHERAPY_MODAL, this.EDIT_CURRENT_CARD, item, showEdit, this.diagnosticExperimentStep);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'physiontherapyModal', this.SHOW_PHYSIONTHERAPY_MODAL, this.EDIT_CURRENT_CARD, item, showEdit, this.diagnosticExperimentStep);
     },
     deletePhysiontherapy(item) {
       var patientPhysiontherapy = {
@@ -738,15 +742,15 @@ export default {
     },
     addTreatmentEvaluation() {
       var showEdit = this.canEdit && this.showTreatmentEvaluation;
-      Bus.$emit(this.SHOW_TREATMENT_EVALUATION_MODAL, this.ADD_NEW_CARD, {}, showEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'treatmentEvaluationModal', this.SHOW_TREATMENT_EVALUATION_MODAL, this.ADD_NEW_CARD, {}, showEdit);
     },
     viewTreatmentEvaluation(item) {
       var showEdit = this.canEdit && this.showTreatmentEvaluation;
-      Bus.$emit(this.SHOW_TREATMENT_EVALUATION_MODAL, this.VIEW_CURRENT_CARD, item, showEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'treatmentEvaluationModal', this.SHOW_TREATMENT_EVALUATION_MODAL, this.VIEW_CURRENT_CARD, item, showEdit);
     },
     editTreatmentEvaluation(item) {
       var showEdit = this.canEdit && this.showTreatmentEvaluation;
-      Bus.$emit(this.SHOW_TREATMENT_EVALUATION_MODAL, this.EDIT_CURRENT_CARD, item, showEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'treatmentEvaluationModal', this.SHOW_TREATMENT_EVALUATION_MODAL, this.EDIT_CURRENT_CARD, item, showEdit);
     },
     deleteTreatmentEvaluation(item) {
       var patientTreatmentEvaluation = {
@@ -759,15 +763,15 @@ export default {
     },
     addAdverseEvent() {
       var showEdit = this.canEdit && this.showAdverseEvent;
-      Bus.$emit(this.SHOW_ADVERSE_EVENT_MODAL, this.ADD_NEW_CARD, {}, showEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'adverseEventModal', this.SHOW_ADVERSE_EVENT_MODAL, this.ADD_NEW_CARD, {}, showEdit);
     },
     viewAdverseEvent(item) {
       var showEdit = this.canEdit && this.showAdverseEvent;
-      Bus.$emit(this.SHOW_ADVERSE_EVENT_MODAL, this.VIEW_CURRENT_CARD, item, showEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'adverseEventModal', this.SHOW_ADVERSE_EVENT_MODAL, this.VIEW_CURRENT_CARD, item, showEdit);
     },
     editAdverseEvent(item) {
       var showEdit = this.canEdit && this.showAdverseEvent;
-      Bus.$emit(this.SHOW_ADVERSE_EVENT_MODAL, this.EDIT_CURRENT_CARD, item, showEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'adverseEventModal', this.SHOW_ADVERSE_EVENT_MODAL, this.EDIT_CURRENT_CARD, item, showEdit);
     },
     deleteAdverseEvent(item) {
       var patientAdverseEvent = {

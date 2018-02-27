@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="dbs-modal-wrapper" v-show="displayModal">
+  <div class="dbs-modal-wrapper">
     <div class="dbs-modal" ref="scrollArea">
       <h3 class="title">{{title}}</h3>
       <div class="content">
@@ -888,7 +888,6 @@ var dbsFollowModel = {
 export default {
   data() {
     return {
-      displayModal: false,
       mode: '',
       dbsPatientCode: '',
       modelType: 1, // 这个用来控制是否为首次开机，1为首次，0为非首次
@@ -1007,7 +1006,7 @@ export default {
           });
         });
       }
-      this.displayModal = true;
+      // this.displayModal = true;
       this.clearWarning();
       this.updateScrollbar();
     },
@@ -1017,7 +1016,8 @@ export default {
     },
     cancel() {
       this.lockSubmitButton = false;
-      this.displayModal = false;
+      // this.displayModal = false;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     submit() {
       if (this.lockSubmitButton) {
@@ -1100,7 +1100,8 @@ export default {
     updateAndClose() {
       Bus.$emit(this.UPDATE_CASE_INFO);
       this.lockSubmitButton = false;
-      this.displayModal = false;
+      // this.displayModal = false;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
 
       // 因为前面的 delete 砍掉了 copyInfo的完整结构，会导致渲染出问题，所以传完数据后就重新补上
       this.initByModelType();
@@ -1704,7 +1705,11 @@ export default {
   },
   mounted() {
     this.updateScrollbar();
+    // 先在本组件注册该事件，等待Layout组件接收动态组件挂载完毕的通知，再在本组件执行 showPanel 或 showModal
     Bus.$on(this.SHOW_DBS_MODAL, this.showModal);
+
+    // 动态组件挂载完毕，通知Layout组件，动态组件已挂载完毕
+    Bus.$emit(this.DYNAMIC_COMPONENT_MOUNTED);
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
   },
   beforeDestroy() {
@@ -1713,9 +1718,10 @@ export default {
   },
   watch: {
     '$route.path'() {
-      if (this.displayModal) {
-        this.cancel();
-      }
+      // if (this.displayModal) {
+      //   this.cancel();
+      // }
+      this.cancel();
     }
   }
 };

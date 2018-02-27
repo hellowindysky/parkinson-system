@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="pre-evaluation-modal-wrapper" v-show="displayModal">
+  <div class="pre-evaluation-modal-wrapper">
     <div class="pre-evaluation-modal" ref="scrollArea">
       <h3 class="title">{{title}}</h3>
       <div class="content">
@@ -846,7 +846,6 @@ let dataModel = {
 export default {
   data() {
     return {
-      displayModal: false,
       mode: '',
       diaryRowNameList: ['睡眠', '关期', '重异动开', '轻异动开', '无异动开'],
       dayTimeNameList: ['oneDayTime', 'twoDayTime', 'threeDayTime', 'fourDayTime', 'fiveDayTime', 'sixDayTime'],
@@ -944,7 +943,7 @@ export default {
         });
       }
 
-      this.displayModal = true;
+      // this.displayModal = true;
       this.updateScrollbar();
     },
     initCopyInfo() {
@@ -963,7 +962,8 @@ export default {
     },
     cancel() {
       this.lockSubmitButton = false;
-      this.displayModal = false;
+      // this.displayModal = false;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     switchToEditingMode() {
       this.mode = this.EDIT_CURRENT_CARD;
@@ -1038,7 +1038,8 @@ export default {
     updateAndClose() {
       Bus.$emit(this.UPDATE_CASE_INFO);
       this.lockSubmitButton = false;
-      this.displayModal = false;
+      // this.displayModal = false;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     alertForDuplicatedDbsCode() {
       this.$message({
@@ -1609,16 +1610,21 @@ export default {
   },
   mounted() {
     this.updateScrollbar();
+    // 先在本组件注册该事件，等待Layout组件接收动态组件挂载完毕的通知，再在本组件执行 showPanel 或 showModal
     Bus.$on(this.SHOW_PRE_EVALUATION_MODAL, this.showModal);
+
+    // 动态组件挂载完毕，通知Layout组件，动态组件已挂载完毕
+    Bus.$emit(this.DYNAMIC_COMPONENT_MOUNTED);
   },
   beforeDestroy() {
     Bus.$off(this.SHOW_PRE_EVALUATION_MODAL, this.showModal);
   },
   watch: {
     '$route.path'() {
-      if (this.displayModal) {
-        this.cancel();
-      }
+      // if (this.displayModal) {
+      //   this.cancel();
+      // }
+      this.cancel();
     }
   }
 };

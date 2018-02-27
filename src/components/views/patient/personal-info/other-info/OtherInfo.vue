@@ -383,13 +383,16 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addMedRecord() {
-      Bus.$emit(this.SHOW_MODAL_BOX, this.ADD_NEW_CARD, '新增用药史', {}, this.MEDICINE_HISTORY_MODAL);
+      // Bus.$emit(this.SHOW_MODAL_BOX, this.ADD_NEW_CARD, '新增用药史', {}, this.MEDICINE_HISTORY_MODAL);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'modalBox', this.SHOW_MODAL_BOX, this.ADD_NEW_CARD, '新增用药史', {}, this.MEDICINE_HISTORY_MODAL);
     },
     viewMedRecord(item) {
-      Bus.$emit(this.SHOW_MODAL_BOX, this.VIEW_CURRENT_CARD, '用药史', item, this.MEDICINE_HISTORY_MODAL);
+      // Bus.$emit(this.SHOW_MODAL_BOX, this.VIEW_CURRENT_CARD, '用药史', item, this.MEDICINE_HISTORY_MODAL);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'modalBox', this.SHOW_MODAL_BOX, this.VIEW_CURRENT_CARD, '用药史', item, this.MEDICINE_HISTORY_MODAL);
     },
     editMedRecord(item) {
-      Bus.$emit(this.SHOW_MODAL_BOX, this.EDIT_CURRENT_CARD, '用药史', item, this.MEDICINE_HISTORY_MODAL);
+      // Bus.$emit(this.SHOW_MODAL_BOX, this.EDIT_CURRENT_CARD, '用药史', item, this.MEDICINE_HISTORY_MODAL);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'modalBox', this.SHOW_MODAL_BOX, this.EDIT_CURRENT_CARD, '用药史', item, this.MEDICINE_HISTORY_MODAL);
     },
     deleteMedRecord(item) {
       var patientMed = {
@@ -403,13 +406,16 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addDiseaseRecord() {
-      Bus.$emit(this.SHOW_MODAL_BOX, this.ADD_NEW_CARD, '新增既往史', {}, this.DISEASE_HISTORY_MODAL);
+      // Bus.$emit(this.SHOW_MODAL_BOX, this.ADD_NEW_CARD, '新增既往史', {}, this.DISEASE_HISTORY_MODAL);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'modalBox', this.SHOW_MODAL_BOX, this.ADD_NEW_CARD, '新增既往史', {}, this.DISEASE_HISTORY_MODAL);
     },
     viewDiseaseRecord(item) {
-      Bus.$emit(this.SHOW_MODAL_BOX, this.VIEW_CURRENT_CARD, '既往史', item, this.DISEASE_HISTORY_MODAL);
+      // Bus.$emit(this.SHOW_MODAL_BOX, this.VIEW_CURRENT_CARD, '既往史', item, this.DISEASE_HISTORY_MODAL);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'modalBox', this.SHOW_MODAL_BOX, this.VIEW_CURRENT_CARD, '既往史', item, this.DISEASE_HISTORY_MODAL);
     },
     editDiseaseRecord(item) {
-      Bus.$emit(this.SHOW_MODAL_BOX, this.EDIT_CURRENT_CARD, '既往史', item, this.DISEASE_HISTORY_MODAL);
+      // Bus.$emit(this.SHOW_MODAL_BOX, this.EDIT_CURRENT_CARD, '既往史', item, this.DISEASE_HISTORY_MODAL);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'modalBox', this.SHOW_MODAL_BOX, this.EDIT_CURRENT_CARD, '既往史', item, this.DISEASE_HISTORY_MODAL);
     },
     deleteDiseaseRecord(item) {
       var patientDisease = {
@@ -423,13 +429,13 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addFamilyRecord() {
-      Bus.$emit(this.SHOW_MODAL_BOX, this.ADD_NEW_CARD, '新增家族史', {}, this.FAMILY_HISTORY_MODAL);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'modalBox', this.SHOW_MODAL_BOX, this.ADD_NEW_CARD, '新增家族史', {}, this.FAMILY_HISTORY_MODAL);
     },
     viewFamilyRecord(item) {
-      Bus.$emit(this.SHOW_MODAL_BOX, this.VIEW_CURRENT_CARD, '家族史', item, this.FAMILY_HISTORY_MODAL);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'modalBox', this.SHOW_MODAL_BOX, this.VIEW_CURRENT_CARD, '家族史', item, this.FAMILY_HISTORY_MODAL);
     },
     editFamilyRecord(item) {
-      Bus.$emit(this.SHOW_MODAL_BOX, this.EDIT_CURRENT_CARD, '家族史', item, this.FAMILY_HISTORY_MODAL);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'modalBox', this.SHOW_MODAL_BOX, this.EDIT_CURRENT_CARD, '家族史', item, this.FAMILY_HISTORY_MODAL);
     },
     deleteFamilyRecord(item) {
       var patientFamily = {
@@ -443,15 +449,18 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addPersonRecord() {
-      Bus.$emit(this.SHOW_MODAL_BOX, this.ADD_NEW_CARD, '新增个人史', {}, this.PERSON_HISTORY_MODAL);
+      // Bus.$emit(this.SHOW_MODAL_BOX, this.ADD_NEW_CARD, '新增个人史', {}, this.PERSON_HISTORY_MODAL);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'modalBox', this.SHOW_MODAL_BOX, this.ADD_NEW_CARD, '新增个人史', {}, this.PERSON_HISTORY_MODAL);
     },
     viewPersonRecord(item, modal) {
       // 个人史下面有几个子类（咖啡史，喝茶史，饮酒史，吸烟史，锻炼史），作为第二个参数传进来
-      Bus.$emit(this.SHOW_MODAL_BOX, this.VIEW_CURRENT_CARD, '个人史', item, modal);
+      // Bus.$emit(this.SHOW_MODAL_BOX, this.VIEW_CURRENT_CARD, '个人史', item, modal);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'modalBox', this.SHOW_MODAL_BOX, this.VIEW_CURRENT_CARD, '个人史', item, modal);
     },
     editPersonRecord(item, modal) {
       // 个人史下面有几个子类（咖啡史，喝茶史，饮酒史，吸烟史，锻炼史），作为第二个参数传进来
-      Bus.$emit(this.SHOW_MODAL_BOX, this.EDIT_CURRENT_CARD, '个人史', item, modal);
+      // Bus.$emit(this.SHOW_MODAL_BOX, this.EDIT_CURRENT_CARD, '个人史', item, modal);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'modalBox', this.SHOW_MODAL_BOX, this.EDIT_CURRENT_CARD, '个人史', item, modal);
     },
     deleteCoffeeRecord(item) {
       var patientCoffee = {
@@ -509,13 +518,13 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addToxicRecord() {
-      Bus.$emit(this.SHOW_MODAL_BOX, this.ADD_NEW_CARD, '新增毒物接触史', {}, this.TOXIC_HISTORY_MODAL);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'modalBox', this.SHOW_MODAL_BOX, this.ADD_NEW_CARD, '新增毒物接触史', {}, this.TOXIC_HISTORY_MODAL);
     },
     viewToxicRecord(item) {
-      Bus.$emit(this.SHOW_MODAL_BOX, this.VIEW_CURRENT_CARD, '毒物接触史', item, this.TOXIC_HISTORY_MODAL);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'modalBox', this.SHOW_MODAL_BOX, this.VIEW_CURRENT_CARD, '毒物接触史', item, this.TOXIC_HISTORY_MODAL);
     },
     editToxicRecord(item) {
-      Bus.$emit(this.SHOW_MODAL_BOX, this.EDIT_CURRENT_CARD, '毒物接触史', item, this.TOXIC_HISTORY_MODAL);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'modalBox', this.SHOW_MODAL_BOX, this.EDIT_CURRENT_CARD, '毒物接触史', item, this.TOXIC_HISTORY_MODAL);
     },
     deleteToxicRecord(item) {
       var patientToxicExposure = {

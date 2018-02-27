@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="follow-up-termination-modal-wrapper" v-show="displayModal">
+  <div class="follow-up-termination-modal-wrapper">
     <div class="follow-up-termination-modal" ref="scrollArea">
       <h3 class="title">{{title}}</h3>
       <div class="content">
@@ -197,7 +197,6 @@ import { completeFollowUp } from 'api/experiment.js';
 export default {
   data() {
     return {
-      displayModal: false,
       mode: '',
       completeInit: false,
       showEdit: true,
@@ -266,7 +265,7 @@ export default {
       });
 
       this.completeInit = true;
-      this.displayModal = true;
+      // this.displayModal = true;
       this.updateScrollbar();
     },
     transform(code, fieldName) {
@@ -304,7 +303,8 @@ export default {
     },
     cancel() {
       this.lockSubmitButton = false;
-      this.displayModal = false;
+      // this.displayModal = false;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     switchToEditingMode() {
       this.mode = this.EDIT_CURRENT_CARD;
@@ -357,7 +357,8 @@ export default {
     updateAndClose() {
       Bus.$emit(this.UPDATE_EXPERIMENT_INFO);
       this.lockSubmitButton = false;
-      this.displayModal = false;
+      // this.displayModal = false;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     updateScrollbar() {
       this.$nextTick(() => {
@@ -371,7 +372,11 @@ export default {
     }
   },
   mounted() {
+    // 先在本组件注册该事件，等待Layout组件接收动态组件挂载完毕的通知，再在本组件执行 showPanel 或 showModal
     Bus.$on(this.SHOW_FOLLOW_UP_TERMINATION_MODAL, this.showPanel);
+
+    // 动态组件挂载完毕，通知Layout组件，动态组件已挂载完毕
+    Bus.$emit(this.DYNAMIC_COMPONENT_MOUNTED);
     this.updateScrollbar();
   },
   beforeDestroy() {
@@ -379,9 +384,10 @@ export default {
   },
   watch: {
     '$route.path'() {
-      if (this.displayModal) {
-        this.cancel();
-      }
+      // if (this.displayModal) {
+      //   this.cancel();
+      // }
+      this.cancel();
     }
   }
 };

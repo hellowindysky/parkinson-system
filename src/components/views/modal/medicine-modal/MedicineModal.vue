@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="medicine-modal-wrapper" v-show="displayModal">
+  <div class="medicine-modal-wrapper">
     <div class="medicine-modal" ref="medicineModal">
       <h3 class="title">{{title}}</h3>
       <div class="content">
@@ -205,7 +205,6 @@ import { addPatientMedicine, modifyPatientMedicine } from 'api/patient.js';
 export default {
   data() {
     return {
-      displayModal: false,
       mode: '',
       medicine: {},
       originalMedicine: {},
@@ -394,7 +393,7 @@ export default {
   methods: {
     showModal(cardOperation, item, showEdit, hasComtAmongOtherMedicine) {
       this.mode = cardOperation;
-      this.displayModal = true;
+      // this.displayModal = true;
       this.completeInit = false;
       this.showEdit = showEdit;
       this.foldedConditionalContent = true;
@@ -436,7 +435,8 @@ export default {
     },
     cancel() {
       this.lockSubmitButton = false;
-      this.displayModal = false;
+      // this.displayModal = false;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     switchToEditingMode() {
       this.mode = this.EDIT_CURRENT_CARD;
@@ -511,7 +511,8 @@ export default {
     updateAndClose() {
       Bus.$emit(this.UPDATE_CASE_INFO);
       this.lockSubmitButton = false;
-      this.displayModal = false;
+      // this.displayModal = false;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     initMedicine(item) {
       // originalMedicine 是原始数据，在修改表格的时候需要参考这个对象，medicine 是我们编辑和上传的对象
@@ -719,20 +720,21 @@ export default {
     }
   },
   mounted() {
+    // 先在本组件注册该事件，等待Layout组件接收动态组件挂载完毕的通知，再在本组件执行 showPanel 或 showModal
     Bus.$on(this.SHOW_MEDICINE_MODAL, this.showModal);
-    setTimeout(() => {
-      // console.log(this.medicineTemplateGroups);
-      // console.log(this.medicineDictionary);
-    }, 2000);
+
+    // 动态组件挂载完毕，通知Layout组件，动态组件已挂载完毕
+    Bus.$emit(this.DYNAMIC_COMPONENT_MOUNTED);
   },
   beforeDestroy() {
     Bus.$off(this.SHOW_MEDICINE_MODAL, this.showModal);
   },
   watch: {
     '$route.path'() {
-      if (this.displayModal) {
-        this.cancel();
-      }
+      // if (this.displayModal) {
+      //   this.cancel();
+      // }
+      this.cancel();
     }
   }
 };

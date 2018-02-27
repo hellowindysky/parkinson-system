@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="ratification-modal-wrapper" v-show="displayModal">
+  <div class="ratification-modal-wrapper">
     <div class="ratification-modal" ref="scrollArea">
       <h3 class="title">{{title}}</h3>
       <div class="content">
@@ -68,7 +68,6 @@ import { agreeEnteringExperiment } from 'api/experiment.js';
 export default {
   data() {
     return {
-      displayModal: false,
       mode: '',
       completeInit: false,
       therapist: '',
@@ -116,7 +115,7 @@ export default {
       });
 
       this.completeInit = true;
-      this.displayModal = true;
+      // this.displayModal = true;
     },
     updateWarning(fieldName) {
       if (this[fieldName] === '') {
@@ -127,7 +126,8 @@ export default {
     },
     cancel() {
       this.lockSubmitButton = false;
-      this.displayModal = false;
+      // this.displayModal = false;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     switchToEditingMode() {
       this.mode = this.EDIT_CURRENT_CARD;
@@ -176,20 +176,26 @@ export default {
       });
       Bus.$emit(this.UPDATE_EXPERIMENT_INFO);
       this.lockSubmitButton = false;
-      this.displayModal = false;
+      // this.displayModal = false;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     }
   },
   mounted() {
+    // 先在本组件注册该事件，等待Layout组件接收动态组件挂载完毕的通知，再在本组件执行 showPanel 或 showModal
     Bus.$on(this.SHOW_RATIFICATION_MODAL, this.showPanel);
+
+    // 动态组件挂载完毕，通知Layout组件，动态组件已挂载完毕
+    Bus.$emit(this.DYNAMIC_COMPONENT_MOUNTED);
   },
   beforeDestroy() {
     Bus.$off(this.SHOW_RATIFICATION_MODAL);
   },
   watch: {
     '$route.path'() {
-      if (this.displayModal) {
-        this.cancel();
-      }
+      // if (this.displayModal) {
+      //   this.cancel();
+      // }
+      this.cancel();
     }
   }
 };

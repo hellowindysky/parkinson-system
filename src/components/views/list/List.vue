@@ -590,7 +590,8 @@ export default {
       }
     },
     addNewGroup() {
-      Bus.$emit(this.SHOW_GROUP_MODAL);
+      // Bus.$emit(this.SHOW_GROUP_MODAL);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'groupModal', this.SHOW_GROUP_MODAL);
     },
     deleteSeletedGroupList() {
       // 首先检查是否有选择分组，假如一个都没选，那么点击删除是不会有效果的

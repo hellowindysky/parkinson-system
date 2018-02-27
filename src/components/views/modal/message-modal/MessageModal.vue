@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="message-modal-wrapper" v-show="displayModal">
+  <div class="message-modal-wrapper">
     <div class="message-modal">
       <div class="title">{{title}}</div>
       <div class="desc">{{desc}}</div>
@@ -33,7 +33,6 @@ import { sendVerificationCode, verifyMessageCode } from 'api/user.js';
 export default {
   data() {
     return {
-      displayModal: false,
       lockSubmitButton: false,
 
       businessType: '',    // 1.修改密码业务 2.授权技术支持业务 3.脱敏业务
@@ -100,7 +99,7 @@ export default {
       this.verificationCodeWarning = '';
       this.readAgreement = false;
 
-      this.displayModal = true;
+      // this.displayModal = true;
     },
     sendCode() {
       if (this.lockSendButton) {
@@ -145,7 +144,8 @@ export default {
     },
     cancel() {
       this.lockSubmitButton = false;
-      this.displayModal = false;
+      // this.displayModal = false;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
     },
     submit() {
       if (this.lockSubmitButton) {
@@ -187,7 +187,8 @@ export default {
           Bus.$emit(this.PERMIT_SUPPORT_THE_DOCTOR);
         }
 
-        this.displayModal = false;
+        // this.displayModal = false;
+        Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
         this.lockSubmitButton = false;
 
       }, (error) => {
@@ -203,16 +204,21 @@ export default {
     }
   },
   mounted() {
+    // 先在本组件注册该事件，等待Layout组件接收动态组件挂载完毕的通知，再在本组件执行 showPanel 或 showModal
     Bus.$on(this.SHOW_MESSAGE_MODAL, this.showModal);
+
+    // 动态组件挂载完毕，通知Layout组件，动态组件已挂载完毕
+    Bus.$emit(this.DYNAMIC_COMPONENT_MOUNTED);
   },
   beforeDestroy() {
     Bus.$off(this.SHOW_MESSAGE_MODAL);
   },
   watch: {
     '$route.path'() {
-      if (this.displayModal) {
-        this.cancel();
-      }
+      // if (this.displayModal) {
+      //   this.cancel();
+      // }
+      this.cancel();
     }
   }
 };

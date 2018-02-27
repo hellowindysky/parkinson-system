@@ -3,42 +3,10 @@
     <topbar class="topbar" :showFilterPanel="showFilterPanel"></topbar>
     <sidebar class="sidebar"></sidebar>
     <router-view class="content"></router-view>
-    <!-- <keep-alive>
-      <component :is="componentName"></component>
-    </keep-alive> -->
+
     <component :is="componentName"></component>
-    <!-- <password-modal></password-modal> -->
-    <!-- <authorization-modal></authorization-modal> -->
+    
     <secret-agreement-modal></secret-agreement-modal>
-    <message-modal></message-modal>
-
-    <group-modal></group-modal>
-
-    <modal-box></modal-box>
-    <medicine-modal></medicine-modal>
-    <pre-evaluation-modal></pre-evaluation-modal>
-    <surgical-method-modal></surgical-method-modal>
-    <operative-complication-modal></operative-complication-modal>
-    <physiontherapy-modal></physiontherapy-modal>
-    <treatment-evaluation-modal></treatment-evaluation-modal>
-    <adverse-event-modal></adverse-event-modal>
-    <!-- <vital-Signs-modal></vital-Signs-modal> -->
-    <dbs-modal></dbs-modal>
-    <!-- <neurologic-modal></neurologic-modal> -->
-    <!-- <gene-modal></gene-modal> -->
-    <!-- <biochemical-exam-modal></biochemical-exam-modal> -->
-    <!-- <neuroelectric-modal></neuroelectric-modal> -->
-    <!-- <image-modal></image-modal> -->
-    <first-symptoms-modal></first-symptoms-modal>
-    <first-treatment-modal></first-treatment-modal>
-    <diagnostic-record-modal></diagnostic-record-modal>
-    <chief-complaint-symptoms-modal></chief-complaint-symptoms-modal>
-    <application-modal></application-modal>
-    <rejection-modal></rejection-modal>
-    <ratification-modal></ratification-modal>
-    <follow-up-termination-modal></follow-up-termination-modal>
-    <termination-modal></termination-modal>
-    <experiment-step-modal></experiment-step-modal>
 
     <filter-panel :showFilterPanel="showFilterPanel"></filter-panel>
     <choice-panel></choice-panel>
