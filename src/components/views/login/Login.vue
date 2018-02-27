@@ -19,7 +19,7 @@
         </el-form-item>
         <el-form-item prop="password">
           <el-input class="round-input" v-model="loginForm.password" type="password" auto-complete="new-password"
-            placeholder="请输入6-10位数字和字母的密码" @keyup.enter.native="submitForm"></el-input>
+            placeholder="请输入6-16位数字和字母的密码" @keyup.enter.native="submitForm"></el-input>
         </el-form-item>
         <el-form-item prop="remember">
           <el-checkbox v-model="loginForm.remember" class="checkbox" label="记住用户名" name="type"></el-checkbox>
