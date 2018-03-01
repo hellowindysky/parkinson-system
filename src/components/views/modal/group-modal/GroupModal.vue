@@ -88,7 +88,7 @@ export default {
   methods: {
     cancel() {
       this.lockSubmitButton = false;
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
+      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
     },
     submit() {
       if (this.lockSubmitButton) {
@@ -110,7 +110,7 @@ export default {
       groupInfo.groupModule = this.$store.state.subjectId === this.SUBJECT_ID_FOR_HOSPITAL ? 0 : this.$store.state.subjectId;
       addGroup(groupInfo).then(() => {
         Bus.$emit(this.UPDATE_GROUP_LIST);
-        Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
+        Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
         this.lockSubmitButton = false;
       }, (error) => {
         if (error.code === 8) {

@@ -1015,7 +1015,7 @@ export default {
     },
     cancel() {
       this.lockSubmitButton = false;
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
+      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
     },
     submit() {
       if (this.lockSubmitButton) {
@@ -1098,7 +1098,7 @@ export default {
     updateAndClose() {
       Bus.$emit(this.UPDATE_CASE_INFO);
       this.lockSubmitButton = false;
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
+      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
 
       // 因为前面的 delete 砍掉了 copyInfo的完整结构，会导致渲染出问题，所以传完数据后就重新补上
       this.initByModelType();

@@ -133,7 +133,7 @@ export default {
     cancel() {
       this.lockSubmitButton = false;
       this.lockSendButton = false;
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
+      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
     },
     submit() {
       if (this.lockSubmitButton) {
@@ -177,7 +177,7 @@ export default {
           type: 'success',
           duration: 2000
         });
-        Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
+        Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
         this.lockSubmitButton = false;
         setTimeout(() => {
           this.$router.push({name: 'login'});

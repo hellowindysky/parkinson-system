@@ -434,7 +434,7 @@ export default {
     },
     cancel() {
       this.lockSubmitButton = false;
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
+      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
     },
     switchToEditingMode() {
       this.mode = this.EDIT_CURRENT_CARD;
@@ -509,7 +509,7 @@ export default {
     updateAndClose() {
       Bus.$emit(this.UPDATE_CASE_INFO);
       this.lockSubmitButton = false;
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
+      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
     },
     initMedicine(item) {
       // originalMedicine 是原始数据，在修改表格的时候需要参考这个对象，medicine 是我们编辑和上传的对象

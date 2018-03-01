@@ -107,7 +107,7 @@ export default {
       this.completeInit = true;
     },
     cancel() {
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
+      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
     },
     transform(code, fieldName) {
       var options = this.getOptions(fieldName);
@@ -176,7 +176,7 @@ export default {
       });
       Bus.$emit(this.UPDATE_EXPERIMENT_INFO);
       this.lockSubmitButton = false;
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
+      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
     }
   },
   mounted() {

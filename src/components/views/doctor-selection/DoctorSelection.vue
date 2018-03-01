@@ -49,7 +49,7 @@
       </div>
     </div>
     <water-mark></water-mark>
-    <message-modal></message-modal>
+    <component :is="componentName"></component>
     <secret-agreement-modal></secret-agreement-modal>
   </div>
 </template>
@@ -62,13 +62,15 @@ import { setRequestToken } from 'api/common.js';
 import { getSupportMessage, getSupportedDoctorList } from 'api/user.js';
 import Util from 'utils/util.js';
 
+const messageModal = () => import(/* webpackChunkName: 'modal' */ 'modal/message-modal/MessageModal');
 import waterMark from 'public/water-mark/WaterMark';
-import messageModal from 'modal/message-modal/MessageModal';
 import secretAgreementModal from 'modal/secret-agreement-modal/SecretAgreementModal';
 
 export default {
   data() {
     return {
+      dynamicArr: [],
+      componentName: '',
       district: '',
       timeout: null,
       searchKeyword: '',
@@ -204,7 +206,9 @@ export default {
       this.updateDoctorList(condition);
     },
     clickDoctorCard(doctor) {
-      Bus.$emit(this.SHOW_MESSAGE_MODAL, 4, '提醒', '需要医生验证后才能为其提供技术支持', doctor.mobileNumber);
+      this.dynamicArr = [this.SHOW_MESSAGE_MODAL, 4, '提醒', '需要医生验证后才能为其提供技术支持', doctor.mobileNumber];
+      this.componentName = 'messageModal';
+      // Bus.$emit(this.SHOW_MESSAGE_MODAL, 4, '提醒', '需要医生验证后才能为其提供技术支持', doctor.mobileNumber);
 
       Bus.$off(this.PERMIT_SUPPORT_THE_DOCTOR);
       Bus.$on(this.PERMIT_SUPPORT_THE_DOCTOR, () => {
@@ -257,6 +261,15 @@ export default {
 
     Bus.$on(this.AUTHORIZED_BY_DOCTOR, this.updateDoctorList);
     Bus.$on(this.DEPRIVED_OF_AUTHORITY_BY_DOCTOR, this.updateDoctorList);
+
+    // 等待动态组件完成挂载
+    Bus.$on(this.DYNAMIC_COMPONENT_MOUNTED, () => {
+      Bus.$emit(this.dynamicArr[0], this.dynamicArr[1], this.dynamicArr[2], this.dynamicArr[3], this.dynamicArr[4]);
+    });
+    // 卸载动态组件
+    Bus.$on(this.UNLOAD_DYNAMIC_COMPONENT, () => {
+      this.componentName = '';
+    });
   },
   beforeRouteEnter(to, from, next) {
     var userType = parseInt(sessionStorage.getItem('userType'), 10);

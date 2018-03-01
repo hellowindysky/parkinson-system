@@ -601,7 +601,7 @@ export default {
       this.$refs.upload5.clearFiles();
       this.$refs.upload6.clearFiles();
       this.$refs.upload7.clearFiles();
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
+      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
     },
     switchToEditingMode() {
       this.mode = this.EDIT_CURRENT_CARD;
@@ -679,7 +679,7 @@ export default {
       this.$refs.upload3.clearFiles();
       this.$refs.upload4.clearFiles();
       Bus.$emit(this.UPDATE_CASE_INFO);
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
+      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
     },
     removeFile(file, showingList, transferringList) {
       // console.log(file);

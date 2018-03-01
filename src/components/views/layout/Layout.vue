@@ -25,7 +25,6 @@ import sidebar from 'views/side-bar/Sidebar';
 
 const passwordModal = () => import(/* webpackChunkName: 'modal' */ 'modal/password-modal/PasswordModal');
 const authorizationModal = () => import(/* webpackChunkName: 'modal' */ 'modal/authorization-modal/AuthorizationModal');
-const secretAgreementModal = () => import(/* webpackChunkName: 'modal' */ 'modal/secret-agreement-modal/SecretAgreementModal');
 const messageModal = () => import(/* webpackChunkName: 'modal' */ 'modal/message-modal/MessageModal');
 const groupModal = () => import(/* webpackChunkName: 'modal' */ 'modal/group-modal/GroupModal');
 
@@ -63,6 +62,7 @@ const filterPanel = () => import(/* webpackChunkName: 'filterPanel' */ 'public/f
 import choicePanel from 'public/choice-panel/ChoicePanel';
 import confirmBox from 'public/confirm-box/ConfirmBox';
 import noticeBox from 'public/notice-box/NoticeBox';
+import secretAgreementModal from 'modal/secret-agreement-modal/SecretAgreementModal';
 
 import waterMark from 'public/water-mark/WaterMark';
 
@@ -178,6 +178,10 @@ export default {
     // 等待动态组件完成挂载
     Bus.$on(this.DYNAMIC_COMPONENT_MOUNTED, () => {
       Bus.$emit(dynamicArr[0], dynamicArr[1], dynamicArr[2], dynamicArr[3], dynamicArr[4]);
+    });
+    // 卸载动态组件
+    Bus.$on(this.UNLOAD_DYNAMIC_COMPONENT, (componentName) => {
+      this.componentName = componentName;
     });
   },
   beforeRouteEnter(to, from, next) {

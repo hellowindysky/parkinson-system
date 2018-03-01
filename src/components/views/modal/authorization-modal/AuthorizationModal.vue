@@ -162,7 +162,7 @@ export default {
       this.lockSubmitButton = false;
       this.lockSendButton = false;
       this.lockTerminateButton = false;
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
+      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
     },
     submit() {
       if (this.lockSubmitButton) {
@@ -206,7 +206,7 @@ export default {
             });
             this.lockSubmitButton = false;
             Bus.$emit(this.UPDATE_AUTHORIZED_STATUS);
-            Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
+            Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
 
           }, (error) => {
             if (error.code === 33) {
@@ -227,7 +227,7 @@ export default {
         return;
       }
       this.lockTerminateButton = true;
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
+      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
 
       Bus.$on(this.CONFIRM, () => {
         let supportAccountList = [this.technicalSupportAccountInfo.id];

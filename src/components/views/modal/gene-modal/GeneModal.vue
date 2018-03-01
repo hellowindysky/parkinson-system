@@ -224,7 +224,7 @@ export default {
       }
     },
     cancel() {
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
+      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
       this.lockSubmitButton = false;
     },
     switchToEditingMode() {
@@ -279,7 +279,7 @@ export default {
     updateAndClose() {
       Bus.$emit(this.UPDATE_CASE_INFO);
       this.lockSubmitButton = false;
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
+      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
     }
   },
   mounted() {

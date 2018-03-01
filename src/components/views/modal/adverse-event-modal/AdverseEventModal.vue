@@ -669,7 +669,7 @@ export default {
     },
     cancel() {
       this.lockSubmitButton = false;
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
+      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
     },
     switchToEditingMode() {
       this.mode = this.EDIT_CURRENT_CARD;
@@ -749,7 +749,7 @@ export default {
     updateAndClose() {
       Bus.$emit(this.UPDATE_CASE_INFO);
       this.lockSubmitButton = false;
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
+      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
     },
     updateScrollbar() {
       this.$nextTick(() => {

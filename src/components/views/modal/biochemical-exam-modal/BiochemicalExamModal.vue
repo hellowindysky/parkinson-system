@@ -286,7 +286,7 @@ export default {
     },
     cancel() {
       this.lockSubmitButton = false;
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
+      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
       this.targetBioexam = [];
     },
     switchToEditingMode() {
@@ -352,7 +352,7 @@ export default {
       this.lockSubmitButton = false;
     },
     updateAndClose() {
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
+      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
     },
     updateWarning(fieldName, index, id, reg, txt) {
       let fieldVal = this.copyInfo[fieldName];

@@ -143,7 +143,7 @@ export default {
     },
     cancel() {
       this.lockSubmitButton = false;
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
+      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
     },
     submit() {
       if (this.lockSubmitButton) {
@@ -185,7 +185,7 @@ export default {
           Bus.$emit(this.PERMIT_SUPPORT_THE_DOCTOR);
         }
 
-        Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
+        Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
         this.lockSubmitButton = false;
 
       }, (error) => {

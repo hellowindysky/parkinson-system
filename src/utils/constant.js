@@ -35,6 +35,10 @@ export default {
   TOGGLE_FILTER_PANEL_DISPLAY: 'toggleFilterPanelDisplay',
   TOGGLE_FOLDED_PANEL: 'toggleFoldedPanel',
 
+  MOUNT_DYNAMIC_COMPONENT: 'mountDynamicComponent',
+  DYNAMIC_COMPONENT_MOUNTED: 'dynamicComponentMounted',
+  UNLOAD_DYNAMIC_COMPONENT: 'unloadDynamicComponent',
+
   FILTER_ALL: 'filterAll',
   FILTER_ARCHIVED: 'filterArchived',
   FILTER_UNARCHIVED: 'filterUnarchived',
@@ -147,7 +151,5 @@ export default {
   COFFEE_HISTORY_MODAL: 'coffeeHistoryModal',
   WINE_HISTORY_MODAL: 'wineHistoryModal',
   SMOKE_HISTORY_MODAL: 'smokeHistoryModal',
-  EXERCISE_HISTORY_MODAL: 'exerciseHistoryModal',
-  MOUNT_DYNAMIC_COMPONENT: 'mountDynamicComponent',
-  DYNAMIC_COMPONENT_MOUNTED: 'dynamicComponentMounted'
+  EXERCISE_HISTORY_MODAL: 'exerciseHistoryModal'
 };

@@ -1525,7 +1525,7 @@ export default {
     },
     cancel() {
       this.lockSubmitButton = false;
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
+      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
       this.copyInfo = {};
       this.tableMode = '';
       if (this.$refs.upload4) {
@@ -1671,7 +1671,7 @@ export default {
       }
       Bus.$emit(this.UPDATE_CASE_INFO);
       this.lockSubmitButton = false;
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
+      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
     },
     chooseSubModal() {
       if (this.subModalType !== '') {

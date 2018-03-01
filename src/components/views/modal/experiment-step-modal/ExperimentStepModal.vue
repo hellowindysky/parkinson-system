@@ -178,7 +178,7 @@ export default {
       this.updateScrollbar();
     },
     cancel() {
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
+      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
     },
     getMilestoneNum(step) {
       var milestoneNum = 0;

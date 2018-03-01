@@ -526,7 +526,7 @@ export default {
       if (this.modalType === this.FAMILY_HISTORY_MODAL && this.mode !== this.VIEW_CURRENT_CARD) {
         this.$refs.uploadTag && this.$refs.uploadTag[0] && this.$refs.uploadTag[0].clearFiles();
       };
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
+      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
     },
     submit() {
       // 如果确定按钮被锁住了，则不执行下面的逻辑，防止重复点击
@@ -683,7 +683,7 @@ export default {
         this.$refs.uploadTag[0] && this.$refs.uploadTag[0].clearFiles();
       };
       Bus.$emit(this.UPDATE_PATIENT_INFO);
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, '');
+      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
       this.lockSubmitButton = false;  // 为按钮解锁
     },
     initCopyInfo() {
