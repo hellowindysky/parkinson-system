@@ -180,8 +180,8 @@ export default {
       Bus.$emit(dynamicArr[0], dynamicArr[1], dynamicArr[2], dynamicArr[3], dynamicArr[4]);
     });
     // 卸载动态组件
-    Bus.$on(this.UNLOAD_DYNAMIC_COMPONENT, (componentName) => {
-      this.componentName = componentName;
+    Bus.$on(this.UNLOAD_DYNAMIC_COMPONENT, () => {
+      this.componentName = '';
     });
   },
   beforeRouteEnter(to, from, next) {
