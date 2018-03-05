@@ -111,6 +111,7 @@ export default {
   SHOW_GENE_MODAL: 'showGeneModal',
   SHOW_BIOCHEMICAL_EXAM_MODAL: 'showBiochemicalExamModal',
   SHOW_NEUROELECTRIC_MODAL: 'showNeuroelectricModal',
+  SHOW_GAITPOSTURE_MODAL: 'showGaitPostureModal',
   SHOW_IMG_MODAL: 'showImgModal',
   SHOW_PRE_EVALUATION_MODAL: 'showPreEvaluationModal',
   SHOW_SURGICAL_METHOD_MODAL: 'showSurgicalMethodModal',
