@@ -5,7 +5,7 @@
     <router-view class="content"></router-view>
 
     <component :is="componentName"></component>
-    
+
     <filter-panel :showFilterPanel="showFilterPanel"></filter-panel>
     <secret-agreement-modal></secret-agreement-modal>
     <choice-panel></choice-panel>
@@ -48,6 +48,7 @@ const neurologicModal = () => import(/* webpackChunkName: 'examinationModal' */ 
 const geneModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/gene-modal/GeneModal');
 const biochemicalExamModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/biochemical-exam-modal/BiochemicalExamModal');
 const neuroelectricModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/neuroelectric-modal/NeuroelectricModal');
+const GaitPostureModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/gait-posture-modal/GaitPostureModal');
 const imageModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/image-modal/ImageModal');
 
 const applicationModal = () => import(/* webpackChunkName: 'experimentModal' */ 'modal/application-modal/ApplicationModal');
@@ -95,6 +96,7 @@ export default {
     geneModal,
     biochemicalExamModal,
     neuroelectricModal,
+    GaitPostureModal,
     imageModal,
     firstSymptomsModal,
     firstTreatmentModal,
