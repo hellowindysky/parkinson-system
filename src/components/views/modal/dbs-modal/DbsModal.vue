@@ -231,7 +231,7 @@
           <table class="form form0">
             <tr class="row top-row">
               <td class="col sort-info" colspan="16">
-                左侧肢体(右侧STN)触电疗效排序为:
+                左侧肢体(右侧STN)触点疗效排序为:
                 <span v-for="(contact, index) in getSideDeviceContact('left')">
                   <span v-show="index !== 0">&gt;</span>
                   <span class="contact narrow" v-if="mode===VIEW_CURRENT_CARD">
@@ -333,7 +333,7 @@
           <table class="form form0">
             <tr class="row top-row">
               <td class="col sort-info" colspan="16">
-                右侧肢体(左侧STN)触电疗效排序为:
+                右侧肢体(左侧STN)触点疗效排序为:
                 <span v-for="(contact, index) in getSideDeviceContact('right')">
                   <span v-show="index !== 0">&gt;</span>
                   <span class="contact narrow" v-if="mode===VIEW_CURRENT_CARD">
