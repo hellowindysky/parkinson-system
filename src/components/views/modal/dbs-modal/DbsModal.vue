@@ -172,8 +172,20 @@
         </div>
       </div>
 
+      <div class="form-tab-wrapper" v-show="modelType===1">
+        <span class="form-tab left" :class="{'on':currentFormSide==='left'}"
+          @click="chooseCurrentFormSide('left')">
+          左侧肢体
+          <span class="form-tab-bottom" :class="currentFormSide"></span>
+        </span>
+        <span class="form-tab right" :class="{'on':currentFormSide==='right'}"
+          @click="chooseCurrentFormSide('right')">
+          右侧肢体
+        </span>
+      </div>
+
       <div class="form-wrapper form0-wrapper" ref="form0" v-show="modelType===1">
-        <div class="form-left">
+        <div class="form-left" v-show="currentFormSide==='left'">
           <table class="form form0">
             <tr class="row top-row">
               <td class="col sort-info" colspan="16">
@@ -275,7 +287,7 @@
             </tr>
           </table>
         </div>
-        <div class="form-right">
+        <div class="form-right" v-show="currentFormSide==='right'">
           <table class="form form0">
             <tr class="row top-row">
               <td class="col sort-info" colspan="16">
@@ -903,6 +915,7 @@ export default {
           return time.getTime() > Date.now();
         }
       },
+      currentFormSide: 'left',  // 用来控制显示是左侧表格还是右侧表格，默认显示左侧
       leftContactSortArray: [],
       rightContactSortArray: [],
       firstDbsAdjustAfterParamPole: [],
@@ -1430,6 +1443,10 @@ export default {
         }
       }
     },
+    chooseCurrentFormSide(side) {
+      this.currentFormSide = side;
+      this.updateScrollbar();
+    },
     addParam(formType) {
       if (formType === 'firstDbsAdjustAfter') {
         let paramList = this.copyInfo.firstDbsParams.adjustAfterParameter;
@@ -1842,6 +1859,47 @@ export default {
         }
       }
     }
+    .form-tab-wrapper {
+      position: relative;
+      height: 35px;
+      line-height: 35px;
+      font-size: 0;
+      transform: translateY(5px);
+      .form-tab {
+        display: inline-block;
+        position: relative;
+        width: 100px;
+        font-weight: bold;
+        font-size: @normal-font-size;
+        color: @light-font-color;
+        cursor: pointer;
+        &.on {
+          color: @font-color;
+        }
+        &:hover {
+          opacity: 0.8;
+        }
+        &:active {
+          opacity: 0.9;
+        }
+      }
+      .form-tab-bottom {
+        display: inline-block;
+        position: absolute;
+        width: 80px;
+        height: 2px;
+        bottom: 0;
+        left: 0;
+        background-color: @font-color;
+        transition: 0.2s;
+        &.left {
+          transform: translate3d(10px, 0, 0);
+        }
+        &.right {
+          transform: translate3d(110px, 0, 0);
+        }
+      }
+    }
     .form-wrapper {
       position: relative;
       margin-bottom: 30px;
@@ -1849,15 +1907,15 @@ export default {
       padding-bottom: 10px;
       overflow: hidden;
       &.form0-wrapper {
-        text-align: left;
+        // text-align: left;
       }
       .form-left, .form-right {
         display: inline-block;
       }
       .form-right {
-        position: absolute; // 这里利用两个表格高度相等，只定义一个为 absolute，从而避免容器坍塌
-        left: @unit-width * 17;
-        top: 0;
+        // position: absolute; // 这里利用两个表格高度相等，只定义一个为 absolute，从而避免容器坍塌
+        // left: @unit-width * 17;
+        // top: 0;
       }
       .form {
         margin: 10px auto 0;
