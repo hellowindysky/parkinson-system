@@ -5,27 +5,6 @@
       <div class="content">
         <div class="field whole-line">
           <span class="field-name">
-            开始发生时间：
-            <span class="required-mark">*</span>
-          </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{occurTime}}</span>
-          </span>
-          <span class="field-input" v-else>
-            <span class="warning-text">{{warningResults.occurTime}}</span>
-            <el-date-picker
-              v-model="occurTime"
-              :class="{'warning': warningResults.occurTime}"
-              type="datetime"
-              format="yyyy-MM-dd HH:mm"
-              placeholder="请选择开始发生时间"
-              :picker-options="pickerOptions"
-              @change="updateWarning('occurTime')">
-            </el-date-picker>
-          </span>
-        </div>
-        <div class="field whole-line">
-          <span class="field-name">
             不良事件名称：
             <span class="required-mark">*</span>
           </span>
@@ -63,30 +42,52 @@
             </el-input>
           </span>
         </div>
-        <div class="field whole-line">
+         <div class="field">
+          <span class="field-name">
+            发生时间：
+            <span class="required-mark">*</span>
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span>{{occurTime}}</span>
+          </span>
+          <span class="field-input" v-else>
+            <span class="warning-text">{{warningResults.occurTime}}</span>
+            <el-date-picker
+              v-model="occurTime"
+              :class="{'warning': warningResults.occurTime}"
+              type="datetime"
+              placeholder="请选择发生时间"
+              :picker-options="pickerOptions"
+              @change="updateWarning('occurTime')">
+            </el-date-picker>
+          </span>
+        </div>
+         <div class="field">
+          <span class="field-name">
+            结束时间：
+            <span class="required-mark">*</span>
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span>{{occurTime}}</span>
+          </span>
+          <span class="field-input" v-else>
+            <span class="warning-text">{{warningResults.occurTime}}</span>
+            <el-date-picker
+              v-model="occurTime"
+              :class="{'warning': warningResults.occurTime}"
+              type="datetime"
+              placeholder="请选择结束时间"
+              :picker-options="pickerOptions"
+              @change="updateWarning('occurTime')">
+            </el-date-picker>
+          </span>
+        </div>
+        <div class="field">
           <span class="field-name">
             实验编号:
           </span>
           <span class="field-input">
             {{patientTaskCode}}
-          </span>
-        </div>
-        <div class="field">
-          <span class="field-name">
-           是否采取措施：
-          </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{transform(measureFlag,'digitYN')}}</span>
-          </span>
-          <span class="field-input" v-else>
-            <el-select v-model="measureFlag" clearable placeholder="请选择">
-              <el-option
-                v-for="item in getOptions('digitYN')"
-                :key="item.code"
-                :label="item.name"
-                :value="item.code">
-              </el-option>
-            </el-select>
           </span>
         </div>
         <div class="field">
@@ -100,42 +101,6 @@
             <el-select v-model="severity" clearable placeholder="请选择">
               <el-option
                 v-for="item in getOptions('adverseSeverity')"
-                :key="item.code"
-                :label="item.name"
-                :value="item.code">
-              </el-option>
-            </el-select>
-          </span>
-        </div>
-        <div class="field">
-          <span class="field-name">
-           是否与本次治疗有关：
-          </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{transform(treatmentRelate,'treatmentRelate')}}</span>
-          </span>
-          <span class="field-input" v-else>
-            <el-select v-model="treatmentRelate" clearable placeholder="请选择">
-              <el-option
-                v-for="item in getOptions('treatmentRelate')"
-                :key="item.code"
-                :label="item.name"
-                :value="item.code">
-              </el-option>
-            </el-select>
-          </span>
-        </div>
-        <div class="field">
-          <span class="field-name">
-           是否严重不良事件：
-          </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{transform(seriousFlag,'digitYN')}}</span>
-          </span>
-          <span class="field-input" v-else>
-            <el-select v-model="seriousFlag" clearable placeholder="请选择">
-              <el-option
-                v-for="item in getOptions('digitYN')"
                 :key="item.code"
                 :label="item.name"
                 :value="item.code">
@@ -809,8 +774,8 @@ export default {
 <style lang="less">
 @import "~styles/variables.less";
 
-@field-line-height: 25px;
-@field-name-width: 170px;
+@field-line-height: 0;
+@field-name-width: 120px;
 @scroll-bar-height: 10px;
 @unit-width: 54px;
 @computed-cell-color: lighten(@font-color, 55%);
@@ -867,7 +832,7 @@ export default {
         position: relative;
         width: 50%;
         min-height: 45px;
-        line-height: @field-line-height;
+        line-height: 25px;
         font-size: @normal-font-size;
         box-sizing: border-box;
         text-align: left;
@@ -885,7 +850,7 @@ export default {
           top: 0;
           left: @field-line-height;
           width: @field-name-width;
-          line-height: @field-line-height;
+          line-height: 25px;
         //   font-size: @normal-font-size;
           color: @font-color;
           .required-mark {
