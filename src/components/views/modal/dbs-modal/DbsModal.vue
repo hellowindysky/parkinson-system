@@ -438,7 +438,6 @@
           <tr class="row top-row">
             <td class="col" colspan="22">
               调整前参数
-              <span class="iconfont icon-question" @click="showMoreInfo"></span>
             </td>
           </tr>
           <tr class="row">
@@ -469,7 +468,10 @@
           <tr class="row title-row">
             <td class="col w2" colspan="2">方案</td>
             <td class="col w2" colspan="2">肢体侧</td>
-            <td class="col w3" colspan="3">刺激模式</td>
+            <td class="col w3" colspan="3">
+              刺激模式
+              <span class="iconfont icon-question" @click="showMoreInfo"></span>
+            </td>
             <td class="col w5" colspan="5">正极</td>
             <td class="col w4" colspan="4">负极</td>
             <td class="col w1" colspan="1">频率<br></br>(Hz)</td>
@@ -542,7 +544,6 @@
           <tr class="row top-row">
             <td class="col" colspan="22">
               单纯调整电压（总增幅 ≤ 0.4V）
-              <span class="iconfont icon-question" @click="showMoreInfo"></span>
             </td>
           </tr>
           <tr class="row">
@@ -577,7 +578,10 @@
                 v-show="copyInfo.followDbsParams.adjustVoltageParameter.length < 8 && mode!==VIEW_CURRENT_CARD"></span>
             </td>
             <td class="col w2" colspan="2">肢体侧</td>
-            <td class="col w3" colspan="3">刺激模式</td>
+            <td class="col w3" colspan="3">
+              刺激模式
+              <span class="iconfont icon-question" @click="showMoreInfo"></span>
+            </td>
             <td class="col w5" colspan="5">正极</td>
             <td class="col w4" colspan="4">负极</td>
             <td class="col w1" colspan="1">频率<br></br>(Hz)</td>
@@ -634,7 +638,6 @@
           <tr class="row top-row">
             <td class="col" colspan="22">
               调整多个参数
-              <span class="iconfont icon-question" @click="showMoreInfo"></span>
             </td>
           </tr>
           <tr class="row">
@@ -669,7 +672,10 @@
                 v-show="copyInfo.followDbsParams.adjustMoreParameter.length < 8 && mode!==VIEW_CURRENT_CARD"></span>
             </td>
             <td class="col w2" colspan="2">肢体侧</td>
-            <td class="col w3" colspan="3">刺激模式</td>
+            <td class="col w3" colspan="3">
+              刺激模式
+              <span class="iconfont icon-question" @click="showMoreInfo"></span>
+            </td>
             <td class="col w5" colspan="5">正极</td>
             <td class="col w4" colspan="5">负极</td>
             <td class="col w1" colspan="1">频率<br></br>(Hz)</td>
@@ -732,7 +738,6 @@
           <tr class="row top-row">
             <td class="col" colspan="22">
               程控完成参数
-              <span class="iconfont icon-question" @click="showMoreInfo"></span>
             </td>
           </tr>
           <tr class="row title-row">
@@ -742,7 +747,10 @@
                 v-show="copyInfo.followDbsParams.adjustAfterParameter.length < 8 && mode!==VIEW_CURRENT_CARD"></span>
             </td>
             <td class="col w2" colspan="2">肢体侧</td>
-            <td class="col w3" colspan="3">刺激模式</td>
+            <td class="col w3" colspan="3">
+              刺激模式
+              <span class="iconfont icon-question" @click="showMoreInfo"></span>
+            </td>
             <td class="col w5" colspan="5">正极</td>
             <td class="col w5" colspan="5">负极</td>
             <td class="col w1" colspan="1">频率<br></br>(Hz)</td>
@@ -802,7 +810,6 @@
           <tr class="row top-row">
             <td class="col" colspan="22">
               开机完成参数
-              <span class="iconfont icon-question" @click="showMoreInfo"></span>
             </td>
           </tr>
           <tr class="row title-row">
@@ -812,7 +819,10 @@
                 v-show="copyInfo.firstDbsParams.adjustAfterParameter.length < 8 && mode !== VIEW_CURRENT_CARD"></span>
             </td>
             <td class="col w2" colspan="2">肢体侧</td>
-            <td class="col w3" colspan="3">刺激模式</td>
+            <td class="col w3" colspan="3">
+              刺激模式
+              <span class="iconfont icon-question" @click="showMoreInfo"></span>
+            </td>
             <td class="col w5" colspan="5">正极</td>
             <td class="col w5" colspan="5">负极</td>
             <td class="col w1" colspan="1">频率<br></br>(Hz)</td>
