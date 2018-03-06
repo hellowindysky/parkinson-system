@@ -264,6 +264,34 @@
             <span class="value">{{""}}</span>
           </div>
         </card>
+        <card class="card adverse-event-card"
+          :class="bigCardWidth" :mode="mutableMode"
+          v-for="(item, index) in diagnosticAdverseEvent"
+          :key="'diagnosticAdverseEvent'+index"
+          :title="'严重不良事件'" v-on:editCurrentCard="editAdverseEvent(item)"
+          v-on:deleteCurrentCard="deleteAdverseEvent(item)"
+          v-on:viewCurrentCard="viewAdverseEvent(item)">
+          <div class="text line-1">
+            <span class="name">事件名称</span>
+            <span class="value">{{item.adverseName}}</span>
+          </div>
+          <div class="text line-2">
+            <span class="name">发生时间</span>
+            <span class="value">{{item.occurTime}}</span>
+          </div>
+          <div class="text line-3">
+            <span class="name">SAE情况</span>
+            <span class="value">{{""}}</span>
+          </div>
+          <div class="text line-4">
+            <span class="name">转归</span>
+            <span class="value">{{""}}</span>
+          </div>
+          <div class="text line-5">
+            <span class="name">SAE报告</span>
+            <span class="value">{{""}}</span>
+          </div>
+        </card>
       </extensible-panel>
     </div>
   </folding-panel>
