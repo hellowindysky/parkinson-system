@@ -438,6 +438,7 @@
           <tr class="row top-row">
             <td class="col" colspan="22">
               调整前参数
+              <span class="iconfont icon-question" @click="showMoreInfo"></span>
             </td>
           </tr>
           <tr class="row">
@@ -541,6 +542,7 @@
           <tr class="row top-row">
             <td class="col" colspan="22">
               单纯调整电压（总增幅 ≤ 0.4V）
+              <span class="iconfont icon-question" @click="showMoreInfo"></span>
             </td>
           </tr>
           <tr class="row">
@@ -632,6 +634,7 @@
           <tr class="row top-row">
             <td class="col" colspan="22">
               调整多个参数
+              <span class="iconfont icon-question" @click="showMoreInfo"></span>
             </td>
           </tr>
           <tr class="row">
@@ -729,6 +732,7 @@
           <tr class="row top-row">
             <td class="col" colspan="22">
               程控完成参数
+              <span class="iconfont icon-question" @click="showMoreInfo"></span>
             </td>
           </tr>
           <tr class="row title-row">
@@ -798,6 +802,7 @@
           <tr class="row top-row">
             <td class="col" colspan="22">
               开机完成参数
+              <span class="iconfont icon-question" @click="showMoreInfo"></span>
             </td>
           </tr>
           <tr class="row title-row">
@@ -1490,6 +1495,29 @@ export default {
       this.updateScrollbar();
     },
     addMedicine() {},
+    showMoreInfo() {
+      // this.$alert('这是一段内容', '各刺激模式可选规则', {
+      //   confirmButtonText: '确定',
+      //   callback: () => {}
+      // });
+      const h = this.$createElement;
+      this.$msgbox({
+        title: '各刺激模式可选规则',
+        message: h('div', null, [
+          h('p', null, '1.单负：单负极刺激，脉冲发生器为正极（C+），选择电极的其中一个触点为负极进行电刺激。'),
+          h('br', null, ''),
+          h('p', null, '2.双极：双极刺激，不再选择脉冲发生器为正极，选择电极其中一个触点为正极，一个触点为负极。'),
+          h('br', null, ''),
+          h('p', null, '3.双负：双负极刺激，脉冲发生器为正极（C+），选择电极的其中2个触点均为负极进行电刺激。'),
+          h('br', null, ''),
+          h('p', null, '4.交叉电脉冲：交叉电脉冲刺激，每个电极选用两个触点进行交叉刺激，每个触点都可采用不同的刺激参数，如不同的电压或脉宽，但刺激频率相同（上限125Hz）'),
+          h('br', null, ''),
+          h('p', null, '5.复杂程控模式：采用多重复合模式进行刺激，如选用超过3个触点刺激（3负极，1正2负极等），或交叉电脉冲中设置了多触点刺激。')
+        ]),
+        showCancelButton: false,
+        confirmButtonText: '确定'
+      });
+    },
     addParam(formType) {
       if (formType === 'firstDbsAdjustAfter') {
         let paramList = this.copyInfo.firstDbsParams.adjustAfterParameter;
@@ -2112,6 +2140,9 @@ export default {
               position: absolute;
               right: 5px;
               cursor: pointer;
+              &.icon-question {
+                right: 10px;
+              }
               &:hover {
                 opacity: 0.6;
               }
