@@ -101,6 +101,48 @@
             </el-select>
           </span>
         </div>
+        <table class="medicine-table" v-if="copyInfo.isTakeMedication===1">
+          <tr class="row title-row">
+            <td class="col">
+              <span v-show="mode!==VIEW_CURRENT_CARD" class="iconfont icon-plus" @click="addMedicine"></span>
+              序号
+            </td>
+            <td class="col">药物商品名</td>
+            <td class="col">规格</td>
+            <td class="col">日用量(片)</td>
+            <td class="col">日总剂量(mg)</td>
+            <td class="col">LEDD(mg)</td>
+          </tr>
+          <!-- <tr class="row" v-for="(medicine, index) in medicineList">
+            <td class="col">
+              <span v-show="mode!==VIEW_CURRENT_CARD" class="iconfont icon-remove" @click="removeMedicine(index)"></span>
+              <el-select v-model="medicine.medicineInfo" @change="selectMedicine(medicine)"
+                :class="{'warning': !isMedicineValid(medicine)}" :disabled="mode===VIEW_CURRENT_CARD">
+                <el-option v-for="option in getOptions('medicineName')" :label="option.name"
+                  :value="option.code" :key="option.code"></el-option>
+              </el-select>
+            </td>
+            <td class="col">
+              <el-select v-model="medicine.medSpecification" :disabled="mode===VIEW_CURRENT_CARD">
+                <el-option v-for="option in getOptions('medicineSpec', medicine.medicineInfo)" :label="option.name"
+                  :value="option.code" :key="option.code"></el-option>
+              </el-select>
+            </td>
+            <td class="col">
+              <span v-if="mode===VIEW_CURRENT_CARD">{{medicine.medUsage}}</span>
+              <el-input v-else v-model="medicine.medUsage" @blur="updateMedicineUsage(medicine)"></el-input>
+            </td>
+            <td class="col computed-cell">
+
+            </td>
+            <td class="col computed-cell">
+
+            </td>
+            <td class="col computed-cell">
+
+            </td>
+          </tr> -->
+        </table>
         <div class="field" v-show="copyInfo.isTakeMedication===1">
           <span class="field-name">服用药物</span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -172,12 +214,24 @@
         </div>
       </div>
 
+      <div class="form-tab-wrapper" v-show="modelType===1">
+        <span class="form-tab left" :class="{'on':currentFormSide==='left'}"
+          @click="chooseCurrentFormSide('left')">
+          左侧肢体
+          <span class="form-tab-bottom" :class="currentFormSide"></span>
+        </span>
+        <span class="form-tab right" :class="{'on':currentFormSide==='right'}"
+          @click="chooseCurrentFormSide('right')">
+          右侧肢体
+        </span>
+      </div>
+
       <div class="form-wrapper form0-wrapper" ref="form0" v-show="modelType===1">
-        <div class="form-left">
+        <div class="form-left" v-show="currentFormSide==='left'">
           <table class="form form0">
             <tr class="row top-row">
               <td class="col sort-info" colspan="16">
-                左侧肢体(右侧STN)触电疗效排序为:
+                左侧肢体(右侧STN)触点疗效排序为:
                 <span v-for="(contact, index) in getSideDeviceContact('left')">
                   <span v-show="index !== 0">&gt;</span>
                   <span class="contact narrow" v-if="mode===VIEW_CURRENT_CARD">
@@ -275,11 +329,11 @@
             </tr>
           </table>
         </div>
-        <div class="form-right">
+        <div class="form-right" v-show="currentFormSide==='right'">
           <table class="form form0">
             <tr class="row top-row">
               <td class="col sort-info" colspan="16">
-                右侧肢体(左侧STN)触电疗效排序为:
+                右侧肢体(左侧STN)触点疗效排序为:
                 <span v-for="(contact, index) in getSideDeviceContact('right')">
                   <span v-show="index !== 0">&gt;</span>
                   <span class="contact narrow" v-if="mode===VIEW_CURRENT_CARD">
@@ -414,7 +468,10 @@
           <tr class="row title-row">
             <td class="col w2" colspan="2">方案</td>
             <td class="col w2" colspan="2">肢体侧</td>
-            <td class="col w3" colspan="3">刺激模式</td>
+            <td class="col w3" colspan="3">
+              刺激模式
+              <span class="iconfont icon-question" @click="showMoreInfo"></span>
+            </td>
             <td class="col w5" colspan="5">正极</td>
             <td class="col w4" colspan="4">负极</td>
             <td class="col w1" colspan="1">频率<br></br>(Hz)</td>
@@ -521,7 +578,10 @@
                 v-show="copyInfo.followDbsParams.adjustVoltageParameter.length < 8 && mode!==VIEW_CURRENT_CARD"></span>
             </td>
             <td class="col w2" colspan="2">肢体侧</td>
-            <td class="col w3" colspan="3">刺激模式</td>
+            <td class="col w3" colspan="3">
+              刺激模式
+              <span class="iconfont icon-question" @click="showMoreInfo"></span>
+            </td>
             <td class="col w5" colspan="5">正极</td>
             <td class="col w4" colspan="4">负极</td>
             <td class="col w1" colspan="1">频率<br></br>(Hz)</td>
@@ -612,7 +672,10 @@
                 v-show="copyInfo.followDbsParams.adjustMoreParameter.length < 8 && mode!==VIEW_CURRENT_CARD"></span>
             </td>
             <td class="col w2" colspan="2">肢体侧</td>
-            <td class="col w3" colspan="3">刺激模式</td>
+            <td class="col w3" colspan="3">
+              刺激模式
+              <span class="iconfont icon-question" @click="showMoreInfo"></span>
+            </td>
             <td class="col w5" colspan="5">正极</td>
             <td class="col w4" colspan="5">负极</td>
             <td class="col w1" colspan="1">频率<br></br>(Hz)</td>
@@ -684,7 +747,10 @@
                 v-show="copyInfo.followDbsParams.adjustAfterParameter.length < 8 && mode!==VIEW_CURRENT_CARD"></span>
             </td>
             <td class="col w2" colspan="2">肢体侧</td>
-            <td class="col w3" colspan="3">刺激模式</td>
+            <td class="col w3" colspan="3">
+              刺激模式
+              <span class="iconfont icon-question" @click="showMoreInfo"></span>
+            </td>
             <td class="col w5" colspan="5">正极</td>
             <td class="col w5" colspan="5">负极</td>
             <td class="col w1" colspan="1">频率<br></br>(Hz)</td>
@@ -753,7 +819,10 @@
                 v-show="copyInfo.firstDbsParams.adjustAfterParameter.length < 8 && mode !== VIEW_CURRENT_CARD"></span>
             </td>
             <td class="col w2" colspan="2">肢体侧</td>
-            <td class="col w3" colspan="3">刺激模式</td>
+            <td class="col w3" colspan="3">
+              刺激模式
+              <span class="iconfont icon-question" @click="showMoreInfo"></span>
+            </td>
             <td class="col w5" colspan="5">正极</td>
             <td class="col w5" colspan="5">负极</td>
             <td class="col w1" colspan="1">频率<br></br>(Hz)</td>
@@ -903,6 +972,7 @@ export default {
           return time.getTime() > Date.now();
         }
       },
+      currentFormSide: 'left',  // 用来控制显示是左侧表格还是右侧表格，默认显示左侧
       leftContactSortArray: [],
       rightContactSortArray: [],
       firstDbsAdjustAfterParamPole: [],
@@ -1430,6 +1500,34 @@ export default {
         }
       }
     },
+    chooseCurrentFormSide(side) {
+      this.currentFormSide = side;
+      this.updateScrollbar();
+    },
+    addMedicine() {},
+    showMoreInfo() {
+      // this.$alert('这是一段内容', '各刺激模式可选规则', {
+      //   confirmButtonText: '确定',
+      //   callback: () => {}
+      // });
+      const h = this.$createElement;
+      this.$msgbox({
+        title: '各刺激模式可选规则',
+        message: h('div', null, [
+          h('p', null, '1.单负：单负极刺激，脉冲发生器为正极（C+），选择电极的其中一个触点为负极进行电刺激。'),
+          h('br', null, ''),
+          h('p', null, '2.双极：双极刺激，不再选择脉冲发生器为正极，选择电极其中一个触点为正极，一个触点为负极。'),
+          h('br', null, ''),
+          h('p', null, '3.双负：双负极刺激，脉冲发生器为正极（C+），选择电极的其中2个触点均为负极进行电刺激。'),
+          h('br', null, ''),
+          h('p', null, '4.交叉电脉冲：交叉电脉冲刺激，每个电极选用两个触点进行交叉刺激，每个触点都可采用不同的刺激参数，如不同的电压或脉宽，但刺激频率相同（上限125Hz）'),
+          h('br', null, ''),
+          h('p', null, '5.复杂程控模式：采用多重复合模式进行刺激，如选用超过3个触点刺激（3负极，1正2负极等），或交叉电脉冲中设置了多触点刺激。')
+        ]),
+        showCancelButton: false,
+        confirmButtonText: '确定'
+      });
+    },
     addParam(formType) {
       if (formType === 'firstDbsAdjustAfter') {
         let paramList = this.copyInfo.firstDbsParams.adjustAfterParameter;
@@ -1563,11 +1661,8 @@ export default {
     },
     getFollowDbsAdjustAfterPlanName(param) {
       var order = param.schemeOrder;
-      if (order === 1) {
-        return '最后参数';
-      } else {
-        return '备选参数' + (order - 1);
-      }
+      var orderArr = ['A', 'B', 'C', 'D'];
+      return '程控参数' + orderArr[order - 1];
     },
     getLimbSide(sideNum) {
       if (sideNum === 1) {
@@ -1729,6 +1824,7 @@ export default {
 @long-field-name-width: 150px;
 @scroll-bar-height: 10px;
 @unit-width: 55px;
+@computed-cell-color: lighten(@font-color, 55%);
 
 .dbs-modal-wrapper {
   position: absolute;
@@ -1841,6 +1937,158 @@ export default {
           }
         }
       }
+      .medicine-table {
+        margin: 10px 0 20px;
+        width: 100%;
+        border: 1px solid @light-gray-color;
+        border-collapse: collapse;
+        text-align: center;
+        .row {
+          height: 35px;
+          font-size: @normal-font-size;
+          &.title-row {
+            background-color: @font-color;
+            color: #fff;
+          }
+          .col {
+            position: relative;
+            width: 10%;
+            border: 1px solid @light-gray-color;
+            .required-mark {
+              position: absolute;
+              right: 5px;
+              top: 8px;
+              color: red;
+              font-size: 25px;
+              vertical-align: middle;
+            }
+            &.title-col {
+              background-color: @font-color;
+              color: #fff;
+            }
+            &.computed-cell {
+              background-color: @computed-cell-color;
+              &.warning {
+                background-color: @alert-color;
+                color: #fff;
+              }
+              .warning-text {
+                position: absolute;
+                top: 35px;
+                left: 0;
+                color: @alert-color;
+                font-size: @small-font-size;
+              }
+            }
+            &.wide-col {
+              width: 30%;
+            }
+            &.narrow-col {
+              width: 5%;
+            }
+            .iconfont {
+              position: absolute;
+              left: 5px;
+              top: 9px;
+              cursor: pointer;
+              z-index: 20;
+              &.icon-remove {
+                color: @alert-color;
+              }
+              &:hover {
+                opacity: 0.6;
+              }
+              &:active {
+                opacity: 0.8;
+              }
+            }
+            .el-input {
+              width: 100%;
+              &.warning {
+                margin: -1px;
+                border: 1px solid red;
+              }
+              .el-input__inner {
+                padding: 0;
+                border: none;
+                text-align: center;
+              }
+              .el-input__icon {
+                &.el-icon-date {
+                  width: 12px;
+                  height: 12px;
+                  padding: 0 0 18px 10px;
+                  opacity: 0.3;
+                }
+                &.el-icon-close {
+                  width: 12px;
+                  height: 12px;
+                  padding: 0 0 18px 10px;
+                  color: @alert-color;
+                }
+              }
+              &.is-disabled {
+                .el-input__inner {
+                  background-color: rgba(0,0,0,0);
+                  color: @font-color;
+                }
+                .el-input__icon {
+                  display: none;
+                }
+              }
+            }
+            .el-select {
+              &.warning {
+                .el-input {
+                  margin: -1px;
+                  border: 1px solid red;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    .form-tab-wrapper {
+      position: relative;
+      height: 35px;
+      line-height: 35px;
+      font-size: 0;
+      transform: translateY(5px);
+      .form-tab {
+        display: inline-block;
+        position: relative;
+        width: 100px;
+        font-weight: bold;
+        font-size: @normal-font-size;
+        color: @light-font-color;
+        cursor: pointer;
+        &.on {
+          color: @font-color;
+        }
+        &:hover {
+          opacity: 0.8;
+        }
+        &:active {
+          opacity: 0.9;
+        }
+      }
+      .form-tab-bottom {
+        display: inline-block;
+        position: absolute;
+        width: 80px;
+        height: 2px;
+        bottom: 0;
+        left: 0;
+        background-color: @font-color;
+        transition: 0.2s;
+        &.left {
+          transform: translate3d(10px, 0, 0);
+        }
+        &.right {
+          transform: translate3d(110px, 0, 0);
+        }
+      }
     }
     .form-wrapper {
       position: relative;
@@ -1849,15 +2097,15 @@ export default {
       padding-bottom: 10px;
       overflow: hidden;
       &.form0-wrapper {
-        text-align: left;
+        // text-align: left;
       }
       .form-left, .form-right {
         display: inline-block;
       }
       .form-right {
-        position: absolute; // 这里利用两个表格高度相等，只定义一个为 absolute，从而避免容器坍塌
-        left: @unit-width * 17;
-        top: 0;
+        // position: absolute; // 这里利用两个表格高度相等，只定义一个为 absolute，从而避免容器坍塌
+        // left: @unit-width * 17;
+        // top: 0;
       }
       .form {
         margin: 10px auto 0;
@@ -1899,6 +2147,9 @@ export default {
               position: absolute;
               right: 5px;
               cursor: pointer;
+              &.icon-question {
+                right: 10px;
+              }
               &:hover {
                 opacity: 0.6;
               }
@@ -1960,6 +2211,14 @@ export default {
                 .el-checkbox__inner {
                   background-color: @light-font-color;
                   border-color: @light-font-color;
+                }
+              }
+              .el-checkbox {
+                .el-checkbox__label {
+                  color: @light-font-color;
+                }
+                .is-checked + .el-checkbox__label {
+                  color: @font-color;
                 }
               }
             }
