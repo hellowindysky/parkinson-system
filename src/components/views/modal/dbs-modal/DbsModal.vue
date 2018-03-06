@@ -1700,19 +1700,13 @@ export default {
     },
     getFirstDbsAdjustAfterPlanName(param) {
       var order = param.schemeOrder;
-      if (order === 1) {
-        return '开机参数';
-      } else {
-        return '备选参数' + (order - 1);
-      }
+      var orderArr = ['A', 'B', 'C', 'D'];
+      return '程控参数' + orderArr[order - 1];
     },
     getFollowDbsAdjustBeforePlanName(param) {
       var order = param.schemeOrder;
-      if (order === 1) {
-        return '上次方案';
-      } else {
-        return '备选参数' + (order - 1);
-      }
+      var orderArr = ['A', 'B', 'C', 'D'];
+      return '程控参数' + orderArr[order - 1];
     },
     getFollowDbsAdjustMorePlanName(param) {
       var order = param.schemeOrder;
