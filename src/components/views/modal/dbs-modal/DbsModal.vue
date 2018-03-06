@@ -1661,11 +1661,8 @@ export default {
     },
     getFollowDbsAdjustAfterPlanName(param) {
       var order = param.schemeOrder;
-      if (order === 1) {
-        return '最后参数';
-      } else {
-        return '备选参数' + (order - 1);
-      }
+      var orderArr = ['A', 'B', 'C', 'D'];
+      return '程控参数' + orderArr[order - 1];
     },
     getLimbSide(sideNum) {
       if (sideNum === 1) {
