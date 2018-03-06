@@ -5,7 +5,7 @@
       <div class="content">
         <div class="field whole-line">
           <span class="field-name">
-            不良事件名称：
+            不良事件名称:
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -23,7 +23,7 @@
         </div>
         <div class="field whole-line">
           <span class="field-name">
-            不良事件描述：
+            不良事件描述:
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -42,9 +42,9 @@
             </el-input>
           </span>
         </div>
-         <div class="field">
+        <div class="field">
           <span class="field-name">
-            发生时间：
+            发生时间:
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -64,7 +64,7 @@
         </div>
          <div class="field">
           <span class="field-name">
-            结束时间：
+            结束时间:
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -92,7 +92,7 @@
         </div>
         <div class="field">
           <span class="field-name">
-           严重程度：
+           不良事件程度:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span>{{transform(severity,'adverseSeverity')}}</span>
@@ -108,80 +108,27 @@
             </el-select>
           </span>
         </div>
-        <div class="field whole-line" v-show="seriousFlag===1">
+        <div class="field">
           <span class="field-name">
-            严重不良事件：
+           转&nbsp;&nbsp;&nbsp;&nbsp;归:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-           {{translateToName()}}
+            <span>{{""}}</span>
           </span>
           <span class="field-input" v-else>
-            <div class="serious-adverse-event">
-              <el-checkbox v-for="(item, index) in getOptions('seriousAdverse')"
-                v-model="seriousAdverseEvents[index]"
+            <el-select clearable placeholder="请选择">
+              <el-option
+                v-for="item in getOptions('')"
                 :key="item.code"
                 :label="item.name"
-                :disabled="mode===VIEW_CURRENT_CARD">
-              </el-checkbox>
-            </div>
+                :value="item.code">
+              </el-option>
+            </el-select>
           </span>
         </div>
-        <div class="field whole-line excursion">
-          伴随用药
-        </div>
-        <table class="table">
-          <tr class="row title-row">
-            <td class="col">
-              <span class="iconfont icon-plus" @click="addAdjointMedicine" v-show="adjointMedicine.length <15 && mode !== VIEW_CURRENT_CARD"></span>
-              序号
-            </td>
-            <td class="col">
-              药物名称
-            </td>
-            <td class="col">日总剂量（mg/d）</td>
-            <td class="col">给药途径</td>
-          </tr>
-          <tr class="row" v-for="(medicine, index) in adjointMedicine">
-            <td class="col">
-              <span v-show="mode!==VIEW_CURRENT_CARD" class="iconfont icon-remove" @click="removeAdjointMedicine(index)"></span>
-              {{String.fromCharCode(64 + parseInt(index+1))}}
-            </td>
-            <td class="col">
-              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                {{(medicine.medicineName)}}
-              </span>
-              <span class="field-input" v-else>
-                <el-input v-model="medicine.medicineName" placeholder="请输入药物名称"></el-input>
-              </span>
-            </td>
-            <td class="col">
-              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                {{(medicine.totalDailyDose)}}
-              </span>
-              <span class="field-input" v-else>
-                <el-input v-model="medicine.totalDailyDose" placeholder="请输入日总剂量"></el-input>
-              </span>
-            </td>
-            <td class="col">
-              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span>{{transform(medicine.medicineMethod,'medicineMethod')}}</span>
-              </span>
-              <span class="field-input" v-else>
-                <el-select v-model="medicine.medicineMethod" clearable placeholder="请选择给药途径">
-                  <el-option
-                    v-for="item in getOptions('medicineMethod')"
-                    :key="item.code"
-                    :label="item.name"
-                    :value="item.code">
-                  </el-option>
-                </el-select>
-              </span>
-            </td>
-          </tr>
-        </table>
         <div class="field whole-line">
           <span class="field-name">
-            备注：
+            表&nbsp;&nbsp;&nbsp;&nbsp;现:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             {{remark}}
@@ -192,166 +139,134 @@
               type="textarea"
               :rows="2"
               :maxlength="500"
-              placeholder="请输入备注">
+              placeholder="请输入后遗症表现">
             </el-input>
           </span>
         </div>
-        <div v-show="measureFlag===1">
-          <div class="seperate-line">
-            <div class="toggle-fold-button" @click="toggleContentFoldedMeasures">
-              治疗措施
-              <span class="iconfont" :class="iconToggleFoldedMeasures"></span>
-            </div>
-          </div>
-          <div class="foldable-content" :class="{'folded': foldedConditionalContentMeasures}">
-            <div class="field whole-line excursion">
-            药物治疗
-            </div>
-            <table class="table">
-              <tr class="row title-row">
-              <td class="col">
-                <span class="iconfont icon-plus" @click="addTreatMedicine" v-show="treatMedicine.length <15 && mode !== VIEW_CURRENT_CARD"></span>
-                  序号
-                </td>
-                <td class="col">
-                  药物名称
-                </td>
-                <td class="col">日总剂量（mg/d）</td>
-                <td class="col">给药途径</td>
-              </tr>
-              <tr class="row" v-for="(reaction, index) in treatMedicine">
-                <td class="col">
-                  <span v-show="mode!==VIEW_CURRENT_CARD" class="iconfont icon-remove" @click="removeTreatMedicine(index)"></span>
-                  {{String.fromCharCode(64 + parseInt(index+1))}}
-                </td>
-                <td class="col">
-                  <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                    {{(reaction.medicineName)}}
-                  </span>
-                  <span class="field-input" v-else>
-                    <el-input v-model="reaction.medicineName" placeholder="请输入药物名称"></el-input>
-                  </span>
-                </td>
-                <td class="col">
-                  <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                    {{(reaction.totalDailyDose)}}
-                  </span>
-                  <span class="field-input" v-else>
-                    <el-input v-model="reaction.totalDailyDose" placeholder="请输入日总剂量"></el-input>
-                  </span>
-                </td>
-                <td class="col">
-                  <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                    <span>{{transform(reaction.medicineMethod,'medicineMethod')}}</span>
-                  </span>
-                  <span class="field-input" v-else>
-                    <el-select v-model="reaction.medicineMethod" clearable placeholder="请选择给药途径">
-                      <el-option
-                        v-for="item in getOptions('medicineMethod')"
-                        :key="item.code"
-                        :label="item.name"
-                        :value="item.code">
-                      </el-option>
-                    </el-select>
-                  </span>
-                </td>
-              </tr>
-            </table>
-            <div class="field whole-line">
-                <span class="field-name">
-                其他治疗措施：
-                </span>
-                <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                {{otherMeasure}}
-                </span>
-                <span class="field-input" v-else>
-                <el-input
-                    v-model="otherMeasure"
-                    type="textarea"
-                    :rows="2"
-                    :maxlength="500"
-                    placeholder="请输入其他治疗措施">
-                </el-input>
-                </span>
-            </div>
-            <div class="field whole-line">
-              <span class="field-name">
-                实验室检查：
-              </span>
-              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                {{aboratoryExam}}
-              </span>
-              <span class="field-input" v-else>
-                <el-input
-                  v-model="aboratoryExam"
-                  type="textarea"
-                  :rows="2"
-                  :maxlength="500"
-                  placeholder="请输入实验室检查详情">
-                </el-input>
-              </span>
-            </div>
-          </div>
+        <div class="field">
+          <span class="field-name">
+           严重不良事件:
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span>{{""}}</span>
+          </span>
+          <span class="field-input" v-else>
+            <el-select clearable placeholder="请选择">
+              <el-option
+                v-for="item in getOptions('')"
+                :key="item.code"
+                :label="item.name"
+                :value="item.code">
+              </el-option>
+            </el-select>
+          </span>
         </div>
-        <div class="seperate-line">
-          <div class="toggle-fold-button" @click="toggleContentFoldedEndEvent">
-            不良事件结局
-            <span class="iconfont" :class="iconToggleFoldedEvents"></span>
-          </div>
+        <div class="field">
+          <span class="field-name">
+           与研究关联性评价:
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span>{{""}}</span>
+          </span>
+          <span class="field-input" v-else>
+            <el-select clearable placeholder="请选择">
+              <el-option
+                v-for="item in getOptions('')"
+                :key="item.code"
+                :label="item.name"
+                :value="item.code">
+              </el-option>
+            </el-select>
+          </span>
         </div>
-        <div class="foldable-content" :class="{'folded': foldedConditionalContentEndEvents}">
-          <div class="field whole-line">
-            <span class="field-name">
-              不良事件结局：
-            </span>
-            <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-              <span>{{transform(adverseResult,'adverseResult')}}</span>
-            </span>
-            <span class="field-input" v-else>
-              <el-select v-model="adverseResult" clearable placeholder="请选择发生不良事件的结局">
-                <el-option
-                  v-for="item in getOptions('adverseResult')"
-                  :key="item.code"
-                  :label="item.name"
-                  :value="item.code">
-                </el-option>
-              </el-select>
-            </span>
-          </div>
-          <div class="field whole-line" v-show="adverseResult===3">
-            <span class="field-name">
-              缓解日期：
-            </span>
-            <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-              <span>{{relieveDate}}</span>
-            </span>
-            <span class="field-input" v-else>
-              <el-date-picker
-                v-model="relieveDate"
-                type="date"
-                placeholder="请选择缓解日期  "
-                :picker-options="pickerOptions">
-              </el-date-picker>
-            </span>
-          </div>
-          <div class="field whole-line">
-            <span class="field-name">
-              不良事件影响：
-            </span>
-            <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-              <span>{{transform(adverseEffect,'adverseEffect')}}</span>
-            </span>
-            <span class="field-input" v-else>
-              <el-select v-model="adverseEffect" clearable placeholder="请选择">
-                <el-option
-                  v-for="item in getOptions('adverseEffect')"
-                  :key="item.code"
-                  :label="item.name"
-                  :value="item.code">
-                </el-option>
-              </el-select>
-            </span>
-          </div>
+        <div class="field">
+          <span class="field-name">
+           纠正治疗:
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span>{{""}}</span>
+          </span>
+          <span class="field-input" v-else>
+            <el-select clearable placeholder="请选择">
+              <el-option
+                v-for="item in getOptions('')"
+                :key="item.code"
+                :label="item.name"
+                :value="item.code">
+              </el-option>
+            </el-select>
+          </span>
+        </div>
+        <div class="field whole-line">
+          <span class="field-name">
+            治疗记录:
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            {{remark}}
+          </span>
+          <span class="field-input" v-else>
+            <el-input
+              v-model="remark"
+              type="textarea"
+              :rows="2"
+              :maxlength="500"
+              placeholder="请输入纠正治疗记录">
+            </el-input>
+          </span>
+        </div>
+        <div class="field">
+          <span class="field-name">
+           因此退出实验:
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span>{{""}}</span>
+          </span>
+          <span class="field-input" v-else>
+            <el-select clearable placeholder="请选择">
+              <el-option
+                v-for="item in getOptions('')"
+                :key="item.code"
+                :label="item.name"
+                :value="item.code">
+              </el-option>
+            </el-select>
+          </span>
+        </div>
+        <div class="field">
+          <span class="field-name">
+           是否揭盲:
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span>{{""}}</span>
+          </span>
+          <span class="field-input" v-else>
+            <el-select clearable placeholder="请选择">
+              <el-option
+                v-for="item in getOptions('')"
+                :key="item.code"
+                :label="item.name"
+                :value="item.code">
+              </el-option>
+            </el-select>
+          </span>
+        </div>
+        <div class="field">
+          <span class="field-name">
+            揭盲日期:
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span>{{""}}</span>
+          </span>
+          <span class="field-input" v-else>
+            <el-date-picker
+              v-model="occurTime"
+              :class="{'warning': warningResults.occurTime}"
+              type="date"
+              placeholder="请选择揭盲日期"
+              :picker-options="pickerOptions"
+              @change="updateWarning('occurTime')">
+            </el-date-picker>
+          </span>
         </div>
       </div>
       <div class="seperate-line"></div>
