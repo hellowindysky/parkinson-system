@@ -5,13 +5,13 @@
     <router-view class="content"></router-view>
 
     <component :is="componentName"></component>
-    
+
     <filter-panel :showFilterPanel="showFilterPanel"></filter-panel>
     <secret-agreement-modal></secret-agreement-modal>
     <choice-panel></choice-panel>
     <confirm-box></confirm-box>
     <notice-box></notice-box>
-
+    <!-- <sleep-monitor-modal></sleep-monitor-modal> -->
     <water-mark></water-mark>
   </div>
 </template>
@@ -48,6 +48,7 @@ const neurologicModal = () => import(/* webpackChunkName: 'examinationModal' */ 
 const geneModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/gene-modal/GeneModal');
 const biochemicalExamModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/biochemical-exam-modal/BiochemicalExamModal');
 const neuroelectricModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/neuroelectric-modal/NeuroelectricModal');
+const sleepMonitorModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/sleep-monitor-modal/SleepMonitorModal');
 const imageModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/image-modal/ImageModal');
 
 const applicationModal = () => import(/* webpackChunkName: 'experimentModal' */ 'modal/application-modal/ApplicationModal');
@@ -95,6 +96,7 @@ export default {
     geneModal,
     biochemicalExamModal,
     neuroelectricModal,
+    sleepMonitorModal,
     imageModal,
     firstSymptomsModal,
     firstTreatmentModal,
