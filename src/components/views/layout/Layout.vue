@@ -8,6 +8,7 @@
 
     <filter-panel :showFilterPanel="showFilterPanel"></filter-panel>
     <secret-agreement-modal></secret-agreement-modal>
+    <!-- <serious-adverse-event-modal></serious-adverse-event-modal> -->
     <choice-panel></choice-panel>
     <confirm-box></confirm-box>
     <notice-box></notice-box>
@@ -42,6 +43,8 @@ const dbsModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/db
 const physiontherapyModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/physiontherapy-modal/PhysiontherapyModal');
 const treatmentEvaluationModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/treatment-evaluation-modal/TreatmentEvaluationModal');
 const adverseEventModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/adverse-event-modal/AdverseEventModal');
+const seriousAdverseEventModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/serious-adverse-event-modal/SeriousAdverseEventModal');
+
 
 const vitalSignsModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/vital-signs-modal/VitalSignsModal');
 const neurologicModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/neurologic-modal/NeurologicModal');
@@ -91,6 +94,7 @@ export default {
     physiontherapyModal,
     treatmentEvaluationModal,
     adverseEventModal,
+    seriousAdverseEventModal,
     vitalSignsModal,
     neurologicModal,
     geneModal,
