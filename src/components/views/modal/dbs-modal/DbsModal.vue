@@ -2206,6 +2206,14 @@ export default {
                   border-color: @light-font-color;
                 }
               }
+              .el-checkbox {
+                .el-checkbox__label {
+                  color: @light-font-color;
+                }
+                .is-checked + .el-checkbox__label {
+                  color: @font-color;
+                }
+              }
             }
             .el-input {
               width: 100%;
