@@ -109,6 +109,28 @@ function calculateYearsBetween(fromDate, toDate) {
   return currentYear - year > 0 ? currentYear - year : 1;
 }
 
+function calculateMonthsBetween(fromDate, toDate) {
+  // 计算参数日期到今天，所经历的完整的月数
+  var formatDate = simplifyDate(fromDate);
+  var dateList = formatDate.split('-');
+  var year = Number(dateList[0]);
+  var month = Number(dateList[1]);
+  var date = Number(dateList[2]);
+
+  var formatTodayDate = simplifyDate(toDate);
+  var todayList = formatTodayDate.split('-');
+  var currentYear = Number(todayList[0]);
+  var currentMonth = Number(todayList[1]);
+  var currentDate = Number(todayList[2]);
+
+  if (currentMonth > month) {
+    year -= 1;
+  } else if (currentMonth === month && currentDate > date) {
+    year -= 1;
+  };
+  return currentYear - year > 0 ? currentYear - year : 1;
+}
+
 function checkId(ID) {
   if (typeof ID !== 'string') {
     return '非法字符串';
@@ -160,6 +182,13 @@ function checkId(ID) {
   var sum = 0;
   var i;
   var residue;
+
+  var TaiwanReg = /^[A-Z][0-9]{9}$/;
+  var HongKongReg = /^[A-Z][0-9]{6}\([0-9A]\)$/;
+  var MacaoReg = /^[157][0-9]{6}\([0-9]\)$/;
+  if (TaiwanReg.test(ID) || HongKongReg.test(ID) || MacaoReg.test(ID)) {
+    return '港澳台身份证';
+  }
 
   if (!/^\d{17}(\d|x)$/i.test(ID)) return '非法身份证';
   if (city[ID.substr(0, 2)] === undefined) return '非法地区';
@@ -213,6 +242,7 @@ export default {
   simplifyTime,
   simplifyTimeWithoutDate,
   calculateYearsBetween,
+  calculateMonthsBetween,
   checkId,
   checkIfPositiveInteger,
   checkIfNonNegativeInteger,

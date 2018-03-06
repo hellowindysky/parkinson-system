@@ -365,6 +365,12 @@ export default {
       var dictionaryField = this.getMatchedField(field);
       var value = dictionaryField.fieldEnumId;
       var typeInfo = Util.getElement('typegroupcode', value, this.typeGroup);
+      if (field.fieldName === 'homeCity') {
+        typeInfo = Util.getElement('typegroupcode', 'homeProvince', this.typeGroup);
+        let provinceCode = this.copyInfo.homeProvince;
+        let types = typeInfo.types ? typeInfo.types : [];
+        return Util.getElement('typeCode', provinceCode, types).childType;
+      }
       return typeInfo.types ? typeInfo.types : [];
     },
     transformTypeCode(typeCode, field) {
@@ -399,7 +405,7 @@ export default {
         }
 
         let result = Util.checkId(copyFieldValue).split(',');
-        if (copyFieldValue === '' || copyFieldValue === undefined) {
+        if (copyFieldValue === '' || copyFieldValue === undefined || result[0] === '港澳台身份证') {
           this.$set(this.warningResults, fieldName, null);
           return;
         } else if (result.length <= 1) {
@@ -423,6 +429,17 @@ export default {
             this.copyInfo.sex = gender === '男' ? 0 : 1;
           }
         }
+      } else if (fieldName === 'thighLength' || fieldName === 'calfLength') {
+        if (copyFieldValue === '' || copyFieldValue === undefined) {
+          this.$set(this.warningResults, fieldName, null);
+        } else {
+          if (Util.checkIfNotMoreThanNDecimalNums(copyFieldValue, 1)) {
+            this.$set(this.warningResults, fieldName, null);
+          } else {
+            this.$set(this.warningResults, fieldName, '请输入数字，最多1位小数');
+          }
+        }
+        return;
       }
 
       if (this.getUIType(field) === 6) {
@@ -438,6 +455,9 @@ export default {
         this.$set(this.warningResults, fieldName, '必填项');
         return;
 
+      } else if (field.must === 2 && (copyFieldValue === '' || copyFieldValue === undefined)) {
+        this.$set(this.warningResults, fieldName, null);
+        return;
       } else if (copyFieldValue && copyFieldValue.toString().indexOf(' ') > -1) {
         this.$set(this.warningResults, fieldName, '不能包含空格');
         return;
@@ -544,6 +564,8 @@ export default {
     }
   },
   mounted() {
+    // console.log(this.basicInfoTemplateGroups);
+    // console.log(this.basicInfoDictionaryGroups);
     this.allNation = Util.getElement('typegroupcode', 'nation', this.typeGroup).types;
     this.$on(this.EDIT, this.startEditing);
     Bus.$on(this.FOLD_BASIC_INFO, () => {
