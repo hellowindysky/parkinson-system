@@ -736,11 +736,12 @@
       <div class="form-wrapper" ref="form4" v-show="modelType===0">
         <table class="form form4">
           <tr class="row top-row">
-            <td class="col" colspan="22">
+            <td class="col" colspan="23">
               程控完成参数
             </td>
           </tr>
           <tr class="row title-row">
+            <td class="col w1" colspan="1">最终<br>参数</td>
             <td class="col w2" colspan="2">
               方案
               <span class="iconfont icon-plus" @click="addParam('followDbsAdjustAfter')"
@@ -760,6 +761,11 @@
             <td class="col w1" colspan="1">电流<br></br>(mA)</td>
           </tr>
           <tr class="row" v-for="(param, index) in copyInfo.followDbsParams.adjustAfterParameter">
+            <td class="col w1" colspan="1" rowspan="2" v-show="index % 2 === 0">
+              <el-checkbox v-model="followDbsAdjustAfterParameterChosenStatus[parseInt(index / 2, 10)]"
+                @change="checkAfterParameterChosenStatus('followDbs', parseInt(index / 2, 10))">
+              </el-checkbox>
+            </td>
             <td class="col w2" colspan="2" rowspan="2" v-show="index % 2 === 0">
               {{getFollowDbsAdjustAfterPlanName(param)}}
               <span class="iconfont icon-remove" v-show="mode!==VIEW_CURRENT_CARD" @click="removeParam(index, 'followDbsAdjustAfter')"></span>
@@ -808,11 +814,12 @@
       <div class="form-wrapper" ref="form5" v-show="modelType===1">
         <table class="form form4">
           <tr class="row top-row">
-            <td class="col" colspan="22">
+            <td class="col" colspan="23">
               开机完成参数
             </td>
           </tr>
           <tr class="row title-row">
+            <td class="col w1" colspan="1">最终<br>参数</td>
             <td class="col w2" colspan="2">
               方案
               <span class="iconfont icon-plus" @click="addParam('firstDbsAdjustAfter')"
@@ -832,6 +839,11 @@
             <td class="col w1" colspan="1">电流<br></br>(mA)</td>
           </tr>
           <tr class="row" v-for="(param, index) in copyInfo.firstDbsParams.adjustAfterParameter">
+            <td class="col w1" colspan="1" rowspan="2" v-show="index % 2 === 0">
+              <el-checkbox v-model="firstDbsAdjustAfterParameterChosenStatus[parseInt(index / 2, 10)]"
+                @change="checkAfterParameterChosenStatus('firstDbs', parseInt(index / 2, 10))">
+              </el-checkbox>
+            </td>
             <td class="col w2" colspan="2" rowspan="2" v-show="index % 2 === 0">
               {{getFirstDbsAdjustAfterPlanName(param)}}
               <span class="iconfont icon-remove" v-show="mode !== VIEW_CURRENT_CARD" @click="removeParam(index, 'firstDbsAdjustAfter')"></span>
@@ -917,9 +929,11 @@ var dbsFirstModel = {
   'rightContactEffectOrder': '',
   'remarks': '',
   'firstDbsParams': {
+    'adjustAfterParameterChoice': '',
     'adjustAfterParameter': []
   },
   'followDbsParams': {
+    'adjustAfterParameterChoice': '',
     'adjustAfterParameter': [],
     'adjustBeforeParameter': [],
     'adjustVoltageParameter': [],
@@ -975,11 +989,16 @@ export default {
       currentFormSide: 'left',  // 用来控制显示是左侧表格还是右侧表格，默认显示左侧
       leftContactSortArray: [],
       rightContactSortArray: [],
+
       firstDbsAdjustAfterParamPole: [],
       followDbsAdjustAfterParamPole: [],
       followDbsAdjustBeforeParamPole: [],
       followDbsAdjustVoltageParamPole: [],
       followDbsAdjustMoreParamPole: [],
+
+      firstDbsAdjustAfterParameterChosenStatus: [],
+      followDbsAdjustAfterParameterChosenStatus: [],
+
       followDbsAdjustBeforeFirstSchemeOrder: '',
       lastProgramDate: '',
       lastDbsParameter: [],
@@ -1528,10 +1547,37 @@ export default {
         confirmButtonText: '确定'
       });
     },
+    checkAfterParameterChosenStatus(dbsType, index) {
+      // 这个函数要检查，【开机完成参数／程控完成参数】表格的最左侧一栏，最终参数，是否有且仅有一个被选中了。
+      var targetAdjustAfterParameterChosenStatus = [];
+      if (dbsType === 'firstDbs') {
+        targetAdjustAfterParameterChosenStatus = this.firstDbsAdjustAfterParameterChosenStatus;
+      } else if (dbsType === 'followDbs') {
+        targetAdjustAfterParameterChosenStatus = this.followDbsAdjustAfterParameterChosenStatus;
+      }
+      var status = targetAdjustAfterParameterChosenStatus[index];
+      if (status) {
+        for (var i = 0; i < targetAdjustAfterParameterChosenStatus.length; i++) {
+          if (index !== i) {
+            targetAdjustAfterParameterChosenStatus[i] = false;
+          }
+        }
+      } else {
+        targetAdjustAfterParameterChosenStatus[index] = true;
+      }
+    },
     addParam(formType) {
       if (formType === 'firstDbsAdjustAfter') {
         let paramList = this.copyInfo.firstDbsParams.adjustAfterParameter;
         let count = paramList.length;
+
+        // 对表格的最左侧一列，最终参数，所对应的数组添加元素
+        if (count === 0) {
+          this.$set(this.firstDbsAdjustAfterParameterChosenStatus, 0, true);
+        } else {
+          this.$set(this.firstDbsAdjustAfterParameterChosenStatus, count / 2, false);
+        }
+
         let order = count / 2 + 1;
         let propertyList = ['exciteMod', 'negativePole', 'positivePole', 'frequency', 'pulseWidth', 'voltage', 'resistance', 'electric'];
         for (let limbSideNum of [1, 2]) {
@@ -1592,6 +1638,14 @@ export default {
       } else if (formType === 'followDbsAdjustAfter') {
         let paramList = this.copyInfo.followDbsParams.adjustAfterParameter;
         let count = paramList.length;
+
+        // 对表格的最左侧一列，最终参数，所对应的数组添加元素
+        if (count === 0) {
+          this.$set(this.followDbsAdjustAfterParameterChosenStatus, 0, true);
+        } else {
+          this.$set(this.followDbsAdjustAfterParameterChosenStatus, count / 2, false);
+        }
+
         let order = Math.floor(count / 2) + 1;
         let propertyList = ['exciteMod', 'negativePole', 'positivePole', 'frequency', 'pulseWidth', 'voltage', 'resistance', 'electric'];
         for (let limbSideNum of [1, 2]) {
@@ -1633,6 +1687,15 @@ export default {
       for (var i = 0; i < paramList.length; i++) {
         paramList[i].schemeOrder = Math.floor(i / 2) + 1;
       }
+
+      // 对表格的最左侧一列，最终参数，所对应的数组移除元素
+      var targetIndex = Math.floor(i / 2);
+      var deletedStatus = this.followDbsAdjustAfterParameterChosenStatus[targetIndex];
+      this.followDbsAdjustAfterParameterChosenStatus.splice(targetIndex, 1);
+      if (deletedStatus && this.followDbsAdjustAfterParameterChosenStatus.length > 0) {
+        this.followDbsAdjustAfterParameterChosenStatus[0] = true;
+      }
+
       this.updateCheckBoxModel(formType);
     },
     getFirstDbsAdjustAfterPlanName(param) {
@@ -2127,7 +2190,7 @@ export default {
           width: @unit-width * 22;
         }
         &.form4 {
-          width: @unit-width * 22;
+          width: @unit-width * 23;
         }
         .row {
           height: 35px;
