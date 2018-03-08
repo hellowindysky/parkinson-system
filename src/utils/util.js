@@ -115,20 +115,27 @@ function calculateMonthsBetween(fromDate, toDate) {
   var dateList = formatDate.split('-');
   var year = Number(dateList[0]);
   var month = Number(dateList[1]);
-  var date = Number(dateList[2]);
+  // var date = Number(dateList[2]);
 
   var formatTodayDate = simplifyDate(toDate);
   var todayList = formatTodayDate.split('-');
   var currentYear = Number(todayList[0]);
   var currentMonth = Number(todayList[1]);
-  var currentDate = Number(todayList[2]);
+  // var currentDate = Number(todayList[2]);
 
-  if (currentMonth > month) {
-    year -= 1;
-  } else if (currentMonth === month && currentDate > date) {
-    year -= 1;
-  };
-  return currentYear - year > 0 ? currentYear - year : 1;
+  var months = (currentYear - year) * 12 + (currentMonth - month);
+  if (months < 12) {
+    let res = months + ' 月';
+    return [res, months];
+  } else if (months % 12 !== 0) {
+    var resYear = parseInt(months / 12, 10);
+    var resMonth = months % 12;
+    let res = resYear + ' 年 ' + resMonth + ' 月';
+    return [res, months];
+  } else {
+    let res = parseInt(months / 12, 10) + ' 年';
+    return [res, months];
+  }
 }
 
 function checkId(ID) {
