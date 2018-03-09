@@ -2,7 +2,7 @@
   <folding-panel :title="'检验检查'" :mode="mutableMode"  v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit" :editable="canEdit">
     <div class="diagnostic-examination" ref="diagnosticExamination">
     <extensible-panel class="panel vital-signs-panel" :mode="mutableMode" :title="vitalSignsTitle" v-on:addNewCard="addVitalSigns" :editable="canEdit">
-        <card class="card vitalSigns-card" :class="cardWidth" :mode="mutableMode" v-for="item in diagnosticVitalSigns" :key="item.patientVitalSign"
+        <card class="card vitalSigns-card" :class="cardWidth" :mode="mutableMode" v-for="(item,index) in diagnosticVitalSigns" :key="index"
           :title="item.title" v-on:editCurrentCard="editVitalSigns(item)"
           v-on:deleteCurrentCard="deleteVitalSigns(item)" v-on:viewCurrentCard="viewVitalSigns(item)">
           <div class="text line-1">
@@ -29,7 +29,7 @@
       </extensible-panel>
       <!-- 神经系统检查 -->
       <extensible-panel class="panel" :mode="mutableMode" :title="neurologicCheckTitle" v-on:addNewCard="addNeurologicCheckRecord" :editable="canEdit">
-        <card class="card" :class="cardWidth" :mode="mutableMode" v-for="item in neurologicCheckList" :key="item.preopsInfoId"
+        <card class="card" :class="cardWidth" :mode="mutableMode" v-for="(item,index) in neurologicCheckList" :key="index"
           :title="transform(item.checkType, 'neurologicExam')" v-on:editCurrentCard="editNeurologicCheckRecord(item)"
           v-on:deleteCurrentCard="deleteNeurologicCheckRecord(item)" v-on:viewCurrentCard="viewNeurologicCheckRecord(item)">
           <div class="text first-line">
@@ -58,7 +58,7 @@
       </extensible-panel>
       <!-- 基因检查 -->
       <extensible-panel class="panel" :mode="mutableMode" :title="geneCheckTitle" v-on:addNewCard="addGeneCheckRecord" :editable="canEdit">
-        <card class="card" :class="cardWidth" :mode="mutableMode" v-for="(item,idx) in geneCheckList" :key="idx"
+        <card class="card" :class="cardWidth" :mode="mutableMode" v-for="(item,index) in geneCheckList" :key="index"
           :title="item.checkName" v-on:editCurrentCard="editGeneCheckRecord(item)"
           v-on:deleteCurrentCard="deleteGeneCheckRecord(item)" v-on:viewCurrentCard="viewGeneCheckRecord(item)">
           <div class="text first-line">
@@ -72,7 +72,7 @@
          </card>
       </extensible-panel>
       <extensible-panel class="panel neuroelectric-panel" :mode="mutableMode" :title="neuroelectricTitle" v-on:addNewCard="addNeuroelectricRecordRecord" :editable="canEdit">
-        <card class="card neuroelectric-card" :class="cardWidth" :mode="mutableMode" v-for="item in emgList" :key="item.pcaseId"
+        <card class="card neuroelectric-card" :class="cardWidth" :mode="mutableMode" v-for="(item,index) in emgList" :key="index+'c1'"
           :title="item.etgName" v-on:editCurrentCard="editNeuroelectricRecord(item)" v-on:viewCurrentCard="viewNeuroelectricRecord(item)"
           v-on:deleteCurrentCard="deleteNeuroelectricRecord(item)">
           <div class="text first-line">
@@ -84,7 +84,7 @@
             <span class="value">{{item.patEleResule}}</span>
           </div>
         </card>
-        <card class="card neuroelectric-card" :class="cardWidth" :mode="mutableMode" v-for="item in sleepMonitoringList" :key="item.patientCaseId"
+        <card class="card neuroelectric-card" :class="cardWidth" :mode="mutableMode" v-for="(item,index) in sleepMonitoringList" :key="index+'c2'"
           :title="transform(item.elecExamType, 'elecExam')" v-on:editCurrentCard="editNeuroelectricRecord(item)" v-on:viewCurrentCard="viewNeuroelectricRecord(item)"
           v-on:deleteCurrentCard="deleteSleepMonitoringRecord(item)">
           <div class="text first-line">
@@ -104,7 +104,7 @@
             <span class="value">{{item.recordStart}}</span>
           </div>
         </card>
-        <card class="card neuroelectric-card" :class="cardWidth" :mode="mutableMode" v-for="item in electricImagingList" :key="item.patientCaseId"
+        <card class="card neuroelectric-card" :class="cardWidth" :mode="mutableMode" v-for="(item,index) in electricImagingList" :key="index+'c3'"
           :title="transform(item.imageType, 'elecExam')" v-on:editCurrentCard="editNeuroelectricRecord(item)" v-on:viewCurrentCard="viewNeuroelectricRecord(item)"
           v-on:deleteCurrentCard="deleteImageRecord(item)">
           <div class="text first-line">
@@ -127,7 +127,7 @@
       </extensible-panel>
 <!-- 医学影像 -->
       <extensible-panel class="panel image-panel" :mode="mutableMode" :title="medicalImagingTitle" v-on:addNewCard="addImageRecord" :editable="canEdit">
-        <card class="card image-card" :class="cardWidth" :mode="mutableMode" v-for="(item,idx) in medicalImagingList" :key="idx"
+        <card class="card image-card" :class="cardWidth" :mode="mutableMode" v-for="(item,index) in medicalImagingList" :key="index"
           :title="item.title" v-on:editCurrentCard="editImageRecord(item)" v-on:viewCurrentCard="viewImageRecord(item)"
           v-on:deleteCurrentCard="deleteImageRecord(item)">
           <div class="text first-line">
