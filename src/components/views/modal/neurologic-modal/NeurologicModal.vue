@@ -280,9 +280,9 @@ export default {
     },
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
-        return '新增神经系统检查';
+        return '新增体格检查';
       } else {
-        return '神经系统检查';
+        return '体格检查';
       }
     },
     subTableTitle() {

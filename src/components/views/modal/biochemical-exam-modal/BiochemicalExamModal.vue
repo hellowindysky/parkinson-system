@@ -46,6 +46,23 @@
             <el-input v-else placeholder="请输入血液标本编号" v-model="copyInfo.bloodCode"></el-input>
           </span>
         </div>
+
+        <div class="field whole-line">
+          <span class="field-name">
+            备注:
+          </span>
+          <span class="field-input">
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.remarks}}</span>
+            <el-input v-else
+             placeholder="请输入备注"
+             v-model="copyInfo.remarks"
+             :rows="2"
+             :maxlength="500"
+             type="textarea">
+            </el-input>
+          </span>
+        </div>
+
         <div class="form-wrapper" ref="formWrapper">
           <table class="form">
             <tr class="row first-row">
@@ -166,9 +183,9 @@ export default {
     ]),
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
-        return '新增生化指标';
+        return '新增实验室检查';
       } else {
-        return '生化指标';
+        return '实验室检查';
       }
     },
     patientId() {
@@ -191,9 +208,10 @@ export default {
       this.copyInfo = {};
 
       this.$set(this.copyInfo, 'bioexamId', '');
-      this.$set(this.copyInfo, 'bioexamResult', []);
       this.$set(this.copyInfo, 'checkDate', '');
+      this.$set(this.copyInfo, 'bloodCode', '');
       this.$set(this.copyInfo, 'remarks', '');
+      this.$set(this.copyInfo, 'bioexamResult', []);
 
       if (this.mode === this.ADD_NEW_CARD) {
         this.$set(this.copyInfo, 'patientCaseId', this.patientCaseId);
@@ -216,6 +234,7 @@ export default {
       this.$nextTick(() => {
         this.clearWarning();
       });
+      console.log(this.copyInfo);
     },
     updateTemplate() {
       this.targetBioexam = [];
@@ -395,11 +414,20 @@ export default {
     },
     updateScrollbar() {
       this.$nextTick(() => {
-        Ps.destroy(this.$refs.formWrapper);
-        Ps.initialize(this.$refs.formWrapper, {
-          wheelSpeed: 1,
-          minScrollbarLength: 40
-        });
+        if (this.$refs.biochemicalModal) {
+          Ps.destroy(this.$refs.biochemicalModal);
+          Ps.initialize(this.$refs.biochemicalModal, {
+            wheelSpeed: 1,
+            minScrollbarLength: 40
+          });
+        }
+        if (this.$refs.formWrapper) {
+          Ps.destroy(this.$refs.formWrapper);
+          Ps.initialize(this.$refs.formWrapper, {
+            wheelSpeed: 1,
+            minScrollbarLength: 40
+          });
+        }
       });
     },
     getFieldValue(code, fieldName) {
@@ -480,14 +508,14 @@ export default {
         display: inline-block;
         position: relative;
         width: 50%;
-        height: @field-height;
+        min-height: @field-height;
         font-size: @normal-font-size;
         text-align: left;
         transform: translateX(10px);  // 这一行是为了修补视觉上的偏移
         &.whole-line {
           width: 100%;
           .field-input {
-            right: 4%;
+            width: calc(~"96% - @{field-name-width}");
           }
         }
         .field-name {
@@ -510,11 +538,11 @@ export default {
         }
         .field-input {
           display: inline-block;
-          position: absolute;
-          top: 0;
+          width: calc(~"92% - @{field-name-width}");
+          position: relative;
           left: @field-name-width;
-          right: 8%;
-          line-height: @field-height;
+          // line-height: @field-height;
+          line-height: 30px;
           font-size: @normal-font-size;
           color: @light-font-color;
           &.long-field-name {
@@ -564,6 +592,7 @@ export default {
         max-height: 250px;
         height: auto;
         width: 100%;
+        margin-top:14px;
         // padding-right: 10px;
         border: 1px solid @inverse-font-color;
         overflow: hidden;
