@@ -10,6 +10,27 @@
         </div>
         <div class="field whole-line">
           <span class="field-name">
+            是否发生不良事件
+            <span class="required-mark">*</span>
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            {{tcPatientAdverseOccurance}}
+          </span>
+          <span class="field-input" v-else>
+            <span class="warning-text">{{warningResults.tcPatientAdverseOccurance}}</span>
+            <el-select v-model="tcPatientAdverseOccurance" clearable placeholder="请选择" @change="updateWarning('tcPatientAdverseOccurance')"
+              :class="{'warning': warningResults.tcPatientAdverseOccurance}">
+              <el-option
+                v-for="item in getOptions('patientAdverseOccurance')"
+                :key="item.code"
+                :label="item.name"
+                :value="item.code">
+              </el-option>
+            </el-select>
+          </span>
+        </div>
+        <div class="field whole-line">
+          <span class="field-name">
             随访形式
             <span class="required-mark">*</span>
           </span>
@@ -203,6 +224,7 @@ export default {
 
       appraiser: '',
       reasonDetail: '',
+      tcPatientAdverseOccurance: '',
       followUpType: '',
       followUpComplete: '',
       followUpReason: '',
@@ -212,6 +234,7 @@ export default {
       remark: '',
 
       warningResults: {
+        tcPatientAdverseOccurance: '',
         followUpType: '',
         followUpComplete: '',
         followUpReason: '',
@@ -246,6 +269,7 @@ export default {
       this.showEdit = showEdit;
 
       this.appraiser = appraiser;
+      this.tcPatientAdverseOccurance = '';
       this.followUpType = '';
       this.followUpComplete = '';
       this.followUpReason = '';
@@ -331,6 +355,7 @@ export default {
         nextMileStone: this.nextStep,
         remark: this.remark,
         followUpModel: {
+          tcPatientAdverseOccurance: this.tcPatientAdverseOccurance,
           followUpType: this.followUpType,
           followUpComplete: this.followUpComplete,
           followUpReason: this.followUpReason,
