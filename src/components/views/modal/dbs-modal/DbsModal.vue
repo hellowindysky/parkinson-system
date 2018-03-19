@@ -104,7 +104,8 @@
         <table class="medicine-table" v-if="copyInfo.isTakeMedication===1">
           <tr class="row title-row">
             <td class="col">
-              <span v-show="mode!==VIEW_CURRENT_CARD" class="iconfont icon-plus" @click="addMedicine"></span>
+              <span v-if="mode!==VIEW_CURRENT_CARD && copyInfo.patientDbsMedicine.length < 15"
+                class="iconfont icon-plus" @click="addMedicine"></span>
               序号
             </td>
             <td class="col">药物商品名</td>
@@ -113,24 +114,28 @@
             <td class="col">日总剂量(mg)</td>
             <td class="col">LEDD(mg)</td>
           </tr>
-          <!-- <tr class="row" v-for="(medicine, index) in medicineList">
+          <tr class="row" v-for="(medicine, index) in copyInfo.patientDbsMedicine">
             <td class="col">
-              <span v-show="mode!==VIEW_CURRENT_CARD" class="iconfont icon-remove" @click="removeMedicine(index)"></span>
-              <el-select v-model="medicine.medicineInfo" @change="selectMedicine(medicine)"
-                :class="{'warning': !isMedicineValid(medicine)}" :disabled="mode===VIEW_CURRENT_CARD">
-                <el-option v-for="option in getOptions('medicineName')" :label="option.name"
+              {{getLetterIndex(index)}}
+              <span v-if="mode!==VIEW_CURRENT_CARD" class="iconfont icon-remove"
+                @click="removeMedicine(index)"></span>
+            </td>
+            <td class="col">
+              <el-select v-model="medicine.medicineId" :disabled="mode===VIEW_CURRENT_CARD"
+                 @change="selectMedicine(medicine)">
+                <el-option v-for="(option, i) in getOptions('medicineName')" :label="option.name"
+                  :value="option.code" :key="'medicineId'+i"></el-option>
+              </el-select>
+            </td>
+            <td class="col">
+              <el-select v-model="medicine.medicalSpecUsed" :disabled="mode===VIEW_CURRENT_CARD">
+                <el-option v-for="option in getOptions('medicineSpec', medicine.medicineId)" :label="option.name"
                   :value="option.code" :key="option.code"></el-option>
               </el-select>
             </td>
             <td class="col">
-              <el-select v-model="medicine.medSpecification" :disabled="mode===VIEW_CURRENT_CARD">
-                <el-option v-for="option in getOptions('medicineSpec', medicine.medicineInfo)" :label="option.name"
-                  :value="option.code" :key="option.code"></el-option>
-              </el-select>
-            </td>
-            <td class="col">
-              <span v-if="mode===VIEW_CURRENT_CARD">{{medicine.medUsage}}</span>
-              <el-input v-else v-model="medicine.medUsage" @blur="updateMedicineUsage(medicine)"></el-input>
+              <span v-if="mode===VIEW_CURRENT_CARD">{{medicine.takeDose}}</span>
+              <el-input v-else v-model="medicine.takeDose" @blur="updateMedicineUsage(medicine)"></el-input>
             </td>
             <td class="col computed-cell">
 
@@ -138,10 +143,7 @@
             <td class="col computed-cell">
 
             </td>
-            <td class="col computed-cell">
-
-            </td>
-          </tr> -->
+          </tr>
         </table>
         <div class="field" v-show="copyInfo.isTakeMedication===1">
           <span class="field-name">服用药物</span>
@@ -921,6 +923,7 @@ var dbsFirstModel = {
   'programDate': '',
   'isTakeMedication': '',
   'medicationStatus': '',
+  'patientDbsMedicine': [],
   'damageEffectExist': '',
   'damageEffectDuration': '',
   'adverseEventsExist': '',
@@ -947,6 +950,7 @@ var dbsFollowModel = {
   'programDate': '',
   'isTakeMedication': '',
   'medicationStatus': '',
+  'patientDbsMedicine': [],
   'complaint': '',
   'effectInfo': '',
   'adjustBeforeLeftSatisfaction': '',
@@ -1009,7 +1013,8 @@ export default {
   computed: {
     ...mapGetters([
       'typeGroup',
-      'deviceInfo'
+      'deviceInfo',
+      'medicineInfo'
     ]),
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
@@ -1239,6 +1244,17 @@ export default {
           this.copyInfo.remarks = remarks;
         }
       });
+
+      // 更换“是否首次开机”这个信息之后，需要对用药列表做相应的处理
+      for (let medicine of this.copyInfo.patientDbsMedicine) {
+        if (this.mode !== this.ADD_NEW_CARD && this.modelType === 0) {
+          delete medicine.patientDbsFirstId;
+          this.$set(medicine, 'patientDbsFollowId', this.copyInfo.patientDbsFollowId);
+        } else if (this.mode !== this.ADD_NEW_CARD && this.modelType === 1) {
+          delete medicine.patientDbsFollowId;
+          this.$set(medicine, 'patientDbsFirstId', this.copyInfo.patientDbsFirstId);
+        }
+      }
     },
     updateModelType(cb) {
       this.duringTogglingModelType = true;
@@ -1439,7 +1455,7 @@ export default {
       var value = Util.getElement('code', code, options).name;
       return value ? value : '';
     },
-    getOptions(fieldName) {
+    getOptions(fieldName, param) {
       // 这里的第二个参数不是必须的，在查询药物规格时会用到
       var options = [];
       var typeGroupCodeMap = {
@@ -1485,6 +1501,33 @@ export default {
               });
             }
           }
+        } else if (fieldName === 'medicineName') {
+          for (let medicine of this.medicineInfo) {
+            // 只有这个药物的药物规格中，存在某一个规格满足其 dbsUsed 属性为 1 的条件时，才把这个药加进来
+            let specGroup = medicine.spec ? medicine.spec : [];
+            for (let spec of specGroup) {
+              if (spec.dbsUsed === 1) {
+                options.push({
+                  name: medicine.medicineName,
+                  code: medicine.medicineId
+                });
+                break;
+              }
+            }
+          }
+        } else if (fieldName === 'medicineSpec') {
+          // 药物规格要根据当前药物去找
+          var targetMedicineId = param;
+          var targetMedicine = Util.getElement('medicineId', targetMedicineId, this.medicineInfo);
+          let specGroup = targetMedicine.spec ? targetMedicine.spec : [];
+          for (let spec of specGroup) {
+            if (spec.dbsUsed === 1) {
+              options.push({
+                name: spec.specOral,
+                code: spec.medicalPec
+              });
+            }
+          }
         }
       }
       return options;
@@ -1523,7 +1566,42 @@ export default {
       this.currentFormSide = side;
       this.updateScrollbar();
     },
-    addMedicine() {},
+    addMedicine() {
+      var index = this.copyInfo.patientDbsMedicine.length;
+      this.$set(this.copyInfo.patientDbsMedicine, index, {});
+      let propertyList = ['medicineId', 'medicalSpecUsed', 'takeDose', 'totalMeasure', 'ledd'];
+      for (let property of propertyList) {
+        this.$set(this.copyInfo.patientDbsMedicine[index], property, '');
+      }
+      if (this.mode !== this.ADD_NEW_CARD && this.modelType === 1) {
+        this.$set(this.copyInfo.patientDbsMedicine[index], 'patientDbsFirstId', this.copyInfo.patientDbsFirstId);
+      } else if (this.mode !== this.ADD_NEW_CARD && this.modelType === 0) {
+        this.$set(this.copyInfo.patientDbsMedicine[index], 'patientDbsFollowId', this.copyInfo.patientDbsFollowId);
+      }
+    },
+    getLetterIndex(index) {
+      return String.fromCharCode(index + 'A'.charCodeAt(0));
+    },
+    removeMedicine(index) {
+      this.copyInfo.patientDbsMedicine.splice(index, 1);
+    },
+    selectMedicine(medicine) {
+      // 重新选择药物后，会将使用量清空，同时因为可选的规格只有一个，所以会自动选上
+      medicine.medicalSpecUsed = '';
+      medicine.takeDose = '';
+
+      var medSpecificationOptions = this.getOptions('medicineSpec', medicine.medicineId);
+      medicine.medicalSpecUsed = medSpecificationOptions[0] ? medSpecificationOptions[0].code : '';
+    },
+    updateMedicineUsage(medicine) {
+      // 重新填写使用量之后，要手动将其由字符串改成数字
+      var usage = medicine.takeDose;
+      if (usage === undefined || usage === '' || isNaN(usage)) {
+        medicine.takeDose = '';
+      } else {
+        medicine.takeDose = Number(usage);
+      }
+    },
     showMoreInfo() {
       // this.$alert('这是一段内容', '各刺激模式可选规则', {
       //   confirmButtonText: '确定',
