@@ -145,7 +145,7 @@
             </td>
           </tr>
         </table>
-        <div class="field" v-show="copyInfo.isTakeMedication===1">
+        <!-- <div class="field" v-show="copyInfo.isTakeMedication===1">
           <span class="field-name">服用药物</span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             {{copyInfo.medicationStatus}}
@@ -153,7 +153,7 @@
           <span class="field-input" v-else>
             <el-input v-model="copyInfo.medicationStatus" placeholder="请输入服用药物"></el-input>
           </span>
-        </div>
+        </div> -->
         <div class="field" v-show="modelType===1">
           <span class="field-name">微毁损效应</span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -1503,15 +1503,14 @@ export default {
           }
         } else if (fieldName === 'medicineName') {
           for (let medicine of this.medicineInfo) {
-            // 只有这个药物的药物规格中，存在某一个规格满足其 dbsUsed 属性为 1 的条件时，才把这个药加进来
+            // 只有这个药物的药物规格中，存在某一个规格满足其 dbsCkUsed 属性为 1 的条件时，才把这个药加进来
             let specGroup = medicine.spec ? medicine.spec : [];
             for (let spec of specGroup) {
-              if (spec.dbsUsed === 1) {
+              if (spec.dbsCkUsed === 1) {
                 options.push({
                   name: medicine.medicineName,
                   code: medicine.medicineId
                 });
-                break;
               }
             }
           }
@@ -1527,6 +1526,17 @@ export default {
                 code: spec.medicalPec
               });
             }
+          }
+
+          // 如果是“其它”药物，则它的规格会作特殊处理
+          let unknownSpec = '其它规格';
+          if (targetMedicine.medicalType === 6) {
+            options = [
+              {
+                name: unknownSpec,
+                code: 0
+              }
+            ];
           }
         }
       }
