@@ -827,7 +827,9 @@
             </td>
             <td class="col w2" colspan="2" rowspan="2" v-show="index % 2 === 0">
               {{getFollowDbsAdjustAfterPlanName(param)}}
-              <span class="iconfont icon-remove" v-show="mode!==VIEW_CURRENT_CARD" @click="removeParam(index, 'followDbsAdjustAfter')"></span>
+              <span class="iconfont icon-remove"
+                v-show="mode!==VIEW_CURRENT_CARD && copyInfo.followDbsParams.adjustAfterParameter.length > 2"
+                @click="removeParam(index, 'followDbsAdjustAfter')"></span>
             </td>
             <td class="col w2" colspan="2">{{getLimbSide(param.limbSide)}}</td>
             <td class="col w3" colspan="3">
@@ -922,7 +924,8 @@
             </td>
             <td class="col w2" colspan="2" rowspan="2" v-show="index % 2 === 0">
               {{getFirstDbsAdjustAfterPlanName(param)}}
-              <span class="iconfont icon-remove" v-show="mode !== VIEW_CURRENT_CARD"
+              <span class="iconfont icon-remove"
+                v-show="mode !== VIEW_CURRENT_CARD && copyInfo.firstDbsParams.adjustAfterParameter.length > 2"
                 @click="removeParam(index, 'firstDbsAdjustAfter')"></span>
             </td>
             <td class="col w2" colspan="2">{{getLimbSide(param.limbSide)}}</td>
@@ -1175,6 +1178,14 @@ export default {
 
           this.updateContactOrder();
           this.updateCheckBoxModel('firstDbsAdjustAfter');
+
+          let firstDbsAdjustAfterParameterChosenIndex = this.copyInfo.patientDbsChoose;
+          let length = parseInt(this.copyInfo.firstDbsParams.adjustAfterParameter.length / 2, 10);
+          for (var i = 0; i < length; i++) {
+            var status = firstDbsAdjustAfterParameterChosenIndex === i;
+            this.firstDbsAdjustAfterParameterChosenStatus.push(status);
+          }
+
           this.$nextTick(() => {
             this.completeInit = true; // 放在 nextTick 中，才不会触发 changeDevice()
           });
@@ -1191,6 +1202,14 @@ export default {
           this.updateCheckBoxModel('followDbsAdjustVoltage');
           this.updateCheckBoxModel('followDbsAdjustMore');
           this.prepareLastDbsInfo(data);
+
+          let followDbsAdjustAfterParameterChosenIndex = this.copyInfo.patientDbsChoose;
+          let length = parseInt(this.copyInfo.followDbsParams.adjustAfterParameter.length / 2, 10);
+          for (var i = 0; i < length; i++) {
+            var status = followDbsAdjustAfterParameterChosenIndex === i;
+            this.followDbsAdjustAfterParameterChosenStatus.push(status);
+          }
+
           this.$nextTick(() => {
             this.completeInit = true;
           });
@@ -1251,28 +1270,67 @@ export default {
       reviseDateFormat(submitData);
       pruneObj(submitData);
 
-      if (this.modelType === 1 && this.mode === this.ADD_NEW_CARD) {
+      if (this.modelType === 1) {
+        // 首次程控
         delete submitData.followDbsParams;
-        addDbsFirstInfo(submitData).then(() => {
-          this.updateAndClose();
-        }, this._handleError);
-      } else if (this.modelType === 1 && this.mode === this.EDIT_CURRENT_CARD) {
-        delete submitData.followDbsParams;
-        modifyDbsFirstInfo(submitData).then(() => {
-          this.updateAndClose();
-        }, this._handleError);
+        for (let i = 0; i < this.firstDbsAdjustAfterParameterChosenStatus.length; i++) {
+          if (this.firstDbsAdjustAfterParameterChosenStatus[i]) {
+            // “开机完成参数”最终参数的选择，将数组中被选择的那一项的索引值传给后端
+            submitData.patientDbsChoose = i;
+          }
+        }
+        if (this.mode === this.ADD_NEW_CARD) {
+          addDbsFirstInfo(submitData).then(() => {
+            this.updateAndClose();
+          }, this._handleError);
+        } else if (this.mode === this.EDIT_CURRENT_CARD) {
+          modifyDbsFirstInfo(submitData).then(() => {
+            this.updateAndClose();
+          }, this._handleError);
+        }
 
-      } else if (this.modelType === 0 && this.mode === this.ADD_NEW_CARD) {
+      } else if (this.modelType === 0) {
+        // 非首次程控
         delete submitData.firstDbsParams;
-        addDbsFollowInfo(submitData).then(() => {
-          this.updateAndClose();
-        }, this._handleError);
-      } else if (this.modelType === 0 && this.mode === this.EDIT_CURRENT_CARD) {
-        delete submitData.firstDbsParams;
-        modifyDbsFollowInfo(submitData).then(() => {
-          this.updateAndClose();
-        }, this._handleError);
+        for (let i = 0; i < this.followDbsAdjustAfterParameterChosenStatus.length; i++) {
+          if (this.followDbsAdjustAfterParameterChosenStatus[i]) {
+            // “程控完成参数”最终参数的选择，将数组中被选择的那一项的索引值传给后端
+            submitData.patientDbsChoose = i;
+          }
+        }
+        if (this.mode === this.ADD_NEW_CARD) {
+          addDbsFollowInfo(submitData).then(() => {
+            this.updateAndClose();
+          }, this._handleError);
+        } else if (this.mode === this.EDIT_CURRENT_CARD) {
+          modifyDbsFollowInfo(submitData).then(() => {
+            this.updateAndClose();
+          }, this._handleError);
+        }
       }
+
+      // if (this.modelType === 1 && this.mode === this.ADD_NEW_CARD) {
+      //   delete submitData.followDbsParams;
+      //   addDbsFirstInfo(submitData).then(() => {
+      //     this.updateAndClose();
+      //   }, this._handleError);
+      // } else if (this.modelType === 1 && this.mode === this.EDIT_CURRENT_CARD) {
+      //   delete submitData.followDbsParams;
+      //   modifyDbsFirstInfo(submitData).then(() => {
+      //     this.updateAndClose();
+      //   }, this._handleError);
+      //
+      // } else if (this.modelType === 0 && this.mode === this.ADD_NEW_CARD) {
+      //   delete submitData.firstDbsParams;
+      //   addDbsFollowInfo(submitData).then(() => {
+      //     this.updateAndClose();
+      //   }, this._handleError);
+      // } else if (this.modelType === 0 && this.mode === this.EDIT_CURRENT_CARD) {
+      //   delete submitData.firstDbsParams;
+      //   modifyDbsFollowInfo(submitData).then(() => {
+      //     this.updateAndClose();
+      //   }, this._handleError);
+      // }
     },
     judgeProgramDate() {
       var programDate = Util.simplifyDate(this.copyInfo.programDate);
@@ -1421,6 +1479,10 @@ export default {
       this.updateCheckBoxModel('followDbsAdjustVoltage');
       this.updateCheckBoxModel('followDbsAdjustMore');
       this.clearWarning();
+    },
+    clearDbsAdjustAfterParameterChosenStatus() {
+      this.firstDbsAdjustAfterParameterChosenStatus = [];
+      this.followDbsAdjustAfterParameterChosenStatus = [];
     },
     prepareLastDbsInfo(data) {
       // 绑定上次程控时间和调整前参数
