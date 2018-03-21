@@ -585,9 +585,6 @@ export default {
         modifyAdverseEvent(adverseEventInfo).then(() => {
           this.updateAndClose();
         }, this._handleError);
-          if (this.item.seriousFlag === 0) {
-
-          }
       }
     },
     _handleError(error) {

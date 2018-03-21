@@ -44,8 +44,6 @@ const physiontherapyModal = () => import(/* webpackChunkName: 'treatmentModal' *
 const treatmentEvaluationModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/treatment-evaluation-modal/TreatmentEvaluationModal');
 const adverseEventModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/adverse-event-modal/AdverseEventModal');
 const seriousAdverseEventModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/serious-adverse-event-modal/SeriousAdverseEventModal');
-
-
 const vitalSignsModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/vital-signs-modal/VitalSignsModal');
 const neurologicModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/neurologic-modal/NeurologicModal');
 const geneModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/gene-modal/GeneModal');

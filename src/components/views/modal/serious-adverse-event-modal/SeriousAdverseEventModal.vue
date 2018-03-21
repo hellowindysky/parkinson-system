@@ -334,8 +334,6 @@ export default {
       mode: '',
       completeInit: false,
       patientTaskCode: '',
-
-
       patientAdverse: '',
       patientAdverseId: '',
       occurTime: '',
