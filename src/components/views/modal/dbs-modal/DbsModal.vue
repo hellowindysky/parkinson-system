@@ -122,26 +122,47 @@
             </td>
             <td class="col">
               <el-select v-model="medicine.medicineId" :disabled="mode===VIEW_CURRENT_CARD"
-                 @change="selectMedicine(medicine)">
+                @change="selectMedicine(medicine)" :class="{'warning': !isMedicineValid(medicine)}" >
                 <el-option v-for="(option, i) in getOptions('medicineName')" :label="option.name"
                   :value="option.code" :key="'medicineId'+i"></el-option>
               </el-select>
             </td>
             <td class="col">
-              <el-select v-model="medicine.medicalSpecUsed" :disabled="mode===VIEW_CURRENT_CARD">
+              <el-select v-if="checkIfCommonMedicine(medicine.medicineId)"
+                v-model="medicine.medicalSpecUsed" :disabled="mode===VIEW_CURRENT_CARD">
                 <el-option v-for="option in getOptions('medicineSpec', medicine.medicineId)" :label="option.name"
                   :value="option.code" :key="option.code"></el-option>
               </el-select>
+              <el-input v-else v-model="medicine.medicalSpecUsed"
+                :disabled="mode===VIEW_CURRENT_CARD"
+                @blur="transformToNum(medicine, 'medicalSpecUsed')"></el-input>
             </td>
             <td class="col">
-              <span v-if="mode===VIEW_CURRENT_CARD">{{medicine.takeDose}}</span>
-              <el-input v-else v-model="medicine.takeDose" @blur="updateMedicineUsage(medicine)"></el-input>
+              <span v-if="mode===VIEW_CURRENT_CARD">
+                {{medicine.takeDose}}
+              </span>
+              <el-input v-else v-model="medicine.takeDose"
+                @blur="transformToNum(medicine, 'takeDose')"></el-input>
             </td>
-            <td class="col computed-cell">
-
+            <td class="col" :class="{'computed-cell': checkIfCommonMedicine(medicine.medicineId)}">
+              <span v-if="checkIfCommonMedicine(medicine.medicineId)">
+                {{getDayTotalDose(medicine)}}
+              </span>
+              <span v-else-if="mode===VIEW_CURRENT_CARD">
+                {{medicine.totalMeasure}}
+              </span>
+              <el-input v-else v-model="medicine.totalMeasure"
+                @blur="transformToNum(medicine, 'totalMeasure')"></el-input>
             </td>
-            <td class="col computed-cell">
-
+            <td class="col" :class="{'computed-cell': checkIfCommonMedicine(medicine.medicineId)}">
+              <span v-if="checkIfCommonMedicine(medicine.medicineId)">
+                {{getLEDD(medicine)}}
+              </span>
+              <span v-else-if="mode===VIEW_CURRENT_CARD">
+                {{medicine.ledd}}
+              </span>
+              <el-input v-else v-model="medicine.ledd"
+                @blur="transformToNum(medicine, 'ledd', 4)"></el-input>
             </td>
           </tr>
         </table>
@@ -1139,6 +1160,15 @@ export default {
         }
       };
 
+      // 然后检查药物表格有没有不符合规定的
+      for (let medicine of this.copyInfo.patientDbsMedicine) {
+        if (!this.isMedicineValid(medicine)) {
+          this.alertForCOMT();
+          this.lockSubmitButton = false;
+          return;
+        }
+      }
+
       // 如果直接操作 copyInfo，后面的 delete 操作可能会影响到数据绑定
       var submitData = deepCopy(this.copyInfo);
 
@@ -1523,14 +1553,14 @@ export default {
             if (spec.dbsUsed === 1) {
               options.push({
                 name: spec.specOral,
-                code: spec.medicalPec
+                code: String(spec.medicalPec)  // 因为后端这里传的是字符串
               });
             }
           }
 
           // 如果是“其它”药物，则它的规格会作特殊处理
           let unknownSpec = '其它规格';
-          if (targetMedicine.medicalType === 6) {
+          if (!this.checkIfCommonMedicine(targetMedicineId)) {
             options = [
               {
                 name: unknownSpec,
@@ -1596,21 +1626,140 @@ export default {
       this.copyInfo.patientDbsMedicine.splice(index, 1);
     },
     selectMedicine(medicine) {
-      // 重新选择药物后，会将使用量清空，同时因为可选的规格只有一个，所以会自动选上
+      // 因为可选的规格只有一个，会自动选上
       medicine.medicalSpecUsed = '';
-      medicine.takeDose = '';
 
       var medSpecificationOptions = this.getOptions('medicineSpec', medicine.medicineId);
       medicine.medicalSpecUsed = medSpecificationOptions[0] ? medSpecificationOptions[0].code : '';
-    },
-    updateMedicineUsage(medicine) {
-      // 重新填写使用量之后，要手动将其由字符串改成数字
-      var usage = medicine.takeDose;
-      if (usage === undefined || usage === '' || isNaN(usage)) {
+
+      if (!this.checkIfCommonMedicine(medicine.medicineId)) {
+        // 如果是 “其它” 药物，则特殊处理
+        medicine.medicalSpecUsed = '';
         medicine.takeDose = '';
-      } else {
-        medicine.takeDose = Number(usage);
+        medicine.totalMeasure = '';
+        medicine.ledd = '';
       }
+
+      if (!this.isMedicineValid(medicine)) {
+        this.alertForCOMT();
+      }
+    },
+    isMedicineValid(medicine) {
+      // COMT 药物存在时，整个药物列表一定要有左旋多巴类制剂的药物存在，同时最多只能存在一个珂丹
+      // 截止 2.2版本，DBS药物列表里面的 COMT 抑制剂只有珂丹一种，所以这里的逻辑就是判断是不是只有一个 COMT 抑制剂
+      if (!this.checkIfCOMT(medicine.medicineId)) {
+        // 如果不是 COMT 抑制剂类药物，则直接返回 true，
+        return true;
+
+      } else {
+        // 如果是 COMT 抑制剂，则根据整个列表是否符合规则来返回 true 或 false
+        var hasLevodopa = false;
+        var amountOfCOMT = 0;
+        for (let eachMedicine of this.copyInfo.patientDbsMedicine) {
+          if (this.checkIfLevodopa(eachMedicine.medicineId)) {
+            hasLevodopa = true;
+          }
+          if (this.checkIfCOMT(eachMedicine.medicineId)) {
+            amountOfCOMT += 1;
+          }
+        }
+        return hasLevodopa && amountOfCOMT < 2;
+      }
+    },
+    getDayTotalDose(medicine) {
+      // 计算药物列表中，具体某一行的日总剂量
+      let spec = medicine.medicalSpecUsed;
+      let amount = medicine.takeDose;
+      medicine.totalMeasure = amount ? spec * amount : 0;
+      return medicine.totalMeasure;
+    },
+    getLEDD(medicine) {
+      let medicineId = medicine.medicineId;
+      let spec = medicine.medicalSpecUsed;
+      let amount = medicine.takeDose;
+
+      // 先对参数进行校验，如果参数不合法，则返回 0
+      if (medicineId === undefined || medicineId === '' || spec === undefined ||
+        spec === '' || isNaN(spec) || amount === undefined || amount === '' || isNaN(amount)) {
+        medicine.ledd = 0;
+        return 0;
+      }
+
+      spec = Number(spec);
+      amount = Number(amount);
+
+      var extraText = '';
+
+      var targetMedicine = Util.getElement('medicineId', medicineId, this.medicineInfo);
+      if (this.checkIfCOMT(medicineId)) {
+        medicine.ledd = 0;
+
+      } else {
+        // 计算其它所有药物中珂丹的总用量，
+        // 如果是 0片则本药物的 LEDD 不变，
+        // 如果是小于等于 0.5片，则增益 25%，
+        // 如果大于 0.5 片，则增益 33%
+        var totalCOMTDose = 0;
+        for (let eachMedicine of this.copyInfo.patientDbsMedicine) {
+          totalCOMTDose += this.checkIfCOMT(eachMedicine.medicineId) && eachMedicine.takeDose > 0
+            ? eachMedicine.takeDose : 0;
+        }
+
+        var gainRatio;
+        if (totalCOMTDose === 0) {
+          gainRatio = 0;
+        } else if (totalCOMTDose <= 0.5) {
+          gainRatio = 0.25;
+          extraText = ' (+25%)';
+        } else {
+          gainRatio = 0.33;
+          extraText = ' (+33%)';
+        }
+
+        var specGroup = targetMedicine.spec ? targetMedicine.spec : [];
+        var targetSpecInfo = Util.getElement('medicalPec', spec, specGroup);
+        var levodopaFactor = targetSpecInfo.levodopaFactor;
+        var ledd = levodopaFactor * amount * (1 + gainRatio);
+        medicine.ledd = Number(ledd.toFixed(4));
+      }
+      return medicine.ledd + extraText;
+    },
+    checkIfCOMT(medicineId) {
+      // 看是否为 COMT 抑制剂（如珂丹）
+      var targetMedicine = Util.getElement('medicineId', medicineId, this.medicineInfo);
+      return targetMedicine.medicalType === 3;
+    },
+    checkIfLevodopa(medicineId) {
+      // 看是否为左旋多巴类药物（如森福罗）
+      var targetMedicine = Util.getElement('medicineId', medicineId, this.medicineInfo);
+      return targetMedicine.medicalType === 0;
+    },
+    checkIfCommonMedicine(medicineId) {
+      // 检查是否为普通药物（即，非“其它”药物）
+      var targetMedicine = Util.getElement('medicineId', medicineId, this.medicineInfo);
+      return targetMedicine.medicalType !== 6;
+    },
+    transformToNum(obj, property, digit) {
+      // 如果填写的不是一个数字，则转换成一个空字符串，如果是一个数字，则将这个数字字符串转化为真正的数字
+      var value = obj[property];
+
+      var reg = new RegExp(/^[0-9]+\.{0,1}[0-9]{0,2}$/);
+      if (reg.test(value)) {
+        obj[property] = Number(value);
+      } else if (value !== '' && !isNaN(value)) {
+        digit = digit ? digit : 2;    // 如果第三个参数不传，就默认为2位小数
+        obj[property] = Number(Number(value).toFixed(digit));
+      } else {
+        obj[property] = '';
+      }
+    },
+    alertForCOMT() {
+      this.$message({
+        message: 'COMT抑制剂类药物需要和多巴胺类制剂类药物联合使用，而且珂丹类药物至多只能出现一组，' +
+          '请检查药物处方是否录入有误',
+        type: 'warning',
+        duration: 4000
+      });
     },
     showMoreInfo() {
       // this.$alert('这是一段内容', '各刺激模式可选规则', {
