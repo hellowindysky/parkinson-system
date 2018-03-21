@@ -261,8 +261,10 @@
                   <span class="contact narrow" v-if="mode===VIEW_CURRENT_CARD">
                     {{getFieldValue(leftContactSortArray[index], 'leftContact')}}
                   </span>
-                  <el-select class="contact" v-else v-model="leftContactSortArray[index]" @change="updateLeftContactOrder" :clearable="true">
-                    <el-option v-for="option in getOptions('leftContact')" :label="option.name" :value="option.code" :key="option.code"></el-option>
+                  <el-select class="contact" v-else v-model="leftContactSortArray[index]"
+                    @change="updateLeftContactOrder" :clearable="true">
+                    <el-option v-for="option in getOptions('leftContact')" :label="option.name"
+                      :value="option.code" :key="option.code"></el-option>
                   </el-select>
                 </span>
               </td>
@@ -363,8 +365,10 @@
                   <span class="contact narrow" v-if="mode===VIEW_CURRENT_CARD">
                     {{getFieldValue(rightContactSortArray[index], 'rightContact')}}
                   </span>
-                  <el-select class="contact" v-else v-model="rightContactSortArray[index]" @change="updateRightContactOrder" :clearable="true">
-                    <el-option v-for="option in getOptions('rightContact')" :label="option.name" :value="option.code" :key="option.code"></el-option>
+                  <el-select class="contact" v-else v-model="rightContactSortArray[index]"
+                    @change="updateRightContactOrder" :clearable="true">
+                    <el-option v-for="option in getOptions('rightContact')"
+                      :label="option.name" :value="option.code" :key="option.code"></el-option>
                   </el-select>
                 </span>
               </td>
@@ -566,14 +570,14 @@
       <div class="form-wrapper" ref="form2" v-show="modelType===0">
         <table class="form form2">
           <tr class="row top-row">
-            <td class="col" colspan="22">
+            <td class="col" colspan="26">
               单纯调整电压（总增幅 ≤ 0.4V）
             </td>
           </tr>
           <tr class="row">
             <td class="col w2" colspan="2">疗效满意度</td>
             <td class="col w2" colspan="2">左侧</td>
-            <td class="col w8" colspan="8">
+            <td class="col w8" colspan="10">
               <span v-if="mode===VIEW_CURRENT_CARD">
                 {{getFieldValue(copyInfo.adjustVoltageLeftSatisfaction, 'satisfaction')}}
               </span>
@@ -584,7 +588,7 @@
               </el-select>
             </td>
             <td class="col w2" colspan="2">右侧</td>
-            <td class="col w8" colspan="8">
+            <td class="col w8" colspan="10">
               <span v-if="mode===VIEW_CURRENT_CARD">
                 {{getFieldValue(copyInfo.adjustVoltageRightSatisfaction, 'satisfaction')}}
               </span>
@@ -599,7 +603,8 @@
             <td class="col w2" colspan="2">
               方案
               <span class="iconfont icon-plus" @click="addParam('followDbsAdjustVoltage')"
-                v-show="copyInfo.followDbsParams.adjustVoltageParameter.length < 8 && mode!==VIEW_CURRENT_CARD"></span>
+                v-show="copyInfo.followDbsParams.adjustVoltageParameter.length < 8 && mode!==VIEW_CURRENT_CARD">
+              </span>
             </td>
             <td class="col w2" colspan="2">肢体侧</td>
             <td class="col w3" colspan="3">
@@ -612,11 +617,13 @@
             <td class="col w1" colspan="1">脉宽<br></br>(μs)</td>
             <td class="col w1" colspan="1">电压<br></br>(V)</td>
             <td class="col w3" colspan="3">效果及副作用</td>
+            <td class="col w3" colspan="4">备注</td>
           </tr>
           <tr class="row" v-for="(param, index) in copyInfo.followDbsParams.adjustVoltageParameter">
             <td class="col w2" colspan="2" rowspan="2" v-show="index % 2 === 0">
               {{getFollowDbsAdjustVoltagePlanName(param)}}
-              <span class="iconfont icon-remove" v-show="mode!==VIEW_CURRENT_CARD" @click="removeParam(index, 'followDbsAdjustVoltage')"></span>
+              <span class="iconfont icon-remove" v-show="mode!==VIEW_CURRENT_CARD"
+                @click="removeParam(index, 'followDbsAdjustVoltage')"></span>
             </td>
             <td class="col w2" colspan="2">{{getLimbSide(param.limbSide)}}</td>
             <td class="col w3" colspan="3">
@@ -626,15 +633,23 @@
               </el-select>
             </td>
             <td class="col w5" colspan="5">
-              <el-checkbox-group v-model="followDbsAdjustVoltageParamPole[index].positive" @change="updateParamPole('followDbsAdjustVoltage', index)">
-                <el-checkbox v-for="contact in getSidePositiveContact(param.limbSide)" :label="contact" :key="contact"
-                  :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
+              <el-checkbox-group v-model="followDbsAdjustVoltageParamPole[index].positive"
+                @change="updateParamPole('followDbsAdjustVoltage', index)"
+                :max="getMaxNumOfContact(param.exciteMod, true)">
+                <el-checkbox v-for="contact in getSidePositiveContact(param.limbSide)"
+                  :label="contact" :key="contact"
+                  :disabled="checkIfDisabledContact(param.exciteMod, contact, true)">
+                </el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w4" colspan="4">
-              <el-checkbox-group v-model="followDbsAdjustVoltageParamPole[index].negative" @change="updateParamPole('followDbsAdjustVoltage', index)">
-                <el-checkbox v-for="contact in getSideNegativeContact(param.limbSide)" :label="contact" :key="contact"
-                  :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
+              <el-checkbox-group v-model="followDbsAdjustVoltageParamPole[index].negative"
+                @change="updateParamPole('followDbsAdjustVoltage', index)"
+                :max="getMaxNumOfContact(param.exciteMod, false)">
+                <el-checkbox v-for="contact in getSideNegativeContact(param.limbSide)"
+                  :label="contact" :key="contact"
+                  :disabled="checkIfDisabledContact(param.exciteMod, contact, false)">
+                </el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w1" colspan="1">
@@ -653,6 +668,10 @@
               <span v-if="mode===VIEW_CURRENT_CARD">{{param.effectInfo}}</span>
               <el-input v-else v-model="param.effectInfo"></el-input>
             </td>
+            <td class="col w4 single-row" colspan="4">
+              <span v-if="mode===VIEW_CURRENT_CARD">{{param.remarks}}</span>
+              <el-input v-else v-model="param.remarks"></el-input>
+            </td>
           </tr>
         </table>
       </div>
@@ -660,14 +679,14 @@
       <div class="form-wrapper" ref="form3" v-show="modelType===0">
         <table class="form form3">
           <tr class="row top-row">
-            <td class="col" colspan="22">
+            <td class="col" colspan="26">
               调整多个参数
             </td>
           </tr>
           <tr class="row">
             <td class="col w2" colspan="2">疗效满意度</td>
             <td class="col w2" colspan="2">左侧</td>
-            <td class="col w8" colspan="8">
+            <td class="col w8" colspan="10">
               <span v-if="mode===VIEW_CURRENT_CARD">
                 {{getFieldValue(copyInfo.adjustMoreLeftSatisfactionRightSatisfaction, 'satisfaction')}}
               </span>
@@ -678,7 +697,7 @@
               </el-select>
             </td>
             <td class="col w2" colspan="2">右侧</td>
-            <td class="col w8" colspan="8">
+            <td class="col w8" colspan="10">
               <span v-if="mode===VIEW_CURRENT_CARD">
                 {{getFieldValue(copyInfo.adjustMoreRightSatisfaction, 'satisfaction')}}
               </span>
@@ -693,7 +712,8 @@
             <td class="col w2" colspan="2">
               方案
               <span class="iconfont icon-plus" @click="addParam('followDbsAdjustMore')"
-                v-show="copyInfo.followDbsParams.adjustMoreParameter.length < 8 && mode!==VIEW_CURRENT_CARD"></span>
+                v-show="copyInfo.followDbsParams.adjustMoreParameter.length < 8 && mode!==VIEW_CURRENT_CARD">
+              </span>
             </td>
             <td class="col w2" colspan="2">肢体侧</td>
             <td class="col w3" colspan="3">
@@ -707,6 +727,7 @@
             <td class="col w1" colspan="1">电压<br></br>(V)</td>
             <td class="col w1" colspan="1">电阻<br></br>(Ω)</td>
             <td class="col w1" colspan="1">电流<br></br>(mA)</td>
+            <td class="col w3" colspan="4">备注</td>
           </tr>
           <tr class="row" v-for="(param, index) in copyInfo.followDbsParams.adjustMoreParameter">
             <td class="col w2" colspan="2" rowspan="2" v-show="index % 2 === 0">
@@ -722,15 +743,23 @@
               </el-select>
             </td>
             <td class="col w5" colspan="5">
-              <el-checkbox-group v-model="followDbsAdjustMoreParamPole[index].positive" @change="updateParamPole('followDbsAdjustMore', index)">
-                <el-checkbox v-for="contact in getSidePositiveContact(param.limbSide)" :label="contact"
-                  :key="contact" :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
+              <el-checkbox-group v-model="followDbsAdjustMoreParamPole[index].positive"
+                @change="updateParamPole('followDbsAdjustMore', index)"
+                :max="getMaxNumOfContact(param.exciteMod, true)">
+                <el-checkbox v-for="contact in getSidePositiveContact(param.limbSide)"
+                  :label="contact" :key="contact"
+                  :disabled="checkIfDisabledContact(param.exciteMod, contact, true)">
+                </el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w5" colspan="5">
-              <el-checkbox-group v-model="followDbsAdjustMoreParamPole[index].negative" @change="updateParamPole('followDbsAdjustMore', index)">
-                <el-checkbox v-for="contact in getSideNegativeContact(param.limbSide)" :label="contact"
-                  :key="contact" :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
+              <el-checkbox-group v-model="followDbsAdjustMoreParamPole[index].negative"
+                @change="updateParamPole('followDbsAdjustMore', index)"
+                :max="getMaxNumOfContact(param.exciteMod, false)">
+                <el-checkbox v-for="contact in getSideNegativeContact(param.limbSide)"
+                  :label="contact" :key="contact"
+                  :disabled="checkIfDisabledContact(param.exciteMod, contact, false)">
+                </el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w1" colspan="1">
@@ -753,6 +782,10 @@
               <span v-if="mode===VIEW_CURRENT_CARD">{{param.electric}}</span>
               <el-input v-else v-model="param.electric"></el-input>
             </td>
+            <td class="col w4 single-row" colspan="4">
+              <span v-if="mode===VIEW_CURRENT_CARD">{{param.remarks}}</span>
+              <el-input v-else v-model="param.remarks"></el-input>
+            </td>
           </tr>
         </table>
       </div>
@@ -760,7 +793,7 @@
       <div class="form-wrapper" ref="form4" v-show="modelType===0">
         <table class="form form4">
           <tr class="row top-row">
-            <td class="col" colspan="23">
+            <td class="col" colspan="26">
               程控完成参数
             </td>
           </tr>
@@ -769,7 +802,8 @@
             <td class="col w2" colspan="2">
               方案
               <span class="iconfont icon-plus" @click="addParam('followDbsAdjustAfter')"
-                v-show="copyInfo.followDbsParams.adjustAfterParameter.length < 8 && mode!==VIEW_CURRENT_CARD"></span>
+                v-show="copyInfo.followDbsParams.adjustAfterParameter.length < 8 && mode!==VIEW_CURRENT_CARD">
+              </span>
             </td>
             <td class="col w2" colspan="2">肢体侧</td>
             <td class="col w3" colspan="3">
@@ -783,6 +817,7 @@
             <td class="col w1" colspan="1">电压<br></br>(V)</td>
             <td class="col w1" colspan="1">电阻<br></br>(Ω)</td>
             <td class="col w1" colspan="1">电流<br></br>(mA)</td>
+            <td class="col w3" colspan="3">备注</td>
           </tr>
           <tr class="row" v-for="(param, index) in copyInfo.followDbsParams.adjustAfterParameter">
             <td class="col w1" colspan="1" rowspan="2" v-show="index % 2 === 0">
@@ -802,13 +837,23 @@
               </el-select>
             </td>
             <td class="col w5" colspan="5">
-              <el-checkbox-group v-model="followDbsAdjustAfterParamPole[index].positive" @change="updateParamPole('followDbsAdjustAfter', index)">
-                <el-checkbox v-for="contact in getSidePositiveContact(param.limbSide)" :label="contact" :key="contact" :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
+              <el-checkbox-group v-model="followDbsAdjustAfterParamPole[index].positive"
+                @change="updateParamPole('followDbsAdjustAfter', index)"
+                :max="getMaxNumOfContact(param.exciteMod, true)">
+                <el-checkbox v-for="contact in getSidePositiveContact(param.limbSide)"
+                  :label="contact" :key="contact"
+                  :disabled="checkIfDisabledContact(param.exciteMod, contact, true)">
+                </el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w5" colspan="5">
-              <el-checkbox-group v-model="followDbsAdjustAfterParamPole[index].negative" @change="updateParamPole('followDbsAdjustAfter', index)">
-                <el-checkbox v-for="contact in getSideNegativeContact(param.limbSide)" :label="contact" :key="contact" :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
+              <el-checkbox-group v-model="followDbsAdjustAfterParamPole[index].negative"
+                @change="updateParamPole('followDbsAdjustAfter', index)"
+                :max="getMaxNumOfContact(param.exciteMod, false)">
+                <el-checkbox v-for="contact in getSideNegativeContact(param.limbSide)"
+                  :label="contact" :key="contact"
+                  :disabled="checkIfDisabledContact(param.exciteMod, contact, false)">
+                </el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w1" colspan="1">
@@ -831,14 +876,18 @@
               <span v-if="mode===VIEW_CURRENT_CARD">{{param.electric}}</span>
               <el-input v-else v-model="param.electric"></el-input>
             </td>
+            <td class="col w3 single-row" colspan="3">
+              <span v-if="mode===VIEW_CURRENT_CARD">{{param.remarks}}</span>
+              <el-input v-else v-model="param.remarks"></el-input>
+            </td>
           </tr>
         </table>
       </div>
 
       <div class="form-wrapper" ref="form5" v-show="modelType===1">
-        <table class="form form4">
+        <table class="form form5">
           <tr class="row top-row">
-            <td class="col" colspan="23">
+            <td class="col" colspan="26">
               开机完成参数
             </td>
           </tr>
@@ -847,7 +896,8 @@
             <td class="col w2" colspan="2">
               方案
               <span class="iconfont icon-plus" @click="addParam('firstDbsAdjustAfter')"
-                v-show="copyInfo.firstDbsParams.adjustAfterParameter.length < 8 && mode !== VIEW_CURRENT_CARD"></span>
+                v-show="copyInfo.firstDbsParams.adjustAfterParameter.length < 8 &&
+                mode !== VIEW_CURRENT_CARD"></span>
             </td>
             <td class="col w2" colspan="2">肢体侧</td>
             <td class="col w3" colspan="3">
@@ -861,16 +911,19 @@
             <td class="col w1" colspan="1">电压<br></br>(V)</td>
             <td class="col w1" colspan="1">电阻<br></br>(Ω)</td>
             <td class="col w1" colspan="1">电流<br></br>(mA)</td>
+            <td class="col w3" colspan="3">备注</td>
           </tr>
           <tr class="row" v-for="(param, index) in copyInfo.firstDbsParams.adjustAfterParameter">
             <td class="col w1" colspan="1" rowspan="2" v-show="index % 2 === 0">
               <el-checkbox v-model="firstDbsAdjustAfterParameterChosenStatus[parseInt(index / 2, 10)]"
-                @change="checkAfterParameterChosenStatus('firstDbs', parseInt(index / 2, 10))">
+                @change="checkAfterParameterChosenStatus('firstDbs', parseInt(index / 2, 10))"
+                :disabled="mode===VIEW_CURRENT_CARD">
               </el-checkbox>
             </td>
             <td class="col w2" colspan="2" rowspan="2" v-show="index % 2 === 0">
               {{getFirstDbsAdjustAfterPlanName(param)}}
-              <span class="iconfont icon-remove" v-show="mode !== VIEW_CURRENT_CARD" @click="removeParam(index, 'firstDbsAdjustAfter')"></span>
+              <span class="iconfont icon-remove" v-show="mode !== VIEW_CURRENT_CARD"
+                @click="removeParam(index, 'firstDbsAdjustAfter')"></span>
             </td>
             <td class="col w2" colspan="2">{{getLimbSide(param.limbSide)}}</td>
             <td class="col w3" colspan="3">
@@ -880,15 +933,23 @@
               </el-select>
             </td>
             <td class="col w5" colspan="5">
-              <el-checkbox-group v-model="firstDbsAdjustAfterParamPole[index].positive" @change="updateParamPole('firstDbsAdjustAfter', index)">
-                <el-checkbox v-for="contact in getSidePositiveContact(param.limbSide)" :label="contact" :key="contact"
-                  :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
+              <el-checkbox-group v-model="firstDbsAdjustAfterParamPole[index].positive"
+                @change="updateParamPole('firstDbsAdjustAfter', index)"
+                :max="getMaxNumOfContact(param.exciteMod, true)">
+                <el-checkbox v-for="contact in getSidePositiveContact(param.limbSide)"
+                  :label="contact" :key="contact"
+                  :disabled="checkIfDisabledContact(param.exciteMod, contact, true)">
+                </el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w5" colspan="5">
-              <el-checkbox-group v-model="firstDbsAdjustAfterParamPole[index].negative" @change="updateParamPole('firstDbsAdjustAfter', index)">
-                <el-checkbox v-for="contact in getSideNegativeContact(param.limbSide)" :label="contact" :key="contact"
-                  :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
+              <el-checkbox-group v-model="firstDbsAdjustAfterParamPole[index].negative"
+                @change="updateParamPole('firstDbsAdjustAfter', index)"
+                :max="getMaxNumOfContact(param.exciteMod, false)">
+                <el-checkbox v-for="contact in getSideNegativeContact(param.limbSide)"
+                  :label="contact" :key="contact"
+                  :disabled="checkIfDisabledContact(param.exciteMod, contact, false)">
+                </el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w1" colspan="1">
@@ -910,6 +971,10 @@
             <td class="col w1" colspan="1">
               <span v-if="mode===VIEW_CURRENT_CARD">{{param.electric}}</span>
               <el-input v-else v-model="param.electric"></el-input>
+            </td>
+            <td class="col w3 single-row" colspan="3">
+              <span v-if="mode===VIEW_CURRENT_CARD">{{param.remarks}}</span>
+              <el-input v-else v-model="param.remarks"></el-input>
             </td>
           </tr>
         </table>
@@ -1826,7 +1891,8 @@ export default {
         }
 
         let order = count / 2 + 1;
-        let propertyList = ['exciteMod', 'negativePole', 'positivePole', 'frequency', 'pulseWidth', 'voltage', 'resistance', 'electric'];
+        let propertyList = ['exciteMod', 'negativePole', 'positivePole', 'frequency',
+          'pulseWidth', 'voltage', 'resistance', 'electric', 'remarks'];
         for (let limbSideNum of [1, 2]) {
           let index = count - 1 + limbSideNum;
           this.$set(paramList, (index), {});
@@ -1995,6 +2061,51 @@ export default {
         positiveContactList.push(contact);
       }
       return positiveContactList;
+    },
+    checkIfDisabledContact(exciteMod, contact, isPositive) {
+      // 该函数的返回值为 false 到时候代表该选项可以被选中，为 true 代表该选项禁用
+      // isPositive 为 true 的时候代表是正极，为 false 代表负极
+      if (this.mode === this.VIEW_CURRENT_CARD) {
+        return true;
+      }
+
+      if (exciteMod === 1) {
+        // 1.单负：正极仅可选 C+，负极为四个靶点单选。
+        if (isPositive) {
+          return contact !== 'C+';
+        } else {
+          return false;
+        }
+      } else if (exciteMod === 2) {
+        // 2.双极：正负极均为单选
+        return false;
+      } else if (exciteMod === 3) {
+        // 3.双负：正极仅可选 C+，负极必须选两个
+        if (isPositive) {
+          return contact !== 'C+';
+        } else {
+          return false;
+        }
+      } else if (exciteMod === 4) {
+        // 4.交叉电脉冲：正极负极均最多可选择两个
+        return false;
+      } else if (exciteMod === 5) {
+        // 5.复杂程控模式：与之前一致，选择靶点不作限制
+        return false;
+      }
+      return true;
+    },
+    getMaxNumOfContact(exciteMod, isPositive) {
+      // isPositive 为 true 的时候代表是正极，为 false 代表负极
+      if (exciteMod === 1 || exciteMod === 2) {
+        return 1;
+      } else if (exciteMod === 3) {
+        return isPositive ? 1 : 2;
+      } else if (exciteMod === 4) {
+        return 2;
+      } else if (exciteMod === 5) {
+        return 5;
+      }
     },
     getDeviceGroups(type) {
       // 这个函数返回的数组用来生成触点电压表格（首次开机），供 v-for 使用
@@ -2432,13 +2543,16 @@ export default {
           width: @unit-width * 22;
         }
         &.form2 {
-          width: @unit-width * 22;
+          width: @unit-width * 26;
         }
         &.form3 {
-          width: @unit-width * 22;
+          width: @unit-width * 26;
         }
         &.form4 {
-          width: @unit-width * 23;
+          width: @unit-width * 26;
+        }
+        &.form5 {
+          width: @unit-width * 26;
         }
         .row {
           height: 35px;
@@ -2467,6 +2581,11 @@ export default {
               &:active {
                 opacity: 0.8;
               }
+            }
+            &.single-row {
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              overflow: hidden;
             }
             &.w1 {
               width: @unit-width;
