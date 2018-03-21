@@ -16,20 +16,22 @@
           </span>
 
           <div class="field-value" v-show="mode===READING_MODE">
-            <span v-if="getUIType(field)===3">
+            <span v-if="field.fieldName==='ariAge'">{{ariAge}}{{theUnit(field.fieldName)}}</span>
+            <span v-else-if="field.fieldName==='courseOfDisease'">{{courseOfDiseaseInfo}}</span>
+            <span v-else-if="getUIType(field)===3">
               {{ transformTypeCode(copyInfo[field.fieldName], field.fieldName) }}
             </span>
             <span v-else-if="getUIType(field)===5">
               {{ translateCodes(copyInfo[field.fieldName], field.fieldName) }}
             </span>
             <span v-else>
-              {{ copyInfo[field.fieldName] }}{{theUnit(field.fieldName)}}
+              {{ copyInfo[field.fieldName] }}
             </span>
           </div>
 
           <div class="field-input" v-show="mode===EDITING_MODE">
             <span v-if="field.fieldName==='ariAge'">{{ariAge}}{{theUnit(field.fieldName)}}</span>
-            <span v-else-if="field.fieldName==='courseOfDisease'">{{courseOfDiseaseInfo}}{{theUnit(field.fieldName)}}</span>
+            <span v-else-if="field.fieldName==='courseOfDisease'">{{courseOfDiseaseInfo}}</span>
             <span v-else-if="getUIType(field)===1">
               <el-input v-model="copyInfo[field.fieldName]" :disabled="field.fieldName==='ariAge'||field.fieldName==='courseOfDisease'"
                 :placeholder="getMatchedField(field.fieldName).cnFieldDesc"></el-input>
@@ -383,9 +385,9 @@ export default {
     courseOfDiseaseInfo() {
       // 病程 特殊的字段特殊处理
       if (this.copyInfo['ariTime']) {
-        let years = Util.calculateYearsBetween(this.copyInfo['ariTime'], new Date());
-        this.$set(this.copyInfo, 'courseOfDisease', years);
-        return years;
+        let years = Util.calculateMonthsBetween(this.copyInfo['ariTime'], new Date());
+        this.$set(this.copyInfo, 'courseOfDisease', years[1]);
+        return years[0];
       } else {
         return this.getMatchedField('courseOfDisease').cnFieldDesc;
         // return '——选择起病时间自动计算——';
@@ -465,7 +467,7 @@ export default {
     },
     theUnit(fieldName) {
       if (this.copyInfo['ariTime']) {
-        return fieldName === 'ariAge' ? ' 岁' : fieldName === 'courseOfDisease' ? ' 年' : '';
+        return fieldName === 'ariAge' ? ' 岁' : '';
       } else {
         return '';
       }
@@ -782,7 +784,7 @@ export default {
           };
         };
       };
-      submitData.courseOfDisease = this.courseOfDiseaseInfo;
+      // submitData.courseOfDisease = this.courseOfDiseaseInfo;
       submitData.patientId = this.$route.params.id;
       modDiseaseHistory(submitData).then(() => {
         Bus.$emit(this.UPDATE_PATIENT_INFO);

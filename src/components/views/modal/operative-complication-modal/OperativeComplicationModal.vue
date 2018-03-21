@@ -3,7 +3,7 @@
     <div class="operative-complication-modal">
       <h3 class="title">{{title}}</h3>
       <div class="content">
-        <div v-for="field in operativeComplicationTemplate" class="field" :class="{'whole-line': field.fieldName==='remarks'}">
+        <div v-for="field in operativeComplicationTemplate" class="field" :class="{'whole-line': field.fieldName==='remarks'||field.fieldName==='process'}">
           <span class="field-name">
             {{field.cnfieldName}}
             <span class="required-mark" v-show="field.must===1">*</span>
@@ -200,7 +200,7 @@ export default {
       return options;
     },
     getType(fieldName) {
-      if (fieldName === 'remarks') {
+      if (fieldName === 'remarks' || fieldName === 'process') {
         return 'textarea';
       } else {
         return 'text';
@@ -234,6 +234,7 @@ export default {
     }
   },
   mounted() {
+    console.log(this.operativeComplicationTemplate);
     // 先在本组件注册该事件，等待Layout组件接收动态组件挂载完毕的通知，再在本组件执行 showPanel 或 showModal
     Bus.$on(this.SHOW_OPERATIVE_COMPLICATION_MODAL, this.showModal);
 
@@ -356,6 +357,7 @@ export default {
           .el-textarea {
             vertical-align: middle;
             transform: translateY(5px);
+            margin-bottom:15px;
             .el-textarea__inner {
               border: none;
               background-color: @screen-color;

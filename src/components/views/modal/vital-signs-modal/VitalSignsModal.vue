@@ -79,19 +79,36 @@
             心率情况:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-          <span>{{transform(rhythm,'rhythm')}}</span>
+            <span>{{transform(rhythm,'rhythm')}}</span>
           </span>
           <span class="field-input" v-else>
-          <el-select v-model="rhythm" placeholder="请选择心率情况" clearable>
-            <el-option
-              v-for="item in getOptions('rhythm')"
-              :key="item.code"
-              :label="item.name"
-              :value="item.code">
-            </el-option>
-          </el-select>
+            <el-select v-model="rhythm" placeholder="请选择心率情况" clearable>
+              <el-option
+                v-for="item in getOptions('rhythm')"
+                :key="item.code"
+                :label="item.name"
+                :value="item.code">
+              </el-option>
+            </el-select>
           </span>
         </div>
+
+        <div class="field whole-line">
+          <span class="field-name">
+            备注:
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span>{{remarks}}</span>
+          </span>
+          <span class="field-input" v-else>
+            <el-input placeholder="请输入备注" v-model="remarks"
+             :rows="2"
+             :maxlength="500"
+             type="textarea">
+            </el-input>
+          </span>
+        </div>
+
         <div class="seperate-line"></div>
           <table class="table">
           <tr class="row title-row">
@@ -183,6 +200,7 @@ export default {
       temperature: '',
       pulse: '',
       rhythm: '',
+      remarks: '',
       patientVitalSignDetail: [
         {
           'bp': 1,
@@ -385,6 +403,7 @@ export default {
       vitalSignsInfo.temperature = this.temperature;
       vitalSignsInfo.pulse = this.pulse;
       vitalSignsInfo.rhythm = this.rhythm;
+      vitalSignsInfo.remarks = this.remarks;
       vitalSignsInfo.patientVitalSignDetail = deepCopy(this.patientVitalSignDetail);
       pruneObj(vitalSignsInfo);
 

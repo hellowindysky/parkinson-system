@@ -282,13 +282,13 @@ export default {
       return '生命体征 (' + this.diagnosticVitalSigns.length + '条记录)';
     },
     neurologicCheckTitle() {
-      return '神经系统检查（' + this.neurologicCheckList.length + '条记录）';
+      return '体格检查（' + this.neurologicCheckList.length + '条记录）';
     },
     geneCheckTitle() {
       return '基因检查（' + this.geneCheckList.length + '条记录）';
     },
     biochemicalExamTitle() {
-      return '生化指标（' + this.biochemicalExamList.length + '条记录）';
+      return '实验室检查（' + this.biochemicalExamList.length + '条记录）';
     },
     neuroelectricTitle() {
       let count = this.emgList.length + this.sleepMonitoringList.length + this.electricImagingList.length;
