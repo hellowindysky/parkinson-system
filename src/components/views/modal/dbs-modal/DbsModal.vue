@@ -845,7 +845,8 @@
           <tr class="row" v-for="(param, index) in copyInfo.followDbsParams.adjustAfterParameter">
             <td class="col w1" colspan="1" rowspan="2" v-show="index % 2 === 0">
               <el-checkbox v-model="followDbsAdjustAfterParameterChosenStatus[parseInt(index / 2, 10)]"
-                @change="checkAfterParameterChosenStatus('followDbs', parseInt(index / 2, 10))">
+                @change="checkAfterParameterChosenStatus('followDbs', parseInt(index / 2, 10))"
+                :disabled="mode===VIEW_CURRENT_CARD">
               </el-checkbox>
             </td>
             <td class="col w2" colspan="2" rowspan="2" v-show="index % 2 === 0">
@@ -2718,10 +2719,7 @@ export default {
                 }
               }
             }
-            .el-checkbox-group {
-              .el-checkbox + .el-checkbox {
-                margin-left: 5px;
-              }
+            .el-checkbox {
               .is-disabled {
                 .el-checkbox__inner {
                   background-color: @light-gray-color;
@@ -2730,6 +2728,11 @@ export default {
                     border-color: @theme-color;
                   }
                 }
+              }
+            }
+            .el-checkbox-group {
+              .el-checkbox + .el-checkbox {
+                margin-left: 5px;
               }
               .el-checkbox {
                 .el-checkbox__label {
