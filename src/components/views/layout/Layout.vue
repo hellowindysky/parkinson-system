@@ -51,11 +51,8 @@ const neurologicModal = () => import(/* webpackChunkName: 'examinationModal' */ 
 const geneModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/gene-modal/GeneModal');
 const biochemicalExamModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/biochemical-exam-modal/BiochemicalExamModal');
 const neuroelectricModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/neuroelectric-modal/NeuroelectricModal');
-<<<<<<< HEAD
 const GaitPostureModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/gait-posture-modal/GaitPostureModal');
-=======
 const sleepMonitorModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/sleep-monitor-modal/SleepMonitorModal');
->>>>>>> beb4eeeccfb42a880caf29c857dcb949773f9d4d
 const imageModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/image-modal/ImageModal');
 
 const applicationModal = () => import(/* webpackChunkName: 'experimentModal' */ 'modal/application-modal/ApplicationModal');
@@ -104,11 +101,8 @@ export default {
     geneModal,
     biochemicalExamModal,
     neuroelectricModal,
-<<<<<<< HEAD
     GaitPostureModal,
-=======
     sleepMonitorModal,
->>>>>>> beb4eeeccfb42a880caf29c857dcb949773f9d4d
     imageModal,
     firstSymptomsModal,
     firstTreatmentModal,
