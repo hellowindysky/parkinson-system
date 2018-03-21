@@ -2639,8 +2639,11 @@ export default {
               }
               .is-disabled {
                 .el-checkbox__inner {
-                  background-color: @light-font-color;
-                  border-color: @light-font-color;
+                  background-color: @light-gray-color;
+                  border-color: @gray-color;
+                  &::after {
+                    border-color: @theme-color;
+                  }
                 }
               }
               .el-checkbox {
