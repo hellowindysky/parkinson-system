@@ -249,7 +249,8 @@
         </span>
       </div>
 
-      <div class="form-wrapper form0-wrapper" ref="form0" v-show="modelType===1">
+      <div class="form-wrapper form0-wrapper" :class="formOffsetClass"
+        ref="form0" v-show="modelType===1">
         <div class="form-left" v-show="currentFormSide==='left'">
           <table class="form form0">
             <tr class="row top-row">
@@ -1044,6 +1045,15 @@ export default {
         return '程控记录';
       } else {
         return '';
+      }
+    },
+    formOffsetClass() {
+      if (this.currentFormSide === 'left') {
+        return 'left-offset';
+      } else if (this.currentFormSide === 'right') {
+        return 'right-offset';
+      } else {
+        return '';  // 正常情况下不会运行到这行
       }
     },
     voltageCount() {
@@ -2391,7 +2401,14 @@ export default {
       padding-bottom: 10px;
       overflow: hidden;
       &.form0-wrapper {
+        transition: 0.2s;
         // text-align: left;
+        &.left-offset {
+          transform: translateX(-15px);
+        }
+        &.right-offset {
+          transform: translateX(15px);
+        }
       }
       .form-left, .form-right {
         display: inline-block;
