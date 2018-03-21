@@ -529,7 +529,8 @@
             <td class="col w2" colspan="2">{{getLimbSide(param.limbSide)}}</td>
             <td class="col w3" colspan="3">
               <el-select v-model="param.exciteMod"
-                :disabled="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">
+                :disabled="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0"
+                @change="resetVoltageParamPole(followDbsAdjustBeforeParamPole[index])">
                 <el-option v-for="(option, i) in getOptions('exciteMod')" :label="option.name"
                   :value="option.code" :key="'exciteMod' + i"></el-option>
               </el-select>
@@ -650,14 +651,15 @@
             </td>
             <td class="col w2" colspan="2">{{getLimbSide(param.limbSide)}}</td>
             <td class="col w3" colspan="3">
-              <el-select v-model="param.exciteMod" :disabled="mode===VIEW_CURRENT_CARD">
+              <el-select v-model="param.exciteMod" :disabled="mode===VIEW_CURRENT_CARD"
+                @change="resetVoltageParamPole(followDbsAdjustVoltageParamPole[index])">
                 <el-option v-for="(option, i) in getOptions('exciteMod')" :label="option.name"
                   :value="option.code" :key="'exciteMod' + i"></el-option>
               </el-select>
             </td>
             <td class="col w5" colspan="5">
               <el-checkbox-group v-model="followDbsAdjustVoltageParamPole[index].positive"
-                @change="updateParamPole('followDbsAdjustVoltage', index)"
+                @change="updateParagmPole('followDbsAdjustVoltage', index)"
                 :max="getMaxNumOfContact(param.exciteMod, true)">
                 <el-checkbox v-for="(contact, i) in getSidePositiveContact(param.limbSide)"
                   :label="contact" :key="'sidePositiveContact' + i"
@@ -760,7 +762,8 @@
             </td>
             <td class="col w2" colspan="2">{{getLimbSide(param.limbSide)}}</td>
             <td class="col w3" colspan="3">
-              <el-select v-model="param.exciteMod" :disabled="mode===VIEW_CURRENT_CARD">
+              <el-select v-model="param.exciteMod" :disabled="mode===VIEW_CURRENT_CARD"
+                @change="resetVoltageParamPole(followDbsAdjustMoreParamPole[index])">
                 <el-option v-for="(option, i) in getOptions('exciteMod')" :label="option.name"
                   :value="option.code" :key="'exciteMod' + i"></el-option>
               </el-select>
@@ -857,7 +860,8 @@
             </td>
             <td class="col w2" colspan="2">{{getLimbSide(param.limbSide)}}</td>
             <td class="col w3" colspan="3">
-              <el-select v-model="param.exciteMod" :disabled="mode===VIEW_CURRENT_CARD">
+              <el-select v-model="param.exciteMod" :disabled="mode===VIEW_CURRENT_CARD"
+                @change="resetVoltageParamPole(followDbsAdjustAfterParamPole[index])">
                 <el-option v-for="(option, i) in getOptions('exciteMod')" :label="option.name"
                   :value="option.code" :key="'exciteMod' + i"></el-option>
               </el-select>
@@ -954,7 +958,8 @@
             </td>
             <td class="col w2" colspan="2">{{getLimbSide(param.limbSide)}}</td>
             <td class="col w3" colspan="3">
-              <el-select v-model="param.exciteMod" :disabled="mode === VIEW_CURRENT_CARD">
+              <el-select v-model="param.exciteMod" :disabled="mode === VIEW_CURRENT_CARD"
+                @change="resetVoltageParamPole(firstDbsAdjustAfterParamPole[index])">
                 <el-option v-for="(option, i) in getOptions('exciteMod')" :label="option.name"
                   :value="option.code" :key="'exciteMod' + i"></el-option>
               </el-select>
@@ -2190,6 +2195,10 @@ export default {
         return false;
       }
       return true;
+    },
+    resetVoltageParamPole(obj) {
+      obj.positive = [];
+      obj.negative = [];
     },
     getMaxNumOfContact(exciteMod, isPositive) {
       // isPositive 为 true 的时候代表是正极，为 false 代表负极
