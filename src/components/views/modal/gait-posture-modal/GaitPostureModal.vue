@@ -267,7 +267,7 @@ import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import { vueCopy, deepCopy } from 'utils/helper';
 import Util from 'utils/util.js';
-import { addGaitPosture, modifyGaitPosture } from 'api/patient.js';
+// import { addGaitPosture, modifyGaitPosture } from 'api/patient.js';
 
 export default {
   data() {
@@ -433,17 +433,17 @@ export default {
       }
 
       if (this.mode === this.EDIT_CURRENT_CARD) {
-        modifyGaitPosture(submitData).then(() => {
-          Bus.$emit(this.UPDATE_CASE_INFO);
-          this.updateAndClose();
-        }, this._handleError);
+        // modifyGaitPosture(submitData).then(() => {
+        //   Bus.$emit(this.UPDATE_CASE_INFO);
+        //   this.updateAndClose();
+        // }, this._handleError);
 
       } else if (this.mode === this.ADD_NEW_CARD) {
         delete submitData.patientSpephysicalId;
-        addGaitPosture(submitData).then(() => {
-          Bus.$emit(this.UPDATE_CASE_INFO);
-          this.updateAndClose();
-        }, this._handleError);
+        // addGaitPosture(submitData).then(() => {
+        //   Bus.$emit(this.UPDATE_CASE_INFO);
+        //   this.updateAndClose();
+        // }, this._handleError);
       }
     },
     _handleError(error) {
