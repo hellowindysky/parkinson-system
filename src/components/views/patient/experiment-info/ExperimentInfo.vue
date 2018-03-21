@@ -60,7 +60,7 @@
           <td class="col col-remarks">
             {{step.remark}}
             <span class="iconfont icon-detail" @click="seeDetail(step)"
-              v-if="index < progressList.length - 1"></span>
+              v-if="(index < progressList.length - 1)||(getMilestoneNum(step)===2&&getStatus(step)===3)"></span>
           </td>
         </tr>
       </table>
