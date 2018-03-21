@@ -148,12 +148,12 @@
            严重不良事件:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{""}}</span>
+            <span>{{transform(seriousFlag,'digitYN')}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-select clearable placeholder="请选择">
+            <el-select v-model="seriousFlag" clearable placeholder="请选择">
               <el-option
-                v-for="item in getOptions('')"
+                v-for="item in getOptions('digitYN')"
                 :key="item.code"
                 :label="item.name"
                 :value="item.code">
@@ -272,7 +272,8 @@
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
       <div v-if="mode!==VIEW_CURRENT_CARD" class="button submit-button" @click="submit">确定</div>
-      <div v-else-if="mode===VIEW_CURRENT_CARD && showEdit" class="button submit-button btn-margin" @click="switchToEditingMode">编辑</div>
+      <div class="button text1-button "  v-else-if="mode!==VIEW_CURRENT_CARD" @click="submit">继续记录严重不良事件</div>
+      <div v-else="mode===VIEW_CURRENT_CARD && showEdit" class="button submit-button btn-margin" @click="switchToEditingMode">编辑</div>
     </div>
   </div>
 </template>
@@ -285,25 +286,11 @@ import { deepCopy, vueCopy, reviseMinuteFormat, pruneObj } from 'utils/helper';
 import { getPatientSimpleInfo, addAdverseEvent, modifyAdverseEvent } from 'api/patient.js';
 
 export default {
-  props: {
-    foldedMeasuresStatus: {
-      required: false,
-      type: Boolean,
-      default: true   // 如果没有传入这个参数，默认状态下面板是折叠的
-    },
-    foldedEventsStatus: {
-      required: false,
-      type: Boolean,
-      default: true   // 如果没有传入这个参数，默认状态下面板是折叠的
-    }
-  },
   data() {
     return {
       mode: '',
       completeInit: false,
       patientTaskCode: '',
-      foldedMeasures: this.foldedMeasuresStatus,
-      foldedEvents: this.foldedEventsStatus,
 
       patientAdverse: '',
       patientAdverseId: '',
@@ -324,8 +311,6 @@ export default {
       adverseEffect: '',
       medicineMethod: '',
       hasNoReaction: '',
-      foldedConditionalContentMeasures: false,
-      foldedConditionalContentEndEvents: false,
       adjointMedicine: [
         {
           'medicineName': '',
@@ -357,12 +342,6 @@ export default {
     ...mapGetters([
       'typeGroup'
     ]),
-    iconToggleFoldedMeasures() {
-      return this.foldedMeasures ? 'icon-arrow-down' : 'icon-arrow-up';
-    },
-    iconToggleFoldedEvents() {
-      return this.foldedEvents ? 'icon-arrow-down' : 'icon-arrow-up';
-    },
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
         return '新增不良事件';
@@ -606,25 +585,14 @@ export default {
         modifyAdverseEvent(adverseEventInfo).then(() => {
           this.updateAndClose();
         }, this._handleError);
+          if (this.item.seriousFlag === 0) {
+
+          }
       }
     },
     _handleError(error) {
       console.log(error);
       this.lockSubmitButton = false;
-    },
-    toggleContentFoldedMeasures() {
-      this.foldedConditionalContentMeasures = !this.foldedConditionalContentMeasures;
-      setTimeout(() => {
-        this.updateScrollbar();
-      }, 150);
-      this.foldedMeasures = !this.foldedMeasures;
-    },
-    toggleContentFoldedEndEvent() {
-      this.foldedConditionalContentEndEvents = !this.foldedConditionalContentEndEvents;
-      setTimeout(() => {
-        this.updateScrollbar();
-      }, 150);
-      this.foldedEvents = !this.foldedEvents;
     },
     updateAndClose() {
       Bus.$emit(this.UPDATE_CASE_INFO);
@@ -658,26 +626,6 @@ export default {
     typeGroup() {
       this.initSeriousAdverseEvents();
       this.prepareSeriousAdverseEvent();
-    },
-    foldedMeasures: function() {
-      // 每当面板的折叠状态发生变化，就会通知所在的滚动区域，需要重新计算高度
-      setTimeout(() => {
-        // 之所以要延时发送事件，是为了等待折叠动画结束
-        Bus.$emit(this.SCROLL_AREA_SIZE_CHANGE);
-      }, 300);
-    },
-    foldedMeasuresStatus: function(newFoldedMeasuresStatus) {
-      this.foldedMeasures = newFoldedMeasuresStatus;
-    },
-    foldedEvents: function() {
-      // 每当面板的折叠状态发生变化，就会通知所在的滚动区域，需要重新计算高度
-      setTimeout(() => {
-        // 之所以要延时发送事件，是为了等待折叠动画结束
-        Bus.$emit(this.SCROLL_AREA_SIZE_CHANGE);
-      }, 300);
-    },
-    foldedEventsStatus: function(newFoldedEventsStatus) {
-      this.foldedEvents = newFoldedEventsStatus;
     },
     '$route.path'() {
       this.cancel();
@@ -983,6 +931,10 @@ export default {
         background-color: @light-font-color;
       }
       &.submit-button {
+        background-color: @button-color;
+      }
+      &.text1-button {
+        width: 200px;
         background-color: @button-color;
       }
       &:hover {
