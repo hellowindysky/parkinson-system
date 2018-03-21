@@ -2089,10 +2089,20 @@ export default {
 
       // 对表格的最左侧一列，最终参数，所对应的数组移除元素
       var targetIndex = Math.floor(i / 2);
-      var deletedStatus = this.followDbsAdjustAfterParameterChosenStatus[targetIndex];
-      this.followDbsAdjustAfterParameterChosenStatus.splice(targetIndex, 1);
-      if (deletedStatus && this.followDbsAdjustAfterParameterChosenStatus.length > 0) {
-        this.followDbsAdjustAfterParameterChosenStatus[0] = true;
+
+      if (formType === 'firstDbsAdjustAfter') {
+        let deletedStatus = this.firstDbsAdjustAfterParameterChosenStatus[targetIndex];
+        this.firstDbsAdjustAfterParameterChosenStatus.splice(targetIndex, 1);
+        if (deletedStatus && this.firstDbsAdjustAfterParameterChosenStatus.length > 0) {
+          this.firstDbsAdjustAfterParameterChosenStatus[0] = true;
+        }
+
+      } else if (formType === 'followDbsAdjustAfter') {
+        let deletedStatus = this.followDbsAdjustAfterParameterChosenStatus[targetIndex];
+        this.followDbsAdjustAfterParameterChosenStatus.splice(targetIndex, 1);
+        if (deletedStatus && this.followDbsAdjustAfterParameterChosenStatus.length > 0) {
+          this.followDbsAdjustAfterParameterChosenStatus[0] = true;
+        }
       }
 
       this.updateCheckBoxModel(formType);
