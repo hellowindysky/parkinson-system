@@ -88,11 +88,7 @@
           </span>
           <span class="field-input" v-else>
             <el-select clearable placeholder="请选择">
-              <el-option
-                v-for="item in getOptions('')"
-                :key="item.code"
-                :label="item.name"
-                :value="item.code">
+              <el-option>
               </el-option>
             </el-select>
           </span>
@@ -106,11 +102,7 @@
           </span>
           <span class="field-input" v-else>
             <el-select clearable placeholder="请选择">
-              <el-option
-                v-for="item in getOptions('')"
-                :key="item.code"
-                :label="item.name"
-                :value="item.code">
+              <el-option>
               </el-option>
             </el-select>
           </span>
@@ -124,11 +116,7 @@
           </span>
           <span class="field-input" v-else>
             <el-select clearable placeholder="请选择">
-              <el-option
-                v-for="item in getOptions('')"
-                :key="item.code"
-                :label="item.name"
-                :value="item.code">
+              <el-option>
               </el-option>
             </el-select>
           </span>
@@ -216,11 +204,7 @@
           </span>
           <span class="field-input" v-else>
             <el-select clearable placeholder="请选择">
-              <el-option
-                v-for="item in getOptions('')"
-                :key="item.code"
-                :label="item.name"
-                :value="item.code">
+              <el-option>
               </el-option>
             </el-select>
           </span>
@@ -234,11 +218,7 @@
           </span>
           <span class="field-input" v-else>
             <el-select clearable placeholder="请选择">
-              <el-option
-                v-for="item in getOptions('')"
-                :key="item.code"
-                :label="item.name"
-                :value="item.code">
+              <el-option>
               </el-option>
             </el-select>
           </span>
@@ -266,11 +246,7 @@
           </span>
           <span class="field-input" v-else>
             <el-select clearable placeholder="请选择">
-              <el-option
-                v-for="item in getOptions('')"
-                :key="item.code"
-                :label="item.name"
-                :value="item.code">
+              <el-option>
               </el-option>
             </el-select>
           </span>
