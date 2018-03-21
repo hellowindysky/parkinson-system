@@ -13,9 +13,10 @@
           </span>
           <span class="field-input" v-else>
             <span class="warning-text">{{warningResults.deviceId}}</span>
-            <el-select v-model="copyInfo.deviceId" @change="changeDevice" :class="{'warning': warningResults.deviceId}">
-              <el-option v-for="option in getOptions('deviceId')" :label="option.name"
-                :value="option.code" :key="option.code"></el-option>
+            <el-select v-model="copyInfo.deviceId" @change="changeDevice"
+              :class="{'warning': warningResults.deviceId}">
+              <el-option v-for="(option, i) in getOptions('deviceId')" :label="option.name"
+                :value="option.code" :key="'deviceId' + i"></el-option>
             </el-select>
           </span>
         </div>
@@ -124,14 +125,14 @@
               <el-select v-model="medicine.medicineId" :disabled="mode===VIEW_CURRENT_CARD"
                 @change="selectMedicine(medicine)" :class="{'warning': !isMedicineValid(medicine)}" >
                 <el-option v-for="(option, i) in getOptions('medicineName')" :label="option.name"
-                  :value="option.code" :key="'medicineId'+i"></el-option>
+                  :value="option.code" :key="'medicineId' + i"></el-option>
               </el-select>
             </td>
             <td class="col">
               <el-select v-if="checkIfCommonMedicine(medicine.medicineId)"
                 v-model="medicine.medicalSpecUsed" :disabled="mode===VIEW_CURRENT_CARD">
-                <el-option v-for="option in getOptions('medicineSpec', medicine.medicineId)" :label="option.name"
-                  :value="option.code" :key="option.code"></el-option>
+                <el-option v-for="(option, i) in getOptions('medicineSpec', medicine.medicineId)" :label="option.name"
+                  :value="option.code" :key="'medicineSpec' + i"></el-option>
               </el-select>
               <el-input v-else v-model="medicine.medicalSpecUsed"
                 :disabled="mode===VIEW_CURRENT_CARD"
@@ -263,8 +264,8 @@
                   </span>
                   <el-select class="contact" v-else v-model="leftContactSortArray[index]"
                     @change="updateLeftContactOrder" :clearable="true">
-                    <el-option v-for="option in getOptions('leftContact')" :label="option.name"
-                      :value="option.code" :key="option.code"></el-option>
+                    <el-option v-for="(option, i) in getOptions('leftContact')" :label="option.name"
+                      :value="option.code" :key="'leftContact' + i"></el-option>
                   </el-select>
                 </span>
               </td>
@@ -349,7 +350,8 @@
                   {{getFieldValue(copyInfo.patientDbsFirstDetail[index].sideEffectDuration, 'duration')}}
                 </span>
                 <el-select v-else v-model="copyInfo.patientDbsFirstDetail[index].sideEffectDuration">
-                  <el-option v-for="option in getOptions('duration')" :label="option.name" :value="option.code" :key="option.code"></el-option>
+                  <el-option v-for="(option, i) in getOptions('duration')" :label="option.name"
+                    :value="option.code" :key="'duration' + i"></el-option>
                 </el-select>
               </td>
             </tr>
@@ -367,8 +369,9 @@
                   </span>
                   <el-select class="contact" v-else v-model="rightContactSortArray[index]"
                     @change="updateRightContactOrder" :clearable="true">
-                    <el-option v-for="option in getOptions('rightContact')"
-                      :label="option.name" :value="option.code" :key="option.code"></el-option>
+                    <el-option v-for="(option, i) in getOptions('rightContact')"
+                      :label="option.name" :value="option.code"
+                      :key="'rightContact' + i"></el-option>
                   </el-select>
                 </span>
               </td>
@@ -453,7 +456,8 @@
                   {{getFieldValue(copyInfo.patientDbsFirstDetail[getRightIndex(index)].sideEffectDuration, 'duration')}}
                 </span>
                 <el-select v-else v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].sideEffectDuration">
-                  <el-option v-for="option in getOptions('duration')" :label="option.name" :value="option.code" :key="option.code"></el-option>
+                  <el-option v-for="(option, i) in getOptions('duration')" :label="option.name"
+                    :value="option.code" :key="'duration' + i"></el-option>
                 </el-select>
               </td>
             </tr>
@@ -511,10 +515,12 @@
           </tr>
           <tr class="row" v-for="(param, index) in copyInfo.followDbsParams.adjustBeforeParameter">
             <td class="col w2" colspan="2" rowspan="2" v-show="index % 2 === 0">
-              <el-select v-model="followDbsAdjustBeforeFirstSchemeOrder" @change="selectFollowDbsAdjustBeforeFirstSchemeOrder"
+              <el-select v-model="followDbsAdjustBeforeFirstSchemeOrder"
+                @change="selectFollowDbsAdjustBeforeFirstSchemeOrder"
                 :disabled="mode===VIEW_CURRENT_CARD">
                 <el-option v-for="(p, i) in lastDbsParameter" v-show="i % 2 === 0"
-                  :label="getFollowDbsAdjustBeforePlanName(p)" :value="p.schemeOrder" :key="p.schemeOrder">
+                  :label="getFollowDbsAdjustBeforePlanName(p)" :value="p.schemeOrder"
+                  :key="'lastDbsParameter' + i">
                 </el-option>
                 <el-option label="自定义" :value="0">
                 </el-option>
@@ -522,41 +528,58 @@
             </td>
             <td class="col w2" colspan="2">{{getLimbSide(param.limbSide)}}</td>
             <td class="col w3" colspan="3">
-              <el-select v-model="param.exciteMod" :disabled="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">
-                <el-option v-for="option in getOptions('exciteMod')" :label="option.name"
-                  :value="option.code" :key="option.code"></el-option>
+              <el-select v-model="param.exciteMod"
+                :disabled="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">
+                <el-option v-for="(option, i) in getOptions('exciteMod')" :label="option.name"
+                  :value="option.code" :key="'exciteMod' + i"></el-option>
               </el-select>
             </td>
             <td class="col w5" colspan="5">
-              <el-checkbox-group v-model="followDbsAdjustBeforeParamPole[index].positive" @change="updateParamPole('followDbsAdjustBefore', index)">
-                <el-checkbox v-for="contact in getSidePositiveContact(param.limbSide)" :label="contact" :key="contact"
-                  :disabled="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0"></el-checkbox>
+              <el-checkbox-group v-model="followDbsAdjustBeforeParamPole[index].positive"
+                @change="updateParamPole('followDbsAdjustBefore', index)">
+                <el-checkbox v-for="(contact, i) in getSidePositiveContact(param.limbSide)"
+                  :label="contact" :key="'sidePositiveContact' + i"
+                  :disabled="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">
+                </el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w4" colspan="4">
-              <el-checkbox-group v-model="followDbsAdjustBeforeParamPole[index].negative" @change="updateParamPole('followDbsAdjustBefore', index)">
-                <el-checkbox v-for="contact in getSideNegativeContact(param.limbSide)" :label="contact" :key="contact"
-                  :disabled="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0"></el-checkbox>
+              <el-checkbox-group v-model="followDbsAdjustBeforeParamPole[index].negative"
+                @change="updateParamPole('followDbsAdjustBefore', index)">
+                <el-checkbox v-for="(contact, i) in getSideNegativeContact(param.limbSide)"
+                  :label="contact" :key="'sideNegativeContact' + i"
+                  :disabled="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">
+                </el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w1" colspan="1">
-              <span v-if="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">{{param.frequency}}</span>
+              <span v-if="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">
+                {{param.frequency}}
+              </span>
               <el-input v-else v-model="param.frequency"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <span v-if="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">{{param.pulseWidth}}</span>
+              <span v-if="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">
+                {{param.pulseWidth}}
+              </span>
               <el-input v-else v-model="param.pulseWidth"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <span v-if="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">{{param.voltage}}</span>
+              <span v-if="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">
+                {{param.voltage}}
+              </span>
               <el-input v-else v-model="param.voltage"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <span v-if="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">{{param.resistance}}</span>
+              <span v-if="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">
+                {{param.resistance}}
+              </span>
               <el-input v-else v-model="param.resistance"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <span v-if="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">{{param.electric}}</span>
+              <span v-if="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">
+                {{param.electric}}
+              </span>
               <el-input v-else v-model="param.electric"></el-input>
             </td>
             <td class="col w1" colspan="1">
@@ -628,16 +651,16 @@
             <td class="col w2" colspan="2">{{getLimbSide(param.limbSide)}}</td>
             <td class="col w3" colspan="3">
               <el-select v-model="param.exciteMod" :disabled="mode===VIEW_CURRENT_CARD">
-                <el-option v-for="option in getOptions('exciteMod')" :label="option.name"
-                  :value="option.code" :key="option.code"></el-option>
+                <el-option v-for="(option, i) in getOptions('exciteMod')" :label="option.name"
+                  :value="option.code" :key="'exciteMod' + i"></el-option>
               </el-select>
             </td>
             <td class="col w5" colspan="5">
               <el-checkbox-group v-model="followDbsAdjustVoltageParamPole[index].positive"
                 @change="updateParamPole('followDbsAdjustVoltage', index)"
                 :max="getMaxNumOfContact(param.exciteMod, true)">
-                <el-checkbox v-for="contact in getSidePositiveContact(param.limbSide)"
-                  :label="contact" :key="contact"
+                <el-checkbox v-for="(contact, i) in getSidePositiveContact(param.limbSide)"
+                  :label="contact" :key="'sidePositiveContact' + i"
                   :disabled="checkIfDisabledContact(param.exciteMod, contact, true)">
                 </el-checkbox>
               </el-checkbox-group>
@@ -646,8 +669,8 @@
               <el-checkbox-group v-model="followDbsAdjustVoltageParamPole[index].negative"
                 @change="updateParamPole('followDbsAdjustVoltage', index)"
                 :max="getMaxNumOfContact(param.exciteMod, false)">
-                <el-checkbox v-for="contact in getSideNegativeContact(param.limbSide)"
-                  :label="contact" :key="contact"
+                <el-checkbox v-for="(contact, i) in getSideNegativeContact(param.limbSide)"
+                  :label="contact" :key="'sideNegativeContact' + i"
                   :disabled="checkIfDisabledContact(param.exciteMod, contact, false)">
                 </el-checkbox>
               </el-checkbox-group>
@@ -738,16 +761,16 @@
             <td class="col w2" colspan="2">{{getLimbSide(param.limbSide)}}</td>
             <td class="col w3" colspan="3">
               <el-select v-model="param.exciteMod" :disabled="mode===VIEW_CURRENT_CARD">
-                <el-option v-for="option in getOptions('exciteMod')" :label="option.name"
-                  :value="option.code" :key="option.code"></el-option>
+                <el-option v-for="(option, i) in getOptions('exciteMod')" :label="option.name"
+                  :value="option.code" :key="'exciteMod' + i"></el-option>
               </el-select>
             </td>
             <td class="col w5" colspan="5">
               <el-checkbox-group v-model="followDbsAdjustMoreParamPole[index].positive"
                 @change="updateParamPole('followDbsAdjustMore', index)"
                 :max="getMaxNumOfContact(param.exciteMod, true)">
-                <el-checkbox v-for="contact in getSidePositiveContact(param.limbSide)"
-                  :label="contact" :key="contact"
+                <el-checkbox v-for="(contact, i) in getSidePositiveContact(param.limbSide)"
+                  :label="contact" :key="'sidePositiveContact' + i"
                   :disabled="checkIfDisabledContact(param.exciteMod, contact, true)">
                 </el-checkbox>
               </el-checkbox-group>
@@ -756,8 +779,8 @@
               <el-checkbox-group v-model="followDbsAdjustMoreParamPole[index].negative"
                 @change="updateParamPole('followDbsAdjustMore', index)"
                 :max="getMaxNumOfContact(param.exciteMod, false)">
-                <el-checkbox v-for="contact in getSideNegativeContact(param.limbSide)"
-                  :label="contact" :key="contact"
+                <el-checkbox v-for="(contact, i) in getSideNegativeContact(param.limbSide)"
+                  :label="contact" :key="'sideNegativeContact' + i"
                   :disabled="checkIfDisabledContact(param.exciteMod, contact, false)">
                 </el-checkbox>
               </el-checkbox-group>
@@ -834,16 +857,16 @@
             <td class="col w2" colspan="2">{{getLimbSide(param.limbSide)}}</td>
             <td class="col w3" colspan="3">
               <el-select v-model="param.exciteMod" :disabled="mode===VIEW_CURRENT_CARD">
-                <el-option v-for="option in getOptions('exciteMod')" :label="option.name"
-                  :value="option.code" :key="option.code"></el-option>
+                <el-option v-for="(option, i) in getOptions('exciteMod')" :label="option.name"
+                  :value="option.code" :key="'exciteMod' + i"></el-option>
               </el-select>
             </td>
             <td class="col w5" colspan="5">
               <el-checkbox-group v-model="followDbsAdjustAfterParamPole[index].positive"
                 @change="updateParamPole('followDbsAdjustAfter', index)"
                 :max="getMaxNumOfContact(param.exciteMod, true)">
-                <el-checkbox v-for="contact in getSidePositiveContact(param.limbSide)"
-                  :label="contact" :key="contact"
+                <el-checkbox v-for="(contact, i) in getSidePositiveContact(param.limbSide)"
+                  :label="contact" :key="'sidePositiveContact' + i"
                   :disabled="checkIfDisabledContact(param.exciteMod, contact, true)">
                 </el-checkbox>
               </el-checkbox-group>
@@ -852,8 +875,8 @@
               <el-checkbox-group v-model="followDbsAdjustAfterParamPole[index].negative"
                 @change="updateParamPole('followDbsAdjustAfter', index)"
                 :max="getMaxNumOfContact(param.exciteMod, false)">
-                <el-checkbox v-for="contact in getSideNegativeContact(param.limbSide)"
-                  :label="contact" :key="contact"
+                <el-checkbox v-for="(contact, i) in getSideNegativeContact(param.limbSide)"
+                  :label="contact" :key="'sideNegativeContact' + i"
                   :disabled="checkIfDisabledContact(param.exciteMod, contact, false)">
                 </el-checkbox>
               </el-checkbox-group>
@@ -931,16 +954,16 @@
             <td class="col w2" colspan="2">{{getLimbSide(param.limbSide)}}</td>
             <td class="col w3" colspan="3">
               <el-select v-model="param.exciteMod" :disabled="mode === VIEW_CURRENT_CARD">
-                <el-option v-for="option in getOptions('exciteMod')" :label="option.name"
-                  :value="option.code" :key="option.code"></el-option>
+                <el-option v-for="(option, i) in getOptions('exciteMod')" :label="option.name"
+                  :value="option.code" :key="'exciteMod' + i"></el-option>
               </el-select>
             </td>
             <td class="col w5" colspan="5">
               <el-checkbox-group v-model="firstDbsAdjustAfterParamPole[index].positive"
                 @change="updateParamPole('firstDbsAdjustAfter', index)"
                 :max="getMaxNumOfContact(param.exciteMod, true)">
-                <el-checkbox v-for="contact in getSidePositiveContact(param.limbSide)"
-                  :label="contact" :key="contact"
+                <el-checkbox v-for="(contact, i) in getSidePositiveContact(param.limbSide)"
+                  :label="contact" :key="'sidePositiveContact' + i"
                   :disabled="checkIfDisabledContact(param.exciteMod, contact, true)">
                 </el-checkbox>
               </el-checkbox-group>
@@ -949,8 +972,8 @@
               <el-checkbox-group v-model="firstDbsAdjustAfterParamPole[index].negative"
                 @change="updateParamPole('firstDbsAdjustAfter', index)"
                 :max="getMaxNumOfContact(param.exciteMod, false)">
-                <el-checkbox v-for="contact in getSideNegativeContact(param.limbSide)"
-                  :label="contact" :key="contact"
+                <el-checkbox v-for="(contact, i) in getSideNegativeContact(param.limbSide)"
+                  :label="contact" :key="'sideNegativeContact' + i"
                   :disabled="checkIfDisabledContact(param.exciteMod, contact, false)">
                 </el-checkbox>
               </el-checkbox-group>
