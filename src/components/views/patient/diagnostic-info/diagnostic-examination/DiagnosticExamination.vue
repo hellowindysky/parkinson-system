@@ -126,7 +126,7 @@
         </card>
       </extensible-panel>
 <!-- 接入设备监测 -->
-      <extensible-panel class="panel gait-posture-panel" :mode="mutableMode" :title="gaitPostureTitle" v-on:addNewCard="addGaitPosture" :editable="canEdit">
+      <!-- <extensible-panel class="panel gait-posture-panel" :mode="mutableMode" :title="gaitPostureTitle" v-on:addNewCard="addGaitPosture" :editable="canEdit">
         <card class="card gaitPosture-card" :class="cardWidth" :mode="mutableMode" v-for="(item,idx) in gaitPostureList" :key="idx"
           :title="item.title" v-on:editCurrentCard="editGaitPosture(item)" v-on:viewCurrentCard="viewGaitPosture(item)"
           v-on:deleteCurrentCard="deleteGaitPosture(item)">
@@ -143,7 +143,7 @@
             <span>{{""}}</span>
           </div>
         </card>
-      </extensible-panel>
+      </extensible-panel> -->
 <!-- 医学影像 -->
       <extensible-panel class="panel image-panel" :mode="mutableMode" :title="medicalImagingTitle" v-on:addNewCard="addImageRecord" :editable="canEdit">
         <card class="card image-card" :class="cardWidth" :mode="mutableMode" v-for="(item,idx) in medicalImagingList" :key="idx"
