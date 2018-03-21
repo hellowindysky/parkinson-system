@@ -208,7 +208,7 @@ import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import { deleteEmg, deleteBiochemical, deleteNeurologicCheck, deleteSleepMonitoring,
-  deleteGeneCheck, deleteImage, deleteVitalSigns, deleteGaitPosture} from 'api/patient.js';
+  deleteGeneCheck, deleteImage, deleteVitalSigns} from 'api/patient.js';
 // import { vueCopy } from 'utils/helper';
 
 import FoldingPanel from 'public/folding-panel/FoldingPanel';
@@ -509,26 +509,26 @@ export default {
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
-    addGaitPosture() {
-      // Bus.$emit(this.SHOW_GAITPOSTURE_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'gaitPostureModal', this.SHOW_GAITPOSTURE_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
-    },
-    viewGaitPosture(item) {
-      // Bus.$emit(this.SHOW_GAITPOSTURE_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit);
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'gaitPostureModal', this.SHOW_GAITPOSTURE_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit);
-    },
-    editGaitPosture(item) {
-      // Bus.$emit(this.SHOW_GAITPOSTURE_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit);
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'gaitPostureModal', this.SHOW_GAITPOSTURE_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit);
-    },
-    deleteGaitPosture(item) {
-      var patientGaitPosture = {id: item.id
-      };
-      Bus.$on(this.CONFIRM, () => {
-        deleteGaitPosture(patientGaitPosture).then(this._resolveDeletion, this._rejectDeletion);
-      });
-      Bus.$emit(this.REQUEST_CONFIRMATION);
-    },
+    // addGaitPosture() {
+    //   // Bus.$emit(this.SHOW_GAITPOSTURE_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
+    //   Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'gaitPostureModal', this.SHOW_GAITPOSTURE_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
+    // },
+    // viewGaitPosture(item) {
+    //   // Bus.$emit(this.SHOW_GAITPOSTURE_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit);
+    //   Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'gaitPostureModal', this.SHOW_GAITPOSTURE_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit);
+    // },
+    // editGaitPosture(item) {
+    //   // Bus.$emit(this.SHOW_GAITPOSTURE_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit);
+    //   Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'gaitPostureModal', this.SHOW_GAITPOSTURE_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit);
+    // },
+    // deleteGaitPosture(item) {
+    //   var patientGaitPosture = {id: item.id
+    //   };
+    //   Bus.$on(this.CONFIRM, () => {
+    //     deleteGaitPosture(patientGaitPosture).then(this._resolveDeletion, this._rejectDeletion);
+    //   });
+    //   Bus.$emit(this.REQUEST_CONFIRMATION);
+    // },
     _resolveDeletion() {
       // 如果成功删除记录，则重新发出请求，获取最新数据。同时解除 [确认对话框] 的 “确认” 回调函数
       Bus.$emit(this.UPDATE_CASE_INFO);
