@@ -123,6 +123,53 @@
             </span>
           </div>
         </div>
+        <!-- dd -->
+        <table class="table" v-if="milestoneNum===2&&(milestoneStatus===2||milestoneStatus===3)">
+          <thead>
+            <tr class="row title-row">
+              <th class="col wide-col">入选标准</th>
+              <th class="col">是</th>
+              <th class="col">否</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="row" v-for="(item,index) in beChosenStandard" :key="'standard'+index">
+              <td class="col">{{item.detailName}}</td>
+              <td class="col">
+                <span v-if="standardDetailOptions[index]&&standardDetailOptions[index].optionId===1">✔</span>
+                <!-- <el-radio class="radio" disabled v-model="standardDetailOptions[index].optionId" :label="1"></el-radio> -->
+              </td>
+              <td class="col">
+                <span v-if="standardDetailOptions[index]&&standardDetailOptions[index].optionId===0">✔</span>
+                <!-- <el-radio class="radio" disabled v-model="standardDetailOptions[index].optionId" :label='0'></el-radio> -->
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table class="table" v-if="milestoneNum===2">
+          <thead>
+            <tr class="row title-row">
+              <th class="col wide-col">排除标准</th>
+              <th class="col">是</th>
+              <th class="col">否</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="row" v-for="(item,index) in excludeStandard" :key="'standard'+index">
+              <td class="col">{{item.detailName}}</td>
+              <td class="col">
+                <span v-if="standardDetailOptions[beChosenStandard.length+index]&&standardDetailOptions[beChosenStandard.length+index].optionId===1">✔</span>
+                <!-- <el-radio class="radio" disabled v-model="standardDetailOptions[beChosenStandard.length+index].optionId" :label="1"></el-radio> -->
+              </td>
+              <td class="col">
+                <span v-if="standardDetailOptions[beChosenStandard.length+index]&&standardDetailOptions[beChosenStandard.length+index].optionId===0">✔</span>
+                <!-- <el-radio class="radio" disabled v-model="standardDetailOptions[beChosenStandard.length+index].optionId" :label='0'></el-radio> -->
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
       </div>
 
       <div class="button cancel-button" @click="cancel">取消</div>
@@ -145,27 +192,43 @@ export default {
       title: '处理意见',
       mode: '',
       milestoneNum: '',
+      milestoneStatus: '',
       remark: '',
       followUpType: '',
       followUpComplete: '',
       followUpReason: '',
       reasonDetail: '',
       followUpContinue: '',
-      nextTime: ''
+      nextTime: '',
+
+      standardDetailOptions: [],
+      beChosenStandard: [],
+      excludeStandard: []
     };
   },
   computed: {
     ...mapGetters([
+      'standardInfo',
       'typeGroup'
     ])
   },
   methods: {
+    updateTemplate() {
+      this.beChosenStandard = this.standardInfo.filter((item) => {
+        return item.standardId === 1;
+      });
+      this.excludeStandard = this.standardInfo.filter((item) => {
+        return item.standardId === 2;
+      });
+      this.updateScrollbar();
+    },
     showModal(cardOperation, item, showEdit) {
       this.completeInit = false;
       this.mode = cardOperation;
       this.showEdit = showEdit;
 
       this.milestoneNum = this.getMilestoneNum(item);
+      this.milestoneStatus = this.getStatus(item);
       this.remark = item.remark ? item.remark : '';
 
       var propertyList = ['followUpType', 'followUpComplete', 'followUpReason',
@@ -175,6 +238,8 @@ export default {
           ? item.followUpModel[property] : '';
       }
 
+      this.updateTemplate();
+      this.standardDetailOptions = item.patientStandards ? item.patientStandards : [];
       this.updateScrollbar();
     },
     cancel() {
@@ -187,6 +252,16 @@ export default {
         milestoneNum = Number(phase.split('.')[0]);
       }
       return milestoneNum;
+    },
+    getStatus(step) {
+      var phase = step.phase;
+      if (phase) {
+        var status = phase.split('.')[1];
+        if (status !== undefined) {
+          return Number(status);
+        }
+      }
+      return '';
     },
     transform(code, fieldName) {
       if (code === 1 && fieldName === 'taskStatus') {
@@ -363,6 +438,42 @@ export default {
           .warning .el-input__inner,
           .warning .el-textarea__inner {
             border: 1px solid red;
+          }
+        }
+      }
+      .table {
+        margin: 10px 0 20px;
+        width: 92%;
+        margin-left: calc(~"@{field-line-height} + 10px");
+        border: 1px solid @light-gray-color;
+        border-collapse: collapse;
+        text-align: center;
+        .row {
+          height: 35px;
+          font-size: @normal-font-size;
+          th {
+            font-weight: normal;
+          }
+          &.title-row {
+            background-color: @font-color;
+            color: #fff;
+          }
+          .col {
+            position: relative;
+            width: 10%;
+            border: 1px solid @light-gray-color;
+            &.wide-col {
+              width: 80%;
+              text-align: center !important;
+            }
+            &:first-child {
+              text-align: left;
+              padding-left:10px;
+            }
+            .el-radio__label {
+              font-size: 0;
+              padding-left: 0;
+            }
           }
         }
       }

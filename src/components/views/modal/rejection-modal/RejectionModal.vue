@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="rejection-modal-wrapper">
-    <div class="rejection-modal">
+    <div class="rejection-modal" ref="scrollArea">
       <h3 class="title">退回</h3>
       <div class="content">
         <div class="field whole-line">
@@ -36,8 +36,54 @@
             </el-input>
           </span>
         </div>
+
+        <div class="seperate-line"></div>
+
+        <h4 class="table-title">请根据患者评估情况选择</h4>
+        <table class="table">
+          <thead>
+            <tr class="row title-row">
+              <th class="col wide-col">入选标准</th>
+              <th class="col">是</th>
+              <th class="col">否</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="row" v-for="(item,index) in beChosenStandard" :key="index">
+              <td class="col">{{item.detailName}}</td>
+              <td class="col">
+                <el-radio class="radio" v-model="standardDetailOptions[index].optionId" :label="1"></el-radio>
+              </td>
+              <td class="col">
+                <el-radio class="radio" v-model="standardDetailOptions[index].optionId" :label='0'></el-radio>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table class="table">
+          <thead>
+            <tr class="row title-row">
+              <th class="col wide-col">排除标准</th>
+              <th class="col">是</th>
+              <th class="col">否</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="row" v-for="(item,index) in excludeStandard" :key="index">
+              <td class="col">{{item.detailName}}</td>
+              <td class="col">
+                <el-radio class="radio" v-model="standardDetailOptions[beChosenStandard.length+index].optionId" :label="1"></el-radio>
+              </td>
+              <td class="col">
+                <el-radio class="radio" v-model="standardDetailOptions[beChosenStandard.length+index].optionId" :label='0'></el-radio>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
       </div>
-      <div class="seperate-line"></div>
+
       <div class="button cancel-button" @click="cancel">取消</div>
       <div v-if="mode!==VIEW_CURRENT_CARD" class="button submit-button" @click="submit">确定</div>
       <div v-else-if="mode===VIEW_CURRENT_CARD && canEdit" class="button submit-button btn-margin" @click="switchToEditingMode">编辑</div>
@@ -46,7 +92,9 @@
 </template>
 
 <script>
+import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
+import { mapGetters } from 'vuex';
 import { rejectEnteringExperiment } from 'api/experiment';
 
 export default {
@@ -56,10 +104,16 @@ export default {
       completeInit: false,
       remark: '',
       doctor: '',
-      showEdit: true
+      showEdit: true,
+      standardDetailOptions: [],
+      beChosenStandard: [],
+      excludeStandard: []
     };
   },
   computed: {
+    ...mapGetters([
+      'standardInfo'
+    ]),
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients) && this.showEdit) {
         return true;
@@ -69,6 +123,26 @@ export default {
     }
   },
   methods: {
+    updateTemplate() {
+      this.beChosenStandard = this.standardInfo.filter((item) => {
+        return item.standardId === 1;
+      });
+      this.excludeStandard = this.standardInfo.filter((item) => {
+        return item.standardId === 2;
+      });
+      this.updateScrollbar();
+    },
+    initStandardOptions() {
+      this.updateTemplate();
+      this.beChosenStandard.forEach((item) => {
+        // this.$set(this.standardDetailOptions, index, {standardDetailId: item.id, optionId: 1});
+        this.standardDetailOptions.push({standardDetailId: item.id, optionId: ''});
+      });
+      this.excludeStandard.forEach((item) => {
+        // this.$set(this.standardDetailOptions, this.beChosenStandard.length + index, {standardDetailId: item.id, optionId: 0});
+        this.standardDetailOptions.push({standardDetailId: item.id, optionId: ''});
+      });
+    },
     showPanel(cardOperation, item, showEdit, doctor) {
       this.completeInit = false;
       this.mode = cardOperation;
@@ -77,6 +151,8 @@ export default {
 
       this.remark = '';
       this.doctor = doctor;
+
+      this.initStandardOptions();
 
       this.$nextTick(() => {
         for (var property in this.warningResults) {
@@ -123,7 +199,19 @@ export default {
       var experimentInfo = {
         remark: this.remark,
         patientId: this.$route.params.id,
-        tcTaskId: this.$store.state.subjectId
+        tcTaskId: this.$store.state.subjectId,
+        standardDetailOptions: Object.assign([], this.standardDetailOptions)
+      };
+      for (let item of experimentInfo.standardDetailOptions) {
+        if (!item.optionId && (item.optionId !== 0)) {
+          this.$message({
+            message: '请完成标准选择！',
+            type: 'warning',
+            duration: 2000
+          });
+          this.lockSubmitButton = false;
+          return;
+        }
       };
       rejectEnteringExperiment(experimentInfo).then(this.updateAndClose, this._handleError);
     },
@@ -147,6 +235,17 @@ export default {
       Bus.$emit(this.UPDATE_EXPERIMENT_INFO);
       this.lockSubmitButton = false;
       Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
+    },
+    updateScrollbar() {
+      this.$nextTick(() => {
+        if (this.$refs.scrollArea) {
+          Ps.destroy(this.$refs.scrollArea);
+          Ps.initialize(this.$refs.scrollArea, {
+            wheelSpeed: 1,
+            minScrollbarLength: 40
+          });
+        }
+      });
     }
   },
   mounted() {
@@ -267,6 +366,47 @@ export default {
           .warning .el-input__inner,
           .warning .el-textarea__inner {
             border: 1px solid red;
+          }
+        }
+      }
+      .table-title {
+        font-size: 14px;
+        font-weight: normal;
+        margin-left: 36px;
+      }
+      .table {
+        margin: 10px 0 20px;
+        width: 92%;
+        margin-left: calc(~"@{field-line-height} + 10px");
+        border: 1px solid @light-gray-color;
+        border-collapse: collapse;
+        text-align: center;
+        .row {
+          height: 35px;
+          font-size: @normal-font-size;
+          th {
+            font-weight: normal;
+          }
+          &.title-row {
+            background-color: @font-color;
+            color: #fff;
+          }
+          .col {
+            position: relative;
+            width: 10%;
+            border: 1px solid @light-gray-color;
+            &.wide-col {
+              width: 80%;
+              text-align: center !important;
+            }
+            &:first-child {
+              text-align: left;
+              padding-left:10px;
+            }
+            .el-radio__label {
+              font-size: 0;
+              padding-left: 0;
+            }
           }
         }
       }

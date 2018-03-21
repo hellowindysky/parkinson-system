@@ -211,6 +211,13 @@ const getters = {
     }
     return state.all.tableData.rhythm;
   },
+  standardInfo: (state) => {
+    // 实验表格
+    if (!state.all.tableData || !state.all.tableData.standardInfo) {
+      return [];
+    }
+    return state.all.tableData.standardInfo;
+  },
   typeGroup: (state) => {
     // 如果 state.all.typegroup 为 undefined，则返回一个空数组
     if (!state.all.typegroup) {
