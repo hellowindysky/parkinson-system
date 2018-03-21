@@ -151,6 +151,19 @@
           </span>
         </div>
 
+        <div class="field whole-line" v-if="copyInfo.elecExamType===1||copyInfo.elecExamType===2">
+          <span class="field-name">
+            备注:
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span class="warning-text"></span>
+            <span>{{copyInfo.remarks}}</span>
+          </span>
+          <span class="field-input" v-else>
+            <el-input v-model="copyInfo.remarks" placeholder="请输入备注信息" type="textarea" :maxlength="500"></el-input>
+          </span>
+        </div>
+
         <h3 class="form-title" v-if="tableMode===SON_OPEN && (copyInfo.elecExamType===1 || copyInfo.elecExamType===2)">
           {{currentTableName}}
         </h3>

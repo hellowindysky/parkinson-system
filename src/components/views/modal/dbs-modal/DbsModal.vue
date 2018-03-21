@@ -101,7 +101,72 @@
             </el-select>
           </span>
         </div>
-        <div class="field" v-show="copyInfo.isTakeMedication===1">
+        <table class="medicine-table" v-if="copyInfo.isTakeMedication===1">
+          <tr class="row title-row">
+            <td class="col">
+              <span v-if="mode!==VIEW_CURRENT_CARD && copyInfo.patientDbsMedicine.length < 15"
+                class="iconfont icon-plus" @click="addMedicine"></span>
+              序号
+            </td>
+            <td class="col">药物商品名</td>
+            <td class="col">规格</td>
+            <td class="col">日用量(片)</td>
+            <td class="col">日总剂量(mg)</td>
+            <td class="col">LEDD(mg)</td>
+          </tr>
+          <tr class="row" v-for="(medicine, index) in copyInfo.patientDbsMedicine">
+            <td class="col">
+              {{getLetterIndex(index)}}
+              <span v-if="mode!==VIEW_CURRENT_CARD" class="iconfont icon-remove"
+                @click="removeMedicine(index)"></span>
+            </td>
+            <td class="col">
+              <el-select v-model="medicine.medicineId" :disabled="mode===VIEW_CURRENT_CARD"
+                @change="selectMedicine(medicine)" :class="{'warning': !isMedicineValid(medicine)}" >
+                <el-option v-for="(option, i) in getOptions('medicineName')" :label="option.name"
+                  :value="option.code" :key="'medicineId'+i"></el-option>
+              </el-select>
+            </td>
+            <td class="col">
+              <el-select v-if="checkIfCommonMedicine(medicine.medicineId)"
+                v-model="medicine.medicalSpecUsed" :disabled="mode===VIEW_CURRENT_CARD">
+                <el-option v-for="option in getOptions('medicineSpec', medicine.medicineId)" :label="option.name"
+                  :value="option.code" :key="option.code"></el-option>
+              </el-select>
+              <el-input v-else v-model="medicine.medicalSpecUsed"
+                :disabled="mode===VIEW_CURRENT_CARD"
+                @blur="transformToNum(medicine, 'medicalSpecUsed')"></el-input>
+            </td>
+            <td class="col">
+              <span v-if="mode===VIEW_CURRENT_CARD">
+                {{medicine.takeDose}}
+              </span>
+              <el-input v-else v-model="medicine.takeDose"
+                @blur="transformToNum(medicine, 'takeDose')"></el-input>
+            </td>
+            <td class="col" :class="{'computed-cell': checkIfCommonMedicine(medicine.medicineId)}">
+              <span v-if="checkIfCommonMedicine(medicine.medicineId)">
+                {{getDayTotalDose(medicine)}}
+              </span>
+              <span v-else-if="mode===VIEW_CURRENT_CARD">
+                {{medicine.totalMeasure}}
+              </span>
+              <el-input v-else v-model="medicine.totalMeasure"
+                @blur="transformToNum(medicine, 'totalMeasure')"></el-input>
+            </td>
+            <td class="col" :class="{'computed-cell': checkIfCommonMedicine(medicine.medicineId)}">
+              <span v-if="checkIfCommonMedicine(medicine.medicineId)">
+                {{getLEDD(medicine)}}
+              </span>
+              <span v-else-if="mode===VIEW_CURRENT_CARD">
+                {{medicine.ledd}}
+              </span>
+              <el-input v-else v-model="medicine.ledd"
+                @blur="transformToNum(medicine, 'ledd', 4)"></el-input>
+            </td>
+          </tr>
+        </table>
+        <!-- <div class="field" v-show="copyInfo.isTakeMedication===1">
           <span class="field-name">服用药物</span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             {{copyInfo.medicationStatus}}
@@ -109,7 +174,7 @@
           <span class="field-input" v-else>
             <el-input v-model="copyInfo.medicationStatus" placeholder="请输入服用药物"></el-input>
           </span>
-        </div>
+        </div> -->
         <div class="field" v-show="modelType===1">
           <span class="field-name">微毁损效应</span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -172,12 +237,24 @@
         </div>
       </div>
 
+      <div class="form-tab-wrapper" v-show="modelType===1">
+        <span class="form-tab left" :class="{'on':currentFormSide==='left'}"
+          @click="chooseCurrentFormSide('left')">
+          左侧肢体
+          <span class="form-tab-bottom" :class="currentFormSide"></span>
+        </span>
+        <span class="form-tab right" :class="{'on':currentFormSide==='right'}"
+          @click="chooseCurrentFormSide('right')">
+          右侧肢体
+        </span>
+      </div>
+
       <div class="form-wrapper form0-wrapper" ref="form0" v-show="modelType===1">
-        <div class="form-left">
+        <div class="form-left" v-show="currentFormSide==='left'">
           <table class="form form0">
             <tr class="row top-row">
               <td class="col sort-info" colspan="16">
-                左侧肢体(右侧STN)触电疗效排序为:
+                左侧肢体(右侧STN)触点疗效排序为:
                 <span v-for="(contact, index) in getSideDeviceContact('left')">
                   <span v-show="index !== 0">&gt;</span>
                   <span class="contact narrow" v-if="mode===VIEW_CURRENT_CARD">
@@ -275,11 +352,11 @@
             </tr>
           </table>
         </div>
-        <div class="form-right">
+        <div class="form-right" v-show="currentFormSide==='right'">
           <table class="form form0">
             <tr class="row top-row">
               <td class="col sort-info" colspan="16">
-                右侧肢体(左侧STN)触电疗效排序为:
+                右侧肢体(左侧STN)触点疗效排序为:
                 <span v-for="(contact, index) in getSideDeviceContact('right')">
                   <span v-show="index !== 0">&gt;</span>
                   <span class="contact narrow" v-if="mode===VIEW_CURRENT_CARD">
@@ -414,7 +491,10 @@
           <tr class="row title-row">
             <td class="col w2" colspan="2">方案</td>
             <td class="col w2" colspan="2">肢体侧</td>
-            <td class="col w3" colspan="3">刺激模式</td>
+            <td class="col w3" colspan="3">
+              刺激模式
+              <span class="iconfont icon-question" @click="showMoreInfo"></span>
+            </td>
             <td class="col w5" colspan="5">正极</td>
             <td class="col w4" colspan="4">负极</td>
             <td class="col w1" colspan="1">频率<br></br>(Hz)</td>
@@ -521,7 +601,10 @@
                 v-show="copyInfo.followDbsParams.adjustVoltageParameter.length < 8 && mode!==VIEW_CURRENT_CARD"></span>
             </td>
             <td class="col w2" colspan="2">肢体侧</td>
-            <td class="col w3" colspan="3">刺激模式</td>
+            <td class="col w3" colspan="3">
+              刺激模式
+              <span class="iconfont icon-question" @click="showMoreInfo"></span>
+            </td>
             <td class="col w5" colspan="5">正极</td>
             <td class="col w4" colspan="4">负极</td>
             <td class="col w1" colspan="1">频率<br></br>(Hz)</td>
@@ -612,7 +695,10 @@
                 v-show="copyInfo.followDbsParams.adjustMoreParameter.length < 8 && mode!==VIEW_CURRENT_CARD"></span>
             </td>
             <td class="col w2" colspan="2">肢体侧</td>
-            <td class="col w3" colspan="3">刺激模式</td>
+            <td class="col w3" colspan="3">
+              刺激模式
+              <span class="iconfont icon-question" @click="showMoreInfo"></span>
+            </td>
             <td class="col w5" colspan="5">正极</td>
             <td class="col w4" colspan="5">负极</td>
             <td class="col w1" colspan="1">频率<br></br>(Hz)</td>
@@ -673,18 +759,22 @@
       <div class="form-wrapper" ref="form4" v-show="modelType===0">
         <table class="form form4">
           <tr class="row top-row">
-            <td class="col" colspan="22">
+            <td class="col" colspan="23">
               程控完成参数
             </td>
           </tr>
           <tr class="row title-row">
+            <td class="col w1" colspan="1">最终<br>参数</td>
             <td class="col w2" colspan="2">
               方案
               <span class="iconfont icon-plus" @click="addParam('followDbsAdjustAfter')"
                 v-show="copyInfo.followDbsParams.adjustAfterParameter.length < 8 && mode!==VIEW_CURRENT_CARD"></span>
             </td>
             <td class="col w2" colspan="2">肢体侧</td>
-            <td class="col w3" colspan="3">刺激模式</td>
+            <td class="col w3" colspan="3">
+              刺激模式
+              <span class="iconfont icon-question" @click="showMoreInfo"></span>
+            </td>
             <td class="col w5" colspan="5">正极</td>
             <td class="col w5" colspan="5">负极</td>
             <td class="col w1" colspan="1">频率<br></br>(Hz)</td>
@@ -694,6 +784,11 @@
             <td class="col w1" colspan="1">电流<br></br>(mA)</td>
           </tr>
           <tr class="row" v-for="(param, index) in copyInfo.followDbsParams.adjustAfterParameter">
+            <td class="col w1" colspan="1" rowspan="2" v-show="index % 2 === 0">
+              <el-checkbox v-model="followDbsAdjustAfterParameterChosenStatus[parseInt(index / 2, 10)]"
+                @change="checkAfterParameterChosenStatus('followDbs', parseInt(index / 2, 10))">
+              </el-checkbox>
+            </td>
             <td class="col w2" colspan="2" rowspan="2" v-show="index % 2 === 0">
               {{getFollowDbsAdjustAfterPlanName(param)}}
               <span class="iconfont icon-remove" v-show="mode!==VIEW_CURRENT_CARD" @click="removeParam(index, 'followDbsAdjustAfter')"></span>
@@ -742,18 +837,22 @@
       <div class="form-wrapper" ref="form5" v-show="modelType===1">
         <table class="form form4">
           <tr class="row top-row">
-            <td class="col" colspan="22">
+            <td class="col" colspan="23">
               开机完成参数
             </td>
           </tr>
           <tr class="row title-row">
+            <td class="col w1" colspan="1">最终<br>参数</td>
             <td class="col w2" colspan="2">
               方案
               <span class="iconfont icon-plus" @click="addParam('firstDbsAdjustAfter')"
                 v-show="copyInfo.firstDbsParams.adjustAfterParameter.length < 8 && mode !== VIEW_CURRENT_CARD"></span>
             </td>
             <td class="col w2" colspan="2">肢体侧</td>
-            <td class="col w3" colspan="3">刺激模式</td>
+            <td class="col w3" colspan="3">
+              刺激模式
+              <span class="iconfont icon-question" @click="showMoreInfo"></span>
+            </td>
             <td class="col w5" colspan="5">正极</td>
             <td class="col w5" colspan="5">负极</td>
             <td class="col w1" colspan="1">频率<br></br>(Hz)</td>
@@ -763,6 +862,11 @@
             <td class="col w1" colspan="1">电流<br></br>(mA)</td>
           </tr>
           <tr class="row" v-for="(param, index) in copyInfo.firstDbsParams.adjustAfterParameter">
+            <td class="col w1" colspan="1" rowspan="2" v-show="index % 2 === 0">
+              <el-checkbox v-model="firstDbsAdjustAfterParameterChosenStatus[parseInt(index / 2, 10)]"
+                @change="checkAfterParameterChosenStatus('firstDbs', parseInt(index / 2, 10))">
+              </el-checkbox>
+            </td>
             <td class="col w2" colspan="2" rowspan="2" v-show="index % 2 === 0">
               {{getFirstDbsAdjustAfterPlanName(param)}}
               <span class="iconfont icon-remove" v-show="mode !== VIEW_CURRENT_CARD" @click="removeParam(index, 'firstDbsAdjustAfter')"></span>
@@ -840,6 +944,7 @@ var dbsFirstModel = {
   'programDate': '',
   'isTakeMedication': '',
   'medicationStatus': '',
+  'patientDbsMedicine': [],
   'damageEffectExist': '',
   'damageEffectDuration': '',
   'adverseEventsExist': '',
@@ -848,9 +953,11 @@ var dbsFirstModel = {
   'rightContactEffectOrder': '',
   'remarks': '',
   'firstDbsParams': {
+    'adjustAfterParameterChoice': '',
     'adjustAfterParameter': []
   },
   'followDbsParams': {
+    'adjustAfterParameterChoice': '',
     'adjustAfterParameter': [],
     'adjustBeforeParameter': [],
     'adjustVoltageParameter': [],
@@ -864,6 +971,7 @@ var dbsFollowModel = {
   'programDate': '',
   'isTakeMedication': '',
   'medicationStatus': '',
+  'patientDbsMedicine': [],
   'complaint': '',
   'effectInfo': '',
   'adjustBeforeLeftSatisfaction': '',
@@ -903,13 +1011,19 @@ export default {
           return time.getTime() > Date.now();
         }
       },
+      currentFormSide: 'left',  // 用来控制显示是左侧表格还是右侧表格，默认显示左侧
       leftContactSortArray: [],
       rightContactSortArray: [],
+
       firstDbsAdjustAfterParamPole: [],
       followDbsAdjustAfterParamPole: [],
       followDbsAdjustBeforeParamPole: [],
       followDbsAdjustVoltageParamPole: [],
       followDbsAdjustMoreParamPole: [],
+
+      firstDbsAdjustAfterParameterChosenStatus: [],
+      followDbsAdjustAfterParameterChosenStatus: [],
+
       followDbsAdjustBeforeFirstSchemeOrder: '',
       lastProgramDate: '',
       lastDbsParameter: [],
@@ -920,7 +1034,8 @@ export default {
   computed: {
     ...mapGetters([
       'typeGroup',
-      'deviceInfo'
+      'deviceInfo',
+      'medicineInfo'
     ]),
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
@@ -1045,6 +1160,15 @@ export default {
         }
       };
 
+      // 然后检查药物表格有没有不符合规定的
+      for (let medicine of this.copyInfo.patientDbsMedicine) {
+        if (!this.isMedicineValid(medicine)) {
+          this.alertForCOMT();
+          this.lockSubmitButton = false;
+          return;
+        }
+      }
+
       // 如果直接操作 copyInfo，后面的 delete 操作可能会影响到数据绑定
       var submitData = deepCopy(this.copyInfo);
 
@@ -1150,6 +1274,17 @@ export default {
           this.copyInfo.remarks = remarks;
         }
       });
+
+      // 更换“是否首次开机”这个信息之后，需要对用药列表做相应的处理
+      for (let medicine of this.copyInfo.patientDbsMedicine) {
+        if (this.mode !== this.ADD_NEW_CARD && this.modelType === 0) {
+          delete medicine.patientDbsFirstId;
+          this.$set(medicine, 'patientDbsFollowId', this.copyInfo.patientDbsFollowId);
+        } else if (this.mode !== this.ADD_NEW_CARD && this.modelType === 1) {
+          delete medicine.patientDbsFollowId;
+          this.$set(medicine, 'patientDbsFirstId', this.copyInfo.patientDbsFirstId);
+        }
+      }
     },
     updateModelType(cb) {
       this.duringTogglingModelType = true;
@@ -1350,7 +1485,7 @@ export default {
       var value = Util.getElement('code', code, options).name;
       return value ? value : '';
     },
-    getOptions(fieldName) {
+    getOptions(fieldName, param) {
       // 这里的第二个参数不是必须的，在查询药物规格时会用到
       var options = [];
       var typeGroupCodeMap = {
@@ -1396,6 +1531,43 @@ export default {
               });
             }
           }
+        } else if (fieldName === 'medicineName') {
+          for (let medicine of this.medicineInfo) {
+            // 只有这个药物的药物规格中，存在某一个规格满足其 dbsCkUsed 属性为 1 的条件时，才把这个药加进来
+            let specGroup = medicine.spec ? medicine.spec : [];
+            for (let spec of specGroup) {
+              if (spec.dbsCkUsed === 1) {
+                options.push({
+                  name: medicine.medicineName,
+                  code: medicine.medicineId
+                });
+              }
+            }
+          }
+        } else if (fieldName === 'medicineSpec') {
+          // 药物规格要根据当前药物去找
+          var targetMedicineId = param;
+          var targetMedicine = Util.getElement('medicineId', targetMedicineId, this.medicineInfo);
+          let specGroup = targetMedicine.spec ? targetMedicine.spec : [];
+          for (let spec of specGroup) {
+            if (spec.dbsUsed === 1) {
+              options.push({
+                name: spec.specOral,
+                code: String(spec.medicalPec)  // 因为后端这里传的是字符串
+              });
+            }
+          }
+
+          // 如果是“其它”药物，则它的规格会作特殊处理
+          let unknownSpec = '其它规格';
+          if (!this.checkIfCommonMedicine(targetMedicineId)) {
+            options = [
+              {
+                name: unknownSpec,
+                code: 0
+              }
+            ];
+          }
         }
       }
       return options;
@@ -1430,10 +1602,219 @@ export default {
         }
       }
     },
+    chooseCurrentFormSide(side) {
+      this.currentFormSide = side;
+      this.updateScrollbar();
+    },
+    addMedicine() {
+      var index = this.copyInfo.patientDbsMedicine.length;
+      this.$set(this.copyInfo.patientDbsMedicine, index, {});
+      let propertyList = ['medicineId', 'medicalSpecUsed', 'takeDose', 'totalMeasure', 'ledd'];
+      for (let property of propertyList) {
+        this.$set(this.copyInfo.patientDbsMedicine[index], property, '');
+      }
+      if (this.mode !== this.ADD_NEW_CARD && this.modelType === 1) {
+        this.$set(this.copyInfo.patientDbsMedicine[index], 'patientDbsFirstId', this.copyInfo.patientDbsFirstId);
+      } else if (this.mode !== this.ADD_NEW_CARD && this.modelType === 0) {
+        this.$set(this.copyInfo.patientDbsMedicine[index], 'patientDbsFollowId', this.copyInfo.patientDbsFollowId);
+      }
+    },
+    getLetterIndex(index) {
+      return String.fromCharCode(index + 'A'.charCodeAt(0));
+    },
+    removeMedicine(index) {
+      this.copyInfo.patientDbsMedicine.splice(index, 1);
+    },
+    selectMedicine(medicine) {
+      // 因为可选的规格只有一个，会自动选上
+      medicine.medicalSpecUsed = '';
+
+      var medSpecificationOptions = this.getOptions('medicineSpec', medicine.medicineId);
+      medicine.medicalSpecUsed = medSpecificationOptions[0] ? medSpecificationOptions[0].code : '';
+
+      if (!this.checkIfCommonMedicine(medicine.medicineId)) {
+        // 如果是 “其它” 药物，则特殊处理
+        medicine.medicalSpecUsed = '';
+        medicine.takeDose = '';
+        medicine.totalMeasure = '';
+        medicine.ledd = '';
+      }
+
+      if (!this.isMedicineValid(medicine)) {
+        this.alertForCOMT();
+      }
+    },
+    isMedicineValid(medicine) {
+      // COMT 药物存在时，整个药物列表一定要有左旋多巴类制剂的药物存在，同时最多只能存在一个珂丹
+      // 截止 2.2版本，DBS药物列表里面的 COMT 抑制剂只有珂丹一种，所以这里的逻辑就是判断是不是只有一个 COMT 抑制剂
+      if (!this.checkIfCOMT(medicine.medicineId)) {
+        // 如果不是 COMT 抑制剂类药物，则直接返回 true，
+        return true;
+
+      } else {
+        // 如果是 COMT 抑制剂，则根据整个列表是否符合规则来返回 true 或 false
+        var hasLevodopa = false;
+        var amountOfCOMT = 0;
+        for (let eachMedicine of this.copyInfo.patientDbsMedicine) {
+          if (this.checkIfLevodopa(eachMedicine.medicineId)) {
+            hasLevodopa = true;
+          }
+          if (this.checkIfCOMT(eachMedicine.medicineId)) {
+            amountOfCOMT += 1;
+          }
+        }
+        return hasLevodopa && amountOfCOMT < 2;
+      }
+    },
+    getDayTotalDose(medicine) {
+      // 计算药物列表中，具体某一行的日总剂量
+      let spec = medicine.medicalSpecUsed;
+      let amount = medicine.takeDose;
+      medicine.totalMeasure = amount ? spec * amount : 0;
+      return medicine.totalMeasure;
+    },
+    getLEDD(medicine) {
+      let medicineId = medicine.medicineId;
+      let spec = medicine.medicalSpecUsed;
+      let amount = medicine.takeDose;
+
+      // 先对参数进行校验，如果参数不合法，则返回 0
+      if (medicineId === undefined || medicineId === '' || spec === undefined ||
+        spec === '' || isNaN(spec) || amount === undefined || amount === '' || isNaN(amount)) {
+        medicine.ledd = 0;
+        return 0;
+      }
+
+      spec = Number(spec);
+      amount = Number(amount);
+
+      var extraText = '';
+
+      var targetMedicine = Util.getElement('medicineId', medicineId, this.medicineInfo);
+      if (this.checkIfCOMT(medicineId)) {
+        medicine.ledd = 0;
+
+      } else {
+        // 计算其它所有药物中珂丹的总用量，
+        // 如果是 0片则本药物的 LEDD 不变，
+        // 如果是小于等于 0.5片，则增益 25%，
+        // 如果大于 0.5 片，则增益 33%
+        var totalCOMTDose = 0;
+        for (let eachMedicine of this.copyInfo.patientDbsMedicine) {
+          totalCOMTDose += this.checkIfCOMT(eachMedicine.medicineId) && eachMedicine.takeDose > 0
+            ? eachMedicine.takeDose : 0;
+        }
+
+        var gainRatio;
+        if (totalCOMTDose === 0) {
+          gainRatio = 0;
+        } else if (totalCOMTDose <= 0.5) {
+          gainRatio = 0.25;
+          extraText = ' (+25%)';
+        } else {
+          gainRatio = 0.33;
+          extraText = ' (+33%)';
+        }
+
+        var specGroup = targetMedicine.spec ? targetMedicine.spec : [];
+        var targetSpecInfo = Util.getElement('medicalPec', spec, specGroup);
+        var levodopaFactor = targetSpecInfo.levodopaFactor;
+        var ledd = levodopaFactor * amount * (1 + gainRatio);
+        medicine.ledd = Number(ledd.toFixed(4));
+      }
+      return medicine.ledd + extraText;
+    },
+    checkIfCOMT(medicineId) {
+      // 看是否为 COMT 抑制剂（如珂丹）
+      var targetMedicine = Util.getElement('medicineId', medicineId, this.medicineInfo);
+      return targetMedicine.medicalType === 3;
+    },
+    checkIfLevodopa(medicineId) {
+      // 看是否为左旋多巴类药物（如森福罗）
+      var targetMedicine = Util.getElement('medicineId', medicineId, this.medicineInfo);
+      return targetMedicine.medicalType === 0;
+    },
+    checkIfCommonMedicine(medicineId) {
+      // 检查是否为普通药物（即，非“其它”药物）
+      var targetMedicine = Util.getElement('medicineId', medicineId, this.medicineInfo);
+      return targetMedicine.medicalType !== 6;
+    },
+    transformToNum(obj, property, digit) {
+      // 如果填写的不是一个数字，则转换成一个空字符串，如果是一个数字，则将这个数字字符串转化为真正的数字
+      var value = obj[property];
+
+      var reg = new RegExp(/^[0-9]+\.{0,1}[0-9]{0,2}$/);
+      if (reg.test(value)) {
+        obj[property] = Number(value);
+      } else if (value !== '' && !isNaN(value)) {
+        digit = digit ? digit : 2;    // 如果第三个参数不传，就默认为2位小数
+        obj[property] = Number(Number(value).toFixed(digit));
+      } else {
+        obj[property] = '';
+      }
+    },
+    alertForCOMT() {
+      this.$message({
+        message: 'COMT抑制剂类药物需要和多巴胺类制剂类药物联合使用，而且珂丹类药物至多只能出现一组，' +
+          '请检查药物处方是否录入有误',
+        type: 'warning',
+        duration: 4000
+      });
+    },
+    showMoreInfo() {
+      // this.$alert('这是一段内容', '各刺激模式可选规则', {
+      //   confirmButtonText: '确定',
+      //   callback: () => {}
+      // });
+      const h = this.$createElement;
+      this.$msgbox({
+        title: '各刺激模式可选规则',
+        message: h('div', null, [
+          h('p', null, '1.单负：单负极刺激，脉冲发生器为正极（C+），选择电极的其中一个触点为负极进行电刺激。'),
+          h('br', null, ''),
+          h('p', null, '2.双极：双极刺激，不再选择脉冲发生器为正极，选择电极其中一个触点为正极，一个触点为负极。'),
+          h('br', null, ''),
+          h('p', null, '3.双负：双负极刺激，脉冲发生器为正极（C+），选择电极的其中2个触点均为负极进行电刺激。'),
+          h('br', null, ''),
+          h('p', null, '4.交叉电脉冲：交叉电脉冲刺激，每个电极选用两个触点进行交叉刺激，每个触点都可采用不同的刺激参数，如不同的电压或脉宽，但刺激频率相同（上限125Hz）'),
+          h('br', null, ''),
+          h('p', null, '5.复杂程控模式：采用多重复合模式进行刺激，如选用超过3个触点刺激（3负极，1正2负极等），或交叉电脉冲中设置了多触点刺激。')
+        ]),
+        showCancelButton: false,
+        confirmButtonText: '确定'
+      });
+    },
+    checkAfterParameterChosenStatus(dbsType, index) {
+      // 这个函数要检查，【开机完成参数／程控完成参数】表格的最左侧一栏，最终参数，是否有且仅有一个被选中了。
+      var targetAdjustAfterParameterChosenStatus = [];
+      if (dbsType === 'firstDbs') {
+        targetAdjustAfterParameterChosenStatus = this.firstDbsAdjustAfterParameterChosenStatus;
+      } else if (dbsType === 'followDbs') {
+        targetAdjustAfterParameterChosenStatus = this.followDbsAdjustAfterParameterChosenStatus;
+      }
+      var status = targetAdjustAfterParameterChosenStatus[index];
+      if (status) {
+        for (var i = 0; i < targetAdjustAfterParameterChosenStatus.length; i++) {
+          if (index !== i) {
+            targetAdjustAfterParameterChosenStatus[i] = false;
+          }
+        }
+      } else {
+        targetAdjustAfterParameterChosenStatus[index] = true;
+      }
+    },
     addParam(formType) {
       if (formType === 'firstDbsAdjustAfter') {
         let paramList = this.copyInfo.firstDbsParams.adjustAfterParameter;
         let count = paramList.length;
+
+        // 对表格的最左侧一列，最终参数，所对应的数组添加元素
+        if (count === 0) {
+          this.$set(this.firstDbsAdjustAfterParameterChosenStatus, 0, true);
+        } else {
+          this.$set(this.firstDbsAdjustAfterParameterChosenStatus, count / 2, false);
+        }
+
         let order = count / 2 + 1;
         let propertyList = ['exciteMod', 'negativePole', 'positivePole', 'frequency', 'pulseWidth', 'voltage', 'resistance', 'electric'];
         for (let limbSideNum of [1, 2]) {
@@ -1494,6 +1875,14 @@ export default {
       } else if (formType === 'followDbsAdjustAfter') {
         let paramList = this.copyInfo.followDbsParams.adjustAfterParameter;
         let count = paramList.length;
+
+        // 对表格的最左侧一列，最终参数，所对应的数组添加元素
+        if (count === 0) {
+          this.$set(this.followDbsAdjustAfterParameterChosenStatus, 0, true);
+        } else {
+          this.$set(this.followDbsAdjustAfterParameterChosenStatus, count / 2, false);
+        }
+
         let order = Math.floor(count / 2) + 1;
         let propertyList = ['exciteMod', 'negativePole', 'positivePole', 'frequency', 'pulseWidth', 'voltage', 'resistance', 'electric'];
         for (let limbSideNum of [1, 2]) {
@@ -1535,23 +1924,26 @@ export default {
       for (var i = 0; i < paramList.length; i++) {
         paramList[i].schemeOrder = Math.floor(i / 2) + 1;
       }
+
+      // 对表格的最左侧一列，最终参数，所对应的数组移除元素
+      var targetIndex = Math.floor(i / 2);
+      var deletedStatus = this.followDbsAdjustAfterParameterChosenStatus[targetIndex];
+      this.followDbsAdjustAfterParameterChosenStatus.splice(targetIndex, 1);
+      if (deletedStatus && this.followDbsAdjustAfterParameterChosenStatus.length > 0) {
+        this.followDbsAdjustAfterParameterChosenStatus[0] = true;
+      }
+
       this.updateCheckBoxModel(formType);
     },
     getFirstDbsAdjustAfterPlanName(param) {
       var order = param.schemeOrder;
-      if (order === 1) {
-        return '开机参数';
-      } else {
-        return '备选参数' + (order - 1);
-      }
+      var orderArr = ['A', 'B', 'C', 'D'];
+      return '程控参数' + orderArr[order - 1];
     },
     getFollowDbsAdjustBeforePlanName(param) {
       var order = param.schemeOrder;
-      if (order === 1) {
-        return '上次方案';
-      } else {
-        return '备选参数' + (order - 1);
-      }
+      var orderArr = ['A', 'B', 'C', 'D'];
+      return '程控参数' + orderArr[order - 1];
     },
     getFollowDbsAdjustMorePlanName(param) {
       var order = param.schemeOrder;
@@ -1563,11 +1955,8 @@ export default {
     },
     getFollowDbsAdjustAfterPlanName(param) {
       var order = param.schemeOrder;
-      if (order === 1) {
-        return '最后参数';
-      } else {
-        return '备选参数' + (order - 1);
-      }
+      var orderArr = ['A', 'B', 'C', 'D'];
+      return '程控参数' + orderArr[order - 1];
     },
     getLimbSide(sideNum) {
       if (sideNum === 1) {
@@ -1729,6 +2118,7 @@ export default {
 @long-field-name-width: 150px;
 @scroll-bar-height: 10px;
 @unit-width: 55px;
+@computed-cell-color: lighten(@font-color, 55%);
 
 .dbs-modal-wrapper {
   position: absolute;
@@ -1841,6 +2231,158 @@ export default {
           }
         }
       }
+      .medicine-table {
+        margin: 10px 0 20px;
+        width: 100%;
+        border: 1px solid @light-gray-color;
+        border-collapse: collapse;
+        text-align: center;
+        .row {
+          height: 35px;
+          font-size: @normal-font-size;
+          &.title-row {
+            background-color: @font-color;
+            color: #fff;
+          }
+          .col {
+            position: relative;
+            width: 10%;
+            border: 1px solid @light-gray-color;
+            .required-mark {
+              position: absolute;
+              right: 5px;
+              top: 8px;
+              color: red;
+              font-size: 25px;
+              vertical-align: middle;
+            }
+            &.title-col {
+              background-color: @font-color;
+              color: #fff;
+            }
+            &.computed-cell {
+              background-color: @computed-cell-color;
+              &.warning {
+                background-color: @alert-color;
+                color: #fff;
+              }
+              .warning-text {
+                position: absolute;
+                top: 35px;
+                left: 0;
+                color: @alert-color;
+                font-size: @small-font-size;
+              }
+            }
+            &.wide-col {
+              width: 30%;
+            }
+            &.narrow-col {
+              width: 5%;
+            }
+            .iconfont {
+              position: absolute;
+              left: 5px;
+              top: 9px;
+              cursor: pointer;
+              z-index: 20;
+              &.icon-remove {
+                color: @alert-color;
+              }
+              &:hover {
+                opacity: 0.6;
+              }
+              &:active {
+                opacity: 0.8;
+              }
+            }
+            .el-input {
+              width: 100%;
+              &.warning {
+                margin: -1px;
+                border: 1px solid red;
+              }
+              .el-input__inner {
+                padding: 0;
+                border: none;
+                text-align: center;
+              }
+              .el-input__icon {
+                &.el-icon-date {
+                  width: 12px;
+                  height: 12px;
+                  padding: 0 0 18px 10px;
+                  opacity: 0.3;
+                }
+                &.el-icon-close {
+                  width: 12px;
+                  height: 12px;
+                  padding: 0 0 18px 10px;
+                  color: @alert-color;
+                }
+              }
+              &.is-disabled {
+                .el-input__inner {
+                  background-color: rgba(0,0,0,0);
+                  color: @font-color;
+                }
+                .el-input__icon {
+                  display: none;
+                }
+              }
+            }
+            .el-select {
+              &.warning {
+                .el-input {
+                  margin: -1px;
+                  border: 1px solid red;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    .form-tab-wrapper {
+      position: relative;
+      height: 35px;
+      line-height: 35px;
+      font-size: 0;
+      transform: translateY(5px);
+      .form-tab {
+        display: inline-block;
+        position: relative;
+        width: 100px;
+        font-weight: bold;
+        font-size: @normal-font-size;
+        color: @light-font-color;
+        cursor: pointer;
+        &.on {
+          color: @font-color;
+        }
+        &:hover {
+          opacity: 0.8;
+        }
+        &:active {
+          opacity: 0.9;
+        }
+      }
+      .form-tab-bottom {
+        display: inline-block;
+        position: absolute;
+        width: 80px;
+        height: 2px;
+        bottom: 0;
+        left: 0;
+        background-color: @font-color;
+        transition: 0.2s;
+        &.left {
+          transform: translate3d(10px, 0, 0);
+        }
+        &.right {
+          transform: translate3d(110px, 0, 0);
+        }
+      }
     }
     .form-wrapper {
       position: relative;
@@ -1849,15 +2391,15 @@ export default {
       padding-bottom: 10px;
       overflow: hidden;
       &.form0-wrapper {
-        text-align: left;
+        // text-align: left;
       }
       .form-left, .form-right {
         display: inline-block;
       }
       .form-right {
-        position: absolute; // 这里利用两个表格高度相等，只定义一个为 absolute，从而避免容器坍塌
-        left: @unit-width * 17;
-        top: 0;
+        // position: absolute; // 这里利用两个表格高度相等，只定义一个为 absolute，从而避免容器坍塌
+        // left: @unit-width * 17;
+        // top: 0;
       }
       .form {
         margin: 10px auto 0;
@@ -1879,7 +2421,7 @@ export default {
           width: @unit-width * 22;
         }
         &.form4 {
-          width: @unit-width * 22;
+          width: @unit-width * 23;
         }
         .row {
           height: 35px;
@@ -1899,6 +2441,9 @@ export default {
               position: absolute;
               right: 5px;
               cursor: pointer;
+              &.icon-question {
+                right: 10px;
+              }
               &:hover {
                 opacity: 0.6;
               }
@@ -1960,6 +2505,14 @@ export default {
                 .el-checkbox__inner {
                   background-color: @light-font-color;
                   border-color: @light-font-color;
+                }
+              }
+              .el-checkbox {
+                .el-checkbox__label {
+                  color: @light-font-color;
+                }
+                .is-checked + .el-checkbox__label {
+                  color: @font-color;
                 }
               }
             }

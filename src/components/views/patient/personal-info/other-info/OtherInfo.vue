@@ -384,15 +384,15 @@ export default {
     },
     addMedRecord() {
       // Bus.$emit(this.SHOW_MODAL_BOX, this.ADD_NEW_CARD, '新增用药史', {}, this.MEDICINE_HISTORY_MODAL);
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'modalBox', this.SHOW_MODAL_BOX, this.ADD_NEW_CARD, '新增用药史', {}, this.MEDICINE_HISTORY_MODAL);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'modalBox', this.SHOW_MODAL_BOX, this.ADD_NEW_CARD, '新增其他用药史', {}, this.MEDICINE_HISTORY_MODAL);
     },
     viewMedRecord(item) {
       // Bus.$emit(this.SHOW_MODAL_BOX, this.VIEW_CURRENT_CARD, '用药史', item, this.MEDICINE_HISTORY_MODAL);
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'modalBox', this.SHOW_MODAL_BOX, this.VIEW_CURRENT_CARD, '用药史', item, this.MEDICINE_HISTORY_MODAL);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'modalBox', this.SHOW_MODAL_BOX, this.VIEW_CURRENT_CARD, '其他用药史', item, this.MEDICINE_HISTORY_MODAL);
     },
     editMedRecord(item) {
       // Bus.$emit(this.SHOW_MODAL_BOX, this.EDIT_CURRENT_CARD, '用药史', item, this.MEDICINE_HISTORY_MODAL);
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'modalBox', this.SHOW_MODAL_BOX, this.EDIT_CURRENT_CARD, '用药史', item, this.MEDICINE_HISTORY_MODAL);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'modalBox', this.SHOW_MODAL_BOX, this.EDIT_CURRENT_CARD, '其他用药史', item, this.MEDICINE_HISTORY_MODAL);
     },
     deleteMedRecord(item) {
       var patientMed = {

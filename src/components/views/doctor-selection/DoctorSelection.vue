@@ -206,14 +206,21 @@ export default {
       this.updateDoctorList(condition);
     },
     clickDoctorCard(doctor) {
-      this.dynamicArr = [this.SHOW_MESSAGE_MODAL, 4, '提醒', '需要医生验证后才能为其提供技术支持', doctor.mobileNumber];
-      this.componentName = 'messageModal';
-      // Bus.$emit(this.SHOW_MESSAGE_MODAL, 4, '提醒', '需要医生验证后才能为其提供技术支持', doctor.mobileNumber);
+      // 0表示不需要验证,1表示需要验证
+      var verifyStatus = doctor.verifyStatus;
 
-      Bus.$off(this.PERMIT_SUPPORT_THE_DOCTOR);
-      Bus.$on(this.PERMIT_SUPPORT_THE_DOCTOR, () => {
+      if (verifyStatus === 0) {
         this.selectDoctor(doctor);
-      });
+
+      } else if (verifyStatus === 1) {
+        this.dynamicArr = [this.SHOW_MESSAGE_MODAL, 4, '提醒', '需要医生验证后才能为其提供技术支持', doctor.mobileNumber];
+        this.componentName = 'messageModal';
+
+        Bus.$off(this.PERMIT_SUPPORT_THE_DOCTOR);
+        Bus.$on(this.PERMIT_SUPPORT_THE_DOCTOR, () => {
+          this.selectDoctor(doctor);
+        });
+      }
     },
     selectDoctor(doctor) {
       var commonRequest = JSON.parse(sessionStorage.getItem('commonRequest'));
