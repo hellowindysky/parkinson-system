@@ -2651,7 +2651,7 @@ export default {
                   color: @light-font-color;
                 }
                 .is-checked + .el-checkbox__label {
-                  color: @font-color;
+                  color: darken(@font-color, 20%);
                 }
               }
             }
