@@ -1215,6 +1215,11 @@ export default {
             this.firstDbsAdjustAfterParameterChosenStatus.push(status);
           }
 
+          // 如果开机完成参数列表为空，则默认添加一行
+          if (this.copyInfo.firstDbsParams.adjustAfterParameter.length === 0) {
+            this.addParam('firstDbsAdjustAfter');
+          }
+
           this.$nextTick(() => {
             this.completeInit = true; // 放在 nextTick 中，才不会触发 changeDevice()
           });
@@ -1237,6 +1242,11 @@ export default {
           for (var i = 0; i < length; i++) {
             var status = followDbsAdjustAfterParameterChosenIndex === i;
             this.followDbsAdjustAfterParameterChosenStatus.push(status);
+          }
+
+          // 如果程控完成参数列表为空，则默认添加一行
+          if (this.copyInfo.followDbsParams.adjustAfterParameter.length === 0) {
+            this.addParam('followDbsAdjustAfter');
           }
 
           this.$nextTick(() => {
@@ -1446,6 +1456,13 @@ export default {
           delete medicine.patientDbsFollowId;
           this.$set(medicine, 'patientDbsFirstId', this.copyInfo.patientDbsFirstId);
         }
+      }
+
+      // 然后对调整后参数列表做一个默认的添加
+      if (this.modelType === 1 && this.copyInfo.firstDbsParams.adjustAfterParameter.length === 0) {
+        this.addParam('firstDbsAdjustAfter');
+      } else if (this.modelType === 0 && this.copyInfo.followDbsParams.adjustAfterParameter.length === 0) {
+        this.addParam('followDbsAdjustAfter');
       }
     },
     updateModelType(cb) {
