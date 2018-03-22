@@ -46,6 +46,27 @@
         重置
       </div>
     </div>
+    <div class="menu-bar" ref="menuBar">
+      <el-tabs v-model="activeTab" @tab-click="handleClick" v-if="type==='dataEntryDetail'">
+        <el-tab-pane label="录入有效分析" name="first">
+          1
+        </el-tab-pane>
+      </el-tabs>
+      <el-tabs v-model="activeTab" @tab-click="handleClick" v-if="type==='historyStatistics'">
+        <el-tab-pane label="当期录入有效分析" name="second">
+          2
+        </el-tab-pane>
+        <el-tab-pane label="当期录入明细" name="third">
+          3
+        </el-tab-pane>
+        <el-tab-pane label="当期量表明细" name="fourth">
+          4
+        </el-tab-pane>
+      </el-tabs>
+    </div>
+    <div class="form-wrapper" ref="formWrapper">
+
+    </div>
   </div>
 </template>
 
@@ -61,7 +82,8 @@ export default {
         disabledDate(time) {
           return time.getTime() > Date.now();
         }
-      }
+      },
+      activeTab: 'first'
     };
   },
   computed: {
@@ -73,6 +95,38 @@ export default {
       } else {
         return '';
       }
+    }
+  },
+  methods: {
+    handleClick(tab, event) {
+      console.log(tab, event);
+    },
+    modifyFormWrapperTop() {
+      this.$nextTick(() => {
+        var refs = this.$refs;
+        var menuBar = refs ? refs.menuBar : null;
+        var formWrapper = refs ? refs.formWrapper : null;
+        if (menuBar && formWrapper) {
+          var top = menuBar.offsetTop + 40;
+          formWrapper.style.top = top + 'px';
+        }
+      });
+    }
+  },
+  mounted() {
+    setTimeout(() => {
+      this.modifyFormWrapperTop();
+    }, 1000);
+
+  },
+  watch: {
+    type(newVal) {
+      if (newVal === 'dataEntryDetail') {
+        this.activeTab = 'first';
+      } else if (newVal === 'historyStatistics') {
+        this.activeTab = 'second';
+      }
+      this.modifyFormWrapperTop();
     }
   }
 };
@@ -172,6 +226,47 @@ export default {
         opacity: 0.8;
       }
     }
+  }
+  .menu-bar {
+    width: 100%;
+    margin: 10px 0 0 0;
+    // padding: 10px 20px;
+    height: 40px;
+    box-sizing: border-box;
+    background-color: #fff;
+    text-align: left;
+    .el-tabs__header {
+      margin-bottom: 0;
+      .el-tabs__item {
+        height: 40px;
+        font-size: @large-font-size;
+        font-weight: bold;
+        color: @light-font-color;
+        &.is-active {
+          color: @button-color;
+        }
+      }
+      .el-tabs__active-bar {
+        background-color: @button-color;
+      }
+    }
+    .el-tabs__content {
+      display: none;
+    }
+    .tab {
+      font-size: @large-font-size;
+      font-weight: bold;
+      color: @light-font-color;
+      cursor: pointer;
+    }
+  }
+  .form-wrapper {
+    position: absolute;
+    top: 100%;
+    bottom: 0;
+    left: 15px;
+    right: 15px;
+    background-color: #fff;
   }
 }
 </style>
