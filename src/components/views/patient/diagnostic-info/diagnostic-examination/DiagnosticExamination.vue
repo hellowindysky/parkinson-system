@@ -153,6 +153,27 @@
           </div>
         </card>
       </extensible-panel>
+
+      <!-- 接入设备监测 -->
+      <!-- <extensible-panel class="panel gait-posture-panel" :mode="mutableMode" :title="gaitPostureTitle" v-on:addNewCard="addGaitPosture" :editable="canEdit">
+        <card class="card gaitPosture-card" :class="cardWidth" :mode="mutableMode" v-for="(item,idx) in gaitPostureList" :key="idx"
+          :title="item.title" v-on:editCurrentCard="editGaitPosture(item)" v-on:viewCurrentCard="viewGaitPosture(item)"
+          v-on:deleteCurrentCard="deleteGaitPosture(item)">
+          <div class="text first-line">
+            <span class="name">类型</span>
+            <span>{{""}}</span>
+          </div>
+          <div class="text second-line">
+            <span class="name">编号</span>
+            <span>{{""}}</span>
+          </div>
+          <div class="text third-line">
+            <span class="name">日期</span>
+            <span>{{""}}</span>
+          </div>
+        </card>
+      </extensible-panel> -->
+
       <!-- 医学影像 -->
       <extensible-panel class="panel image-panel" :mode="mutableMode"
         :title="medicalImagingTitle" :editable="canEdit"
@@ -187,7 +208,7 @@ import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import { deleteEmg, deleteBiochemical, deleteNeurologicCheck, deleteSleepMonitoring,
-  deleteGeneCheck, deleteImage, deleteVitalSigns } from 'api/patient.js';
+  deleteGeneCheck, deleteImage, deleteVitalSigns} from 'api/patient.js';
 // import { vueCopy } from 'utils/helper';
 
 import FoldingPanel from 'public/folding-panel/FoldingPanel';
@@ -243,6 +264,12 @@ export default {
         return [];
       }
     },
+    gaitPostureList: {
+      type: Array,
+      default: () => {
+        return [];
+      }
+    },
     medicalImagingList: {
       type: Array,
       default: () => {
@@ -293,6 +320,9 @@ export default {
     neuroelectricTitle() {
       let count = this.emgList.length + this.sleepMonitoringList.length + this.electricImagingList.length;
       return '电生理检查（' + count + '条记录）';
+    },
+    gaitPostureTitle() {
+      return '接入设备监测（' + this.gaitPostureList.length + '条记录）';
     },
     medicalImagingTitle() {
       return '医学影像（' + this.medicalImagingList.length + '条记录）';
@@ -479,6 +509,26 @@ export default {
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
+    // addGaitPosture() {
+    //   // Bus.$emit(this.SHOW_GAITPOSTURE_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
+    //   Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'gaitPostureModal', this.SHOW_GAITPOSTURE_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
+    // },
+    // viewGaitPosture(item) {
+    //   // Bus.$emit(this.SHOW_GAITPOSTURE_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit);
+    //   Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'gaitPostureModal', this.SHOW_GAITPOSTURE_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit);
+    // },
+    // editGaitPosture(item) {
+    //   // Bus.$emit(this.SHOW_GAITPOSTURE_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit);
+    //   Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'gaitPostureModal', this.SHOW_GAITPOSTURE_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit);
+    // },
+    // deleteGaitPosture(item) {
+    //   var patientGaitPosture = {id: item.id
+    //   };
+    //   Bus.$on(this.CONFIRM, () => {
+    //     deleteGaitPosture(patientGaitPosture).then(this._resolveDeletion, this._rejectDeletion);
+    //   });
+    //   Bus.$emit(this.REQUEST_CONFIRMATION);
+    // },
     _resolveDeletion() {
       // 如果成功删除记录，则重新发出请求，获取最新数据。同时解除 [确认对话框] 的 “确认” 回调函数
       Bus.$emit(this.UPDATE_CASE_INFO);

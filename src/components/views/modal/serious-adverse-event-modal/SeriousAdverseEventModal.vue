@@ -1,6 +1,6 @@
 <template lang="html">
-  <div class="adverse-event-modal-wrapper">
-    <div class="adverse-event-modal" ref="scrollArea">
+  <div class="serious-adverse-event-modal-wrapper">
+    <div class="serious-adverse-event-modal" ref="scrollArea">
       <h3 class="title">{{title}}</h3>
       <div class="content">
         <div class="field whole-line">
@@ -23,28 +23,25 @@
         </div>
         <div class="field whole-line">
           <span class="field-name">
-            不良事件描述:
-            <span class="required-mark">*</span>
+            SAE 情况:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            {{adverseDescribe}}
+           {{translateToName()}}
           </span>
           <span class="field-input" v-else>
-            <span class="warning-text event-text">{{warningResults.adverseDescribe}}</span>
-            <el-input
-              v-model="adverseDescribe"
-              :class="{'warning': warningResults.adverseDescribe}"
-              type="textarea"
-              :rows="2"
-              :maxlength="500"
-              @change="updateWarning('adverseDescribe')"
-              placeholder="请输入不良事件描述">
-            </el-input>
+            <div class="serious-adverse-event">
+              <el-checkbox v-for="(item, index) in getOptions('seriousAdverse')"
+                v-model="seriousAdverseEvents[index]"
+                :key="item.code"
+                :label="item.name"
+                :disabled="mode===VIEW_CURRENT_CARD">
+              </el-checkbox>
+            </div>
           </span>
         </div>
         <div class="field">
           <span class="field-name">
-            发生时间:
+            SAE发生时间:
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -56,7 +53,7 @@
               v-model="occurTime"
               :class="{'warning': warningResults.occurTime}"
               type="datetime"
-              placeholder="请选择发生时间"
+              placeholder="请选择SAE发生时间"
               :picker-options="pickerOptions"
               @change="updateWarning('occurTime')">
             </el-date-picker>
@@ -64,7 +61,7 @@
         </div>
          <div class="field">
           <span class="field-name">
-            结束时间:
+            获知SAE时间:
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -76,36 +73,10 @@
               v-model="occurTime"
               :class="{'warning': warningResults.occurTime}"
               type="datetime"
-              placeholder="请选择结束时间"
+              placeholder="请选择SAE获知时间"
               :picker-options="pickerOptions"
               @change="updateWarning('occurTime')">
             </el-date-picker>
-          </span>
-        </div>
-        <div class="field">
-          <span class="field-name">
-            实验编号:
-          </span>
-          <span class="field-input">
-            {{patientTaskCode}}
-          </span>
-        </div>
-        <div class="field">
-          <span class="field-name">
-           不良事件程度:
-          </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{transform(severity,'adverseSeverity')}}</span>
-          </span>
-          <span class="field-input" v-else>
-            <el-select v-model="severity" clearable placeholder="请选择">
-              <el-option
-                v-for="item in getOptions('adverseSeverity')"
-                :key="item.code"
-                :label="item.name"
-                :value="item.code">
-              </el-option>
-            </el-select>
           </span>
         </div>
         <div class="field">
@@ -118,41 +89,6 @@
           <span class="field-input" v-else>
             <el-select clearable placeholder="请选择">
               <el-option>
-              </el-option>
-            </el-select>
-          </span>
-        </div>
-        <div class="field whole-line">
-          <span class="field-name">
-            表&nbsp;&nbsp;&nbsp;&nbsp;现:
-          </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            {{remark}}
-          </span>
-          <span class="field-input" v-else>
-            <el-input
-              v-model="remark"
-              type="textarea"
-              :rows="2"
-              :maxlength="500"
-              placeholder="请输入后遗症表现">
-            </el-input>
-          </span>
-        </div>
-        <div class="field">
-          <span class="field-name">
-           严重不良事件:
-          </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{transform(seriousFlag,'digitYN')}}</span>
-          </span>
-          <span class="field-input" v-else>
-            <el-select v-model="seriousFlag" clearable placeholder="请选择">
-              <el-option
-                v-for="item in getOptions('digitYN')"
-                :key="item.code"
-                :label="item.name"
-                :value="item.code">
               </el-option>
             </el-select>
           </span>
@@ -173,7 +109,7 @@
         </div>
         <div class="field">
           <span class="field-name">
-           纠正治疗:
+           后遗症:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span>{{""}}</span>
@@ -185,9 +121,29 @@
             </el-select>
           </span>
         </div>
+        <div class="field">
+          <span class="field-name">
+            症状消失时间:
+            <span class="required-mark">*</span>
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span>{{occurTime}}</span>
+          </span>
+          <span class="field-input" v-else>
+            <span class="warning-text">{{warningResults.occurTime}}</span>
+            <el-date-picker
+              v-model="occurTime"
+              :class="{'warning': warningResults.occurTime}"
+              type="datetime"
+              placeholder="请选择死亡时间"
+              :picker-options="pickerOptions"
+              @change="updateWarning('occurTime')">
+            </el-date-picker>
+          </span>
+        </div>
         <div class="field whole-line">
           <span class="field-name">
-            治疗记录:
+            表&nbsp;&nbsp;&nbsp;&nbsp;现:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             {{remark}}
@@ -198,13 +154,50 @@
               type="textarea"
               :rows="2"
               :maxlength="500"
-              placeholder="请输入纠正治疗记录">
+              placeholder="请输入后遗症表现">
+            </el-input>
+          </span>
+        </div>
+        <div class="field whole-line">
+          <span class="field-name">
+            直接死因:
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            {{remark}}
+          </span>
+          <span class="field-input" v-else>
+            <el-input
+              v-model="remark"
+              type="textarea"
+              :rows="2"
+              :maxlength="500"
+              placeholder="请输入直接死因">
             </el-input>
           </span>
         </div>
         <div class="field">
           <span class="field-name">
-           因此退出实验:
+            死亡时间:
+            <span class="required-mark">*</span>
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span>{{occurTime}}</span>
+          </span>
+          <span class="field-input" v-else>
+            <span class="warning-text">{{warningResults.occurTime}}</span>
+            <el-date-picker
+              v-model="occurTime"
+              :class="{'warning': warningResults.occurTime}"
+              type="datetime"
+              placeholder="请选择死亡时间"
+              :picker-options="pickerOptions"
+              @change="updateWarning('occurTime')">
+            </el-date-picker>
+          </span>
+        </div>
+        <div class="field">
+          <span class="field-name">
+           国内SAE报告情况:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span>{{""}}</span>
@@ -216,6 +209,34 @@
             </el-select>
           </span>
         </div>
+        <div class="field">
+          <span class="field-name">
+           国外SAE报告情况:
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span>{{""}}</span>
+          </span>
+          <span class="field-input" v-else>
+            <el-select clearable placeholder="请选择">
+              <el-option>
+              </el-option>
+            </el-select>
+          </span>
+        </div>
+        <table class="table">
+          <tr class="row title-row">
+            <td class="col col-width-35">与研究器械的关联性评价</td>
+            <td class="col col-width-10">是</td>
+            <td class="col col-width-10">否</td>
+            <td class="col col-width-15">不清楚</td>
+          </tr>
+          <tr class="row">
+            <td class="col col-width-35">{{""}}</td>
+            <td class="col col-width-10">{{""}}</td>
+            <td class="col col-width-10">{{""}}</td>
+            <td class="col col-width-15"></td>
+          </tr>
+        </table>
         <div class="field">
           <span class="field-name">
            是否揭盲:
@@ -248,12 +269,28 @@
             </el-date-picker>
           </span>
         </div>
+        <div class="field whole-line">
+          <span class="field-name">
+            SAE发生及处理详情:
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            {{remark}}
+          </span>
+          <span class="field-input" v-else>
+            <el-input
+              v-model="remark"
+              type="textarea"
+              :rows="2"
+              :maxlength="500"
+              placeholder="请输入SAE发生及处理详情">
+            </el-input>
+          </span>
+        </div>
       </div>
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
       <div v-if="mode!==VIEW_CURRENT_CARD" class="button submit-button" @click="submit">确定</div>
-      <div class="button text1-button "  v-else-if="mode!==VIEW_CURRENT_CARD" @click="submit">继续记录严重不良事件</div>
-      <div v-else="mode===VIEW_CURRENT_CARD && showEdit" class="button submit-button btn-margin" @click="switchToEditingMode">编辑</div>
+      <div v-else-if="mode===VIEW_CURRENT_CARD && showEdit" class="button submit-button btn-margin" @click="switchToEditingMode">编辑</div>
     </div>
   </div>
 </template>
@@ -266,12 +303,13 @@ import { deepCopy, vueCopy, reviseMinuteFormat, pruneObj } from 'utils/helper';
 import { getPatientSimpleInfo, addAdverseEvent, modifyAdverseEvent } from 'api/patient.js';
 
 export default {
+  props: {
+  },
   data() {
     return {
       mode: '',
       completeInit: false,
       patientTaskCode: '',
-
       patientAdverse: '',
       patientAdverseId: '',
       occurTime: '',
@@ -291,6 +329,8 @@ export default {
       adverseEffect: '',
       medicineMethod: '',
       hasNoReaction: '',
+      foldedConditionalContentMeasures: false,
+      foldedConditionalContentEndEvents: false,
       adjointMedicine: [
         {
           'medicineName': '',
@@ -324,9 +364,9 @@ export default {
     ]),
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
-        return '新增不良事件';
+        return '新增严重不良事件';
       } else {
-        return '不良事件';
+        return '严重不良事件';
       }
     }
   },
@@ -589,7 +629,7 @@ export default {
   },
   mounted() {
     // 先在本组件注册该事件，等待Layout组件接收动态组件挂载完毕的通知，再在本组件执行 showPanel 或 showModal
-    Bus.$on(this.SHOW_ADVERSE_EVENT_MODAL, this.showPanel);
+    Bus.$on(this.SHOW_SERIOUS_ADVERSE_EVENT_MODAL, this.showPanel);
 
     // 动态组件挂载完毕，通知Layout组件，动态组件已挂载完毕
     Bus.$emit(this.DYNAMIC_COMPONENT_MOUNTED);
@@ -597,7 +637,7 @@ export default {
     this.initSeriousAdverseEvents();
   },
   beforeDestroy() {
-    Bus.$off(this.SHOW_ADVERSE_EVENT_MODAL);
+    Bus.$off(this.SHOW_SERIOUS_ADVERSE_EVENT_MODAL);
   },
   watch: {
     typeGroup() {
@@ -620,7 +660,7 @@ export default {
 @unit-width: 54px;
 @computed-cell-color: lighten(@font-color, 55%);
 
-.adverse-event-modal-wrapper {
+.serious-adverse-event-modal-wrapper {
   position: absolute;
   left: 0;
   top: 0;
@@ -628,7 +668,7 @@ export default {
   height: 100%;
   background-color: fadeout(@light-font-color, 30%);
   z-index: 500;
-  .adverse-event-modal {
+  .serious-adverse-event-modal {
     position: relative;
     margin: auto;
     padding: 0 40px;
@@ -752,7 +792,7 @@ export default {
         margin-bottom: -4px;
       }
       .table {
-        margin: 10px 20px;
+        margin: 10px 0;
         width: 100%;
         border: 1px solid @light-gray-color;
         border-collapse: collapse;
@@ -775,6 +815,15 @@ export default {
               color: red;
               font-size: 25px;
               vertical-align: middle;
+            }
+            &.col-width-10 {
+              width: 10%;
+            }
+            &.col-width-15 {
+              width: 15%;
+            }
+            &.col-width-35 {
+              width: 35%;
             }
             &.title-col {
               background-color: @font-color;
@@ -908,10 +957,6 @@ export default {
         background-color: @light-font-color;
       }
       &.submit-button {
-        background-color: @button-color;
-      }
-      &.text1-button {
-        width: 200px;
         background-color: @button-color;
       }
       &:hover {
