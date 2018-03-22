@@ -264,13 +264,14 @@
               {{getRealName(scale.scaleInfo, 'unifyScale')}}
             </td>
             <td class="col">
-              <span v-if="mode===VIEW_CURRENT_CARD">{{getFieldValue(scale.bodyStatus, 'bodyStatus')}}</span>
-              <el-select v-else v-model="scale.bodyStatus"
+              {{getFieldValue(scale.bodyStatus, 'bodyStatus')}}
+              <!-- <span v-if="mode===VIEW_CURRENT_CARD">{{getFieldValue(scale.bodyStatus, 'bodyStatus')}}</span>
+              <el-select v-else v-model="scale.bodyStatus" :disabled="true"
                 @change="checkWarning(['preopsDyskinesiaDTO', 'patientPreopsScaleList', index, 'bodyStatus'], 'dyskinesiaDTOScaleStatus')"
                 :class="{'warning': warningResults['dyskinesiaDTOScaleStatus']}">
                 <el-option label="开期" :value="1"></el-option>
                 <el-option label="关期" :value="0"></el-option>
-              </el-select>
+              </el-select> -->
             </td>
             <td class="col">
               <span v-if="mode===VIEW_CURRENT_CARD">{{scale.scaleScore}}</span>
@@ -715,7 +716,14 @@ let dataModel = {
     'patientPreopsScaleList': [
       {
         'ariseTime': '',
-        'bodyStatus': '',
+        'bodyStatus': 1,
+        'scaleInfo': 1,
+        'scaleScore': '',
+        'scaleType': 2
+      },
+      {
+        'ariseTime': '',
+        'bodyStatus': 0,
         'scaleInfo': 1,
         'scaleScore': '',
         'scaleType': 2
