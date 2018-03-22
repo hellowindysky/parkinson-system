@@ -13,9 +13,10 @@
           </span>
           <span class="field-input" v-else>
             <span class="warning-text">{{warningResults.deviceId}}</span>
-            <el-select v-model="copyInfo.deviceId" @change="changeDevice" :class="{'warning': warningResults.deviceId}">
-              <el-option v-for="option in getOptions('deviceId')" :label="option.name"
-                :value="option.code" :key="option.code"></el-option>
+            <el-select v-model="copyInfo.deviceId" @change="changeDevice"
+              :class="{'warning': warningResults.deviceId}">
+              <el-option v-for="(option, i) in getOptions('deviceId')" :label="option.name"
+                :value="option.code" :key="'deviceId' + i"></el-option>
             </el-select>
           </span>
         </div>
@@ -124,14 +125,14 @@
               <el-select v-model="medicine.medicineId" :disabled="mode===VIEW_CURRENT_CARD"
                 @change="selectMedicine(medicine)" :class="{'warning': !isMedicineValid(medicine)}" >
                 <el-option v-for="(option, i) in getOptions('medicineName')" :label="option.name"
-                  :value="option.code" :key="'medicineId'+i"></el-option>
+                  :value="option.code" :key="'medicineId' + i"></el-option>
               </el-select>
             </td>
             <td class="col">
               <el-select v-if="checkIfCommonMedicine(medicine.medicineId)"
                 v-model="medicine.medicalSpecUsed" :disabled="mode===VIEW_CURRENT_CARD">
-                <el-option v-for="option in getOptions('medicineSpec', medicine.medicineId)" :label="option.name"
-                  :value="option.code" :key="option.code"></el-option>
+                <el-option v-for="(option, i) in getOptions('medicineSpec', medicine.medicineId)" :label="option.name"
+                  :value="option.code" :key="'medicineSpec' + i"></el-option>
               </el-select>
               <el-input v-else v-model="medicine.medicalSpecUsed"
                 :disabled="mode===VIEW_CURRENT_CARD"
@@ -249,7 +250,8 @@
         </span>
       </div>
 
-      <div class="form-wrapper form0-wrapper" ref="form0" v-show="modelType===1">
+      <div class="form-wrapper form0-wrapper" :class="formOffsetClass"
+        ref="form0" v-show="modelType===1">
         <div class="form-left" v-show="currentFormSide==='left'">
           <table class="form form0">
             <tr class="row top-row">
@@ -260,8 +262,10 @@
                   <span class="contact narrow" v-if="mode===VIEW_CURRENT_CARD">
                     {{getFieldValue(leftContactSortArray[index], 'leftContact')}}
                   </span>
-                  <el-select class="contact" v-else v-model="leftContactSortArray[index]" @change="updateLeftContactOrder" :clearable="true">
-                    <el-option v-for="option in getOptions('leftContact')" :label="option.name" :value="option.code" :key="option.code"></el-option>
+                  <el-select class="contact" v-else v-model="leftContactSortArray[index]"
+                    @change="updateLeftContactOrder" :clearable="true">
+                    <el-option v-for="(option, i) in getOptions('leftContact')" :label="option.name"
+                      :value="option.code" :key="'leftContact' + i"></el-option>
                   </el-select>
                 </span>
               </td>
@@ -346,7 +350,8 @@
                   {{getFieldValue(copyInfo.patientDbsFirstDetail[index].sideEffectDuration, 'duration')}}
                 </span>
                 <el-select v-else v-model="copyInfo.patientDbsFirstDetail[index].sideEffectDuration">
-                  <el-option v-for="option in getOptions('duration')" :label="option.name" :value="option.code" :key="option.code"></el-option>
+                  <el-option v-for="(option, i) in getOptions('duration')" :label="option.name"
+                    :value="option.code" :key="'duration' + i"></el-option>
                 </el-select>
               </td>
             </tr>
@@ -362,8 +367,11 @@
                   <span class="contact narrow" v-if="mode===VIEW_CURRENT_CARD">
                     {{getFieldValue(rightContactSortArray[index], 'rightContact')}}
                   </span>
-                  <el-select class="contact" v-else v-model="rightContactSortArray[index]" @change="updateRightContactOrder" :clearable="true">
-                    <el-option v-for="option in getOptions('rightContact')" :label="option.name" :value="option.code" :key="option.code"></el-option>
+                  <el-select class="contact" v-else v-model="rightContactSortArray[index]"
+                    @change="updateRightContactOrder" :clearable="true">
+                    <el-option v-for="(option, i) in getOptions('rightContact')"
+                      :label="option.name" :value="option.code"
+                      :key="'rightContact' + i"></el-option>
                   </el-select>
                 </span>
               </td>
@@ -448,7 +456,8 @@
                   {{getFieldValue(copyInfo.patientDbsFirstDetail[getRightIndex(index)].sideEffectDuration, 'duration')}}
                 </span>
                 <el-select v-else v-model="copyInfo.patientDbsFirstDetail[getRightIndex(index)].sideEffectDuration">
-                  <el-option v-for="option in getOptions('duration')" :label="option.name" :value="option.code" :key="option.code"></el-option>
+                  <el-option v-for="(option, i) in getOptions('duration')" :label="option.name"
+                    :value="option.code" :key="'duration' + i"></el-option>
                 </el-select>
               </td>
             </tr>
@@ -506,10 +515,12 @@
           </tr>
           <tr class="row" v-for="(param, index) in copyInfo.followDbsParams.adjustBeforeParameter">
             <td class="col w2" colspan="2" rowspan="2" v-show="index % 2 === 0">
-              <el-select v-model="followDbsAdjustBeforeFirstSchemeOrder" @change="selectFollowDbsAdjustBeforeFirstSchemeOrder"
+              <el-select v-model="followDbsAdjustBeforeFirstSchemeOrder"
+                @change="selectFollowDbsAdjustBeforeFirstSchemeOrder"
                 :disabled="mode===VIEW_CURRENT_CARD">
                 <el-option v-for="(p, i) in lastDbsParameter" v-show="i % 2 === 0"
-                  :label="getFollowDbsAdjustBeforePlanName(p)" :value="p.schemeOrder" :key="p.schemeOrder">
+                  :label="getFollowDbsAdjustBeforePlanName(p)" :value="p.schemeOrder"
+                  :key="'lastDbsParameter' + i">
                 </el-option>
                 <el-option label="自定义" :value="0">
                 </el-option>
@@ -517,41 +528,59 @@
             </td>
             <td class="col w2" colspan="2">{{getLimbSide(param.limbSide)}}</td>
             <td class="col w3" colspan="3">
-              <el-select v-model="param.exciteMod" :disabled="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">
-                <el-option v-for="option in getOptions('exciteMod')" :label="option.name"
-                  :value="option.code" :key="option.code"></el-option>
+              <el-select v-model="param.exciteMod"
+                :disabled="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0"
+                @change="resetVoltageParamPole(followDbsAdjustBeforeParamPole[index])">
+                <el-option v-for="(option, i) in getOptions('exciteMod')" :label="option.name"
+                  :value="option.code" :key="'exciteMod' + i"></el-option>
               </el-select>
             </td>
             <td class="col w5" colspan="5">
-              <el-checkbox-group v-model="followDbsAdjustBeforeParamPole[index].positive" @change="updateParamPole('followDbsAdjustBefore', index)">
-                <el-checkbox v-for="contact in getSidePositiveContact(param.limbSide)" :label="contact" :key="contact"
-                  :disabled="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0"></el-checkbox>
+              <el-checkbox-group v-model="followDbsAdjustBeforeParamPole[index].positive"
+                @change="updateParamPole('followDbsAdjustBefore', index)">
+                <el-checkbox v-for="(contact, i) in getSidePositiveContact(param.limbSide)"
+                  :label="contact" :key="'sidePositiveContact' + i"
+                  :disabled="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">
+                </el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w4" colspan="4">
-              <el-checkbox-group v-model="followDbsAdjustBeforeParamPole[index].negative" @change="updateParamPole('followDbsAdjustBefore', index)">
-                <el-checkbox v-for="contact in getSideNegativeContact(param.limbSide)" :label="contact" :key="contact"
-                  :disabled="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0"></el-checkbox>
+              <el-checkbox-group v-model="followDbsAdjustBeforeParamPole[index].negative"
+                @change="updateParamPole('followDbsAdjustBefore', index)">
+                <el-checkbox v-for="(contact, i) in getSideNegativeContact(param.limbSide)"
+                  :label="contact" :key="'sideNegativeContact' + i"
+                  :disabled="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">
+                </el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w1" colspan="1">
-              <span v-if="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">{{param.frequency}}</span>
+              <span v-if="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">
+                {{param.frequency}}
+              </span>
               <el-input v-else v-model="param.frequency"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <span v-if="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">{{param.pulseWidth}}</span>
+              <span v-if="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">
+                {{param.pulseWidth}}
+              </span>
               <el-input v-else v-model="param.pulseWidth"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <span v-if="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">{{param.voltage}}</span>
+              <span v-if="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">
+                {{param.voltage}}
+              </span>
               <el-input v-else v-model="param.voltage"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <span v-if="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">{{param.resistance}}</span>
+              <span v-if="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">
+                {{param.resistance}}
+              </span>
               <el-input v-else v-model="param.resistance"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <span v-if="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">{{param.electric}}</span>
+              <span v-if="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">
+                {{param.electric}}
+              </span>
               <el-input v-else v-model="param.electric"></el-input>
             </td>
             <td class="col w1" colspan="1">
@@ -565,14 +594,14 @@
       <div class="form-wrapper" ref="form2" v-show="modelType===0">
         <table class="form form2">
           <tr class="row top-row">
-            <td class="col" colspan="22">
+            <td class="col" colspan="26">
               单纯调整电压（总增幅 ≤ 0.4V）
             </td>
           </tr>
           <tr class="row">
             <td class="col w2" colspan="2">疗效满意度</td>
             <td class="col w2" colspan="2">左侧</td>
-            <td class="col w8" colspan="8">
+            <td class="col w8" colspan="10">
               <span v-if="mode===VIEW_CURRENT_CARD">
                 {{getFieldValue(copyInfo.adjustVoltageLeftSatisfaction, 'satisfaction')}}
               </span>
@@ -583,7 +612,7 @@
               </el-select>
             </td>
             <td class="col w2" colspan="2">右侧</td>
-            <td class="col w8" colspan="8">
+            <td class="col w8" colspan="10">
               <span v-if="mode===VIEW_CURRENT_CARD">
                 {{getFieldValue(copyInfo.adjustVoltageRightSatisfaction, 'satisfaction')}}
               </span>
@@ -598,7 +627,8 @@
             <td class="col w2" colspan="2">
               方案
               <span class="iconfont icon-plus" @click="addParam('followDbsAdjustVoltage')"
-                v-show="copyInfo.followDbsParams.adjustVoltageParameter.length < 8 && mode!==VIEW_CURRENT_CARD"></span>
+                v-show="copyInfo.followDbsParams.adjustVoltageParameter.length < 8 && mode!==VIEW_CURRENT_CARD">
+              </span>
             </td>
             <td class="col w2" colspan="2">肢体侧</td>
             <td class="col w3" colspan="3">
@@ -611,29 +641,40 @@
             <td class="col w1" colspan="1">脉宽<br></br>(μs)</td>
             <td class="col w1" colspan="1">电压<br></br>(V)</td>
             <td class="col w3" colspan="3">效果及副作用</td>
+            <td class="col w3" colspan="4">备注</td>
           </tr>
           <tr class="row" v-for="(param, index) in copyInfo.followDbsParams.adjustVoltageParameter">
             <td class="col w2" colspan="2" rowspan="2" v-show="index % 2 === 0">
               {{getFollowDbsAdjustVoltagePlanName(param)}}
-              <span class="iconfont icon-remove" v-show="mode!==VIEW_CURRENT_CARD" @click="removeParam(index, 'followDbsAdjustVoltage')"></span>
+              <span class="iconfont icon-remove" v-show="mode!==VIEW_CURRENT_CARD"
+                @click="removeParam(index, 'followDbsAdjustVoltage')"></span>
             </td>
             <td class="col w2" colspan="2">{{getLimbSide(param.limbSide)}}</td>
             <td class="col w3" colspan="3">
-              <el-select v-model="param.exciteMod" :disabled="mode===VIEW_CURRENT_CARD">
-                <el-option v-for="option in getOptions('exciteMod')" :label="option.name"
-                  :value="option.code" :key="option.code"></el-option>
+              <el-select v-model="param.exciteMod" :disabled="mode===VIEW_CURRENT_CARD"
+                @change="resetVoltageParamPole(followDbsAdjustVoltageParamPole[index])">
+                <el-option v-for="(option, i) in getOptions('exciteMod')" :label="option.name"
+                  :value="option.code" :key="'exciteMod' + i"></el-option>
               </el-select>
             </td>
             <td class="col w5" colspan="5">
-              <el-checkbox-group v-model="followDbsAdjustVoltageParamPole[index].positive" @change="updateParamPole('followDbsAdjustVoltage', index)">
-                <el-checkbox v-for="contact in getSidePositiveContact(param.limbSide)" :label="contact" :key="contact"
-                  :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
+              <el-checkbox-group v-model="followDbsAdjustVoltageParamPole[index].positive"
+                @change="updateParagmPole('followDbsAdjustVoltage', index)"
+                :max="getMaxNumOfContact(param.exciteMod, true)">
+                <el-checkbox v-for="(contact, i) in getSidePositiveContact(param.limbSide)"
+                  :label="contact" :key="'sidePositiveContact' + i"
+                  :disabled="checkIfDisabledContact(param.exciteMod, contact, true)">
+                </el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w4" colspan="4">
-              <el-checkbox-group v-model="followDbsAdjustVoltageParamPole[index].negative" @change="updateParamPole('followDbsAdjustVoltage', index)">
-                <el-checkbox v-for="contact in getSideNegativeContact(param.limbSide)" :label="contact" :key="contact"
-                  :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
+              <el-checkbox-group v-model="followDbsAdjustVoltageParamPole[index].negative"
+                @change="updateParamPole('followDbsAdjustVoltage', index)"
+                :max="getMaxNumOfContact(param.exciteMod, false)">
+                <el-checkbox v-for="(contact, i) in getSideNegativeContact(param.limbSide)"
+                  :label="contact" :key="'sideNegativeContact' + i"
+                  :disabled="checkIfDisabledContact(param.exciteMod, contact, false)">
+                </el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w1" colspan="1">
@@ -652,6 +693,10 @@
               <span v-if="mode===VIEW_CURRENT_CARD">{{param.effectInfo}}</span>
               <el-input v-else v-model="param.effectInfo"></el-input>
             </td>
+            <td class="col w4 single-row" colspan="4">
+              <span v-if="mode===VIEW_CURRENT_CARD">{{param.remarks}}</span>
+              <el-input v-else v-model="param.remarks"></el-input>
+            </td>
           </tr>
         </table>
       </div>
@@ -659,14 +704,14 @@
       <div class="form-wrapper" ref="form3" v-show="modelType===0">
         <table class="form form3">
           <tr class="row top-row">
-            <td class="col" colspan="22">
+            <td class="col" colspan="26">
               调整多个参数
             </td>
           </tr>
           <tr class="row">
             <td class="col w2" colspan="2">疗效满意度</td>
             <td class="col w2" colspan="2">左侧</td>
-            <td class="col w8" colspan="8">
+            <td class="col w8" colspan="10">
               <span v-if="mode===VIEW_CURRENT_CARD">
                 {{getFieldValue(copyInfo.adjustMoreLeftSatisfactionRightSatisfaction, 'satisfaction')}}
               </span>
@@ -677,7 +722,7 @@
               </el-select>
             </td>
             <td class="col w2" colspan="2">右侧</td>
-            <td class="col w8" colspan="8">
+            <td class="col w8" colspan="10">
               <span v-if="mode===VIEW_CURRENT_CARD">
                 {{getFieldValue(copyInfo.adjustMoreRightSatisfaction, 'satisfaction')}}
               </span>
@@ -692,7 +737,8 @@
             <td class="col w2" colspan="2">
               方案
               <span class="iconfont icon-plus" @click="addParam('followDbsAdjustMore')"
-                v-show="copyInfo.followDbsParams.adjustMoreParameter.length < 8 && mode!==VIEW_CURRENT_CARD"></span>
+                v-show="copyInfo.followDbsParams.adjustMoreParameter.length < 8 && mode!==VIEW_CURRENT_CARD">
+              </span>
             </td>
             <td class="col w2" colspan="2">肢体侧</td>
             <td class="col w3" colspan="3">
@@ -706,6 +752,7 @@
             <td class="col w1" colspan="1">电压<br></br>(V)</td>
             <td class="col w1" colspan="1">电阻<br></br>(Ω)</td>
             <td class="col w1" colspan="1">电流<br></br>(mA)</td>
+            <td class="col w3" colspan="4">备注</td>
           </tr>
           <tr class="row" v-for="(param, index) in copyInfo.followDbsParams.adjustMoreParameter">
             <td class="col w2" colspan="2" rowspan="2" v-show="index % 2 === 0">
@@ -715,21 +762,30 @@
             </td>
             <td class="col w2" colspan="2">{{getLimbSide(param.limbSide)}}</td>
             <td class="col w3" colspan="3">
-              <el-select v-model="param.exciteMod" :disabled="mode===VIEW_CURRENT_CARD">
-                <el-option v-for="option in getOptions('exciteMod')" :label="option.name"
-                  :value="option.code" :key="option.code"></el-option>
+              <el-select v-model="param.exciteMod" :disabled="mode===VIEW_CURRENT_CARD"
+                @change="resetVoltageParamPole(followDbsAdjustMoreParamPole[index])">
+                <el-option v-for="(option, i) in getOptions('exciteMod')" :label="option.name"
+                  :value="option.code" :key="'exciteMod' + i"></el-option>
               </el-select>
             </td>
             <td class="col w5" colspan="5">
-              <el-checkbox-group v-model="followDbsAdjustMoreParamPole[index].positive" @change="updateParamPole('followDbsAdjustMore', index)">
-                <el-checkbox v-for="contact in getSidePositiveContact(param.limbSide)" :label="contact"
-                  :key="contact" :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
+              <el-checkbox-group v-model="followDbsAdjustMoreParamPole[index].positive"
+                @change="updateParamPole('followDbsAdjustMore', index)"
+                :max="getMaxNumOfContact(param.exciteMod, true)">
+                <el-checkbox v-for="(contact, i) in getSidePositiveContact(param.limbSide)"
+                  :label="contact" :key="'sidePositiveContact' + i"
+                  :disabled="checkIfDisabledContact(param.exciteMod, contact, true)">
+                </el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w5" colspan="5">
-              <el-checkbox-group v-model="followDbsAdjustMoreParamPole[index].negative" @change="updateParamPole('followDbsAdjustMore', index)">
-                <el-checkbox v-for="contact in getSideNegativeContact(param.limbSide)" :label="contact"
-                  :key="contact" :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
+              <el-checkbox-group v-model="followDbsAdjustMoreParamPole[index].negative"
+                @change="updateParamPole('followDbsAdjustMore', index)"
+                :max="getMaxNumOfContact(param.exciteMod, false)">
+                <el-checkbox v-for="(contact, i) in getSideNegativeContact(param.limbSide)"
+                  :label="contact" :key="'sideNegativeContact' + i"
+                  :disabled="checkIfDisabledContact(param.exciteMod, contact, false)">
+                </el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w1" colspan="1">
@@ -751,6 +807,10 @@
             <td class="col w1" colspan="1">
               <span v-if="mode===VIEW_CURRENT_CARD">{{param.electric}}</span>
               <el-input v-else v-model="param.electric"></el-input>
+            </td>
+            <td class="col w4 single-row" colspan="4">
+              <span v-if="mode===VIEW_CURRENT_CARD">{{param.remarks}}</span>
+              <el-input v-else v-model="param.remarks"></el-input>
             </td>
           </tr>
         </table>
@@ -759,7 +819,7 @@
       <div class="form-wrapper" ref="form4" v-show="modelType===0">
         <table class="form form4">
           <tr class="row top-row">
-            <td class="col" colspan="23">
+            <td class="col" colspan="26">
               程控完成参数
             </td>
           </tr>
@@ -768,7 +828,8 @@
             <td class="col w2" colspan="2">
               方案
               <span class="iconfont icon-plus" @click="addParam('followDbsAdjustAfter')"
-                v-show="copyInfo.followDbsParams.adjustAfterParameter.length < 8 && mode!==VIEW_CURRENT_CARD"></span>
+                v-show="copyInfo.followDbsParams.adjustAfterParameter.length < 8 && mode!==VIEW_CURRENT_CARD">
+              </span>
             </td>
             <td class="col w2" colspan="2">肢体侧</td>
             <td class="col w3" colspan="3">
@@ -782,32 +843,47 @@
             <td class="col w1" colspan="1">电压<br></br>(V)</td>
             <td class="col w1" colspan="1">电阻<br></br>(Ω)</td>
             <td class="col w1" colspan="1">电流<br></br>(mA)</td>
+            <td class="col w3" colspan="3">备注</td>
           </tr>
           <tr class="row" v-for="(param, index) in copyInfo.followDbsParams.adjustAfterParameter">
             <td class="col w1" colspan="1" rowspan="2" v-show="index % 2 === 0">
               <el-checkbox v-model="followDbsAdjustAfterParameterChosenStatus[parseInt(index / 2, 10)]"
-                @change="checkAfterParameterChosenStatus('followDbs', parseInt(index / 2, 10))">
+                @change="checkAfterParameterChosenStatus('followDbs', parseInt(index / 2, 10))"
+                :disabled="mode===VIEW_CURRENT_CARD">
               </el-checkbox>
             </td>
             <td class="col w2" colspan="2" rowspan="2" v-show="index % 2 === 0">
               {{getFollowDbsAdjustAfterPlanName(param)}}
-              <span class="iconfont icon-remove" v-show="mode!==VIEW_CURRENT_CARD" @click="removeParam(index, 'followDbsAdjustAfter')"></span>
+              <span class="iconfont icon-remove"
+                v-show="mode!==VIEW_CURRENT_CARD && copyInfo.followDbsParams.adjustAfterParameter.length > 2"
+                @click="removeParam(index, 'followDbsAdjustAfter')"></span>
             </td>
             <td class="col w2" colspan="2">{{getLimbSide(param.limbSide)}}</td>
             <td class="col w3" colspan="3">
-              <el-select v-model="param.exciteMod" :disabled="mode===VIEW_CURRENT_CARD">
-                <el-option v-for="option in getOptions('exciteMod')" :label="option.name"
-                  :value="option.code" :key="option.code"></el-option>
+              <el-select v-model="param.exciteMod" :disabled="mode===VIEW_CURRENT_CARD"
+                @change="resetVoltageParamPole(followDbsAdjustAfterParamPole[index])">
+                <el-option v-for="(option, i) in getOptions('exciteMod')" :label="option.name"
+                  :value="option.code" :key="'exciteMod' + i"></el-option>
               </el-select>
             </td>
             <td class="col w5" colspan="5">
-              <el-checkbox-group v-model="followDbsAdjustAfterParamPole[index].positive" @change="updateParamPole('followDbsAdjustAfter', index)">
-                <el-checkbox v-for="contact in getSidePositiveContact(param.limbSide)" :label="contact" :key="contact" :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
+              <el-checkbox-group v-model="followDbsAdjustAfterParamPole[index].positive"
+                @change="updateParamPole('followDbsAdjustAfter', index)"
+                :max="getMaxNumOfContact(param.exciteMod, true)">
+                <el-checkbox v-for="(contact, i) in getSidePositiveContact(param.limbSide)"
+                  :label="contact" :key="'sidePositiveContact' + i"
+                  :disabled="checkIfDisabledContact(param.exciteMod, contact, true)">
+                </el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w5" colspan="5">
-              <el-checkbox-group v-model="followDbsAdjustAfterParamPole[index].negative" @change="updateParamPole('followDbsAdjustAfter', index)">
-                <el-checkbox v-for="contact in getSideNegativeContact(param.limbSide)" :label="contact" :key="contact" :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
+              <el-checkbox-group v-model="followDbsAdjustAfterParamPole[index].negative"
+                @change="updateParamPole('followDbsAdjustAfter', index)"
+                :max="getMaxNumOfContact(param.exciteMod, false)">
+                <el-checkbox v-for="(contact, i) in getSideNegativeContact(param.limbSide)"
+                  :label="contact" :key="'sideNegativeContact' + i"
+                  :disabled="checkIfDisabledContact(param.exciteMod, contact, false)">
+                </el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w1" colspan="1">
@@ -830,14 +906,18 @@
               <span v-if="mode===VIEW_CURRENT_CARD">{{param.electric}}</span>
               <el-input v-else v-model="param.electric"></el-input>
             </td>
+            <td class="col w3 single-row" colspan="3">
+              <span v-if="mode===VIEW_CURRENT_CARD">{{param.remarks}}</span>
+              <el-input v-else v-model="param.remarks"></el-input>
+            </td>
           </tr>
         </table>
       </div>
 
       <div class="form-wrapper" ref="form5" v-show="modelType===1">
-        <table class="form form4">
+        <table class="form form5">
           <tr class="row top-row">
-            <td class="col" colspan="23">
+            <td class="col" colspan="26">
               开机完成参数
             </td>
           </tr>
@@ -846,7 +926,8 @@
             <td class="col w2" colspan="2">
               方案
               <span class="iconfont icon-plus" @click="addParam('firstDbsAdjustAfter')"
-                v-show="copyInfo.firstDbsParams.adjustAfterParameter.length < 8 && mode !== VIEW_CURRENT_CARD"></span>
+                v-show="copyInfo.firstDbsParams.adjustAfterParameter.length < 8 &&
+                mode !== VIEW_CURRENT_CARD"></span>
             </td>
             <td class="col w2" colspan="2">肢体侧</td>
             <td class="col w3" colspan="3">
@@ -860,34 +941,47 @@
             <td class="col w1" colspan="1">电压<br></br>(V)</td>
             <td class="col w1" colspan="1">电阻<br></br>(Ω)</td>
             <td class="col w1" colspan="1">电流<br></br>(mA)</td>
+            <td class="col w3" colspan="3">备注</td>
           </tr>
           <tr class="row" v-for="(param, index) in copyInfo.firstDbsParams.adjustAfterParameter">
             <td class="col w1" colspan="1" rowspan="2" v-show="index % 2 === 0">
               <el-checkbox v-model="firstDbsAdjustAfterParameterChosenStatus[parseInt(index / 2, 10)]"
-                @change="checkAfterParameterChosenStatus('firstDbs', parseInt(index / 2, 10))">
+                @change="checkAfterParameterChosenStatus('firstDbs', parseInt(index / 2, 10))"
+                :disabled="mode===VIEW_CURRENT_CARD">
               </el-checkbox>
             </td>
             <td class="col w2" colspan="2" rowspan="2" v-show="index % 2 === 0">
               {{getFirstDbsAdjustAfterPlanName(param)}}
-              <span class="iconfont icon-remove" v-show="mode !== VIEW_CURRENT_CARD" @click="removeParam(index, 'firstDbsAdjustAfter')"></span>
+              <span class="iconfont icon-remove"
+                v-show="mode !== VIEW_CURRENT_CARD && copyInfo.firstDbsParams.adjustAfterParameter.length > 2"
+                @click="removeParam(index, 'firstDbsAdjustAfter')"></span>
             </td>
             <td class="col w2" colspan="2">{{getLimbSide(param.limbSide)}}</td>
             <td class="col w3" colspan="3">
-              <el-select v-model="param.exciteMod" :disabled="mode === VIEW_CURRENT_CARD">
-                <el-option v-for="option in getOptions('exciteMod')" :label="option.name"
-                  :value="option.code" :key="option.code"></el-option>
+              <el-select v-model="param.exciteMod" :disabled="mode === VIEW_CURRENT_CARD"
+                @change="resetVoltageParamPole(firstDbsAdjustAfterParamPole[index])">
+                <el-option v-for="(option, i) in getOptions('exciteMod')" :label="option.name"
+                  :value="option.code" :key="'exciteMod' + i"></el-option>
               </el-select>
             </td>
             <td class="col w5" colspan="5">
-              <el-checkbox-group v-model="firstDbsAdjustAfterParamPole[index].positive" @change="updateParamPole('firstDbsAdjustAfter', index)">
-                <el-checkbox v-for="contact in getSidePositiveContact(param.limbSide)" :label="contact" :key="contact"
-                  :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
+              <el-checkbox-group v-model="firstDbsAdjustAfterParamPole[index].positive"
+                @change="updateParamPole('firstDbsAdjustAfter', index)"
+                :max="getMaxNumOfContact(param.exciteMod, true)">
+                <el-checkbox v-for="(contact, i) in getSidePositiveContact(param.limbSide)"
+                  :label="contact" :key="'sidePositiveContact' + i"
+                  :disabled="checkIfDisabledContact(param.exciteMod, contact, true)">
+                </el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w5" colspan="5">
-              <el-checkbox-group v-model="firstDbsAdjustAfterParamPole[index].negative" @change="updateParamPole('firstDbsAdjustAfter', index)">
-                <el-checkbox v-for="contact in getSideNegativeContact(param.limbSide)" :label="contact" :key="contact"
-                  :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
+              <el-checkbox-group v-model="firstDbsAdjustAfterParamPole[index].negative"
+                @change="updateParamPole('firstDbsAdjustAfter', index)"
+                :max="getMaxNumOfContact(param.exciteMod, false)">
+                <el-checkbox v-for="(contact, i) in getSideNegativeContact(param.limbSide)"
+                  :label="contact" :key="'sideNegativeContact' + i"
+                  :disabled="checkIfDisabledContact(param.exciteMod, contact, false)">
+                </el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w1" colspan="1">
@@ -909,6 +1003,10 @@
             <td class="col w1" colspan="1">
               <span v-if="mode===VIEW_CURRENT_CARD">{{param.electric}}</span>
               <el-input v-else v-model="param.electric"></el-input>
+            </td>
+            <td class="col w3 single-row" colspan="3">
+              <span v-if="mode===VIEW_CURRENT_CARD">{{param.remarks}}</span>
+              <el-input v-else v-model="param.remarks"></el-input>
             </td>
           </tr>
         </table>
@@ -1046,6 +1144,15 @@ export default {
         return '';
       }
     },
+    formOffsetClass() {
+      if (this.currentFormSide === 'left') {
+        return 'left-offset';
+      } else if (this.currentFormSide === 'right') {
+        return 'right-offset';
+      } else {
+        return '';  // 正常情况下不会运行到这行
+      }
+    },
     voltageCount() {
       return this.getOptions('dbsVoltage').length;
     },
@@ -1100,6 +1207,14 @@ export default {
 
           this.updateContactOrder();
           this.updateCheckBoxModel('firstDbsAdjustAfter');
+
+          let firstDbsAdjustAfterParameterChosenIndex = this.copyInfo.patientDbsChoose;
+          let length = parseInt(this.copyInfo.firstDbsParams.adjustAfterParameter.length / 2, 10);
+          for (var i = 0; i < length; i++) {
+            var status = firstDbsAdjustAfterParameterChosenIndex === i;
+            this.firstDbsAdjustAfterParameterChosenStatus.push(status);
+          }
+
           this.$nextTick(() => {
             this.completeInit = true; // 放在 nextTick 中，才不会触发 changeDevice()
           });
@@ -1116,6 +1231,14 @@ export default {
           this.updateCheckBoxModel('followDbsAdjustVoltage');
           this.updateCheckBoxModel('followDbsAdjustMore');
           this.prepareLastDbsInfo(data);
+
+          let followDbsAdjustAfterParameterChosenIndex = this.copyInfo.patientDbsChoose;
+          let length = parseInt(this.copyInfo.followDbsParams.adjustAfterParameter.length / 2, 10);
+          for (var i = 0; i < length; i++) {
+            var status = followDbsAdjustAfterParameterChosenIndex === i;
+            this.followDbsAdjustAfterParameterChosenStatus.push(status);
+          }
+
           this.$nextTick(() => {
             this.completeInit = true;
           });
@@ -1176,28 +1299,67 @@ export default {
       reviseDateFormat(submitData);
       pruneObj(submitData);
 
-      if (this.modelType === 1 && this.mode === this.ADD_NEW_CARD) {
+      if (this.modelType === 1) {
+        // 首次程控
         delete submitData.followDbsParams;
-        addDbsFirstInfo(submitData).then(() => {
-          this.updateAndClose();
-        }, this._handleError);
-      } else if (this.modelType === 1 && this.mode === this.EDIT_CURRENT_CARD) {
-        delete submitData.followDbsParams;
-        modifyDbsFirstInfo(submitData).then(() => {
-          this.updateAndClose();
-        }, this._handleError);
+        for (let i = 0; i < this.firstDbsAdjustAfterParameterChosenStatus.length; i++) {
+          if (this.firstDbsAdjustAfterParameterChosenStatus[i]) {
+            // “开机完成参数”最终参数的选择，将数组中被选择的那一项的索引值传给后端
+            submitData.patientDbsChoose = i;
+          }
+        }
+        if (this.mode === this.ADD_NEW_CARD) {
+          addDbsFirstInfo(submitData).then(() => {
+            this.updateAndClose();
+          }, this._handleError);
+        } else if (this.mode === this.EDIT_CURRENT_CARD) {
+          modifyDbsFirstInfo(submitData).then(() => {
+            this.updateAndClose();
+          }, this._handleError);
+        }
 
-      } else if (this.modelType === 0 && this.mode === this.ADD_NEW_CARD) {
+      } else if (this.modelType === 0) {
+        // 非首次程控
         delete submitData.firstDbsParams;
-        addDbsFollowInfo(submitData).then(() => {
-          this.updateAndClose();
-        }, this._handleError);
-      } else if (this.modelType === 0 && this.mode === this.EDIT_CURRENT_CARD) {
-        delete submitData.firstDbsParams;
-        modifyDbsFollowInfo(submitData).then(() => {
-          this.updateAndClose();
-        }, this._handleError);
+        for (let i = 0; i < this.followDbsAdjustAfterParameterChosenStatus.length; i++) {
+          if (this.followDbsAdjustAfterParameterChosenStatus[i]) {
+            // “程控完成参数”最终参数的选择，将数组中被选择的那一项的索引值传给后端
+            submitData.patientDbsChoose = i;
+          }
+        }
+        if (this.mode === this.ADD_NEW_CARD) {
+          addDbsFollowInfo(submitData).then(() => {
+            this.updateAndClose();
+          }, this._handleError);
+        } else if (this.mode === this.EDIT_CURRENT_CARD) {
+          modifyDbsFollowInfo(submitData).then(() => {
+            this.updateAndClose();
+          }, this._handleError);
+        }
       }
+
+      // if (this.modelType === 1 && this.mode === this.ADD_NEW_CARD) {
+      //   delete submitData.followDbsParams;
+      //   addDbsFirstInfo(submitData).then(() => {
+      //     this.updateAndClose();
+      //   }, this._handleError);
+      // } else if (this.modelType === 1 && this.mode === this.EDIT_CURRENT_CARD) {
+      //   delete submitData.followDbsParams;
+      //   modifyDbsFirstInfo(submitData).then(() => {
+      //     this.updateAndClose();
+      //   }, this._handleError);
+      //
+      // } else if (this.modelType === 0 && this.mode === this.ADD_NEW_CARD) {
+      //   delete submitData.firstDbsParams;
+      //   addDbsFollowInfo(submitData).then(() => {
+      //     this.updateAndClose();
+      //   }, this._handleError);
+      // } else if (this.modelType === 0 && this.mode === this.EDIT_CURRENT_CARD) {
+      //   delete submitData.firstDbsParams;
+      //   modifyDbsFollowInfo(submitData).then(() => {
+      //     this.updateAndClose();
+      //   }, this._handleError);
+      // }
     },
     judgeProgramDate() {
       var programDate = Util.simplifyDate(this.copyInfo.programDate);
@@ -1346,6 +1508,10 @@ export default {
       this.updateCheckBoxModel('followDbsAdjustVoltage');
       this.updateCheckBoxModel('followDbsAdjustMore');
       this.clearWarning();
+    },
+    clearDbsAdjustAfterParameterChosenStatus() {
+      this.firstDbsAdjustAfterParameterChosenStatus = [];
+      this.followDbsAdjustAfterParameterChosenStatus = [];
     },
     prepareLastDbsInfo(data) {
       // 绑定上次程控时间和调整前参数
@@ -1816,7 +1982,8 @@ export default {
         }
 
         let order = count / 2 + 1;
-        let propertyList = ['exciteMod', 'negativePole', 'positivePole', 'frequency', 'pulseWidth', 'voltage', 'resistance', 'electric'];
+        let propertyList = ['exciteMod', 'negativePole', 'positivePole', 'frequency',
+          'pulseWidth', 'voltage', 'resistance', 'electric', 'remarks'];
         for (let limbSideNum of [1, 2]) {
           let index = count - 1 + limbSideNum;
           this.$set(paramList, (index), {});
@@ -1927,10 +2094,20 @@ export default {
 
       // 对表格的最左侧一列，最终参数，所对应的数组移除元素
       var targetIndex = Math.floor(i / 2);
-      var deletedStatus = this.followDbsAdjustAfterParameterChosenStatus[targetIndex];
-      this.followDbsAdjustAfterParameterChosenStatus.splice(targetIndex, 1);
-      if (deletedStatus && this.followDbsAdjustAfterParameterChosenStatus.length > 0) {
-        this.followDbsAdjustAfterParameterChosenStatus[0] = true;
+
+      if (formType === 'firstDbsAdjustAfter') {
+        let deletedStatus = this.firstDbsAdjustAfterParameterChosenStatus[targetIndex];
+        this.firstDbsAdjustAfterParameterChosenStatus.splice(targetIndex, 1);
+        if (deletedStatus && this.firstDbsAdjustAfterParameterChosenStatus.length > 0) {
+          this.firstDbsAdjustAfterParameterChosenStatus[0] = true;
+        }
+
+      } else if (formType === 'followDbsAdjustAfter') {
+        let deletedStatus = this.followDbsAdjustAfterParameterChosenStatus[targetIndex];
+        this.followDbsAdjustAfterParameterChosenStatus.splice(targetIndex, 1);
+        if (deletedStatus && this.followDbsAdjustAfterParameterChosenStatus.length > 0) {
+          this.followDbsAdjustAfterParameterChosenStatus[0] = true;
+        }
       }
 
       this.updateCheckBoxModel(formType);
@@ -1985,6 +2162,55 @@ export default {
         positiveContactList.push(contact);
       }
       return positiveContactList;
+    },
+    checkIfDisabledContact(exciteMod, contact, isPositive) {
+      // 该函数的返回值为 false 到时候代表该选项可以被选中，为 true 代表该选项禁用
+      // isPositive 为 true 的时候代表是正极，为 false 代表负极
+      if (this.mode === this.VIEW_CURRENT_CARD) {
+        return true;
+      }
+
+      if (exciteMod === 1) {
+        // 1.单负：正极仅可选 C+，负极为四个靶点单选。
+        if (isPositive) {
+          return contact !== 'C+';
+        } else {
+          return false;
+        }
+      } else if (exciteMod === 2) {
+        // 2.双极：正负极均为单选
+        return false;
+      } else if (exciteMod === 3) {
+        // 3.双负：正极仅可选 C+，负极必须选两个
+        if (isPositive) {
+          return contact !== 'C+';
+        } else {
+          return false;
+        }
+      } else if (exciteMod === 4) {
+        // 4.交叉电脉冲：正极负极均最多可选择两个
+        return false;
+      } else if (exciteMod === 5) {
+        // 5.复杂程控模式：与之前一致，选择靶点不作限制
+        return false;
+      }
+      return true;
+    },
+    resetVoltageParamPole(obj) {
+      obj.positive = [];
+      obj.negative = [];
+    },
+    getMaxNumOfContact(exciteMod, isPositive) {
+      // isPositive 为 true 的时候代表是正极，为 false 代表负极
+      if (exciteMod === 1 || exciteMod === 2) {
+        return 1;
+      } else if (exciteMod === 3) {
+        return isPositive ? 1 : 2;
+      } else if (exciteMod === 4) {
+        return 2;
+      } else if (exciteMod === 5) {
+        return 5;
+      }
     },
     getDeviceGroups(type) {
       // 这个函数返回的数组用来生成触点电压表格（首次开机），供 v-for 使用
@@ -2391,7 +2617,14 @@ export default {
       padding-bottom: 10px;
       overflow: hidden;
       &.form0-wrapper {
+        transition: 0.2s;
         // text-align: left;
+        &.left-offset {
+          transform: translateX(-15px);
+        }
+        &.right-offset {
+          transform: translateX(15px);
+        }
       }
       .form-left, .form-right {
         display: inline-block;
@@ -2415,13 +2648,16 @@ export default {
           width: @unit-width * 22;
         }
         &.form2 {
-          width: @unit-width * 22;
+          width: @unit-width * 26;
         }
         &.form3 {
-          width: @unit-width * 22;
+          width: @unit-width * 26;
         }
         &.form4 {
-          width: @unit-width * 23;
+          width: @unit-width * 26;
+        }
+        &.form5 {
+          width: @unit-width * 26;
         }
         .row {
           height: 35px;
@@ -2450,6 +2686,11 @@ export default {
               &:active {
                 opacity: 0.8;
               }
+            }
+            &.single-row {
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              overflow: hidden;
             }
             &.w1 {
               width: @unit-width;
@@ -2497,22 +2738,27 @@ export default {
                 }
               }
             }
+            .el-checkbox {
+              .is-disabled {
+                .el-checkbox__inner {
+                  background-color: @light-gray-color;
+                  border-color: @gray-color;
+                  &::after {
+                    border-color: @theme-color;
+                  }
+                }
+              }
+            }
             .el-checkbox-group {
               .el-checkbox + .el-checkbox {
                 margin-left: 5px;
-              }
-              .is-disabled {
-                .el-checkbox__inner {
-                  background-color: @light-font-color;
-                  border-color: @light-font-color;
-                }
               }
               .el-checkbox {
                 .el-checkbox__label {
                   color: @light-font-color;
                 }
                 .is-checked + .el-checkbox__label {
-                  color: @font-color;
+                  color: darken(@font-color, 20%);
                 }
               }
             }
