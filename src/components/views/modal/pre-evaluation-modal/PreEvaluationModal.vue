@@ -63,7 +63,7 @@
         <div class="field">
           <span class="field-name long-field-name">
             是否存在剂末现象
-            <span class="required-mark">*</span>
+            <!-- <span class="required-mark">*</span> -->
           </span>
           <span class="field-input long-field-name">
             <span v-if="mode===VIEW_CURRENT_CARD">{{getFieldValue(copyInfo.preopsTerminalDTO.terminalExist, 'terminalExist')}}</span>
@@ -77,7 +77,7 @@
         <div class="field" v-show="copyInfo.preopsTerminalDTO.terminalExist===1">
           <span class="field-name long-field-name">
             是否首次出现
-            <span class="required-mark">*</span>
+            <!-- <span class="required-mark">*</span> -->
           </span>
           <span class="field-input long-field-name">
             <span v-if="mode===VIEW_CURRENT_CARD">{{getFieldValue(copyInfo.preopsTerminalDTO.terminalIsfirst, 'terminalIsfirst')}}</span>
@@ -104,7 +104,7 @@
         <div class="field" v-show="copyInfo.preopsTerminalDTO.terminalIsfirst===0">
           <span class="field-name long-field-name">
             已出现剂末现象
-            <span class="required-mark">*</span>
+            <!-- <span class="required-mark">*</span> -->
           </span>
           <span class="field-input short-input long-field-name">
             <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.preopsTerminalDTO.terminalDuration}}</span>
@@ -133,7 +133,7 @@
             <td class="col" rowspan="2">状态</td>
             <td class="col">
               第一天
-              <span class="required-mark">*</span>
+              <!-- <span class="required-mark">*</span> -->
             </td>
             <td class="col">第二天</td>
             <td class="col">第三天</td>
@@ -251,11 +251,11 @@
             <td class="col wide-col">量表</td>
             <td class="col">
               状态
-              <span class="required-mark">*</span>
+              <!-- <span class="required-mark">*</span> -->
             </td>
             <td class="col">
               分数
-              <span class="required-mark">*</span>
+              <!-- <span class="required-mark">*</span> -->
             </td>
             <td class="col">量表完成日期</td>
           </tr>
@@ -264,13 +264,14 @@
               {{getRealName(scale.scaleInfo, 'unifyScale')}}
             </td>
             <td class="col">
-              <span v-if="mode===VIEW_CURRENT_CARD">{{getFieldValue(scale.bodyStatus, 'bodyStatus')}}</span>
-              <el-select v-else v-model="scale.bodyStatus"
+              {{getFieldValue(scale.bodyStatus, 'bodyStatus')}}
+              <!-- <span v-if="mode===VIEW_CURRENT_CARD">{{getFieldValue(scale.bodyStatus, 'bodyStatus')}}</span>
+              <el-select v-else v-model="scale.bodyStatus" :disabled="true"
                 @change="checkWarning(['preopsDyskinesiaDTO', 'patientPreopsScaleList', index, 'bodyStatus'], 'dyskinesiaDTOScaleStatus')"
                 :class="{'warning': warningResults['dyskinesiaDTOScaleStatus']}">
                 <el-option label="开期" :value="1"></el-option>
                 <el-option label="关期" :value="0"></el-option>
-              </el-select>
+              </el-select> -->
             </td>
             <td class="col">
               <span v-if="mode===VIEW_CURRENT_CARD">{{scale.scaleScore}}</span>
@@ -428,11 +429,11 @@
             <td class="col wide-col">量表</td>
             <td class="col">
               服药前得分
-              <span class="required-mark">*</span>
+              <!-- <span class="required-mark">*</span> -->
             </td>
             <td class="col">
               服药后最低分
-              <span class="required-mark">*</span>
+              <!-- <span class="required-mark">*</span> -->
             </td>
             <td class="col">改善率%</td>
           </tr>
@@ -484,7 +485,7 @@
         <div class="field">
           <span class="field-name">
             手术意愿
-            <span class="required-mark">*</span>
+            <!-- <span class="required-mark">*</span> -->
           </span>
           <span class="field-input">
             <span v-if="mode===VIEW_CURRENT_CARD">{{getFieldValue(copyInfo.preopsIntensionDTO.operationIntension, 'operationIntension')}}</span>
@@ -715,7 +716,14 @@ let dataModel = {
     'patientPreopsScaleList': [
       {
         'ariseTime': '',
-        'bodyStatus': '',
+        'bodyStatus': 1,
+        'scaleInfo': 1,
+        'scaleScore': '',
+        'scaleType': 2
+      },
+      {
+        'ariseTime': '',
+        'bodyStatus': 0,
         'scaleInfo': 1,
         'scaleScore': '',
         'scaleType': 2
@@ -1564,6 +1572,11 @@ export default {
       return Boolean(this.copyInfo.preopsDiaryDTO.patientPreopsDiaryList[0][dayTimeName]);
     },
     checkWarning(propList, warningFieldName) {
+      // 2.2 版本改为，除了“评估时间”之外，不做任何校验，因此新增了下面 3 行代码
+      if (warningFieldName !== 'preopsTime') {
+        return;
+      }
+
       // 前面是特殊逻辑
       if (warningFieldName === 'terminalIsfirst') {
         if (this.copyInfo.preopsTerminalDTO.terminalExist === 0 || this.copyInfo.preopsTerminalDTO.terminalExist === '') {
