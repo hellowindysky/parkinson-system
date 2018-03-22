@@ -62,16 +62,13 @@
          <div class="field">
           <span class="field-name">
             获知SAE时间:
-            <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span>{{occurTime}}</span>
           </span>
           <span class="field-input" v-else>
-            <span class="warning-text">{{warningResults.occurTime}}</span>
             <el-date-picker
               v-model="occurTime"
-              :class="{'warning': warningResults.occurTime}"
               type="datetime"
               placeholder="请选择SAE获知时间"
               :picker-options="pickerOptions"
@@ -124,16 +121,13 @@
         <div class="field">
           <span class="field-name">
             症状消失时间:
-            <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span>{{occurTime}}</span>
           </span>
           <span class="field-input" v-else>
-            <span class="warning-text">{{warningResults.occurTime}}</span>
             <el-date-picker
               v-model="occurTime"
-              :class="{'warning': warningResults.occurTime}"
               type="datetime"
               placeholder="请选择死亡时间"
               :picker-options="pickerOptions"
@@ -178,16 +172,13 @@
         <div class="field">
           <span class="field-name">
             死亡时间:
-            <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span>{{occurTime}}</span>
           </span>
           <span class="field-input" v-else>
-            <span class="warning-text">{{warningResults.occurTime}}</span>
             <el-date-picker
               v-model="occurTime"
-              :class="{'warning': warningResults.occurTime}"
               type="datetime"
               placeholder="请选择死亡时间"
               :picker-options="pickerOptions"
@@ -261,7 +252,6 @@
           <span class="field-input" v-else>
             <el-date-picker
               v-model="occurTime"
-              :class="{'warning': warningResults.occurTime}"
               type="date"
               placeholder="请选择揭盲日期"
               :picker-options="pickerOptions"
@@ -654,7 +644,7 @@ export default {
 <style lang="less">
 @import "~styles/variables.less";
 
-@field-line-height: 0;
+@field-line-height: 25px;
 @field-name-width: 120px;
 @scroll-bar-height: 10px;
 @unit-width: 54px;
@@ -728,7 +718,7 @@ export default {
           display: inline-block;
           position: absolute;
           top: 0;
-          left: @field-line-height;
+          left: 0;
           width: @field-name-width;
           line-height: 25px;
         //   font-size: @normal-font-size;
