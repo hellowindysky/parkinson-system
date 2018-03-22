@@ -253,15 +253,15 @@
           </div>
           <div class="text line-3">
             <span class="name">不良事件程度</span>
-            <span class="value">{{""}}</span>
+            <span class="value">{{transform(item.severity, 'severity')}}</span>
           </div>
           <div class="text line-4">
             <span class="name">转归</span>
-            <span class="value">{{""}}</span>
+            <span class="value">{{transform(item.outCome, 'outCome')}}</span>
           </div>
           <div class="text line-5">
             <span class="name">纠正治疗</span>
-            <span class="value">{{""}}</span>
+            <span class="value">{{item.correctFlag == 1 ? '是' : '否'}}</span>
           </div>
         </card>
         <card class="card adverse-event-card"
