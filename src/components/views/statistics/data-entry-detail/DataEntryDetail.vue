@@ -117,7 +117,9 @@ export default {
     setTimeout(() => {
       this.modifyFormWrapperTop();
     }, 1000);
-
+    window.onresize = () => {
+      this.modifyFormWrapperTop();
+    };
   },
   watch: {
     type(newVal) {
