@@ -402,12 +402,18 @@ export default new Router({
             {
               path: 'dataEntryDetail',
               component: DataEntryDetail,
-              name: 'dataEntryDetail'
+              name: 'dataEntryDetail',
+              meta: {
+                dataEntryDetail: true
+              }
             },
             {
               path: 'history',
               component: DataEntryDetail,
-              name: 'historyStatistics'
+              name: 'historyStatistics',
+              meta: {
+                historyStatistics: true
+              }
             }
           ]
         },
