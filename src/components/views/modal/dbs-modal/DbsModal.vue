@@ -1302,11 +1302,13 @@ export default {
         }
       }
 
+      // 转换日期格式
+      reviseDateFormat(this.copyInfo);
+
       // 如果直接操作 copyInfo，后面的 delete 操作可能会影响到数据绑定
       var submitData = deepCopy(this.copyInfo);
 
       submitData.patientCaseId = this.$route.params.caseId;
-      reviseDateFormat(submitData);
       pruneObj(submitData);
 
       if (this.modelType === 1) {
