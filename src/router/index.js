@@ -8,6 +8,7 @@ import DoctorSelection from 'views/doctor-selection/DoctorSelection';
 import Layout from 'views/layout/Layout';
 import ListFrame from 'views/list-frame/ListFrame';
 import Analytics from 'views/analytics/Analytics';
+import Statistics from 'views/statistics/Statistics';
 const Configuration = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/Configuration');
 
 import PatientInfo from 'patient/patient-info/PatientInfo';
@@ -18,6 +19,8 @@ import DiagnosticInfo from 'patient/diagnostic-info/DiagnosticInfo';
 import ExperimentInfo from 'patient/experiment-info/ExperimentInfo';
 
 import BasicAnalytics from 'views/analytics/basic-analytics/BasicAnalytics';
+
+import DataEntryDetail from 'views/statistics/data-entry-detail/DataEntryDetail';
 
 const FeatureConfiguration = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/featureconfiguration/FeatureConfiguration');
 const SecondBar = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/featureconfiguration/configuration-bar/SecondBar');
@@ -388,6 +391,23 @@ export default new Router({
               path: 'basic',
               component: BasicAnalytics,
               name: 'basicAnalytics'
+            }
+          ]
+        },
+        {
+          path: 'statistics',
+          component: Statistics,
+          name: 'statistics',
+          children: [
+            {
+              path: 'dataEntryDetail',
+              component: DataEntryDetail,
+              name: 'dataEntryDetail'
+            },
+            {
+              path: 'history',
+              component: DataEntryDetail,
+              name: 'historyStatistics'
             }
           ]
         },
