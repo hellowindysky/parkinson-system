@@ -298,6 +298,7 @@ export default {
           width: 100%;
           .field-input {
             right: 4%;
+            width: calc(~"96% - @{field-name-width}");
           }
         }
         .field-name {
