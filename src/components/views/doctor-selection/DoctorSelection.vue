@@ -62,7 +62,9 @@ import { setRequestToken } from 'api/common.js';
 import { getSupportMessage, getSupportedDoctorList } from 'api/user.js';
 import Util from 'utils/util.js';
 
+const dataEntryDetail = () => import(/* webpackChunkName: 'statistcs' */ 'views/statistics/data-entry-detail/DataEntryDetail');
 const messageModal = () => import(/* webpackChunkName: 'modal' */ 'modal/message-modal/MessageModal');
+
 import waterMark from 'public/water-mark/WaterMark';
 import secretAgreementModal from 'modal/secret-agreement-modal/SecretAgreementModal';
 
@@ -296,7 +298,8 @@ export default {
   components: {
     waterMark,
     messageModal,
-    secretAgreementModal
+    secretAgreementModal,
+    dataEntryDetail
   }
 };
 </script>
