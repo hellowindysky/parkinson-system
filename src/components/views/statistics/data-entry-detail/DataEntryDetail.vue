@@ -83,7 +83,7 @@ export default {
           return time.getTime() > Date.now();
         }
       },
-      activeTab: 'first'
+      activeTab: ''
     };
   },
   computed: {
@@ -132,7 +132,7 @@ export default {
         var menuBar = refs ? refs.menuBar : null;
         var formWrapper = refs ? refs.formWrapper : null;
         if (menuBar && formWrapper) {
-          var top = menuBar.offsetTop + 40;
+          var top = menuBar.offsetTop + menuBar.offsetHeight;
           formWrapper.style.top = top + 'px';
         }
       });
@@ -148,7 +148,7 @@ export default {
     type(newVal) {
       this.activeTab = '';
 
-      // 之所以要把下面的逻辑包裹在 setTimeout 中，是因为只有到了下个时钟周期，新的 tab 标签才会生成
+      // 之所以要把下面的逻辑包裹在 nextTick 中，是因为只有到了下个时钟周期，新的 tab 标签才会生成
       // 这个时候才能将【选中状态】赋给对应的新 tab
       // 否则会报警告信息，提示读取了 undefined 的某个属性（这个 undefined 就是还未生成的新 tab）
       // 基于同样的道理，我们在上面将 activeTab 置空。
