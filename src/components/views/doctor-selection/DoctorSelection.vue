@@ -4,6 +4,18 @@
       <h2 class="title" v-if="!statisticsType">
         {{title}}
       </h2>
+      <div class="tabs" v-if="statisticsType">
+        <span class="tab data-entry-tab"
+          :class="{'is-active': statisticsType==='dataEntryDetail'}"
+          @click="chooseTab('dataEntryDetail')">
+          录入统计
+        </span>
+        <span class="tab history-tab"
+          :class="{'is-active': statisticsType==='historyStatistics'}"
+          @click="chooseTab('historyStatistics')">
+          历史统计
+        </span>
+      </div>
       <div class="button statistics" v-if="!statisticsType" @click="showStatistics">
         <span class="iconfont icon-statistics"></span>
         运营分析
@@ -260,6 +272,9 @@ export default {
     hideStatistics() {
       this.statisticsType = '';
     },
+    chooseTab(type) {
+      this.statisticsType = type;
+    },
     clickScreen() {
       this.checkIfNoOperationForTooLong(this.$store.state.lastOperationTime);
     },
@@ -352,6 +367,41 @@ export default {
       line-height: 80px;
       color: @button-color;
       font-size: 24px;
+    }
+    .tabs {
+      position: relative;
+      margin: 0 auto;
+      width: 400px;
+      height: @this-top-bar-height;
+      .tab {
+        display: inline-block;
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        width: 100px;
+        height: 40px;
+        line-height: 40px;
+        font-weight: bold;
+        transition: 0.2s;
+        cursor: pointer;
+        &:hover {
+          opacity: 0.8;
+        }
+        &.data-entry-tab {
+          transform: translateX(-180%);
+          &.is-active {
+            color: @button-color;
+            transform: translateX(-90%) scale(1.8, 1.8);
+          }
+        }
+        &.history-tab {
+          transform: translateX(60%);
+          &.is-active {
+            color: @button-color;
+            transform: translateX(-30%) scale(1.8, 1.8);
+          }
+        }
+      }
     }
     .button {
       cursor: pointer;
