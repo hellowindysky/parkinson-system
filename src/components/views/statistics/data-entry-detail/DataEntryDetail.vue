@@ -57,20 +57,9 @@
       </div>
     </div>
     <div class="menu-bar" ref="menuBar">
-      <el-tabs v-model="activeTab" @tab-click="handleClick" v-if="type==='dataEntryDetail'">
-        <el-tab-pane label="录入有效分析" name="first">
-          1
-        </el-tab-pane>
-      </el-tabs>
-      <el-tabs v-model="activeTab" @tab-click="handleClick" v-if="type==='historyStatistics'">
-        <el-tab-pane label="当期录入有效分析" name="second">
-          2
-        </el-tab-pane>
-        <el-tab-pane label="当期录入明细" name="third">
-          3
-        </el-tab-pane>
-        <el-tab-pane label="当期量表明细" name="fourth">
-          4
+      <el-tabs v-model="activeTab" @tab-click="handleClick">
+        <el-tab-pane :key="item.name" v-for="(item, index) in availableTabs"
+          :label="item.title" :name="item.name">
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -106,6 +95,31 @@ export default {
       } else {
         return '';
       }
+    },
+    availableTabs() {
+      if (this.type === 'dataEntryDetail') {
+        return [{
+          title: '录入有效分析',
+          name: 'first'
+        }];
+      } else if (this.type === 'historyStatistics') {
+        return [
+          {
+            title: '当期录入有效分析',
+            name: 'second'
+          },
+          {
+            title: '当期录入明细',
+            name: 'third'
+          },
+          {
+            title: '当期量表明细',
+            name: 'fourth'
+          }
+        ];
+      } else {
+        return [];
+      }
     }
   },
   methods: {
@@ -125,20 +139,28 @@ export default {
     }
   },
   mounted() {
-    setTimeout(() => {
-      this.modifyFormWrapperTop();
-    }, 1000);
+    this.modifyFormWrapperTop();
     window.onresize = () => {
       this.modifyFormWrapperTop();
     };
   },
   watch: {
     type(newVal) {
-      if (newVal === 'dataEntryDetail') {
-        this.activeTab = 'first';
-      } else if (newVal === 'historyStatistics') {
-        this.activeTab = 'second';
-      }
+      this.activeTab = '';
+
+      // 之所以要把下面的逻辑包裹在 setTimeout 中，是因为只有到了下个时钟周期，新的 tab 标签才会生成
+      // 这个时候才能将【选中状态】赋给对应的新 tab
+      // 否则会报警告信息，提示读取了 undefined 的某个属性（这个 undefined 就是还未生成的新 tab）
+      // 基于同样的道理，我们在上面将 activeTab 置空。
+      // 因为旧的 tab 已经销毁，如果当前【选中状态】依然指向这个销毁的对象时，就会出错
+      // 总之，这个问题的实质就是由 数据变化 和 视图实际变化的异步所造成
+      this.$nextTick(() => {
+        if (newVal === 'dataEntryDetail') {
+          this.activeTab = 'first';
+        } else if (newVal === 'historyStatistics') {
+          this.activeTab = 'second';
+        }
+      });
       this.modifyFormWrapperTop();
     }
   }
