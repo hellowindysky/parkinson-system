@@ -37,6 +37,7 @@ module.exports = {
   },
 
   build: {
+    alphaEnv: require('./alpha.env'),
     betaEnv: require('./beta.env'),
     preEnv: require('./pre.env'),
     prodEnv: require('./prod.env'),

@@ -14,6 +14,8 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 var env = config.build.prodEnv
 if (process.env.NODE_ENV === 'testing') {
   env = require('../config/test.env')
+} else if (process.env.NODE_ENV === 'alpha') {
+  env = config.build.alphaEnv
 } else if (process.env.NODE_ENV === 'beta') {
   env = config.build.betaEnv
 } else if (process.env.NODE_ENV === 'pre') {
