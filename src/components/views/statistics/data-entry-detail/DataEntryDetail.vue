@@ -39,11 +39,21 @@
           </el-date-picker>
         </span>
       </div>
-      <div class="button query">
-        查询
+      <div class="field" v-else-if="type === 'historyStatistics'">
+        <span class="field-name">
+          录入月份
+        </span>
+        <span class="field-input">
+          <el-date-picker v-model="month" placeholder="请选择录入月份" type="month"></el-date-picker>
+        </span>
       </div>
-      <div class="button reset">
-        重置
+      <div class="button-wrapper">
+        <div class="button query">
+          查询
+        </div>
+        <div class="button reset">
+          重置
+        </div>
       </div>
     </div>
     <div class="menu-bar" ref="menuBar">
@@ -78,6 +88,7 @@ export default {
       doctorName: '',
       startTime: '',
       endTime: '',
+      month: '',
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now();
@@ -203,29 +214,32 @@ export default {
         }
       }
     }
-    .button {
+    .button-wrapper {
       display: inline-block;
-      position: relative;
-      top: 3px;
-      width: @small-button-width;
-      height: @small-button-height;
-      line-height: @small-button-height;
-      font-size: @normal-font-size;
-      color: #fff;
-      text-align: center;
-      cursor: pointer;
-      &.query {
-        margin-right: 15px;
-        background-color: @button-color;
-      }
-      &.reset {
-        background-color: @font-color;
-      }
-      &:hover {
-        opacity: 0.6;
-      }
-      &:active {
-        opacity: 0.8;
+      .button {
+        display: inline-block;
+        position: relative;
+        top: 3px;
+        width: @small-button-width;
+        height: @small-button-height;
+        line-height: @small-button-height;
+        font-size: @normal-font-size;
+        color: #fff;
+        text-align: center;
+        cursor: pointer;
+        &.query {
+          margin-right: 15px;
+          background-color: @button-color;
+        }
+        &.reset {
+          background-color: @font-color;
+        }
+        &:hover {
+          opacity: 0.6;
+        }
+        &:active {
+          opacity: 0.8;
+        }
       }
     }
   }
