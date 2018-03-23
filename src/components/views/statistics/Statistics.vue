@@ -1,11 +1,20 @@
 <template lang="html">
   <div class="statistics">
-    <router-view></router-view>
+    <router-view :type="type"></router-view>
   </div>
 </template>
 
 <script>
 export default {
+  computed: {
+    type() {
+      if (this.$route.matched.some(record => record.meta.dataEntryDetail)) {
+        return 'dataEntryDetail';
+      } else if (this.$route.matched.some(record => record.meta.historyStatistics)) {
+        return 'historyStatistics';
+      }
+    }
+  },
   methods: {
     checkRoute() {
       var path = this.$route.path;

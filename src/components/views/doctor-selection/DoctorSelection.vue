@@ -48,6 +48,7 @@
         </span>
       </div>
     </div>
+    <data-entry-detail class="statistics" :type="'dataEntryDetail'"></data-entry-detail>
     <water-mark></water-mark>
     <component :is="componentName"></component>
     <secret-agreement-modal></secret-agreement-modal>
@@ -353,6 +354,16 @@ export default {
       }
     }
   }
+  .statistics {
+    position: absolute;
+    width: auto;
+    height: auto;
+    top: @this-top-bar-height + 10px;
+    bottom: 0;
+    left: 15px;
+    right: 15px;
+    z-index: 100;
+  }
   .info-line {
     position: relative;
     width: 100%;
@@ -590,7 +601,7 @@ export default {
       }
     }
   }
-  .width-1-1, &.width-1-0 {
+  .width-1-1, .width-1-0 {
     width: calc(~"100% - @{this-card-horizontal-margin} * 2");
   }
   .width-1-2 {

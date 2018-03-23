@@ -71,6 +71,13 @@
 
 <script>
 export default {
+  props: {
+    type: {
+      type: String,
+      required: false,
+      default: ''
+    }
+  },
   data() {
     return {
       hospitalName: '',
@@ -87,15 +94,6 @@ export default {
     };
   },
   computed: {
-    type() {
-      if (this.$route.matched.some(record => record.meta.dataEntryDetail)) {
-        return 'dataEntryDetail';
-      } else if (this.$route.matched.some(record => record.meta.historyStatistics)) {
-        return 'historyStatistics';
-      } else {
-        return '';
-      }
-    },
     availableTabs() {
       if (this.type === 'dataEntryDetail') {
         return [{
@@ -127,6 +125,7 @@ export default {
       console.log(tab, event);
     },
     modifyFormWrapperTop() {
+      // 动态调整菜单栏的高度
       this.$nextTick(() => {
         var refs = this.$refs;
         var menuBar = refs ? refs.menuBar : null;
@@ -136,32 +135,36 @@ export default {
           formWrapper.style.top = top + 'px';
         }
       });
-    }
-  },
-  mounted() {
-    this.modifyFormWrapperTop();
-    window.onresize = () => {
-      this.modifyFormWrapperTop();
-    };
-  },
-  watch: {
-    type(newVal) {
+    },
+    updateActiveTab() {
+      // 更新当前选中的标签
+      // 首先将 activeTab 置空，因为旧的 tab 已经销毁，如果当前【选中状态】依然指向这个销毁的对象时，就会出错
       this.activeTab = '';
 
       // 之所以要把下面的逻辑包裹在 nextTick 中，是因为只有到了下个时钟周期，新的 tab 标签才会生成
       // 这个时候才能将【选中状态】赋给对应的新 tab
-      // 否则会报警告信息，提示读取了 undefined 的某个属性（这个 undefined 就是还未生成的新 tab）
-      // 基于同样的道理，我们在上面将 activeTab 置空。
-      // 因为旧的 tab 已经销毁，如果当前【选中状态】依然指向这个销毁的对象时，就会出错
-      // 总之，这个问题的实质就是由 数据变化 和 视图实际变化的异步所造成
+      // 否则会报警告信息，提示读取了 undefined 的某个属性（这个 undefined 就是还未生成的新 tab DOM）
+      // 总之，这个问题的实质就是由 数据变化 和 视图实际变化 的异步关系所造成
       this.$nextTick(() => {
-        if (newVal === 'dataEntryDetail') {
+        if (this.type === 'dataEntryDetail') {
           this.activeTab = 'first';
-        } else if (newVal === 'historyStatistics') {
+        } else if (this.type === 'historyStatistics') {
           this.activeTab = 'second';
         }
       });
+    }
+  },
+  mounted() {
+    window.onresize = () => {
       this.modifyFormWrapperTop();
+    };
+    this.modifyFormWrapperTop();
+    this.updateActiveTab();
+  },
+  watch: {
+    type() {
+      this.modifyFormWrapperTop();
+      this.updateActiveTab();
     }
   }
 };
@@ -176,8 +179,10 @@ export default {
 @long-field-width: @field-width * 2 - @field-name-width;
 
 .data-entry-detail {
+  position: relative;
   width: 100%;
   height: 100%;
+  background-color: @screen-color;
   .condition-bar {
     width: 100%;
     padding: 10px 20px;
@@ -302,8 +307,8 @@ export default {
     position: absolute;
     top: 100%;
     bottom: 0;
-    left: 15px;
-    right: 15px;
+    left: 0;
+    right: 0;
     background-color: #fff;
   }
 }
