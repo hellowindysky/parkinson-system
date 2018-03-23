@@ -17,6 +17,7 @@ npm run dll
 # 压缩打包出生产代码，目标地址是 dist 目录，第一次执行会新建该目录
 # 如果你希望更改项目在服务器上的部署路径，那么需要修改 config/index.js 文件下的 assetsPublicPath 属性值，默认是在域名下的根路径
 # 冒号后面的是打包模式，不同模式下的打包会决定一些全局变量的值，例如 api 的公共 url
+npm run build:alpha
 npm run build:beta
 npm run build:pre
 npm run build:prod

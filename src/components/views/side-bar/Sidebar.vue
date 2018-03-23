@@ -36,6 +36,21 @@
         高级统计
       </li>
     </ul>
+    <li class="item" :class="{'current-item': currentItem === 'statistics'}" @click="toggleStatisticsList" v-if="showStatistics">
+      <div class="menu-icon iconfont icon-statistics"></div>
+      <div class="title">运营分析</div>
+      <div class="fold-icon iconfont" :class="showStatisticsList ? 'icon-up' : 'icon-down'"></div>
+    </li>
+    <ul class="sub-item-list" :class="{'folded': !showStatisticsList}" v-if="showStatistics">
+      <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'dataEntryDetail'}"
+        @click="chooseDataEntryDetail">
+        录入统计
+      </li>
+      <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'historyStatistics'}"
+        @click="chooseHistoryStatistics">
+        历史统计
+      </li>
+    </ul>
     <li class="item" :class="{'current-item': currentItem === 'experiment'}" @click="toggleExperimentList"
       v-if="showExperiment && subjectRole > 0">
       <div class="menu-icon iconfont icon-experiment"></div>
@@ -107,6 +122,7 @@ export default {
     return {
       showPatientsList: true,
       showAnalyticsList: false,
+      showStatisticsList: false,
       showExperimentList: false,
       showConfigurationList: false,
       showInstitutionList: false
@@ -126,6 +142,8 @@ export default {
         return 'analytics';
       } else if (/^\/configuration/.test(path)) {
         return 'configuration';
+      } else if (/^\/statistics/.test(path)) {
+        return 'statistics';
       }
     },
     inSubject() {
@@ -159,6 +177,10 @@ export default {
         return 'basicAnalytics';
       } else if (/^\/analytics\/advanced/.test(path)) {
         return 'advancedAnalytics';
+      } else if (/^\/statistics\/dataEntryDetail/.test(path)) {
+        return 'dataEntryDetail';
+      } else if (/^\/statistics\/history/.test(path)) {
+        return 'historyStatistics';
       } else if (/^\/configuration\/featureConfiguration/.test(path)) {
         return 'featureConfiguration';
       } else if (/^\/configuration\/userManagement/.test(path)) {
@@ -176,6 +198,11 @@ export default {
     showAnalytics() {
       var userType = Number(sessionStorage.getItem('userType'));
       return (userType === 2 || userType === 4 || userType === 5);
+    },
+    showStatistics() {
+      // 只有录入员才可以看到这个菜单
+      var userType = Number(sessionStorage.getItem('userType'));
+      return userType === 5;
     },
     showExperiment() {
       return this.$store.state.subjectId !== this.SUBJECT_ID_FOR_HOSPITAL;
@@ -195,6 +222,9 @@ export default {
     },
     toggleAnalyticsList() {
       this.showAnalyticsList = !this.showAnalyticsList;
+    },
+    toggleStatisticsList() {
+      this.showStatisticsList = !this.showStatisticsList;
     },
     toggleExperimentList() {
       this.showExperimentList = !this.showExperimentList;
@@ -236,6 +266,18 @@ export default {
       }
     },
     chooseAdvancedAnalytics() {},
+    chooseDataEntryDetail() {
+      // 如果当前路径不是以“/statistics/dataEntryDetail”开头了，才发生跳转
+      if (!/^\/statistics\/dataEntryDetail/.test(this.$route.path)) {
+        this.$router.push({name: 'dataEntryDetail'});
+      }
+    },
+    chooseHistoryStatistics() {
+      // 如果当前路径不是以“/statistics/history”开头了，才发生跳转
+      if (!/^\/statistics\/history/.test(this.$route.path)) {
+        this.$router.push({name: 'historyStatistics'});
+      }
+    },
     chooseTherapist() {
       if (!/^\/patients\/therapistsPatientList/.test(this.$route.path)) {
         this.$router.push({name: 'therapistsPatients'});

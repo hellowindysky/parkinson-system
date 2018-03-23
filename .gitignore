@@ -2,6 +2,7 @@
 .cache
 node_modules/
 dist/
+dist_alpha/
 dist_beta/
 dist_pre/
 dist_prod/

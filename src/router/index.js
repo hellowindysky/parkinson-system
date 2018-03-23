@@ -7,7 +7,9 @@ import DoctorSelection from 'views/doctor-selection/DoctorSelection';
 
 import Layout from 'views/layout/Layout';
 import ListFrame from 'views/list-frame/ListFrame';
-import Analytics from 'views/analytics/Analytics';
+
+const Analytics = () => import(/* webpackChunkName: 'analytics' */ 'views/analytics/Analytics');
+const Statistics = () => import(/* webpackChunkName: 'statistcs' */ 'views/statistics/Statistics');
 const Configuration = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/Configuration');
 
 import PatientInfo from 'patient/patient-info/PatientInfo';
@@ -17,7 +19,9 @@ import PersonalInfo from 'patient/personal-info/PersonalInfo';
 import DiagnosticInfo from 'patient/diagnostic-info/DiagnosticInfo';
 import ExperimentInfo from 'patient/experiment-info/ExperimentInfo';
 
-import BasicAnalytics from 'views/analytics/basic-analytics/BasicAnalytics';
+const BasicAnalytics = () => import(/* webpackChunkName: 'analytics' */ 'views/analytics/basic-analytics/BasicAnalytics');
+
+const DataEntryDetail = () => import(/* webpackChunkName: 'statistcs' */ 'views/statistics/data-entry-detail/DataEntryDetail');
 
 const FeatureConfiguration = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/featureconfiguration/FeatureConfiguration');
 const SecondBar = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/featureconfiguration/configuration-bar/SecondBar');
@@ -388,6 +392,29 @@ export default new Router({
               path: 'basic',
               component: BasicAnalytics,
               name: 'basicAnalytics'
+            }
+          ]
+        },
+        {
+          path: 'statistics',
+          component: Statistics,
+          name: 'statistics',
+          children: [
+            {
+              path: 'dataEntryDetail',
+              component: DataEntryDetail,
+              name: 'dataEntryDetail',
+              meta: {
+                dataEntryDetail: true
+              }
+            },
+            {
+              path: 'history',
+              component: DataEntryDetail,
+              name: 'historyStatistics',
+              meta: {
+                historyStatistics: true
+              }
             }
           ]
         },
