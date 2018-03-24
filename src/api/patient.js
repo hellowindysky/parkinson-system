@@ -1082,6 +1082,32 @@ export function deleteAdverseEvent(patientAdverse) {
 
   return encapsulatePromise(url, request);
 };
+// 新增严重不良事件
+export function addSeriousAdverseEvent(patientAdverseSerious) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientAdverseSerious = patientAdverseSerious;
+  var url = '/pdms/addPatientAdverseSerious';
+
+  return encapsulatePromise(url, request);
+};
+
+// 修改严重不良事件
+export function modifySeriousAdverseEvent(patientAdverseSerious) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientAdverseSerious = patientAdverseSerious;
+  var url = '/pdms/modPatientAdverseSerious';
+
+  return encapsulatePromise(url, request);
+};
+
+// 删除严重不良事件
+export function deleteSeriousAdverseEvent(patientAdverseSerious) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientAdverseSerious = patientAdverseSerious;
+  var url = '/pdms/delPatientAdverseSerious';
+
+  return encapsulatePromise(url, request);
+};
 // 新增生命体征
 export function addVitalSigns(patientVitalSign) {
   var request = Object.assign({}, getCommonRequest());
