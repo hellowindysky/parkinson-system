@@ -123,7 +123,7 @@
             </el-select>
           </span>
         </div>
-        <div class="field whole-line">
+        <div class="field whole-line" v-show="outCome === 5">
           <span class="field-name">
             表&nbsp;&nbsp;&nbsp;&nbsp;现:
           </span>
@@ -140,7 +140,7 @@
             </el-input>
           </span>
         </div>
-        <div class="field whole-line">
+        <div class="field whole-line" v-show="outCome === 6">
           <span class="field-name">
             直接死因:
           </span>
@@ -157,7 +157,7 @@
             </el-input>
           </span>
         </div>
-        <div class="field">
+        <div class="field" v-show="outCome === 6">
           <span class="field-name">
             死亡时间:
           </span>
@@ -228,7 +228,7 @@
             </el-select>
           </span>
         </div>
-        <div class="field whole-line">
+        <div class="field whole-line" v-show="correctFlag === 1">
           <span class="field-name">
             治疗记录:
           </span>
@@ -281,7 +281,7 @@
             </el-select>
           </span>
         </div>
-        <div class="field">
+        <div class="field" v-show="unblindFlag === 1">
           <span class="field-name">
             揭盲日期:
           </span>
@@ -301,8 +301,16 @@
       </div>
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
-      <div v-if="mode!==VIEW_CURRENT_CARD" class="button submit-button" @click="submit">确定</div>
-      <div class="button text1-button "  v-else-if="mode!==VIEW_CURRENT_CARD" @click="submit">继续记录严重不良事件</div>
+      <div v-if="mode!==VIEW_CURRENT_CARD" class="button">
+        <span class="button text1-button" v-show="seriousFlag === 1" @click="seriousAgain">继续记录严重不良事件</span>
+        <span class="button submit-button" v-show="seriousFlag === 2" @click="submit">确定</span>
+      </div>
+      <!-- <div v-if="mode!==VIEW_CURRENT_CARD" class="button text1-button">
+        <span v-if="seriousFlag === 1">继续记录严重不良事件</span>
+      </div>
+      <div v-if="mode!==VIEW_CURRENT_CARD" class="button submit-button">
+        <span v-if="seriousFlag === 2" @click="submit">确定</span>
+      </div> -->
       <div v-else="mode===VIEW_CURRENT_CARD && showEdit" class="button submit-button btn-margin" @click="switchToEditingMode">编辑</div>
     </div>
   </div>
@@ -409,8 +417,6 @@ export default {
 
       this.completeInit = true;
       this.updateScrollbar();
-      this.foldedConditionalContentMeasures = false;
-      this.foldedConditionalContentEndEvents = false;
     },
     getUIType(field) {
       // uiType类型 0/无 1/输入框 2/数字箭头 3/单选下拉框 4/单选按纽 5/多选复选框 6/日期 7/日期时间
@@ -453,6 +459,12 @@ export default {
       this.mode = this.EDIT_CURRENT_CARD;
       this.updateScrollbar();
     },
+    seriousAgain() {
+      Bus.$on(this.SHOW_SERIOUS_ADVERSE_EVENT_MODAL, this.showPanel);
+      Bus.$emit(this.DYNAMIC_COMPONENT_MOUNTED);
+      this.updateScrollbar();
+
+    },
     submit() {
       if (this.lockSubmitButton) {
         return;
@@ -487,9 +499,7 @@ export default {
       adverseEventInfo.seriousFlag = this.seriousFlag;
       adverseEventInfo.adverseName = this.adverseName;
       adverseEventInfo.adverseDescribe = this.adverseDescribe;
-      adverseEventInfo.adverseSeverity = this.adverseSeverity;
       adverseEventInfo.severity = this.severity;
-      adverseEventInfo.digitYN = this.digitYN;
 
       adverseEventInfo.occurTime = Util.simplifyTime(adverseEventInfo.occurTime, true);
       adverseEventInfo.endTime = Util.simplifyTime(adverseEventInfo.endTime, true);
@@ -735,22 +745,6 @@ export default {
             &.narrow-col {
               width: 5%;
             }
-            .iconfont {
-              position: absolute;
-              left: 5px;
-              top: 9px;
-              cursor: pointer;
-              z-index: 20;
-              &.icon-remove {
-                color: @alert-color;
-              }
-              &:hover {
-                opacity: 0.6;
-              }
-              &:active {
-                opacity: 0.8;
-              }
-            }
             .el-input {
               width: 100%;
               &.warning {
@@ -804,32 +798,6 @@ export default {
       margin: 10px auto;
       background-color: @light-gray-color;
       text-align: center;
-      .toggle-fold-button {
-        display: inline-block;
-        width: 180px;
-        height: 21px;
-        line-height: 21px;
-        background-color: @background-color;
-        font-size: @small-font-size;
-        color: @gray-color;
-        transform: translateY(-10px);
-        cursor: pointer;
-        &:hover {
-          color: fade(@gray-color, 50%);
-        }
-        &:active {
-          color: fade(@gray-color, 75%);
-        }
-      }
-      .iconfont {
-        position: absolute;
-        display: inline-block;
-        margin-left: 8px;
-        width: @field-line-height;
-        height: @field-line-height;
-        color:#aaa;
-        vertical-align: middle;
-      }
     }
     .button {
       display: inline-block;
