@@ -253,7 +253,7 @@
           </div>
           <div class="text line-3">
             <span class="name">不良事件程度</span>
-            <span class="value">{{transform(item.severity, 'severity')}}</span>
+            <span class="value">{{transform(item.severity, 'adverseSeverity')}}</span>
           </div>
           <div class="text line-4">
             <span class="name">转归</span>
