@@ -1603,8 +1603,10 @@ export default {
       var influencedFieldName = '';
       if (fieldName === 'isTakeMedication') {
         influencedFieldName = 'medicationStatus';
-        if (this.copyInfo.patientDbsMedicine.length === 0) {
+        if (this.copyInfo.isTakeMedication === 1 && this.copyInfo.patientDbsMedicine.length === 0) {
           this.addMedicine();
+        } else if (this.copyInfo.isTakeMedication === 0) {
+          this.copyInfo.patientDbsMedicine = [];
         }
       } else if (fieldName === 'damageEffectExist') {
         influencedFieldName = 'damageEffectDuration';
