@@ -82,20 +82,21 @@ export default {
     },
     dataSort(item) {
       this.order = !this.order;
+
+      var dataType = item.dataType;
+      var key = item.dataKey;
+
+      var compare = function(x, y) {
+        if (dataType === 1) {
+          return x[key] - y[key];
+        } else if (dataType === 4) {
+          return x[key].localeCompare(y[key], 'zh');
+        } else if (dataType === 5) {
+          return new Date(x[key]).getTime() - new Date(y[key]).getTime();
+        }
+      };
+
       this.tableContentData.sort((a, b) => {
-        var key = item.dataKey;
-        var dataType = item.dataType;
-
-        var compare = function(x, y) {
-          if (dataType === 1) {
-            return x[key] - y[key];
-          } else if (dataType === 4) {
-            return x[key].localeCompare(y[key], 'zh');
-          } else if (dataType === 5) {
-            return new Date(x[key]).getTime() - new Date(y[key]).getTime();
-          }
-        };
-
         return this.order ? compare(a, b) : compare(b, a);
       });
     }
