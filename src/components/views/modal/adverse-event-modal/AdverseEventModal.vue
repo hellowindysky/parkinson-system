@@ -301,17 +301,21 @@
       </div>
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
+      <div v-if="mode===VIEW_CURRENT_CARD && showEdit" class="button submit-button btn-margin" @click="switchToEditingMode">编辑</div>
+      <span class="button text1-button" v-if="mode!==VIEW_CURRENT_CARD && seriousFlag === 1" @click="submit">继续记录严重不良事件</span>
+      <span class="button submit-button" v-if="mode!==VIEW_CURRENT_CARD && seriousFlag !== 1" @click="submit">确定</span>
+      <!-- <div class="button cancel-button" @click="cancel">取消</div>
       <div v-if="mode!==VIEW_CURRENT_CARD" class="button">
         <span class="button text1-button" v-show="seriousFlag === 1" @click="seriousAgain">继续记录严重不良事件</span>
         <span class="button submit-button" v-show="seriousFlag === 2" @click="submit">确定</span>
-      </div>
+      </div> -->
       <!-- <div v-if="mode!==VIEW_CURRENT_CARD" class="button text1-button">
         <span v-if="seriousFlag === 1">继续记录严重不良事件</span>
       </div>
       <div v-if="mode!==VIEW_CURRENT_CARD" class="button submit-button">
         <span v-if="seriousFlag === 2" @click="submit">确定</span>
       </div> -->
-      <div v-else="mode===VIEW_CURRENT_CARD && showEdit" class="button submit-button btn-margin" @click="switchToEditingMode">编辑</div>
+      <!-- <div v-else="mode===VIEW_CURRENT_CARD && showEdit" class="button submit-button btn-margin" @click="switchToEditingMode">编辑</div> -->
     </div>
   </div>
 </template>
@@ -382,8 +386,8 @@ export default {
        // 获取患者的 实验编号
       this.patientTaskCode = '';
       getPatientSimpleInfo(this.$route.params.id).then((data) => {
-        if (data.patientInfo && data.patientInfo.patientTaskCode) {
-          this.patientTaskCode = data.patientInfo.patientTaskCode;
+        if (data.patientInfo && data.patientInfo.dbsPatientCode) {
+          this.patientTaskCode = data.patientInfo.dbsPatientCode;
         }
       }, (error) => {
         console.log(error);
@@ -459,12 +463,12 @@ export default {
       this.mode = this.EDIT_CURRENT_CARD;
       this.updateScrollbar();
     },
-    seriousAgain() {
-      Bus.$on(this.SHOW_SERIOUS_ADVERSE_EVENT_MODAL, this.showPanel);
-      Bus.$emit(this.DYNAMIC_COMPONENT_MOUNTED);
-      this.updateScrollbar();
+    // seriousAgain() {
+    //   Bus.$on(this.SHOW_SERIOUS_ADVERSE_EVENT_MODAL, this.showPanel);
+    //   Bus.$emit(this.DYNAMIC_COMPONENT_MOUNTED);
+    //   this.updateScrollbar();
 
-    },
+    // },
     submit() {
       if (this.lockSubmitButton) {
         return;
@@ -524,7 +528,11 @@ export default {
     updateAndClose() {
       Bus.$emit(this.UPDATE_CASE_INFO);
       this.lockSubmitButton = false;
-      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
+      if (this.seriousFlag === 1) {
+        Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'seriousAdverseEventModal', this.SHOW_SERIOUS_ADVERSE_EVENT_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
+      } else {
+        Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
+      }
     },
     updateScrollbar() {
       this.$nextTick(() => {

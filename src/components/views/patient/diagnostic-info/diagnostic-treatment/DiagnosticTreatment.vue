@@ -765,12 +765,12 @@ export default {
           callback: this.addAdverseEvent
         });
       }
-      if (this.showSeriousAdverseEvent) {
-        list.push({
-          text: '严重不良事件',
-          callback: this.addSeriousAdverseEvent
-        });
-      }
+      // if (this.showSeriousAdverseEvent) {
+      //   list.push({
+      //     text: '严重不良事件',
+      //     callback: this.addSeriousAdverseEvent
+      //   });
+      // }
       Bus.$emit(this.SHOW_CHOICE_PANEL, list);
     },
     addPhysiontherapy() {
