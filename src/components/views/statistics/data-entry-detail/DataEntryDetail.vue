@@ -48,10 +48,10 @@
         </span>
       </div>
       <div class="button-wrapper">
-        <div class="button query">
+        <div class="button query" @click="updateFormData">
           查询
         </div>
-        <div class="button reset">
+        <div class="button reset" @click="resetConditions">
           重置
         </div>
       </div>
@@ -64,13 +64,14 @@
       </el-tabs>
     </div>
     <div class="form-wrapper" ref="formWrapper">
-      <custom-table :tableData="data"></custom-table>
+      <custom-table :tableData="tableData"></custom-table>
     </div>
   </div>
 </template>
 
 <script>
 import Ps from 'perfect-scrollbar';
+import Util from 'utils/util';
 import { getStatisticsData } from 'api/statistics';
 
 const customTable = () => import(/* webpackChunkName: 'statistics' */ 'public/custom-table/CustomTable');
@@ -153,7 +154,7 @@ export default {
         }
       },
       activeTab: '',
-      data: {}
+      tableData: {}
     };
   },
   computed: {
@@ -219,15 +220,36 @@ export default {
       });
     },
     updateFormData() {
-      var entryStatistics = {
+      var params = {
         startTime: '2017-10-01',
         endTime: '2018-01-01'
       };
-      getStatisticsData(entryStatistics).then((res) => {
-        res.data = res.data.concat(mockData);
-        this.data = res;
+      if (this.hospitalName) {
+        params.hospitalName = this.hospitalName;
+      }
+      if (this.doctorName) {
+        params.doctorName = this.doctorName;
+      }
+      if (this.type === 'dataEntryDetail' && this.startTime) {
+        params.startTime = Util.simplifyDate(this.startTime);
+      }
+      if (this.type === 'dataEntryDetail' && this.endTime) {
+        params.startTime = Util.simplifyDate(this.endTime);
+      }
+      getStatisticsData(params).then((res) => {
+        this.tableData = res;
+        // this.tableData.data = res.data && res.data[0] ? res.data : [];
+        this.tableData.data = res.data && res.data[0] ? res.data.concat(mockData) : mockData;
         this.updateScrollbar();
       });
+    },
+    resetConditions() {
+      this.hospitalName = '';
+      this.doctorName = '';
+      this.startTime = '';
+      this.endTime = '';
+      this.tableData = {};  // 这样在请求返回之前，就不会显示之前的数据
+      this.updateFormData();
     },
     updateScrollbar() {
       this.$nextTick(() => {
