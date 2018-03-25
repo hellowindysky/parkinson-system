@@ -115,9 +115,8 @@ export default {
 @import "~styles/variables.less";
 
 .custom-table-wrapper{
-  font-size:14px;
+  font-size: @normal-font-size;
   box-sizing: border-box;
-  overflow-x:auto;
   user-select: text;
   .table {
     width: 100%;
@@ -136,7 +135,7 @@ export default {
         transform: translateY(-50%);
       }
     }
-    th,td{
+    th, td {
       border: 1px solid @light-gray-color;
       font-weight: normal;
     }
@@ -153,8 +152,8 @@ export default {
       }
       td.col{
         white-space: nowrap;
-        padding-left:10px;
-        padding-right:10px;
+        padding-left: 10px;
+        padding-right: 10px;
       }
     }
   }
