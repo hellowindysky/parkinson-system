@@ -118,7 +118,8 @@
           <tr class="row" v-for="(medicine, index) in copyInfo.patientDbsMedicine">
             <td class="col">
               {{getLetterIndex(index)}}
-              <span v-if="mode!==VIEW_CURRENT_CARD" class="iconfont icon-remove"
+              <span v-if="mode!==VIEW_CURRENT_CARD && copyInfo.patientDbsMedicine.length > 1"
+                class="iconfont icon-remove"
                 @click="removeMedicine(index)"></span>
             </td>
             <td class="col">
@@ -1602,6 +1603,9 @@ export default {
       var influencedFieldName = '';
       if (fieldName === 'isTakeMedication') {
         influencedFieldName = 'medicationStatus';
+        if (this.copyInfo.patientDbsMedicine.length === 0) {
+          this.addMedicine();
+        }
       } else if (fieldName === 'damageEffectExist') {
         influencedFieldName = 'damageEffectDuration';
       } else if (fieldName === 'adverseEventsExist') {
