@@ -26,7 +26,7 @@
             SAE 情况:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-           {{translateToName(saeSituation, 'saeSituation')}}
+           {{translateToName()}}
           </span>
           <span class="field-input" v-else>
             <div class="serious-adverse-event">
@@ -355,6 +355,7 @@ export default {
   methods: {
     translateToName() {
       let typeArr = this.getOptions('saeSituation');
+      console.log(typeArr);
       let str = [];
       this.seriousAdverseEvents.forEach((item, i) => {
         if (item === true) {
