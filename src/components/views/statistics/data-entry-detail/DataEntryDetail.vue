@@ -71,9 +71,9 @@
 
 <script>
 import Ps from 'perfect-scrollbar';
-import { encapsulatePromise } from 'api/common.js';
+import { getStatisticsData } from 'api/statistics';
 
-const customTable = () => import(/* webpackChunkName: 'statistcs' */ 'public/custom-table/CustomTable');
+const customTable = () => import(/* webpackChunkName: 'statistics' */ 'public/custom-table/CustomTable');
 
 export default {
   props: {
@@ -180,18 +180,11 @@ export default {
     this.updateActiveTab();
     this.updateScrollbar();
 
-    encapsulatePromise('/pdms/entryStatistics', {
-      userId: 93242,
-      accountNumber: '15527231713',
-      userType: 2,
-      orgId: 34,
-      orgType: 2,
-      techSupport: '12345678901',
-      entryStatistics: {
-        startTime: '2017-10-01',
-        endTime: '2018-01-01'
-      }
-    }).then((res) => {
+    var entryStatistics = {
+      startTime: '2017-10-01',
+      endTime: '2018-01-01'
+    };
+    getStatisticsData(entryStatistics).then((res) => {
       res.data.push({
         recordTime: '2018-02-01',
         userDepName: '臻络医院',

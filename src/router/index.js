@@ -9,7 +9,7 @@ import Layout from 'views/layout/Layout';
 import ListFrame from 'views/list-frame/ListFrame';
 
 const Analytics = () => import(/* webpackChunkName: 'analytics' */ 'views/analytics/Analytics');
-const Statistics = () => import(/* webpackChunkName: 'statistcs' */ 'views/statistics/Statistics');
+const Statistics = () => import(/* webpackChunkName: 'statistics' */ 'views/statistics/Statistics');
 const Configuration = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/Configuration');
 
 import PatientInfo from 'patient/patient-info/PatientInfo';
@@ -21,7 +21,7 @@ import ExperimentInfo from 'patient/experiment-info/ExperimentInfo';
 
 const BasicAnalytics = () => import(/* webpackChunkName: 'analytics' */ 'views/analytics/basic-analytics/BasicAnalytics');
 
-const DataEntryDetail = () => import(/* webpackChunkName: 'statistcs' */ 'views/statistics/data-entry-detail/DataEntryDetail');
+const DataEntryDetail = () => import(/* webpackChunkName: 'statistics' */ 'views/statistics/data-entry-detail/DataEntryDetail');
 
 const FeatureConfiguration = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/featureconfiguration/FeatureConfiguration');
 const SecondBar = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/featureconfiguration/configuration-bar/SecondBar');
