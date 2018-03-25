@@ -1,8 +1,30 @@
 <template lang="html">
   <div class="doctor-selection" @click="clickScreen">
     <div class="top-bar shadow">
-      <h2 class="title">{{title}}</h2>
-      <div class="quit" @click="reLogin">
+      <h2 class="title" v-if="!statisticsType">
+        {{title}}
+      </h2>
+      <div class="tabs" v-if="statisticsType">
+        <span class="tab data-entry-tab"
+          :class="{'is-active': statisticsType==='dataEntryDetail'}"
+          @click="chooseTab('dataEntryDetail')">
+          录入统计
+        </span>
+        <span class="tab history-tab"
+          :class="{'is-active': statisticsType==='historyStatistics'}"
+          @click="chooseTab('historyStatistics')">
+          历史统计
+        </span>
+      </div>
+      <div class="button statistics" v-if="!statisticsType" @click="showStatistics">
+        <span class="iconfont icon-statistics"></span>
+        运营分析
+      </div>
+      <div class="button back" v-else @click="hideStatistics">
+        <span class="iconfont icon-back"></span>
+        返回
+      </div>
+      <div class="button quit" @click="reLogin">
         <span class="iconfont icon-quit"></span>
         退出
       </div>
@@ -48,6 +70,9 @@
         </span>
       </div>
     </div>
+
+    <data-entry-detail class="statistics" :class="{'hidden': !statisticsType}" :type="statisticsType"></data-entry-detail>
+
     <water-mark></water-mark>
     <component :is="componentName"></component>
     <secret-agreement-modal></secret-agreement-modal>
@@ -62,7 +87,9 @@ import { setRequestToken } from 'api/common.js';
 import { getSupportMessage, getSupportedDoctorList } from 'api/user.js';
 import Util from 'utils/util.js';
 
+const dataEntryDetail = () => import(/* webpackChunkName: 'statistics' */ 'views/statistics/data-entry-detail/DataEntryDetail');
 const messageModal = () => import(/* webpackChunkName: 'modal' */ 'modal/message-modal/MessageModal');
+
 import waterMark from 'public/water-mark/WaterMark';
 import secretAgreementModal from 'modal/secret-agreement-modal/SecretAgreementModal';
 
@@ -77,7 +104,8 @@ export default {
       refreshing: false,
       devideWidth: '',
       searchInputWrapperLeft: '',
-      doctorList: []
+      doctorList: [],
+      statisticsType: ''
     };
   },
   computed: {
@@ -238,6 +266,15 @@ export default {
       }, 3000);
       this.$router.push('/');
     },
+    showStatistics() {
+      this.statisticsType = 'dataEntryDetail';
+    },
+    hideStatistics() {
+      this.statisticsType = '';
+    },
+    chooseTab(type) {
+      this.statisticsType = type;
+    },
     clickScreen() {
       this.checkIfNoOperationForTooLong(this.$store.state.lastOperationTime);
     },
@@ -296,7 +333,8 @@ export default {
   components: {
     waterMark,
     messageModal,
-    secretAgreementModal
+    secretAgreementModal,
+    dataEntryDetail
   }
 };
 </script>
@@ -330,6 +368,65 @@ export default {
       color: @button-color;
       font-size: 24px;
     }
+    .tabs {
+      position: relative;
+      margin: 0 auto;
+      width: 400px;
+      height: @this-top-bar-height;
+      .tab {
+        display: inline-block;
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        width: 100px;
+        height: 40px;
+        line-height: 40px;
+        font-weight: bold;
+        transition: 0.2s;
+        cursor: pointer;
+        &:hover {
+          opacity: 0.8;
+        }
+        &.data-entry-tab {
+          transform: translateX(-180%);
+          &.is-active {
+            color: @button-color;
+            transform: translateX(-90%) scale(1.8, 1.8);
+          }
+        }
+        &.history-tab {
+          transform: translateX(60%);
+          &.is-active {
+            color: @button-color;
+            transform: translateX(-30%) scale(1.8, 1.8);
+          }
+        }
+      }
+    }
+    .button {
+      cursor: pointer;
+      &:hover {
+        opacity: 0.6;
+      }
+      &:active {
+        opacity: 0.8;
+      }
+    }
+    .statistics, .back {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 100px;
+      height: 40px;
+      line-height: 40px;
+      font-weight: bold;
+    }
+    .back {
+      .iconfont {
+        display: inline-block;
+        transform: translateX(-5px);
+      }
+    }
     .quit {
       display: inline-block;
       position: absolute;
@@ -338,16 +435,23 @@ export default {
       width: 100px;
       height: 40px;
       line-height: 40px;
-      cursor: pointer;
-      &:hover {
-        opacity: 0.6;
-      }
-      &:active {
-        opacity: 0.8;
-      }
       .iconfont {
         margin-right: 6px;
       }
+    }
+  }
+  .statistics {
+    position: absolute;
+    width: auto;
+    height: auto;
+    top: @this-top-bar-height + 10px;
+    bottom: 0;
+    left: 15px;
+    right: 15px;
+    transition: 0.3s;
+    z-index: 100;
+    &.hidden {
+      transform: translateX(120%);
     }
   }
   .info-line {
@@ -587,7 +691,7 @@ export default {
       }
     }
   }
-  .width-1-1, &.width-1-0 {
+  .width-1-1, .width-1-0 {
     width: calc(~"100% - @{this-card-horizontal-margin} * 2");
   }
   .width-1-2 {
