@@ -281,7 +281,7 @@
           </div>
           <div class="text line-3">
             <span class="name">SAE情况</span>
-            <span class="value">{{item.saeSituation}}</span>
+            <span class="value">{{transform(item.saeSituation, 'saeSituation')}}</span>
           </div>
           <div class="text line-4">
             <span class="name">转归</span>
