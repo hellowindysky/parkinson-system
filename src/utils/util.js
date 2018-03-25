@@ -115,15 +115,21 @@ function calculateMonthsBetween(fromDate, toDate) {
   var dateList = formatDate.split('-');
   var year = Number(dateList[0]);
   var month = Number(dateList[1]);
-  // var date = Number(dateList[2]);
+  var date = Number(dateList[2]);
 
   var formatTodayDate = simplifyDate(toDate);
   var todayList = formatTodayDate.split('-');
   var currentYear = Number(todayList[0]);
   var currentMonth = Number(todayList[1]);
-  // var currentDate = Number(todayList[2]);
+  var currentDate = Number(todayList[2]);
 
   var months = (currentYear - year) * 12 + (currentMonth - month);
+  if (date < currentDate) {
+    months += 1;
+  }
+  if (months === 0) {
+    months = 1;
+  }
   if (months < 12) {
     let res = months + ' 月';
     return [res, months];
