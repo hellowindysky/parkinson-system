@@ -81,9 +81,8 @@ export default {
       }
     },
     dataSort(item) {
+      this.order = !this.order;
       this.tableContentData.sort((a, b) => {
-        this.order = !this.order;
-
         var key = item.dataKey;
         var dataType = item.dataType;
 
@@ -160,4 +159,3 @@ export default {
   }
 }
 </style>
-
