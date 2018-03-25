@@ -224,8 +224,10 @@
             <td class="col col-width-10">否</td>
             <td class="col col-width-15">不清楚</td>
           </tr>
-          <tr class="row">
-            <td class="col col-width-35">{{transform(relateEvaluateFlag,'relateEvaluate')}}</td>
+          <tr class="row" v-for="(section, index) in relateEvaluateFlag">
+            <td class="col col-width-35">
+              {{transform(reaction.relateEvaluateFlag,'relateEvaluate')}}
+            </td>
             <td class="col col-width-10">{{""}}</td>
             <td class="col col-width-10">{{""}}</td>
             <td class="col col-width-15"></td>
@@ -326,7 +328,6 @@ export default {
       saeDealDetail: '',
       adverseName: '',
       seriousAdverseEvents: [],
-      hasNoReaction: '',
       warningResults: {
         saeAccurDate: '',
         adverseName: ''
@@ -513,7 +514,7 @@ export default {
         }, this._handleError);
 
       } else if (this.mode === this.EDIT_CURRENT_CARD) {
-        seriousAdverseEventInfo.patientAdverseId = this.patientAdverseId;
+        seriousAdverseEventInfo.patientAdverseSeriousId = this.patientAdverseSeriousId;
         modifySeriousAdverseEvent(seriousAdverseEventInfo).then(() => {
           this.updateAndClose();
         }, this._handleError);
