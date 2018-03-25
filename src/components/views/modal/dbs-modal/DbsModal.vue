@@ -102,6 +102,10 @@
             </el-select>
           </span>
         </div>
+        <div class="field" v-if="copyInfo.isTakeMedication === 1">
+          <span class="field-name">LEDD 合计</span>
+          <span class="field-input">{{totalLedd}} mg</span>
+        </div>
         <table class="medicine-table" v-if="copyInfo.isTakeMedication===1">
           <tr class="row title-row">
             <td class="col">
@@ -118,7 +122,8 @@
           <tr class="row" v-for="(medicine, index) in copyInfo.patientDbsMedicine">
             <td class="col">
               {{getLetterIndex(index)}}
-              <span v-if="mode!==VIEW_CURRENT_CARD" class="iconfont icon-remove"
+              <span v-if="mode!==VIEW_CURRENT_CARD && copyInfo.patientDbsMedicine.length > 1"
+                class="iconfont icon-remove"
                 @click="removeMedicine(index)"></span>
             </td>
             <td class="col">
@@ -1144,6 +1149,13 @@ export default {
         return '';
       }
     },
+    totalLedd() {
+      var total = 0;
+      for (let medicine of this.copyInfo.patientDbsMedicine) {
+        total += medicine.ledd;
+      }
+      return total;
+    },
     formOffsetClass() {
       if (this.currentFormSide === 'left') {
         return 'left-offset';
@@ -1602,6 +1614,11 @@ export default {
       var influencedFieldName = '';
       if (fieldName === 'isTakeMedication') {
         influencedFieldName = 'medicationStatus';
+        if (this.copyInfo.isTakeMedication === 1 && this.copyInfo.patientDbsMedicine.length === 0) {
+          this.addMedicine();
+        } else if (this.copyInfo.isTakeMedication === 0) {
+          this.copyInfo.patientDbsMedicine = [];
+        }
       } else if (fieldName === 'damageEffectExist') {
         influencedFieldName = 'damageEffectDuration';
       } else if (fieldName === 'adverseEventsExist') {

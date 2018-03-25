@@ -87,7 +87,7 @@ import { setRequestToken } from 'api/common.js';
 import { getSupportMessage, getSupportedDoctorList } from 'api/user.js';
 import Util from 'utils/util.js';
 
-const dataEntryDetail = () => import(/* webpackChunkName: 'statistcs' */ 'views/statistics/data-entry-detail/DataEntryDetail');
+const dataEntryDetail = () => import(/* webpackChunkName: 'statistics' */ 'views/statistics/data-entry-detail/DataEntryDetail');
 const messageModal = () => import(/* webpackChunkName: 'modal' */ 'modal/message-modal/MessageModal');
 
 import waterMark from 'public/water-mark/WaterMark';
