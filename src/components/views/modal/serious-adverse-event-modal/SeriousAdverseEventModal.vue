@@ -353,14 +353,19 @@ export default {
     }
   },
   methods: {
-    translateToName() {
+    translateToName(saeSituation) {
       let typeArr = this.getOptions('saeSituation');
       let str = [];
-      this.seriousAdverseEvents.forEach((item, i) => {
-        if (item === true) {
+      for (let i = 0; i < saeSituation.length; i++) {
+        if (saeSituation[i] === '1') {
           str.push(typeArr[i].name);
         }
-      });
+      };
+      // this.seriousAdverseEvents.forEach((item, i) => {
+      //   if (item === true) {
+      //     str.push(typeArr[i].name);
+      //   }
+      // });
       return str.join('，');
     },
     showPanel(cardOperation, item, showEdit) {
@@ -402,7 +407,7 @@ export default {
       this.saeDealDetail = item.saeDealDetail ? item.saeDealDetail : '';
       this.adverseName = item.adverseName ? item.adverseName : '';
       this.saeSituation = item.saeSituation ? item.saeSituation : '';
-      this.prepareSeriousAdverseEvent();
+      this.prepareSeriousAdverseEvent(item.saeSituation);
       this.completeInit = true;
       this.updateScrollbar();
     },
@@ -438,10 +443,9 @@ export default {
         this.$set(this.seriousAdverseEvents, i, false);
       }
     },
-    prepareSeriousAdverseEvent() {
-      var list = this.saeSituation.split('');
-      for (let i = 0; i < this.seriousAdverseEvents.length; i++) {
-        this.seriousAdverseEvents[i] = list[i] === '1';
+    prepareSeriousAdverseEvent(list) {
+      for (let i = 0; i < list.length; i++) {
+        this.$set(this.seriousAdverseEvents, i, list[i] === '1');
       }
     },
     concatenateSeriousAdverse() {
@@ -541,13 +545,13 @@ export default {
     }
   },
   mounted() {
+    this.initSeriousAdverseEvents();
     // 先在本组件注册该事件，等待Layout组件接收动态组件挂载完毕的通知，再在本组件执行 showPanel 或 showModal
     Bus.$on(this.SHOW_SERIOUS_ADVERSE_EVENT_MODAL, this.showPanel);
 
     // 动态组件挂载完毕，通知Layout组件，动态组件已挂载完毕
     Bus.$emit(this.DYNAMIC_COMPONENT_MOUNTED);
     this.updateScrollbar();
-    this.initSeriousAdverseEvents();
   },
   beforeDestroy() {
     Bus.$off(this.SHOW_SERIOUS_ADVERSE_EVENT_MODAL);
