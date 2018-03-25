@@ -25,7 +25,7 @@
       </thead>
       <tbody>
         <tr class="row" v-for="(item,index) in tableContentData" :key="'data'+index">
-          <td class="col" v-for="subItem in item">{{subItem}}</td>
+          <td class="col" v-for="subItem in tableTitleKeys">{{item[subItem]}}</td>
         </tr>
       </tbody>
     </table>
@@ -63,6 +63,19 @@ export default {
         }
       });
       return sub;
+    },
+    tableTitleKeys() {
+      let keys = [];
+      this.tableTitleData.forEach((item) => {
+        if (item.subCol && Array.isArray(item.subCol)) {
+          item.subCol.forEach((subItem) => {
+            keys.push(subItem.dataKey);
+          });
+        } else {
+          keys.push(item.dataKey);
+        }
+      });
+      return keys;
     }
   },
   methods: {
@@ -87,6 +100,11 @@ export default {
       var key = item.dataKey;
 
       var compare = function(x, y) {
+        if (y[key] === undefined) {
+          return false;
+        } else if (x[key] === undefined) {
+          return true;
+        }
         if (dataType === 1) {
           return x[key] - y[key];
         } else if (dataType === 4) {
