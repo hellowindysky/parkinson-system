@@ -224,13 +224,20 @@
             <td class="col col-width-10">否</td>
             <td class="col col-width-15">不清楚</td>
           </tr>
-          <tr class="row" v-for="(section, index) in relateEvaluateFlag">
+          <tr class="row" v-for="(section, index) in getOptions('relateEvaluate')">
             <td class="col col-width-35">
-              {{transform(reaction.relateEvaluateFlag,'relateEvaluate')}}
+              <!-- {{transform(reaction.relateEvaluateFlag,'relateEvaluate')}} -->
+              {{section.name}}
             </td>
-            <td class="col col-width-10">{{""}}</td>
-            <td class="col col-width-10">{{""}}</td>
-            <td class="col col-width-15"></td>
+            <td class="col col-width-10">
+              <el-radio class="radio" v-model="relateEvaluateFlag" label="1"></el-radio>
+            </td>
+            <td class="col col-width-10">
+              <el-radio class="radio" v-model="relateEvaluateFlag" label="0"></el-radio>
+            </td>
+            <td class="col col-width-15">
+              <el-radio class="radio" v-model="relateEvaluateFlag" label="2"></el-radio>
+            </td>
           </tr>
         </table>
         <div class="field">
@@ -732,6 +739,9 @@ export default {
               color: red;
               font-size: 25px;
               vertical-align: middle;
+            }
+            .el-radio__label {
+              font-size: 0;
             }
             &.col-width-10 {
               width: 10%;
