@@ -102,6 +102,10 @@
             </el-select>
           </span>
         </div>
+        <div class="field" v-if="copyInfo.isTakeMedication === 1">
+          <span class="field-name">LEDD 合计</span>
+          <span class="field-input">{{totalLedd}} mg</span>
+        </div>
         <table class="medicine-table" v-if="copyInfo.isTakeMedication===1">
           <tr class="row title-row">
             <td class="col">
@@ -1144,6 +1148,13 @@ export default {
       } else {
         return '';
       }
+    },
+    totalLedd() {
+      var total = 0;
+      for (let medicine of this.copyInfo.patientDbsMedicine) {
+        total += medicine.ledd;
+      }
+      return total;
     },
     formOffsetClass() {
       if (this.currentFormSide === 'left') {
