@@ -1,6 +1,6 @@
 <template lang="html">
-  <div class="data-entry-detail">
-    <div class="condition-bar">
+  <div class="data-entry-detail" ref="dataEntryDetail">
+    <div class="condition-bar" ref="conditionBar">
       <div class="field">
         <span class="field-name">
           医&nbsp;&nbsp;&nbsp;&nbsp;院
@@ -56,7 +56,7 @@
         </div>
       </div>
     </div>
-    <div class="menu-bar" ref="menuBar">
+    <div class="menu-bar">
       <el-tabs v-model="activeTab" @tab-click="handleClick">
         <el-tab-pane :key="item.name" v-for="(item, index) in availableTabs"
           :label="item.title" :name="item.name">
@@ -64,12 +64,16 @@
       </el-tabs>
     </div>
     <div class="form-wrapper" ref="formWrapper">
-
+      <custom-table :tableData="data"></custom-table>
     </div>
   </div>
 </template>
 
 <script>
+import Ps from 'perfect-scrollbar';
+
+const customTable = () => import(/* webpackChunkName: 'statistcs' */ 'public/custom-table/CustomTable');
+
 export default {
   props: {
     type: {
@@ -90,7 +94,8 @@ export default {
           return time.getTime() > Date.now();
         }
       },
-      activeTab: ''
+      activeTab: '',
+      data: {}
     };
   },
   computed: {
@@ -128,11 +133,13 @@ export default {
       // 动态调整菜单栏的高度
       this.$nextTick(() => {
         var refs = this.$refs;
-        var menuBar = refs ? refs.menuBar : null;
+        var dataEntryDetail = refs ? refs.dataEntryDetail : null;
+        var conditionBar = refs ? refs.conditionBar : null;
         var formWrapper = refs ? refs.formWrapper : null;
-        if (menuBar && formWrapper) {
-          var top = menuBar.offsetTop + menuBar.offsetHeight;
-          formWrapper.style.top = top + 'px';
+        if (dataEntryDetail && conditionBar && formWrapper) {
+          // 50 是 menuBar 的高度和它的 margin 之和
+          var height = dataEntryDetail.offsetHeight - conditionBar.offsetHeight - 50;
+          formWrapper.style.height = height + 'px';
         }
       });
     },
@@ -152,19 +159,37 @@ export default {
           this.activeTab = 'second';
         }
       });
+    },
+    updateScrollbar() {
+      this.$nextTick(() => {
+        Ps.destroy(this.$refs.formWrapper);
+        Ps.initialize(this.$refs.formWrapper, {
+          wheelSpeed: 1,
+          minScrollbarLength: 40
+        });
+      });
     }
   },
   mounted() {
     window.onresize = () => {
       this.modifyFormWrapperTop();
+      this.updateScrollbar();
     };
     this.modifyFormWrapperTop();
     this.updateActiveTab();
+    this.updateScrollbar();
+  },
+  components: {
+    customTable
   },
   watch: {
     type() {
       this.modifyFormWrapperTop();
       this.updateActiveTab();
+
+      this.$refs.formWrapper.scrollTop = 0;
+      this.$refs.formWrapper.scrollLeft = 0;
+      this.updateScrollbar();
     }
   }
 };
@@ -304,12 +329,45 @@ export default {
     }
   }
   .form-wrapper {
-    position: absolute;
-    top: 100%;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    position: relative;
+    height: 0;
+    width: 100%;
     background-color: #fff;
+    overflow: hidden;
+    .ps__scrollbar-x-rail {
+      position: absolute;
+      height: 12px;
+      bottom: 0;
+      padding: 0;
+      box-sizing: border-box;
+      opacity: 0.3;
+      transition: opacity 0.3s;
+      .ps__scrollbar-x {
+        position: relative;
+        height: 100%;
+        background-color: #aaa;
+        border-radius: 20px;
+      }
+    }
+    .ps__scrollbar-y-rail {
+      position: absolute;
+      width: 12px;
+      right: 0;
+      padding: 0;
+      box-sizing: border-box;
+      opacity: 0.3;
+      transition: opacity 0.3s;
+      .ps__scrollbar-y {
+        position: relative;
+        background-color: #aaa;
+        border-radius: 20px;
+      }
+    }
+    &:hover {
+      .ps__scrollbar-x-rail, .ps__scrollbar-y-rail {
+        opacity: 0.6;
+      }
+    }
   }
 }
 </style>
