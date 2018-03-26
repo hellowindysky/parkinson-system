@@ -225,7 +225,7 @@
             <td class="col col-width-15">不清楚</td>
           </tr>
           <tr class="row" v-for="(section, index) in getOptions('relateEvaluate')">
-            <td class="col col-width-35">
+            <td class="col col-width-40">
               {{section.name}}
             </td>
             <td class="col col-width-10">
@@ -234,7 +234,7 @@
             <td class="col col-width-10">
               <el-radio class="radio" v-model="relateEvaluateFlag[index]" label="0" :disabled="mode===VIEW_CURRENT_CARD"></el-radio>
             </td>
-            <td class="col col-width-15">
+            <td class="col col-width-10">
               <el-radio class="radio" v-model="relateEvaluateFlag[index]" label="2" :disabled="mode===VIEW_CURRENT_CARD"></el-radio>
             </td>
           </tr>
@@ -593,11 +593,11 @@ export default {
   z-index: 500;
   .serious-adverse-event-modal {
     position: relative;
-    margin: auto;
+    margin: 10px auto;
     padding: 0 40px;
-    top: 3%;
+    top: 5%;
     width: 660px;
-    max-height: 94%;
+    max-height: 90%;
     background-color: @background-color;
     overflow: hidden;
     .serious-adverse-event {
@@ -745,11 +745,10 @@ export default {
             &.col-width-10 {
               width: 10%;
             }
-            &.col-width-15 {
-              width: 15%;
-            }
-            &.col-width-35 {
-              width: 35%;
+            &.col-width-40 {
+              width: 40%;
+              letter-spacing: 1px;
+              padding: 5px;
             }
             &.title-col {
               background-color: @font-color;
