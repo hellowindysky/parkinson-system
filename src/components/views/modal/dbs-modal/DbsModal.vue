@@ -535,7 +535,7 @@
             <td class="col w3" colspan="3">
               <el-select v-model="param.exciteMod"
                 :disabled="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==VALUE_FOR_CUSTOM"
-                @change="resetVoltageParamPole(followDbsAdjustBeforeParamPole[index])">
+                @change="resetVoltageParamPole(followDbsAdjustBeforeParamPole[index], followDbsAdjustBeforeFirstSchemeOrder!==VALUE_FOR_CUSTOM)">
                 <el-option v-for="(option, i) in getOptions('exciteMod')" :label="option.name"
                   :value="option.code" :key="'exciteMod' + i"></el-option>
               </el-select>
@@ -2259,7 +2259,11 @@ export default {
       }
       return true;
     },
-    resetVoltageParamPole(obj) {
+    resetVoltageParamPole(obj, disableToReset) {
+      // 第 2 个参数默认状况下是不传的，只有在特殊情形下，才会传递 true 过来，代表不要执行本函数
+      if (disableToReset) {
+        return;
+      }
       obj.positive = [];
       obj.negative = [];
     },
