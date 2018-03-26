@@ -291,7 +291,7 @@ export default {
       return '现病史（' + this.presentHistoryList.length + '条记录）';
     },
     medHistoryTitle() {
-      return '其它用药史（' + this.medHistoryList.length + '条记录）';
+      return '其他用药史（' + this.medHistoryList.length + '条记录）';
     },
     diseaseHistoryTitle() {
       return '既往史（' + this.diseaseHistoryList.length + '条记录）';
