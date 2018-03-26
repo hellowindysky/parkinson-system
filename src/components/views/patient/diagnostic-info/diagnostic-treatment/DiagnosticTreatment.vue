@@ -281,7 +281,7 @@
           </div>
           <div class="text line-3">
             <span class="name">SAE情况</span>
-            <span class="value">{{transform(item.saeSituation, 'saeSituation')}}</span>
+            <span class="value">{{translateToName(item.saeSituation, 'saeSituation')}}</span>
           </div>
           <div class="text line-4">
             <span class="name">转归</span>
@@ -585,6 +585,33 @@ export default {
       var types = typeInfo.types ? typeInfo.types : [];
       var name = Util.getElement('typeCode', parseInt(typeId, 10), types).typeName;
       return name;
+    },
+    translateToName(saeSituation) {
+      let typeArr = this.getOptions('saeSituation');
+      let str = [];
+      for (let i = 0; i < saeSituation.length; i++) {
+        if (saeSituation[i] === '1') {
+          str.push(typeArr[i].name);
+        }
+      };
+      // this.seriousAdverseEvents.forEach((item, i) => {
+      //   if (item === true) {
+      //     str.push(typeArr[i].name);
+      //   }
+      // });
+      return str.join('，');
+    },
+    getOptions(fieldName) {
+      var options = [];
+      var types = Util.getElement('typegroupcode', fieldName, this.typeGroup).types;
+      types = types ? types : [];
+      for (let type of types) {
+        options.push({
+          name: type.typeName,
+          code: type.typeCode
+        });
+      };
+      return options;
     },
     transformTypeGroupId(typeId, fieldName) {
       var types = Util.getElement('typegroupcode', fieldName, this.typeGroup).types;
