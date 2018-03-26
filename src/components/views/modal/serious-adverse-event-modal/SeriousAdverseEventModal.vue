@@ -26,7 +26,7 @@
             SAE 情况:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-           {{translateToName()}}
+           {{translateToName(saeSituation, 'saeSituation')}}
           </span>
           <span class="field-input" v-else>
             <div class="serious-adverse-event">
@@ -226,17 +226,16 @@
           </tr>
           <tr class="row" v-for="(section, index) in getOptions('relateEvaluate')">
             <td class="col col-width-35">
-              <!-- {{transform(reaction.relateEvaluateFlag,'relateEvaluate')}} -->
               {{section.name}}
             </td>
             <td class="col col-width-10">
-              <el-radio class="radio" v-model="relateEvaluateFlag" label="1"></el-radio>
+              <el-radio class="radio" v-model="relateEvaluateFlag[index]" label="1" :disabled="mode===VIEW_CURRENT_CARD"></el-radio>
             </td>
             <td class="col col-width-10">
-              <el-radio class="radio" v-model="relateEvaluateFlag" label="0"></el-radio>
+              <el-radio class="radio" v-model="relateEvaluateFlag[index]" label="0" :disabled="mode===VIEW_CURRENT_CARD"></el-radio>
             </td>
             <td class="col col-width-15">
-              <el-radio class="radio" v-model="relateEvaluateFlag" label="2"></el-radio>
+              <el-radio class="radio" v-model="relateEvaluateFlag[index]" label="2" :disabled="mode===VIEW_CURRENT_CARD"></el-radio>
             </td>
           </tr>
         </table>
@@ -329,7 +328,7 @@ export default {
       deathDate: '',
       domesticSituation: '',
       abroadSituation: '',
-      relateEvaluateFlag: '',
+      relateEvaluateFlag: [],
       unblindFlag: '',
       unblindDate: '',
       saeDealDetail: '',
@@ -362,7 +361,6 @@ export default {
   methods: {
     translateToName(saeSituation) {
       let typeArr = this.getOptions('saeSituation');
-      console.log(typeArr);
       let str = [];
       for (let i = 0; i < saeSituation.length; i++) {
         if (saeSituation[i] === '1') {
@@ -409,13 +407,13 @@ export default {
       this.deathDate = item.deathDate ? item.deathDate : '';
       this.domesticSituation = item.domesticSituation ? item.domesticSituation : '';
       this.abroadSituation = item.abroadSituation ? item.abroadSituation : '';
-      this.relateEvaluateFlag = item.relateEvaluateFlag ? item.relateEvaluateFlag : '';
+      this.relateEvaluateFlag = item.relateEvaluateFlag ? item.relateEvaluateFlag.split('') : [];
       this.unblindFlag = item.unblindFlag ? item.unblindFlag : '';
       this.unblindDate = item.unblindDate ? item.unblindDate : '';
       this.saeDealDetail = item.saeDealDetail ? item.saeDealDetail : '';
       this.adverseName = item.adverseName ? item.adverseName : '';
       this.saeSituation = item.saeSituation ? item.saeSituation : '';
-      this.prepareSeriousAdverseEvent(item.saeSituation);
+      this.prepareSeriousAdverseEvent();
       this.completeInit = true;
       this.updateScrollbar();
     },
@@ -452,8 +450,8 @@ export default {
       }
     },
     prepareSeriousAdverseEvent(list) {
-      for (let i = 0; i < list.length; i++) {
-        this.$set(this.seriousAdverseEvents, i, list[i] === '1');
+      for (let i = 0; i < this.saeSituation.length; i++) {
+        this.$set(this.seriousAdverseEvents, i, this.saeSituation[i] === '1');
       }
     },
     concatenateSeriousAdverse() {
@@ -508,7 +506,7 @@ export default {
       seriousAdverseEventInfo.deathDate = this.deathDate;
       seriousAdverseEventInfo.domesticSituation = this.domesticSituation;
       seriousAdverseEventInfo.abroadSituation = this.abroadSituation;
-      seriousAdverseEventInfo.relateEvaluateFlag = this.relateEvaluateFlag;
+      seriousAdverseEventInfo.relateEvaluateFlag = this.relateEvaluateFlag.join('');
       seriousAdverseEventInfo.unblindFlag = this.unblindFlag;
       seriousAdverseEventInfo.unblindDate = this.unblindDate;
       seriousAdverseEventInfo.saeDealDetail = this.saeDealDetail;
