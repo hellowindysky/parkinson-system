@@ -583,7 +583,7 @@ export default {
   z-index: 500;
   .adverse-event-modal {
     position: relative;
-    margin: auto;
+    margin: 10px auto;
     padding: 0 40px;
     top: 3%;
     width: 660px;
