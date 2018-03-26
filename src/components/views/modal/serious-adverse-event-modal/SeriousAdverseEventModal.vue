@@ -449,7 +449,7 @@ export default {
         this.$set(this.seriousAdverseEvents, i, false);
       }
     },
-    prepareSeriousAdverseEvent(list) {
+    prepareSeriousAdverseEvent() {
       for (let i = 0; i < this.saeSituation.length; i++) {
         this.$set(this.seriousAdverseEvents, i, this.saeSituation[i] === '1');
       }
