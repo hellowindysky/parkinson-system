@@ -109,7 +109,7 @@
         <table class="medicine-table" v-if="copyInfo.isTakeMedication===1">
           <tr class="row title-row">
             <td class="col">
-              <span v-if="mode!==VIEW_CURRENT_CARD && copyInfo.patientDbsMedicine.length < 15"
+              <span v-if="mode!==VIEW_CURRENT_CARD && copyInfo.patientDbsMedicine.length < MAXIMUM_FOR_MEDICINE_LIST"
                 class="iconfont icon-plus" @click="addMedicine"></span>
               序号
             </td>
@@ -1132,6 +1132,7 @@ export default {
       lastDbsParameter: [],
 
       VALUE_FOR_CUSTOM: -1,
+      MAXIMUM_FOR_MEDICINE_LIST: 15,
 
       lockSubmitButton: false,
       showEdit: false
@@ -1816,7 +1817,12 @@ export default {
       this.updateScrollbar();
     },
     addMedicine() {
-      var index = this.copyInfo.patientDbsMedicine.length;
+      var length = this.copyInfo.patientDbsMedicine.length;
+      if (length >= this.MAXIMUM_FOR_MEDICINE_LIST) {
+        return;
+      }
+
+      var index = length;
       this.$set(this.copyInfo.patientDbsMedicine, index, {});
       let propertyList = ['medicineId', 'medicalSpecUsed', 'takeDose', 'totalMeasure', 'ledd'];
       for (let property of propertyList) {
