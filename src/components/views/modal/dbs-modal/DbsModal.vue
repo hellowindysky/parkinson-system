@@ -2022,6 +2022,9 @@ export default {
       if (formType === 'firstDbsAdjustAfter') {
         let paramList = this.copyInfo.firstDbsParams.adjustAfterParameter;
         let count = paramList.length;
+        if (count >= 8) {
+          return;
+        }
 
         // 对表格的最左侧一列，最终参数，所对应的数组添加元素
         if (count === 0) {
@@ -2055,6 +2058,10 @@ export default {
       } else if (formType === 'followDbsAdjustVoltage') {
         let paramList = this.copyInfo.followDbsParams.adjustVoltageParameter;
         let count = paramList.length;
+        if (count >= 8) {
+          return;
+        }
+
         let order = count / 2 + 1;
         let propertyList = ['exciteMod', 'negativePole', 'positivePole', 'frequency', 'pulseWidth', 'voltage', 'effectInfo'];
         for (let limbSideNum of [1, 2]) {
@@ -2073,6 +2080,10 @@ export default {
       } else if (formType === 'followDbsAdjustMore') {
         let paramList = this.copyInfo.followDbsParams.adjustMoreParameter;
         let count = paramList.length;
+        if (count >= 8) {
+          return;
+        }
+
         let order = count / 2 + 1;
         let propertyList = ['exciteMod', 'negativePole', 'positivePole', 'frequency', 'pulseWidth', 'voltage', 'resistance', 'electric'];
         for (let limbSideNum of [1, 2]) {
@@ -2091,6 +2102,9 @@ export default {
       } else if (formType === 'followDbsAdjustAfter') {
         let paramList = this.copyInfo.followDbsParams.adjustAfterParameter;
         let count = paramList.length;
+        if (count >= 8) {
+          return;
+        }
 
         // 对表格的最左侧一列，最终参数，所对应的数组添加元素
         if (count === 0) {
