@@ -454,9 +454,9 @@ export default {
   z-index: 500;
   .treatment-evaluation-modal {
     position: relative;
-    margin: auto;
+    margin: 10px auto;
     padding: 0 40px;
-    top: 5%;
+    top: 3%;
     width: 600px;
     max-height: 90%;
     background-color: @background-color;
