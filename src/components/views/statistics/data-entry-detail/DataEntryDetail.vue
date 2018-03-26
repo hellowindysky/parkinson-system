@@ -249,7 +249,9 @@ export default {
           params.month = Util.simplifyDate(this.month);
         }
         var f = () => {};
-        if (this.activeTab === 'third') {
+        if (this.activeTab === 'second') {
+          return;
+        } else if (this.activeTab === 'third') {
           f = getStatisticsDetail;
         } else if (this.activeTab === 'fourth') {
           f = getScaleDetail;
