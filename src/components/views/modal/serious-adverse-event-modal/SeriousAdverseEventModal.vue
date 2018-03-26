@@ -408,7 +408,7 @@ export default {
       this.domesticSituation = item.domesticSituation ? item.domesticSituation : '';
       this.abroadSituation = item.abroadSituation ? item.abroadSituation : '';
       this.relateEvaluateFlag = item.relateEvaluateFlag ? item.relateEvaluateFlag.split('') : [];
-      this.unblindFlag = item.unblindFlag ? item.unblindFlag : '';
+      this.unblindFlag = item.unblindFlag ;
       this.unblindDate = item.unblindDate ? item.unblindDate : '';
       this.saeDealDetail = item.saeDealDetail ? item.saeDealDetail : '';
       this.adverseName = item.adverseName ? item.adverseName : '';
