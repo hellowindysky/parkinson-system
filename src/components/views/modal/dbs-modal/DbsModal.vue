@@ -527,14 +527,14 @@
                   :label="getFollowDbsAdjustBeforePlanName(p)" :value="p.schemeOrder"
                   :key="'lastDbsParameter' + i">
                 </el-option>
-                <el-option label="自定义" :value="0">
+                <el-option label="自定义" :value="VALUE_FOR_CUSTOM">
                 </el-option>
               </el-select>
             </td>
             <td class="col w2" colspan="2">{{getLimbSide(param.limbSide)}}</td>
             <td class="col w3" colspan="3">
               <el-select v-model="param.exciteMod"
-                :disabled="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0"
+                :disabled="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==VALUE_FOR_CUSTOM"
                 @change="resetVoltageParamPole(followDbsAdjustBeforeParamPole[index])">
                 <el-option v-for="(option, i) in getOptions('exciteMod')" :label="option.name"
                   :value="option.code" :key="'exciteMod' + i"></el-option>
@@ -545,7 +545,7 @@
                 @change="updateParamPole('followDbsAdjustBefore', index)">
                 <el-checkbox v-for="(contact, i) in getSidePositiveContact(param.limbSide)"
                   :label="contact" :key="'sidePositiveContact' + i"
-                  :disabled="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">
+                  :disabled="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==VALUE_FOR_CUSTOM">
                 </el-checkbox>
               </el-checkbox-group>
             </td>
@@ -554,36 +554,36 @@
                 @change="updateParamPole('followDbsAdjustBefore', index)">
                 <el-checkbox v-for="(contact, i) in getSideNegativeContact(param.limbSide)"
                   :label="contact" :key="'sideNegativeContact' + i"
-                  :disabled="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">
+                  :disabled="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==VALUE_FOR_CUSTOM">
                 </el-checkbox>
               </el-checkbox-group>
             </td>
             <td class="col w1" colspan="1">
-              <span v-if="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">
+              <span v-if="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==VALUE_FOR_CUSTOM">
                 {{param.frequency}}
               </span>
               <el-input v-else v-model="param.frequency"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <span v-if="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">
+              <span v-if="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==VALUE_FOR_CUSTOM">
                 {{param.pulseWidth}}
               </span>
               <el-input v-else v-model="param.pulseWidth"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <span v-if="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">
+              <span v-if="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==VALUE_FOR_CUSTOM">
                 {{param.voltage}}
               </span>
               <el-input v-else v-model="param.voltage"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <span v-if="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">
+              <span v-if="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==VALUE_FOR_CUSTOM">
                 {{param.resistance}}
               </span>
               <el-input v-else v-model="param.resistance"></el-input>
             </td>
             <td class="col w1" colspan="1">
-              <span v-if="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==0">
+              <span v-if="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==VALUE_FOR_CUSTOM">
                 {{param.electric}}
               </span>
               <el-input v-else v-model="param.electric"></el-input>
@@ -1130,6 +1130,9 @@ export default {
       followDbsAdjustBeforeFirstSchemeOrder: '',
       lastProgramDate: '',
       lastDbsParameter: [],
+
+      VALUE_FOR_CUSTOM: -1,
+
       lockSubmitButton: false,
       showEdit: false
     };
@@ -1547,6 +1550,8 @@ export default {
     prepareLastDbsInfo(data) {
       // 绑定上次程控时间和调整前参数
       this.lastProgramDate = data.lastProgramDate;
+      var lastDbsParameterChoice = data.patientDbsChoose !== undefined ? data.patientDbsChoose : 0;
+
       vueCopy(data.lastDbsParameter, this.lastDbsParameter);
       for (let param of this.lastDbsParameter) {
         delete param.id;
@@ -1555,9 +1560,11 @@ export default {
       if (this.lastDbsParameter.length > 0 && this.mode === this.ADD_NEW_CARD) {
         this.$set(this.copyInfo.followDbsParams.adjustBeforeParameter, 0, {});
         this.$set(this.copyInfo.followDbsParams.adjustBeforeParameter, 1, {});
-        vueCopy(this.lastDbsParameter[0], this.copyInfo.followDbsParams.adjustBeforeParameter[0]);
-        vueCopy(this.lastDbsParameter[1], this.copyInfo.followDbsParams.adjustBeforeParameter[1]);
-        this.followDbsAdjustBeforeFirstSchemeOrder = this.lastDbsParameter[0].schemeOrder;
+
+        var index = lastDbsParameterChoice * 2;
+        vueCopy(this.lastDbsParameter[index], this.copyInfo.followDbsParams.adjustBeforeParameter[0]);
+        vueCopy(this.lastDbsParameter[index + 1], this.copyInfo.followDbsParams.adjustBeforeParameter[1]);
+        this.followDbsAdjustBeforeFirstSchemeOrder = this.lastDbsParameter[index].schemeOrder;
       } else if (this.copyInfo.followDbsParams.adjustBeforeParameter && this.copyInfo.followDbsParams.adjustBeforeParameter[0]) {
         this.followDbsAdjustBeforeFirstSchemeOrder = this.copyInfo.followDbsParams.adjustBeforeParameter[0].schemeOrder;
       }
@@ -2320,7 +2327,7 @@ export default {
       this.$set(this.copyInfo.followDbsParams.adjustBeforeParameter, 0, {});
       this.$set(this.copyInfo.followDbsParams.adjustBeforeParameter, 1, {});
 
-      // 如果选择了自定义方案，则 this.followDbsAdjustBeforeFirstSchemeOrder 值为 0，
+      // 如果选择了自定义方案，则 this.followDbsAdjustBeforeFirstSchemeOrder 值为 this.VALUE_FOR_CUSTOM，
       // 与 this.lastDbsParameter 数组中的任意一项的 schemeOrder 都对应不上，那么 firstIndex 的值就还是 -1
       if (firstIndex === -1) {
         let emptyParam = {
