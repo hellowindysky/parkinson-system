@@ -5,7 +5,7 @@
       <div class="content">
         <div class="field whole-line">
           <span class="field-name">
-            不良事件名称:
+            严重不良事件名称:
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -17,7 +17,7 @@
               v-model="adverseName"
               :class="{'warning': warningResults.adverseName}"
               @change="updateWarning('adverseName')"
-              placeholder="请输入不良事件名称">
+              placeholder="请输入严重不良事件名称">
             </el-input>
           </span>
         </div>
