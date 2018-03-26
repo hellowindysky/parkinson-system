@@ -26,11 +26,11 @@
             SAE 情况:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-           {{translateToName()}}
+           {{translateToName(saeSituation, 'saeSituation')}}
           </span>
           <span class="field-input" v-else>
             <div class="serious-adverse-event">
-              <el-checkbox v-for="(item, index) in getOptions('seriousAdverse')"
+              <el-checkbox v-for="(item, index) in getOptions('saeSituation')"
                 v-model="seriousAdverseEvents[index]"
                 :key="item.code"
                 :label="item.name"
@@ -45,37 +45,34 @@
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{occurTime}}</span>
+            <span>{{saeAccurDate}}</span>
           </span>
           <span class="field-input" v-else>
-            <span class="warning-text">{{warningResults.occurTime}}</span>
+            <span class="warning-text">{{warningResults.saeAccurDate}}</span>
             <el-date-picker
-              v-model="occurTime"
-              :class="{'warning': warningResults.occurTime}"
+              v-model="saeAccurDate"
+              :class="{'warning': warningResults.saeAccurDate}"
               type="datetime"
               placeholder="请选择SAE发生时间"
               :picker-options="pickerOptions"
-              @change="updateWarning('occurTime')">
+              @change="updateWarning('saeAccurDate')">
             </el-date-picker>
           </span>
         </div>
          <div class="field">
           <span class="field-name">
             获知SAE时间:
-            <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{occurTime}}</span>
+            <span>{{ saeGetDate}}</span>
           </span>
           <span class="field-input" v-else>
-            <span class="warning-text">{{warningResults.occurTime}}</span>
             <el-date-picker
-              v-model="occurTime"
-              :class="{'warning': warningResults.occurTime}"
+              v-model=" saeGetDate"
               type="datetime"
               placeholder="请选择SAE获知时间"
               :picker-options="pickerOptions"
-              @change="updateWarning('occurTime')">
+              @change="updateWarning(' saeGetDate')">
             </el-date-picker>
           </span>
         </div>
@@ -84,11 +81,15 @@
            转&nbsp;&nbsp;&nbsp;&nbsp;归:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{""}}</span>
+            <span>{{transform(outCome,'outComeSerious')}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-select clearable placeholder="请选择">
-              <el-option>
+            <el-select v-model="outCome" clearable placeholder="请选择">
+              <el-option
+                v-for="item in getOptions('outComeSerious')"
+                :key="item.code"
+                :label="item.name"
+                :value="item.code">
               </el-option>
             </el-select>
           </span>
@@ -98,76 +99,64 @@
            与研究关联性评价:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{""}}</span>
+            <span>{{transform(treatmentRelate,'treatmentRelate')}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-select clearable placeholder="请选择">
-              <el-option>
+            <el-select v-model="treatmentRelate" clearable placeholder="请选择">
+              <el-option
+                v-for="item in getOptions('treatmentRelate')"
+                :key="item.code"
+                :label="item.name"
+                :value="item.code">
               </el-option>
             </el-select>
           </span>
         </div>
-        <div class="field">
+        <div class="field" v-show="outCome === 1">
           <span class="field-name">
            后遗症:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{""}}</span>
+            <span>{{transform(sequela,'haveType')}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-select clearable placeholder="请选择">
-              <el-option>
+            <el-select v-model="sequela" clearable placeholder="请选择">
+              <el-option
+                v-for="item in getOptions('haveType')"
+                :key="item.code"
+                :label="item.name"
+                :value="item.code">
               </el-option>
             </el-select>
           </span>
         </div>
-        <div class="field">
+        <div class="field" v-show="outCome === 1">
           <span class="field-name">
             症状消失时间:
-            <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{occurTime}}</span>
+            <span>{{disappearTime}}</span>
           </span>
           <span class="field-input" v-else>
-            <span class="warning-text">{{warningResults.occurTime}}</span>
             <el-date-picker
-              v-model="occurTime"
-              :class="{'warning': warningResults.occurTime}"
+              v-model="disappearTime"
               type="datetime"
               placeholder="请选择死亡时间"
               :picker-options="pickerOptions"
-              @change="updateWarning('occurTime')">
+              @change="updateWarning('disappearTime')">
             </el-date-picker>
           </span>
         </div>
-        <div class="field whole-line">
-          <span class="field-name">
-            表&nbsp;&nbsp;&nbsp;&nbsp;现:
-          </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            {{remark}}
-          </span>
-          <span class="field-input" v-else>
-            <el-input
-              v-model="remark"
-              type="textarea"
-              :rows="2"
-              :maxlength="500"
-              placeholder="请输入后遗症表现">
-            </el-input>
-          </span>
-        </div>
-        <div class="field whole-line">
+        <div class="field whole-line" v-show="outCome === 3">
           <span class="field-name">
             直接死因:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            {{remark}}
+            {{deathCause}}
           </span>
           <span class="field-input" v-else>
             <el-input
-              v-model="remark"
+              v-model="deathCause"
               type="textarea"
               :rows="2"
               :maxlength="500"
@@ -175,23 +164,20 @@
             </el-input>
           </span>
         </div>
-        <div class="field">
+        <div class="field" v-show="outCome === 3">
           <span class="field-name">
             死亡时间:
-            <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{occurTime}}</span>
+            <span>{{deathDate}}</span>
           </span>
           <span class="field-input" v-else>
-            <span class="warning-text">{{warningResults.occurTime}}</span>
             <el-date-picker
-              v-model="occurTime"
-              :class="{'warning': warningResults.occurTime}"
+              v-model="deathDate"
               type="datetime"
               placeholder="请选择死亡时间"
               :picker-options="pickerOptions"
-              @change="updateWarning('occurTime')">
+              @change="updateWarning('deathDate')">
             </el-date-picker>
           </span>
         </div>
@@ -200,11 +186,15 @@
            国内SAE报告情况:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{""}}</span>
+            <span>{{transform(domesticSituation,'saeReportSituation')}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-select clearable placeholder="请选择">
-              <el-option>
+            <el-select v-model="domesticSituation" clearable placeholder="请选择">
+              <el-option
+                v-for="item in getOptions('saeReportSituation')"
+                :key="item.code"
+                :label="item.name"
+                :value="item.code">
               </el-option>
             </el-select>
           </span>
@@ -214,11 +204,15 @@
            国外SAE报告情况:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{""}}</span>
+            <span>{{transform(abroadSituation,'saeReportSituation')}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-select clearable placeholder="请选择">
-              <el-option>
+            <el-select v-model="abroadSituation" clearable placeholder="请选择">
+              <el-option
+                v-for="item in getOptions('saeReportSituation')"
+                :key="item.code"
+                :label="item.name"
+                :value="item.code">
               </el-option>
             </el-select>
           </span>
@@ -230,11 +224,19 @@
             <td class="col col-width-10">否</td>
             <td class="col col-width-15">不清楚</td>
           </tr>
-          <tr class="row">
-            <td class="col col-width-35">{{""}}</td>
-            <td class="col col-width-10">{{""}}</td>
-            <td class="col col-width-10">{{""}}</td>
-            <td class="col col-width-15"></td>
+          <tr class="row" v-for="(section, index) in getOptions('relateEvaluate')">
+            <td class="col col-width-40">
+              {{section.name}}
+            </td>
+            <td class="col col-width-10">
+              <el-radio class="radio" v-model="relateEvaluateFlag[index]" label="1" :disabled="mode===VIEW_CURRENT_CARD"></el-radio>
+            </td>
+            <td class="col col-width-10">
+              <el-radio class="radio" v-model="relateEvaluateFlag[index]" label="0" :disabled="mode===VIEW_CURRENT_CARD"></el-radio>
+            </td>
+            <td class="col col-width-10">
+              <el-radio class="radio" v-model="relateEvaluateFlag[index]" label="2" :disabled="mode===VIEW_CURRENT_CARD"></el-radio>
+            </td>
           </tr>
         </table>
         <div class="field">
@@ -242,30 +244,33 @@
            是否揭盲:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{""}}</span>
+            <span>{{transform(unblindFlag,'digitYN')}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-select clearable placeholder="请选择">
-              <el-option>
+            <el-select v-model="unblindFlag" clearable placeholder="请选择">
+              <el-option
+                v-for="item in getOptions('digitYN')"
+                :key="item.code"
+                :label="item.name"
+                :value="item.code">
               </el-option>
             </el-select>
           </span>
         </div>
-        <div class="field">
+        <div class="field" v-show="unblindFlag === 1">
           <span class="field-name">
             揭盲日期:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{""}}</span>
+            <span>{{unblindDate}}</span>
           </span>
           <span class="field-input" v-else>
             <el-date-picker
-              v-model="occurTime"
-              :class="{'warning': warningResults.occurTime}"
+              v-model="unblindDate"
               type="date"
               placeholder="请选择揭盲日期"
               :picker-options="pickerOptions"
-              @change="updateWarning('occurTime')">
+              @change="updateWarning('unblindDate')">
             </el-date-picker>
           </span>
         </div>
@@ -274,11 +279,11 @@
             SAE发生及处理详情:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            {{remark}}
+            {{saeDealDetail}}
           </span>
           <span class="field-input" v-else>
             <el-input
-              v-model="remark"
+              v-model="saeDealDetail"
               type="textarea"
               :rows="2"
               :maxlength="500"
@@ -299,8 +304,8 @@ import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import { deepCopy, vueCopy, reviseMinuteFormat, pruneObj } from 'utils/helper';
-import { getPatientSimpleInfo, addAdverseEvent, modifyAdverseEvent } from 'api/patient.js';
+import { pruneObj } from 'utils/helper';
+import { getPatientSimpleInfo, addSeriousAdverseEvent, modifySeriousAdverseEvent } from 'api/patient.js';
 
 export default {
   props: {
@@ -310,45 +315,28 @@ export default {
       mode: '',
       completeInit: false,
       patientTaskCode: '',
-      patientAdverse: '',
-      patientAdverseId: '',
-      occurTime: '',
-      adverseName: '',
-      adverseDescribe: '',
-      measureFlag: '',
-      seriousFlag: '',
-      severity: '',
+      patientAdverseSerious: '',
+      patientAdverseSeriousId: '',
+      saeAccurDate: '',
+      saeSituation: '',
+      saeGetDate: '',
+      outCome: '',
       treatmentRelate: '',
-      seriousAdverse: '',
+      sequela: '',
+      disappearTime: '',
+      deathCause: '',
+      deathDate: '',
+      domesticSituation: '',
+      abroadSituation: '',
+      relateEvaluateFlag: [],
+      unblindFlag: '',
+      unblindDate: '',
+      saeDealDetail: '',
+      adverseName: '',
       seriousAdverseEvents: [],
-      remark: '',
-      otherMeasure: '',
-      aboratoryExam: '',
-      adverseResult: '',
-      relieveDate: '',
-      adverseEffect: '',
-      medicineMethod: '',
-      hasNoReaction: '',
-      foldedConditionalContentMeasures: false,
-      foldedConditionalContentEndEvents: false,
-      adjointMedicine: [
-        {
-          'medicineName': '',
-          'totalDailyDose': '',
-          'medicineMethod': ''
-        }
-      ],
-      treatMedicine: [
-        {
-          'medicineName': '',
-          'totalDailyDose': '',
-          'medicineMethod': ''
-        }
-      ],
       warningResults: {
-        occurTime: '',
-        adverseName: '',
-        adverseDescribe: ''
+        saeAccurDate: '',
+        adverseName: ''
       },
       pickerOptions: {
         disabledDate(time) {
@@ -371,31 +359,25 @@ export default {
     }
   },
   methods: {
-    translateToName() {
-      let typeArr = this.getOptions('seriousAdverse');
+    translateToName(saeSituation) {
+      let typeArr = this.getOptions('saeSituation');
       let str = [];
-      this.seriousAdverseEvents.forEach((item, i) => {
-        if (item === true) {
+      for (let i = 0; i < saeSituation.length; i++) {
+        if (saeSituation[i] === '1') {
           str.push(typeArr[i].name);
         }
-      });
+      };
+      // this.seriousAdverseEvents.forEach((item, i) => {
+      //   if (item === true) {
+      //     str.push(typeArr[i].name);
+      //   }
+      // });
       return str.join('，');
     },
     showPanel(cardOperation, item, showEdit) {
       this.completeInit = false;
       this.mode = cardOperation;
       this.showEdit = showEdit;
-      this.adjointMedicine = [];
-      this.$set(this.adjointMedicine, 0, {});
-      this.$set(this.adjointMedicine[0], 'medicineName', '');
-      this.$set(this.adjointMedicine[0], 'totalDailyDose', '');
-      this.$set(this.adjointMedicine[0], 'totalDailyDose', '');
-
-      this.treatMedicine = [];
-      this.$set(this.treatMedicine, 0, {});
-      this.$set(this.treatMedicine[0], 'medicineName', '');
-      this.$set(this.treatMedicine[0], 'totalDailyDose', '');
-      this.$set(this.treatMedicine[0], 'totalDailyDose', '');
        // 获取患者的 实验编号
       this.patientTaskCode = '';
       getPatientSimpleInfo(this.$route.params.id).then((data) => {
@@ -414,32 +396,26 @@ export default {
           }
         }
       });
-      this.patientAdverseId = item.patientAdverseId ? item.patientAdverseId : '';
-      this.occurTime = item.occurTime ? item.occurTime : '';
-      this.adverseName = item.adverseName ? item.adverseName : '';
-      this.adverseDescribe = item.adverseDescribe ? item.adverseDescribe : '';
-      this.measureFlag = item.measureFlag;
-      this.seriousFlag = item.seriousFlag;
-      this.severity = item.severity ? item.severity : '';
+      this.patientAdverseSeriousId = item.patientAdverseSeriousId ? item.patientAdverseSeriousId : '';
+      this.saeAccurDate = item.saeAccurDate ? item.saeAccurDate : '';
+      this.saeGetDate = item.saeGetDate ? item.saeGetDate : '';
+      this.outCome = item.outCome ? item.outCome : '';
       this.treatmentRelate = item.treatmentRelate ? item.treatmentRelate : '';
-      this.seriousAdverse = item.seriousAdverse ? item.seriousAdverse : '';
+      this.sequela = item.sequela ? item.sequela : '';
+      this.disappearTime = item.disappearTime ? item.disappearTime : '';
+      this.deathCause = item.deathCause ? item.deathCause : '';
+      this.deathDate = item.deathDate ? item.deathDate : '';
+      this.domesticSituation = item.domesticSituation ? item.domesticSituation : '';
+      this.abroadSituation = item.abroadSituation ? item.abroadSituation : '';
+      this.relateEvaluateFlag = item.relateEvaluateFlag ? item.relateEvaluateFlag.split('') : [];
+      this.unblindFlag = item.unblindFlag ? item.unblindFlag : '';
+      this.unblindDate = item.unblindDate ? item.unblindDate : '';
+      this.saeDealDetail = item.saeDealDetail ? item.saeDealDetail : '';
+      this.adverseName = item.adverseName ? item.adverseName : '';
+      this.saeSituation = item.saeSituation ? item.saeSituation : '';
       this.prepareSeriousAdverseEvent();
-
-      this.remark = item.remark ? item.remark : '';
-      this.otherMeasure = item.otherMeasure ? item.otherMeasure : '';
-      this.aboratoryExam = item.aboratoryExam ? item.aboratoryExam : '';
-      this.adverseResult = item.adverseResult ? item.adverseResult : '';
-      this.relieveDate = item.relieveDate ? item.relieveDate : '';
-      this.adverseEffect = item.adverseEffect ? item.adverseEffect : '';
-      this.medicineMethod = item.medicineMethod ? item.medicineMethod : '';
-      this.relieveDate = item.relieveDate ? item.relieveDate : '';
-      vueCopy(item.adjointMedicine, this.adjointMedicine);
-      vueCopy(item.treatMedicine, this.treatMedicine);
-
       this.completeInit = true;
       this.updateScrollbar();
-      this.foldedConditionalContentMeasures = false;
-      this.foldedConditionalContentEndEvents = false;
     },
     getUIType(field) {
       // uiType类型 0/无 1/输入框 2/数字箭头 3/单选下拉框 4/单选按纽 5/多选复选框 6/日期 7/日期时间
@@ -448,58 +424,6 @@ export default {
     getMatchedField(fieldName) {
       // 这个函数根据实际数据，在字典项中查询到对应的字段，从而方便我们得到其 uiType 等信息
       return Util.getElement('fieldName', fieldName, this.diseaseInfoDictionary);
-    },
-    addAdjointMedicine() {
-      var medicineList = this.adjointMedicine;
-      var index = medicineList.length;
-      this.$set(medicineList, index, {});
-      let propertyList = ['medicineName', 'totalDailyDose', 'medicineMethod'];
-      for (let property of propertyList) {
-        this.$set(medicineList[index], property, '');
-      }
-    },
-    addTreatMedicine() {
-      var medicineList = this.treatMedicine;
-      var index = medicineList.length;
-      this.$set(medicineList, index, {});
-      let propertyList = ['medicineName', 'totalDailyDose', 'medicineMethod'];
-      for (let property of propertyList) {
-        this.$set(medicineList[index], property, '');
-      }
-    },
-    removeAdjointMedicine(index) {
-      var medicineList = this.adjointMedicine;
-      var oldList = [];
-      for (let medicine of medicineList) {
-        oldList.push({
-          medicineName: medicine.medicineName,
-          totalDailyDose: medicine.totalDailyDose
-        });
-      }
-      medicineList.splice(index, 1);
-      this.$nextTick(() => {
-        for (var i = 0; i < medicineList.length; i++) {
-          medicineList[i].medicineName = oldList[i].medicineName;
-          medicineList[i].totalDailyDose = oldList[i].totalDailyDose;
-        }
-      });
-    },
-    removeTreatMedicine(index) {
-      var medicineList = this.treatMedicine;
-      var oldList = [];
-      for (let medicine of medicineList) {
-        oldList.push({
-          medicineName: medicine.medicineName,
-          totalDailyDose: medicine.totalDailyDose
-        });
-      }
-      medicineList.splice(index, 1);
-      this.$nextTick(() => {
-        for (var i = 0; i < medicineList.length; i++) {
-          medicineList[i].medicineName = oldList[i].medicineName;
-          medicineList[i].totalDailyDose = oldList[i].totalDailyDose;
-        }
-      });
     },
     transform(code, fieldName) {
       var options = this.getOptions(fieldName);
@@ -519,16 +443,15 @@ export default {
       return options;
     },
     initSeriousAdverseEvents() {
-      var options = this.getOptions('seriousAdverse');
+      var options = this.getOptions('saeSituation');
       this.seriousAdverseEvents = [];
       for (let i = 0; i < options.length; i++) {
         this.$set(this.seriousAdverseEvents, i, false);
       }
     },
     prepareSeriousAdverseEvent() {
-      var list = this.seriousAdverse.split('');
-      for (let i = 0; i < this.seriousAdverseEvents.length; i++) {
-        this.seriousAdverseEvents[i] = list[i] === '1';
+      for (let i = 0; i < this.saeSituation.length; i++) {
+        this.$set(this.seriousAdverseEvents, i, this.saeSituation[i] === '1');
       }
     },
     concatenateSeriousAdverse() {
@@ -539,7 +462,7 @@ export default {
       return result;
     },
     updateWarning(fieldName) {
-      var list = ['occurTime', 'adverseName', 'adverseDescribe'];
+      var list = ['saeAccurDate', 'adverseName'];
       if (list.indexOf(fieldName) >= 0 && !this[fieldName]) {
         this.warningResults[fieldName] = '必填项';
       } else {
@@ -570,39 +493,39 @@ export default {
           return;
         }
       }
-      var adverseEventInfo = {};
-      adverseEventInfo.patientId = this.$route.params.id;
-      adverseEventInfo.patientCaseId = this.$route.params.caseId;
-      adverseEventInfo.occurTime = this.occurTime;
-      adverseEventInfo.adverseName = this.adverseName;
-      adverseEventInfo.adverseDescribe = this.adverseDescribe;
-      adverseEventInfo.adverseSeverity = this.adverseSeverity;
-      adverseEventInfo.treatmentRelate = this.treatmentRelate;
-      adverseEventInfo.severity = this.severity;
-      adverseEventInfo.seriousFlag = this.seriousFlag;
-      adverseEventInfo.measureFlag = this.measureFlag;
-      adverseEventInfo.digitYN = this.digitYN;
-      adverseEventInfo.seriousAdverse = this.concatenateSeriousAdverse();
-
-      adverseEventInfo.remark = this.remark;
-      adverseEventInfo.otherMeasure = this.otherMeasure;
-      adverseEventInfo.aboratoryExam = this.aboratoryExam;
-      adverseEventInfo.adverseResult = this.adverseResult;
-      adverseEventInfo.relieveDate = this.relieveDate;
-      adverseEventInfo.adverseEffect = this.adverseEffect;
-      adverseEventInfo.adjointMedicine = deepCopy(this.adjointMedicine);
-      adverseEventInfo.treatMedicine = deepCopy(this.treatMedicine);
-      reviseMinuteFormat(adverseEventInfo);
-      pruneObj(adverseEventInfo);
+      var seriousAdverseEventInfo = {};
+      seriousAdverseEventInfo.patientId = this.$route.params.id;
+      seriousAdverseEventInfo.patientCaseId = this.$route.params.caseId;
+      seriousAdverseEventInfo.saeAccurDate = this.saeAccurDate;
+      seriousAdverseEventInfo.saeGetDate = this. saeGetDate;
+      seriousAdverseEventInfo.outCome = this. outCome;
+      seriousAdverseEventInfo.treatmentRelate = this.treatmentRelate;
+      seriousAdverseEventInfo.sequela = this.sequela;
+      seriousAdverseEventInfo.disappearTime = this.disappearTime;
+      seriousAdverseEventInfo.deathCause = this.deathCause;
+      seriousAdverseEventInfo.deathDate = this.deathDate;
+      seriousAdverseEventInfo.domesticSituation = this.domesticSituation;
+      seriousAdverseEventInfo.abroadSituation = this.abroadSituation;
+      seriousAdverseEventInfo.relateEvaluateFlag = this.relateEvaluateFlag.join('');
+      seriousAdverseEventInfo.unblindFlag = this.unblindFlag;
+      seriousAdverseEventInfo.unblindDate = this.unblindDate;
+      seriousAdverseEventInfo.saeDealDetail = this.saeDealDetail;
+      seriousAdverseEventInfo.adverseName = this.adverseName;
+      seriousAdverseEventInfo.saeSituation = this.concatenateSeriousAdverse();
+      seriousAdverseEventInfo.saeAccurDate = Util.simplifyTime(seriousAdverseEventInfo.saeAccurDate, true);
+      seriousAdverseEventInfo.saeGetDate = Util.simplifyTime(seriousAdverseEventInfo.saeGetDate, true);
+      seriousAdverseEventInfo.disappearTime = Util.simplifyTime(seriousAdverseEventInfo.disappearTime, true);
+      seriousAdverseEventInfo.deathDate = Util.simplifyTime(seriousAdverseEventInfo.deathDate, true);
+      pruneObj(seriousAdverseEventInfo);
 
       if (this.mode === this.ADD_NEW_CARD) {
-        addAdverseEvent(adverseEventInfo).then(() => {
+        addSeriousAdverseEvent(seriousAdverseEventInfo).then(() => {
           this.updateAndClose();
         }, this._handleError);
 
       } else if (this.mode === this.EDIT_CURRENT_CARD) {
-        adverseEventInfo.patientAdverseId = this.patientAdverseId;
-        modifyAdverseEvent(adverseEventInfo).then(() => {
+        seriousAdverseEventInfo.patientAdverseSeriousId = this.patientAdverseSeriousId;
+        modifySeriousAdverseEvent(seriousAdverseEventInfo).then(() => {
           this.updateAndClose();
         }, this._handleError);
       }
@@ -628,13 +551,13 @@ export default {
     }
   },
   mounted() {
+    this.initSeriousAdverseEvents();
     // 先在本组件注册该事件，等待Layout组件接收动态组件挂载完毕的通知，再在本组件执行 showPanel 或 showModal
     Bus.$on(this.SHOW_SERIOUS_ADVERSE_EVENT_MODAL, this.showPanel);
 
     // 动态组件挂载完毕，通知Layout组件，动态组件已挂载完毕
     Bus.$emit(this.DYNAMIC_COMPONENT_MOUNTED);
     this.updateScrollbar();
-    this.initSeriousAdverseEvents();
   },
   beforeDestroy() {
     Bus.$off(this.SHOW_SERIOUS_ADVERSE_EVENT_MODAL);
@@ -654,7 +577,7 @@ export default {
 <style lang="less">
 @import "~styles/variables.less";
 
-@field-line-height: 0;
+@field-line-height: 25px;
 @field-name-width: 120px;
 @scroll-bar-height: 10px;
 @unit-width: 54px;
@@ -670,11 +593,11 @@ export default {
   z-index: 500;
   .serious-adverse-event-modal {
     position: relative;
-    margin: auto;
+    margin: 10px auto;
     padding: 0 40px;
-    top: 3%;
+    top: 5%;
     width: 660px;
-    max-height: 94%;
+    max-height: 90%;
     background-color: @background-color;
     overflow: hidden;
     .serious-adverse-event {
@@ -728,7 +651,7 @@ export default {
           display: inline-block;
           position: absolute;
           top: 0;
-          left: @field-line-height;
+          left: 0;
           width: @field-name-width;
           line-height: 25px;
         //   font-size: @normal-font-size;
@@ -816,14 +739,16 @@ export default {
               font-size: 25px;
               vertical-align: middle;
             }
+            .el-radio__label {
+              font-size: 0;
+            }
             &.col-width-10 {
               width: 10%;
             }
-            &.col-width-15 {
-              width: 15%;
-            }
-            &.col-width-35 {
-              width: 35%;
+            &.col-width-40 {
+              width: 40%;
+              letter-spacing: 1px;
+              padding: 5px;
             }
             &.title-col {
               background-color: @font-color;

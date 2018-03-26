@@ -22,6 +22,7 @@
         :diagnosticPhysiontherapy="caseDetail.patientPhytheTms"
         :diagnosticTreatmentEvaluation="caseDetail.patientPhytheAssess"
         :diagnosticAdverseEvent="caseDetail.patientAdverse"
+        :diagnosticSeriousAdverseEvent="caseDetail.patientAdverseSerious"
         :diagnosticExperimentStep="diagnosticExperimentStep"
         :diagnosisCreator="diagnosisCreator">
       </diagnostic-treatment>

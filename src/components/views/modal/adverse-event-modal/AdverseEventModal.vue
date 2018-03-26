@@ -65,20 +65,17 @@
          <div class="field">
           <span class="field-name">
             结束时间:
-            <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{occurTime}}</span>
+            <span>{{endTime}}</span>
           </span>
           <span class="field-input" v-else>
-            <span class="warning-text">{{warningResults.occurTime}}</span>
             <el-date-picker
-              v-model="occurTime"
-              :class="{'warning': warningResults.occurTime}"
+              v-model="endTime"
               type="datetime"
               placeholder="请选择结束时间"
               :picker-options="pickerOptions"
-              @change="updateWarning('occurTime')">
+              @change="updateWarning('endTime')">
             </el-date-picker>
           </span>
         </div>
@@ -113,30 +110,68 @@
            转&nbsp;&nbsp;&nbsp;&nbsp;归:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{""}}</span>
+            <span>{{transform(outCome,'outCome')}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-select clearable placeholder="请选择">
-              <el-option>
+            <el-select v-model="outCome" clearable placeholder="请选择">
+              <el-option
+                v-for="item in getOptions('outCome')"
+                :key="item.code"
+                :label="item.name"
+                :value="item.code">
               </el-option>
             </el-select>
           </span>
         </div>
-        <div class="field whole-line">
+        <div class="field whole-line" v-show="outCome === 5">
           <span class="field-name">
             表&nbsp;&nbsp;&nbsp;&nbsp;现:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            {{remark}}
+            {{expression}}
           </span>
           <span class="field-input" v-else>
             <el-input
-              v-model="remark"
+              v-model="expression"
               type="textarea"
               :rows="2"
               :maxlength="500"
               placeholder="请输入后遗症表现">
             </el-input>
+          </span>
+        </div>
+        <div class="field whole-line" v-show="outCome === 6">
+          <span class="field-name">
+            直接死因:
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            {{deathCause}}
+          </span>
+          <span class="field-input" v-else>
+            <el-input
+              v-model="deathCause"
+              type="textarea"
+              :rows="2"
+              :maxlength="500"
+              placeholder="请输入后遗症表现">
+            </el-input>
+          </span>
+        </div>
+        <div class="field" v-show="outCome === 6">
+          <span class="field-name">
+            死亡时间:
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span>{{deathDate}}</span>
+          </span>
+          <span class="field-input" v-else>
+            <el-date-picker
+              v-model="deathDate"
+              type="date"
+              placeholder="请选择死亡时间"
+              :picker-options="pickerOptions"
+              @change="updateWarning('deathDate')">
+            </el-date-picker>
           </span>
         </div>
         <div class="field">
@@ -162,11 +197,15 @@
            与研究关联性评价:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{""}}</span>
+            <span>{{transform(treatmentRelate,'treatmentRelate')}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-select clearable placeholder="请选择">
-              <el-option>
+            <el-select v-model="treatmentRelate" clearable placeholder="请选择">
+              <el-option
+                v-for="item in getOptions('treatmentRelate')"
+                :key="item.code"
+                :label="item.name"
+                :value="item.code">
               </el-option>
             </el-select>
           </span>
@@ -176,25 +215,29 @@
            纠正治疗:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{""}}</span>
+            <span>{{transform(correctFlag,'digitYN')}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-select clearable placeholder="请选择">
-              <el-option>
+            <el-select v-model="correctFlag" clearable placeholder="请选择">
+              <el-option
+                v-for="item in getOptions('digitYN')"
+                :key="item.code"
+                :label="item.name"
+                :value="item.code">
               </el-option>
             </el-select>
           </span>
         </div>
-        <div class="field whole-line">
+        <div class="field whole-line" v-show="correctFlag === 1">
           <span class="field-name">
             治疗记录:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            {{remark}}
+            {{treatRecord}}
           </span>
           <span class="field-input" v-else>
             <el-input
-              v-model="remark"
+              v-model="treatRecord"
               type="textarea"
               :rows="2"
               :maxlength="500"
@@ -207,11 +250,15 @@
            因此退出实验:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{""}}</span>
+            <span>{{transform(exitTestFlag,'digitYN')}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-select clearable placeholder="请选择">
-              <el-option>
+            <el-select v-model="exitTestFlag" clearable placeholder="请选择">
+              <el-option
+                v-for="item in getOptions('digitYN')"
+                :key="item.code"
+                :label="item.name"
+                :value="item.code">
               </el-option>
             </el-select>
           </span>
@@ -221,39 +268,54 @@
            是否揭盲:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{""}}</span>
+            <span>{{transform(unblindFlag,'digitYN')}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-select clearable placeholder="请选择">
-              <el-option>
+            <el-select v-model="unblindFlag" clearable placeholder="请选择">
+              <el-option
+                v-for="item in getOptions('digitYN')"
+                :key="item.code"
+                :label="item.name"
+                :value="item.code">
               </el-option>
             </el-select>
           </span>
         </div>
-        <div class="field">
+        <div class="field" v-show="unblindFlag === 1">
           <span class="field-name">
             揭盲日期:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{""}}</span>
+            <span>{{unblindDate}}</span>
           </span>
           <span class="field-input" v-else>
             <el-date-picker
-              v-model="occurTime"
-              :class="{'warning': warningResults.occurTime}"
+              v-model="unblindDate"
               type="date"
               placeholder="请选择揭盲日期"
               :picker-options="pickerOptions"
-              @change="updateWarning('occurTime')">
+              @change="updateWarning('unblindDate')">
             </el-date-picker>
           </span>
         </div>
       </div>
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
-      <div v-if="mode!==VIEW_CURRENT_CARD" class="button submit-button" @click="submit">确定</div>
-      <div class="button text1-button "  v-else-if="mode!==VIEW_CURRENT_CARD" @click="submit">继续记录严重不良事件</div>
-      <div v-else="mode===VIEW_CURRENT_CARD && showEdit" class="button submit-button btn-margin" @click="switchToEditingMode">编辑</div>
+      <div v-if="mode===VIEW_CURRENT_CARD && showEdit" class="button submit-button btn-margin" @click="switchToEditingMode">编辑</div>
+      <span class="button text1-button" v-if="mode!==VIEW_CURRENT_CARD && seriousFlag === 1" @click="submit">继续记录严重不良事件</span>
+      <span class="button submit-button" v-if="mode!==VIEW_CURRENT_CARD && seriousFlag !== 1" @click="submit">确定</span>
+      <!-- <div class="button cancel-button" @click="cancel">取消</div>
+      <div v-if="mode!==VIEW_CURRENT_CARD" class="button">
+        <span class="button text1-button" v-show="seriousFlag === 1" @click="seriousAgain">继续记录严重不良事件</span>
+        <span class="button submit-button" v-show="seriousFlag === 2" @click="submit">确定</span>
+      </div> -->
+      <!-- <div v-if="mode!==VIEW_CURRENT_CARD" class="button text1-button">
+        <span v-if="seriousFlag === 1">继续记录严重不良事件</span>
+      </div>
+      <div v-if="mode!==VIEW_CURRENT_CARD" class="button submit-button">
+        <span v-if="seriousFlag === 2" @click="submit">确定</span>
+      </div> -->
+      <!-- <div v-else="mode===VIEW_CURRENT_CARD && showEdit" class="button submit-button btn-margin" @click="switchToEditingMode">编辑</div> -->
     </div>
   </div>
 </template>
@@ -262,7 +324,7 @@ import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import { deepCopy, vueCopy, reviseMinuteFormat, pruneObj } from 'utils/helper';
+import { pruneObj } from 'utils/helper';
 import { getPatientSimpleInfo, addAdverseEvent, modifyAdverseEvent } from 'api/patient.js';
 
 export default {
@@ -275,36 +337,22 @@ export default {
       patientAdverse: '',
       patientAdverseId: '',
       occurTime: '',
+      endTime: '',
+      unblindDate: '',
+      correctFlag: '',
+      outCome: '',
+      expression: '',
+      treatRecord: '',
+      exitTestFlag: '',
+      unblindFlag: '',
+      treatmentRelate: '',
+      deathCause: '',
+      deathDate: '',
+      seriousFlag: '',
+
       adverseName: '',
       adverseDescribe: '',
-      measureFlag: '',
-      seriousFlag: '',
       severity: '',
-      treatmentRelate: '',
-      seriousAdverse: '',
-      seriousAdverseEvents: [],
-      remark: '',
-      otherMeasure: '',
-      aboratoryExam: '',
-      adverseResult: '',
-      relieveDate: '',
-      adverseEffect: '',
-      medicineMethod: '',
-      hasNoReaction: '',
-      adjointMedicine: [
-        {
-          'medicineName': '',
-          'totalDailyDose': '',
-          'medicineMethod': ''
-        }
-      ],
-      treatMedicine: [
-        {
-          'medicineName': '',
-          'totalDailyDose': '',
-          'medicineMethod': ''
-        }
-      ],
       warningResults: {
         occurTime: '',
         adverseName: '',
@@ -331,36 +379,15 @@ export default {
     }
   },
   methods: {
-    translateToName() {
-      let typeArr = this.getOptions('seriousAdverse');
-      let str = [];
-      this.seriousAdverseEvents.forEach((item, i) => {
-        if (item === true) {
-          str.push(typeArr[i].name);
-        }
-      });
-      return str.join('，');
-    },
     showPanel(cardOperation, item, showEdit) {
       this.completeInit = false;
       this.mode = cardOperation;
       this.showEdit = showEdit;
-      this.adjointMedicine = [];
-      this.$set(this.adjointMedicine, 0, {});
-      this.$set(this.adjointMedicine[0], 'medicineName', '');
-      this.$set(this.adjointMedicine[0], 'totalDailyDose', '');
-      this.$set(this.adjointMedicine[0], 'totalDailyDose', '');
-
-      this.treatMedicine = [];
-      this.$set(this.treatMedicine, 0, {});
-      this.$set(this.treatMedicine[0], 'medicineName', '');
-      this.$set(this.treatMedicine[0], 'totalDailyDose', '');
-      this.$set(this.treatMedicine[0], 'totalDailyDose', '');
        // 获取患者的 实验编号
       this.patientTaskCode = '';
       getPatientSimpleInfo(this.$route.params.id).then((data) => {
-        if (data.patientInfo && data.patientInfo.patientTaskCode) {
-          this.patientTaskCode = data.patientInfo.patientTaskCode;
+        if (data.patientInfo && data.patientInfo.dbsPatientCode) {
+          this.patientTaskCode = data.patientInfo.dbsPatientCode;
         }
       }, (error) => {
         console.log(error);
@@ -376,30 +403,24 @@ export default {
       });
       this.patientAdverseId = item.patientAdverseId ? item.patientAdverseId : '';
       this.occurTime = item.occurTime ? item.occurTime : '';
+      this.endTime = item.endTime ? item.endTime : '';
+      this.unblindDate = item.unblindDate ? item.unblindDate : '';
+      this.outCome = item.outCome ? item.outCome : '';
+      this.expression = item.expression ? item.expression : '';
+      this.correctFlag = item.correctFlag ? item.correctFlag : '';
+      this.treatRecord = item.treatRecord ? item.treatRecord : '';
+      this.exitTestFlag = item.exitTestFlag ? item.exitTestFlag : '';
+      this.unblindFlag = item.unblindFlag ? item.unblindFlag : '';
+      this.treatmentRelate = item.treatmentRelate ? item.treatmentRelate : '';
+      this.deathCause = item.deathCause ? item.deathCause : '';
+      this.deathDate = item.deathDate ? item.deathDate : '';
+      this.seriousFlag = item.seriousFlag ? item.seriousFlag : '';
       this.adverseName = item.adverseName ? item.adverseName : '';
       this.adverseDescribe = item.adverseDescribe ? item.adverseDescribe : '';
-      this.measureFlag = item.measureFlag;
-      this.seriousFlag = item.seriousFlag;
       this.severity = item.severity ? item.severity : '';
-      this.treatmentRelate = item.treatmentRelate ? item.treatmentRelate : '';
-      this.seriousAdverse = item.seriousAdverse ? item.seriousAdverse : '';
-      this.prepareSeriousAdverseEvent();
-
-      this.remark = item.remark ? item.remark : '';
-      this.otherMeasure = item.otherMeasure ? item.otherMeasure : '';
-      this.aboratoryExam = item.aboratoryExam ? item.aboratoryExam : '';
-      this.adverseResult = item.adverseResult ? item.adverseResult : '';
-      this.relieveDate = item.relieveDate ? item.relieveDate : '';
-      this.adverseEffect = item.adverseEffect ? item.adverseEffect : '';
-      this.medicineMethod = item.medicineMethod ? item.medicineMethod : '';
-      this.relieveDate = item.relieveDate ? item.relieveDate : '';
-      vueCopy(item.adjointMedicine, this.adjointMedicine);
-      vueCopy(item.treatMedicine, this.treatMedicine);
 
       this.completeInit = true;
       this.updateScrollbar();
-      this.foldedConditionalContentMeasures = false;
-      this.foldedConditionalContentEndEvents = false;
     },
     getUIType(field) {
       // uiType类型 0/无 1/输入框 2/数字箭头 3/单选下拉框 4/单选按纽 5/多选复选框 6/日期 7/日期时间
@@ -408,58 +429,6 @@ export default {
     getMatchedField(fieldName) {
       // 这个函数根据实际数据，在字典项中查询到对应的字段，从而方便我们得到其 uiType 等信息
       return Util.getElement('fieldName', fieldName, this.diseaseInfoDictionary);
-    },
-    addAdjointMedicine() {
-      var medicineList = this.adjointMedicine;
-      var index = medicineList.length;
-      this.$set(medicineList, index, {});
-      let propertyList = ['medicineName', 'totalDailyDose', 'medicineMethod'];
-      for (let property of propertyList) {
-        this.$set(medicineList[index], property, '');
-      }
-    },
-    addTreatMedicine() {
-      var medicineList = this.treatMedicine;
-      var index = medicineList.length;
-      this.$set(medicineList, index, {});
-      let propertyList = ['medicineName', 'totalDailyDose', 'medicineMethod'];
-      for (let property of propertyList) {
-        this.$set(medicineList[index], property, '');
-      }
-    },
-    removeAdjointMedicine(index) {
-      var medicineList = this.adjointMedicine;
-      var oldList = [];
-      for (let medicine of medicineList) {
-        oldList.push({
-          medicineName: medicine.medicineName,
-          totalDailyDose: medicine.totalDailyDose
-        });
-      }
-      medicineList.splice(index, 1);
-      this.$nextTick(() => {
-        for (var i = 0; i < medicineList.length; i++) {
-          medicineList[i].medicineName = oldList[i].medicineName;
-          medicineList[i].totalDailyDose = oldList[i].totalDailyDose;
-        }
-      });
-    },
-    removeTreatMedicine(index) {
-      var medicineList = this.treatMedicine;
-      var oldList = [];
-      for (let medicine of medicineList) {
-        oldList.push({
-          medicineName: medicine.medicineName,
-          totalDailyDose: medicine.totalDailyDose
-        });
-      }
-      medicineList.splice(index, 1);
-      this.$nextTick(() => {
-        for (var i = 0; i < medicineList.length; i++) {
-          medicineList[i].medicineName = oldList[i].medicineName;
-          medicineList[i].totalDailyDose = oldList[i].totalDailyDose;
-        }
-      });
     },
     transform(code, fieldName) {
       var options = this.getOptions(fieldName);
@@ -478,26 +447,6 @@ export default {
       };
       return options;
     },
-    initSeriousAdverseEvents() {
-      var options = this.getOptions('seriousAdverse');
-      this.seriousAdverseEvents = [];
-      for (let i = 0; i < options.length; i++) {
-        this.$set(this.seriousAdverseEvents, i, false);
-      }
-    },
-    prepareSeriousAdverseEvent() {
-      var list = this.seriousAdverse.split('');
-      for (let i = 0; i < this.seriousAdverseEvents.length; i++) {
-        this.seriousAdverseEvents[i] = list[i] === '1';
-      }
-    },
-    concatenateSeriousAdverse() {
-      var result = '';
-      for (let event of this.seriousAdverseEvents) {
-        result += (event ? '1' : '0');
-      }
-      return result;
-    },
     updateWarning(fieldName) {
       var list = ['occurTime', 'adverseName', 'adverseDescribe'];
       if (list.indexOf(fieldName) >= 0 && !this[fieldName]) {
@@ -514,6 +463,12 @@ export default {
       this.mode = this.EDIT_CURRENT_CARD;
       this.updateScrollbar();
     },
+    // seriousAgain() {
+    //   Bus.$on(this.SHOW_SERIOUS_ADVERSE_EVENT_MODAL, this.showPanel);
+    //   Bus.$emit(this.DYNAMIC_COMPONENT_MOUNTED);
+    //   this.updateScrollbar();
+
+    // },
     submit() {
       if (this.lockSubmitButton) {
         return;
@@ -534,25 +489,24 @@ export default {
       adverseEventInfo.patientId = this.$route.params.id;
       adverseEventInfo.patientCaseId = this.$route.params.caseId;
       adverseEventInfo.occurTime = this.occurTime;
+      adverseEventInfo.endTime = this.endTime;
+      adverseEventInfo.unblindDate = this.unblindDate;
+      adverseEventInfo.outCome = this.outCome;
+      adverseEventInfo.expression = this.expression;
+      adverseEventInfo.correctFlag = this.correctFlag;
+      adverseEventInfo.treatRecord = this.treatRecord;
+      adverseEventInfo.exitTestFlag = this.exitTestFlag;
+      adverseEventInfo.unblindFlag = this.unblindFlag;
+      adverseEventInfo.treatmentRelate = this.treatmentRelate;
+      adverseEventInfo.deathCause = this.deathCause;
+      adverseEventInfo.deathDate = this.deathDate;
+      adverseEventInfo.seriousFlag = this.seriousFlag;
       adverseEventInfo.adverseName = this.adverseName;
       adverseEventInfo.adverseDescribe = this.adverseDescribe;
-      adverseEventInfo.adverseSeverity = this.adverseSeverity;
-      adverseEventInfo.treatmentRelate = this.treatmentRelate;
       adverseEventInfo.severity = this.severity;
-      adverseEventInfo.seriousFlag = this.seriousFlag;
-      adverseEventInfo.measureFlag = this.measureFlag;
-      adverseEventInfo.digitYN = this.digitYN;
-      adverseEventInfo.seriousAdverse = this.concatenateSeriousAdverse();
 
-      adverseEventInfo.remark = this.remark;
-      adverseEventInfo.otherMeasure = this.otherMeasure;
-      adverseEventInfo.aboratoryExam = this.aboratoryExam;
-      adverseEventInfo.adverseResult = this.adverseResult;
-      adverseEventInfo.relieveDate = this.relieveDate;
-      adverseEventInfo.adverseEffect = this.adverseEffect;
-      adverseEventInfo.adjointMedicine = deepCopy(this.adjointMedicine);
-      adverseEventInfo.treatMedicine = deepCopy(this.treatMedicine);
-      reviseMinuteFormat(adverseEventInfo);
+      adverseEventInfo.occurTime = Util.simplifyTime(adverseEventInfo.occurTime, true);
+      adverseEventInfo.endTime = Util.simplifyTime(adverseEventInfo.endTime, true);
       pruneObj(adverseEventInfo);
 
       if (this.mode === this.ADD_NEW_CARD) {
@@ -574,7 +528,11 @@ export default {
     updateAndClose() {
       Bus.$emit(this.UPDATE_CASE_INFO);
       this.lockSubmitButton = false;
-      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
+      if (this.seriousFlag === 1) {
+        Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'seriousAdverseEventModal', this.SHOW_SERIOUS_ADVERSE_EVENT_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
+      } else {
+        Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
+      }
     },
     updateScrollbar() {
       this.$nextTick(() => {
@@ -594,16 +552,11 @@ export default {
     // 动态组件挂载完毕，通知Layout组件，动态组件已挂载完毕
     Bus.$emit(this.DYNAMIC_COMPONENT_MOUNTED);
     this.updateScrollbar();
-    this.initSeriousAdverseEvents();
   },
   beforeDestroy() {
     Bus.$off(this.SHOW_ADVERSE_EVENT_MODAL);
   },
   watch: {
-    typeGroup() {
-      this.initSeriousAdverseEvents();
-      this.prepareSeriousAdverseEvent();
-    },
     '$route.path'() {
       this.cancel();
     }
@@ -614,7 +567,7 @@ export default {
 <style lang="less">
 @import "~styles/variables.less";
 
-@field-line-height: 0;
+@field-line-height: 25px;
 @field-name-width: 120px;
 @scroll-bar-height: 10px;
 @unit-width: 54px;
@@ -630,7 +583,7 @@ export default {
   z-index: 500;
   .adverse-event-modal {
     position: relative;
-    margin: auto;
+    margin: 10px auto;
     padding: 0 40px;
     top: 3%;
     width: 660px;
@@ -688,7 +641,7 @@ export default {
           display: inline-block;
           position: absolute;
           top: 0;
-          left: @field-line-height;
+          left: 0;
           width: @field-name-width;
           line-height: 25px;
         //   font-size: @normal-font-size;
@@ -800,22 +753,6 @@ export default {
             &.narrow-col {
               width: 5%;
             }
-            .iconfont {
-              position: absolute;
-              left: 5px;
-              top: 9px;
-              cursor: pointer;
-              z-index: 20;
-              &.icon-remove {
-                color: @alert-color;
-              }
-              &:hover {
-                opacity: 0.6;
-              }
-              &:active {
-                opacity: 0.8;
-              }
-            }
             .el-input {
               width: 100%;
               &.warning {
@@ -869,32 +806,6 @@ export default {
       margin: 10px auto;
       background-color: @light-gray-color;
       text-align: center;
-      .toggle-fold-button {
-        display: inline-block;
-        width: 180px;
-        height: 21px;
-        line-height: 21px;
-        background-color: @background-color;
-        font-size: @small-font-size;
-        color: @gray-color;
-        transform: translateY(-10px);
-        cursor: pointer;
-        &:hover {
-          color: fade(@gray-color, 50%);
-        }
-        &:active {
-          color: fade(@gray-color, 75%);
-        }
-      }
-      .iconfont {
-        position: absolute;
-        display: inline-block;
-        margin-left: 8px;
-        width: @field-line-height;
-        height: @field-line-height;
-        color:#aaa;
-        vertical-align: middle;
-      }
     }
     .button {
       display: inline-block;

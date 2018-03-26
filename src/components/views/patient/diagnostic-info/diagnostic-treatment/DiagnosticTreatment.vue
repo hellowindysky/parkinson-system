@@ -253,43 +253,43 @@
           </div>
           <div class="text line-3">
             <span class="name">不良事件程度</span>
-            <span class="value">{{""}}</span>
+            <span class="value">{{transform(item.severity, 'adverseSeverity')}}</span>
           </div>
           <div class="text line-4">
             <span class="name">转归</span>
-            <span class="value">{{""}}</span>
+            <span class="value">{{transform(item.outCome, 'outCome')}}</span>
           </div>
           <div class="text line-5">
             <span class="name">纠正治疗</span>
-            <span class="value">{{""}}</span>
+            <span class="value">{{item.correctFlag == 1 ? '是' : '否'}}</span>
           </div>
         </card>
         <card class="card adverse-event-card"
           :class="bigCardWidth" :mode="mutableMode"
-          v-for="(item, index) in diagnosticAdverseEvent"
-          :key="'diagnosticAdverseEvent'+index"
-          :title="'严重不良事件'" v-on:editCurrentCard="editAdverseEvent(item)"
-          v-on:deleteCurrentCard="deleteAdverseEvent(item)"
-          v-on:viewCurrentCard="viewAdverseEvent(item)">
+          v-for="(item, index) in diagnosticSeriousAdverseEvent"
+          :key="'diagnosticSeriousAdverseEvent'+index"
+          :title="'严重不良事件'" v-on:editCurrentCard="editSeriousAdverseEvent(item)"
+          v-on:deleteCurrentCard="deleteSeriousAdverseEvent(item)"
+          v-on:viewCurrentCard="viewSeriousAdverseEvent(item)">
           <div class="text line-1">
             <span class="name">事件名称</span>
             <span class="value">{{item.adverseName}}</span>
           </div>
           <div class="text line-2">
             <span class="name">发生时间</span>
-            <span class="value">{{item.occurTime}}</span>
+            <span class="value">{{item.saeAccurDate}}</span>
           </div>
           <div class="text line-3">
             <span class="name">SAE情况</span>
-            <span class="value">{{""}}</span>
+            <span class="value">{{translateToName(item.saeSituation, 'saeSituation')}}</span>
           </div>
           <div class="text line-4">
             <span class="name">转归</span>
-            <span class="value">{{""}}</span>
+            <span class="value">{{transform(item.outCome, 'outComeSerious')}}</span>
           </div>
           <div class="text line-5">
             <span class="name">SAE报告</span>
-            <span class="value">{{""}}</span>
+            <span class="value">国内({{transform(item.domesticSituation, 'saeReportSituation')}}),国外({{transform(item.abroadSituation, 'saeReportSituation')}}）</span>
           </div>
         </card>
       </extensible-panel>
@@ -302,6 +302,7 @@ import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import {
+  deleteSeriousAdverseEvent,
   deleteAdverseEvent,
   deleteTreatmentEvaluation,
   deletePhysiontherapy,
@@ -360,6 +361,12 @@ export default {
         return [];
       }
     },
+    diagnosticSeriousAdverseEvent: {
+      type: Array,
+      default: () => {
+        return [];
+      }
+    },
     diagnosisCreator: {
       type: String,
       default: ''
@@ -406,7 +413,7 @@ export default {
       return '程控记录（' + amount + '条记录）';
     },
     physiontherapyTitle() {
-      var totalCount = this.diagnosticPhysiontherapy.length + this.diagnosticTreatmentEvaluation.length + this.diagnosticAdverseEvent.length;
+      var totalCount = this.diagnosticPhysiontherapy.length + this.diagnosticTreatmentEvaluation.length + this.diagnosticAdverseEvent.length + this.diagnosticSeriousAdverseEvent.length;
       return '物理治疗（' + totalCount + '条记录）';
     },
     preEvaluationList() {
@@ -469,6 +476,15 @@ export default {
       }
     },
     showAdverseEvent() {
+      var atOtherStatus = this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_THERAPY &&
+        this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_FOLLOW_UP;
+      if (this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+    showSeriousAdverseEvent() {
       var atOtherStatus = this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_THERAPY &&
         this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_FOLLOW_UP;
       if (this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
@@ -569,6 +585,33 @@ export default {
       var types = typeInfo.types ? typeInfo.types : [];
       var name = Util.getElement('typeCode', parseInt(typeId, 10), types).typeName;
       return name;
+    },
+    translateToName(saeSituation) {
+      let typeArr = this.getOptions('saeSituation');
+      let str = [];
+      for (let i = 0; i < saeSituation.length; i++) {
+        if (saeSituation[i] === '1') {
+          str.push(typeArr[i].name);
+        }
+      };
+      // this.seriousAdverseEvents.forEach((item, i) => {
+      //   if (item === true) {
+      //     str.push(typeArr[i].name);
+      //   }
+      // });
+      return str.join('，');
+    },
+    getOptions(fieldName) {
+      var options = [];
+      var types = Util.getElement('typegroupcode', fieldName, this.typeGroup).types;
+      types = types ? types : [];
+      for (let type of types) {
+        options.push({
+          name: type.typeName,
+          code: type.typeCode
+        });
+      };
+      return options;
     },
     transformTypeGroupId(typeId, fieldName) {
       var types = Util.getElement('typegroupcode', fieldName, this.typeGroup).types;
@@ -749,6 +792,12 @@ export default {
           callback: this.addAdverseEvent
         });
       }
+      // if (this.showSeriousAdverseEvent) {
+      //   list.push({
+      //     text: '严重不良事件',
+      //     callback: this.addSeriousAdverseEvent
+      //   });
+      // }
       Bus.$emit(this.SHOW_CHOICE_PANEL, list);
     },
     addPhysiontherapy() {
@@ -811,6 +860,27 @@ export default {
       };
       Bus.$on(this.CONFIRM, () => {
         deleteAdverseEvent(patientAdverseEvent).then(this._resolveDeletion, this._rejectDeletion);
+      });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
+    },
+    addSeriousAdverseEvent() {
+      var showEdit = this.canEdit && this.showSeriousAdverseEvent;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'seriousAdverseEventModal', this.SHOW_SERIOUS_ADVERSE_EVENT_MODAL, this.ADD_NEW_CARD, {}, showEdit);
+    },
+    viewSeriousAdverseEvent(item) {
+      var showEdit = this.canEdit && this.showSeriousAdverseEvent;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'seriousAdverseEventModal', this.SHOW_SERIOUS_ADVERSE_EVENT_MODAL, this.VIEW_CURRENT_CARD, item, showEdit);
+    },
+    editSeriousAdverseEvent(item) {
+      var showEdit = this.canEdit && this.showSeriousAdverseEvent;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'seriousAdverseEventModal', this.SHOW_SERIOUS_ADVERSE_EVENT_MODAL, this.EDIT_CURRENT_CARD, item, showEdit);
+    },
+    deleteSeriousAdverseEvent(item) {
+      var patientSeriousAdverseEvent = {
+        patientAdverseSeriousId: item.patientAdverseSeriousId
+      };
+      Bus.$on(this.CONFIRM, () => {
+        deleteSeriousAdverseEvent(patientSeriousAdverseEvent).then(this._resolveDeletion, this._rejectDeletion);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
