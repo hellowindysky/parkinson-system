@@ -621,6 +621,9 @@ export default {
         };
         return childType;
 
+      } else if (fieldName === 'diagnoseState' && this.copyInfo['diseaseType'] === 1) {
+        let typeItem = Util.getElement('typegroupcode', 'diagnoseStateForPD', this.typeGroup);
+        return typeItem.types ? typeItem.types : [];
       } else {
         // 在 typegroup 里面查找到 field 所对应的 types（选项组）
         var dictionaryField = this.getMatchedField(fieldName);

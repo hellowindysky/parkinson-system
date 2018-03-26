@@ -376,7 +376,7 @@ export default {
     transformTypeCode(typeCode, field) {
       // 根据 typeCode 找到对应的 typeName
       var types = this.getTypes(field);
-      var matchedType = Util.getElement('typeCode', typeCode, types);
+      var matchedType = Util.getElement('typeCode', Number(typeCode), types);
       return matchedType.typeName ? matchedType.typeName : '';
     },
     inputing(field) {
