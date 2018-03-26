@@ -72,7 +72,7 @@
 <script>
 import Ps from 'perfect-scrollbar';
 import Util from 'utils/util';
-import { getStatisticsData } from 'api/statistics';
+import { getStatisticsData, getStatisticsDetail, getScaleDetail } from 'api/statistics';
 
 const customTable = () => import(/* webpackChunkName: 'statistics' */ 'public/custom-table/CustomTable');
 
@@ -230,18 +230,38 @@ export default {
       if (this.doctorName) {
         params.doctorName = this.doctorName;
       }
-      if (this.type === 'dataEntryDetail' && this.startTime) {
-        params.startTime = Util.simplifyDate(this.startTime);
+      if (this.type === 'dataEntryDetail') {
+        if (this.startTime) {
+          params.startTime = Util.simplifyDate(this.startTime);
+        }
+        if (this.endTime) {
+          params.endTime = Util.simplifyDate(this.endTime);
+        }
+        getStatisticsData(params).then((res) => {
+          this.tableData = res;
+          this.tableData.data = res.data && res.data[0] ? res.data : [];
+          // this.tableData.data = res.data && res.data[0] ? res.data.concat(mockData) : mockData;
+          this.updateScrollbar();
+        });
+
+      } else if (this.type === 'historyStatistics') {
+        if (this.month) {
+          params.month = Util.simplifyDate(this.month);
+        }
+        var f = () => {};
+        if (this.activeTab === 'third') {
+          f = getStatisticsDetail;
+        } else if (this.activeTab === 'fourth') {
+          f = getScaleDetail;
+        } else {
+          return;
+        }
+        f(params).then((res) => {
+          this.tableData = res;
+          this.tableData.data = res.data && res.data[0] ? res.data : [];
+          this.updateScrollbar();
+        });
       }
-      if (this.type === 'dataEntryDetail' && this.endTime) {
-        params.startTime = Util.simplifyDate(this.endTime);
-      }
-      getStatisticsData(params).then((res) => {
-        this.tableData = res;
-        // this.tableData.data = res.data && res.data[0] ? res.data : [];
-        this.tableData.data = res.data && res.data[0] ? res.data.concat(mockData) : mockData;
-        this.updateScrollbar();
-      });
     },
     resetConditions() {
       this.hospitalName = '';
