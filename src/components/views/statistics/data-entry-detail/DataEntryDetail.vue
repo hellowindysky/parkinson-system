@@ -56,7 +56,7 @@
         </div>
       </div>
     </div>
-    <div class="menu-bar">
+    <div class="menu-bar" :class="{'disabled-to-select': updatingFormData}">
       <el-tabs v-model="activeTab" @tab-click="handleClick">
         <el-tab-pane :key="item.name" v-for="(item, index) in availableTabs"
           :label="item.title" :name="item.name">
@@ -97,6 +97,7 @@ export default {
         }
       },
       activeTab: '',
+      updatingFormData: false,
       supportedDoctorNumber: '',
       tableData: {}
     };
@@ -173,6 +174,7 @@ export default {
       }
     },
     updateFormData() {
+      this.updatingFormData = true;
       this.tableData = {
         template: [],
         data: []
@@ -205,12 +207,14 @@ export default {
           params.month = Util.simplifyDate(this.month);
         }
         if (this.activeTab === 'second') {
+          this.updatingFormData = false;
           return;
         } else if (this.activeTab === 'third') {
           f = getStatisticsDetail;
         } else if (this.activeTab === 'fourth') {
           f = getScaleDetail;
         } else {
+          this.updatingFormData = false;
           return;
         }
 
@@ -222,6 +226,10 @@ export default {
         this.tableData = res;
         this.tableData.data = res.data && res.data[0] ? res.data : [];
         this.updateScrollbar();
+        this.updatingFormData = false;
+      }, (error) => {
+        console.log(error);
+        this.updatingFormData = false;
       });
     },
     resetConditions() {
@@ -382,6 +390,10 @@ export default {
     box-sizing: border-box;
     background-color: #fff;
     text-align: left;
+    &.disabled-to-select {
+      opacity: 0.6;
+      pointer-events: none;
+    }
     .el-tabs__header {
       margin-bottom: 0;
       .el-tabs__item {
