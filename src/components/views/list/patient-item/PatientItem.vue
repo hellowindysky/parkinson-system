@@ -49,7 +49,8 @@ export default {
 
       } else if (this.patient.status !== undefined &&
         this.$store.state.subjectId !== this.SUBJECT_ID_FOR_HOSPITAL &&
-        ([this.MY_PATIENTS_TYPE, this.THERAPISTS_PATIENTS_TYPE, this.APPRAISERS_PATIENTS_TYPE].indexOf(this.listType) >= 0)) {
+        ([this.MY_PATIENTS_TYPE, this.THERAPISTS_PATIENTS_TYPE, this.APPRAISERS_PATIENTS_TYPE,
+          this.SUBJECT_PATIENTS_TYPE].indexOf(this.listType) >= 0)) {
         let status = Number(this.patient.status);
         if (status === this.EXPERIMENT_STEP_SCREENING) {
           return 'icon-shai';
