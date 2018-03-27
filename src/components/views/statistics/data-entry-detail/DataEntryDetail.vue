@@ -72,66 +72,9 @@
 <script>
 import Ps from 'perfect-scrollbar';
 import Util from 'utils/util';
-import { getStatisticsData } from 'api/statistics';
+import { getStatisticsData, getStatisticsDetail, getScaleDetail } from 'api/statistics';
 
 const customTable = () => import(/* webpackChunkName: 'statistics' */ 'public/custom-table/CustomTable');
-
-var mockData = [
-  {
-    recordTime: '2018-02-01',
-    userDepName: '臻络医院',
-    userName: '胡小东',
-    supportDoctorName: '张艺',
-    patientIncreased: 100,
-    patientModify: 100,
-    caseIncreased: 100,
-    caseModify: 100,
-    validNewNumber: 100,
-    validFollowNumber: 100,
-    medicineProject: 100,
-    sideeffect: 100,
-    surgeryTreat: 100,
-    physicalTreat: 100,
-    scale: 100,
-    vitalSigns: 100,
-    nerousSystem: 100,
-    labExam: 100,
-    electroExam: 100,
-    medicineImage: 100,
-    otherMedicine: 100,
-    pastMedicalHistory: 100,
-    family: 100,
-    habit: 100,
-    cideexposed: 100
-  },
-  {
-    recordTime: '2018-02-02',
-    userDepName: 'a臻络医院',
-    userName: '圆点',
-    supportDoctorName: '阿毛',
-    patientIncreased: 200,
-    patientModify: 200,
-    caseIncreased: 200,
-    caseModify: 200,
-    validNewNumber: 200,
-    validFollowNumber: 200,
-    medicineProject: 200,
-    sideeffect: 200,
-    surgeryTreat: 200,
-    physicalTreat: 200,
-    scale: 200,
-    vitalSigns: 200,
-    nerousSystem: 200,
-    labExam: 200,
-    electroExam: 200,
-    medicineImage: 200,
-    otherMedicine: 200,
-    pastMedicalHistory: 200,
-    family: 200,
-    habit: 200,
-    cideexposed: 200
-  }
-];
 
 export default {
   props: {
@@ -154,6 +97,7 @@ export default {
         }
       },
       activeTab: '',
+      supportedDoctorNumber: '',
       tableData: {}
     };
   },
@@ -219,7 +163,21 @@ export default {
         }
       });
     },
+    updateSupportedDoctorNumber() {
+      var supportedDoctor = sessionStorage.getItem('supportedDoctor');
+      if (supportedDoctor) {
+        supportedDoctor = JSON.parse(supportedDoctor);
+        this.supportedDoctorNumber = supportedDoctor.mobileNumber ? supportedDoctor.mobileNumber : '';
+      } else {
+        this.supportedDoctorNumber = '';
+      }
+    },
     updateFormData() {
+      this.tableData = {
+        template: [],
+        data: []
+      };
+
       var params = {
         startTime: '2017-10-01',
         endTime: '2018-01-01'
@@ -230,16 +188,39 @@ export default {
       if (this.doctorName) {
         params.doctorName = this.doctorName;
       }
-      if (this.type === 'dataEntryDetail' && this.startTime) {
-        params.startTime = Util.simplifyDate(this.startTime);
+
+      var f = () => {};
+
+      if (this.type === 'dataEntryDetail') {
+        if (this.startTime) {
+          params.startTime = Util.simplifyDate(this.startTime);
+        }
+        if (this.endTime) {
+          params.endTime = Util.simplifyDate(this.endTime);
+        }
+        f = getStatisticsData;
+
+      } else if (this.type === 'historyStatistics') {
+        if (this.month) {
+          params.month = Util.simplifyDate(this.month);
+        }
+        if (this.activeTab === 'second') {
+          return;
+        } else if (this.activeTab === 'third') {
+          f = getStatisticsDetail;
+        } else if (this.activeTab === 'fourth') {
+          f = getScaleDetail;
+        } else {
+          return;
+        }
+
+      } else {
+        return;
       }
-      if (this.type === 'dataEntryDetail' && this.endTime) {
-        params.startTime = Util.simplifyDate(this.endTime);
-      }
-      getStatisticsData(params).then((res) => {
+
+      f(params, this.supportedDoctorNumber).then((res) => {
         this.tableData = res;
-        // this.tableData.data = res.data && res.data[0] ? res.data : [];
-        this.tableData.data = res.data && res.data[0] ? res.data.concat(mockData) : mockData;
+        this.tableData.data = res.data && res.data[0] ? res.data : [];
         this.updateScrollbar();
       });
     },
@@ -267,9 +248,11 @@ export default {
       this.updateScrollbar();
     };
     this.modifyFormWrapperTop();
-    this.updateActiveTab();
     this.updateScrollbar();
 
+    this.updateSupportedDoctorNumber();
+
+    this.updateActiveTab();
     this.updateFormData();
   },
   components: {
@@ -283,6 +266,9 @@ export default {
       this.$refs.formWrapper.scrollTop = 0;
       this.$refs.formWrapper.scrollLeft = 0;
       this.updateScrollbar();
+    },
+    activeTab() {
+      this.updateFormData();
     }
   }
 };

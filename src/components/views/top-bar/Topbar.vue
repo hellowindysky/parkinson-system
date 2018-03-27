@@ -471,7 +471,7 @@ export default {
     top: @header-height;
     left: 0;
     padding: 10px 0;
-    width: 400px;
+    width: 500px;
     background-color: rgba(24,34,48,0.95);
     color: #fff;
     font-size: 0;
