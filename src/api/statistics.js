@@ -30,6 +30,6 @@ export function getScaleDetail(entryStatistics, techSupport) {
     request.techSupport = techSupport;
   }
   request.entryStatistics = entryStatistics;
-  var url = '/pdms/currentEntryDetail';
+  var url = '/pdms/currentScaleDetail';
   return encapsulatePromise(url, request);
 };
