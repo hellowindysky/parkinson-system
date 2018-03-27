@@ -173,6 +173,11 @@ export default {
       }
     },
     updateFormData() {
+      this.tableData = {
+        template: [],
+        data: []
+      };
+
       var params = {
         startTime: '2017-10-01',
         endTime: '2018-01-01'
@@ -183,6 +188,9 @@ export default {
       if (this.doctorName) {
         params.doctorName = this.doctorName;
       }
+
+      var f = () => {};
+
       if (this.type === 'dataEntryDetail') {
         if (this.startTime) {
           params.startTime = Util.simplifyDate(this.startTime);
@@ -190,17 +198,12 @@ export default {
         if (this.endTime) {
           params.endTime = Util.simplifyDate(this.endTime);
         }
-        getStatisticsData(params).then((res) => {
-          this.tableData = res;
-          this.tableData.data = res.data && res.data[0] ? res.data : [];
-          this.updateScrollbar();
-        });
+        f = getStatisticsData;
 
       } else if (this.type === 'historyStatistics') {
         if (this.month) {
           params.month = Util.simplifyDate(this.month);
         }
-        var f = () => {};
         if (this.activeTab === 'second') {
           return;
         } else if (this.activeTab === 'third') {
@@ -210,12 +213,17 @@ export default {
         } else {
           return;
         }
-        f(params).then((res) => {
-          this.tableData = res;
-          this.tableData.data = res.data && res.data[0] ? res.data : [];
-          this.updateScrollbar();
-        });
+
+      } else {
+        return;
       }
+
+      console.log(f);
+      f(params, this.supportedDoctorNumber).then((res) => {
+        this.tableData = res;
+        this.tableData.data = res.data && res.data[0] ? res.data : [];
+        this.updateScrollbar();
+      });
     },
     resetConditions() {
       this.hospitalName = '';
@@ -241,10 +249,11 @@ export default {
       this.updateScrollbar();
     };
     this.modifyFormWrapperTop();
-    this.updateActiveTab();
     this.updateScrollbar();
 
     this.updateSupportedDoctorNumber();
+
+    this.updateActiveTab();
     this.updateFormData();
   },
   components: {
@@ -258,6 +267,9 @@ export default {
       this.$refs.formWrapper.scrollTop = 0;
       this.$refs.formWrapper.scrollLeft = 0;
       this.updateScrollbar();
+    },
+    activeTab() {
+      this.updateFormData();
     }
   }
 };
