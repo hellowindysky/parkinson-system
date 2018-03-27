@@ -1055,6 +1055,7 @@ var dbsFirstModel = {
   'leftContactEffectOrder': '',
   'rightContactEffectOrder': '',
   'remarks': '',
+  'patientDbsChoose': '',
   'firstDbsParams': {
     'adjustAfterParameterChoice': '',
     'adjustAfterParameter': []
@@ -1084,6 +1085,7 @@ var dbsFollowModel = {
   'adjustMoreLeftSatisfaction': '',
   'adjustMoreRightSatisfaction': '',
   'remarks': '',
+  'patientDbsChoose': '',
   'patientCaseId': '',
   'firstDbsParams': {
     'adjustAfterParameter': []

@@ -219,6 +219,7 @@ export default {
         }
 
       } else {
+        this.updatingFormData = false;
         return;
       }
 
