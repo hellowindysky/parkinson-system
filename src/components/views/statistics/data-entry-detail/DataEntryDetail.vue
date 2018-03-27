@@ -76,63 +76,6 @@ import { getStatisticsData, getStatisticsDetail, getScaleDetail } from 'api/stat
 
 const customTable = () => import(/* webpackChunkName: 'statistics' */ 'public/custom-table/CustomTable');
 
-var mockData = [
-  {
-    recordTime: '2018-02-01',
-    userDepName: '臻络医院',
-    userName: '胡小东',
-    supportDoctorName: '张艺',
-    patientIncreased: 100,
-    patientModify: 100,
-    caseIncreased: 100,
-    caseModify: 100,
-    validNewNumber: 100,
-    validFollowNumber: 100,
-    medicineProject: 100,
-    sideeffect: 100,
-    surgeryTreat: 100,
-    physicalTreat: 100,
-    scale: 100,
-    vitalSigns: 100,
-    nerousSystem: 100,
-    labExam: 100,
-    electroExam: 100,
-    medicineImage: 100,
-    otherMedicine: 100,
-    pastMedicalHistory: 100,
-    family: 100,
-    habit: 100,
-    cideexposed: 100
-  },
-  {
-    recordTime: '2018-02-02',
-    userDepName: 'a臻络医院',
-    userName: '圆点',
-    supportDoctorName: '阿毛',
-    patientIncreased: 200,
-    patientModify: 200,
-    caseIncreased: 200,
-    caseModify: 200,
-    validNewNumber: 200,
-    validFollowNumber: 200,
-    medicineProject: 200,
-    sideeffect: 200,
-    surgeryTreat: 200,
-    physicalTreat: 200,
-    scale: 200,
-    vitalSigns: 200,
-    nerousSystem: 200,
-    labExam: 200,
-    electroExam: 200,
-    medicineImage: 200,
-    otherMedicine: 200,
-    pastMedicalHistory: 200,
-    family: 200,
-    habit: 200,
-    cideexposed: 200
-  }
-];
-
 export default {
   props: {
     type: {
@@ -154,6 +97,7 @@ export default {
         }
       },
       activeTab: '',
+      supportedDoctorNumber: '',
       tableData: {}
     };
   },
@@ -219,6 +163,15 @@ export default {
         }
       });
     },
+    updateSupportedDoctorNumber() {
+      var supportedDoctor = sessionStorage.getItem('supportedDoctor');
+      if (supportedDoctor) {
+        supportedDoctor = JSON.parse(supportedDoctor);
+        this.supportedDoctorNumber = supportedDoctor.mobileNumber ? supportedDoctor.mobileNumber : '';
+      } else {
+        this.supportedDoctorNumber = '';
+      }
+    },
     updateFormData() {
       var params = {
         startTime: '2017-10-01',
@@ -240,7 +193,6 @@ export default {
         getStatisticsData(params).then((res) => {
           this.tableData = res;
           this.tableData.data = res.data && res.data[0] ? res.data : [];
-          // this.tableData.data = res.data && res.data[0] ? res.data.concat(mockData) : mockData;
           this.updateScrollbar();
         });
 
@@ -292,6 +244,7 @@ export default {
     this.updateActiveTab();
     this.updateScrollbar();
 
+    this.updateSupportedDoctorNumber();
     this.updateFormData();
   },
   components: {
