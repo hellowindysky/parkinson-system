@@ -10,7 +10,7 @@
            :colspan="colSpan(item)"
            @click="dataSort(item)">
             {{item.colName}}
-            <i class="iconfont icon-order" v-if="!item.subCol"></i>
+            <i class="iconfont icon-sort" v-if="!item.subCol"></i>
           </th>
         </tr>
         <tr class="row title-row">
@@ -19,7 +19,7 @@
            :key="'tbtitle_sub'+index"
            @click="dataSort(item)">
             {{item.colName}}
-            <i class="iconfont icon-order"></i>
+            <i class="iconfont icon-sort"></i>
           </th>
         </tr>
       </thead>
@@ -146,9 +146,10 @@ export default {
       position: relative;
       padding-left:16px;
       padding-right:16px;
-      i.icon-order {
+      i.icon-order,i.icon-sort {
+        font-size: 12px;
         position: absolute;
-        right: 0;
+        right: 2px;
         top: 50%;
         transform: translateY(-50%);
       }
