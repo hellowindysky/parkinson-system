@@ -218,7 +218,6 @@ export default {
         return;
       }
 
-      console.log(f);
       f(params, this.supportedDoctorNumber).then((res) => {
         this.tableData = res;
         this.tableData.data = res.data && res.data[0] ? res.data : [];
