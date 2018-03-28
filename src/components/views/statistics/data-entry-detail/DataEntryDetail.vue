@@ -174,7 +174,6 @@ export default {
       }
     },
     updateFormData() {
-      this.updatingFormData = true;
       this.tableData = {
         template: [],
         data: []
@@ -207,30 +206,38 @@ export default {
           params.month = Util.simplifyDate(this.month);
         }
         if (this.activeTab === 'second') {
-          this.updatingFormData = false;
           return;
         } else if (this.activeTab === 'third') {
           f = getStatisticsDetail;
         } else if (this.activeTab === 'fourth') {
           f = getScaleDetail;
         } else {
-          this.updatingFormData = false;
           return;
         }
 
       } else {
-        this.updatingFormData = false;
         return;
       }
+
+      this.updatingFormData = true;
+
+      var options = {
+        target: this.$refs.formWrapper,
+        text: '正在加载',
+        lock: true
+      };
+      let loadingInstance = this.$loading(options);
 
       f(params, this.supportedDoctorNumber).then((res) => {
         this.tableData = res;
         this.tableData.data = res.data && res.data[0] ? res.data : [];
         this.updateScrollbar();
         this.updatingFormData = false;
+        loadingInstance.close();
       }, (error) => {
         console.log(error);
         this.updatingFormData = false;
+        loadingInstance.close();
       });
     },
     resetConditions() {
