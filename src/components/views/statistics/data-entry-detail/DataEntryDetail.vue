@@ -57,7 +57,7 @@
       </div>
     </div>
     <div class="menu-bar" :class="{'disabled-to-select': updatingFormData}">
-      <el-tabs v-model="activeTab" @tab-click="handleClick">
+      <el-tabs v-model="activeTab">
         <el-tab-pane :key="item.name" v-for="(item, index) in availableTabs"
           :label="item.title" :name="item.name">
         </el-tab-pane>
@@ -130,9 +130,6 @@ export default {
     }
   },
   methods: {
-    handleClick(tab, event) {
-      console.log(tab, event);
-    },
     modifyFormWrapperTop() {
       // 动态调整菜单栏的高度
       this.$nextTick(() => {
