@@ -386,8 +386,8 @@ export default {
        // 获取患者的 实验编号
       this.patientTaskCode = '';
       getPatientSimpleInfo(this.$route.params.id).then((data) => {
-        if (data.patientInfo && data.patientInfo.dbsPatientCode) {
-          this.patientTaskCode = data.patientInfo.dbsPatientCode;
+        if (data.patientInfo && data.patientInfo.patientTaskCode) {
+          this.patientTaskCode = data.patientInfo.patientTaskCode;
         }
       }, (error) => {
         console.log(error);
