@@ -602,7 +602,7 @@ export default {
     overflow: hidden;
     .serious-adverse-event {
       position: relative;
-      top: 0;
+      top: -5px;
       // left: @field-name-width;
       .el-checkbox {
         padding-right: 15px;
