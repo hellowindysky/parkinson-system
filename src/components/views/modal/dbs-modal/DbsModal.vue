@@ -545,7 +545,8 @@
                 @change="updateParamPole('followDbsAdjustBefore', index)">
                 <el-checkbox v-for="(contact, i) in getSidePositiveContact(param.limbSide)"
                   :label="contact" :key="'sidePositiveContact' + i"
-                  :disabled="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==VALUE_FOR_CUSTOM">
+                  :disabled="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==VALUE_FOR_CUSTOM ||
+                  (mode!==VIEW_CURRENT_CARD && checkIfDisabledContact(param.exciteMod, contact, true))">
                 </el-checkbox>
               </el-checkbox-group>
             </td>
@@ -554,7 +555,8 @@
                 @change="updateParamPole('followDbsAdjustBefore', index)">
                 <el-checkbox v-for="(contact, i) in getSideNegativeContact(param.limbSide)"
                   :label="contact" :key="'sideNegativeContact' + i"
-                  :disabled="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==VALUE_FOR_CUSTOM">
+                  :disabled="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==VALUE_FOR_CUSTOM ||
+                  (mode!==VIEW_CURRENT_CARD && checkIfDisabledContact(param.exciteMod, contact, false))">
                 </el-checkbox>
               </el-checkbox-group>
             </td>
