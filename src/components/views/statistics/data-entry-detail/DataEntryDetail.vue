@@ -27,6 +27,8 @@
             v-model="startTime"
             type="date"
             placeholder="请选择日期"
+            :editable="false"
+            :clearable="false"
             :picker-options="pickerOptions">
           </el-date-picker>
           <span class="middle-text">~</span>
@@ -35,6 +37,8 @@
             v-model="endTime"
             type="date"
             placeholder="请选择日期"
+            :editable="false"
+            :clearable="false"
             :picker-options="pickerOptions">
           </el-date-picker>
         </span>
@@ -44,7 +48,8 @@
           录入月份
         </span>
         <span class="field-input">
-          <el-date-picker v-model="month" placeholder="请选择录入月份" type="month"></el-date-picker>
+          <el-date-picker v-model="month" placeholder="请选择录入月份"
+            :editable="false" :clearable="false" type="month"></el-date-picker>
         </span>
       </div>
       <div class="button-wrapper">
@@ -130,6 +135,16 @@ export default {
     }
   },
   methods: {
+    initDate() {
+      var now = new Date();
+      this.endTime = now;
+      this.startTime = new Date(now.getTime() - 24 * 3600 * 1000);
+
+      var year = now.getFullYear();
+      var month = now.getMonth();
+      month = month < 10 ? '0' + month : '' + month;
+      this.month = year + '-' + month;
+    },
     modifyFormWrapperTop() {
       // 动态调整菜单栏的高度
       this.$nextTick(() => {
@@ -176,10 +191,8 @@ export default {
         data: []
       };
 
-      var params = {
-        startTime: '2017-10-01',
-        endTime: '2018-01-01'
-      };
+      var params = {};
+
       if (this.hospitalName) {
         params.hospitalName = this.hospitalName;
       }
@@ -200,10 +213,11 @@ export default {
 
       } else if (this.type === 'historyStatistics') {
         if (this.month) {
-          params.month = Util.simplifyDate(this.month);
+          var dateText = Util.simplifyDate(this.month);
+          params.month = dateText.slice(0, 7);
         }
         if (this.activeTab === 'second') {
-          return;
+          f = getStatisticsData;
         } else if (this.activeTab === 'third') {
           f = getStatisticsDetail;
         } else if (this.activeTab === 'fourth') {
@@ -256,6 +270,8 @@ export default {
     }
   },
   mounted() {
+    this.initDate();
+
     window.onresize = () => {
       this.modifyFormWrapperTop();
       this.updateScrollbar();
