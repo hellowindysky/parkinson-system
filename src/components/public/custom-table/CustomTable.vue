@@ -134,7 +134,7 @@ export default {
 
 .custom-table-wrapper{
   width: 100%;
-  height:100%;
+  // height:100%;
   // overflow-x:scroll;
   // overflow-y:hidden;
   font-size: @normal-font-size;
