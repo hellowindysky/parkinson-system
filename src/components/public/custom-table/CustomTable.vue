@@ -3,7 +3,7 @@
     <table class="table">
       <thead>
         <tr class="row title-row">
-          <th class="col"
+          <th class="col title-col"
            v-for="(item,index) in tableTitleData"
            :key="'tbtitle'+index"
            :rowspan="rowSpan(item)"
@@ -14,7 +14,7 @@
           </th>
         </tr>
         <tr class="row title-row">
-          <th class="col"
+          <th class="col title-col"
            v-for="(item,index) in tableTitleData_sub"
            :key="'tbtitle_sub'+index"
            @click="dataSort(item)">
@@ -24,8 +24,8 @@
         </tr>
       </thead>
       <tbody>
-        <tr class="row" v-for="(item,index) in tableContentData" :key="'data'+index">
-          <td class="col" v-for="subItem in tableTitleKeys">{{item[subItem]}}</td>
+        <tr class="row content-row" v-for="(item,index) in tableContentData" :key="'data'+index">
+          <td class="col content-col" v-for="subItem in tableTitleKeys">{{item[subItem]}}</td>
         </tr>
       </tbody>
     </table>
@@ -133,31 +133,18 @@ export default {
 @import "~styles/variables.less";
 
 .custom-table-wrapper{
+  width: 100%;
+  height:100%;
+  // overflow-x:scroll;
+  // overflow-y:hidden;
   font-size: @normal-font-size;
   box-sizing: border-box;
   user-select: text;
   .table {
-    width: 100%;
-    min-width: 800px;
+    height:100%;
+    min-width: 100%;
     border: 1px solid @light-gray-color;
     border-collapse: collapse;
-    th {
-      cursor: pointer;
-      position: relative;
-      padding-left:16px;
-      padding-right:16px;
-      i.icon-order,i.icon-sort {
-        font-size: 12px;
-        position: absolute;
-        right: 2px;
-        top: 50%;
-        transform: translateY(-50%);
-      }
-    }
-    th, td {
-      border: 1px solid @light-gray-color;
-      font-weight: normal;
-    }
     .row {
       height: 30px;
       font-size: @normal-font-size;
@@ -168,11 +155,26 @@ export default {
       }
       .col {
         min-width: 70px;
-      }
-      td.col{
-        white-space: nowrap;
-        padding-left: 10px;
-        padding-right: 10px;
+        border: 1px solid @light-gray-color;
+        font-weight: normal;
+        &.title-col {
+          cursor: pointer;
+          position: relative;
+          padding-left:16px;
+          padding-right:16px;
+          i.icon-order,i.icon-sort {
+            font-size: 12px;
+            position: absolute;
+            right: 2px;
+            top: 50%;
+            transform: translateY(-50%);
+          }
+        }
+        &.content-col {
+          white-space: nowrap;
+          padding-left: 10px;
+          padding-right: 10px;
+        }
       }
     }
   }
