@@ -74,28 +74,41 @@
       <el-form class="filter-panel" :model="filterPatientsForm" :rules="rules" ref="filterPatientsForm"
       label-width="25%"  v-show="panelDisplay && (listType === MY_PATIENTS_TYPE || listType === OTHER_PATIENTS_TYPE ||
         listType === SUBJECT_PATIENTS_TYPE || listType === THERAPISTS_PATIENTS_TYPE || listType === APPRAISERS_PATIENTS_TYPE)">
-        <el-form-item label="分组" prop="group" class="item">
+        <el-form-item label="分组" prop="group" class="item"
+          v-if="listType === MY_PATIENTS_TYPE">
           <el-select v-model="filterPatientsForm.group">
             <el-option label="不限" :value="-1"></el-option>
-            <el-option v-for="option in getOptions('group')" :label="option.name" :value="option.code" :key="option.code"></el-option>
+            <el-option v-for="option in getOptions('group')" :label="option.name"
+              :value="option.code" :key="option.code"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="医院" prop="hospital" class="item"
+          v-if="listType === SUBJECT_PATIENTS_TYPE">
+          <el-select v-model="filterPatientsForm.hospital">
+            <el-option label="不限" :value="-1"></el-option>
+            <el-option v-for="option in getOptions('hospital')" :label="option.name"
+              :value="option.code" :key="option.code"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="性别" prop="gender" class="item">
           <el-select v-model="filterPatientsForm.gender">
             <el-option label="不限" :value="-1"></el-option>
-            <el-option v-for="option in getOptions('sex')" :label="option.name" :value="option.code" :key="option.code"></el-option>
+            <el-option v-for="option in getOptions('sex')" :label="option.name"
+              :value="option.code" :key="option.code"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="地区" prop="homeProvince" class="item">
           <el-select v-model="filterPatientsForm.homeProvince">
             <el-option label="不限" :value="-1"></el-option>
-            <el-option v-for="option in getOptions('homeProvince')" :label="option.name" :value="option.code" :key="option.code"></el-option>
+            <el-option v-for="option in getOptions('homeProvince')" :label="option.name"
+              :value="option.code" :key="option.code"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="病程" class="item" v-if="false">
           <el-col :span="8">
             <el-form-item prop="minCourseYear">
-              <el-input v-model.number="filterPatientsForm.minCourseYear" :min="0" :max="120" placeholder="不限"></el-input>
+              <el-input v-model.number="filterPatientsForm.minCourseYear" :min="0" :max="120"
+                placeholder="不限"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="5">年 -</el-col>
@@ -256,6 +269,7 @@ export default {
       selectedGroupList: [],
       filterPatientsForm: {
         group: -1,
+        hospital: -1,
         gender: -1,
         homeProvince: -1,
         minAge: '',
@@ -480,6 +494,9 @@ export default {
       var filterForm = this.filterPatientsForm;
       if (filterForm.group !== -1) {
         condition.groupId = filterForm.group;
+      }
+      if (filterForm.hospital !== -1) {
+        // TODO
       }
       if (filterForm.gender !== -1) {
         condition.sex = filterForm.gender;

@@ -329,7 +329,9 @@ export default {
       // 进行浅复制之后，修改复制对象的属性，不会影响到原始对象
       // 下面这行有一个特殊作用，能让 Vue 动态检测已有对象的新添加的属性，参看 https://cn.vuejs.org/v2/guide/reactivity.html
       this.copyInfo = Object.assign({}, obj);
-      this.copyInfo.homeCity = parseInt(this.copyInfo.homeCity, 10);
+      if (this.copyInfo.homeCity) {
+        this.copyInfo.homeCity = parseInt(this.copyInfo.homeCity, 10);
+      }
       // 如果传过来的数据对象缺少某些属性，则根据 template 补上
       for (let group of this.basicInfoTemplateGroups) {
         for (let field of group) {
