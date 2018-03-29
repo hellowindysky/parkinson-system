@@ -200,9 +200,9 @@ export default {
       return (userType === 2 || userType === 4 || userType === 5);
     },
     showStatistics() {
-      // 只有录入员才可以看到这个菜单
+      // 只有内部人员才可以看到这个菜单
       var userType = Number(sessionStorage.getItem('userType'));
-      return userType === 5;
+      return userType === 3;
     },
     showExperiment() {
       return this.$store.state.subjectId !== this.SUBJECT_ID_FOR_HOSPITAL;
