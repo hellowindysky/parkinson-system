@@ -715,7 +715,7 @@ export default {
         margin-bottom: -4px;
       }
       .table {
-        margin: 10px 0;
+        margin: 25px 0;
         width: 100%;
         border: 1px solid @light-gray-color;
         border-collapse: collapse;
