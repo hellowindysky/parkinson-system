@@ -153,7 +153,7 @@
               type="textarea"
               :rows="2"
               :maxlength="500"
-              placeholder="请输入后遗症表现">
+              placeholder="请输入直接死因">
             </el-input>
           </span>
         </div>
