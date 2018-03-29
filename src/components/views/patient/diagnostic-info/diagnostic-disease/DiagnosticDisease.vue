@@ -331,6 +331,9 @@ export default {
         };
         // ---
         return childType;
+      } else if (fieldName === 'diagnoseState' && this.copyInfo['diseaseType'] === 1) {
+        let typeItem = Util.getElement('typegroupcode', 'diagnoseStateForPD', this.typeGroup);
+        return typeItem.types ? typeItem.types : [];
       } else {
         var dictionaryField = Util.getElement('fieldName', fieldName, this.diagnosticDiseaseDictionary);
         var fieldEnumId = dictionaryField.fieldEnumId;
