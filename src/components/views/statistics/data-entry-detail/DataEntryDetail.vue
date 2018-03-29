@@ -78,7 +78,7 @@
 <script>
 import Ps from 'perfect-scrollbar';
 import Util from 'utils/util';
-import { getStatisticsData, getStatisticsDetail, getScaleDetail } from 'api/statistics';
+import { getStatisticsData, getStatisticsDetail, getScaleDetail, queryEntryMonth } from 'api/statistics';
 
 const customTable = () => import(/* webpackChunkName: 'statistics' */ 'public/custom-table/CustomTable');
 
@@ -97,10 +97,9 @@ export default {
       startTime: '',
       endTime: '',
       month: '',
+      selectableMonth: [],
       pickerOptions: {
-        disabledDate(time) {
-          return time.getTime() > Date.now();
-        }
+        disabledDate: this.checkIfDisabledDate
       },
       activeTab: '',
       updatingFormData: false,
@@ -142,9 +141,31 @@ export default {
       this.startTime = new Date(now.getTime() - 24 * 3600 * 1000);
 
       var year = now.getFullYear();
-      var month = now.getMonth();
+      var month = now.getMonth() + 1;
       month = month < 10 ? '0' + month : '' + month;
       this.month = year + '-' + month;
+    },
+    querySelectableMonth() {
+      queryEntryMonth().then((data) => {
+        this.selectableMonth = data;
+      }, (error) => {
+        console.log(error);
+      });
+    },
+    checkIfDisabledDate(time) {
+      // var isFuture = time.getTime() > Date.now();
+
+      var year = time.getFullYear();
+      var month = time.getMonth() + 1;
+      month = month < 10 ? '0' + month : '' + month;
+      var str = year + '-' + month;
+
+      if (this && this.selectableMonth) {
+        return !(this.selectableMonth.indexOf(str) >= 0);
+      } else {
+        return true;
+      }
+
     },
     modifyFormWrapperTop() {
       // 动态调整菜单栏的高度
@@ -272,6 +293,7 @@ export default {
   },
   mounted() {
     this.initDate();
+    this.querySelectableMonth();
 
     window.onresize = () => {
       this.modifyFormWrapperTop();
