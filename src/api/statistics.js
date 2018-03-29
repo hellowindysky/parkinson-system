@@ -33,3 +33,10 @@ export function getScaleDetail(entryStatistics, techSupport) {
   var url = '/pdms/currentScaleDetail';
   return encapsulatePromise(url, request);
 };
+
+// 查询历史统计的有效月份
+export function queryEntryMonth() {
+  var request = Object.assign({}, getCommonRequest());
+  var url = '/pdms/queryEntryMonth';
+  return encapsulatePromise(url, request);
+}
