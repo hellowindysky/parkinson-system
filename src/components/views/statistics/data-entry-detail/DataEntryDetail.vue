@@ -49,7 +49,8 @@
         </span>
         <span class="field-input">
           <el-date-picker v-model="month" placeholder="请选择录入月份"
-            :editable="false" :clearable="false" type="month"></el-date-picker>
+            :editable="false" :clearable="false" type="month" :picker-options="pickerOptions">
+          </el-date-picker>
         </span>
       </div>
       <div class="button-wrapper">
