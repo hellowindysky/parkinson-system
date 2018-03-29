@@ -78,7 +78,7 @@
 <script>
 import Ps from 'perfect-scrollbar';
 import Util from 'utils/util';
-import { getStatisticsData, getStatisticsDetail, getScaleDetail, queryEntryMonth } from 'api/statistics';
+import { getStatisticsData, getHistoryStatistics, getStatisticsDetail, getScaleDetail, queryEntryMonth } from 'api/statistics';
 
 const customTable = () => import(/* webpackChunkName: 'statistics' */ 'public/custom-table/CustomTable');
 
@@ -239,7 +239,7 @@ export default {
           params.month = dateText.slice(0, 7);
         }
         if (this.activeTab === 'second') {
-          f = getStatisticsData;
+          f = getHistoryStatistics;
         } else if (this.activeTab === 'third') {
           f = getStatisticsDetail;
         } else if (this.activeTab === 'fourth') {
