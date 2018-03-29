@@ -103,7 +103,7 @@
           </span>
         </div>
         <div class="field" v-if="copyInfo.isTakeMedication === 1">
-          <span class="field-name">LEDD 合计</span>
+          <span class="field-name">LEDD</span>
           <span class="field-input">{{totalLedd}} mg</span>
         </div>
         <table class="medicine-table" v-if="copyInfo.isTakeMedication===1">
@@ -2829,7 +2829,7 @@ export default {
                   color: @light-font-color;
                 }
                 .is-checked + .el-checkbox__label {
-                  color: darken(@font-color, 20%);
+                  color: @button-color;
                 }
               }
             }
