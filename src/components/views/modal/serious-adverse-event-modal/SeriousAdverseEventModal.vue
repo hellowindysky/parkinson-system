@@ -578,7 +578,7 @@ export default {
 @import "~styles/variables.less";
 
 @field-line-height: 25px;
-@field-name-width: 120px;
+@field-name-width: 130px;
 @scroll-bar-height: 10px;
 @unit-width: 54px;
 @computed-cell-color: lighten(@font-color, 55%);
@@ -602,7 +602,7 @@ export default {
     overflow: hidden;
     .serious-adverse-event {
       position: relative;
-      top: 0;
+      top: -5px;
       // left: @field-name-width;
       .el-checkbox {
         padding-right: 15px;
@@ -748,7 +748,7 @@ export default {
             &.col-width-40 {
               width: 40%;
               letter-spacing: 1px;
-              padding: 5px;
+              padding: 5px 0;
             }
             &.title-col {
               background-color: @font-color;
