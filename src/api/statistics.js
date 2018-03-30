@@ -12,6 +12,17 @@ export function getStatisticsData(entryStatistics, techSupport) {
   return encapsulatePromise(url, request);
 };
 
+// 查询当期录入有效分析
+export function getHistoryStatistics(entryStatistics, techSupport) {
+  var request = Object.assign({}, getCommonRequest());
+  if (techSupport) {
+    request.techSupport = techSupport;
+  }
+  request.entryStatistics = entryStatistics;
+  var url = '/pdms/historyStatistics';
+  return encapsulatePromise(url, request);
+};
+
 // 查询当期录入明细
 export function getStatisticsDetail(entryStatistics, techSupport) {
   var request = Object.assign({}, getCommonRequest());
@@ -33,3 +44,10 @@ export function getScaleDetail(entryStatistics, techSupport) {
   var url = '/pdms/currentScaleDetail';
   return encapsulatePromise(url, request);
 };
+
+// 查询历史统计的有效月份
+export function queryEntryMonth() {
+  var request = Object.assign({}, getCommonRequest());
+  var url = '/pdms/queryEntryMonth';
+  return encapsulatePromise(url, request);
+}
