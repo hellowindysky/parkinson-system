@@ -226,10 +226,10 @@
               <el-checkbox class="item-checkbox" v-model="diseaseInfoSelectedStatus.diseaseProcessFrom"></el-checkbox>
               <span class="item-name">患者病程</span>
               <span class="item-value">
-                <el-input class="left-input" v-model="diseaseInfoCondition.diseaseProcessFrom" placeholder="最小年龄"
+                <el-input class="left-input" v-model="diseaseInfoCondition.diseaseProcessFrom" placeholder="最小年份"
                   :disabled="!diseaseInfoSelectedStatus.diseaseProcessFrom"></el-input>
                 <span class="middle-text">~</span>
-                <el-input class="right-input" v-model="diseaseInfoCondition.diseaseProcessTo" placeholder="最大年龄"
+                <el-input class="right-input" v-model="diseaseInfoCondition.diseaseProcessTo" placeholder="最大年份"
                   :disabled="!diseaseInfoSelectedStatus.diseaseProcessFrom"></el-input>
               </span>
             </div>
@@ -740,10 +740,10 @@
               <el-checkbox class="item-checkbox" v-model="diagnosticSurgerySelectedStatus.preopsTimeFrom"></el-checkbox>
               <span class="item-name">评估时间</span>
               <span class="item-value">
-                <el-date-picker class="left-input" v-model="diagnosticSurgeryCondition.preopsTimeFrom" placeholder="开始时间"
+                <el-date-picker class="left-input" v-model="diagnosticSurgeryCondition.preopsTimeFrom" placeholder="最早时间"
                   :disabled="!diagnosticSurgerySelectedStatus.preopsTimeFrom"></el-date-picker>
                 <span class="middle-text">~</span>
-                <el-date-picker class="right-input" v-model="diagnosticSurgeryCondition.preopsTimeTo" placeholder="结束时间"
+                <el-date-picker class="right-input" v-model="diagnosticSurgeryCondition.preopsTimeTo" placeholder="最晚时间"
                   :disabled="!diagnosticSurgerySelectedStatus.preopsTimeFrom"></el-date-picker>
               </span>
             </div>
@@ -784,10 +784,10 @@
               <el-checkbox class="item-checkbox" v-model="diagnosticSurgerySelectedStatus.intensionTimeFrom"></el-checkbox>
               <span class="item-name">同意时间</span>
               <span class="item-value">
-                <el-date-picker class="left-input" v-model="diagnosticSurgeryCondition.intensionTimeFrom" placeholder="开始时间"
+                <el-date-picker class="left-input" v-model="diagnosticSurgeryCondition.intensionTimeFrom" placeholder="最早时间"
                   :disabled="!diagnosticSurgerySelectedStatus.intensionTimeFrom"></el-date-picker>
                 <span class="middle-text">~</span>
-                <el-date-picker class="right-input" v-model="diagnosticSurgeryCondition.intensionTimeTo" placeholder="结束时间"
+                <el-date-picker class="right-input" v-model="diagnosticSurgeryCondition.intensionTimeTo" placeholder="最晚时间"
                   :disabled="!diagnosticSurgerySelectedStatus.intensionTimeFrom"></el-date-picker>
               </span>
             </div>
@@ -806,10 +806,10 @@
               <el-checkbox class="item-checkbox" v-model="diagnosticSurgerySelectedStatus.surgicalDateFrom"></el-checkbox>
               <span class="item-name">手术时间</span>
               <span class="item-value">
-                <el-date-picker class="left-input" v-model="diagnosticSurgeryCondition.surgicalDateFrom" placeholder="开始时间"
+                <el-date-picker class="left-input" v-model="diagnosticSurgeryCondition.surgicalDateFrom" placeholder="最早时间"
                   :disabled="!diagnosticSurgerySelectedStatus.surgicalDateFrom"></el-date-picker>
                 <span class="middle-text">~</span>
-                <el-date-picker class="right-input" v-model="diagnosticSurgeryCondition.surgicalDateTo" placeholder="结束时间"
+                <el-date-picker class="right-input" v-model="diagnosticSurgeryCondition.surgicalDateTo" placeholder="最晚时间"
                   :disabled="!diagnosticSurgerySelectedStatus.surgicalDateFrom"></el-date-picker>
               </span>
             </div>
@@ -817,10 +817,10 @@
               <el-checkbox class="item-checkbox" v-model="diagnosticSurgerySelectedStatus.dbsDateFrom"></el-checkbox>
               <span class="item-name">程控时间</span>
               <span class="item-value">
-                <el-date-picker class="left-input" v-model="diagnosticSurgeryCondition.dbsDateFrom" placeholder="开始时间"
+                <el-date-picker class="left-input" v-model="diagnosticSurgeryCondition.dbsDateFrom" placeholder="最早时间"
                   :disabled="!diagnosticSurgerySelectedStatus.dbsDateFrom"></el-date-picker>
                 <span class="middle-text">~</span>
-                <el-date-picker class="right-input" v-model="diagnosticSurgeryCondition.dbsDateTo" placeholder="结束时间"
+                <el-date-picker class="right-input" v-model="diagnosticSurgeryCondition.dbsDateTo" placeholder="最晚时间"
                   :disabled="!diagnosticSurgerySelectedStatus.dbsDateFrom"></el-date-picker>
               </span>
             </div>
@@ -828,10 +828,10 @@
               <el-checkbox class="item-checkbox" v-model="diagnosticSurgerySelectedStatus.occurrenceTimeFrom"></el-checkbox>
               <span class="item-name">并发症时间</span>
               <span class="item-value">
-                <el-date-picker class="left-input" v-model="diagnosticSurgeryCondition.occurrenceTimeFrom" placeholder="开始时间"
+                <el-date-picker class="left-input" v-model="diagnosticSurgeryCondition.occurrenceTimeFrom" placeholder="最早时间"
                   :disabled="!diagnosticSurgerySelectedStatus.occurrenceTimeFrom"></el-date-picker>
                 <span class="middle-text">~</span>
-                <el-date-picker class="right-input" v-model="diagnosticSurgeryCondition.occurrenceTimeTo" placeholder="结束时间"
+                <el-date-picker class="right-input" v-model="diagnosticSurgeryCondition.occurrenceTimeTo" placeholder="最晚时间"
                   :disabled="!diagnosticSurgerySelectedStatus.occurrenceTimeFrom"></el-date-picker>
               </span>
             </div>
@@ -903,10 +903,10 @@
               <el-checkbox class="item-checkbox" v-model="diagnosticPhysiSelectedStatus.recordDateStart"></el-checkbox>
               <span class="item-name long-name">记录时间</span>
               <span class="item-value">
-                <el-date-picker class="left-input" v-model="diagnosticPhysiCondition.recordDateStart" placeholder="开始时间"
+                <el-date-picker class="left-input" v-model="diagnosticPhysiCondition.recordDateStart" placeholder="最早时间"
                   :disabled="!diagnosticPhysiSelectedStatus.recordDateStart"></el-date-picker>
                 <span class="middle-text">~</span>
-                <el-date-picker class="right-input" v-model="diagnosticPhysiCondition.recordDateEnd" placeholder="结束时间"
+                <el-date-picker class="right-input" v-model="diagnosticPhysiCondition.recordDateEnd" placeholder="最晚时间"
                   :disabled="!diagnosticPhysiSelectedStatus.recordDateStart"></el-date-picker>
               </span>
             </div>
@@ -1071,10 +1071,10 @@
               <el-checkbox class="item-checkbox" v-model="diagnosticScaleSelectedStatus.inspectTimeFrom"></el-checkbox>
               <span class="item-name">录入时间</span>
               <span class="item-value">
-                <el-date-picker class="left-input" v-model="diagnosticScaleCondition.inspectTimeFrom" placeholder="开始时间"
+                <el-date-picker class="left-input" v-model="diagnosticScaleCondition.inspectTimeFrom" placeholder="最早时间"
                   :disabled="!diagnosticScaleSelectedStatus.inspectTimeFrom"></el-date-picker>
                 <span class="middle-text">~</span>
-                <el-date-picker class="right-input" v-model="diagnosticScaleCondition.inspectTimeTo" placeholder="结束时间"
+                <el-date-picker class="right-input" v-model="diagnosticScaleCondition.inspectTimeTo" placeholder="最晚时间"
                   :disabled="!diagnosticScaleSelectedStatus.inspectTimeFrom"></el-date-picker>
               </span>
             </div>
@@ -2274,6 +2274,19 @@ export default {
               position: absolute;
               left: 110px;
               right: 15px;
+              .el-input {
+                .el-input__inner {
+                  height: 30px;
+                  border: none;
+                  background-color: @screen-color;
+                }
+              }
+              .el-select {
+                width: 100%;
+              }
+              .el-date-editor{
+                width: 100%;
+              }
               .left-input, .right-input {
                 display: inline-block;
                 position: absolute;
@@ -2297,19 +2310,6 @@ export default {
               }
               .normal-input {
                 display: inline-block;
-              }
-              .el-input {
-                .el-input__inner {
-                  height: 30px;
-                  border: none;
-                  background-color: @screen-color;
-                }
-              }
-              .el-select {
-                width: 100%;
-              }
-              .el-date-editor{
-                width: 100%;
               }
             }
           }
