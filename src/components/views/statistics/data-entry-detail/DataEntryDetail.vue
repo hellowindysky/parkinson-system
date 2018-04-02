@@ -139,15 +139,16 @@ export default {
       var now = new Date();
       this.endTime = now;
       this.startTime = new Date(now.getTime() - 24 * 3600 * 1000);
-
-      var year = now.getFullYear();
-      var month = now.getMonth() + 1;
-      month = month < 10 ? '0' + month : '' + month;
-      this.month = year + '-' + month;
     },
-    querySelectableMonth() {
+    initMonth() {
+      if (this.selectableMonth && this.selectableMonth.length > 0) {
+        this.month = this.selectableMonth[this.selectableMonth.length - 1];
+      }
+    },
+    querySelectableMonth(cb) {
       queryEntryMonth().then((data) => {
-        this.selectableMonth = data;
+        this.selectableMonth = data ? data : [];
+        cb && cb();
       }, (error) => {
         console.log(error);
       });
@@ -237,7 +238,10 @@ export default {
         if (this.month) {
           var dateText = Util.simplifyDate(this.month);
           params.month = dateText.slice(0, 7);
+        } else {
+          return;
         }
+
         if (this.activeTab === 'second') {
           f = getHistoryStatistics;
         } else if (this.activeTab === 'third') {
@@ -293,7 +297,7 @@ export default {
   },
   mounted() {
     this.initDate();
-    this.querySelectableMonth();
+    this.querySelectableMonth(this.initMonth);
 
     window.onresize = () => {
       this.modifyFormWrapperTop();
