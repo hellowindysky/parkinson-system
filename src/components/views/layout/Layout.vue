@@ -8,6 +8,7 @@
 
     <filter-panel :showFilterPanel="showFilterPanel"></filter-panel>
     <secret-agreement-modal></secret-agreement-modal>
+    <authorization-modal></authorization-modal>
     <choice-panel></choice-panel>
     <confirm-box></confirm-box>
     <notice-box></notice-box>
@@ -24,7 +25,6 @@ import topbar from 'views/top-bar/Topbar';
 import sidebar from 'views/side-bar/Sidebar';
 
 const passwordModal = () => import(/* webpackChunkName: 'modal' */ 'modal/password-modal/PasswordModal');
-const authorizationModal = () => import(/* webpackChunkName: 'modal' */ 'modal/authorization-modal/AuthorizationModal');
 const messageModal = () => import(/* webpackChunkName: 'modal' */ 'modal/message-modal/MessageModal');
 const groupModal = () => import(/* webpackChunkName: 'modal' */ 'modal/group-modal/GroupModal');
 
@@ -61,6 +61,7 @@ const experimentStepModal = () => import(/* webpackChunkName: 'experimentModal' 
 
 const filterPanel = () => import(/* webpackChunkName: 'filterPanel' */ 'public/filter-panel/FilterPanel');
 
+import authorizationModal from 'modal/authorization-modal/AuthorizationModal';
 import choicePanel from 'public/choice-panel/ChoicePanel';
 import confirmBox from 'public/confirm-box/ConfirmBox';
 import noticeBox from 'public/notice-box/NoticeBox';
