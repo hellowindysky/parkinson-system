@@ -30,8 +30,14 @@
     </table>
 
     <div class="table-box" :style="tableBoxStyle">
+      <div :style="lineWidth"></div>
       <table class="table">
         <tbody>
+          <tr v-if="tableContentData.length===0">
+            <td>
+              <div>无数据</div>
+            </td>
+          </tr>
           <tr class="row content-row" v-for="(item,index) in tableContentData" :key="'data'+index">
             <td class="col content-col" v-for="(subItem,tdIndex) in tableTitleKeys" :key="'col'+tdIndex">
               <div :ref="'td'+index">
@@ -58,7 +64,10 @@ export default {
         height: '',
         marginTop: 0
       },
-      boxShadowStatus: false
+      boxShadowStatus: false,
+      lineWidth: {
+        width: '0px'
+      }
     };
   },
   props: {
@@ -170,12 +179,15 @@ export default {
             this.tableTitleKeys.forEach((item, index) => {
               this.$set(this.colStyle, item, this.$refs.td0[index].offsetWidth + 'px');
             });
+          }
+          if (this.$refs.tbhead) {
             let h1 = this.$refs.tbhead.offsetHeight;
             let h2 = this.$refs.customtable.offsetHeight;
             this.$set(this.tableBoxStyle, 'height', h2 - h1 + 'px');
             this.$set(this.tableBoxStyle, 'marginTop', h1 + 'px');
-            this.updateScrollbar();
+            this.$set(this.lineWidth, 'width', this.$refs.tbhead.offsetWidth + 'px');
           }
+          this.updateScrollbar();
         });
       },
       deep: true
