@@ -264,7 +264,7 @@ export default {
       f(params, this.supportedDoctorNumber).then((res) => {
         this.tableData = res;
         this.tableData.data = res.data && res.data[0] ? res.data : [];
-        this.updateScrollbar();
+        // this.updateScrollbar();
         this.updatingFormData = false;
         loadingInstance.close();
       }, (error) => {
@@ -297,10 +297,10 @@ export default {
 
     window.onresize = () => {
       this.modifyFormWrapperTop();
-      this.updateScrollbar();
+      // this.updateScrollbar();
     };
     this.modifyFormWrapperTop();
-    this.updateScrollbar();
+    // this.updateScrollbar();
 
     this.updateSupportedDoctorNumber();
 
@@ -317,7 +317,7 @@ export default {
 
       this.$refs.formWrapper.scrollTop = 0;
       this.$refs.formWrapper.scrollLeft = 0;
-      this.updateScrollbar();
+      // this.updateScrollbar();
     },
     activeTab() {
       this.updateFormData();
