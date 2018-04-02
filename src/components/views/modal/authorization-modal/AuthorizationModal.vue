@@ -232,7 +232,6 @@ export default {
         return;
       }
       // this.lockTerminateButton = true;
-      this.displayModal = false;
 
       Bus.$on(this.CONFIRM, () => {
         let supportAccountList = [this.technicalSupportAccountInfo.id];
@@ -258,6 +257,8 @@ export default {
       let content = '你确定要解除对【' + this.supportAccountName + '】的授权吗?';
       let confirmButtonText = '确认解除';
       Bus.$emit(this.REQUEST_CONFIRMATION, title, content, confirmButtonText);
+
+      this.displayModal = false;
     },
     showSecretAgreement() {
       Bus.$emit(this.SHOW_SECRET_AGREEMENT_MODAL);
