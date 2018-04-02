@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import Ps from 'perfect-scrollbar';
+// import Ps from 'perfect-scrollbar';
 import Util from 'utils/util';
 import { getStatisticsData, getHistoryStatistics, getStatisticsDetail, getScaleDetail, queryEntryMonth } from 'api/statistics';
 
@@ -284,16 +284,16 @@ export default {
       this.endTime = '';
       this.tableData = {};  // 这样在请求返回之前，就不会显示之前的数据
       this.updateFormData();
-    },
-    updateScrollbar() {
-      this.$nextTick(() => {
-        Ps.destroy(this.$refs.formWrapper);
-        Ps.initialize(this.$refs.formWrapper, {
-          wheelSpeed: 1,
-          minScrollbarLength: 40
-        });
-      });
     }
+    // updateScrollbar() {
+    //   this.$nextTick(() => {
+    //     Ps.destroy(this.$refs.formWrapper);
+    //     Ps.initialize(this.$refs.formWrapper, {
+    //       wheelSpeed: 1,
+    //       minScrollbarLength: 40
+    //     });
+    //   });
+    // }
   },
   mounted() {
     this.initDate();
