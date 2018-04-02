@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import Ps from 'perfect-scrollbar';
+// import Ps from 'perfect-scrollbar';
 import Util from 'utils/util';
 import { getStatisticsData, getHistoryStatistics, getStatisticsDetail, getScaleDetail, queryEntryMonth } from 'api/statistics';
 
@@ -139,15 +139,16 @@ export default {
       var now = new Date();
       this.endTime = now;
       this.startTime = new Date(now.getTime() - 24 * 3600 * 1000);
-
-      var year = now.getFullYear();
-      var month = now.getMonth() + 1;
-      month = month < 10 ? '0' + month : '' + month;
-      this.month = year + '-' + month;
     },
-    querySelectableMonth() {
+    initMonth() {
+      if (this.selectableMonth && this.selectableMonth.length > 0) {
+        this.month = this.selectableMonth[this.selectableMonth.length - 1];
+      }
+    },
+    querySelectableMonth(cb) {
       queryEntryMonth().then((data) => {
-        this.selectableMonth = data;
+        this.selectableMonth = data ? data : [];
+        cb && cb();
       }, (error) => {
         console.log(error);
       });
@@ -237,7 +238,10 @@ export default {
         if (this.month) {
           var dateText = Util.simplifyDate(this.month);
           params.month = dateText.slice(0, 7);
+        } else {
+          return;
         }
+
         if (this.activeTab === 'second') {
           f = getHistoryStatistics;
         } else if (this.activeTab === 'third') {
@@ -280,20 +284,20 @@ export default {
       this.endTime = '';
       this.tableData = {};  // 这样在请求返回之前，就不会显示之前的数据
       this.updateFormData();
-    },
-    updateScrollbar() {
-      this.$nextTick(() => {
-        Ps.destroy(this.$refs.formWrapper);
-        Ps.initialize(this.$refs.formWrapper, {
-          wheelSpeed: 1,
-          minScrollbarLength: 40
-        });
-      });
     }
+    // updateScrollbar() {
+    //   this.$nextTick(() => {
+    //     Ps.destroy(this.$refs.formWrapper);
+    //     Ps.initialize(this.$refs.formWrapper, {
+    //       wheelSpeed: 1,
+    //       minScrollbarLength: 40
+    //     });
+    //   });
+    // }
   },
   mounted() {
     this.initDate();
-    this.querySelectableMonth();
+    this.querySelectableMonth(this.initMonth);
 
     window.onresize = () => {
       this.modifyFormWrapperTop();
