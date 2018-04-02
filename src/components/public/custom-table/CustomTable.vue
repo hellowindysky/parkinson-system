@@ -175,11 +175,11 @@ export default {
       handler: function(data) {
         this.tableContentData = data.data;
         this.$nextTick(() => {
-          if (this.$refs.td0) {
-            this.tableTitleKeys.forEach((item, index) => {
+          this.tableTitleKeys.forEach((item, index) => {
+            if (this.$refs.td0 && this.$refs.td0[index]) {
               this.$set(this.colStyle, item, this.$refs.td0[index].offsetWidth + 'px');
-            });
-          }
+            }
+          });
           if (this.$refs.tbhead) {
             let h1 = this.$refs.tbhead.offsetHeight;
             let h2 = this.$refs.customtable.offsetHeight;
