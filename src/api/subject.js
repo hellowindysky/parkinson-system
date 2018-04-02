@@ -8,6 +8,16 @@ export function getSubjectList() {
   return encapsulatePromise(url, request);
 };
 
+// 查询参与该课题的医院
+export function getSubjectHospitalList(patientCond) {
+  var request = Object.assign({}, getCommonRequest());
+  if (patientCond) {
+    request.patientCond = patientCond;
+  }
+  var url = '/pdms/queryTaskChoose';
+  return encapsulatePromise(url, request);
+};
+
 // 添加患者到课题
 export function addPatientToSubject(patientSubjectList) {
   var request = Object.assign({}, getCommonRequest());
