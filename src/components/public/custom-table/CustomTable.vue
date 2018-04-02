@@ -33,11 +33,6 @@
       <div :style="lineWidth"></div>
       <table class="table">
         <tbody>
-          <tr v-if="tableContentData.length===0">
-            <td>
-              <div>无数据</div>
-            </td>
-          </tr>
           <tr class="row content-row" v-for="(item,index) in tableContentData" :key="'data'+index">
             <td class="col content-col" v-for="(subItem,tdIndex) in tableTitleKeys" :key="'col'+tdIndex">
               <div :ref="'td'+index">
