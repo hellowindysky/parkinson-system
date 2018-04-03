@@ -8,6 +8,7 @@
 
     <filter-panel :showFilterPanel="showFilterPanel"></filter-panel>
     <secret-agreement-modal></secret-agreement-modal>
+    <!-- <medicine-adverse-event-modal></medicine-adverse-event-modal> -->
     <choice-panel></choice-panel>
     <confirm-box></confirm-box>
     <notice-box></notice-box>
@@ -33,8 +34,8 @@ const firstSymptomsModal = () => import(/* webpackChunkName: 'personalInfoModal'
 const firstTreatmentModal = () => import(/* webpackChunkName: 'personalInfoModal' */ 'modal/first-treatment-modal/FirstTreatmentModal');
 const diagnosticRecordModal = () => import(/* webpackChunkName: 'personalInfoModal' */ 'modal/diagnostic-record-modal/DiagnosticRecordModal');
 const chiefComplaintSymptomsModal = () => import(/* webpackChunkName: 'personalInfoModal' */ 'modal/chief-complaint-symptoms-modal/ChiefComplaintSymptomsModal');
-
 const medicineModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/medicine-modal/MedicineModal');
+const medicineAdverseEventModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/medicine-adverse-event-modal/MedicineAdverseEventModal');
 const preEvaluationModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/pre-evaluation-modal/PreEvaluationModal');
 const surgicalMethodModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/surgical-method-modal/SurgicalMethodModal');
 const operativeComplicationModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/operative-complication-modal/OperativeComplicationModal');
@@ -85,6 +86,7 @@ export default {
     groupModal,
     modalBox,
     medicineModal,
+    medicineAdverseEventModal,
     preEvaluationModal,
     surgicalMethodModal,
     operativeComplicationModal,
