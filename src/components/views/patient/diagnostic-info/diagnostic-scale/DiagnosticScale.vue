@@ -23,14 +23,18 @@
             </span>
           </div>
           <div class="text second-line">
+            <span class="name">量表类型:</span>
+            <span class="value">{{getScaleType(item.scaleInfoId)}}</span>
+          </div>
+          <div class="text third-line">
             <span class="name">填写时间:</span>
             <span class="value">{{item.inspectTime}}</span>
           </div>
-          <div class="text third-line">
+          <div class="text fourth-line">
             <span class="name">末次服药:</span>
             <span class="value">{{item.lastTakingTime}}</span>
           </div>
-          <div class="text fourth-line">
+          <div class="text fifth-line">
             <span class="name">开关状态:</span>
             <span class="value">{{getSwitchType(item.switchType)}}</span>
           </div>
@@ -130,6 +134,25 @@ export default {
       var targetScale = Util.getElement('scaleInfoId', scaleInfoId, this.allScale);
       return targetScale.formType;
     },
+    getOptions(fieldName) {
+      var options = [];
+      var typesInfo = Util.getElement('typegroupcode', fieldName, this.typeGroup);
+      var types = typesInfo.types ? typesInfo.types : [];
+      for (let type of types) {
+        options.push({
+          code: type.typeCode,
+          name: type.typeName
+        });
+      }
+      return options;
+    },
+    getScaleType(scaleInfoId) {
+      var scale = Util.getElement('scaleInfoId', scaleInfoId, this.allScale);
+      var scaleTypeCode = scale.gaugeType;
+      var options = this.getOptions('gaugeType');
+      var option = Util.getElement('code', scaleTypeCode, options);
+      return option.name ? option.name : '';
+    },
     getTypeTitle(typeName) {
       var count = this.patientScale.filter((scale) => {
         return this.getScaleTypeName(scale.scaleInfoId) === typeName;
@@ -216,7 +239,7 @@ export default {
 <style lang="less">
 @import "~styles/variables.less";
 
-@scale-card-height: 150px;
+@scale-card-height: 175px;
 
 .diagnostic-scale {
   position: relative;
@@ -293,6 +316,10 @@ export default {
       .fourth-line {
         left: 10px;
         top: 125px;
+      }
+      .fifth-line {
+        left: 10px;
+        top: 150px;
       }
     }
   }
