@@ -2,7 +2,7 @@
   <folding-panel :title="'医学量表'" :mode="mutableMode"  v-on:edit="startEditing"
     v-on:cancel="cancel" v-on:submit="submit" :editable="canEdit" v-if="!hidePanel">
     <div class="diagnostic-scale" ref="diagnosticscale">
-      <extensible-panel class="panel" :mode="mutableMode" :title="'临床量表'"
+      <extensible-panel class="panel" :mode="mutableMode" :title="normalScaleTitle"
         v-on:addNewCard="addScale" :editable="canEdit">
         <card class="card" :class="devideWidth" :mode="mutableMode"
           v-for="(item, index) in patientScale"
@@ -39,6 +39,9 @@
             <span class="value">{{getSwitchType(item.switchType)}}</span>
           </div>
         </card>
+      </extensible-panel>
+      <extensible-panel class="panel" :mode="mutableMode" :title="subjectScaleTitle"
+        v-on:addNewCard="addScale" :editable="canEdit">
       </extensible-panel>
     </div>
   </folding-panel>
@@ -90,6 +93,12 @@ export default {
       'allScale',
       'typeGroup'
     ]),
+    normalScaleTitle() {
+      return '临床量表 (' + this.patientScale.length + '条记录)';
+    },
+    subjectScaleTitle() {
+      return '临床量表 (' + 0 + '条记录)';
+    },
     allScaleTypes() {
       var typesInfo = Util.getElement('typegroupcode', 'gaugeType', this.typeGroup);
       return typesInfo.types ? typesInfo.types : [];
