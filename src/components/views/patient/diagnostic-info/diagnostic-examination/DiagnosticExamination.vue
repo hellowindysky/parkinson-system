@@ -32,9 +32,13 @@
           </div>
          </card>
       </extensible-panel>
-      <!-- 神经系统检查 -->
-      <extensible-panel class="panel" :mode="mutableMode" :title="neurologicCheckTitle"
-        v-on:addNewCard="addNeurologicCheckRecord":editable="canEdit">
+      <!-- 体格检查 -->
+      <extensible-panel class="panel"
+        v-if="showNeurologicCheckRecord || showSiteInspection"
+        :mode="mutableMode"
+        :title="neurologicCheckTitle"
+        v-on:addNewCard="addNeurologicCheck"
+        :editable="canEdit">
         <card class="card" :class="cardWidth" :mode="mutableMode"
           v-for="(item, index) in neurologicCheckList"
           :key="'neurologicCheck' + index"
@@ -42,6 +46,22 @@
           v-on:editCurrentCard="editNeurologicCheckRecord(item)"
           v-on:deleteCurrentCard="deleteNeurologicCheckRecord(item)"
           v-on:viewCurrentCard="viewNeurologicCheckRecord(item)">
+          <div class="text first-line">
+            <span class="name">诊断结果</span>
+            <span class="value">{{item.spephysicalResult}}</span>
+          </div>
+          <div class="text second-line">
+            <span class="name">诊断时间</span>
+            <span class="value">{{item.ariseTime}}</span>
+          </div>
+         </card>
+         <card class="card" :class="cardWidth" :mode="mutableMode"
+          v-for="(item, index) in siteInspectionList"
+          :key="'siteInspection' + index"
+          :title="'部位检查'"
+          v-on:editCurrentCard="editSiteInspection(item)"
+          v-on:deleteCurrentCard="deleteSiteInspection(item)"
+          v-on:viewCurrentCard="viewSiteInspection(item)">
           <div class="text first-line">
             <span class="name">诊断结果</span>
             <span class="value">{{item.spephysicalResult}}</span>
@@ -234,6 +254,12 @@ export default {
         return [];
       }
     },
+    siteInspectionList: {
+      type: Array,
+      default: () => {
+        return [];
+      }
+    },
     geneCheckList: {
       type: Array,
       default: () => {
@@ -309,7 +335,7 @@ export default {
       return '生命体征 (' + this.diagnosticVitalSigns.length + '条记录)';
     },
     neurologicCheckTitle() {
-      return '体格检查（' + this.neurologicCheckList.length + '条记录）';
+      return '体格检查（' + this.neurologicCheckList.length + this.siteInspectionList.length + '条记录）';
     },
     geneCheckTitle() {
       return '基因检查（' + this.geneCheckList.length + '条记录）';
@@ -375,6 +401,38 @@ export default {
         item.patientFieldCode[3][7][0] &&
         item.patientFieldCode[3][7][0].fieldValue
         ? item.patientFieldCode[3][7][0].fieldValue + '%' : '';
+    },
+    addNeurologicCheck() {
+      var list = [];
+      if (this.showNeurologicCheckRecord) {
+        list.push({
+          text: '神经系统检查',
+          callback: this.addNeurologicCheckRecord
+        });
+      }
+      if (this.showSiteInspection) {
+        list.push({
+          text: '部位检查',
+          callback: this.addSiteInspection
+        });
+      }
+      Bus.$emit(this.SHOW_CHOICE_PANEL, list);
+    },
+    showNeurologicCheckRecord() {
+      var atOtherStatus = this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_FOLLOW_UP;
+      if (this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+    showSiteInspection() {
+      var atOtherStatus = this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_FOLLOW_UP;
+      if (this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
+        return false;
+      } else {
+        return true;
+      }
     },
     addNeurologicCheckRecord() {
       // Bus.$emit(this.SHOW_NEUROLOGIC_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
