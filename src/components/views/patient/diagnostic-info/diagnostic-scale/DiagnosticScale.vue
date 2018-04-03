@@ -2,12 +2,14 @@
   <folding-panel :title="'医学量表'" :mode="mutableMode"  v-on:edit="startEditing"
     v-on:cancel="cancel" v-on:submit="submit" :editable="canEdit" v-if="!hidePanel">
     <div class="diagnostic-scale" ref="diagnosticscale">
-      <extensible-panel v-for="type in allScaleTypes" class="panel" :mode="mutableMode" :title="getTypeTitle(type.typeName)"
-        v-on:addNewCard="addScale(type.typeCode)" :editable="canEdit" :key="type.typeCode">
-        <card class="card" :class="devideWidth" :mode="mutableMode" v-for="item in patientScale"
-          v-if="getScaleTypeName(item.scaleInfoId) === type.typeName"
-          :key="item.id" :title="getTitle(item.scaleInfoId)" v-on:deleteCurrentCard="deleteScaleRecord(item)"
-          v-on:editCurrentCard="editScale(item)" v-on:viewCurrentCard="viewScale(item)">
+      <extensible-panel class="panel" :mode="mutableMode" :title="'临床量表'"
+        v-on:addNewCard="addScale" :editable="canEdit">
+        <card class="card" :class="devideWidth" :mode="mutableMode"
+          v-for="(item, index) in patientScale"
+          :key="item.id + '' + index" :title="getTitle(item.scaleInfoId)"
+          v-on:deleteCurrentCard="deleteScaleRecord(item)"
+          v-on:editCurrentCard="editScale(item)"
+          v-on:viewCurrentCard="viewScale(item)">
           <div class="text first-line">
             <span class="name">量表得分:</span>
             <span class="value">
@@ -143,15 +145,15 @@ export default {
       }
     },
     editScale(item) {
-      var scaleTypeCode = this.getScaleTypeCode(item.scaleInfoId);
-      Bus.$emit(this.SHOW_SCALE_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit, scaleTypeCode);
+      // var scaleTypeCode = this.getScaleTypeCode(item.scaleInfoId);
+      Bus.$emit(this.SHOW_SCALE_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit);
     },
     viewScale(item) {
-      var scaleTypeCode = this.getScaleTypeCode(item.scaleInfoId);
-      Bus.$emit(this.SHOW_SCALE_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit, scaleTypeCode);
+      // var scaleTypeCode = this.getScaleTypeCode(item.scaleInfoId);
+      Bus.$emit(this.SHOW_SCALE_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit);
     },
-    addScale(scaleTypeCode) {
-      Bus.$emit(this.SHOW_SCALE_MODAL, this.ADD_NEW_CARD, {}, this.canEdit, scaleTypeCode);
+    addScale() {
+      Bus.$emit(this.SHOW_SCALE_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
     },
     deleteScaleRecord(item) {
       // console.log(item);

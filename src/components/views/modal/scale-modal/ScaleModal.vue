@@ -26,7 +26,7 @@
             <el-select placeholder="请选择量表" v-model="copyInfo.scaleInfoId" :class="{'warning': warningResults.scaleInfoId}"
               @change="selectScale" size="small">
               <el-option v-for="scale in allScale" :key="scale.scaleInfoId" :label="scale.gaugeName"
-                :value="scale.scaleInfoId" v-show="getScaleTypeCode(scale.scaleInfoId)===scaleTypeCode"></el-option>
+                :value="scale.scaleInfoId"></el-option>
             </el-select>
           </span>
         </div>
@@ -291,6 +291,7 @@ export default {
   },
   methods: {
     selectScale() {
+      this.scaleTypeCode = this.getScaleTypeCode(this.copyInfo.scaleInfoId);
       this.updateWarning('scaleInfoId');
       this.updateScrollbar();
     },
@@ -326,12 +327,12 @@ export default {
         });
       });
     },
-    showModal(cardOperation, item, showEdit, scaleTypeCode) {
+    showModal(cardOperation, item, showEdit) {
       this.mode = cardOperation;
       this.showEdit = showEdit;
 
       this.initPatientScale(item);
-      this.scaleTypeCode = scaleTypeCode;
+      this.scaleTypeCode = this.getScaleTypeCode(this.copyInfo.scaleInfoId);
       this.initSymptomList();
 
       this.fileList4 = [];
