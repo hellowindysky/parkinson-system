@@ -214,8 +214,7 @@ export default {
 
       } else {
         // 只有当支持员账户信息的更新过程完成之后，才打开模态框
-        // Bus.$emit(this.SHOW_AUTHORIZATION_MODAL, this.technicalSupportAccountInfo);
-        Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'authorizationModal', this.SHOW_AUTHORIZATION_MODAL, this.technicalSupportAccountInfo);
+        Bus.$emit(this.SHOW_AUTHORIZATION_MODAL, this.technicalSupportAccountInfo);
       }
     },
     updateAuthorizedStatus() {

@@ -37,7 +37,7 @@
             <span v-else-if="getUIType(field)===3">
               <el-select v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
                 :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)" :clearable="true">
-                <el-option v-for="type in getTypes(field)" :key="type.typeCode"
+                <el-option v-for="(type, index) in getTypes(field)" :key="type.typeName + type.typeCode + '-' + index"
                  :label="type.typeName"
                  :value="type.typeCode">
                 </el-option>
