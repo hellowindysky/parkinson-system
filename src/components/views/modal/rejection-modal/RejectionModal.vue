@@ -197,10 +197,12 @@ export default {
       }
 
       var experimentInfo = {
-        remark: this.remark,
-        patientId: this.$route.params.id,
-        tcTaskId: this.$store.state.subjectId,
-        standardDetailOptions: Object.assign([], this.standardDetailOptions)
+        'patientExperimentModel': {
+          'remark': this.remark,
+          'patientId': this.$route.params.id,
+          'tcTaskId': this.$store.state.subjectId
+        },
+        'standardDetailOptions': Object.assign([], this.standardDetailOptions)
       };
       for (let item of experimentInfo.standardDetailOptions) {
         if (!item.optionId && (item.optionId !== 0)) {

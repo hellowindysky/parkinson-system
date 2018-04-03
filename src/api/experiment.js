@@ -4,7 +4,7 @@ import { encapsulatePromise, getCommonRequest } from 'api/common.js';
 // 查询实验流程
 export function queryExperimentProgress(experimentInfo) {
   var request = Object.assign({}, getCommonRequest());
-  request.patientExperimentModel = experimentInfo;
+  request.shengRenYiPatientExperiment = experimentInfo;
   var url = '/pdms/queryPatientExperiment';
   return encapsulatePromise(url, request);
 };
@@ -29,7 +29,7 @@ export function queryExperimentMember(subjectId) {
 // 申请加入实验组
 export function applyToEnterExperiment(experimentInfo) {
   var request = Object.assign({}, getCommonRequest());
-  request.patientExperimentModel = experimentInfo;
+  request.shengRenYiPatientExperiment = experimentInfo;
   var url = '/pdms/addPatientExperiment';
   return encapsulatePromise(url, request);
 };
@@ -37,7 +37,7 @@ export function applyToEnterExperiment(experimentInfo) {
 // 同意加入实验组
 export function agreeEnteringExperiment(experimentInfo) {
   var request = Object.assign({}, getCommonRequest());
-  request.patientExperimentModel = experimentInfo;
+  request.shengRenYiPatientExperiment = experimentInfo;
   var url = '/pdms/agreePatientExperiment';
   return encapsulatePromise(url, request);
 };
@@ -45,7 +45,7 @@ export function agreeEnteringExperiment(experimentInfo) {
 // 拒绝加入实验组
 export function rejectEnteringExperiment(experimentInfo) {
   var request = Object.assign({}, getCommonRequest());
-  request.patientExperimentModel = experimentInfo;
+  request.shengRenYiPatientExperiment = experimentInfo;
   var url = '/pdms/returnPatientExperiment';
   return encapsulatePromise(url, request);
 };
@@ -53,7 +53,7 @@ export function rejectEnteringExperiment(experimentInfo) {
 // 结束治疗
 export function completeExperiment(experimentInfo) {
   var request = Object.assign({}, getCommonRequest());
-  request.patientExperimentModel = experimentInfo;
+  request.shengRenYiPatientExperiment = experimentInfo;
   var url = 'pdms/completePatientExperiment';
   return encapsulatePromise(url, request);
 };
@@ -61,7 +61,7 @@ export function completeExperiment(experimentInfo) {
 // 结束随访
 export function completeFollowUp(experimentInfo) {
   var request = Object.assign({}, getCommonRequest());
-  request.patientExperimentModel = experimentInfo;
+  request.shengRenYiPatientExperiment = experimentInfo;
   var url = 'pdms/completeFollowUp';
   return encapsulatePromise(url, request);
 };
