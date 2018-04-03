@@ -23,11 +23,19 @@
             <span class="warning-text">
               {{warningResults.scaleInfoId}}
             </span>
-            <el-select placeholder="请选择量表" v-model="copyInfo.scaleInfoId" :class="{'warning': warningResults.scaleInfoId}"
+            <!-- <el-select placeholder="请选择量表" v-model="copyInfo.scaleInfoId" :class="{'warning': warningResults.scaleInfoId}"
               @change="selectScale" size="small">
               <el-option v-for="scale in allScale" :key="scale.scaleInfoId" :label="scale.gaugeName"
                 :value="scale.scaleInfoId"></el-option>
-            </el-select>
+            </el-select> -->
+            <el-autocomplete
+              class="inline-input"
+              :class="{'warning': warningResults.scaleInfoId}"
+              v-model="scaleName"
+              :fetch-suggestions="queryScaleSearch"
+              placeholder="请输入量表名称或直接在列表中选择"
+              @select="handleScaleSelect"
+            ></el-autocomplete>
           </span>
         </div>
         <div class="field">
@@ -220,6 +228,7 @@ export default {
         }
       },
       scaleTypeCode: '',
+      scaleName: '',
 
       scaleSymptomList: [], // 关联症状列表，长度由 typeGroup 决定
       scaleAnswer: [],       // 放筛选出来的量表病人填写答案的数组
@@ -246,14 +255,14 @@ export default {
       if (this.mode === this.ADD_NEW_CARD) {
         return '新增量表';
       } else {
-        return this.scaleName;
+        return this.scaleTitle;
       }
     },
     targetScale() {
       let scale = Util.getElement('scaleInfoId', this.copyInfo.scaleInfoId, this.allScale);
       return scale ? scale : {};
     },
-    scaleName() {
+    scaleTitle() {
       return this.targetScale.gaugeName ? this.targetScale.gaugeName : '';
     },
     scaleType() {
@@ -294,6 +303,25 @@ export default {
       this.scaleTypeCode = this.getScaleTypeCode(this.copyInfo.scaleInfoId);
       this.updateWarning('scaleInfoId');
       this.updateScrollbar();
+    },
+    queryScaleSearch(queryString, cb) {
+      var allScale = this.allScale.map((item) => {
+        return {
+          value: item.gaugeName
+        };
+      });
+
+      var results = queryString ? allScale.filter((item) => {
+        return (item.value.indexOf(queryString) >= 0);
+      }) : allScale;
+
+      // 调用 callback 返回建议列表的数据
+      cb(results);
+    },
+    handleScaleSelect() {
+      var targetScale = Util.getElement('gaugeName', this.scaleName, this.allScale);
+      this.copyInfo.scaleInfoId = targetScale.scaleInfoId;
+      this.selectScale();
     },
     updateWarning(fieldName) {
       if (this.copyInfo[fieldName] === undefined || this.copyInfo[fieldName] === '') {
@@ -944,6 +972,9 @@ export default {
           .el-input__inner {
             height: 30px;
           }
+        }
+        .el-autocomplete {
+          width: 100%;
         }
         .el-date-editor {
           width: 100%;
