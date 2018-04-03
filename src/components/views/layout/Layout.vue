@@ -9,6 +9,7 @@
     <filter-panel :showFilterPanel="showFilterPanel"></filter-panel>
     <secret-agreement-modal></secret-agreement-modal>
     <!-- <medicine-adverse-event-modal></medicine-adverse-event-modal> -->
+    <!-- <site-inspection-modal></site-inspection-modal> -->
     <choice-panel></choice-panel>
     <confirm-box></confirm-box>
     <notice-box></notice-box>
@@ -46,6 +47,7 @@ const adverseEventModal = () => import(/* webpackChunkName: 'treatmentModal' */ 
 const seriousAdverseEventModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/serious-adverse-event-modal/SeriousAdverseEventModal');
 const vitalSignsModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/vital-signs-modal/VitalSignsModal');
 const neurologicModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/neurologic-modal/NeurologicModal');
+const siteInspectionModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/site-inspection-modal/SiteInspectionModal');
 const geneModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/gene-modal/GeneModal');
 const biochemicalExamModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/biochemical-exam-modal/BiochemicalExamModal');
 const neuroelectricModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/neuroelectric-modal/NeuroelectricModal');
@@ -97,6 +99,7 @@ export default {
     seriousAdverseEventModal,
     vitalSignsModal,
     neurologicModal,
+    siteInspectionModal,
     geneModal,
     biochemicalExamModal,
     neuroelectricModal,
