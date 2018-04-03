@@ -249,12 +249,14 @@ export default {
         return;
       }
       var experimentInfo = {
-        'taskGroupId': this.experimentalGroup,
-        'treaterId': this.therapist,
-        'assessorId': this.appraiser,
-        'remark': this.remark,
-        'patientId': this.$route.params.id,
-        'tcTaskId': this.$store.state.subjectId
+        'patientExperimentModel': {
+          'taskGroupId': this.experimentalGroup,
+          'treaterId': this.therapist,
+          'assessorId': this.appraiser,
+          'remark': this.remark,
+          'patientId': this.$route.params.id,
+          'tcTaskId': this.$store.state.subjectId
+        }
       };
       applyToEnterExperiment(experimentInfo).then(this.updateAndClose, this._handleError);
     },

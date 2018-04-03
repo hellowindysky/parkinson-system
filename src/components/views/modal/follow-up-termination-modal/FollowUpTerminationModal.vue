@@ -350,18 +350,20 @@ export default {
       }
 
       var experimentInfo = {
-        patientId: this.$route.params.id,
-        tcTaskId: this.$store.state.subjectId,
-        nextMileStone: this.nextStep,
-        remark: this.remark,
-        followUpModel: {
-          tcPatientAdverseOccurance: this.tcPatientAdverseOccurance,
-          followUpType: this.followUpType,
-          followUpComplete: this.followUpComplete,
-          followUpReason: this.followUpReason,
-          reasonDetail: this.reasonDetail,
-          followUpContinue: this.followUpContinue,
-          nextTime: Util.simplifyDate(this.nextTime)
+        patientExperimentModel: {
+          patientId: this.$route.params.id,
+          tcTaskId: this.$store.state.subjectId,
+          nextMileStone: this.nextStep,
+          remark: this.remark,
+          followUpModel: {
+            tcPatientAdverseOccurance: this.tcPatientAdverseOccurance,
+            followUpType: this.followUpType,
+            followUpComplete: this.followUpComplete,
+            followUpReason: this.followUpReason,
+            reasonDetail: this.reasonDetail,
+            followUpContinue: this.followUpContinue,
+            nextTime: Util.simplifyDate(this.nextTime)
+          }
         }
       };
       completeFollowUp(experimentInfo).then(this.updateAndClose, this._handleError);

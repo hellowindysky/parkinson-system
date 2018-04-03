@@ -205,8 +205,10 @@ export default {
     },
     updateExperimentProgress() {
       var experimentInfo = {
-        'patientId': this.$route.params.id,
-        'tcTaskId': this.$store.state.subjectId
+        'patientExperimentModel': {
+          'patientId': this.$route.params.id,
+          'tcTaskId': this.$store.state.subjectId
+        }
       };
       queryExperimentProgress(experimentInfo).then((data) => {
         // console.log(data);

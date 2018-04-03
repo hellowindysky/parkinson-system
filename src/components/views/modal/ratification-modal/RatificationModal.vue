@@ -224,11 +224,13 @@ export default {
       }
 
       var experimentInfo = {
-        taskCode: this.experimentNumber,
-        remark: this.remark,
-        patientId: this.$route.params.id,
-        tcTaskId: this.$store.state.subjectId,
-        standardDetailOptions: Object.assign([], this.standardDetailOptions)
+        'patientExperimentModel': {
+          'taskCode': this.experimentNumber,
+          'remark': this.remark,
+          'patientId': this.$route.params.id,
+          'tcTaskId': this.$store.state.subjectId
+        },
+        'standardDetailOptions': Object.assign([], this.standardDetailOptions)
       };
       agreeEnteringExperiment(experimentInfo).then(this.updateAndClose, this._handleError);
     },
