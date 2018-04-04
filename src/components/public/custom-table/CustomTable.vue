@@ -173,6 +173,17 @@ export default {
           this.$set(this.colStyle[colCurKey], 'order', -1);
         }
       }
+      // 如果这一列有空的项，排完序后将空的项移到最后边
+      let deletedArr = [];
+      for (var i = 0; i < this.tableContentData.length; i++) {
+        let item = this.tableContentData[i];
+        if (item[key] === undefined) {
+          deletedArr.push(this.tableContentData.splice(i, 1)[0]);
+          i--;
+        }
+      }
+      this.tableContentData = this.tableContentData.concat(deletedArr);
+      // ---
     },
     updateScrollbar() {
       this.$nextTick(() => {
