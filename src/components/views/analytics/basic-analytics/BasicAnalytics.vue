@@ -435,7 +435,7 @@ export default {
       para.groupId = this.statPatientProvince.para.groupValue;
       para.sourceDeviceType = this.statPatientProvince.para.sourceDeviceTypeValue;
       pruneObj(para);
-      queryStatPatientProvince(para).then((data) => {
+      queryStatPatientProvince(para, this.$store.state.subjectId).then((data) => {
         var proviceData = [];
         var countData = [];
         for (var i = 0;i < data.length; i++) {
@@ -456,7 +456,7 @@ export default {
       para.groupId = this.statPatientAge.para.groupValue;
       para.sourceDeviceTypeValue = this.statPatientAge.para.sourceDeviceTypeValue;
       pruneObj(para);
-      queryStatPatientAge(para).then((data) => {
+      queryStatPatientAge(para, this.$store.state.subjectId).then((data) => {
         var dataValue = [];
         for (var i = 0;i < data.length; i++) {
           dataValue[i] = data[i].patientCount;
@@ -473,7 +473,7 @@ export default {
       para.groupId = this.statPatientCareer.para.groupValue;
       para.sourceDeviceTypeValue = this.statPatientCareer.para.sourceDeviceTypeValue;
       pruneObj(para);
-      queryStatPatientCareer(para).then((data) =>{
+      queryStatPatientCareer(para, this.$store.state.subjectId).then((data) =>{
         var career = [];
         var countData = [];
         for (var i = 0;i < data.length; i++) {
@@ -511,7 +511,7 @@ export default {
       this.updateScrollbar();
     });
 
-    queryStatDataBrief().then((data) => {
+    queryStatDataBrief(this.$store.state.subjectId).then((data) => {
       this.dataBrief = data;
     }, (error) => {
       console.log(error);

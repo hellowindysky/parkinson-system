@@ -9,10 +9,10 @@
            :rowspan="rowSpan(item)"
            :colspan="colSpan(item)"
            @click="dataSort(item)">
-            <div :style="{width:colStyle[item.dataKey]}">
+            <div :style="{width:colStyle[item.dataKey] ? colStyle[item.dataKey].width : ''}">
               {{item.colName}}
             </div>
-            <i class="iconfont icon-sort" v-if="!item.subCol"></i>
+            <i class="iconfont" v-if="!item.subCol" :class="iconClass(item.dataKey)"></i>
           </th>
         </tr>
         <tr class="row title-row">
@@ -20,10 +20,10 @@
            v-for="(item,index) in tableTitleData_sub"
            :key="'tbtitle_sub'+index"
            @click="dataSort(item)">
-            <div :style="{width:colStyle[item.dataKey]}">
+            <div :style="{width:colStyle[item.dataKey] ? colStyle[item.dataKey].width : ''}">
               {{item.colName}}
             </div>
-            <i class="iconfont icon-sort"></i>
+            <i class="iconfont" :class="iconClass(item.dataKey)"></i>
           </th>
         </tr>
       </thead>
@@ -49,6 +49,7 @@
 
 <script>
 import Ps from 'perfect-scrollbar';
+import { deepCopy } from 'utils/helper.js';
 export default {
   data() {
     return {
@@ -127,11 +128,12 @@ export default {
       }
     },
     dataSort(item) {
-      this.order = !this.order;
+      let key = item.dataKey;
+      if (!this.colStyle[key]) {
+        return;
+      }
 
-      var dataType = item.dataType;
-      var key = item.dataKey;
-
+      let dataType = item.dataType;
       var compare = function(x, y) {
         if (y[key] === undefined) {
           return false;
@@ -141,15 +143,47 @@ export default {
         if (dataType === 1) {
           return x[key] - y[key];
         } else if (dataType === 4) {
-          return x[key].localeCompare(y[key], 'zh');
+          return x[key].toString().localeCompare(y[key], 'zh');
         } else if (dataType === 5) {
           return new Date(x[key]).getTime() - new Date(y[key]).getTime();
         }
       };
 
+      let colStyleItem = this.colStyle[key];
+      if (colStyleItem.order === -1) {
+        this.$set(colStyleItem, 'order', 1);
+      } else if (colStyleItem.order === 1) {
+        this.$set(colStyleItem, 'order', 0);
+      } else if (colStyleItem.order === 0) {
+        this.$set(colStyleItem, 'order', 1);
+      }
+
       this.tableContentData.sort((a, b) => {
-        return this.order ? compare(a, b) : compare(b, a);
+        if (colStyleItem.order === 1) {
+          return compare(a, b);
+        } else if (colStyleItem.order === 0) {
+          return compare(b, a);
+        } else if (colStyleItem.order === -1) {
+          return;
+        }
       });
+
+      for (let colCurKey in this.colStyle) {
+        if (colCurKey !== key) {
+          this.$set(this.colStyle[colCurKey], 'order', -1);
+        }
+      }
+      // 如果这一列有空的项，排完序后将空的项移到最后边
+      let deletedArr = [];
+      for (var i = 0; i < this.tableContentData.length; i++) {
+        let item = this.tableContentData[i];
+        if (item[key] === undefined) {
+          deletedArr.push(this.tableContentData.splice(i, 1)[0]);
+          i--;
+        }
+      }
+      this.tableContentData = this.tableContentData.concat(deletedArr);
+      // ---
     },
     updateScrollbar() {
       this.$nextTick(() => {
@@ -161,6 +195,14 @@ export default {
           });
         }
       });
+    },
+    iconClass(dataKey) {
+      if (this.colStyle[dataKey]) {
+        let order = this.colStyle[dataKey].order;
+        return order === 1 ? 'icon-up' : order === 0 ? 'icon-down' : 'icon-sort';
+      } else {
+        return '';
+      }
     }
   },
   mounted() {
@@ -168,11 +210,12 @@ export default {
   watch: {
     tableData: {
       handler: function(data) {
-        this.tableContentData = data.data;
+        this.colStyle = {};
+        this.tableContentData = deepCopy(data.data);
         this.$nextTick(() => {
           this.tableTitleKeys.forEach((item, index) => {
             if (this.$refs.td0 && this.$refs.td0[index]) {
-              this.$set(this.colStyle, item, this.$refs.td0[index].offsetWidth + 'px');
+              this.$set(this.colStyle, item, {width: this.$refs.td0[index].offsetWidth + 'px', order: -1});
             }
           });
           if (this.$refs.tbhead) {
@@ -235,7 +278,7 @@ export default {
           position: relative;
           padding-left:16px;
           padding-right:16px;
-          i.icon-order,i.icon-sort {
+          i.iconfont {
             font-size: 12px;
             position: absolute;
             right: 2px;
