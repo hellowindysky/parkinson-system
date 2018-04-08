@@ -10,8 +10,8 @@
       </span>
       <div class="button light-button application-button"
         v-if="listType===MY_PATIENTS_TYPE && progressList.length===0"
-        @click="applyTojoin">
-        申请入组
+        @click="startExperiment">
+        开始实验
       </div>
       <div class="button light-button application-button"
         v-if="listType===MY_PATIENTS_TYPE && isApplicationRejected"
@@ -118,6 +118,13 @@ export default {
     }
   },
   methods: {
+    startExperiment() {
+      if (this.inExperimentWithinOtherSubject) {
+        Bus.$emit(this.NOTICE, '注意', '当前患者正在其它课题下进行实验，每个患者只能同时加入一个课题的实验');
+      } else {
+        Bus.$emit(this.REQUEST_CONFIRMATION, '提示', '请确认患者已经签署知情同意书', '已签署', '暂未签署');
+      }
+    },
     applyTojoin() {
       if (this.notInAnyExperiment || this.inExperimentWithinCurrentSubject) {
         Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'applicationModal', this.SHOW_APPLICATION_MODAL, this.ADD_NEW_CARD, {}, true);
