@@ -312,7 +312,7 @@ export default {
       });
 
       var results = queryString ? allScale.filter((item) => {
-        return (item.value.indexOf(queryString) >= 0);
+        return (item.value.toLowerCase().indexOf(queryString.toLowerCase()) >= 0);
       }) : allScale;
 
       // 调用 callback 返回建议列表的数据

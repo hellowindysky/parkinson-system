@@ -97,7 +97,7 @@ export default {
       return '临床量表 (' + this.patientScale.length + '条记录)';
     },
     subjectScaleTitle() {
-      return '临床量表 (' + 0 + '条记录)';
+      return '课题评定 (' + 0 + '条记录)';
     },
     allScaleTypes() {
       var typesInfo = Util.getElement('typegroupcode', 'gaugeType', this.typeGroup);
