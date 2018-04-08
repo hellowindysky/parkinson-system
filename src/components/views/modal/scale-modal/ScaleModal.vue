@@ -721,6 +721,9 @@ export default {
         this.$set(this.copyInfo, 'patientOptions', []);
       }
       this.getCorrectAnswer();
+    },
+    scaleName() {
+      this.handleScaleSelect();
     }
   }
 };
