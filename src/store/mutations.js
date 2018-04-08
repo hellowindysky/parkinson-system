@@ -10,6 +10,10 @@ const mutations = {
     state.subjectId = subjectId;
   },
 
+  [types.UPDATE_HOSPITAL_TYPE](state, hospitalType) {
+    state.hospitalType = hospitalType;
+  },
+
   [types.PERMIT_DISPLAYING_SENSITIVE_INFO](state) {
     state.hasRightToDisplaySensitiveInfo = true;
   },

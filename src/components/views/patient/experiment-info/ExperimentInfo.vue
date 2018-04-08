@@ -250,6 +250,7 @@ export default {
   mounted() {
     Bus.$on(this.UPDATE_EXPERIMENT_INFO, this.updateExperimentProgress);
     this.updateExperimentProgress();
+    console.log(this.$store.state.hospitalType);
   },
   beforeRouteEnter(to, from, next) {
     var subjectId = sessionStorage.getItem('subjectId');

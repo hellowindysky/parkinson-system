@@ -126,12 +126,16 @@ export default {
       }
 
       var subjectId = subject.id ? subject.id : this.SUBJECT_ID_FOR_HOSPITAL;
+      var hospitalType = subject.hospType !== undefined ? subject.hospType : this.HOSPITAL_TYPE_WITHOUT_SUBJECT;
       var subjectName = subject.taskName ? subject.taskName : '';
 
       if (subjectId !== this.$store.state.subjectId) {
         this.$store.commit('UPDATE_SUBJECT_ID', subjectId);
+        this.$store.commit('UPDATE_HOSPITAL_TYPE', hospitalType);
+
         sessionStorage.setItem('subjectId', subjectId);
         sessionStorage.setItem('subjectName', subjectName);
+        sessionStorage.setItem('hospitalType', hospitalType);
 
         // 等面板缩起的动画结束再进行路由跳转
         setTimeout(() => {
