@@ -240,10 +240,10 @@
                 </td>
                 <td class="col">
                   <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                    <span>{{transform(reaction.wetherContinue,'digitYN')}}</span>
+                    <span>{{transform(reaction.whetherContinue,'digitYN')}}</span>
                   </span>
                   <span class="field-input" v-else>
-                    <el-select v-model="reaction.wetherContinue" clearable placeholder="请选择是否继续应用">
+                    <el-select v-model="reaction.whetherContinue" clearable placeholder="请选择是否继续应用">
                       <el-option
                         v-for="item in getOptions('digitYN')"
                         :key="item.code"
@@ -429,7 +429,7 @@ export default {
         {
           'duration': '',
           'useMedicineWay': '',
-          'wetherContinue': ''
+          'whetherContinue': ''
         }
       ],
       warningResults: {
