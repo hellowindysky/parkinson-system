@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="experiment-step-modal-wrapper">
-    <div class="experiment-step-modal" :class="{'follow-up-modal': milestoneNum===4}" ref="scrollArea">
+    <div class="experiment-step-modal" :class="{'follow-up-modal': milestoneNum===40}" ref="scrollArea">
       <h3 class="title">{{title}}</h3>
       <div class="content">
         <div class="field whole-line">
@@ -30,9 +30,9 @@
           </span>
         </div>
 
-        <hr class="seperate-line" v-if="milestoneNum===4">
+        <hr class="seperate-line" v-if="milestoneNum===40">
 
-        <div v-if="milestoneNum===4">
+        <div v-if="milestoneNum===40">
           <h4 class="sub-title">本期随访总结</h4>
           <div class="field whole-line">
             <span class="field-name long-field-name">
@@ -124,7 +124,7 @@
           </div>
         </div>
         <!-- dd -->
-        <table class="table" v-if="milestoneNum===2&&(milestoneStatus===2||milestoneStatus===3)">
+        <table class="table" v-if="milestoneNum===20 && (milestoneStatus===20 || milestoneStatus===30)">
           <thead>
             <tr class="row title-row">
               <th class="col wide-col">入选标准</th>
@@ -147,7 +147,7 @@
           </tbody>
         </table>
 
-        <table class="table" v-if="milestoneNum===2">
+        <table class="table" v-if="milestoneNum===20">
           <thead>
             <tr class="row title-row">
               <th class="col wide-col">排除标准</th>
@@ -210,7 +210,10 @@ export default {
     ...mapGetters([
       'standardInfo',
       'typeGroup'
-    ])
+    ]),
+    hospitalType() {
+      return this.$store.state.hospitalType;
+    }
   },
   methods: {
     updateTemplate() {
@@ -264,9 +267,23 @@ export default {
       return '';
     },
     transform(code, fieldName) {
-      if (code === 1 && fieldName === 'taskStatus') {
+      if (fieldName === 'taskStatus') {
         // 特殊处理
-        return '筛选入组';
+        if (code === 10) {
+          if (this.hospitalType === 1) {
+            return '入组诊断';
+          } else if (this.hospitalType === 2) {
+            return '筛选入组';
+          }
+        } else if (code === 20) {
+          return '基线评估';
+        } else if (code === 30) {
+          return '治疗期';
+        } else if (code === 40) {
+          return '随访期';
+        } else if (code === 50) {
+          return '治疗期';
+        }
       }
       var options = this.getOptions(fieldName);
       var targetOption = Util.getElement('code', code, options);

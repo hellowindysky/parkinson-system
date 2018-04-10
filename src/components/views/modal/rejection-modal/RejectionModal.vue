@@ -1,9 +1,9 @@
 <template lang="html">
   <div class="rejection-modal-wrapper">
     <div class="rejection-modal" ref="scrollArea">
-      <h3 class="title">退回</h3>
+      <h3 class="title">排除患者</h3>
       <div class="content">
-        <div class="field whole-line">
+        <!-- <div class="field whole-line">
           <span class="field-name">
             退回节点
           </span>
@@ -18,7 +18,7 @@
           <span class="field-input">
             {{doctor}}
           </span>
-        </div>
+        </div> -->
         <div class="field whole-line">
           <span class="field-name">
             处理意见：
@@ -37,7 +37,7 @@
           </span>
         </div>
 
-        <div class="seperate-line"></div>
+        <!-- <div class="seperate-line"></div>
 
         <h4 class="table-title">请根据患者评估情况选择</h4>
         <table class="table">
@@ -80,7 +80,7 @@
               </td>
             </tr>
           </tbody>
-        </table>
+        </table> -->
 
       </div>
 
@@ -95,7 +95,7 @@
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import { mapGetters } from 'vuex';
-import { rejectEnteringExperiment } from 'api/experiment';
+import { leaveExperiment } from 'api/experiment';
 
 export default {
   data() {
@@ -197,25 +197,23 @@ export default {
       }
 
       var experimentInfo = {
-        'patientExperimentModel': {
-          'remark': this.remark,
-          'patientId': this.$route.params.id,
-          'tcTaskId': this.$store.state.subjectId
-        },
-        'standardDetailOptions': Object.assign([], this.standardDetailOptions)
+        'remark': this.remark,
+        'patientId': this.$route.params.id,
+        'tcTaskId': this.$store.state.subjectId
+        // 'standardDetailOptions': Object.assign([], this.standardDetailOptions)
       };
-      for (let item of experimentInfo.standardDetailOptions) {
-        if (!item.optionId && (item.optionId !== 0)) {
-          this.$message({
-            message: '请完成标准选择！',
-            type: 'warning',
-            duration: 2000
-          });
-          this.lockSubmitButton = false;
-          return;
-        }
-      };
-      rejectEnteringExperiment(experimentInfo).then(this.updateAndClose, this._handleError);
+      // for (let item of experimentInfo.standardDetailOptions) {
+      //   if (!item.optionId && (item.optionId !== 0)) {
+      //     this.$message({
+      //       message: '请完成标准选择！',
+      //       type: 'warning',
+      //       duration: 2000
+      //     });
+      //     this.lockSubmitButton = false;
+      //     return;
+      //   }
+      // };
+      leaveExperiment(experimentInfo).then(this.updateAndClose, this._handleError);
     },
     _handleError(error) {
       console.log(error);
@@ -230,7 +228,7 @@ export default {
     },
     updateAndClose() {
       this.$message({
-        message: '已拒绝将该患者加入实验组',
+        message: '已将该患者移出实验组',
         type: 'warning',
         duration: 2000
       });
@@ -272,7 +270,7 @@ export default {
 @import "~styles/variables.less";
 
 @field-line-height: 25px;
-@field-name-width: 150px;
+@field-name-width: 110px;
 
 .rejection-modal-wrapper {
   position: absolute;
@@ -287,7 +285,7 @@ export default {
     margin: auto;
     padding: 0 40px;
     top: 10%;
-    width: 660px;
+    width: 600px;
     max-height: 80%;
     background-color: @background-color;
     overflow: hidden;
