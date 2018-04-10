@@ -58,6 +58,7 @@ const ratificationModal = () => import(/* webpackChunkName: 'experimentModal' */
 const terminationModal = () => import(/* webpackChunkName: 'experimentModal' */ 'modal/termination-modal/TerminationModal');
 const followUpTerminationModal = () => import(/* webpackChunkName: 'experimentModal' */ 'modal/follow-up-termination-modal/FollowUpTerminationModal');
 const experimentStepModal = () => import(/* webpackChunkName: 'experimentModal' */ 'modal/experiment-step-modal/ExperimentStepModal');
+const nextExperimentStepModal = () => import(/* webpackChunkName: 'experimentModal' */ 'modal/next-experiment-step-modal/NextExperimentStepModal');
 
 const filterPanel = () => import(/* webpackChunkName: 'filterPanel' */ 'public/filter-panel/FilterPanel');
 
@@ -112,6 +113,7 @@ export default {
     terminationModal,
     followUpTerminationModal,
     experimentStepModal,
+    nextExperimentStepModal,
 
     filterPanel,
     choicePanel,
