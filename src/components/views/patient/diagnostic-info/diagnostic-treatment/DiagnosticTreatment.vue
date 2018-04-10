@@ -47,19 +47,19 @@
           v-on:viewCurrentCard="viewMedicineAdverseEvent(item)">
           <div class="text line-1">
             <span class="name">事件名称</span>
-            <span class="value">{{transformMedicineField(item, 'usages')}}</span>
+            <span class="value">{{item.adverseName}}</span>
           </div>
           <div class="text line-2">
             <span class="name">开始时间</span>
-            <span class="value">{{transformMedicineField(item, 'firMedFlag')}}</span>
+            <span class="value">{{item.occurTime)}}</span>
           </div>
           <div class="text line-3">
             <span class="name">是否采取措施</span>
-            <span class="value">{{transformMedicineField(item, 'stopReason')}}</span>
+            <span class="value">{{transformMedicineField(item, 'measureFlag')}}</span>
           </div>
           <div class="text line-4">
             <span class="name">不良事件结局</span>
-            <span class="value">{{transformMedicineField(item, 'sideeffectType')}}</span>
+            <span class="value">{{transformMedicineField(item, 'adverseResult')}}</span>
           </div>
         </card>
       </extensible-panel>
