@@ -107,6 +107,7 @@ export default {
   SHOW_MODAL_BOX: 'showModalBox',
   SHOW_SCALE_MODAL: 'showScaleModal',
   SHOW_MEDICINE_MODAL: 'showMedicineModal',
+  SHOW_MEDICINE_ADVERSE_EVENT_MODAL: 'showMedicineAdverseEventModal',
   SHOW_NEUROLOGIC_MODAL: 'showNeurologicModal',
   SHOW_GENE_MODAL: 'showGeneModal',
   SHOW_BIOCHEMICAL_EXAM_MODAL: 'showBiochemicalExamModal',
