@@ -328,6 +328,7 @@ import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import {
+  deleteMedicineAdverseEvent,
   deleteSeriousAdverseEvent,
   deleteAdverseEvent,
   deleteTreatmentEvaluation,
@@ -684,6 +685,28 @@ export default {
       };
       Bus.$on(this.CONFIRM, () => {
         deletePatientMedicine(patientMedicine).then(this._resolveDeletion, this._rejectDeletion);
+      });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
+    },
+    addMedicineAdverseEvent() {
+      var showEdit = this.canEdit && this.showMedicineAdverseEvent;
+      // Bus.$emit(this.SHOW_PRE_EVALUATION_MODAL, this.ADD_NEW_CARD, {}, showEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'medicineAdverseEventModal', this.SHOW_MEDICINE_ADVERSE_EVENT_MODAL, this.ADD_NEW_CARD, {}, showEdit);
+    },
+    viewMedicineAdverseEvent(item) {
+      var showEdit = this.canEdit && this.showMedicineAdverseEvent;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'medicineAdverseEventModal', this.SHOW_MEDICINE_ADVERSE_EVENT_MODAL, this.VIEW_CURRENT_CARD, item, showEdit);
+    },
+    editMedicineAdverseEvent(item) {
+      var showEdit = this.canEdit && this.showMedicineAdverseEvent;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'medicineAdverseEventModal', this.SHOW_MEDICINE_ADVERSE_EVENT_MODAL, this.EDIT_CURRENT_CARD, item, showEdit);
+    },
+    deleteMedicineAdverseEvent(item) {
+      var medicineAdverseEvent = {
+        'patientAdverseId': item.patientAdverseId
+      };
+      Bus.$on(this.CONFIRM, () => {
+        deleteMedicineAdverseEvent(medicineAdverseEvent).then(this._resolveDeletion, this._rejectDeletion);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
