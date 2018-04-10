@@ -97,7 +97,7 @@ export default {
       if (val === true) {
         var condition = {};
         condition.groupModule = this.$store.state.subjectId === this.SUBJECT_ID_FOR_HOSPITAL ? 0 : this.$store.state.subjectId;
-        getGroupList(condition).then((data) => {
+        getGroupList(condition, this.$store.state.subjectId).then((data) => {
           this.allGroups = data;
           let length = this.allGroups.length;
           this.groupSelectedList = [];

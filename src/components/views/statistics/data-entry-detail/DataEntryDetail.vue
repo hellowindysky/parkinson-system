@@ -9,6 +9,14 @@
           <el-input v-model="hospitalName" placeholder="请输入医院名称"></el-input>
         </span>
       </div>
+      <div class="field" v-if="inStatisticsMenu">
+        <span class="field-name">
+          技术支持员
+        </span>
+        <span class="field-input">
+          <el-input v-model="techSupport" placeholder="请输入技术支持员账号"></el-input>
+        </span>
+      </div>
       <div class="field">
         <span class="field-name">
           医&nbsp;&nbsp;&nbsp;&nbsp;生
@@ -103,6 +111,7 @@ export default {
       },
       activeTab: '',
       updatingFormData: false,
+      techSupport: '',
       supportedDoctorNumber: '',
       tableData: {}
     };
@@ -132,6 +141,9 @@ export default {
       } else {
         return [];
       }
+    },
+    inStatisticsMenu() {
+      return this.$route.matched.some(record => record.meta.statistics);
     }
   },
   methods: {
@@ -222,6 +234,9 @@ export default {
       if (this.doctorName) {
         params.doctorName = this.doctorName;
       }
+      if (this.inStatisticsMenu && this.techSupport) {
+        params.techSupportName = this.techSupport;
+      }
 
       var f = () => {};
 
@@ -279,6 +294,7 @@ export default {
     },
     resetConditions() {
       this.hospitalName = '';
+      this.techSupport = '';
       this.doctorName = '';
       this.startTime = '';
       this.endTime = '';
@@ -334,8 +350,8 @@ export default {
 @import "~styles/variables.less";
 
 @field-line-height: 25px;
-@field-width: 240px;
-@field-name-width: 60px;
+@field-width: 260px;
+@field-name-width: 75px;
 @long-field-width: @field-width * 2 - @field-name-width;
 
 .data-entry-detail {

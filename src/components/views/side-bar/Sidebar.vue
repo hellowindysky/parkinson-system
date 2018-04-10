@@ -156,7 +156,7 @@ export default {
       var subjects = sessionStorage.getItem('subjects');
       subjects = JSON.parse(subjects);
 
-      var currentSubject = Util.findTargetObj(subjects, 'taskRoleType', 'id', this.subjectId);
+      var currentSubject = Util.findTargetObj(subjects, 'tasks', 'id', this.subjectId);
       return currentSubject ? Number(currentSubject.taskRoleType) : 0;
     },
     currentSubItem() {

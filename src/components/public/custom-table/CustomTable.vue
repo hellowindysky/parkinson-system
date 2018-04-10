@@ -36,7 +36,12 @@
           <tr class="row content-row" v-for="(item,index) in tableContentData" :key="'data'+index">
             <td class="col content-col" v-for="(subItem,tdIndex) in tableTitleKeys" :key="'col'+tdIndex">
               <div :ref="'td'+index">
-                {{item[subItem]}}
+                <span v-if="subItem.length===32&&(item[subItem]===undefined||item[subItem]==='')">
+                  0
+                </span>
+                <span v-else>
+                  {{item[subItem]}}
+                </span>
               </div>
             </td>
           </tr>
