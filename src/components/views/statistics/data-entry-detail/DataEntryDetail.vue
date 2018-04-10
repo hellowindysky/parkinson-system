@@ -37,7 +37,7 @@
             placeholder="请选择日期"
             :editable="false"
             :clearable="false"
-            :picker-options="pickerOptions">
+            :picker-options="pickerOptions2">
           </el-date-picker>
           <span class="middle-text">~</span>
           <el-date-picker
@@ -47,7 +47,7 @@
             placeholder="请选择日期"
             :editable="false"
             :clearable="false"
-            :picker-options="pickerOptions">
+            :picker-options="pickerOptions2">
           </el-date-picker>
         </span>
       </div>
@@ -108,6 +108,11 @@ export default {
       selectableMonth: [],
       pickerOptions: {
         disabledDate: this.checkIfDisabledDate
+      },
+      pickerOptions2: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        }
       },
       activeTab: '',
       updatingFormData: false,
@@ -241,6 +246,16 @@ export default {
       var f = () => {};
 
       if (this.type === 'dataEntryDetail') {
+        var timeInterval = this.endTime - this.startTime;
+        var maxInterval = 60 * 60 * 1000 * 24 * 365;
+        if (timeInterval > maxInterval) {
+          this.$message({
+            message: '时间跨度不能超过1年',
+            type: 'warning',
+            duration: 2000
+          });
+          return;
+        }
         if (this.startTime) {
           params.startTime = Util.simplifyDate(this.startTime);
         }
