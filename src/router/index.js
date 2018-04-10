@@ -399,6 +399,9 @@ export default new Router({
           path: 'statistics',
           component: Statistics,
           name: 'statistics',
+          meta: {
+            statistics: true
+          },
           children: [
             {
               path: 'dataEntryDetail',
