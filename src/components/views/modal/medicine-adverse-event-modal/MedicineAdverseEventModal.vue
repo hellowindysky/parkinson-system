@@ -16,7 +16,7 @@
             <el-date-picker
               v-model="occurTime"
               :class="{'warning': warningResults.occurTime}"
-              type="datetime"
+              type="date"
               placeholder="请选择时间"
               :picker-options="pickerOptions"
               @change="updateWarning('occurTime')">
@@ -188,7 +188,7 @@
             <el-date-picker
               v-model="reportAdverseDate"
               :class="{'warning': warningResults.reportAdverseDate}"
-              type="datetime"
+              type="date"
               placeholder="请选择时间"
               :picker-options="pickerOptions"
               @change="updateWarning('reportAdverseDate')">
@@ -208,7 +208,7 @@
             <table class="table">
               <tr class="row title-row">
               <td class="col">
-                <span class="iconfont icon-plus" @click="addTreatMedicine" v-show="treatMedicine.length <15 && mode !== VIEW_CURRENT_CARD"></span>
+                <span class="iconfont icon-plus" @click="addTreatMedicine" v-show="patientCaseAdverseMedicine.length <15 && mode !== VIEW_CURRENT_CARD"></span>
                   序号
                 </td>
                 <td class="col">
@@ -217,17 +217,23 @@
                 <td class="col">目前用法</td>
                 <td class="col">继续应用</td>
               </tr>
-              <tr class="row" v-for="(reaction, index) in treatMedicine">
+              <tr class="row" v-for="(reaction, index) in patientCaseAdverseMedicine">
                 <td class="col">
                   <span v-show="mode!==VIEW_CURRENT_CARD" class="iconfont icon-remove" @click="removeTreatMedicine(index)"></span>
                   {{String.fromCharCode(64 + parseInt(index+1))}}
                 </td>
                 <td class="col">
                   <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                    {{(reaction.duration)}}
+                    {{(reaction.medicineTime)}}
                   </span>
                   <span class="field-input" v-else>
-                    <el-input v-model="reaction.duration" placeholder="请输入用药时间"></el-input>
+                    <el-date-picker
+                      v-model="reaction.medicineTime"
+                      type="date"
+                      format="yyyy-MM-dd"
+                      placeholder="请输入用药时间"
+                      :picker-options="pickerOptions">
+                    </el-date-picker>
                   </span>
                 </td>
                 <td class="col">
@@ -326,6 +332,7 @@
               <el-date-picker
                 v-model="endTime"
                 type="datetime"
+                format="yyyy-MM-dd HH:mm"
                 placeholder="请选择时间"
                 :picker-options="pickerOptions">
               </el-date-picker>
@@ -381,7 +388,7 @@ import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import { vueCopy, pruneObj, reviseDateFormat } from 'utils/helper';
+import { vueCopy, deepCopy, pruneObj, reviseDateFormat } from 'utils/helper';
 import { getPatientSimpleInfo, addMedicineAdverseEvent, modifyMedicineAdverseEvent } from 'api/patient.js';
 
 export default {
@@ -403,7 +410,7 @@ export default {
       completeInit: false,
       patientTaskCode: '',
       patientAdverseSerious: '',
-      patientAdverseSeriousId: '',
+      patientAdverseId: '',
       occurTime: '',
       adverseDescribe: '',
       measureFlag: '',
@@ -425,9 +432,9 @@ export default {
       foldedConditionalContentMeasures: false,
       foldedEvents: this.foldedEventsStatus,
       foldedConditionalContentEndEvents: false,
-      treatMedicine: [
+      patientCaseAdverseMedicine: [
         {
-          'duration': '',
+          'medicineTime': '',
           'useMedicineWay': '',
           'whetherContinue': ''
         }
@@ -465,11 +472,11 @@ export default {
     }
   },
   methods: {
-    translateToName(saeSituation) {
-      let typeArr = this.getOptions('saeSituation');
+    translateToName(seriousAdverse) {
+      let typeArr = this.getOptions('medicineSeriousAdverse');
       let str = [];
-      for (let i = 0; i < saeSituation.length; i++) {
-        if (saeSituation[i] === '1') {
+      for (let i = 0; i < seriousAdverse.length; i++) {
+        if (seriousAdverse[i] === '1') {
           str.push(typeArr[i].name);
         }
       };
@@ -484,11 +491,11 @@ export default {
       this.completeInit = false;
       this.mode = cardOperation;
       this.showEdit = showEdit;
-      this.treatMedicine = [];
-      this.$set(this.treatMedicine, 0, {});
-      this.$set(this.treatMedicine[0], 'medicineName', '');
-      this.$set(this.treatMedicine[0], 'totalDailyDose', '');
-      this.$set(this.treatMedicine[0], 'totalDailyDose', '');
+      this.patientCaseAdverseMedicine = [];
+      this.$set(this.patientCaseAdverseMedicine, 0, {});
+      this.$set(this.patientCaseAdverseMedicine[0], 'medicineTime', '');
+      this.$set(this.patientCaseAdverseMedicine[0], 'useMedicineWay', '');
+      this.$set(this.patientCaseAdverseMedicine[0], 'whetherContinue', '');
        // 获取患者的 实验编号
       this.patientTaskCode = '';
       getPatientSimpleInfo(this.$route.params.id).then((data) => {
@@ -506,14 +513,14 @@ export default {
           }
         }
       });
-      this.patientAdverseSeriousId = item.patientAdverseSeriousId ? item.patientAdverseSeriousId : '';
+      this.patientAdverseId = item.patientAdverseId ? item.patientAdverseId : '';
       this.occurTime = item.occurTime ? item.occurTime : '';
       this.adverseDescribe = item.adverseDescribe ? item.adverseDescribe : '';
-      this.measureFlag = item.measureFlag ? item.measureFlag : '';
+      this.measureFlag = item.measureFlag;
       this.treatmentRelate = item.treatmentRelate ? item.treatmentRelate : '';
       this.medicineDoseEffect = item.medicineDoseEffect ? item.medicineDoseEffect : '';
       this.searchMedicineRelate = item.searchMedicineRelate ? item.searchMedicineRelate : '';
-      this.seriousFlag = item.seriousFlag ? item.seriousFlag : '';
+      this.seriousFlag = item.seriousFlag ;
       this.seriousAdverse = item.seriousAdverse ? item.seriousAdverse : '';
       this.reportAdverseDate = item.reportAdverseDate ? item.reportAdverseDate : '';
       this.otherMeasure = item.otherMeasure ? item.otherMeasure : '';
@@ -522,35 +529,35 @@ export default {
       this.adverseResult = item.adverseResult ? item.adverseResult : '';
       this.adverseName = item.adverseName ? item.adverseName : '';
       this.endTime = item.endTime ? item.endTime : '';
-      this.exitTestFlag = item.exitTestFlag ? item.exitTestFlag : '';
-      vueCopy(item.treatMedicine, this.treatMedicine);
+      this.exitTestFlag = item.exitTestFlag;
+      vueCopy(item.patientCaseAdverseMedicine, this.patientCaseAdverseMedicine);
       this.prepareSeriousAdverseEvent();
       this.completeInit = true;
       this.updateScrollbar();
     },
     addTreatMedicine() {
-      var medicineList = this.treatMedicine;
+      var medicineList = this.patientCaseAdverseMedicine;
       var index = medicineList.length;
       this.$set(medicineList, index, {});
-      let propertyList = ['medicineName', 'totalDailyDose', 'medicineMethod'];
+      let propertyList = ['medicineTime', 'useMedicineWay', 'whetherContinue'];
       for (let property of propertyList) {
         this.$set(medicineList[index], property, '');
       }
     },
     removeTreatMedicine(index) {
-      var medicineList = this.treatMedicine;
+      var medicineList = this.patientCaseAdverseMedicine;
       var oldList = [];
       for (let medicine of medicineList) {
         oldList.push({
-          medicineName: medicine.medicineName,
-          totalDailyDose: medicine.totalDailyDose
+          duration: medicine.duration,
+          useMedicineWay: medicine.useMedicineWay
         });
       }
       medicineList.splice(index, 1);
       this.$nextTick(() => {
         for (var i = 0; i < medicineList.length; i++) {
-          medicineList[i].medicineName = oldList[i].medicineName;
-          medicineList[i].totalDailyDose = oldList[i].totalDailyDose;
+          medicineList[i].duration = oldList[i].duration;
+          medicineList[i].useMedicineWay = oldList[i].useMedicineWay;
         }
       });
     },
@@ -580,15 +587,15 @@ export default {
       return options;
     },
     initSeriousAdverseEvents() {
-      var options = this.getOptions('saeSituation');
+      var options = this.getOptions('medicineSeriousAdverse');
       this.seriousAdverseEvents = [];
       for (let i = 0; i < options.length; i++) {
         this.$set(this.seriousAdverseEvents, i, false);
       }
     },
     prepareSeriousAdverseEvent() {
-      for (let i = 0; i < this.saeSituation.length; i++) {
-        this.$set(this.seriousAdverseEvents, i, this.saeSituation[i] === '1');
+      for (let i = 0; i < this.seriousAdverse.length; i++) {
+        this.$set(this.seriousAdverseEvents, i, this.seriousAdverse[i] === '1');
       }
     },
     concatenateSeriousAdverse() {
@@ -649,6 +656,8 @@ export default {
       medicineAdverseEventInfo.adverseName = this.adverseName;
       medicineAdverseEventInfo.adverseEffect = this.adverseEffect;
       medicineAdverseEventInfo.exitTestFlag = this.exitTestFlag;
+      medicineAdverseEventInfo.seriousAdverse = this.concatenateSeriousAdverse();
+      medicineAdverseEventInfo.patientCaseAdverseMedicine = deepCopy(this.patientCaseAdverseMedicine);
       medicineAdverseEventInfo.endTime = Util.simplifyTime(medicineAdverseEventInfo.endTime, false);
       reviseDateFormat(medicineAdverseEventInfo);
       pruneObj(medicineAdverseEventInfo);
@@ -658,7 +667,7 @@ export default {
         }, this._handleError);
 
       } else if (this.mode === this.EDIT_CURRENT_CARD) {
-        medicineAdverseEventInfo.patientAdverseSeriousId = this.patientAdverseSeriousId;
+        medicineAdverseEventInfo.patientAdverseId = this.patientAdverseId;
         modifyMedicineAdverseEvent(medicineAdverseEventInfo).then(() => {
           this.updateAndClose();
         }, this._handleError);
