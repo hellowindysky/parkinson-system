@@ -40,7 +40,7 @@
         <card class="card medicine-card" :class="smallCardWidth" :mode="mutableMode"
           v-for="(item, index) in diagnosticMedicineAdverseEvent"
           :key="'diagnosticMedicineAdverseEvent'+index"
-          :title="getMedicineAdverseEventTitle(item.medicineAdverseEventId)"
+          :title="'不良事件'"
           :disable-delete="item.statusFlag===0"
           v-on:editCurrentCard="editMedicineAdverseEvent(item)"
           v-on:deleteCurrentCard="deleteMedicineAdverseEvent(item)"
@@ -51,7 +51,7 @@
           </div>
           <div class="text line-2">
             <span class="name">开始时间</span>
-            <span class="value">{{item.occurTime)}}</span>
+            <span class="value">{{item.occurTime}}</span>
           </div>
           <div class="text line-3">
             <span class="name">是否采取措施</span>
@@ -711,16 +711,19 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addMedicineRecord() {
-      var list = [
-        {
+      var list = [];
+      if (this.showMedicinePanel) {
+        list.push({
           text: '药物治疗',
           callback: this.addMedicine
-        },
-        {
+        });
+      }
+      if (this.showMedicineAdverseEvent) {
+        list.push({
           text: '不良事件',
           callback: this.addMedicineAdverseEvent
-        }
-      ];
+        });
+      }
       Bus.$emit(this.SHOW_CHOICE_PANEL, list);
     },
     addTreatmentRecord() {
