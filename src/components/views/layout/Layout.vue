@@ -8,7 +8,6 @@
 
     <filter-panel :showFilterPanel="showFilterPanel"></filter-panel>
     <secret-agreement-modal></secret-agreement-modal>
-    <!-- <medicine-adverse-event-modal></medicine-adverse-event-modal> -->
     <!-- <site-inspection-modal></site-inspection-modal> -->
     <choice-panel></choice-panel>
     <confirm-box></confirm-box>
