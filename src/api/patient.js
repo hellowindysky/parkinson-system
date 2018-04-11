@@ -1130,7 +1130,7 @@ export function modifyMedicineAdverseEvent(patientMedicineAdverse) {
 export function deleteMedicineAdverseEvent(patientMedicineAdverse) {
   var request = Object.assign({}, getCommonRequest());
   request.patientMedicineAdverse = patientMedicineAdverse;
-  var url = '/pdms/delPatientAdverse';
+  var url = '/pdms/delPatientMedicineAdverse';
 
   return encapsulatePromise(url, request);
 };
