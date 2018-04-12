@@ -147,7 +147,7 @@
             <span>{{transform(seriousFlag,'digitYN')}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-select v-model="seriousFlag" clearable placeholder="请选择是否严重不良事件">
+            <el-select v-model="seriousFlag" clearable placeholder="请选择是否严重不良事件" @change="toggle">
               <el-option
                 v-for="item in getOptions('digitYN')"
                 :key="item.code"
@@ -207,20 +207,27 @@
           </div>
             <table class="table">
               <tr class="row title-row">
-              <td class="col">
-                <span class="iconfont icon-plus" @click="addTreatMedicine" v-show="patientCaseAdverseMedicine.length <15 && mode !== VIEW_CURRENT_CARD"></span>
+                <td class="col col-width-10">
+                  <span class="iconfont icon-plus" @click="addTreatMedicine" v-show="patientCaseAdverseMedicine.length <15 && mode !== VIEW_CURRENT_CARD"></span>
                   序号
                 </td>
-                <td class="col">
-                  用药时间
-                </td>
-                <td class="col">目前用法</td>
-                <td class="col">继续应用</td>
+                <td class="col col-width-10">药物名称</td>
+                <td class="col col-width-10">用药时间</td>
+                <td class="col col-width-10">目前用法</td>
+                <td class="col col-width-15">继续应用</td>
               </tr>
               <tr class="row" v-for="(reaction, index) in patientCaseAdverseMedicine">
                 <td class="col">
                   <span v-show="mode!==VIEW_CURRENT_CARD" class="iconfont icon-remove" @click="removeTreatMedicine(index)"></span>
                   {{String.fromCharCode(64 + parseInt(index+1))}}
+                </td>
+                <td class="col">
+                  <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                    {{(reaction.medicineName)}}
+                  </span>
+                  <span class="field-input" v-else>
+                    <el-input v-model="reaction.medicineName" placeholder="请输入药物名称"></el-input>
+                  </span>
                 </td>
                 <td class="col">
                   <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -296,13 +303,13 @@
               </span>
             </div>
         </div>
-        <div class="seperate-line" v-show="seriousFlag === 1">
+        <div class="seperate-line" v-if="seriousFlag === 1" >
           <div class="toggle-fold-button" @click="toggleContentFoldedEndEvent">
             不良事件结局
             <span class="iconfont" :class="iconToggleFoldedEvents"></span>
           </div>
         </div>
-        <div class="foldable-content" v-show="seriousFlag === 1" :class="{'folded': foldedConditionalContentEndEvents}">
+        <div class="foldable-content" v-if="seriousFlag === 1" :class="{'folded': foldedConditionalContentEndEvents}">
           <div class="field whole-line">
             <span class="field-name">
               不良事件结局：
@@ -435,6 +442,7 @@ export default {
       patientCaseAdverseMedicine: [
         {
           'medicineTime': '',
+          'medicineName': '',
           'useMedicineWay': '',
           'whetherContinue': ''
         }
@@ -494,6 +502,7 @@ export default {
       this.patientCaseAdverseMedicine = [];
       this.$set(this.patientCaseAdverseMedicine, 0, {});
       this.$set(this.patientCaseAdverseMedicine[0], 'medicineTime', '');
+      this.$set(this.patientCaseAdverseMedicine[0], 'medicineName', '');
       this.$set(this.patientCaseAdverseMedicine[0], 'useMedicineWay', '');
       this.$set(this.patientCaseAdverseMedicine[0], 'whetherContinue', '');
        // 获取患者的 实验编号
@@ -539,7 +548,7 @@ export default {
       var medicineList = this.patientCaseAdverseMedicine;
       var index = medicineList.length;
       this.$set(medicineList, index, {});
-      let propertyList = ['medicineTime', 'useMedicineWay', 'whetherContinue'];
+      let propertyList = ['medicineTime', 'medicineName', 'useMedicineWay', 'whetherContinue'];
       for (let property of propertyList) {
         this.$set(medicineList[index], property, '');
       }
@@ -560,6 +569,12 @@ export default {
           medicineList[i].useMedicineWay = oldList[i].useMedicineWay;
         }
       });
+    },
+    toggle() {
+      this.adverseResult = '';
+      this.adverseEffect = '';
+      this.endTime = '';
+      this.exitTestFlag = '';
     },
     getUIType(field) {
       // uiType类型 0/无 1/输入框 2/数字箭头 3/单选下拉框 4/单选按纽 5/多选复选框 6/日期 7/日期时间
@@ -907,7 +922,7 @@ export default {
           }
           .col {
             position: relative;
-            width: 10%;
+            width: 5%;
             border: 1px solid @light-gray-color;
             .required-mark {
               position: absolute;
@@ -922,15 +937,13 @@ export default {
             }
             &.col-width-10 {
               width: 10%;
-            }
-            &.col-width-40 {
-              width: 40%;
               letter-spacing: 1px;
               padding: 5px 0;
             }
-            &.title-col {
-              background-color: @font-color;
-              color: #fff;
+            &.col-width-15 {
+              width: 15%;
+              letter-spacing: 1px;
+              padding: 5px 0;
             }
             &.computed-cell {
               background-color: @computed-cell-color;
@@ -945,12 +958,6 @@ export default {
                 color: @alert-color;
                 font-size: @small-font-size;
               }
-            }
-            &.wide-col {
-              width: 30%;
-            }
-            &.narrow-col {
-              width: 5%;
             }
             .iconfont {
               position: absolute;
@@ -980,6 +987,7 @@ export default {
                 text-align: center;
               }
               .el-input__icon {
+                right: -7px;
                 &.el-icon-date {
                   width: 12px;
                   height: 12px;
