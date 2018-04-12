@@ -2,9 +2,13 @@
 import { encapsulatePromise, getCommonRequest } from 'api/common.js';
 
 // 查询实验流程
-export function queryExperimentProgress(experimentInfo) {
+export function queryExperimentProgress(experimentInfo, hospitalType) {
+  // 医院的类型决定了参数键值的区别
   var request = Object.assign({}, getCommonRequest());
-  request.patientExperimentModel = experimentInfo;
+  if (hospitalType !== undefined) {
+    var key = 'patientExperiment_' + hospitalType;
+    request[key] = experimentInfo;
+  }
   var url = '/pdms/queryPatientExperiment';
   return encapsulatePromise(url, request);
 };
@@ -26,10 +30,32 @@ export function queryExperimentMember(subjectId) {
   return encapsulatePromise(url, request);
 };
 
-// 申请加入实验组
-export function applyToEnterExperiment(experimentInfo) {
+// 开始实验
+export function startExperiment(experimentInfo) {
   var request = Object.assign({}, getCommonRequest());
-  request.patientExperimentModel = experimentInfo;
+  request.patientExperiment = experimentInfo;
+  var url = '/pdms/startPatientExperiment';
+  return encapsulatePromise(url, request);
+};
+
+// 加入实验组
+export function joinExperiment(experimentInfo) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientExperiment = {
+    patientExperimentModel: experimentInfo,
+    type: 1     // 1 是入组
+  };
+  var url = '/pdms/addPatientExperiment';
+  return encapsulatePromise(url, request);
+};
+
+// 退出实验组
+export function leaveExperiment(experimentInfo) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientExperiment = {
+    patientExperimentModel: experimentInfo,
+    type: 0     // 0 是排除出组
+  };
   var url = '/pdms/addPatientExperiment';
   return encapsulatePromise(url, request);
 };
@@ -37,23 +63,23 @@ export function applyToEnterExperiment(experimentInfo) {
 // 同意加入实验组
 export function agreeEnteringExperiment(experimentInfo) {
   var request = Object.assign({}, getCommonRequest());
-  request.patientExperimentModel = experimentInfo;
+  request.shengRenYiPatientExperiment = experimentInfo;
   var url = '/pdms/agreePatientExperiment';
   return encapsulatePromise(url, request);
 };
 
 // 拒绝加入实验组
-export function rejectEnteringExperiment(experimentInfo) {
-  var request = Object.assign({}, getCommonRequest());
-  request.patientExperimentModel = experimentInfo;
-  var url = '/pdms/returnPatientExperiment';
-  return encapsulatePromise(url, request);
-};
+// export function rejectEnteringExperiment(experimentInfo) {
+//   var request = Object.assign({}, getCommonRequest());
+//   request.shengRenYiPatientExperiment = experimentInfo;
+//   var url = '/pdms/returnPatientExperiment';
+//   return encapsulatePromise(url, request);
+// };
 
 // 结束治疗
 export function completeExperiment(experimentInfo) {
   var request = Object.assign({}, getCommonRequest());
-  request.patientExperimentModel = experimentInfo;
+  request.shengRenYiPatientExperiment = experimentInfo;
   var url = 'pdms/completePatientExperiment';
   return encapsulatePromise(url, request);
 };
@@ -61,7 +87,7 @@ export function completeExperiment(experimentInfo) {
 // 结束随访
 export function completeFollowUp(experimentInfo) {
   var request = Object.assign({}, getCommonRequest());
-  request.patientExperimentModel = experimentInfo;
+  request.shengRenYiPatientExperiment = experimentInfo;
   var url = 'pdms/completeFollowUp';
   return encapsulatePromise(url, request);
 };

@@ -2,14 +2,15 @@
 import { encapsulatePromise, getCommonRequest } from 'api/common.js';
 
 // 获取分组信息
-export function getGroupList(groupInfoCondition) {
+export function getGroupList(groupInfoCondition, taskId) {
   var request = Object.assign({}, getCommonRequest());
   if (groupInfoCondition === undefined) {
     request.groupInfoCond = {};
   } else {
     request.groupInfoCond = groupInfoCondition;
   }
-  var url = '/pdms/queryGroupList';
+  request.taskId = taskId;
+  var url = '/pdms/queryGroupInTask';
   return encapsulatePromise(url, request);
 };
 

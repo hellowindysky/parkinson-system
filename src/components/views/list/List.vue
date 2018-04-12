@@ -221,14 +221,13 @@ import groupListItem from 'views/list/group-item/GroupItem';
 import userListItem from 'views/configuration/usermanagement/user-item/UserItem';
 import roleListItem from 'views/configuration/rolemanagement/role-item/RoleItem';
 
-// import axios from 'axios';
 import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util';
-// import { vueCopy } from 'utils/helper';
 import { getPatientList } from 'api/patient';
 import { getUserList, getRoleList } from 'api/user';
 import { getGroupList, deleteGroup } from 'api/group';
+import { getSubjectHospitalList } from 'api/subject';
 
 export default {
   data() {
@@ -267,6 +266,8 @@ export default {
       listMode: this.READING_MODE,
 
       selectedGroupList: [],
+      hospitalList: [],
+
       filterPatientsForm: {
         group: -1,
         hospital: -1,
@@ -310,6 +311,9 @@ export default {
     ...mapGetters([
       'typeGroup'
     ]),
+    subjectId() {
+      return this.$store.state.subjectId;
+    },
     inSubject() {
       return this.$store.state.subjectId !== this.SUBJECT_ID_FOR_HOSPITAL;
     },
@@ -393,6 +397,10 @@ export default {
       this.updateCurrentList();
     }
 
+    if (this.inSubject) {
+      this.updateHospitalList();
+    }
+
     Bus.$on(this.UPDATE_PATIENTS_LIST, this.updatePatientsList);
 
     Bus.$on(this.UPDATE_GROUP_LIST, this.updateGroupList);
@@ -434,6 +442,16 @@ export default {
       } else {
         console.log('unknown listType');
       }
+    },
+    updateHospitalList() {
+      var condition = {
+        taskId: this.subjectId
+      };
+      getSubjectHospitalList(condition).then((data) => {
+        this.hospitalList = data ? data : [];
+      }, (error) => {
+        console.log(error);
+      });
     },
     updateScrollbar() {
       this.$nextTick(() => {
@@ -496,7 +514,7 @@ export default {
         condition.groupId = filterForm.group;
       }
       if (filterForm.hospital !== -1) {
-        // TODO
+        condition.departId = filterForm.hospital;
       }
       if (filterForm.gender !== -1) {
         condition.sex = filterForm.gender;
@@ -546,7 +564,7 @@ export default {
       }
       condition.groupModule = this.inSubject ? this.$store.state.subjectId : 0;
       this.hasFirstUpdatedList = true;
-      getGroupList(condition).then((data) => {
+      getGroupList(condition, this.$store.state.subjectId).then((data) => {
         this.groupList = data ? data : [];
         cb && cb();
       }, (error) => {
@@ -678,6 +696,13 @@ export default {
           options.push({
             name: group.groupName,
             code: group.groupId
+          });
+        }
+      } else if (fieldName === 'hospital') {
+        for (let hospital of this.hospitalList) {
+          options.push({
+            name: hospital.departname,
+            code: hospital.id
           });
         }
       } else {

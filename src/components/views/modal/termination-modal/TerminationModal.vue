@@ -150,10 +150,12 @@ export default {
         }
       }
       var experimentInfo = {
-        remark: this.remark,
-        patientId: this.$route.params.id,
-        tcTaskId: this.$store.state.subjectId,
-        nextMileStone: this.nextStep
+        'patientExperimentModel': {
+          'remark': this.remark,
+          'patientId': this.$route.params.id,
+          'tcTaskId': this.$store.state.subjectId,
+          'nextMileStone': this.nextStep
+        }
       };
       completeExperiment(experimentInfo).then(this.updateAndClose, this._handleError);
     },

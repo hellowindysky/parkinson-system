@@ -18,7 +18,7 @@
         科室患者
       </li>
       <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'subjectPatients'}"
-        @click="chooseSubjectPatients" v-if="inSubject">
+        @click="chooseSubjectPatients" v-if="false">
         项目患者
       </li>
     </ul>
@@ -156,7 +156,7 @@ export default {
       var subjects = sessionStorage.getItem('subjects');
       subjects = JSON.parse(subjects);
 
-      var currentSubject = Util.findTargetObj(subjects, 'taskRoleType', 'id', this.subjectId);
+      var currentSubject = Util.findTargetObj(subjects, 'tasks', 'id', this.subjectId);
       return currentSubject ? Number(currentSubject.taskRoleType) : 0;
     },
     currentSubItem() {
@@ -193,16 +193,16 @@ export default {
     },
     showPatientsManagement() {
       var userType = Number(sessionStorage.getItem('userType'));
-      return (userType === 2 || userType === 4 || userType === 5);
+      return (userType === 2 || userType === 4 || userType === 5 || userType === 6);
     },
     showAnalytics() {
       var userType = Number(sessionStorage.getItem('userType'));
-      return (userType === 2 || userType === 4 || userType === 5);
+      return (userType === 2 || userType === 4 || userType === 5 || userType === 6);
     },
     showStatistics() {
       // 只有内部人员才可以看到这个菜单
       var userType = Number(sessionStorage.getItem('userType'));
-      return userType === 3;
+      return (userType === 3 || userType === 6);
     },
     showExperiment() {
       return this.$store.state.subjectId !== this.SUBJECT_ID_FOR_HOSPITAL;

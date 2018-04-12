@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="authorization-modal-wrapper">
+  <div class="authorization-modal-wrapper" v-show="displayModal">
     <div class="authorization-modal" :class="{'narrow': hasAuthorized}">
       <div v-show="!hasAuthorized" class="unauthorized">
         <div class="title">授权技术支持</div>
@@ -52,6 +52,8 @@ import { sendVerificationCode, getTechnicalSupport, addAuthentication, removeAut
 export default {
   data() {
     return {
+      displayModal: false,
+
       hasAuthorized: false,
       lockSubmitButton: false,
 
@@ -108,6 +110,8 @@ export default {
       if (this.codeButtonStatus === 2) {
         this.codeButtonStatus = 0;
       }
+
+      this.displayModal = true;
     },
     updateVerificationCode() {
       if (/^[0-9]*$/.test(this.verificationCode)) {
@@ -162,7 +166,7 @@ export default {
       this.lockSubmitButton = false;
       this.lockSendButton = false;
       this.lockTerminateButton = false;
-      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
+      this.displayModal = false;
     },
     submit() {
       if (this.lockSubmitButton) {
@@ -206,7 +210,8 @@ export default {
             });
             this.lockSubmitButton = false;
             Bus.$emit(this.UPDATE_AUTHORIZED_STATUS);
-            Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
+
+            this.displayModal = false;
 
           }, (error) => {
             if (error.code === 33) {
@@ -226,8 +231,7 @@ export default {
       if (this.lockTerminateButton) {
         return;
       }
-      this.lockTerminateButton = true;
-      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
+      // this.lockTerminateButton = true;
 
       Bus.$on(this.CONFIRM, () => {
         let supportAccountList = [this.technicalSupportAccountInfo.id];
@@ -253,17 +257,16 @@ export default {
       let content = '你确定要解除对【' + this.supportAccountName + '】的授权吗?';
       let confirmButtonText = '确认解除';
       Bus.$emit(this.REQUEST_CONFIRMATION, title, content, confirmButtonText);
+
+      this.displayModal = false;
     },
     showSecretAgreement() {
       Bus.$emit(this.SHOW_SECRET_AGREEMENT_MODAL);
     }
   },
   mounted() {
-    // 先在本组件注册该事件，等待Layout组件接收动态组件挂载完毕的通知，再在本组件执行 showPanel 或 showModal
     Bus.$on(this.SHOW_AUTHORIZATION_MODAL, this.showModal);
 
-    // 动态组件挂载完毕，通知Layout组件，动态组件已挂载完毕
-    Bus.$emit(this.DYNAMIC_COMPONENT_MOUNTED);
     Bus.$on(this.GIVE_UP, () => {
       Bus.$off(this.CONFIRM);
     });

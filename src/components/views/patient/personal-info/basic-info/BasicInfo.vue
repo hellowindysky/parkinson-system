@@ -31,13 +31,18 @@
                 @select="handleSelect"
                 :placeholder="getMatchedField(field).cnFieldDesc">
               </el-autocomplete>
+              <el-autocomplete v-else-if="field.fieldName==='nationality'" v-model="copyInfo[field.fieldName]"
+                :fetch-suggestions="querySearchAsync2"
+                @select="handleSelect"
+                :placeholder="getMatchedField(field).cnFieldDesc">
+              </el-autocomplete>
               <el-input v-else v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}" :disabled="field.fieldName==='bmi'"
                 :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)" :maxlength="50" @input="inputing(field)"></el-input>
             </span>
             <span v-else-if="getUIType(field)===3">
               <el-select v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
                 :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)" :clearable="true">
-                <el-option v-for="type in getTypes(field)" :key="type.typeCode"
+                <el-option v-for="(type, index) in getTypes(field)" :key="type.typeName + type.typeCode + '-' + index"
                  :label="type.typeName"
                  :value="type.typeCode">
                 </el-option>
@@ -95,7 +100,8 @@ export default {
       },
       completeEditingForTheFirstTime: false,  // 用来控制某些字段是否需要校验
       lockSubmitButton: false,
-      allNation: [] // 所有民族
+      allNation: [], // 所有民族
+      allNationality: [] // 所有国籍
     };
   },
   computed: {
@@ -445,6 +451,14 @@ export default {
           }
         }
         return;
+      } else if (fieldName === 'email') {
+        let reg = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+        if (reg.test(copyFieldValue) || copyFieldValue === '' || copyFieldValue === undefined) {
+          this.$set(this.warningResults, fieldName, null);
+        } else {
+          this.$set(this.warningResults, fieldName, '请输入正确的邮箱');
+        };
+        return;
       }
 
       if (this.getUIType(field) === 6) {
@@ -512,19 +526,24 @@ export default {
         this.warningResults[key] = null;
       }
     },
-    querySearchAsync(queryStr, callback) {
-      let allNation = this.allNation;
-      allNation = allNation ? allNation : [];
-      let results = queryStr ? allNation.filter((state) => {
+    autoComplete(types, queryStr) {
+      types = types ? types : [];
+      let results = queryStr ? types.filter((state) => {
         return (state.typeName.indexOf(queryStr) !== -1);
-      }) : allNation;
+      }) : types;
       results = results.map((obj) => {
         return {
           value: obj.typeName,
           code: obj.typeCode
         };
       });
-      callback(results);
+      return results;
+    },
+    querySearchAsync(queryStr, callback) {
+      callback(this.autoComplete(this.allNation, queryStr));
+    },
+    querySearchAsync2(queryStr, callback) {
+      callback(this.autoComplete(this.allNationality, queryStr));
     },
     handleSelect() {
       // console.log(item);
@@ -572,6 +591,7 @@ export default {
     // console.log(this.basicInfoTemplateGroups);
     // console.log(this.basicInfoDictionaryGroups);
     this.allNation = Util.getElement('typegroupcode', 'nation', this.typeGroup).types;
+    this.allNationality = Util.getElement('typegroupcode', 'nationality', this.typeGroup).types;
     this.$on(this.EDIT, this.startEditing);
     Bus.$on(this.FOLD_BASIC_INFO, () => {
       this.foldedStatus = true;

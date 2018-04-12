@@ -25,6 +25,29 @@
         </div> -->
         <div class="field whole-line">
           <span class="field-name">
+            下一阶段
+          </span>
+          <span class="field-input">
+            基线评估
+          </span>
+        </div>
+        <div class="field whole-line">
+          <span class="field-name">
+            实验编号
+            <span class="required-mark">*</span>
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            {{experimentCode}}
+          </span>
+          <span class="field-input" v-else>
+            <span class="warning-text">{{warningResults.experimentCode}}</span>
+            <el-input v-model="experimentCode" clearable placeholder="请输入实验编号" @change="updateWarning('experimentCode')"
+              :class="{'warning': warningResults.experimentCode}">
+            </el-input>
+          </span>
+        </div>
+        <div class="field whole-line">
+          <span class="field-name">
             治疗者
             <span class="required-mark">*</span>
           </span>
@@ -99,7 +122,7 @@ import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 // import { deepCopy, pruneObj } from 'utils/helper.js';
-import { queryExperimentMember, applyToEnterExperiment } from 'api/experiment.js';
+import { queryExperimentMember, joinExperiment} from 'api/experiment.js';
 
 export default {
   data() {
@@ -108,6 +131,7 @@ export default {
       completeInit: false,
 
       experimentalGroup: '',
+      experimentCode: '',
       therapist: '',
       appraiser: '',
       hasCheckedBox: false,
@@ -117,6 +141,7 @@ export default {
       appraisersList: [],
       warningResults: {
         // experimentalGroup: '',
+        experimentCode: '',
         therapist: '',
         appraiser: ''
       },
@@ -129,9 +154,9 @@ export default {
     ]),
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
-        return '申请加入实验组';
+        return '入选实验';
       } else {
-        return '申请加入实验组';
+        return '入选实验';
       }
     },
     canEdit() {
@@ -249,20 +274,20 @@ export default {
         return;
       }
       var experimentInfo = {
-        'taskGroupId': this.experimentalGroup,
         'treaterId': this.therapist,
         'assessorId': this.appraiser,
         'remark': this.remark,
         'patientId': this.$route.params.id,
-        'tcTaskId': this.$store.state.subjectId
+        'tcTaskId': this.$store.state.subjectId,
+        'taskCode': this.experimentCode
       };
-      applyToEnterExperiment(experimentInfo).then(this.updateAndClose, this._handleError);
+      joinExperiment(experimentInfo).then(this.updateAndClose, this._handleError);
     },
     _handleError(error) {
       console.log(error);
       if (error.code === 10) {
         this.$message({
-          message: '该患者已在其它课题的实验中，待其完成后才能重新申请入组',
+          message: '该患者已在其它课题的实验中，待其完成后才能重新入组',
           type: 'error',
           duration: 2000
         });
@@ -277,7 +302,7 @@ export default {
     },
     updateAndClose() {
       this.$message({
-        message: '已成功发起申请，请等待评估者通过',
+        message: '已将该患者加入实验组',
         type: 'success',
         duration: 2000
       });
@@ -319,7 +344,7 @@ export default {
 @import "~styles/variables.less";
 
 @field-line-height: 25px;
-@field-name-width: 100px;
+@field-name-width: 110px;
 
 .application-modal-wrapper {
   position: absolute;
@@ -334,7 +359,7 @@ export default {
     margin: auto;
     padding: 0 40px;
     top: 10%;
-    width: 660px;
+    width: 500px;
     max-height: 80%;
     background-color: @background-color;
     overflow: hidden;

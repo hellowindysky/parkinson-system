@@ -2,12 +2,14 @@
   <folding-panel :title="'医学量表'" :mode="mutableMode"  v-on:edit="startEditing"
     v-on:cancel="cancel" v-on:submit="submit" :editable="canEdit" v-if="!hidePanel">
     <div class="diagnostic-scale" ref="diagnosticscale">
-      <extensible-panel v-for="type in allScaleTypes" class="panel" :mode="mutableMode" :title="getTypeTitle(type.typeName)"
-        v-on:addNewCard="addScale(type.typeCode)" :editable="canEdit" :key="type.typeCode">
-        <card class="card" :class="devideWidth" :mode="mutableMode" v-for="item in patientScale"
-          v-if="getScaleTypeName(item.scaleInfoId) === type.typeName"
-          :key="item.id" :title="getTitle(item.scaleInfoId)" v-on:deleteCurrentCard="deleteScaleRecord(item)"
-          v-on:editCurrentCard="editScale(item)" v-on:viewCurrentCard="viewScale(item)">
+      <extensible-panel class="panel" :mode="mutableMode" :title="normalScaleTitle"
+        v-on:addNewCard="addScale" :editable="canEdit">
+        <card class="card" :class="devideWidth" :mode="mutableMode"
+          v-for="(item, index) in patientScale"
+          :key="item.id + '' + index" :title="getTitle(item.scaleInfoId)"
+          v-on:deleteCurrentCard="deleteScaleRecord(item)"
+          v-on:editCurrentCard="editScale(item)"
+          v-on:viewCurrentCard="viewScale(item)">
           <div class="text first-line">
             <span class="name">量表得分:</span>
             <span class="value">
@@ -21,18 +23,25 @@
             </span>
           </div>
           <div class="text second-line">
+            <span class="name">量表类型:</span>
+            <span class="value">{{getScaleType(item.scaleInfoId)}}</span>
+          </div>
+          <div class="text third-line">
             <span class="name">填写时间:</span>
             <span class="value">{{item.inspectTime}}</span>
           </div>
-          <div class="text third-line">
+          <div class="text fourth-line">
             <span class="name">末次服药:</span>
             <span class="value">{{item.lastTakingTime}}</span>
           </div>
-          <div class="text fourth-line">
+          <div class="text fifth-line">
             <span class="name">开关状态:</span>
             <span class="value">{{getSwitchType(item.switchType)}}</span>
           </div>
         </card>
+      </extensible-panel>
+      <extensible-panel class="panel" :mode="mutableMode" :title="subjectScaleTitle"
+        v-on:addNewCard="addScale" :editable="canEdit">
       </extensible-panel>
     </div>
   </folding-panel>
@@ -84,6 +93,12 @@ export default {
       'allScale',
       'typeGroup'
     ]),
+    normalScaleTitle() {
+      return '临床量表 (' + this.patientScale.length + '条记录)';
+    },
+    subjectScaleTitle() {
+      return '课题评定 (' + 0 + '条记录)';
+    },
     allScaleTypes() {
       var typesInfo = Util.getElement('typegroupcode', 'gaugeType', this.typeGroup);
       return typesInfo.types ? typesInfo.types : [];
@@ -128,6 +143,25 @@ export default {
       var targetScale = Util.getElement('scaleInfoId', scaleInfoId, this.allScale);
       return targetScale.formType;
     },
+    getOptions(fieldName) {
+      var options = [];
+      var typesInfo = Util.getElement('typegroupcode', fieldName, this.typeGroup);
+      var types = typesInfo.types ? typesInfo.types : [];
+      for (let type of types) {
+        options.push({
+          code: type.typeCode,
+          name: type.typeName
+        });
+      }
+      return options;
+    },
+    getScaleType(scaleInfoId) {
+      var scale = Util.getElement('scaleInfoId', scaleInfoId, this.allScale);
+      var scaleTypeCode = scale.gaugeType;
+      var options = this.getOptions('gaugeType');
+      var option = Util.getElement('code', scaleTypeCode, options);
+      return option.name ? option.name : '';
+    },
     getTypeTitle(typeName) {
       var count = this.patientScale.filter((scale) => {
         return this.getScaleTypeName(scale.scaleInfoId) === typeName;
@@ -143,15 +177,15 @@ export default {
       }
     },
     editScale(item) {
-      var scaleTypeCode = this.getScaleTypeCode(item.scaleInfoId);
-      Bus.$emit(this.SHOW_SCALE_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit, scaleTypeCode);
+      // var scaleTypeCode = this.getScaleTypeCode(item.scaleInfoId);
+      Bus.$emit(this.SHOW_SCALE_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit);
     },
     viewScale(item) {
-      var scaleTypeCode = this.getScaleTypeCode(item.scaleInfoId);
-      Bus.$emit(this.SHOW_SCALE_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit, scaleTypeCode);
+      // var scaleTypeCode = this.getScaleTypeCode(item.scaleInfoId);
+      Bus.$emit(this.SHOW_SCALE_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit);
     },
-    addScale(scaleTypeCode) {
-      Bus.$emit(this.SHOW_SCALE_MODAL, this.ADD_NEW_CARD, {}, this.canEdit, scaleTypeCode);
+    addScale() {
+      Bus.$emit(this.SHOW_SCALE_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
     },
     deleteScaleRecord(item) {
       // console.log(item);
@@ -214,7 +248,7 @@ export default {
 <style lang="less">
 @import "~styles/variables.less";
 
-@scale-card-height: 150px;
+@scale-card-height: 175px;
 
 .diagnostic-scale {
   position: relative;
@@ -291,6 +325,10 @@ export default {
       .fourth-line {
         left: 10px;
         top: 125px;
+      }
+      .fifth-line {
+        left: 10px;
+        top: 150px;
       }
     }
   }

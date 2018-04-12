@@ -9,6 +9,14 @@
           <el-input v-model="hospitalName" placeholder="请输入医院名称"></el-input>
         </span>
       </div>
+      <div class="field" v-if="inStatisticsMenu">
+        <span class="field-name">
+          技术支持员
+        </span>
+        <span class="field-input">
+          <el-input v-model="techSupport" placeholder="请输入技术支持员账号"></el-input>
+        </span>
+      </div>
       <div class="field">
         <span class="field-name">
           医&nbsp;&nbsp;&nbsp;&nbsp;生
@@ -29,7 +37,7 @@
             placeholder="请选择日期"
             :editable="false"
             :clearable="false"
-            :picker-options="pickerOptions">
+            :picker-options="pickerOptions2">
           </el-date-picker>
           <span class="middle-text">~</span>
           <el-date-picker
@@ -39,7 +47,7 @@
             placeholder="请选择日期"
             :editable="false"
             :clearable="false"
-            :picker-options="pickerOptions">
+            :picker-options="pickerOptions2">
           </el-date-picker>
         </span>
       </div>
@@ -76,7 +84,7 @@
 </template>
 
 <script>
-import Ps from 'perfect-scrollbar';
+// import Ps from 'perfect-scrollbar';
 import Util from 'utils/util';
 import { getStatisticsData, getHistoryStatistics, getStatisticsDetail, getScaleDetail, queryEntryMonth } from 'api/statistics';
 
@@ -101,8 +109,14 @@ export default {
       pickerOptions: {
         disabledDate: this.checkIfDisabledDate
       },
+      pickerOptions2: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        }
+      },
       activeTab: '',
       updatingFormData: false,
+      techSupport: '',
       supportedDoctorNumber: '',
       tableData: {}
     };
@@ -132,6 +146,9 @@ export default {
       } else {
         return [];
       }
+    },
+    inStatisticsMenu() {
+      return this.$route.matched.some(record => record.meta.statistics);
     }
   },
   methods: {
@@ -139,15 +156,16 @@ export default {
       var now = new Date();
       this.endTime = now;
       this.startTime = new Date(now.getTime() - 24 * 3600 * 1000);
-
-      var year = now.getFullYear();
-      var month = now.getMonth() + 1;
-      month = month < 10 ? '0' + month : '' + month;
-      this.month = year + '-' + month;
     },
-    querySelectableMonth() {
+    initMonth() {
+      if (this.selectableMonth && this.selectableMonth.length > 0) {
+        this.month = this.selectableMonth[this.selectableMonth.length - 1];
+      }
+    },
+    querySelectableMonth(cb) {
       queryEntryMonth().then((data) => {
-        this.selectableMonth = data;
+        this.selectableMonth = data ? data : [];
+        cb && cb();
       }, (error) => {
         console.log(error);
       });
@@ -221,10 +239,23 @@ export default {
       if (this.doctorName) {
         params.doctorName = this.doctorName;
       }
+      if (this.inStatisticsMenu && this.techSupport) {
+        params.techSupportName = this.techSupport;
+      }
 
       var f = () => {};
 
       if (this.type === 'dataEntryDetail') {
+        var timeInterval = this.endTime - this.startTime;
+        var maxInterval = 60 * 60 * 1000 * 24 * 365;
+        if (timeInterval > maxInterval) {
+          this.$message({
+            message: '时间跨度不能超过1年',
+            type: 'warning',
+            duration: 2000
+          });
+          return;
+        }
         if (this.startTime) {
           params.startTime = Util.simplifyDate(this.startTime);
         }
@@ -237,7 +268,10 @@ export default {
         if (this.month) {
           var dateText = Util.simplifyDate(this.month);
           params.month = dateText.slice(0, 7);
+        } else {
+          return;
         }
+
         if (this.activeTab === 'second') {
           f = getHistoryStatistics;
         } else if (this.activeTab === 'third') {
@@ -264,7 +298,7 @@ export default {
       f(params, this.supportedDoctorNumber).then((res) => {
         this.tableData = res;
         this.tableData.data = res.data && res.data[0] ? res.data : [];
-        this.updateScrollbar();
+        // this.updateScrollbar();
         this.updatingFormData = false;
         loadingInstance.close();
       }, (error) => {
@@ -275,32 +309,33 @@ export default {
     },
     resetConditions() {
       this.hospitalName = '';
+      this.techSupport = '';
       this.doctorName = '';
       this.startTime = '';
       this.endTime = '';
       this.tableData = {};  // 这样在请求返回之前，就不会显示之前的数据
       this.updateFormData();
-    },
-    updateScrollbar() {
-      this.$nextTick(() => {
-        Ps.destroy(this.$refs.formWrapper);
-        Ps.initialize(this.$refs.formWrapper, {
-          wheelSpeed: 1,
-          minScrollbarLength: 40
-        });
-      });
     }
+    // updateScrollbar() {
+    //   this.$nextTick(() => {
+    //     Ps.destroy(this.$refs.formWrapper);
+    //     Ps.initialize(this.$refs.formWrapper, {
+    //       wheelSpeed: 1,
+    //       minScrollbarLength: 40
+    //     });
+    //   });
+    // }
   },
   mounted() {
     this.initDate();
-    this.querySelectableMonth();
+    this.querySelectableMonth(this.initMonth);
 
     window.onresize = () => {
       this.modifyFormWrapperTop();
-      this.updateScrollbar();
+      // this.updateScrollbar();
     };
     this.modifyFormWrapperTop();
-    this.updateScrollbar();
+    // this.updateScrollbar();
 
     this.updateSupportedDoctorNumber();
 
@@ -317,7 +352,7 @@ export default {
 
       this.$refs.formWrapper.scrollTop = 0;
       this.$refs.formWrapper.scrollLeft = 0;
-      this.updateScrollbar();
+      // this.updateScrollbar();
     },
     activeTab() {
       this.updateFormData();
@@ -330,8 +365,8 @@ export default {
 @import "~styles/variables.less";
 
 @field-line-height: 25px;
-@field-width: 240px;
-@field-name-width: 60px;
+@field-width: 260px;
+@field-name-width: 75px;
 @long-field-width: @field-width * 2 - @field-name-width;
 
 .data-entry-detail {

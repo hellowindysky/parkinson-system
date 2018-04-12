@@ -4,7 +4,7 @@
       <h3 class="title">{{title}}</h3>
       <p class="content">{{content}}</p>
       <div class="button-wrapper">
-        <span class="button cancel-button" @click="cancel">取消</span>
+        <span class="button cancel-button" @click="cancel">{{cancelText}}</span>
         <span class="button confirm-button" @click="confirm">{{confirmText}}</span>
         <div class="seperate-line"></div>
       </div>
@@ -18,6 +18,7 @@ import Bus from 'utils/bus.js';
 const DEFAULT_TITLE = '提示';
 const DEFAULT_CONTENT = '确定删除该记录吗？删除后将无法恢复';
 const DEFAULT_CONFIRM_TEXT = '确定';
+const DEFAULT_CANCEL_TEXT = '取消';
 
 export default {
   data() {
@@ -25,7 +26,8 @@ export default {
       displayConfirmBox: false,
       title: DEFAULT_TITLE,
       content: DEFAULT_CONTENT,
-      confirmText: DEFAULT_CONFIRM_TEXT
+      confirmText: DEFAULT_CONFIRM_TEXT,
+      cancelText: DEFAULT_CANCEL_TEXT
     };
   },
   methods: {
@@ -37,11 +39,12 @@ export default {
       Bus.$emit(this.CONFIRM);
       this.displayConfirmBox = false;
     },
-    showConfirmBox(title, content, confirmText) {
+    showConfirmBox(title, content, confirmText, cancelText) {
       this.displayConfirmBox = true;
       this.title = (title !== undefined && title !== '') ? title : DEFAULT_TITLE;
       this.content = (content !== undefined && content !== '') ? content : DEFAULT_CONTENT;
       this.confirmText = (confirmText !== undefined && confirmText !== '') ? confirmText : DEFAULT_CONFIRM_TEXT;
+      this.cancelText = (cancelText !== undefined && cancelText !== '') ? cancelText : DEFAULT_CANCEL_TEXT;
     }
   },
   mounted() {

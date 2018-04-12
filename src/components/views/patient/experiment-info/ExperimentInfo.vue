@@ -2,39 +2,39 @@
   <div class="experiment-info">
     <div class="top-bar">
       <span class="title">实验流程</span>
-      <span v-if="milestoneNum > 2" class="info-text">
+      <span v-if="milestoneNum > 20" class="info-text">
         实验方式 <span class="value experiment-mode">{{experimentModeText}}</span>
         治疗者 <span class="value therapist">{{therapist}}</span>
         评估者 <span class="value appraiser">{{appraiser}}</span>
         实验编号 <span class="value experiment-number">{{experimentNumber}}</span>
       </span>
       <div class="button light-button application-button"
-        v-if="listType===MY_PATIENTS_TYPE && progressList.length===0"
-        @click="applyTojoin">
-        申请入组
-      </div>
-      <div class="button light-button application-button"
-        v-if="listType===MY_PATIENTS_TYPE && isApplicationRejected"
-        @click="applyTojoin">
-        重新申请
+        v-if="listType===MY_PATIENTS_TYPE && (progressList.length===0 || preventedFromExperiment)"
+        @click="clickToStartExperiment">
+        开始实验
       </div>
       <div class="button light-blue-button reject-button"
-        v-if="listType===APPRAISERS_PATIENTS_TYPE && progressList.length>0 && milestoneNum===2 && status===1"
-        @click="rejectApplication">
-        退回
+        v-if="listType===MY_PATIENTS_TYPE && progressList.length>0 && milestoneNum===10 && status===1"
+        @click="preventFromExperiment">
+        排除
       </div>
       <div class="button light-button agree-button"
-        v-if="listType===APPRAISERS_PATIENTS_TYPE && progressList.length>0 && milestoneNum===2 && status===1"
-        @click="agreeApplication">
-        通过
+        v-if="listType===MY_PATIENTS_TYPE && progressList.length>0 && milestoneNum===10 && status===1"
+        @click="joinExperiment">
+        入组
       </div>
       <div class="button light-button complete-therapy-button"
-        v-if="listType===THERAPISTS_PATIENTS_TYPE && progressList.length>0 && milestoneNum===3"
+        v-if="listType===APPRAISERS_PATIENTS_TYPE && progressList.length>0 && milestoneNum===20"
+        @click="completeEvaluation">
+        课题流转
+      </div>
+      <div class="button light-button complete-therapy-button"
+        v-if="listType===THERAPISTS_PATIENTS_TYPE && progressList.length>0 && milestoneNum===30"
         @click="completeTherapy">
         结束治疗
       </div>
       <div class="button light-button complete-follow-up-button"
-        v-if="listType===APPRAISERS_PATIENTS_TYPE && progressList.length>0 && milestoneNum===4"
+        v-if="listType===APPRAISERS_PATIENTS_TYPE && progressList.length>0 && milestoneNum===40"
         @click="completeFollowUp">
         本期随访结束
       </div>
@@ -70,7 +70,7 @@
 
 <script>
 import Bus from 'utils/bus';
-import { queryExperimentProgress } from 'api/experiment.js';
+import { queryExperimentProgress, startExperiment } from 'api/experiment.js';
 
 export default {
   data() {
@@ -89,6 +89,12 @@ export default {
     listType() {
       return this.$store.state.listType;
     },
+    subjectId() {
+      return this.$store.state.subjectId;
+    },
+    hospitalType() {
+      return this.$store.state.hospitalType;
+    },
     notInAnyExperiment() {
       return this.subjectIdForOngoingExperiment === '';
     },
@@ -98,7 +104,7 @@ export default {
     inExperimentWithinOtherSubject() {
       return !this.notInAnyExperiment && this.subjectIdForOngoingExperiment !== this.$store.state.subjectId;
     },
-    isApplicationRejected() {
+    preventedFromExperiment() {
       var length = this.progressList.length;
       if (length > 0) {
         var theLastStep = this.progressList[length - 1];
@@ -118,18 +124,43 @@ export default {
     }
   },
   methods: {
-    applyTojoin() {
+    clickToStartExperiment() {
+      Bus.$on(this.CONFIRM, this.startExperiment);
+      if (this.inExperimentWithinOtherSubject) {
+        Bus.$emit(this.NOTICE, '注意', '当前患者正在其它课题下进行实验，每个患者只能同时加入一个课题的实验');
+      } else {
+        Bus.$emit(this.REQUEST_CONFIRMATION, '提示', '请确认患者已经签署知情同意书', '已签署', '暂未签署');
+      }
+    },
+    startExperiment() {
+      var patientExperimentModel = {
+        'patientId': this.$route.params.id,
+        'tcTaskId': this.$store.state.subjectId
+      };
+      var experimentInfo = {
+        'patientExperimentModel': patientExperimentModel
+      };
+      startExperiment(experimentInfo, this.hospitalType).then(() => {
+        this.updateExperimentProgress();
+        Bus.$off(this.CONFIRM);
+
+      }, (error) => {
+        console.log(error);
+        Bus.$off(this.CONFIRM);
+      });
+    },
+    joinExperiment() {
       if (this.notInAnyExperiment || this.inExperimentWithinCurrentSubject) {
         Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'applicationModal', this.SHOW_APPLICATION_MODAL, this.ADD_NEW_CARD, {}, true);
       } else if (this.inExperimentWithinOtherSubject) {
         Bus.$emit(this.NOTICE, '注意', '当前患者正在其它课题下进行实验，每个患者只能同时加入一个课题的实验');
       }
     },
-    rejectApplication() {
+    preventFromExperiment() {
       Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'rejectionModal', this.SHOW_REJECTION_MODAL, this.ADD_NEW_CARD, {}, true, this.doctor);
     },
-    agreeApplication() {
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'ratificationModal', this.SHOW_RATIFICATION_MODAL, this.ADD_NEW_CARD, {}, true, this.therapist);
+    completeEvaluation() {
+
     },
     completeTherapy() {
       Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'terminationModal', this.SHOW_TERMINATION_MODAL, this.ADD_NEW_CARD, {}, true, this.appraiser);
@@ -152,22 +183,41 @@ export default {
       var milestoneNum = this.getMilestoneNum(step);
 
       // 因为存在多个随访期，所以需要知道到底是第几个随访期
-      if (milestoneNum === 4) {
+      if (milestoneNum === 40) {
         var count = 0;
         for (var i = 0; i <= currentIndex; i++) {
-          if (this.getMilestoneNum(this.progressList[i]) === 4) {
+          if (this.getMilestoneNum(this.progressList[i]) === 40) {
             count += 1;
           }
         }
       }
 
-      let milestoneList = ['', '筛选入组', '基线评估', '治疗期', '随访期', '实验结束'];
-
-      if (milestoneNum === 4) {
-        return milestoneList[milestoneNum] + '(' + count + ')';
-      } else {
-        return milestoneList[milestoneNum];
+      var resultText = '';
+      switch (milestoneNum) {
+        case 10:
+          if (this.hospitalType === 1) {
+            resultText = '入组诊断';
+          } else if (this.hospitalType === 2) {
+            resultText = '筛选入组';
+          }
+          break;
+        case 20:
+          resultText = '基线评估';
+          break;
+        case 30:
+          resultText = '治疗期';
+          break;
+        case 40:
+          resultText = '随访期' + '(' + count + ')';
+          break;
+        case 50:
+          resultText = '实验结束';
+          break;
+        default:
+          break;
       }
+
+      return resultText;
     },
     getStatus(step) {
       var phase = step.phase;
@@ -188,7 +238,7 @@ export default {
       } else if (status === 2) {
         return '完成';
       } else if (status === 3) {
-        return '退回';
+        return '排除患者';
       }
     },
     getStatusColor(step) {
@@ -205,10 +255,12 @@ export default {
     },
     updateExperimentProgress() {
       var experimentInfo = {
-        'patientId': this.$route.params.id,
-        'tcTaskId': this.$store.state.subjectId
+        'patientExperimentModel': {
+          'patientId': this.$route.params.id,
+          'tcTaskId': this.subjectId
+        }
       };
-      queryExperimentProgress(experimentInfo).then((data) => {
+      queryExperimentProgress(experimentInfo, this.hospitalType).then((data) => {
         // console.log(data);
         this.subjectIdForOngoingExperiment = data && data.patientCurrentTaskId ? data.patientCurrentTaskId : '';
         if (data && data.patientExperiment && data.patientExperiment.length > 0) {
@@ -252,6 +304,7 @@ export default {
   },
   beforeDestroy() {
     Bus.$off(this.UPDATE_EXPERIMENT_INFO);
+    Bus.$off(this.CONFIRM);
   }
 };
 </script>
