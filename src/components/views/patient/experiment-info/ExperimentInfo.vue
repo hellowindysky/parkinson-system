@@ -260,7 +260,7 @@ export default {
           'tcTaskId': this.subjectId
         }
       };
-      queryExperimentProgress(experimentInfo, this.hospitalType).then((data) => {
+      queryExperimentProgress(experimentInfo).then((data) => {
         // console.log(data);
         this.subjectIdForOngoingExperiment = data && data.patientCurrentTaskId ? data.patientCurrentTaskId : '';
         if (data && data.patientExperiment && data.patientExperiment.length > 0) {

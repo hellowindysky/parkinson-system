@@ -2,13 +2,10 @@
 import { encapsulatePromise, getCommonRequest } from 'api/common.js';
 
 // 查询实验流程
-export function queryExperimentProgress(experimentInfo, hospitalType) {
+export function queryExperimentProgress(experimentInfo) {
   // 医院的类型决定了参数键值的区别
   var request = Object.assign({}, getCommonRequest());
-  if (hospitalType !== undefined) {
-    var key = 'patientExperiment_' + hospitalType;
-    request[key] = experimentInfo;
-  }
+  request.patientExperiment = experimentInfo;
   var url = '/pdms/queryPatientExperiment';
   return encapsulatePromise(url, request);
 };
