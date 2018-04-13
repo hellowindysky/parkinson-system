@@ -564,7 +564,7 @@ export default {
       }
       condition.groupModule = this.inSubject ? this.$store.state.subjectId : 0;
       this.hasFirstUpdatedList = true;
-      getGroupList(condition, this.$store.state.subjectId).then((data) => {
+      getGroupList(condition).then((data) => {
         this.groupList = data ? data : [];
         cb && cb();
       }, (error) => {

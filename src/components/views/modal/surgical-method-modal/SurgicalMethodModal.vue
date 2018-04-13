@@ -88,7 +88,10 @@ export default {
       this.mode = cardOperation;
       this.originalInfo = info;
       this.showEdit = showEdit;
-      this.initCopyInfo();
+
+      this.$nextTick(() => {
+        this.initCopyInfo();
+      });
       // console.log(this.copyInfo);
 
     },

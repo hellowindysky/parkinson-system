@@ -541,7 +541,8 @@
             </td>
             <td class="col w5" colspan="5">
               <el-checkbox-group v-model="followDbsAdjustBeforeParamPole[index].positive"
-                @change="updateParamPole('followDbsAdjustBefore', index)">
+                @change="updateParamPole('followDbsAdjustBefore', index)"
+                :max="getMaxNumOfContact(param.exciteMod, true)">
                 <el-checkbox v-for="(contact, i) in getSidePositiveContact(param.limbSide)"
                   :label="contact" :key="'sidePositiveContact' + i"
                   :disabled="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==VALUE_FOR_CUSTOM ||
@@ -551,7 +552,8 @@
             </td>
             <td class="col w4" colspan="4">
               <el-checkbox-group v-model="followDbsAdjustBeforeParamPole[index].negative"
-                @change="updateParamPole('followDbsAdjustBefore', index)">
+                @change="updateParamPole('followDbsAdjustBefore', index)"
+                :max="getMaxNumOfContact(param.exciteMod, false)">
                 <el-checkbox v-for="(contact, i) in getSideNegativeContact(param.limbSide)"
                   :label="contact" :key="'sideNegativeContact' + i"
                   :disabled="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==VALUE_FOR_CUSTOM ||
@@ -1134,7 +1136,7 @@ export default {
       lastProgramDate: '',
       lastDbsParameter: [],
 
-      VALUE_FOR_CUSTOM: -1,
+      VALUE_FOR_CUSTOM: 0,
       MAXIMUM_FOR_MEDICINE_LIST: 15,
 
       lockSubmitButton: false,
