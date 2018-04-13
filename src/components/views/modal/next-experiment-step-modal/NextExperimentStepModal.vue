@@ -18,7 +18,7 @@
             接收人
             <!-- <span class="required-mark">*</span> -->
           </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+          <span class="field-input">
             <span>{{name}}</span>
           </span>
         </div>
