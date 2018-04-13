@@ -77,17 +77,23 @@ export function agreeEnteringExperiment(experimentInfo, hospitalType) {
 // };
 
 // 结束治疗
-export function completeExperiment(experimentInfo) {
+export function completeExperiment(experimentInfo, hospitalType) {
   var request = Object.assign({}, getCommonRequest());
-  request.shengRenYiPatientExperiment = experimentInfo;
+  if (hospitalType !== undefined) {
+    var key = 'patientExperiment_' + hospitalType;
+    request[key] = experimentInfo;
+  }
   var url = 'pdms/completePatientExperiment';
   return encapsulatePromise(url, request);
 };
 
 // 结束随访
-export function completeFollowUp(experimentInfo) {
+export function completeFollowUp(experimentInfo, hospitalType) {
   var request = Object.assign({}, getCommonRequest());
-  request.shengRenYiPatientExperiment = experimentInfo;
+  if (hospitalType !== undefined) {
+    var key = 'patientExperiment_' + hospitalType;
+    request[key] = experimentInfo;
+  }
   var url = 'pdms/completeFollowUp';
   return encapsulatePromise(url, request);
 };

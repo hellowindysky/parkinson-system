@@ -85,7 +85,10 @@ export default {
   computed: {
     ...mapGetters([
       'typeGroup'
-    ])
+    ]),
+    hospitalType() {
+      return this.$store.state.hospitalType;
+    }
   },
   methods: {
     showPanel(cardOperation, item, showEdit, appraiser) {
@@ -157,7 +160,7 @@ export default {
           'nextMileStone': this.nextStep
         }
       };
-      completeExperiment(experimentInfo).then(this.updateAndClose, this._handleError);
+      completeExperiment(experimentInfo, this.hospitalType).then(this.updateAndClose, this._handleError);
     },
     _handleError(error) {
       console.log(error);
