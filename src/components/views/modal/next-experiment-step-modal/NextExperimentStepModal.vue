@@ -39,7 +39,8 @@
       </div>
 
       <div class="button cancel-button" @click="cancel">取消</div>
-      <div v-if="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD" class="button submit-button">确定</div>
+      <div v-if="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD" class="button submit-button"
+        @click="submit">确定</div>
       <div v-else-if="mode===VIEW_CURRENT_CARD && showEdit" class="button submit-button">编辑</div>
 
     </div>
@@ -137,6 +138,9 @@ export default {
         });
       };
       return options;
+    },
+    submit() {
+
     },
     updateScrollbar() {
       this.$nextTick(() => {

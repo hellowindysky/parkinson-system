@@ -61,9 +61,12 @@ export function leaveExperiment(experimentInfo) {
 };
 
 // 同意加入实验组
-export function agreeEnteringExperiment(experimentInfo) {
+export function agreeEnteringExperiment(experimentInfo, hospitalType) {
   var request = Object.assign({}, getCommonRequest());
-  request.shengRenYiPatientExperiment = experimentInfo;
+  if (hospitalType !== undefined) {
+    var key = 'patientExperiment_' + hospitalType;
+    request[key] = experimentInfo;
+  }
   var url = '/pdms/agreePatientExperiment';
   return encapsulatePromise(url, request);
 };
