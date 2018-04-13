@@ -52,6 +52,7 @@ import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
+import { agreeEnteringExperiment } from 'api/experiment.js';
 
 export default {
   data() {
@@ -140,7 +141,40 @@ export default {
       return options;
     },
     submit() {
+      if (this.lockSubmitButton) {
+        return;
+      }
+      this.lockSubmitButton = true;
 
+      var experimentInfo = {
+        'patientExperimentModel': {
+          'remark': this.remark,
+          'patientId': this.$route.params.id,
+          'tcTaskId': this.$store.state.subjectId
+        }
+      };
+      agreeEnteringExperiment(experimentInfo, this.hospitalType).then(this.updateAndClose, this._handleError);
+    },
+    _handleError(error) {
+      console.log(error);
+      if (error.code === 2009) {
+        this.$message({
+          message: '当前操作无法完成，请刷新页面后再试',
+          type: 'error',
+          duration: 2000
+        });
+      }
+      this.lockSubmitButton = false;
+    },
+    updateAndClose() {
+      this.$message({
+        message: '已同意将该患者加入实验组',
+        type: 'success',
+        duration: 2000
+      });
+      Bus.$emit(this.UPDATE_EXPERIMENT_INFO);
+      this.lockSubmitButton = false;
+      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
     },
     updateScrollbar() {
       this.$nextTick(() => {

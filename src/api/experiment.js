@@ -57,7 +57,7 @@ export function leaveExperiment(experimentInfo) {
   return encapsulatePromise(url, request);
 };
 
-// 同意加入实验组
+// 筛选通过
 export function agreeEnteringExperiment(experimentInfo, hospitalType) {
   var request = Object.assign({}, getCommonRequest());
   if (hospitalType !== undefined) {

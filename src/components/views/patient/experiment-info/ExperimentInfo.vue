@@ -265,7 +265,7 @@ export default {
         }
       };
       queryExperimentProgress(experimentInfo).then((data) => {
-        console.log(data);
+        // console.log(data);
         this.subjectIdForOngoingExperiment = data && data.patientCurrentTaskId ? data.patientCurrentTaskId : '';
         if (data && data.patientExperiment && data.patientExperiment.length > 0) {
           this.progressList = data.patientExperiment;
