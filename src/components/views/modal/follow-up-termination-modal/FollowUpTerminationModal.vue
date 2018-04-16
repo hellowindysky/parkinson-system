@@ -309,9 +309,6 @@ export default {
           code: type.typeCode
         });
       };
-      if (fieldName === 'nextStatus') {
-        console.log(options);
-      }
       return options;
     },
     updateWarning(fieldName) {

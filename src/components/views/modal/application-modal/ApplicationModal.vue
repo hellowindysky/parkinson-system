@@ -46,7 +46,7 @@
             </el-input>
           </span>
         </div>
-        <div class="field whole-line">
+        <div class="field whole-line" v-if="hospitalType === 1">
           <span class="field-name">
             治疗者
             <span class="required-mark">*</span>
@@ -66,7 +66,7 @@
             </el-select>
           </span>
         </div>
-        <div class="field whole-line">
+        <div class="field whole-line" v-if="hospitalType === 1">
           <span class="field-name">
             评估者
             <span class="required-mark">*</span>
@@ -103,7 +103,7 @@
             </el-input>
           </span>
         </div>
-        <div class="check-field">
+        <div class="check-field" v-if="hospitalType === 1">
           <el-checkbox v-model="hasCheckedBox" :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
           确认患者已经签署《知情同意书》
         </div>
@@ -153,10 +153,10 @@ export default {
       'typeGroup'
     ]),
     title() {
-      if (this.mode === this.ADD_NEW_CARD) {
+      if (this.hospitalType === 1) {
         return '入选实验';
-      } else {
-        return '入选实验';
+      } else if (this.hospitalType === 2) {
+        return '申请加入课题组';
       }
     },
     canEdit() {
@@ -165,6 +165,9 @@ export default {
       } else {
         return false;
       }
+    },
+    hospitalType() {
+      return this.$store.state.hospitalType;
     }
   },
   methods: {
@@ -255,7 +258,11 @@ export default {
       this.lockSubmitButton = true;
       for (let property in this.warningResults) {
         if (this.warningResults.hasOwnProperty(property)) {
-          this.updateWarning(property);
+          if (this.hospitalType === 1) {
+            this.updateWarning(property);
+          } else if (this.hospitalType === 2 && property === 'experimentCode') {
+            this.updateWarning(property);
+          }
         }
       }
       for (let property in this.warningResults) {
@@ -264,7 +271,7 @@ export default {
           return;
         }
       }
-      if (!this.hasCheckedBox) {
+      if (this.hospitalType === 1 && !this.hasCheckedBox) {
         this.$message({
           message: '确认患者已经签署《知情同意书》',
           type: 'warning',
@@ -274,13 +281,15 @@ export default {
         return;
       }
       var experimentInfo = {
-        'treaterId': this.therapist,
-        'assessorId': this.appraiser,
         'remark': this.remark,
         'patientId': this.$route.params.id,
         'tcTaskId': this.$store.state.subjectId,
         'taskCode': this.experimentCode
       };
+      if (this.hospitalType === 1) {
+        experimentInfo.treaterId = this.therapist;
+        experimentInfo.assessorId = this.appraiser;
+      }
       joinExperiment(experimentInfo).then(this.updateAndClose, this._handleError);
     },
     _handleError(error) {
