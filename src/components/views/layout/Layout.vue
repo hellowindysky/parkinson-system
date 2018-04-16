@@ -12,7 +12,7 @@
     <choice-panel></choice-panel>
     <confirm-box></confirm-box>
     <notice-box></notice-box>
-    <!-- <sleep-monitor-modal></sleep-monitor-modal> -->
+    <!-- <subject-circulation-modal></subject-circulation-modal> -->
     <water-mark></water-mark>
   </div>
 </template>
@@ -27,6 +27,7 @@ import sidebar from 'views/side-bar/Sidebar';
 const passwordModal = () => import(/* webpackChunkName: 'modal' */ 'modal/password-modal/PasswordModal');
 const messageModal = () => import(/* webpackChunkName: 'modal' */ 'modal/message-modal/MessageModal');
 const groupModal = () => import(/* webpackChunkName: 'modal' */ 'modal/group-modal/GroupModal');
+const subjectCirculationModal = () => import(/* webpackChunkName: 'modal' */ 'modal/subject-circulation-modal/SubjectCirculationModal');
 
 const modalBox = () => import(/* webpackChunkName: 'personalInfoModal' */ 'modal/modal-box/ModalBox');
 const firstSymptomsModal = () => import(/* webpackChunkName: 'personalInfoModal' */ 'modal/first-symptoms-modal/FirstSymptomsModal');
@@ -85,6 +86,7 @@ export default {
     secretAgreementModal,
     messageModal,
     groupModal,
+    subjectCirculationModal,
     modalBox,
     medicineModal,
     preEvaluationModal,

@@ -27,7 +27,7 @@
 
         <!-- 以下是 药物治疗才有的序列 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
         <div v-if="copyInfo.firstVisitType===1">
-          <div class="field">
+          <div class="field half-line">
             <span class="field-name long-field-name">
               药物分类:
               <span class="required-mark">*</span>
@@ -50,18 +50,18 @@
             </span>
           </div>
 
-          <div class="field">
-            <span class="field-name long-field-name">
+          <div class="field half-line">
+            <span class="field-name">
               药物商品名:
               <!-- <span class="required-mark">*</span> -->
             </span>
-            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
+            <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
               <!-- <span>{{copyInfo.medicineName}}</span> -->
               <span>{{transform(copyInfo.medicineName,medicineNameOpt)}}</span>
             </span>
             <span class="field-input" v-else>
               <!-- <span class="warning-text">必填项</span> -->
-              <el-select v-model="copyInfo.medicineName" placeholder="请选择药物名称" clearable >
+              <el-select v-model="copyInfo.medicineName" placeholder="请选择药物商品名" clearable >
                 <el-option
                  v-for="item in medicineNameOpt"
                  :key="item.code"
@@ -72,12 +72,34 @@
             </span>
           </div>
 
-          <div class="field">
-            <span class="field-name long-field-name">
+          <div class="field half-line">
+            <span class="field-name">
+              药物规格:
+              <!-- <span class="required-mark">*</span> -->
+            </span>
+            <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+              <!-- <span>{{copyInfo.medicineName}}</span> -->
+              <span></span>
+            </span>
+            <span class="field-input" v-else>
+              <!-- <span class="warning-text">必填项</span> -->
+              <el-select v-model="copyInfo.medicalSpecUsed" placeholder="请选择药物规格" clearable >
+                <el-option
+                 v-for="(item,index) in medicineSpec"
+                 :key="item.specOral+index"
+                 :label="item.specOral"
+                 :value="item.specOral">
+                </el-option>
+              </el-select>
+            </span>
+          </div>
+
+          <div class="field half-line">
+            <span class="field-name">
               化学名:
               <!-- <span class="required-mark">*</span> -->
             </span>
-            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
+            <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
               <span>{{commonMedicineName}}</span>
             </span>
             <span class="field-input" v-else>
@@ -86,7 +108,7 @@
             </span>
           </div>
 
-          <div class="field">
+          <div class="field half-line">
             <span class="field-name long-field-name">
               每日用量（mg）:
               <!-- <span class="required-mark">*</span> -->
@@ -101,7 +123,25 @@
             </span>
           </div>
 
-          <div class="field">
+          <div class="field half-line">
+            <span class="field-name long-field-name">
+              LEDD（mg）:
+              <!-- <span class="required-mark">*</span> -->
+            </span>
+            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
+              <span>{{copyInfo.ledd}}</span>
+            </span>
+            <span class="field-input" v-else>
+              <!-- <span class="warning-text">{{warningResults.dailyDosage}}</span> -->
+              <span>
+                {{leddAttr}}
+                <span class="enhance" v-show="enhanceEffect && leddAttr!==0">( +33% )</span>
+              </span>
+              <!-- <el-input v-model="copyInfo.ledd" placeholder="根据用量自动计算" disabled></el-input> -->
+            </span>
+          </div>
+
+          <div class="field half-line">
             <span class="field-name long-field-name">
               初次用药时间:
               <!-- <span class="required-mark">*</span> -->
@@ -114,6 +154,116 @@
               <el-date-picker v-model="copyInfo.firstTime" type="date" placeholder="请选择初次用药时间" clearable
                :picker-options="pickerOptions">
               </el-date-picker>
+            </span>
+          </div>
+
+          <div class="field half-line">
+            <span class="field-name long-field-name">
+              用药年限:
+              <!-- <span class="required-mark">*</span> -->
+            </span>
+            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
+              <span>{{copyInfo.yearsOfMedicine}}</span>
+            </span>
+            <span class="field-input" v-else>
+              <!-- <span class="warning-text">必填项</span> -->
+              <el-input v-model="copyInfo.yearsOfMedicine" placeholder="请输入用药年限" :maxlength="500"></el-input>
+            </span>
+          </div>
+
+          <div class="field half-line">
+            <span class="field-name">
+              是否有效:
+              <!-- <span class="required-mark">*</span> -->
+            </span>
+            <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+              <!-- <span>{{copyInfo.medicineName}}</span> -->
+              <!-- <span>{{transform(copyInfo.medicineName,medicineNameOpt)}}</span> -->
+            </span>
+            <span class="field-input" v-else>
+              <!-- <span class="warning-text">必填项</span> -->
+              <el-select v-model="copyInfo.whetherEffect" placeholder="请选择药物名称" clearable >
+                <el-option
+                 v-for="item in medicineNameOpt"
+                 :key="item.code"
+                 :label="item.name"
+                 :value="item.code">
+                </el-option>
+              </el-select>
+            </span>
+          </div>
+
+          <div class="field half-line">
+            <span class="field-name">
+              不良反应:
+              <!-- <span class="required-mark">*</span> -->
+            </span>
+            <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+              <!-- <span>{{copyInfo.medicineName}}</span> -->
+              <!-- <span>{{transform(copyInfo.medicineName,medicineNameOpt)}}</span> -->
+            </span>
+            <span class="field-input" v-else>
+              <!-- <span class="warning-text">必填项</span> -->
+              <el-select v-model="copyInfo.adverse" placeholder="请选择药物名称" clearable >
+                <el-option
+                 v-for="item in medicineNameOpt"
+                 :key="item.code"
+                 :label="item.name"
+                 :value="item.code">
+                </el-option>
+              </el-select>
+            </span>
+          </div>
+
+          <div class="field half-line">
+            <span class="field-name">
+              是否继续服用:
+              <!-- <span class="required-mark">*</span> -->
+            </span>
+            <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+              <!-- <span>{{copyInfo.medicineName}}</span> -->
+              <!-- <span>{{transform(copyInfo.medicineName,medicineNameOpt)}}</span> -->
+            </span>
+            <span class="field-input" v-else>
+              <!-- <span class="warning-text">必填项</span> -->
+              <el-select v-model="copyInfo.whetherContinue" placeholder="请选择药物名称" clearable >
+                <el-option
+                 v-for="item in medicineNameOpt"
+                 :key="item.code"
+                 :label="item.name"
+                 :value="item.code">
+                </el-option>
+              </el-select>
+            </span>
+          </div>
+
+          <div class="field half-line">
+            <span class="field-name long-field-name">
+              停药时间:
+              <!-- <span class="required-mark">*</span> -->
+            </span>
+            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
+              <span>{{copyInfo.stopTime}}</span>
+            </span>
+            <span class="field-input" v-else>
+              <!-- <span class="warning-text">必填项</span> -->
+              <el-date-picker v-model="copyInfo.stopTime" type="date" placeholder="请选择初次用药时间" clearable
+               :picker-options="pickerOptions">
+              </el-date-picker>
+            </span>
+          </div>
+
+          <div class="field">
+            <span class="field-name long-field-name">
+              停药原因:
+              <!-- <span class="required-mark">*</span> -->
+            </span>
+            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
+              <span>{{copyInfo.stopReason}}</span>
+            </span>
+            <span class="field-input" v-else>
+              <!-- <span class="warning-text">必填项</span> -->
+              <el-input v-model="copyInfo.stopReason" type="textarea" placeholder="请输入备注" :maxlength="500"></el-input>
             </span>
           </div>
 
@@ -242,6 +392,7 @@ export default {
     return {
       mode: '',
       completeInit: false,
+      hasComtAmongOtherMedicine: false, // 需不需要加33%
       copyInfo: {
         firstVisitType: '', // 初诊治疗类型
         treatmentType: '', // 治疗类型
@@ -309,12 +460,22 @@ export default {
       return this.getOptions('firstVisitMedType');
     },
     medicineNameOpt() {
-      // 药物名称的select
+      // 药物商品名的select
       let transArr = this.getMedNameOptions(this.copyInfo.medicineClassification);
       if (this.copyInfo.medicineClassification === 9) {
         transArr[0].name = transArr[0].name + '（请在备注中说明）';
       }
+      console.log(transArr);
       return transArr;
+    },
+    medicineSpec() {
+      // 药物规格的select
+      var spec = Util.getElement('code', this.copyInfo.medicineName, this.medicineNameOpt).spec;
+      if (spec && spec.length === 1) {
+        this.$set(this.copyInfo, 'medicalSpecUsed', spec[0].specOral);
+      }
+      console.log(this.levodopaFactor);
+      return spec ? spec : [];
     },
     commonMedicineName() {
       // 通用名
@@ -323,6 +484,34 @@ export default {
       }).map((obj) => {
         return obj.commonName;
       })[0];
+    },
+    enhanceEffect() {
+      // 如果是多巴胺类药物，则要看其它药物中是否存在 COMT 抑制剂，存在则有药效增益的
+      // 如果是本身具有左旋多巴等效系数的 COMT 抑制剂，比如达灵复，同样是具有药效增益的
+      // 如果是左旋多巴等效系数为 0 的 COMT 抑制剂，比如珂丹，也是视为具有药效增益，因为怎么算最后都是 0
+      // 其它情况均不具有药效增益
+      // 为true就乘以1.33，为false不乘
+      let currMedicalType = Util.getElement('code', this.copyInfo.medicineName, this.medicineNameOpt).medicalType;
+      return (currMedicalType === 0 && this.hasComtAmongOtherMedicine) || currMedicalType === 3;
+    },
+    leddAttr() {
+      // LEDD
+      let medicalSpecUsed = parseFloat(this.copyInfo.medicalSpecUsed, 10); // 药物规格（mg/片）
+      let dailyDosage = parseFloat(this.copyInfo.dailyDosage, 10); // 每日用量（mg）
+      let pieces = dailyDosage / medicalSpecUsed;
+
+      let coefficient = this.enhanceEffect ? 1.33 : 1;
+
+      let res = Math.round(this.levodopaFactor * pieces * 100000 * coefficient) / 100000.0;
+      res = res || (res === 0) ? res : '';
+      this.$set(this.copyInfo, 'ledd', res);
+      return res;
+    },
+    levodopaFactor() {
+      // 左旋多巴等效系数
+      let spec = Util.getElement('code', this.copyInfo.medicineName, this.medicineNameOpt).spec;
+      let levodopaFactor = Util.getElement('specOral', this.copyInfo.medicalSpecUsed, spec).levodopaFactor;
+      return levodopaFactor;
     },
     treatmentTypeOpt() {
       // 非药物治疗治疗类型的select
@@ -360,10 +549,11 @@ export default {
         return (obj.typeName || obj.name);
       })[0];
     },
-    showModal(cardOperation, item) {
+    showModal(cardOperation, item, hasComtAmongOtherMedicine) {
       this.completeInit = false;
       this.runClearVal = false;
       this.mode = cardOperation;
+      this.hasComtAmongOtherMedicine = hasComtAmongOtherMedicine;
       // ----------------------
       this.$set(this.copyInfo, 'firstVisitType', item.firstVisitType);
       this.$set(this.copyInfo, 'treatmentType', item.treatmentType);
@@ -411,8 +601,8 @@ export default {
     updateWarning(fieldName) {
       if (fieldName === 'dailyDosage') {
         let fieldVal = this.copyInfo[fieldName];
-        if (fieldVal !== '' && !Util.checkIfNotMoreThanNDecimalNums(fieldVal, 7)) {
-          this.$set(this.warningResults, fieldName, '请填入正数');
+        if (fieldVal !== '' && !Util.checkIfNotMoreThanNDecimalNums(fieldVal, 5)) {
+          this.$set(this.warningResults, fieldName, '请填入正数，最多5位小数');
         } else {
           this.$set(this.warningResults, fieldName, '');
         };
@@ -443,7 +633,9 @@ export default {
         return {
           name: obj.medicineName,
           code: obj.medicineId,
-          commonName: obj.commonName
+          commonName: obj.commonName,
+          medicalType: obj.medicalType,
+          spec: obj.spec
         };
       });
     },
@@ -522,7 +714,7 @@ export default {
 @import "~styles/variables.less";
 
 @field-line-height: 25px;
-@field-name-width: 90px;
+@field-name-width: 110px;
 @long-field-name-width: 160px;
 
 .treatment-modal-wrapper{
@@ -586,13 +778,20 @@ export default {
           display: inline-block;
           position: relative;
           top: 0;
-          left: @long-field-name-width;
-          width: calc(~"96% - @{long-field-name-width}");
+          left: @field-name-width;
+          width: calc(~"96% - @{field-name-width}");
           line-height: @field-line-height;
           font-size: @normal-font-size;
           color: @light-font-color;
           &.long-field-name {
             left: @long-field-name-width;
+          }
+          .enhance {
+            display: inline-block;
+            margin-left: 2px;
+            width: 60px;
+            color: @green-color;
+            text-align: center;
           }
           .warning-text {
             position: absolute;
