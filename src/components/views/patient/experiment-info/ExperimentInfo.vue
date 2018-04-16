@@ -160,7 +160,11 @@ export default {
       Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'rejectionModal', this.SHOW_REJECTION_MODAL, this.ADD_NEW_CARD, {}, true, this.doctor);
     },
     completeEvaluation() {
-
+      var step = {
+        // 结束基线评估，下一阶段的 phase 应当为 30
+        phase: '' + 30
+      };
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'nextExperimentStepModal', this.SHOW_NEXT_EXPERIMENT_STEP_MODAL, this.ADD_NEW_CARD, step, true, this.therapist);
     },
     completeTherapy() {
       Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'terminationModal', this.SHOW_TERMINATION_MODAL, this.ADD_NEW_CARD, {}, true, this.appraiser);
@@ -260,7 +264,7 @@ export default {
           'tcTaskId': this.subjectId
         }
       };
-      queryExperimentProgress(experimentInfo, this.hospitalType).then((data) => {
+      queryExperimentProgress(experimentInfo).then((data) => {
         // console.log(data);
         this.subjectIdForOngoingExperiment = data && data.patientCurrentTaskId ? data.patientCurrentTaskId : '';
         if (data && data.patientExperiment && data.patientExperiment.length > 0) {

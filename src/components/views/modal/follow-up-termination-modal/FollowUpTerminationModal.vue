@@ -156,7 +156,7 @@
             </el-select>
           </span>
         </div>
-        <div class="field whole-line" v-if="nextStep===4">
+        <div class="field whole-line" v-if="nextStep===40">
           <span class="field-name">
             接收人
             <span class="required-mark">*</span>
@@ -165,7 +165,7 @@
             {{appraiser}}
           </span>
         </div>
-        <div class="field whole-line" v-if="nextStep===4">
+        <div class="field whole-line" v-if="nextStep===40">
           <span class="field-name">
             下次随访时间
           </span>
@@ -193,7 +193,7 @@
             </el-input>
           </span>
         </div>
-        <div class="field" v-if="nextStep===5">
+        <div class="field" v-if="nextStep===50">
           <div class="menu-icon iconfont icon-caution"></div>
           <span class="field-name foot-section">
             请确认患者已经完成所有随访点，结束实验后，实验期间记录将会归档
@@ -260,6 +260,9 @@ export default {
       } else {
         return false;
       }
+    },
+    hospitalType() {
+      return this.$store.state.hospitalType;
     }
   },
   methods: {
@@ -306,6 +309,9 @@ export default {
           code: type.typeCode
         });
       };
+      if (fieldName === 'nextStatus') {
+        console.log(options);
+      }
       return options;
     },
     updateWarning(fieldName) {
@@ -366,7 +372,7 @@ export default {
           }
         }
       };
-      completeFollowUp(experimentInfo).then(this.updateAndClose, this._handleError);
+      completeFollowUp(experimentInfo, this.hospitalType).then(this.updateAndClose, this._handleError);
     },
     _handleError(error) {
       console.log(error);

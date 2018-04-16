@@ -2,13 +2,10 @@
 import { encapsulatePromise, getCommonRequest } from 'api/common.js';
 
 // 查询实验流程
-export function queryExperimentProgress(experimentInfo, hospitalType) {
+export function queryExperimentProgress(experimentInfo) {
   // 医院的类型决定了参数键值的区别
   var request = Object.assign({}, getCommonRequest());
-  if (hospitalType !== undefined) {
-    var key = 'patientExperiment_' + hospitalType;
-    request[key] = experimentInfo;
-  }
+  request.patientExperiment = experimentInfo;
   var url = '/pdms/queryPatientExperiment';
   return encapsulatePromise(url, request);
 };
@@ -60,10 +57,13 @@ export function leaveExperiment(experimentInfo) {
   return encapsulatePromise(url, request);
 };
 
-// 同意加入实验组
-export function agreeEnteringExperiment(experimentInfo) {
+// 筛选通过
+export function agreeEnteringExperiment(experimentInfo, hospitalType) {
   var request = Object.assign({}, getCommonRequest());
-  request.shengRenYiPatientExperiment = experimentInfo;
+  if (hospitalType !== undefined) {
+    var key = 'patientExperiment_' + hospitalType;
+    request[key] = experimentInfo;
+  }
   var url = '/pdms/agreePatientExperiment';
   return encapsulatePromise(url, request);
 };
@@ -77,17 +77,23 @@ export function agreeEnteringExperiment(experimentInfo) {
 // };
 
 // 结束治疗
-export function completeExperiment(experimentInfo) {
+export function completeExperiment(experimentInfo, hospitalType) {
   var request = Object.assign({}, getCommonRequest());
-  request.shengRenYiPatientExperiment = experimentInfo;
+  if (hospitalType !== undefined) {
+    var key = 'patientExperiment_' + hospitalType;
+    request[key] = experimentInfo;
+  }
   var url = 'pdms/completePatientExperiment';
   return encapsulatePromise(url, request);
 };
 
 // 结束随访
-export function completeFollowUp(experimentInfo) {
+export function completeFollowUp(experimentInfo, hospitalType) {
   var request = Object.assign({}, getCommonRequest());
-  request.shengRenYiPatientExperiment = experimentInfo;
+  if (hospitalType !== undefined) {
+    var key = 'patientExperiment_' + hospitalType;
+    request[key] = experimentInfo;
+  }
   var url = 'pdms/completeFollowUp';
   return encapsulatePromise(url, request);
 };
