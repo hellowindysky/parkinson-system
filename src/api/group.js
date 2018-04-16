@@ -2,14 +2,26 @@
 import { encapsulatePromise, getCommonRequest } from 'api/common.js';
 
 // 获取分组信息
-export function getGroupList(groupInfoCondition, taskId) {
+export function getGroupList(groupInfoCondition) {
   var request = Object.assign({}, getCommonRequest());
   if (groupInfoCondition === undefined) {
     request.groupInfoCond = {};
   } else {
     request.groupInfoCond = groupInfoCondition;
   }
-  request.taskId = taskId;
+  var url = '/pdms/queryGroupList';
+  return encapsulatePromise(url, request);
+};
+
+// 获取指定课题的分组信息
+export function getSubjectGroupList(groupInfoCondition, subjectId) {
+  var request = Object.assign({}, getCommonRequest());
+  if (groupInfoCondition === undefined) {
+    request.groupInfoCond = {};
+  } else {
+    request.groupInfoCond = groupInfoCondition;
+  }
+  request.taskId = subjectId;
   var url = '/pdms/queryGroupInTask';
   return encapsulatePromise(url, request);
 };

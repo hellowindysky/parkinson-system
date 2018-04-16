@@ -169,7 +169,7 @@
 <script>
 import echarts from 'echarts';
 import {queryStatDataBrief, queryStatPatientProvince, queryStatPatientAge, queryStatPatientCareer} from 'api/analytics.js';
-import {getGroupList} from 'api/group.js';
+import {getSubjectGroupList} from 'api/group.js';
 import {pruneObj} from 'utils/helper.js';
 import Ps from 'perfect-scrollbar';
 export default {
@@ -518,7 +518,7 @@ export default {
     });
     var condition = {};
     condition.groupModule = this.$store.state.subjectId === this.SUBJECT_ID_FOR_HOSPITAL ? 0 : this.$store.state.subjectId;
-    getGroupList(condition, this.$store.state.subjectId).then((data) => {
+    getSubjectGroupList(condition, this.$store.state.subjectId).then((data) => {
       var groups = [];
       for (let group of data) {
         var obj = {
