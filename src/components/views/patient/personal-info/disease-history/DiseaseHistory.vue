@@ -970,8 +970,10 @@ export default {
         this.$set(this.copyInfo, field.fieldName, '');
       }
     }
-    vueCopy(this.diseaseInfo, this.copyInfo);
-    this.changeCopyInfo();
+    this.$nextTick(() => {
+      vueCopy(this.diseaseInfo, this.copyInfo);
+      this.changeCopyInfo();
+    });
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.recalculateCardWidth);
     Bus.$on(this.TOGGLE_LIST_DISPLAY, this.recalculateCardWidth);
     Bus.$on(this.RECALCULATE_CARD_WIDTH, this.recalculateCardWidth);

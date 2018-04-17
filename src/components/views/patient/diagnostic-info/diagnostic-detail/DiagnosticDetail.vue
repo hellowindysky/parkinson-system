@@ -19,6 +19,7 @@
       <diagnostic-treatment :canEdit="canEdit" class="folding-panel" :mode="mode" v-show="existed"
         :diagnosticSurgery="caseDetail.patientSurgicalDbs"
         :diagnosticMedicine="caseDetail.patientMedicineNew"
+        :diagnosticMedicineAdverseEvent="caseDetail.patientMedicineAdverse"
         :diagnosticPhysiontherapy="caseDetail.patientPhytheTms"
         :diagnosticTreatmentEvaluation="caseDetail.patientPhytheAssess"
         :diagnosticAdverseEvent="caseDetail.patientAdverse"

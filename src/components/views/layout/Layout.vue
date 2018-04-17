@@ -8,6 +8,7 @@
 
     <filter-panel :showFilterPanel="showFilterPanel"></filter-panel>
     <secret-agreement-modal></secret-agreement-modal>
+    <!-- <site-inspection-modal></site-inspection-modal> -->
     <authorization-modal></authorization-modal>
     <choice-panel></choice-panel>
     <confirm-box></confirm-box>
@@ -34,8 +35,8 @@ const firstSymptomsModal = () => import(/* webpackChunkName: 'personalInfoModal'
 const firstTreatmentModal = () => import(/* webpackChunkName: 'personalInfoModal' */ 'modal/first-treatment-modal/FirstTreatmentModal');
 const diagnosticRecordModal = () => import(/* webpackChunkName: 'personalInfoModal' */ 'modal/diagnostic-record-modal/DiagnosticRecordModal');
 const chiefComplaintSymptomsModal = () => import(/* webpackChunkName: 'personalInfoModal' */ 'modal/chief-complaint-symptoms-modal/ChiefComplaintSymptomsModal');
-
 const medicineModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/medicine-modal/MedicineModal');
+const medicineAdverseEventModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/medicine-adverse-event-modal/MedicineAdverseEventModal');
 const preEvaluationModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/pre-evaluation-modal/PreEvaluationModal');
 const surgicalMethodModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/surgical-method-modal/SurgicalMethodModal');
 const operativeComplicationModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/operative-complication-modal/OperativeComplicationModal');
@@ -46,6 +47,7 @@ const adverseEventModal = () => import(/* webpackChunkName: 'treatmentModal' */ 
 const seriousAdverseEventModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/serious-adverse-event-modal/SeriousAdverseEventModal');
 const vitalSignsModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/vital-signs-modal/VitalSignsModal');
 const neurologicModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/neurologic-modal/NeurologicModal');
+const siteInspectionModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/site-inspection-modal/SiteInspectionModal');
 const geneModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/gene-modal/GeneModal');
 const biochemicalExamModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/biochemical-exam-modal/BiochemicalExamModal');
 const neuroelectricModal = () => import(/* webpackChunkName: 'examinationModal' */ 'modal/neuroelectric-modal/NeuroelectricModal');
@@ -89,6 +91,7 @@ export default {
     subjectCirculationModal,
     modalBox,
     medicineModal,
+    medicineAdverseEventModal,
     preEvaluationModal,
     surgicalMethodModal,
     operativeComplicationModal,
@@ -99,6 +102,7 @@ export default {
     seriousAdverseEventModal,
     vitalSignsModal,
     neurologicModal,
+    siteInspectionModal,
     geneModal,
     biochemicalExamModal,
     neuroelectricModal,

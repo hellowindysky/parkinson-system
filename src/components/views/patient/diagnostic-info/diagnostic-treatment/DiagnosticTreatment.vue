@@ -2,11 +2,12 @@
   <folding-panel :title="'治疗方案'" :mode="mutableMode"  v-on:edit="startEditing"
     v-on:cancel="cancel" v-on:submit="submit" :editable="canEdit">
     <div class="diagnostic-surgery" ref="diagnosticSurgery">
-      <extensible-panel class="panel medicine-panel" :mode="mutableMode"
+      <extensible-panel class="panel medicine-panel"
+        v-if="showMedicinePanel || showMedicineAdverseEvent"
+        :mode="mutableMode"
         :title="medicineTitle"
-        v-on:addNewCard="addMedicine"
-        :editable="canEdit"
-        v-if="showMedicinePanel">
+        v-on:addNewCard="addMedicineRecord"
+        :editable="canEdit">
         <card class="card medicine-card" :class="smallCardWidth" :mode="mutableMode"
           v-for="(item, index) in diagnosticMedicine"
           :key="'diagnosticMedicine'+index"
@@ -34,6 +35,31 @@
           <div class="text line-5">
             <span class="name">处方性质</span>
             <span class="value">{{getPrescriptionDesc(item.statusFlag)}}</span>
+          </div>
+        </card>
+        <card class="card medicine-card" :class="smallCardWidth" :mode="mutableMode"
+          v-for="(item, index) in diagnosticMedicineAdverseEvent"
+          :key="'diagnosticMedicineAdverseEvent'+index"
+          :title="'不良事件'"
+          :disable-delete="item.statusFlag===0"
+          v-on:editCurrentCard="editMedicineAdverseEvent(item)"
+          v-on:deleteCurrentCard="deleteMedicineAdverseEvent(item)"
+          v-on:viewCurrentCard="viewMedicineAdverseEvent(item)">
+          <div class="text line-1">
+            <span class="name">事件名称</span>
+            <span class="value">{{item.adverseName}}</span>
+          </div>
+          <div class="text line-2">
+            <span class="name">开始时间</span>
+            <span class="value">{{item.occurTime}}</span>
+          </div>
+          <div class="text line-3">
+            <span class="name">是否采取措施</span>
+            <span class="value">{{item.measureFlag == 1 ? '是' : '否'}}</span>
+          </div>
+          <div class="text line-4">
+            <span class="name">不良事件结局</span>
+            <span class="value">{{transform(item.adverseResult, 'adverseResult')}}</span>
           </div>
         </card>
       </extensible-panel>
@@ -302,6 +328,7 @@ import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import {
+  deleteMedicineAdverseEvent,
   deleteSeriousAdverseEvent,
   deleteAdverseEvent,
   deleteTreatmentEvaluation,
@@ -332,6 +359,12 @@ export default {
       default: this.READING_MODE
     },
     diagnosticMedicine: {
+      type: Array,
+      default: () => {
+        return [];
+      }
+    },
+    diagnosticMedicineAdverseEvent: {
       type: Array,
       default: () => {
         return [];
@@ -390,7 +423,7 @@ export default {
       'typeGroup'
     ]),
     medicineTitle() {
-      var count = this.diagnosticMedicine.length;
+      var count = this.diagnosticMedicine.length + this.diagnosticMedicineAdverseEvent.length;
       var ledd = Number(this.calcTotalLevodopaDoseOfAllOtherMedicine({}).toFixed(5));
       return '药物治疗' + '（' + count + '条记录） LEDD: ' + ledd + ' mg';
     },
@@ -445,6 +478,15 @@ export default {
     },
     showMedicinePanel() {
       var atOtherStatus = this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_SCREENING &&
+        this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_FOLLOW_UP;
+      if (this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+    showMedicineAdverseEvent() {
+      var atOtherStatus = this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_THERAPY &&
         this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_FOLLOW_UP;
       if (this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
         return false;
@@ -646,6 +688,44 @@ export default {
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
+    addMedicineAdverseEvent() {
+      var showEdit = this.canEdit && this.showMedicineAdverseEvent;
+      // Bus.$emit(this.SHOW_PRE_EVALUATION_MODAL, this.ADD_NEW_CARD, {}, showEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'medicineAdverseEventModal', this.SHOW_MEDICINE_ADVERSE_EVENT_MODAL, this.ADD_NEW_CARD, {}, showEdit);
+    },
+    viewMedicineAdverseEvent(item) {
+      var showEdit = this.canEdit && this.showMedicineAdverseEvent;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'medicineAdverseEventModal', this.SHOW_MEDICINE_ADVERSE_EVENT_MODAL, this.VIEW_CURRENT_CARD, item, showEdit);
+    },
+    editMedicineAdverseEvent(item) {
+      var showEdit = this.canEdit && this.showMedicineAdverseEvent;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'medicineAdverseEventModal', this.SHOW_MEDICINE_ADVERSE_EVENT_MODAL, this.EDIT_CURRENT_CARD, item, showEdit);
+    },
+    deleteMedicineAdverseEvent(item) {
+      var medicineAdverseEvent = {
+        'patientAdverseId': item.patientAdverseId
+      };
+      Bus.$on(this.CONFIRM, () => {
+        deleteMedicineAdverseEvent(medicineAdverseEvent).then(this._resolveDeletion, this._rejectDeletion);
+      });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
+    },
+    addMedicineRecord() {
+      var list = [];
+      if (this.showMedicinePanel) {
+        list.push({
+          text: '药物治疗',
+          callback: this.addMedicine
+        });
+      }
+      if (this.showMedicineAdverseEvent) {
+        list.push({
+          text: '不良事件',
+          callback: this.addMedicineAdverseEvent
+        });
+      }
+      Bus.$emit(this.SHOW_CHOICE_PANEL, list);
+    },
     addTreatmentRecord() {
       var list = [
         {
@@ -792,12 +872,6 @@ export default {
           callback: this.addAdverseEvent
         });
       }
-      // if (this.showSeriousAdverseEvent) {
-      //   list.push({
-      //     text: '严重不良事件',
-      //     callback: this.addSeriousAdverseEvent
-      //   });
-      // }
       Bus.$emit(this.SHOW_CHOICE_PANEL, list);
     },
     addPhysiontherapy() {

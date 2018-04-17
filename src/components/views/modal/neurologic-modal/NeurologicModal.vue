@@ -10,7 +10,7 @@
         </span>
         <span class="field-input">
           <span class="warning-text">{{warningResults.checkType}}</span>
-          <el-select v-if="mode===ADD_NEW_CARD" placeholder="请选择检查类型" v-model="copyInfo.checkType"
+          <el-select v-if="mode===ADD_NEW_CARD" clearable placeholder="请选择检查类型" v-model="copyInfo.checkType"
             :class="{'warning': warningResults.checkType}" @change="updateWarning('checkType')">
             <el-option v-for="type in getOptions('neurologicExam')" :key="type.code"
               :label="type.name" :value="type.code"></el-option>
