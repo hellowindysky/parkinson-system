@@ -182,8 +182,8 @@ export default {
     };
   },
   methods: {
-    showModal() {
-
+    showModal(a, b, c) {
+      console.log(a, b, c);
     },
     updateScrollbar() {
       this.$nextTick(() => {

@@ -179,18 +179,17 @@ export default {
       if (this.hospitalType === 2 && this.patientCurrentExperimentStep !== this.EXPERIMENT_STEP_OUT) {
         if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_FILTERING) {
           Bus.$on(this.GIVE_UP, () => {
-            Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'subjectCirculationModal', this.SHOW_SUBJECT_CIRCULATION_MODAL, this.ADD_NEW_CARD, {}, true);
+
             Bus.$off(this.GIVE_UP);
           });
-          Bus.$emit(this.REQUEST_CONFIRMATION, '提示', '即将添加的诊断信息是否属于当前节点', '是', '否');
+          Bus.$emit(this.REQUEST_CONFIRMATION, '提示', '即将添加的诊断信息是否属于当前节点【筛选入组 V0】', '是', '否');
 
-        } else if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_SCREENING ||
-          this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_FOLLOW_UP) {
+        } else if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_SCREENING) {
           Bus.$on(this.GIVE_UP, () => {
             Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'subjectCirculationModal', this.SHOW_SUBJECT_CIRCULATION_MODAL, this.ADD_NEW_CARD, {}, true);
             Bus.$off(this.GIVE_UP);
           });
-          Bus.$emit(this.REQUEST_CONFIRMATION, '提示', '即将添加的诊断信息是否属于当前节点', '是', '否');
+          Bus.$emit(this.REQUEST_CONFIRMATION, '提示', '即将添加的诊断信息是否属于当前节点【基线评估 V1】', '是', '否');
         }
       }
     },
