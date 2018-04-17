@@ -79,7 +79,7 @@
           </span>
         </div>
 
-        <div class="form-wrapper" ref="formWrapper">
+        <div class="form-wrapper" ref="formWrapper" v-if="copyInfo.bioexamId!==27">
           <table class="form">
             <tr class="row first-row">
               <td class="col col-id">
