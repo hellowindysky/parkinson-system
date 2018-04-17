@@ -6,7 +6,7 @@
 
         <div class="field whole-line">
           <span class="field-name">
-            下一节点：
+            下一节点:
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -29,7 +29,7 @@
 
         <div class="field whole-line">
           <span class="field-name">
-            开始时间：
+            开始时间:
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -47,7 +47,7 @@
 
         <div class="field whole-line">
           <span class="field-name long-field-name">
-            距上次随访天数：
+            距上次随访天数:
             <span class="required-mark">*</span>
           </span>
           <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
@@ -66,7 +66,7 @@
 
         <div class="field whole-line">
           <span class="field-name">
-            是否超窗：
+            是否超窗:
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -81,7 +81,7 @@
 
         <div class="field whole-line" v-if="copyInfo.exceedTime===1">
           <span class="field-name">
-            超窗原因：
+            超窗原因:
             <!-- <span class="required-mark">*</span> -->
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -101,7 +101,7 @@
 
         <div class="field whole-line">
           <span class="field-name">
-            处理意见：
+            处理意见:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             {{copyInfo.remark}}
@@ -120,7 +120,7 @@
       </div>
 
       <div class="seperate-line"></div>
-      <div class="button cancel-button">取消</div>
+      <div class="button cancel-button" @click="cancel">取消</div>
       <div v-if="mode!==VIEW_CURRENT_CARD" class="button submit-button">确定</div>
       <div v-else-if="mode===VIEW_CURRENT_CARD && canEdit" class="button submit-button btn-margin">编辑</div>
 
@@ -130,6 +130,8 @@
 
 <script>
 import Ps from 'perfect-scrollbar';
+import Bus from 'utils/bus';
+
 export default {
   data() {
     return {
@@ -141,10 +143,10 @@ export default {
         exceedTime: ''
       },
       warningResults: {
-        step: '必填项',
-        startDate: '必填项',
-        lastDay: '必填项',
-        exceedTime: '必填项'
+        step: '',
+        startDate: '',
+        lastDay: '',
+        exceedTime: ''
       }
     };
   },
@@ -158,10 +160,19 @@ export default {
           suppressScrollX: true
         });
       });
+    },
+    cancel() {
+      this.lockSubmitButton = false;
+      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
     }
   },
   mounted() {
     this.updateScrollbar();
+  },
+  watch: {
+    '$route.path'() {
+      this.cancel();
+    }
   }
 };
 </script>
@@ -170,8 +181,8 @@ export default {
 @import "~styles/variables.less";
 
 @field-line-height: 25px;
-@field-name-width: 100px;
-@long-field-name-width: 140px;
+@field-name-width: 120px;
+@long-field-name-width: 120px;
 
 .subject-circulation-modal-wrapper {
   position: absolute;

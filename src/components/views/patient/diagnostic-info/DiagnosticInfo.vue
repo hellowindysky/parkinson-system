@@ -61,6 +61,9 @@ export default {
     inSubject() {
       return this.$store.state.subjectId !== this.SUBJECT_ID_FOR_HOSPITAL;
     },
+    hospitalType() {
+      return this.$store.state.hospitalType;
+    },
     title() {
       return '看诊记录（' + this.patientCaseList.length + '条记录）';
     },
@@ -168,6 +171,13 @@ export default {
     },
     addRecord() {
       this.routerJumpWithCaseId('newCase');
+      if (this.hospitalType === 2) {
+        Bus.$on(this.GIVE_UP, () => {
+          Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'subjectCirculationModal', this.SHOW_SUBJECT_CIRCULATION_MODAL, this.ADD_NEW_CARD, {}, true);
+          Bus.$off(this.GIVE_UP);
+        });
+        Bus.$emit(this.REQUEST_CONFIRMATION, '提示', '即将添加的诊断信息是否属于当前节点', '是', '否');
+      }
     },
     checkIfDisabledToDelete(item) {
       // 返回值为 true 时，代表该诊断卡片不允许被删除
