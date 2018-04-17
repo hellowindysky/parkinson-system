@@ -112,7 +112,7 @@
             </el-select>
           </span>
         </div>
-        <div class="field" v-show="outCome === 1">
+        <div class="field" v-if="outCome === 1">
           <span class="field-name">
            后遗症:
           </span>
@@ -130,7 +130,7 @@
             </el-select>
           </span>
         </div>
-        <div class="field" v-show="outCome === 1">
+        <div class="field" v-if="outCome === 1">
           <span class="field-name">
             症状消失时间:
           </span>
@@ -147,7 +147,7 @@
             </el-date-picker>
           </span>
         </div>
-        <div class="field whole-line" v-show="outCome === 3">
+        <div class="field whole-line" v-if="outCome === 3">
           <span class="field-name">
             直接死因:
           </span>
@@ -164,7 +164,7 @@
             </el-input>
           </span>
         </div>
-        <div class="field" v-show="outCome === 3">
+        <div class="field" v-if="outCome === 3">
           <span class="field-name">
             死亡时间:
           </span>
