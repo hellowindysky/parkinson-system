@@ -77,6 +77,50 @@
             </el-select>
           </span>
         </div>
+        <div class="field" v-if="copyInfo.checkType===3">
+          <span class="field-name">
+            面部油脂:
+          </span>
+          <span class="field-input">
+            <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.sittingBloc, 'positiveType')}}</span>
+            <el-select v-else v-model="copyInfo.sittingBloc">
+              <el-option v-for="option in getOptions('positiveType')" :label="option.name" :value="option.code" :key="option.code"></el-option>
+            </el-select>
+          </span>
+        </div>
+        <div class="field" v-if="copyInfo.checkType===3">
+          <span class="field-name">
+            皮肤划痕试验:
+          </span>
+          <span class="field-input">
+            <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.sittingBloc, 'positiveType')}}</span>
+            <el-select v-else v-model="copyInfo.sittingBloc">
+              <el-option v-for="option in getOptions('positiveType')" :label="option.name" :value="option.code" :key="option.code"></el-option>
+            </el-select>
+          </span>
+        </div>
+        <div class="field" v-if="copyInfo.checkType===3">
+          <span class="field-name">
+            立毛反射:
+          </span>
+          <span class="field-input">
+            <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.sittingBloc, 'positiveType')}}</span>
+            <el-select v-else v-model="copyInfo.sittingBloc">
+              <el-option v-for="option in getOptions('positiveType')" :label="option.name" :value="option.code" :key="option.code"></el-option>
+            </el-select>
+          </span>
+        </div>
+        <div class="field" v-if="copyInfo.checkType===3">
+          <span class="field-name">
+            直立倾斜试验:
+          </span>
+          <span class="field-input">
+            <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.sittingBloc, 'positiveType')}}</span>
+            <el-select v-else v-model="copyInfo.sittingBloc">
+              <el-option v-for="option in getOptions('positiveType')" :label="option.name" :value="option.code" :key="option.code"></el-option>
+            </el-select>
+          </span>
+        </div>
 
         <h3 class="form-title" v-if="tableMode===SON_OPEN && hasTableExisted">{{subTableTitle}}</h3>
         <div class="form-wrapper" v-if="hasTableExisted" ref="formWrapper">
