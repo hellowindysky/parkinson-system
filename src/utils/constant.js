@@ -139,6 +139,7 @@ export default {
   SHOW_TERMINATION_MODAL: 'showTerminationModal',
   SHOW_NEXT_EXPERIMENT_STEP_MODAL: 'showNextExperimentStepModal',
   SHOW_EXPERIMENT_STEP_MODAL: 'showExperimentStepModal',
+  SHOW_SUBJECT_CIRCULATION_MODAL: 'showSubjectCirculationModal',
 
   SHOW_CHOICE_PANEL: 'showChoicePanel',
 
