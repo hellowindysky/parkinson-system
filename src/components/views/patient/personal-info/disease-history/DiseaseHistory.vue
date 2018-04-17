@@ -406,7 +406,8 @@ export default {
       return '首发症状（' + (this.firstSymbolData ? this.firstSymbolData : []).length + '条记录）';
     },
     firstTreatmentsTitle() {
-      return '初诊治疗（' + (this.firstVisitTreatmentData ? this.firstVisitTreatmentData : []).length + '条记录）';
+      var ledd = Number(this.calcTotalLevodopaDoseOfAllOtherMedicine().toFixed(5));
+      return '初诊治疗（' + (this.firstVisitTreatmentData ? this.firstVisitTreatmentData : []).length + '条记录） LEDD: ' + ledd + ' mg';
     },
     visitRecordTitle() {
       return '就诊记录（' + (this.patientHistorysData ? this.patientHistorysData : []).length + '条记录）';
@@ -444,9 +445,36 @@ export default {
       } else {
         return false;
       }
+    },
+    medicalTreatmentCard() {
+      // 把card中的药物治疗过滤出来
+      return this.firstVisitTreatmentData.filter((obj) => {
+        return obj.firstVisitType === 1;
+      });
     }
   },
   methods: {
+    calcTotalLevodopaDoseOfAllOtherMedicine() {
+      let ledd = 0;
+      for (let item of this.medicalTreatmentCard) {
+        // 用来计算的药物要满足 2 个条件：未停药，---
+        if (item.whetherContinue !== 0) {
+          ledd += (item.ledd ? item.ledd : 0);
+        }
+      }
+      return ledd;
+    },
+    checkIfComtExistsAmongOtherMedicine(targetMedicine) {
+      // 遍历其它所有未停药的药物，看是否存在 COMT 抑制剂
+      var hasCOMT = false;
+      for (let item of this.medicalTreatmentCard) {
+        var medicineInfoObj = Util.getElement('medicineId', item.medicineName, this.medicineInfo);
+        if (item.medicineName !== targetMedicine.medicineName && medicineInfoObj.medicalType === 3) {
+          hasCOMT = true;
+        }
+      }
+      return hasCOMT;
+    },
     theAriseTime(item) {
       if (item.ariseTime) {
         return item.ariseTime;
@@ -813,13 +841,16 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addFirstTreatmentRecord() {
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'firstTreatmentModal', this.SHOW_FIRSTTREATMENT_MODAL, this.ADD_NEW_CARD, {});
+      var hasCOMT = this.checkIfComtExistsAmongOtherMedicine({});
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'firstTreatmentModal', this.SHOW_FIRSTTREATMENT_MODAL, this.ADD_NEW_CARD, {}, hasCOMT);
     },
     editFirstTreatmentRecord(item) {
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'firstTreatmentModal', this.SHOW_FIRSTTREATMENT_MODAL, this.EDIT_CURRENT_CARD, item);
+      var hasCOMT = this.checkIfComtExistsAmongOtherMedicine(item);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'firstTreatmentModal', this.SHOW_FIRSTTREATMENT_MODAL, this.EDIT_CURRENT_CARD, item, hasCOMT);
     },
     viewFirstTreatmentRecord(item) {
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'firstTreatmentModal', this.SHOW_FIRSTTREATMENT_MODAL, this.VIEW_CURRENT_CARD, item);
+      var hasCOMT = this.checkIfComtExistsAmongOtherMedicine(item);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'firstTreatmentModal', this.SHOW_FIRSTTREATMENT_MODAL, this.VIEW_CURRENT_CARD, item, hasCOMT);
     },
     deleteFirstTreatmentRecord(item) {
       var firTreatmentId = {

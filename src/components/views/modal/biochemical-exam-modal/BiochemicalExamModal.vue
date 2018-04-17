@@ -37,13 +37,29 @@
         </div>
         <div class="field">
           <span class="field-name">
-            血液标本编号:
+            标本编号:
             <span class="required-mark"></span>
           </span>
           <span class="field-input">
             <!-- <span class="warning-text">{{warningResults.bloodCode}}</span> -->
             <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.bloodCode}}</span>
             <el-input v-else placeholder="请输入血液标本编号" v-model="copyInfo.bloodCode"></el-input>
+          </span>
+        </div>
+
+        <div class="field whole-line">
+          <span class="field-name">
+            实验结果:
+          </span>
+          <span class="field-input">
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.projectResults}}</span>
+            <el-input v-else
+             placeholder="请输入实验结果"
+             v-model="copyInfo.projectResults"
+             :rows="2"
+             :maxlength="500"
+             type="textarea">
+            </el-input>
           </span>
         </div>
 
@@ -63,7 +79,7 @@
           </span>
         </div>
 
-        <div class="form-wrapper" ref="formWrapper">
+        <div class="form-wrapper" ref="formWrapper" v-if="copyInfo.bioexamId!==27">
           <table class="form">
             <tr class="row first-row">
               <td class="col col-id">
@@ -85,7 +101,7 @@
                 参考范围
               </td>
               <td class="col col-clinical">
-                临床意义
+                判断意义
               </td>
               <td class="col col-remarks">
                 备注
@@ -210,6 +226,7 @@ export default {
       this.$set(this.copyInfo, 'bioexamId', '');
       this.$set(this.copyInfo, 'checkDate', '');
       this.$set(this.copyInfo, 'bloodCode', '');
+      this.$set(this.copyInfo, 'projectResults', '');
       this.$set(this.copyInfo, 'remarks', '');
       this.$set(this.copyInfo, 'bioexamResult', []);
 
