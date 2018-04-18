@@ -2,221 +2,221 @@
   <div class="neurologic-modal-wrapper">
     <div class="neurologic-modal" ref="neurologicModal">
       <h3 class="title">{{title}}</h3>
-
-      <div class="field">
-        <span class="field-name">
-          检查类型:
-          <span class="required-mark">*</span>
-        </span>
-        <span class="field-input">
-          <span class="warning-text">{{warningResults.checkType}}</span>
-          <el-select v-if="mode===ADD_NEW_CARD" clearable placeholder="请选择检查类型" v-model="copyInfo.checkType"
-            :class="{'warning': warningResults.checkType}" @change="updateWarning('checkType')">
-            <el-option v-for="type in getOptions('neurologicExam')" :key="type.code"
-              :label="type.name" :value="type.code"></el-option>
-          </el-select>
-          <span v-else>
-            {{transform(copyInfo.checkType, 'neurologicExam')}}
+      <div class="content">
+        <div class="field whole-line">
+          <span class="field-name">
+            检查类型:
+            <span class="required-mark">*</span>
           </span>
-        </span>
-      </div>
+          <span class="field-input">
+            <span class="warning-text">{{warningResults.checkType}}</span>
+            <el-select v-if="mode===ADD_NEW_CARD" clearable placeholder="请选择检查类型" v-model="copyInfo.checkType"
+              :class="{'warning': warningResults.checkType}" @change="updateWarning('checkType')">
+              <el-option v-for="type in getOptions('neurologicExam')" :key="type.code"
+                :label="type.name" :value="type.code"></el-option>
+            </el-select>
+            <span v-else>
+              {{transform(copyInfo.checkType, 'neurologicExam')}}
+            </span>
+          </span>
+        </div>
 
-      <div class="field">
-        <span class="field-name">
-          检查时间:
-        </span>
-        <span class="field-input">
-          <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.ariseTime}}</span>
-          <el-date-picker v-else
-          v-model="copyInfo.ariseTime"
-          placeholder="请输入检查时间"
-          type="date"
-          format="yyyy-MM-dd"
-          :picker-options="pickerOptions">
-          </el-date-picker>
-        </span>
-      </div>
-      <div class="field">
-        <span class="field-name">
-          检查结果:
-        </span>
-        <span class="field-input">
-          <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.spephysicalResult}}</span>
-          <el-input v-else type="textarea" placeholder="请输入检查结果" v-model="copyInfo.spephysicalResult" :maxlength="500"></el-input>
-        </span>
-      </div>
-      <div class="field">
-        <span class="field-name">
-          备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注:
-        </span>
-        <span class="field-input">
-          <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.remarks}}</span>
-          <el-input v-else type="textarea" placeholder="请输入备注内容" v-model="copyInfo.remarks" :maxlength="500"></el-input>
-        </span>
-      </div>
-      <div class="field" v-if="copyInfo.checkType===3">
-        <span class="field-name">
-          回拉试验:
-        </span>
-        <span class="field-input">
-          <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.pullTest, 'positiveType')}}</span>
-          <el-select v-else v-model="copyInfo.pullTest">
-            <el-option v-for="option in getOptions('positiveType')" :label="option.name" :value="option.code" :key="option.code"></el-option>
-          </el-select>
-        </span>
-      </div>
-      <div class="field" v-if="copyInfo.checkType===3">
-        <span class="field-name">
-          sitting en bloc现象:
-        </span>
-        <span class="field-input">
-          <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.sittingBloc, 'positiveType')}}</span>
-          <el-select v-else v-model="copyInfo.sittingBloc">
-            <el-option v-for="option in getOptions('positiveType')" :label="option.name" :value="option.code" :key="option.code"></el-option>
-          </el-select>
-        </span>
-      </div>
+        <div class="field whole-line">
+          <span class="field-name">
+            检查时间:
+          </span>
+          <span class="field-input">
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.ariseTime}}</span>
+            <el-date-picker v-else
+            v-model="copyInfo.ariseTime"
+            placeholder="请输入检查时间"
+            type="date"
+            format="yyyy-MM-dd"
+            :picker-options="pickerOptions">
+            </el-date-picker>
+          </span>
+        </div>
+        <div class="field whole-line">
+          <span class="field-name">
+            检查结果:
+          </span>
+          <span class="field-input">
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.spephysicalResult}}</span>
+            <el-input v-else type="textarea" placeholder="请输入检查结果" v-model="copyInfo.spephysicalResult" :maxlength="500"></el-input>
+          </span>
+        </div>
+        <div class="field whole-line">
+          <span class="field-name">
+            备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注:
+          </span>
+          <span class="field-input">
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.remarks}}</span>
+            <el-input v-else type="textarea" placeholder="请输入备注内容" v-model="copyInfo.remarks" :maxlength="500"></el-input>
+          </span>
+        </div>
+        <div class="field" v-if="copyInfo.checkType===3">
+          <span class="field-name">
+            回拉试验:
+          </span>
+          <span class="field-input">
+            <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.pullTest, 'positiveType')}}</span>
+            <el-select v-else clearable v-model="copyInfo.pullTest">
+              <el-option v-for="option in getOptions('positiveType')" :label="option.name" :value="option.code" :key="option.code"></el-option>
+            </el-select>
+          </span>
+        </div>
+        <div class="field" v-if="copyInfo.checkType===3">
+          <span class="field-name">
+            sitting en bloc现象:
+          </span>
+          <span class="field-input">
+            <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.sittingBloc, 'positiveType')}}</span>
+            <el-select v-else clearable v-model="copyInfo.sittingBloc">
+              <el-option v-for="option in getOptions('positiveType')" :label="option.name" :value="option.code" :key="option.code"></el-option>
+            </el-select>
+          </span>
+        </div>
 
-      <h3 class="form-title" v-if="tableMode===SON_OPEN && hasTableExisted">{{subTableTitle}}</h3>
-      <div class="form-wrapper" v-if="hasTableExisted" ref="formWrapper">
-        <table class="form" v-if="tableMode===FATHER_OPEN">
-          <tr class="row first-row">
-            <td class="col col-width-10">
-              序号
-            </td>
-            <td class="col col-width-30">
-              检查项
-            </td>
-            <td class="col col-width-15">
-              操作
-            </td>
-          </tr>
-          <tr class="row" v-for="(type, index) in tableTypes">
-            <td class="col col-width-10">
-              {{ index + 1 }}
-            </td>
-            <td class="col col-width-30">
-              {{type.typeName}}
-            </td>
-            <td class="col col-width-15">
-              <span class="text-button" v-if="mode===VIEW_CURRENT_CARD" @click.stop="selectSubTable(type.typeCode)">查看</span>
-              <span class="text-button" v-else-if="mode!==VIEW_CURRENT_CARD" @click.stop="selectSubTable(type.typeCode)">编辑</span>
-            </td>
-          </tr>
-        </table>
+        <h3 class="form-title" v-if="tableMode===SON_OPEN && hasTableExisted">{{subTableTitle}}</h3>
+        <div class="form-wrapper" v-if="hasTableExisted" ref="formWrapper">
+          <table class="form" v-if="tableMode===FATHER_OPEN">
+            <tr class="row first-row">
+              <td class="col col-width-10">
+                序号
+              </td>
+              <td class="col col-width-30">
+                检查项
+              </td>
+              <td class="col col-width-15">
+                操作
+              </td>
+            </tr>
+            <tr class="row" v-for="(type, index) in tableTypes">
+              <td class="col col-width-10">
+                {{ index + 1 }}
+              </td>
+              <td class="col col-width-30">
+                {{type.typeName}}
+              </td>
+              <td class="col col-width-15">
+                <span class="text-button" v-if="mode===VIEW_CURRENT_CARD" @click.stop="selectSubTable(type.typeCode)">查看</span>
+                <span class="text-button" v-else-if="mode!==VIEW_CURRENT_CARD" @click.stop="selectSubTable(type.typeCode)">编辑</span>
+              </td>
+            </tr>
+          </table>
 
-        <table class="form" :class="{'small-font':tableMode===SON_OPEN}"
-          v-if="tableMode===SON_OPEN" v-for="(group, groupIndex) in itemGroups">
-          <tr class="row" v-if="group.colItems.length===0"
-            v-for="row in rearrangeRows(group.rowItems)">
-            <td class="col col-width-10">
-              {{row[0].fieldName}}
-            </td>
-            <td class="col col-width-10">
-              <span v-if="mode===VIEW_CURRENT_CARD && row[0].uiType===3">
-                {{transform(copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue, row[0].fieldEnumId)}}
-              </span>
-              <span v-else-if="mode===VIEW_CURRENT_CARD">
-                {{copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue}}
-              </span>
-              <el-input v-else-if="row[0].uiType===1" v-model="copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue"></el-input>
-              <el-select v-else-if="row[0].uiType===3" v-model="copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue">
-                <el-option v-for="option in getOptions(row[0].fieldEnumId)" :label="option.name" :key="option.code" :value="option.code"></el-option>
-              </el-select>
-              <el-date-picker
-                v-else-if="row[0].uiType===6"
-                v-model="copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue"
-                :picker-options="pickerOptions">
-              </el-date-picker>
-              <el-date-picker
-                v-else-if="row[0].uiType===7"
-                type="datetime"
-                format="yyyy-MM-dd HH:mm"
-                v-model="copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue"
-                :picker-options="pickerOptions">
-              </el-date-picker>
-              <el-time-select v-else-if="row[0].uiType===8" v-model="copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue"
-                :picker-options="{start:'00:00', end:'24:00'}"></el-time-select>
-            </td>
-            <td class="col col-width-10" v-if="row.length===2">
-              {{row[1].fieldName}}
-            </td>
-            <td class="col col-width-10" v-if="row.length===2">
-              <span v-if="mode===VIEW_CURRENT_CARD && row[1].uiType===3">
-                {{transform(copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue, row[1].fieldEnumId)}}
-              </span>
-              <span v-else-if="mode===VIEW_CURRENT_CARD">
-                {{copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue}}
-              </span>
-              <el-input v-else-if="row[1].uiType===1" v-model="copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue"></el-input>
-              <el-select v-else-if="row[1].uiType===3" v-model="copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue">
-                <el-option v-for="option in getOptions(row[1].fieldEnumId)" :label="option.name" :key="option.code" :value="option.code"></el-option>
-              </el-select>
-              <el-date-picker
-                v-else-if="row[1].uiType===6"
-                v-model="copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue"
-                :picker-options="pickerOptions">
-              </el-date-picker>
-              <el-date-picker
-                v-else-if="row[1].uiType===7"
-                type="datetime"
-                format="yyyy-MM-dd HH:mm"
-                v-model="copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue"
-                :picker-options="pickerOptions">
-              </el-date-picker>
-              <el-time-select v-else-if="row[1].uiType===8" v-model="copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue"
-                :picker-options="{start:'00:00', end:'24:00'}"></el-time-select>
-            </td>
-          </tr>
+          <table class="form" :class="{'small-font':tableMode===SON_OPEN}"
+            v-if="tableMode===SON_OPEN" v-for="(group, groupIndex) in itemGroups">
+            <tr class="row" v-if="group.colItems.length===0"
+              v-for="row in rearrangeRows(group.rowItems)">
+              <td class="col col-width-10">
+                {{row[0].fieldName}}
+              </td>
+              <td class="col col-width-10">
+                <span v-if="mode===VIEW_CURRENT_CARD && row[0].uiType===3">
+                  {{transform(copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue, row[0].fieldEnumId)}}
+                </span>
+                <span v-else-if="mode===VIEW_CURRENT_CARD">
+                  {{copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue}}
+                </span>
+                <el-input v-else-if="row[0].uiType===1" v-model="copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue"></el-input>
+                <el-select v-else-if="row[0].uiType===3" v-model="copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue">
+                  <el-option v-for="option in getOptions(row[0].fieldEnumId)" :label="option.name" :key="option.code" :value="option.code"></el-option>
+                </el-select>
+                <el-date-picker
+                  v-else-if="row[0].uiType===6"
+                  v-model="copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue"
+                  :picker-options="pickerOptions">
+                </el-date-picker>
+                <el-date-picker
+                  v-else-if="row[0].uiType===7"
+                  type="datetime"
+                  format="yyyy-MM-dd HH:mm"
+                  v-model="copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue"
+                  :picker-options="pickerOptions">
+                </el-date-picker>
+                <el-time-select v-else-if="row[0].uiType===8" v-model="copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue"
+                  :picker-options="{start:'00:00', end:'24:00'}"></el-time-select>
+              </td>
+              <td class="col col-width-10" v-if="row.length===2">
+                {{row[1].fieldName}}
+              </td>
+              <td class="col col-width-10" v-if="row.length===2">
+                <span v-if="mode===VIEW_CURRENT_CARD && row[1].uiType===3">
+                  {{transform(copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue, row[1].fieldEnumId)}}
+                </span>
+                <span v-else-if="mode===VIEW_CURRENT_CARD">
+                  {{copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue}}
+                </span>
+                <el-input v-else-if="row[1].uiType===1" v-model="copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue"></el-input>
+                <el-select v-else-if="row[1].uiType===3" v-model="copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue">
+                  <el-option v-for="option in getOptions(row[1].fieldEnumId)" :label="option.name" :key="option.code" :value="option.code"></el-option>
+                </el-select>
+                <el-date-picker
+                  v-else-if="row[1].uiType===6"
+                  v-model="copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue"
+                  :picker-options="pickerOptions">
+                </el-date-picker>
+                <el-date-picker
+                  v-else-if="row[1].uiType===7"
+                  type="datetime"
+                  format="yyyy-MM-dd HH:mm"
+                  v-model="copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue"
+                  :picker-options="pickerOptions">
+                </el-date-picker>
+                <el-time-select v-else-if="row[1].uiType===8" v-model="copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue"
+                  :picker-options="{start:'00:00', end:'24:00'}"></el-time-select>
+              </td>
+            </tr>
 
-          <tr class="row first-row" v-if="group.anotherColItems.length>0">
-            <td class="col col-width-10" :rowspan="group.anotherColItems.length>0 ? 2:1"></td>
-            <td class="col col-width-10" v-for="col in group.anotherColItems" :rowspan="col.rowSpan" :colspan="col.colSpan">
-              {{col.fieldName}}
-            </td>
-          </tr>
-          <tr class="row first-row" v-if="group.colItems.length>0">
-            <td class="col col-width-10" v-if="group.anotherColItems.length===0"></td>
-            <td class="col col-width-10" v-if="col.rowSpan>0" v-for="col in group.colItems" :rowspan="col.rowSpan" :colspan="col.colSpan">
-              {{col.fieldName}}
-            </td>
-          </tr>
-          <tr class="row" v-for="row in group.rowItems" v-if="group.colItems.length>0">
-            <td class="col col-width-10">
-              {{row.fieldName}}
-            </td>
-            <td class="col col-width-10" v-for="col in group.colItems">
-              <span v-if="mode===VIEW_CURRENT_CARD && col.uiType===3">
-                {{transform(copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue, col.fieldEnumId)}}
-              </span>
-              <span v-else-if="mode===VIEW_CURRENT_CARD">
-                {{copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue}}
-              </span>
-              <el-input v-else-if="col.uiType===1" v-model="copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue"></el-input>
-              <el-select v-else-if="col.uiType===3" v-model="copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue"
-                placeholder="">
-                <el-option v-for="option in getOptions(col.fieldEnumId)" :label="option.name" :key="option.code" :value="option.code"></el-option>
-              </el-select>
-              <el-date-picker
-                v-else-if="col.uiType===6"
-                v-model="copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue"
-                :picker-options="pickerOptions">
-              </el-date-picker>
-              <el-date-picker
-                v-else-if="col.uiType===7"
-                type="datetime"
-                format="yyyy-MM-dd HH:mm"
-                v-model="copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue"
-                :picker-options="pickerOptions">
-              </el-date-picker>
-              <el-time-select v-else-if="col.uiType===8" v-model="copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue"
-                :picker-options="{start:'00:00', end:'24:00'}"></el-time-select>
-            </td>
-          </tr>
+            <tr class="row first-row" v-if="group.anotherColItems.length>0">
+              <td class="col col-width-10" :rowspan="group.anotherColItems.length>0 ? 2:1"></td>
+              <td class="col col-width-10" v-for="col in group.anotherColItems" :rowspan="col.rowSpan" :colspan="col.colSpan">
+                {{col.fieldName}}
+              </td>
+            </tr>
+            <tr class="row first-row" v-if="group.colItems.length>0">
+              <td class="col col-width-10" v-if="group.anotherColItems.length===0"></td>
+              <td class="col col-width-10" v-if="col.rowSpan>0" v-for="col in group.colItems" :rowspan="col.rowSpan" :colspan="col.colSpan">
+                {{col.fieldName}}
+              </td>
+            </tr>
+            <tr class="row" v-for="row in group.rowItems" v-if="group.colItems.length>0">
+              <td class="col col-width-10">
+                {{row.fieldName}}
+              </td>
+              <td class="col col-width-10" v-for="col in group.colItems">
+                <span v-if="mode===VIEW_CURRENT_CARD && col.uiType===3">
+                  {{transform(copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue, col.fieldEnumId)}}
+                </span>
+                <span v-else-if="mode===VIEW_CURRENT_CARD">
+                  {{copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue}}
+                </span>
+                <el-input v-else-if="col.uiType===1" v-model="copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue"></el-input>
+                <el-select v-else-if="col.uiType===3" v-model="copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue"
+                  placeholder="">
+                  <el-option v-for="option in getOptions(col.fieldEnumId)" :label="option.name" :key="option.code" :value="option.code"></el-option>
+                </el-select>
+                <el-date-picker
+                  v-else-if="col.uiType===6"
+                  v-model="copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue"
+                  :picker-options="pickerOptions">
+                </el-date-picker>
+                <el-date-picker
+                  v-else-if="col.uiType===7"
+                  type="datetime"
+                  format="yyyy-MM-dd HH:mm"
+                  v-model="copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue"
+                  :picker-options="pickerOptions">
+                </el-date-picker>
+                <el-time-select v-else-if="col.uiType===8" v-model="copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue"
+                  :picker-options="{start:'00:00', end:'24:00'}"></el-time-select>
+              </td>
+            </tr>
 
-        </table>
+          </table>
+        </div>
       </div>
-
       <!-- <div class="seperate-line"></div> -->
       <span v-if="tableMode===FATHER_OPEN">
         <div class="button cancel-button" @click="cancel">取消</div>
@@ -600,208 +600,218 @@ export default {
       padding: 30px 0 10px;
       font-size: @large-font-size;
     }
-    .field {
-      display: inline-block;
-      position: relative;
-      width: 100%;
-      min-height: 45px;
-      vertical-align: top;
+    .content {
       text-align: left;
-      transform: translateX(20px);
-      .field-name {
-        display: inline-block;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: @field-name-width;
-        line-height: @field-line-height;
-        font-size: @normal-font-size;
-        color: @font-color;
-        .required-mark {
-          color: red;
-          font-size: 20px;
-          vertical-align: middle;
-        }
-      }
-      .field-input {
+      font-size: 0;
+      .field {
         display: inline-block;
         position: relative;
-        left: @field-name-width;
-        width: calc(~"92% - @{field-name-width}");
-        line-height: 25px;
-        font-size: @normal-font-size;
-        color: @light-font-color;
-        .warning-text {
+        width: 50%;
+        min-height: 45px;
+        vertical-align: top;
+        text-align: left;
+        transform: translateX(20px);
+        &.whole-line {
+          width: 100%;
+          .field-input {
+            width: calc(~"96% - @{field-name-width}");
+          }
+        }
+        .field-name {
+          display: inline-block;
           position: absolute;
-          top: 22px;
-          left: 10px;
-          height: 15px;
-          color: red;
-          font-size: @small-font-size;
-        }
-        .el-input {
-          transform: translateY(-3px);
-          .el-input__inner {
-            height: 30px;
-            border: none;
-            background-color: @screen-color;
+          top: 0;
+          left: 0;
+          width: @field-name-width;
+          line-height: @field-line-height;
+          font-size: @normal-font-size;
+          color: @font-color;
+          .required-mark {
+            color: red;
+            font-size: 20px;
+            vertical-align: middle;
           }
         }
-        .el-textarea {
-          margin-bottom: 15px;
-          transform: translateY(-3px);
-          .el-textarea__inner {
-            border: none;
-            background-color: @screen-color;
+        .field-input {
+          display: inline-block;
+          position: relative;
+          left: @field-name-width;
+          width: calc(~"92% - @{field-name-width}");
+          line-height: 25px;
+          font-size: @normal-font-size;
+          color: @light-font-color;
+          .warning-text {
+            position: absolute;
+            top: 22px;
+            left: 10px;
+            height: 15px;
+            color: red;
+            font-size: @small-font-size;
           }
-          &.warning {
-            border: 1px solid red;
-          }
-        }
-        .el-select {
-          width: 100%;
-        }
-        .el-date-editor {
-          width: 100%;
-        }
-        .warning .el-input__inner {
-          border: 1px solid red;
-        }
-      }
-    }
-    .form-title {
-      margin: 0;
-      padding: 0;
-      line-height: 40px;
-      font-size: @normal-font-size;
-      color: @font-color;
-      text-align: center;
-    }
-    .form-wrapper {
-      position: relative;
-      margin-top: 5px;
-      max-height: 320px;
-      height: auto;
-      width: 100%;
-      padding-bottom: 5px;
-      overflow: hidden;
-      box-sizing: border-box;
-      border: 1px solid @inverse-font-color;
-      .form {
-        position: relative;
-        margin-bottom: 5px;
-        width: 100%;
-        border-spacing: 0;
-        border-collapse: collapse;
-        font-size: 14px;
-        &.small-font {
-          font-size: @small-font-size !important;
-        }
-        .row {
-          height: 40px;
-          &.first-row {
-            background-color: @screen-color;
-            height: 35px;
-            .col {
-              padding: 0 3px;
+          .el-input {
+            transform: translateY(-3px);
+            .el-input__inner {
+              height: 30px;
+              border: none;
+              background-color: @screen-color;
             }
           }
-          .col {
-            text-align: center;
-            padding: 0;
-            margin: 0;
-            border: 1px solid @light-gray-color;
-            .text-button {
-              margin: 0 5px;
-              color: @theme-color;
-              line-height: 20px;
-              border-bottom: 1px solid @theme-color;
-              cursor: pointer;
-              &:hover {
-                opacity: 0.8;
-              }
+          .el-textarea {
+            margin-bottom: 15px;
+            transform: translateY(-3px);
+            .el-textarea__inner {
+              border: none;
+              background-color: @screen-color;
             }
-            &.col-width-5 {
-              width: 5%;
-              min-width: 40px;
-            }
-            &.col-width-10 {
-              width: 10%;
-              min-width: 60px;
-            }
-            &.col-width-15 {
-              width: 15%;
-            }
-            &.col-width-20 {
-              width: 20%;
-            }
-            &.col-width-25 {
-              width: 25%;
-            }
-            &.col-width-30 {
-              width: 30%;
-            }
-            &.col-width-18 {
-              width: 18%;
-            }
-            &.col-width-7 {
-              width: 7%;
-            }
-            .required-mark {
-              color: red;
-              font-size: 20px;
-              vertical-align: middle;
-            }
-            .el-input {
-              margin-left: 2%;
-              width: 98%;
-              .el-input__inner {
-                height: 30px;
-                border: none;
-                background-color: rgba(0, 0, 0, 0);
-                text-align: center;
-              }
-            }
-            .warning .el-input__inner {
+            &.warning {
               border: 1px solid red;
             }
           }
+          .el-select {
+            width: 100%;
+          }
+          .el-date-editor {
+            width: 100%;
+          }
+          .warning .el-input__inner {
+            border: 1px solid red;
+          }
         }
       }
-      .ps__scrollbar-y-rail {
-        position: absolute;
+      .form-title {
+        margin: 0;
         padding: 0;
-        top: 0;
-        width: 10px;
-        right: 0;
-        box-sizing: border-box;
-        opacity: 0.3;
-        transition: opacity 0.3s;
-        .ps__scrollbar-y {
-          position: relative;
-          border-radius: 0;
-          background-color: #aaa;
-        }
+        line-height: 40px;
+        font-size: @normal-font-size;
+        color: @font-color;
+        text-align: center;
       }
-      .ps__scrollbar-x-rail {
-        position: absolute;
-        padding: 0;
-        bottom: 0;
-        height: 10px;
-        right: 0;
+      .form-wrapper {
+        position: relative;
+        margin-top: 5px;
+        max-height: 320px;
+        height: auto;
+        width: 100%;
+        padding-bottom: 5px;
+        overflow: hidden;
         box-sizing: border-box;
-        opacity: 0.3;
-        transition: opacity 0.3s;
-        .ps__scrollbar-x {
+        border: 1px solid @inverse-font-color;
+        .form {
           position: relative;
+          margin-bottom: 5px;
+          width: 100%;
+          border-spacing: 0;
+          border-collapse: collapse;
+          font-size: 14px;
+          &.small-font {
+            font-size: @small-font-size !important;
+          }
+          .row {
+            height: 40px;
+            &.first-row {
+              background-color: @screen-color;
+              height: 35px;
+              .col {
+                padding: 0 3px;
+              }
+            }
+            .col {
+              text-align: center;
+              padding: 0;
+              margin: 0;
+              border: 1px solid @light-gray-color;
+              .text-button {
+                margin: 0 5px;
+                color: @theme-color;
+                line-height: 20px;
+                border-bottom: 1px solid @theme-color;
+                cursor: pointer;
+                &:hover {
+                  opacity: 0.8;
+                }
+              }
+              &.col-width-5 {
+                width: 5%;
+                min-width: 40px;
+              }
+              &.col-width-10 {
+                width: 10%;
+                min-width: 60px;
+              }
+              &.col-width-15 {
+                width: 15%;
+              }
+              &.col-width-20 {
+                width: 20%;
+              }
+              &.col-width-25 {
+                width: 25%;
+              }
+              &.col-width-30 {
+                width: 30%;
+              }
+              &.col-width-18 {
+                width: 18%;
+              }
+              &.col-width-7 {
+                width: 7%;
+              }
+              .required-mark {
+                color: red;
+                font-size: 20px;
+                vertical-align: middle;
+              }
+              .el-input {
+                margin-left: 2%;
+                width: 98%;
+                .el-input__inner {
+                  height: 30px;
+                  border: none;
+                  background-color: rgba(0, 0, 0, 0);
+                  text-align: center;
+                }
+              }
+              .warning .el-input__inner {
+                border: 1px solid red;
+              }
+            }
+          }
+        }
+        .ps__scrollbar-y-rail {
+          position: absolute;
+          padding: 0;
+          top: 0;
+          width: 10px;
+          right: 0;
+          box-sizing: border-box;
+          opacity: 0.3;
+          transition: opacity 0.3s;
+          .ps__scrollbar-y {
+            position: relative;
+            border-radius: 0;
+            background-color: #aaa;
+          }
+        }
+        .ps__scrollbar-x-rail {
+          position: absolute;
+          padding: 0;
+          bottom: 0;
           height: 10px;
-          border-radius: 0;
-          background-color: #aaa;
+          right: 0;
+          box-sizing: border-box;
+          opacity: 0.3;
+          transition: opacity 0.3s;
+          .ps__scrollbar-x {
+            position: relative;
+            height: 10px;
+            border-radius: 0;
+            background-color: #aaa;
+          }
         }
-      }
-      &:hover {
-        .ps__scrollbar-y-rail, .ps__scrollbar-x-rail {
-          opacity: 0.6;
+        &:hover {
+          .ps__scrollbar-y-rail, .ps__scrollbar-x-rail {
+            opacity: 0.6;
+          }
         }
       }
     }
