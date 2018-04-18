@@ -313,6 +313,10 @@ export default {
       this.doctorName = '';
       this.startTime = '';
       this.endTime = '';
+
+      this.initDate();
+      this.initMonth();
+
       this.tableData = {};  // 这样在请求返回之前，就不会显示之前的数据
       this.updateFormData();
     }

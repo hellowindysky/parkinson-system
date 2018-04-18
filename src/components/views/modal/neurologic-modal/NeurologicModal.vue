@@ -54,13 +54,21 @@
             <el-input v-else type="textarea" placeholder="请输入备注内容" v-model="copyInfo.remarks" :maxlength="500"></el-input>
           </span>
         </div>
+<<<<<<< HEAD
+=======
+        <div class="seperate-line"></div>
+>>>>>>> 9513ef296dd6bc6cd3dcc6583351baab8ed86b05
         <div class="field" v-if="copyInfo.checkType===3">
           <span class="field-name">
             回拉试验:
           </span>
           <span class="field-input">
             <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.pullTest, 'positiveType')}}</span>
+<<<<<<< HEAD
             <el-select v-else clearable v-model="copyInfo.pullTest">
+=======
+            <el-select v-else v-model="copyInfo.pullTest">
+>>>>>>> 9513ef296dd6bc6cd3dcc6583351baab8ed86b05
               <el-option v-for="option in getOptions('positiveType')" :label="option.name" :value="option.code" :key="option.code"></el-option>
             </el-select>
           </span>
@@ -71,7 +79,55 @@
           </span>
           <span class="field-input">
             <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.sittingBloc, 'positiveType')}}</span>
+<<<<<<< HEAD
             <el-select v-else clearable v-model="copyInfo.sittingBloc">
+=======
+            <el-select v-else v-model="copyInfo.sittingBloc">
+              <el-option v-for="option in getOptions('positiveType')" :label="option.name" :value="option.code" :key="option.code"></el-option>
+            </el-select>
+          </span>
+        </div>
+        <div class="field" v-if="copyInfo.checkType===3">
+          <span class="field-name">
+            面部油脂:
+          </span>
+          <span class="field-input">
+            <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.sittingBloc, 'positiveType')}}</span>
+            <el-select v-else v-model="copyInfo.sittingBloc">
+              <el-option v-for="option in getOptions('positiveType')" :label="option.name" :value="option.code" :key="option.code"></el-option>
+            </el-select>
+          </span>
+        </div>
+        <div class="field" v-if="copyInfo.checkType===3">
+          <span class="field-name">
+            皮肤划痕试验:
+          </span>
+          <span class="field-input">
+            <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.sittingBloc, 'positiveType')}}</span>
+            <el-select v-else v-model="copyInfo.sittingBloc">
+              <el-option v-for="option in getOptions('positiveType')" :label="option.name" :value="option.code" :key="option.code"></el-option>
+            </el-select>
+          </span>
+        </div>
+        <div class="field" v-if="copyInfo.checkType===3">
+          <span class="field-name">
+            立毛反射:
+          </span>
+          <span class="field-input">
+            <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.sittingBloc, 'positiveType')}}</span>
+            <el-select v-else v-model="copyInfo.sittingBloc">
+              <el-option v-for="option in getOptions('positiveType')" :label="option.name" :value="option.code" :key="option.code"></el-option>
+            </el-select>
+          </span>
+        </div>
+        <div class="field" v-if="copyInfo.checkType===3">
+          <span class="field-name">
+            直立倾斜试验:
+          </span>
+          <span class="field-input">
+            <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.sittingBloc, 'positiveType')}}</span>
+            <el-select v-else v-model="copyInfo.sittingBloc">
+>>>>>>> 9513ef296dd6bc6cd3dcc6583351baab8ed86b05
               <el-option v-for="option in getOptions('positiveType')" :label="option.name" :value="option.code" :key="option.code"></el-option>
             </el-select>
           </span>
@@ -608,9 +664,18 @@ export default {
         position: relative;
         width: 50%;
         min-height: 45px;
+<<<<<<< HEAD
         vertical-align: top;
         text-align: left;
         transform: translateX(20px);
+=======
+        line-height: 25px;
+        font-size: @normal-font-size;
+        box-sizing: border-box;
+        vertical-align: top;
+        text-align: left;
+        transform: translate3d(10px, 5px, 0); // 这一行是为了修补视觉上的偏移
+>>>>>>> 9513ef296dd6bc6cd3dcc6583351baab8ed86b05
         &.whole-line {
           width: 100%;
           .field-input {
@@ -624,7 +689,11 @@ export default {
           left: 0;
           width: @field-name-width;
           line-height: @field-line-height;
+<<<<<<< HEAD
           font-size: @normal-font-size;
+=======
+          // font-size: @normal-font-size;
+>>>>>>> 9513ef296dd6bc6cd3dcc6583351baab8ed86b05
           color: @font-color;
           .required-mark {
             color: red;
@@ -655,6 +724,7 @@ export default {
               border: none;
               background-color: @screen-color;
             }
+<<<<<<< HEAD
           }
           .el-textarea {
             margin-bottom: 15px;
@@ -667,6 +737,20 @@ export default {
               border: 1px solid red;
             }
           }
+=======
+          }
+          .el-textarea {
+            margin-bottom: 15px;
+            transform: translateY(-3px);
+            .el-textarea__inner {
+              border: none;
+              background-color: @screen-color;
+            }
+            &.warning {
+              border: 1px solid red;
+            }
+          }
+>>>>>>> 9513ef296dd6bc6cd3dcc6583351baab8ed86b05
           .el-select {
             width: 100%;
           }
