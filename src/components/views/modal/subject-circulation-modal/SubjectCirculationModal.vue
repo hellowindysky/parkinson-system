@@ -5,8 +5,32 @@
       <div class="content">
 
         <div class="field whole-line">
+          <span class="field-name long-field-name">经研究后存在不适合加入研究的情况</span>
+          <span class="field-input long-field-name">
+            <el-switch v-model="readyToEndExperiment" on-color="#3c485a"
+              off-color="" on-text="" off-text="">
+            </el-switch>
+          </span>
+        </div>
+
+        <div class="field whole-line" v-if="readyToEndExperiment">
+          <span class="field-name long-field-name">
+            是否不适合加入研究情况:
+            <span class="required-mark">*</span>
+          </span>
+          <span class="field-input long-field-name">
+            <span class="warning-text">{{warningResults.suitableForResearch}}</span>
+            <el-select v-model="copyInfo.suitableForResearch" placeholder="请选择"
+              :class="{'warning': warningResults.suitableForResearch}" clearable >
+              <el-option :label="'是'" :value="0"></el-option>
+              <el-option :label="'否'" :value="1"></el-option>
+            </el-select>
+          </span>
+        </div>
+
+        <div class="field whole-line" v-if="!readyToEndExperiment">
           <span class="field-name">
-            下一节点：
+            下一节点:
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -14,7 +38,8 @@
           </span>
           <span class="field-input" v-else>
             <span class="warning-text">{{warningResults.step}}</span>
-            <el-select v-model="copyInfo.step" placeholder="请选择课题节点" :class="{'warning': warningResults.step}" clearable >
+            <el-select v-model="copyInfo.step" placeholder="请选择课题节点"
+              :class="{'warning': warningResults.step}" clearable >
               <el-option :label="'筛选入组（V0）'" :value="0"></el-option>
               <el-option :label="'基线评估（V1）'" :value="1"></el-option>
               <el-option :label="'随访（V2）'" :value="2"></el-option>
@@ -27,9 +52,9 @@
           </span>
         </div>
 
-        <div class="field whole-line">
+        <div class="field whole-line" v-if="!readyToEndExperiment">
           <span class="field-name">
-            开始时间：
+            开始时间:
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -45,15 +70,15 @@
           </span>
         </div>
 
-        <div class="field whole-line">
-          <span class="field-name long-field-name">
-            距上次随访天数：
+        <div class="field whole-line" v-if="!readyToEndExperiment">
+          <span class="field-name">
+            距上次随访天数:
             <span class="required-mark">*</span>
           </span>
-          <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             {{copyInfo.lastDay}}
           </span>
-          <span class="field-input long-field-name" v-else>
+          <span class="field-input" v-else>
             <span class="warning-text">{{warningResults.lastDay}}</span>
             <el-input
               v-model="copyInfo.lastDay"
@@ -66,7 +91,7 @@
 
         <div class="field whole-line">
           <span class="field-name">
-            是否超窗：
+            是否超窗:
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -81,7 +106,7 @@
 
         <div class="field whole-line" v-if="copyInfo.exceedTime===1">
           <span class="field-name">
-            超窗原因：
+            超窗原因:
             <!-- <span class="required-mark">*</span> -->
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -101,7 +126,7 @@
 
         <div class="field whole-line">
           <span class="field-name">
-            处理意见：
+            处理意见:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             {{copyInfo.remark}}
@@ -120,9 +145,12 @@
       </div>
 
       <div class="seperate-line"></div>
-      <div class="button cancel-button">取消</div>
-      <div v-if="mode!==VIEW_CURRENT_CARD" class="button submit-button">确定</div>
-      <div v-else-if="mode===VIEW_CURRENT_CARD && canEdit" class="button submit-button btn-margin">编辑</div>
+      <div class="button cancel-button" @click="cancel">取消</div>
+      <div v-if="mode!==VIEW_CURRENT_CARD && !readyToEndExperiment"
+        class="button submit-button">确定</div>
+      <div v-else-if="mode!==VIEW_CURRENT_CARD && readyToEndExperiment"
+        class="button submit-button">结束实验</div>
+      <div v-else-if="mode===VIEW_CURRENT_CARD" class="button submit-button">编辑</div>
 
     </div>
   </div>
@@ -130,25 +158,33 @@
 
 <script>
 import Ps from 'perfect-scrollbar';
+import Bus from 'utils/bus';
+
 export default {
   data() {
     return {
       mode: '',
+      readyToEndExperiment: false,
       copyInfo: {
         step: '',
         startDate: '',
         lastDay: '',
-        exceedTime: ''
+        exceedTime: '',
+        suitableForResearch: ''
       },
       warningResults: {
-        step: '必填项',
-        startDate: '必填项',
-        lastDay: '必填项',
-        exceedTime: '必填项'
+        step: '',
+        startDate: '',
+        lastDay: '',
+        exceedTime: '',
+        suitableForResearch: ''
       }
     };
   },
   methods: {
+    showModal(a, b, c) {
+      console.log(a, b, c);
+    },
     updateScrollbar() {
       this.$nextTick(() => {
         Ps.destroy(this.$refs.scrollArea);
@@ -158,10 +194,29 @@ export default {
           suppressScrollX: true
         });
       });
+    },
+    cancel() {
+      this.lockSubmitButton = false;
+      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
     }
   },
   mounted() {
+    // 先在本组件注册该事件，等待Layout组件接收动态组件挂载完毕的通知，再在本组件执行 showPanel 或 showModal
+    Bus.$on(this.SHOW_SUBJECT_CIRCULATION_MODAL, this.showModal);
+
+    // 动态组件挂载完毕，通知Layout组件，动态组件已挂载完毕
+    Bus.$emit(this.DYNAMIC_COMPONENT_MOUNTED);
+    // this.updateScrollbar();
+
     this.updateScrollbar();
+  },
+  beforeDestroy() {
+    Bus.$off(this.SHOW_SUBJECT_CIRCULATION_MODAL);
+  },
+  watch: {
+    '$route.path'() {
+      this.cancel();
+    }
   }
 };
 </script>
@@ -170,8 +225,8 @@ export default {
 @import "~styles/variables.less";
 
 @field-line-height: 25px;
-@field-name-width: 100px;
-@long-field-name-width: 140px;
+@field-name-width: 120px;
+@long-field-name-width: 250px;
 
 .subject-circulation-modal-wrapper {
   position: absolute;
@@ -186,7 +241,7 @@ export default {
     margin: auto;
     padding: 0 40px;
     top: 10%;
-    width: 600px;
+    width: 500px;
     max-height: 80%;
     background-color: @background-color;
     overflow: hidden;
@@ -315,9 +370,6 @@ export default {
       }
       &:active {
         opacity: 0.9;
-      }
-      &.btn-margin {
-        margin-top: 10px;
       }
     }
     .ps__scrollbar-y-rail {

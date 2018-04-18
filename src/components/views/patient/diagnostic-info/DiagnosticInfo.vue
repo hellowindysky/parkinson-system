@@ -4,7 +4,8 @@
       v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit" v-on:addNewCard="addRecord"
       v-on:updateFilterCondition="changeFilterCondition" :editable="canEdit">
       <card class="card" :class="cardClass" :mode="mode" v-for="item in patientCaseList" :key="item.patientCaseId"
-        :title="item.caseName" :disable-delete="checkIfDisabledToDelete(item)" v-on:editCurrentCard="seeDetail(item)" v-on:deleteCurrentCard="deleteRecord(item)"
+        :title="item.caseName" :disable-delete="checkIfDisabledToDelete(item)" v-on:editCurrentCard="seeDetail(item)"
+        v-on:deleteCurrentCard="deleteRecord(item)"
         v-show="passFilter(item)" v-on:viewCurrentCard="seeDetail(item)">
         <div class="text first-line">诊断内容</div>
         <div class="text second-line">{{getDiagnosticContent(item)}}</div>
@@ -61,6 +62,9 @@ export default {
     inSubject() {
       return this.$store.state.subjectId !== this.SUBJECT_ID_FOR_HOSPITAL;
     },
+    hospitalType() {
+      return this.$store.state.hospitalType;
+    },
     title() {
       return '看诊记录（' + this.patientCaseList.length + '条记录）';
     },
@@ -77,12 +81,16 @@ export default {
       return this.patientInfo.patientCurrentStage !== undefined ? Number(this.patientInfo.patientCurrentStage) : this.EXPERIMENT_STEP_OUT;
     },
     canEdit() {
-      if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_OUT && this.listType === this.MY_PATIENTS_TYPE) {
+      if (this.hospitalType === 2) {
+        // 如果是北京医院的实验流程，这里的可编辑状态不受 listType 的影响
+        return true;
+
+      } else if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_OUT && this.listType === this.MY_PATIENTS_TYPE) {
         // 如果患者不处于实验期，只有所属医生在“我的患者”下才能 添加／删除 诊断卡片
         return true;
 
       } else if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_SCREENING && this.listType === this.APPRAISERS_PATIENTS_TYPE) {
-        // 如果患者处于筛选期，只有评估者才能 添加／删除 诊断卡片
+        // 如果患者处于基线评估阶段，只有评估者才能 添加／删除 诊断卡片
         return true;
 
       } else if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_THERAPY && this.listType === this.THERAPISTS_PATIENTS_TYPE) {
@@ -168,6 +176,23 @@ export default {
     },
     addRecord() {
       this.routerJumpWithCaseId('newCase');
+      if (this.hospitalType === 2 && this.patientCurrentExperimentStep !== this.EXPERIMENT_STEP_OUT) {
+        if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_FILTERING) {
+          Bus.$on(this.GIVE_UP, () => {
+            Bus.$off(this.GIVE_UP);
+            this.$router.push({name: 'experimentInfo'});
+          });
+          Bus.$emit(this.REQUEST_CONFIRMATION, '提示',
+            '即将添加的诊断信息是否属于当前节点【筛选入组 V0】？如果选择否，将跳转至实验流程界面', '是', '否');
+
+        } else if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_SCREENING) {
+          Bus.$on(this.GIVE_UP, () => {
+            Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'subjectCirculationModal', this.SHOW_SUBJECT_CIRCULATION_MODAL, this.ADD_NEW_CARD, {}, true);
+            Bus.$off(this.GIVE_UP);
+          });
+          Bus.$emit(this.REQUEST_CONFIRMATION, '提示', '即将添加的诊断信息是否属于当前节点【基线评估 V1】？', '是', '否');
+        }
+      }
     },
     checkIfDisabledToDelete(item) {
       // 返回值为 true 时，代表该诊断卡片不允许被删除

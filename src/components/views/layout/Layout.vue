@@ -28,7 +28,6 @@ import sidebar from 'views/side-bar/Sidebar';
 const passwordModal = () => import(/* webpackChunkName: 'modal' */ 'modal/password-modal/PasswordModal');
 const messageModal = () => import(/* webpackChunkName: 'modal' */ 'modal/message-modal/MessageModal');
 const groupModal = () => import(/* webpackChunkName: 'modal' */ 'modal/group-modal/GroupModal');
-const subjectCirculationModal = () => import(/* webpackChunkName: 'modal' */ 'modal/subject-circulation-modal/SubjectCirculationModal');
 
 const modalBox = () => import(/* webpackChunkName: 'personalInfoModal' */ 'modal/modal-box/ModalBox');
 const firstSymptomsModal = () => import(/* webpackChunkName: 'personalInfoModal' */ 'modal/first-symptoms-modal/FirstSymptomsModal');
@@ -63,6 +62,7 @@ const followUpTerminationModal = () => import(/* webpackChunkName: 'experimentMo
 const experimentStepModal = () => import(/* webpackChunkName: 'experimentModal' */ 'modal/experiment-step-modal/ExperimentStepModal');
 const nextExperimentStepModal = () => import(/* webpackChunkName: 'experimentModal' */ 'modal/next-experiment-step-modal/NextExperimentStepModal');
 const endExperimentModal = () => import(/* webpackChunkName: 'experimentModal' */ 'modal/end-experiment-modal/EndExperimentModal');
+const subjectCirculationModal = () => import(/* webpackChunkName: 'experimentModal' */ 'modal/subject-circulation-modal/SubjectCirculationModal');
 
 const filterPanel = () => import(/* webpackChunkName: 'filterPanel' */ 'public/filter-panel/FilterPanel');
 
