@@ -245,6 +245,8 @@ export default {
         }
       } else if (type === 4) {
         let set = new Set(cols);
+        set.delete(undefined);
+        set.delete('');
         total = set.size;
       }
       return total;
@@ -270,7 +272,7 @@ export default {
             this.$set(this.tableBoxStyle, 'marginTop', h1 + 'px');
             this.$set(this.lineWidth, 'width', this.$refs.tbhead.offsetWidth + 'px');
           }
-          this.updateScrollbar();
+          // this.updateScrollbar();
         });
       },
       deep: true
@@ -285,11 +287,12 @@ export default {
 .custom-table-wrapper{
   width: 100%;
   height:100%;
-  overflow:hidden;
+  // overflow:hidden;
   font-size: @normal-font-size;
   box-sizing: border-box;
   user-select: text;
   position: relative;
+  overflow: auto;
   .table.table-head {
     position: absolute;
     top:0;
