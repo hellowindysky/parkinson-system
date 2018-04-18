@@ -147,23 +147,6 @@
             </el-date-picker>
           </span>
         </div>
-        <div class="field whole-line" v-if="outCome === 3">
-          <span class="field-name">
-            直接死因:
-          </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            {{deathCause}}
-          </span>
-          <span class="field-input" v-else>
-            <el-input
-              v-model="deathCause"
-              type="textarea"
-              :rows="2"
-              :maxlength="500"
-              placeholder="请输入直接死因">
-            </el-input>
-          </span>
-        </div>
         <div class="field" v-if="outCome === 3">
           <span class="field-name">
             死亡时间:
@@ -324,7 +307,6 @@ export default {
       treatmentRelate: '',
       sequela: '',
       disappearTime: '',
-      deathCause: '',
       deathDate: '',
       domesticSituation: '',
       abroadSituation: '',
@@ -403,7 +385,6 @@ export default {
       this.treatmentRelate = item.treatmentRelate ? item.treatmentRelate : '';
       this.sequela = item.sequela ? item.sequela : '';
       this.disappearTime = item.disappearTime ? item.disappearTime : '';
-      this.deathCause = item.deathCause ? item.deathCause : '';
       this.deathDate = item.deathDate ? item.deathDate : '';
       this.domesticSituation = item.domesticSituation ? item.domesticSituation : '';
       this.abroadSituation = item.abroadSituation ? item.abroadSituation : '';
@@ -502,7 +483,6 @@ export default {
       seriousAdverseEventInfo.treatmentRelate = this.treatmentRelate;
       seriousAdverseEventInfo.sequela = this.sequela;
       seriousAdverseEventInfo.disappearTime = this.disappearTime;
-      seriousAdverseEventInfo.deathCause = this.deathCause;
       seriousAdverseEventInfo.deathDate = this.deathDate;
       seriousAdverseEventInfo.domesticSituation = this.domesticSituation;
       seriousAdverseEventInfo.abroadSituation = this.abroadSituation;
