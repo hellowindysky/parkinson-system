@@ -76,7 +76,7 @@ export function agreeEnteringExperiment(experimentInfo, hospitalType) {
 //   return encapsulatePromise(url, request);
 // };
 
-// 结束治疗
+// 结束治疗 以及 随访期流转
 export function completeExperiment(experimentInfo, hospitalType) {
   var request = Object.assign({}, getCommonRequest());
   if (hospitalType !== undefined) {

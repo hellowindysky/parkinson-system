@@ -150,7 +150,7 @@
         class="button submit-button">确定</div>
       <div v-else-if="mode!==VIEW_CURRENT_CARD && readyToEndExperiment"
         class="button submit-button">结束实验</div>
-      <div v-else-if="mode===VIEW_CURRENT_CARD" class="button submit-button">编辑</div>
+      <div v-else-if="mode===VIEW_CURRENT_CARD && showEdit" class="button submit-button">编辑</div>
 
     </div>
   </div>
@@ -164,6 +164,7 @@ export default {
   data() {
     return {
       mode: '',
+      showEdit: true,
       readyToEndExperiment: false,
       copyInfo: {
         step: '',
@@ -182,8 +183,26 @@ export default {
     };
   },
   methods: {
-    showModal(a, b, c) {
-      console.log(a, b, c);
+    showModal(cardOperation, item, showEdit) {
+      this.mode = cardOperation;
+      this.showEdit = showEdit;
+      this.readyToEndExperiment = false;
+
+      for (let property in this.copyInfo) {
+        if (this.copyInfo.hasOwnProperty(property)) {
+          this.copyInfo[property] = '';
+        }
+      }
+      // console.log('item: ', item);
+      this.$nextTick(() => {
+        for (var property in this.warningResults) {
+          if (this.warningResults.hasOwnProperty(property)) {
+            this.warningResults[property] = '';
+          }
+        }
+      });
+
+      // this.updateScrollbar();
     },
     updateScrollbar() {
       this.$nextTick(() => {
