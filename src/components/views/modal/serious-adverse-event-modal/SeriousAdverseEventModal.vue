@@ -212,13 +212,14 @@
               {{section.name}}
             </td>
             <td class="col col-width-10">
-              <el-radio class="radio" v-model="relateEvaluateFlag[index]" label="1" :disabled="mode===VIEW_CURRENT_CARD"></el-radio>
+              <el-radio  v-model="relateEvaluateFlag[index]" label="0" :disabled="mode===VIEW_CURRENT_CARD"></el-radio>
             </td>
             <td class="col col-width-10">
-              <el-radio class="radio" v-model="relateEvaluateFlag[index]" label="0" :disabled="mode===VIEW_CURRENT_CARD"></el-radio>
+              <el-radio  v-model="relateEvaluateFlag[index]" label="1" :disabled="mode===VIEW_CURRENT_CARD"></el-radio>
             </td>
             <td class="col col-width-10">
-              <el-radio class="radio" v-model="relateEvaluateFlag[index]" label="2" :disabled="mode===VIEW_CURRENT_CARD"></el-radio>
+              <span v-if="section.code===1" >/</span>
+              <el-radio v-if="section.code!==1" class="radio"v-model="relateEvaluateFlag[index]" label="2" :disabled="mode===VIEW_CURRENT_CARD"></el-radio>
             </td>
           </tr>
         </table>
