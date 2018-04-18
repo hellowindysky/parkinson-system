@@ -61,7 +61,7 @@
           </span>
           <span class="field-input">
             <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.pullTest, 'positiveType')}}</span>
-            <el-select v-else v-model="copyInfo.pullTest">
+            <el-select v-else clearable v-model="copyInfo.pullTest">
               <el-option v-for="option in getOptions('positiveType')" :label="option.name" :value="option.code" :key="option.code"></el-option>
             </el-select>
           </span>
@@ -72,7 +72,7 @@
           </span>
           <span class="field-input">
             <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.sittingBloc, 'positiveType')}}</span>
-            <el-select v-else v-model="copyInfo.sittingBloc">
+            <el-select v-else clearable v-model="copyInfo.sittingBloc">
               <el-option v-for="option in getOptions('positiveType')" :label="option.name" :value="option.code" :key="option.code"></el-option>
             </el-select>
           </span>
@@ -83,7 +83,7 @@
           </span>
           <span class="field-input">
             <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.sittingBloc, 'positiveType')}}</span>
-            <el-select v-else v-model="copyInfo.sittingBloc">
+            <el-select v-else clearable v-model="copyInfo.sittingBloc">
               <el-option v-for="option in getOptions('positiveType')" :label="option.name" :value="option.code" :key="option.code"></el-option>
             </el-select>
           </span>
@@ -94,7 +94,7 @@
           </span>
           <span class="field-input">
             <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.sittingBloc, 'positiveType')}}</span>
-            <el-select v-else v-model="copyInfo.sittingBloc">
+            <el-select v-else clearable v-model="copyInfo.sittingBloc">
               <el-option v-for="option in getOptions('positiveType')" :label="option.name" :value="option.code" :key="option.code"></el-option>
             </el-select>
           </span>
@@ -105,7 +105,7 @@
           </span>
           <span class="field-input">
             <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.sittingBloc, 'positiveType')}}</span>
-            <el-select v-else v-model="copyInfo.sittingBloc">
+            <el-select v-else clearable v-model="copyInfo.sittingBloc">
               <el-option v-for="option in getOptions('positiveType')" :label="option.name" :value="option.code" :key="option.code"></el-option>
             </el-select>
           </span>
@@ -116,7 +116,7 @@
           </span>
           <span class="field-input">
             <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.sittingBloc, 'positiveType')}}</span>
-            <el-select v-else v-model="copyInfo.sittingBloc">
+            <el-select v-else clearable v-model="copyInfo.sittingBloc">
               <el-option v-for="option in getOptions('positiveType')" :label="option.name" :value="option.code" :key="option.code"></el-option>
             </el-select>
           </span>
@@ -653,12 +653,9 @@ export default {
         position: relative;
         width: 50%;
         min-height: 45px;
-        line-height: 25px;
-        font-size: @normal-font-size;
-        box-sizing: border-box;
         vertical-align: top;
         text-align: left;
-        transform: translate3d(10px, 5px, 0); // 这一行是为了修补视觉上的偏移
+        transform: translateX(20px);
         &.whole-line {
           width: 100%;
           .field-input {
@@ -672,7 +669,7 @@ export default {
           left: 0;
           width: @field-name-width;
           line-height: @field-line-height;
-          // font-size: @normal-font-size;
+          font-size: @normal-font-size;
           color: @font-color;
           .required-mark {
             color: red;
