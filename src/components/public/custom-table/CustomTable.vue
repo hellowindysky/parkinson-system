@@ -34,14 +34,25 @@
       <table class="table">
         <tbody>
           <tr class="row content-row" v-for="(item,index) in tableContentData" :key="'data'+index">
-            <td class="col content-col" v-for="(subItem,tdIndex) in tableTitleKeys" :key="'col'+tdIndex">
+            <td class="col content-col" v-for="(subItem,tdIndex) in tableTitleItems" :key="'col'+tdIndex">
               <div :ref="'td'+index">
-                <span v-if="subItem.length===32&&(item[subItem]===undefined||item[subItem]==='')">
+                <span v-if="subItem.key.length===32 &&
+                  (item[subItem.key]===undefined || item[subItem.key]==='')">
                   0
                 </span>
                 <span v-else>
-                  {{item[subItem]}}
+                  {{item[subItem.key]}}
                 </span>
+              </div>
+            </td>
+          </tr>
+          <tr class="row content-row total-row">
+            <td class="col content-col" v-for="(subItem,tdIndex) in tableTitleItems" :key="'col'+tdIndex">
+              <div v-if="tdIndex===0">
+                合计
+              </div>
+              <div v-else>
+                {{totalLine[subItem.key]}}
               </div>
             </td>
           </tr>
@@ -94,18 +105,31 @@ export default {
       });
       return sub;
     },
-    tableTitleKeys() {
-      let keys = [];
+    tableTitleItems() {
+      let items = [];
       this.tableTitleData.forEach((item) => {
         if (item.subCol && Array.isArray(item.subCol)) {
           item.subCol.forEach((subItem) => {
-            keys.push(subItem.dataKey);
+            items.push({
+              key: subItem.dataKey,
+              type: subItem.dataType
+            });
           });
         } else {
-          keys.push(item.dataKey);
+          items.push({
+            key: item.dataKey,
+            type: item.dataType
+          });
         }
       });
-      return keys;
+      return items;
+    },
+    totalLine() {
+      let totalNumObj = {};
+      for (let item of this.tableTitleItems) {
+        totalNumObj[item.key] = this.getTotalNum(item.key, item.type);
+      }
+      return totalNumObj;
     }
   },
   methods: {
@@ -208,6 +232,22 @@ export default {
       } else {
         return '';
       }
+    },
+    getTotalNum(key, type) {
+      var total = 0;
+      var cols = [];
+      for (let lineData of this.tableContentData) {
+        cols.push(lineData[key]);
+      }
+      if (type === 1) {
+        for (let col of cols) {
+          total += Number(col);
+        }
+      } else if (type === 4) {
+        let set = new Set(cols);
+        total = set.size;
+      }
+      return total;
     }
   },
   mounted() {
@@ -218,9 +258,9 @@ export default {
         this.colStyle = {};
         this.tableContentData = deepCopy(data.data);
         this.$nextTick(() => {
-          this.tableTitleKeys.forEach((item, index) => {
+          this.tableTitleItems.forEach((item, index) => {
             if (this.$refs.td0 && this.$refs.td0[index]) {
-              this.$set(this.colStyle, item, {width: this.$refs.td0[index].offsetWidth + 'px', order: -1});
+              this.$set(this.colStyle, item.key, {width: this.$refs.td0[index].offsetWidth + 'px', order: -1});
             }
           });
           if (this.$refs.tbhead) {
@@ -269,6 +309,10 @@ export default {
       background-color: #fff;
       &.title-row {
         background-color: @font-color;
+        color: #fff;
+      }
+      &.total-row {
+        background-color: @light-font-color;
         color: #fff;
       }
       .col {
