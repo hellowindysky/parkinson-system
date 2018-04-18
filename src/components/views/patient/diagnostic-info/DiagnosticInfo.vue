@@ -179,8 +179,8 @@ export default {
       if (this.hospitalType === 2 && this.patientCurrentExperimentStep !== this.EXPERIMENT_STEP_OUT) {
         if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_FILTERING) {
           Bus.$on(this.GIVE_UP, () => {
-            this.$router.push({name: 'experimentInfo'});
             Bus.$off(this.GIVE_UP);
+            this.$router.push({name: 'experimentInfo'});
           });
           Bus.$emit(this.REQUEST_CONFIRMATION, '提示',
             '即将添加的诊断信息是否属于当前节点【筛选入组 V0】？如果选择否，将跳转至实验流程界面', '是', '否');
