@@ -40,7 +40,6 @@
               是否发生不良事件
             </span>
             <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-              {{tcPatientAdverseOccurance}}
               {{transform(tcPatientAdverseOccurance, 'patientAdverseOccurance')}}
             </span>
             <span class="field-input" v-else>
