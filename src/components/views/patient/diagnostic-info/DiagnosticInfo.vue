@@ -185,12 +185,23 @@ export default {
           Bus.$emit(this.REQUEST_CONFIRMATION, '提示',
             '即将添加的诊断信息是否属于当前节点【筛选入组 V0】？如果选择否，将跳转至实验流程界面', '是', '否');
 
-        } else if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_SCREENING) {
+        } else if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_SCREENING ||
+          parseInt(this.patientCurrentExperimentStep / 10, 10) === parseInt(this.EXPERIMENT_STEP_FOLLOW_UP / 10, 10)) {
           Bus.$on(this.GIVE_UP, () => {
-            Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'subjectCirculationModal', this.SHOW_SUBJECT_CIRCULATION_MODAL, this.ADD_NEW_CARD, {}, true);
+            var info = {
+              patientCurrentExperimentStep: this.patientCurrentExperimentStep
+            };
+            Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'subjectCirculationModal', this.SHOW_SUBJECT_CIRCULATION_MODAL, this.ADD_NEW_CARD, info, true);
             Bus.$off(this.GIVE_UP);
           });
-          Bus.$emit(this.REQUEST_CONFIRMATION, '提示', '即将添加的诊断信息是否属于当前节点【基线评估 V1】？', '是', '否');
+          let nodeText = '';
+          if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_SCREENING) {
+            nodeText = '【基线评估 V1】';
+          } else if (parseInt(this.patientCurrentExperimentStep / 10, 10) === parseInt(this.EXPERIMENT_STEP_FOLLOW_UP / 10, 10)) {
+            let stage = this.patientCurrentExperimentStep % 10;
+            nodeText = '【随访 V' + stage + '】';
+          }
+          Bus.$emit(this.REQUEST_CONFIRMATION, '提示', '即将添加的诊断信息是否属于当前节点' + nodeText + '？', '是', '否');
         }
       }
     },

@@ -8,7 +8,8 @@
           <span class="field-name long-field-name">经研究后存在不适合加入研究的情况</span>
           <span class="field-input long-field-name">
             <el-switch v-model="readyToEndExperiment" on-color="#3c485a"
-              off-color="" on-text="" off-text="">
+              off-color="" on-text="" off-text=""
+              @change="clearWarning">
             </el-switch>
           </span>
         </div>
@@ -21,6 +22,7 @@
           <span class="field-input long-field-name">
             <span class="warning-text">{{warningResults.suitableForResearch}}</span>
             <el-select v-model="copyInfo.suitableForResearch" placeholder="请选择"
+              @change="updateWarning('suitableForResearch')"
               :class="{'warning': warningResults.suitableForResearch}" clearable >
               <el-option :label="'是'" :value="0"></el-option>
               <el-option :label="'否'" :value="1"></el-option>
@@ -39,15 +41,20 @@
           <span class="field-input" v-else>
             <span class="warning-text">{{warningResults.step}}</span>
             <el-select v-model="copyInfo.step" placeholder="请选择课题节点"
+              @change="updateWarning('step')"
               :class="{'warning': warningResults.step}" clearable >
-              <el-option :label="'筛选入组（V0）'" :value="0"></el-option>
-              <el-option :label="'基线评估（V1）'" :value="1"></el-option>
-              <el-option :label="'随访（V2）'" :value="2"></el-option>
-              <el-option :label="'随访（V3）'" :value="3"></el-option>
-              <el-option :label="'随访（V4）'" :value="4"></el-option>
-              <el-option :label="'随访（V5）'" :value="5"></el-option>
-              <el-option :label="'随访（V6）'" :value="6"></el-option>
-              <el-option :label="'随访（V7）'" :value="7"></el-option>
+              <el-option :label="'随访（V2）'" :value="2"
+                v-if="patientCurrentExperimentStep <= 20"></el-option>
+              <el-option :label="'随访（V3）'" :value="3"
+                v-if="patientCurrentExperimentStep <= 42"></el-option>
+              <el-option :label="'随访（V4）'" :value="4"
+                v-if="patientCurrentExperimentStep <= 43"></el-option>
+              <el-option :label="'随访（V5）'" :value="5"
+                v-if="patientCurrentExperimentStep <= 44"></el-option>
+              <el-option :label="'随访（V6）'" :value="6"
+                v-if="patientCurrentExperimentStep <= 45"></el-option>
+              <el-option :label="'随访（V7）'" :value="7"
+                v-if="patientCurrentExperimentStep <= 46"></el-option>
             </el-select>
           </span>
         </div>
@@ -63,9 +70,11 @@
           <span class="field-input" v-else>
             <span class="warning-text">{{warningResults.startDate}}</span>
             <el-date-picker
-             v-model="copyInfo.startDate"
-             :class="{'warning': warningResults.startDate}"
-             placeholder="请选择下次随访时间" clearable>
+              type="datetime"
+              v-model="copyInfo.startDate"
+              :class="{'warning': warningResults.startDate}"
+              @change="updateWarning('startDate')"
+              placeholder="请选择下次随访时间" clearable>
             </el-date-picker>
           </span>
         </div>
@@ -76,14 +85,15 @@
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            {{copyInfo.lastDay}}
+            {{copyInfo.lastTime}}
           </span>
           <span class="field-input" v-else>
-            <span class="warning-text">{{warningResults.lastDay}}</span>
+            <span class="warning-text">{{warningResults.lastTime}}</span>
             <el-input
-              v-model="copyInfo.lastDay"
-              :class="{'warning': warningResults.lastDay}"
+              v-model="copyInfo.lastTime"
+              :class="{'warning': warningResults.lastTime}"
               :maxlength="500"
+              @change="updateWarning('lastTime')"
               placeholder="请输入距上次随访天数">
             </el-input>
           </span>
@@ -99,8 +109,10 @@
           </span>
           <span class="field-input" v-else>
             <span class="warning-text">{{warningResults.exceedTime}}</span>
-            <el-radio class="radio" v-model="copyInfo.exceedTime" :label="1">是</el-radio>
-            <el-radio class="radio" v-model="copyInfo.exceedTime" :label="0">否</el-radio>
+            <el-radio class="radio" v-model="copyInfo.exceedTime" :label="1"
+              @change.native="updateWarning('exceedTime')">是</el-radio>
+            <el-radio class="radio" v-model="copyInfo.exceedTime" :label="0"
+              @change.native="updateWarning('exceedTime')">否</el-radio>
           </span>
         </div>
 
@@ -110,17 +122,17 @@
             <!-- <span class="required-mark">*</span> -->
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            {{copyInfo.reason}}
+            {{copyInfo.exceedReason}}
           </span>
           <span class="field-input" v-else>
             <el-input
-              v-model="copyInfo.reason"
+              v-model="copyInfo.exceedReason"
               type="textarea"
               :rows="2"
               :maxlength="500"
               placeholder="请输入超窗原因">
             </el-input>
-            <!-- <span class="warning-text textarea-warning">{{warningResults.reason}}</span> -->
+            <!-- <span class="warning-text textarea-warning">{{warningResults.exceedReason}}</span> -->
           </span>
         </div>
 
@@ -147,9 +159,9 @@
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
       <div v-if="mode!==VIEW_CURRENT_CARD && !readyToEndExperiment"
-        class="button submit-button">确定</div>
+        class="button submit-button" @click="submit">确定</div>
       <div v-else-if="mode!==VIEW_CURRENT_CARD && readyToEndExperiment"
-        class="button submit-button">结束实验</div>
+        class="button submit-button" @click="submit">结束实验</div>
       <div v-else-if="mode===VIEW_CURRENT_CARD && showEdit" class="button submit-button">编辑</div>
 
     </div>
@@ -159,33 +171,45 @@
 <script>
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus';
+import Util from 'utils/util';
+import { completeExperiment } from 'api/experiment';
 
 export default {
   data() {
     return {
       mode: '',
+      lockSubmitButton: false,
       showEdit: true,
+      patientCurrentExperimentStep: '',
       readyToEndExperiment: false,
       copyInfo: {
         step: '',
         startDate: '',
-        lastDay: '',
+        lastTime: '',
         exceedTime: '',
+        exceedReason: '',
         suitableForResearch: ''
       },
       warningResults: {
         step: '',
         startDate: '',
-        lastDay: '',
+        lastTime: '',
         exceedTime: '',
         suitableForResearch: ''
       }
     };
   },
+  computed: {
+    hospitalType() {
+      return this.$store.state.hospitalType;
+    }
+  },
   methods: {
     showModal(cardOperation, item, showEdit) {
       this.mode = cardOperation;
       this.showEdit = showEdit;
+      this.patientCurrentExperimentStep = item.patientCurrentExperimentStep;
+      console.log(this.patientCurrentExperimentStep);
       this.readyToEndExperiment = false;
 
       for (let property in this.copyInfo) {
@@ -194,13 +218,7 @@ export default {
         }
       }
       // console.log('item: ', item);
-      this.$nextTick(() => {
-        for (var property in this.warningResults) {
-          if (this.warningResults.hasOwnProperty(property)) {
-            this.warningResults[property] = '';
-          }
-        }
-      });
+      this.clearWarning();
 
       // this.updateScrollbar();
     },
@@ -214,9 +232,84 @@ export default {
         });
       });
     },
+    submit() {
+      if (this.lockSubmitButton) {
+        return;
+      }
+      this.lockSubmitButton = true;
+
+      var experimentInfo = {
+        'patientExperimentModel': {
+          'patientId': this.$route.params.id,
+          'tcTaskId': this.$store.state.subjectId
+        }
+      };
+      var patientExperimentModel = experimentInfo.patientExperimentModel;
+      if (!this.readyToEndExperiment) {
+        // 走实验跳转流程
+        experimentInfo.qualified = 0;
+        patientExperimentModel.statusDetail = this.copyInfo.step;
+        patientExperimentModel.startDate = Util.simplifyTime(this.copyInfo.startDate, false);
+        patientExperimentModel.lastTime = this.copyInfo.lastTime;
+        patientExperimentModel.exceedTime = this.copyInfo.exceedTime;
+        if (this.copyInfo.exceedTime === 1) {
+          patientExperimentModel.exceedReason = this.copyInfo.exceedReason;
+        }
+        patientExperimentModel.remark = this.copyInfo.remark;
+
+      } else {
+        // 走结束实验流程
+        experimentInfo.qualified = 1;
+        patientExperimentModel.suitableForResearch = this.copyInfo.suitableForResearch;
+        patientExperimentModel.exceedTime = this.copyInfo.exceedTime;
+        if (this.copyInfo.exceedTime === 1) {
+          patientExperimentModel.exceedReason = this.copyInfo.exceedReason;
+        }
+        patientExperimentModel.remark = this.copyInfo.remark;
+      }
+      completeExperiment(experimentInfo, this.hospitalType).then(this.updateAndClose, this._handleError);
+    },
+    _handleError(error) {
+      console.log(error);
+      if (error.code === 2009) {
+        this.$message({
+          message: '当前操作无法完成，请刷新页面后再试',
+          type: 'error',
+          duration: 2000
+        });
+      }
+      this.lockSubmitButton = false;
+    },
+    updateAndClose() {
+      this.$message({
+        message: '已将该患者移至对应的实验节点',
+        type: 'success',
+        duration: 2000
+      });
+      this.lockSubmitButton = false;
+      Bus.$emit(this.UPDATE_PATIENTS_LIST);
+      Bus.$emit(this.UPDATE_PATIENT_INFO);
+      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
+    },
     cancel() {
       this.lockSubmitButton = false;
       Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
+    },
+    updateWarning(fieldName) {
+      if (this.copyInfo[fieldName] === '') {
+        this.warningResults[fieldName] = '必填项';
+      } else {
+        this.warningResults[fieldName] = '';
+      }
+    },
+    clearWarning() {
+      this.$nextTick(() => {
+        for (var property in this.warningResults) {
+          if (this.warningResults.hasOwnProperty(property)) {
+            this.warningResults[property] = '';
+          }
+        }
+      });
     }
   },
   mounted() {
