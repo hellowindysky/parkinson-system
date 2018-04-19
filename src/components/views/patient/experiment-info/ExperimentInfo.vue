@@ -14,27 +14,29 @@
         开始实验
       </div>
       <div class="button light-blue-button reject-button"
-        v-if="listType===MY_PATIENTS_TYPE && progressList.length>0 && milestoneNum===10 && status===1"
+        v-if="listType===MY_PATIENTS_TYPE && progressList.length>0 &&
+          milestoneNum===EXPERIMENT_STEP_FILTERING && status===1"
         @click="preventFromExperiment">
         排除
       </div>
       <div class="button light-button agree-button"
-        v-if="listType===MY_PATIENTS_TYPE && progressList.length>0 && milestoneNum===10 && status===1"
+        v-if="listType===MY_PATIENTS_TYPE && progressList.length>0 &&
+          milestoneNum===EXPERIMENT_STEP_FILTERING && status===1"
         @click="joinExperiment">
         入组
       </div>
       <div class="button light-button complete-therapy-button"
-        v-if="listType===APPRAISERS_PATIENTS_TYPE && progressList.length>0 && milestoneNum===20"
+        v-if="listType===APPRAISERS_PATIENTS_TYPE && progressList.length>0 && milestoneNum===EXPERIMENT_STEP_SCREENING"
         @click="completeEvaluation">
         课题流转
       </div>
       <div class="button light-button complete-therapy-button"
-        v-if="listType===THERAPISTS_PATIENTS_TYPE && progressList.length>0 && milestoneNum===30"
+        v-if="listType===THERAPISTS_PATIENTS_TYPE && progressList.length>0 && milestoneNum===EXPERIMENT_STEP_THERAPY"
         @click="completeTherapy">
         结束治疗
       </div>
       <div class="button light-button complete-follow-up-button"
-        v-if="listType===APPRAISERS_PATIENTS_TYPE && progressList.length>0 && milestoneNum===40"
+        v-if="listType===APPRAISERS_PATIENTS_TYPE && progressList.length>0 && milestoneNum===EXPERIMENT_STEP_FOLLOW_UP"
         @click="completeFollowUp">
         本期随访结束
       </div>
@@ -181,16 +183,26 @@ export default {
       if (phase && phase.split('.').length > 0) {
         milestoneNum = Number(phase.split('.')[0]);
       }
+      milestoneNum = parseInt(milestoneNum / 10, 10) * 10;
       return milestoneNum;
+    },
+    getMilestoneSubNum(step) {
+      // 对应 hospitalType 为 2 的情况，需要知道到底是 V 几阶段
+      var num = 0;
+      var phase = step.phase;
+      if (phase && phase.split('.').length > 0) {
+        num = Number(phase.split('.')[0]);
+      }
+      return num % 10;
     },
     getMilestone(step, currentIndex) {
       var milestoneNum = this.getMilestoneNum(step);
 
       // 因为存在多个随访期，所以需要知道到底是第几个随访期
-      if (milestoneNum === 40) {
+      if (milestoneNum === this.EXPERIMENT_STEP_FOLLOW_UP) {
         var count = 0;
         for (var i = 0; i <= currentIndex; i++) {
-          if (this.getMilestoneNum(this.progressList[i]) === 40) {
+          if (this.getMilestoneNum(this.progressList[i]) === this.EXPERIMENT_STEP_FOLLOW_UP) {
             count += 1;
           }
         }
@@ -198,24 +210,36 @@ export default {
 
       var resultText = '';
       switch (milestoneNum) {
-        case 10:
+        case this.EXPERIMENT_STEP_FILTERING:
           if (this.hospitalType === 1) {
             resultText = '入组诊断';
           } else if (this.hospitalType === 2) {
-            resultText = '筛选入组';
+            resultText = '筛选入组(V0)';
           }
           break;
-        case 20:
+        case this.EXPERIMENT_STEP_SCREENING:
           resultText = '基线评估';
+          if (this.hospitalType === 2) {
+            resultText += '(V1)';
+          }
           break;
-        case 30:
+        case this.EXPERIMENT_STEP_THERAPY:
           resultText = '治疗期';
           break;
-        case 40:
-          resultText = '随访期' + '(' + count + ')';
+        case this.EXPERIMENT_STEP_FOLLOW_UP:
+          if (this.hospitalType === 1) {
+            resultText = '随访期' + '(' + count + ')';
+          } else if (this.hospitalType === 2) {
+            let subNum = this.getMilestoneSubNum(step);
+            resultText = '随访期(V' + subNum + ')';
+          }
+
           break;
-        case 50:
+        case this.EXPERIMENT_STEP_COMPLETE:
           resultText = '实验结束';
+          if (this.hospitalType === 2) {
+            resultText += '(V8)';
+          }
           break;
         default:
           break;
