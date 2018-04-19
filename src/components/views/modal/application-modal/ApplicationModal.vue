@@ -131,17 +131,17 @@
             <!-- <span class="required-mark">*</span> -->
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            {{reason}}
+            {{exceedReason}}
           </span>
           <span class="field-input" v-else>
             <el-input
-              v-model="reason"
+              v-model="exceedReason"
               type="textarea"
               :rows="2"
               :maxlength="500"
               placeholder="请输入超窗原因">
             </el-input>
-            <!-- <span class="warning-text textarea-warning">{{warningResults.reason}}</span> -->
+            <!-- <span class="warning-text textarea-warning">{{warningResults.exceedReason}}</span> -->
           </span>
         </div>
 
@@ -196,7 +196,7 @@ export default {
       hasCheckedBox: false,
       lastDay: '',
       exceedTime: '',
-      reason: '',
+      exceedReason: '',
       remark: '',
 
       therapistsList: [],
@@ -245,7 +245,7 @@ export default {
       this.appraiser = '';
       this.lastDay = '';
       this.exceedTime = '';
-      this.reason = '';
+      this.exceedReason = '';
       this.remark = '';
       this.hasCheckedBox = false;
       // console.log('item: ', item);
@@ -369,7 +369,7 @@ export default {
       } else if (this.hospitalType === 2) {
         experimentInfo.lastDay = this.lastDay;
         experimentInfo.exceedTime = this.exceedTime;
-        experimentInfo.reason = this.reason;
+        experimentInfo.exceedReason = this.exceedReason;
         experimentInfo.remark = this.remark;
       }
       joinExperiment(experimentInfo).then(this.updateAndClose, this._handleError);
