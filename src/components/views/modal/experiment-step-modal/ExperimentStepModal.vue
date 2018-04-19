@@ -34,6 +34,27 @@
 
         <div v-if="milestoneNum===4">
           <h4 class="sub-title">本期随访总结</h4>
+
+          <div class="field whole-line">
+            <span class="field-name">
+              是否发生不良事件
+            </span>
+            <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+              {{tcPatientAdverseOccurance}}
+              {{transform(tcPatientAdverseOccurance, 'patientAdverseOccurance')}}
+            </span>
+            <span class="field-input" v-else>
+              <el-select v-model="tcPatientAdverseOccurance" clearable placeholder="请选择">
+                <el-option
+                  v-for="item in getOptions('patientAdverseOccurance')"
+                  :key="item.code"
+                  :label="item.name"
+                  :value="item.code">
+                </el-option>
+              </el-select>
+            </span>
+          </div>
+
           <div class="field whole-line">
             <span class="field-name long-field-name">
               随访形式
