@@ -13,7 +13,7 @@
     <choice-panel></choice-panel>
     <confirm-box></confirm-box>
     <notice-box></notice-box>
-    <!-- <subject-circulation-modal></subject-circulation-modal> -->
+    <!-- <end-experiment-modal></end-experiment-modal> -->
     <water-mark></water-mark>
   </div>
 </template>
@@ -61,6 +61,7 @@ const terminationModal = () => import(/* webpackChunkName: 'experimentModal' */ 
 const followUpTerminationModal = () => import(/* webpackChunkName: 'experimentModal' */ 'modal/follow-up-termination-modal/FollowUpTerminationModal');
 const experimentStepModal = () => import(/* webpackChunkName: 'experimentModal' */ 'modal/experiment-step-modal/ExperimentStepModal');
 const nextExperimentStepModal = () => import(/* webpackChunkName: 'experimentModal' */ 'modal/next-experiment-step-modal/NextExperimentStepModal');
+const endExperimentModal = () => import(/* webpackChunkName: 'experimentModal' */ 'modal/end-experiment-modal/EndExperimentModal');
 const subjectCirculationModal = () => import(/* webpackChunkName: 'experimentModal' */ 'modal/subject-circulation-modal/SubjectCirculationModal');
 
 const filterPanel = () => import(/* webpackChunkName: 'filterPanel' */ 'public/filter-panel/FilterPanel');
@@ -120,6 +121,7 @@ export default {
     followUpTerminationModal,
     experimentStepModal,
     nextExperimentStepModal,
+    endExperimentModal,
 
     filterPanel,
     choicePanel,
