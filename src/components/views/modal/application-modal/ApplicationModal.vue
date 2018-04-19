@@ -94,15 +94,15 @@
             <span class="required-mark">*</span>
           </span>
           <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-            {{lastDay}}
+            {{lastTime}}
           </span>
           <span class="field-input long-field-name" v-else>
-            <span class="warning-text">{{warningResults.lastDay}}</span>
+            <span class="warning-text">{{warningResults.lastTime}}</span>
             <el-input
-              v-model="lastDay"
-              :class="{'warning': warningResults.lastDay}"
+              v-model="lastTime"
+              :class="{'warning': warningResults.lastTime}"
               :maxlength="500"
-              @change="updateWarning('lastDay')"
+              @change="updateWarning('lastTime')"
               placeholder="请输入距上次随访天数">
             </el-input>
           </span>
@@ -194,7 +194,7 @@ export default {
       therapist: '',
       appraiser: '',
       hasCheckedBox: false,
-      lastDay: '',
+      lastTime: '',
       exceedTime: '',
       exceedReason: '',
       remark: '',
@@ -206,7 +206,7 @@ export default {
         experimentCode: '',
         therapist: '',
         appraiser: '',
-        lastDay: '',
+        lastTime: '',
         exceedTime: ''
       },
       showEdit: true
@@ -243,7 +243,7 @@ export default {
       this.experimentalGroup = '';
       this.therapist = '';
       this.appraiser = '';
-      this.lastDay = '';
+      this.lastTime = '';
       this.exceedTime = '';
       this.exceedReason = '';
       this.remark = '';
@@ -329,7 +329,7 @@ export default {
             ['experimentCode', 'therapist', 'appraiser'].indexOf(property) >= 0) {
             this.updateWarning(property);
           } else if (this.hospitalType === 2 &&
-            ['experimentCode', 'lastDay', 'exceedTime'].indexOf(property) >= 0) {
+            ['experimentCode', 'lastTime', 'exceedTime'].indexOf(property) >= 0) {
             this.updateWarning(property);
           }
         }
@@ -341,7 +341,7 @@ export default {
             this.lockSubmitButton = false;
             return;
           } else if (this.hospitalType === 2 &&
-            ['experimentCode', 'lastDay', 'exceedTime'].indexOf(property) >= 0) {
+            ['experimentCode', 'lastTime', 'exceedTime'].indexOf(property) >= 0) {
             this.lockSubmitButton = false;
             return;
           }
@@ -367,7 +367,7 @@ export default {
         experimentInfo.remark = this.remark;
 
       } else if (this.hospitalType === 2) {
-        experimentInfo.lastDay = this.lastDay;
+        experimentInfo.lastTime = this.lastTime;
         experimentInfo.exceedTime = this.exceedTime;
         experimentInfo.exceedReason = this.exceedReason;
         experimentInfo.remark = this.remark;
