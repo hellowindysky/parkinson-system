@@ -36,10 +36,10 @@
           <h4 class="sub-title">本期随访总结</h4>
 
           <div class="field whole-line">
-            <span class="field-name">
+            <span class="field-name long-field-name">
               是否发生不良事件
             </span>
-            <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
               {{tcPatientAdverseOccurance}}
               {{transform(tcPatientAdverseOccurance, 'patientAdverseOccurance')}}
             </span>
@@ -215,6 +215,7 @@ export default {
       milestoneNum: '',
       milestoneStatus: '',
       remark: '',
+      tcPatientAdverseOccurance: '',
       followUpType: '',
       followUpComplete: '',
       followUpReason: '',
@@ -252,7 +253,7 @@ export default {
       this.milestoneStatus = this.getStatus(item);
       this.remark = item.remark ? item.remark : '';
 
-      var propertyList = ['followUpType', 'followUpComplete', 'followUpReason',
+      var propertyList = ['tcPatientAdverseOccurance', 'followUpType', 'followUpComplete', 'followUpReason',
         'reasonDetail', 'followUpContinue', 'nextTime'];
       for (let property of propertyList) {
         this[property] = item.followUpModel && item.followUpModel[property] !== undefined
