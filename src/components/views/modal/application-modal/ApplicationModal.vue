@@ -76,7 +76,8 @@
           </span>
           <span class="field-input" v-else>
             <span class="warning-text">{{warningResults.appraiser}}</span>
-            <el-select v-model="appraiser" clearable placeholder="请选择本次实验的评估者" @change="updateWarning('appraiser')"
+            <el-select v-model="appraiser" clearable placeholder="请选择本次实验的评估者"
+              @change="updateWarning('appraiser')"
               :class="{'warning': warningResults.appraiser}">
               <el-option v-for="item in getOptions('appraiser')"
                 :key="item.code"
@@ -86,6 +87,64 @@
             </el-select>
           </span>
         </div>
+
+        <div class="field whole-line" v-if="hospitalType === 2">
+          <span class="field-name long-field-name">
+            距上次随访天数:
+            <span class="required-mark">*</span>
+          </span>
+          <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
+            {{lastDay}}
+          </span>
+          <span class="field-input long-field-name" v-else>
+            <span class="warning-text">{{warningResults.lastDay}}</span>
+            <el-input
+              v-model="lastDay"
+              :class="{'warning': warningResults.lastDay}"
+              :maxlength="500"
+              @change="updateWarning('lastDay')"
+              placeholder="请输入距上次随访天数">
+            </el-input>
+          </span>
+        </div>
+
+        <div class="field whole-line">
+          <span class="field-name">
+            是否超窗:
+            <span class="required-mark">*</span>
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            {{exceedTime}}
+          </span>
+          <span class="field-input" v-else>
+            <span class="warning-text">{{warningResults.exceedTime}}</span>
+            <el-radio class="radio" v-model="exceedTime" :label="1"
+              @change.native="updateWarning('exceedTime')">是</el-radio>
+            <el-radio class="radio" v-model="exceedTime" :label="0"
+              @change.native="updateWarning('exceedTime')">否</el-radio>
+          </span>
+        </div>
+
+        <div class="field whole-line" v-if="exceedTime===1">
+          <span class="field-name">
+            超窗原因:
+            <!-- <span class="required-mark">*</span> -->
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            {{reason}}
+          </span>
+          <span class="field-input" v-else>
+            <el-input
+              v-model="reason"
+              type="textarea"
+              :rows="2"
+              :maxlength="500"
+              placeholder="请输入超窗原因">
+            </el-input>
+            <!-- <span class="warning-text textarea-warning">{{warningResults.reason}}</span> -->
+          </span>
+        </div>
+
         <div class="field whole-line">
           <span class="field-name">
             处理意见
@@ -135,6 +194,9 @@ export default {
       therapist: '',
       appraiser: '',
       hasCheckedBox: false,
+      lastDay: '',
+      exceedTime: '',
+      reason: '',
       remark: '',
 
       therapistsList: [],
@@ -143,7 +205,9 @@ export default {
         // experimentalGroup: '',
         experimentCode: '',
         therapist: '',
-        appraiser: ''
+        appraiser: '',
+        lastDay: '',
+        exceedTime: ''
       },
       showEdit: true
     };
@@ -179,6 +243,9 @@ export default {
       this.experimentalGroup = '';
       this.therapist = '';
       this.appraiser = '';
+      this.lastDay = '';
+      this.exceedTime = '';
+      this.reason = '';
       this.remark = '';
       this.hasCheckedBox = false;
       // console.log('item: ', item);
@@ -258,17 +325,26 @@ export default {
       this.lockSubmitButton = true;
       for (let property in this.warningResults) {
         if (this.warningResults.hasOwnProperty(property)) {
-          if (this.hospitalType === 1) {
+          if (this.hospitalType === 1 &&
+            ['experimentCode', 'therapist', 'appraiser'].indexOf(property) >= 0) {
             this.updateWarning(property);
-          } else if (this.hospitalType === 2 && property === 'experimentCode') {
+          } else if (this.hospitalType === 2 &&
+            ['experimentCode', 'lastDay', 'exceedTime'].indexOf(property) >= 0) {
             this.updateWarning(property);
           }
         }
       }
       for (let property in this.warningResults) {
         if (this.warningResults.hasOwnProperty(property) && this.warningResults[property]) {
-          this.lockSubmitButton = false;
-          return;
+          if (this.hospitalType === 1 &&
+            ['experimentCode', 'therapist', 'appraiser'].indexOf(property) >= 0) {
+            this.lockSubmitButton = false;
+            return;
+          } else if (this.hospitalType === 2 &&
+            ['experimentCode', 'lastDay', 'exceedTime'].indexOf(property) >= 0) {
+            this.lockSubmitButton = false;
+            return;
+          }
         }
       }
       if (this.hospitalType === 1 && !this.hasCheckedBox) {
@@ -281,7 +357,6 @@ export default {
         return;
       }
       var experimentInfo = {
-        'remark': this.remark,
         'patientId': this.$route.params.id,
         'tcTaskId': this.$store.state.subjectId,
         'taskCode': this.experimentCode
@@ -289,6 +364,13 @@ export default {
       if (this.hospitalType === 1) {
         experimentInfo.treaterId = this.therapist;
         experimentInfo.assessorId = this.appraiser;
+        experimentInfo.remark = this.remark;
+
+      } else if (this.hospitalType === 2) {
+        experimentInfo.lastDay = this.lastDay;
+        experimentInfo.exceedTime = this.exceedTime;
+        experimentInfo.reason = this.reason;
+        experimentInfo.remark = this.remark;
       }
       joinExperiment(experimentInfo).then(this.updateAndClose, this._handleError);
     },
@@ -355,6 +437,8 @@ export default {
 @field-line-height: 25px;
 @field-name-width: 110px;
 
+@long-field-name-width: 150px;
+
 .application-modal-wrapper {
   position: absolute;
   left: 0;
@@ -409,6 +493,9 @@ export default {
             font-size: 20px;
             vertical-align: middle;
           }
+          &.long-field-name {
+            width: @long-field-name-width;
+          }
         }
         .field-input {
           display: inline-block;
@@ -418,6 +505,10 @@ export default {
           line-height: @field-line-height;
           font-size: @normal-font-size;
           color: @light-font-color;
+          &.long-field-name {
+            left: @long-field-name-width;
+            width: calc(~"94% - @{long-field-name-width}");
+          }
           .warning-text {
             position: absolute;
             top: 22px;
