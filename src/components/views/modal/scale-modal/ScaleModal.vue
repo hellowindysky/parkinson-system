@@ -572,6 +572,7 @@ export default {
     initPatientScale(item) {
       // 初始化copyInfo对象
       this.copyInfo = {};
+      this.scaleName = '';
       this.$set(this.copyInfo, 'scaleInfoId', '');
       this.$set(this.copyInfo, 'switchType', '');
       this.$set(this.copyInfo, 'inspectTime', '');
