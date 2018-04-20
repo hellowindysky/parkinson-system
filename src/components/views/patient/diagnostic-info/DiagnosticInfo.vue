@@ -176,7 +176,9 @@ export default {
     },
     addRecord() {
       this.routerJumpWithCaseId('newCase');
+
       if (this.hospitalType === 2 && this.patientCurrentExperimentStep !== this.EXPERIMENT_STEP_OUT) {
+
         if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_FILTERING) {
           Bus.$on(this.GIVE_UP, () => {
             Bus.$off(this.GIVE_UP);
@@ -187,21 +189,31 @@ export default {
 
         } else if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_SCREENING ||
           this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_FOLLOW_UP) {
-          Bus.$on(this.GIVE_UP, () => {
-            var info = {
-              patientCurrentExperimentStep: this.patientCurrentExperimentStep
-            };
-            Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'subjectCirculationModal', this.SHOW_SUBJECT_CIRCULATION_MODAL, this.ADD_NEW_CARD, info, true);
-            Bus.$off(this.GIVE_UP);
-          });
+
           let nodeText = '';
+          let stage = '';
+
           if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_SCREENING) {
             nodeText = '【基线评估 V1】';
           } else if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_FOLLOW_UP) {
-            let stage = this.patientCurrentExperimentStage;
+            stage = this.patientCurrentExperimentStage;
             nodeText = '【随访 V' + stage + '】';
           }
-          Bus.$emit(this.REQUEST_CONFIRMATION, '提示', '即将添加的诊断信息是否属于当前节点' + nodeText + '？', '是', '否');
+          if (stage !== 7) {
+            Bus.$on(this.GIVE_UP, () => {
+              var info = {
+                patientCurrentExperimentStep: this.patientCurrentExperimentStep
+              };
+              Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'subjectCirculationModal', this.SHOW_SUBJECT_CIRCULATION_MODAL, this.ADD_NEW_CARD, info, true);
+              Bus.$off(this.GIVE_UP);
+            });
+
+            Bus.$emit(this.REQUEST_CONFIRMATION, '提示', '即将添加的诊断信息是否属于当前节点' + nodeText + '？', '是', '否');
+
+          } else {
+            Bus.$emit(this.NOTICE, '提示', '即将在【随访 V7】节点添加诊断信息，如果需要结束实验，请至【课题记录】界面进行操作');
+          }
+
         }
       }
     },
