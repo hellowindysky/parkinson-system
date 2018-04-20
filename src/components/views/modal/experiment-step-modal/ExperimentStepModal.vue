@@ -167,7 +167,7 @@
           </tbody>
         </table>
 
-        <table class="table" v-if="milestoneNum===20">
+        <table class="table" v-if="milestoneNum===20 && false">
           <thead>
             <tr class="row title-row">
               <th class="col wide-col">排除标准</th>
@@ -250,7 +250,7 @@ export default {
       this.completeInit = false;
       this.mode = cardOperation;
       this.showEdit = showEdit;
-
+      console.log(item);
       this.milestoneNum = this.getMilestoneNum(item);
       this.milestoneStatus = this.getStatus(item);
       this.remark = item.remark ? item.remark : '';
