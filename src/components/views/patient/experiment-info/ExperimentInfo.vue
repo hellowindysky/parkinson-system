@@ -2,10 +2,12 @@
   <div class="experiment-info">
     <div class="top-bar">
       <span class="title">实验流程</span>
-      <span v-if="milestoneNum > 20" class="info-text">
+      <span v-if="showExperimentInfo" class="info-text">
         实验方式 <span class="value experiment-mode">{{experimentModeText}}</span>
-        治疗者 <span class="value therapist">{{therapist}}</span>
-        评估者 <span class="value appraiser">{{appraiser}}</span>
+        <span v-if="hospitalType !== 2">
+          治疗者 <span class="value therapist">{{therapist}}</span>
+          评估者 <span class="value appraiser">{{appraiser}}</span>
+        </span>
         实验编号 <span class="value experiment-number">{{experimentNumber}}</span>
       </span>
       <div class="button light-button application-button"
@@ -96,6 +98,13 @@ export default {
     },
     hospitalType() {
       return this.$store.state.hospitalType;
+    },
+    showExperimentInfo() {
+      if (this.hospitalType === 2) {
+        return this.milestoneNum > this.EXPERIMENT_STEP_FILTERING;
+      } else {
+        return this.milestoneNum > this.EXPERIMENT_STEP_SCREENING;
+      }
     },
     notInAnyExperiment() {
       return this.subjectIdForOngoingExperiment === '';
