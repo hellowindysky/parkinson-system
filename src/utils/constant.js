@@ -136,6 +136,7 @@ export default {
   SHOW_REJECTION_MODAL: 'showRejectionModal',
   SHOW_RATIFICATION_MODAL: 'showRatificationModal',
   SHOW_FOLLOW_UP_TERMINATION_MODAL: 'showFollowUpTerminationModal',
+  SHOW_END_EXPERIMENT_MODAL: 'showEndExperimentModal',
   SHOW_TERMINATION_MODAL: 'showTerminationModal',
   SHOW_NEXT_EXPERIMENT_STEP_MODAL: 'showNextExperimentStepModal',
   SHOW_EXPERIMENT_STEP_MODAL: 'showExperimentStepModal',

@@ -19,7 +19,7 @@
         v-if="listType===MY_PATIENTS_TYPE && progressList.length>0 &&
           milestoneNum===EXPERIMENT_STEP_FILTERING && status===1"
         @click="preventFromExperiment">
-        排除
+        {{hospitalType === 2 ? '退回' : '排除'}}
       </div>
       <div class="button light-button agree-button"
         v-if="listType===MY_PATIENTS_TYPE && progressList.length>0 &&
@@ -41,6 +41,17 @@
         v-if="listType===APPRAISERS_PATIENTS_TYPE && progressList.length>0 && milestoneNum===EXPERIMENT_STEP_FOLLOW_UP"
         @click="completeFollowUp">
         本期随访结束
+      </div>
+      <div class="button light-button complete-follow-up-button"
+        v-if="hospitalType===2 && progressList.length>0 && milestoneNum===EXPERIMENT_STEP_FOLLOW_UP &&
+        getStage(progressList[progressList.length - 1]) === 7"
+        @click="completeFollowUp">
+        结束随访
+      </div>
+      <div class="button light-button complete-experiment-button"
+        v-if="hospitalType===2 && progressList.length>0 && milestoneNum===EXPERIMENT_STEP_COMPLETE"
+        @click="completeExperiment">
+        结束实验
       </div>
     </div>
     <div class="content">
@@ -74,7 +85,7 @@
 
 <script>
 import Bus from 'utils/bus';
-import { queryExperimentProgress, startExperiment } from 'api/experiment.js';
+import { queryExperimentProgress, startExperiment, completeFollowUp } from 'api/experiment.js';
 
 export default {
   data() {
@@ -181,7 +192,34 @@ export default {
       Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'terminationModal', this.SHOW_TERMINATION_MODAL, this.ADD_NEW_CARD, {}, true, this.appraiser);
     },
     completeFollowUp() {
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'followUpTerminationModal', this.SHOW_FOLLOW_UP_TERMINATION_MODAL, this.ADD_NEW_CARD, {}, true, this.appraiser);
+      if (this.hospitalType === 2) {
+        Bus.$on(this.CONFIRM, () => {
+          Bus.$off(this.CONFIRM);
+
+          let experimentInfo = {
+            patientExperimentModel: {
+              patientId: this.$route.params.id,
+              tcTaskId: this.subjectId
+            }
+          };
+
+          completeFollowUp(experimentInfo, this.hospitalType).then(() => {
+            this.updateExperimentProgress();
+
+          }, (error) => {
+            console.log(error);
+          });
+        });
+
+        Bus.$emit(this.REQUEST_CONFIRMATION, '提示', '结束随访流程？', '是', '否');
+      } else {
+        Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'followUpTerminationModal', this.SHOW_FOLLOW_UP_TERMINATION_MODAL, this.ADD_NEW_CARD, {}, true, this.appraiser);
+      }
+    },
+    completeExperiment() {
+      if (this.hospitalType === 2) {
+        Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'endExperimentModal', this.SHOW_END_EXPERIMENT_MODAL, this.ADD_NEW_CARD, {}, true);
+      }
     },
     seeDetail(step) {
       Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'experimentStepModal', this.SHOW_EXPERIMENT_STEP_MODAL, this.VIEW_CURRENT_CARD, step, false);
@@ -416,6 +454,10 @@ export default {
         right: 10px;
       }
       &.complete-follow-up-button {
+        right: 10px;
+        width: 100px;
+      }
+      &.complete-experiment-button {
         right: 10px;
         width: 100px;
       }
