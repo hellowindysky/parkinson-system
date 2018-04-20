@@ -359,9 +359,9 @@ export default {
         this.listType === this.THERAPISTS_PATIENTS_TYPE ||
         this.listType === this.APPRAISERS_PATIENTS_TYPE) {
         if (this.$store.state.showSensitiveInfo === false) {
-          return '请输入患者姓名编码';
+          return '请输入患者姓名编码/ID';
         } else {
-          return '请输入姓名/身份证号/手机号';
+          return '姓名/身份证号/手机号/ID';
         }
 
       } else if (this.listType === this.GROUP_TYPE) {
