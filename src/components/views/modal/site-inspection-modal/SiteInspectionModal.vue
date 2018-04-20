@@ -5,297 +5,212 @@
       <div class="content">
         <div class="field whole-line">
           <span class="field-name">
-            不良事件名称:
-            <span class="required-mark">*</span>
+            一般情况:
+          </span>
+          <span class="field-radio">
+            <el-radio v-model="relateEvaluateFlag" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="relateEvaluateFlag" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            {{adverseName}}
+            <span>{{''}}</span>
           </span>
-          <span class="field-input" v-else>
-            <span class="warning-text">{{warningResults.adverseName}}</span>
+          <span class="field-input" v-else >
             <el-input
-              v-model="adverseName"
-              :class="{'warning': warningResults.adverseName}"
-              @change="updateWarning('adverseName')"
-              placeholder="请输入不良事件名称">
+              type="textarea"
+              :rows="2"
+              :maxlength="50"
+              placeholder="请输入特征描述"
+              :disabled="relateEvaluateFlag==0">
             </el-input>
           </span>
         </div>
         <div class="field whole-line">
           <span class="field-name">
-            不良事件描述:
-            <span class="required-mark">*</span>
+            皮肤、粘膜:
+          </span>
+          <span class="field-radio">
+            <el-radio v-model="relateEvaluateFlag" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="relateEvaluateFlag" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            {{adverseDescribe}}
-          </span>
-          <span class="field-input" v-else>
-            <span class="warning-text event-text">{{warningResults.adverseDescribe}}</span>
-            <el-input
-              v-model="adverseDescribe"
-              :class="{'warning': warningResults.adverseDescribe}"
-              type="textarea"
-              :rows="2"
-              :maxlength="500"
-              @change="updateWarning('adverseDescribe')"
-              placeholder="请输入不良事件描述">
-            </el-input>
-          </span>
-        </div>
-        <div class="field">
-          <span class="field-name">
-            发生时间:
-            <span class="required-mark">*</span>
-          </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{occurTime}}</span>
-          </span>
-          <span class="field-input" v-else>
-            <span class="warning-text">{{warningResults.occurTime}}</span>
-            <el-date-picker
-              v-model="occurTime"
-              :class="{'warning': warningResults.occurTime}"
-              type="datetime"
-              placeholder="请选择发生时间"
-              :picker-options="pickerOptions"
-              @change="updateWarning('occurTime')">
-            </el-date-picker>
-          </span>
-        </div>
-         <div class="field">
-          <span class="field-name">
-            结束时间:
-          </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{endTime}}</span>
-          </span>
-          <span class="field-input" v-else>
-            <el-date-picker
-              v-model="endTime"
-              type="datetime"
-              placeholder="请选择结束时间"
-              :picker-options="pickerOptions"
-              @change="updateWarning('endTime')">
-            </el-date-picker>
-          </span>
-        </div>
-        <div class="field">
-          <span class="field-name">
-            实验编号:
-          </span>
-          <span class="field-input">
-            {{patientTaskCode}}
-          </span>
-        </div>
-        <div class="field">
-          <span class="field-name">
-           不良事件程度:
-          </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{transform(severity,'adverseSeverity')}}</span>
-          </span>
-          <span class="field-input" v-else>
-            <el-select v-model="severity" clearable placeholder="请选择">
-              <el-option
-                v-for="item in getOptions('adverseSeverity')"
-                :key="item.code"
-                :label="item.name"
-                :value="item.code">
-              </el-option>
-            </el-select>
-          </span>
-        </div>
-        <div class="field">
-          <span class="field-name">
-           转&nbsp;&nbsp;&nbsp;&nbsp;归:
-          </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{transform(outCome,'outCome')}}</span>
-          </span>
-          <span class="field-input" v-else>
-            <el-select v-model="outCome" clearable placeholder="请选择">
-              <el-option
-                v-for="item in getOptions('outCome')"
-                :key="item.code"
-                :label="item.name"
-                :value="item.code">
-              </el-option>
-            </el-select>
-          </span>
-        </div>
-        <div class="field whole-line" v-show="outCome === 5">
-          <span class="field-name">
-            表&nbsp;&nbsp;&nbsp;&nbsp;现:
-          </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            {{expression}}
+            <span>{{''}}</span>
           </span>
           <span class="field-input" v-else>
             <el-input
-              v-model="expression"
               type="textarea"
               :rows="2"
-              :maxlength="500"
-              placeholder="请输入后遗症表现">
+              :maxlength="50"
+              placeholder="请输入特征描述"
+              :disabled="relateEvaluateFlag==0">
             </el-input>
           </span>
         </div>
-        <div class="field whole-line" v-show="outCome === 6">
+        <div class="field whole-line">
           <span class="field-name">
-            直接死因:
+            浅表淋巴结:
+          </span>
+          <span class="field-radio">
+            <el-radio v-model="relateEvaluateFlag" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="relateEvaluateFlag" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            {{deathCause}}
+            <span>{{''}}</span>
           </span>
           <span class="field-input" v-else>
             <el-input
-              v-model="deathCause"
               type="textarea"
               :rows="2"
-              :maxlength="500"
-              placeholder="请输入直接死因">
+              :maxlength="50"
+              placeholder="请输入特征描述"
+              :disabled="relateEvaluateFlag==0">
             </el-input>
           </span>
         </div>
-        <div class="field" v-show="outCome === 6">
+        <div class="field whole-line">
           <span class="field-name">
-            死亡时间:
+            头部:
+          </span>
+          <span class="field-radio">
+            <el-radio v-model="relateEvaluateFlag" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="relateEvaluateFlag" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{deathDate}}</span>
-          </span>
-          <span class="field-input" v-else>
-            <el-date-picker
-              v-model="deathDate"
-              type="date"
-              placeholder="请选择死亡时间"
-              :picker-options="pickerOptions"
-              @change="updateWarning('deathDate')">
-            </el-date-picker>
-          </span>
-        </div>
-        <div class="field">
-          <span class="field-name">
-           严重不良事件:
-          </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{transform(seriousFlag,'digitYN')}}</span>
-          </span>
-          <span class="field-input" v-else>
-            <el-select v-model="seriousFlag" clearable placeholder="请选择">
-              <el-option
-                v-for="item in getOptions('digitYN')"
-                :key="item.code"
-                :label="item.name"
-                :value="item.code">
-              </el-option>
-            </el-select>
-          </span>
-        </div>
-        <div class="field">
-          <span class="field-name">
-           与研究关联性评价:
-          </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{transform(treatmentRelate,'treatmentRelate')}}</span>
-          </span>
-          <span class="field-input" v-else>
-            <el-select v-model="treatmentRelate" clearable placeholder="请选择">
-              <el-option
-                v-for="item in getOptions('treatmentRelate')"
-                :key="item.code"
-                :label="item.name"
-                :value="item.code">
-              </el-option>
-            </el-select>
-          </span>
-        </div>
-        <div class="field">
-          <span class="field-name">
-           纠正治疗:
-          </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{transform(correctFlag,'digitYN')}}</span>
-          </span>
-          <span class="field-input" v-else>
-            <el-select v-model="correctFlag" clearable placeholder="请选择">
-              <el-option
-                v-for="item in getOptions('digitYN')"
-                :key="item.code"
-                :label="item.name"
-                :value="item.code">
-              </el-option>
-            </el-select>
-          </span>
-        </div>
-        <div class="field whole-line" v-show="correctFlag === 1">
-          <span class="field-name">
-            治疗记录:
-          </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            {{treatRecord}}
+            <span>{{''}}</span>
           </span>
           <span class="field-input" v-else>
             <el-input
-              v-model="treatRecord"
               type="textarea"
               :rows="2"
-              :maxlength="500"
-              placeholder="请输入纠正治疗记录">
+              :maxlength="50"
+              placeholder="请输入特征描述"
+              :disabled="relateEvaluateFlag==0">
             </el-input>
           </span>
         </div>
-        <div class="field">
+        <div class="field whole-line">
           <span class="field-name">
-           因此退出实验:
+            颈部:
+          </span>
+          <span class="field-radio">
+            <el-radio v-model="relateEvaluateFlag" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="relateEvaluateFlag" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{transform(exitTestFlag,'digitYN')}}</span>
+            <span>{{''}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-select v-model="exitTestFlag" clearable placeholder="请选择">
-              <el-option
-                v-for="item in getOptions('digitYN')"
-                :key="item.code"
-                :label="item.name"
-                :value="item.code">
-              </el-option>
-            </el-select>
+            <el-input
+              type="textarea"
+              :rows="2"
+              :maxlength="50"
+              placeholder="请输入特征描述"
+              :disabled="relateEvaluateFlag==0">
+            </el-input>
           </span>
         </div>
-        <div class="field">
+        <div class="field whole-line">
           <span class="field-name">
-           是否揭盲:
+            胸部:
+          </span>
+          <span class="field-radio">
+            <el-radio v-model="relateEvaluateFlag" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="relateEvaluateFlag" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{transform(unblindFlag,'digitYN')}}</span>
+            <span>{{''}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-select v-model="unblindFlag" clearable placeholder="请选择">
-              <el-option
-                v-for="item in getOptions('digitYN')"
-                :key="item.code"
-                :label="item.name"
-                :value="item.code">
-              </el-option>
-            </el-select>
+            <el-input
+              type="textarea"
+              :rows="2"
+              :maxlength="50"
+              placeholder="请输入特征描述"
+              :disabled="relateEvaluateFlag==0">
+            </el-input>
           </span>
         </div>
-        <div class="field" v-show="unblindFlag === 1">
+        <div class="field whole-line">
           <span class="field-name">
-            揭盲日期:
+            心脏:
+          </span>
+          <span class="field-radio">
+            <el-radio v-model="relateEvaluateFlag" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="relateEvaluateFlag" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{unblindDate}}</span>
+            <span>{{''}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-date-picker
-              v-model="unblindDate"
-              type="date"
-              placeholder="请选择揭盲日期"
-              :picker-options="pickerOptions"
-              @change="updateWarning('unblindDate')">
-            </el-date-picker>
+            <el-input
+              type="textarea"
+              :rows="2"
+              :maxlength="50"
+              placeholder="请输入特征描述"
+              :disabled="relateEvaluateFlag==0">
+            </el-input>
+          </span>
+        </div>
+        <div class="field whole-line">
+          <span class="field-name">
+            腹部:
+          </span>
+          <span class="field-radio">
+            <el-radio v-model="relateEvaluateFlag" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="relateEvaluateFlag" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span>{{''}}</span>
+          </span>
+          <span class="field-input" v-else>
+            <el-input
+              type="textarea"
+              :rows="2"
+              :maxlength="50"
+              placeholder="请输入特征描述"
+              :disabled="relateEvaluateFlag==0">
+            </el-input>
+          </span>
+        </div>
+        <div class="field whole-line">
+          <span class="field-name">
+            四肢关节:
+          </span>
+          <span class="field-radio">
+            <el-radio v-model="relateEvaluateFlag" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="relateEvaluateFlag" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span>{{''}}</span>
+          </span>
+          <span class="field-input" v-else>
+            <el-input
+              type="textarea"
+              :rows="2"
+              :maxlength="50"
+              placeholder="请输入特征描述"
+              :disabled="relateEvaluateFlag==0">
+            </el-input>
+          </span>
+        </div>
+        <div class="field whole-line">
+          <span class="field-name">
+            其他:
+          </span>
+          <span class="field-radio">
+            <el-radio v-model="relateEvaluateFlag" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="relateEvaluateFlag" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span>{{''}}</span>
+          </span>
+          <span class="field-input" v-else>
+            <el-input
+              type="textarea"
+              :rows="2"
+              :maxlength="50"
+              placeholder="请输入特征描述"
+              :disabled="relateEvaluateFlag==0">
+            </el-input>
           </span>
         </div>
       </div>
@@ -319,32 +234,12 @@ export default {
     return {
       mode: '',
       completeInit: false,
-      patientTaskCode: '',
 
       patientAdverse: '',
       patientAdverseId: '',
-      occurTime: '',
-      endTime: '',
-      unblindDate: '',
-      correctFlag: '',
-      outCome: '',
-      expression: '',
-      treatRecord: '',
-      exitTestFlag: '',
-      unblindFlag: '',
-      treatmentRelate: '',
-      deathCause: '',
-      deathDate: '',
-      seriousFlag: '',
+      relateEvaluateFlag: '0',
 
-      adverseName: '',
-      adverseDescribe: '',
-      severity: '',
-      warningResults: {
-        occurTime: '',
-        adverseName: '',
-        adverseDescribe: ''
-      },
+
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now();
@@ -370,15 +265,6 @@ export default {
       this.completeInit = false;
       this.mode = cardOperation;
       this.showEdit = showEdit;
-       // 获取患者的 实验编号
-      this.patientTaskCode = '';
-      getPatientSimpleInfo(this.$route.params.id).then((data) => {
-        if (data.patientInfo && data.patientInfo.patientTaskCode) {
-          this.patientTaskCode = data.patientInfo.patientTaskCode;
-        }
-      }, (error) => {
-        console.log(error);
-      });
 
       this.$nextTick(() => {
         this.$refs.scrollArea.scrollTop = 0;
@@ -389,22 +275,7 @@ export default {
         }
       });
       this.patientAdverseId = item.patientAdverseId ? item.patientAdverseId : '';
-      this.occurTime = item.occurTime ? item.occurTime : '';
-      this.endTime = item.endTime ? item.endTime : '';
-      this.unblindDate = item.unblindDate ? item.unblindDate : '';
-      this.outCome = item.outCome ? item.outCome : '';
-      this.expression = item.expression ? item.expression : '';
-      this.correctFlag = item.correctFlag ;
-      this.treatRecord = item.treatRecord ? item.treatRecord : '';
-      this.exitTestFlag = item.exitTestFlag ;
-      this.unblindFlag = item.unblindFlag ;
-      this.treatmentRelate = item.treatmentRelate ? item.treatmentRelate : '';
-      this.deathCause = item.deathCause ? item.deathCause : '';
-      this.deathDate = item.deathDate ? item.deathDate : '';
-      this.seriousFlag = item.seriousFlag ;
-      this.adverseName = item.adverseName ? item.adverseName : '';
-      this.adverseDescribe = item.adverseDescribe ? item.adverseDescribe : '';
-      this.severity = item.severity ? item.severity : '';
+      this.relateEvaluateFlag = item.relateEvaluateFlag ? item.relateEvaluateFlag.split('') : [];
 
       this.completeInit = true;
       this.updateScrollbar();
@@ -475,22 +346,7 @@ export default {
       var adverseEventInfo = {};
       adverseEventInfo.patientId = this.$route.params.id;
       adverseEventInfo.patientCaseId = this.$route.params.caseId;
-      adverseEventInfo.occurTime = this.occurTime;
-      adverseEventInfo.endTime = this.endTime;
-      adverseEventInfo.unblindDate = this.unblindDate;
-      adverseEventInfo.outCome = this.outCome;
-      adverseEventInfo.expression = this.expression;
-      adverseEventInfo.correctFlag = this.correctFlag;
-      adverseEventInfo.treatRecord = this.treatRecord;
-      adverseEventInfo.exitTestFlag = this.exitTestFlag;
-      adverseEventInfo.unblindFlag = this.unblindFlag;
-      adverseEventInfo.treatmentRelate = this.treatmentRelate;
-      adverseEventInfo.deathCause = this.deathCause;
-      adverseEventInfo.deathDate = this.deathDate;
-      adverseEventInfo.seriousFlag = this.seriousFlag;
-      adverseEventInfo.adverseName = this.adverseName;
-      adverseEventInfo.adverseDescribe = this.adverseDescribe;
-      adverseEventInfo.severity = this.severity;
+      adverseEventInfo.relateEvaluateFlag = this.relateEvaluateFlag.join('');
 
       adverseEventInfo.occurTime = Util.simplifyTime(adverseEventInfo.occurTime, true);
       adverseEventInfo.endTime = Util.simplifyTime(adverseEventInfo.endTime, true);
@@ -627,7 +483,7 @@ export default {
         .field-name {
           display: inline-block;
           position: absolute;
-          top: 0;
+          top: 10px;
           left: 0;
           width: @field-name-width;
           line-height: 25px;
@@ -668,9 +524,10 @@ export default {
             }
           }
           .el-textarea {
+            width: 80%;
             margin-bottom: 14px;
             vertical-align: middle;
-            transform: translateY(-3px);
+            transform: translateY(-5px);
             .el-textarea__inner {
               border: none;
               background-color: @screen-color;
@@ -687,104 +544,18 @@ export default {
             border: 1px solid red;
           }
         }
+        .field-radio {
+          display: inline-block;
+          position: relative;
+          left: 100px;
+          line-height: @field-line-height;
+          font-size: @normal-font-size;
+          color: @light-font-color;
+          transform: translateY(-10px);
+        }
       }
       .excursion {
         margin-bottom: -4px;
-      }
-      .table {
-        margin: 10px 20px;
-        width: 100%;
-        border: 1px solid @light-gray-color;
-        border-collapse: collapse;
-        text-align: center;
-        .row {
-          height: 35px;
-          font-size: @normal-font-size;
-          &.title-row {
-            background-color: @font-color;
-            color: #fff;
-          }
-          .col {
-            position: relative;
-            width: 10%;
-            border: 1px solid @light-gray-color;
-            .required-mark {
-              position: absolute;
-              right: 0px;
-              top: 8px;
-              color: red;
-              font-size: 25px;
-              vertical-align: middle;
-            }
-            &.title-col {
-              background-color: @font-color;
-              color: #fff;
-            }
-            &.computed-cell {
-              background-color: @computed-cell-color;
-              &.warning {
-                background-color: @alert-color;
-                color: #fff;
-              }
-              .warning-text {
-                position: absolute;
-                top: 35px;
-                left: 0;
-                color: @alert-color;
-                font-size: @small-font-size;
-              }
-            }
-            &.wide-col {
-              width: 30%;
-            }
-            &.narrow-col {
-              width: 5%;
-            }
-            .el-input {
-              width: 100%;
-              &.warning {
-                margin: -1px;
-                border: 1px solid red;
-              }
-              .el-input__inner {
-                padding: 0;
-                border: none;
-                text-align: center;
-              }
-              .el-input__icon {
-                &.el-icon-date {
-                  width: 12px;
-                  height: 12px;
-                  padding: 0 0 18px 10px;
-                  opacity: 0.3;
-                }
-                &.el-icon-close {
-                  width: 12px;
-                  height: 12px;
-                  padding: 0 0 18px 10px;
-                  color: @alert-color;
-                }
-              }
-              &.is-disabled {
-                .el-input__inner {
-                  background-color: rgba(0,0,0,0);
-                  color: @font-color;
-                }
-                .el-input__icon {
-                  display: none;
-                }
-              }
-            }
-            .el-select {
-              &.warning {
-                .el-input {
-                  margin: -1px;
-                  border: 1px solid red;
-                }
-              }
-            }
-          }
-        }
       }
     }
     .seperate-line {
