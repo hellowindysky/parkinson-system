@@ -209,7 +209,6 @@ export default {
       this.mode = cardOperation;
       this.showEdit = showEdit;
       this.patientCurrentExperimentStep = item.patientCurrentExperimentStep;
-      console.log(this.patientCurrentExperimentStep);
       this.readyToEndExperiment = false;
 
       for (let property in this.copyInfo) {
