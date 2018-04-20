@@ -35,7 +35,8 @@
                 <el-button>{{group.groupName}}</el-button>
               </el-tooltip>
             </span>
-            <span class="iconfont icon-group" @click="toggleGroupPanel"></span>
+            <span class="iconfont icon-group" v-if="listType!==OTHER_PATIENTS_TYPE"
+              @click="toggleGroupPanel"></span>
           </span>
         </div>
         <div class="info whole-line" v-show="showProjectTags">
