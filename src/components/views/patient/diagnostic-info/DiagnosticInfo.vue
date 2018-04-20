@@ -186,7 +186,7 @@ export default {
             '即将添加的诊断信息是否属于当前节点【筛选入组 V0】？如果选择否，将跳转至实验流程界面', '是', '否');
 
         } else if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_SCREENING ||
-          parseInt(this.patientCurrentExperimentStep / 10, 10) === parseInt(this.EXPERIMENT_STEP_FOLLOW_UP / 10, 10)) {
+          this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_FOLLOW_UP) {
           Bus.$on(this.GIVE_UP, () => {
             var info = {
               patientCurrentExperimentStep: this.patientCurrentExperimentStep
@@ -197,8 +197,8 @@ export default {
           let nodeText = '';
           if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_SCREENING) {
             nodeText = '【基线评估 V1】';
-          } else if (parseInt(this.patientCurrentExperimentStep / 10, 10) === parseInt(this.EXPERIMENT_STEP_FOLLOW_UP / 10, 10)) {
-            let stage = this.patientCurrentExperimentStep % 10;
+          } else if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_FOLLOW_UP) {
+            let stage = this.patientCurrentExperimentStage;
             nodeText = '【随访 V' + stage + '】';
           }
           Bus.$emit(this.REQUEST_CONFIRMATION, '提示', '即将添加的诊断信息是否属于当前节点' + nodeText + '？', '是', '否');

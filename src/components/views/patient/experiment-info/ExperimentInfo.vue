@@ -221,7 +221,7 @@ export default {
           if (this.hospitalType === 1) {
             resultText = '随访期' + '(' + count + ')';
           } else if (this.hospitalType === 2) {
-            let subNum = count + 1;
+            let subNum = this.getStage(step);
             resultText = '随访期(V' + subNum + ')';
           }
 
@@ -245,6 +245,13 @@ export default {
         if (status !== undefined) {
           return Number(status);
         }
+      }
+      return '';
+    },
+    getStage(step) {
+      var stage = step.stage;
+      if (stage) {
+        return Number(stage);
       }
       return '';
     },
