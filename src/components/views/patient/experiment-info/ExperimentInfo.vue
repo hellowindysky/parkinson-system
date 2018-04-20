@@ -186,15 +186,6 @@ export default {
       milestoneNum = parseInt(milestoneNum / 10, 10) * 10;
       return milestoneNum;
     },
-    getMilestoneSubNum(step) {
-      // 对应 hospitalType 为 2 的情况，需要知道到底是 V 几阶段
-      var num = 0;
-      var phase = step.phase;
-      if (phase && phase.split('.').length > 0) {
-        num = Number(phase.split('.')[0]);
-      }
-      return num % 10;
-    },
     getMilestone(step, currentIndex) {
       var milestoneNum = this.getMilestoneNum(step);
 
@@ -230,7 +221,7 @@ export default {
           if (this.hospitalType === 1) {
             resultText = '随访期' + '(' + count + ')';
           } else if (this.hospitalType === 2) {
-            let subNum = this.getMilestoneSubNum(step);
+            let subNum = count + 1;
             resultText = '随访期(V' + subNum + ')';
           }
 
