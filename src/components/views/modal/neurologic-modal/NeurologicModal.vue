@@ -82,9 +82,9 @@
             面部油脂:
           </span>
           <span class="field-input">
-            <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.sittingBloc, 'positiveType')}}</span>
-            <el-select v-else clearable v-model="copyInfo.sittingBloc">
-              <el-option v-for="(option, index) in getOptions('positiveType')" :label="option.name" :value="option.code" :key="'positiveType'+ index"></el-option>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.facialOil, 'addMoveNormal')}}</span>
+            <el-select v-else clearable v-model="copyInfo.facialOil">
+              <el-option v-for="(option, index) in getOptions('addMoveNormal')" :label="option.name" :value="option.code" :key="'addMoveNormal'+ index"></el-option>
             </el-select>
           </span>
         </div>
@@ -93,9 +93,9 @@
             皮肤划痕试验:
           </span>
           <span class="field-input">
-            <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.sittingBloc, 'positiveType')}}</span>
-            <el-select v-else clearable v-model="copyInfo.sittingBloc">
-              <el-option v-for="(option, index) in getOptions('positiveType')" :label="option.name" :value="option.code" :key="'positiveType'+ index"></el-option>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.skinScratch, 'normalLate')}}</span>
+            <el-select v-else clearable v-model="copyInfo.skinScratch">
+              <el-option v-for="(option, index) in getOptions('normalLate')" :label="option.name" :value="option.code" :key="'normalLate'+ index"></el-option>
             </el-select>
           </span>
         </div>
@@ -104,9 +104,9 @@
             立毛反射:
           </span>
           <span class="field-input">
-            <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.sittingBloc, 'positiveType')}}</span>
-            <el-select v-else clearable v-model="copyInfo.sittingBloc">
-              <el-option v-for="(option, index) in getOptions('positiveType')" :label="option.name" :value="option.code" :key="'positiveType'+ index"></el-option>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.erectReflex, 'unusualNormal')}}</span>
+            <el-select v-else clearable v-model="copyInfo.erectReflex">
+              <el-option v-for="(option, index) in getOptions('unusualNormal')" :label="option.name" :value="option.code" :key="'unusualNormal'+ index"></el-option>
             </el-select>
           </span>
         </div>
@@ -115,9 +115,9 @@
             直立倾斜试验:
           </span>
           <span class="field-input">
-            <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.sittingBloc, 'positiveType')}}</span>
-            <el-select v-else clearable v-model="copyInfo.sittingBloc">
-              <el-option v-for="(option, index) in getOptions('positiveType')" :label="option.name" :value="option.code" :key="'positiveType'+ index"></el-option>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.verticalTilt, 'normalCentralRound')}}</span>
+            <el-select v-else clearable v-model="copyInfo.verticalTilt">
+              <el-option v-for="(option, index) in getOptions('normalCentralRound')" :label="option.name" :value="option.code" :key="'normalCentralRound'+ index"></el-option>
             </el-select>
           </span>
         </div>
@@ -406,7 +406,10 @@ export default {
 
       this.$set(this.copyInfo, 'pullTest', '');
       this.$set(this.copyInfo, 'sittingBloc', '');
-
+      this.$set(this.copyInfo, 'facialOil', '');
+      this.$set(this.copyInfo, 'skinScratch', '');
+      this.$set(this.copyInfo, 'erectReflex', '');
+      this.$set(this.copyInfo, 'verticalTilt', '');
       this.initSubTableData();
     },
     initSubTableData() {
@@ -485,6 +488,11 @@ export default {
       if (submitData.checkType !== 3) {
         delete submitData.pullTest;
         delete submitData.sittingBloc;
+        delete submitData.facialOil;
+        delete submitData.skinScratch;
+        delete submitData.erectReflex;
+        delete submitData.verticalTilt;
+
       } else {
         delete submitData.patientFieldCode;
       }
