@@ -98,10 +98,10 @@
             备注:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{remarks}}</span>
+            <span>{{remark}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-input placeholder="请输入备注" v-model="remarks"
+            <el-input placeholder="请输入备注" v-model="remark"
              :rows="2"
              :maxlength="500"
              type="textarea">
@@ -307,6 +307,7 @@ export default {
       this.temperature = item.temperature ? item.temperature : '';
       this.pulse = item.pulse ? item.pulse : '';
       this.rhythm = item.rhythm;
+      this.remark = item.remark;
       vueCopy(item.patientVitalSignDetail, this.patientVitalSignDetail);
 
       this.$nextTick(() => {
@@ -403,7 +404,7 @@ export default {
       vitalSignsInfo.temperature = this.temperature;
       vitalSignsInfo.pulse = this.pulse;
       vitalSignsInfo.rhythm = this.rhythm;
-      vitalSignsInfo.remarks = this.remarks;
+      vitalSignsInfo.remark = this.remark;
       vitalSignsInfo.patientVitalSignDetail = deepCopy(this.patientVitalSignDetail);
       pruneObj(vitalSignsInfo);
 
