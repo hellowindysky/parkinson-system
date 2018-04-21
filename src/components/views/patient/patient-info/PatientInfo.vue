@@ -6,7 +6,7 @@
       <div class="tab second-tab" :class="{'current-tab': currentTab === 'diagnosticInfo'}"
         @click="chooseDiagnostic" v-if="existed">诊断信息</div>
       <div class="tab third-tab" :class="{'current-tab': currentTab === 'experimentInfo'}"
-        @click="chooseExperiment" v-if="existed && inSubject">实验记录</div>
+        @click="chooseExperiment" v-if="existed && inSubject">{{experimentTitle}}</div>
       <div class="patient-id" :class="{'left-shift': false}" v-if="existed">患者ID: {{patientId}}</div>
       <!-- <div class="button" v-if="existed && listType===MY_PATIENTS_TYPE">导出病历</div> -->
       <div class="tab-bottom-bar" :class="currentTabBottomBar" v-if="this.existed"></div>
@@ -35,7 +35,8 @@
                 <el-button>{{group.groupName}}</el-button>
               </el-tooltip>
             </span>
-            <span class="iconfont icon-group" @click="toggleGroupPanel"></span>
+            <span class="iconfont icon-group" v-if="listType!==OTHER_PATIENTS_TYPE"
+              @click="toggleGroupPanel"></span>
           </span>
         </div>
         <div class="info whole-line" v-show="showProjectTags">
@@ -145,6 +146,16 @@ export default {
     },
     inSubject() {
       return this.$store.state.subjectId !== this.SUBJECT_ID_FOR_HOSPITAL;
+    },
+    hospitalType() {
+      return this.$store.state.hospitalType;
+    },
+    experimentTitle() {
+      if (this.hospitalType === 2) {
+        return '课题记录';
+      } else {
+        return '实验记录';
+      }
     },
     showProjectTags() {
       // 课题标签这一栏的显示取决于:

@@ -307,6 +307,7 @@ export default {
       this.temperature = item.temperature ? item.temperature : '';
       this.pulse = item.pulse ? item.pulse : '';
       this.rhythm = item.rhythm;
+      this.remark = item.remark;
       vueCopy(item.patientVitalSignDetail, this.patientVitalSignDetail);
 
       this.$nextTick(() => {

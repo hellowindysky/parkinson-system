@@ -187,8 +187,8 @@ export default {
 
     let dynamicArr = [];
     // 等待挂载动态组件
-    Bus.$on(this.MOUNT_DYNAMIC_COMPONENT, (componentName, showWhichModal, cardOperation, item, showEdit, heightAndWeight) => {
-      dynamicArr = [showWhichModal, cardOperation, item, showEdit, heightAndWeight];
+    Bus.$on(this.MOUNT_DYNAMIC_COMPONENT, (componentName, showWhichModal, cardOperation, item, showEdit, extraInfo) => {
+      dynamicArr = [showWhichModal, cardOperation, item, showEdit, extraInfo];
       this.componentName = componentName;
     });
     // 等待动态组件完成挂载

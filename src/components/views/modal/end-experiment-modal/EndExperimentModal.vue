@@ -174,7 +174,7 @@
       </div>
 
       <div class="seperate-line"></div>
-      <div class="button cancel-button">取消</div>
+      <div class="button cancel-button" @click="cancel">取消</div>
       <div v-if="mode!==VIEW_CURRENT_CARD" class="button submit-button" @click="submit">确定</div>
       <div v-else-if="mode===VIEW_CURRENT_CARD && canEdit" class="button submit-button btn-margin">编辑</div>
 
@@ -185,7 +185,9 @@
 <script>
 import Util from 'utils/util.js';
 import Ps from 'perfect-scrollbar';
+import Bus from 'utils/bus';
 import { mapGetters } from 'vuex';
+
 export default {
   data() {
     return {
@@ -242,12 +244,10 @@ export default {
       return typeInfo.types ? typeInfo.types : [];
     },
     updateWarning(fieldName) {
-      console.log(this.copyInfo[fieldName]);
       if (this.completeInit && !this.copyInfo[fieldName] && this.copyInfo[fieldName] !== 0) {
         this.warningResults[fieldName] = '必填项';
       } else {
         this.warningResults[fieldName] = '';
-        console.log(1234);
       }
     },
     submit() {
@@ -264,9 +264,19 @@ export default {
       for (let property in this.warningResults) {
         if (this.warningResults.hasOwnProperty(property) && this.warningResults[property]) {
           this.lockSubmitButton = false;
+          this.$message({
+            message: '请完成必填项',
+            type: 'warning',
+            duration: 2000
+          });
           return;
         }
-      };
+      }
+      console.log(this.copyInfo);
+    },
+    cancel() {
+      this.lockSubmitButton = false;
+      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
     },
     updateScrollbar() {
       this.$nextTick(() => {
@@ -280,8 +290,21 @@ export default {
     }
   },
   mounted() {
-    this.showModal();
-    console.log(this.getOptions('factor'));
+    // 先在本组件注册该事件，等待Layout组件接收动态组件挂载完毕的通知，再在本组件执行 showPanel 或 showModal
+    Bus.$on(this.SHOW_END_EXPERIMENT_MODAL, this.showModal);
+
+    // 动态组件挂载完毕，通知Layout组件，动态组件已挂载完毕
+    Bus.$emit(this.DYNAMIC_COMPONENT_MOUNTED);
+
+    this.updateScrollbar();
+  },
+  beforeDestroy() {
+    Bus.$off(this.SHOW_END_EXPERIMENT_MODAL);
+  },
+  watch: {
+    '$route.path'() {
+      this.cancel();
+    }
   }
 };
 </script>

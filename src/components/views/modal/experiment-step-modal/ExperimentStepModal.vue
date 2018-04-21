@@ -34,6 +34,26 @@
 
         <div v-if="milestoneNum===40">
           <h4 class="sub-title">本期随访总结</h4>
+
+          <div class="field whole-line">
+            <span class="field-name long-field-name">
+              是否发生不良事件
+            </span>
+            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
+              {{transform(tcPatientAdverseOccurance, 'patientAdverseOccurance')}}
+            </span>
+            <span class="field-input" v-else>
+              <el-select v-model="tcPatientAdverseOccurance" clearable placeholder="请选择">
+                <el-option
+                  v-for="item in getOptions('patientAdverseOccurance')"
+                  :key="item.code"
+                  :label="item.name"
+                  :value="item.code">
+                </el-option>
+              </el-select>
+            </span>
+          </div>
+
           <div class="field whole-line">
             <span class="field-name long-field-name">
               随访形式
@@ -147,7 +167,7 @@
           </tbody>
         </table>
 
-        <table class="table" v-if="milestoneNum===20">
+        <table class="table" v-if="milestoneNum===20 && false">
           <thead>
             <tr class="row title-row">
               <th class="col wide-col">排除标准</th>
@@ -194,6 +214,7 @@ export default {
       milestoneNum: '',
       milestoneStatus: '',
       remark: '',
+      tcPatientAdverseOccurance: '',
       followUpType: '',
       followUpComplete: '',
       followUpReason: '',
@@ -229,12 +250,12 @@ export default {
       this.completeInit = false;
       this.mode = cardOperation;
       this.showEdit = showEdit;
-
+      console.log(item);
       this.milestoneNum = this.getMilestoneNum(item);
       this.milestoneStatus = this.getStatus(item);
       this.remark = item.remark ? item.remark : '';
 
-      var propertyList = ['followUpType', 'followUpComplete', 'followUpReason',
+      var propertyList = ['tcPatientAdverseOccurance', 'followUpType', 'followUpComplete', 'followUpReason',
         'reasonDetail', 'followUpContinue', 'nextTime'];
       for (let property of propertyList) {
         this[property] = item.followUpModel && item.followUpModel[property] !== undefined

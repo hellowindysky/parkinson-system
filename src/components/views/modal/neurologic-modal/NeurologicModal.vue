@@ -12,7 +12,7 @@
             <span class="warning-text">{{warningResults.checkType}}</span>
             <el-select v-if="mode===ADD_NEW_CARD" clearable placeholder="请选择检查类型" v-model="copyInfo.checkType"
               :class="{'warning': warningResults.checkType}" @change="updateWarning('checkType')">
-              <el-option v-for="type in getOptions('neurologicExam')" :key="type.code"
+              <el-option v-for="(type, index) in getOptions('neurologicExam')" :key="'neurologicExam' + index"
                 :label="type.name" :value="type.code"></el-option>
             </el-select>
             <span v-else>
@@ -62,7 +62,7 @@
           <span class="field-input">
             <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.pullTest, 'positiveType')}}</span>
             <el-select v-else clearable v-model="copyInfo.pullTest">
-              <el-option v-for="option in getOptions('positiveType')" :label="option.name" :value="option.code" :key="option.code"></el-option>
+              <el-option v-for="(option, index) in getOptions('positiveType')" :label="option.name" :value="option.code" :key="'positiveType'+ index"></el-option>
             </el-select>
           </span>
         </div>
@@ -73,7 +73,7 @@
           <span class="field-input">
             <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.sittingBloc, 'positiveType')}}</span>
             <el-select v-else clearable v-model="copyInfo.sittingBloc">
-              <el-option v-for="option in getOptions('positiveType')" :label="option.name" :value="option.code" :key="option.code"></el-option>
+              <el-option v-for="(option, index) in getOptions('positiveType')" :label="option.name" :value="option.code" :key="'positiveType'+ index"></el-option>
             </el-select>
           </span>
         </div>
@@ -82,9 +82,9 @@
             面部油脂:
           </span>
           <span class="field-input">
-            <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.sittingBloc, 'positiveType')}}</span>
-            <el-select v-else clearable v-model="copyInfo.sittingBloc">
-              <el-option v-for="option in getOptions('positiveType')" :label="option.name" :value="option.code" :key="option.code"></el-option>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.facialOil, 'addMoveNormal')}}</span>
+            <el-select v-else clearable v-model="copyInfo.facialOil">
+              <el-option v-for="(option, index) in getOptions('addMoveNormal')" :label="option.name" :value="option.code" :key="'addMoveNormal'+ index"></el-option>
             </el-select>
           </span>
         </div>
@@ -93,9 +93,9 @@
             皮肤划痕试验:
           </span>
           <span class="field-input">
-            <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.sittingBloc, 'positiveType')}}</span>
-            <el-select v-else clearable v-model="copyInfo.sittingBloc">
-              <el-option v-for="option in getOptions('positiveType')" :label="option.name" :value="option.code" :key="option.code"></el-option>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.skinScratch, 'normalLate')}}</span>
+            <el-select v-else clearable v-model="copyInfo.skinScratch">
+              <el-option v-for="(option, index) in getOptions('normalLate')" :label="option.name" :value="option.code" :key="'normalLate'+ index"></el-option>
             </el-select>
           </span>
         </div>
@@ -104,9 +104,9 @@
             立毛反射:
           </span>
           <span class="field-input">
-            <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.sittingBloc, 'positiveType')}}</span>
-            <el-select v-else clearable v-model="copyInfo.sittingBloc">
-              <el-option v-for="option in getOptions('positiveType')" :label="option.name" :value="option.code" :key="option.code"></el-option>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.erectReflex, 'unusualNormal')}}</span>
+            <el-select v-else clearable v-model="copyInfo.erectReflex">
+              <el-option v-for="(option, index) in getOptions('unusualNormal')" :label="option.name" :value="option.code" :key="'unusualNormal'+ index"></el-option>
             </el-select>
           </span>
         </div>
@@ -115,9 +115,9 @@
             直立倾斜试验:
           </span>
           <span class="field-input">
-            <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.sittingBloc, 'positiveType')}}</span>
-            <el-select v-else clearable v-model="copyInfo.sittingBloc">
-              <el-option v-for="option in getOptions('positiveType')" :label="option.name" :value="option.code" :key="option.code"></el-option>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{transform(copyInfo.verticalTilt, 'normalCentralRound')}}</span>
+            <el-select v-else clearable v-model="copyInfo.verticalTilt">
+              <el-option v-for="(option, index) in getOptions('normalCentralRound')" :label="option.name" :value="option.code" :key="'normalCentralRound'+ index"></el-option>
             </el-select>
           </span>
         </div>
@@ -166,7 +166,7 @@
                 </span>
                 <el-input v-else-if="row[0].uiType===1" v-model="copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue"></el-input>
                 <el-select v-else-if="row[0].uiType===3" v-model="copyInfo.patientFieldCode[subTableCode][row[0].id][0].fieldValue">
-                  <el-option v-for="option in getOptions(row[0].fieldEnumId)" :label="option.name" :key="option.code" :value="option.code"></el-option>
+                  <el-option v-for="(option, index) in getOptions(row[0].fieldEnumId)" :label="option.name" :key="'row[0].fieldEnumId'+ index" :value="option.code"></el-option>
                 </el-select>
                 <el-date-picker
                   v-else-if="row[0].uiType===6"
@@ -195,7 +195,7 @@
                 </span>
                 <el-input v-else-if="row[1].uiType===1" v-model="copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue"></el-input>
                 <el-select v-else-if="row[1].uiType===3" v-model="copyInfo.patientFieldCode[subTableCode][row[1].id][0].fieldValue">
-                  <el-option v-for="option in getOptions(row[1].fieldEnumId)" :label="option.name" :key="option.code" :value="option.code"></el-option>
+                  <el-option v-for="option in getOptions(row[1].fieldEnumId)" :label="option.name" :key="'positiveType'+ index" :value="option.code"></el-option>
                 </el-select>
                 <el-date-picker
                   v-else-if="row[1].uiType===6"
@@ -238,9 +238,23 @@
                   {{copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue}}
                 </span>
                 <el-input v-else-if="col.uiType===1" v-model="copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue"></el-input>
+                <el-select v-else-if="col.uiType===3 && row.fieldEnumId" v-model="copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue"
+                  placeholder="">
+                  <el-option
+                    v-for="(option, index) in getOptions(row.fieldEnumId)"
+                    :label="option.name"
+                    :key="'row.fieldEnumId'+ index"
+                    :value="option.code">
+                  </el-option>
+                </el-select>
                 <el-select v-else-if="col.uiType===3" v-model="copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue"
                   placeholder="">
-                  <el-option v-for="option in getOptions(col.fieldEnumId)" :label="option.name" :key="option.code" :value="option.code"></el-option>
+                  <el-option
+                    v-for="(option, index) in getOptions(col.fieldEnumId)"
+                    :label="option.name"
+                    :key="'col.fieldEnumId'+ index"
+                    :value="option.code">
+                  </el-option>
                 </el-select>
                 <el-date-picker
                   v-else-if="col.uiType===6"
@@ -392,7 +406,10 @@ export default {
 
       this.$set(this.copyInfo, 'pullTest', '');
       this.$set(this.copyInfo, 'sittingBloc', '');
-
+      this.$set(this.copyInfo, 'facialOil', '');
+      this.$set(this.copyInfo, 'skinScratch', '');
+      this.$set(this.copyInfo, 'erectReflex', '');
+      this.$set(this.copyInfo, 'verticalTilt', '');
       this.initSubTableData();
     },
     initSubTableData() {
@@ -471,6 +488,11 @@ export default {
       if (submitData.checkType !== 3) {
         delete submitData.pullTest;
         delete submitData.sittingBloc;
+        delete submitData.facialOil;
+        delete submitData.skinScratch;
+        delete submitData.erectReflex;
+        delete submitData.verticalTilt;
+
       } else {
         delete submitData.patientFieldCode;
       }

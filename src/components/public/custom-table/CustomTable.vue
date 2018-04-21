@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="custom-table-wrapper" ref="customtable" @scroll="tableScroll">
+  <div class="custom-table-wrapper" ref="customtable">
     <table class="table table-head" ref="tbhead" :class="{'table-shadow':boxShadowStatus}">
       <thead>
         <tr class="row title-row">
@@ -29,7 +29,7 @@
       </thead>
     </table>
 
-    <div class="table-box" :style="tableBoxStyle">
+    <div class="table-box" :style="tableBoxStyle" @scroll="boxScroll" ref="tableBox">
       <div :style="lineWidth"></div>
       <table class="table">
         <tbody>
@@ -133,9 +133,11 @@ export default {
     }
   },
   methods: {
-    tableScroll() {
-      let scrollTop = this.$refs.customtable.scrollTop;
-      this.$refs.tbhead.style.top = scrollTop + 'px';
+    boxScroll() {
+      let scrollLeft = this.$refs.tableBox.scrollLeft;
+      this.$refs.tbhead.style.left = -scrollLeft + 'px';
+
+      let scrollTop = this.$refs.tableBox.scrollTop;
       if (scrollTop > 0) {
         this.boxShadowStatus = true;
       } else {
@@ -287,12 +289,11 @@ export default {
 .custom-table-wrapper{
   width: 100%;
   height:100%;
-  // overflow:hidden;
+  overflow:hidden;
   font-size: @normal-font-size;
   box-sizing: border-box;
   user-select: text;
   position: relative;
-  overflow: auto;
   .table.table-head {
     position: absolute;
     top:0;
@@ -301,6 +302,9 @@ export default {
       transition: box-shadow 0.5s;
       box-shadow: 0 0 20px 0 #3c485a;
     }
+  }
+  .table-box {
+    overflow: scroll;
   }
   .table {
     min-width: 100%;
