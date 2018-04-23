@@ -161,7 +161,7 @@
       <div v-if="mode!==VIEW_CURRENT_CARD && !readyToEndExperiment"
         class="button submit-button" @click="submit">确定</div>
       <div v-else-if="mode!==VIEW_CURRENT_CARD && readyToEndExperiment"
-        class="button submit-button" @click="submit">结束实验</div>
+        class="button submit-button" @click="submit">结束随访</div>
       <div v-else-if="mode===VIEW_CURRENT_CARD && showEdit" class="button submit-button">编辑</div>
 
     </div>
@@ -257,7 +257,7 @@ export default {
         patientExperimentModel.remark = this.copyInfo.remark;
 
       } else {
-        // 走结束实验流程
+        // 走结束随访流程
         experimentInfo.qualified = 1;
         patientExperimentModel.suitableForResearch = this.copyInfo.suitableForResearch;
         patientExperimentModel.exceedTime = this.copyInfo.exceedTime;
