@@ -237,6 +237,42 @@ export default {
       }
       this.lockSubmitButton = true;
 
+      for (let property in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(property)) {
+          if (!this.readyToEndExperiment &&
+            ['step', 'startDate', 'lastTime', 'exceedTime'].indexOf(property) >= 0) {
+            this.updateWarning(property);
+          } else if (this.readyToEndExperiment &&
+            ['suitableForResearch', 'exceedTime'].indexOf(property) >= 0) {
+            this.updateWarning(property);
+          }
+        }
+      }
+      for (let property in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(property) && this.warningResults[property]) {
+          if (!this.readyToEndExperiment &&
+            ['step', 'startDate', 'lastTime', 'exceedTime'].indexOf(property) >= 0) {
+            this.$message({
+              message: '请完成必填项',
+              type: 'warning',
+              duration: 2000
+            });
+            this.lockSubmitButton = false;
+            return;
+
+          } else if (this.readyToEndExperiment &&
+            ['suitableForResearch', 'exceedTime'].indexOf(property) >= 0) {
+            this.$message({
+              message: '请完成必填项',
+              type: 'warning',
+              duration: 2000
+            });
+            this.lockSubmitButton = false;
+            return;
+          }
+        }
+      }
+
       var experimentInfo = {
         'patientExperimentModel': {
           'patientId': this.$route.params.id,
