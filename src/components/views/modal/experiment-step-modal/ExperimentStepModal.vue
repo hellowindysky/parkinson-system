@@ -18,6 +18,53 @@
           </span>
         </div>
 
+        <div class="field whole-line" v-if="hospitalType===2">
+          <span class="field-name">
+            距上次随访天数
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            {{lastTime}}
+          </span>
+          <span class="field-input" v-else>
+            <el-input
+              v-model="lastTime"
+              :maxlength="500"
+              placeholder="请输入距上次随访天数">
+            </el-input>
+          </span>
+        </div>
+
+        <div class="field whole-line" v-if="hospitalType===2">
+          <span class="field-name">
+            是否超窗
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            {{transform(exceedTime, 'exceedTime')}}
+          </span>
+          <span class="field-input" v-else>
+            <el-radio class="radio" v-model="exceedTime" :label="1">是</el-radio>
+            <el-radio class="radio" v-model="exceedTime" :label="0">否</el-radio>
+          </span>
+        </div>
+
+        <div class="field whole-line" v-if="hospitalType===2 && exceedTime===1">
+          <span class="field-name">
+            超窗原因
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            {{exceedReason}}
+          </span>
+          <span class="field-input" v-else>
+            <el-input
+              v-model="exceedReason"
+              type="textarea"
+              :rows="2"
+              :maxlength="500"
+              placeholder="请输入超窗原因">
+            </el-input>
+          </span>
+        </div>
+
         <div class="field whole-line">
           <span class="field-name">
             处理意见
@@ -216,6 +263,9 @@ export default {
       mode: '',
       milestoneNum: '',
       milestoneStatus: '',
+      lastTime: '',
+      exceedTime: '',
+      exceedReason: '',
       remark: '',
       tcPatientAdverseOccurance: '',
       followUpType: '',
@@ -253,9 +303,13 @@ export default {
       this.completeInit = false;
       this.mode = cardOperation;
       this.showEdit = showEdit;
-      console.log(item);
+      // console.log(item);
       this.milestoneNum = this.getMilestoneNum(item);
       this.milestoneStatus = this.getStatus(item);
+
+      this.lastTime = item.lastTime ? item.lastTime : '';
+      this.exceedTime = item.exceedTime ? item.exceedTime : '';
+      this.exceedReason = item.exceedReason ? item.exceedReason : '';
       this.remark = item.remark ? item.remark : '';
 
       var propertyList = ['tcPatientAdverseOccurance', 'followUpType', 'followUpComplete', 'followUpReason',
@@ -323,6 +377,18 @@ export default {
           code: type.typeCode
         });
       };
+      if (fieldName === 'exceedTime') {
+        options = [
+          {
+            name: '是',
+            code: 1
+          },
+          {
+            name: '否',
+            code: 0
+          }
+        ];
+      }
       return options;
     },
     updateScrollbar() {
@@ -374,7 +440,7 @@ export default {
     margin: auto;
     padding: 0 40px;
     top: 10%;
-    width: 600px;
+    width: 500px;
     max-height: 80%;
     background-color: @background-color;
     overflow: hidden;
