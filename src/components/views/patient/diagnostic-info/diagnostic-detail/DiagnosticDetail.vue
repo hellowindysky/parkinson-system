@@ -88,6 +88,9 @@ export default {
     listType() {
       return this.$store.state.listType;
     },
+    hospitalType() {
+      return this.$store.state.hospitalType;
+    },
     isNewCase() {
       if (this.$route.params.caseId && this.$route.params.caseId === 'newCase') {
         return true;
@@ -162,6 +165,10 @@ export default {
 
       } else if (caseId === undefined || this.hasBeenArchived) {
         return false;
+
+      } else if (this.hospitalType === 2) {
+        // 如果是北京医院的实验流程，则全部处于可编辑状态
+        return true;
 
       } else if (isExperimentPatientsList && !createdByCurrentUser) {
         // 如果当前处于“评估者”和“诊断者”的患者列表，则需要检查该诊断记录是否是由当前登录用户创建的，不是则不允许编辑
