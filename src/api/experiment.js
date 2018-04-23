@@ -87,7 +87,7 @@ export function completeExperiment(experimentInfo, hospitalType) {
   return encapsulatePromise(url, request);
 };
 
-// 结束随访
+// 结束随访(北京医院的随访V7) & 提交终止实验的表格
 export function completeFollowUp(experimentInfo, hospitalType) {
   var request = Object.assign({}, getCommonRequest());
   if (hospitalType !== undefined) {
