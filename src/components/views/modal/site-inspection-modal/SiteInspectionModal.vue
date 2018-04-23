@@ -5,22 +5,40 @@
       <div class="content">
         <div class="field whole-line">
           <span class="field-name">
+            诊断时间:
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span>{{ariseTime}}</span>
+          </span>
+          <span class="field-input" v-else>
+            <el-date-picker
+              v-model="ariseTime"
+              placeholder="请输入诊断时间"
+              type="date"
+              format="yyyy-MM-dd"
+              :picker-options="pickerOptions">
+            </el-date-picker>
+          </span>
+        </div>
+        <div class="field whole-line">
+          <span class="field-name">
             一般情况:
           </span>
           <span class="field-radio">
-            <el-radio v-model="relateEvaluateFlag" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
-            <el-radio v-model="relateEvaluateFlag" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
+            <el-radio v-model="normal" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="normal" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{''}}</span>
+            <span>{{normal}}</span>
           </span>
           <span class="field-input" v-else >
             <el-input
+              v-model="normal"
               type="textarea"
               :rows="2"
               :maxlength="50"
               placeholder="请输入特征描述"
-              :disabled="relateEvaluateFlag==0">
+              :disabled="normal==0">
             </el-input>
           </span>
         </div>
@@ -29,19 +47,20 @@
             皮肤、粘膜:
           </span>
           <span class="field-radio">
-            <el-radio v-model="relateEvaluateFlag" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
-            <el-radio v-model="relateEvaluateFlag" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
+            <el-radio v-model="skin" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="skin" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{''}}</span>
+            <span>{{skin}}</span>
           </span>
           <span class="field-input" v-else>
             <el-input
+              v-model="skin"
               type="textarea"
               :rows="2"
               :maxlength="50"
               placeholder="请输入特征描述"
-              :disabled="relateEvaluateFlag==0">
+              :disabled="skin==0">
             </el-input>
           </span>
         </div>
@@ -50,19 +69,20 @@
             浅表淋巴结:
           </span>
           <span class="field-radio">
-            <el-radio v-model="relateEvaluateFlag" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
-            <el-radio v-model="relateEvaluateFlag" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
+            <el-radio v-model="lymphNode" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="lymphNode" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{''}}</span>
+            <span>{{lymphNode}}</span>
           </span>
           <span class="field-input" v-else>
             <el-input
+              v-model="lymphNode"
               type="textarea"
               :rows="2"
               :maxlength="50"
               placeholder="请输入特征描述"
-              :disabled="relateEvaluateFlag==0">
+              :disabled="lymphNode==0">
             </el-input>
           </span>
         </div>
@@ -71,19 +91,20 @@
             头部:
           </span>
           <span class="field-radio">
-            <el-radio v-model="relateEvaluateFlag" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
-            <el-radio v-model="relateEvaluateFlag" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
+            <el-radio v-model="head" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="head" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{''}}</span>
+            <span>{{head}}</span>
           </span>
           <span class="field-input" v-else>
             <el-input
+              v-model="head"
               type="textarea"
               :rows="2"
               :maxlength="50"
               placeholder="请输入特征描述"
-              :disabled="relateEvaluateFlag==0">
+              :disabled="head==0">
             </el-input>
           </span>
         </div>
@@ -92,19 +113,20 @@
             颈部:
           </span>
           <span class="field-radio">
-            <el-radio v-model="relateEvaluateFlag" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
-            <el-radio v-model="relateEvaluateFlag" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
+            <el-radio v-model="neck" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="neck" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{''}}</span>
+            <span>{{neck}}</span>
           </span>
           <span class="field-input" v-else>
             <el-input
+              v-model="neck"
               type="textarea"
               :rows="2"
               :maxlength="50"
               placeholder="请输入特征描述"
-              :disabled="relateEvaluateFlag==0">
+              :disabled="neck==0">
             </el-input>
           </span>
         </div>
@@ -113,19 +135,20 @@
             胸部:
           </span>
           <span class="field-radio">
-            <el-radio v-model="relateEvaluateFlag" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
-            <el-radio v-model="relateEvaluateFlag" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
+            <el-radio v-model="chesk" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="chesk" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{''}}</span>
+            <span>{{chesk}}</span>
           </span>
           <span class="field-input" v-else>
             <el-input
+              v-model="chesk"
               type="textarea"
               :rows="2"
               :maxlength="50"
               placeholder="请输入特征描述"
-              :disabled="relateEvaluateFlag==0">
+              :disabled="chesk==0">
             </el-input>
           </span>
         </div>
@@ -134,19 +157,20 @@
             心脏:
           </span>
           <span class="field-radio">
-            <el-radio v-model="relateEvaluateFlag" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
-            <el-radio v-model="relateEvaluateFlag" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
+            <el-radio v-model="heart" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="heart" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{''}}</span>
+            <span>{{heart}}</span>
           </span>
           <span class="field-input" v-else>
             <el-input
+              v-model="heart"
               type="textarea"
               :rows="2"
               :maxlength="50"
               placeholder="请输入特征描述"
-              :disabled="relateEvaluateFlag==0">
+              :disabled="heart==0">
             </el-input>
           </span>
         </div>
@@ -155,19 +179,20 @@
             腹部:
           </span>
           <span class="field-radio">
-            <el-radio v-model="relateEvaluateFlag" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
-            <el-radio v-model="relateEvaluateFlag" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
+            <el-radio v-model="abdomen" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="abdomen" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{''}}</span>
+            <span>{{abdomen}}</span>
           </span>
           <span class="field-input" v-else>
             <el-input
+              v-model="abdomen"
               type="textarea"
               :rows="2"
               :maxlength="50"
               placeholder="请输入特征描述"
-              :disabled="relateEvaluateFlag==0">
+              :disabled="abdomen==0">
             </el-input>
           </span>
         </div>
@@ -176,19 +201,20 @@
             四肢关节:
           </span>
           <span class="field-radio">
-            <el-radio v-model="relateEvaluateFlag" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
-            <el-radio v-model="relateEvaluateFlag" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
+            <el-radio v-model="limb" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="limb" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{''}}</span>
+            <span>{{limb}}</span>
           </span>
           <span class="field-input" v-else>
             <el-input
+              v-model="limb"
               type="textarea"
               :rows="2"
               :maxlength="50"
               placeholder="请输入特征描述"
-              :disabled="relateEvaluateFlag==0">
+              :disabled="limb==0">
             </el-input>
           </span>
         </div>
@@ -197,19 +223,20 @@
             其他:
           </span>
           <span class="field-radio">
-            <el-radio v-model="relateEvaluateFlag" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
-            <el-radio v-model="relateEvaluateFlag" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
+            <el-radio v-model="other" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="other" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{''}}</span>
+            <span>{{other}}</span>
           </span>
           <span class="field-input" v-else>
             <el-input
+              v-model="other"
               type="textarea"
               :rows="2"
               :maxlength="50"
               placeholder="请输入特征描述"
-              :disabled="relateEvaluateFlag==0">
+              :disabled="other==0">
             </el-input>
           </span>
         </div>
@@ -226,8 +253,8 @@ import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import { pruneObj } from 'utils/helper';
-import { getPatientSimpleInfo, addAdverseEvent, modifyAdverseEvent } from 'api/patient.js';
+import { pruneObj, reviseDateFormat} from 'utils/helper';
+import { addPatientBodypart, modifyPatientBodypart } from 'api/patient.js';
 
 export default {
   data() {
@@ -235,11 +262,20 @@ export default {
       mode: '',
       completeInit: false,
 
-      patientAdverse: '',
-      patientAdverseId: '',
-      relateEvaluateFlag: '0',
-
-
+      patientBodypart: '',
+      patientBodypartId: '',
+      // partExamination: [],
+      ariseTime: '',
+      normal: '',
+      skin: '',
+      lymphNode: '',
+      head: '',
+      neck: '',
+      chesk: '',
+      heart: '',
+      abdomen: '',
+      limb: '',
+      other: '',
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now();
@@ -274,8 +310,19 @@ export default {
           }
         }
       });
-      this.patientAdverseId = item.patientAdverseId ? item.patientAdverseId : '';
-      this.relateEvaluateFlag = item.relateEvaluateFlag ? item.relateEvaluateFlag.split('') : [];
+      this.patientBodypartId = item.patientBodypartId ? item.patientBodypartId : '';
+      this.ariseTime = item.ariseTime ? item.ariseTime : '';
+      this.normal = item.normal ? item.normal : '';
+      this.skin = item.skin ? item.skin : '';
+      this.lymphNode = item.lymphNode ? item.lymphNode : '';
+      this.head = item.head ? item.head : '';
+      this.neck = item.neck ? item.neck : '';
+      this.chesk = item.chesk ? item.chesk : '';
+      this.heart = item.heart ? item.heart : '';
+      this.abdomen = item.abdomen ? item.abdomen : '';
+      this.limb = item.limb ? item.limb : '';
+      this.other = item.other ? item.other : '';
+      // this.partExamination = item.partExamination ? item.partExamination.split('') : [];
 
       this.completeInit = true;
       this.updateScrollbar();
@@ -305,14 +352,14 @@ export default {
       };
       return options;
     },
-    updateWarning(fieldName) {
-      var list = ['occurTime', 'adverseName', 'adverseDescribe'];
-      if (list.indexOf(fieldName) >= 0 && !this[fieldName]) {
-        this.warningResults[fieldName] = '必填项';
-      } else {
-        this.warningResults[fieldName] = '';
-      }
-    },
+    // updateWarning(fieldName) {
+    //   var list = ['occurTime', 'adverseName', 'adverseDescribe'];
+    //   if (list.indexOf(fieldName) >= 0 && !this[fieldName]) {
+    //     this.warningResults[fieldName] = '必填项';
+    //   } else {
+    //     this.warningResults[fieldName] = '';
+    //   }
+    // },
     cancel() {
       this.lockSubmitButton = false;
       Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
@@ -343,23 +390,31 @@ export default {
           return;
         }
       }
-      var adverseEventInfo = {};
-      adverseEventInfo.patientId = this.$route.params.id;
-      adverseEventInfo.patientCaseId = this.$route.params.caseId;
-      adverseEventInfo.relateEvaluateFlag = this.relateEvaluateFlag.join('');
-
-      adverseEventInfo.occurTime = Util.simplifyTime(adverseEventInfo.occurTime, true);
-      adverseEventInfo.endTime = Util.simplifyTime(adverseEventInfo.endTime, true);
-      pruneObj(adverseEventInfo);
-
+      var patientBodypartInfo = {};
+      patientBodypartInfo.patientId = this.$route.params.id;
+      patientBodypartInfo.patientCaseId = this.$route.params.caseId;
+      patientBodypartInfo.ariseTime = this.ariseTime;
+      patientBodypartInfo.normal = this.normal;
+      patientBodypartInfo.skin = this.skin;
+      patientBodypartInfo.lymphNode = this.lymphNode;
+      patientBodypartInfo.head = this.head;
+      patientBodypartInfo.neck = this.neck;
+      patientBodypartInfo.chesk = this.chesk;
+      patientBodypartInfo.heart = this.heart;
+      patientBodypartInfo.abdomen = this.abdomen;
+      patientBodypartInfo.limb = this.limb;
+      patientBodypartInfo.other = this.other;
+      // patientBodypartInfo.partExamination = this.partExamination.join('');
+      reviseDateFormat(patientBodypartInfo);
+      pruneObj(patientBodypartInfo);
       if (this.mode === this.ADD_NEW_CARD) {
-        addAdverseEvent(adverseEventInfo).then(() => {
+        addPatientBodypart(patientBodypartInfo).then(() => {
           this.updateAndClose();
         }, this._handleError);
 
       } else if (this.mode === this.EDIT_CURRENT_CARD) {
-        adverseEventInfo.patientAdverseId = this.patientAdverseId;
-        modifyAdverseEvent(adverseEventInfo).then(() => {
+        patientBodypartInfo.patientBodypartId = this.patientBodypartId;
+        modifyPatientBodypart(patientBodypartInfo).then(() => {
           this.updateAndClose();
         }, this._handleError);
       }
@@ -371,7 +426,7 @@ export default {
     updateAndClose() {
       Bus.$emit(this.UPDATE_CASE_INFO);
       this.lockSubmitButton = false;
-      if (this.seriousFlag === 1 && this.mode === this.ADD_NEW_CARD) {
+      if (this.mode === this.ADD_NEW_CARD) {
         Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'siteInspectionModal', this.SHOW_SITE_INSPECTION_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
       } else {
         Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
@@ -390,14 +445,14 @@ export default {
   },
   mounted() {
     // 先在本组件注册该事件，等待Layout组件接收动态组件挂载完毕的通知，再在本组件执行 showPanel 或 showModal
-    Bus.$on(this.SHOW_ADVERSE_EVENT_MODAL, this.showPanel);
+    Bus.$on(this.SHOW_SITE_INSPECTION_MODAL, this.showPanel);
 
     // 动态组件挂载完毕，通知Layout组件，动态组件已挂载完毕
     Bus.$emit(this.DYNAMIC_COMPONENT_MOUNTED);
     this.updateScrollbar();
   },
   beforeDestroy() {
-    Bus.$off(this.SHOW_ADVERSE_EVENT_MODAL);
+    Bus.$off(this.SHOW_SITE_INSPECTION_MODAL);
   },
   watch: {
     '$route.path'() {
@@ -483,7 +538,7 @@ export default {
         .field-name {
           display: inline-block;
           position: absolute;
-          top: 10px;
+          top: 5px;
           left: 0;
           width: @field-name-width;
           line-height: 25px;
@@ -499,7 +554,7 @@ export default {
           display: inline-block;
           position: relative;
           left: @field-name-width;
-          width: calc(~"92% - @{field-name-width}");
+          // width: calc(~"98% - @{field-name-width}");
           line-height: @field-line-height;
           font-size: @normal-font-size;
           color: @light-font-color;
@@ -516,7 +571,7 @@ export default {
             top: 46px;
             }
           .el-input {
-            transform: translateY(-3px);
+            transform: translateX(22px);
             .el-input__inner {
               height: 30px;
               border: none;
@@ -527,7 +582,7 @@ export default {
             width: 80%;
             margin-bottom: 14px;
             vertical-align: middle;
-            transform: translateY(-5px);
+            transform: translateY(-8px);
             .el-textarea__inner {
               border: none;
               background-color: @screen-color;
@@ -551,7 +606,7 @@ export default {
           line-height: @field-line-height;
           font-size: @normal-font-size;
           color: @light-font-color;
-          transform: translateY(-10px);
+          transform: translateY(-13px);
         }
       }
       .excursion {
