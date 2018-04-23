@@ -187,6 +187,8 @@ import Util from 'utils/util.js';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus';
 import { mapGetters } from 'vuex';
+import { reviseDateFormat, pruneObj } from 'utils/helper.js';
+import { completeFollowUp } from 'api/experiment.js';
 
 export default {
   data() {
@@ -272,11 +274,33 @@ export default {
           return;
         }
       }
-      console.log(this.copyInfo);
+
+      let patientExperiment_2 = {
+        patientExperimentModel: {
+          patientId: this.$route.params.id,
+          tcTaskId: this.$store.state.subjectId
+        },
+        terminateExperimentModel: this.copyInfo
+      };
+      reviseDateFormat(patientExperiment_2);
+      pruneObj(patientExperiment_2);
+      console.log(patientExperiment_2, typeof this.copyInfo.finishDate.constructor, this.$store.state.hospitalType);
+      completeFollowUp(patientExperiment_2, this.$store.state.hospitalType).then(() => {
+        this.updateAndClose();
+      }, this._handleError);
     },
     cancel() {
       this.lockSubmitButton = false;
       Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
+    },
+    updateAndClose() {
+      this.lockSubmitButton = false;
+      Bus.$emit(this.UPDATE_EXPERIMENT_INFO);
+      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
+    },
+    _handleError(error) {
+      console.log(error);
+      this.lockSubmitButton = false;
     },
     updateScrollbar() {
       this.$nextTick(() => {
@@ -304,6 +328,16 @@ export default {
   watch: {
     '$route.path'() {
       this.cancel();
+    },
+    'copyInfo.factor': function() {
+      this.copyInfo.factorReason = '';
+      this.copyInfo.factorDate = '';
+      this.copyInfo.factorDetail = '';
+    },
+    'copyInfo.exposeMedicine': function(newVal) {
+      if (newVal === 0) {
+        this.copyInfo.exposeDate = '';
+      }
     }
   }
 };
