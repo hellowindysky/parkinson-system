@@ -10,15 +10,16 @@
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            {{copyInfo.finish}}
+            {{transform(copyInfo.finish, 'finish')}}
           </span>
           <span class="field-input" v-else>
             <span class="warning-text">{{warningResults.finish}}</span>
             <el-radio class="radio" v-model="copyInfo.finish"
-             v-for="(item,index) in getOptions('finish')"
-             :key="item.typeName+index"
-             :label="item.typeCode"
-             @change.native="updateWarning('finish')">
+              v-for="(item,index) in getOptions('finish')"
+              :key="item.typeName + index"
+              :label="item.typeCode"
+              @change.native="updateWarning('finish')"
+              :disabled="mode===VIEW_CURRENT_CARD">
               {{item.typeName}}
             </el-radio>
           </span>
@@ -35,20 +36,23 @@
           <span class="field-input" v-else>
             <span class="warning-text">{{warningResults.finishDate}}</span>
             <el-date-picker
-             v-model="copyInfo.finishDate"
-             :class="{'warning': warningResults.finishDate}"
-             :placeholder="placeholder"
-             @change="updateWarning('finishDate')" clearable>
+              v-model="copyInfo.finishDate"
+              :class="{'warning': warningResults.finishDate}"
+              :placeholder="placeholder"
+              @change="updateWarning('finishDate')" clearable>
             </el-date-picker>
           </span>
         </div>
 
-        <h4 class="subTitle">1.终止理由请选择最重要的一个</h4>
+        <h4 class="sub-title">1.终止理由请选择最重要的一个</h4>
 
         <div class="field-container" v-for="(item,index) in getOptions('factor')" :key="item.typeCode+index">
           <div class="field whole-line">
             <span class="field-name">
-              <el-radio class="radio" v-model="copyInfo.factor" :label="item.typeCode">{{item.typeName}}</el-radio>
+              <el-radio class="radio" v-model="copyInfo.factor" :label="item.typeCode"
+                :disabled="mode===VIEW_CURRENT_CARD">
+                {{item.typeName}}
+              </el-radio>
             </span>
           </div>
 
@@ -62,11 +66,11 @@
             </span>
             <span class="field-input" v-else>
               <el-input
-              v-model="copyInfo.factorReason"
-              type="textarea"
-              :rows="2"
-              :maxlength="500"
-              placeholder="请注明死亡原因">
+                v-model="copyInfo.factorReason"
+                type="textarea"
+                :rows="2"
+                :maxlength="500"
+                placeholder="请注明死亡原因">
               </el-input>
             </span>
           </div>
@@ -95,11 +99,11 @@
             </span>
             <span class="field-input" v-else>
               <el-input
-               v-model="copyInfo.factorReason"
-               type="textarea"
-               :rows="2"
-               :maxlength="500"
-               placeholder="请注明详情">
+                v-model="copyInfo.factorReason"
+                type="textarea"
+                :rows="2"
+                :maxlength="500"
+                placeholder="请注明详情">
               </el-input>
             </span>
           </div>
@@ -109,15 +113,15 @@
               请选择原因：
             </span>
             <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-              {{copyInfo.factorDetail}}
+              {{transform(copyInfo.factorDetail, 'factorDetail')}}
             </span>
             <span class="field-input" v-else>
               <el-select v-model="copyInfo.factorDetail" placeholder="请选择原因" clearable >
                 <el-option
-                 v-for="(item,index) in getOptions('factorDetail')"
-                 :key="item.typeName+index"
-                 :label="item.typeName"
-                 :value="item.typeCode">
+                  v-for="(item,index) in getOptions('factorDetail')"
+                  :key="item.typeName+index"
+                  :label="item.typeName"
+                  :value="item.typeCode">
                 </el-option>
               </el-select>
             </span>
@@ -143,14 +147,15 @@
 
         </div>
 
-        <h4 class="subTitle">2.患者的药物编号是否被揭盲</h4>
+        <h4 class="sub-title">2.患者的药物编号是否被揭盲</h4>
 
         <div class="field whole-line field-indent">
           <span class="field-name">
             <el-radio class="radio" v-model="copyInfo.exposeMedicine"
-             v-for="(item,index) in getOptions('finish')"
-             :key="item.typeName+index"
-             :label="item.typeCode">
+              v-for="(item,index) in getOptions('finish')"
+              :key="item.typeName+index"
+              :label="item.typeCode"
+              :disabled="mode===VIEW_CURRENT_CARD">
               {{item.typeName}}
             </el-radio>
           </span>
@@ -176,7 +181,7 @@
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
       <div v-if="mode!==VIEW_CURRENT_CARD" class="button submit-button" @click="submit">确定</div>
-      <div v-else-if="mode===VIEW_CURRENT_CARD && canEdit" class="button submit-button btn-margin">编辑</div>
+      <div v-else-if="mode===VIEW_CURRENT_CARD && showEdit" class="button submit-button btn-margin">编辑</div>
 
     </div>
   </div>
@@ -195,6 +200,7 @@ export default {
     return {
       mode: '',
       completeInit: false,
+      showEdit: false,
       lockSubmitButton: false,
       copyInfo: {
         finish: '',
@@ -221,16 +227,14 @@ export default {
     }
   },
   methods: {
-    showModal(cardOperation) {
+    showModal(cardOperation, item, showEdit) {
       this.completeInit = false;
       this.mode = cardOperation;
+      this.showEdit = showEdit;
+
       // 绑定数据
-      // 绑定数据
-      // 绑定数据
-      // 绑定数据
-      // 绑定数据
-      // 绑定数据
-      // 绑定数据
+      this.initCopyInfo(item);
+
       this.$nextTick(() => {
         for (var property in this.warningResults) {
           if (this.warningResults.hasOwnProperty(property)) {
@@ -238,18 +242,34 @@ export default {
           }
         }
       });
-      this.completeInit = true;
+      this.$nextTick(() => {
+        this.completeInit = true;
+      });
       this.updateScrollbar();
     },
     getOptions(fieldName) {
       var typeInfo = Util.getElement('typegroupcode', fieldName, this.typeGroup);
       return typeInfo.types ? typeInfo.types : [];
     },
+    transform(code, fieldName) {
+      return Util.getElement('typeCode', code, this.getOptions(fieldName)).typeName;
+    },
     updateWarning(fieldName) {
       if (this.completeInit && !this.copyInfo[fieldName] && this.copyInfo[fieldName] !== 0) {
         this.warningResults[fieldName] = '必填项';
       } else {
         this.warningResults[fieldName] = '';
+      }
+    },
+    initCopyInfo(obj) {
+      for (let property in this.copyInfo) {
+        if (this.copyInfo.hasOwnProperty(property)) {
+          if (obj && obj[property] !== undefined) {
+            this.$set(this.copyInfo, property, obj[property]);
+          } else {
+            this.$set(this.copyInfo, property, '');
+          }
+        }
       }
     },
     submit() {
@@ -331,12 +351,14 @@ export default {
       this.cancel();
     },
     'copyInfo.factor': function() {
-      this.copyInfo.factorReason = '';
-      this.copyInfo.factorDate = '';
-      this.copyInfo.factorDetail = '';
+      if (this.completeInit) {
+        this.copyInfo.factorReason = '';
+        this.copyInfo.factorDate = '';
+        this.copyInfo.factorDetail = '';
+      }
     },
     'copyInfo.exposeMedicine': function(newVal) {
-      if (newVal === 0) {
+      if (newVal === 0 && this.completeInit) {
         this.copyInfo.exposeDate = '';
       }
     }
@@ -348,7 +370,7 @@ export default {
 @import "~styles/variables.less";
 
 @field-line-height: 25px;
-@field-name-width: 100px;
+@field-name-width: 120px;
 @long-field-name-width: 140px;
 
 .end-experiment-modal-wrapper {
@@ -362,9 +384,9 @@ export default {
   .end-experiment-modal {
     position: relative;
     margin: auto;
-    padding: 0 40px;
+    padding: 0 60px;
     top: 10%;
-    width: 600px;
+    width: 500px;
     max-height: 80%;
     background-color: @background-color;
     overflow: hidden;
@@ -375,7 +397,7 @@ export default {
     .content {
       text-align: left;
       font-size: 0;
-      .subTitle {
+      .sub-title {
         margin: 20px 10px 20px;
         font-size: 14px;
       }
@@ -477,6 +499,17 @@ export default {
       }
       .field-container {
         margin-left: 20px;
+      }
+      .field-container, .field-indent {
+        .is-disabled {
+          .el-radio__inner {
+            background-color: @inverse-font-color;
+            border-color: @inverse-font-color;
+          }
+          &+.el-radio__label {
+            color: @font-color;
+          }
+        }
       }
     }
     .seperate-line {
