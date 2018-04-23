@@ -1,6 +1,7 @@
 <template lang="html">
   <div class="experiment-step-modal-wrapper">
-    <div class="experiment-step-modal" :class="{'follow-up-modal': milestoneNum===40}" ref="scrollArea">
+    <div class="experiment-step-modal"
+      :class="{'follow-up-modal': milestoneNum===EXPERIMENT_STEP_FOLLOW_UP}" ref="scrollArea">
       <h3 class="title">{{title}}</h3>
       <div class="content">
         <div class="field whole-line">
@@ -30,9 +31,9 @@
           </span>
         </div>
 
-        <hr class="seperate-line" v-if="milestoneNum===40">
+        <hr class="seperate-line" v-if="hospitalType===1 && milestoneNum===EXPERIMENT_STEP_FOLLOW_UP">
 
-        <div v-if="milestoneNum===40">
+        <div v-if="hospitalType===1 && milestoneNum===EXPERIMENT_STEP_FOLLOW_UP">
           <h4 class="sub-title">本期随访总结</h4>
 
           <div class="field whole-line">
@@ -144,7 +145,9 @@
           </div>
         </div>
         <!-- dd -->
-        <table class="table" v-if="milestoneNum===20 && (milestoneStatus===20 || milestoneStatus===30)">
+        <table class="table"
+          v-if="milestoneNum===EXPERIMENT_STEP_SCREENING &&
+          (milestoneStatus===EXPERIMENT_STEP_SCREENING || milestoneStatus===EXPERIMENT_STEP_THERAPY)">
           <thead>
             <tr class="row title-row">
               <th class="col wide-col">入选标准</th>
@@ -156,18 +159,18 @@
             <tr class="row" v-for="(item,index) in beChosenStandard" :key="'standard'+index">
               <td class="col">{{item.detailName}}</td>
               <td class="col">
-                <span v-if="standardDetailOptions[index]&&standardDetailOptions[index].optionId===1">✔</span>
+                <span v-if="standardDetailOptions[index] && standardDetailOptions[index].optionId===1">✔</span>
                 <!-- <el-radio class="radio" disabled v-model="standardDetailOptions[index].optionId" :label="1"></el-radio> -->
               </td>
               <td class="col">
-                <span v-if="standardDetailOptions[index]&&standardDetailOptions[index].optionId===0">✔</span>
+                <span v-if="standardDetailOptions[index] && standardDetailOptions[index].optionId===0">✔</span>
                 <!-- <el-radio class="radio" disabled v-model="standardDetailOptions[index].optionId" :label='0'></el-radio> -->
               </td>
             </tr>
           </tbody>
         </table>
 
-        <table class="table" v-if="milestoneNum===20 && false">
+        <table class="table" v-if="milestoneNum===EXPERIMENT_STEP_SCREENING && false">
           <thead>
             <tr class="row title-row">
               <th class="col wide-col">排除标准</th>
@@ -290,19 +293,19 @@ export default {
     transform(code, fieldName) {
       if (fieldName === 'taskStatus') {
         // 特殊处理
-        if (code === 10) {
+        if (code === this.EXPERIMENT_STEP_FILTERING) {
           if (this.hospitalType === 1) {
             return '入组诊断';
           } else if (this.hospitalType === 2) {
             return '筛选入组';
           }
-        } else if (code === 20) {
+        } else if (code === this.EXPERIMENT_STEP_SCREENING) {
           return '基线评估';
-        } else if (code === 30) {
+        } else if (code === this.EXPERIMENT_STEP_THERAPY) {
           return '治疗期';
-        } else if (code === 40) {
+        } else if (code === this.EXPERIMENT_STEP_FOLLOW_UP) {
           return '随访期';
-        } else if (code === 50) {
+        } else if (code === this.EXPERIMENT_STEP_COMPLETE) {
           return '治疗期';
         }
       }
