@@ -255,6 +255,7 @@ export default {
           patientExperimentModel.exceedReason = this.copyInfo.exceedReason;
         }
         patientExperimentModel.remark = this.copyInfo.remark;
+        completeExperiment(experimentInfo, this.hospitalType).then(this.updateAndClose, this._handleError);
 
       } else {
         // 走结束随访流程
@@ -265,8 +266,8 @@ export default {
           patientExperimentModel.exceedReason = this.copyInfo.exceedReason;
         }
         patientExperimentModel.remark = this.copyInfo.remark;
+        completeExperiment(experimentInfo, this.hospitalType).then(this.completeFollowUpAndClose, this._handleError);
       }
-      completeExperiment(experimentInfo, this.hospitalType).then(this.updateAndClose, this._handleError);
     },
     _handleError(error) {
       console.log(error);
@@ -289,6 +290,23 @@ export default {
       Bus.$emit(this.UPDATE_PATIENTS_LIST);
       Bus.$emit(this.UPDATE_PATIENT_INFO);
       Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
+    },
+    completeFollowUpAndClose() {
+      // 这个函数是在 updateAndClose 基础之上修改的，做了一些额外的操作
+      this.$message({
+        message: '已结束该患者的随访流程，请填写实验结束信息',
+        type: 'success',
+        duration: 2000
+      });
+      this.lockSubmitButton = false;
+      Bus.$emit(this.UPDATE_PATIENTS_LIST);
+      Bus.$emit(this.UPDATE_PATIENT_INFO);
+      this.$router.push({
+        name: 'experimentInfo',
+        params: {
+          shouldOpenEndExperimentModal: true
+        }
+      });
     },
     cancel() {
       this.lockSubmitButton = false;

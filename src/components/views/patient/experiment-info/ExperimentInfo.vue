@@ -394,6 +394,11 @@ export default {
   mounted() {
     Bus.$on(this.UPDATE_EXPERIMENT_INFO, this.updateExperimentProgress);
     this.updateExperimentProgress();
+
+    // 如果是由课题流转模态框点击“结束随访”跳转过来的，则自动打开结束实验的模态框
+    if (this.$route.params.shouldOpenEndExperimentModal) {
+      this.completeExperiment();
+    }
   },
   beforeRouteEnter(to, from, next) {
     var subjectId = sessionStorage.getItem('subjectId');
