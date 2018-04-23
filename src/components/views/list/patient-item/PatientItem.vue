@@ -24,6 +24,9 @@ export default {
     listType() {
       return this.$store.state.listType;
     },
+    hospitalType() {
+      return this.$store.state.hospitalType;
+    },
     // 根据路由信息对象提供的当前路径，来判断自己是否被选择
     selected() {
       if (Number(this.$route.params.id) === Number(this.patient.patientId)) {
@@ -52,8 +55,16 @@ export default {
         ([this.MY_PATIENTS_TYPE, this.THERAPISTS_PATIENTS_TYPE, this.APPRAISERS_PATIENTS_TYPE,
           this.SUBJECT_PATIENTS_TYPE].indexOf(this.listType) >= 0)) {
         let status = Number(this.patient.status);
-        if (status === this.EXPERIMENT_STEP_SCREENING) {
-          return 'icon-shai';
+        if (status === this.EXPERIMENT_STEP_FILTERING) {
+          if (this.hospitalType === 2) {
+            return 'icon-shai';
+          }
+        } else if (status === this.EXPERIMENT_STEP_SCREENING) {
+          if (this.hospitalType === 1) {
+            return 'icon-shai';
+          } else if (this.hospitalType === 2) {
+            return 'icon-ji';
+          }
         } else if (status === this.EXPERIMENT_STEP_THERAPY) {
           return 'icon-zhi';
         } else if (status === this.EXPERIMENT_STEP_FOLLOW_UP) {
@@ -118,6 +129,9 @@ export default {
     font-size: 25px;
     border-radius: 50%;
     background-color: #fff;
+    &.icon-ji {
+      color: #912cee;
+    }
     &.icon-shai {
       color: #ff3952;
     }
