@@ -275,17 +275,18 @@ export default {
         }
       }
 
-      let patientExperiment_2 = {
+      let patientExperiment = {
         patientExperimentModel: {
           patientId: this.$route.params.id,
           tcTaskId: this.$store.state.subjectId
         },
         terminateExperimentModel: this.copyInfo
       };
-      reviseDateFormat(patientExperiment_2);
-      pruneObj(patientExperiment_2);
-      console.log(patientExperiment_2, typeof this.copyInfo.finishDate.constructor, this.$store.state.hospitalType);
-      completeFollowUp(patientExperiment_2, this.$store.state.hospitalType).then(() => {
+      reviseDateFormat(patientExperiment);
+      pruneObj(patientExperiment);
+
+      // console.log(patientExperiment);
+      completeFollowUp(patientExperiment, this.$store.state.hospitalType).then(() => {
         this.updateAndClose();
       }, this._handleError);
     },
