@@ -271,7 +271,6 @@ export default {
         console.log('format', tempInfo);
         scale = tempInfo;
       }
-      
       return scale ? scale : {};
     },
     scaleTitle() {
