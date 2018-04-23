@@ -99,7 +99,7 @@
           </span>
         </div>
 
-        <div class="field whole-line">
+        <div class="field whole-line" v-if="!readyToEndExperiment">
           <span class="field-name">
             是否超窗:
             <span class="required-mark">*</span>
@@ -243,7 +243,7 @@ export default {
             ['step', 'startDate', 'lastTime', 'exceedTime'].indexOf(property) >= 0) {
             this.updateWarning(property);
           } else if (this.readyToEndExperiment &&
-            ['suitableForResearch', 'exceedTime'].indexOf(property) >= 0) {
+            ['suitableForResearch'].indexOf(property) >= 0) {
             this.updateWarning(property);
           }
         }
@@ -261,7 +261,7 @@ export default {
             return;
 
           } else if (this.readyToEndExperiment &&
-            ['suitableForResearch', 'exceedTime'].indexOf(property) >= 0) {
+            ['suitableForResearch'].indexOf(property) >= 0) {
             this.$message({
               message: '请完成必填项',
               type: 'warning',
