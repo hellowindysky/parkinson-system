@@ -165,7 +165,8 @@
         </div>
       </folding-panel>
 
-      <div v-for="(item, index) in targetScale.questions" class="scale-questions">
+      <div v-for="(item, index) in targetScale.questions" class="scale-questions" v-show="item.parentId ? checkQuestionListIsShow(item.parentId) : true"
+        :style="{'padding-left': item.questionLevel? item.questionLevel*20 + 30 + 'px':'30px'}">
         <p class="question-title" v-html="item.subjectName"></p>
         <el-radio-group v-if="item.questionType===0 || item.questionType===1"
           class="question-body" :key="index" v-model="copyInfo.patientOptions[index].scaleOptionId">
@@ -260,6 +261,17 @@ export default {
     },
     targetScale() {
       let scale = Util.getElement('scaleInfoId', this.copyInfo.scaleInfoId, this.allScale);
+
+      // 问题嵌套 层级递归处理
+      console.log('targetScale', scale);
+      let tempInfo = deepCopy(scale);
+      if (tempInfo.questions && tempInfo.questions.length > 0) {
+        console.log('targetScaleFormat', tempInfo);
+        this.questionsListFormat(tempInfo);
+        console.log('format', tempInfo);
+        scale = tempInfo;
+      }
+      
       return scale ? scale : {};
     },
     scaleTitle() {
@@ -691,6 +703,38 @@ export default {
     handlePreview(file) {
       console.log(file);
       // window.location.href = file.url;
+    },
+    // 问题列表递归处理
+    questionsListFormat(questionsList) {
+      let list = questionsList.questions;
+      for (let i = 0; i < list.length; i++) {
+        if (list[i].questions && list[i].questions.length > 0) {
+          // 获取父级触发展开子列表的答案ID
+          let parentId = '';
+          for (let j = 0; j < list[i].options.length; j++) {
+            if (list[i].options[j].openFlag === 1) {
+              parentId = list[i].options[j].scaleOptionId;
+              break;
+            }
+          }
+          // 多维列表转化为一维
+          for (let k = 0; k < list[i].questions.length; k++) {
+            list[i].questions[k].parentId = parentId;
+            list.splice(i + k + 1, 0, list[i].questions[k]);
+          }
+          delete list[i].questions;
+        }
+      }
+    },
+    // 校验父级问题答案是否触发子列表显示
+    checkQuestionListIsShow(parentId) {
+      let optionsList = this.copyInfo.patientOptions;
+      for (let i = 0; i < optionsList.length; i++) {
+        if (optionsList[i].scaleOptionId === parentId) {
+          return true;
+        }
+      }
+      return false;
     }
   },
   mounted() {
