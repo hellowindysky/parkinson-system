@@ -130,7 +130,7 @@ export default {
     border-radius: 50%;
     background-color: #fff;
     &.icon-ji {
-      color: #912cee;
+      color: #813cee;
     }
     &.icon-shai {
       color: #ff3952;
