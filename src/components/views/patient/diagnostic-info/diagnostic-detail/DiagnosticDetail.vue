@@ -118,6 +118,9 @@ export default {
     diagnosisCreator() {
       return this.caseDetail.createUserName ? this.caseDetail.createUserName : '';
     },
+    diagnosticSubjectId() {
+      return this.caseDetail.taskInfoId ? this.caseDetail.taskInfoId : this.SUBJECT_ID_FOR_HOSPITAL;
+    },
     diagnosticExperimentStep() {
       var status = parseInt(this.caseDetail.status, 10);  // 实验阶段 (从 2 开始)
       return status > 0 ? status : this.EXPERIMENT_STEP_OUT;
@@ -163,7 +166,9 @@ export default {
       if (caseId === 'newCase') {
         return true;
 
-      } else if (caseId === undefined || this.hasBeenArchived) {
+      } else if (caseId === undefined || this.hasBeenArchived || this.diagnosticSubjectId !== this.$store.state.subjectId) {
+        // 如果没有课题 Id，或者该诊断已经归档，或者该诊断不属于当前课题（医院入口可以看作一种特殊的课题入口），
+        // 则不可编辑
         return false;
 
       } else if (this.hospitalType === 2) {
