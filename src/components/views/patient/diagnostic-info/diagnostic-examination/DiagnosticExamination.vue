@@ -227,7 +227,7 @@
 import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import { deleteEmg, deleteBiochemical, deleteNeurologicCheck, deleteSleepMonitoring,
+import { deleteSiteInspection, deleteEmg, deleteBiochemical, deleteNeurologicCheck, deleteSleepMonitoring,
   deleteGeneCheck, deleteImage, deleteVitalSigns} from 'api/patient.js';
 // import { vueCopy } from 'utils/helper';
 
@@ -544,6 +544,27 @@ export default {
       };
       Bus.$on(this.CONFIRM, () => {
         deleteImage(imageInfo).then(this._resolveDeletion, this._rejectDeletion);
+      });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
+    },
+    addSiteInspection() {
+      // Bus.$emit(this.SHOW_IMG_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'siteInspectionModal', this.SHOW_SITE_INSPECTION_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
+    },
+    viewSiteInspection(item) {
+      // Bus.$emit(this.SHOW_IMG_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'siteInspectionModal', this.SHOW_SITE_INSPECTION_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit);
+    },
+    editSiteInspection(item) {
+      // Bus.$emit(this.SHOW_IMG_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'siteInspectionModal', this.SHOW_SITE_INSPECTION_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit);
+    },
+    deleteSiteInspection(item) {
+      let patientBodypartInfo = {
+        id: item.id
+      };
+      Bus.$on(this.CONFIRM, () => {
+        deleteSiteInspection(patientBodypartInfo).then(this._resolveDeletion, this._rejectDeletion);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
