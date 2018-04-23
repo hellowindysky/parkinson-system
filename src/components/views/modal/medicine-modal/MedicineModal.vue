@@ -14,6 +14,9 @@
               <span v-else-if="field.fieldName==='medicalType'">{{medicalType}}</span>
               <span v-else>{{medicine[field.fieldName]}}</span>
             </span>
+            <span v-else-if="getUIType(field.fieldName)===1">
+              {{medicine[field.fieldName]}}
+            </span>
             <span v-else-if="getUIType(field.fieldName)===3">
               {{getFieldValue(field)}}
             </span>
@@ -25,6 +28,12 @@
               <span v-else-if="field.fieldName==='medicalType'">{{medicalType}}</span>
               <span v-else>{{medicine[field.fieldName]}}</span>
             </span>
+            <el-input v-else-if="getUIType(field.fieldName)===1"
+             v-model="medicine[field.fieldName]"
+             :class="{'warning': warningResults[field.fieldName]}"
+             :placeholder="getMatchedField(field.fieldName).cnFieldDesc"
+             @change="updateField(field)">
+            </el-input>
             <el-select v-else-if="getUIType(field.fieldName)===3"
               v-model="medicine[field.fieldName]" clearable
               :class="{'warning': warningResults[field.fieldName]}"
@@ -105,12 +114,14 @@
               <span v-else-if="field.fieldName==='totalMeasure'">{{totalMeasure}} mg</span>
               <span v-else>{{medicine[field.fieldName]}}</span>
             </span>
+            <span v-else-if="field.fieldName==='drugComplianceIndex'">{{complainceOfDrug}}</span>
             <el-input v-else-if="getUIType(field.fieldName)===1" v-model="medicine[field.fieldName]"
               :class="{'warning': warningResults[field.fieldName]}" :type="getInputType(field.fieldName)"
               :placeholder="getMatchedField(field.fieldName).cnFieldDesc" @change="updateWarning(field)"
               :maxlength="500">
             </el-input>
           </span>
+          <span v-if="field.fieldName==='nonTakingDose'" class="field-right-txt">{{fieldRightTxt}}</span>
         </div>
 
         <div class="seperate-line">
@@ -308,6 +319,19 @@ export default {
       this.medicine.totalMeasure = totalMeasure;
       return totalMeasure;
     },
+    complainceOfDrug() {
+      // 药物依从性指数
+      let prescriptionDose = this.totalMeasure * Number(this.medicine.prescriptionDays);// 处方总剂量mg
+      if (!prescriptionDose) {
+        this.$set(this.medicine, 'drugComplianceIndex', '');
+        return '';
+      }
+      let notTakenDose = Number(this.medicine.nonTakingDose) * parseFloat(this.medicine.medicalSpecUsed, 10); // 未服用剂量mg
+      let takenDose = (prescriptionDose - notTakenDose) / prescriptionDose * 100;
+      takenDose = takenDose ? takenDose.toFixed(1) + '%' : '';
+      this.$set(this.medicine, 'drugComplianceIndex', takenDose);
+      return takenDose;
+    },
     computeUnit() {
       // 计算单位，是一个数字，这个计算属性是在和服务器进行数据交互时使用的，在 rowArray() 中有用到
       return this.medicineInfoObj.oralUnit;
@@ -400,6 +424,12 @@ export default {
 
       this.updateScrollbar();
       return arr;
+    },
+    fieldRightTxt() {
+      if (this.medicine.medicalSpecUsed) {
+        return this.medicine.medicalSpecUsed.split('/')[1];
+      }
+      return '';
     }
   },
   methods: {
@@ -674,6 +704,17 @@ export default {
       var fieldValue = this.medicine[fieldName];
       var isSideEffectField = this.checkIfSideEffectField(fieldName);
 
+      if (fieldName === 'prescriptionDays' || fieldName === 'nonTakingDose') {
+        if (field.must === 1 && !Util.checkIfPositiveInteger(fieldValue)) {
+          this.$set(this.warningResults, fieldName, '请输入正整数');
+        } else if (field.must === 2 && fieldValue && !Util.checkIfPositiveInteger(fieldValue)) {
+          this.$set(this.warningResults, fieldName, '请输入正整数');
+        } else {
+          this.$set(this.warningResults, fieldName, null);
+        };
+        return;
+      }
+
       if (field.must === 1 || (isSideEffectField && this.hasSideEffect)) {
         // must 为 1 代表必填，为 2 代表选填
         var isEmptyValue = !fieldValue && fieldValue !== 0;
@@ -875,6 +916,11 @@ export default {
           .warning .el-input__inner, .warning .el-textarea__inner {
             border: 1px solid red;
           }
+        }
+        .field-right-txt {
+          position: absolute;
+          right: calc(~"10%");
+          line-height: 25px;
         }
       }
       .form-wrapper {
