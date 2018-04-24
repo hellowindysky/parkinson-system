@@ -1,12 +1,12 @@
 <template lang="html">
   <div class="end-experiment-modal-wrapper">
     <div class="end-experiment-modal" ref="scrollArea">
-      <h3 class="title">结束试验</h3>
+      <h3 class="title">结束实验</h3>
       <div class="content">
 
         <div class="field whole-line">
           <span class="field-name">
-            是否完成试验
+            是否完成实验
             <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">

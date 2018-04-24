@@ -307,10 +307,10 @@ export default {
       this.milestoneNum = this.getMilestoneNum(item);
       this.milestoneStatus = this.getStatus(item);
 
-      this.lastTime = item.lastTime ? item.lastTime : '';
-      this.exceedTime = item.exceedTime ? item.exceedTime : '';
-      this.exceedReason = item.exceedReason ? item.exceedReason : '';
-      this.remark = item.remark ? item.remark : '';
+      this.lastTime = item.lastTime !== undefined ? item.lastTime : '';
+      this.exceedTime = item.exceedTime !== undefined ? item.exceedTime : '';
+      this.exceedReason = item.exceedReason !== undefined ? item.exceedReason : '';
+      this.remark = item.remark !== undefined ? item.remark : '';
 
       var propertyList = ['tcPatientAdverseOccurance', 'followUpType', 'followUpComplete', 'followUpReason',
         'reasonDetail', 'followUpContinue', 'nextTime'];
