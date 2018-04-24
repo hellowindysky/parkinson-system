@@ -1,6 +1,6 @@
 <template lang="html">
   <folding-panel :title="'医学量表'" :mode="mutableMode"  v-on:edit="startEditing"
-    v-on:cancel="cancel" v-on:submit="submit" :editable="canEdit" v-if="!hidePanel">
+    v-on:cancel="cancel" v-on:submit="submit" :editable="canEdit" v-if="showPanel">
     <div class="diagnostic-scale" ref="diagnosticscale">
       <extensible-panel class="panel" :mode="mutableMode" :title="normalScaleTitle"
         v-on:addNewCard="addScale(0)" :editable="canEdit">
@@ -123,6 +123,9 @@ export default {
       'allScale',
       'typeGroup'
     ]),
+    hospitalType() {
+      return this.$store.state.hospitalType;
+    },
     normalScaleTitle() {
       return '临床量表 (' + this.scaleListFomat.normalScaleList.length + '条记录)';
     },
@@ -166,11 +169,11 @@ export default {
       var typesInfo = Util.getElement('typegroupcode', 'gaugeType', this.typeGroup);
       return typesInfo.types ? typesInfo.types : [];
     },
-    hidePanel() {
-      if (this.diagnosticExperimentStep === this.EXPERIMENT_STEP_THERAPY) {
-        return true;
+    showPanel() {
+      if (this.hospitalType === 1 && this.diagnosticExperimentStep === this.EXPERIMENT_STEP_THERAPY) {
+        return false;
       }
-      return false;
+      return true;
     }
   },
   methods: {

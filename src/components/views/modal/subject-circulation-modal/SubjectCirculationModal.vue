@@ -73,7 +73,7 @@
               type="datetime"
               v-model="copyInfo.startDate"
               :class="{'warning': warningResults.startDate}"
-              @change="updateWarning('startDate')"
+              @change="updateStartDate"
               placeholder="请选择下次随访时间" clearable>
             </el-date-picker>
           </span>
@@ -99,7 +99,7 @@
           </span>
         </div>
 
-        <div class="field whole-line">
+        <div class="field whole-line" v-if="!readyToEndExperiment">
           <span class="field-name">
             是否超窗:
             <span class="required-mark">*</span>
@@ -161,7 +161,7 @@
       <div v-if="mode!==VIEW_CURRENT_CARD && !readyToEndExperiment"
         class="button submit-button" @click="submit">确定</div>
       <div v-else-if="mode!==VIEW_CURRENT_CARD && readyToEndExperiment"
-        class="button submit-button" @click="submit">结束实验</div>
+        class="button submit-button" @click="submit">结束随访</div>
       <div v-else-if="mode===VIEW_CURRENT_CARD && showEdit" class="button submit-button">编辑</div>
 
     </div>
@@ -172,7 +172,7 @@
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus';
 import Util from 'utils/util';
-import { completeExperiment } from 'api/experiment';
+import { queryExperimentProgress, completeExperiment } from 'api/experiment';
 
 export default {
   data() {
@@ -196,7 +196,8 @@ export default {
         lastTime: '',
         exceedTime: '',
         suitableForResearch: ''
-      }
+      },
+      lastStepStartDate: ''
     };
   },
   computed: {
@@ -211,6 +212,11 @@ export default {
       this.patientCurrentExperimentStep = item.patientCurrentExperimentStep;
       this.readyToEndExperiment = false;
 
+      this.lastStepStartDate = '';
+
+      // 读取实验流程中，最后一步操作的开始日期，用来计算距离上次随访的天数
+      this.updateExperimentLastStepStartTime();
+
       for (let property in this.copyInfo) {
         if (this.copyInfo.hasOwnProperty(property)) {
           this.copyInfo[property] = '';
@@ -220,6 +226,39 @@ export default {
       this.clearWarning();
 
       // this.updateScrollbar();
+    },
+    updateExperimentLastStepStartTime() {
+      var experimentInfo = {
+        'patientExperimentModel': {
+          'patientId': this.$route.params.id,
+          'tcTaskId': this.$store.state.subjectId
+        }
+      };
+      queryExperimentProgress(experimentInfo).then((data) => {
+        if (data && data.patientExperiment && data.patientExperiment.length > 0) {
+          let progressList = data.patientExperiment;
+          this.lastStepStartDate = progressList[progressList.length - 1].startDate;
+        } else {
+          this.lastStepStartDate = '';
+        }
+      }, (error) => {
+        console.log(error);
+      });
+    },
+    updateStartDate() {
+      // 填写了开始时间之后，需要动态计算距离上次随访天数
+      if (this.copyInfo.startDate === '' || this.lastStepStartDate === '') {
+        this.updateWarning('startDate');
+        return;
+      }
+      let currentStepStartDate = new Date(this.copyInfo.startDate).getTime();
+      let lastStepStartDate = new Date(this.lastStepStartDate).getTime();
+      let dayTime = 1000 * 60 * 60 * 24;
+      let days = Math.floor((currentStepStartDate - lastStepStartDate) / dayTime);
+      this.copyInfo.lastTime = days >= 0 ? days : 0;
+
+      this.updateWarning('startDate');
+      this.updateWarning('lastTime');
     },
     updateScrollbar() {
       this.$nextTick(() => {
@@ -236,6 +275,42 @@ export default {
         return;
       }
       this.lockSubmitButton = true;
+
+      for (let property in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(property)) {
+          if (!this.readyToEndExperiment &&
+            ['step', 'startDate', 'lastTime', 'exceedTime'].indexOf(property) >= 0) {
+            this.updateWarning(property);
+          } else if (this.readyToEndExperiment &&
+            ['suitableForResearch'].indexOf(property) >= 0) {
+            this.updateWarning(property);
+          }
+        }
+      }
+      for (let property in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(property) && this.warningResults[property]) {
+          if (!this.readyToEndExperiment &&
+            ['step', 'startDate', 'lastTime', 'exceedTime'].indexOf(property) >= 0) {
+            this.$message({
+              message: '请完成必填项',
+              type: 'warning',
+              duration: 2000
+            });
+            this.lockSubmitButton = false;
+            return;
+
+          } else if (this.readyToEndExperiment &&
+            ['suitableForResearch'].indexOf(property) >= 0) {
+            this.$message({
+              message: '请完成必填项',
+              type: 'warning',
+              duration: 2000
+            });
+            this.lockSubmitButton = false;
+            return;
+          }
+        }
+      }
 
       var experimentInfo = {
         'patientExperimentModel': {
@@ -255,9 +330,10 @@ export default {
           patientExperimentModel.exceedReason = this.copyInfo.exceedReason;
         }
         patientExperimentModel.remark = this.copyInfo.remark;
+        completeExperiment(experimentInfo, this.hospitalType).then(this.updateAndClose, this._handleError);
 
       } else {
-        // 走结束实验流程
+        // 走结束随访流程
         experimentInfo.qualified = 1;
         patientExperimentModel.suitableForResearch = this.copyInfo.suitableForResearch;
         patientExperimentModel.exceedTime = this.copyInfo.exceedTime;
@@ -265,8 +341,8 @@ export default {
           patientExperimentModel.exceedReason = this.copyInfo.exceedReason;
         }
         patientExperimentModel.remark = this.copyInfo.remark;
+        completeExperiment(experimentInfo, this.hospitalType).then(this.completeFollowUpAndClose, this._handleError);
       }
-      completeExperiment(experimentInfo, this.hospitalType).then(this.updateAndClose, this._handleError);
     },
     _handleError(error) {
       console.log(error);
@@ -289,6 +365,23 @@ export default {
       Bus.$emit(this.UPDATE_PATIENTS_LIST);
       Bus.$emit(this.UPDATE_PATIENT_INFO);
       Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
+    },
+    completeFollowUpAndClose() {
+      // 这个函数是在 updateAndClose 基础之上修改的，做了一些额外的操作
+      this.$message({
+        message: '已结束该患者的随访流程，请填写实验结束信息',
+        type: 'success',
+        duration: 2000
+      });
+      this.lockSubmitButton = false;
+      Bus.$emit(this.UPDATE_PATIENTS_LIST);
+      Bus.$emit(this.UPDATE_PATIENT_INFO);
+      this.$router.push({
+        name: 'experimentInfo',
+        params: {
+          shouldOpenEndExperimentModal: true
+        }
+      });
     },
     cancel() {
       this.lockSubmitButton = false;

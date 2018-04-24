@@ -850,7 +850,32 @@ export function deleteNeurologicCheck(patientSpephysical) {
 
   return encapsulatePromise(url, request);
 };
+// 新增部位检查
+export function addPatientBodypart(patientBodypart) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientBodypart = patientBodypart;
+  var url = '/pdms/addPatientBodypart';
 
+  return encapsulatePromise(url, request);
+};
+
+// 修改部位检查
+export function modifyPatientBodypart(patientBodypart) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientBodypart = patientBodypart;
+  var url = '/pdms/modPatientBodypart';
+
+  return encapsulatePromise(url, request);
+};
+
+// 删除部位检查
+export function deletePatientBodypart(patientBodypart) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientBodypart = patientBodypart;
+  var url = '/pdms/delPatientBodypart';
+
+  return encapsulatePromise(url, request);
+};
 // 修改基因检查
 export function modifyGeneCheck(patientGene) {
   var request = Object.assign({}, getCommonRequest());

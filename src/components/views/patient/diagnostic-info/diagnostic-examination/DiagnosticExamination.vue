@@ -227,7 +227,7 @@
 import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import { deleteEmg, deleteBiochemical, deleteNeurologicCheck, deleteSleepMonitoring,
+import { deletePatientBodypart, deleteEmg, deleteBiochemical, deleteNeurologicCheck, deleteSleepMonitoring,
   deleteGeneCheck, deleteImage, deleteVitalSigns} from 'api/patient.js';
 // import { vueCopy } from 'utils/helper';
 
@@ -331,6 +331,9 @@ export default {
       'emgTypeList',
       'typeGroup'
     ]),
+    hospitalType() {
+      return this.$store.state.hospitalType;
+    },
     vitalSignsTitle() {
       return '生命体征 (' + this.diagnosticVitalSigns.length + '条记录)';
     },
@@ -420,7 +423,7 @@ export default {
     },
     showNeurologicCheckRecord() {
       var atOtherStatus = this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_FOLLOW_UP;
-      if (this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
+      if (this.hospitalType === 1 && this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
         return false;
       } else {
         return true;
@@ -428,7 +431,7 @@ export default {
     },
     showSiteInspection() {
       var atOtherStatus = this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_FOLLOW_UP;
-      if (this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
+      if (this.hospitalType === 1 && this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
         return false;
       } else {
         return true;
@@ -544,6 +547,27 @@ export default {
       };
       Bus.$on(this.CONFIRM, () => {
         deleteImage(imageInfo).then(this._resolveDeletion, this._rejectDeletion);
+      });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
+    },
+    addSiteInspection() {
+      // Bus.$emit(this.SHOW_IMG_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'siteInspectionModal', this.SHOW_SITE_INSPECTION_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
+    },
+    viewSiteInspection(item) {
+      // Bus.$emit(this.SHOW_IMG_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'siteInspectionModal', this.SHOW_SITE_INSPECTION_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit);
+    },
+    editSiteInspection(item) {
+      // Bus.$emit(this.SHOW_IMG_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'siteInspectionModal', this.SHOW_SITE_INSPECTION_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit);
+    },
+    deleteSiteInspection(item) {
+      let patientBodypartInfo = {
+        id: item.id
+      };
+      Bus.$on(this.CONFIRM, () => {
+        deletePatientBodypart(patientBodypartInfo).then(this._resolveDeletion, this._rejectDeletion);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },

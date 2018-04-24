@@ -180,6 +180,9 @@ export default {
       var caseId = this.$route.params.caseId;
       if (caseId === 'newCase') {
         this.copyInfo.patientId = this.$route.params.id;
+        if (this.inSubject) {
+          this.copyInfo.taskInfoId = this.subjectId;
+        }
         addDiagnosticBasic(this.copyInfo).then((data) => {
           var routeName;
           if (this.listType === this.MY_PATIENTS_TYPE) {

@@ -39,6 +39,7 @@
         :biochemicalExamList="caseDetail.patientBioexam"
         :emgList="caseDetail.patientElecTroGram"
         :sleepMonitoringList="caseDetail.patientNerveSleep"
+        :siteInspectionList="caseDetail.patientBodypart"
         :electricImagingList="caseDetail.patientElecVideoList"
         :medicalImagingList="caseDetail.patientVideoList"
         :diagnosticVitalSigns="caseDetail.patientVitalSign"
@@ -88,6 +89,9 @@ export default {
     listType() {
       return this.$store.state.listType;
     },
+    hospitalType() {
+      return this.$store.state.hospitalType;
+    },
     isNewCase() {
       if (this.$route.params.caseId && this.$route.params.caseId === 'newCase') {
         return true;
@@ -115,6 +119,9 @@ export default {
     diagnosisCreator() {
       return this.caseDetail.createUserName ? this.caseDetail.createUserName : '';
     },
+    diagnosticSubjectId() {
+      return this.caseDetail.taskInfoId ? this.caseDetail.taskInfoId : this.SUBJECT_ID_FOR_HOSPITAL;
+    },
     diagnosticExperimentStep() {
       var status = parseInt(this.caseDetail.status, 10);  // 实验阶段 (从 2 开始)
       return status > 0 ? status : this.EXPERIMENT_STEP_OUT;
@@ -132,12 +139,18 @@ export default {
       return stage >= 0 ? stage : 0;
     },
     patientDuringExperiment() {
-      return [this.EXPERIMENT_STEP_SCREENING, this.EXPERIMENT_STEP_THERAPY,
+      return [this.EXPERIMENT_STEP_FILTERING, this.EXPERIMENT_STEP_SCREENING, this.EXPERIMENT_STEP_THERAPY,
         this.EXPERIMENT_STEP_FOLLOW_UP].indexOf(this.patientExperimentStep) >= 0;
     },
     canEdit() {
       var createdByCurrentUser = this.diagnosisCreator === sessionStorage.getItem('userName');
       var isExperimentPatientsList = this.listType === this.THERAPISTS_PATIENTS_TYPE || this.listType === this.APPRAISERS_PATIENTS_TYPE;
+
+      // 2.3 新增的判断条件：
+      // 诊断在添加时，要记录是在哪个课题下面添加的。只有当这个课题 Id 和当下前端页面的课题 Id 相同时，才可以编辑。
+      // 医院入口虽然是一个特殊情况，但已经做了特殊处理，
+      // 下面这排代码的 === 两端都会采用 this.SUBJECT_ID_FOR_HOSPITAL 这个特殊值
+      var inSameSubject = this.diagnosticSubjectId === this.$store.state.subjectId;
 
       // 以下条件要控制，诊断添加时的实验阶段，和病人当前所处的实验阶段，要相一致。
       // 唯一的例外情况是，病人处于实验结束阶段时，诊断卡片如果是实验之外添加的，也是可以编辑的
@@ -160,8 +173,13 @@ export default {
       if (caseId === 'newCase') {
         return true;
 
-      } else if (caseId === undefined || this.hasBeenArchived) {
+      } else if (caseId === undefined || this.hasBeenArchived || !inSameSubject) {
+        // 如果没有诊断 Id，或者该诊断已经归档，或者该诊断不属于当前课题，则不可编辑
         return false;
+
+      } else if (this.hospitalType === 2) {
+        // 如果是北京医院的实验流程，则全部处于可编辑状态
+        return true;
 
       } else if (isExperimentPatientsList && !createdByCurrentUser) {
         // 如果当前处于“评估者”和“诊断者”的患者列表，则需要检查该诊断记录是否是由当前登录用户创建的，不是则不允许编辑

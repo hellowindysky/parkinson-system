@@ -8,7 +8,6 @@
 
     <filter-panel :showFilterPanel="showFilterPanel"></filter-panel>
     <secret-agreement-modal></secret-agreement-modal>
-    <!-- <site-inspection-modal></site-inspection-modal> -->
     <authorization-modal></authorization-modal>
     <choice-panel></choice-panel>
     <confirm-box></confirm-box>

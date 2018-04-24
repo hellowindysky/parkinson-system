@@ -276,7 +276,6 @@ export default {
         this.questionsListFormat(scale);
         // console.log('format', scale);
       }
-      
       return scale ? scale : {};
     },
     scaleTitle() {

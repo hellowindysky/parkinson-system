@@ -21,7 +21,7 @@
           </span>
         </div>
         <div class="experiment-description" v-if="inSubject">
-          {{item.experimentDescription}}
+          {{getExperimentDescription(item)}}
         </div>
       </card>
     </folding-panel>
@@ -158,6 +158,24 @@ export default {
         return '未归档';
       }
     },
+    getExperimentDescription(item) {
+      if (this.hospitalType === 1) {
+        return item.experimentDescription;
+      } else if (this.hospitalType === 2) {
+        let status = Number(item.status);
+        let stage = item.stage;
+        if (status === this.EXPERIMENT_STEP_FILTERING) {
+          return '筛选入组(V0)';
+        } else if (status === this.EXPERIMENT_STEP_SCREENING) {
+          return '基线评估(V1)';
+        } else if (status === this.EXPERIMENT_STEP_FOLLOW_UP) {
+          return '随访(V' + stage + ')';
+        } else if (status === this.EXPERIMENT_STEP_COMPLETE) {
+          return '实验结束';
+        }
+      }
+      return '';
+    },
     changeFilterCondition(filterCondition) {
       this.filterCondition = filterCondition;
     },
@@ -229,7 +247,7 @@ export default {
       var diagnosticExperimentStep = item.status !== undefined ? Number(item.status) : this.EXPERIMENT_STEP_OUT;
       var diagnosticExperimentStage = item.stage !== undefined ? Number(item.stage) : this.EXPERIMENT_STEP_OUT;
       if (this.patientCurrentExperimentStep !== this.EXPERIMENT_STEP_OUT) {
-        // 如果该患者正处在试验期，则只有当患者所处实验阶段和诊断记录的实验阶段相同，
+        // 如果该患者正处在实验期，则只有当患者所处实验阶段和诊断记录的实验阶段相同，
         // 而且该诊断的创建人和当前登录账号一致时，该阶段的特定的角色才能删除该诊断卡片
         if (this.patientCurrentExperimentStep === diagnosticExperimentStep &&
           this.patientCurrentExperimentStage === diagnosticExperimentStage &&
