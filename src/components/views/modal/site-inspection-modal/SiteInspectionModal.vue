@@ -25,8 +25,8 @@
             一般情况:
           </span>
           <span class="field-radio">
-            <el-radio v-model="normal" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
-            <el-radio v-model="normal" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
+            <el-radio v-model="spephysicalResult" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="spephysicalResult" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span>{{normal}}</span>
@@ -38,7 +38,7 @@
               :rows="2"
               :maxlength="50"
               placeholder="请输入特征描述"
-              :disabled="normal==0">
+              :disabled="spephysicalResult==0">
             </el-input>
           </span>
         </div>
@@ -47,8 +47,8 @@
             皮肤、粘膜:
           </span>
           <span class="field-radio">
-            <el-radio v-model="skin" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
-            <el-radio v-model="skin" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
+            <el-radio v-model="spephysicalResult" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="spephysicalResult" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span>{{skin}}</span>
@@ -60,7 +60,7 @@
               :rows="2"
               :maxlength="50"
               placeholder="请输入特征描述"
-              :disabled="skin==0">
+              :disabled="spephysicalResult==0">
             </el-input>
           </span>
         </div>
@@ -69,8 +69,8 @@
             浅表淋巴结:
           </span>
           <span class="field-radio">
-            <el-radio v-model="lymphNode" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
-            <el-radio v-model="lymphNode" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
+            <el-radio v-model="spephysicalResult" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="spephysicalResult" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span>{{lymphNode}}</span>
@@ -82,7 +82,7 @@
               :rows="2"
               :maxlength="50"
               placeholder="请输入特征描述"
-              :disabled="lymphNode==0">
+              :disabled="spephysicalResult==0">
             </el-input>
           </span>
         </div>
@@ -91,8 +91,8 @@
             头部:
           </span>
           <span class="field-radio">
-            <el-radio v-model="head" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
-            <el-radio v-model="head" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
+            <el-radio v-model="spephysicalResult" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="spephysicalResult" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span>{{head}}</span>
@@ -104,7 +104,7 @@
               :rows="2"
               :maxlength="50"
               placeholder="请输入特征描述"
-              :disabled="head==0">
+              :disabled="spephysicalResult==0">
             </el-input>
           </span>
         </div>
@@ -113,8 +113,8 @@
             颈部:
           </span>
           <span class="field-radio">
-            <el-radio v-model="neck" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
-            <el-radio v-model="neck" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
+            <el-radio v-model="spephysicalResult" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="spephysicalResult" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span>{{neck}}</span>
@@ -126,7 +126,7 @@
               :rows="2"
               :maxlength="50"
               placeholder="请输入特征描述"
-              :disabled="neck==0">
+              :disabled="spephysicalResult==0">
             </el-input>
           </span>
         </div>
@@ -135,8 +135,8 @@
             胸部:
           </span>
           <span class="field-radio">
-            <el-radio v-model="chesk" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
-            <el-radio v-model="chesk" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
+            <el-radio v-model="spephysicalResult" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="spephysicalResult" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span>{{chesk}}</span>
@@ -148,7 +148,7 @@
               :rows="2"
               :maxlength="50"
               placeholder="请输入特征描述"
-              :disabled="chesk==0">
+              :disabled="spephysicalResult==0">
             </el-input>
           </span>
         </div>
@@ -157,8 +157,8 @@
             心脏:
           </span>
           <span class="field-radio">
-            <el-radio v-model="heart" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
-            <el-radio v-model="heart" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
+            <el-radio v-model="spephysicalResult" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="spephysicalResult" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span>{{heart}}</span>
@@ -170,7 +170,7 @@
               :rows="2"
               :maxlength="50"
               placeholder="请输入特征描述"
-              :disabled="heart==0">
+              :disabled="spephysicalResult==0">
             </el-input>
           </span>
         </div>
@@ -179,8 +179,8 @@
             腹部:
           </span>
           <span class="field-radio">
-            <el-radio v-model="abdomen" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
-            <el-radio v-model="abdomen" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
+            <el-radio v-model="spephysicalResult" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="spephysicalResult" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span>{{abdomen}}</span>
@@ -192,7 +192,7 @@
               :rows="2"
               :maxlength="50"
               placeholder="请输入特征描述"
-              :disabled="abdomen==0">
+              :disabled="spephysicalResult==0">
             </el-input>
           </span>
         </div>
@@ -201,8 +201,8 @@
             四肢关节:
           </span>
           <span class="field-radio">
-            <el-radio v-model="limb" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
-            <el-radio v-model="limb" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
+            <el-radio v-model="spephysicalResult" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="spephysicalResult" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span>{{limb}}</span>
@@ -214,7 +214,7 @@
               :rows="2"
               :maxlength="50"
               placeholder="请输入特征描述"
-              :disabled="limb==0">
+              :disabled="spephysicalResult==0">
             </el-input>
           </span>
         </div>
@@ -223,8 +223,8 @@
             其他:
           </span>
           <span class="field-radio">
-            <el-radio v-model="other" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
-            <el-radio v-model="other" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
+            <el-radio v-model="spephysicalResult" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="spephysicalResult" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span>{{other}}</span>
@@ -236,7 +236,7 @@
               :rows="2"
               :maxlength="50"
               placeholder="请输入特征描述"
-              :disabled="other==0">
+              :disabled="spephysicalResult==0">
             </el-input>
           </span>
         </div>
@@ -253,7 +253,7 @@ import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import { pruneObj, reviseDateFormat} from 'utils/helper';
+import { vueCopy, pruneObj, reviseDateFormat} from 'utils/helper';
 import { addPatientBodypart, modifyPatientBodypart } from 'api/patient.js';
 
 export default {
@@ -261,10 +261,53 @@ export default {
     return {
       mode: '',
       completeInit: false,
-
+      spephysicalResult: '',
       patientBodypart: '',
       patientBodypartId: '',
-      // partExamination: [],
+      partExamination: [
+        {
+          'normal': {
+            'result': 0,
+            'remark': '特征描述'
+          },
+          'skin': {
+            'result': 1,
+            'remark': '描述......'
+          },
+          'lymphNode': {
+            'result': 1,
+            'remark': '描述......'
+          },
+          'head': {
+            'result': 1,
+            'remark': '描述......'
+          },
+          'neck': {
+            'result': 1,
+            'remark': '描述......'
+          },
+          'chesk': {
+            'result': 1,
+            'remark': '描述......'
+          },
+          'heart': {
+            'result': 1,
+            'remark': '描述......'
+          },
+          'abdomen': {
+            'result': 1,
+            'remark': '描述......'
+          },
+          'limb': {
+            'result': 1,
+            'remark': '描述......'
+          },
+          'other': {
+            'result': 1,
+            'remark': '描述......'
+          }
+        }
+      ],
       ariseTime: '',
       normal: '',
       skin: '',
@@ -322,8 +365,8 @@ export default {
       this.abdomen = item.abdomen ? item.abdomen : '';
       this.limb = item.limb ? item.limb : '';
       this.other = item.other ? item.other : '';
-      // this.partExamination = item.partExamination ? item.partExamination.split('') : [];
-
+      // this.spephysicalResult = item.spephysicalResult ? item.spephysicalResult: '';
+      vueCopy(item.partExamination, this.partExamination);
       this.completeInit = true;
       this.updateScrollbar();
     },
@@ -404,7 +447,9 @@ export default {
       patientBodypartInfo.abdomen = this.abdomen;
       patientBodypartInfo.limb = this.limb;
       patientBodypartInfo.other = this.other;
-      // patientBodypartInfo.partExamination = this.partExamination.join('');
+      // patientBodypartInfo.spephysicalResult = this.spephysicalResult;
+      // patientBodypartInfo.partExamination = deepCopy(this.partExamination);
+      patientBodypartInfo.partExamination = JSON.stringify(this.partExamination);
       reviseDateFormat(patientBodypartInfo);
       pruneObj(patientBodypartInfo);
       if (this.mode === this.ADD_NEW_CARD) {
