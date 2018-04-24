@@ -298,7 +298,7 @@ export default {
      */
     getScaleShowKey(item) {
       switch (item.scaleInfoId) {
-        case '8a9e2d38609771180162d839e5e1059b':
+        case '8a9e2d38609771180162d839e5e1059b' || '8a9e2d38609771180162d843c44505cd':
           item.keyText = ['填写时间', '入选标准', '排除标准'];
           item.keyName = ['inspectTime', 'inclusionCriteria', 'exclusionCriteria'];
           break;
