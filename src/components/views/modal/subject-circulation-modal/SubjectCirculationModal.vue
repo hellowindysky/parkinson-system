@@ -73,7 +73,7 @@
               type="datetime"
               v-model="copyInfo.startDate"
               :class="{'warning': warningResults.startDate}"
-              @change="updateLastTime"
+              @change="updateStartDate"
               placeholder="请选择下次随访时间" clearable>
             </el-date-picker>
           </span>
@@ -212,6 +212,8 @@ export default {
       this.patientCurrentExperimentStep = item.patientCurrentExperimentStep;
       this.readyToEndExperiment = false;
 
+      this.lastStepStartDate = '';
+
       // 读取实验流程中，最后一步操作的开始日期，用来计算距离上次随访的天数
       this.updateExperimentLastStepStartTime();
 
@@ -243,7 +245,7 @@ export default {
         console.log(error);
       });
     },
-    updateLastTime() {
+    updateStartDate() {
       // 填写了开始时间之后，需要动态计算距离上次随访天数
       if (this.copyInfo.startDate === '' || this.lastStepStartDate === '') {
         this.updateWarning('startDate');
@@ -256,6 +258,7 @@ export default {
       this.copyInfo.lastTime = days >= 0 ? days : 0;
 
       this.updateWarning('startDate');
+      this.updateWarning('lastTime');
     },
     updateScrollbar() {
       this.$nextTick(() => {
