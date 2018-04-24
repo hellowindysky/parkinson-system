@@ -422,6 +422,9 @@ export default {
       'complicationTypeList',
       'typeGroup'
     ]),
+    hospitalType() {
+      return this.$store.state.hospitalType;
+    },
     medicineTitle() {
       var count = this.diagnosticMedicine.length + this.diagnosticMedicineAdverseEvent.length;
       var ledd = Number(this.calcTotalLevodopaDoseOfAllOtherMedicine({}).toFixed(5));
@@ -479,7 +482,7 @@ export default {
     showMedicinePanel() {
       var atOtherStatus = this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_SCREENING &&
         this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_FOLLOW_UP;
-      if (this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
+      if (this.hospitalType === 1 && this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
         return false;
       } else {
         return true;
@@ -488,14 +491,14 @@ export default {
     showMedicineAdverseEvent() {
       var atOtherStatus = this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_THERAPY &&
         this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_FOLLOW_UP;
-      if (this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
+      if (this.hospitalType === 1 && this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
         return false;
       } else {
         return true;
       }
     },
     showSurgeryPanel() {
-      if (this.diagnosisDuringExperiment) {
+      if (this.hospitalType === 1 && this.diagnosisDuringExperiment) {
         return false;
       } else {
         return true;
@@ -503,7 +506,7 @@ export default {
     },
     showPhysiontherapy() {
       var atOtherStatus = this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_THERAPY;
-      if (this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
+      if (this.hospitalType === 1 && this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
         return false;
       } else {
         return true;
@@ -511,7 +514,7 @@ export default {
     },
     showTreatmentEvaluation() {
       var atOtherStatus = this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_FOLLOW_UP;
-      if (this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
+      if (this.hospitalType === 1 && this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
         return false;
       } else {
         return true;
@@ -520,7 +523,7 @@ export default {
     showAdverseEvent() {
       var atOtherStatus = this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_THERAPY &&
         this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_FOLLOW_UP;
-      if (this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
+      if (this.hospitalType === 1 && this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
         return false;
       } else {
         return true;
@@ -529,7 +532,7 @@ export default {
     showSeriousAdverseEvent() {
       var atOtherStatus = this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_THERAPY &&
         this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_FOLLOW_UP;
-      if (this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
+      if (this.hospitalType === 1 && this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
         return false;
       } else {
         return true;

@@ -28,17 +28,17 @@
         入组
       </div>
       <div class="button light-button complete-therapy-button"
-        v-if="listType===APPRAISERS_PATIENTS_TYPE && progressList.length>0 && milestoneNum===EXPERIMENT_STEP_SCREENING"
+        v-if="hospitalType===1 && listType===APPRAISERS_PATIENTS_TYPE && progressList.length>0 && milestoneNum===EXPERIMENT_STEP_SCREENING"
         @click="completeEvaluation">
         课题流转
       </div>
       <div class="button light-button complete-therapy-button"
-        v-if="listType===THERAPISTS_PATIENTS_TYPE && progressList.length>0 && milestoneNum===EXPERIMENT_STEP_THERAPY"
+        v-if="hospitalType===1 && listType===THERAPISTS_PATIENTS_TYPE && progressList.length>0 && milestoneNum===EXPERIMENT_STEP_THERAPY"
         @click="completeTherapy">
         结束治疗
       </div>
       <div class="button light-button complete-follow-up-button"
-        v-if="listType===APPRAISERS_PATIENTS_TYPE && progressList.length>0 && milestoneNum===EXPERIMENT_STEP_FOLLOW_UP"
+        v-if="hospitalType===1 && listType===APPRAISERS_PATIENTS_TYPE && progressList.length>0 && milestoneNum===EXPERIMENT_STEP_FOLLOW_UP"
         @click="completeFollowUp">
         本期随访结束
       </div>
@@ -49,7 +49,7 @@
         结束随访
       </div>
       <div class="button light-button complete-experiment-button"
-        v-if="hospitalType===2 && progressList.length>0 && milestoneNum===EXPERIMENT_STEP_COMPLETE"
+        v-if="hospitalType===2 && progressList.length>0 && milestoneNum===EXPERIMENT_STEP_COMPLETE && !hasCompletionInfo"
         @click="completeExperiment">
         结束实验
       </div>
@@ -75,7 +75,7 @@
           <td class="col col-remarks">
             {{step.remark}}
             <span class="iconfont icon-detail" @click="seeDetail(step)"
-              v-if="(index < progressList.length - 1)||(getMilestoneNum(step)===2&&getStatus(step)===3)"></span>
+              v-if="decideIfShowDetail(step, index)"></span>
           </td>
         </tr>
       </table>
@@ -143,6 +143,18 @@ export default {
       } else {
         return '';
       }
+    },
+    hasCompletionInfo() {
+      // 该计算变量用来判断是否有提交过结束信息
+      // 判断标准是，最后一步操作里面，是否包含结束实验的描述信息 terminateExperimentModel
+      var length = this.progressList.length;
+      if (length > 0) {
+        var theLastStep = this.progressList[length - 1];
+        if (theLastStep.terminateExperimentModel) {
+          return true;
+        }
+      }
+      return false;
     }
   },
   methods: {
@@ -183,8 +195,8 @@ export default {
     },
     completeEvaluation() {
       var step = {
-        // 结束基线评估，下一阶段的 phase 应当为 30
-        phase: '' + 30
+        // 结束基线评估，下一阶段的 phase 应当为 治疗期
+        phase: '' + this.EXPERIMENT_STEP_THERAPY
       };
       Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'nextExperimentStepModal', this.SHOW_NEXT_EXPERIMENT_STEP_MODAL, this.ADD_NEW_CARD, step, true, this.therapist);
     },
@@ -222,7 +234,12 @@ export default {
       }
     },
     seeDetail(step) {
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'experimentStepModal', this.SHOW_EXPERIMENT_STEP_MODAL, this.VIEW_CURRENT_CARD, step, false);
+      if (this.hospitalType === 2 && this.getMilestoneNum(step) === this.EXPERIMENT_STEP_COMPLETE) {
+        let info = step.terminateExperimentModel ? step.terminateExperimentModel : {};
+        Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'endExperimentModal', this.SHOW_END_EXPERIMENT_MODAL, this.VIEW_CURRENT_CARD, info, false);
+      } else {
+        Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'experimentStepModal', this.SHOW_EXPERIMENT_STEP_MODAL, this.VIEW_CURRENT_CARD, step, false);
+      }
     },
     getMilestoneNum(step) {
       var milestoneNum = 0;
@@ -230,7 +247,7 @@ export default {
       if (phase && phase.split('.').length > 0) {
         milestoneNum = Number(phase.split('.')[0]);
       }
-      milestoneNum = parseInt(milestoneNum / 10, 10) * 10;
+      milestoneNum = parseInt(milestoneNum, 10);
       return milestoneNum;
     },
     getMilestone(step, currentIndex) {
@@ -326,6 +343,17 @@ export default {
         return 'rejected';
       }
     },
+    decideIfShowDetail(step, index) {
+      if (index < this.progressList.length - 1) {
+        return true;
+      } else if (this.getMilestoneNum(step) === this.EXPERIMENT_STEP_SCREENING && this.getStatus(step) === 3) {
+        return true;
+      } else if (this.getMilestoneNum(step) === this.EXPERIMENT_STEP_COMPLETE &&
+        this.hospitalType === 2 && this.hasCompletionInfo) {
+        return true;
+      }
+      return false;
+    },
     updateExperimentProgress() {
       var experimentInfo = {
         'patientExperimentModel': {
@@ -366,6 +394,11 @@ export default {
   mounted() {
     Bus.$on(this.UPDATE_EXPERIMENT_INFO, this.updateExperimentProgress);
     this.updateExperimentProgress();
+
+    // 如果是由课题流转模态框点击“结束随访”跳转过来的，则自动打开结束实验的模态框
+    if (this.$route.params.shouldOpenEndExperimentModal) {
+      this.completeExperiment();
+    }
   },
   beforeRouteEnter(to, from, next) {
     var subjectId = sessionStorage.getItem('subjectId');

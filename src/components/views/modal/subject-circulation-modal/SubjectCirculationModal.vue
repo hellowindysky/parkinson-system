@@ -99,7 +99,7 @@
           </span>
         </div>
 
-        <div class="field whole-line">
+        <div class="field whole-line" v-if="!readyToEndExperiment">
           <span class="field-name">
             是否超窗:
             <span class="required-mark">*</span>
@@ -161,7 +161,7 @@
       <div v-if="mode!==VIEW_CURRENT_CARD && !readyToEndExperiment"
         class="button submit-button" @click="submit">确定</div>
       <div v-else-if="mode!==VIEW_CURRENT_CARD && readyToEndExperiment"
-        class="button submit-button" @click="submit">结束实验</div>
+        class="button submit-button" @click="submit">结束随访</div>
       <div v-else-if="mode===VIEW_CURRENT_CARD && showEdit" class="button submit-button">编辑</div>
 
     </div>
@@ -237,6 +237,42 @@ export default {
       }
       this.lockSubmitButton = true;
 
+      for (let property in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(property)) {
+          if (!this.readyToEndExperiment &&
+            ['step', 'startDate', 'lastTime', 'exceedTime'].indexOf(property) >= 0) {
+            this.updateWarning(property);
+          } else if (this.readyToEndExperiment &&
+            ['suitableForResearch'].indexOf(property) >= 0) {
+            this.updateWarning(property);
+          }
+        }
+      }
+      for (let property in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(property) && this.warningResults[property]) {
+          if (!this.readyToEndExperiment &&
+            ['step', 'startDate', 'lastTime', 'exceedTime'].indexOf(property) >= 0) {
+            this.$message({
+              message: '请完成必填项',
+              type: 'warning',
+              duration: 2000
+            });
+            this.lockSubmitButton = false;
+            return;
+
+          } else if (this.readyToEndExperiment &&
+            ['suitableForResearch'].indexOf(property) >= 0) {
+            this.$message({
+              message: '请完成必填项',
+              type: 'warning',
+              duration: 2000
+            });
+            this.lockSubmitButton = false;
+            return;
+          }
+        }
+      }
+
       var experimentInfo = {
         'patientExperimentModel': {
           'patientId': this.$route.params.id,
@@ -255,9 +291,10 @@ export default {
           patientExperimentModel.exceedReason = this.copyInfo.exceedReason;
         }
         patientExperimentModel.remark = this.copyInfo.remark;
+        completeExperiment(experimentInfo, this.hospitalType).then(this.updateAndClose, this._handleError);
 
       } else {
-        // 走结束实验流程
+        // 走结束随访流程
         experimentInfo.qualified = 1;
         patientExperimentModel.suitableForResearch = this.copyInfo.suitableForResearch;
         patientExperimentModel.exceedTime = this.copyInfo.exceedTime;
@@ -265,8 +302,8 @@ export default {
           patientExperimentModel.exceedReason = this.copyInfo.exceedReason;
         }
         patientExperimentModel.remark = this.copyInfo.remark;
+        completeExperiment(experimentInfo, this.hospitalType).then(this.completeFollowUpAndClose, this._handleError);
       }
-      completeExperiment(experimentInfo, this.hospitalType).then(this.updateAndClose, this._handleError);
     },
     _handleError(error) {
       console.log(error);
@@ -289,6 +326,23 @@ export default {
       Bus.$emit(this.UPDATE_PATIENTS_LIST);
       Bus.$emit(this.UPDATE_PATIENT_INFO);
       Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
+    },
+    completeFollowUpAndClose() {
+      // 这个函数是在 updateAndClose 基础之上修改的，做了一些额外的操作
+      this.$message({
+        message: '已结束该患者的随访流程，请填写实验结束信息',
+        type: 'success',
+        duration: 2000
+      });
+      this.lockSubmitButton = false;
+      Bus.$emit(this.UPDATE_PATIENTS_LIST);
+      Bus.$emit(this.UPDATE_PATIENT_INFO);
+      this.$router.push({
+        name: 'experimentInfo',
+        params: {
+          shouldOpenEndExperimentModal: true
+        }
+      });
     },
     cancel() {
       this.lockSubmitButton = false;

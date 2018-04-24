@@ -331,6 +331,9 @@ export default {
       'emgTypeList',
       'typeGroup'
     ]),
+    hospitalType() {
+      return this.$store.state.hospitalType;
+    },
     vitalSignsTitle() {
       return '生命体征 (' + this.diagnosticVitalSigns.length + '条记录)';
     },
@@ -420,7 +423,7 @@ export default {
     },
     showNeurologicCheckRecord() {
       var atOtherStatus = this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_FOLLOW_UP;
-      if (this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
+      if (this.hospitalType === 1 && this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
         return false;
       } else {
         return true;
@@ -428,7 +431,7 @@ export default {
     },
     showSiteInspection() {
       var atOtherStatus = this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_FOLLOW_UP;
-      if (this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
+      if (this.hospitalType === 1 && this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
         return false;
       } else {
         return true;

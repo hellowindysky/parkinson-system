@@ -108,7 +108,7 @@
           </span>
         </div>
 
-        <div class="field whole-line">
+        <div class="field whole-line" v-if="hospitalType === 2">
           <span class="field-name">
             是否超窗:
             <span class="required-mark">*</span>
@@ -125,7 +125,7 @@
           </span>
         </div>
 
-        <div class="field whole-line" v-if="exceedTime===1">
+        <div class="field whole-line" v-if="hospitalType === 2 && exceedTime===1">
           <span class="field-name">
             超窗原因:
             <!-- <span class="required-mark">*</span> -->

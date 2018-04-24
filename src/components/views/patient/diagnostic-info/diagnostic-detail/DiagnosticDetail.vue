@@ -89,6 +89,9 @@ export default {
     listType() {
       return this.$store.state.listType;
     },
+    hospitalType() {
+      return this.$store.state.hospitalType;
+    },
     isNewCase() {
       if (this.$route.params.caseId && this.$route.params.caseId === 'newCase') {
         return true;
@@ -116,6 +119,9 @@ export default {
     diagnosisCreator() {
       return this.caseDetail.createUserName ? this.caseDetail.createUserName : '';
     },
+    diagnosticSubjectId() {
+      return this.caseDetail.taskInfoId ? this.caseDetail.taskInfoId : this.SUBJECT_ID_FOR_HOSPITAL;
+    },
     diagnosticExperimentStep() {
       var status = parseInt(this.caseDetail.status, 10);  // 实验阶段 (从 2 开始)
       return status > 0 ? status : this.EXPERIMENT_STEP_OUT;
@@ -133,7 +139,7 @@ export default {
       return stage >= 0 ? stage : 0;
     },
     patientDuringExperiment() {
-      return [this.EXPERIMENT_STEP_SCREENING, this.EXPERIMENT_STEP_THERAPY,
+      return [this.EXPERIMENT_STEP_FILTERING, this.EXPERIMENT_STEP_SCREENING, this.EXPERIMENT_STEP_THERAPY,
         this.EXPERIMENT_STEP_FOLLOW_UP].indexOf(this.patientExperimentStep) >= 0;
     },
     canEdit() {
@@ -161,8 +167,14 @@ export default {
       if (caseId === 'newCase') {
         return true;
 
-      } else if (caseId === undefined || this.hasBeenArchived) {
+      } else if (caseId === undefined || this.hasBeenArchived || this.diagnosticSubjectId !== this.$store.state.subjectId) {
+        // 如果没有课题 Id，或者该诊断已经归档，或者该诊断不属于当前课题（医院入口可以看作一种特殊的课题入口），
+        // 则不可编辑
         return false;
+
+      } else if (this.hospitalType === 2) {
+        // 如果是北京医院的实验流程，则全部处于可编辑状态
+        return true;
 
       } else if (isExperimentPatientsList && !createdByCurrentUser) {
         // 如果当前处于“评估者”和“诊断者”的患者列表，则需要检查该诊断记录是否是由当前登录用户创建的，不是则不允许编辑

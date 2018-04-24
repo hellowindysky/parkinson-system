@@ -52,13 +52,13 @@
       </li>
     </ul>
     <li class="item" :class="{'current-item': currentItem === 'experiment'}" @click="toggleExperimentList"
-      v-if="showExperiment && subjectRole > 0">
+      v-if="hospitalType===1 && showExperiment && subjectRole > 0">
       <div class="menu-icon iconfont icon-experiment"></div>
       <div class="title">实验研究</div>
       <div class="fold-icon iconfont" :class="showExperimentList ? 'icon-up' : 'icon-down'"></div>
     </li>
     <ul class="sub-item-list" :class="{'folded': !showExperimentList}"
-      v-if="showExperiment && subjectRole > 0">
+      v-if="hospitalType===1 && showExperiment && subjectRole > 0">
       <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'therapistsPatients'}"
         @click="chooseTherapist" v-if="subjectRole===1">
         治疗者
@@ -158,6 +158,9 @@ export default {
 
       var currentSubject = Util.findTargetObj(subjects, 'tasks', 'id', this.subjectId);
       return currentSubject ? Number(currentSubject.taskRoleType) : 0;
+    },
+    hospitalType() {
+      return this.$store.state.hospitalType;
     },
     currentSubItem() {
       var path = this.$route.path;
