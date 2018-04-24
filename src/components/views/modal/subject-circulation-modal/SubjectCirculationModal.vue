@@ -73,7 +73,7 @@
               type="datetime"
               v-model="copyInfo.startDate"
               :class="{'warning': warningResults.startDate}"
-              @change="updateWarning('startDate')"
+              @change="updateLastTime"
               placeholder="请选择下次随访时间" clearable>
             </el-date-picker>
           </span>
@@ -172,7 +172,7 @@
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus';
 import Util from 'utils/util';
-import { completeExperiment } from 'api/experiment';
+import { queryExperimentProgress, completeExperiment } from 'api/experiment';
 
 export default {
   data() {
@@ -196,7 +196,8 @@ export default {
         lastTime: '',
         exceedTime: '',
         suitableForResearch: ''
-      }
+      },
+      lastStepStartDate: ''
     };
   },
   computed: {
@@ -211,6 +212,9 @@ export default {
       this.patientCurrentExperimentStep = item.patientCurrentExperimentStep;
       this.readyToEndExperiment = false;
 
+      // 读取实验流程中，最后一步操作的开始日期，用来计算距离上次随访的天数
+      this.updateExperimentLastStepStartTime();
+
       for (let property in this.copyInfo) {
         if (this.copyInfo.hasOwnProperty(property)) {
           this.copyInfo[property] = '';
@@ -220,6 +224,38 @@ export default {
       this.clearWarning();
 
       // this.updateScrollbar();
+    },
+    updateExperimentLastStepStartTime() {
+      var experimentInfo = {
+        'patientExperimentModel': {
+          'patientId': this.$route.params.id,
+          'tcTaskId': this.$store.state.subjectId
+        }
+      };
+      queryExperimentProgress(experimentInfo).then((data) => {
+        if (data && data.patientExperiment && data.patientExperiment.length > 0) {
+          let progressList = data.patientExperiment;
+          this.lastStepStartDate = progressList[progressList.length - 1].startDate;
+        } else {
+          this.lastStepStartDate = '';
+        }
+      }, (error) => {
+        console.log(error);
+      });
+    },
+    updateLastTime() {
+      // 填写了开始时间之后，需要动态计算距离上次随访天数
+      if (this.copyInfo.startDate === '' || this.lastStepStartDate === '') {
+        this.updateWarning('startDate');
+        return;
+      }
+      let currentStepStartDate = new Date(this.copyInfo.startDate).getTime();
+      let lastStepStartDate = new Date(this.lastStepStartDate).getTime();
+      let dayTime = 1000 * 60 * 60 * 24;
+      let days = Math.floor((currentStepStartDate - lastStepStartDate) / dayTime);
+      this.copyInfo.lastTime = days >= 0 ? days : 0;
+
+      this.updateWarning('startDate');
     },
     updateScrollbar() {
       this.$nextTick(() => {
