@@ -111,6 +111,7 @@ export default {
   SHOW_MEDICINE_MODAL: 'showMedicineModal',
   SHOW_MEDICINE_ADVERSE_EVENT_MODAL: 'showMedicineAdverseEventModal',
   SHOW_NEUROLOGIC_MODAL: 'showNeurologicModal',
+  SHOW_SITE_INSPECTION_MODAL: 'showSiteInspectionModal',
   SHOW_GENE_MODAL: 'showGeneModal',
   SHOW_BIOCHEMICAL_EXAM_MODAL: 'showBiochemicalExamModal',
   SHOW_NEUROELECTRIC_MODAL: 'showNeuroelectricModal',

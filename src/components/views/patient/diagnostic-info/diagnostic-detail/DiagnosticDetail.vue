@@ -39,6 +39,7 @@
         :biochemicalExamList="caseDetail.patientBioexam"
         :emgList="caseDetail.patientElecTroGram"
         :sleepMonitoringList="caseDetail.patientNerveSleep"
+        :siteInspectionList="caseDetail.patientBodypart"
         :electricImagingList="caseDetail.patientElecVideoList"
         :medicalImagingList="caseDetail.patientVideoList"
         :diagnosticVitalSigns="caseDetail.patientVitalSign"
