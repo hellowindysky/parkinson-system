@@ -7,10 +7,10 @@
           <span class="field-name">
             诊断时间:
           </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+          <span class="field-input field-input-especial" v-if="mode===VIEW_CURRENT_CARD">
             <span>{{ariseTime}}</span>
           </span>
-          <span class="field-input" v-else>
+          <span class="field-input field-input-especial" v-else>
             <el-date-picker
               v-model="ariseTime"
               placeholder="请输入诊断时间"
@@ -25,20 +25,20 @@
             一般情况:
           </span>
           <span class="field-radio">
-            <el-radio v-model="spephysicalResult" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
-            <el-radio v-model="spephysicalResult" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
+            <el-radio v-model="partExamination.normal.result" :label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="partExamination.normal.result" :label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{normal}}</span>
+            <span>{{partExamination.normal.remark}}</span>
           </span>
           <span class="field-input" v-else >
             <el-input
-              v-model="normal"
+              v-model="partExamination.normal.remark"
               type="textarea"
               :rows="2"
               :maxlength="50"
               placeholder="请输入特征描述"
-              :disabled="spephysicalResult==0">
+              :disabled="partExamination.normal.result===0">
             </el-input>
           </span>
         </div>
@@ -47,20 +47,20 @@
             皮肤、粘膜:
           </span>
           <span class="field-radio">
-            <el-radio v-model="spephysicalResult" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
-            <el-radio v-model="spephysicalResult" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
+            <el-radio v-model="partExamination.skin.result" :label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="partExamination.skin.result" :label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{skin}}</span>
+            <span>{{partExamination.skin.remark}}</span>
           </span>
           <span class="field-input" v-else>
             <el-input
-              v-model="skin"
+              v-model="partExamination.skin.remark"
               type="textarea"
               :rows="2"
               :maxlength="50"
               placeholder="请输入特征描述"
-              :disabled="spephysicalResult==0">
+              :disabled="partExamination.skin.result===0">
             </el-input>
           </span>
         </div>
@@ -69,20 +69,20 @@
             浅表淋巴结:
           </span>
           <span class="field-radio">
-            <el-radio v-model="spephysicalResult" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
-            <el-radio v-model="spephysicalResult" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
+            <el-radio v-model="partExamination.lymphNode.result" :label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="partExamination.lymphNode.result" :label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{lymphNode}}</span>
+            <span>{{partExamination.lymphNode.remark}}</span>
           </span>
           <span class="field-input" v-else>
             <el-input
-              v-model="lymphNode"
+              v-model="partExamination.lymphNode.remark"
               type="textarea"
               :rows="2"
               :maxlength="50"
               placeholder="请输入特征描述"
-              :disabled="spephysicalResult==0">
+              :disabled="partExamination.lymphNode.result===0">
             </el-input>
           </span>
         </div>
@@ -91,20 +91,20 @@
             头部:
           </span>
           <span class="field-radio">
-            <el-radio v-model="spephysicalResult" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
-            <el-radio v-model="spephysicalResult" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
+            <el-radio v-model="partExamination.head.result" :label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="partExamination.head.result" :label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{head}}</span>
+            <span>{{partExamination.head.remark}}</span>
           </span>
           <span class="field-input" v-else>
             <el-input
-              v-model="head"
+              v-model="partExamination.head.remark"
               type="textarea"
               :rows="2"
               :maxlength="50"
               placeholder="请输入特征描述"
-              :disabled="spephysicalResult==0">
+              :disabled="partExamination.head.result===0">
             </el-input>
           </span>
         </div>
@@ -113,20 +113,20 @@
             颈部:
           </span>
           <span class="field-radio">
-            <el-radio v-model="spephysicalResult" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
-            <el-radio v-model="spephysicalResult" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
+            <el-radio v-model="partExamination.neck.result" :label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="partExamination.neck.result" :label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{neck}}</span>
+            <span>{{partExamination.neck.remark}}</span>
           </span>
           <span class="field-input" v-else>
             <el-input
-              v-model="neck"
+              v-model="partExamination.neck.remark"
               type="textarea"
               :rows="2"
               :maxlength="50"
               placeholder="请输入特征描述"
-              :disabled="spephysicalResult==0">
+              :disabled="partExamination.neck.result===0">
             </el-input>
           </span>
         </div>
@@ -135,20 +135,20 @@
             胸部:
           </span>
           <span class="field-radio">
-            <el-radio v-model="spephysicalResult" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
-            <el-radio v-model="spephysicalResult" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
+            <el-radio v-model="partExamination.chesk.result" :label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="partExamination.chesk.result" :label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{chesk}}</span>
+            <span>{{partExamination.chesk.remark}}</span>
           </span>
           <span class="field-input" v-else>
             <el-input
-              v-model="chesk"
+              v-model="partExamination.chesk.remark"
               type="textarea"
               :rows="2"
               :maxlength="50"
               placeholder="请输入特征描述"
-              :disabled="spephysicalResult==0">
+              :disabled="partExamination.chesk.result===0">
             </el-input>
           </span>
         </div>
@@ -157,20 +157,20 @@
             心脏:
           </span>
           <span class="field-radio">
-            <el-radio v-model="spephysicalResult" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
-            <el-radio v-model="spephysicalResult" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
+            <el-radio v-model="partExamination.heart.result" :label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="partExamination.heart.result" :label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{heart}}</span>
+            <span>{{partExamination.heart.remark}}</span>
           </span>
           <span class="field-input" v-else>
             <el-input
-              v-model="heart"
+              v-model="partExamination.heart.remark"
               type="textarea"
               :rows="2"
               :maxlength="50"
               placeholder="请输入特征描述"
-              :disabled="spephysicalResult==0">
+              :disabled="partExamination.heart.result===0">
             </el-input>
           </span>
         </div>
@@ -179,20 +179,20 @@
             腹部:
           </span>
           <span class="field-radio">
-            <el-radio v-model="spephysicalResult" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
-            <el-radio v-model="spephysicalResult" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
+            <el-radio v-model="partExamination.abdomen.result" :label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="partExamination.abdomen.result" :label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{abdomen}}</span>
+            <span>{{partExamination.abdomen.remark}}</span>
           </span>
           <span class="field-input" v-else>
             <el-input
-              v-model="abdomen"
+              v-model="partExamination.abdomen.remark"
               type="textarea"
               :rows="2"
               :maxlength="50"
               placeholder="请输入特征描述"
-              :disabled="spephysicalResult==0">
+              :disabled="partExamination.abdomen.result===0">
             </el-input>
           </span>
         </div>
@@ -201,20 +201,20 @@
             四肢关节:
           </span>
           <span class="field-radio">
-            <el-radio v-model="spephysicalResult" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
-            <el-radio v-model="spephysicalResult" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
+            <el-radio v-model="partExamination.limb.result" :label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="partExamination.limb.result" :label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{limb}}</span>
+            <span>{{partExamination.limb.remark}}</span>
           </span>
           <span class="field-input" v-else>
             <el-input
-              v-model="limb"
+              v-model="partExamination.limb.remark"
               type="textarea"
               :rows="2"
               :maxlength="50"
               placeholder="请输入特征描述"
-              :disabled="spephysicalResult==0">
+              :disabled="partExamination.limb.result===0">
             </el-input>
           </span>
         </div>
@@ -223,20 +223,20 @@
             其他:
           </span>
           <span class="field-radio">
-            <el-radio v-model="spephysicalResult" label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
-            <el-radio v-model="spephysicalResult" label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
+            <el-radio v-model="partExamination.other.result" :label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="partExamination.other.result" :label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{other}}</span>
+            <span>{{partExamination.other.remark}}</span>
           </span>
           <span class="field-input" v-else>
             <el-input
-              v-model="other"
+              v-model="partExamination.other.remark"
               type="textarea"
               :rows="2"
               :maxlength="50"
               placeholder="请输入特征描述"
-              :disabled="spephysicalResult==0">
+              :disabled="partExamination.other.result===0">
             </el-input>
           </span>
         </div>
@@ -253,7 +253,8 @@ import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import { vueCopy, pruneObj, reviseDateFormat} from 'utils/helper';
+// import { vueCopy, pruneObj, reviseDateFormat} from 'utils/helper';
+import { vueCopy } from 'utils/helper';
 import { addPatientBodypart, modifyPatientBodypart } from 'api/patient.js';
 
 export default {
@@ -264,61 +265,49 @@ export default {
       spephysicalResult: '',
       patientBodypart: '',
       patientBodypartId: '',
-      partExamination: [
-        {
-          'normal': {
-            'result': 0,
-            'remark': '特征描述'
-          },
-          'skin': {
-            'result': 1,
-            'remark': '描述......'
-          },
-          'lymphNode': {
-            'result': 1,
-            'remark': '描述......'
-          },
-          'head': {
-            'result': 1,
-            'remark': '描述......'
-          },
-          'neck': {
-            'result': 1,
-            'remark': '描述......'
-          },
-          'chesk': {
-            'result': 1,
-            'remark': '描述......'
-          },
-          'heart': {
-            'result': 1,
-            'remark': '描述......'
-          },
-          'abdomen': {
-            'result': 1,
-            'remark': '描述......'
-          },
-          'limb': {
-            'result': 1,
-            'remark': '描述......'
-          },
-          'other': {
-            'result': 1,
-            'remark': '描述......'
-          }
-        }
-      ],
       ariseTime: '',
-      normal: '',
-      skin: '',
-      lymphNode: '',
-      head: '',
-      neck: '',
-      chesk: '',
-      heart: '',
-      abdomen: '',
-      limb: '',
-      other: '',
+      partExamination: {
+        'normal': {
+          'result': 0,
+          'remark': ''
+        },
+        'skin': {
+          'result': 0,
+          'remark': ''
+        },
+        'lymphNode': {
+          'result': 0,
+          'remark': ''
+        },
+        'head': {
+          'result': 0,
+          'remark': ''
+        },
+        'neck': {
+          'result': 0,
+          'remark': ''
+        },
+        'chesk': {
+          'result': 0,
+          'remark': ''
+        },
+        'heart': {
+          'result': 0,
+          'remark': ''
+        },
+        'abdomen': {
+          'result': 0,
+          'remark': ''
+        },
+        'limb': {
+          'result': 0,
+          'remark': ''
+        },
+        'other': {
+          'result': 0,
+          'remark': ''
+        }
+      },
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now();
@@ -344,7 +333,6 @@ export default {
       this.completeInit = false;
       this.mode = cardOperation;
       this.showEdit = showEdit;
-
       this.$nextTick(() => {
         this.$refs.scrollArea.scrollTop = 0;
         for (var property in this.warningResults) {
@@ -353,20 +341,12 @@ export default {
           }
         }
       });
-      this.patientBodypartId = item.patientBodypartId ? item.patientBodypartId : '';
-      this.ariseTime = item.ariseTime ? item.ariseTime : '';
-      this.normal = item.normal ? item.normal : '';
-      this.skin = item.skin ? item.skin : '';
-      this.lymphNode = item.lymphNode ? item.lymphNode : '';
-      this.head = item.head ? item.head : '';
-      this.neck = item.neck ? item.neck : '';
-      this.chesk = item.chesk ? item.chesk : '';
-      this.heart = item.heart ? item.heart : '';
-      this.abdomen = item.abdomen ? item.abdomen : '';
-      this.limb = item.limb ? item.limb : '';
-      this.other = item.other ? item.other : '';
-      // this.spephysicalResult = item.spephysicalResult ? item.spephysicalResult: '';
-      vueCopy(item.partExamination, this.partExamination);
+      this.patientBodypartId = item.patientBodypartId;
+      this.ariseTime = item.ariseTime;
+
+      if (this.mode !== this.ADD_NEW_CARD) {
+        vueCopy(JSON.parse(item.partExamination), this.partExamination);
+      }
       this.completeInit = true;
       this.updateScrollbar();
     },
@@ -433,25 +413,15 @@ export default {
           return;
         }
       }
+
       var patientBodypartInfo = {};
       patientBodypartInfo.patientId = this.$route.params.id;
       patientBodypartInfo.patientCaseId = this.$route.params.caseId;
-      patientBodypartInfo.ariseTime = this.ariseTime;
-      patientBodypartInfo.normal = this.normal;
-      patientBodypartInfo.skin = this.skin;
-      patientBodypartInfo.lymphNode = this.lymphNode;
-      patientBodypartInfo.head = this.head;
-      patientBodypartInfo.neck = this.neck;
-      patientBodypartInfo.chesk = this.chesk;
-      patientBodypartInfo.heart = this.heart;
-      patientBodypartInfo.abdomen = this.abdomen;
-      patientBodypartInfo.limb = this.limb;
-      patientBodypartInfo.other = this.other;
-      // patientBodypartInfo.spephysicalResult = this.spephysicalResult;
-      // patientBodypartInfo.partExamination = deepCopy(this.partExamination);
+      patientBodypartInfo.ariseTime = Util.simplifyDate(this.ariseTime);
       patientBodypartInfo.partExamination = JSON.stringify(this.partExamination);
-      reviseDateFormat(patientBodypartInfo);
-      pruneObj(patientBodypartInfo);
+
+      // reviseDateFormat(patientBodypartInfo);
+      // pruneObj(patientBodypartInfo);
       if (this.mode === this.ADD_NEW_CARD) {
         addPatientBodypart(patientBodypartInfo).then(() => {
           this.updateAndClose();
@@ -469,13 +439,9 @@ export default {
       this.lockSubmitButton = false;
     },
     updateAndClose() {
-      Bus.$emit(this.UPDATE_CASE_INFO);
       this.lockSubmitButton = false;
-      if (this.mode === this.ADD_NEW_CARD) {
-        Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'siteInspectionModal', this.SHOW_SITE_INSPECTION_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
-      } else {
-        Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
-      }
+      Bus.$emit(this.UPDATE_CASE_INFO);
+      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
     },
     updateScrollbar() {
       this.$nextTick(() => {
@@ -577,13 +543,13 @@ export default {
         &.whole-line {
           width: 100%;
           .field-input {
-            width: calc(~"96% - @{field-name-width}");
+            width: calc(~"96% - @{field-name-width} * 2");
           }
         }
         .field-name {
           display: inline-block;
           position: absolute;
-          top: 5px;
+          // top: 5px;
           left: 0;
           width: @field-name-width;
           line-height: 25px;
@@ -595,14 +561,27 @@ export default {
             vertical-align: middle;
           }
         }
-        .field-input {
+        .field-radio {
           display: inline-block;
-          position: relative;
-          left: @field-name-width;
-          // width: calc(~"98% - @{field-name-width}");
+          position: absolute;
+          width: calc(~"@{field-name-width} + 10px");
+          left: 100px;
           line-height: @field-line-height;
           font-size: @normal-font-size;
           color: @light-font-color;
+        }
+        .field-input {
+          display: inline-block;
+          position: relative;
+          left: calc(~"@{field-name-width} * 2 + 10px");
+          width: calc(~"98% - @{field-name-width}");
+          line-height: @field-line-height;
+          font-size: @normal-font-size;
+          color: @light-font-color;
+          &.field-input-especial {
+            transform: translateX(-145px);
+            width: calc(~"100% - @{field-name-width}");
+          }
           .warning-text {
             position: absolute;
             top: 22px;
@@ -616,7 +595,6 @@ export default {
             top: 46px;
             }
           .el-input {
-            transform: translateX(22px);
             .el-input__inner {
               height: 30px;
               border: none;
@@ -624,7 +602,7 @@ export default {
             }
           }
           .el-textarea {
-            width: 80%;
+            width: 100%;
             margin-bottom: 14px;
             vertical-align: middle;
             transform: translateY(-8px);
@@ -643,15 +621,6 @@ export default {
           .warning .el-textarea__inner {
             border: 1px solid red;
           }
-        }
-        .field-radio {
-          display: inline-block;
-          position: relative;
-          left: 100px;
-          line-height: @field-line-height;
-          font-size: @normal-font-size;
-          color: @light-font-color;
-          transform: translateY(-13px);
         }
       }
       .excursion {

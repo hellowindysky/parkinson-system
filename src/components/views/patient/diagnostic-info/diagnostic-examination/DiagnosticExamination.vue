@@ -227,7 +227,7 @@
 import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import { deleteSiteInspection, deleteEmg, deleteBiochemical, deleteNeurologicCheck, deleteSleepMonitoring,
+import { deletePatientBodypart, deleteEmg, deleteBiochemical, deleteNeurologicCheck, deleteSleepMonitoring,
   deleteGeneCheck, deleteImage, deleteVitalSigns} from 'api/patient.js';
 // import { vueCopy } from 'utils/helper';
 
@@ -567,7 +567,7 @@ export default {
         id: item.id
       };
       Bus.$on(this.CONFIRM, () => {
-        deleteSiteInspection(patientBodypartInfo).then(this._resolveDeletion, this._rejectDeletion);
+        deletePatientBodypart(patientBodypartInfo).then(this._resolveDeletion, this._rejectDeletion);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
