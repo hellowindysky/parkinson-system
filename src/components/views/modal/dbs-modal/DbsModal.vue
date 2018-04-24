@@ -1161,7 +1161,7 @@ export default {
     totalLedd() {
       var total = 0;
       for (let medicine of this.copyInfo.patientDbsMedicine) {
-        total += medicine.ledd;
+        total += Number(medicine.ledd);
       }
       return total;
     },
