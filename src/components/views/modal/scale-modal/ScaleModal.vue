@@ -165,16 +165,23 @@
         </div>
       </folding-panel>
 
-      <div v-for="(item, index) in targetScale.questions" class="scale-questions" v-show="item.parentId ? checkQuestionListIsShow(item.parentId) : true"
+      <div v-for="(item, index) in targetScale.questions" class="scale-questions" v-show="item.parentId ? checkQuestionListIsShow(item.parentId, index) : true"
         :style="{'padding-left': item.questionLevel? item.questionLevel*20 + 30 + 'px':'30px'}">
         <p class="question-title" v-html="item.subjectName"></p>
-        <el-radio-group v-if="item.questionType===0 || item.questionType===1"
+        <el-checkbox-group v-if="(item.questionType===0 || item.questionType===1) && item.multipleChoose === 1"
+          class="question-body" :key="index" v-model="copyInfo.patientOptions[index].scaleOptionId">
+          <el-checkbox class="question-selection" v-for="(option, i) in item.options"
+            :label="option.scaleOptionId" :key="i" :disabled="mode===VIEW_CURRENT_CARD">
+              {{option.optionName}}
+          </el-checkbox>
+        </el-checkbox-group>
+        <el-radio-group v-if="(item.questionType===0 || item.questionType===1)  && item.multipleChoose !== 1"
           class="question-body" :key="index" v-model="copyInfo.patientOptions[index].scaleOptionId">
           <el-radio class="question-selection" v-for="(option, i) in item.options"
             :label="option.scaleOptionId" :key="i" :disabled="mode===VIEW_CURRENT_CARD">
               {{option.optionName}}
             <el-input v-if="item.questionType===1 && option.scaleOptionId===copyInfo.patientOptions[index].scaleOptionId"
-              v-model="copyInfo.patientOptions[index].remarks" :disabled="mode===VIEW_CURRENT_CARD">
+              v-model="copyInfo.patientOptions[index].remarks" :disabled="mode===VIEW_CURRENT_CARD" checked>
             </el-input>
           </el-radio>
         </el-radio-group>
@@ -218,6 +225,7 @@ export default {
       mode: '',
       showEdit: false,
       lockSubmitButton: false,
+      scaleCategory: 0,
 
       copyInfo: {},
       warningResults: {
@@ -262,14 +270,11 @@ export default {
     targetScale() {
       let scale = Util.getElement('scaleInfoId', this.copyInfo.scaleInfoId, this.allScale);
 
+      // console.log('targetScale', scale);
       // 问题嵌套 层级递归处理
-      console.log('targetScale', scale);
-      let tempInfo = deepCopy(scale);
-      if (tempInfo.questions && tempInfo.questions.length > 0) {
-        console.log('targetScaleFormat', tempInfo);
-        this.questionsListFormat(tempInfo);
-        console.log('format', tempInfo);
-        scale = tempInfo;
+      if (scale.questions && scale.questions.length > 0) {
+        this.questionsListFormat(scale);
+        // console.log('format', scale);
       }
       
       return scale ? scale : {};
@@ -317,11 +322,24 @@ export default {
       this.updateScrollbar();
     },
     queryScaleSearch(queryString, cb) {
-      var allScale = this.allScale.map((item) => {
-        return {
-          value: item.gaugeName
-        };
-      });
+      var allScale = [];
+
+      // 根据量表分类判断可选择的量表数组
+      if (this.scaleCategory === 1) {
+        this.allScale.map((item) => {
+          if (this.$store.state.subjectId === item.gaugeTaskType) {
+            allScale.push({'value': item.gaugeName});
+          }
+        });
+      } else {
+        this.allScale.map((item) => {
+          if (this.$store.state.subjectId !== item.gaugeTaskType) {
+            allScale.push({'value': item.gaugeName});
+          }
+        });
+      }
+
+      // console.log(allScale);
 
       var results = queryString ? allScale.filter((item) => {
         return (item.value.toLowerCase().indexOf(queryString.toLowerCase()) >= 0);
@@ -367,9 +385,11 @@ export default {
         });
       });
     },
-    showModal(cardOperation, item, showEdit) {
+    showModal(cardOperation, item, showEdit, scaleCategory) {
+      
       this.mode = cardOperation;
       this.showEdit = showEdit;
+      this.scaleCategory = scaleCategory;
 
       this.initPatientScale(item);
       this.scaleTypeCode = this.getScaleTypeCode(this.copyInfo.scaleInfoId);
@@ -404,7 +424,7 @@ export default {
       this.$nextTick(() => {
         this.clearWarning();
       });
-      // console.log('copyInfo: ', this.copyInfo);
+      console.log('copyInfo: ', this.copyInfo);
     },
     edit() {
       this.mode = this.EDIT_CURRENT_CARD;
@@ -429,20 +449,35 @@ export default {
       // 去掉空答案
       var options = [];
       for (let i = 0; i < submitData.patientOptions.length; i++) {
+        let item = submitData.patientOptions[i];
+        // questionType 0单选题 1单选有备注 2填空题不计分 3填空题计分
         let questionType = this.targetScale.questions[i].questionType;
         if (questionType === 0 || questionType === 1) {
-          if (submitData.patientOptions[i].scaleOptionId !== '') {
-            options.push(submitData.patientOptions[i]);
+
+          // 多选处理
+          if (item.scaleOptionId instanceof Array) {
+            if (item.scaleOptionId.length > 0) {
+              for (let j = 0; j < item.scaleOptionId.length; j++) {
+                let newData = {
+                  optionPoint: item.optionPoint,
+                  remarks: item.remarks,
+                  scaleOptionId: item.scaleOptionId[j]
+                };
+                options.push(newData);
+              }
+            }
+          } else if (item.scaleOptionId !== '') {
+            options.push(item);
           }
         } else if (questionType === 2) {
-          if (submitData.patientOptions[i].remarks !== '') {
-            submitData.patientOptions[i].scaleOptionId = this.targetScale.questions[i].options[0].scaleOptionId;
-            options.push(submitData.patientOptions[i]);
+          if (item.remarks !== '') {
+            item.scaleOptionId = this.targetScale.questions[i].options[0].scaleOptionId;
+            options.push(item);
           }
         } else if (questionType === 3) {
-          if (submitData.patientOptions[i].optionPoint !== '') {
-            submitData.patientOptions[i].scaleOptionId = this.targetScale.questions[i].options[0].scaleOptionId;
-            options.push(submitData.patientOptions[i]);
+          if (item.optionPoint !== '') {
+            item.scaleOptionId = this.targetScale.questions[i].options[0].scaleOptionId;
+            options.push(item);
           }
         }
       }
@@ -534,7 +569,14 @@ export default {
         this.copyInfo.patientOptions = [];
         for (let i = 0; i < this.targetScale.questions.length; i++) {
           this.$set(this.copyInfo.patientOptions, i, {});
-          this.$set(this.copyInfo.patientOptions[i], 'scaleOptionId', '');
+
+          // 判断单选/多选 multipleChoose: 1 多选
+          if (this.targetScale.questions[i].multipleChoose === 1) {
+            this.$set(this.copyInfo.patientOptions[i], 'scaleOptionId', []);
+          } else {
+            this.$set(this.copyInfo.patientOptions[i], 'scaleOptionId', '');
+          }
+
           this.$set(this.copyInfo.patientOptions[i], 'remarks', '');
           this.$set(this.copyInfo.patientOptions[i], 'optionPoint', '');
         }
@@ -543,21 +585,33 @@ export default {
       for (var i = 0; i < this.targetScale.questions.length; i++) {
         let options = this.targetScale.questions[i].options;
         let notExisted = true;
-        let targetOptionId = '';
+        let mutltiSelect = this.targetScale.questions[i].multipleChoose === 1;
+        let targetOptionId = mutltiSelect ? [] : '';
         let remarks = '';
         let optionPoint = '';
+
         for (let option of options) {
           for (let answer of this.scaleAnswer) {
             if (option.scaleOptionId === answer.scaleOptionId) {
               notExisted = false;
-              targetOptionId = option.scaleOptionId;
+              if (mutltiSelect) {
+                targetOptionId.push(option.scaleOptionId);
+              } else {
+                targetOptionId = option.scaleOptionId;
+              }
               remarks = answer.remarks ? answer.remarks : '';
               optionPoint = answer.optionPoint ? answer.optionPoint : '';
             }
           }
         }
         if (notExisted) {
-          this.$set(this.copyInfo.patientOptions[i], 'scaleOptionId', '');
+          
+          // 判断单选/多选 multipleChoose: 1 多选
+          if (this.targetScale.questions[i].multipleChoose === 1) {
+            this.$set(this.copyInfo.patientOptions[i], 'scaleOptionId', []);
+          } else {
+            this.$set(this.copyInfo.patientOptions[i], 'scaleOptionId', '');
+          }
         } else {
           this.$set(this.copyInfo.patientOptions[i], 'scaleOptionId', targetOptionId);
           this.$set(this.copyInfo.patientOptions[i], 'remarks', remarks);
@@ -584,7 +638,9 @@ export default {
     initPatientScale(item) {
       // 初始化copyInfo对象
       this.copyInfo = {};
-      this.scaleName = '';
+      if (this.mode === this.ADD_NEW_CARD) {
+        this.scaleName = '';
+      }
       this.$set(this.copyInfo, 'scaleInfoId', '');
       this.$set(this.copyInfo, 'switchType', '');
       this.$set(this.copyInfo, 'inspectTime', '');
@@ -727,13 +783,15 @@ export default {
       }
     },
     // 校验父级问题答案是否触发子列表显示
-    checkQuestionListIsShow(parentId) {
+    checkQuestionListIsShow(parentId, index) {
       let optionsList = this.copyInfo.patientOptions;
       for (let i = 0; i < optionsList.length; i++) {
         if (optionsList[i].scaleOptionId === parentId) {
           return true;
         }
       }
+      // 不显示时清空当前选择的值
+      this.copyInfo.patientOptions[index].scaleOptionId = '';
       return false;
     }
   },

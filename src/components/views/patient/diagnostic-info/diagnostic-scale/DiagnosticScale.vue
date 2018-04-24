@@ -3,45 +3,75 @@
     v-on:cancel="cancel" v-on:submit="submit" :editable="canEdit" v-if="!hidePanel">
     <div class="diagnostic-scale" ref="diagnosticscale">
       <extensible-panel class="panel" :mode="mutableMode" :title="normalScaleTitle"
-        v-on:addNewCard="addScale" :editable="canEdit">
+        v-on:addNewCard="addScale(0)" :editable="canEdit">
         <card class="card" :class="devideWidth" :mode="mutableMode"
-          v-for="(item, index) in patientScale"
+          v-for="(item, index) in scaleListFomat.normalScaleList"
           :key="item.id + '' + index" :title="getTitle(item.scaleInfoId)"
           v-on:deleteCurrentCard="deleteScaleRecord(item)"
           v-on:editCurrentCard="editScale(item)"
           v-on:viewCurrentCard="viewScale(item)">
           <div class="text first-line">
-            <span class="name">量表得分:</span>
-            <span class="value">
+            <div class="name">量表得分:</div>
+            <div class="value">
               <span v-if="getScaleFormType(item.scaleInfoId)===3">
                 不记分
+              </span>
+              <span v-else-if="item.npiPoint" v-html="item.npiPoint" class="spanPaddingLeft">
+                {{item.npiPoint}}
               </span>
               <span v-else>
                 {{item.scalePoint}}
               </span>
-              <span class="mark">{{getCompleteStatus(item)}}</span>
-            </span>
+              <span v-if="!item.npiPoint" class="mark">{{getCompleteStatus(item)}}</span>
+            </div>
           </div>
           <div class="text second-line">
-            <span class="name">量表类型:</span>
-            <span class="value">{{getScaleType(item.scaleInfoId)}}</span>
+            <div class="name">量表类型:</div>
+            <div class="value">{{getScaleType(item.scaleInfoId)}}</div>
           </div>
           <div class="text third-line">
-            <span class="name">填写时间:</span>
-            <span class="value">{{item.inspectTime}}</span>
+            <div class="name">填写时间:</div>
+            <div class="value">{{item.inspectTime}}</div>
           </div>
           <div class="text fourth-line">
-            <span class="name">末次服药:</span>
-            <span class="value">{{item.lastTakingTime}}</span>
+            <div class="name">末次服药:</div>
+            <div class="value">{{item.lastTakingTime}}</div>
           </div>
           <div class="text fifth-line">
-            <span class="name">开关状态:</span>
-            <span class="value">{{getSwitchType(item.switchType)}}</span>
+            <div class="name">开关状态:</div>
+            <div class="value">{{getSwitchType(item.switchType)}}</div>
           </div>
         </card>
       </extensible-panel>
       <extensible-panel class="panel" :mode="mutableMode" :title="subjectScaleTitle"
-        v-on:addNewCard="addScale" :editable="canEdit">
+        v-on:addNewCard="addScale(1)" :editable="canEdit">
+        <card class="card" :class="devideWidth" :mode="mutableMode"
+          v-for="(item, index) in scaleListFomat.subjectScaleList"
+          :key="item.id + '' + index" :title="getTitle(item.scaleInfoId)"
+          v-on:deleteCurrentCard="deleteScaleRecord(item)"
+          v-on:editCurrentCard="editScale(item)"
+          v-on:viewCurrentCard="viewScale(item)">
+          <div class="text first-line">
+            <div class="name">{{getScaleShowKey(item).keyText[0] ? getScaleShowKey(item).keyText[0] + ':' : ''}}</div>
+            <div class="value">{{item[getScaleShowKey(item).keyName[0]] ? item[getScaleShowKey(item).keyName[0]] : ''}}</div>
+          </div>
+          <div class="text second-line">
+            <div class="name">{{getScaleShowKey(item).keyText[1] ? getScaleShowKey(item).keyText[1] + ':' : ''}}</div>
+            <div class="value">{{item[getScaleShowKey(item).keyName[1]] ? item[getScaleShowKey(item).keyName[1]] : ''}}</div>
+          </div>
+          <div class="text third-line">
+            <div class="name">{{getScaleShowKey(item).keyText[2] ? getScaleShowKey(item).keyText[2] + ':' : ''}}</div>
+            <div class="value">{{item[getScaleShowKey(item).keyName[2]] ? item[getScaleShowKey(item).keyName[2]] : ''}}</div>
+          </div>
+          <div class="text fourth-line">
+            <div class="name">{{getScaleShowKey(item).keyText[3] ? getScaleShowKey(item).keyText[3] + ':' : ''}}</div>
+            <div class="value">{{item[getScaleShowKey(item).keyName[3]] ? item[getScaleShowKey(item).keyName[3]] : ''}}</div>
+          </div>
+          <div class="text fifth-line">
+            <div class="name">{{getScaleShowKey(item).keyText[4] ? getScaleShowKey(item).keyText[4] + ':' : ''}}</div>
+            <div class="value">{{item[getScaleShowKey(item).keyName[4]] ? item[getScaleShowKey(item).keyName[4]] : ''}}</div>
+          </div>
+        </card>
       </extensible-panel>
     </div>
   </folding-panel>
@@ -94,10 +124,43 @@ export default {
       'typeGroup'
     ]),
     normalScaleTitle() {
-      return '临床量表 (' + this.patientScale.length + '条记录)';
+      return '临床量表 (' + this.scaleListFomat.normalScaleList.length + '条记录)';
     },
     subjectScaleTitle() {
-      return '课题评定 (' + 0 + '条记录)';
+      return '课题评定 (' + this.scaleListFomat.subjectScaleList.length + '条记录)';
+    },
+    /* 量表分组
+     * 临床量表/课题评定
+     */
+    scaleListFomat() {
+      let list = {
+        normalScaleList: [],
+        subjectScaleList: []
+      };
+
+      if (this.patientScale) {
+        let templist = [];
+        let subjectId = this.$store.state.subjectId;
+        let scale = Util.getElement('gaugeTaskType', subjectId, this.allScale);
+        
+        this.allScale.forEach((ele) => {
+          if (ele.gaugeTaskType === subjectId) {
+            templist.push(ele);
+          }
+        });
+
+        this.patientScale.forEach((ele) => {
+          templist.forEach((listEle) => {
+            if (ele.scaleInfoId === listEle.scaleInfoId) {
+              list.subjectScaleList.push(ele);
+            } else {
+              list.normalScaleList.push(ele);
+            }
+          });
+        });
+      }
+
+      return list;
     },
     allScaleTypes() {
       var typesInfo = Util.getElement('typegroupcode', 'gaugeType', this.typeGroup);
@@ -184,8 +247,13 @@ export default {
       // var scaleTypeCode = this.getScaleTypeCode(item.scaleInfoId);
       Bus.$emit(this.SHOW_SCALE_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit);
     },
-    addScale() {
-      Bus.$emit(this.SHOW_SCALE_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
+    /* 添加量表
+     * scaleCategory 量表分类
+     * 0: 临床量表
+     * 1: 课题评定
+     */
+    addScale(scaleCategory) {
+      Bus.$emit(this.SHOW_SCALE_MODAL, this.ADD_NEW_CARD, {}, this.canEdit, scaleCategory);
     },
     deleteScaleRecord(item) {
       // console.log(item);
@@ -220,6 +288,31 @@ export default {
     getScaleTypeName(scaleInfoId) {
       var scale = Util.getElement('scaleInfoId', scaleInfoId, this.allScale);
       return Util.getElement('typeCode', scale.gaugeType, this.allScaleTypes).typeName;
+    },
+    /* 获取量表展示字段
+     * keyText 展示字段文本
+     * keyName 展示字段名称
+     */
+    getScaleShowKey(item) {
+      switch (item.scaleInfoId) {
+        case '8a9e2d38609771180162d839e5e1059b':
+          item.keyText = ['填写时间', '入选标准', '排除标准'];
+          item.keyName = ['inspectTime', 'inclusionCriteria', 'exclusionCriteria'];
+          break;
+        case '8a9e2d38609771180162d2583bcc041f':
+          item.keyText = ['填写时间', '病情严重程度', '疗效总评'];
+          item.keyName = ['inspectTime', 'inclusionCriteria', 'exclusionCriteria'];
+          break;
+        case '8a9e2d38609771180162d2b599e60433':
+          item.keyText = ['填写时间', '帕金森症', '绝对排除项', '警示症状'];
+          item.keyName = ['parkinsonDisease', 'severityOfDisease', 'absoluteExclusion', 'warningSymptoms'];
+          break;
+        default:
+          item.keyText = [];
+          item.keyName = [];
+      }
+      // console.log('getScaleShowKey', item);
+      return item;
     }
   },
   components: {
@@ -296,16 +389,22 @@ export default {
       }
       .text {
         position: absolute;
+        padding-left: 55px;
         font-size: @small-font-size;
         color: @light-font-color;
         .name {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 55px;
+          height: 13px;
           color: @font-color;
         }
         .value {
-          padding-left: 10px;
+          padding-left: 5px;
           color: @light-font-color;
           .mark {
-            padding-left: 10px;
+            padding-left: 5px;
             color: @button-color;
           }
         }
@@ -313,6 +412,11 @@ export default {
       .first-line {
         left: 10px;
         top: 50px;
+        .spanPaddingLeft{
+          span{
+            display: block;
+          }
+        }
       }
       .second-line {
         left: 10px;
