@@ -338,7 +338,8 @@ export default {
       return '生命体征 (' + this.diagnosticVitalSigns.length + '条记录)';
     },
     neurologicCheckTitle() {
-      return '体格检查（' + this.neurologicCheckList.length + this.siteInspectionList.length + '条记录）';
+      var totalCount = this.neurologicCheckList.length + this.siteInspectionList.length;
+      return '体格检查（' + totalCount + '条记录）';
     },
     geneCheckTitle() {
       return '基因检查（' + this.geneCheckList.length + '条记录）';
