@@ -184,16 +184,22 @@ export default {
     Bus.$on(this.TOGGLE_FILTER_PANEL_DISPLAY, this.toggleFilterPanelDisplay);
     Bus.$on(this.DEPRIVED_OF_AUTHORITY_BY_DOCTOR, this.handleDeprivationOfAuthority);
 
-    let dynamicArr = [];
+    // 这个数组用来临时存储需要传递给动态组件的参数
+    let paramsForDynamicComponent = [];
+
     // 等待挂载动态组件
-    Bus.$on(this.MOUNT_DYNAMIC_COMPONENT, (componentName, showWhichModal, cardOperation, item, showEdit, extraInfo) => {
-      dynamicArr = [showWhichModal, cardOperation, item, showEdit, extraInfo];
+    Bus.$on(this.MOUNT_DYNAMIC_COMPONENT, (...params) => {
+      // 一般来讲，params 中的参数依次代表 componentName, showWhichModal, cardOperation, item, showEdit, extraInfo
+      let [componentName, ...paramsArr] = params;
+      paramsForDynamicComponent = paramsArr;
       this.componentName = componentName;
     });
+
     // 等待动态组件完成挂载
     Bus.$on(this.DYNAMIC_COMPONENT_MOUNTED, () => {
-      Bus.$emit(dynamicArr[0], dynamicArr[1], dynamicArr[2], dynamicArr[3], dynamicArr[4]);
+      Bus.$emit(...paramsForDynamicComponent);
     });
+
     // 卸载动态组件
     Bus.$on(this.UNLOAD_DYNAMIC_COMPONENT, () => {
       this.componentName = '';
