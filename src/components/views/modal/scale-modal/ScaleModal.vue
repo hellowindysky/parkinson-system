@@ -326,13 +326,13 @@ export default {
       // 根据量表分类判断可选择的量表数组
       if (this.scaleCategory === 1) {
         this.allScale.map((item) => {
-          if (this.$store.state.subjectId === item.gaugeTaskType) {
+          if (item.gaugeTaskType !== undefined) {
             allScale.push({'value': item.gaugeName});
           }
         });
       } else {
         this.allScale.map((item) => {
-          if (this.$store.state.subjectId !== item.gaugeTaskType) {
+          if (item.gaugeTaskType === undefined) {
             allScale.push({'value': item.gaugeName});
           }
         });
@@ -422,7 +422,7 @@ export default {
       this.$nextTick(() => {
         this.clearWarning();
       });
-      console.log('copyInfo: ', this.copyInfo);
+      // console.log('copyInfo: ', this.copyInfo);
     },
     edit() {
       this.mode = this.EDIT_CURRENT_CARD;

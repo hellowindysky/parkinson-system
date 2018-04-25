@@ -142,23 +142,29 @@ export default {
       };
 
       if (this.patientScale) {
-        let templist = [];
+        let tempList = [];
         let subjectId = this.$store.state.subjectId;
         console.log(subjectId);
         this.allScale.forEach((ele) => {
           if (ele.gaugeTaskType !== undefined) {
-            templist.push(ele.scaleInfoId);
+            tempList.push(ele.scaleInfoId);
+            console.log(ele);
           }
         });
+        console.log(tempList);
 
         this.patientScale.forEach((ele) => {
-          templist.forEach((listEle) => {
-            if (ele === listEle.scaleInfoId) {
+          let isSubject = false;
+          for (let i = 0; i < tempList.length; i++) {
+            if (tempList[i] === ele.scaleInfoId) {
               list.subjectScaleList.push(ele);
-            } else {
-              list.normalScaleList.push(ele);
+              isSubject = true;
+              break;
             }
-          });
+          }
+          if (!isSubject) {
+            list.normalScaleList.push(ele);
+          }
         });
       }
 
