@@ -144,17 +144,16 @@ export default {
       if (this.patientScale) {
         let templist = [];
         let subjectId = this.$store.state.subjectId;
-        let scale = Util.getElement('gaugeTaskType', subjectId, this.allScale);
-        
+        console.log(subjectId);
         this.allScale.forEach((ele) => {
-          if (ele.gaugeTaskType === subjectId) {
-            templist.push(ele);
+          if (ele.gaugeTaskType !== undefined) {
+            templist.push(ele.scaleInfoId);
           }
         });
 
         this.patientScale.forEach((ele) => {
           templist.forEach((listEle) => {
-            if (ele.scaleInfoId === listEle.scaleInfoId) {
+            if (ele === listEle.scaleInfoId) {
               list.subjectScaleList.push(ele);
             } else {
               list.normalScaleList.push(ele);

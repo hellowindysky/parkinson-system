@@ -385,7 +385,6 @@ export default {
       });
     },
     showModal(cardOperation, item, showEdit, scaleCategory) {
-      
       this.mode = cardOperation;
       this.showEdit = showEdit;
       this.scaleCategory = scaleCategory;
@@ -604,7 +603,6 @@ export default {
           }
         }
         if (notExisted) {
-          
           // 判断单选/多选 multipleChoose: 1 多选
           if (this.targetScale.questions[i].multipleChoose === 1) {
             this.$set(this.copyInfo.patientOptions[i], 'scaleOptionId', []);
