@@ -51,26 +51,13 @@
           v-on:deleteCurrentCard="deleteScaleRecord(item)"
           v-on:editCurrentCard="editScale(item)"
           v-on:viewCurrentCard="viewScale(item)">
-          <div class="text first-line">
-            <div class="name">{{getScaleShowKey(item).keyText[0] ? getScaleShowKey(item).keyText[0] + ':' : ''}}</div>
-            <div class="value">{{item[getScaleShowKey(item).keyName[0]] ? item[getScaleShowKey(item).keyName[0]] : ''}}</div>
-          </div>
-          <div class="text second-line">
-            <div class="name">{{getScaleShowKey(item).keyText[1] ? getScaleShowKey(item).keyText[1] + ':' : ''}}</div>
-            <div class="value">{{item[getScaleShowKey(item).keyName[1]] ? item[getScaleShowKey(item).keyName[1]] : ''}}</div>
-          </div>
-          <div class="text third-line">
-            <div class="name">{{getScaleShowKey(item).keyText[2] ? getScaleShowKey(item).keyText[2] + ':' : ''}}</div>
-            <div class="value">{{item[getScaleShowKey(item).keyName[2]] ? item[getScaleShowKey(item).keyName[2]] : ''}}</div>
-          </div>
-          <div class="text fourth-line">
-            <div class="name">{{getScaleShowKey(item).keyText[3] ? getScaleShowKey(item).keyText[3] + ':' : ''}}</div>
-            <div class="value">{{item[getScaleShowKey(item).keyName[3]] ? item[getScaleShowKey(item).keyName[3]] : ''}}</div>
-          </div>
-          <div class="text fifth-line">
-            <div class="name">{{getScaleShowKey(item).keyText[4] ? getScaleShowKey(item).keyText[4] + ':' : ''}}</div>
-            <div class="value">{{item[getScaleShowKey(item).keyName[4]] ? item[getScaleShowKey(item).keyName[4]] : ''}}</div>
-          </div>
+          <ul>
+            <li class="text" v-for="(subItem, index) in getScaleShowKey(item)"
+              :key="'cardInfo ' + index">
+              <div class="name">{{subItem.keyText + ':'}}</div>
+              <div class="value">{{item[subItem.keyName]}}</div>
+            </li>
+          </ul>
         </card>
       </extensible-panel>
     </div>
@@ -143,15 +130,13 @@ export default {
 
       if (this.patientScale) {
         let tempList = [];
-        let subjectId = this.$store.state.subjectId;
-        console.log(subjectId);
         this.allScale.forEach((ele) => {
           if (ele.gaugeTaskType !== undefined) {
             tempList.push(ele.scaleInfoId);
-            console.log(ele);
+            // console.log(ele);
           }
         });
-        console.log(tempList);
+        // console.log(tempList);
 
         this.patientScale.forEach((ele) => {
           let isSubject = false;
@@ -302,25 +287,52 @@ export default {
      * keyName 展示字段名称
      */
     getScaleShowKey(item) {
+      let keyList = [];
       switch (item.scaleInfoId) {
-        case '8a9e2d38609771180162d839e5e1059b' || '8a9e2d38609771180162d843c44505cd':
-          item.keyText = ['填写时间', '入选标准', '排除标准'];
-          item.keyName = ['inspectTime', 'inclusionCriteria', 'exclusionCriteria'];
+        case '8a9e2d38609771180162d839e5e1059b':
+        case '8a9e2d38609771180162d843c44505cd':
+          keyList = [{
+            keyText: '填写时间',
+            keyName: 'inspectTime'
+          }, {
+            keyText: '入选标准',
+            keyName: 'inclusionCriteria'
+          }, {
+            keyText: '排除标准',
+            keyName: 'exclusionCriteria'
+          }];
           break;
         case '8a9e2d38609771180162d2583bcc041f':
-          item.keyText = ['填写时间', '病情严重程度', '疗效总评'];
-          item.keyName = ['inspectTime', 'inclusionCriteria', 'exclusionCriteria'];
+          keyList = [{
+            keyText: '填写时间',
+            keyName: 'inspectTime'
+          }, {
+            keyText: '病情严重程度',
+            keyName: 'severityOfDisease'
+          }, {
+            keyText: '疗效总评',
+            keyName: 'Cgigi'
+          }];
           break;
         case '8a9e2d38609771180162d2b599e60433':
-          item.keyText = ['填写时间', '帕金森症', '绝对排除项', '警示症状'];
-          item.keyName = ['parkinsonDisease', 'severityOfDisease', 'absoluteExclusion', 'warningSymptoms'];
+          keyList = [{
+            keyText: '填写时间',
+            keyName: 'inspectTime'
+          }, {
+            keyText: '帕金森症',
+            keyName: 'parkinsonDisease'
+          }, {
+            keyText: '绝对排除项',
+            keyName: 'absoluteExclusion'
+          }, {
+            keyText: '警示症状',
+            keyName: 'warningSymptoms'
+          }];
           break;
         default:
-          item.keyText = [];
-          item.keyName = [];
+          keyList = [];
       }
-      // console.log('getScaleShowKey', item);
-      return item;
+      return keyList;
     }
   },
   components: {
@@ -441,6 +453,25 @@ export default {
       .fifth-line {
         left: 10px;
         top: 150px;
+      }
+      li {
+        left: 10px;
+        list-style: none;
+        &:nth-child(1) {
+          top: 50px;
+        }
+        &:nth-child(2) {
+          top: 75px;
+        }
+        &:nth-child(3) {
+          top: 100px;
+        }
+        &:nth-child(4) {
+          top: 125px;
+        }
+        &:nth-child(5) {
+          top: 150px;
+        }
       }
     }
   }
