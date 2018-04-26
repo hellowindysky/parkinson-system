@@ -20,6 +20,22 @@
 
         <div class="field whole-line" v-if="hospitalType===2">
           <span class="field-name">
+            开始时间
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            {{startDate}}
+          </span>
+          <span class="field-input" v-else>
+            <el-date-picker
+              type="datetime"
+              v-model="startDate"
+              placeholder="请选择下次随访时间" clearable>
+            </el-date-picker>
+          </span>
+        </div>
+
+        <div class="field whole-line" v-if="hospitalType===2">
+          <span class="field-name">
             距上次随访天数
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -263,6 +279,7 @@ export default {
       mode: '',
       milestoneNum: '',
       milestoneStatus: '',
+      startDate: '',
       lastTime: '',
       exceedTime: '',
       exceedReason: '',
@@ -307,6 +324,7 @@ export default {
       this.milestoneNum = this.getMilestoneNum(item);
       this.milestoneStatus = this.getStatus(item);
 
+      this.startDate = item.startDate !== undefined ? item.startDate : '';
       this.lastTime = item.lastTime !== undefined ? item.lastTime : '';
       this.exceedTime = item.exceedTime !== undefined ? item.exceedTime : '';
       this.exceedReason = item.exceedReason !== undefined ? item.exceedReason : '';

@@ -89,6 +89,26 @@
         </div>
 
         <div class="field whole-line" v-if="hospitalType === 2">
+          <span class="field-name">
+            开始时间:
+            <span class="required-mark">*</span>
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            {{startDate}}
+          </span>
+          <span class="field-input" v-else>
+            <span class="warning-text">{{warningResults.startDate}}</span>
+            <el-date-picker
+              type="datetime"
+              v-model="startDate"
+              :class="{'warning': warningResults.startDate}"
+              @change="updateStartDate"
+              placeholder="请选择下次随访时间" clearable>
+            </el-date-picker>
+          </span>
+        </div>
+
+        <div class="field whole-line" v-if="hospitalType === 2">
           <span class="field-name long-field-name">
             距上次随访天数:
             <span class="required-mark">*</span>
@@ -181,7 +201,7 @@ import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 // import { deepCopy, pruneObj } from 'utils/helper.js';
-import { queryExperimentMember, joinExperiment} from 'api/experiment.js';
+import { queryExperimentMember, joinExperiment, queryExperimentProgress } from 'api/experiment.js';
 
 export default {
   data() {
@@ -194,6 +214,8 @@ export default {
       therapist: '',
       appraiser: '',
       hasCheckedBox: false,
+
+      startDate: '',
       lastTime: '',
       exceedTime: '',
       exceedReason: '',
@@ -206,9 +228,13 @@ export default {
         experimentCode: '',
         therapist: '',
         appraiser: '',
+        startDate: '',
         lastTime: '',
         exceedTime: ''
       },
+
+      lastStepStartDate: '',
+
       showEdit: true
     };
   },
@@ -239,6 +265,7 @@ export default {
       this.completeInit = false;
       this.mode = cardOperation;
       this.showEdit = showEdit;
+      // console.log('item: ', item);
 
       this.experimentalGroup = '';
       this.therapist = '';
@@ -248,7 +275,12 @@ export default {
       this.exceedReason = '';
       this.remark = '';
       this.hasCheckedBox = false;
-      // console.log('item: ', item);
+
+      this.lastStepStartDate = '';
+
+      // 读取实验流程中，最后一步操作的开始日期，用来计算距离上次随访的天数
+      this.updateExperimentLastStepStartTime();
+
       this.$nextTick(() => {
         for (var property in this.warningResults) {
           if (this.warningResults.hasOwnProperty(property)) {
@@ -303,6 +335,39 @@ export default {
         console.log(error);
       });
     },
+    updateExperimentLastStepStartTime() {
+      var experimentInfo = {
+        'patientExperimentModel': {
+          'patientId': this.$route.params.id,
+          'tcTaskId': this.$store.state.subjectId
+        }
+      };
+      queryExperimentProgress(experimentInfo).then((data) => {
+        if (data && data.patientExperiment && data.patientExperiment.length > 0) {
+          let progressList = data.patientExperiment;
+          this.lastStepStartDate = progressList[progressList.length - 1].startDate;
+        } else {
+          this.lastStepStartDate = '';
+        }
+      }, (error) => {
+        console.log(error);
+      });
+    },
+    updateStartDate() {
+      // 填写了开始时间之后，需要动态计算距离上次随访天数
+      if (this.startDate === '' || this.lastStepStartDate === '') {
+        this.updateWarning('startDate');
+        return;
+      }
+      let currentStepStartDate = new Date(this.startDate).getTime();
+      let lastStepStartDate = new Date(this.lastStepStartDate).getTime();
+      let dayTime = 1000 * 60 * 60 * 24;
+      let days = Math.floor((currentStepStartDate - lastStepStartDate) / dayTime);
+      this.lastTime = days >= 0 ? days : 0;
+
+      this.updateWarning('startDate');
+      this.updateWarning('lastTime');
+    },
     updateWarning(fieldName) {
       if (this[fieldName] === '') {
         this.warningResults[fieldName] = '必填项';
@@ -329,7 +394,7 @@ export default {
             ['experimentCode', 'therapist', 'appraiser'].indexOf(property) >= 0) {
             this.updateWarning(property);
           } else if (this.hospitalType === 2 &&
-            ['experimentCode', 'lastTime', 'exceedTime'].indexOf(property) >= 0) {
+            ['experimentCode', 'startDate', 'lastTime', 'exceedTime'].indexOf(property) >= 0) {
             this.updateWarning(property);
           }
         }
@@ -341,7 +406,7 @@ export default {
             this.lockSubmitButton = false;
             return;
           } else if (this.hospitalType === 2 &&
-            ['experimentCode', 'lastTime', 'exceedTime'].indexOf(property) >= 0) {
+            ['experimentCode', 'startDate', 'lastTime', 'exceedTime'].indexOf(property) >= 0) {
             this.lockSubmitButton = false;
             return;
           }

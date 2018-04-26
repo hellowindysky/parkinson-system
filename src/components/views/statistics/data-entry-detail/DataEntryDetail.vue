@@ -307,6 +307,12 @@ export default {
         loadingInstance.close();
       });
     },
+    clearFormData() {
+      this.tableData = {
+        template: [],
+        data: []
+      };
+    },
     resetConditions() {
       this.hospitalName = '';
       this.techSupport = '';
@@ -344,7 +350,7 @@ export default {
     this.updateSupportedDoctorNumber();
 
     this.updateActiveTab();
-    this.updateFormData();
+    // this.updateFormData();
   },
   components: {
     customTable
@@ -359,7 +365,8 @@ export default {
       // this.updateScrollbar();
     },
     activeTab() {
-      this.updateFormData();
+      // this.updateFormData();
+      this.clearFormData();
     }
   }
 };
