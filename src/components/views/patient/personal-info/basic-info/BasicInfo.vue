@@ -3,7 +3,7 @@
     :folded-status="foldedStatus" :editable="canEdit">
     <div class="basic-info">
       <div class="group" v-for="group in basicInfoTemplateGroups">
-        <div class="field" v-for="field in group" :class="{'whole-line': checkIfWholeLine(field)}">
+        <div class="field" v-for="field in group" :class="checkIfWholeLine(field)">
           <span class="field-name">
             {{field.cnfieldName}}
             <span class="required-mark" v-show="field.must===1">*</span>
@@ -365,7 +365,18 @@ export default {
     checkIfWholeLine(field) {
       var dictionaryField = this.getMatchedField(field);
       // 判断该字段是否跨行
-      return WHOLE_LINE_FIELD_LIST.indexOf(dictionaryField.fieldName) > -1;
+      // return WHOLE_LINE_FIELD_LIST.indexOf(dictionaryField.fieldName) > -1;
+      let fieldClass = [];
+      if (WHOLE_LINE_FIELD_LIST.indexOf(dictionaryField.fieldName) > -1) {
+        fieldClass.push('whole-line');
+      };
+      if (field.fieldName === 'homeProvince') {
+        fieldClass.push('field-Province');
+      }
+      if (field.fieldName === 'homeCity') {
+        fieldClass.push('field-city');
+      }
+      return fieldClass.join(' ');
     },
     getUIType(field) {
       // uiType类型 0/无 1/输入框 2/数字箭头 3/单选下拉框 4/单选按纽 5/多选复选框 6/日期 7/日期时间
@@ -645,6 +656,15 @@ export default {
         width: 100%;
         .field-name, .field-input {
           width: calc(~"98% - @{field-name-width}");
+        }
+      }
+      &.field-Province {
+        width: 30%;
+      }
+      &.field-city {
+        width: 46%;
+        .field-input,.field-value {
+          left: 0;
         }
       }
       .field-name {

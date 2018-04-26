@@ -453,9 +453,6 @@ export default {
       if (this.copyInfo.medicineClassification === 9) {
         transArr[0].name = transArr[0].name + '（请在备注中说明）';
       }
-      if (transArr.length === 0) {
-        this.$set(this.copyInfo, 'medicineName', '');
-      }
       return transArr;
     },
     medicineSpec() {
@@ -464,11 +461,9 @@ export default {
       spec = spec ? spec : [];
       // 如果只有一项，就把这一项自动显示出来
       if (spec && spec.length === 1) {
-        this.$set(this.copyInfo, 'medicalSpecUsed', spec[0].specOral);
-      }
-      // 如果为空，就把select清空
-      if (spec.length === 0) {
-        this.$set(this.copyInfo, 'medicalSpecUsed', '');
+        this.$nextTick(() => {
+          this.$set(this.copyInfo, 'medicalSpecUsed', spec[0].specOral);
+        });
       }
       return spec;
     },
@@ -587,9 +582,10 @@ export default {
           }
         }
       });
-      this.completeInit = true;
+
       this.updateScrollbar();
       this.$nextTick(() => {
+        this.completeInit = true;
         this.runClearVal = true;
       });
     },
@@ -710,6 +706,16 @@ export default {
   watch: {
     '$route.path'() {
       this.cancel();
+    },
+    medicineNameOpt: function() {
+      if (this.completeInit) {
+        this.$set(this.copyInfo, 'medicineName', '');
+      }
+    },
+    medicineSpec: function() {
+      if (this.completeInit) {
+        this.$set(this.copyInfo, 'medicalSpecUsed', '');
+      }
     }
   }
 };
