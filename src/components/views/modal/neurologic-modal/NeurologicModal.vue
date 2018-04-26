@@ -232,7 +232,12 @@
               </td>
               <td class="col col-width-10" v-for="col in group.colItems">
                 <span v-if="mode===VIEW_CURRENT_CARD && col.uiType===3">
-                  {{transform(copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue, col.fieldEnumId)}}
+                  <span v-if="row.fieldEnumId">
+                    {{transform(copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue, row.fieldEnumId)}}
+                  </span>
+                  <span v-else>
+                    {{transform(copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue, col.fieldEnumId)}}
+                  </span>
                 </span>
                 <span v-else-if="mode===VIEW_CURRENT_CARD">
                   {{copyInfo.patientFieldCode[subTableCode][row.id][col.id].fieldValue}}

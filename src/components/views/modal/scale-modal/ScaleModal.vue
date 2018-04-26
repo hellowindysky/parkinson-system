@@ -225,7 +225,7 @@ export default {
       mode: '',
       showEdit: false,
       lockSubmitButton: false,
-      scaleCategory: 0,
+      scaleCategory: 0, // 量表类型 0: 临床量表, 1: 课题评定
 
       copyInfo: {},
       warningResults: {
@@ -238,6 +238,7 @@ export default {
       },
       scaleTypeCode: '',
       scaleName: '',
+      scaleList: [], // 根据scaleCategory量表类型筛选出的量表列表
 
       scaleSymptomList: [], // 关联症状列表，长度由 typeGroup 决定
       scaleAnswer: [],       // 放筛选出来的量表病人填写答案的数组
@@ -322,23 +323,26 @@ export default {
     },
     queryScaleSearch(queryString, cb) {
       var allScale = [];
+      this.scaleList = [];
 
       // 根据量表分类判断可选择的量表数组
       if (this.scaleCategory === 1) {
         this.allScale.map((item) => {
           if (item.gaugeTaskType !== undefined) {
+            this.scaleList.push(item);
             allScale.push({'value': item.gaugeName});
           }
         });
       } else {
         this.allScale.map((item) => {
           if (item.gaugeTaskType === undefined) {
+            this.scaleList.push(item);
             allScale.push({'value': item.gaugeName});
           }
         });
       }
 
-      // console.log(allScale);
+      console.log(this.scaleList);
 
       var results = queryString ? allScale.filter((item) => {
         return (item.value.toLowerCase().indexOf(queryString.toLowerCase()) >= 0);
@@ -348,7 +352,7 @@ export default {
       cb(results);
     },
     handleScaleSelect() {
-      var targetScale = Util.getElement('gaugeName', this.scaleName, this.allScale);
+      var targetScale = Util.getElement('gaugeName', this.scaleName, this.scaleList);
       this.copyInfo.scaleInfoId = targetScale.scaleInfoId;
       this.selectScale();
     },
