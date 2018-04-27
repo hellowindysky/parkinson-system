@@ -89,6 +89,7 @@ export default {
   },
   data() {
     return {
+      completeInit: false,
       mode: this.READING_MODE,
       foldedStatus: false,
       copyInfo: {},
@@ -332,6 +333,7 @@ export default {
       }
     },
     shallowCopy(obj) {
+      this.completeInit = false;
       // 进行浅复制之后，修改复制对象的属性，不会影响到原始对象
       // 下面这行有一个特殊作用，能让 Vue 动态检测已有对象的新添加的属性，参看 https://cn.vuejs.org/v2/guide/reactivity.html
       this.copyInfo = Object.assign({}, obj);
@@ -348,6 +350,9 @@ export default {
       }
 
       this.handleSpecialField();
+      this.$nextTick(() => {
+        this.completeInit = true;
+      });
     },
     handleSpecialField() {
       // basicInfo 有几个字段的值需要特殊处理一下
@@ -595,6 +600,11 @@ export default {
         this.copyInfo.bmi = res;
       } else {
         this.copyInfo.bmi = '';
+      }
+    },
+    'copyInfo.homeProvince': function() {
+      if (this.completeInit) {
+        this.$set(this.copyInfo, 'homeCity', '');
       }
     }
   },
