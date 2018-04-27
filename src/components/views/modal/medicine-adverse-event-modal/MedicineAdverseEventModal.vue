@@ -157,7 +157,7 @@
             </el-select>
           </span>
         </div>
-        <div class="field whole-line">
+        <div class="field whole-line" v-if="seriousFlag === 1">
           <span class="field-name">
             严重不良事件:
           </span>
@@ -175,23 +175,19 @@
             </div>
           </span>
         </div>
-        <div class="field whole-line">
+        <div class="field whole-line" v-if="seriousFlag === 1">
           <span class="field-name">
             严重不良事件报告日期:
-            <span class="required-mark">*</span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span>{{reportAdverseDate}}</span>
           </span>
           <span class="field-input" v-else>
-            <span class="warning-text">{{warningResults.reportAdverseDate}}</span>
             <el-date-picker
               v-model="reportAdverseDate"
-              :class="{'warning': warningResults.reportAdverseDate}"
               type="date"
               placeholder="请选择时间"
-              :picker-options="pickerOptions"
-              @change="updateWarning('reportAdverseDate')">
+              :picker-options="pickerOptions">
             </el-date-picker>
           </span>
         </div>
@@ -303,7 +299,7 @@
               </span>
             </div>
         </div>
-        <div class="seperate-line" v-if="seriousFlag === 1" >
+        <div class="seperate-line" v-if="seriousFlag === 1">
           <div class="toggle-fold-button" @click="toggleContentFoldedEndEvent">
             不良事件结局
             <span class="iconfont" :class="iconToggleFoldedEvents"></span>
@@ -450,8 +446,7 @@ export default {
       warningResults: {
         occurTime: '',
         adverseName: '',
-        adverseDescribe: '',
-        reportAdverseDate: ''
+        adverseDescribe: ''
       },
       pickerOptions: {
         disabledDate(time) {
@@ -621,7 +616,7 @@ export default {
       return result;
     },
     updateWarning(fieldName) {
-      var list = ['occurTime', 'adverseName', 'adverseDescribe', 'reportAdverseDate'];
+      var list = ['occurTime', 'adverseName', 'adverseDescribe'];
       if (list.indexOf(fieldName) >= 0 && !this[fieldName]) {
         this.warningResults[fieldName] = '必填项';
       } else {
