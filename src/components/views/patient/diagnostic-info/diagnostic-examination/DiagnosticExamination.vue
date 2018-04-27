@@ -91,7 +91,7 @@
         </card>
       </extensible-panel>
       <!-- 基因检查 -->
-      <extensible-panel class="panel" :mode="mutableMode" :title="geneCheckTitle"
+      <extensible-panel v-if="false" class="panel" :mode="mutableMode" :title="geneCheckTitle"
         v-on:addNewCard="addGeneCheckRecord" :editable="canEdit">
         <card class="card" :class="cardWidth" :mode="mutableMode"
           v-for="(item,index) in geneCheckList"

@@ -55,7 +55,7 @@
             <li class="text" v-for="(subItem, index) in getScaleShowKey(item)"
               :key="'cardInfo ' + index">
               <div class="name">{{subItem.keyText + ':'}}</div>
-              <div class="value">{{item[subItem.keyName]}}</div>
+              <div class="value">{{item.gaugeShowModel[subItem.keyName]}}</div>
             </li>
           </ul>
         </card>
@@ -409,20 +409,20 @@ export default {
       }
       .text {
         position: absolute;
-        padding-left: 55px;
         font-size: @small-font-size;
         color: @light-font-color;
+        white-space: nowrap;
         .name {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 55px;
-          height: 13px;
+          display: inline-block;
+          white-space: nowrap;
           color: @font-color;
+          vertical-align: top;
         }
         .value {
+          display: inline-block;
           padding-left: 5px;
           color: @light-font-color;
+          word-break: break-all;
           .mark {
             padding-left: 5px;
             color: @button-color;
