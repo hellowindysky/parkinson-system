@@ -60,6 +60,17 @@
       </table>
     </div>
 
+    <div class="block" v-if="pageBtnStatus">
+      <el-pagination
+       @size-change="handleSizeChange"
+       @current-change="handleCurrentChange"
+       :page-size="pageSize"
+       :page-sizes="[500, 1000, 1500, 2000]"
+       layout="sizes, prev, pager, next"
+       :total="tableData.totalNum">
+      </el-pagination>
+    </div>
+
   </div>
 </template>
 
@@ -79,13 +90,19 @@ export default {
       boxShadowStatus: false,
       lineWidth: {
         width: '0px'
-      }
+      },
+      pageSize: 500, // 每页显示多少条
+      pageNo: 1 // 显示第几页
     };
   },
   props: {
     tableData: {
       type: Object,
       default: () => {}
+    },
+    pageBtnStatus: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
@@ -133,6 +150,16 @@ export default {
     }
   },
   methods: {
+    handleSizeChange(val) {
+      this.pageSize = val;
+      setTimeout(() => {
+        this.$emit('sizeChange', {pageSize: this.pageSize, pageNo: this.pageNo});
+      }, 0);
+    },
+    handleCurrentChange(val) {
+      this.pageNo = val;
+      this.$emit('pageChange', {pageSize: this.pageSize, pageNo: this.pageNo});
+    },
     boxScroll() {
       let scrollLeft = this.$refs.tableBox.scrollLeft;
       this.$refs.tbhead.style.left = -scrollLeft + 'px';
@@ -371,6 +398,12 @@ export default {
         padding: 0;
       }
     }
+  }
+  .block {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
   }
 }
 </style>

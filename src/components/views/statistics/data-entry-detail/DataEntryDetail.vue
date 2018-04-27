@@ -78,7 +78,12 @@
       </el-tabs>
     </div>
     <div class="form-wrapper" ref="formWrapper">
-      <custom-table :tableData="tableData"></custom-table>
+      <custom-table
+       @sizeChange="sizeChange"
+       @pageChange="pageChange"
+       :tableData="tableData"
+       :pageBtnStatus="activeTab === 'third' || activeTab === 'fourth'">
+      </custom-table>
     </div>
   </div>
 </template>
@@ -118,7 +123,11 @@ export default {
       updatingFormData: false,
       techSupport: '',
       supportedDoctorNumber: '',
-      tableData: {}
+      tableData: {},
+      pageParam: {
+        pageNo: 1,
+        pageSize: 500
+      }
     };
   },
   computed: {
@@ -225,13 +234,17 @@ export default {
         this.supportedDoctorNumber = '';
       }
     },
-    updateFormData() {
+    updateFormData(pagingOpts) {
       this.tableData = {
         template: [],
         data: []
       };
 
-      var params = {};
+      pagingOpts = pagingOpts ? pagingOpts : {};
+      var params = {
+        pageNo: pagingOpts.pageNo,
+        pageSize: pagingOpts.pageSize
+      };
 
       if (this.hospitalName) {
         params.hospitalName = this.hospitalName;
@@ -318,7 +331,13 @@ export default {
       this.initMonth();
 
       this.tableData = {};  // 这样在请求返回之前，就不会显示之前的数据
-      this.updateFormData();
+      this.updateFormData(this.pageParam);
+    },
+    sizeChange(data) {
+      this.updateFormData(data);
+    },
+    pageChange(data) {
+      this.updateFormData(data);
     }
     // updateScrollbar() {
     //   this.$nextTick(() => {
@@ -344,7 +363,7 @@ export default {
     this.updateSupportedDoctorNumber();
 
     this.updateActiveTab();
-    this.updateFormData();
+    this.updateFormData(this.pageParam);
   },
   components: {
     customTable
@@ -359,7 +378,7 @@ export default {
       // this.updateScrollbar();
     },
     activeTab() {
-      this.updateFormData();
+      this.updateFormData(this.pageParam);
     }
   }
 };
