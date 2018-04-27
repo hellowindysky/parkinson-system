@@ -320,6 +320,12 @@ export default {
         loadingInstance.close();
       });
     },
+    clearFormData() {
+      this.tableData = {
+        template: [],
+        data: []
+      };
+    },
     resetConditions() {
       this.hospitalName = '';
       this.techSupport = '';

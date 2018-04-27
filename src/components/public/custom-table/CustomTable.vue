@@ -270,7 +270,9 @@ export default {
       }
       if (type === 1) {
         for (let col of cols) {
-          total += Number(col);
+          if (col) {
+            total += Number(col);
+          }
         }
       } else if (type === 4) {
         let set = new Set(cols);
