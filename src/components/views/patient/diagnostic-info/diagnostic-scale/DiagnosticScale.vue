@@ -55,7 +55,7 @@
             <li class="text" v-for="(subItem, index) in getScaleShowKey(item)"
               :key="'cardInfo ' + index">
               <div class="name">{{subItem.keyText + ':'}}</div>
-              <div class="value">{{item.gaugeShowModel[subItem.keyName]}}</div>
+              <div class="value">{{item[subItem.keyName]}}</div>
             </li>
           </ul>
         </card>
@@ -311,7 +311,7 @@ export default {
             keyName: 'severityOfDisease'
           }, {
             keyText: '疗效总评',
-            keyName: 'Cgigi'
+            keyName: 'cgigi'
           }];
           break;
         case '8a9e2d38609771180162d2b599e60433':
