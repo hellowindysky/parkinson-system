@@ -299,7 +299,11 @@ export default {
         var question = this.targetScale.questions[i];
         var questionType = question.questionType;
         if (questionType === 0 || questionType === 1) {
-          if (this.copyInfo.patientOptions[i].scaleOptionId !== '') {
+          if (this.copyInfo.patientOptions[i].scaleOptionId instanceof Array) {
+            if (this.copyInfo.patientOptions[i].scaleOptionId.length > 0) {
+              num += 1;
+            }
+          } else if (this.copyInfo.patientOptions[i].scaleOptionId !== '') {
             num += 1;
           }
         } else if (questionType === 2) {
