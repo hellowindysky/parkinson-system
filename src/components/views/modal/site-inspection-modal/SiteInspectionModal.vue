@@ -25,7 +25,7 @@
             一般情况:
           </span>
           <span class="field-radio">
-            <el-radio v-model="partExamination.normal.result" :label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="partExamination.normal.result" :label="0" :disabled="mode===VIEW_CURRENT_CARD" @change.native="clear1">正常</el-radio>
             <el-radio v-model="partExamination.normal.result" :label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -47,7 +47,7 @@
             皮肤、粘膜:
           </span>
           <span class="field-radio">
-            <el-radio v-model="partExamination.skin.result" :label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="partExamination.skin.result" :label="0" :disabled="mode===VIEW_CURRENT_CARD" @change.native="clear2">正常</el-radio>
             <el-radio v-model="partExamination.skin.result" :label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -69,7 +69,7 @@
             浅表淋巴结:
           </span>
           <span class="field-radio">
-            <el-radio v-model="partExamination.lymphNode.result" :label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="partExamination.lymphNode.result" :label="0" :disabled="mode===VIEW_CURRENT_CARD" @change.native="clear3">正常</el-radio>
             <el-radio v-model="partExamination.lymphNode.result" :label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -91,7 +91,7 @@
             头部:
           </span>
           <span class="field-radio">
-            <el-radio v-model="partExamination.head.result" :label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="partExamination.head.result" :label="0" :disabled="mode===VIEW_CURRENT_CARD" @change.native="clear4">正常</el-radio>
             <el-radio v-model="partExamination.head.result" :label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -113,7 +113,7 @@
             颈部:
           </span>
           <span class="field-radio">
-            <el-radio v-model="partExamination.neck.result" :label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="partExamination.neck.result" :label="0" :disabled="mode===VIEW_CURRENT_CARD" @change.native="clear5">正常</el-radio>
             <el-radio v-model="partExamination.neck.result" :label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -135,7 +135,7 @@
             胸部:
           </span>
           <span class="field-radio">
-            <el-radio v-model="partExamination.chesk.result" :label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="partExamination.chesk.result" :label="0" :disabled="mode===VIEW_CURRENT_CARD" @change.native="clear6">正常</el-radio>
             <el-radio v-model="partExamination.chesk.result" :label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -157,7 +157,7 @@
             心脏:
           </span>
           <span class="field-radio">
-            <el-radio v-model="partExamination.heart.result" :label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="partExamination.heart.result" :label="0" :disabled="mode===VIEW_CURRENT_CARD" @change.native="clear7">正常</el-radio>
             <el-radio v-model="partExamination.heart.result" :label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -179,7 +179,7 @@
             腹部:
           </span>
           <span class="field-radio">
-            <el-radio v-model="partExamination.abdomen.result" :label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="partExamination.abdomen.result" :label="0" :disabled="mode===VIEW_CURRENT_CARD" @change.native="clear8">正常</el-radio>
             <el-radio v-model="partExamination.abdomen.result" :label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -201,7 +201,7 @@
             四肢关节:
           </span>
           <span class="field-radio">
-            <el-radio v-model="partExamination.limb.result" :label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="partExamination.limb.result" :label="0" :disabled="mode===VIEW_CURRENT_CARD" @change.native="clear9">正常</el-radio>
             <el-radio v-model="partExamination.limb.result" :label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -223,7 +223,7 @@
             其他:
           </span>
           <span class="field-radio">
-            <el-radio v-model="partExamination.other.result" :label="0" :disabled="mode===VIEW_CURRENT_CARD">正常</el-radio>
+            <el-radio v-model="partExamination.other.result" :label="0" :disabled="mode===VIEW_CURRENT_CARD" @change.native="clear10">正常</el-radio>
             <el-radio v-model="partExamination.other.result" :label="1" :disabled="mode===VIEW_CURRENT_CARD">异常</el-radio>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -253,7 +253,6 @@ import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-// import { vueCopy, pruneObj, reviseDateFormat} from 'utils/helper';
 import { vueCopy } from 'utils/helper';
 import { addPatientBodypart, modifyPatientBodypart } from 'api/patient.js';
 
@@ -342,13 +341,43 @@ export default {
         }
       });
       this.patientBodypartId = item.patientBodypartId;
-      this.ariseTime = item.ariseTime;
+      this.ariseTime = item.ariseTime ? item.ariseTime : '';
 
       if (this.mode !== this.ADD_NEW_CARD) {
         vueCopy(JSON.parse(item.partExamination), this.partExamination);
       }
       this.completeInit = true;
       this.updateScrollbar();
+    },
+    clear1() {
+      this.partExamination.normal.remark = '';
+    },
+    clear2() {
+      this.partExamination.skin.remark = '';
+    },
+    clear3() {
+      this.partExamination.lymphNode.remark = '';
+    },
+    clear4() {
+      this.partExamination.head.remark = '';
+    },
+    clear5() {
+      this.partExamination.neck.remark = '';
+    },
+    clear6() {
+      this.partExamination.chesk.remark = '';
+    },
+    clear7() {
+      this.partExamination.heart.remark = '';
+    },
+    clear8() {
+      this.partExamination.abdomen.remark = '';
+    },
+    clear9() {
+      this.partExamination.limb.remark = '';
+    },
+    clear10() {
+      this.partExamination.other.remark = '';
     },
     getUIType(field) {
       // uiType类型 0/无 1/输入框 2/数字箭头 3/单选下拉框 4/单选按纽 5/多选复选框 6/日期 7/日期时间
@@ -375,14 +404,6 @@ export default {
       };
       return options;
     },
-    // updateWarning(fieldName) {
-    //   var list = ['occurTime', 'adverseName', 'adverseDescribe'];
-    //   if (list.indexOf(fieldName) >= 0 && !this[fieldName]) {
-    //     this.warningResults[fieldName] = '必填项';
-    //   } else {
-    //     this.warningResults[fieldName] = '';
-    //   }
-    // },
     cancel() {
       this.lockSubmitButton = false;
       Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
@@ -391,12 +412,6 @@ export default {
       this.mode = this.EDIT_CURRENT_CARD;
       this.updateScrollbar();
     },
-    // seriousAgain() {
-    //   Bus.$on(this.SHOW_SERIOUS_ADVERSE_EVENT_MODAL, this.showPanel);
-    //   Bus.$emit(this.DYNAMIC_COMPONENT_MOUNTED);
-    //   this.updateScrollbar();
-
-    // },
     submit() {
       if (this.lockSubmitButton) {
         return;
@@ -419,9 +434,6 @@ export default {
       patientBodypartInfo.patientCaseId = this.$route.params.caseId;
       patientBodypartInfo.ariseTime = Util.simplifyDate(this.ariseTime);
       patientBodypartInfo.partExamination = JSON.stringify(this.partExamination);
-
-      // reviseDateFormat(patientBodypartInfo);
-      // pruneObj(patientBodypartInfo);
       if (this.mode === this.ADD_NEW_CARD) {
         addPatientBodypart(patientBodypartInfo).then(() => {
           this.updateAndClose();
