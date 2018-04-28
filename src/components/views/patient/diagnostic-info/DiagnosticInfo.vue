@@ -220,7 +220,8 @@ export default {
           if (stage !== 7) {
             Bus.$on(this.GIVE_UP, () => {
               var info = {
-                patientCurrentExperimentStep: this.patientCurrentExperimentStep
+                patientCurrentExperimentStep: this.patientCurrentExperimentStep,
+                patientCurrentExperimentStage: this.patientCurrentExperimentStage
               };
               Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'subjectCirculationModal', this.SHOW_SUBJECT_CIRCULATION_MODAL, this.ADD_NEW_CARD, info, true);
               Bus.$off(this.GIVE_UP);
