@@ -44,7 +44,7 @@
         </card>
       </extensible-panel>
       <extensible-panel class="panel" :mode="mutableMode" :title="subjectScaleTitle"
-        v-on:addNewCard="addScale(1)" :editable="canEdit">
+        v-if="subjectId !== -1" v-on:addNewCard="addScale(1)" :editable="canEdit">
         <card class="card" :class="devideWidth" :mode="mutableMode"
           v-for="(item, index) in scaleListFomat.subjectScaleList"
           :key="item.id + '' + index" :title="getTitle(item.scaleInfoId)"
@@ -67,7 +67,7 @@
 <script>
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import { mapGetters } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
 import { deleteScaleInfo } from 'api/patient.js';
 
 import FoldingPanel from 'public/folding-panel/FoldingPanel';
@@ -106,6 +106,9 @@ export default {
     }
   },
   computed: {
+    ...mapState([
+      'subjectId'
+    ]),
     ...mapGetters([
       'allScale',
       'typeGroup'
@@ -131,9 +134,8 @@ export default {
       if (this.patientScale) {
         let normalList = [];
         let subjectList = [];
-        let subjectId = this.$store.state.subjectId;
         this.allScale.forEach((ele) => {
-          if (ele.gaugeTaskType === subjectId) {
+          if (ele.gaugeTaskType === this.subjectId) {
             subjectList.push(ele.scaleInfoId);
             // console.log(ele);
           } else if (ele.gaugeTaskType === 0) {
