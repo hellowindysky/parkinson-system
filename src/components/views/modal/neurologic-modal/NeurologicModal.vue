@@ -535,8 +535,8 @@ export default {
     closeSubTable() {
       this.tableMode = this.FATHER_OPEN;
       this.updateScrollbar();
-      this.$refs.neurologicModal.scrollTop = 0;
-      // this.$refs.formWrapper.scrollTop = 0;
+      // this.$refs.neurologicModal.scrollTop = 0;
+      this.$refs.formWrapper.scrollTop = 0;
     },
     getOptions(fieldName) {
       var options = [];
@@ -613,13 +613,13 @@ export default {
             minScrollbarLength: 40
           });
         }
-        if (this.$refs.neurologicModal) {
-          Ps.destroy(this.$refs.neurologicModal);
-          Ps.initialize(this.$refs.neurologicModal, {
-            wheelSpeed: 1,
-            minScrollbarLength: 40
-          });
-        }
+        // if (this.$refs.neurologicModal) {
+        //   Ps.destroy(this.$refs.neurologicModal);
+        //   Ps.initialize(this.$refs.neurologicModal, {
+        //     wheelSpeed: 1,
+        //     minScrollbarLength: 40
+        //   });
+        // }
       });
     }
   },
@@ -925,11 +925,11 @@ export default {
       box-sizing: border-box;
       opacity: 0.3;
       transition: opacity 0.3s, padding 0.2s;
-      .ps__scrollbar-y {
-        position: relative;
-        background-color: #aaa;
-        border-radius: 20px;
-      }
+      // .ps__scrollbar-y {
+      //   // position: relative;
+      //   background-color: #aaa;
+      //   border-radius: 20px;
+      // }
     }
     &:hover {
       .ps__scrollbar-y-rail {
