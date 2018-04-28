@@ -322,20 +322,21 @@ export default {
       this.updateScrollbar();
     },
     queryScaleSearch(queryString, cb) {
-      var allScale = [];
+      let allScale = [];
+      let subjectId = this.$store.state.subjectId;
       this.scaleList = [];
 
       // 根据量表分类判断可选择的量表数组
       if (this.scaleCategory === 1) {
         this.allScale.map((item) => {
-          if (item.gaugeTaskType !== undefined) {
+          if (item.gaugeTaskType === subjectId) {
             this.scaleList.push(item);
             allScale.push({'value': item.gaugeName});
           }
         });
       } else {
         this.allScale.map((item) => {
-          if (item.gaugeTaskType === undefined) {
+          if (item.gaugeTaskType === 0) {
             this.scaleList.push(item);
             allScale.push({'value': item.gaugeName});
           }

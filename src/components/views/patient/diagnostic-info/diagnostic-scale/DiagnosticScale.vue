@@ -129,28 +129,34 @@ export default {
       };
 
       if (this.patientScale) {
-        let tempList = [];
+        let normalList = [];
+        let subjectList = [];
+        let subjectId = this.$store.state.subjectId;
         this.allScale.forEach((ele) => {
-          if (ele.gaugeTaskType !== undefined) {
-            tempList.push(ele.scaleInfoId);
+          if (ele.gaugeTaskType === subjectId) {
+            subjectList.push(ele.scaleInfoId);
             // console.log(ele);
+          } else if (ele.gaugeTaskType === 0) {
+            normalList.push(ele.scaleInfoId);
           }
         });
         // console.log(tempList);
 
-        this.patientScale.forEach((ele) => {
-          let isSubject = false;
-          for (let i = 0; i < tempList.length; i++) {
-            if (tempList[i] === ele.scaleInfoId) {
-              list.subjectScaleList.push(ele);
-              isSubject = true;
-              break;
+        listFormat:
+        for (let i = 0; i < this.patientScale.length; i++) {
+          for (let j = 0; j < normalList.length; j++) {
+            if (normalList[j] === this.patientScale[i].scaleInfoId) {
+              list.normalScaleList.push(this.patientScale[i]);
+              continue listFormat;
             }
           }
-          if (!isSubject) {
-            list.normalScaleList.push(ele);
+          for (let j = 0; j < subjectList.length; j++) {
+            if (subjectList[j] === this.patientScale[i].scaleInfoId) {
+              list.subjectScaleList.push(this.patientScale[i]);
+              continue listFormat;
+            }
           }
-        });
+        }
       }
 
       return list;
