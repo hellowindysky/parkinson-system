@@ -404,13 +404,9 @@ export default {
   .block {
     position: absolute;
     bottom: 50px;
-    opacity: 0.4;
     left: 50%;
     transform: translateX(-50%);
     box-shadow: 0 10px 30px -10px #3c485a;
-    &:hover {
-      opacity: 1;
-    }
   }
 }
 </style>
