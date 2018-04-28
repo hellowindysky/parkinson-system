@@ -140,7 +140,7 @@
                   {{transform(copyInfo.bioexamResult[index].isReference, 'isReference')}}
                 </span>
                 <el-select v-else placeholder="请选择" v-model="copyInfo.bioexamResult[index].isReference">
-                  <el-option v-for="item in getOptions('isReference')" :key="item.code"
+                  <el-option v-for="item in getOptions('clinicSignificance')" :key="item.code"
                    :label="item.name"
                    :value="item.code">
                   </el-option>
@@ -492,7 +492,7 @@ export default {
 @col-result-width: 160px;
 @col-unit-width: 70px;
 @col-range-width: 100px;
-@col-clinical-width:100px;
+@col-clinical-width:200px;
 @col-remarks-width: 180px;
 
 .biochemical-modal-wrapper {
