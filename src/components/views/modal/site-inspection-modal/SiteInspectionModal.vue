@@ -40,6 +40,9 @@
               placeholder="请输入特征描述"
               :disabled="partExamination.normal.result===0">
             </el-input>
+            <span class="click" v-if='partExamination.normal.remark.length > 50'>
+              只能输入50个字符
+            </span>
           </span>
         </div>
         <div class="field whole-line">
@@ -62,6 +65,9 @@
               placeholder="请输入特征描述"
               :disabled="partExamination.skin.result===0">
             </el-input>
+            <span class="click" v-if='partExamination.skin.remark.length > 50'>
+              只能输入50个字符
+            </span>
           </span>
         </div>
         <div class="field whole-line">
@@ -84,6 +90,9 @@
               placeholder="请输入特征描述"
               :disabled="partExamination.lymphNode.result===0">
             </el-input>
+            <span class="click" v-if='partExamination.lymphNode.remark.length > 50'>
+              只能输入50个字符
+            </span>
           </span>
         </div>
         <div class="field whole-line">
@@ -106,6 +115,9 @@
               placeholder="请输入特征描述"
               :disabled="partExamination.head.result===0">
             </el-input>
+            <span class="click" v-if='partExamination.head.remark.length > 50'>
+              只能输入50个字符
+            </span>
           </span>
         </div>
         <div class="field whole-line">
@@ -128,6 +140,9 @@
               placeholder="请输入特征描述"
               :disabled="partExamination.neck.result===0">
             </el-input>
+            <span class="click" v-if='partExamination.neck.remark.length > 50'>
+              只能输入50个字符
+            </span>
           </span>
         </div>
         <div class="field whole-line">
@@ -150,6 +165,9 @@
               placeholder="请输入特征描述"
               :disabled="partExamination.chesk.result===0">
             </el-input>
+            <span class="click" v-if='partExamination.chesk.remark.length > 50'>
+              只能输入50个字符
+            </span>
           </span>
         </div>
         <div class="field whole-line">
@@ -172,6 +190,9 @@
               placeholder="请输入特征描述"
               :disabled="partExamination.heart.result===0">
             </el-input>
+            <span class="click" v-if='partExamination.heart.remark.length > 50'>
+              只能输入50个字符
+            </span>
           </span>
         </div>
         <div class="field whole-line">
@@ -194,6 +215,9 @@
               placeholder="请输入特征描述"
               :disabled="partExamination.abdomen.result===0">
             </el-input>
+            <span class="click" v-if='partExamination.abdomen.remark.length > 50'>
+              只能输入50个字符
+            </span>
           </span>
         </div>
         <div class="field whole-line">
@@ -216,6 +240,9 @@
               placeholder="请输入特征描述"
               :disabled="partExamination.limb.result===0">
             </el-input>
+            <span class="click" v-if='partExamination.limb.remark.length > 50'>
+              只能输入50个字符
+            </span>
           </span>
         </div>
         <div class="field whole-line">
@@ -238,6 +265,9 @@
               placeholder="请输入特征描述"
               :disabled="partExamination.other.result===0">
             </el-input>
+            <span class="click" v-if='partExamination.other.remark.length > 50'>
+              只能输入50个字符
+            </span>
           </span>
         </div>
       </div>
@@ -594,10 +624,10 @@ export default {
             transform: translateX(-145px);
             width: calc(~"100% - @{field-name-width}");
           }
-          .warning-text {
+          .click {
             position: absolute;
-            top: 22px;
-            left: 10px;
+            top: 35px;
+            left: 8px;
             height: 15px;
             color: red;
             font-size: @small-font-size;
