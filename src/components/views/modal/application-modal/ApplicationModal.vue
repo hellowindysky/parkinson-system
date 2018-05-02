@@ -182,10 +182,10 @@
             </el-input>
           </span>
         </div>
-        <div class="check-field" v-if="hospitalType === 1">
+        <!-- <div class="check-field" v-if="hospitalType === 1">
           <el-checkbox v-model="hasCheckedBox" :disabled="mode===VIEW_CURRENT_CARD"></el-checkbox>
           确认患者已经签署《知情同意书》
-        </div>
+        </div> -->
       </div>
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
@@ -412,15 +412,15 @@ export default {
           }
         }
       }
-      if (this.hospitalType === 1 && !this.hasCheckedBox) {
-        this.$message({
-          message: '确认患者已经签署《知情同意书》',
-          type: 'warning',
-          duration: 2000
-        });
-        this.lockSubmitButton = false;
-        return;
-      }
+      // if (this.hospitalType === 1 && !this.hasCheckedBox) {
+      //   this.$message({
+      //     message: '确认患者已经签署《知情同意书》',
+      //     type: 'warning',
+      //     duration: 2000
+      //   });
+      //   this.lockSubmitButton = false;
+      //   return;
+      // }
       var experimentInfo = {
         'patientId': this.$route.params.id,
         'tcTaskId': this.$store.state.subjectId,
@@ -432,6 +432,7 @@ export default {
         experimentInfo.remark = this.remark;
 
       } else if (this.hospitalType === 2) {
+        experimentInfo.startDate = new Date(this.startDate).getTime();
         experimentInfo.lastTime = this.lastTime;
         experimentInfo.exceedTime = this.exceedTime;
         experimentInfo.exceedReason = this.exceedReason;

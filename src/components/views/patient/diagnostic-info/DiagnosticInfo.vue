@@ -85,7 +85,7 @@ export default {
         // 如果是北京医院的实验流程，这里的可编辑状态不受 listType 的影响
         return true;
 
-      } else if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_OUT && this.listType === this.MY_PATIENTS_TYPE) {
+      } else if ((this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_OUT || this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_FILTERING) && this.listType === this.MY_PATIENTS_TYPE) {
         // 如果患者不处于实验期，只有所属医生在“我的患者”下才能 添加／删除 诊断卡片
         return true;
 
@@ -197,15 +197,7 @@ export default {
 
       if (this.hospitalType === 2 && this.patientCurrentExperimentStep !== this.EXPERIMENT_STEP_OUT) {
 
-        if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_FILTERING) {
-          Bus.$on(this.GIVE_UP, () => {
-            Bus.$off(this.GIVE_UP);
-            this.$router.push({name: 'experimentInfo'});
-          });
-          Bus.$emit(this.REQUEST_CONFIRMATION, '提示',
-            '即将添加的诊断信息是否属于当前节点【筛选入组 V0】？如果选择否，将跳转至实验流程界面', '是', '否');
-
-        } else if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_SCREENING ||
+        if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_SCREENING ||
           this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_FOLLOW_UP) {
 
           let nodeText = '';
@@ -220,7 +212,8 @@ export default {
           if (stage !== 7) {
             Bus.$on(this.GIVE_UP, () => {
               var info = {
-                patientCurrentExperimentStep: this.patientCurrentExperimentStep
+                patientCurrentExperimentStep: this.patientCurrentExperimentStep,
+                patientCurrentStage: this.patientInfo.patientCurrentStage
               };
               Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'subjectCirculationModal', this.SHOW_SUBJECT_CIRCULATION_MODAL, this.ADD_NEW_CARD, info, true);
               Bus.$off(this.GIVE_UP);

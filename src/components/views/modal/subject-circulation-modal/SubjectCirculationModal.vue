@@ -44,17 +44,17 @@
               @change="updateWarning('step')"
               :class="{'warning': warningResults.step}" clearable >
               <el-option :label="'随访（V2）'" :value="2"
-                v-if="patientCurrentExperimentStep <= 20"></el-option>
+                v-if="patientCurrentStage <= 2"></el-option>
               <el-option :label="'随访（V3）'" :value="3"
-                v-if="patientCurrentExperimentStep <= 42"></el-option>
+                v-if="patientCurrentStage <= 3"></el-option>
               <el-option :label="'随访（V4）'" :value="4"
-                v-if="patientCurrentExperimentStep <= 43"></el-option>
+                v-if="patientCurrentStage <= 4"></el-option>
               <el-option :label="'随访（V5）'" :value="5"
-                v-if="patientCurrentExperimentStep <= 44"></el-option>
+                v-if="patientCurrentStage <= 5"></el-option>
               <el-option :label="'随访（V6）'" :value="6"
-                v-if="patientCurrentExperimentStep <= 45"></el-option>
+                v-if="patientCurrentStage <= 6"></el-option>
               <el-option :label="'随访（V7）'" :value="7"
-                v-if="patientCurrentExperimentStep <= 46"></el-option>
+                v-if="patientCurrentStage <= 7"></el-option>
             </el-select>
           </span>
         </div>
@@ -181,6 +181,7 @@ export default {
       lockSubmitButton: false,
       showEdit: true,
       patientCurrentExperimentStep: '',
+      patientCurrentStage: '',
       readyToEndExperiment: false,
       copyInfo: {
         step: '',
@@ -210,6 +211,7 @@ export default {
       this.mode = cardOperation;
       this.showEdit = showEdit;
       this.patientCurrentExperimentStep = item.patientCurrentExperimentStep;
+      this.patientCurrentStage = item.patientCurrentStage;
       this.readyToEndExperiment = false;
 
       this.lastStepStartDate = '';
