@@ -38,6 +38,7 @@
               v-model="medicine[field.fieldName]" clearable
               :class="{'warning': warningResults[field.fieldName]}"
               :placeholder="getMatchedField(field.fieldName).cnFieldDesc"
+              :disabled="isDisableField(field)"
               @change="updateField(field)">
               <el-option v-for="(option, index) in getOptions(field.fieldName)"
                 :label="option.name" :value="option.code"
@@ -121,7 +122,7 @@
               :maxlength="500">
             </el-input>
           </span>
-          <span v-if="field.fieldName==='nonTakingDose'" class="field-right-txt">{{fieldRightTxt}}</span>
+          <span v-if="field.fieldName==='nonTakingDose'" class="field-right-txt">{{medicineUnit}}</span>
         </div>
 
         <div class="seperate-line">
@@ -238,6 +239,8 @@ export default {
       lockSubmitButton: false,
       showEdit: false,
       foldedConditionalContent: false,   // 这个变量用来控制是否显示停药信息和副反应信息
+      disableField: ['medicineId', 'commonName', 'medicalSpecUsed',
+        'medicalType', 'totalMeasure', 'levodopaFactorUsed', 'levodopaDose'], // 课题内禁用的字段（不能填）
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now();
@@ -253,6 +256,9 @@ export default {
       'medicineStopReason',
       'typeGroup'
     ]),
+    inSubject() {
+      return this.$store.state.subjectId !== this.SUBJECT_ID_FOR_HOSPITAL;
+    },
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
         return '新增药物治疗';
@@ -321,14 +327,16 @@ export default {
     },
     complainceOfDrug() {
       // 药物依从性指数
-      let prescriptionDose = this.totalMeasure * Number(this.medicine.prescriptionDays);// 处方总剂量mg
+      // this.totalAmount    单日服用片数
+      let prescriptionDose = this.totalAmount * Number(this.medicine.prescriptionDays);// 处方总剂量 片/粒
       if (!prescriptionDose) {
         this.$set(this.medicine, 'drugComplianceIndex', '');
         return '';
       }
-      let notTakenDose = Number(this.medicine.nonTakingDose) * parseFloat(this.medicine.medicalSpecUsed, 10); // 未服用剂量mg
+      let notTakenDose = Number(this.medicine.nonTakingDose); // 未服用剂量 片/粒
       let takenDose = (prescriptionDose - notTakenDose) / prescriptionDose * 100;
-      takenDose = takenDose ? takenDose.toFixed(1) + '%' : '';
+      console.log(takenDose);
+      takenDose = takenDose ? takenDose.toFixed(1) + '%' : takenDose === 0 ? '0%' : '';
       this.$set(this.medicine, 'drugComplianceIndex', takenDose);
       return takenDose;
     },
@@ -337,6 +345,11 @@ export default {
       return this.medicineInfoObj.oralUnit;
     },
     medicineUnit() {
+      // 如果在课题内
+      if (this.inSubject) {
+        let unitTypes = Util.getElement('typegroupcode', 'medicineTestUnit', this.typeGroup).types;
+        return Util.getElement('typeCode', 1, unitTypes).typeName;
+      }
       // 计算单位，它是 this.computeUnit 所对应的 字符串
       let unitTypes = Util.getElement('typegroupcode', 'oralUnit', this.typeGroup).types;
       return Util.getElement('typeCode', this.computeUnit, unitTypes).typeName;
@@ -398,15 +411,29 @@ export default {
           var value = '';
           // 下面这个是为了初始化 this.medicine 的时候不覆盖掉 originalMedicine.patientMedicineDetail 的值，
           // 就设定了一个条件 ———— 如果药物名和每日服药次数都是原来的值的话，就把原来的每次服药时间 和 每次服用量 都复制过来
-          if (this.medicine.usages === this.originalMedicine.usages && this.medicine.medicineId &&
-           this.medicine.medicineId === this.originalMedicine.medicineId) {
+          // ---------------------------------------------------------------
+          // 这部分钟立的原代码是else里面的那部分，这个可能是钟立早期做的模态框，目前不敢大改，我只增加判断了在不在课题内，去掉了对在课题内有影响的判断，先就这样吧
+          if (this.inSubject) {
+            if (this.medicine.usages === this.originalMedicine.usages) {
 
-            // 记得验证原始值是否存在
-            if (this.originalMedicine.patientMedicineDetail &&
-             this.originalMedicine.patientMedicineDetail[i]) {
-              value = this.originalMedicine.patientMedicineDetail[i][fieldName];
+              // 记得验证原始值是否存在
+              if (this.originalMedicine.patientMedicineDetail &&
+               this.originalMedicine.patientMedicineDetail[i]) {
+                value = this.originalMedicine.patientMedicineDetail[i][fieldName];
+              }
+            }
+          } else {
+            if (this.medicine.usages === this.originalMedicine.usages && this.medicine.medicineId &&
+             this.medicine.medicineId === this.originalMedicine.medicineId) {
+
+              // 记得验证原始值是否存在
+              if (this.originalMedicine.patientMedicineDetail &&
+               this.originalMedicine.patientMedicineDetail[i]) {
+                value = this.originalMedicine.patientMedicineDetail[i][fieldName];
+              }
             }
           }
+          // -------------------------------------------------------------
 
           if (fieldName === 'computUnit') { // 数据库拼写错误，掉了一个 e
             value = this.computeUnit;
@@ -424,12 +451,6 @@ export default {
 
       this.updateScrollbar();
       return arr;
-    },
-    fieldRightTxt() {
-      if (this.medicine.medicalSpecUsed) {
-        return this.medicine.medicalSpecUsed.split('/')[1];
-      }
-      return '';
     }
   },
   methods: {
@@ -442,10 +463,10 @@ export default {
 
       setTimeout(() => {
         // console.log('firstTemplate', this.firstTemplateGroup);
-        // console.log('secondTemplate', this.secondTemplateGroup);
+        console.log('secondTemplate', this.secondTemplateGroup);
         // console.log('thirdTemplate', this.thirdTemplateGroup);
-        // console.log('secondTemplate', this.fourthTemplateGroup);
-        // console.log('thirdTemplate', this.fifthTemplateGroup);
+        // console.log('fourthTemplate', this.fourthTemplateGroup);
+        // console.log('fifthTemplate', this.fifthTemplateGroup);
         // console.log('dictionary', this.medicineDictionary);
         // console.log('medicineInfo', this.medicineInfo);
       }, 2000);
@@ -477,6 +498,13 @@ export default {
     cancel() {
       this.lockSubmitButton = false;
       Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
+    },
+    isDisableField(field) {
+      // 如果在课题内，该字段不需填写，也不编辑
+      if (this.inSubject && this.disableField.indexOf(field.fieldName) !== -1) {
+        return true;
+      }
+      return false;
     },
     switchToEditingMode() {
       this.mode = this.EDIT_CURRENT_CARD;
@@ -557,7 +585,7 @@ export default {
       // originalMedicine 是原始数据，在修改表格的时候需要参考这个对象，medicine 是我们编辑和上传的对象
       this.medicine = Object.assign({}, item);
       this.originalMedicine = Object.assign({}, item);
-
+      console.log(item, this.medicine, this.originalMedicine);
       // 遍历 firstTemplateGroup，对其中的每个 field，检查 this.medicine 下有没有名字对应的属性值，没有的话，就初始化为空字符串
       // 注意初始化采用 this.$set 方法，使得当前 Vue 实例对象可以跟踪该属性值的变化
       for (let field of [].concat(this.firstTemplateGroup, this.thirdTemplateGroup, this.fourthTemplateGroup, this.fifthTemplateGroup)) {
@@ -701,16 +729,26 @@ export default {
         return;
       }
 
+      // 如果在课题内不必验证该字段
+      if (this.inSubject && this.disableField.indexOf(field.fieldName) !== -1) {
+        return;
+      }
+
       var fieldValue = this.medicine[fieldName];
       var isSideEffectField = this.checkIfSideEffectField(fieldName);
 
       if (fieldName === 'prescriptionDays' || fieldName === 'nonTakingDose') {
         if (field.must === 1 && !Util.checkIfPositiveInteger(fieldValue)) {
-          this.$set(this.warningResults, fieldName, '请输入正整数');
+          this.$set(this.warningResults, fieldName, '请输入0~999之间的整数');
         } else if (field.must === 2 && fieldValue && !Util.checkIfPositiveInteger(fieldValue)) {
-          this.$set(this.warningResults, fieldName, '请输入正整数');
+          this.$set(this.warningResults, fieldName, '请输入0~999之间的整数');
         } else {
-          this.$set(this.warningResults, fieldName, null);
+          fieldValue = Number(fieldValue);
+          if (fieldValue >= 0 && fieldValue <= 999) {
+            this.$set(this.warningResults, fieldName, null);
+          } else {
+            this.$set(this.warningResults, fieldName, '请输入0~999之间的整数');
+          }
         };
         return;
       }
