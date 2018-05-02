@@ -74,7 +74,7 @@ import { reviseDateFormat, pruneObj, deepCopy } from 'utils/helper.js';
 
 import FoldingPanel from 'public/folding-panel/FoldingPanel';
 
-const WHOLE_LINE_FIELD_LIST = ['homeAddress'];
+const WHOLE_LINE_FIELD_LIST = ['homeAddress', 'nationality'];
 const CONVERT_TO_DECIMAL_LIST = ['height', 'weight'];
 
 export default {
