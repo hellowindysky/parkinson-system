@@ -335,7 +335,6 @@ export default {
       }
       let notTakenDose = Number(this.medicine.nonTakingDose); // 未服用剂量 片/粒
       let takenDose = (prescriptionDose - notTakenDose) / prescriptionDose * 100;
-      console.log(takenDose);
       takenDose = takenDose ? takenDose.toFixed(1) + '%' : takenDose === 0 ? '0%' : '';
       this.$set(this.medicine, 'drugComplianceIndex', takenDose);
       return takenDose;
@@ -463,7 +462,7 @@ export default {
 
       setTimeout(() => {
         // console.log('firstTemplate', this.firstTemplateGroup);
-        console.log('secondTemplate', this.secondTemplateGroup);
+        // console.log('secondTemplate', this.secondTemplateGroup);
         // console.log('thirdTemplate', this.thirdTemplateGroup);
         // console.log('fourthTemplate', this.fourthTemplateGroup);
         // console.log('fifthTemplate', this.fifthTemplateGroup);
@@ -585,7 +584,6 @@ export default {
       // originalMedicine 是原始数据，在修改表格的时候需要参考这个对象，medicine 是我们编辑和上传的对象
       this.medicine = Object.assign({}, item);
       this.originalMedicine = Object.assign({}, item);
-      console.log(item, this.medicine, this.originalMedicine);
       // 遍历 firstTemplateGroup，对其中的每个 field，检查 this.medicine 下有没有名字对应的属性值，没有的话，就初始化为空字符串
       // 注意初始化采用 this.$set 方法，使得当前 Vue 实例对象可以跟踪该属性值的变化
       for (let field of [].concat(this.firstTemplateGroup, this.thirdTemplateGroup, this.fourthTemplateGroup, this.fifthTemplateGroup)) {
