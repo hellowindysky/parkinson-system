@@ -588,6 +588,9 @@ export default {
     getMedicineTitle(medicineId) {
       // 根据药物 id，在相应的 tableData 里面寻找对应的 药物详情
       var medicine = Util.getElement('medicineId', medicineId, this.medicineInfo);
+      if (medicineId === '' || medicineId === undefined) {
+        return '----';
+      }
       return medicine.medicineName + '(' + medicine.commonName + ')';
     },
     calcTotalLevodopaDoseOfAllOtherMedicine(targetMedicine) {
