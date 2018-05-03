@@ -20,7 +20,7 @@
             {{item.taskCode ? item.taskCode : '门诊'}}
           </span>
         </div>
-        <div class="experiment-description" v-if="inSubject">
+        <div class="experiment-description">
           {{getExperimentDescription(item)}}
         </div>
       </card>
@@ -210,16 +210,16 @@ export default {
             nodeText = '【随访 V' + stage + '】';
           }
           if (stage !== 7) {
-            Bus.$on(this.GIVE_UP, () => {
+            Bus.$on(this.CONFIRM, () => {
               var info = {
                 patientCurrentExperimentStep: this.patientCurrentExperimentStep,
                 patientCurrentStage: this.patientInfo.patientCurrentStage
               };
               Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'subjectCirculationModal', this.SHOW_SUBJECT_CIRCULATION_MODAL, this.ADD_NEW_CARD, info, true);
-              Bus.$off(this.GIVE_UP);
+              Bus.$off(this.CONFIRM);
             });
 
-            Bus.$emit(this.REQUEST_CONFIRMATION, '提示', '即将添加的诊断信息是否属于当前节点' + nodeText + '？', '是', '否');
+            Bus.$emit(this.REQUEST_CONFIRMATION, '提示', '即将添加的诊断信息是否属于当前节点' + nodeText + '？', '否', '是');
 
           } else {
             Bus.$emit(this.NOTICE, '提示', '即将在【随访 V7】节点添加诊断信息，如果需要结束实验，请至【课题记录】界面进行操作');

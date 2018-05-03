@@ -739,9 +739,9 @@ export default {
       var isSideEffectField = this.checkIfSideEffectField(fieldName);
 
       if (fieldName === 'prescriptionDays' || fieldName === 'nonTakingDose') {
-        if (field.must === 1 && !Util.checkIfPositiveInteger(fieldValue)) {
+        if (field.must === 1 && !Util.checkIfNonNegativeInteger(fieldValue)) {
           this.$set(this.warningResults, fieldName, '请输入0~999之间的整数');
-        } else if (field.must === 2 && fieldValue && !Util.checkIfPositiveInteger(fieldValue)) {
+        } else if (field.must === 2 && fieldValue && !Util.checkIfNonNegativeInteger(fieldValue)) {
           this.$set(this.warningResults, fieldName, '请输入0~999之间的整数');
         } else {
           fieldValue = Number(fieldValue);

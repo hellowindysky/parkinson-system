@@ -181,7 +181,7 @@ export default {
       lockSubmitButton: false,
       showEdit: true,
       patientCurrentExperimentStep: '',
-      patientCurrentStage: '',     
+      patientCurrentStage: 0,
       readyToEndExperiment: false,
       copyInfo: {
         step: '',
@@ -211,7 +211,10 @@ export default {
       this.mode = cardOperation;
       this.showEdit = showEdit;
       this.patientCurrentExperimentStep = item.patientCurrentExperimentStep;
-      this.patientCurrentStage = item.patientCurrentStage;      
+      console.log(item.patientCurrentStage);
+      if (item.patientCurrentStage !== undefined) {
+        this.patientCurrentStage = item.patientCurrentStage;
+      }
       this.readyToEndExperiment = false;
 
       this.lastStepStartDate = '';
