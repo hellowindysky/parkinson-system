@@ -50,6 +50,7 @@
         <div class="field whole-line">
           <span class="field-name">
             实验结果:
+            <span class="required-mark">*</span>
           </span>
           <span class="field-input">
             <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.projectResults}}</span>
@@ -58,8 +59,11 @@
              v-model="copyInfo.projectResults"
              :rows="2"
              :maxlength="500"
+             :class="{'warning': warningResults.projectResults}"
+             @change="updateWarning('projectResults')"
              type="textarea">
             </el-input>
+            <span class="warning-text textarea-warning-text">{{warningResults.projectResults}}</span>
           </span>
         </div>
 
@@ -179,7 +183,8 @@ export default {
       disableChangingSubModal: false,
       warningResults: {
         bioexamId: '',
-        checkDate: ''
+        checkDate: '',
+        projectResults: ''
       },
       pickerOptions: {
         disabledDate(time) {
@@ -572,6 +577,12 @@ export default {
             height: 15px;
             color: red;
             font-size: @small-font-size;
+            &.textarea-warning-text {
+              margin-top:-15px;
+              position: static;
+              display: block;
+              line-height:1;
+            }
           }
           .el-input {
             .el-input__inner {
@@ -582,7 +593,8 @@ export default {
           }
           .el-textarea {
             vertical-align: middle;
-            transform: translateY(5px);
+            margin-bottom: 15px;
+            transform: translateY(-3px);
             .el-textarea__inner {
               border: none;
               background-color: @screen-color;
