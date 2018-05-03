@@ -6,17 +6,21 @@
         <div class="field whole-line">
           <span class="field-name">
             诊断时间:
+            <span class="required-mark">*</span>
           </span>
           <span class="field-input field-input-especial" v-if="mode===VIEW_CURRENT_CARD">
             <span>{{ariseTime}}</span>
           </span>
           <span class="field-input field-input-especial" v-else>
+            <span class="warning-text">{{warningResults.ariseTime}}</span>
             <el-date-picker
               v-model="ariseTime"
+              :class="{'warning': warningResults.ariseTime}"
               placeholder="请输入诊断时间"
               type="date"
               format="yyyy-MM-dd"
-              :picker-options="pickerOptions">
+              :picker-options="pickerOptions"
+              @change="updateWarning('ariseTime')">
             </el-date-picker>
           </span>
         </div>
@@ -337,6 +341,9 @@ export default {
           'remark': ''
         }
       },
+      warningResults: {
+        ariseTime: ''
+      },
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now();
@@ -433,6 +440,14 @@ export default {
         });
       };
       return options;
+    },
+    updateWarning(fieldName) {
+      var list = ['ariseTime'];
+      if (list.indexOf(fieldName) >= 0 && !this[fieldName]) {
+        this.warningResults[fieldName] = '必填项';
+      } else {
+        this.warningResults[fieldName] = '';
+      }
     },
     cancel() {
       this.lockSubmitButton = false;
@@ -628,6 +643,14 @@ export default {
             position: absolute;
             top: 35px;
             left: 8px;
+            height: 15px;
+            color: red;
+            font-size: @small-font-size;
+          }
+          .warning-text {
+            position: absolute;
+            top: 23px;
+            left: 10px;
             height: 15px;
             color: red;
             font-size: @small-font-size;
