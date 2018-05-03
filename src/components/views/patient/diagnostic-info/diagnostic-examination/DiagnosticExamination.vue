@@ -65,6 +65,7 @@
           <div class="text first-line">
             <span class="name">诊断结果</span>
             <span class="value">{{item.spephysicalResult}}</span>
+            <span class="value" v-if="item.spephysicalResult.length===0">{{'全部正常'}}</span>
           </div>
           <div class="text second-line">
             <span class="name">诊断时间</span>
