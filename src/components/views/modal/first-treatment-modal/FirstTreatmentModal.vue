@@ -178,7 +178,7 @@
               <span>{{transform(copyInfo.whetherEffect, getOptions('whetherEffect'))}}</span>
             </span>
             <span class="field-input" v-else>
-              <el-select v-model="copyInfo.whetherEffect" placeholder="请选择药物名称" clearable >
+              <el-select v-model="copyInfo.whetherEffect" placeholder="请选择" clearable >
                 <el-option
                  v-for="(item,index) in getOptions('whetherEffect')"
                  :key="item.code"
@@ -197,7 +197,7 @@
               <span>{{transform(copyInfo.adverse, getOptions('haveType'))}}</span>
             </span>
             <span class="field-input" v-else>
-              <el-select v-model="copyInfo.adverse" placeholder="请选择药物名称" clearable >
+              <el-select v-model="copyInfo.adverse" placeholder="请选择" clearable >
                 <el-option
                  v-for="(item,index) in getOptions('haveType')"
                  :key="item.code"
@@ -216,7 +216,7 @@
               <span>{{transform(copyInfo.whetherContinue, getOptions('finish'))}}</span>
             </span>
             <span class="field-input" v-else>
-              <el-select v-model="copyInfo.whetherContinue" placeholder="请选择药物名称" clearable >
+              <el-select v-model="copyInfo.whetherContinue" placeholder="请选择" clearable >
                 <el-option
                  v-for="item in getOptions('finish')"
                  :key="item.code"
@@ -227,7 +227,7 @@
             </span>
           </div>
 
-          <div class="field half-line">
+          <div class="field half-line" v-if="copyInfo.whetherContinue===0">
             <span class="field-name">
               停药时间
             </span>
@@ -235,13 +235,13 @@
               <span>{{copyInfo.stopTime}}</span>
             </span>
             <span class="field-input" v-else>
-              <el-date-picker v-model="copyInfo.stopTime" type="date" placeholder="请选择初次用药时间" clearable
+              <el-date-picker v-model="copyInfo.stopTime" type="date" placeholder="请选择停药时间" clearable
                :picker-options="pickerOptions">
               </el-date-picker>
             </span>
           </div>
 
-          <div class="field">
+          <div class="field" v-if="copyInfo.whetherContinue===0">
             <span class="field-name">
               停药原因
             </span>
@@ -249,7 +249,7 @@
               <span>{{copyInfo.stopReason}}</span>
             </span>
             <span class="field-input" v-else>
-              <el-input v-model="copyInfo.stopReason" type="textarea" placeholder="请输入备注" :maxlength="500"></el-input>
+              <el-input v-model="copyInfo.stopReason" type="textarea" placeholder="请输入停药原因" :maxlength="500"></el-input>
             </span>
           </div>
 

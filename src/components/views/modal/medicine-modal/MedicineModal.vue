@@ -259,6 +259,9 @@ export default {
     inSubject() {
       return this.$store.state.subjectId !== this.SUBJECT_ID_FOR_HOSPITAL;
     },
+    hospitalType() {
+      return this.$store.state.hospitalType;
+    },
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
         return '新增药物治疗';
@@ -500,7 +503,7 @@ export default {
     },
     isDisableField(field) {
       // 如果在课题内，该字段不需填写，也不编辑
-      if (this.inSubject && this.disableField.indexOf(field.fieldName) !== -1) {
+      if (this.inSubject && this.hospitalType === 2 && this.disableField.indexOf(field.fieldName) !== -1) {
         return true;
       }
       return false;
@@ -728,7 +731,7 @@ export default {
       }
 
       // 如果在课题内不必验证该字段
-      if (this.inSubject && this.disableField.indexOf(field.fieldName) !== -1) {
+      if (this.inSubject && this.hospitalType === 2 && this.disableField.indexOf(field.fieldName) !== -1) {
         return;
       }
 
