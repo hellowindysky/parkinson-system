@@ -493,6 +493,8 @@ export default {
         this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_FOLLOW_UP;
       if (this.hospitalType === 1 && this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
         return false;
+      } else if (this.canEdit && this.diagnosticExperimentStep === this.EXPERIMENT_STEP_THERAPY) {
+        return false;
       } else {
         return true;
       }
