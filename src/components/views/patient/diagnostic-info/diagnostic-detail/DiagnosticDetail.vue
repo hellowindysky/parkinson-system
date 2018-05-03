@@ -139,7 +139,7 @@ export default {
       return stage >= 0 ? stage : 0;
     },
     patientDuringExperiment() {
-      return [this.EXPERIMENT_STEP_FILTERING, this.EXPERIMENT_STEP_SCREENING, this.EXPERIMENT_STEP_THERAPY,
+      return [this.EXPERIMENT_STEP_SCREENING, this.EXPERIMENT_STEP_THERAPY,
         this.EXPERIMENT_STEP_FOLLOW_UP].indexOf(this.patientExperimentStep) >= 0;
     },
     canEdit() {
