@@ -141,7 +141,7 @@
               </td>
               <td class="col col-clinical">
                 <span v-if="mode===VIEW_CURRENT_CARD">
-                  {{transform(copyInfo.bioexamResult[index].isReference, 'isReference')}}
+                  {{transform(copyInfo.bioexamResult[index].isReference, 'clinicSignificance')}}
                 </span>
                 <el-select v-else placeholder="请选择" v-model="copyInfo.bioexamResult[index].isReference">
                   <el-option v-for="item in getOptions('clinicSignificance')" :key="item.code"
@@ -256,7 +256,6 @@ export default {
       this.$nextTick(() => {
         this.clearWarning();
       });
-      console.log(this.copyInfo);
     },
     updateTemplate() {
       this.targetBioexam = [];
