@@ -133,7 +133,8 @@
             </span>
             <span class="field-input" v-else>
               <span>
-                {{leddAttr}}
+                <span v-if="leddAttr||leddAttr===0">{{leddAttr}}</span>
+                <span v-else>{{fieldHint('ledd')}}</span>
                 <span class="enhance" v-show="enhanceEffect && leddAttr">( +33% )</span>
               </span>
               <!-- <el-input v-model="copyInfo.ledd" placeholder="根据用量自动计算" disabled></el-input> -->
@@ -495,10 +496,6 @@ export default {
       let res = Math.round(this.levodopaFactor * pieces * 100000 * coefficient) / 100000.0;
       res = res || (res === 0) ? res : '';
       this.$set(this.copyInfo, 'ledd', res);
-
-      if (res === '' || res === undefined) {
-        return '--根据用量自动计算--';
-      }
       return res;
     },
     levodopaFactor() {
@@ -521,6 +518,11 @@ export default {
     }
   },
   methods: {
+    fieldHint(fieldName) {
+      if (fieldName === 'ledd') {
+        return '--根据用量自动计算--';
+      }
+    },
     clearVal(fieldName) {
       if (fieldName === 'firstVisitType') {
         for (let key in this.copyInfo) {
