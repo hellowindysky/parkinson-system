@@ -160,6 +160,12 @@ export default {
           'nextMileStone': this.nextStep
         }
       };
+
+      // 随访期开始阶段的status 默认值为2
+      if (this.nextStep === 40) {
+        experimentInfo.patientExperimentModel.statusDetail = 2;
+      }
+
       completeExperiment(experimentInfo, this.hospitalType).then(this.updateAndClose, this._handleError);
     },
     _handleError(error) {

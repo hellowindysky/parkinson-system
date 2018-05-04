@@ -124,7 +124,6 @@ export default {
       if (subject.tasks && subject.tasks.length > 0) {
         return;
       }
-      console.log('chooseSubject', subject, this.SUBJECT_ID_FOR_HOSPITAL);
 
       var subjectId = subject.id ? subject.id : this.SUBJECT_ID_FOR_HOSPITAL;
       var hospitalType = subject.hospType !== undefined ? subject.hospType : this.HOSPITAL_TYPE_WITHOUT_SUBJECT;
