@@ -495,6 +495,10 @@ export default {
       let res = Math.round(this.levodopaFactor * pieces * 100000 * coefficient) / 100000.0;
       res = res || (res === 0) ? res : '';
       this.$set(this.copyInfo, 'ledd', res);
+
+      if (res === '' || res === undefined) {
+        return '--根据用量自动计算--';
+      }
       return res;
     },
     levodopaFactor() {
