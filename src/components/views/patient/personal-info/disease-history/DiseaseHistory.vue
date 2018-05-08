@@ -17,7 +17,9 @@
 
           <div class="field-value" v-show="mode===READING_MODE">
             <span v-if="field.fieldName==='ariAge'">{{ariAge}}{{theUnit(field.fieldName)}}</span>
-            <span v-else-if="field.fieldName==='courseOfDisease'">{{courseOfDiseaseInfo}}</span>
+            <span v-else-if="field.fieldName==='courseOfDisease'">
+              {{diseaseCourse.year}}年{{diseaseCourse.month}}月
+            </span>
             <span v-else-if="getUIType(field)===3">
               {{ transformTypeCode(copyInfo[field.fieldName], field.fieldName) }}
             </span>
@@ -31,9 +33,14 @@
 
           <div class="field-input" v-show="mode===EDITING_MODE">
             <span v-if="field.fieldName==='ariAge'">{{ariAge}}{{theUnit(field.fieldName)}}</span>
-            <span v-else-if="field.fieldName==='courseOfDisease'">{{courseOfDiseaseInfo}}</span>
+            <span v-else-if="field.fieldName==='courseOfDisease'">
+              <el-input type="number" v-model="diseaseCourse.year" placeholder="填写年"></el-input>
+              <span>年</span>
+              <el-input type="number" v-model="diseaseCourse.month" placeholder="填写月"></el-input>
+              <span>月</span>
+            </span>
             <span v-else-if="getUIType(field)===1">
-              <el-input v-model="copyInfo[field.fieldName]" :disabled="field.fieldName==='ariAge'||field.fieldName==='courseOfDisease'"
+              <el-input v-model="copyInfo[field.fieldName]" :disabled="field.fieldName==='ariAge'"
                 :placeholder="getMatchedField(field.fieldName).cnFieldDesc"></el-input>
             </span>
             <span v-else-if="getUIType(field)===3">
@@ -53,11 +60,10 @@
             <span v-else-if="getUIType(field)===6">
               <el-date-picker
                 v-model="copyInfo[field.fieldName]"
-                type="date"
+                type="month"
                 :class="{'warning': warningResults[field.fieldName]}"
                 :picker-options="pickerOptions"
                 :placeholder="getMatchedField(field.fieldName).cnFieldDesc"
-                format="yyyy-MM-dd"
                 @change="updateWarning(field)">
               </el-date-picker>
             </span>
@@ -327,6 +333,10 @@ export default {
       firstSymbolData: [], // 首发症状
       firstVisitTreatmentData: [], // 初诊治疗
       patientHistorysData: [], // 就诊记录
+      diseaseCourse: {
+        year: '',
+        month: ''
+      },
       copyInfo: {
         patientDiseaseOrders: [
           {
@@ -381,18 +391,6 @@ export default {
         return this.getMatchedField('ariAge').cnFieldDesc;
         // return '——选择起病时间自动计算——';
       }
-    },
-    courseOfDiseaseInfo() {
-      // 病程 特殊的字段特殊处理
-      if (this.copyInfo['ariTime']) {
-        let years = Util.calculateMonthsBetween(this.copyInfo['ariTime'], new Date());
-        this.$set(this.copyInfo, 'courseOfDisease', years[1]);
-        return years[0];
-      } else {
-        return this.getMatchedField('courseOfDisease').cnFieldDesc;
-        // return '——选择起病时间自动计算——';
-      }
-
     },
     diseaseInfoDictionary() {
       // 对 diseaseInfoDictionaryGroups 进行扁平化处理，方便之后操作
@@ -628,6 +626,10 @@ export default {
       if (field.fieldName === 'chiefComplaint') {
         classNameList.push('textarea-field');
       };
+      // 判断是否是病程
+      if (field.fieldName === 'courseOfDisease') {
+        classNameList.push('field-courseOfDisease');
+      }
       return classNameList.join(' ');
     },
     getUIType(field) {
@@ -768,6 +770,9 @@ export default {
           }
         }
       }
+
+      // let staTime = Util.simplifyDate(this.copyInfo.ariTime).split('-');
+      // this.copyInfo.ariTime = staTime[0] + '-' + staTime[1];
       this.copyInfo.ariTime = Util.simplifyDate(this.copyInfo.ariTime);
 
       var submitData = deepCopy(this.copyInfo);
@@ -815,7 +820,7 @@ export default {
           };
         };
       };
-      // submitData.courseOfDisease = this.courseOfDiseaseInfo;
+
       submitData.patientId = this.$route.params.id;
       modDiseaseHistory(submitData).then(() => {
         Bus.$emit(this.UPDATE_PATIENT_INFO);
@@ -945,6 +950,47 @@ export default {
         }
       }
       this.changeCopyInfo();
+    },
+    'copyInfo.courseOfDisease': function(newVal) {
+      if (newVal) {
+        let year = parseInt(newVal / 12, 10);
+        let month = newVal % 12;
+        // console.log(newVal, year, month);
+        this.$set(this.diseaseCourse, 'year', year);
+        this.$set(this.diseaseCourse, 'month', month);
+      }
+    },
+    diseaseCourse: {
+      handler: function(newObj) {
+        // console.log(newObj);
+        let year = newObj.year ? Number(newObj.year) : 0;
+        let month = newObj.month ? Number(newObj.month) : 0;
+        let months = year * 12 + month;
+        this.$set(this.copyInfo, 'courseOfDisease', months);
+        // console.log(months);
+        let today = new Date();
+        today.setMonth(today.getMonth() - months);
+        let ariTime = today;
+        ariTime = Util.simplifyDate(ariTime).split('-');
+        ariTime = ariTime[0] + '-' + ariTime[1];
+        console.log(ariTime);
+        this.$set(this.copyInfo, 'ariTime', ariTime);
+        if (!newObj.year && !newObj.month) {
+          this.$set(this.copyInfo, 'ariTime', '');
+        }
+      },
+      deep: true
+    },
+    'copyInfo.ariTime': function(newVal) {
+      if (newVal) {
+        let today = new Date();
+        let courseDis = Util.calculateMonthsBetween(newVal, today);
+        // console.log(newVal, courseDis, today);
+        this.$set(this.copyInfo, 'courseOfDisease', courseDis);
+      } else {
+        this.$set(this.diseaseCourse, 'year', '');
+        this.$set(this.diseaseCourse, 'month', '');
+      }
     }
   },
   created() {
@@ -1133,6 +1179,13 @@ export default {
       width: 100%;
       height: @field-height;
       text-align: left;
+      &.field-courseOfDisease {
+        .field-input {
+          .el-input {
+            width: 36%;
+          }
+        }
+      }
       &.half-line {
         width: 50%;
         .field-input {
