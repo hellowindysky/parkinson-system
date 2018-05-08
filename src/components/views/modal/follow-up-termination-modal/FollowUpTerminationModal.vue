@@ -232,6 +232,7 @@ export default {
       nextStep: '',
       nextTime: '',
       remark: '',
+      currentStage: '',
 
       warningResults: {
         tcPatientAdverseOccurance: '',
@@ -266,7 +267,7 @@ export default {
     }
   },
   methods: {
-    showPanel(cardOperation, item, showEdit, appraiser) {
+    showPanel(cardOperation, item, showEdit, appraiser, currentStage) {
       this.completeInit = false;
       this.mode = cardOperation;
       this.showEdit = showEdit;
@@ -281,6 +282,8 @@ export default {
       this.nextStep = '';
       this.nextTime = '';
       this.remark = '';
+
+      this.currentStage = currentStage;
 
       this.$nextTick(() => {
         this.$refs.scrollArea.scrollTop = 0;
@@ -369,6 +372,12 @@ export default {
           }
         }
       };
+
+            // 随访期开始阶段的status 默认值为2
+      if (this.nextStep === 40) {
+        experimentInfo.patientExperimentModel.statusDetail = this.currentStage - 0 + 1;
+      }
+
       completeFollowUp(experimentInfo, this.hospitalType).then(this.updateAndClose, this._handleError);
     },
     _handleError(error) {

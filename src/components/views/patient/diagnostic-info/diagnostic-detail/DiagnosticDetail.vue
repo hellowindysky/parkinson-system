@@ -139,7 +139,7 @@ export default {
       return stage >= 0 ? stage : 0;
     },
     patientDuringExperiment() {
-      return [this.EXPERIMENT_STEP_FILTERING, this.EXPERIMENT_STEP_SCREENING, this.EXPERIMENT_STEP_THERAPY,
+      return [this.EXPERIMENT_STEP_SCREENING, this.EXPERIMENT_STEP_THERAPY,
         this.EXPERIMENT_STEP_FOLLOW_UP].indexOf(this.patientExperimentStep) >= 0;
     },
     canEdit() {
@@ -187,7 +187,10 @@ export default {
         // 因为“我的患者”中，存在录入员这个角色，他们和医生是能够互相编辑对方创建的诊断卡片的
         return false;
 
-      } else if ((canEditInMyPatientsList || canEditInTherapistsList || canEditInAppraisersList) && atSameStep) {
+      } else if ((canEditInTherapistsList || canEditInAppraisersList) && atSameStep) {
+        return true;
+
+      } else if (canEditInMyPatientsList) {
         return true;
 
       } else {

@@ -191,14 +191,14 @@
             </el-date-picker>
           </span>
         </div>
-        <div class="seperate-line">
+        <div class="seperate-line" v-if="measureFlag==1">
           <div class="toggle-fold-button" @click="toggleContentFoldedMeasures">
               治疗措施
             <span class="iconfont" :class="iconToggleFoldedMeasures"></span>
           </div>
         </div>
-        <div class="foldable-content" :class="{'folded': foldedConditionalContentMeasures}">
-          <div class="field whole-line excursion">
+        <div class="foldable-content" v-if="measureFlag==1" :class="{'folded': foldedConditionalContentMeasures}">
+          <div class="field whole-line excursion" v-if="measureFlag==1">
               药物治疗（最近90天内所使用的其他药物）
           </div>
             <table class="table">

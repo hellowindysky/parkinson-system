@@ -251,7 +251,7 @@ export default new Router({
               path: 'therapistsPatientList',
               name: 'therapistsPatients',
               meta: {
-                therapistsPatients: true
+                therapistsPatients: true // 判断是否是治疗者
               },
               beforeEnter: (to, from, next) => {
                 var subjectId = sessionStorage.getItem('subjectId');
@@ -318,7 +318,7 @@ export default new Router({
               path: 'appraisersPatientList',
               name: 'appraisersPatients',
               meta: {
-                appraisersPatients: true
+                appraisersPatients: true // 判断是否为评估者
               },
               beforeEnter: (to, from, next) => {
                 var subjectId = sessionStorage.getItem('subjectId');

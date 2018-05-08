@@ -249,7 +249,13 @@ export default {
     transform(typeCode, fieldName) {
       typeCode = parseInt(typeCode, 10);
       var fieldEnumId = this.getMatchedField(fieldName).fieldEnumId;
-      return Util.getElement('typeCode', typeCode, this.getOptions(fieldEnumId)).typeName;
+
+      // 特殊处理 判断如果患者status为10时，实验节点返回值为 筛选期
+      if (typeCode === 10 && fieldEnumId === 'taskStatus') {
+        return '筛选期';
+      } else {
+        return Util.getElement('typeCode', typeCode, this.getOptions(fieldEnumId)).typeName;
+      }
     },
     updateWarning(field) {
       var fieldName = field.fieldName;

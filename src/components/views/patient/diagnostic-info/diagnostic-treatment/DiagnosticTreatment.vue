@@ -63,6 +63,7 @@
           </div>
         </card>
       </extensible-panel>
+
       <extensible-panel class="panel surgery-panel" :mode="mutableMode" v-if="showSurgeryPanel"
         :title="surgeryTitle" v-on:addNewCard="addTreatmentRecord" :editable="canEdit">
         <card class="card surgery-card" :class="bigCardWidth" :mode="mutableMode"
@@ -201,7 +202,7 @@
       </extensible-panel>
 
       <extensible-panel class="panel physiontherapy-panel"
-        v-if="showPhysiontherapy || showTreatmentEvaluation || showAdverseEvent"
+        v-if="(showPhysiontherapy || showTreatmentEvaluation || showAdverseEvent)"
         :mode="mutableMode" :title="physiontherapyTitle"
         v-on:addNewCard="addPhysiontherapyRecord" :editable="canEdit">
         <card class="card physiontherapy-card" :class="bigCardWidth"
@@ -470,7 +471,7 @@ export default {
     isMyPatientsList() {
       return this.$route.matched.some(record => record.meta.myPatients);
     },
-    isExperimentPatientsList() {
+    isExperimentPatientsList() { // 根据路由判断是否为治疗者therapistsPatients/评估者appraisersPatients
       return this.$route.matched.some(record => {
         return record.meta.therapistsPatients || record.meta.appraisersPatients;
       });
@@ -493,12 +494,17 @@ export default {
         this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_FOLLOW_UP;
       if (this.hospitalType === 1 && this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
         return false;
+      } else if (this.canEdit && this.diagnosticExperimentStep === this.EXPERIMENT_STEP_THERAPY) {
+        return false;
       } else {
         return true;
       }
     },
-    showSurgeryPanel() {
+    showSurgeryPanel() { // 是否显示手术治疗模块
       if (this.hospitalType === 1 && this.diagnosisDuringExperiment) {
+        return false;
+      } else if (this.hospitalType === 1 && this.diagnosticExperimentStep === this.EXPERIMENT_STEP_FILTERING) {
+        // 如果患者处于入组诊断期 则隐藏手术治疗
         return false;
       } else {
         return true;
@@ -508,6 +514,9 @@ export default {
       var atOtherStatus = this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_THERAPY;
       if (this.hospitalType === 1 && this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
         return false;
+      } else if (this.hospitalType === 1 && this.diagnosticExperimentStep === this.EXPERIMENT_STEP_FILTERING) {
+        // 如果患者处于入组诊断期 则隐藏物理治疗
+        return false;
       } else {
         return true;
       }
@@ -515,6 +524,9 @@ export default {
     showTreatmentEvaluation() {
       var atOtherStatus = this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_FOLLOW_UP;
       if (this.hospitalType === 1 && this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
+        return false;
+      } else if (this.hospitalType === 1 && this.diagnosticExperimentStep === this.EXPERIMENT_STEP_FILTERING) {
+        // 如果患者处于入组诊断期 则隐藏物理治疗
         return false;
       } else {
         return true;
@@ -525,6 +537,9 @@ export default {
         this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_FOLLOW_UP;
       if (this.hospitalType === 1 && this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
         return false;
+      } else if (this.hospitalType === 1 && this.diagnosticExperimentStep === this.EXPERIMENT_STEP_FILTERING) {
+        // 如果患者处于入组诊断期 则隐藏物理治疗
+        return false;
       } else {
         return true;
       }
@@ -533,6 +548,9 @@ export default {
       var atOtherStatus = this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_THERAPY &&
         this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_FOLLOW_UP;
       if (this.hospitalType === 1 && this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
+        return false;
+      } else if (this.hospitalType === 1 && this.diagnosticExperimentStep === this.EXPERIMENT_STEP_FILTERING) {
+        // 如果患者处于入组诊断期 则隐藏物理治疗
         return false;
       } else {
         return true;

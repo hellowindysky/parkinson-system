@@ -97,7 +97,8 @@ export default {
       experimentMode: '',
       therapist: '',
       appraiser: '',
-      doctor: ''
+      doctor: '',
+      currentStage: '' // 当前患者所处随访期阶段 处于随访期中才会存在此字段
     };
   },
   computed: {
@@ -225,7 +226,7 @@ export default {
 
         Bus.$emit(this.REQUEST_CONFIRMATION, '提示', '结束随访流程？', '是', '否');
       } else {
-        Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'followUpTerminationModal', this.SHOW_FOLLOW_UP_TERMINATION_MODAL, this.ADD_NEW_CARD, {}, true, this.appraiser);
+        Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'followUpTerminationModal', this.SHOW_FOLLOW_UP_TERMINATION_MODAL, this.ADD_NEW_CARD, {}, true, this.appraiser, this.currentStage);
       }
     },
     completeExperiment() {
@@ -379,6 +380,7 @@ export default {
         this.appraiser = data.assessor ? data.assessor : '';
         this.doctor = data.doctor ? data.doctor : '';
         this.experimentNumber = data.taskCode ? data.taskCode : '';
+        this.currentStage = data.stage ? data.stage : '';
 
         Bus.$emit(this.SCROLL_AREA_SIZE_CHANGE);
 
