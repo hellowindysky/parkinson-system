@@ -53,15 +53,14 @@
           <div class="field half-line">
             <span class="field-name">
               药物商品名
-              <span class="required-mark">*</span>
+              <!-- <span class="required-mark">*</span> -->
             </span>
             <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
               <span>{{transform(copyInfo.medicineName,medicineNameOpt)}}</span>
             </span>
             <span class="field-input" v-else>
-              <span class="warning-text">{{warningResults.medicineName}}</span>
+              <!-- <span class="warning-text">{{warningResults.medicineName}}</span> -->
               <el-select v-model="copyInfo.medicineName" placeholder="请选择药物商品名" clearable
-               :class="{'warning': warningResults.medicineName}"
                @change="updateWarning('medicineName')">
                 <el-option
                  v-for="item in medicineNameOpt"
@@ -76,15 +75,14 @@
           <div class="field half-line">
             <span class="field-name">
               药物规格
-              <span class="required-mark">*</span>
+              <!-- <span class="required-mark">*</span> -->
             </span>
             <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
               <span>{{copyInfo.medicalSpecUsed}}</span>
             </span>
             <span class="field-input" v-else>
-              <span class="warning-text">{{warningResults.medicalSpecUsed}}</span>
+              <!-- <span class="warning-text">{{warningResults.medicalSpecUsed}}</span> -->
               <el-select v-model="copyInfo.medicalSpecUsed" placeholder="请选择药物规格" clearable
-               :class="{'warning': warningResults.medicalSpecUsed}"
                @change="updateWarning('medicalSpecUsed')">
                 <el-option
                  v-for="(item,index) in medicineSpec"
@@ -397,8 +395,8 @@ export default {
         firstVisitType: '',
         treatmentType: '',
         medicineClassification: '',
-        medicineName: '', // 药物商品名
-        medicalSpecUsed: '', // 药物规格
+        // medicineName: '', // 药物商品名
+        // medicalSpecUsed: '', // 药物规格
         dailyDosage: '',
         yearsOfMedicine: ''
       },
@@ -433,7 +431,7 @@ export default {
     },
     verificationFieldList() {
       if (this.copyInfo.firstVisitType === 1) {
-        return ['firstVisitType', 'medicineClassification', 'medicineName', 'medicalSpecUsed'];
+        return ['firstVisitType', 'medicineClassification'];
       } else if (this.copyInfo.firstVisitType === 2) {
         return ['firstVisitType', 'treatmentType'];
       } else {
