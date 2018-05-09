@@ -85,8 +85,12 @@ export default {
         // 如果是北京医院的实验流程，这里的可编辑状态不受 listType 的影响
         return true;
 
-      } else if ((this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_OUT || this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_FILTERING) && this.listType === this.MY_PATIENTS_TYPE) {
+      } else if ((this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_OUT) && this.listType === this.MY_PATIENTS_TYPE) {
         // 如果患者不处于实验期，只有所属医生在“我的患者”下才能 添加／删除 诊断卡片
+        return true;
+
+      } else if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_FILTERING && this.hospitalType !== -1) {
+        // 如果患者处于入组阶段，只有所属医生才能在课题中 添加／删除 诊断卡片
         return true;
 
       } else if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_SCREENING && this.listType === this.APPRAISERS_PATIENTS_TYPE) {
@@ -281,7 +285,7 @@ export default {
         // 如果该患者处于排除阶段时入组诊断也可以删除
         // 此处存在问题 在患者处于入组或者排除阶段 queryPatientCaseList 返回的 status 始终为10 无法区分诊断创建阶段
         // 同时在入组阶段创建的诊断 手动将患者排除后 诊断状态会被处理成排除阶段创建
-        if (diagnosticExperimentStep === 10) {
+        if (this.hospitalType !== -1 && diagnosticExperimentStep === 10) {
           return false;
         }
         return true;
