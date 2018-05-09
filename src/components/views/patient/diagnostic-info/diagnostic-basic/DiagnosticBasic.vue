@@ -228,7 +228,8 @@ export default {
     },
     isShown(fieldName) {
       if (['taskCode', 'taskName', 'createUser', 'status'].indexOf(fieldName) >= 0) {
-        if (this.inSubject || !this.copyInfo.taskCode) {
+        // status为10.3时 患者被排除实验
+        if (this.inSubject || this.copyInfo.status === '10.3') {
           return false;
         }
       }
@@ -321,6 +322,7 @@ export default {
     width: 50%;
     height: @field-height;
     text-align: left;
+    vertical-align: middle;
     &.whole-line {
       width: 100%;
       .field-value, .field-input {

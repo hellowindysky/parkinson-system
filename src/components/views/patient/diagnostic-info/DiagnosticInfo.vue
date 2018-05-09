@@ -235,26 +235,35 @@ export default {
         return true;
       }
 
+      // 判读当前角色是否为患者的所属医生
       var createdByCurrentUser = item.createUser === sessionStorage.getItem('userName');
 
       var diagnosticExperimentStep = item.status !== undefined ? Number(item.status) : this.EXPERIMENT_STEP_OUT;
       var diagnosticExperimentStage = item.stage !== undefined ? Number(item.stage) : this.EXPERIMENT_STEP_OUT;
       if (this.patientCurrentExperimentStep !== this.EXPERIMENT_STEP_OUT) {
+        console.log(this.patientCurrentExperimentStep, diagnosticExperimentStep, this.patientCurrentExperimentStage, diagnosticExperimentStage);
         // 如果该患者正处在实验期，则只有当患者所处实验阶段和诊断记录的实验阶段相同，
         // 而且该诊断的创建人和当前登录账号一致时，该阶段的特定的角色才能删除该诊断卡片
         if (this.patientCurrentExperimentStep === diagnosticExperimentStep &&
           this.patientCurrentExperimentStage === diagnosticExperimentStage &&
           createdByCurrentUser) {
-          if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_SCREENING &&
-            this.listType === this.APPRAISERS_PATIENTS_TYPE) {
-            return false;
-          } else if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_THERAPY &&
-            this.listType === this.THERAPISTS_PATIENTS_TYPE) {
-            return false;
-          } else if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_FOLLOW_UP &&
-            this.listType === this.APPRAISERS_PATIENTS_TYPE) {
+          if (this.hospitalType === 1) {
+            if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_SCREENING &&
+              this.listType === this.APPRAISERS_PATIENTS_TYPE) {
+              return false;
+            } else if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_THERAPY &&
+              this.listType === this.THERAPISTS_PATIENTS_TYPE) {
+              return false;
+            } else if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_FOLLOW_UP &&
+              this.listType === this.APPRAISERS_PATIENTS_TYPE) {
+              return false;
+            }
+          } else if (this.hospitalType === 2) {
             return false;
           }
+        } else if (this.patientCurrentExperimentStep === diagnosticExperimentStep && this.patientCurrentExperimentStep === 10 && createdByCurrentUser) {
+          // 如果该患者处于筛选期入组阶段 则该诊断创建人可以删除该诊断卡片
+          return false;
         }
         if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_COMPLETE &&
           diagnosticExperimentStep === this.EXPERIMENT_STEP_OUT &&
@@ -267,6 +276,12 @@ export default {
       } else {
         // 如果该患者不处于实验期，只有所属医生在“我的患者”里面可以对非实验期添加的卡片进行删除
         if (diagnosticExperimentStep === this.EXPERIMENT_STEP_OUT && this.listType === this.MY_PATIENTS_TYPE) {
+          return false;
+        }
+        // 如果该患者处于排除阶段时入组诊断也可以删除
+        // 此处存在问题 在患者处于入组或者排除阶段 queryPatientCaseList 返回的 status 始终为10 无法区分诊断创建阶段
+        // 同时在入组阶段创建的诊断 手动将患者排除后 诊断状态会被处理成排除阶段创建
+        if (diagnosticExperimentStep === 10) {
           return false;
         }
         return true;

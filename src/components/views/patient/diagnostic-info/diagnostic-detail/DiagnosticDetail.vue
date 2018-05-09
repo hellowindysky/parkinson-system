@@ -123,7 +123,13 @@ export default {
       return this.caseDetail.taskInfoId ? this.caseDetail.taskInfoId : this.SUBJECT_ID_FOR_HOSPITAL;
     },
     diagnosticExperimentStep() {
-      var status = parseInt(this.caseDetail.status, 10);  // 实验阶段 (从 2 开始)
+      let status;
+      if (this.caseDetail.status === '10.3') {
+        // 特殊处理 判断患者是否处于省人医课题排除阶段
+        status = 0;
+      } else {
+        status = parseInt(this.caseDetail.status, 10);  // 实验阶段 (从 2 开始)
+      }
       return status > 0 ? status : this.EXPERIMENT_STEP_OUT;
     },
     diagnosticExperimentStage() {
