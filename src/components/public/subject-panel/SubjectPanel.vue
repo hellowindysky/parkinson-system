@@ -73,6 +73,14 @@ export default {
         patientId: patientId
       };
       if (value) {
+        // v2.3.0 临时特殊处理 患者同时只能参加一个课题
+        if (this.belongSubjects.length > 0) {
+          Bus.$emit(this.NOTICE, '注意', '目前患者只能同时参加一个课题');
+          let listIndex = lockList.indexOf(index);
+          lockList.splice(listIndex, 1);
+          return;
+        }
+        
         addPatientToSubject([patientSubject]).then(() => {
           let listIndex = lockList.indexOf(index);
           this.$emit(this.UPDATE_PATIENT_SUBJECT_INFO);
@@ -84,6 +92,7 @@ export default {
           lockList.splice(listIndex, 1);
         });
       } else {
+        console.log('remove');
         removePatientFromSubject([patientSubject]).then(() => {
           let listIndex = lockList.indexOf(index);
           this.$emit(this.UPDATE_PATIENT_SUBJECT_INFO);
