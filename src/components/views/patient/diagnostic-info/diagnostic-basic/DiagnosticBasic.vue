@@ -231,6 +231,8 @@ export default {
         // status为10.3时 患者被排除实验
         if (!this.copyInfo.status || this.copyInfo.status === '10.3') {
           return false;
+        } else if (this.hospitalType !== -1) {
+          return false;
         }
       }
       return true;
