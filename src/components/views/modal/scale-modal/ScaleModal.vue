@@ -143,6 +143,7 @@
       </div>
 
       <folding-panel :title="'关联症状'" :folded-status="true" class="associated-symptom" :editable="showEdit">
+        <!-- 关联症状 -->
         <div class="symptom-item" v-for="(symptom, index) in scaleSymptomList">
           <el-checkbox class="symptom-item-title" v-model="symptom.status" :disabled="mode===VIEW_CURRENT_CARD">
             {{symptom.sympName}}
@@ -167,6 +168,7 @@
 
       <div v-for="(item, index) in targetScale.questions" class="scale-questions" v-show="item.parentId ? checkQuestionListIsShow(item.parentId, index) : true"
         :style="{'padding-left': item.questionLevel? item.questionLevel*20 + 30 + 'px':'30px'}">
+        <!-- 题目列表 -->
         <p class="question-title" v-html="item.subjectName"></p>
         <el-checkbox-group v-if="(item.questionType===0 || item.questionType===1) && item.multipleChoose === 1"
           class="question-body" :key="index" v-model="copyInfo.patientOptions[index].scaleOptionId">
@@ -226,6 +228,8 @@ export default {
       showEdit: false,
       lockSubmitButton: false,
       scaleCategory: 0, // 量表类型 0: 临床量表, 1: 课题评定
+      quicklySupport: true,  // 量表是否支持快速答题
+      quicklyMode: true, // 答题模式 false 常规答题 true 快速答题
 
       copyInfo: {},
       warningResults: {
@@ -948,16 +952,22 @@ export default {
           margin: 0;
           height: auto;
           line-height: 40px;
+          .el-checkbox__input{
+
+          }
           .el-radio__label {
             display: inline-block;
             width: 80%;
             height: 40px;
+            vertical-align: top;
             // white-space: pre-wrap;
             // word-wrap: break-word;
             // word-break: normal;
             .el-input {
               margin-left: 20px;
               width: 300px;
+              vertical-align: top;
+              white-space: normal;
               .el-input__inner {
                 height: 30px;
                 border: 1px solid @inverse-font-color;
@@ -970,6 +980,11 @@ export default {
                 }
               }
             }
+          }
+          .el-checkbox__label {
+            display: inline-block;
+            vertical-align: top;
+            white-space: normal;
           }
           .is-disabled {
             .el-radio__inner {
@@ -1274,6 +1289,60 @@ export default {
         }
       }
     }
+    .quickly-answer{
+      .quickly-title{
+        height: 28px;
+        margin-bottom: 10px;
+      }
+      .quickly-button{
+        float: right;
+        width: @small-button-width;
+        height: @small-button-height;
+        margin-right: 10px;
+        line-height: @small-button-height;
+        color: #fff;
+        cursor: pointer;
+        background-color: @button-color;
+      }
+      .answer-form{
+        width: 100%;
+        text-align: left;
+        background-color: #fff;
+        border-width: 1px;
+        border-style: solid;
+        border-color: #ccc;
+        border-collapse: collapse;
+        .form-cell{
+          display: inline-block;
+          width: 20%;
+          height: 100px;
+          padding: 0 20px;
+          line-height: 50px;
+          text-align: center;
+          border-style: solid;
+          border-width: 0 1px 1px 0;
+          border-color: #ccc;
+          box-sizing: border-box;
+          .cell-title{
+            height: 50px;
+            border-bottom: 1px solid #dfdfdf;
+          }
+          .cell-input{
+            position: relative;
+            height: 50px;
+            padding-right: 20px;
+            .el-autocomplete{
+              width: 100%;
+            }
+            .cell-key{
+              position: absolute;
+              top: 0;
+              right: 10px;
+            }
+          }
+        }
+      }
+    }
     .ps__scrollbar-y-rail {
       position: absolute;
       width: 15px;
@@ -1297,5 +1366,13 @@ export default {
       }
     }
   }
+}
+
+.clearfix:after{
+    display: block;
+    clear: both;
+    content: "";
+    visibility: hidden;
+    height: 0;
 }
 </style>
