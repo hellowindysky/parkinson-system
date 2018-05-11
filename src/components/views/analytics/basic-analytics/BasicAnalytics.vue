@@ -18,7 +18,7 @@
         </div>
         <div class="my-groups card">
           <div class="title">我的分组</div>
-          <div class="analy-value">{{dataBrief.myGroup.totalCount}}</div>
+          <div class="analy-value">{{dataBrief.myGroup.totalCount===0?dataBrief.myGroup.totalCount:dataBrief.myGroup.totalCount-1}}</div>
           <div class="compare">
             <div class="compare-left">
               <div>本周新增</div>
