@@ -80,7 +80,7 @@ export default {
           lockList.splice(listIndex, 1);
           return;
         }
-        
+
         addPatientToSubject([patientSubject]).then(() => {
           let listIndex = lockList.indexOf(index);
           this.$emit(this.UPDATE_PATIENT_SUBJECT_INFO);
