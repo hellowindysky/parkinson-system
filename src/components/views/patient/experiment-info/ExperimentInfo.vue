@@ -90,7 +90,7 @@ import { queryExperimentProgress, startExperiment, completeFollowUp } from 'api/
 export default {
   data() {
     return {
-      subjectIdForOngoingExperiment: '',
+      subjectIdForOngoingExperiment: '', // 患者当前进行中的实验所处课题ID
       progressList: [],
       status: '',
       milestoneNum: '',
