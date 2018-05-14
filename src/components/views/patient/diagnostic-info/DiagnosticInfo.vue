@@ -245,7 +245,7 @@ export default {
       var diagnosticExperimentStep = item.status !== undefined ? Number(item.status) : this.EXPERIMENT_STEP_OUT;
       var diagnosticExperimentStage = item.stage !== undefined ? Number(item.stage) : this.EXPERIMENT_STEP_OUT;
       if (this.patientCurrentExperimentStep !== this.EXPERIMENT_STEP_OUT) {
-        console.log(this.patientCurrentExperimentStep, diagnosticExperimentStep, this.patientCurrentExperimentStage, diagnosticExperimentStage);
+        // console.log(this.patientCurrentExperimentStep, diagnosticExperimentStep, this.patientCurrentExperimentStage, diagnosticExperimentStage);
         // 如果该患者正处在实验期，则只有当患者所处实验阶段和诊断记录的实验阶段相同，
         // 而且该诊断的创建人和当前登录账号一致时，该阶段的特定的角色才能删除该诊断卡片
         if (this.patientCurrentExperimentStep === diagnosticExperimentStep &&
