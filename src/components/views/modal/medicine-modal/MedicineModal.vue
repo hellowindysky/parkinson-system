@@ -3,7 +3,7 @@
     <div class="medicine-modal" ref="medicineModal">
       <h3 class="title">{{title}}</h3>
       <div class="content">
-        <div class="field" v-for="field in firstTemplateGroup">
+        <div class="field" v-for="field in firstTemplateGroup" v-if="showField(field.fieldName)">
           <span class="field-name">
             {{field.cnfieldName}}
           <span class="required-mark" v-show="field.must===1">*</span>
@@ -87,7 +87,7 @@
           </table>
         </div>
 
-        <div class="field" v-for="field in thirdTemplateGroup" :class="{'whole-line': field.fieldName==='remarks'}">
+        <div class="field" v-for="field in thirdTemplateGroup" :class="{'whole-line': field.fieldName==='remarks'}" v-if="showField(field.fieldName)">
           <span class="field-name" :class="{'long-field-name': isLongName(field.fieldName)}">
             {{field.cnfieldName}}
             <span class="required-mark" v-show="field.must===1">*</span>
@@ -456,6 +456,13 @@ export default {
     }
   },
   methods: {
+    showField(fieldName) {
+      let fields = ['prescriptionDays', 'nonTakingDose', 'drugComplianceIndex'];
+      if (fields.indexOf(fieldName) !== -1 && !(this.hospitalType === 2 && this.inSubject)) {
+        return false;
+      }
+      return true;
+    },
     showModal(cardOperation, item, showEdit, hasComtAmongOtherMedicine) {
       this.mode = cardOperation;
       this.completeInit = false;
@@ -466,7 +473,7 @@ export default {
       setTimeout(() => {
         // console.log('firstTemplate', this.firstTemplateGroup);
         // console.log('secondTemplate', this.secondTemplateGroup);
-        // console.log('thirdTemplate', this.thirdTemplateGroup);
+        console.log('thirdTemplate', this.thirdTemplateGroup);
         // console.log('fourthTemplate', this.fourthTemplateGroup);
         // console.log('fifthTemplate', this.fifthTemplateGroup);
         // console.log('dictionary', this.medicineDictionary);
@@ -732,6 +739,11 @@ export default {
 
       // 如果在课题内不必验证该字段
       if (this.inSubject && this.hospitalType === 2 && this.disableField.indexOf(field.fieldName) !== -1) {
+        return;
+      }
+
+      // 药物治疗的处方天数、未服用剂量、药物依从性指数只在北京医院课题下显示, 所以不需要验证这三个字段的时候就不验证
+      if (!this.showField(field.fieldName)) {
         return;
       }
 
