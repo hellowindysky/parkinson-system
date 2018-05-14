@@ -142,8 +142,8 @@
         </span>
       </div>
 
+      <!-- 关联症状 -->
       <folding-panel :title="'关联症状'" :folded-status="true" class="associated-symptom" :editable="showEdit">
-        <!-- 关联症状 -->
         <div class="symptom-item" v-for="(symptom, index) in scaleSymptomList">
           <el-checkbox class="symptom-item-title" v-model="symptom.status" :disabled="mode===VIEW_CURRENT_CARD">
             {{symptom.sympName}}
@@ -166,9 +166,8 @@
         </div>
       </folding-panel>
 
-      
+      <!-- 快速答题 -->
       <div class="quickly-answer" v-if="quickAnswer === true">
-        <!-- 快速答题 -->
         <div class="quickly-title">
           <div @click="quicklyMode = !quicklyMode" class="quickly-button">{{quicklyMode === true ? '常规答题' : '快速答题'}}</div>
         </div>
@@ -1316,7 +1315,7 @@ export default {
         float: right;
         width: @small-button-width;
         height: @small-button-height;
-        margin-right: 10px;
+        margin: 5px 10px 0 0;
         line-height: @small-button-height;
         color: #fff;
         cursor: pointer;
