@@ -56,7 +56,7 @@ export default {
           this.SUBJECT_PATIENTS_TYPE].indexOf(this.listType) >= 0)) {
         let status = Number(this.patient.status);
         if (status === this.EXPERIMENT_STEP_FILTERING) {
-          if (this.hospitalType === 2) {
+          if (this.hospitalType === 2 || this.hospitalType === 1) {
             return 'icon-shai';
           }
         } else if (status === this.EXPERIMENT_STEP_SCREENING) {
