@@ -9,7 +9,7 @@
            :rowspan="rowSpan(item)"
            :colspan="colSpan(item)"
            @click="dataSort(item)">
-            <div :style="{width:colStyle[item.dataKey] ? colStyle[item.dataKey].width : ''}">
+            <div :style="{width:colStyle[item.dataKey] ? colStyle[item.dataKey].width : ''}" class="coldiv">
               {{item.colName}}
             </div>
             <i class="iconfont" v-if="!item.subCol" :class="iconClass(item.dataKey)"></i>
@@ -20,7 +20,7 @@
            v-for="(item,index) in tableTitleData_sub"
            :key="'tbtitle_sub'+index"
            @click="dataSort(item)">
-            <div :style="{width:colStyle[item.dataKey] ? colStyle[item.dataKey].width : ''}">
+            <div :style="{width:colStyle[item.dataKey] ? colStyle[item.dataKey].width : ''}" class="coldiv">
               {{item.colName}}
             </div>
             <i class="iconfont" :class="iconClass(item.dataKey)"></i>
@@ -284,6 +284,13 @@ export default {
     }
   },
   mounted() {
+    window.addEventListener('resize', () => {
+      if (this.$refs.tbhead) {
+        let h1 = this.$refs.tbhead.offsetHeight;
+        let h2 = this.$refs.customtable.offsetHeight;
+        this.$set(this.tableBoxStyle, 'height', h2 - h1 + 'px');
+      }
+    });
   },
   watch: {
     tableData: {
@@ -363,6 +370,10 @@ export default {
           position: relative;
           padding-left:16px;
           padding-right:16px;
+          .coldiv {
+            word-break: break-all;
+            word-wrap:break-word;
+          }
           i.iconfont {
             font-size: 12px;
             position: absolute;
