@@ -6,28 +6,43 @@
       <h1 class="title">{{title}}</h1>
       <h3 class="subtitle"></h3>
 
-      <div class="tabs-wrapper" v-if="false">
-        <span class="tab tab-place-1" :class="{'current-tab':loginType===1}" @click="accountLogin">账号登录</span>
-        <span class="tab tab-place-2" :class="{'current-tab':loginType===2}" @click="">备用</span>
+      <div class="tabs-wrapper">
+        <span class="tab tab-place-1" :class="{'current-tab':loginType===1}" @click="accountLogin">用户名密码</span>
+        <span class="tab tab-place-2" :class="{'current-tab':loginType===2}" @click="dynamicPassword">动态密码</span>
         <div class="tab-bottom-bar" :class="tabPlaceClass"></div>
       </div>
-
       <el-form class="input-wrapper" v-if="!mustResetPassword" :model="loginForm" :rules="rules" ref="loginForm" label-width="0">
         <el-form-item prop="account">
-          <el-input class="round-input" v-model="loginForm.account" auto-complete="off" :placeholder="holderText"
+          <el-input class="round-input" clearable v-model="loginForm.account" auto-complete="off" :placeholder="holderText"
             @keyup.enter.native="submitForm" autofocus="autofocus"></el-input>
         </el-form-item>
-        <el-form-item prop="password">
-          <el-input class="round-input" v-model="loginForm.password" type="password" auto-complete="new-password"
+        <el-form-item prop="password" v-if="loginType===1">
+          <el-input class="round-input" clearable v-model="loginForm.password" type="password" auto-complete="new-password"
             placeholder="请输入6-16位数字和字母的密码" @keyup.enter.native="submitForm"></el-input>
         </el-form-item>
+
+        <el-form-item prop="verificationCode" v-if="loginType===2">
+          <el-input class="round-input short" clearable v-model="resetForm.verificationCode" auto-complete="new-password" placeholder="请输入短信验证码" @keyup.enter.native="submitForm" autofocus="autofocus"></el-input>
+        <el-button class="button code-button" type="primary" @click="sendCode" :disabled="codeButtonStatus===1">{{codeButtonText}}</el-button>
+        </el-form-item>
+
+        <el-form-item prop="verificationCode" v-if="false">
+          <el-input class="round-input short" clearable v-model="resetForm.verificationCode" auto-complete="new-password" placeholder="请输入短信验证码" @keyup.enter.native="submitForm" autofocus="autofocus"></el-input>
+          <el-button class="button code-button" type="primary" @click="sendCode" :disabled="codeButtonStatus===1">{{codeButtonText}}</el-button>
+        </el-form-item>
+
         <el-form-item prop="remember">
           <el-checkbox v-model="loginForm.remember" class="checkbox" label="记住用户名" name="type"></el-checkbox>
+        </el-form-item>
+        <el-form-item prop="verificationCode">
+          <el-button class="forget" type="primary">忘记密码</el-button>
         </el-form-item>
         <el-form-item>
           <el-button class="button" type="primary" @click="submitForm">登 录</el-button>
         </el-form-item>
       </el-form>
+
+
       <div class="sign-up-text" v-if="!mustResetPassword">
         还没有账号？
         <a class="link" target="_blank" href="https://www.wjx.top/jq/19488329.aspx">点击这里</a>申请试用
@@ -74,6 +89,7 @@ import Bus from 'utils/bus';
 // import particles from 'views/login/particles/Particles';
 
 const ACCOUNT_LOGIN = 1;
+const DYNAMIC_PASSWORD = 2;
 
 export default {
   name: 'login',
@@ -196,8 +212,13 @@ export default {
     holderText() {
       if (this.loginType === ACCOUNT_LOGIN) {
         return '请输入您的睿云账号/手机号码';
+      } else if (this.loginType === DYNAMIC_PASSWORD) {
+        return '请输入您的手机号码';
       }
     },
+    // forgetPassword() {
+
+    // },
     md5Password() {
       return md5(this.password);
     },
@@ -241,6 +262,14 @@ export default {
     accountLogin() {
       this.loginType = ACCOUNT_LOGIN;
     },
+    dynamicPassword() {
+      this.loginType = DYNAMIC_PASSWORD;
+    },
+    // forgetPassword() {
+    //   if (this.lockSendButton) {
+    //     return;
+    //   }
+    // },
     sendCode() {
       if (this.lockSendButton) {
         return;
@@ -495,13 +524,13 @@ export default {
       color: #fff;
     }
     .subtitle {
-      display: none;
+      // display: none;
       height: 30px;
       line-height: 30px;
       font-size: 18px;
     }
     .tabs-wrapper {
-      display: none;
+      // display: none;
       position: relative;
       margin: 0 auto;
       padding: 0;
@@ -511,7 +540,7 @@ export default {
       .tab {
         position: absolute;
         margin: 0;
-        width: @tab-width;
+        width: @tab-width + @tab-horizontal-space;
         left: 0;
         box-sizing: border-box;
         text-align: center;
@@ -532,16 +561,16 @@ export default {
         position: absolute;
         bottom: 0;
         left: 0;
-        width: @tab-width;
+        width: @tab-width + @tab-horizontal-space;
         height: 2px;
         background-color: @button-color;
         transition: 0.2s;
       }
       .tab-place-1 {
-        transform: translateX(0);
+        transform: translateX(-70px);
       }
       .tab-place-2 {
-        transform: translateX(@tab-width + @tab-horizontal-space);
+        transform: translateX(@tab-width*2 + @tab-horizontal-space);
       }
     }
     .input-wrapper {
@@ -588,6 +617,18 @@ export default {
         }
         .el-checkbox__label {
           color: #fff;
+        }
+      }
+      .forget {
+        float: right;
+        margin-right: 8px;
+        position: absolute;
+        right: 0;
+        top: -55px;
+        border: none;
+        &:hover {
+          opacity: .6;
+          background-color: #505b6b;
         }
       }
       .el-form-item__error {
