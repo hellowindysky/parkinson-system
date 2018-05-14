@@ -416,7 +416,9 @@ export default {
         width: calc(~"10% - @{card-horizontal-margin} * 2");
       }
       &.uncompleted{
-        background: url("~img/uncompleted.png") 100% 100% no-repeat;
+        background-image: url("~img/uncompleted.png");
+        background-position:100% 100%;
+        background-repeat: no-repeat;
       }
       .text {
         position: absolute;
