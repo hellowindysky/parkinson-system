@@ -127,7 +127,8 @@ export default {
       pageParam: {
         pageNo: 1,
         pageSize: 500
-      }
+      },
+      lockSubmitButton: false
     };
   },
   computed: {
@@ -301,6 +302,11 @@ export default {
 
       this.updatingFormData = true;
 
+      if (this.lockSubmitButton) {
+        return;
+      }
+      this.lockSubmitButton = true;
+
       var options = {
         target: this.$refs.formWrapper,
         text: '正在加载',
@@ -309,12 +315,14 @@ export default {
       let loadingInstance = this.$loading(options);
 
       f(params, this.supportedDoctorNumber).then((res) => {
+        this.lockSubmitButton = false;
         this.tableData = res;
         this.tableData.data = res.data && res.data[0] ? res.data : [];
         // this.updateScrollbar();
         this.updatingFormData = false;
         loadingInstance.close();
       }, (error) => {
+        this.lockSubmitButton = false;
         console.log(error);
         this.updatingFormData = false;
         loadingInstance.close();
