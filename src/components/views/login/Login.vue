@@ -8,8 +8,8 @@
 
       <div class="tabs-wrapper">
         <span class="tab tab-place-1" :class="{'current-tab':loginType===1}" @click="accountLogin">用户名密码</span>
-        <span class="tab tab-place-2" :class="{'current-tab':loginType===2}" @click="dynamicPassword">动态密码</span>
-        <div class="tab-bottom-bar" :class="tabPlaceClass"></div>
+        <span class="tab tab-place-2" v-if="isAlone === false" :class="{'current-tab':loginType===2}" @click="dynamicPassword">动态密码</span>
+        <div class="tab-bottom-bar" v-if="isAlone === false" :class="tabPlaceClass"></div>
       </div>
       <el-form class="input-wrapper" v-if="!mustResetPassword" :model="loginForm" :rules="rules" ref="loginForm" label-width="0">
         <el-form-item prop="account">
