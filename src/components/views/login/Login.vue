@@ -21,14 +21,9 @@
             placeholder="请输入6-16位数字和字母的密码" @keyup.enter.native="submitForm"></el-input>
         </el-form-item>
 
-        <el-form-item prop="verificationCode" v-if="loginType===2">
-          <el-input class="round-input short" clearable v-model="resetForm.verificationCode" auto-complete="new-password" placeholder="请输入短信验证码" @keyup.enter.native="submitForm" autofocus="autofocus"></el-input>
-        <el-button class="button code-button" type="primary" @click="sendCode" :disabled="codeButtonStatus===1">{{codeButtonText}}</el-button>
-        </el-form-item>
-
-        <el-form-item prop="verificationCode" v-if="false">
-          <el-input class="round-input short" clearable v-model="resetForm.verificationCode" auto-complete="new-password" placeholder="请输入短信验证码" @keyup.enter.native="submitForm" autofocus="autofocus"></el-input>
-          <el-button class="button code-button" type="primary" @click="sendCode" :disabled="codeButtonStatus===1">{{codeButtonText}}</el-button>
+        <el-form-item prop="identifyingCode" v-if="loginType===2">
+          <el-input class="round-input short" clearable v-model="loginForm.identifyingCode" auto-complete="new-password" placeholder="请输入短信验证码" @keyup.enter.native="submitForm" autofocus="autofocus"></el-input>
+        <el-button class="button code-button" type="primary" @click="sendCodes" :disabled="codeButtonStatus===1">{{codeButtonText}}</el-button>
         </el-form-item>
 
         <el-form-item prop="remember">
@@ -83,7 +78,7 @@
 import md5 from 'md5';
 import { getLoginInfo } from 'api/login';
 import { setRequestToken, clearRequestToken } from 'api/common';
-import { sendVerificationCode, resetPassword } from 'api/user';
+import { sendVerificationCode, sendVerificationCodes, resetPassword } from 'api/user';
 import Bus from 'utils/bus';
 
 // import particles from 'views/login/particles/Particles';
@@ -145,6 +140,15 @@ export default {
         callback();
       }
     };
+    var identifyingCodeCode = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入验证码'));
+      } else if (!(/^[0-9]*$/.test(value))) {
+        callback(new Error('请输入数字'));
+      } else {
+        callback();
+      }
+    };
     return {
       loginType: 1,
 
@@ -168,13 +172,15 @@ export default {
       loginForm: {
         account: '',
         password: '',
-        remember: false
+        remember: false,
+        identifyingCode: ''
       },
       resetForm: {
         originalPassword: '',
         newPassword: '',
         repeatedNewPassword: '',
-        verificationCode: ''
+        verificationCode: '',
+        identifyingCode: ''
       },
       rules: {
         account: [
@@ -184,6 +190,9 @@ export default {
         password: [
           { required: true, message: '请输入密码', trigger: 'change' },
           { min: 6, message: '长度至少为 6 个字符', trigger: 'blur' }
+        ],
+        identifyingCode: [
+          {validator: identifyingCodeCode, trigger: 'blur'}
         ]
       },
       resetRules: {
@@ -302,6 +311,38 @@ export default {
         }
       });
     },
+    sendCodes() {
+      if (this.lockSendButton) {
+        return;
+      }
+      this.lockSendButton = true;
+      var verificationInfos = {
+        'businessType': 5,
+        'accountNumber': this.loginForm.account
+      };
+      sendVerificationCodes(verificationInfos).then(() => {
+        this.lockSendButton = false;
+        this.codeButtonStatus = 1;
+        this.codeButtonCount = 180;
+        this.countDown = setInterval(() => {
+          this.codeButtonCount -= 1;
+          if (this.codeButtonCount <= 0) {
+            clearInterval(this.countDown);
+            this.codeButtonStatus = 2;
+          }
+        }, 1000);
+      }, (error) => {
+        this.lockSendButton = false;
+        console.log(error);
+        if (error.code === 32) {
+          this.$message({
+            message: '请等待足够时间后再发送验证码',
+            type: 'warning',
+            duration: 2000
+          });
+        }
+      });
+    },
     getPasswordStrength(value) {
       // 返回值为 0，1，2，3，分别代表 非法，弱，中，强
       var regValid = new RegExp(/^(?:[0-9a-zA-Z!@#$%^&*()\-_=+`~\[{\]};:'",<.>\/?\\|]+)$/);
@@ -331,6 +372,7 @@ export default {
       sessionStorage.setItem('accountNumber', this.accountNumber);
       sessionStorage.setItem('name', this.name);
       sessionStorage.setItem('userName', this.userName);
+      // sessionStorage.setItem('identifyingCode', this.identifyingCode);
       sessionStorage.setItem('userType', this.userType);
       sessionStorage.setItem('orgName', this.orgName);
       sessionStorage.setItem('subjects', JSON.stringify(this.subjects));
@@ -363,13 +405,14 @@ export default {
             localStorage.removeItem('account');
           }
 
-          getLoginInfo(this.loginForm.account, this.loginForm.password).then((data) => {
+          getLoginInfo(this.loginForm.account, this.loginForm.password, this.loginForm.identifyingCode).then((data) => {
             this.lockSubmitButton = false;
             this.token = data.loginToken;
             this.userId = data.user.userIdV1;
             this.accountNumber = data.user.accountNumber;
-            this.name = data.user.name;
             this.userName = data.user.userName;
+            this.name = data.user.name;
+            // this.identifyingCode = data.user.identifyingCode;
             this.userType = data.user.userType;
             this.orgName = data.orgs && data.orgs[0] && data.orgs[0].orgName ? data.orgs[0].orgName : '';
             this.subjects = data.tasks ? data.tasks : [];
@@ -422,7 +465,7 @@ export default {
       this.$refs['resetForm'].validate((valid) => {
         // 校验字段之后，发送修改密码的请求，如果再返回正确，则跳转到系统
         if (valid) {
-          resetPassword(this.resetForm.originalPassword, this.resetForm.newPassword, this.resetForm.verificationCode).then(() => {
+          resetPassword(this.resetForm.originalPassword, this.resetForm.newPassword, this.resetForm.verificationCode, this.resetForm.identifyingCode).then(() => {
             this.$message({
               message: '已成功修改密码',
               type: 'success',
@@ -462,6 +505,7 @@ export default {
     // particles
   },
   mounted() {
+    console.log(this.title);
     // 如果之前登录的时候勾选了“记住用户名”，则在浏览器中读取上次的用户名
     var account = localStorage.getItem('account');
     if (account !== null) {
