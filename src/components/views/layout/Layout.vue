@@ -12,7 +12,7 @@
     <choice-panel></choice-panel>
     <confirm-box></confirm-box>
     <notice-box></notice-box>
-    <!-- <print-template-modal></print-template-modal> -->
+
     <water-mark></water-mark>
   </div>
 </template>
@@ -64,7 +64,6 @@ const endExperimentModal = () => import(/* webpackChunkName: 'experimentModal' *
 const subjectCirculationModal = () => import(/* webpackChunkName: 'experimentModal' */ 'modal/subject-circulation-modal/SubjectCirculationModal');
 
 const filterPanel = () => import(/* webpackChunkName: 'filterPanel' */ 'public/filter-panel/FilterPanel');
-const printTemplateModal = () => import(/* webpackChunkName: 'printTemplateModal' */ 'modal/print-template-modal/printTemplateModal');
 
 import authorizationModal from 'modal/authorization-modal/AuthorizationModal';
 import choicePanel from 'public/choice-panel/ChoicePanel';
@@ -127,7 +126,6 @@ export default {
     choicePanel,
     confirmBox,
     noticeBox,
-    printTemplateModal,
 
     waterMark
   },
