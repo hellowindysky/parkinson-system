@@ -21,7 +21,7 @@
             placeholder="请输入6-16位数字和字母的密码" @keyup.enter.native="submitForm"></el-input>
         </el-form-item>
 
-        <el-form-item prop="identifyingCode" v-if="loginType===2">
+        <el-form-item prop="identifyingCode" v-if="loginType===2 && isAlone === false">
           <el-input class="round-input short" clearable v-model="loginForm.identifyingCode" auto-complete="new-password" placeholder="请输入短信验证码" @keyup.enter.native="submitForm" autofocus="autofocus"></el-input>
         <el-button class="button code-button" type="primary" @click="sendCodes" :disabled="codeButtonStatus===1">{{codeButtonText}}</el-button>
         </el-form-item>
@@ -214,6 +214,11 @@ export default {
   computed: {
     title() {
       return process.env.TITLE;
+    },
+    isAlone() {
+      if (process.env.NODE_ENV_NAME === 'alone') {
+        return true;
+      }
     },
     tabPlaceClass() {
       return 'tab-place-' + this.loginType;
