@@ -47,6 +47,8 @@
       <div class="seperate-line" v-if="allowAuthorization"></div>
       <p class="operate-item" v-if="isSupportAccount" @click="reselectDoctor">更换授权医生</p>
       <div class="seperate-line" v-if="isSupportAccount"></div>
+      <p class="operate-item" @click="setPrintTemp">打印模板设置</p>
+      <div class="seperate-line"></div>
       <p class="operate-item" @click="resetPassword">修改密码</p>
       <div class="seperate-line"></div>
       <p class="operate-item" @click="logout">退出登录</p>
@@ -241,6 +243,9 @@ export default {
       });
       let message = '更换操作需要先退出当前医生的授权管理页，退出后需要医生重新进行手机验证才能登录，是否继续？';
       Bus.$emit(this.REQUEST_CONFIRMATION, '确认提醒', message, '确定');
+    },
+    setPrintTemp() {
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'printTemplateModal');
     },
     resetPassword() {
       Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'passwordModal', this.SHOW_PASSWORD_MODAL);

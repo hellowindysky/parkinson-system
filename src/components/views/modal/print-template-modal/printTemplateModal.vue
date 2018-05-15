@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="print-template-modal-wrapper">
     <div class="print-template-modal">
-      <h3 class="title">设置打印模板 <i class="icon el-icon-circle-close"></i></h3>
+      <h3 class="title">设置打印模板 <i class="icon el-icon-circle-close" @click="closeModal"></i></h3>
       <div class="content">
 
         <!-- 左边部分 -->
@@ -152,6 +152,7 @@
 </template>
 
 <script>
+import Bus from 'utils/bus.js';
 import { mapGetters } from 'vuex';
 import Util from 'utils/util.js';
 import Ps from 'perfect-scrollbar';
@@ -316,6 +317,10 @@ export default {
         title: ''
       });
     },
+    closeModal() {
+      //
+      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
+    },
     updateScrollbar() {
       this.$nextTick(() => {
 
@@ -472,6 +477,10 @@ export default {
         float: right;
         margin-right:10px;
         font-size: 20px;
+        &:hover {
+          color: lighten(@font-color, 20%);
+          cursor: pointer;
+        }
       }
     }
     .content {
@@ -503,6 +512,10 @@ export default {
             float: right;
             margin-right:10px;
             font-size: 24px;
+            &:hover {
+              color: lighten(@font-color, 20%);
+              cursor: pointer;
+            }
           }
         }
         .export-box {
