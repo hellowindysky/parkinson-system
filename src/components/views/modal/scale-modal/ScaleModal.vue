@@ -142,8 +142,8 @@
         </span>
       </div>
 
+      <!-- 关联症状 -->
       <folding-panel :title="'关联症状'" :folded-status="true" class="associated-symptom" :editable="showEdit">
-        <!-- 关联症状 -->
         <div class="symptom-item" v-for="(symptom, index) in scaleSymptomList">
           <el-checkbox class="symptom-item-title" v-model="symptom.status" :disabled="mode===VIEW_CURRENT_CARD">
             {{symptom.sympName}}
@@ -166,8 +166,34 @@
         </div>
       </folding-panel>
 
-      <div v-for="(item, index) in targetScale.questions" class="scale-questions" v-show="item.parentId ? checkQuestionListIsShow(item.parentId, index) : true"
-        :style="{'padding-left': item.questionLevel? item.questionLevel*20 + 30 + 'px':'30px'}">
+      <!-- 快速答题 -->
+      <div class="quickly-answer" v-if="quickAnswer === true">
+        <div class="quickly-title">
+          <div @click="quicklyMode = !quicklyMode" class="quickly-button">{{quicklyMode === true ? '常规答题' : '快速答题'}}</div>
+        </div>
+        <div class="answer-form" v-show="quicklyMode === true">
+          <div v-for="(item, index) in targetScale.questions" class="form-cell">
+            <div class="cell-title">{{item.scaleQuestionNumber}}</div>
+            <div class="cell-input">
+              <span class="field-value">
+                <el-select v-model="copyInfo.patientOptions[index].scaleOptionId" filterable placeholder="请选择">
+                  <el-option
+                    v-for="option in item.options"
+                    :key="option.scaleOptionId"
+                    :label="String(option.grade)"
+                    :value="option.scaleOptionId">
+                    {{ option.grade }}
+                  </el-option>
+                </el-select>
+              </span>
+              <span class="cell-key">分</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div v-for="(item, index) in targetScale.questions" class="scale-questions" v-show="(item.parentId ? checkQuestionListIsShow(item.parentId, index) : true) && quicklyMode === false"
+        :id="'questions_' + index" :style="{'padding-left': item.questionLevel? item.questionLevel*20 + 30 + 'px':'30px'}">
         <!-- 题目列表 -->
         <p class="question-title" v-html="item.subjectName"></p>
         <el-checkbox-group v-if="(item.questionType===0 || item.questionType===1) && item.multipleChoose === 1"
@@ -228,8 +254,8 @@ export default {
       showEdit: false,
       lockSubmitButton: false,
       scaleCategory: 0, // 量表类型 0: 临床量表, 1: 课题评定
-      quicklySupport: true,  // 量表是否支持快速答题
-      quicklyMode: true, // 答题模式 false 常规答题 true 快速答题
+      quickAnswer: false,  // 量表是否支持快速答题
+      quicklyMode: false, // 答题模式 false 常规答题 true 快速答题
 
       copyInfo: {},
       warningResults: {
@@ -812,6 +838,7 @@ export default {
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
   },
   beforeDestroy() {
+    this.quicklyMode = false;  // 切换到常规答题模式
     Bus.$off(this.SHOW_SCALE_MODAL, this.showModal);
     Bus.$off(this.SCROLL_AREA_SIZE_CHANGE);
     Bus.$off(this.SCREEN_SIZE_CHANGE);
@@ -829,6 +856,7 @@ export default {
       this.initSymptomList();
     },
     targetScale: function() {
+      this.quickAnswer = this.targetScale.quickAnswer === 1;
       if (this.mode === this.ADD_NEW_CARD) {
         // 只有在新增模式下，才允许更换量表，一旦这样做，就要清空答题信息
         this.$set(this.copyInfo, 'patientOptions', []);
@@ -952,22 +980,16 @@ export default {
           margin: 0;
           height: auto;
           line-height: 40px;
-          .el-checkbox__input{
-
-          }
           .el-radio__label {
             display: inline-block;
             width: 80%;
             height: 40px;
-            vertical-align: top;
             // white-space: pre-wrap;
             // word-wrap: break-word;
             // word-break: normal;
             .el-input {
               margin-left: 20px;
               width: 300px;
-              vertical-align: top;
-              white-space: normal;
               .el-input__inner {
                 height: 30px;
                 border: 1px solid @inverse-font-color;
@@ -980,11 +1002,6 @@ export default {
                 }
               }
             }
-          }
-          .el-checkbox__label {
-            display: inline-block;
-            vertical-align: top;
-            white-space: normal;
           }
           .is-disabled {
             .el-radio__inner {
@@ -1298,7 +1315,7 @@ export default {
         float: right;
         width: @small-button-width;
         height: @small-button-height;
-        margin-right: 10px;
+        margin: 5px 10px 0 0;
         line-height: @small-button-height;
         color: #fff;
         cursor: pointer;
