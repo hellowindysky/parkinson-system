@@ -142,6 +142,7 @@
         </span>
       </div>
 
+      <!-- 关联症状 -->
       <folding-panel :title="'关联症状'" :folded-status="true" class="associated-symptom" :editable="showEdit">
         <div class="symptom-item" v-for="(symptom, index) in scaleSymptomList">
           <el-checkbox class="symptom-item-title" v-model="symptom.status" :disabled="mode===VIEW_CURRENT_CARD">
@@ -165,8 +166,35 @@
         </div>
       </folding-panel>
 
-      <div v-for="(item, index) in targetScale.questions" class="scale-questions" v-show="item.parentId ? checkQuestionListIsShow(item.parentId, index) : true"
-        :style="{'padding-left': item.questionLevel? item.questionLevel*20 + 30 + 'px':'30px'}">
+      <!-- 快速答题 -->
+      <div class="quickly-answer" v-if="quickAnswer === true">
+        <div class="quickly-title">
+          <div @click="quicklyMode = !quicklyMode" class="quickly-button">{{quicklyMode === true ? '常规答题' : '快速答题'}}</div>
+        </div>
+        <div class="answer-form" v-show="quicklyMode === true">
+          <div v-for="(item, index) in targetScale.questions" class="form-cell">
+            <div class="cell-title">{{item.scaleQuestionNumber}}</div>
+            <div class="cell-input">
+              <span class="field-value">
+                <el-select v-model="copyInfo.patientOptions[index].scaleOptionId" filterable placeholder="请选择">
+                  <el-option
+                    v-for="option in item.options"
+                    :key="option.scaleOptionId"
+                    :label="String(option.grade)"
+                    :value="option.scaleOptionId">
+                    {{ option.grade }}
+                  </el-option>
+                </el-select>
+              </span>
+              <span class="cell-key">分</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div v-for="(item, index) in targetScale.questions" class="scale-questions" v-show="(item.parentId ? checkQuestionListIsShow(item.parentId, index) : true) && quicklyMode === false"
+        :id="'questions_' + index" :style="{'padding-left': item.questionLevel? item.questionLevel*20 + 30 + 'px':'30px'}">
+        <!-- 题目列表 -->
         <p class="question-title" v-html="item.subjectName"></p>
         <el-checkbox-group v-if="(item.questionType===0 || item.questionType===1) && item.multipleChoose === 1"
           class="question-body" :key="index" v-model="copyInfo.patientOptions[index].scaleOptionId">
@@ -226,6 +254,8 @@ export default {
       showEdit: false,
       lockSubmitButton: false,
       scaleCategory: 0, // 量表类型 0: 临床量表, 1: 课题评定
+      quickAnswer: false,  // 量表是否支持快速答题
+      quicklyMode: false, // 答题模式 false 常规答题 true 快速答题
 
       copyInfo: {},
       warningResults: {
@@ -808,6 +838,7 @@ export default {
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
   },
   beforeDestroy() {
+    this.quicklyMode = false;  // 切换到常规答题模式
     Bus.$off(this.SHOW_SCALE_MODAL, this.showModal);
     Bus.$off(this.SCROLL_AREA_SIZE_CHANGE);
     Bus.$off(this.SCREEN_SIZE_CHANGE);
@@ -825,6 +856,7 @@ export default {
       this.initSymptomList();
     },
     targetScale: function() {
+      this.quickAnswer = this.targetScale.quickAnswer === 1;
       if (this.mode === this.ADD_NEW_CARD) {
         // 只有在新增模式下，才允许更换量表，一旦这样做，就要清空答题信息
         this.$set(this.copyInfo, 'patientOptions', []);
@@ -1274,6 +1306,60 @@ export default {
         }
       }
     }
+    .quickly-answer{
+      .quickly-title{
+        height: 28px;
+        margin-bottom: 10px;
+      }
+      .quickly-button{
+        float: right;
+        width: @small-button-width;
+        height: @small-button-height;
+        margin: 5px 10px 0 0;
+        line-height: @small-button-height;
+        color: #fff;
+        cursor: pointer;
+        background-color: @button-color;
+      }
+      .answer-form{
+        width: 100%;
+        text-align: left;
+        background-color: #fff;
+        border-width: 1px;
+        border-style: solid;
+        border-color: #ccc;
+        border-collapse: collapse;
+        .form-cell{
+          display: inline-block;
+          width: 20%;
+          height: 100px;
+          padding: 0 20px;
+          line-height: 50px;
+          text-align: center;
+          border-style: solid;
+          border-width: 0 1px 1px 0;
+          border-color: #ccc;
+          box-sizing: border-box;
+          .cell-title{
+            height: 50px;
+            border-bottom: 1px solid #dfdfdf;
+          }
+          .cell-input{
+            position: relative;
+            height: 50px;
+            padding-right: 20px;
+            .el-autocomplete{
+              width: 100%;
+            }
+            .cell-key{
+              position: absolute;
+              top: 0;
+              right: 10px;
+            }
+          }
+        }
+      }
+    }
     .ps__scrollbar-y-rail {
       position: absolute;
       width: 15px;
@@ -1297,5 +1383,13 @@ export default {
       }
     }
   }
+}
+
+.clearfix:after{
+    display: block;
+    clear: both;
+    content: "";
+    visibility: hidden;
+    height: 0;
 }
 </style>
