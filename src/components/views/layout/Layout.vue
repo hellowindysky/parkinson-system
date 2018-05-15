@@ -14,6 +14,12 @@
     <notice-box></notice-box>
     <!-- <end-experiment-modal></end-experiment-modal> -->
     <water-mark></water-mark>
+    
+    <!-- 数据字典版本信息 -->
+    <div class="version-box">
+      <span>当前数据版本：{{version}}</span>
+      <span>最后更新日期：{{updateTime}}</span>
+    </div>
   </div>
 </template>
 
@@ -130,6 +136,12 @@ export default {
     waterMark
   },
   computed: {
+    version() {
+      return this.$store.state.dictionary.all.version;
+    },
+    updateTime() {
+      return this.$store.state.dictionary.all.lastest;
+    },
     isSupportAccount() {
       // 1 患者 2 医生 3 管理员 4 医院管理员 5 技术支持人员
       var userType = parseInt(sessionStorage.getItem('userType'), 10);
@@ -263,6 +275,17 @@ export default {
     top: @header-height + @header-margin-bottom;
     width: calc(~"100% - @{sidebar-width}");
     height: calc(~"100% - @{header-height} - @{header-margin-bottom}");
+  }
+  .version-box {
+    position: absolute;
+    bottom: 5px;
+    right: 15px;
+    text-align: right;
+    color: #999;
+    z-index: 5000;
+    span {
+      padding-left: 20px;
+    }
   }
 }
 </style>
