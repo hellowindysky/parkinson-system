@@ -7,9 +7,9 @@
       <h3 class="subtitle"></h3>
 
       <div class="tabs-wrapper">
-        <span class="tab tab-place-1" :class="{'current-tab':loginType===1}" @click="accountLogin">用户名密码</span>
-        <span class="tab tab-place-2" v-if="isAlone === false" :class="{'current-tab':loginType===2}" @click="dynamicPassword">动态密码</span>
-        <div class="tab-bottom-bar" v-if="isAlone === false" :class="tabPlaceClass"></div>
+        <span class="tab tab-place-1" v-if="loginType!==3 && isAlone===false" :class="{'current-tab':loginType===1}" @click="accountLogin">用户名密码</span>
+        <span class="tab tab-place-2" v-if="loginType!==3 && isAlone===false" :class="{'current-tab':loginType===2}" @click="dynamicPassword">动态密码</span>
+        <div class="tab-bottom-bar" v-if="isAlone===false" :class="tabPlaceClass"></div>
       </div>
       <el-form class="input-wrapper" v-if="!mustResetPassword" :model="loginForm" :rules="rules" ref="loginForm" label-width="0">
         <el-form-item prop="account">
@@ -21,16 +21,21 @@
             placeholder="请输入6-16位数字和字母的密码" @keyup.enter.native="submitForm"></el-input>
         </el-form-item>
 
-        <el-form-item prop="identifyingCode" v-if="loginType===2 && isAlone === false">
+        <el-form-item prop="identifyingCode" v-if="loginType===2 && isAlone===false">
           <el-input class="round-input short" clearable v-model="loginForm.identifyingCode" auto-complete="new-password" placeholder="请输入短信验证码" @keyup.enter.native="submitForm" autofocus="autofocus"></el-input>
         <el-button class="button code-button" type="primary" @click="sendCodes" :disabled="codeButtonStatus===1">{{codeButtonText}}</el-button>
         </el-form-item>
 
+        <el-form-item prop="identifyingCode" v-if="loginType===3">
+          <el-input class="round-input short" clearable v-model="loginForm.identifyingCode" auto-complete="new-password" placeholder="请输入短信验证码" @keyup.enter.native="submitForm" autofocus="autofocus"></el-input>
+          <el-button class="button code-button" type="primary" @click="sendCodes" :disabled="codeButtonStatus===1">{{codeButtonText}}</el-button>
+        </el-form-item>
+
         <el-form-item prop="remember">
-          <el-checkbox v-model="loginForm.remember" class="checkbox" label="记住用户名" name="type"></el-checkbox>
+          <el-checkbox v-model="loginForm.remember"  v-if="loginType!==3" class="checkbox" label="记住用户名" name="type"></el-checkbox>
         </el-form-item>
         <el-form-item prop="verificationCode">
-          <el-button class="forget" type="primary">忘记密码</el-button>
+          <span class="forget" type="primary" v-if="loginType!==3 && isAlone===false" :class="{'current-tab':loginType===3, display:none}" @click="forgetPassword">忘记密码</span>
         </el-form-item>
         <el-form-item>
           <el-button class="button" type="primary" @click="submitForm">登 录</el-button>
@@ -85,6 +90,7 @@ import Bus from 'utils/bus';
 
 const ACCOUNT_LOGIN = 1;
 const DYNAMIC_PASSWORD = 2;
+const FORGET_PASSWORD = 3;
 
 export default {
   name: 'login',
@@ -220,19 +226,27 @@ export default {
         return true;
       }
     },
+    isHide() {
+      if (this.loginType === 3) {
+        return false;
+      }
+    },
     tabPlaceClass() {
-      return 'tab-place-' + this.loginType;
+      if (this.loginType !== 3) {
+        return 'tab-place-' + this.loginType;
+      } else {
+        return 'tab-place-0';
+      }
     },
     holderText() {
       if (this.loginType === ACCOUNT_LOGIN) {
         return '请输入您的睿云账号/手机号码';
       } else if (this.loginType === DYNAMIC_PASSWORD) {
         return '请输入您的手机号码';
+      } else if (this.loginType === FORGET_PASSWORD) {
+        return '请输入您的手机号码';
       }
     },
-    // forgetPassword() {
-
-    // },
     md5Password() {
       return md5(this.password);
     },
@@ -279,11 +293,9 @@ export default {
     dynamicPassword() {
       this.loginType = DYNAMIC_PASSWORD;
     },
-    // forgetPassword() {
-    //   if (this.lockSendButton) {
-    //     return;
-    //   }
-    // },
+    forgetPassword() {
+      this.loginType = FORGET_PASSWORD;
+    },
     sendCode() {
       if (this.lockSendButton) {
         return;
@@ -510,7 +522,7 @@ export default {
     // particles
   },
   mounted() {
-    console.log(this.title);
+    // console.log(this.title);
     // 如果之前登录的时候勾选了“记住用户名”，则在浏览器中读取上次的用户名
     var account = localStorage.getItem('account');
     if (account !== null) {
@@ -615,6 +627,9 @@ export default {
         background-color: @button-color;
         transition: 0.2s;
       }
+      .tab-place-0 {
+        display: none;
+      }
       .tab-place-1 {
         transform: translateX(-70px);
       }
@@ -675,6 +690,7 @@ export default {
         right: 0;
         top: -55px;
         border: none;
+        color:#fff;
         &:hover {
           opacity: .6;
           background-color: #505b6b;
