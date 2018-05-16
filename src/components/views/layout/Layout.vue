@@ -17,8 +17,8 @@
 
     <!-- 数据字典版本信息 -->
     <div class="version-box">
-      <span>当前数据版本：{{version}}</span>
-      <span>最后更新日期：{{updateTime}}</span>
+      <span v-if="version">当前数据版本：{{version}}</span>
+      <span v-if="updateTime">最后更新日期：{{updateTime}}</span>
     </div>
   </div>
 </template>

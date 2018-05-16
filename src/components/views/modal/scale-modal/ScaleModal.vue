@@ -169,11 +169,14 @@
       <!-- 快速答题 -->
       <div class="quickly-answer" v-if="quickAnswer === true">
         <div class="quickly-title">
-          <div @click="quicklyMode = !quicklyMode" class="quickly-button">{{quicklyMode === true ? '常规答题' : '快速答题'}}</div>
+          <div @click="changeAnswerMode" class="quickly-button">{{quicklyMode === true ? '常规答题' : '快速答题'}}</div>
         </div>
         <div class="answer-form" v-show="quicklyMode === true">
-          <div v-for="(item, index) in targetScale.questions" class="form-cell">
-            <div class="cell-title">{{item.scaleQuestionNumber}}</div>
+          <div class="form-cell" v-for="(item, index) in targetScale.questions" 
+          :class="{'notice-empty': !copyInfo.patientOptions[index].scaleOptionId && mode === EDIT_CURRENT_CARD}">
+            <div class="cell-title">
+              {{item.scaleQuestionNumber}}
+            </div>
             <div class="cell-input">
               <span class="field-value">
                 <el-select v-model="copyInfo.patientOptions[index].scaleOptionId" filterable placeholder="请选择">
@@ -192,10 +195,11 @@
         </div>
       </div>
 
+      <!-- 题目列表 -->
       <div v-for="(item, index) in targetScale.questions" class="scale-questions" v-show="(item.parentId ? checkQuestionListIsShow(item.parentId, index) : true) && quicklyMode === false"
         :id="'questions_' + index" :style="{'padding-left': item.questionLevel? item.questionLevel*20 + 30 + 'px':'30px'}">
-        <!-- 题目列表 -->
-        <p class="question-title" v-html="item.subjectName"></p>
+        <p class="question-title" v-html="item.subjectName" 
+        :class="{'notice-empty': !copyInfo.patientOptions[index].scaleOptionId && mode === EDIT_CURRENT_CARD}"></p>
         <el-checkbox-group v-if="(item.questionType===0 || item.questionType===1) && item.multipleChoose === 1"
           class="question-body" :key="index" v-model="copyInfo.patientOptions[index].scaleOptionId">
           <el-checkbox class="question-selection" v-for="(option, i) in item.options"
@@ -255,7 +259,8 @@ export default {
       lockSubmitButton: false,
       scaleCategory: 0, // 量表类型 0: 临床量表, 1: 课题评定
       quickAnswer: false,  // 量表是否支持快速答题
-      quicklyMode: false, // 答题模式 false 常规答题 true 快速答题
+      quicklyMode: false,  // 答题模式 false 常规答题 true 快速答题
+      answerModeChanged: false,  // 判断是否切换过答题模式，用于在第一次由快速答题切换至常规答题时进行弹窗提示
 
       copyInfo: {},
       warningResults: {
@@ -377,7 +382,7 @@ export default {
         });
       }
 
-      console.log(this.scaleList);
+      // console.log(this.scaleList);
 
       var results = queryString ? allScale.filter((item) => {
         return (item.value.toLowerCase().indexOf(queryString.toLowerCase()) >= 0);
@@ -465,6 +470,9 @@ export default {
     },
     edit() {
       this.mode = this.EDIT_CURRENT_CARD;
+      if (this.quicklyMode === false) {
+        this.scrollToQuestion();
+      }
     },
     submit() {
       if (this.lockSubmitButton) {
@@ -567,6 +575,8 @@ export default {
     closePanel() {
       this.lockSubmitButton = false;
       this.displayModal = false;
+      this.quicklyMode = false;  // 切换到常规答题模式
+      this.answerModeChanged = false;  // 初始化模式修改状态
     },
     transformToNum(obj, propertyName, stepping, maxValue) {
       // 步进值 stepping 如果没有传值进来，则默认为 0.1
@@ -829,6 +839,43 @@ export default {
       // 不显示时清空当前选择的值
       this.copyInfo.patientOptions[index].scaleOptionId = '';
       return false;
+    },
+    // 切换答题模式，第一次由快速答题切换至常规答题时序弹窗提示是否跳转到第一道未答题目
+    changeAnswerMode() {
+      this.quicklyMode = !this.quicklyMode;
+      if (this.mode === this.EDIT_CURRENT_CARD) {
+        if (this.answerModeChanged === false && this.quicklyMode === false) {
+          this.scrollToQuestion();
+        }
+        this.answerModeChanged = true;
+      }
+    },
+    // 编辑模式下 跳转至第一道未答题目
+    scrollToQuestion() {
+      this.$confirm('是否需要定位到未作答的题目?', '提示', {
+        confirmButtonText: '是',
+        cancelButtonText: '否',
+        type: 'warning'
+      }).then(() => {
+        // 跳转到未答题目
+        const container = this.$refs.scrollArea;
+        let firstLevelSelect = [];  // 选中的父级题目集合，此处为包含嵌套题目的量表做特殊处理，目前只考虑存在二级题目的情况，由于题目嵌套格式V2.4.0有所修改，所以此处不再进一步完善
+        for (let i = 0; i < this.copyInfo.patientOptions.length; i++) {
+          if (!this.copyInfo.patientOptions[i].scaleOptionId || this.copyInfo.patientOptions[i].scaleOptionId.length === 0) {
+            if (this.targetScale.questions[i].parentId && firstLevelSelect.indexOf(this.targetScale.questions[i].parentId) !== -1) {
+              console.log(this.$el.querySelector('#questions_' + i).offsetTop, i, 'child');
+              container.scrollTop = this.$el.querySelector('#questions_' + i).offsetTop;
+              break;
+            } else if (!this.targetScale.questions[i].questionLevel) {
+              console.log(this.$el.querySelector('#questions_' + i).offsetTop, i, 'parent');
+              container.scrollTop = this.$el.querySelector('#questions_' + i).offsetTop;
+              break;
+            }
+          } else if (!this.targetScale.questions[i].questionLevel) {
+            firstLevelSelect.push(this.targetScale.questions[i].scaleInfoId);
+          }
+        }
+      });
     }
   },
   mounted() {
@@ -838,7 +885,6 @@ export default {
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
   },
   beforeDestroy() {
-    this.quicklyMode = false;  // 切换到常规答题模式
     Bus.$off(this.SHOW_SCALE_MODAL, this.showModal);
     Bus.$off(this.SCROLL_AREA_SIZE_CHANGE);
     Bus.$off(this.SCREEN_SIZE_CHANGE);
@@ -967,6 +1013,9 @@ export default {
         &>u {
           text-decoration: none;
           border-bottom: 2px solid @font-color;
+        }
+        &.notice-empty {
+          color: #ff0000;
         }
       }
       .question-body {
@@ -1340,6 +1389,27 @@ export default {
           border-width: 0 1px 1px 0;
           border-color: #ccc;
           box-sizing: border-box;
+          &.notice-empty {
+            color: #ff0000;
+            .el-input__inner {
+              border: 1px solid #ff0000;
+              &::-webkit-input-placeholder {
+                color: #ff0000;
+              }
+              &:-moz-placeholder {
+                color: #ff0000;
+              }
+              &::-moz-placeholder {
+                color: #ff0000;
+              }
+              &:-ms-input-placeholder {
+                color: #ff0000;
+              }
+            }
+            .el-input__icon{
+              color: #ff0000;
+            }
+          }
           .cell-title{
             height: 50px;
             border-bottom: 1px solid #dfdfdf;
