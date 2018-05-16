@@ -377,7 +377,9 @@ export default {
     this.updateSupportedDoctorNumber();
 
     this.updateActiveTab();
-    this.updateFormData(this.pageParam);
+
+    // v2.3.1 屏蔽进入页面自动查询 只支持手动查询
+    // this.updateFormData(this.pageParam);
   },
   components: {
     customTable
