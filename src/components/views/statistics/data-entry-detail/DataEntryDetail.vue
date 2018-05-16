@@ -392,7 +392,13 @@ export default {
       // this.updateScrollbar();
     },
     activeTab() {
-      this.updateFormData(this.pageParam);
+      // this.updateFormData(this.pageParam);
+
+      // v2.3.1 屏蔽点击tab自动查询 只支持手动查询
+      this.tableData = {
+        template: [],
+        data: []
+      };
     }
   }
 };
