@@ -118,6 +118,36 @@
             <el-tabs v-model="activeName">
 
               <el-tab-pane
+               v-for="(mainItem,mainIndex) in exportList" :key="mainIndex"
+               :label="mainItem.typeName"
+               :name="mainItem.typeCode+''">
+                <div class="collapse-box" :ref="'choice'+mainItem.typeCode">
+                  <el-collapse v-model="activeNames">
+                    <el-collapse-item
+                     v-for="(middleItem,middleIndex) in mainItem.childType?mainItem.childType:[]" :key="middleIndex"
+                     :title="middleItem.typeName"
+                     :name="middleItem.typeCode+''">
+                      <div class="checkbox-box">
+                        <div class="checkbox-item" v-for="(subItem,subIndex) in getFieldsGroup(mainItem.typeCode,middleItem.typeCode)" :key="subIndex">
+                          <el-checkbox
+                           v-model="subItem.checked">
+                            {{subItem.cnFieldName}}
+                          </el-checkbox>
+                          <div class="checkbox-subItem">
+                            <el-checkbox
+                             v-for="(fourItem,fourIndex) in getFieldsGroup(mainItem.typeCode,middleItem.typeCode,true,subItem.id)" :key="fourIndex"
+                             v-model="fourItem.checked">
+                              {{fourItem.cnFieldName}}
+                            </el-checkbox>
+                          </div>
+                        </div>
+                      </div>
+                    </el-collapse-item>
+                  </el-collapse>
+                </div>
+              </el-tab-pane>
+
+              <!-- <el-tab-pane
                v-for="(mainItem,mainIndex) in keXuanZiDuan" :key="mainIndex"
                :label="mainItem.label"
                :name="mainItem.name+''">
@@ -137,7 +167,7 @@
                     </el-collapse-item>
                   </el-collapse>
                 </div>
-              </el-tab-pane>
+              </el-tab-pane> -->
 
             </el-tabs>
           </div>
@@ -174,44 +204,26 @@ export default {
         { name: '年龄'},
         { name: '身份证号'}
       ],
-      resData: [],
-      keXuanZiDuan: []
+      keXuanZiDuan: [],
+      keXuan3: [],
+      keXuan4: []
     };
   },
   computed: {
     ...mapGetters([
-      'typeGroup'
+      'typeGroup',
+      'exportFields'
     ]),
     exportList() {
-      return Util.getElement('typegroupcode', 'exportTemplate', this.typeGroup).types;
+      let types = Util.getElement('typegroupcode', 'exportTemplate', this.typeGroup).types;
+      return types ? types : [];
     }
   },
   methods: {
     initChoiceField2() {
-      console.log(new Date().getTime());
+      // console.log(new Date().getTime());
       // 导出字段所有类别名称（标题）的集合
       let exportList = this.exportList ? this.exportList : [];
-
-      /* 把接口返回的数据分类
-        把属于同一个类别的对象放到一起
-       */
-      let copyData = [];
-      this.resData.forEach((item) => {
-        for (let i = 0; i < copyData.length; i++) {
-          if (item.fid === copyData[i].fid && item.pid === copyData[i].pid) {
-            item.checked = false;
-            copyData[i].types.push(item);
-            return;
-          }
-        };
-        item.checked = false;
-        copyData.push({
-          fid: item.fid,
-          pid: item.pid,
-          types: [item]
-        });
-      });
-      // --------
 
       var handleTypes = (arr, code) => {
         arr = Array.isArray(arr) ? arr : [];
@@ -219,9 +231,11 @@ export default {
           return {
             title: item.typeName,
             name: item.typeCode,
-            types: copyData.filter((resItem) => {
-              return code === resItem.fid && item.typeCode === resItem.pid;
-            })[0].types
+            types: this.exportFields.filter((resItem) => {
+              return code === resItem.gid && item.typeCode === resItem.fid;
+            }).length > 0 ? this.exportFields.filter((resItem) => {
+              return code === resItem.gid && item.typeCode === resItem.fid;
+            })[0].types : []
           };
         });
       };
@@ -236,21 +250,9 @@ export default {
 
       vueCopy(keXuanZiDuan, this.keXuanZiDuan);
       console.log(this.keXuanZiDuan);
-      console.log(new Date().getTime());
+      // console.log(new Date().getTime());
     },
     // initChoiceField() {
-    //   let gerenjibenqingkuang = this.resData.filter((item) => {
-    //     return item.fid === 1 && item.pid === 1;
-    //   });
-    //   let gerenxianbingshi = this.resData.filter((item) => {
-    //     return item.fid === 1 && item.pid === 2;
-    //   });
-    //   let zhenduanjibenqingkuang = this.resData.filter((item) => {
-    //     return item.fid === 2 && item.pid === 1;
-    //   });
-    //   let zhenduanbingcheng = this.resData.filter((item) => {
-    //     return item.fid === 2 && item.pid === 2;
-    //   });
     //   this.keXuanZiDuan = [
     //     {
     //       label: '个人信息',
@@ -286,9 +288,30 @@ export default {
     //     }
     //   ];
     // },
+    getFieldsGroup(gid, fid, hasPid, pid) {
+      let fieldsItem = this.exportFields.filter((item) => {
+        return item.gid === gid && item.fid === fid;
+      });
+      let fields = fieldsItem[0] ? fieldsItem[0].fields : [];
+
+      console.log(fields);
+
+      if (hasPid) {
+        fields = fields.filter((item) => {
+          return item.pid === pid;
+        });
+      } else {
+        fields = fields.filter((item) => {
+          return !item.hasOwnProperty('pid');
+        });
+        // this.keXuan3 = fields;
+        vueCopy(fields, this.keXuan3);
+      };
+      return fields;
+    },
     tagClose(item) {
       item.checked = false;
-      console.log(this.keXuanZiDuan, this.resData);
+      // console.log(this.keXuanZiDuan);
     },
     reset() {
       this.keXuanZiDuan.forEach((item) => {
@@ -343,106 +366,19 @@ export default {
           }
         });
 
-        // if (this.$refs.scrollArea2) {
-        //   Ps.destroy(this.$refs.scrollArea2);
-        //   Ps.initialize(this.$refs.scrollArea2, {
-        //     wheelSpeed: 1,
-        //     minScrollbarLength: 40
-        //   });
-        // }
-        // if (this.$refs.scrollArea3) {
-        //   Ps.destroy(this.$refs.scrollArea3);
-        //   Ps.initialize(this.$refs.scrollArea3, {
-        //     wheelSpeed: 1,
-        //     minScrollbarLength: 40
-        //   });
-        // }
       });
     }
   },
   mounted() {
     this.updateScrollbar();
-    // console.log(this.$refs.scrollArea);
-    console.log(this.$refs);
-    // console.log(Ps);
-    // console.log(this.exportList);
-    // console.log(this.initChoiceField2());
-    this.resData = [
-      {
-        id: 1,
-        tableName: 'tc_patient_info',
-        enFieldName: 'PTNAME',
-        cnFieldName: '姓名',
-        pid: 3, // 基本情况
-        groupNo: 1,
-        fid: 1 // 个人信息
-      },
-      {
-        id: 1,
-        tableName: 'tc_patient_info',
-        enFieldName: 'CODE',
-        cnFieldName: '身份证号',
-        pid: 3, // 基本情况
-        groupNo: 1,
-        fid: 1 // 个人信息
-      },
-      {
-        id: 1,
-        tableName: 'tc_patient_info',
-        enFieldName: 'DISEASETYPE',
-        cnFieldName: '起病类型',
-        pid: 4, // 现病史
-        groupNo: 1,
-        fid: 1 // 个人信息
-      },
-      {
-        id: 1,
-        tableName: 'tc_patient_info',
-        enFieldName: 'ARITIME',
-        cnFieldName: '起病时间',
-        pid: 4, // 现病史
-        groupNo: 1,
-        fid: 1 // 个人信息
-      },
-      {
-        id: 1,
-        tableName: 'tc_patient_info',
-        enFieldName: 'patientCode',
-        cnFieldName: '医院患者编号',
-        pid: 1, // 基本情况
-        groupNo: 1,
-        fid: 2 // 诊断信息
-      },
-      {
-        id: 1,
-        tableName: 'tc_patient_info',
-        enFieldName: 'OUT_PATIENT_MEDICAL_RECORDS',
-        cnFieldName: '门诊病历号',
-        pid: 1, // 基本情况
-        groupNo: 1,
-        fid: 2 // 诊断信息
-      },
-      {
-        id: 1,
-        tableName: 'tc_patient_info',
-        enFieldName: 'patientCode',
-        cnFieldName: '医院患者编号',
-        pid: 1, // 病程情况
-        groupNo: 1,
-        fid: 2 // 诊断信息
-      },
-      {
-        id: 1,
-        tableName: 'tc_patient_info',
-        enFieldName: 'OUT_PATIENT_MEDICAL_RECORDS',
-        cnFieldName: '门诊病历号',
-        pid: 1, // 病程情况
-        groupNo: 1,
-        fid: 2 // 诊断信息
-      }
-    ];
+    console.log(this.exportList);
+    console.log(this.exportFields);
     // this.initChoiceField();
-    this.initChoiceField2();
+    // this.initChoiceField2();
+    console.log(this.keXuan3);
+    // setTimeout(() => {
+    //   console.log(this.keXuan3);
+    // }, 2000);
   }
 };
 </script>
@@ -684,7 +620,11 @@ export default {
             height: 100%;
             overflow: hidden;
             .checkbox-box {
-
+              .checkbox-item {
+                .checkbox-subItem {
+                  margin-left: 28px;
+                }
+              }
             }
           }
         }

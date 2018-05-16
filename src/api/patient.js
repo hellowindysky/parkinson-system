@@ -1029,6 +1029,13 @@ export function queryPatientsByCondition(condition) {
   return encapsulatePromise(url, request);
 };
 
+// 查询可导出字段
+export function queryExportField() {
+  var request = Object.assign({}, getCommonRequest());
+  var url = '/pdms/queryExportField';
+  return encapsulatePromise(url, request);
+};
+
 // 新增物理治疗
 export function addPhysiontherapy(patientPhytheTms) {
   var request = Object.assign({}, getCommonRequest());

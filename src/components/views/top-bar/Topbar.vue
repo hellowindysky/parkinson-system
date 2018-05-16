@@ -267,6 +267,7 @@ export default {
     this.$store.dispatch('getWholeDictionary');
     this.$store.dispatch('getWholeTemplate');
     this.$store.dispatch('getScaleList');
+    this.$store.dispatch('getExportFields');
 
     this.updateAuthorizedStatus();
 
