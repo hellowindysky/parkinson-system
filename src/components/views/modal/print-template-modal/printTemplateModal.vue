@@ -37,71 +37,41 @@
 
               <el-tab-pane
                v-for="(mainItem,mainIndex) in keXuanZiDuan" :key="mainIndex"
-               :label="mainItem.label"
-               :name="mainItem.name+''">
-                <div class="collapse-box" :ref="'selected'+mainItem.name">
+               :label="mainItem.title"
+               :name="mainItem.code+''">
+                <div class="collapse-box" :ref="'selected'+mainItem.code">
                   <el-collapse v-model="activeNames">
                     <el-collapse-item
                      v-for="(middleItem,middleIndex) in mainItem.category" :key="middleIndex"
                      :title="middleItem.title"
-                     :name="middleItem.name+''">
+                     :name="middleItem.code+''">
                       <div class="tags-box">
 
-                        <el-tag
-                         v-for="(subItem,subIndex) in middleItem.types" :key="subIndex"
-                         v-if="subItem.checked"
-                         @close="tagClose(subItem)"
-                         :closable="true">
-                          {{subItem.cnFieldName}}
-                        </el-tag>
+                        <div class="tags-item" v-for="(subItem,subIndex) in middleItem.fieldDataP" :key="subIndex">
+                          <el-tag
+                           v-if="subItem.checked"
+                           @close="tagClose(subItem)"
+                           :closable="true">
+                            {{subItem.cnFieldName}}
+                          </el-tag>
+                          <div class="tagsbox-subItem">
+                            <span class="turning" v-if="subItem.fieldDataS.length">∟</span>
+                            <el-tag
+                             v-for="(fourItem,fourIndex) in subItem.fieldDataS" :key="fourIndex"
+                             v-if="fourItem.checked"
+                             @close="tagClose(fourItem)"
+                             :closable="true">
+                              {{fourItem.cnFieldName}}
+                            </el-tag>
+                          </div>
+                        </div>
 
                       </div>
                     </el-collapse-item>
                   </el-collapse>
                 </div>
               </el-tab-pane>
-              <!-- <el-tab-pane label="个人信息" :name="1+''">
-                <div class="collapse-box" ref="scrollArea2">
-                  <el-collapse v-model="activeNames">
-                    <el-collapse-item title="基本情况" :name="3+''">
-                      <div class="tags-box">
-                        <el-tag v-for="(item,index) in yiXuanZiDuanGeRen"
-                         :key="index"
-                         :closable="true">
-                          {{item.name}}
-                        </el-tag>
-                      </div>
-                    </el-collapse-item>
-                    <el-collapse-item title="现病史" :name="4+''">
 
-                    </el-collapse-item>
-                    <el-collapse-item title="其他信息" name="3">
-
-                    </el-collapse-item>
-                    <el-collapse-item title="其他信息" name="3">
-
-                    </el-collapse-item>
-                    <el-collapse-item title="其他信息" name="3">
-
-                    </el-collapse-item>
-                    <el-collapse-item title="其他信息" name="3">
-
-                    </el-collapse-item>
-                    <el-collapse-item title="其他信息" name="3">
-
-                    </el-collapse-item>
-                    <el-collapse-item title="其他信息" name="3">
-
-                    </el-collapse-item>
-                    <el-collapse-item title="其他信息" name="3">
-
-                    </el-collapse-item>
-                  </el-collapse>
-                </div>
-              </el-tab-pane>
-              <el-tab-pane label="诊断信息" name="second">
-
-              </el-tab-pane> -->
             </el-tabs>
           </div>
 
@@ -118,25 +88,28 @@
             <el-tabs v-model="activeName">
 
               <el-tab-pane
-               v-for="(mainItem,mainIndex) in exportList" :key="mainIndex"
-               :label="mainItem.typeName"
-               :name="mainItem.typeCode+''">
-                <div class="collapse-box" :ref="'choice'+mainItem.typeCode">
+               v-for="(mainItem,mainIndex) in keXuanZiDuan" :key="mainIndex"
+               :label="mainItem.title"
+               :name="mainItem.code+''">
+                <div class="collapse-box" :ref="'choice'+mainItem.code">
                   <el-collapse v-model="activeNames">
                     <el-collapse-item
-                     v-for="(middleItem,middleIndex) in mainItem.childType?mainItem.childType:[]" :key="middleIndex"
-                     :title="middleItem.typeName"
-                     :name="middleItem.typeCode+''">
+                     v-for="(middleItem,middleIndex) in mainItem.category" :key="middleIndex"
+                     :title="middleItem.title"
+                     :name="middleItem.code+''">
                       <div class="checkbox-box">
-                        <div class="checkbox-item" v-for="(subItem,subIndex) in getFieldsGroup(mainItem.typeCode,middleItem.typeCode)" :key="subIndex">
+                        <div class="checkbox-item" v-for="(subItem,subIndex) in middleItem.fieldDataP" :key="subIndex">
                           <el-checkbox
-                           v-model="subItem.checked">
+                           v-model="subItem.checked"
+                           @change="checkboxChange(subItem, 'parent')">
                             {{subItem.cnFieldName}}
                           </el-checkbox>
                           <div class="checkbox-subItem">
+                            <span class="turning" v-if="subItem.fieldDataS.length">∟</span>
                             <el-checkbox
-                             v-for="(fourItem,fourIndex) in getFieldsGroup(mainItem.typeCode,middleItem.typeCode,true,subItem.id)" :key="fourIndex"
-                             v-model="fourItem.checked">
+                             v-for="(fourItem,fourIndex) in subItem.fieldDataS" :key="fourIndex"
+                             v-model="fourItem.checked"
+                             @change="checkboxChange(fourItem, 'son')">
                               {{fourItem.cnFieldName}}
                             </el-checkbox>
                           </div>
@@ -146,28 +119,6 @@
                   </el-collapse>
                 </div>
               </el-tab-pane>
-
-              <!-- <el-tab-pane
-               v-for="(mainItem,mainIndex) in keXuanZiDuan" :key="mainIndex"
-               :label="mainItem.label"
-               :name="mainItem.name+''">
-                <div class="collapse-box" :ref="'choice'+mainItem.name">
-                  <el-collapse v-model="activeNames">
-                    <el-collapse-item
-                     v-for="(middleItem,middleIndex) in mainItem.category" :key="middleIndex"
-                     :title="middleItem.title"
-                     :name="middleItem.name+''">
-                      <div class="checkbox-box">
-                        <el-checkbox
-                         v-for="(subItem,subIndex) in middleItem.types" :key="subIndex"
-                         v-model="subItem.checked">
-                          {{subItem.cnFieldName}}
-                        </el-checkbox>
-                      </div>
-                    </el-collapse-item>
-                  </el-collapse>
-                </div>
-              </el-tab-pane> -->
 
             </el-tabs>
           </div>
@@ -186,7 +137,7 @@ import Bus from 'utils/bus.js';
 import { mapGetters } from 'vuex';
 import Util from 'utils/util.js';
 import Ps from 'perfect-scrollbar';
-import { vueCopy } from 'utils/helper';
+import {deepCopy, vueCopy } from 'utils/helper';
 export default {
   data() {
     return {
@@ -204,15 +155,13 @@ export default {
         { name: '年龄'},
         { name: '身份证号'}
       ],
-      keXuanZiDuan: [],
-      keXuan3: [],
-      keXuan4: []
+      keXuanZiDuan: []
     };
   },
   computed: {
     ...mapGetters([
       'typeGroup',
-      'exportFields'
+      'totalExportFields'
     ]),
     exportList() {
       let types = Util.getElement('typegroupcode', 'exportTemplate', this.typeGroup).types;
@@ -220,98 +169,58 @@ export default {
     }
   },
   methods: {
-    initChoiceField2() {
-      // console.log(new Date().getTime());
+    initChoiceField_3() {
       // 导出字段所有类别名称（标题）的集合
-      let exportList = this.exportList ? this.exportList : [];
-
-      var handleTypes = (arr, code) => {
-        arr = Array.isArray(arr) ? arr : [];
-        return arr.map((item) => {
-          return {
-            title: item.typeName,
-            name: item.typeCode,
-            types: this.exportFields.filter((resItem) => {
-              return code === resItem.gid && item.typeCode === resItem.fid;
-            }).length > 0 ? this.exportFields.filter((resItem) => {
-              return code === resItem.gid && item.typeCode === resItem.fid;
-            })[0].types : []
-          };
-        });
-      };
-
-      let keXuanZiDuan = exportList.map((item) => {
-        return {
-          label: item.typeName,
-          name: item.typeCode,
-          category: handleTypes(item.childType, item.typeCode)
+      let exportList = deepCopy(this.exportList); // 分级标题
+      let totalExportFields = deepCopy(this.totalExportFields);
+      let exportFields_p = totalExportFields.filter((item) => { // 三级字段
+        return !item.hasOwnProperty('pid');
+      });
+      let exportFields_s = totalExportFields.filter((item) => { // 四级字段
+        return item.hasOwnProperty('pid');
+      });
+      let keXuanZiDuan = [];
+      exportList.forEach((itemF, indexF) => {
+        keXuanZiDuan[indexF] = {
+          title: itemF.typeName,
+          code: itemF.typeCode,
+          category: []
         };
+        if (itemF.childType) {
+          itemF.childType.forEach((itemS, indexS) => {
+            keXuanZiDuan[indexF].category[indexS] = {
+              title: itemS.typeName,
+              code: itemS.typeCode,
+              fieldDataP: this.getWantedFields({gid: itemF.typeCode, fid: itemS.typeCode}, exportFields_p)
+            };
+            keXuanZiDuan[indexF].category[indexS].fieldDataP.forEach((itemT) => {
+              itemT.fieldDataS = this.getWantedFields({gid: itemF.typeCode, fid: itemS.typeCode, pid: itemT.id}, exportFields_s);
+            });
+          });
+        }
       });
-
       vueCopy(keXuanZiDuan, this.keXuanZiDuan);
-      console.log(this.keXuanZiDuan);
-      // console.log(new Date().getTime());
     },
-    // initChoiceField() {
-    //   this.keXuanZiDuan = [
-    //     {
-    //       label: '个人信息',
-    //       name: 'first',
-    //       category: [
-    //         {
-    //           title: '基本情况',
-    //           name: '1',
-    //           fieldData: gerenjibenqingkuang
-    //         },
-    //         {
-    //           title: '现病史',
-    //           name: '2',
-    //           fieldData: gerenxianbingshi
-    //         }
-    //       ]
-    //     },
-    //     {
-    //       label: '诊断信息',
-    //       name: 'second',
-    //       category: [
-    //         {
-    //           title: '基本情况',
-    //           name: '1',
-    //           fieldData: zhenduanjibenqingkuang
-    //         },
-    //         {
-    //           title: '病程情况',
-    //           name: '2',
-    //           fieldData: zhenduanbingcheng
-    //         }
-    //       ]
-    //     }
-    //   ];
-    // },
-    getFieldsGroup(gid, fid, hasPid, pid) {
-      let fieldsItem = this.exportFields.filter((item) => {
-        return item.gid === gid && item.fid === fid;
-      });
-      let fields = fieldsItem[0] ? fieldsItem[0].fields : [];
-
-      console.log(fields);
-
-      if (hasPid) {
-        fields = fields.filter((item) => {
-          return item.pid === pid;
+    getWantedFields(opts, arr) {
+      // 从obj中得到符合opts条件的数据
+      arr = Array.isArray(arr) ? arr : [];
+      let fields = [];
+      if (opts.hasOwnProperty('pid')) {
+        fields = arr.filter((item) => {
+          return item.gid === opts.gid && item.fid === opts.fid && item.pid === opts.pid;
         });
       } else {
-        fields = fields.filter((item) => {
-          return !item.hasOwnProperty('pid');
+        fields = arr.filter((item) => {
+          return item.gid === opts.gid && item.fid === opts.fid;
         });
-        // this.keXuan3 = fields;
-        vueCopy(fields, this.keXuan3);
       };
       return fields;
     },
+    checkboxChange(Obj) {
+      console.log(Obj);
+    },
     tagClose(item) {
       item.checked = false;
-      // console.log(this.keXuanZiDuan);
     },
     reset() {
       this.keXuanZiDuan.forEach((item) => {
@@ -371,14 +280,10 @@ export default {
   },
   mounted() {
     this.updateScrollbar();
-    console.log(this.exportList);
-    console.log(this.exportFields);
-    // this.initChoiceField();
-    // this.initChoiceField2();
-    console.log(this.keXuan3);
-    // setTimeout(() => {
-    //   console.log(this.keXuan3);
-    // }, 2000);
+    this.initChoiceField_3();
+    setTimeout(() => {
+      // console.log(this.keXuanZiDuan);
+    }, 2000);
   }
 };
 </script>
@@ -558,9 +463,23 @@ export default {
             height: 100%;
             overflow: hidden;
             .tags-box {
-              .el-tag {
-                margin-right: 4px;
-                margin-bottom: 4px;
+              .tags-item {
+                border-bottom: 1px solid #e6e6e6;
+                padding: 10px 0;
+                .tagsbox-subItem {
+                  margin-left: 28px;
+                  .el-tag {
+                    margin-right: 4px;
+                    margin-top: 4px;
+                  }
+                  .turning {
+                    position: absolute;
+                    font-size: 20px;
+                    margin-left: -22px;
+                    margin-top: -8px;
+                    color: #a9aaaf;
+                  }
+                }
               }
             }
           }
@@ -621,8 +540,21 @@ export default {
             overflow: hidden;
             .checkbox-box {
               .checkbox-item {
+                border-bottom: 1px solid #e6e6e6;
+                padding: 10px 0;
                 .checkbox-subItem {
                   margin-left: 28px;
+                  .el-checkbox {
+                    margin-left: 0;
+                    margin-right: 15px;
+                  }
+                  .turning {
+                    position: absolute;
+                    font-size: 20px;
+                    margin-left: -22px;
+                    margin-top: -8px;
+                    color: #a9aaaf;
+                  }
                 }
               }
             }
