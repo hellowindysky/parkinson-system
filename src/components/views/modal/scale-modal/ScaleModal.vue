@@ -518,10 +518,10 @@ export default {
       }
       submitData.scaleFiles = this.newOther;
 
-      this.lockSubmitButton = false;
       if (this.mode === this.ADD_NEW_CARD) {
         // console.log('add', submitData);
         addScaleInfo(submitData).then(() => {
+          this.lockSubmitButton = false;
           Bus.$emit(this.UPDATE_CASE_INFO);
           this.closePanel();
         }, this._handleError);
@@ -529,6 +529,7 @@ export default {
       } else if (this.mode === this.EDIT_CURRENT_CARD) {
         // console.log('modify', submitData);
         modifyScaleInfo(submitData).then(() => {
+          this.lockSubmitButton = false;
           Bus.$emit(this.UPDATE_CASE_INFO);
           this.closePanel();
         }, this._handleError);
