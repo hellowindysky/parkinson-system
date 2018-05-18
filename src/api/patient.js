@@ -657,6 +657,34 @@ export function deletePreEvaluation(preEvaluation) {
   return encapsulatePromise(url, request);
 };
 
+// 术前评估 根据评估时间查询非运动症状量表分数量表分数
+export function getEvaluationPreopsScale(preEvaluation) {
+  /**
+   * preEvaluation $obj 入参
+   * preEvaluation.patientId
+   * preEvaluation.patientCaseId
+   * preEvaluation.checkTime 评估时间
+   */
+  var request = Object.assign({}, getCommonRequest(), preEvaluation);
+  var url = 'pdms/queryPatientPreopsScale';
+
+  return encapsulatePromise(url, request);
+};
+
+// 术前评估 根据评估时间查询运动症状量表分数
+export function getEvaluationMdsScale(preEvaluation) {
+  /**
+   * preEvaluation $obj 入参
+   * preEvaluation.patientId
+   * preEvaluation.patientCaseId
+   * preEvaluation.checkTime 评估时间
+   */
+  var request = Object.assign({}, getCommonRequest(), preEvaluation);
+  var url = 'pdms/queryMdsScale';
+
+  return encapsulatePromise(url, request);
+};
+
 // 新增手术方案
 export function addSurgicalMethod(surgicalMethod) {
   var request = Object.assign({}, getCommonRequest());

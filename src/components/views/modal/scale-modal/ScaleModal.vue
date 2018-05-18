@@ -199,7 +199,7 @@
       <div v-for="(item, index) in targetScale.questions" class="scale-questions" v-show="(item.parentId ? checkQuestionListIsShow(item.parentId, index) : true) && quicklyMode === false"
         :id="'questions_' + index" :style="{'padding-left': item.questionLevel? item.questionLevel*20 + 30 + 'px':'30px'}">
         <p class="question-title" v-html="item.subjectName" 
-        :class="{'notice-empty': !copyInfo.patientOptions[index].scaleOptionId && mode === EDIT_CURRENT_CARD}"></p>
+        :class="{'notice-empty': !(copyInfo.patientOptions[index].scaleOptionId || copyInfo.patientOptions[index].optionPoint || copyInfo.patientOptions[index].remarks) && mode === EDIT_CURRENT_CARD}"></p>
         <el-checkbox-group v-if="(item.questionType===0 || item.questionType===1) && item.multipleChoose === 1"
           class="question-body" :key="index" v-model="copyInfo.patientOptions[index].scaleOptionId">
           <el-checkbox class="question-selection" v-for="(option, i) in item.options"
@@ -647,7 +647,8 @@ export default {
                 targetOptionId = option.scaleOptionId;
               }
               remarks = answer.remarks ? answer.remarks : '';
-              optionPoint = answer.optionPoint ? answer.optionPoint : '';
+              // v2.3.2修改 之前版本optionPoint为0的时候设置为''的原因未知
+              optionPoint = answer.optionPoint || answer.optionPoint === 0 ? answer.optionPoint : '';
             }
           }
         }
@@ -852,11 +853,7 @@ export default {
     },
     // 编辑模式下 跳转至第一道未答题目
     scrollToQuestion() {
-      this.$confirm('是否需要定位到未作答的题目?', '提示', {
-        confirmButtonText: '是',
-        cancelButtonText: '否',
-        type: 'warning'
-      }).then(() => {
+      Bus.$on(this.CONFIRM, () => {
         // 跳转到未答题目
         const container = this.$refs.scrollArea;
         let firstLevelSelect = [];  // 选中的父级题目集合，此处为包含嵌套题目的量表做特殊处理，目前只考虑存在二级题目的情况，由于题目嵌套格式V2.4.0有所修改，所以此处不再进一步完善
@@ -875,7 +872,11 @@ export default {
             firstLevelSelect.push(this.targetScale.questions[i].scaleInfoId);
           }
         }
+
+        Bus.$off(this.CONFIRM);
       });
+
+      Bus.$emit(this.REQUEST_CONFIRMATION, '提示', '是否需要定位到未作答的题目?', '是', '否');
     }
   },
   mounted() {
