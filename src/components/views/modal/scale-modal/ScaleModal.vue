@@ -199,7 +199,7 @@
       <div v-for="(item, index) in targetScale.questions" class="scale-questions" v-show="(item.parentId ? checkQuestionListIsShow(item.parentId, index) : true) && quicklyMode === false"
         :id="'questions_' + index" :style="{'padding-left': item.questionLevel? item.questionLevel*20 + 30 + 'px':'30px'}">
         <p class="question-title" v-html="item.subjectName" 
-        :class="{'notice-empty': !copyInfo.patientOptions[index].scaleOptionId && mode === EDIT_CURRENT_CARD}"></p>
+        :class="{'notice-empty': !(copyInfo.patientOptions[index].scaleOptionId || copyInfo.patientOptions[index].optionPoint || copyInfo.patientOptions[index].remarks) && mode === EDIT_CURRENT_CARD}"></p>
         <el-checkbox-group v-if="(item.questionType===0 || item.questionType===1) && item.multipleChoose === 1"
           class="question-body" :key="index" v-model="copyInfo.patientOptions[index].scaleOptionId">
           <el-checkbox class="question-selection" v-for="(option, i) in item.options"
