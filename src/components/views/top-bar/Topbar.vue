@@ -473,8 +473,8 @@ export default {
     position: absolute;
     top: @header-height;
     left: 0;
-    padding: 10px 0;
-    width: 700px;
+    padding: 10px 10px 10px 0;
+    width: 690px;
     background-color: rgba(24,34,48,0.95);
     color: #fff;
     font-size: 0;
