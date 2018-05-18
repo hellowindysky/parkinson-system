@@ -489,7 +489,7 @@ export default {
       margin: 5px 0;
       padding-left: 30px;
       width: 100%;
-      height: 40px;
+      height: auto;
       line-height: 40px;
       box-sizing: border-box;
       text-align: left;
