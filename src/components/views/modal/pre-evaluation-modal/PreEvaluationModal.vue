@@ -1115,6 +1115,11 @@ export default {
                 }
               }
             }
+            this.$message({
+              message: '导入成功',
+              type: 'success',
+              duration: 2000
+            });
           }
         });
         getEvaluationMdsScale(params).then((data) => {
@@ -1129,6 +1134,11 @@ export default {
             let preopsMotorScaleList = this.copyInfo.preopsMotorDTO.preopsMotorScaleList;
             preopsMotorScaleList[0].scaleScoreBefore = data['1'];
             preopsMotorScaleList[0].scaleScoreAfter = data['2'];
+            this.$message({
+              message: '导入成功',
+              type: 'success',
+              duration: 2000
+            });
           }
         });
         Bus.$off(this.CONFIRM);

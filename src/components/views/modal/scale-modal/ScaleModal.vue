@@ -852,11 +852,7 @@ export default {
     },
     // 编辑模式下 跳转至第一道未答题目
     scrollToQuestion() {
-      this.$confirm('是否需要定位到未作答的题目?', '提示', {
-        confirmButtonText: '是',
-        cancelButtonText: '否',
-        type: 'warning'
-      }).then(() => {
+      Bus.$on(this.CONFIRM, () => {
         // 跳转到未答题目
         const container = this.$refs.scrollArea;
         let firstLevelSelect = [];  // 选中的父级题目集合，此处为包含嵌套题目的量表做特殊处理，目前只考虑存在二级题目的情况，由于题目嵌套格式V2.4.0有所修改，所以此处不再进一步完善
@@ -875,7 +871,11 @@ export default {
             firstLevelSelect.push(this.targetScale.questions[i].scaleInfoId);
           }
         }
+
+        Bus.$off(this.CONFIRM);
       });
+
+      Bus.$emit(this.REQUEST_CONFIRMATION, '提示', '是否需要定位到未作答的题目?', '是', '否');
     }
   },
   mounted() {
