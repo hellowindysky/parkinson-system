@@ -50,16 +50,16 @@
                         <div class="tags-item" v-for="(subItem,subIndex) in middleItem.fieldDataP" :key="subIndex">
                           <el-tag
                            v-if="subItem.checked"
-                           @close="tagClose(subItem)"
+                           @close="tagClose(subItem,'parent')"
                            :closable="true">
                             {{subItem.cnFieldName}}
                           </el-tag>
                           <div class="tagsbox-subItem">
-                            <span class="turning" v-if="subItem.fieldDataS.length">∟</span>
+                            <span class="turning" v-if="showTurning(subItem.fieldDataS)">∟</span>
                             <el-tag
                              v-for="(fourItem,fourIndex) in subItem.fieldDataS" :key="fourIndex"
                              v-if="fourItem.checked"
-                             @close="tagClose(fourItem)"
+                             @close="tagClose(fourItem,'son')"
                              :closable="true">
                               {{fourItem.cnFieldName}}
                             </el-tag>
@@ -109,7 +109,8 @@
                             <el-checkbox
                              v-for="(fourItem,fourIndex) in subItem.fieldDataS" :key="fourIndex"
                              v-model="fourItem.checked"
-                             @change="checkboxChange(fourItem, 'son')">
+                             @change="checkboxChange(fourItem, 'son')"
+                             :disabled="!subItem.checked">
                               {{fourItem.cnFieldName}}
                             </el-checkbox>
                           </div>
@@ -202,7 +203,7 @@ export default {
       vueCopy(keXuanZiDuan, this.keXuanZiDuan);
     },
     getWantedFields(opts, arr) {
-      // 从obj中得到符合opts条件的数据
+      // 从arr中得到符合opts条件的数据
       arr = Array.isArray(arr) ? arr : [];
       let fields = [];
       if (opts.hasOwnProperty('pid')) {
@@ -216,26 +217,46 @@ export default {
       };
       return fields;
     },
-    checkboxChange(Obj) {
-      console.log(Obj);
-    },
-    tagClose(item) {
-      item.checked = false;
-    },
-    reset() {
-      this.keXuanZiDuan.forEach((item) => {
-        if (item.category) {
-          item.category.forEach((middItem) => {
-            if (middItem.types) {
-              middItem.types.forEach((subItem) => {
-                if (subItem.checked) {
-                  subItem.checked = false;
-                }
-              });
+    checkboxChange(obj, level) {
+      if (level === 'parent') {
+        if (obj.checked === false) {
+          obj.fieldDataS.forEach((item) => {
+            if (item.checked) {
+              item.checked = false;
             }
           });
         }
-      });
+      }
+    },
+    tagClose(obj, level) {
+      obj.checked = false;
+      if (level === 'parent') {
+        if (obj.checked === false) {
+          obj.fieldDataS.forEach((item) => {
+            if (item.checked) {
+              item.checked = false;
+            }
+          });
+        }
+      }
+    },
+    reset() {
+      // this.keXuanZiDuan.forEach((itemF) => {
+      //   //
+      // });
+      // this.keXuanZiDuan.forEach((item) => {
+      //   if (item.category) {
+      //     item.category.forEach((middItem) => {
+      //       if (middItem.types) {
+      //         middItem.types.forEach((subItem) => {
+      //           if (subItem.checked) {
+      //             subItem.checked = false;
+      //           }
+      //         });
+      //       }
+      //     });
+      //   }
+      // });
     },
     editTemplate(index) {
       this.$set(this.daoChuMuBan[index], 'mode', this.EDITING_MODE);
@@ -252,6 +273,15 @@ export default {
     closeModal() {
       //
       Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
+    },
+    showTurning(fields) {
+      let flag = false;
+      fields.forEach((item) => {
+        if (item.checked) {
+          flag = true;
+        }
+      });
+      return flag;
     },
     updateScrollbar() {
       this.$nextTick(() => {
@@ -282,7 +312,7 @@ export default {
     this.updateScrollbar();
     this.initChoiceField_3();
     setTimeout(() => {
-      // console.log(this.keXuanZiDuan);
+      console.log(this.keXuanZiDuan);
     }, 2000);
   }
 };

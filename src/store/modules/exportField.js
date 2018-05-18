@@ -1,13 +1,21 @@
 import { queryExportField } from 'api/patient.js';
 import * as types from '../mutation_types';
 
+var transfer = function(res) {
+  res = Array.isArray(res) ? res : [];
+  res.forEach((item) => {
+    item.checked = false;
+  });
+  return res;
+};
+
 const state = {
   exportFields: []
 };
 
 const getters = {
   totalExportFields(state) {
-    return state.exportFields;
+    return transfer(state.exportFields);
   }
 };
 
