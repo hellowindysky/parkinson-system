@@ -647,7 +647,8 @@ export default {
                 targetOptionId = option.scaleOptionId;
               }
               remarks = answer.remarks ? answer.remarks : '';
-              optionPoint = answer.optionPoint ? answer.optionPoint : '';
+              // v2.3.2修改 之前版本optionPoint为0的时候设置为''的原因未知
+              optionPoint = answer.optionPoint || answer.optionPoint === 0 ? answer.optionPoint : '';
             }
           }
         }
