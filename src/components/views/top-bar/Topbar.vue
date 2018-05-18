@@ -510,7 +510,7 @@ export default {
     }
     .sub-item {
       padding-left: 50px;
-      height: 35px;
+      height: auto;
       line-height: 35px;
     }
     .seperate-line {
