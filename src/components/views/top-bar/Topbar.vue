@@ -473,8 +473,8 @@ export default {
     position: absolute;
     top: @header-height;
     left: 0;
-    padding: 10px 10px 10px 0;
-    width: 690px;
+    padding: 10px 0;
+    width: 700px;
     background-color: rgba(24,34,48,0.95);
     color: #fff;
     font-size: 0;
@@ -487,7 +487,7 @@ export default {
     .item {
       display: block;
       margin: 5px 0;
-      padding: 7px 0 7px 30px;
+      padding: 7px 10px 7px 30px;
       width: 100%;
       height: auto;
       line-height: 22px;
@@ -510,7 +510,7 @@ export default {
     }
     .sub-item {
       height: auto;
-      padding: 7px 0 7px 50px;
+      padding: 7px 10px 7px 50px;
       line-height: 20px;
     }
     .seperate-line {
