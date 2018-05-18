@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="diagnostic-detail-wrapper" :class="{'slide-outside':!displayDetail, 'with-animation':withAnimation}">
+  <div class="diagnostic-detail-wrapper" :class="{'slide-outside':!displayDetail, 'with-animation':withAnimation}" ref="diagnosticWrapper">
     <div class="title-bar">
       <h2 class="title">{{title}}</h2>
       <div class="button back-button" @click="goBack" v-show="!isNewCase">返回</div>
@@ -265,6 +265,15 @@ export default {
         this.$refs.diagnosticBasic.$emit(this.EDIT);
       } else {
         var patientId = this.$route.params.id;
+
+        // 请求时间较长 显示Loading动画
+        let options = {
+          target: this.$refs.diagnosticWrapper,
+          text: '正在加载',
+          lock: true
+        };
+        let loadingInstance = this.$loading(options);
+
         getPatientCase(patientId, this.caseId).then((data) => {
           this.existed = true;
           this.caseDetail = Object.assign({}, data.patientCase);
@@ -274,9 +283,13 @@ export default {
           } else if (data.patientCase.archiveStatus === 2) {
             this.hasBeenArchived = false;
           }
+
+          loadingInstance.close();
         }, (error) => {
           console.log(error);
           this.hasBeenArchived = true;
+
+          loadingInstance.close();
         });
       }
       this.updateScrollbar();

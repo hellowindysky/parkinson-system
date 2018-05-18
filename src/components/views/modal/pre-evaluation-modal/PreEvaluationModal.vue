@@ -1099,7 +1099,6 @@ export default {
           checkTime: Util.simplifyDate(this.copyInfo.preopsTime)
         };
         getEvaluationPreopsScale(params).then((data) => {
-          console.log(data);
           if (!data) {
             this.$message({
               message: '没有符合条件的数据',
@@ -1123,7 +1122,6 @@ export default {
           }
         });
         getEvaluationMdsScale(params).then((data) => {
-          console.log(data);
           if (!data) {
             this.$message({
               message: '没有符合条件的数据',
