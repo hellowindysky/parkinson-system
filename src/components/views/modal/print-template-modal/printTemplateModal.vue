@@ -59,7 +59,7 @@
                             <el-tag
                              v-for="(fourItem,fourIndex) in subItem.fieldDataS" :key="fourIndex"
                              v-if="fourItem.checked"
-                             @close="tagClose(fourItem,'son')"
+                             @close="tagClose(fourItem,'son',subItem)"
                              :closable="true">
                               {{fourItem.cnFieldName}}
                             </el-tag>
@@ -109,8 +109,7 @@
                             <el-checkbox
                              v-for="(fourItem,fourIndex) in subItem.fieldDataS" :key="fourIndex"
                              v-model="fourItem.checked"
-                             @change="checkboxChange(fourItem, 'son')"
-                             :disabled="!subItem.checked">
+                             @change="checkboxChange(fourItem, 'son', subItem)">
                               {{fourItem.cnFieldName}}
                             </el-checkbox>
                           </div>
@@ -170,7 +169,7 @@ export default {
     }
   },
   methods: {
-    initChoiceField_3() {
+    initChoiceField() {
       // 导出字段所有类别名称（标题）的集合
       let exportList = deepCopy(this.exportList); // 分级标题
       let totalExportFields = deepCopy(this.totalExportFields);
@@ -217,7 +216,7 @@ export default {
       };
       return fields;
     },
-    checkboxChange(obj, level) {
+    checkboxChange(obj, level, objP) {
       if (level === 'parent') {
         if (obj.checked === false) {
           obj.fieldDataS.forEach((item) => {
@@ -225,10 +224,28 @@ export default {
               item.checked = false;
             }
           });
+        } else if (obj.checked === true) {
+          obj.fieldDataS.forEach((item) => {
+            if (item.checked === false) {
+              item.checked = true;
+            }
+          });
+        }
+      } else if (level === 'son') {
+        for (let item of objP.fieldDataS) {
+          if (item.checked === true) {
+            if (objP.checked === false) {
+              objP.checked = true;
+            }
+            break;
+          } else if (item.checked === false) {
+            objP.checked = false;
+            continue;
+          }
         }
       }
     },
-    tagClose(obj, level) {
+    tagClose(obj, level, objP) {
       obj.checked = false;
       if (level === 'parent') {
         if (obj.checked === false) {
@@ -238,25 +255,35 @@ export default {
             }
           });
         }
+      } else if (level === 'son') {
+        for (let item of objP.fieldDataS) {
+          if (item.checked === true) {
+            if (objP.checked === false) {
+              objP.checked = true;
+            }
+            break;
+          } else if (item.checked === false) {
+            objP.checked = false;
+            continue;
+          }
+        }
       }
     },
     reset() {
-      // this.keXuanZiDuan.forEach((itemF) => {
-      //   //
-      // });
-      // this.keXuanZiDuan.forEach((item) => {
-      //   if (item.category) {
-      //     item.category.forEach((middItem) => {
-      //       if (middItem.types) {
-      //         middItem.types.forEach((subItem) => {
-      //           if (subItem.checked) {
-      //             subItem.checked = false;
-      //           }
-      //         });
-      //       }
-      //     });
-      //   }
-      // });
+      this.keXuanZiDuan.forEach((itemF) => {
+        itemF.category.forEach((itemS) => {
+          itemS.fieldDataP.forEach((itemT) => {
+            if (itemT.checked === true) {
+              itemT.checked = false;
+            }
+            itemT.fieldDataS.forEach((fourItem) => {
+              if (fourItem.checked === true) {
+                fourItem.checked = false;
+              }
+            });
+          });
+        });
+      });
     },
     editTemplate(index) {
       this.$set(this.daoChuMuBan[index], 'mode', this.EDITING_MODE);
@@ -276,11 +303,12 @@ export default {
     },
     showTurning(fields) {
       let flag = false;
-      fields.forEach((item) => {
+      for (let item of fields) {
         if (item.checked) {
           flag = true;
+          break;
         }
-      });
+      }
       return flag;
     },
     updateScrollbar() {
@@ -310,9 +338,9 @@ export default {
   },
   mounted() {
     this.updateScrollbar();
-    this.initChoiceField_3();
+    this.initChoiceField();
     setTimeout(() => {
-      console.log(this.keXuanZiDuan);
+      // console.log(this.keXuanZiDuan);
     }, 2000);
   }
 };
