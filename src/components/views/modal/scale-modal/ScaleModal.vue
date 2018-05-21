@@ -330,20 +330,25 @@ export default {
       this.updateScrollbar();
     },
     queryScaleSearch(queryString, cb) {
+      // v2.3.1 筛选非废除量表
+      let scalesIsUse = this.allScale.filter((item) => {
+        return item.isUse === 1;
+      });
+
       let allScale = [];
       let subjectId = this.$store.state.subjectId;
       this.scaleList = [];
 
       // 根据量表分类判断可选择的量表数组
       if (this.scaleCategory === 1) {
-        this.allScale.map((item) => {
+        scalesIsUse.map((item) => {
           if (item.gaugeTaskType === subjectId) {
             this.scaleList.push(item);
             allScale.push({'value': item.gaugeName});
           }
         });
       } else {
-        this.allScale.map((item) => {
+        scalesIsUse.map((item) => {
           if (item.gaugeTaskType === 0) {
             this.scaleList.push(item);
             allScale.push({'value': item.gaugeName});
