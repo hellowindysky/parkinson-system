@@ -21,9 +21,9 @@
                   </span>
                 </div>
                 <div class="item-btns">
-                  <el-button type="danger" size="small" v-if="item.mode===READING_MODE" @click.stop="">删除</el-button>
+                  <el-button type="danger" size="small" v-if="item.mode===READING_MODE" @click.stop="removeTemplate">删除</el-button>
                   <el-button type="primary" size="small" v-if="item.mode===EDITING_MODE" @click.stop="canel(index)">取消</el-button>
-                  <el-button type="warning" size="small" v-if="item.mode===EDITING_MODE" @click.stop="">保存</el-button>
+                  <el-button type="warning" size="small" v-if="item.mode===EDITING_MODE" @click.stop="saveTemplate">保存</el-button>
                   <el-button type="warning" size="small" v-if="item.mode===READING_MODE" @click.stop="editTemplate(index)">编辑</el-button>
                 </div>
               </li>
@@ -374,6 +374,12 @@ export default {
           });
         });
       });
+    },
+    removeTemplate() {
+      //
+    },
+    saveTemplate() {
+      //
     },
     editTemplate(index) {
       this.toggleTemp(index);
