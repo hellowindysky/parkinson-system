@@ -9,20 +9,22 @@
           <p class="export-title">导出模板<i class="icon iconfont icon-plus" @click="addTemp"></i></p>
           <div class="export-box" ref="scrollArea">
             <ul class="temp-middle">
-              <li class="item" v-for="(item,index) in daoChuMuBan" :key="index">
+              <li class="item" v-for="(item,index) in daoChuMuBan" :key="index"
+               :class="{'active':index===activeIndex}"
+               @click="toggleTemp(index)">
                 <div class="item-left">
                   <span class="item-title" v-if="item.mode===READING_MODE">
-                    <span>{{item.title}}</span>
+                    <span>{{item.templateName}}</span>
                   </span>
                   <span v-else>
-                    <el-input v-model="item.title" placeholder="请输入模板名称"></el-input>
+                    <el-input v-model="item.templateName" placeholder="请输入模板名称"></el-input>
                   </span>
                 </div>
                 <div class="item-btns">
-                  <el-button type="danger" size="small" v-if="item.mode===READING_MODE" @click="canel(index)">删除</el-button>
-                  <el-button type="primary" size="small" v-if="item.mode===EDITING_MODE" @click="canel(index)">取消</el-button>
-                  <el-button type="warning" size="small" v-if="item.mode===EDITING_MODE">保存</el-button>
-                  <el-button type="warning" size="small" v-if="item.mode===READING_MODE" @click="editTemplate(index)">编辑</el-button>
+                  <el-button type="danger" size="small" v-if="item.mode===READING_MODE" @click.stop="">删除</el-button>
+                  <el-button type="primary" size="small" v-if="item.mode===EDITING_MODE" @click.stop="canel(index)">取消</el-button>
+                  <el-button type="warning" size="small" v-if="item.mode===EDITING_MODE" @click.stop="">保存</el-button>
+                  <el-button type="warning" size="small" v-if="item.mode===READING_MODE" @click.stop="editTemplate(index)">编辑</el-button>
                 </div>
               </li>
             </ul>
@@ -51,7 +53,7 @@
                           <el-tag
                            v-if="subItem.checked"
                            @close="tagClose(subItem,'parent')"
-                           :closable="true">
+                           :closable="!isDisable(activeIndex)">
                             {{subItem.cnFieldName}}
                           </el-tag>
                           <div class="tagsbox-subItem">
@@ -60,7 +62,7 @@
                              v-for="(fourItem,fourIndex) in subItem.fieldDataS" :key="fourIndex"
                              v-if="fourItem.checked"
                              @close="tagClose(fourItem,'son',subItem)"
-                             :closable="true">
+                             :closable="!isDisable(activeIndex)">
                               {{fourItem.cnFieldName}}
                             </el-tag>
                           </div>
@@ -76,7 +78,7 @@
           </div>
 
           <div class="reset-btn">
-            <el-button type="primary" size="large" @click="reset">重置</el-button>
+            <el-button type="primary" size="large" @click="resetChoice">重置</el-button>
           </div>
 
         </div>
@@ -101,7 +103,8 @@
                         <div class="checkbox-item" v-for="(subItem,subIndex) in middleItem.fieldDataP" :key="subIndex">
                           <el-checkbox
                            v-model="subItem.checked"
-                           @change="checkboxChange(subItem, 'parent')">
+                           @change="checkboxChange(subItem, 'parent')"
+                           :disabled="isDisable(activeIndex)">
                             {{subItem.cnFieldName}}
                           </el-checkbox>
                           <div class="checkbox-subItem">
@@ -109,7 +112,8 @@
                             <el-checkbox
                              v-for="(fourItem,fourIndex) in subItem.fieldDataS" :key="fourIndex"
                              v-model="fourItem.checked"
-                             @change="checkboxChange(fourItem, 'son', subItem)">
+                             @change="checkboxChange(fourItem, 'son', subItem)"
+                             :disabled="isDisable(activeIndex)">
                               {{fourItem.cnFieldName}}
                             </el-checkbox>
                           </div>
@@ -138,23 +142,14 @@ import { mapGetters } from 'vuex';
 import Util from 'utils/util.js';
 import Ps from 'perfect-scrollbar';
 import {deepCopy, vueCopy } from 'utils/helper';
+import { queryExportTemplate } from 'api/patient.js';
 export default {
   data() {
     return {
+      activeIndex: 1,
       activeName: '1',
       activeNames: ['3', '4'],
-      daoChuMuBan: [
-        {
-          mode: this.READING_MODE,
-          title: '模板发发发'
-        }
-      ],
-      yiXuanZiDuanGeRen: [
-        { name: '姓名'},
-        { name: '性别'},
-        { name: '年龄'},
-        { name: '身份证号'}
-      ],
+      daoChuMuBan: [],
       keXuanZiDuan: []
     };
   },
@@ -170,6 +165,7 @@ export default {
   },
   methods: {
     initChoiceField() {
+      // 加载所有可导出字段
       // 导出字段所有类别名称（标题）的集合
       let exportList = deepCopy(this.exportList); // 分级标题
       let totalExportFields = deepCopy(this.totalExportFields);
@@ -215,6 +211,100 @@ export default {
         });
       };
       return fields;
+    },
+    queryTemplate() {
+      // 查询所有导出模板
+      queryExportTemplate().then((res) => {
+        res.push(
+          {
+            templateId: 1,
+            templateName: '张艺的模板',
+            templateExportFields: [
+              {
+                id: 33,
+                templateId: 1,
+                templateName: '张艺的模板',
+                exportGroupNo: 1,
+                exportEnField: 'DIAGMODE',
+                exportCnField: '初诊方式',
+                exportTableName: 'tc_patient_info',
+                exportFid: 3,
+                exportGid: 1
+              },
+              {
+                id: 34,
+                templateId: 1,
+                templateName: '张艺的模板',
+                exportEnField: '',
+                exportCnField: '初诊药物治疗',
+                exportTableName: '',
+                exportFid: 3,
+                exportGid: 1
+              },
+              {
+                id: 35,
+                templateId: 1,
+                templateName: '张艺的模板',
+                exportGroupNo: 5,
+                exportEnField: 'MEDICINE_NAME',
+                exportCnField: '药品名',
+                exportTableName: 'tc_patient_first_visit_treatment',
+                exportFid: 3,
+                exportGid: 1,
+                exportPid: 34
+              }
+            ]
+          }
+        );
+        res.forEach((item) => {
+          item.mode = this.READING_MODE;
+        });
+        this.daoChuMuBan = res;
+        // vueCopy(res, this.daoChuMuBan);
+        this.initTemplate(this.activeIndex);
+        // console.log(res);
+      }, (error) => {
+        console.error(error);
+      });
+    },
+    initTemplate(index) {
+      // 把当前模板显示出来
+      if (this.daoChuMuBan.length === 0) {
+        return;
+      }
+      let temp = this.daoChuMuBan[index].templateExportFields;
+      this.keXuanZiDuan.forEach((itemF) => {
+        itemF.category.forEach((itemS) => {
+          itemS.fieldDataP.forEach((itemT) => {
+            for (let item of temp) {
+              if (item.id === itemT.id) {
+                itemT.checked = true;
+              }
+            }
+            itemT.fieldDataS.forEach((fourItem) => {
+              for (let item of temp) {
+                if (item.id === fourItem.id) {
+                  fourItem.checked = true;
+                }
+              }
+            });
+          });
+        });
+      });
+    },
+    toggleTemp(index) {
+      this.activeIndex = index;
+      this.resetChoice();
+      this.initTemplate(this.activeIndex);
+    },
+    isDisable(index) {
+      if (this.daoChuMuBan.length === 0) {
+        return true;
+      }
+      if (this.daoChuMuBan[index] && this.daoChuMuBan[index].mode === this.READING_MODE) {
+        return true;
+      }
+      return false;
     },
     checkboxChange(obj, level, objP) {
       if (level === 'parent') {
@@ -269,7 +359,7 @@ export default {
         }
       }
     },
-    reset() {
+    resetChoice() {
       this.keXuanZiDuan.forEach((itemF) => {
         itemF.category.forEach((itemS) => {
           itemS.fieldDataP.forEach((itemT) => {
@@ -286,16 +376,37 @@ export default {
       });
     },
     editTemplate(index) {
+      this.toggleTemp(index);
       this.$set(this.daoChuMuBan[index], 'mode', this.EDITING_MODE);
     },
     canel(index) {
+      if (!this.daoChuMuBan[index].hasOwnProperty('templateId')) {
+        this.daoChuMuBan.splice(index, 1);
+        this.resetChoice();
+        this.initTemplate(this.activeIndex);
+        return;
+      }
+      this.toggleTemp(index);
       this.$set(this.daoChuMuBan[index], 'mode', this.READING_MODE);
     },
     addTemp() {
+      for (let item of this.daoChuMuBan) {
+        if (!item.hasOwnProperty('templateId')) {
+          this.$message({
+            message: '已添加新模板',
+            type: 'warning'
+          });
+          return;
+        }
+      }
       this.daoChuMuBan.unshift({
         mode: this.EDITING_MODE,
-        title: ''
+        templateName: '',
+        templateExportFields: []
       });
+      this.activeIndex = 0;
+      this.resetChoice();
+      // console.log(this.daoChuMuBan);
     },
     closeModal() {
       //
@@ -339,6 +450,7 @@ export default {
   mounted() {
     this.updateScrollbar();
     this.initChoiceField();
+    this.queryTemplate();
     setTimeout(() => {
       // console.log(this.keXuanZiDuan);
     }, 2000);
@@ -389,11 +501,10 @@ export default {
       background-color: #f6f7fb;
       .export-temp-area {
         font-size: @normal-font-size;
-        width: 22%;
+        width: 24%;
         background-color: #f6f7fb;
         height: 100%;
         float: left;
-        margin-left: 1%;
         ul {
           margin: 0;
           list-style: none;
@@ -431,8 +542,10 @@ export default {
               margin-bottom: 2px;
               box-sizing: border-box;
               position: relative;
-              &:hover {
-                background-color: #ebebeb;
+              cursor: pointer;
+              &.active {
+                background-color: #e4e4e4;
+                transition-duration: 300ms;
               }
               .item-left {
                 display: inline-block;

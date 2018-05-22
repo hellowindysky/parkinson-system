@@ -1064,6 +1064,13 @@ export function queryExportField() {
   return encapsulatePromise(url, request);
 };
 
+// 查询导出模板
+export function queryExportTemplate() {
+  var request = Object.assign({}, getCommonRequest());
+  var url = '/pdms/queryTemplateExport';
+  return encapsulatePromise(url, request);
+};
+
 // 新增物理治疗
 export function addPhysiontherapy(patientPhytheTms) {
   var request = Object.assign({}, getCommonRequest());
