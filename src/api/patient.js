@@ -584,6 +584,17 @@ export function getPatientCase(patientId, patientCaseId) {
   return encapsulatePromise(url, request);
 };
 
+// // 获取姿势步态详情
+// export function getPatientCase() {
+//   var patientIdNum = parseInt(patientId, 10);
+//   var request = Object.assign({}, getCommonRequest());
+//   request.patientId = patientIdNum;
+//   request.patientCaseId = patientCaseId;
+//   var url = '/pdms/queryPatientGaitCard';
+
+//   return encapsulatePromise(url, request);
+// };
+
 // 将诊断信息进行归档
 export function archivePatientCase(patientCaseId) {
   var request = Object.assign({}, getCommonRequest());
@@ -979,6 +990,33 @@ export function deleteSleepMonitoring(sleepMonitoringInfo) {
   var request = Object.assign({}, getCommonRequest());
   request.patientNerveSleep = sleepMonitoringInfo;
   var url = '/pdms/delPatientNerveSleep';
+
+  return encapsulatePromise(url, request);
+};
+
+// 新增接入设备监测
+export function addPatientGait(patientGait) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientImageReq = patientGait;
+  var url = '/pdms/addOrUpdatePatientGait';
+
+  return encapsulatePromise(url, request);
+};
+
+// 修改接入设备监测
+export function modifyPatientGait(patientGait) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientImageReq = patientGait;
+  var url = '/pdms/addOrUpdatePatientGait';
+
+  return encapsulatePromise(url, request);
+};
+
+// 删除接入设备监测
+export function deletePatientGait(patientGait) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientImageReq = patientGait;
+  var url = '/pdms/deletePatientGait';
 
   return encapsulatePromise(url, request);
 };
