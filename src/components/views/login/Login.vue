@@ -7,38 +7,52 @@
       <h3 class="subtitle"></h3>
 
       <div class="tabs-wrapper">
-        <span class="tab tab-place-1" v-if="loginType!==3 && isAlone===false" :class="{'current-tab':loginType===1}" @click="accountLogin">用户名密码</span>
-        <span class="tab tab-place-2" v-if="loginType!==3 && isAlone===false" :class="{'current-tab':loginType===2}" @click="dynamicPassword">动态密码</span>
-        <div class="tab-bottom-bar" v-if="isAlone===false" :class="tabPlaceClass"></div>
+        <span class="tab tab-place-1" v-if="loginType!==3 && loginType !== 4 " :class="{'current-tab':loginType===1}" @click="accountLogin">用户名密码</span>
+        <span class="tab tab-place-2" v-if="loginType!==3 && loginType !== 4" :class="{'current-tab':loginType===2}" @click="dynamicPassword">动态密码</span>
+        <div class="tab-bottom-bar" :class="tabPlaceClass"></div>
       </div>
       <el-form class="input-wrapper" v-if="!mustResetPassword" :model="loginForm" :rules="rules" ref="loginForm" label-width="0">
-        <el-form-item prop="account">
+        <el-form-item prop="account" v-if="loginType!==4">
           <el-input class="round-input" clearable v-model="loginForm.account" auto-complete="off" :placeholder="holderText"
             @keyup.enter.native="submitForm" autofocus="autofocus"></el-input>
         </el-form-item>
-        <el-form-item prop="password" v-if="loginType===1">
+        <el-form-item prop="password" v-if="loginType===1 || loginType===5">
           <el-input class="round-input" clearable v-model="loginForm.password" type="password" auto-complete="new-password"
             placeholder="请输入6-16位数字和字母的密码" @keyup.enter.native="submitForm"></el-input>
         </el-form-item>
 
-        <el-form-item prop="identifyingCode" v-if="loginType===2 && isAlone===false">
+        <el-form-item prop="identifyingCode" v-if="loginType===2">
           <el-input class="round-input short" clearable v-model="loginForm.identifyingCode" auto-complete="new-password" placeholder="请输入短信验证码" @keyup.enter.native="submitForm" autofocus="autofocus"></el-input>
         <el-button class="button code-button" type="primary" @click="sendCodes" :disabled="codeButtonStatus===1">{{codeButtonText}}</el-button>
         </el-form-item>
 
         <el-form-item prop="identifyingCode" v-if="loginType===3">
-          <el-input class="round-input short" clearable v-model="loginForm.identifyingCode" auto-complete="new-password" placeholder="请输入短信验证码" @keyup.enter.native="submitForm" autofocus="autofocus"></el-input>
+          <el-input class="round-input short" clearable v-model="loginForm.identifyingCode" auto-complete="new-password" placeholder="请输入短信验证码" @keyup.enter.native="submitResetForm" autofocus="autofocus"></el-input>
           <el-button class="button code-button" type="primary" @click="sendCodes" :disabled="codeButtonStatus===1">{{codeButtonText}}</el-button>
         </el-form-item>
 
+        <el-form class="input-wrapper" v-if="loginType===4" :model="resetFormPassword" :rules="resetRulesPassword" ref="resetFormPassword" label-width="0">
+        <el-form-item prop="formNewPassword" v-if="loginType===4">
+          <el-input class="round-input" v-model="resetFormPassword.formNewPassword" type="password" auto-complete="new-password"
+            placeholder="请输入6-16位数字或字母的新密码" @keyup.enter.native="submitResetFormPassword"></el-input>
+          <div class="password-strength">{{passwordStrength}}</div>
+        </el-form-item>
+        <el-form-item prop="repeatedFormNewPassword" v-if="loginType===4">
+          <el-input class="round-input" clearable v-model="resetFormPassword.repeatedFormNewPassword" auto-complete="new-password" placeholder="请确认输入6-16位数字或字母的新密码" @keyup.enter.native="submitResetFormPassword" autofocus="autofocus"></el-input>
+          <div class="password-strength">{{passwordStrength}}</div>
+        </el-form-item>
+        </el-form>
+
         <el-form-item prop="remember">
-          <el-checkbox v-model="loginForm.remember"  v-if="loginType!==3" class="checkbox" label="记住用户名" name="type"></el-checkbox>
+          <el-checkbox v-model="loginForm.remember"  v-if="loginType!==3 && loginType !== 4" class="checkbox" label="记住用户名" name="type"></el-checkbox>
         </el-form-item>
         <el-form-item prop="verificationCode">
-          <span class="forget" type="primary" v-if="loginType!==3 && isAlone===false" :class="{'current-tab':loginType===3, display:none}" @click="forgetPassword">忘记密码</span>
+          <span class="forget" type="primary" v-if="loginType!==3 && loginType !== 4" :class="{'current-tab':loginType===3}" @click="forgetPassword">忘记密码</span>
         </el-form-item>
         <el-form-item>
-          <el-button class="button" type="primary" @click="submitForm">登 录</el-button>
+          <el-button class="button" type="primary" v-if="loginType===1 || loginType===2 || loginType===5" @click="submitForm">登 录</el-button>
+          <el-button class="button" type="primary" v-if="loginType===3" :class="{'current-tab':loginType===4}"  @click="submitForm">确定</el-button>
+          <el-button class="button" type="primary" v-if="loginType===4" :class="{'current-tab':loginType===4}" @click="submitResetFormPassword">确定</el-button>
         </el-form-item>
       </el-form>
 
@@ -83,7 +97,7 @@
 import md5 from 'md5';
 import { getLoginInfo } from 'api/login';
 import { setRequestToken, clearRequestToken } from 'api/common';
-import { sendVerificationCode, sendVerificationCodes, resetPassword } from 'api/user';
+import { sendVerificationCode, sendVerificationCodes, resetPassword, resetPasswordByIdentifyingCode } from 'api/user';
 import Bus from 'utils/bus';
 
 // import particles from 'views/login/particles/Particles';
@@ -91,6 +105,8 @@ import Bus from 'utils/bus';
 const ACCOUNT_LOGIN = 1;
 const DYNAMIC_PASSWORD = 2;
 const FORGET_PASSWORD = 3;
+const TO_CHANGE_PASSWORD = 4;
+const BACK_HOMEPAGE = 5;
 
 export default {
   name: 'login',
@@ -125,13 +141,16 @@ export default {
         } else if (strengthLevel > 0 && this.resetForm.newPassword !== '') {
           this.$refs.resetForm.validateField('repeatedNewPassword');
           callback();
+        } else if (strengthLevel > 0 && this.resetFormPassword.formNewPassword !== '') {
+          this.$refs.resetFormPassword.validateField('repeatedFormNewPassword');
+          callback();
         }
       }
     };
     var validateRepeatedNewPass = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请再次输入新密码'));
-      } else if (value !== this.resetForm.newPassword) {
+      } else if (value !== this.resetForm.newPassword && value !== this.resetFormPassword.formNewPassword) {
         callback(new Error('两次输入密码不一致!'));
       } else {
         callback();
@@ -185,12 +204,15 @@ export default {
         originalPassword: '',
         newPassword: '',
         repeatedNewPassword: '',
-        verificationCode: '',
-        identifyingCode: ''
+        verificationCode: ''
+      },
+      resetFormPassword: {
+        formNewPassword: '',
+        repeatedFormNewPassword: ''
       },
       rules: {
         account: [
-          { required: true, message: '请输入账号', trigger: 'change' },
+          { required: true, message: '请输入账号/手机号码', trigger: 'change' },
           { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
         ],
         password: [
@@ -214,6 +236,14 @@ export default {
         verificationCode: [
           {validator: validateVerificationCode, trigger: 'blur'}
         ]
+      },
+      resetRulesPassword: {
+        formNewPassword: [
+          {validator: validateNewPass, trigger: 'blur'}
+        ],
+        repeatedFormNewPassword: [
+          {validator: validateRepeatedNewPass, trigger: 'blur'}
+        ]
       }
     };
   },
@@ -226,20 +256,17 @@ export default {
         return true;
       }
     },
-    isHide() {
-      if (this.loginType === 3) {
-        return false;
-      }
-    },
     tabPlaceClass() {
-      if (this.loginType !== 3) {
+      if (this.loginType === 1 || this.loginType === 2) {
         return 'tab-place-' + this.loginType;
+      } else if (this.loginType === 5) {
+        return 'tab-place-1';
       } else {
         return 'tab-place-0';
       }
     },
     holderText() {
-      if (this.loginType === ACCOUNT_LOGIN) {
+      if (this.loginType === ACCOUNT_LOGIN || this.loginType === BACK_HOMEPAGE) {
         return '请输入您的睿云账号/手机号码';
       } else if (this.loginType === DYNAMIC_PASSWORD) {
         return '请输入您的手机号码';
@@ -295,6 +322,12 @@ export default {
     },
     forgetPassword() {
       this.loginType = FORGET_PASSWORD;
+    },
+    toChangePassword() {
+      this.loginType = TO_CHANGE_PASSWORD;
+    },
+    backHomepage() {
+      this.loginType = BACK_HOMEPAGE;
     },
     sendCode() {
       if (this.lockSendButton) {
@@ -354,6 +387,12 @@ export default {
         if (error.code === 32) {
           this.$message({
             message: '请等待足够时间后再发送验证码',
+            type: 'warning',
+            duration: 2000
+          });
+        } else if (error.code === 1) {
+          this.$message({
+            message: '您输入的手机号码不存在',
             type: 'warning',
             duration: 2000
           });
@@ -453,15 +492,29 @@ export default {
             var changePassword = data.user.changePassword;
             this.mustResetPassword = changePassword === 0;
 
-            if (!this.mustResetPassword) {
+            if (this.loginType === 3 && this.resetFormPassword.formNewPassword.length !== '' && this.resetFormPassword.repeatedFormNewPassword.length !== '') {
+              this.toChangePassword();
+            } else if (!this.mustResetPassword) {
               this.enterApp();
             }
 
           }, (error) => {
             this.lockSubmitButton = false;
-            if (error.code === 21) {
+            if (error.code === 21 && this.loginType === 1) {
               this.$message({
                 message: '用户名或密码错误',
+                type: 'warning',
+                duration: 2000
+              });
+            } else if (error.code === 21 && this.loginType === 2) {
+              this.$message({
+                message: '手机号码或者验证码错误',
+                type: 'warning',
+                duration: 2000
+              });
+            } else if (error.code === 21 && this.loginType === 3) {
+              this.$message({
+                message: '手机号码或者验证码错误',
                 type: 'warning',
                 duration: 2000
               });
@@ -489,6 +542,56 @@ export default {
               duration: 2000
             });
             this.enterApp();
+            this.lockSubmitButton = false;
+
+          }, (error) => {
+            if (error.code === 25) {
+              // 由于我们在前端就做了校验，所以正常情况下不会执行到这里
+              this.$message({
+                message: '当前密码输入错误',
+                type: 'warning',
+                duration: 2000
+              });
+            } else if (error.code === 33) {
+              this.$message({
+                message: '验证码输入错误或已失效',
+                type: 'warning',
+                duration: 2000
+              });
+            }
+            console.log(error);
+            this.lockSubmitButton = false;
+          });
+
+        } else {
+          console.log('input invalid');
+          this.lockSubmitButton = false;
+          return;
+        }
+      });
+    },
+    submitResetFormPassword() {
+      console.log('break');
+      if (this.lockSubmitButton) {
+        return;
+      }
+      this.lockSubmitButton = true;
+      this.$refs['resetFormPassword'].validate((valid) => {
+        console.log(valid);
+        // 校验字段之后，发送修改密码的请求，如果再返回正确，则跳转到系统
+        if (valid) {
+
+          resetPasswordByIdentifyingCode(this.resetFormPassword.formNewPassword).then(() => {
+            this.$message({
+              message: '已成功修改密码',
+              type: 'success',
+              duration: 2000
+            });
+            if (this.loginType === 4) {
+              this.backHomepage();
+            } else {
+              this.enterApp();
+            }
             this.lockSubmitButton = false;
 
           }, (error) => {
