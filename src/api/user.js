@@ -12,6 +12,14 @@ export function resetPassword(oldPassword, newPassword, verificationCode, verifi
   return encapsulatePromise(url, request);
 };
 
+export function resetPasswordByIdentifyingCode(newPassword) {
+  var request = Object.assign({}, getCommonRequest());
+  request.newPassword = newPassword;
+  var url = '/usermgr/modPasswordByIdentifyingCode';
+
+  return encapsulatePromise(url, request);
+};
+
 // 向手机发送短信验证码
 export function sendVerificationCode(verificationInfo) {
   var request = Object.assign({}, getCommonRequest());
