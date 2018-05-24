@@ -179,7 +179,8 @@
             </div>
             <div class="cell-input">
               <span class="field-value">
-                <el-select v-model="copyInfo.patientOptions[index].scaleOptionId" filterable placeholder="请选择">
+                <el-select v-model="copyInfo.patientOptions[index].scaleOptionId" filterable placeholder="请选择"
+                  :disabled='mode === VIEW_CURRENT_CARD'>
                   <el-option
                     v-for="option in item.options"
                     :key="option.scaleOptionId"
@@ -197,16 +198,29 @@
 
       <!-- 题目列表 -->
       <div v-for="(item, index) in targetScale.questions" class="scale-questions" v-show="(item.parentId ? checkQuestionListIsShow(item.parentId, index) : true) && quicklyMode === false"
-        :id="'questions_' + index" :style="{'padding-left': item.questionLevel? item.questionLevel*20 + 30 + 'px':'30px'}">
+        :id="'questions_' + index" :style="item.parentId ? 'padding-left: 50px;' : ''">
         <p class="question-title" v-html="item.subjectName" 
         :class="{'notice-empty': !(copyInfo.patientOptions[index].scaleOptionId || copyInfo.patientOptions[index].optionPoint || copyInfo.patientOptions[index].remarks) && mode === EDIT_CURRENT_CARD}"></p>
+
         <el-checkbox-group v-if="(item.questionType===0 || item.questionType===1) && item.multipleChoose === 1"
-          class="question-body" :key="index" v-model="copyInfo.patientOptions[index].scaleOptionId">
-          <el-checkbox class="question-selection" v-for="(option, i) in item.options"
-            :label="option.scaleOptionId" :key="i" :disabled="mode===VIEW_CURRENT_CARD">
-              {{option.optionName}}
-          </el-checkbox>
+          class="question-body" :key="index" v-model="copyInfo.patientOptions[item.answerIndex].scaleOptionId">
+          <div class="question-selection" v-for="(option, i) in item.options">
+            <el-checkbox 
+              :label="option.scaleOptionId" :key="i" :disabled="mode===VIEW_CURRENT_CARD">
+                {{option.optionName}}
+            </el-checkbox>
+            <!-- 子选项列表 -->
+            <div class="subOptions" v-if="option.options" v-show="checkOptionListIsShow(option.scaleOptionId, item.answerIndex, option.answerIndex)">
+              <el-radio-group v-model="copyInfo.patientOptions[option.answerIndex].scaleOptionId" :style="'padding-left: 20px;'">
+                <el-radio class="question-selection" v-for="(subOption, subOptionIndex) in option.options"
+                  :label="subOption.scaleOptionId" :key="subOptionIndex" :disabled="mode===VIEW_CURRENT_CARD">
+                    {{subOption.optionName}}
+                </el-radio>
+              </el-radio-group>
+            </div>
+          </div>
         </el-checkbox-group>
+
         <el-radio-group v-if="(item.questionType===0 || item.questionType===1)  && item.multipleChoose !== 1"
           class="question-body" :key="index" v-model="copyInfo.patientOptions[index].scaleOptionId">
           <el-radio class="question-selection" v-for="(option, i) in item.options"
@@ -217,6 +231,7 @@
             </el-input>
           </el-radio>
         </el-radio-group>
+
         <el-input v-model="copyInfo.patientOptions[index].remarks" :disabled="mode===VIEW_CURRENT_CARD"
           class="question-body" v-if="item.questionType===2"></el-input>
         <div v-if="item.questionType===3">
@@ -306,10 +321,10 @@ export default {
     targetScale() {
       let scale = Util.getElement('scaleInfoId', this.copyInfo.scaleInfoId, this.allScale);
 
-      // console.log('targetScale', scale);
-      // 问题嵌套 层级递归处理
+      console.log('targetScale', scale);
+      // 量表问题列表重构
       if (scale.questions && scale.questions.length > 0) {
-        this.questionsListFormat(scale);
+        this.questionsListFormat(scale.questions);
         // console.log('format', scale);
       }
       return scale ? scale : {};
@@ -393,6 +408,7 @@ export default {
     },
     handleScaleSelect() {
       var targetScale = Util.getElement('gaugeName', this.scaleName, this.scaleList);
+      this.scaleInfoId = targetScale.scaleInfoId;
       this.copyInfo.scaleInfoId = targetScale.scaleInfoId;
       this.selectScale();
     },
@@ -495,10 +511,42 @@ export default {
       var options = [];
       for (let i = 0; i < submitData.patientOptions.length; i++) {
         let item = submitData.patientOptions[i];
-        // questionType 0单选题 1单选有备注 2填空题不计分 3填空题计分
-        let questionType = this.targetScale.questions[i].questionType;
-        if (questionType === 0 || questionType === 1) {
 
+        // 判断量表是否包含子选项 包含子选项的答案列表同问题列表长度不同
+        // 包含子题目的答案列表同问题列表长度相同
+        // 如果包含子选项 则两者长度不等 默认问题类型为单选或多选
+        if (this.targetScale.questions.length === submitData.patientOptions.length) {
+          // questionType 0单选题 1单选有备注 2填空题不计分 3填空题计分
+          let questionType = this.targetScale.questions[i].questionType ? this.targetScale.questions[i].questionType : 0;
+          if (questionType === 0 || questionType === 1) {
+
+            // 多选处理
+            if (item.scaleOptionId instanceof Array) {
+              if (item.scaleOptionId.length > 0) {
+                for (let j = 0; j < item.scaleOptionId.length; j++) {
+                  let newData = {
+                    optionPoint: item.optionPoint,
+                    remarks: item.remarks,
+                    scaleOptionId: item.scaleOptionId[j]
+                  };
+                  options.push(newData);
+                }
+              }
+            } else if (item.scaleOptionId !== '') {
+              options.push(item);
+            }
+          } else if (questionType === 2) {
+            if (item.remarks !== '') {
+              item.scaleOptionId = this.targetScale.questions[i].options[0].scaleOptionId;
+              options.push(item);
+            }
+          } else if (questionType === 3) {
+            if (item.optionPoint !== '') {
+              item.scaleOptionId = this.targetScale.questions[i].options[0].scaleOptionId;
+              options.push(item);
+            }
+          }
+        } else {
           // 多选处理
           if (item.scaleOptionId instanceof Array) {
             if (item.scaleOptionId.length > 0) {
@@ -512,16 +560,6 @@ export default {
               }
             }
           } else if (item.scaleOptionId !== '') {
-            options.push(item);
-          }
-        } else if (questionType === 2) {
-          if (item.remarks !== '') {
-            item.scaleOptionId = this.targetScale.questions[i].options[0].scaleOptionId;
-            options.push(item);
-          }
-        } else if (questionType === 3) {
-          if (item.optionPoint !== '') {
-            item.scaleOptionId = this.targetScale.questions[i].options[0].scaleOptionId;
             options.push(item);
           }
         }
@@ -606,7 +644,7 @@ export default {
       }
     },
     getCorrectAnswer() {
-      // 取出量表的选中答案以及对应的分数
+      // 取出量表的选中答案以及对应的分数 新建量表则答案全部为空
       if (!this.targetScale.questions) {
         return;
       }
@@ -615,54 +653,12 @@ export default {
         this.copyInfo.patientOptions.length !== this.targetScale.questions.length) {
         this.copyInfo.patientOptions = [];
         for (let i = 0; i < this.targetScale.questions.length; i++) {
-          this.$set(this.copyInfo.patientOptions, i, {});
-
-          // 判断单选/多选 multipleChoose: 1 多选
-          if (this.targetScale.questions[i].multipleChoose === 1) {
-            this.$set(this.copyInfo.patientOptions[i], 'scaleOptionId', []);
-          } else {
-            this.$set(this.copyInfo.patientOptions[i], 'scaleOptionId', '');
-          }
-
-          this.$set(this.copyInfo.patientOptions[i], 'remarks', '');
-          this.$set(this.copyInfo.patientOptions[i], 'optionPoint', '');
-        }
-      }
-
-      for (var i = 0; i < this.targetScale.questions.length; i++) {
-        let options = this.targetScale.questions[i].options;
-        let notExisted = true;
-        let mutltiSelect = this.targetScale.questions[i].multipleChoose === 1;
-        let targetOptionId = mutltiSelect ? [] : '';
-        let remarks = '';
-        let optionPoint = '';
-
-        for (let option of options) {
-          for (let answer of this.scaleAnswer) {
-            if (option.scaleOptionId === answer.scaleOptionId) {
-              notExisted = false;
-              if (mutltiSelect) {
-                targetOptionId.push(option.scaleOptionId);
-              } else {
-                targetOptionId = option.scaleOptionId;
-              }
-              remarks = answer.remarks ? answer.remarks : '';
-              // v2.3.2修改 之前版本optionPoint为0的时候设置为''的原因未知
-              optionPoint = answer.optionPoint || answer.optionPoint === 0 ? answer.optionPoint : '';
+          this.questionAnswerFormat(this.targetScale.questions[i]);
+          for (let j = 0; j < this.targetScale.questions[i].options.length; j++) {
+            if (this.targetScale.questions[i].options[j].options && this.targetScale.questions[i].options[j].options.length > 0) {
+              this.questionAnswerFormat(this.targetScale.questions[i].options[j]);
             }
           }
-        }
-        if (notExisted) {
-          // 判断单选/多选 multipleChoose: 1 多选
-          if (this.targetScale.questions[i].multipleChoose === 1) {
-            this.$set(this.copyInfo.patientOptions[i], 'scaleOptionId', []);
-          } else {
-            this.$set(this.copyInfo.patientOptions[i], 'scaleOptionId', '');
-          }
-        } else {
-          this.$set(this.copyInfo.patientOptions[i], 'scaleOptionId', targetOptionId);
-          this.$set(this.copyInfo.patientOptions[i], 'remarks', remarks);
-          this.$set(this.copyInfo.patientOptions[i], 'optionPoint', optionPoint);
         }
       }
     },
@@ -807,38 +803,106 @@ export default {
       console.log(file);
       // window.location.href = file.url;
     },
-    // 问题列表递归处理
+    // 量表问题列表递归处理
     questionsListFormat(questionsList) {
-      let list = questionsList.questions;
+      // console.log('format', questionsList);
+      let list = questionsList;
+      let index = 0;
       for (let i = 0; i < list.length; i++) {
-        if (list[i].questions && list[i].questions.length > 0) {
-          // 获取父级触发展开子列表的答案ID
-          let parentId = '';
-          for (let j = 0; j < list[i].options.length; j++) {
-            if (list[i].options[j].openFlag === 1) {
-              parentId = list[i].options[j].scaleOptionId;
-              break;
+        list[i].answerIndex = index;
+        index++;
+        for (let j = 0; j < list[i].options.length; j++) {
+          if (list[i].options[j].openFlag === 1 && list[i].options[j].questions && list[i].options[j].questions.length > 0) {
+            let parentId = list[i].options[j].scaleOptionId;
+            for (let k = 0; k < list[i].options[j].questions.length; k++) {
+              list[i].options[j].questions[k].parentId = parentId;
+              list.splice(i + k + 1, 0, list[i].options[j].questions[k]);
             }
+            delete list[i].options[j].questions;
+          } else if (list[i].options[j].options && list[i].options[j].options.length > 0) {
+            list[i].options[j].answerIndex = index;
+            index++;
           }
-          // 多维列表转化为一维
-          for (let k = 0; k < list[i].questions.length; k++) {
-            list[i].questions[k].parentId = parentId;
-            list.splice(i + k + 1, 0, list[i].questions[k]);
-          }
-          delete list[i].questions;
         }
+      }
+    },
+    /**
+     * originAnswerObj 当前要添加到this.copyInfo.patientOptions中的原始量表问题对象
+     * 初始化this.copyInfo.patientOptions中数组元素的初始值
+     * 如果是单选this.copyInfo.patientOptions[i].scaleOptionId 设为 ''
+     * 如果是单选this.copyInfo.patientOptions[i].scaleOptionId 设为 []
+     */
+    questionAnswerFormat(originQuestionObj) {
+      let currentQuestion = originQuestionObj;
+      let mutltiSelect = currentQuestion.multipleChoose === 1;
+      let targetOptionId = mutltiSelect ? [] : '';
+      let remarks = '';
+      let optionPoint = '';
+
+      // 向this.copyInfo.patientOptions添加新的答案对象
+      this.$set(this.copyInfo.patientOptions, this.copyInfo.patientOptions.length, {});
+
+      // 初始化最新的答案对象的属性
+      let currentAnswer = this.copyInfo.patientOptions[this.copyInfo.patientOptions.length - 1];
+
+      if (this.scaleAnswer.length > 0) {
+        for (let i = 0; i < this.scaleAnswer.length; i++) {
+          for (let j = 0; j < currentQuestion.options.length; j++) {
+            if (this.scaleAnswer[i].scaleOptionId === currentQuestion.options[j].scaleOptionId) {
+              let answer = this.scaleAnswer[i];
+              let option = currentQuestion.options[j];
+              if (mutltiSelect) {
+                targetOptionId.push(option.scaleOptionId);
+              } else {
+                targetOptionId = option.scaleOptionId;
+              }
+              remarks = answer.remarks ? answer.remarks : '';
+              // v2.3.2修改 之前版本optionPoint为0的时候设置为''的原因未知
+              optionPoint = answer.optionPoint || answer.optionPoint === 0 ? answer.optionPoint : '';
+            }
+            this.$set(currentAnswer, 'scaleOptionId', targetOptionId);
+            this.$set(currentAnswer, 'remarks', remarks);
+            this.$set(currentAnswer, 'optionPoint', optionPoint);
+          }
+        }
+      } else {
+        if (mutltiSelect) {
+          this.$set(currentAnswer, 'scaleOptionId', []);
+        } else {
+          this.$set(currentAnswer, 'scaleOptionId', '');
+        }
+
+        this.$set(currentAnswer, 'remarks', '');
+        this.$set(currentAnswer, 'optionPoint', '');
       }
     },
     // 校验父级问题答案是否触发子列表显示
     checkQuestionListIsShow(parentId, index) {
-      let optionsList = this.copyInfo.patientOptions;
-      for (let i = 0; i < optionsList.length; i++) {
-        if (optionsList[i].scaleOptionId === parentId) {
+      let answerList = this.copyInfo.patientOptions;
+      for (let i = 0; i < answerList.length; i++) {
+        if (answerList[i].scaleOptionId === parentId) {
           return true;
         }
       }
       // 不显示时清空当前选择的值
       this.copyInfo.patientOptions[index].scaleOptionId = '';
+      return false;
+    },
+    // 校验父级问题答案选项是否触发子选项显示
+    checkOptionListIsShow(optionId, parentAnswerIndex, thisAnswerIndex) {
+      let optionsList = this.copyInfo.patientOptions[parentAnswerIndex];
+      if (optionsList.scaleOptionId instanceof Array) {
+        for (let i = 0; i < optionsList.scaleOptionId.length; i++) {
+          if (optionsList.scaleOptionId[i] === optionId) {
+            return true;
+          }
+        }
+      } else if (optionsList.scaleOptionId === optionId) {
+        return true;
+      }
+
+      // 不显示时清空当前选择的值
+      this.copyInfo.patientOptions[thisAnswerIndex].scaleOptionId = '';
       return false;
     },
     // 切换答题模式，第一次由快速答题切换至常规答题时序弹窗提示是否跳转到第一道未答题目
@@ -860,11 +924,11 @@ export default {
         for (let i = 0; i < this.copyInfo.patientOptions.length; i++) {
           if (!this.copyInfo.patientOptions[i].scaleOptionId || this.copyInfo.patientOptions[i].scaleOptionId.length === 0) {
             if (this.targetScale.questions[i].parentId && firstLevelSelect.indexOf(this.targetScale.questions[i].parentId) !== -1) {
-              console.log(this.$el.querySelector('#questions_' + i).offsetTop, i, 'child');
+              // console.log(this.$el.querySelector('#questions_' + i).offsetTop, i, 'child');
               container.scrollTop = this.$el.querySelector('#questions_' + i).offsetTop;
               break;
             } else if (!this.targetScale.questions[i].questionLevel) {
-              console.log(this.$el.querySelector('#questions_' + i).offsetTop, i, 'parent');
+              // console.log(this.$el.querySelector('#questions_' + i).offsetTop, i, 'parent');
               container.scrollTop = this.$el.querySelector('#questions_' + i).offsetTop;
               break;
             }
@@ -1418,7 +1482,7 @@ export default {
           .cell-input{
             position: relative;
             height: 50px;
-            padding-right: 20px;
+            padding-right: 30px;
             .el-autocomplete{
               width: 100%;
             }
