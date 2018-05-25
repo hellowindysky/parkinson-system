@@ -19,6 +19,9 @@
               <span v-else-if="item.npiPoint" v-html="item.npiPoint" class="spanPaddingLeft">
                 {{item.npiPoint}}
               </span>
+              <span v-else-if="item.totalICDPoint" class="spanPaddingLeft">
+                {{item.scalePoint + ' ' + item.totalICDPoint}}
+              </span>
               <span v-else>
                 {{item.scalePoint}}
               </span>

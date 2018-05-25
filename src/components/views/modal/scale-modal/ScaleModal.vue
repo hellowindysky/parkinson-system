@@ -175,7 +175,7 @@
           <div class="form-cell" v-for="(item, index) in targetScale.questions" 
           :class="{'notice-empty': !copyInfo.patientOptions[index].scaleOptionId && mode === EDIT_CURRENT_CARD}">
             <div class="cell-title">
-              {{item.scaleQuestionNumber}}
+              {{item.scaleQuestionNumber ? item.scaleQuestionNumber : index + 1}}
             </div>
             <div class="cell-input">
               <span class="field-value">
@@ -225,7 +225,7 @@
           class="question-body" :key="index" v-model="copyInfo.patientOptions[index].scaleOptionId">
           <el-radio class="question-selection" v-for="(option, i) in item.options"
             :label="option.scaleOptionId" :key="i" :disabled="mode===VIEW_CURRENT_CARD">
-              {{option.optionName}}
+              <span v-html="option.optionName">{{option.optionName}}</span>
             <el-input v-if="item.questionType===1 && option.scaleOptionId===copyInfo.patientOptions[index].scaleOptionId"
               v-model="copyInfo.patientOptions[index].remarks" :disabled="mode===VIEW_CURRENT_CARD" checked>
             </el-input>
@@ -1085,6 +1085,7 @@ export default {
       }
       .question-body {
         display: inline-block;
+        width: 100%;
         margin: 0;
         padding: 0;
         color: @secondary-button-color;
@@ -1094,13 +1095,17 @@ export default {
           margin: 0;
           height: auto;
           line-height: 40px;
+          white-space: nowrap;
           .el-radio__label {
             display: inline-block;
-            width: 80%;
-            height: 40px;
-            // white-space: pre-wrap;
-            // word-wrap: break-word;
-            // word-break: normal;
+            width: auto;
+            white-space: normal;
+            word-wrap: break-word;
+            word-break: break-all;
+            .el-radio__input {
+              vertical-align: top;
+              margin-top: 10px;
+            }
             .el-input {
               margin-left: 20px;
               width: 300px;
