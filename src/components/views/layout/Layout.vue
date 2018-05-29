@@ -8,7 +8,6 @@
 
     <filter-panel :showFilterPanel="showFilterPanel"></filter-panel>
     <secret-agreement-modal></secret-agreement-modal>
-    <!-- <gait-posture-modal></gait-posture-modal> -->
     <authorization-modal></authorization-modal>
     <choice-panel></choice-panel>
     <confirm-box></confirm-box>
