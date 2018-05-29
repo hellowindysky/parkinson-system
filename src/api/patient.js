@@ -584,16 +584,15 @@ export function getPatientCase(patientId, patientCaseId) {
   return encapsulatePromise(url, request);
 };
 
-// // 获取姿势步态详情
-// export function getPatientCase() {
-//   var patientIdNum = parseInt(patientId, 10);
-//   var request = Object.assign({}, getCommonRequest());
-//   request.patientId = patientIdNum;
-//   request.patientCaseId = patientCaseId;
-//   var url = '/pdms/queryPatientGaitCard';
+// 获取姿势步态详情
+export function queryPatientGaitInfo(type, typeCode) {
+  var request = Object.assign({}, getCommonRequest());
+  request.typeCode = typeCode;
+  request.type = type;
+  var url = '/pdms/queryPatientGaitInfo';
 
-//   return encapsulatePromise(url, request);
-// };
+  return encapsulatePromise(url, request);
+};
 
 // 将诊断信息进行归档
 export function archivePatientCase(patientCaseId) {
