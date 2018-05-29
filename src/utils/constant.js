@@ -88,6 +88,7 @@ export default {
   UPDATE_PATIENTS_LIST: 'updatePatientsList',
   UPDATE_GROUP_LIST: 'updateGroupList',
   UPDATE_PATIENT_INFO: 'updatePatientInfo',
+  UPDATE_PATIENT_GAIT_INFO: 'updatePatientGaitInfo',
   UPDATE_PATIENT_GROUP_INFO: 'updatePatientGroupInfo',
   UPDATE_PATIENT_SUBJECT_INFO: 'updatePatientSubjectInfo',
   UPDATE_CASE_INFO: 'updateCaseInfo',
