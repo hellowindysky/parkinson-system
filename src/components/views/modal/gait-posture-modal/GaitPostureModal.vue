@@ -1,16 +1,17 @@
 <template lang="html">
   <div class="gait-posture-modal-wrapper">
-    <div class="gait-posture-modal" ref="gaitPostureModal">
+    <div class="gait-posture-modal" ref="scrollArea">
       <h3 class="title">{{title}}</h3>
       <div class="content">
         <div class="field">
           <span class="field-name">
             采集开始时间：
           </span>
+          </span>
             <span class="field-input">
-              <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.ariseTime}}</span>
+              <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.acquisitionStartTime}}</span>
                 <el-date-picker v-else
-                  v-model="copyInfo.ariseTime"
+                  v-model="copyInfo.acquisitionStartTime"
                   placeholder="请选择开始时间"
                   type="date"
                   format="yyyy-MM-dd"
@@ -23,9 +24,9 @@
             采集结束时间：
           </span>
           <span class="field-input">
-            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.ariseTime}}</span>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.acquisitionEndTime}}</span>
               <el-date-picker v-else
-                v-model="copyInfo.ariseTime"
+                v-model="copyInfo.acquisitionEndTime"
                 placeholder="请选择结束时间"
                 type="date"
                 format="yyyy-MM-dd"
@@ -38,10 +39,19 @@
             设备型号：
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{''}}</span>
+            <span>{{transform(copyInfo.equipmentModel, 'threeGait')}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-select clearable placeholder="请选择设备型号">
+            <el-select
+              clearable
+              placeholder="请选择设备型号"
+              v-model="copyInfo.equipmentModel">
+              <el-option
+                v-for="item in getOptions('threeGait')"
+                :key="item.code"
+                :label="item.name"
+                :value="item.code">
+                </el-option>
             </el-select>
           </span>
         </div>
@@ -49,24 +59,18 @@
           <span class="field-name">
             设备编号：
           </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span class="warning-text"></span>
-            <span>{{''}}</span>
-          </span>
-          <span class="field-input" v-else>
-            <el-input placeholder="请输入设备编号"></el-input>
+          <span class="field-input">
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.equipmentNumber}}</span>
+            <el-input v-else placeholder="请输入设备编号" v-model="copyInfo.equipmentNumber" :maxlength="50"></el-input>
           </span>
         </div>
         <div class="field">
           <span class="field-name">
             检查编号：
           </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            <span class="warning-text"></span>
-            <span>{{''}}</span>
-          </span>
-          <span class="field-input" v-else>
-            <el-input placeholder="请输入检查编号"></el-input>
+          <span class="field-input">
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.checkNumber}}</span>
+            <el-input v-else placeholder="请输入检查编号" v-model="copyInfo.checkNumber" :maxlength="50"></el-input>
           </span>
         </div>
         <div class="field">
@@ -82,42 +86,159 @@
             备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注：
           </span>
           <span class="field-input">
-            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.remarks}}</span>
-            <el-input v-else type="textarea" placeholder="请输入备注" v-model="copyInfo.remarks" :maxlength="500"></el-input>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.remark}}</span>
+            <el-input v-else type="textarea" placeholder="请输入备注" v-model="copyInfo.remark" :maxlength="500"></el-input>
           </span>
         </div>
       </div>
       <div class="seperate-line"></div>
-      <div class="content">
-        <table class="table">
+      <h3 class="form-title" v-if="tableMode===SON_OPEN && hasTableExisted">{{subTableTitle}}</h3>
+      <div class="content" v-if="hasTableExisted">
+        <table class="table" v-if="tableMode===FATHER_OPEN">
           <tr class="row title-row">
             <td class="col col-width-5">序&nbsp;&nbsp;号</td>
             <td class="col col-width-35">检&nbsp;&nbsp;查&nbsp;&nbsp;项</td>
-            <td class="col col-width-20">操&nbsp;&nbsp;作</td>
+            <td class="col col-width-10">操&nbsp;&nbsp;作</td>
           </tr>
-          <tr class="row">
+          <tr class="row" v-for="(reaction, index) in data">
             <td class="col col-width-5">{{ index + 1 }}</td>
-            <td class="col col-width-35">{{""}}</td>
-            <td class="col col-width-20">
-              <span class="text-button" v-if="mode===VIEW_CURRENT_CARD">查&nbsp;&nbsp;看</span>
-              <span class="text-button" v-else-if="mode!==VIEW_CURRENT_CARD">编&nbsp;&nbsp;辑</span>
+            <td class="col col-width-35">{{transform(reaction.type, "threeDimensionalGait")}}</td>
+            <td class="col col-width-10">
+              <span class="text-button" v-if="mode===VIEW_CURRENT_CARD" @click.stop="updataPatientGaitInfo(reaction.type, reaction.typeCode, reaction.typeName)">查&nbsp;&nbsp;看</span>
+              <span class="text-button" v-if="mode!==VIEW_CURRENT_CARD" @click.stop="updataPatientGaitInfo(reaction.type, reaction.typeCode, reaction.typeName)">编&nbsp;&nbsp;辑</span>
             </td>
           </tr>
         </table>
       </div>
-      <div class="seperate-line"></div>
-      <div class="content">
-        <table class="table">
-          <td class="row title-row" colspan="5">时&nbsp;&nbsp;空&nbsp;&nbsp;参&nbsp;&nbsp;数</td>
-          <tr class="row">
-            <td class="col col-width-1 endways" rowspan="2">时间参数</td>
-            <td class="col col-width-25">{{""}}</td>
-            <td class="col col-width-30">右&nbsp;&nbsp;侧</td>
-            <td class="col col-width-30">左&nbsp;&nbsp;侧</td>
-            <td class="col col-width-20">正&nbsp;&nbsp;常&nbsp;&nbsp;值</td>
+      <div class="content" :class="{'small-font':tableMode===SON_OPEN}">
+        <table class="table" v-if="tableMode===SON_OPEN && type === 1 && typeName === '时空参数'">
+          <td class="row title-row" colspan=5>时&nbsp;&nbsp;空&nbsp;&nbsp;参&nbsp;&nbsp;数</td>
+          <tr class="row title-row">
+            <td class="col col-width-25 endways">时间参数</td>
+            <td class="col col-width-25">右&nbsp;&nbsp;侧</td>
+            <td class="col col-width-25">左&nbsp;&nbsp;侧</td>
+            <td class="col col-width-25">正&nbsp;&nbsp;常&nbsp;&nbsp;值</td>
           </tr>
-          <tr class="row">
-            <td class="col col-width-1"></td>
+          <tr class="row" v-for="(item, index) in timeParameter">
+            <td class="col col-width-25">{{item.typeName}}</td>
+            <td class="col col-width-25" v-show="index <6">
+              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                <span class="left">{{""}}</span>
+              </span>
+              <span class="field-input" v-else>
+                <el-input class="left"></el-input>
+              </span>
+              <span>±</span>
+              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                <span class="right">{{""}}</span>
+              </span>
+              <span class="field-input" v-else>
+                <el-input class="right"></el-input>
+              </span>
+            </td>
+            <td class="col col-width-25" v-show="index <6">
+              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                <span class="left">{{""}}</span>
+              </span>
+              <span class="field-input" v-else>
+                <el-input class="left"></el-input>
+              </span>
+              <span>±</span>
+              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                <span class="right">{{""}}</span>
+              </span>
+              <span class="field-input" v-else>
+                <el-input class="right"></el-input>
+              </span>
+            </td>
+            <td class="col col-width-25" colspan=2 v-show="index >= 6">
+              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                <span class="left">{{""}}</span>
+              </span>
+              <span class="field-input" v-else>
+                <el-input class="left"></el-input>
+              </span>
+              <span>±</span>
+              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                <span class="right">{{""}}</span>
+              </span>
+              <span class="field-input" v-else>
+                <el-input class="right"></el-input>
+              </span>
+            </td>
+            <td class="col col-width-25">{{item.referenceValue}}</td>
+          </tr>
+
+          <tr class="row title-row">
+            <td class="col col-width-25 endways">空间参数</td>
+            <td class="col col-width-25">右&nbsp;&nbsp;侧</td>
+            <td class="col col-width-25">左&nbsp;&nbsp;侧</td>
+            <td class="col col-width-25">正&nbsp;&nbsp;常&nbsp;&nbsp;值</td>
+          </tr>
+          <tr class="row" v-for="(item, index) in spatialParameters">
+            <td class="col col-width-25">{{item.typeName}}</td>
+            <td class="col col-width-25" v-show="index <3">
+              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                <span class="left">{{""}}</span>
+              </span>
+              <span class="field-input" v-else>
+                <el-input class="left"></el-input>
+              </span>
+              <span>±</span>
+              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                <span class="right">{{""}}</span>
+              </span>
+              <span class="field-input" v-else>
+                <el-input class="right"></el-input>
+              </span>
+            </td>
+            <td class="col col-width-25" v-show="index <3">
+              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                <span class="left">{{""}}</span>
+              </span>
+              <span class="field-input" v-else>
+                <el-input class="left"></el-input>
+              </span>
+              <span>±</span>
+              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                <span class="right">{{""}}</span>
+              </span>
+              <span class="field-input" v-else>
+                <el-input class="right"></el-input>
+              </span>
+            </td>
+
+            <td class="col col-width-25" colspan=2 v-show="index >= 3">
+              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                <span class="left">{{""}}</span>
+              </span>
+              <span class="field-input" v-else>
+                <el-input class="left"></el-input>
+              </span>
+              <span>±</span>
+              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                <span class="right">{{""}}</span>
+              </span>
+              <span class="field-input" v-else>
+                <el-input class="right"></el-input>
+              </span>
+            </td>
+            <td class="col col-width-25">{{item.referenceValue}}</td>
+          </tr>
+
+
+
+
+
+
+          <tr class="row title-row">
+            <td class="col col-width-25 endways">站立角度</td>
+            <td class="col col-width-25">右&nbsp;&nbsp;侧</td>
+            <td class="col col-width-25">左&nbsp;&nbsp;侧</td>
+            <td class="col col-width-25"></td>
+          </tr>
+          <tr class="row" v-for="(item, index) in standingAngle">
+            <td class="col col-width-25">{{item.typeName}}</td>
             <td class="col col-width-25">
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
                 <span class="left">{{""}}</span>
@@ -133,37 +254,6 @@
                 <el-input class="right"></el-input>
               </span>
             </td>
-            <td class="col col-width-30">
-              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span class="left">{{""}}</span>
-              </span>
-              <span class="field-input" v-else>
-                <el-input class="left"></el-input>
-              </span>
-              <span>±</span>
-              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span class="right">{{""}}</span>
-              </span>
-              <span class="field-input" v-else>
-                <el-input class="right"></el-input>
-              </span>
-            </td>
-            <td class="col col-width-30">{{""}}</td>
-          </tr>
-        </table>
-      </div>
-
-      <div class="content">
-        <table class="table">
-          <tr class="row">
-            <td class="col col-width-1 endways" rowspan="2">空间参数</td>
-            <td class="col col-width-25">{{""}}</td>
-            <td class="col col-width-30">右&nbsp;&nbsp;侧</td>
-            <td class="col col-width-30">左&nbsp;&nbsp;侧</td>
-            <td class="col col-width-20">正&nbsp;&nbsp;常&nbsp;&nbsp;值</td>
-          </tr>
-          <tr class="row">
-            <td class="col col-width-1"></td>
             <td class="col col-width-25">
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
                 <span class="left">{{""}}</span>
@@ -179,37 +269,21 @@
                 <el-input class="right"></el-input>
               </span>
             </td>
-            <td class="col col-width-30">
-              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span class="left">{{""}}</span>
-              </span>
-              <span class="field-input" v-else>
-                <el-input class="left"></el-input>
-              </span>
-              <span>±</span>
-              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span class="right">{{""}}</span>
-              </span>
-              <span class="field-input" v-else>
-                <el-input class="right"></el-input>
-              </span>
-            </td>
-            <td class="col col-width-30">{{""}}</td>
+            <td class="col col-width-25">{{""}}</td>
           </tr>
         </table>
       </div>
-
-      <div class="content">
-        <table class="table">
-          <tr class="row">
-            <td class="col col-width-1 endways" rowspan="2">站立角度</td>
-            <td class="col col-width-25">{{""}}</td>
-            <td class="col col-width-30">右&nbsp;&nbsp;侧</td>
-            <td class="col col-width-30">左&nbsp;&nbsp;侧</td>
-            <td class="col col-width-20"></td>
+      <div class="content" :class="{'small-font':tableMode===SON_OPEN}">
+        <table class="table" v-if="tableMode===SON_OPEN && type === 2 && typeName === '运动学分析'">
+          <td class="row title-row" colspan=5>运&nbsp;&nbsp;动&nbsp;&nbsp;学&nbsp;&nbsp;分&nbsp;&nbsp;析</td>
+          <tr class="row title-row">
+            <td class="col col-width-25 endways">{{''}}</td>
+            <td class="col col-width-25">右&nbsp;&nbsp;侧</td>
+            <td class="col col-width-25">参&nbsp;&nbsp;考&nbsp;&nbsp;值</td>
+            <td class="col col-width-25">左&nbsp;&nbsp;侧</td>
           </tr>
-          <tr class="row">
-            <td class="col col-width-1"></td>
+          <tr class="row" v-for="(item, index) in kinematicAnalysis">
+            <td class="col col-width-25" rowspan = 2 v-show="index % 2 === 0">{{item.typeName}}</td>
             <td class="col col-width-25">
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
                 <span class="left">{{""}}</span>
@@ -225,7 +299,8 @@
                 <el-input class="right"></el-input>
               </span>
             </td>
-            <td class="col col-width-30">
+            <td class="col col-width-25">{{item.referenceValue}}</td>
+            <td class="col col-width-25">
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
                 <span class="left">{{""}}</span>
               </span>
@@ -240,17 +315,154 @@
                 <el-input class="right"></el-input>
               </span>
             </td>
-            <td class="col col-width-30">{{""}}</td>
           </tr>
         </table>
       </div>
 
-      <span>
+      <div class="content" :class="{'small-font':tableMode===SON_OPEN}">
+        <table class="table" v-if="tableMode===SON_OPEN && type === 3 && typeName === '力矩'">
+          <td class="row title-row" colspan=5>力&nbsp;&nbsp;矩</td>
+          <tr class="row title-row">
+            <td class="col col-width-25 endways">{{''}}</td>
+            <td class="col col-width-25">右&nbsp;&nbsp;侧</td>
+            <td class="col col-width-25">参&nbsp;&nbsp;考&nbsp;&nbsp;值</td>
+            <td class="col col-width-25">左&nbsp;&nbsp;侧</td>
+          </tr>
+          <tr class="row" v-for="(item, index) in moment">
+            <td class="col col-width-25" rowspan = 2 v-show="index % 2 === 0">{{item.typeName}}</td>
+            <td class="col col-width-25">
+              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                <span class="left">{{""}}</span>
+              </span>
+              <span class="field-input" v-else>
+                <el-input class="left"></el-input>
+              </span>
+              <span>±</span>
+              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                <span class="right">{{""}}</span>
+              </span>
+              <span class="field-input" v-else>
+                <el-input class="right"></el-input>
+              </span>
+            </td>
+            <td class="col col-width-25">{{item.referenceValue}}</td>
+            <td class="col col-width-25">
+              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                <span class="left">{{""}}</span>
+              </span>
+              <span class="field-input" v-else>
+                <el-input class="left"></el-input>
+              </span>
+              <span>±</span>
+              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                <span class="right">{{""}}</span>
+              </span>
+              <span class="field-input" v-else>
+                <el-input class="right"></el-input>
+              </span>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="content" :class="{'small-font':tableMode===SON_OPEN}">
+        <table class="table" v-if="tableMode===SON_OPEN && type === 4 && typeName === '做功'">
+          <td class="row title-row" colspan=5>做&nbsp;&nbsp;功</td>
+          <tr class="row title-row">
+            <td class="col col-width-25 endways">{{''}}</td>
+            <td class="col col-width-25">右&nbsp;&nbsp;侧</td>
+            <td class="col col-width-25">参&nbsp;&nbsp;考&nbsp;&nbsp;值</td>
+            <td class="col col-width-25">左&nbsp;&nbsp;侧</td>
+          </tr>
+          <tr class="row" v-for="(item, index) in doWork">
+            <td class="col col-width-25" rowspan = 2 v-show="index % 2 === 0">{{item.typeName}}</td>
+            <td class="col col-width-25">
+              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                <span class="left">{{""}}</span>
+              </span>
+              <span class="field-input" v-else>
+                <el-input class="left"></el-input>
+              </span>
+              <span>±</span>
+              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                <span class="right">{{""}}</span>
+              </span>
+              <span class="field-input" v-else>
+                <el-input class="right"></el-input>
+              </span>
+            </td>
+            <td class="col col-width-25">{{item.referenceValue}}</td>
+            <td class="col col-width-25">
+              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                <span class="left">{{""}}</span>
+              </span>
+              <span class="field-input" v-else>
+                <el-input class="left"></el-input>
+              </span>
+              <span>±</span>
+              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                <span class="right">{{""}}</span>
+              </span>
+              <span class="field-input" v-else>
+                <el-input class="right"></el-input>
+              </span>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="content" :class="{'small-font':tableMode===SON_OPEN}">
+        <table class="table" v-if="tableMode===SON_OPEN && type === 5 && typeName === '压力平台'">
+          <td class="row title-row" colspan=5>压&nbsp;&nbsp;力&nbsp;&nbsp;平&nbsp;&nbsp;台</td>
+          <tr class="row title-row">
+            <td class="col col-width-25 endways">{{''}}</td>
+            <td class="col col-width-25">右&nbsp;&nbsp;侧</td>
+            <td class="col col-width-25">参&nbsp;&nbsp;考&nbsp;&nbsp;值</td>
+            <td class="col col-width-25">左&nbsp;&nbsp;侧</td>
+          </tr>
+          <tr class="row" v-for="(item, index) in pressurePlatform">
+            <td class="col col-width-25" rowspan = 3 v-if="index % 4 === 0 && index >=4">{{item.typeName}}</td>
+            <td class="col col-width-25" rowspan = 2 v-else-if="index % 2 === 0 && index <4">{{item.typeName}}</td>
+            <td class="col col-width-25">
+              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                <span class="left">{{""}}</span>
+              </span>
+              <span class="field-input" v-else>
+                <el-input class="left"></el-input>
+              </span>
+              <span>±</span>
+              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                <span class="right">{{""}}</span>
+              </span>
+              <span class="field-input" v-else>
+                <el-input class="right"></el-input>
+              </span>
+            </td>
+            <td class="col col-width-25">{{item.referenceValue}}</td>
+            <td class="col col-width-25">
+              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                <span class="left">{{""}}</span>
+              </span>
+              <span class="field-input" v-else>
+                <el-input class="left"></el-input>
+              </span>
+              <span>±</span>
+              <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+                <span class="right">{{""}}</span>
+              </span>
+              <span class="field-input" v-else>
+                <el-input class="right"></el-input>
+              </span>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <span v-if="tableMode===FATHER_OPEN">
         <div class="button cancel-button" @click="cancel">取消</div>
         <div class="button edit-button" v-if="mode===VIEW_CURRENT_CARD && showEdit" @click="switchToEditingMode">编辑</div>
         <div class="button submit-button" v-else-if="mode!==VIEW_CURRENT_CARD" @click="submit">确认</div>
       </span>
-      <span>
+      <span v-else-if="tableMode===SON_OPEN">
         <div class="button cancel-button" v-if="mode===VIEW_CURRENT_CARD" @click="closeSubTable">返回</div>
         <span v-else-if="mode!==VIEW_CURRENT_CARD && hasTableExisted">
           <div class="button reset-button" @click="initSubTableDataForTypeCode(subTableCode)">重置</div>
@@ -267,7 +479,7 @@ import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import { vueCopy, deepCopy } from 'utils/helper';
 import Util from 'utils/util.js';
-// import { addGaitPosture, modifyGaitPosture } from 'api/patient.js';
+import {queryPatientGaitInfo, addPatientGait, modifyPatientGait } from 'api/patient.js';
 
 export default {
   data() {
@@ -279,12 +491,124 @@ export default {
       FATHER_OPEN: 'fatherOpen',
       SON_OPEN: 'sonOpen',
       tableMode: '',
+      type: '',
+      typeCode: '',
+      typeName: '',
 
       copyInfo: {},
       copyItem: {},   //  用来缓存传递进来的数据
       subTableCode: '',
+      threeGait: [],
+
+      data: [
+        {
+          'type': 1,
+          'typeCode': 'threeDimensionalGait',
+          'typeName': '时空参数'
+        },
+        {
+          'type': 2,
+          'typeCode': 'threeDimensionalGait',
+          'typeName': '运动学分析'
+        },
+        {
+          'type': 3,
+          'typeCode': 'threeDimensionalGait',
+          'typeName': '力矩'
+        },
+        {
+          'type': 4,
+          'typeCode': 'threeDimensionalGait',
+          'typeName': '做功'
+        },
+        {
+          'type': 5,
+          'typeCode': 'threeDimensionalGait',
+          'typeName': '压力平台'
+        }
+      ],
+      timeParameter: [
+
+      ],
+      spatialParameters: [
+        {
+          'type': 1,
+          'typeCode': 'spatialParameters',
+          'referenceValue': '1.36 ± 0.11',
+          'typeName': '跨步长（s）'
+        },
+        {
+          'type': 2,
+          'typeCode': 'spatialParameters',
+          'referenceValue': '80 ± 10',
+          'typeName': '跨步长（%身高）'
+        },
+        {
+          'type': 3,
+          'typeCode': 'spatialParameters',
+          'referenceValue': '0.62 ± 0.05',
+          'typeName': '步长（m）'
+        },
+        {
+          'type': 4,
+          'typeCode': 'spatialParameters',
+          'referenceValue': '0.08± 0.02',
+          'typeName': '步宽（m）'
+        }
+      ],
+      standingAngle: [
+        {
+          'type': 1,
+          'typeCode': 'standingAngle',
+          'typeName': '盆骨上下'
+        },
+        {
+          'type': 2,
+          'typeCode': 'standingAngle',
+          'typeName': '盆骨前倾'
+        },
+        {
+          'type': 3,
+          'typeCode': 'standingAngle',
+          'typeName': '盆骨旋转'
+        },
+        {
+          'type': 4,
+          'typeCode': 'standingAngle',
+          'typeName': '髋内收外展'
+        },
+        {
+          'type': 5,
+          'typeCode': 'standingAngle',
+          'typeName': '髋屈曲伸展'
+        },
+        {
+          'type': 6,
+          'typeCode': 'standingAngle',
+          'typeName': '髋内旋外旋'
+        },
+        {
+          'type': 7,
+          'typeCode': 'standingAngle',
+          'typeName': '膝屈曲伸展'
+        },
+        {
+          'type': 8,
+          'typeCode': 'standingAngle',
+          'typeName': '踝背屈跖屈'
+        },
+        {
+          'type': 9,
+          'typeCode': 'standingAngle',
+          'typeName': '足前进夹角'
+        }
+      ],
+      kinematicAnalysis: [],
+      moment: [],
+      doWork: [],
+      pressurePlatform: [],
       warningResults: {
-        checkType: ''
+        equipmentModel: ''
       },
       pickerOptions: {
         disabledDate(time) {
@@ -301,9 +625,7 @@ export default {
     ]),
     hasTableExisted() {
       this.updateScrollbar();
-      return this.copyInfo.checkType !== undefined &&
-        this.copyInfo.checkType !== '' &&
-        this.copyInfo.checkType !== 3;
+      return this.copyInfo.equipmentModel === 1;
     },
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
@@ -312,20 +634,13 @@ export default {
         return '姿势步态';
       }
     },
-    itemGroups() {
-      var items = this.typeField.filter(item => {
-        return Number(item.typeCode) === this.subTableCode &&
-        item.typeGroupCode === 'neurologicExam';
-      });
-      var groups = this.filterItemsIntoGroups(items);
-      var resultGroups = [];
-      for (let i = 0; i < groups.length; i += 1) {
-        resultGroups.push({});
-        resultGroups[i].rowItems = groups[i].filter(item => item.fieldType === 0);
-        resultGroups[i].colItems = groups[i].filter(item => item.fieldType === 1);
-        resultGroups[i].anotherColItems = groups[i].filter(item => item.fieldType === 2);
+    subTableTitle() {
+      if (this.tableMode === this.SON_OPEN) {
+        let targetType = Util.getElement('typeCode', this.subTableCode, this.tableTypes);
+        return targetType.typeName ? targetType.typeName : '';
+      } else {
+        return '';
       }
-      return resultGroups;
     }
   },
   methods: {
@@ -336,8 +651,8 @@ export default {
       this.tableMode = this.FATHER_OPEN;
       this.initCopyInfo();
       this.copyItem = item;
-      if (this.copyItem.checkType) {
-        this.copyItem.checkType = Number(this.copyItem.checkType);
+      if (this.copyItem.equipmentModel) {
+        this.copyItem.equipmentModel = Number(this.copyItem.equipmentModel);
       }
       vueCopy(this.copyItem, this.copyInfo);
 
@@ -350,60 +665,52 @@ export default {
       this.copyInfo = {};
       this.$set(this.copyInfo, 'patientCaseId', this.$route.params.caseId);
       this.$set(this.copyInfo, 'patientId', this.$route.params.id);
-      this.$set(this.copyInfo, 'checkType', '');
-      this.$set(this.copyInfo, 'ariseTime', '');
-      this.$set(this.copyInfo, 'spephysicalResult', '');
-      this.$set(this.copyInfo, 'remarks', '');
-
-      this.$set(this.copyInfo, 'pullTest', '');
-      this.$set(this.copyInfo, 'sittingBloc', '');
+      this.$set(this.copyInfo, 'acquisitionStartTime', '');
+      this.$set(this.copyInfo, 'acquisitionEndTime', '');
+      this.$set(this.copyInfo, 'equipmentModel', '');
+      this.$set(this.copyInfo, 'equipmentNumber', '');
+      this.$set(this.copyInfo, 'checkNumber', '');
+      this.$set(this.copyInfo, 'remark', '');
 
       this.initSubTableData();
+      this.updateScrollbar();
+    },
+    initSubTableData() {
+      this.$set(this.copyInfo, 'patientFieldCode', {});
+      for (let type of this.tableTypes) {
+        let typeCode = type.typeCode;
+        this.initSubTableDataForTypeCode(typeCode);
+      }
     },
     initSubTableDataForTypeCode(typeCode) {
       this.$set(this.copyInfo.patientFieldCode, typeCode, {});
-
-      let items = this.typeField.filter(item => {
-        return Number(item.typeCode) === typeCode &&
-        item.typeGroupCode === 'neurologicExam';
-      });
-      let groups = this.filterItemsIntoGroups(items);
-      let resultGroups = [];
-      for (let i = 0; i < groups.length; i += 1) {
-        resultGroups.push({});
-        resultGroups[i].rowItems = groups[i].filter(item => item.fieldType === 0);
-        resultGroups[i].colItems = groups[i].filter(item => item.fieldType === 1);
-      }
-
-      for (let group of resultGroups) {
-        for (let rowItem of group.rowItems) {
-          var rowItemCode = rowItem.id;
-          this.$set(this.copyInfo.patientFieldCode[typeCode], rowItemCode, {});
-
-          let colItems = group.colItems;
-          if (colItems.length === 0) {
-            // 特殊情况：如果没有列，则新建一个code为 0 的虚拟列
-            colItems = [{id: 0}];
-          }
-
-          for (let colItem of colItems) {
-            var colItemCode = colItem.id;
-            this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode], colItemCode, {});
-
-            this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode][colItemCode], 'typeGroupCode', 'elecExam');
-            this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode][colItemCode], 'typeCode', typeCode);
-            this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode][colItemCode], 'rowFieldId', rowItemCode);
-            this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode][colItemCode], 'columnFieldId', colItemCode);
-            this.$set(this.copyInfo.patientFieldCode[typeCode][rowItemCode][colItemCode], 'fieldValue', '');
-          }
-        }
-      }
+      // let items = this.typeField.filter(item => {
+      //   return Number(item.typeCode) === typeCode
+      //   // &&
+      //   // item.typeGroupCode === 'copyInfo.equipmentModel'
+      //   ;
+      // });
     },
-    selectSubTable(code) {
-      this.subTableCode = code;
-      this.tableMode = this.SON_OPEN;
-      this.updateScrollbar();
-      // console.log(this.itemGroups);
+    updataPatientGaitInfo(type, typeCode, typeName) {
+      // 查询姿势步态表格
+      // if (!this.existed) {
+      //   return;
+      // }
+      queryPatientGaitInfo(type, typeCode).then((data) =>{
+        this.subTableCode = typeCode;
+        this.tableMode = this.SON_OPEN;
+        this.timeParameter = data.timeParameter;
+        this.spatialParameters = data.spatialParameters;
+        this.standingAngle = data.standingAngle;
+        this.kinematicAnalysis = data.kinematicAnalysis;
+        this.moment = data.moment;
+        this.doWork = data.doWork;
+        this.pressurePlatform = data.pressurePlatform;
+        this.type = type;
+        this.typeName = typeName;
+        // console.log(type, typeCode, typeName);
+        this.updateScrollbar();
+      });
     },
     submit() {
       if (this.lockSubmitButton) {
@@ -411,39 +718,34 @@ export default {
       }
       this.lockSubmitButton = true;
 
-      this.updateWarning('checkType');
-      if (this.warningResults.checkType !== '') {
+      this.updateWarning('equipmentModel');
+      if (this.warningResults.equipmentModel !== '') {
         this.lockSubmitButton = false;
         return;
       }
 
       let submitData = deepCopy(this.copyInfo);
-      submitData.typeGroupCode = 'neurologicExam';
-      submitData.ariseTime = Util.simplifyDate(submitData.ariseTime);
+      submitData.typeGroupCode = 'equipmentModel';
+      submitData.acquisitionStartTime = Util.simplifyDate(submitData.acquisitionStartTime);
+      submitData.acquisitionEndTime = Util.simplifyDate(submitData.acquisitionEndTime);
 
       submitData.patientFieldCode = {};
       for (let type of this.tableTypes) {
         submitData.patientFieldCode[type.typeCode] = deepCopy(this.copyInfo.patientFieldCode[type.typeCode]);
       }
-      if (submitData.checkType !== 3) {
-        delete submitData.pullTest;
-        delete submitData.sittingBloc;
-      } else {
-        delete submitData.patientFieldCode;
-      }
 
       if (this.mode === this.EDIT_CURRENT_CARD) {
-        // modifyGaitPosture(submitData).then(() => {
-        //   Bus.$emit(this.UPDATE_CASE_INFO);
-        //   this.updateAndClose();
-        // }, this._handleError);
+        modifyPatientGait(submitData).then(() => {
+          Bus.$emit(this.UPDATE_CASE_INFO);
+          this.updateAndClose();
+        }, this._handleError);
 
       } else if (this.mode === this.ADD_NEW_CARD) {
         delete submitData.patientSpephysicalId;
-        // addGaitPosture(submitData).then(() => {
-        //   Bus.$emit(this.UPDATE_CASE_INFO);
-        //   this.updateAndClose();
-        // }, this._handleError);
+        addPatientGait(submitData).then(() => {
+          Bus.$emit(this.UPDATE_CASE_INFO);
+          this.updateAndClose();
+        }, this._handleError);
       }
     },
     _handleError(error) {
@@ -465,7 +767,7 @@ export default {
     closeSubTable() {
       this.tableMode = this.FATHER_OPEN;
       this.updateScrollbar();
-      this.$refs.neurologicModal.scrollTop = 0;
+      // this.$refs.gaitPostureModal.scrollTop = 0;
       // this.$refs.formWrapper.scrollTop = 0;
     },
     getOptions(fieldName) {
@@ -486,42 +788,42 @@ export default {
       var name = Util.getElement('typeCode', parseInt(typeId, 10), types).typeName;
       return name;
     },
-    rearrangeRows(items) {
-      // 因为有的子表格没有明确的列信息，只有行信息，而且每一行只有字段名字和字段值
-      // 因此需要重新排列此表格，一排有4列，分别为字段1的名字，字段1的值，字段2的名字，字段2的值
-      var newArray = [];
-      var subArray = [];
-      var length = items.length;
-      for (var i = 0; i < length; i++) {
-        subArray.push(items[i]);
-        if (i % 2 === 1 || i === length - 1) {
-          newArray.push(subArray);
-          subArray = [];
-        }
-      }
-      return newArray;
-    },
-    filterItemsIntoGroups(items) {
-      // 根据 item 的 groupNo 属性，装到不同的子数组里面，最后返回最外层的数组
-      var groups = [];
-      var hasSameGroupNumberBefore = false;
+    // rearrangeRows(items) {
+    //   // 因为有的子表格没有明确的列信息，只有行信息，而且每一行只有字段名字和字段值
+    //   // 因此需要重新排列此表格，一排有4列，分别为字段1的名字，字段1的值，字段2的名字，字段2的值
+    //   var newArray = [];
+    //   var subArray = [];
+    //   var length = items.length;
+    //   for (var i = 0; i < length; i++) {
+    //     subArray.push(items[i]);
+    //     if (i % 2 === 1 || i === length - 1) {
+    //       newArray.push(subArray);
+    //       subArray = [];
+    //     }
+    //   }
+    //   return newArray;
+    // },
+    // filterItemsIntoGroups(items) {
+    //   // 根据 item 的 groupNo 属性，装到不同的子数组里面，最后返回最外层的数组
+    //   var groups = [];
+    //   var hasSameGroupNumberBefore = false;
 
-      for (let item of items) {
-        hasSameGroupNumberBefore = false;
-        for (let i = 0; i < groups.length; i++) {
-          if (groups[i][0].groupNo === item.groupNo) {
-            hasSameGroupNumberBefore = true;
-            groups[i].push(item);
-          }
-        }
-        if (!hasSameGroupNumberBefore) {
-          let newGroup = [];
-          newGroup.push(item);
-          groups.push(newGroup);
-        }
-      }
-      return groups;
-    },
+    //   for (let item of items) {
+    //     hasSameGroupNumberBefore = false;
+    //     for (let i = 0; i < groups.length; i++) {
+    //       if (groups[i][0].groupNo === item.groupNo) {
+    //         hasSameGroupNumberBefore = true;
+    //         groups[i].push(item);
+    //       }
+    //     }
+    //     if (!hasSameGroupNumberBefore) {
+    //       let newGroup = [];
+    //       newGroup.push(item);
+    //       groups.push(newGroup);
+    //     }
+    //   }
+    //   return groups;
+    // },
     updateWarning(fieldName) {
       if (this.copyInfo[fieldName] === undefined || this.copyInfo[fieldName] === '') {
         this.$set(this.warningResults, fieldName, '必填项');
@@ -536,29 +838,33 @@ export default {
     },
     updateScrollbar() {
       this.$nextTick(() => {
-        if (this.$refs.formWrapper) {
-          Ps.destroy(this.$refs.formWrapper);
-          Ps.initialize(this.$refs.formWrapper, {
-            wheelSpeed: 1,
-            minScrollbarLength: 40
-          });
-        }
-        if (this.$refs.neurologicModal) {
-          Ps.destroy(this.$refs.neurologicModal);
-          Ps.initialize(this.$refs.neurologicModal, {
-            wheelSpeed: 1,
-            minScrollbarLength: 40
-          });
-        }
+        // if (this.$refs.formWrapper) {
+        //   Ps.destroy(this.$refs.formWrapper);
+        //   Ps.initialize(this.$refs.formWrapper, {
+        //     wheelSpeed: 1,
+        //     minScrollbarLength: 40
+        //   });
+        // }
+        // if (this.$refs.formWrapper) {
+        Ps.destroy(this.$refs.scrollArea);
+        Ps.initialize(this.$refs.scrollArea, {
+          wheelSpeed: 1,
+          minScrollbarLength: 40,
+          suppressScrollX: true
+        });
+        // }
       });
     }
   },
   mounted() {
     // 先在本组件注册该事件，等待Layout组件接收动态组件挂载完毕的通知，再在本组件执行 showPanel 或 showModal
+    this.updataPatientGaitInfo();
+    Bus.$on(this.UPDATE_PATIENT_GAIT_INFO, this.updataPatientGaitInfo);
     Bus.$on(this.SHOW_GAITPOSTURE_MODAL, this.showPanel);
 
     // 动态组件挂载完毕，通知Layout组件，动态组件已挂载完毕
     Bus.$emit(this.DYNAMIC_COMPONENT_MOUNTED);
+    this.updateScrollbar();
   },
   beforeDestroy() {
     Bus.$off(this.SHOW_GAITPOSTURE_MODAL, this.showPanel);
@@ -595,7 +901,7 @@ export default {
     padding: 0 40px;
     top: 5%;
     width: 600px;
-    max-height: 90%;
+    max-height: 94%;
     background-color: @background-color;
     overflow: hidden;
     .moveLeft {
@@ -686,12 +992,23 @@ export default {
         }
       }
     }
+    .form-title {
+      margin: 0;
+      padding: 0;
+      line-height: 40px;
+      font-size: @normal-font-size;
+      color: @font-color;
+      text-align: center;
+    }
     .table {
-      margin: 10px 0 20px;
+      // margin: 10px 0 20px;
       width: 100%;
       border: 1px solid @light-gray-color;
       border-collapse: collapse;
       text-align: center;
+      &.small-font {
+        font-size: @small-font-size !important;
+      }
       .row {
         height: 40px;
         font-size: @normal-font-size;
@@ -727,9 +1044,6 @@ export default {
                 color: #fff;
               }
             }
-          &.col-width-10 {
-              width: 10%;
-            }
           &.col-width-20 {
               width: 20%;
             }
@@ -739,14 +1053,8 @@ export default {
           &.col-width-25 {
               width: 25%;
             }
-          &.col-width-20 {
-              width: 20%;
-            }
           &.col-width-30 {
               width: 30%;
-            }
-          &.col-width-80 {
-              width: 80%;
             }
           &.title-col {
             background-color: @font-color;
@@ -837,6 +1145,9 @@ export default {
       &.submit-button, &.edit-button {
         background-color: @button-color;
       }
+      &.reset-button {
+        background-color: @font-color;
+      }
       &:hover {
         opacity: 0.8;
       }
@@ -850,7 +1161,7 @@ export default {
     .ps__scrollbar-y-rail {
       position: absolute;
       width: 15px;
-      right: -2px;
+      right: 0px;
       padding: 0 3px;
       box-sizing: border-box;
       opacity: 0.3;
