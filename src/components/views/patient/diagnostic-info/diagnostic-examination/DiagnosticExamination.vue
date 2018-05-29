@@ -181,15 +181,19 @@
           :title="item.title" v-on:editCurrentCard="editGaitPosture(item)" v-on:viewCurrentCard="viewGaitPosture(item)"
           v-on:deleteCurrentCard="deleteGaitPosture(item)">
           <div class="text first-line">
-            <span class="name">类型</span>
+            <span class="name">开始时间:</span>
             <span>{{""}}</span>
           </div>
           <div class="text second-line">
-            <span class="name">编号</span>
+            <span class="name">结束时间:</span>
             <span>{{""}}</span>
           </div>
           <div class="text third-line">
-            <span class="name">日期</span>
+            <span class="name">采集类型:</span>
+            <span>{{""}}</span>
+          </div>
+          <div class="text forth-line">
+            <span class="name">数据来源:</span>
             <span>{{""}}</span>
           </div>
         </card>
@@ -229,7 +233,7 @@ import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import { deletePatientBodypart, deleteEmg, deleteBiochemical, deleteNeurologicCheck, deleteSleepMonitoring,
-  deleteGeneCheck, deleteImage, deleteVitalSigns, deleteGaitPosture} from 'api/patient.js';
+  deleteGeneCheck, deleteImage, deleteVitalSigns, deletePatientGait} from 'api/patient.js';
 // import { vueCopy } from 'utils/helper';
 
 import FoldingPanel from 'public/folding-panel/FoldingPanel';
@@ -609,7 +613,7 @@ export default {
       var patientGaitPosture = {id: item.id
       };
       Bus.$on(this.CONFIRM, () => {
-        deleteGaitPosture(patientGaitPosture).then(this._resolveDeletion, this._rejectDeletion);
+        deletePatientGait(patientGaitPosture).then(this._resolveDeletion, this._rejectDeletion);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
