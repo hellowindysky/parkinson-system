@@ -320,11 +320,11 @@ export default {
     targetScale() {
       let scale = Util.getElement('scaleInfoId', this.copyInfo.scaleInfoId, this.allScale);
 
-      console.log('targetScale', scale);
+      // console.log('targetScale', scale);
       // 量表问题列表重构
       if (scale.questions && scale.questions.length > 0) {
         this.questionsListFormat(scale.questions);
-        console.log('format', scale);
+        // console.log('format', scale);
       }
       return scale ? scale : {};
     },
@@ -338,15 +338,17 @@ export default {
     },
     totalNumOfQuestions() {
       let totalNum = 0;
-      for (let i = 0; i < this.targetScale.questions.length; i++) {
-        if (this.targetScale.questions[i].parentId) {
-          for (var j = 0; j < this.copyInfo.patientOptions.length; j++) {
-            if (this.copyInfo.patientOptions[j].scaleOptionId === this.targetScale.questions[i].parentId) {
-              totalNum += 1;
+      if (this.targetScale.questions) {
+        for (let i = 0; i < this.targetScale.questions.length; i++) {
+          if (this.targetScale.questions[i].parentId) {
+            for (var j = 0; j < this.copyInfo.patientOptions.length; j++) {
+              if (this.copyInfo.patientOptions[j].scaleOptionId === this.targetScale.questions[i].parentId) {
+                totalNum += 1;
+              }
             }
+          } else {
+            totalNum += 1;
           }
-        } else {
-          totalNum += 1;
         }
       }
       // return this.targetScale.questions ? this.targetScale.questions.length : 0;
@@ -956,11 +958,11 @@ export default {
       Bus.$on(this.CONFIRM, () => {
         // 跳转到未答题目
         const container = this.$refs.scrollArea;
-        let firstLevelSelect = [];
+        let parentSelected = [];
         for (let i = 0; i < this.targetScale.questions.length; i++) {
           let index = this.targetScale.questions[i].answerIndex;
           if (!this.copyInfo.patientOptions[index].scaleOptionId || this.copyInfo.patientOptions[index].scaleOptionId.length === 0) {
-            if (this.targetScale.questions[i].parentId && firstLevelSelect.indexOf(this.targetScale.questions[i].parentId) !== -1) {
+            if (this.targetScale.questions[i].parentId && parentSelected.indexOf(this.targetScale.questions[i].parentId) !== -1) {
               // console.log(this.$el.querySelector('#questions_' + index).offsetTop, i, 'child');
               container.scrollTop = this.$el.querySelector('#questions_' + index).offsetTop;
               break;
@@ -970,7 +972,7 @@ export default {
               break;
             }
           } else if (!this.targetScale.questions[i].questionLevel) {
-            firstLevelSelect.push(this.targetScale.questions[i].scaleInfoId);
+            parentSelected.push(this.targetScale.questions[i].scaleInfoId);
           }
         }
 
