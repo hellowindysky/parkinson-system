@@ -1079,6 +1079,21 @@
               </span>
             </div>
             <div class="item">
+              <el-form :inline="true">
+                <el-form-item>
+                  <el-checkbox v-model="diagnosticScaleSelectedStatus.inspectTimeFrom"></el-checkbox>
+                </el-form-item>
+                <el-form-item label="录入时间">
+                  <el-date-picker class="left-input" v-model="diagnosticScaleCondition.inspectTimeFrom" placeholder="最早时间"
+                    :disabled="!diagnosticScaleSelectedStatus.inspectTimeFrom"></el-date-picker>
+                  <span>-</span>
+                  <el-date-picker class="right-input" v-model="diagnosticScaleCondition.inspectTimeTo" placeholder="最晚时间"
+                    :disabled="!diagnosticScaleSelectedStatus.inspectTimeFrom"></el-date-picker>
+                </el-form-item>
+              </el-row>
+              </el-form>
+            </div>
+            <!-- <div class="item">
               <el-checkbox class="item-checkbox" v-model="diagnosticScaleSelectedStatus.scaleType"></el-checkbox>
               <span class="item-name">量表类型</span>
               <span class="item-value">
@@ -1088,7 +1103,7 @@
                     :key="option.code"></el-option>
                 </el-select>
               </span>
-            </div>
+            </div> -->
             <div class="item">
               <el-checkbox class="item-checkbox" v-model="diagnosticScaleSelectedStatus.scaleName"></el-checkbox>
               <span class="item-name">量表名称</span>
@@ -1109,6 +1124,23 @@
                 <span class="middle-text">~</span>
                 <el-input class="right-input" v-model="diagnosticScaleCondition.scalePointTo" placeholder="最高得分"
                   :disabled="!diagnosticScaleSelectedStatus.scalePointFrom"></el-input>
+              </span>
+            </div>
+            <div class="item">
+              <el-checkbox class="item-checkbox" v-model="diagnosticScaleSelectedStatus.scaleType"></el-checkbox>
+              <span class="item-name">量表题目</span>
+              <span class="item-value">
+                <span>1</span>
+                <el-select class="normal-input" v-model="diagnosticScaleCondition.scaleType"
+                  :disabled="!diagnosticScaleSelectedStatus.scaleType">
+                  <el-option v-for="option in getOptions('gaugeType')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
+                <el-select class="normal-input" v-model="diagnosticScaleCondition.scaleType"
+                  :disabled="!diagnosticScaleSelectedStatus.scaleType">
+                  <el-option v-for="option in getOptions('gaugeType')" :label="option.name" :value="option.code"
+                    :key="option.code"></el-option>
+                </el-select>
               </span>
             </div>
             <div class="item">
@@ -1255,6 +1287,7 @@ import GroupPanel from 'public/group-panel/GroupPanel';
 const PERSONAL_INFO = 'personalInfo';
 const DIAGNOSTIC_INFO = 'diagnosticInfo';
 
+// 基本情况
 let basicInfoFieldNames = ['ageFrom', 'ageTo', 'birthDateFrom', 'birthDateTo',
   'nation', 'sex', 'marryType', 'qualification', 'career', 'yearsOfEducationMin', 'yearsOfEducationMax', 'bmiMin', 'bmiMax', 'bloodType', 'econType',
   'liveType', 'homeProvince'];
@@ -1262,6 +1295,7 @@ let basicInfoSelectedFieldNames = ['ageFrom', 'ageFrom', 'birthDateFrom', 'birth
   'nation', 'sex', 'marryType', 'qualification', 'career', 'yearsOfEducationMin', 'yearsOfEducationMin', 'bmiMin', 'bmiMin', 'bloodType', 'econType',
   'liveType', 'homeProvince'];
 
+// 现病史
 let diseaseInfoFieldNames = ['diseaseType', 'specificDisease', 'diagnoseState', 'ariAgeFrom', 'ariAgeTo', 'diseaseProcessFrom', 'diseaseProcessTo',
   'motorSymptom', 'motorComplication', 'nonMotorSymptom', 'firSym',
   'firBody', 'symmetries', 'symmetriesTimeFrom', 'symmetriesTimeTo', 'firTimeFrom',
@@ -1273,26 +1307,31 @@ let diseaseInfoSelectedFieldNames = ['diseaseType', 'specificDisease', 'diagnose
   'firTimeFrom', 'firTimeFrom', 'surTimeFrom', 'surTimeFrom',
   'diagMode', 'medType', 'medId', 'treatMethod', 'treatPro', 'firMed', 'getDisFac', 'getDisFac0'];
 
+// 其它信息
 let otherInfoFieldNames = ['medType', 'diseaseRelationId', 'similarRole', 'patientSmokeId',
   'patientWineId', 'patientTeaId', 'patientCoffeeId', 'grade', 'exposedType'];
 let otherInfoSelectedFieldNames = ['medType', 'diseaseRelationId', 'similarRole', 'patientSmokeId',
   'patientWineId', 'patientTeaId', 'patientCoffeeId', 'grade', 'exposedType'];
 
+// 基本情况
 let diagnosticBasicFieldNames = ['caseType', 'diagTimeFrom', 'diagTimeTo',
   'diseaseYearFrom', 'diseaseYearTo'];
 let diagnosticBasicSelectedFieldNames = ['caseType', 'diagTimeFrom', 'diagTimeFrom',
   'diseaseYearFrom', 'diseaseYearFrom'];
 
+// 病症情况
 let diagnosticDiseaseFieldNames = ['diseaseType', 'specificDisease', 'diagnoseState', 'motorSymptomTypeId',
   'motorComplicationsSymptomTypeId', 'nonMotorSymptomTypeId'];
 let diagnosticDiseaseSelectedFieldNames = ['diseaseType', 'specificDisease', 'diagnoseState', 'motorSymptomTypeId',
   'motorComplicationsSymptomTypeId', 'nonMotorSymptomTypeId'];
 
+// 药物治疗
 let diagnosticMedicineFieldNames = ['medicineType', 'medicineId', 'medicineSpecId',
   'levodopaSingleIntakeFrom', 'levodopaSingleIntakeTo', 'levodopaTotalIntakeFrom', 'levodopaTotalIntakeTo'];
 let diagnosticMedicineSelectedFieldNames = ['medicineType', 'medicineId', 'medicineSpecId',
   'levodopaSingleIntakeFrom', 'levodopaSingleIntakeFrom', 'levodopaTotalIntakeFrom', 'levodopaTotalIntakeFrom'];
 
+// 手术治疗
 let diagnosticSurgeryFieldNames = ['preopsTimeFrom', 'preopsTimeTo', 'deviceId', 'devicePowerType',
   'operationIntension', 'intensionTimeFrom', 'intensionTimeTo', 'surgicalInfoId', 'surgicalDateFrom',
   'surgicalDateTo', 'dbsDateFrom', 'dbsDateTo', 'occurrenceTimeFrom', 'occurrenceTimeTo', 'majorComplicationType',
@@ -1302,10 +1341,12 @@ let diagnosticSurgerySelectedFieldNames = ['preopsTimeFrom', 'preopsTimeFrom', '
   'surgicalDateFrom', 'dbsDateFrom', 'dbsDateFrom', 'occurrenceTimeFrom', 'occurrenceTimeFrom', 'majorComplicationType',
   'minorComplicationType', 'treatment', 'result'];
 
+
+// 医学量表
 let diagnosticScaleFieldNames = ['inspectTimeFrom', 'inspectTimeTo', 'scaleType', 'scaleName',
-  'scaleQuestionFrom', 'scaleQuestionTo', 'scalePointFrom', 'scalePointTo', 'switchType'];
+  'scaleQuestionFrom', 'scaleQuestionTo', 'scalePointFrom', 'scalePointTo', 'scaleQuestionList', 'switchType'];
 let diagnosticScaleSelectedFieldNames = ['inspectTimeFrom', 'inspectTimeFrom', 'scaleType', 'scaleName',
-  'scaleQuestionFrom', 'scaleQuestionFrom', 'scalePointFrom', 'scalePointFrom', 'switchType'];
+  'scaleQuestionFrom', 'scaleQuestionFrom', 'scalePointFrom', 'scalePointFrom', 'scaleQuestionList', 'switchType'];
 
 // 物理治疗
 let diagnosticPhysiFieldNames = ['physiType', 'recordDateStart', 'recordDateEnd', 'leftThresholdBeforeMin', 'leftThresholdBeforeMax',
@@ -1603,7 +1644,11 @@ export default {
         this.$set(this.diagnosticPhysiSelectedStatus, fieldName, false);
       });
       diagnosticScaleFieldNames.forEach((fieldName) => {
-        this.$set(this.diagnosticScaleCondition, fieldName, '');
+        if (fieldName === 'scaleQuestionList') {
+          this.$set(this.diagnosticScaleCondition, fieldName, []);
+        } else {
+          this.$set(this.diagnosticScaleCondition, fieldName, '');
+        }
       });
       diagnosticScaleSelectedFieldNames.forEach((fieldName) => {
         this.$set(this.diagnosticScaleSelectedStatus, fieldName, false);
