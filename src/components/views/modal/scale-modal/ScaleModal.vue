@@ -274,7 +274,7 @@ export default {
       scaleCategory: 0, // 量表类型 0: 临床量表, 1: 课题评定
       quickAnswer: false,  // 量表是否支持快速答题
       quicklyMode: false,  // 答题模式 false 常规答题 true 快速答题
-      answerModeChanged: false,  // 判断是否切换过答题模式，用于在第一次由快速答题切换至常规答题时进行弹窗提示
+      answerModeChanged: false,  // 判断是否切换过答题模式，用于在仅在一次由快速答题切换至常规答题时进行弹窗提示
 
       copyInfo: {},
       warningResults: {
@@ -496,6 +496,10 @@ export default {
       this.$nextTick(() => {
         this.clearWarning();
       });
+
+      if (this.mode === this.EDIT_CURRENT_CARD && this.quicklyMode === false) {
+        this.scrollToQuestion();
+      }
       // console.log('copyInfo: ', this.copyInfo);
     },
     edit() {
@@ -821,7 +825,7 @@ export default {
       let index = questionObj.answerIndex;
       let answerObj = this.copyInfo.patientOptions[index];
       if (answerObj.optionPoint || answerObj.remarks) {
-        console.log('optionPoint');
+        // console.log('optionPoint');
         return true;
       } else {
         if (answerObj.scaleOptionId === '') {
@@ -855,7 +859,7 @@ export default {
           }
         }
       }
-      console.log(list);
+      // console.log(list);
     },
     /**
      * originAnswerObj 当前要添加到this.copyInfo.patientOptions中的原始量表问题对象
@@ -955,31 +959,35 @@ export default {
     },
     // 编辑模式下 跳转至第一道未答题目
     scrollToQuestion() {
-      Bus.$on(this.CONFIRM, () => {
-        // 跳转到未答题目
-        const container = this.$refs.scrollArea;
-        let parentSelected = [];
-        for (let i = 0; i < this.targetScale.questions.length; i++) {
-          let index = this.targetScale.questions[i].answerIndex;
-          if (!this.copyInfo.patientOptions[index].scaleOptionId || this.copyInfo.patientOptions[index].scaleOptionId.length === 0) {
-            if (this.targetScale.questions[i].parentId && parentSelected.indexOf(this.targetScale.questions[i].parentId) !== -1) {
-              // console.log(this.$el.querySelector('#questions_' + index).offsetTop, i, 'child');
-              container.scrollTop = this.$el.querySelector('#questions_' + index).offsetTop;
-              break;
-            } else if (!this.targetScale.questions[i].questionLevel) {
-              // console.log(this.$el.querySelector('#questions_' + index).offsetTop, i, 'parent');
-              container.scrollTop = this.$el.querySelector('#questions_' + index).offsetTop;
-              break;
-            }
+      const container = this.$refs.scrollArea;
+      let parentSelected = [];
+      let unAnsweredQuestionOffsetTop = '';
+      for (let i = 0; i < this.targetScale.questions.length; i++) {
+        let index = this.targetScale.questions[i].answerIndex;
+        if (!this.copyInfo.patientOptions[index].scaleOptionId || this.copyInfo.patientOptions[index].scaleOptionId.length === 0) {
+          if (this.targetScale.questions[i].parentId && parentSelected.indexOf(this.targetScale.questions[i].parentId) !== -1) {
+            // console.log(this.$el.querySelector('#questions_' + index).offsetTop, i, 'child');
+            unAnsweredQuestionOffsetTop = this.$el.querySelector('#questions_' + index).offsetTop;
+            break;
           } else if (!this.targetScale.questions[i].questionLevel) {
-            parentSelected.push(this.targetScale.questions[i].scaleInfoId);
+            // console.log(this.$el.querySelector('#questions_' + index).offsetTop, i, 'parent');
+            unAnsweredQuestionOffsetTop = this.$el.querySelector('#questions_' + index).offsetTop;
+            break;
           }
+        } else if (!this.targetScale.questions[i].questionLevel) {
+          parentSelected.push(this.targetScale.questions[i].scaleInfoId);
         }
+      }
+      console.log(unAnsweredQuestionOffsetTop);
+      if (unAnsweredQuestionOffsetTop !== '') {
+        Bus.$on(this.CONFIRM, () => {
+          // 跳转到未答题目
+          container.scrollTop = unAnsweredQuestionOffsetTop;
+          Bus.$off(this.CONFIRM);
+        });
 
-        Bus.$off(this.CONFIRM);
-      });
-
-      Bus.$emit(this.REQUEST_CONFIRMATION, '提示', '是否需要定位到未作答的题目?', '是', '否');
+        Bus.$emit(this.REQUEST_CONFIRMATION, '提示', '是否需要定位到未作答的题目?', '是', '否');
+      }
     }
   },
   mounted() {
