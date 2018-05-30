@@ -1071,6 +1071,22 @@ export function queryExportTemplate() {
   return encapsulatePromise(url, request);
 };
 
+// 新增或修改导出模板
+export function operateExportTemplate(exportTemp) {
+  var request = Object.assign({}, getCommonRequest());
+  request.templateExport = exportTemp;
+  var url = '/pdms/operateTemplateExport';
+  return encapsulatePromise(url, request);
+};
+
+// 删除导出模板
+export function deleteExportTemplate(TempIds) {
+  var request = Object.assign({}, getCommonRequest());
+  request.templateIds = TempIds;
+  var url = '/pdms/deleteTemplateExport';
+  return encapsulatePromise(url, request);
+};
+
 // 新增物理治疗
 export function addPhysiontherapy(patientPhytheTms) {
   var request = Object.assign({}, getCommonRequest());
