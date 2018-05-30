@@ -23,7 +23,7 @@
                 <div class="item-btns">
                   <el-button type="danger" size="small" v-if="item.mode===READING_MODE" @click.stop="removeTemplate">删除</el-button>
                   <el-button type="primary" size="small" v-if="item.mode===EDITING_MODE" @click.stop="canel(index)">取消</el-button>
-                  <el-button type="warning" size="small" v-if="item.mode===EDITING_MODE" @click.stop="saveTemplate">保存</el-button>
+                  <el-button type="warning" size="small" v-if="item.mode===EDITING_MODE" @click.stop="saveTemplate(index)">保存</el-button>
                   <el-button type="warning" size="small" v-if="item.mode===READING_MODE" @click.stop="editTemplate(index)">编辑</el-button>
                 </div>
               </li>
@@ -49,7 +49,8 @@
                      :name="middleItem.code+''">
                       <div class="tags-box">
 
-                        <div class="tags-item" v-for="(subItem,subIndex) in middleItem.fieldDataP" :key="subIndex">
+                        <div class="tags-item" v-for="(subItem,subIndex) in middleItem.fieldDataP" :key="subIndex"
+                         v-if="subItem.checked">
                           <el-tag
                            v-if="subItem.checked"
                            @close="tagClose(subItem,'parent')"
@@ -78,7 +79,12 @@
           </div>
 
           <div class="reset-btn">
-            <el-button type="primary" size="large" @click="resetChoice">重置</el-button>
+            <el-button
+             type="primary"
+             size="large"
+             @click="resetChoice"
+             :disabled="isDisable(activeIndex)">重置
+            </el-button>
           </div>
 
         </div>
@@ -141,14 +147,16 @@ import Bus from 'utils/bus.js';
 import { mapGetters } from 'vuex';
 import Util from 'utils/util.js';
 import Ps from 'perfect-scrollbar';
-import {deepCopy, vueCopy } from 'utils/helper';
-import { queryExportTemplate } from 'api/patient.js';
+import {deepCopy, vueCopy, pruneObj } from 'utils/helper';
+// import { queryExportTemplate, operateExportTemplate, deleteExportTemplate } from 'api/patient.js';
+import { queryExportTemplate, operateExportTemplate } from 'api/patient.js';
 export default {
   data() {
     return {
       activeIndex: 1,
       activeName: '1',
       activeNames: ['3', '4'],
+      tempNames: [],
       daoChuMuBan: [],
       keXuanZiDuan: []
     };
@@ -161,6 +169,15 @@ export default {
     exportList() {
       let types = Util.getElement('typegroupcode', 'exportTemplate', this.typeGroup).types;
       return types ? types : [];
+    },
+    isEditing() {
+      for (let i = 0; i < this.daoChuMuBan.length; i++) {
+        const element = this.daoChuMuBan[i];
+        if (element.mode === this.EDITING_MODE) {
+          return [true, i];
+        }
+      }
+      return [false, ''];
     }
   },
   methods: {
@@ -260,9 +277,15 @@ export default {
           item.mode = this.READING_MODE;
         });
         this.daoChuMuBan = res;
+        this.tempNames = res.map((item) => {
+          return {
+            templateId: item.templateId,
+            templateName: item.templateName
+          };
+        });
         // vueCopy(res, this.daoChuMuBan);
         this.initTemplate(this.activeIndex);
-        // console.log(res);
+        // console.log(res, this.templateName);
       }, (error) => {
         console.error(error);
       });
@@ -293,6 +316,16 @@ export default {
       });
     },
     toggleTemp(index) {
+      if (this.isEditing[0] && index !== this.isEditing[1]) {
+        this.$message({
+          message: '请先完成编辑中的模板',
+          type: 'warning'
+        });
+        return;
+      }
+      if (this.daoChuMuBan[index].mode === this.EDITING_MODE) {
+        return;
+      }
       this.activeIndex = index;
       this.resetChoice();
       this.initTemplate(this.activeIndex);
@@ -378,11 +411,85 @@ export default {
     removeTemplate() {
       //
     },
-    saveTemplate() {
-      //
+    saveTemplate(index) {
+      let tempFields = [];
+      this.keXuanZiDuan.forEach((itemF) => {
+        itemF.category.forEach((itemS) => {
+          itemS.fieldDataP.forEach((itemT) => {
+            if (itemT.checked === true) {
+              let fieldObj = {
+                templateId: this.daoChuMuBan[index].templateId,
+                templateName: this.daoChuMuBan[index].templateName,
+                exportTableName: itemT.tableName,
+                exportEnField: itemT.enFieldName,
+                exportCnField: itemT.cnFieldName,
+                exportFid: itemT.fid,
+                exportGid: itemT.gid,
+                exportGroupNo: itemT.groupNo
+              };
+              tempFields.push(fieldObj);
+              console.log('itemT', itemT);
+            }
+            itemT.fieldDataS.forEach((fourItem) => {
+              if (fourItem.checked === true) {
+                let fieldObj = {
+                  templateId: this.daoChuMuBan[index].templateId,
+                  templateName: this.daoChuMuBan[index].templateName,
+                  exportTableName: fourItem.tableName,
+                  exportEnField: fourItem.enFieldName,
+                  exportCnField: fourItem.cnFieldName,
+                  exportPid: fourItem.pid,
+                  exportFid: fourItem.fid,
+                  exportGid: fourItem.gid,
+                  exportGroupNo: fourItem.groupNo
+                };
+                tempFields.push(fieldObj);
+                console.log('fourItem', fourItem);
+              }
+            });
+          });
+        });
+      });
+      console.log('tempFields', tempFields);
+      if (!tempFields[0]) {
+        this.$message({
+          message: '请选择导出字段！！！',
+          type: 'warning'
+        });
+        return;
+      }
+      if (!tempFields[0].templateName) {
+        this.$message({
+          message: '请填写模板名称！！！',
+          type: 'warning'
+        });
+        return;
+      }
+      pruneObj(tempFields);
+      // 准备提交数据
+      let type = tempFields[0].templateId ? 1 : 0;
+      let templateExport = {
+        type: type,
+        templateExportFields: tempFields
+      };
+
+      operateExportTemplate(templateExport).then(() => {
+        this.queryTemplate();
+      }, (error) => {
+        console.error(error);
+      });
     },
     editTemplate(index) {
-      this.toggleTemp(index);
+      if (this.isEditing[0] && index !== this.isEditing[1]) {
+        this.$message({
+          message: '请先完成编辑中的模板',
+          type: 'warning'
+        });
+        return;
+      }
+      this.activeIndex = index;
+      this.resetChoice();
+      this.initTemplate(index);
       this.$set(this.daoChuMuBan[index], 'mode', this.EDITING_MODE);
     },
     canel(index) {
@@ -392,10 +499,23 @@ export default {
         this.initTemplate(this.activeIndex);
         return;
       }
-      this.toggleTemp(index);
+      this.resetChoice();
+      this.initTemplate(index);
       this.$set(this.daoChuMuBan[index], 'mode', this.READING_MODE);
+
+      // 点击取消时把模板名称恢复成原样
+      this.daoChuMuBan.forEach((item, index) => {
+        this.$set(item, 'templateName', this.tempNames[index].templateName);
+      });
     },
     addTemp() {
+      if (this.isEditing[0]) {
+        this.$message({
+          message: '请先完成编辑中的模板',
+          type: 'warning'
+        });
+        return;
+      }
       for (let item of this.daoChuMuBan) {
         if (!item.hasOwnProperty('templateId')) {
           this.$message({
