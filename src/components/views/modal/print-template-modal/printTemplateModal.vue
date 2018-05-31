@@ -21,7 +21,7 @@
                   </span>
                 </div>
                 <div class="item-btns">
-                  <el-button type="danger" size="small" v-if="item.mode===READING_MODE" @click.stop="removeTemplate">删除</el-button>
+                  <el-button type="danger" size="small" v-if="item.mode===READING_MODE" @click.stop="removeTemplate(item.templateId)">删除</el-button>
                   <el-button type="primary" size="small" v-if="item.mode===EDITING_MODE" @click.stop="canel(index)">取消</el-button>
                   <el-button type="warning" size="small" v-if="item.mode===EDITING_MODE" @click.stop="saveTemplate(index)">保存</el-button>
                   <el-button type="warning" size="small" v-if="item.mode===READING_MODE" @click.stop="editTemplate(index)">编辑</el-button>
@@ -35,14 +35,14 @@
         <div class="selected-area">
           <p class="selected-title">当前已选字段</p>
           <div class="selected-field">
-            <el-tabs v-model="activeName">
+            <el-tabs v-model="activeName_selected">
 
               <el-tab-pane
                v-for="(mainItem,mainIndex) in keXuanZiDuan" :key="mainIndex"
                :label="mainItem.title"
                :name="mainItem.code+''">
                 <div class="collapse-box" :ref="'selected'+mainItem.code">
-                  <el-collapse v-model="activeNames">
+                  <el-collapse v-model="activeTitle_selected">
                     <el-collapse-item
                      v-for="(middleItem,middleIndex) in mainItem.category" :key="middleIndex"
                      :title="middleItem.title"
@@ -93,14 +93,14 @@
         <div class="choice-area">
           <p class="choice-title">可选导出字段</p>
           <div class="choice-field">
-            <el-tabs v-model="activeName">
+            <el-tabs v-model="activeName_choice">
 
               <el-tab-pane
                v-for="(mainItem,mainIndex) in keXuanZiDuan" :key="mainIndex"
                :label="mainItem.title"
                :name="mainItem.code+''">
                 <div class="collapse-box" :ref="'choice'+mainItem.code">
-                  <el-collapse v-model="activeNames">
+                  <el-collapse v-model="activeTitle_choice">
                     <el-collapse-item
                      v-for="(middleItem,middleIndex) in mainItem.category" :key="middleIndex"
                      :title="middleItem.title"
@@ -153,9 +153,11 @@ import { queryExportTemplate, operateExportTemplate } from 'api/patient.js';
 export default {
   data() {
     return {
-      activeIndex: 1,
-      activeName: '1',
-      activeNames: ['3', '4'],
+      activeIndex: 0,
+      activeName_selected: '1',
+      activeName_choice: '1',
+      activeTitle_selected: ['3'],
+      activeTitle_choice: ['3'],
       tempNames: [],
       daoChuMuBan: [],
       keXuanZiDuan: []
@@ -408,8 +410,29 @@ export default {
         });
       });
     },
-    removeTemplate() {
-      //
+    removeTemplate(id) {
+      let templateIds = [id];
+      console.log(templateIds);
+      this.$confirm('确定删除该模板?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // this.$message({
+        //   type: 'success',
+        //   message: '删除成功!'
+        // });
+      }).catch(() => {
+        // this.$message({
+        //   type: 'info',
+        //   message: '已取消删除'
+        // });
+      });
+      // deleteExportTemplate(templateIds).then(() => {
+      //   //
+      // }, (error) => {
+      //   console.log(error);
+      // });
     },
     saveTemplate(index) {
       let tempFields = [];
@@ -450,7 +473,7 @@ export default {
           });
         });
       });
-      console.log('tempFields', tempFields);
+
       if (!tempFields[0]) {
         this.$message({
           message: '请选择导出字段！！！',
