@@ -16,9 +16,13 @@
           </span>
 
           <div class="field-value" v-show="mode===READING_MODE">
-            <span v-if="field.fieldName==='ariAge'">{{ariAge}}{{theUnit(field.fieldName)}}</span>
+            <span v-if="field.fieldName==='ariTime'">{{ onsetTime(copyInfo[field.fieldName]) }}</span>
+            <span v-else-if="field.fieldName==='ariAge'">{{ariAge}}{{theUnit(field.fieldName)}}</span>
             <span v-else-if="field.fieldName==='courseOfDisease'">
-              {{diseaseCourse.year}}年{{diseaseCourse.month}}月
+              {{diseaseCourse.year}}
+              <span v-if="diseaseCourse.year+''">年</span>
+              {{diseaseCourse.month}}
+              <span v-if="diseaseCourse.month+''">月</span>
             </span>
             <span v-else-if="getUIType(field)===3">
               {{ transformTypeCode(copyInfo[field.fieldName], field.fieldName) }}
@@ -34,9 +38,9 @@
           <div class="field-input" v-show="mode===EDITING_MODE">
             <span v-if="field.fieldName==='ariAge'">{{ariAge}}{{theUnit(field.fieldName)}}</span>
             <span v-else-if="field.fieldName==='courseOfDisease'">
-              <el-input type="number" v-model="diseaseCourse.year" placeholder="填写年"></el-input>
+              <el-input v-model="diseaseCourse.year" placeholder="填写年"></el-input>
               <span>年</span>
-              <el-input type="number" v-model="diseaseCourse.month" placeholder="填写月"></el-input>
+              <el-input v-model="diseaseCourse.month" placeholder="填写月"></el-input>
               <span>月</span>
             </span>
             <span v-else-if="getUIType(field)===1">
@@ -218,7 +222,7 @@
            v-on:editCurrentCard="editFirstTreatmentRecord(item)"
            v-on:viewCurrentCard="viewFirstTreatmentRecord(item)"
            v-on:deleteCurrentCard="deleteFirstTreatmentRecord(item)">
-            <template v-if="item.firstVisitType === 1">
+            <div v-if="item.firstVisitType === 1">
               <div class="text first-line">
                 <span class="name">药物名称</span>
                 <span class="value">{{transform(item.medicineName, getMedNameOptions(item.medicineClassification))}}</span>
@@ -231,8 +235,8 @@
                 <span class="name">初次用药时间</span>
                 <span class="value">{{item.firstTime}}</span>
               </div>
-            </template>
-            <template v-else-if="item.firstVisitType === 2">
+            </div>
+            <div v-else-if="item.firstVisitType === 2">
               <div class="text first-line">
                 <span class="name">治疗类型</span>
                 <span class="value">{{transform(item.treatmentType,treatmentTypeOpt)}}</span>
@@ -245,7 +249,7 @@
                 <span class="name">治疗时间</span>
                 <span class="value">{{item.treatmentTime}}</span>
               </div>
-            </template>
+            </div>
 
           </Card>
         </extensible-panel>
@@ -472,6 +476,13 @@ export default {
         }
       }
       return hasCOMT;
+    },
+    onsetTime(dateStr) {
+      if (dateStr) {
+        return dateStr.split('-').slice(0, 2).join('-');
+      } else {
+        return dateStr;
+      }
     },
     theAriseTime(item) {
       if (item.ariseTime) {
@@ -951,29 +962,17 @@ export default {
       }
       this.changeCopyInfo();
     },
-    'copyInfo.courseOfDisease': function(newVal) {
-      if (newVal) {
-        let year = parseInt(newVal / 12, 10);
-        let month = newVal % 12;
-        // console.log(newVal, year, month);
-        this.$set(this.diseaseCourse, 'year', year);
-        this.$set(this.diseaseCourse, 'month', month);
-      }
-    },
     diseaseCourse: {
       handler: function(newObj) {
-        // console.log(newObj);
         let year = newObj.year ? Number(newObj.year) : 0;
         let month = newObj.month ? Number(newObj.month) : 0;
         let months = year * 12 + month;
-        this.$set(this.copyInfo, 'courseOfDisease', months);
-        // console.log(months);
         let today = new Date();
         today.setMonth(today.getMonth() - months);
         let ariTime = today;
         ariTime = Util.simplifyDate(ariTime).split('-');
+        // ariTime = ariTime.getFullYear() + '-' + (ariTime.getMonth() + 1);
         ariTime = ariTime[0] + '-' + ariTime[1];
-        console.log(ariTime);
         this.$set(this.copyInfo, 'ariTime', ariTime);
         if (!newObj.year && !newObj.month) {
           this.$set(this.copyInfo, 'ariTime', '');
@@ -985,7 +984,10 @@ export default {
       if (newVal) {
         let today = new Date();
         let courseDis = Util.calculateMonthsBetween(newVal, today);
-        // console.log(newVal, courseDis, today);
+        let year = parseInt(courseDis / 12, 10);
+        let month = courseDis % 12;
+        this.$set(this.diseaseCourse, 'year', year);
+        this.$set(this.diseaseCourse, 'month', month);
         this.$set(this.copyInfo, 'courseOfDisease', courseDis);
       } else {
         this.$set(this.diseaseCourse, 'year', '');
