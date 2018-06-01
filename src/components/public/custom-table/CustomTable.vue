@@ -141,16 +141,24 @@ export default {
       this.tableTitleData.forEach((item) => {
         if (item.subCol && Array.isArray(item.subCol)) {
           item.subCol.forEach((subItem) => {
-            items.push({
-              key: subItem.dataKey,
-              type: subItem.dataType
-            });
+            if (this.isMockUser() && this.isMockTitle(subItem.dataKey)) {
+              console.log('skip mock column item ' + JSON.stringify(subItem));
+            } else {
+              items.push({
+                key: subItem.dataKey,
+                type: subItem.dataType
+              });
+            }
           });
         } else {
-          items.push({
-            key: item.dataKey,
-            type: item.dataType
-          });
+          if (this.isMockUser() && this.isMockTitle(item.dataKey)) {
+            console.log('skip mock column item ' + JSON.stringify(item));
+          } else {
+            items.push({
+              key: item.dataKey,
+              type: item.dataType
+            });
+          }
         }
       });
       return items;
