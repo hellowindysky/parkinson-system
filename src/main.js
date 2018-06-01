@@ -3,6 +3,7 @@
 
 import Vue from 'vue';
 import ElementUI from 'element-ui';
+import { Popover } from 'element-ui';
 import axios from 'axios';
 
 import 'normalize.css';  // 引入normalize.css
@@ -33,6 +34,7 @@ router.afterEach(() => {
 Vue.config.productionTip = false;
 
 Vue.use(ElementUI);
+Vue.use(Popover);
 
 /* eslint-disable no-new */
 new Vue({
