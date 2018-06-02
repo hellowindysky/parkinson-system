@@ -158,10 +158,15 @@ export default {
       }
     },
     inStatisticsMenu() {
-      return this.$route.matched.some(record => record.meta.statistics);
+      return this.$route.matched.some(record => record.meta.statistics) && !this.isMockUser();
     }
   },
   methods: {
+    isMockUser() {
+      var accountNumber = sessionStorage.getItem('userName');
+      var mockUser = {'admin2': true, 'test1': true};
+      return accountNumber in mockUser;
+    },
     initDate() {
       var now = new Date();
       this.endTime = now;
