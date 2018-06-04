@@ -149,7 +149,7 @@ import Util from 'utils/util.js';
 import Ps from 'perfect-scrollbar';
 import {deepCopy, vueCopy, pruneObj } from 'utils/helper';
 // import { queryExportTemplate, operateExportTemplate, deleteExportTemplate } from 'api/patient.js';
-import { queryExportTemplate, operateExportTemplate } from 'api/patient.js';
+import { queryExportTemplate, operateExportTemplate, deleteExportTemplate } from 'api/patient.js';
 export default {
   data() {
     return {
@@ -234,47 +234,6 @@ export default {
     queryTemplate() {
       // 查询所有导出模板
       queryExportTemplate().then((res) => {
-        res.push(
-          {
-            templateId: 1,
-            templateName: '张艺的模板',
-            templateExportFields: [
-              {
-                id: 33,
-                templateId: 1,
-                templateName: '张艺的模板',
-                exportGroupNo: 1,
-                exportEnField: 'DIAGMODE',
-                exportCnField: '初诊方式',
-                exportTableName: 'tc_patient_info',
-                exportFid: 3,
-                exportGid: 1
-              },
-              {
-                id: 34,
-                templateId: 1,
-                templateName: '张艺的模板',
-                exportEnField: '',
-                exportCnField: '初诊药物治疗',
-                exportTableName: '',
-                exportFid: 3,
-                exportGid: 1
-              },
-              {
-                id: 35,
-                templateId: 1,
-                templateName: '张艺的模板',
-                exportGroupNo: 5,
-                exportEnField: 'MEDICINE_NAME',
-                exportCnField: '药品名',
-                exportTableName: 'tc_patient_first_visit_treatment',
-                exportFid: 3,
-                exportGid: 1,
-                exportPid: 34
-              }
-            ]
-          }
-        );
         res.forEach((item) => {
           item.mode = this.READING_MODE;
         });
@@ -286,6 +245,7 @@ export default {
           };
         });
         // vueCopy(res, this.daoChuMuBan);
+        this.resetChoice();
         this.initTemplate(this.activeIndex);
         // console.log(res, this.templateName);
       }, (error) => {
@@ -418,21 +378,17 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        // this.$message({
-        //   type: 'success',
-        //   message: '删除成功!'
-        // });
+        deleteExportTemplate(templateIds).then(() => {
+          this.queryTemplate();
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }, (error) => {
+          console.log(error);
+        });
       }).catch(() => {
-        // this.$message({
-        //   type: 'info',
-        //   message: '已取消删除'
-        // });
       });
-      // deleteExportTemplate(templateIds).then(() => {
-      //   //
-      // }, (error) => {
-      //   console.log(error);
-      // });
     },
     saveTemplate(index) {
       let tempFields = [];
@@ -451,7 +407,6 @@ export default {
                 exportGroupNo: itemT.groupNo
               };
               tempFields.push(fieldObj);
-              console.log('itemT', itemT);
             }
             itemT.fieldDataS.forEach((fourItem) => {
               if (fourItem.checked === true) {
@@ -467,7 +422,6 @@ export default {
                   exportGroupNo: fourItem.groupNo
                 };
                 tempFields.push(fieldObj);
-                console.log('fourItem', fourItem);
               }
             });
           });
