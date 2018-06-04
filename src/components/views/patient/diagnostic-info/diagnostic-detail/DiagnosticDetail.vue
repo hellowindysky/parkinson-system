@@ -43,8 +43,9 @@
         :electricImagingList="caseDetail.patientElecVideoList"
         :medicalImagingList="caseDetail.patientVideoList"
         :diagnosticVitalSigns="caseDetail.patientVitalSign"
-        :diagnosisCreator="diagnosisCreator"
-        :gaitPostureList="caseDetail.patientGait">
+        :gaitPostureList="caseDetail.patientGait"
+        :maGaitList="caseDetail.patientGait"
+        :diagnosisCreator="diagnosisCreator">
       </diagnostic-examination>
       <!-- 空白区域是为了让最后的内容能够滚动到脱离屏幕最下方 -->
       <div class="blank-area"></div>

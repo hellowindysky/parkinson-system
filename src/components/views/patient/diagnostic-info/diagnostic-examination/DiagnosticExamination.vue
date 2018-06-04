@@ -176,27 +176,65 @@
       </extensible-panel>
 
       <!-- 接入设备监测 -->
-      <extensible-panel class="panel gait-posture-panel" :mode="mutableMode" :title="gaitPostureTitle" v-on:addNewCard="addGaitPosture" :editable="canEdit">
-        <card class="card gaitPosture-card" :class="cardWidth" :mode="mutableMode" v-for="(item,idx) in gaitPostureList" :key="idx"
-          :title="item.title" v-on:editCurrentCard="editGaitPosture(item)" v-on:viewCurrentCard="viewGaitPosture(item)"
+      <extensible-panel class="panel gait-posture-panel"
+        v-if="showAddGaitPosture || showMaGait"
+        :mode="mutableMode"
+        :title="gaitPostureTitle"
+        v-on:addNewCard="addGaitPostureRecord"
+        :editable="canEdit">
+        <card class="card gaitPosture-card"
+          :class="cardWidth"
+          :mode="mutableMode"
+          v-for="(item, index) in gaitPostureList"
+          :key="'gaitPosture' + index"
+          :title="item.title"
+          v-on:editCurrentCard="editGaitPosture(item)"
+          v-on:viewCurrentCard="viewGaitPosture(item)"
           v-on:deleteCurrentCard="deleteGaitPosture(item)">
           <div class="text first-line">
             <span class="name">开始时间:</span>
-            <span>{{""}}</span>
+            <span>{{item.acquisitionStartTime}}</span>
           </div>
           <div class="text second-line">
             <span class="name">结束时间:</span>
-            <span>{{""}}</span>
+            <span>{{item.acquisitionEndTime}}</span>
           </div>
           <div class="text third-line">
             <span class="name">采集类型:</span>
-            <span>{{""}}</span>
+            <span>{{transform(item.type, 'type')}}</span>
           </div>
-          <div class="text forth-line">
+          <div class="text fourth-line">
             <span class="name">数据来源:</span>
-            <span>{{""}}</span>
+            <span>{{'手动录入'}}</span>
           </div>
         </card>
+        <card class="card gaitPosture-card"
+          :class="cardWidth"
+          :mode="mutableMode"
+          v-for="(item, index) in maGaitList"
+          :key="'maGait' + index"
+          :title="'MA10'"
+          v-on:editCurrentCard="editMaGait(item)"
+          v-on:viewCurrentCard="viewMaGait(item)"
+          v-on:deleteCurrentCard="deleteMaGait(item)">
+          <div class="text first-line">
+            <span class="name">开始时间:</span>
+            <span>{{item.acquisitionStartTime}}</span>
+          </div>
+          <div class="text second-line">
+            <span class="name">结束时间:</span>
+            <span>{{item.acquisitionEndTime}}</span>
+          </div>
+          <div class="text third-line">
+            <span class="name">采集类型:</span>
+            <span>{{transform(item.type, 'type')}}</span>
+          </div>
+          <div class="text fourth-line">
+            <span class="name">数据来源:</span>
+            <span>{{'手动录入'}}</span>
+          </div>
+        </card>
+
       </extensible-panel>
 
       <!-- 医学影像 -->
@@ -233,7 +271,7 @@ import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import { deletePatientBodypart, deleteEmg, deleteBiochemical, deleteNeurologicCheck, deleteSleepMonitoring,
-  deleteGeneCheck, deleteImage, deleteVitalSigns, deletePatientGait} from 'api/patient.js';
+  deleteGeneCheck, deleteImage, deleteVitalSigns, deletePatientGait, deleteMaGait} from 'api/patient.js';
 // import { vueCopy } from 'utils/helper';
 
 import FoldingPanel from 'public/folding-panel/FoldingPanel';
@@ -301,6 +339,12 @@ export default {
         return [];
       }
     },
+    maGaitList: {
+      type: Array,
+      default: () => {
+        return [];
+      }
+    },
     medicalImagingList: {
       type: Array,
       default: () => {
@@ -357,7 +401,8 @@ export default {
       return '电生理检查（' + count + '条记录）';
     },
     gaitPostureTitle() {
-      return '接入设备监测（' + this.gaitPostureList.length + '条记录）';
+      var totalCount = this.gaitPostureList.length + this.maGaitList.length ;
+      return '接入设备监测（' + totalCount + '条记录）';
     },
     medicalImagingTitle() {
       return '医学影像（' + this.medicalImagingList.length + '条记录）';
@@ -426,6 +471,38 @@ export default {
         });
       }
       Bus.$emit(this.SHOW_CHOICE_PANEL, list);
+    },
+    addGaitPostureRecord() {
+      var list = [];
+      if (this.showAddGaitPosture) {
+        list.push({
+          text: '步态仪器',
+          callback: this.addGaitPosture
+        });
+      }
+      if (this.showMaGait) {
+        list.push({
+          text: 'MA10',
+          callback: this.addMaGait
+        });
+      }
+      Bus.$emit(this.SHOW_CHOICE_PANEL, list);
+    },
+    showAddGaitPosture() {
+      var atOtherStatus = this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_FOLLOW_UP;
+      if (this.hospitalType === 1 && this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+    showMaGait() {
+      var atOtherStatus = this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_FOLLOW_UP;
+      if (this.hospitalType === 1 && this.isExperimentPatientsList && this.diagnosisDuringExperiment && atOtherStatus) {
+        return false;
+      } else {
+        return true;
+      }
     },
     showNeurologicCheckRecord() {
       var atOtherStatus = this.diagnosticExperimentStep !== this.EXPERIMENT_STEP_FOLLOW_UP;
@@ -598,22 +675,42 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addGaitPosture() {
-      // Bus.$emit(this.SHOW_GAITPOSTURE_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'gaitPostureModal', this.SHOW_GAITPOSTURE_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
+      // Bus.$emit(this.SHOW_GAIT_POSTURE_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'gaitPostureModal', this.SHOW_GAIT_POSTURE_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
     },
     viewGaitPosture(item) {
-      // Bus.$emit(this.SHOW_GAITPOSTURE_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit);
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'gaitPostureModal', this.SHOW_GAITPOSTURE_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit);
+      // Bus.$emit(this.SHOW_GAIT_POSTURE_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'gaitPostureModal', this.SHOW_GAIT_POSTURE_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit);
     },
     editGaitPosture(item) {
-      // Bus.$emit(this.SHOW_GAITPOSTURE_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit);
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'gaitPostureModal', this.SHOW_GAITPOSTURE_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit);
+      // Bus.$emit(this.SHOW_GAIT_POSTURE_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'gaitPostureModal', this.SHOW_GAIT_POSTURE_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit);
     },
     deleteGaitPosture(item) {
       var patientGaitPosture = {id: item.id
       };
       Bus.$on(this.CONFIRM, () => {
         deletePatientGait(patientGaitPosture).then(this._resolveDeletion, this._rejectDeletion);
+      });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
+    },
+    addMaGait() {
+      // Bus.$emit(this.SHOW_GAIT_POSTURE_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'maGaitModal', this.SHOW_MA_GAIT_MODAL, this.ADD_NEW_CARD, {}, this.canEdit);
+    },
+    viewMaGait(item) {
+      // Bus.$emit(this.SHOW_GAIT_POSTURE_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'maGaitModal', this.SHOW_MA_GAIT_MODAL, this.VIEW_CURRENT_CARD, item, this.canEdit);
+    },
+    editMaGait(item) {
+      // Bus.$emit(this.SHOW_GAIT_POSTURE_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'maGaitModal', this.SHOW_MA_GAIT_MODAL, this.EDIT_CURRENT_CARD, item, this.canEdit);
+    },
+    deleteMaGait(item) {
+      var patientMaGait = {id: item.id
+      };
+      Bus.$on(this.CONFIRM, () => {
+        deleteMaGait(patientMaGait).then(this._resolveDeletion, this._rejectDeletion);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
@@ -675,6 +772,7 @@ export default {
 @field-item-width: 150px;
 @field-height: 45px;
 @vitalSigns-card-height: 130px;
+@gaitPosture-card-height: 130px;
 
 .diagnostic-examination {
   .panel {
@@ -697,6 +795,12 @@ export default {
         height: auto;
       }
     }
+    &.gait-posture-panel .content {
+      height: @gaitPosture-card-height + @card-vertical-margin * 2 + 5px * 2;
+      &.extended {
+        height: auto;
+      }
+    }
     .card {
       display: inline-block;
       position: relative;
@@ -706,6 +810,9 @@ export default {
       }
       &.neuroelectric-card {
         height: @neuroelectric-card-height;
+      }
+      &.gaitPosture-card {
+        height: @gaitPosture-card-height;
       }
       &.width-1-1,
       &.width-1-0 {
