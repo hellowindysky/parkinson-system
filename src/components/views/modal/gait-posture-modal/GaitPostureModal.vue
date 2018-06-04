@@ -92,7 +92,7 @@
         </div>
       </div>
       <div class="seperate-line"></div>
-      <h3 class="form-title" v-if="tableMode===SON_OPEN && hasTableExisted">{{subTableTitle}}</h3>
+      <!-- <h3 class="form-title" v-if="tableMode===SON_OPEN && hasTableExisted">{{subTableTitle}}</h3> -->
       <div class="content" v-if="hasTableExisted">
         <table class="table" v-if="tableMode===FATHER_OPEN">
           <tr class="row title-row">
@@ -100,7 +100,7 @@
             <td class="col col-width-35">检&nbsp;&nbsp;查&nbsp;&nbsp;项</td>
             <td class="col col-width-10">操&nbsp;&nbsp;作</td>
           </tr>
-          <tr class="row" v-for="(reaction, index) in data">
+          <tr class="row" v-for="(reaction, index) in patientGait">
             <td class="col col-width-5">{{ index + 1 }}</td>
             <td class="col col-width-35">{{transform(reaction.type, "threeDimensionalGait")}}</td>
             <td class="col col-width-10">
@@ -123,47 +123,59 @@
             <td class="col col-width-25">{{item.typeName}}</td>
             <td class="col col-width-25" v-show="index <6">
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span class="left">{{""}}</span>
+                <span class="left">{{item.leftNormal}}</span>
               </span>
               <span class="field-input" v-else>
-                <el-input class="left"></el-input>
+                <el-input class="left"
+                  v-model="item.leftNormal">
+                </el-input>
               </span>
               <span>±</span>
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span class="right">{{""}}</span>
+                <span class="right">{{item.leftError}}</span>
               </span>
               <span class="field-input" v-else>
-                <el-input class="right"></el-input>
+                <el-input class="right"
+                  v-model="item.leftError">
+                </el-input>
               </span>
             </td>
             <td class="col col-width-25" v-show="index <6">
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span class="left">{{""}}</span>
+                <span class="left">{{item.rightNormal}}</span>
               </span>
               <span class="field-input" v-else>
-                <el-input class="left"></el-input>
+                <el-input class="left"
+                  v-model="item.rightNormal">
+                </el-input>
               </span>
               <span>±</span>
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span class="right">{{""}}</span>
+                <span class="right">{{item.rightError}}</span>
               </span>
               <span class="field-input" v-else>
-                <el-input class="right"></el-input>
+                <el-input class="right"
+                  v-model="item.rightError">
+                </el-input>
               </span>
             </td>
             <td class="col col-width-25" colspan=2 v-show="index >= 6">
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span class="left">{{""}}</span>
+                <span class="left">{{item.dataNormal}}</span>
               </span>
               <span class="field-input" v-else>
-                <el-input class="left"></el-input>
+                <el-input class="left"
+                  v-model="item.dataNormal">
+                </el-input>
               </span>
               <span>±</span>
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span class="right">{{""}}</span>
+                <span class="right">{{item.dataError}}</span>
               </span>
               <span class="field-input" v-else>
-                <el-input class="right"></el-input>
+                <el-input class="right"
+                  v-model="item.dataError">
+                </el-input>
               </span>
             </td>
             <td class="col col-width-25">{{item.referenceValue}}</td>
@@ -277,7 +289,7 @@
         <table class="table" v-if="tableMode===SON_OPEN && type === 2 && typeName === '运动学分析'">
           <td class="row title-row" colspan=5>运&nbsp;&nbsp;动&nbsp;&nbsp;学&nbsp;&nbsp;分&nbsp;&nbsp;析</td>
           <tr class="row title-row">
-            <td class="col col-width-25 endways">{{''}}</td>
+            <td class="col col-width-25 endways"></td>
             <td class="col col-width-25">右&nbsp;&nbsp;侧</td>
             <td class="col col-width-25">参&nbsp;&nbsp;考&nbsp;&nbsp;值</td>
             <td class="col col-width-25">左&nbsp;&nbsp;侧</td>
@@ -323,7 +335,7 @@
         <table class="table" v-if="tableMode===SON_OPEN && type === 3 && typeName === '力矩'">
           <td class="row title-row" colspan=5>力&nbsp;&nbsp;矩</td>
           <tr class="row title-row">
-            <td class="col col-width-25 endways">{{''}}</td>
+            <td class="col col-width-25 endways"></td>
             <td class="col col-width-25">右&nbsp;&nbsp;侧</td>
             <td class="col col-width-25">参&nbsp;&nbsp;考&nbsp;&nbsp;值</td>
             <td class="col col-width-25">左&nbsp;&nbsp;侧</td>
@@ -369,7 +381,7 @@
         <table class="table" v-if="tableMode===SON_OPEN && type === 4 && typeName === '做功'">
           <td class="row title-row" colspan=5>做&nbsp;&nbsp;功</td>
           <tr class="row title-row">
-            <td class="col col-width-25 endways">{{''}}</td>
+            <td class="col col-width-25 endways"></td>
             <td class="col col-width-25">右&nbsp;&nbsp;侧</td>
             <td class="col col-width-25">参&nbsp;&nbsp;考&nbsp;&nbsp;值</td>
             <td class="col col-width-25">左&nbsp;&nbsp;侧</td>
@@ -415,7 +427,7 @@
         <table class="table" v-if="tableMode===SON_OPEN && type === 5 && typeName === '压力平台'">
           <td class="row title-row" colspan=5>压&nbsp;&nbsp;力&nbsp;&nbsp;平&nbsp;&nbsp;台</td>
           <tr class="row title-row">
-            <td class="col col-width-25 endways">{{''}}</td>
+            <td class="col col-width-25 endways"></td>
             <td class="col col-width-25">右&nbsp;&nbsp;侧</td>
             <td class="col col-width-25">参&nbsp;&nbsp;考&nbsp;&nbsp;值</td>
             <td class="col col-width-25">左&nbsp;&nbsp;侧</td>
@@ -465,7 +477,7 @@
       <span v-else-if="tableMode===SON_OPEN">
         <div class="button cancel-button" v-if="mode===VIEW_CURRENT_CARD" @click="closeSubTable">返回</div>
         <span v-else-if="mode!==VIEW_CURRENT_CARD && hasTableExisted">
-          <div class="button reset-button" @click="initSubTableDataForTypeCode(subTableCode)">重置</div>
+          <div class="button reset-button" @click="">重置</div>
           <div class="button submit-button" @click="closeSubTable">完成</div>
         </span>
       </span>
@@ -477,7 +489,7 @@
 import Ps from 'perfect-scrollbar';
 import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
-import { vueCopy, deepCopy } from 'utils/helper';
+import { vueCopy, deepCopy, reviseDateFormat, pruneObj } from 'utils/helper';
 import Util from 'utils/util.js';
 import {queryPatientGaitInfo, addPatientGait, modifyPatientGait } from 'api/patient.js';
 
@@ -497,10 +509,10 @@ export default {
 
       copyInfo: {},
       copyItem: {},   //  用来缓存传递进来的数据
-      subTableCode: '',
+      // subTableCode: '',
       threeGait: [],
 
-      data: [
+      patientGait: [
         {
           'type': 1,
           'typeCode': 'threeDimensionalGait',
@@ -531,77 +543,8 @@ export default {
 
       ],
       spatialParameters: [
-        {
-          'type': 1,
-          'typeCode': 'spatialParameters',
-          'referenceValue': '1.36 ± 0.11',
-          'typeName': '跨步长（s）'
-        },
-        {
-          'type': 2,
-          'typeCode': 'spatialParameters',
-          'referenceValue': '80 ± 10',
-          'typeName': '跨步长（%身高）'
-        },
-        {
-          'type': 3,
-          'typeCode': 'spatialParameters',
-          'referenceValue': '0.62 ± 0.05',
-          'typeName': '步长（m）'
-        },
-        {
-          'type': 4,
-          'typeCode': 'spatialParameters',
-          'referenceValue': '0.08± 0.02',
-          'typeName': '步宽（m）'
-        }
       ],
       standingAngle: [
-        {
-          'type': 1,
-          'typeCode': 'standingAngle',
-          'typeName': '盆骨上下'
-        },
-        {
-          'type': 2,
-          'typeCode': 'standingAngle',
-          'typeName': '盆骨前倾'
-        },
-        {
-          'type': 3,
-          'typeCode': 'standingAngle',
-          'typeName': '盆骨旋转'
-        },
-        {
-          'type': 4,
-          'typeCode': 'standingAngle',
-          'typeName': '髋内收外展'
-        },
-        {
-          'type': 5,
-          'typeCode': 'standingAngle',
-          'typeName': '髋屈曲伸展'
-        },
-        {
-          'type': 6,
-          'typeCode': 'standingAngle',
-          'typeName': '髋内旋外旋'
-        },
-        {
-          'type': 7,
-          'typeCode': 'standingAngle',
-          'typeName': '膝屈曲伸展'
-        },
-        {
-          'type': 8,
-          'typeCode': 'standingAngle',
-          'typeName': '踝背屈跖屈'
-        },
-        {
-          'type': 9,
-          'typeCode': 'standingAngle',
-          'typeName': '足前进夹角'
-        }
       ],
       kinematicAnalysis: [],
       moment: [],
@@ -619,9 +562,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'typeGroup',
-      'typeField',
-      'neurologicCheckTypeList'
+      'typeGroup'
     ]),
     hasTableExisted() {
       this.updateScrollbar();
@@ -633,15 +574,15 @@ export default {
       } else {
         return '姿势步态';
       }
-    },
-    subTableTitle() {
-      if (this.tableMode === this.SON_OPEN) {
-        let targetType = Util.getElement('typeCode', this.subTableCode, this.tableTypes);
-        return targetType.typeName ? targetType.typeName : '';
-      } else {
-        return '';
-      }
     }
+    // subTableTitle() {
+    //   if (this.tableMode === this.SON_OPEN) {
+    //     let targetType = Util.getElement('typeCode', this.subTableCode, this.tableTypes);
+    //     return targetType.typeName ? targetType.typeName : '';
+    //   } else {
+    //     return '';
+    //   }
+    // }
   },
   methods: {
     showPanel(cardOperation, item, showEdit) {
@@ -665,6 +606,7 @@ export default {
       this.copyInfo = {};
       this.$set(this.copyInfo, 'patientCaseId', this.$route.params.caseId);
       this.$set(this.copyInfo, 'patientId', this.$route.params.id);
+      this.$set(this.copyInfo, 'id', this.$route.params.id);
       this.$set(this.copyInfo, 'acquisitionStartTime', '');
       this.$set(this.copyInfo, 'acquisitionEndTime', '');
       this.$set(this.copyInfo, 'equipmentModel', '');
@@ -672,40 +614,34 @@ export default {
       this.$set(this.copyInfo, 'checkNumber', '');
       this.$set(this.copyInfo, 'remark', '');
 
-      this.initSubTableData();
+      // this.initSubTableData();
       this.updateScrollbar();
     },
-    initSubTableData() {
-      this.$set(this.copyInfo, 'patientFieldCode', {});
-      for (let type of this.tableTypes) {
-        let typeCode = type.typeCode;
-        this.initSubTableDataForTypeCode(typeCode);
-      }
-    },
-    initSubTableDataForTypeCode(typeCode) {
-      this.$set(this.copyInfo.patientFieldCode, typeCode, {});
-      // let items = this.typeField.filter(item => {
-      //   return Number(item.typeCode) === typeCode
-      //   // &&
-      //   // item.typeGroupCode === 'copyInfo.equipmentModel'
-      //   ;
-      // });
-    },
+    // initSubTableData() {
+    //   this.$set(this.copyInfo, 'patientFieldCode', {});
+    //   for (let type of this.tableTypes) {
+    //     let typeCode = type.typeCode;
+    //     this.initSubTableDataForTypeCode(typeCode);
+    //   }
+    // },
+    // initSubTableDataForTypeCode(typeCode) {
+    //   this.$set(this.copyInfo.patientFieldCode, typeCode, {});
+    // },
     updataPatientGaitInfo(type, typeCode, typeName) {
       // 查询姿势步态表格
       // if (!this.existed) {
       //   return;
       // }
-      queryPatientGaitInfo(type, typeCode).then((data) =>{
-        this.subTableCode = typeCode;
+      queryPatientGaitInfo(type, typeCode).then((patientGait) =>{
+        // this.subTableCode = typeCode;
         this.tableMode = this.SON_OPEN;
-        this.timeParameter = data.timeParameter;
-        this.spatialParameters = data.spatialParameters;
-        this.standingAngle = data.standingAngle;
-        this.kinematicAnalysis = data.kinematicAnalysis;
-        this.moment = data.moment;
-        this.doWork = data.doWork;
-        this.pressurePlatform = data.pressurePlatform;
+        this.timeParameter = patientGait.timeParameter;
+        this.spatialParameters = patientGait.spatialParameters;
+        this.standingAngle = patientGait.standingAngle;
+        this.kinematicAnalysis = patientGait.kinematicAnalysis;
+        this.moment = patientGait.moment;
+        this.doWork = patientGait.doWork;
+        this.pressurePlatform = patientGait.pressurePlatform;
         this.type = type;
         this.typeName = typeName;
         // console.log(type, typeCode, typeName);
@@ -725,24 +661,41 @@ export default {
       }
 
       let submitData = deepCopy(this.copyInfo);
-      submitData.typeGroupCode = 'equipmentModel';
+      submitData.patientId = this.$route.params.id;
+      submitData.id = this.$route.params.id;
+      submitData.equipmentModel = submitData.equipmentModel;
+      submitData.equipmentNumber = submitData.equipmentNumber;
+      submitData.checkNumber = submitData.checkNumber;
+      submitData.remark = submitData.remark;
       submitData.acquisitionStartTime = Util.simplifyDate(submitData.acquisitionStartTime);
       submitData.acquisitionEndTime = Util.simplifyDate(submitData.acquisitionEndTime);
 
-      submitData.patientFieldCode = {};
-      for (let type of this.tableTypes) {
-        submitData.patientFieldCode[type.typeCode] = deepCopy(this.copyInfo.patientFieldCode[type.typeCode]);
-      }
+      submitData.timeParameter = deepCopy(this.timeParameter);
+      submitData.spatialParameters = deepCopy(this.spatialParameters);
+      submitData.standingAngle = deepCopy(this.standingAngle);
+      submitData.kinematicAnalysis = deepCopy(this.kinematicAnalysis);
+      submitData.moment = deepCopy(this.moment);
+      submitData.doWork = deepCopy(this.doWork);
+      submitData.pressurePlatform = deepCopy(this.pressurePlatform);
 
-      if (this.mode === this.EDIT_CURRENT_CARD) {
-        modifyPatientGait(submitData).then(() => {
+      reviseDateFormat(submitData);
+      pruneObj(submitData);
+
+      // submitData.patientFieldCode = {};
+      // for (let type of this.tableTypes) {
+      //   submitData.patientFieldCode[type.typeCode] = deepCopy(this.copyInfo.patientFieldCode[type.typeCode]);
+      // }
+
+      if (this.mode === this.ADD_NEW_CARD) {
+        addPatientGait(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
           this.updateAndClose();
         }, this._handleError);
 
-      } else if (this.mode === this.ADD_NEW_CARD) {
-        delete submitData.patientSpephysicalId;
-        addPatientGait(submitData).then(() => {
+      } else if (this.mode === this.EDIT_CURRENT_CARD) {
+        // delete submitData.patientSpephysicalId;
+        submitData.id = submitData.id;
+        modifyPatientGait(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
           this.updateAndClose();
         }, this._handleError);
@@ -788,42 +741,6 @@ export default {
       var name = Util.getElement('typeCode', parseInt(typeId, 10), types).typeName;
       return name;
     },
-    // rearrangeRows(items) {
-    //   // 因为有的子表格没有明确的列信息，只有行信息，而且每一行只有字段名字和字段值
-    //   // 因此需要重新排列此表格，一排有4列，分别为字段1的名字，字段1的值，字段2的名字，字段2的值
-    //   var newArray = [];
-    //   var subArray = [];
-    //   var length = items.length;
-    //   for (var i = 0; i < length; i++) {
-    //     subArray.push(items[i]);
-    //     if (i % 2 === 1 || i === length - 1) {
-    //       newArray.push(subArray);
-    //       subArray = [];
-    //     }
-    //   }
-    //   return newArray;
-    // },
-    // filterItemsIntoGroups(items) {
-    //   // 根据 item 的 groupNo 属性，装到不同的子数组里面，最后返回最外层的数组
-    //   var groups = [];
-    //   var hasSameGroupNumberBefore = false;
-
-    //   for (let item of items) {
-    //     hasSameGroupNumberBefore = false;
-    //     for (let i = 0; i < groups.length; i++) {
-    //       if (groups[i][0].groupNo === item.groupNo) {
-    //         hasSameGroupNumberBefore = true;
-    //         groups[i].push(item);
-    //       }
-    //     }
-    //     if (!hasSameGroupNumberBefore) {
-    //       let newGroup = [];
-    //       newGroup.push(item);
-    //       groups.push(newGroup);
-    //     }
-    //   }
-    //   return groups;
-    // },
     updateWarning(fieldName) {
       if (this.copyInfo[fieldName] === undefined || this.copyInfo[fieldName] === '') {
         this.$set(this.warningResults, fieldName, '必填项');
@@ -858,16 +775,14 @@ export default {
   },
   mounted() {
     // 先在本组件注册该事件，等待Layout组件接收动态组件挂载完毕的通知，再在本组件执行 showPanel 或 showModal
-    this.updataPatientGaitInfo();
-    Bus.$on(this.UPDATE_PATIENT_GAIT_INFO, this.updataPatientGaitInfo);
-    Bus.$on(this.SHOW_GAITPOSTURE_MODAL, this.showPanel);
+    Bus.$on(this.SHOW_GAIT_POSTURE_MODAL, this.showPanel);
 
     // 动态组件挂载完毕，通知Layout组件，动态组件已挂载完毕
     Bus.$emit(this.DYNAMIC_COMPONENT_MOUNTED);
     this.updateScrollbar();
   },
   beforeDestroy() {
-    Bus.$off(this.SHOW_GAITPOSTURE_MODAL, this.showPanel);
+    Bus.$off(this.SHOW_GAIT_POSTURE_MODAL);
   },
   watch: {
     tableTypes() {
