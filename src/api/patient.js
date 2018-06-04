@@ -583,17 +583,6 @@ export function getPatientCase(patientId, patientCaseId) {
 
   return encapsulatePromise(url, request);
 };
-
-// 获取姿势步态详情
-export function queryPatientGaitInfo(type, typeCode) {
-  var request = Object.assign({}, getCommonRequest());
-  request.typeCode = typeCode;
-  request.type = type;
-  var url = '/pdms/queryPatientGaitInfo';
-
-  return encapsulatePromise(url, request);
-};
-
 // 将诊断信息进行归档
 export function archivePatientCase(patientCaseId) {
   var request = Object.assign({}, getCommonRequest());
@@ -992,11 +981,19 @@ export function deleteSleepMonitoring(sleepMonitoringInfo) {
 
   return encapsulatePromise(url, request);
 };
+// 获取接入设备监测详情
+export function queryPatientGaitInfo(type, typeCode) {
+  var request = Object.assign({}, getCommonRequest());
+  request.typeCode = typeCode;
+  request.type = type;
+  var url = '/pdms/queryPatientGaitInfo';
 
+  return encapsulatePromise(url, request);
+};
 // 新增接入设备监测
 export function addPatientGait(patientGait) {
   var request = Object.assign({}, getCommonRequest());
-  request.patientImageReq = patientGait;
+  request.patientGait = patientGait;
   var url = '/pdms/addOrUpdatePatientGait';
 
   return encapsulatePromise(url, request);
@@ -1005,21 +1002,29 @@ export function addPatientGait(patientGait) {
 // 修改接入设备监测
 export function modifyPatientGait(patientGait) {
   var request = Object.assign({}, getCommonRequest());
-  request.patientImageReq = patientGait;
+  request.patientGait = patientGait;
   var url = '/pdms/addOrUpdatePatientGait';
 
   return encapsulatePromise(url, request);
 };
 
-// 删除接入设备监测
+// 删除接入设备监测(姿势步态)
 export function deletePatientGait(patientGait) {
   var request = Object.assign({}, getCommonRequest());
-  request.patientImageReq = patientGait;
+  request.patientGait = patientGait;
   var url = '/pdms/deletePatientGait';
 
   return encapsulatePromise(url, request);
 };
 
+// 删除接入设备监测(MA10)
+export function deleteMaGait(patientGait) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientGait = patientGait;
+  var url = '/pdms/deletePatientGait';
+
+  return encapsulatePromise(url, request);
+};
 // 新增医学影像
 export function addImage(imageInfo) {
   var request = Object.assign({}, getCommonRequest());
