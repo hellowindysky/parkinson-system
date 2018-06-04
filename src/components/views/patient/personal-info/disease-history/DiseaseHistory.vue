@@ -38,26 +38,27 @@
           <div class="field-input" v-show="mode===EDITING_MODE">
             <span v-if="field.fieldName==='ariAge'">{{ariAge}}{{theUnit(field.fieldName)}}</span>
             <span v-else-if="field.fieldName==='courseOfDisease'">
-              <span>
-                <el-input
-                 v-model="diseaseCourse.year"
-                 placeholder="填写年"
-                 :class="{'warning': warningResults.year}"
-                 @change="updateWarning({fieldName:'year'})">
-                </el-input>
-                <span>年</span>
-                <span class="warning-text">{{getWarningText('year')}}</span>
-              </span>
-              <span>
-                <el-input
-                 v-model="diseaseCourse.month"
-                 placeholder="填写月"
-                 :class="{'warning': warningResults.month}"
-                 @change="updateWarning({fieldName:'month'})">
-                </el-input>
-                <span>月</span>
-                <span class="warning-text">{{getWarningText('month')}}</span>
-              </span>
+              <el-input-number
+               v-model="diseaseCourse.year"
+               :controls="false"
+               :min="0"
+               :debounce="0"
+               :id="'year'"
+               @input.native="courseChange($event)"
+               placeholder="填写年">
+              </el-input-number>
+              <span>年</span>
+              <el-input-number
+               v-model="diseaseCourse.month"
+               :controls="false"
+               :min="0"
+               :max="11"
+               :debounce="0"
+               :id="'month'"
+               @input.native="courseChange($event)"
+               placeholder="填写月">
+              </el-input-number>
+              <span>月</span>
             </span>
             <span v-else-if="getUIType(field)===1">
               <el-input v-model="copyInfo[field.fieldName]" :disabled="field.fieldName==='ariAge'"
@@ -87,8 +88,6 @@
                 @change="updateWarning(field)">
               </el-date-picker>
             </span>
-            <!-- <span class="warning-text" v-if="field.fieldName==='courseOfDisease'">{{getWarningText('year')}}{{getWarningText('month')}}</span> -->
-            <!-- <span class="warning-text" v-else-if="">{{getWarningText(field.fieldName)}}</span> -->
             <span class="warning-text">{{getWarningText(field.fieldName)}}</span>
           </div>
         </div>
@@ -474,6 +473,16 @@ export default {
     }
   },
   methods: {
+    courseChange(e) {
+      if (e.data === null) {
+        if (e.target.parentNode.parentNode.id === 'month') {
+          this.$set(this.diseaseCourse, 'month', '');
+        }
+        if (e.target.parentNode.parentNode.id === 'year') {
+          this.$set(this.diseaseCourse, 'year', '');
+        }
+      }
+    },
     calcTotalLevodopaDoseOfAllOtherMedicine() {
       let ledd = 0;
       for (let item of this.medicalTreatmentCard) {
@@ -714,12 +723,6 @@ export default {
     updateWarning(field) {
       var fieldName = field.fieldName;
       var copyFieldValue = this.copyInfo[fieldName];
-      if (fieldName === 'year' || fieldName === 'month') {
-        if (!Util.checkIfNonNegativeInteger(this.diseaseCourse[fieldName]) && this.diseaseCourse[fieldName] !== '') {
-          this.$set(this.warningResults, fieldName, '请填正整数');
-          return;
-        }
-      }
       if (this.getUIType(field) === 6) {
         // 日期控件(el-date-picker)给的是一个表示完整日期对象的字符串，我们需要格式化之后再校验
         copyFieldValue = Util.simplifyDate(copyFieldValue);
@@ -1209,8 +1212,11 @@ export default {
       text-align: left;
       &.field-courseOfDisease {
         .field-input {
-          .el-input {
+          .el-input-number {
             width: 36%;
+            .el-input__inner {
+              padding-right: 10px;
+            }
           }
         }
       }
