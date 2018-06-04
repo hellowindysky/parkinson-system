@@ -1078,21 +1078,6 @@
                   :disabled="!diagnosticScaleSelectedStatus.inspectTimeFrom"></el-date-picker>
               </span>
             </div>
-            <div class="item">
-              <el-form :inline="true">
-                <el-form-item>
-                  <el-checkbox v-model="diagnosticScaleSelectedStatus.inspectTimeFrom"></el-checkbox>
-                </el-form-item>
-                <el-form-item label="录入时间">
-                  <el-date-picker class="left-input" v-model="diagnosticScaleCondition.inspectTimeFrom" placeholder="最早时间"
-                    :disabled="!diagnosticScaleSelectedStatus.inspectTimeFrom"></el-date-picker>
-                  <span>-</span>
-                  <el-date-picker class="right-input" v-model="diagnosticScaleCondition.inspectTimeTo" placeholder="最晚时间"
-                    :disabled="!diagnosticScaleSelectedStatus.inspectTimeFrom"></el-date-picker>
-                </el-form-item>
-              </el-row>
-              </el-form>
-            </div>
             <!-- <div class="item">
               <el-checkbox class="item-checkbox" v-model="diagnosticScaleSelectedStatus.scaleType"></el-checkbox>
               <span class="item-name">量表类型</span>
@@ -1114,6 +1099,48 @@
                     :key="option.code"></el-option>
               </el-select>
               </span>
+              <div class="item-list scale-question-list" v-show="diagnosticScaleSelectedStatus.scaleName && diagnosticScaleCondition.scaleName">
+                <!-- <span class="item-name">量表题目</span> -->
+                <table>
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th>题号</th>
+                      <th>题目名称</th>
+                      <th>得分</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(item, index) in diagnosticScaleCondition.scaleQuestionList" :key="index">
+                      <td @click="removeQuestionRow(index)"><i class="iconfont icon-remove"></i></td>
+                      <td>
+                        {{getQuestionGrade(item.scaleQuestionId).scaleQuestionNumber}}
+                      </td>
+                      <td>
+                        <el-popover placement="right-start" width="200" trigger="hover" :disabled="!getQuestionGrade(item.scaleQuestionId).questionName"
+                          :content="getQuestionGrade(item.scaleQuestionId).questionName">
+                          <el-select class="normal-input" slot="reference" v-model="item.scaleQuestionId" @change="item.scaleOptionId = ''">
+                            <el-option v-for="option in selectedScaleInfo.questions" :label="option.subjectName" :value="option.scaleQuestionId"
+                              :key="option.code"></el-option>
+                          </el-select>
+                        </el-popover>
+                      </td>
+                      <td>
+                        <el-select class="normal-input" v-model="item.scaleOptionId"
+                          :disabled="!item.scaleQuestionId">
+                          <el-option v-for="option in getQuestionGrade(item.scaleQuestionId).gradeList" :label="option.grade" :value="option.scaleOptionId"
+                            :key="option.code"></el-option>
+                        </el-select>
+                      </td>
+                    </tr>
+                    <tr v-show="diagnosticScaleCondition.scaleQuestionList.length < 10">
+                      <td colspan="4" @click="addQuestionRow">
+                        <i class="iconfont icon-plus"></i>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
             <div class="item">
               <el-checkbox class="item-checkbox" v-model="diagnosticScaleSelectedStatus.scalePointFrom"></el-checkbox>
@@ -1124,23 +1151,6 @@
                 <span class="middle-text">~</span>
                 <el-input class="right-input" v-model="diagnosticScaleCondition.scalePointTo" placeholder="最高得分"
                   :disabled="!diagnosticScaleSelectedStatus.scalePointFrom"></el-input>
-              </span>
-            </div>
-            <div class="item">
-              <el-checkbox class="item-checkbox" v-model="diagnosticScaleSelectedStatus.scaleType"></el-checkbox>
-              <span class="item-name">量表题目</span>
-              <span class="item-value">
-                <span>1</span>
-                <el-select class="normal-input" v-model="diagnosticScaleCondition.scaleType"
-                  :disabled="!diagnosticScaleSelectedStatus.scaleType">
-                  <el-option v-for="option in getOptions('gaugeType')" :label="option.name" :value="option.code"
-                    :key="option.code"></el-option>
-                </el-select>
-                <el-select class="normal-input" v-model="diagnosticScaleCondition.scaleType"
-                  :disabled="!diagnosticScaleSelectedStatus.scaleType">
-                  <el-option v-for="option in getOptions('gaugeType')" :label="option.name" :value="option.code"
-                    :key="option.code"></el-option>
-                </el-select>
               </span>
             </div>
             <div class="item">
@@ -1341,12 +1351,11 @@ let diagnosticSurgerySelectedFieldNames = ['preopsTimeFrom', 'preopsTimeFrom', '
   'surgicalDateFrom', 'dbsDateFrom', 'dbsDateFrom', 'occurrenceTimeFrom', 'occurrenceTimeFrom', 'majorComplicationType',
   'minorComplicationType', 'treatment', 'result'];
 
-
 // 医学量表
 let diagnosticScaleFieldNames = ['inspectTimeFrom', 'inspectTimeTo', 'scaleType', 'scaleName',
   'scaleQuestionFrom', 'scaleQuestionTo', 'scalePointFrom', 'scalePointTo', 'scaleQuestionList', 'switchType'];
 let diagnosticScaleSelectedFieldNames = ['inspectTimeFrom', 'inspectTimeFrom', 'scaleType', 'scaleName',
-  'scaleQuestionFrom', 'scaleQuestionFrom', 'scalePointFrom', 'scalePointFrom', 'scaleQuestionList', 'switchType'];
+  'scaleQuestionFrom', 'scaleQuestionFrom', 'scalePointFrom', 'scalePointFrom', 'scaleName', 'switchType'];
 
 // 物理治疗
 let diagnosticPhysiFieldNames = ['physiType', 'recordDateStart', 'recordDateEnd', 'leftThresholdBeforeMin', 'leftThresholdBeforeMax',
@@ -1473,6 +1482,43 @@ export default {
       } else {
         return false;
       }
+    },
+    /**
+     * 根据已选量表scaleInfoId生成该量表的问题选项列表
+     */
+    selectedScaleInfo() {
+      let type = '';
+      let questionList = [];
+      for (let scaleIndex = 0; scaleIndex < this.allScale.length; scaleIndex++) {
+        if (this.allScale[scaleIndex].scaleInfoId === this.diagnosticScaleCondition.scaleName) {
+          questionList = this.allScale[scaleIndex].questions;
+          type = this.allScale[scaleIndex].gaugeTaskType;
+        }
+      }
+      let index = 0;
+      for (let i = 0; i < questionList.length; i++) {
+        questionList[i].answerIndex = index;
+        index++;
+        for (let j = 0; j < questionList[i].options.length; j++) {
+          if (questionList[i].options[j].openFlag === 1 && questionList[i].options[j].questions && questionList[i].options[j].questions.length > 0) {
+            let parentId = questionList[i].options[j].scaleOptionId;
+            for (let k = 0; k < questionList[i].options[j].questions.length; k++) {
+              questionList[i].options[j].questions[k].parentId = parentId;
+              questionList.splice(i + k + 1, 0, questionList[i].options[j].questions[k]);
+            }
+            delete questionList[i].options[j].questions;
+          } else if (questionList[i].options[j].options && questionList[i].options[j].options.length > 0) {
+            questionList[i].options[j].answerIndex = index;
+            index++;
+          }
+        }
+      }
+      let scaleInfo = {
+        gaugeTaskType: type,
+        questions: questionList
+      };
+
+      return scaleInfo;
     }
   },
   methods: {
@@ -1645,7 +1691,10 @@ export default {
       });
       diagnosticScaleFieldNames.forEach((fieldName) => {
         if (fieldName === 'scaleQuestionList') {
-          this.$set(this.diagnosticScaleCondition, fieldName, []);
+          this.$set(this.diagnosticScaleCondition, fieldName, [{
+            scaleQuestionId: '',
+            scaleOptionId: ''
+          }]);
         } else {
           this.$set(this.diagnosticScaleCondition, fieldName, '');
         }
@@ -1800,6 +1849,46 @@ export default {
         });
       }
       return options;
+    },
+    /**
+     * 根据量表题目scaleQuestionId查询题目名称、题号以及选项得分枚举值
+     */
+    getQuestionGrade(scaleQuestionId) {
+      let id = scaleQuestionId;
+      let type = this.selectedScaleInfo.gaugeTaskType;
+      let list = this.selectedScaleInfo.questions;
+      let questionInfo = {
+        questionName: '',
+        scaleQuestionNumber: '',
+        gradeList: []
+      };
+      for (let i = 0; i < list.length; i++) {
+        if (list[i].scaleQuestionId === id) {
+          questionInfo.questionName = list[i].subjectName;
+          if (type === 0 && list[i].scaleQuestionNumber) {
+            questionInfo.scaleQuestionNumber = list[i].scaleQuestionNumber;
+          } else {
+            questionInfo.scaleQuestionNumber = i + 1;
+          }
+          for (let j = 0; j < list[i].options.length; j++) {
+            questionInfo.gradeList.push({
+              grade: list[i].options[j].grade === 0 ? '0' : list[i].options[j].grade,
+              scaleOptionId: list[i].options[j].scaleOptionId
+            });
+          }
+          break;
+        }
+      }
+      return questionInfo;
+    },
+    removeQuestionRow(index) {
+      this.diagnosticScaleCondition.scaleQuestionList.splice(index, 1);
+    },
+    addQuestionRow() {
+      this.diagnosticScaleCondition.scaleQuestionList.push({
+        scaleQuestionId: '',
+        scaleOptionId: ''
+      });
     },
     resetCondition() {
       this.initCondition();
@@ -2141,6 +2230,12 @@ export default {
         // 在面板打开的情况下，一旦路由发生变化，则自动收起面板
         Bus.$emit(this.TOGGLE_FILTER_PANEL_DISPLAY);
       }
+    },
+    selectedScaleInfo() {
+      this.diagnosticScaleCondition.scaleQuestionList = [{
+        scaleQuestionId: '',
+        scaleOptionId: ''
+      }];
     }
   },
   beforeDestroy() {
@@ -2280,45 +2375,35 @@ export default {
             opacity: 0.3;
           }
           .item {
-            width: 100%;
-            height: 40px;
+            width: 330px;
+            padding: 0 10px;
             line-height: 40px;
             text-align: left;
             &.auto-resize {
               height: auto;
               .item-value {
-                position: relative;
-                width: 225px;
-                left: 110px;
+                width: 220px;
                 padding-bottom: 3px;
               }
             }
             .item-checkbox {
-              position: absolute;
-              left: 10px;
             }
             .item-name {
               display: inline-block;
-              position: absolute;
-              left: 35px;
+              width: 80px;
+              vertical-align: middle;
               &.long-name {
                 left: 35px;
                 font-size: @small-font-size;
                 &.double-line {
-                  display: -webkit-box;
-                  -webkit-box-orient: vertical;
-                  -webkit-line-clamp: 2;
-                  width: 75px;
-                  padding-top: 5px;
-                  line-height: @normal-font-size;
+                  line-height: 20px;
                 }
               }
             }
             .item-value {
               display: inline-block;
-              position: absolute;
-              left: 110px;
-              right: 15px;
+              width: 220px;
+              vertical-align: middle;
               .el-input {
                 .el-input__inner {
                   height: 30px;
@@ -2334,8 +2419,6 @@ export default {
               }
               .left-input, .right-input {
                 display: inline-block;
-                position: absolute;
-                width: 100px;
                 .el-input__icon {
                   display: none;
                 }
@@ -2344,20 +2427,135 @@ export default {
                 }
               }
               .left-input {
-                left: 0;
+                width: 102px;
               }
               .right-input {
-                right: 0;
+                width: 102px;
               }
               .middle-text {
-                position: absolute;
-                left: 110px;
               }
               .normal-input {
                 display: inline-block;
               }
             }
+            .item-list {
+              &.scale-question-list {
+                .item-name {
+                  padding-left: 22px;
+                }
+                .icon-remove {
+                  color: #d20000f5;
+                }
+                table {
+                  text-align: center;
+                  thead {
+                    th {
+                      &:nth-child(1) {
+                        width: 20px;
+                      }
+                      &:nth-child(2) {
+                        width: 50px;
+                      }
+                      &:nth-child(3) {
+                        width: 146px;
+                      }
+                      &:nth-child(4) {
+                        width: 100px;
+                      }
+                    }
+                  }
+                  tbody {
+                    tr:last-child td {
+                      height: 30px;
+                      line-height: 30px;
+                      border: 1px dashed #3c485a;
+                      border-radius: 4px;
+                      cursor: pointer;
+                    }
+                  }
+                }
+              }
+            }
           }
+          // .item {
+          //   width: 100%;
+          //   height: 40px;
+          //   line-height: 40px;
+          //   text-align: left;
+          //   &.auto-resize {
+          //     height: auto;
+          //     .item-value {
+          //       position: relative;
+          //       width: 225px;
+          //       left: 110px;
+          //       padding-bottom: 3px;
+          //     }
+          //   }
+          //   .item-checkbox {
+          //     position: absolute;
+          //     left: 10px;
+          //   }
+          //   .item-name {
+          //     display: inline-block;
+          //     position: absolute;
+          //     left: 35px;
+          //     &.long-name {
+          //       left: 35px;
+          //       font-size: @small-font-size;
+          //       &.double-line {
+          //         display: -webkit-box;
+          //         -webkit-box-orient: vertical;
+          //         -webkit-line-clamp: 2;
+          //         width: 75px;
+          //         padding-top: 5px;
+          //         line-height: @normal-font-size;
+          //       }
+          //     }
+          //   }
+          //   .item-value {
+          //     display: inline-block;
+          //     position: absolute;
+          //     left: 110px;
+          //     right: 15px;
+          //     .el-input {
+          //       .el-input__inner {
+          //         height: 30px;
+          //         border: none;
+          //         background-color: @screen-color;
+          //       }
+          //     }
+          //     .el-select {
+          //       width: 100%;
+          //     }
+          //     .el-date-editor{
+          //       width: 100%;
+          //     }
+          //     .left-input, .right-input {
+          //       display: inline-block;
+          //       position: absolute;
+          //       width: 100px;
+          //       .el-input__icon {
+          //         display: none;
+          //       }
+          //       .el-input__inner {
+          //         padding: 3px 10px;
+          //       }
+          //     }
+          //     .left-input {
+          //       left: 0;
+          //     }
+          //     .right-input {
+          //       right: 0;
+          //     }
+          //     .middle-text {
+          //       position: absolute;
+          //       left: 110px;
+          //     }
+          //     .normal-input {
+          //       display: inline-block;
+          //     }
+          //   }
+          // }
         }
       }
       .ps__scrollbar-y-rail {
