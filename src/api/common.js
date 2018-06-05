@@ -4,14 +4,6 @@ import router from '../router';
 
 export var baseUrl = process.env.BASE_API;
 
-var accountNumber = sessionStorage.getItem('userName');
-
-var mockUser = {'admin2': true, 'test1': true};
-console.log(accountNumber);
-if (accountNumber in mockUser) {
-  baseUrl = 'https://apipre.gyenno.com';
-}
-
 // 请求拦截器
 axios.interceptors.request.use(
   config => {
@@ -37,6 +29,12 @@ export function clearRequestToken() {
 
 // axios.post 本身就是个 Promise 对象，这里我们再用 Promise 封装一次，在本文件内对响应数据进行处理，对外只暴露请求成功时的有效数据
 export function encapsulatePromise(url, request) {
+
+  var accountNumber = sessionStorage.getItem('userName');
+  var mockUser = {'admin2': true, 'test1': true};
+  if (accountNumber in mockUser) {
+    baseUrl = 'https://apipre.gyenno.com';
+  }
 
   var promise = new Promise(function(resolve, reject) {
 
