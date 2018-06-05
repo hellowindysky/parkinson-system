@@ -9,7 +9,7 @@ var accountNumber = sessionStorage.getItem('userName');
 var mockUser = {'admin2': true, 'test1': true};
 console.log(accountNumber);
 if (accountNumber in mockUser) {
-  baseUrl = 'http://apipre.gyenno.com';
+  baseUrl = 'https://apipre.gyenno.com';
 }
 
 // 请求拦截器
