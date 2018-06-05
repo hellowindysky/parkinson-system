@@ -4,6 +4,14 @@ import router from '../router';
 
 export var baseUrl = process.env.BASE_API;
 
+var accountNumber = sessionStorage.getItem('userName');
+
+var mockUser = {'admin2': true, 'test1': true};
+console.log(accountNumber);
+if (accountNumber in mockUser) {
+  baseUrl = 'http://apipre.gyenno.com';
+}
+
 // 请求拦截器
 axios.interceptors.request.use(
   config => {
