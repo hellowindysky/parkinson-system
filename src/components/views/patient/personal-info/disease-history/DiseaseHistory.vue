@@ -505,8 +505,10 @@ export default {
       return hasCOMT;
     },
     onsetTime(dateStr) {
+      console.log(dateStr);
+      // console.log(Util.simplifyDate(dateStr));
       if (dateStr) {
-        return dateStr.split('-').slice(0, 2).join('-');
+        return Util.simplifyDate(dateStr).split('-').slice(0, 2).join('-');
       } else {
         return dateStr;
       }
@@ -1019,8 +1021,8 @@ export default {
         this.$set(this.diseaseCourse, 'month', month);
         this.$set(this.copyInfo, 'courseOfDisease', courseDis);
       } else {
-        this.$set(this.diseaseCourse, 'year', '');
-        this.$set(this.diseaseCourse, 'month', '');
+        this.$set(this.diseaseCourse, 'year', 0);
+        this.$set(this.diseaseCourse, 'month', 0);
       }
     }
   },
