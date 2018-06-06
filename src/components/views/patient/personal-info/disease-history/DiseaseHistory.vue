@@ -505,8 +505,6 @@ export default {
       return hasCOMT;
     },
     onsetTime(dateStr) {
-      console.log(dateStr);
-      // console.log(Util.simplifyDate(dateStr));
       if (dateStr) {
         return Util.simplifyDate(dateStr).split('-').slice(0, 2).join('-');
       } else {
