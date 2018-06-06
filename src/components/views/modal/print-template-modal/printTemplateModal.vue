@@ -262,13 +262,13 @@ export default {
         itemF.category.forEach((itemS) => {
           itemS.fieldDataP.forEach((itemT) => {
             for (let item of temp) {
-              if (item.id === itemT.id) {
+              if (item.exportFieldId === itemT.id) {
                 itemT.checked = true;
               }
             }
             itemT.fieldDataS.forEach((fourItem) => {
               for (let item of temp) {
-                if (item.id === fourItem.id) {
+                if (item.exportFieldId === fourItem.id) {
                   fourItem.checked = true;
                 }
               }
@@ -404,7 +404,11 @@ export default {
                 exportCnField: itemT.cnFieldName,
                 exportFid: itemT.fid,
                 exportGid: itemT.gid,
-                exportGroupNo: itemT.groupNo
+                exportGroupNo: itemT.groupNo,
+                exportFieldId: itemT.id,
+                excelNo: itemT.excelNo,
+                excelSort: itemT.excelSort
+
               };
               tempFields.push(fieldObj);
             }
@@ -419,7 +423,10 @@ export default {
                   exportPid: fourItem.pid,
                   exportFid: fourItem.fid,
                   exportGid: fourItem.gid,
-                  exportGroupNo: fourItem.groupNo
+                  exportGroupNo: fourItem.groupNo,
+                  exportFieldId: fourItem.id,
+                  excelNo: fourItem.excelNo,
+                  excelSort: fourItem.excelSort
                 };
                 tempFields.push(fieldObj);
               }
