@@ -1504,6 +1504,8 @@ export default {
             let parentId = questionList[i].options[j].scaleOptionId;
             for (let k = 0; k < questionList[i].options[j].questions.length; k++) {
               questionList[i].options[j].questions[k].parentId = parentId;
+              questionList[i].options[j].questions[k].questionNumber = questionList[i].questionNumber + ' - ' + questionList[i].options[j].questions[k].questionNumber;
+              questionList[i].options[j].questions[k].subjectName = questionList[i].subjectName + ' - ' + questionList[i].options[j].questions[k].subjectName;
               questionList.splice(i + k + 1, 0, questionList[i].options[j].questions[k]);
             }
             delete questionList[i].options[j].questions;
@@ -1859,16 +1861,16 @@ export default {
       let list = this.selectedScaleInfo.questions;
       let questionInfo = {
         questionName: '',
-        scaleQuestionNumber: '',
+        questionNumber: '',
         gradeList: []
       };
       for (let i = 0; i < list.length; i++) {
         if (list[i].scaleQuestionId === id) {
           questionInfo.questionName = list[i].subjectName;
-          if (type === 0 && list[i].scaleQuestionNumber) {
-            questionInfo.scaleQuestionNumber = list[i].scaleQuestionNumber;
+          if (type === 0 && list[i].questionNumber) {
+            questionInfo.questionNumber = list[i].questionNumber;
           } else {
-            questionInfo.scaleQuestionNumber = i + 1;
+            questionInfo.questionNumber = i + 1;
           }
           for (let j = 0; j < list[i].options.length; j++) {
             questionInfo.gradeList.push({
