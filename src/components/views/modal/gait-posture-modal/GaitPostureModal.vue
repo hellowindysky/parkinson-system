@@ -13,8 +13,8 @@
                 <el-date-picker v-else
                   v-model="copyInfo.acquisitionStartTime"
                   placeholder="请选择开始时间"
-                  type="date"
-                  format="yyyy-MM-dd"
+                  type="datetime"
+                  format="yyyy-MM-dd HH:mm"
                   :picker-options="pickerOptions">
                 </el-date-picker>
             </span>
@@ -28,8 +28,8 @@
               <el-date-picker v-else
                 v-model="copyInfo.acquisitionEndTime"
                 placeholder="请选择结束时间"
-                type="date"
-                format="yyyy-MM-dd"
+                type="datetime"
+                format="yyyy-MM-dd HH:mm"
                 :picker-options="pickerOptions">
               </el-date-picker>
           </span>
@@ -77,8 +77,21 @@
           <span class="field-name">
             数据来源：
           </span>
-          <span class="field-input">
-            {{"手动录入"}}
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span>{{transform(copyInfo.dataSources, 'dataSources')}}</span>
+          </span>
+          <span class="field-input" v-else>
+            <el-select
+              clearable
+              placeholder="请选择数据来源"
+              v-model="copyInfo.dataSources">
+              <el-option
+                v-for="item in getOptions('dataSources')"
+                :key="item.code"
+                :label="item.name"
+                :value="item.code">
+                </el-option>
+            </el-select>
           </span>
         </div>
         <div class="field whole-line">
@@ -92,7 +105,6 @@
         </div>
       </div>
       <div class="seperate-line"></div>
-      <!-- <h3 class="form-title" v-if="tableMode===SON_OPEN && hasTableExisted">{{subTableTitle}}</h3> -->
       <div class="content" v-if="hasTableExisted">
         <table class="table" v-if="tableMode===FATHER_OPEN">
           <tr class="row title-row">
@@ -191,57 +203,63 @@
             <td class="col col-width-25">{{item.typeName}}</td>
             <td class="col col-width-25" v-show="index <3">
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span class="left">{{""}}</span>
+                <span class="left">{{item.leftNormal}}</span>
               </span>
               <span class="field-input" v-else>
-                <el-input class="left"></el-input>
+                <el-input class="left"
+                  v-model="item.leftNormal">
+                </el-input>
               </span>
               <span>±</span>
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span class="right">{{""}}</span>
+                <span class="right">{{item.leftError}}</span>
               </span>
               <span class="field-input" v-else>
-                <el-input class="right"></el-input>
+                <el-input class="right"
+                  v-model="item.leftError">
+                </el-input>
               </span>
             </td>
             <td class="col col-width-25" v-show="index <3">
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span class="left">{{""}}</span>
+                <span class="left">{{item.rightNormal}}</span>
               </span>
               <span class="field-input" v-else>
-                <el-input class="left"></el-input>
+                <el-input class="left"
+                  v-model="item.rightNormal">
+                </el-input>
               </span>
               <span>±</span>
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span class="right">{{""}}</span>
+                <span class="right">{{item.rightError}}</span>
               </span>
               <span class="field-input" v-else>
-                <el-input class="right"></el-input>
+                <el-input class="right"
+                  v-model="item.rightError">
+                </el-input>
               </span>
             </td>
-
             <td class="col col-width-25" colspan=2 v-show="index >= 3">
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span class="left">{{""}}</span>
+                <span class="left">{{item.dataNormal}}</span>
               </span>
               <span class="field-input" v-else>
-                <el-input class="left"></el-input>
+                <el-input class="left"
+                  v-model="item.dataNormal">
+                </el-input>
               </span>
               <span>±</span>
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span class="right">{{""}}</span>
+                <span class="right">{{item.dataError}}</span>
               </span>
               <span class="field-input" v-else>
-                <el-input class="right"></el-input>
+                <el-input class="right"
+                  v-model="item.dataError">
+                </el-input>
               </span>
             </td>
             <td class="col col-width-25">{{item.referenceValue}}</td>
           </tr>
-
-
-
-
-
 
           <tr class="row title-row">
             <td class="col col-width-25 endways">站立角度</td>
@@ -253,32 +271,40 @@
             <td class="col col-width-25">{{item.typeName}}</td>
             <td class="col col-width-25">
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span class="left">{{""}}</span>
+                <span class="left">{{item.leftNormal}}</span>
               </span>
               <span class="field-input" v-else>
-                <el-input class="left"></el-input>
+                <el-input class="left"
+                  v-model="item.leftNormal">
+                </el-input>
               </span>
               <span>±</span>
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span class="right">{{""}}</span>
+                <span class="right">{{item.leftError}}</span>
               </span>
               <span class="field-input" v-else>
-                <el-input class="right"></el-input>
+                <el-input class="right"
+                  v-model="item.leftError">
+                </el-input>
               </span>
             </td>
             <td class="col col-width-25">
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span class="left">{{""}}</span>
+                <span class="left">{{item.rightNormal}}</span>
               </span>
               <span class="field-input" v-else>
-                <el-input class="left"></el-input>
+                <el-input class="left"
+                  v-model="item.rightNormal">
+                </el-input>
               </span>
               <span>±</span>
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span class="right">{{""}}</span>
+                <span class="right">{{item.rightError}}</span>
               </span>
               <span class="field-input" v-else>
-                <el-input class="right"></el-input>
+                <el-input class="right"
+                  v-model="item.rightError">
+                </el-input>
               </span>
             </td>
             <td class="col col-width-25">{{""}}</td>
@@ -298,33 +324,41 @@
             <td class="col col-width-25" rowspan = 2 v-show="index % 2 === 0">{{item.typeName}}</td>
             <td class="col col-width-25">
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span class="left">{{""}}</span>
+                <span class="left">{{item.leftNormal}}</span>
               </span>
               <span class="field-input" v-else>
-                <el-input class="left"></el-input>
+                <el-input class="left"
+                  v-model="item.leftNormal">
+                </el-input>
               </span>
               <span>±</span>
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span class="right">{{""}}</span>
+                <span class="right">{{item.leftError}}</span>
               </span>
               <span class="field-input" v-else>
-                <el-input class="right"></el-input>
+                <el-input class="right"
+                  v-model="item.leftError">
+                </el-input>
               </span>
             </td>
             <td class="col col-width-25">{{item.referenceValue}}</td>
             <td class="col col-width-25">
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span class="left">{{""}}</span>
+                <span class="left">{{item.rightNormal}}</span>
               </span>
               <span class="field-input" v-else>
-                <el-input class="left"></el-input>
+                <el-input class="left"
+                  v-model="item.rightNormal">
+                </el-input>
               </span>
               <span>±</span>
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span class="right">{{""}}</span>
+                <span class="right">{{item.rightError}}</span>
               </span>
               <span class="field-input" v-else>
-                <el-input class="right"></el-input>
+                <el-input class="right"
+                  v-model="item.rightError">
+                </el-input>
               </span>
             </td>
           </tr>
@@ -344,33 +378,41 @@
             <td class="col col-width-25" rowspan = 2 v-show="index % 2 === 0">{{item.typeName}}</td>
             <td class="col col-width-25">
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span class="left">{{""}}</span>
+                <span class="left">{{item.leftNormal}}</span>
               </span>
               <span class="field-input" v-else>
-                <el-input class="left"></el-input>
+                <el-input class="left"
+                  v-model="item.leftNormal">
+                </el-input>
               </span>
               <span>±</span>
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span class="right">{{""}}</span>
+                <span class="right">{{item.leftError}}</span>
               </span>
               <span class="field-input" v-else>
-                <el-input class="right"></el-input>
+                <el-input class="right"
+                  v-model="item.leftError">
+                </el-input>
               </span>
             </td>
             <td class="col col-width-25">{{item.referenceValue}}</td>
             <td class="col col-width-25">
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span class="left">{{""}}</span>
+                <span class="left">{{item.rightNormal}}</span>
               </span>
               <span class="field-input" v-else>
-                <el-input class="left"></el-input>
+                <el-input class="left"
+                  v-model="item.rightNormal">
+                </el-input>
               </span>
               <span>±</span>
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span class="right">{{""}}</span>
+                <span class="right">{{item.rightError}}</span>
               </span>
               <span class="field-input" v-else>
-                <el-input class="right"></el-input>
+                <el-input class="right"
+                  v-model="item.rightError">
+                </el-input>
               </span>
             </td>
           </tr>
@@ -390,33 +432,41 @@
             <td class="col col-width-25" rowspan = 2 v-show="index % 2 === 0">{{item.typeName}}</td>
             <td class="col col-width-25">
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span class="left">{{""}}</span>
+                <span class="left">{{item.leftNormal}}</span>
               </span>
               <span class="field-input" v-else>
-                <el-input class="left"></el-input>
+                <el-input class="left"
+                  v-model="item.leftNormal">
+                </el-input>
               </span>
               <span>±</span>
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span class="right">{{""}}</span>
+                <span class="right">{{item.leftError}}</span>
               </span>
               <span class="field-input" v-else>
-                <el-input class="right"></el-input>
+                <el-input class="right"
+                  v-model="item.leftError">
+                </el-input>
               </span>
             </td>
             <td class="col col-width-25">{{item.referenceValue}}</td>
             <td class="col col-width-25">
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span class="left">{{""}}</span>
+                <span class="left">{{item.rightNormal}}</span>
               </span>
               <span class="field-input" v-else>
-                <el-input class="left"></el-input>
+                <el-input class="left"
+                  v-model="item.rightNormal">
+                </el-input>
               </span>
               <span>±</span>
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span class="right">{{""}}</span>
+                <span class="right">{{item.rightError}}</span>
               </span>
               <span class="field-input" v-else>
-                <el-input class="right"></el-input>
+                <el-input class="right"
+                  v-model="item.rightError">
+                </el-input>
               </span>
             </td>
           </tr>
@@ -437,33 +487,41 @@
             <td class="col col-width-25" rowspan = 2 v-else-if="index % 2 === 0 && index <4">{{item.typeName}}</td>
             <td class="col col-width-25">
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span class="left">{{""}}</span>
+                <span class="left">{{item.leftNormal}}</span>
               </span>
               <span class="field-input" v-else>
-                <el-input class="left"></el-input>
+                <el-input class="left"
+                  v-model="item.leftNormal">
+                </el-input>
               </span>
               <span>±</span>
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span class="right">{{""}}</span>
+                <span class="right">{{item.leftError}}</span>
               </span>
               <span class="field-input" v-else>
-                <el-input class="right"></el-input>
+                <el-input class="right"
+                  v-model="item.leftError">
+                </el-input>
               </span>
             </td>
             <td class="col col-width-25">{{item.referenceValue}}</td>
             <td class="col col-width-25">
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span class="left">{{""}}</span>
+                <span class="left">{{item.rightNormal}}</span>
               </span>
               <span class="field-input" v-else>
-                <el-input class="left"></el-input>
+                <el-input class="left"
+                  v-model="item.rightNormal">
+                </el-input>
               </span>
               <span>±</span>
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-                <span class="right">{{""}}</span>
+                <span class="right">{{item.rightError}}</span>
               </span>
               <span class="field-input" v-else>
-                <el-input class="right"></el-input>
+                <el-input class="right"
+                  v-model="item.rightError">
+                </el-input>
               </span>
             </td>
           </tr>
@@ -477,7 +535,7 @@
       <span v-else-if="tableMode===SON_OPEN">
         <div class="button cancel-button" v-if="mode===VIEW_CURRENT_CARD" @click="closeSubTable">返回</div>
         <span v-else-if="mode!==VIEW_CURRENT_CARD && hasTableExisted">
-          <div class="button reset-button" @click="">重置</div>
+          <div class="button reset-button" @click="resetForm">重置</div>
           <div class="button submit-button" @click="closeSubTable">完成</div>
         </span>
       </span>
@@ -506,11 +564,10 @@ export default {
       type: '',
       typeCode: '',
       typeName: '',
+      id: '',
 
       copyInfo: {},
       copyItem: {},   //  用来缓存传递进来的数据
-      // subTableCode: '',
-      threeGait: [],
 
       patientGait: [
         {
@@ -575,25 +632,21 @@ export default {
         return '姿势步态';
       }
     }
-    // subTableTitle() {
-    //   if (this.tableMode === this.SON_OPEN) {
-    //     let targetType = Util.getElement('typeCode', this.subTableCode, this.tableTypes);
-    //     return targetType.typeName ? targetType.typeName : '';
-    //   } else {
-    //     return '';
-    //   }
-    // }
   },
   methods: {
     showPanel(cardOperation, item, showEdit) {
       this.mode = cardOperation;
       this.showEdit = showEdit;
+      this.id = item.id;
 
       this.tableMode = this.FATHER_OPEN;
       this.initCopyInfo();
       this.copyItem = item;
       if (this.copyItem.equipmentModel) {
         this.copyItem.equipmentModel = Number(this.copyItem.equipmentModel);
+      }
+      if (this.copyItem.dataSources) {
+        this.copyItem.dataSources = Number(this.copyItem.dataSources);
       }
       vueCopy(this.copyItem, this.copyInfo);
 
@@ -606,10 +659,10 @@ export default {
       this.copyInfo = {};
       this.$set(this.copyInfo, 'patientCaseId', this.$route.params.caseId);
       this.$set(this.copyInfo, 'patientId', this.$route.params.id);
-      this.$set(this.copyInfo, 'id', this.$route.params.id);
       this.$set(this.copyInfo, 'acquisitionStartTime', '');
       this.$set(this.copyInfo, 'acquisitionEndTime', '');
       this.$set(this.copyInfo, 'equipmentModel', '');
+      this.$set(this.copyInfo, 'dataSources', '');
       this.$set(this.copyInfo, 'equipmentNumber', '');
       this.$set(this.copyInfo, 'checkNumber', '');
       this.$set(this.copyInfo, 'remark', '');
@@ -617,22 +670,57 @@ export default {
       // this.initSubTableData();
       this.updateScrollbar();
     },
-    // initSubTableData() {
-    //   this.$set(this.copyInfo, 'patientFieldCode', {});
-    //   for (let type of this.tableTypes) {
-    //     let typeCode = type.typeCode;
-    //     this.initSubTableDataForTypeCode(typeCode);
-    //   }
-    // },
-    // initSubTableDataForTypeCode(typeCode) {
-    //   this.$set(this.copyInfo.patientFieldCode, typeCode, {});
-    // },
+    resetForm() {
+      for (let item of this.timeParameter) {
+        item.leftNormal = '';
+        item.leftError = '';
+        item.rightNormal = '';
+        item.rightError = '';
+        item.dataNormal = '';
+        item.dataError = '';
+      };
+      for (let item of this.spatialParameters) {
+        item.leftNormal = '';
+        item.leftError = '';
+        item.rightNormal = '';
+        item.rightError = '';
+        item.dataNormal = '';
+        item.dataError = '';
+      };
+      for (let item of this.standingAngle) {
+        item.leftNormal = '';
+        item.leftError = '';
+        item.rightNormal = '';
+        item.rightError = '';
+      };
+      for (let item of this.kinematicAnalysis) {
+        item.leftNormal = '';
+        item.leftError = '';
+        item.rightNormal = '';
+        item.rightError = '';
+      }
+      for (let item of this.moment) {
+        item.leftNormal = '';
+        item.leftError = '';
+        item.rightNormal = '';
+        item.rightError = '';
+      }
+      for (let item of this.doWork) {
+        item.leftNormal = '';
+        item.leftError = '';
+        item.rightNormal = '';
+        item.rightError = '';
+      }
+      for (let item of this.pressurePlatform) {
+        item.leftNormal = '';
+        item.leftError = '';
+        item.rightNormal = '';
+        item.rightError = '';
+      }
+    },
     updataPatientGaitInfo(type, typeCode, typeName) {
-      // 查询姿势步态表格
-      // if (!this.existed) {
-      //   return;
-      // }
-      queryPatientGaitInfo(type, typeCode).then((patientGait) =>{
+      let id = this.id;
+      queryPatientGaitInfo(type, typeCode, id).then((patientGait) =>{
         // this.subTableCode = typeCode;
         this.tableMode = this.SON_OPEN;
         this.timeParameter = patientGait.timeParameter;
@@ -661,14 +749,14 @@ export default {
       }
 
       let submitData = deepCopy(this.copyInfo);
-      submitData.patientId = this.$route.params.id;
-      submitData.id = this.$route.params.id;
+      submitData.patientCaseId = this.$route.params.caseId;
       submitData.equipmentModel = submitData.equipmentModel;
+      submitData.dataSources = submitData.dataSources;
       submitData.equipmentNumber = submitData.equipmentNumber;
       submitData.checkNumber = submitData.checkNumber;
       submitData.remark = submitData.remark;
-      submitData.acquisitionStartTime = Util.simplifyDate(submitData.acquisitionStartTime);
-      submitData.acquisitionEndTime = Util.simplifyDate(submitData.acquisitionEndTime);
+      submitData.acquisitionStartTime = Util.simplifyTime(submitData.acquisitionStartTime, false);
+      submitData.acquisitionEndTime = Util.simplifyTime(submitData.acquisitionEndTime, false);
 
       submitData.timeParameter = deepCopy(this.timeParameter);
       submitData.spatialParameters = deepCopy(this.spatialParameters);
@@ -681,11 +769,6 @@ export default {
       reviseDateFormat(submitData);
       pruneObj(submitData);
 
-      // submitData.patientFieldCode = {};
-      // for (let type of this.tableTypes) {
-      //   submitData.patientFieldCode[type.typeCode] = deepCopy(this.copyInfo.patientFieldCode[type.typeCode]);
-      // }
-
       if (this.mode === this.ADD_NEW_CARD) {
         addPatientGait(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
@@ -693,7 +776,6 @@ export default {
         }, this._handleError);
 
       } else if (this.mode === this.EDIT_CURRENT_CARD) {
-        // delete submitData.patientSpephysicalId;
         submitData.id = submitData.id;
         modifyPatientGait(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
@@ -741,6 +823,11 @@ export default {
       var name = Util.getElement('typeCode', parseInt(typeId, 10), types).typeName;
       return name;
     },
+    // transform(code, fieldName) {
+    //   var options = this.getOptions(fieldName);
+    //   var targetOption = Util.getElement('code', code, options);
+    //   return targetOption.name;
+    // },
     updateWarning(fieldName) {
       if (this.copyInfo[fieldName] === undefined || this.copyInfo[fieldName] === '') {
         this.$set(this.warningResults, fieldName, '必填项');
@@ -861,7 +948,7 @@ export default {
         display: inline-block;
         position: relative;
         left: @field-name-width;
-        width: calc(~"92% - @{field-name-width}");
+        width: calc(~"96% - @{field-name-width}");
         line-height: @field-line-height;
         font-size: @normal-font-size;
         color: @light-font-color;
