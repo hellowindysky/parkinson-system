@@ -38,26 +38,27 @@
           <div class="field-input" v-show="mode===EDITING_MODE">
             <span v-if="field.fieldName==='ariAge'">{{ariAge}}{{theUnit(field.fieldName)}}</span>
             <span v-else-if="field.fieldName==='courseOfDisease'">
-              <el-input-number
-               v-model="diseaseCourse.year"
-               :controls="false"
-               :min="0"
-               :debounce="0"
-               :id="'year'"
-               @input.native="courseChange($event)"
-               placeholder="填写年">
-              </el-input-number>
+              <span class="field-course-input">
+                <el-input
+                 v-model="diseaseCourse.year"
+                 :id="'year'"
+                 :class="{'warning': warningResults.year}"
+                 @change="updateWarning({fieldName: 'year'})"
+                 placeholder="填写年">
+                </el-input>
+                <span class="warning-text">{{getWarningText('year')}}</span>
+              </span>
               <span>年</span>
-              <el-input-number
-               v-model="diseaseCourse.month"
-               :controls="false"
-               :min="0"
-               :max="11"
-               :debounce="0"
-               :id="'month'"
-               @input.native="courseChange($event)"
-               placeholder="填写月">
-              </el-input-number>
+              <span class="field-course-input">
+                <el-input
+                 v-model="diseaseCourse.month"
+                 :id="'month'"
+                 :class="{'warning': warningResults.month}"
+                 @change="updateWarning({fieldName: 'month'})"
+                 placeholder="填写月">
+                </el-input>
+                <span class="warning-text">{{getWarningText('month')}}</span>
+              </span>
               <span>月</span>
             </span>
             <span v-else-if="getUIType(field)===1">
@@ -723,6 +724,13 @@ export default {
     updateWarning(field) {
       var fieldName = field.fieldName;
       var copyFieldValue = this.copyInfo[fieldName];
+      if (fieldName === 'year' || fieldName === 'month') {
+        let val = this.diseaseCourse[fieldName];
+        if (!Util.checkIfNonNegativeInteger(val) && val !== '') {
+          this.$set(this.warningResults, fieldName, '填正整数');
+          return;
+        }
+      }
       if (this.getUIType(field) === 6) {
         // 日期控件(el-date-picker)给的是一个表示完整日期对象的字符串，我们需要格式化之后再校验
         copyFieldValue = Util.simplifyDate(copyFieldValue);
@@ -808,7 +816,11 @@ export default {
           }
         }
       }
-
+      this.updateWarning({fieldName: 'year'});
+      this.updateWarning({fieldName: 'month'});
+      if (this.warningResults['year'] || this.warningResults['month']) {
+        return;
+      }
       // let staTime = Util.simplifyDate(this.copyInfo.ariTime).split('-');
       // this.copyInfo.ariTime = staTime[0] + '-' + staTime[1];
       this.copyInfo.ariTime = Util.simplifyDate(this.copyInfo.ariTime);
@@ -991,27 +1003,29 @@ export default {
     },
     diseaseCourse: {
       handler: function(newObj) {
+        if (isNaN(Number(newObj.year)) || isNaN(Number(newObj.month))) {
+          return;
+        }
+        if (newObj.year === '' && newObj.month === '') {
+          this.$set(this.copyInfo, 'ariTime', '');
+          return;
+        }
         let year = newObj.year ? Number(newObj.year) : 0;
         let month = newObj.month ? Number(newObj.month) : 0;
         let months = year * 12 + month;
         let today = new Date();
+        today.setDate(1);
         today.setMonth(today.getMonth() - months);
         let ariTime = today;
-        ariTime = Util.simplifyDate(ariTime).split('-');
-        // ariTime = ariTime.getFullYear() + '-' + (ariTime.getMonth() + 1);
-        ariTime = ariTime[0] + '-' + ariTime[1];
+        ariTime = Util.simplifyDate(ariTime);
         this.$set(this.copyInfo, 'ariTime', ariTime);
-        if (!newObj.year && !newObj.month) {
-          let today = new Date();
-          today = today.getFullYear() + '-' + (today.getMonth() + 1);
-          this.$set(this.copyInfo, 'ariTime', today);
-        }
       },
       deep: true
     },
     'copyInfo.ariTime': function(newVal) {
       if (newVal) {
         let today = new Date();
+        today.setDate(1);
         let courseDis = Util.calculateMonthsBetween(newVal, today);
         let year = parseInt(courseDis / 12, 10);
         let month = courseDis % 12;
@@ -1019,9 +1033,12 @@ export default {
         this.$set(this.diseaseCourse, 'month', month);
         this.$set(this.copyInfo, 'courseOfDisease', courseDis);
       } else {
-        this.$set(this.diseaseCourse, 'year', 0);
-        this.$set(this.diseaseCourse, 'month', 0);
+        this.$set(this.diseaseCourse, 'year', '');
+        this.$set(this.diseaseCourse, 'month', '');
+        this.$set(this.copyInfo, 'courseOfDisease', '');
       }
+      this.updateWarning({fieldName: 'year'});
+      this.updateWarning({fieldName: 'month'});
     }
   },
   created() {
@@ -1212,11 +1229,15 @@ export default {
       text-align: left;
       &.field-courseOfDisease {
         .field-input {
-          .el-input-number {
-            width: 36%;
-            .el-input__inner {
-              padding-right: 10px;
+          .field-course-input {
+            position: relative;
+            .warning-text {
+              line-height: 25px;
+              top: 20px;
             }
+          }
+          .el-input {
+            width: 36%;
           }
         }
       }

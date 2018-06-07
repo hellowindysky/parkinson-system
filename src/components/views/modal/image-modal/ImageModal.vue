@@ -104,6 +104,21 @@
             <el-input v-model="checkDevice" placeholder="请输入检查设备编号"></el-input>
           </span>
         </div>
+
+        <div class="field field-brain">
+          <span class="field-name">
+            第三脑室宽:
+          </span>
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span class="warning-text"></span>
+            <span>{{checkDevice}}</span>
+          </span>
+          <span class="field-input" v-else>
+            <el-input v-model="checkDevice" placeholder="请输入第三脑室宽"></el-input>
+            <span class="unit">cm</span>
+          </span>
+        </div>
+
         <div class="field whole-line">
           <span class="field-name">
             检查结论:
@@ -882,6 +897,20 @@ export default {
         text-align: left;
         vertical-align: top;
         transform: translate3d(10px, 5px, 0); // 这一行是为了修补视觉上的偏移
+        &.field-brain {
+          .field-input {
+            .el-input {
+              width: calc(~"100% - 34px");
+            }
+            .unit {
+              position: absolute;
+              right: 10px;
+              top: calc(~"50% - 3px");
+              transform: translateY(-50%);
+              font-size: 14px;
+            }
+          }
+        }
         &.whole-line {
           width: 100%;
           .field-input {
