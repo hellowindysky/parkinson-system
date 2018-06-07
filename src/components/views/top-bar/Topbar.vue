@@ -11,7 +11,7 @@
         <span class="text right" @click="switchBlockSensitiveStatus(false)">全部显示</span>
       </div>
       <div class="operation-wrapper">
-        <a class="iconfont icon-question" target="_blank" href="https://shimo.im/doc/gu8wxBjX9U8GMiy2?r=ZY24LK//"></a>
+        <a class="iconfont icon-question" target="_blank" href="https://shimo.im/docs/kkrtBy4AuA0v24t5/"></a>
         <span class="iconfont icon-search" :class="{'on': showFilterPanel}" @click="toggleFilterPanelDisplay"></span>
         <span class="iconfont icon-notice" v-show="false"></span>
         <span class="iconfont icon-task" v-show="false"></span>

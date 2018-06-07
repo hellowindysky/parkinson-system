@@ -198,7 +198,7 @@
 
       <!-- 题目列表 -->
       <div v-for="(item, index) in targetScale.questions" class="scale-questions" v-show="(item.parentId ? checkQuestionListIsShow(item.parentId, item.answerIndex) : true) && quicklyMode === false" :id="'questions_' + item.answerIndex" :style="item.parentId ? 'padding-left: 50px;' : ''">
-        <p class="question-title" v-html="item.subjectName" 
+        <p class="question-title" v-html="item.questionNumber + ' ' + item.subjectName" 
         :class="{'notice-empty': !questionIsAnswered(item) && mode === EDIT_CURRENT_CARD}"></p>
 
         <el-checkbox-group v-if="(item.questionType===0 || item.questionType===1) && item.multipleChoose === 1"
@@ -318,7 +318,7 @@ export default {
       }
     },
     targetScale() {
-      let scale = Util.getElement('scaleInfoId', this.copyInfo.scaleInfoId, this.allScale);
+      let scale = deepCopy(Util.getElement('scaleInfoId', this.copyInfo.scaleInfoId, this.allScale));
 
       // console.log('targetScale', scale);
       // 量表问题列表重构

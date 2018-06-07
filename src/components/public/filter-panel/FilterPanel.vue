@@ -1114,10 +1114,10 @@
                     <tr v-for="(item, index) in diagnosticScaleCondition.scaleQuestionList" :key="index">
                       <td @click="removeQuestionRow(index)"><i class="iconfont icon-remove"></i></td>
                       <td>
-                        {{getQuestionGrade(item.scaleQuestionId).scaleQuestionNumber}}
+                        {{getQuestionGrade(item.scaleQuestionId).questionNumber}}
                       </td>
                       <td>
-                        <el-popover placement="right-start" width="200" trigger="hover" :disabled="!getQuestionGrade(item.scaleQuestionId).questionName"
+                        <el-popover placement="right-end" width="200" trigger="hover" :disabled="!getQuestionGrade(item.scaleQuestionId).questionName"
                           :content="getQuestionGrade(item.scaleQuestionId).questionName">
                           <el-select class="normal-input" slot="reference" v-model="item.scaleQuestionId" @change="item.scaleOptionId = ''">
                             <el-option v-for="option in selectedScaleInfo.questions" :label="option.subjectName" :value="option.scaleQuestionId"
