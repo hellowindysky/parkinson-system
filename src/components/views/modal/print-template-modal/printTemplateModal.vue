@@ -150,6 +150,7 @@ import Ps from 'perfect-scrollbar';
 import {deepCopy, vueCopy, pruneObj } from 'utils/helper';
 // import { queryExportTemplate, operateExportTemplate, deleteExportTemplate } from 'api/patient.js';
 import { queryExportTemplate, operateExportTemplate, deleteExportTemplate } from 'api/patient.js';
+import { Loading } from 'element-ui';
 export default {
   data() {
     return {
@@ -457,9 +458,13 @@ export default {
         templateExportFields: tempFields
       };
 
+      let loadingInstance = Loading.service({text: '正在提交...'});
+
       operateExportTemplate(templateExport).then(() => {
+        loadingInstance.close();
         this.queryTemplate();
       }, (error) => {
+        loadingInstance.close();
         console.error(error);
       });
     },
