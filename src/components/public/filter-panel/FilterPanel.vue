@@ -1119,8 +1119,8 @@
                       <td>
                         <el-popover placement="right-end" width="200" trigger="hover" :disabled="!getQuestionGrade(item.scaleQuestionId).questionName"
                           :content="getQuestionGrade(item.scaleQuestionId).questionName">
-                          <el-select class="normal-input" slot="reference" v-model="item.scaleQuestionId" @change="item.scaleOptionId = ''">
-                            <el-option v-for="option in selectedScaleInfo.questions" :label="option.subjectName" :value="option.scaleQuestionId"
+                          <el-select class="normal-input" slot="reference" v-model="item.scaleQuestionId" @change="item.scaleOptionId = ''" popper-class="scale-question-selector">
+                            <el-option v-for="option in selectedScaleInfo.questions" v-if="!option.noValue" :label="option.subjectName" :value="option.scaleQuestionId"
                               :key="option.code"></el-option>
                           </el-select>
                         </el-popover>
@@ -1497,6 +1497,7 @@ export default {
       }
       let index = 0;
       for (let i = 0; i < questionList.length; i++) {
+        let noValue = false;
         questionList[i].answerIndex = index;
         index++;
         for (let j = 0; j < questionList[i].options.length; j++) {
@@ -1513,6 +1514,13 @@ export default {
             questionList[i].options[j].answerIndex = index;
             index++;
           }
+          // 判断该题目的选项是否均为0分，如果是，则该题目按照不计分处理
+          if (questionList[i].options[j].grade !== 0) {
+            noValue = true;
+          }
+        }
+        if (!noValue) {
+          questionList[i].noValue = true;
         }
       }
       let scaleInfo = {
@@ -2813,5 +2821,8 @@ export default {
       }
     }
   }
+}
+.scale-question-selector {
+  max-width: 500px;
 }
 </style>
