@@ -187,7 +187,7 @@
           :mode="mutableMode"
           v-for="(item, index) in gaitPostureList"
           :key="'gaitPosture' + index"
-          :title="item.title"
+          :title="'步态仪器'"
           v-on:editCurrentCard="editGaitPosture(item)"
           v-on:viewCurrentCard="viewGaitPosture(item)"
           v-on:deleteCurrentCard="deleteGaitPosture(item)">
@@ -201,11 +201,11 @@
           </div>
           <div class="text third-line">
             <span class="name">采集类型:</span>
-            <span>{{transform(item.type, 'type')}}</span>
+            <span>{{'姿势步态'}}</span>
           </div>
           <div class="text fourth-line">
             <span class="name">数据来源:</span>
-            <span>{{'手动录入'}}</span>
+            <span>{{transform(item.dataSources, 'dataSources')}}</span>
           </div>
         </card>
         <card class="card gaitPosture-card"
@@ -213,7 +213,7 @@
           :mode="mutableMode"
           v-for="(item, index) in maGaitList"
           :key="'maGait' + index"
-          :title="'MA10'"
+          :title="'MA-10'"
           v-on:editCurrentCard="editMaGait(item)"
           v-on:viewCurrentCard="viewMaGait(item)"
           v-on:deleteCurrentCard="deleteMaGait(item)">
@@ -227,11 +227,11 @@
           </div>
           <div class="text third-line">
             <span class="name">采集类型:</span>
-            <span>{{transform(item.type, 'type')}}</span>
+            <span>{{'姿势步态'}}</span>
           </div>
           <div class="text fourth-line">
             <span class="name">数据来源:</span>
-            <span>{{'手动录入'}}</span>
+            <span>{{transform(item.dataSources, 'dataSources')}}</span>
           </div>
         </card>
 
@@ -271,7 +271,7 @@ import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import { deletePatientBodypart, deleteEmg, deleteBiochemical, deleteNeurologicCheck, deleteSleepMonitoring,
-  deleteGeneCheck, deleteImage, deleteVitalSigns, deletePatientGait, deleteMaGait} from 'api/patient.js';
+  deleteGeneCheck, deleteImage, deleteVitalSigns, deletePatientGait, deletePatientMaGait} from 'api/patient.js';
 // import { vueCopy } from 'utils/helper';
 
 import FoldingPanel from 'public/folding-panel/FoldingPanel';
@@ -710,7 +710,7 @@ export default {
       var patientMaGait = {id: item.id
       };
       Bus.$on(this.CONFIRM, () => {
-        deleteMaGait(patientMaGait).then(this._resolveDeletion, this._rejectDeletion);
+        deletePatientMaGait(patientMaGait).then(this._resolveDeletion, this._rejectDeletion);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
@@ -772,7 +772,7 @@ export default {
 @field-item-width: 150px;
 @field-height: 45px;
 @vitalSigns-card-height: 130px;
-@gaitPosture-card-height: 130px;
+@gaitPosture-card-height: 150px;
 
 .diagnostic-examination {
   .panel {
