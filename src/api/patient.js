@@ -982,15 +982,16 @@ export function deleteSleepMonitoring(sleepMonitoringInfo) {
   return encapsulatePromise(url, request);
 };
 // 获取接入设备监测详情
-export function queryPatientGaitInfo(type, typeCode) {
+export function queryPatientGaitInfo(type, typeCode, id) {
   var request = Object.assign({}, getCommonRequest());
   request.typeCode = typeCode;
   request.type = type;
+  request.gaitId = id;
   var url = '/pdms/queryPatientGaitInfo';
 
   return encapsulatePromise(url, request);
 };
-// 新增接入设备监测
+// 新增接入设备监测(姿势步态)
 export function addPatientGait(patientGait) {
   var request = Object.assign({}, getCommonRequest());
   request.patientGait = patientGait;
@@ -999,7 +1000,7 @@ export function addPatientGait(patientGait) {
   return encapsulatePromise(url, request);
 };
 
-// 修改接入设备监测
+// 修改接入设备监测(姿势步态)
 export function modifyPatientGait(patientGait) {
   var request = Object.assign({}, getCommonRequest());
   request.patientGait = patientGait;
@@ -1017,10 +1018,27 @@ export function deletePatientGait(patientGait) {
   return encapsulatePromise(url, request);
 };
 
-// 删除接入设备监测(MA10)
-export function deleteMaGait(patientGait) {
+// 新增接入设备监测(MA10)
+export function addPatientMaGait(patientGaitMa) {
   var request = Object.assign({}, getCommonRequest());
-  request.patientGait = patientGait;
+  request.patientGaitMa = patientGaitMa;
+  var url = '/pdms/addOrUpdatePatientGait';
+
+  return encapsulatePromise(url, request);
+};
+
+// 修改接入设备监测(MA10)
+export function modifyPatientMaGait(patientGaitMa) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientGaitMa = patientGaitMa;
+  var url = '/pdms/addOrUpdatePatientGait';
+
+  return encapsulatePromise(url, request);
+};
+// 删除接入设备监测(MA10)
+export function deletePatientMaGait(patientGaitMa) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientGaitMa = patientGaitMa;
   var url = '/pdms/deletePatientGait';
 
   return encapsulatePromise(url, request);
