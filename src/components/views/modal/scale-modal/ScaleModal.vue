@@ -390,20 +390,25 @@ export default {
       this.updateScrollbar();
     },
     queryScaleSearch(queryString, cb) {
+      // v2.3.1 筛选非废除量表
+      let scalesIsUse = this.allScale.filter((item) => {
+        return item.isUse === 1;
+      });
+
       let allScale = [];
       let subjectId = this.$store.state.subjectId;
       this.scaleList = [];
 
       // 根据量表分类判断可选择的量表数组
       if (this.scaleCategory === 1) {
-        this.allScale.map((item) => {
+        scalesIsUse.map((item) => {
           if (item.gaugeTaskType === subjectId) {
             this.scaleList.push(item);
             allScale.push({'value': item.gaugeName});
           }
         });
       } else {
-        this.allScale.map((item) => {
+        scalesIsUse.map((item) => {
           if (item.gaugeTaskType === 0) {
             this.scaleList.push(item);
             allScale.push({'value': item.gaugeName});
@@ -608,10 +613,10 @@ export default {
       }
       submitData.scaleFiles = this.newOther;
 
-      this.lockSubmitButton = false;
       if (this.mode === this.ADD_NEW_CARD) {
         // console.log('add', submitData);
         addScaleInfo(submitData).then(() => {
+          this.lockSubmitButton = false;
           Bus.$emit(this.UPDATE_CASE_INFO);
           this.closePanel();
         }, this._handleError);
@@ -619,6 +624,7 @@ export default {
       } else if (this.mode === this.EDIT_CURRENT_CARD) {
         // console.log('modify', submitData);
         modifyScaleInfo(submitData).then(() => {
+          this.lockSubmitButton = false;
           Bus.$emit(this.UPDATE_CASE_INFO);
           this.closePanel();
         }, this._handleError);

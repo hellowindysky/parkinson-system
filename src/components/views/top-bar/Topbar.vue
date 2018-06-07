@@ -480,7 +480,7 @@ export default {
     top: @header-height;
     left: 0;
     padding: 10px 0;
-    width: 500px;
+    width: 700px;
     background-color: rgba(24,34,48,0.95);
     color: #fff;
     font-size: 0;
@@ -493,10 +493,10 @@ export default {
     .item {
       display: block;
       margin: 5px 0;
-      padding-left: 30px;
+      padding: 7px 10px 7px 30px;
       width: 100%;
-      height: 40px;
-      line-height: 40px;
+      height: auto;
+      line-height: 22px;
       box-sizing: border-box;
       text-align: left;
       font-size: @normal-font-size;
@@ -515,9 +515,9 @@ export default {
       }
     }
     .sub-item {
-      padding-left: 50px;
-      height: 35px;
-      line-height: 35px;
+      height: auto;
+      padding: 7px 10px 7px 50px;
+      line-height: 20px;
     }
     .seperate-line {
       margin: 5px 30px;

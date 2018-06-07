@@ -158,10 +158,15 @@ export default {
       }
     },
     inStatisticsMenu() {
-      return this.$route.matched.some(record => record.meta.statistics);
+      return this.$route.matched.some(record => record.meta.statistics) && !this.isMockUser();
     }
   },
   methods: {
+    isMockUser() {
+      var accountNumber = sessionStorage.getItem('userName');
+      var mockUser = {'admin2': true, 'test1': true};
+      return accountNumber in mockUser;
+    },
     initDate() {
       var now = new Date();
       this.endTime = now;
@@ -377,7 +382,9 @@ export default {
     this.updateSupportedDoctorNumber();
 
     this.updateActiveTab();
-    this.updateFormData(this.pageParam);
+
+    // v2.3.1 屏蔽进入页面自动查询 只支持手动查询
+    // this.updateFormData(this.pageParam);
   },
   components: {
     customTable
@@ -392,7 +399,13 @@ export default {
       // this.updateScrollbar();
     },
     activeTab() {
-      this.updateFormData(this.pageParam);
+      // this.updateFormData(this.pageParam);
+
+      // v2.3.1 屏蔽点击tab自动查询 只支持手动查询
+      this.tableData = {
+        template: [],
+        data: []
+      };
     }
   }
 };
