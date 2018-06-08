@@ -1057,6 +1057,13 @@ export function queryPatientsByCondition(condition) {
   return encapsulatePromise(url, request);
 };
 
+// 可导出账号
+export function queryExportUsername() {
+  var request = Object.assign({}, getCommonRequest());
+  var url = '/usermgr/queryExportUsername';
+  return encapsulatePromise(url, request);
+};
+
 // 查询可导出字段
 export function queryExportField() {
   var request = Object.assign({}, getCommonRequest());
