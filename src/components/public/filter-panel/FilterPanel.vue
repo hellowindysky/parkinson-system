@@ -2189,6 +2189,20 @@ export default {
     //   window.location.href = url;
     // },
     popDialog() {
+      var patientIdList = [];
+      for (var i = 0; i < this.patientList.length; i++) {
+        if (this.patientSeletedStatusList[i]) {
+          patientIdList.push(this.patientList[i].patientId);
+        }
+      }
+      if (patientIdList.length === 0) {
+        // 如果没有选择患者则不打开弹窗
+        this.$message({
+          message: '请选择患者',
+          type: 'warning'
+        });
+        return;
+      }
       this.queryTemp();
       this.dialogVisible = true;
     },
