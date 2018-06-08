@@ -1129,7 +1129,7 @@
                         <el-select class="normal-input" v-model="item.scaleOptionId"
                           :disabled="!item.scaleQuestionId">
                           <el-option v-for="option in getQuestionGrade(item.scaleQuestionId).gradeList" :label="option.grade" :value="option.scaleOptionId"
-                            :key="option.code"></el-option>
+                            :key="option.code" :disabled="checkScaleOptionId(option.scaleOptionId)"></el-option>
                         </el-select>
                       </td>
                     </tr>
@@ -1235,14 +1235,14 @@
       <div class="iconfont" :class="toggleIconClass"></div>
     </div>
     <div class="content-area" :class="{'hide-condition-status': !displayCondition}">
-      <div class="operation-bar" v-show="showOperationBar">
+      <div class="operation-bar" v-show="isShowOperationBar">
         <div class="export-button" @click="popDialog">批量导出</div>
       </div>
       <div class="content-scroll-area" ref="scrollContent">
         <div class="form-head">
-          <table class="form form-head" :class="{'selectable': showOperationBar}">
+          <table class="form form-head" :class="{'selectable': isShowOperationBar}">
             <tr class="row top-row">
-              <td class="col col-select" v-show="showOperationBar">
+              <td class="col col-select" v-show="isShowOperationBar">
                 <el-checkbox v-model="allPatientsSelectedStatus"
                   @change="toggleAllPatientsSeletedStatus"></el-checkbox>
               </td>
@@ -1257,9 +1257,9 @@
           </table>
         </div>
         <div class="form-body" ref="formBody">
-          <table class="form" :class="{'selectable': showOperationBar}">
+          <table class="form" :class="{'selectable': isShowOperationBar}">
             <tr class="row" v-for="(patient, i) in patientList">
-              <td class="col col-select" v-show="showOperationBar">
+              <td class="col col-select" v-show="isShowOperationBar">
                 <el-checkbox v-model="patientSeletedStatusList[i]"></el-checkbox>
               </td>
               <td class="col col-num">{{i + 1}}</td>
@@ -1315,7 +1315,7 @@
 import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
-import { queryPatientsByCondition, getPatientGroupInfo, queryExportTemplate } from 'api/patient.js';
+import { queryPatientsByCondition, getPatientGroupInfo, queryExportTemplate, queryExportUsername } from 'api/patient.js';
 import { baseUrl } from 'api/common.js';
 import { vueCopy, pruneObj, reviseDateFormat, isEmptyObject } from 'utils/helper.js';
 import Util from 'utils/util.js';
@@ -1411,6 +1411,7 @@ export default {
       dialogVisible: false,
       exportTemp: [],
       templateId: '',
+      isShowOperationBar: false,
       warningResults: {
         templateId: ''
       },
@@ -1511,12 +1512,15 @@ export default {
     },
     showOperationBar() {
       var userName = sessionStorage.getItem('userName');
-      let specialUserList = ['chenshengdi', 'zeng'];
-      if (specialUserList.indexOf(userName) >= 0) {
-        return true;
-      } else {
-        return false;
-      }
+      queryExportUsername().then((res) => {
+        let specialUserList = res.split(',');
+        console.log(userName, specialUserList);
+        if (specialUserList.indexOf(userName) >= 0) {
+          console.log('true');
+          this.isShowOperationBar = true;
+        }
+      });
+      return status;
     },
     /**
      * 根据已选量表scaleInfoId生成该量表的问题选项列表
@@ -1926,6 +1930,18 @@ export default {
       }
       return questionInfo;
     },
+    /**
+     * 根据scaleOptionId检查选项得分是否被选中，如果选中则在其他列表的下拉框中设置成disabled
+     */
+    checkScaleOptionId(optionId) {
+      let list = this.diagnosticScaleCondition.scaleQuestionList;
+      for (let i = 0; i < list.length; i++) {
+        if (optionId === list[i].scaleOptionId) {
+          return true;
+        }
+      }
+      return false;
+    },
     removeQuestionRow(index) {
       this.diagnosticScaleCondition.scaleQuestionList.splice(index, 1);
     },
@@ -2097,9 +2113,17 @@ export default {
           this.diagnosticScaleCondition[fieldName] !== undefined &&
           this.diagnosticScaleCondition[fieldName] !== '') {
           let value = this.diagnosticScaleCondition[fieldName];
-          if (value instanceof Array) {
+          if (value instanceof Array && fieldName !== 'scaleQuestionList') {
             value.sort((a, b) => a > b);
             value = value.join(',');
+          } else if (value instanceof Array && fieldName === 'scaleQuestionList') {
+            let tempValue = [];
+            for (let j = 0; j < value.length; j++) {
+              if (value[j].scaleOptionId) {
+                tempValue.push(value[j]);
+              }
+            }
+            value = tempValue;
           }
           condition.caseScale[fieldName] = value;
         }
@@ -2344,6 +2368,7 @@ export default {
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollList);
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollContent);
     this.queryPatients();
+    this.showOperationBar();
   },
   watch: {
     '$route.path'() {
