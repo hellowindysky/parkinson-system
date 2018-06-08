@@ -1510,16 +1510,6 @@ export default {
       this.diagnosticSurgeryCondition.minorComplicationType = '';
       return majorComplicationType;
     },
-    showOperationBar() {
-      var userName = sessionStorage.getItem('userName');
-      queryExportUsername().then((res) => {
-        let specialUserList = res.split(',');
-        console.log(userName, specialUserList);
-        if (specialUserList.indexOf(userName) >= 0) {
-          this.isShowOperationBar = true;
-        }
-      });
-    },
     /**
      * 根据已选量表scaleInfoId生成该量表的问题选项列表
      */
@@ -1569,6 +1559,16 @@ export default {
     }
   },
   methods: {
+    showOperationBar() {
+      var userName = sessionStorage.getItem('userName');
+      queryExportUsername().then((res) => {
+        let specialUserList = res.split(',');
+        console.log(userName, specialUserList);
+        if (specialUserList.indexOf(userName) >= 0) {
+          this.isShowOperationBar = true;
+        }
+      });
+    },
     clearVal(flag) {
       if (flag === 'specificDisease') {
         this.$set(this.diseaseInfoCondition, 'specificDisease', '');
@@ -2273,7 +2273,7 @@ export default {
         '&accountNumber=' + accountNumber + '&userType=' + userType + '&orgId=' +
         orgId + '&orgType=' + orgType + '&templateId=' + templateId + '&patientIds=' + patientIdList.join(',');
       window.location.href = url;
-      this.dialogVisible = false;
+      this.canel();
     },
     canel() {
       this.templateId = '';
@@ -2366,6 +2366,7 @@ export default {
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollList);
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollContent);
     this.queryPatients();
+    this.showOperationBar();
   },
   watch: {
     '$route.path'() {
@@ -2957,6 +2958,9 @@ export default {
         right: -@group-panel-width;
       }
     }
+  }
+  .v-modal {
+    background-color: rgba(110, 132, 159, 1);
   }
   .el-dialog__wrapper {
     text-align: left;
