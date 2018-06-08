@@ -1236,7 +1236,7 @@
     </div>
     <div class="content-area" :class="{'hide-condition-status': !displayCondition}">
       <div class="operation-bar" v-show="showOperationBar">
-        <div class="export-button" @click="batchExportPatients">批量导出</div>
+        <div class="export-button" @click="popDialog">批量导出</div>
       </div>
       <div class="content-scroll-area" ref="scrollContent">
         <div class="form-head">
@@ -1280,6 +1280,34 @@
       <group-panel class="group-panel" :class="{'hide': !displayGroupPanel}" :belongGroups="belongGroups"
         :display="displayGroupPanel" :patientId="Number(patientId)" @hideGroupPanel="hideGroupPanel"></group-panel>
     </div>
+
+    <el-dialog title="导出模板" :visible.sync="dialogVisible" size="tiny" :modal-append-to-body="false">
+      <div>
+        <div class="field whole-line">
+          <span class="field-name">
+            选择导出模板:
+          </span>
+          <span class="field-input">
+            <el-select v-model="templateId" placeholder="请选择导出模板" clearable
+             :class="{'warning': warningResults.templateId}"
+             @change="updateWarning('templateId')">
+              <el-option
+               v-for="(item,index) in exportTemp"
+               :key="item.templateId"
+               :label="item.templateName"
+               :value="item.templateId">
+              </el-option>
+            </el-select>
+            <span class="warning-text">{{warningResults.templateId}}</span>
+          </span>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="canel">取 消</el-button>
+        <el-button type="primary" @click="submitTemp">确 定</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -1287,7 +1315,7 @@
 import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
-import { queryPatientsByCondition, getPatientGroupInfo } from 'api/patient.js';
+import { queryPatientsByCondition, getPatientGroupInfo, queryExportTemplate } from 'api/patient.js';
 import { baseUrl } from 'api/common.js';
 import { vueCopy, pruneObj, reviseDateFormat, isEmptyObject } from 'utils/helper.js';
 import Util from 'utils/util.js';
@@ -1380,6 +1408,13 @@ export default {
   },
   data() {
     return {
+      dialogVisible: false,
+      exportTemp: [],
+      templateId: '',
+      warningResults: {
+        templateId: ''
+      },
+
       currentTab: PERSONAL_INFO,
       PERSONAL_INFO: PERSONAL_INFO,
       DIAGNOSTIC_INFO: DIAGNOSTIC_INFO,
@@ -2130,7 +2165,56 @@ export default {
         this.$set(this.patientSeletedStatusList, i, this.allPatientsSelectedStatus);
       }
     },
-    batchExportPatients() {
+    // batchExportPatients() {
+    //   var patientIdList = [];
+    //   for (var i = 0; i < this.patientList.length; i++) {
+    //     if (this.patientSeletedStatusList[i]) {
+    //       patientIdList.push(this.patientList[i].patientId);
+    //     }
+    //   }
+    //   if (patientIdList.length === 0) {
+    //     // 如果没有选择患者则不发出请求
+    //     return;
+    //   }
+
+    //   var userId = sessionStorage.getItem('userId');
+    //   var accountNumber = sessionStorage.getItem('accountNumber');
+    //   var userType = sessionStorage.getItem('userType');
+    //   var orgId = sessionStorage.getItem('orgId');
+    //   var orgType = sessionStorage.getItem('orgType');
+
+    //   var url = baseUrl + '/export/ruiJinPatientExport' + '?userId=' + userId +
+    //     '&accountNumber=' + accountNumber + '&userType=' + userType + '&orgId=' +
+    //     orgId + '&orgType=' + orgType + '&patientIds=' + patientIdList.join(',');
+    //   window.location.href = url;
+    // },
+    popDialog() {
+      this.queryTemp();
+      this.dialogVisible = true;
+    },
+    queryTemp() {
+      queryExportTemplate().then((res) => {
+        this.exportTemp = res;
+      });;
+    },
+    updateWarning(fieldName) {
+      if (!this[fieldName]) {
+        this.$set(this.warningResults, fieldName, '必填项');
+      } else {
+        this.$set(this.warningResults, fieldName, '');
+      }
+    },
+    submitTemp() {
+      for (let property in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(property)) {
+          this.updateWarning(property);
+        }
+      }
+      for (let property in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(property) && this.warningResults[property]) {
+          return;
+        }
+      }
       var patientIdList = [];
       for (var i = 0; i < this.patientList.length; i++) {
         if (this.patientSeletedStatusList[i]) {
@@ -2147,11 +2231,24 @@ export default {
       var userType = sessionStorage.getItem('userType');
       var orgId = sessionStorage.getItem('orgId');
       var orgType = sessionStorage.getItem('orgType');
+      var templateId = this.templateId;
 
-      var url = baseUrl + '/export/ruiJinPatientExport' + '?userId=' + userId +
+      var url = baseUrl + '/export/patientTemplateExport' + '?userId=' + userId +
         '&accountNumber=' + accountNumber + '&userType=' + userType + '&orgId=' +
-        orgId + '&orgType=' + orgType + '&patientIds=' + patientIdList.join(',');
+        orgId + '&orgType=' + orgType + '&templateId=' + templateId + '&patientIds=' + patientIdList.join(',');
       window.location.href = url;
+      this.dialogVisible = false;
+    },
+    canel() {
+      this.templateId = '';
+      for (let property in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(property)) {
+          this.$nextTick(() => {
+            this.$set(this.warningResults, property, '');
+          });
+        }
+      }
+      this.dialogVisible = false;
     },
     getNameByCode(code, typeGroupCode) {
       var types = Util.getElement('typegroupcode', typeGroupCode, this.typeGroup).types;
@@ -2277,6 +2374,10 @@ export default {
   @col-disease-width + @col-symptom-width + @col-operation-width;
 @selectable-table-width: @table-width + @col-select-width;
 
+@field-line-height: 25px;
+@field-name-width: 110px;
+@long-field-name-width: 160px;
+
 .filter-panel {
   position: absolute;
   top: @header-height + @header-margin-bottom;
@@ -2396,8 +2497,8 @@ export default {
                 padding-bottom: 3px;
               }
             }
-            .item-checkbox {
-            }
+            // .item-checkbox {
+            // }
             .item-name {
               display: inline-block;
               width: 80px;
@@ -2442,8 +2543,8 @@ export default {
               .right-input {
                 width: 102px;
               }
-              .middle-text {
-              }
+              // .middle-text {
+              // }
               .normal-input {
                 display: inline-block;
               }
@@ -2818,6 +2919,91 @@ export default {
       z-index: 200;
       &.hide {
         right: -@group-panel-width;
+      }
+    }
+  }
+  .el-dialog__wrapper {
+    text-align: left;
+    .field {
+      display: inline-block;
+      position: relative;
+      width: 50%;
+      min-height: 45px;
+      line-height: @field-line-height;
+      box-sizing: border-box;
+      text-align: left;
+      vertical-align: top;
+      transform: translate3d(10px, 5px, 0); // 这一行是为了修补视觉上的偏移
+      &.whole-line {
+        width: 100%;
+        .field-input {
+          width: calc(~"96% - @{field-name-width}");
+        }
+      }
+      .field-name {
+        display: inline-block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: @field-name-width;
+        line-height: @field-line-height;
+        font-size: @normal-font-size;
+        color: @font-color;
+        // &.long-field-name {
+        //   width: @long-field-name-width;
+        // }
+        .required-mark {
+          color: red;
+          font-size: 20px;
+          vertical-align: middle;
+        }
+      }
+      .field-input {
+        display: inline-block;
+        position: relative;
+        left: @field-name-width;
+        width: calc(~"92% - @{field-name-width}");
+        line-height: @field-line-height;
+        font-size: @normal-font-size;
+        color: @light-font-color;
+        // &.long-field-name {
+        //   left: @long-field-name-width;
+        // }
+        .warning-text {
+          position: absolute;
+          top: 22px;
+          left: 10px;
+          height: 15px;
+          color: red;
+          font-size: @small-font-size;
+        }
+        .el-input {
+          transform: translateY(-3px);
+          .el-input__inner {
+            height: 30px;
+            border: none;
+            background-color: @screen-color;
+          }
+        }
+        .el-textarea {
+          margin-bottom: 10px;
+          vertical-align: middle;
+          transform: translateY(-3px);
+          .el-textarea__inner {
+            border: none;
+            background-color: @screen-color;
+          }
+        }
+        .el-select {
+          width: 100%;
+        }
+        .el-date-editor {
+          width: 100%;
+        }
+        .warning .el-input__inner,
+        .warning .el-textarea__inner {
+          border: 1px solid red;
+        }
       }
     }
   }
