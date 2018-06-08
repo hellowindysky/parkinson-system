@@ -1516,11 +1516,9 @@ export default {
         let specialUserList = res.split(',');
         console.log(userName, specialUserList);
         if (specialUserList.indexOf(userName) >= 0) {
-          console.log('true');
           this.isShowOperationBar = true;
         }
       });
-      return status;
     },
     /**
      * 根据已选量表scaleInfoId生成该量表的问题选项列表
@@ -2368,7 +2366,6 @@ export default {
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollList);
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollContent);
     this.queryPatients();
-    this.showOperationBar();
   },
   watch: {
     '$route.path'() {
