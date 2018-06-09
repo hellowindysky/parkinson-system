@@ -93,14 +93,14 @@
         <div class="choice-area">
           <p class="choice-title">可选导出字段</p>
           <div class="choice-field">
-            <el-tabs v-model="activeName_choice">
+            <el-tabs v-model="activeName_selected">
 
               <el-tab-pane
                v-for="(mainItem,mainIndex) in keXuanZiDuan" :key="mainIndex"
                :label="mainItem.title"
                :name="mainItem.code+''">
                 <div class="collapse-box" :ref="'choice'+mainItem.code">
-                  <el-collapse v-model="activeTitle_choice">
+                  <el-collapse v-model="activeTitle_selected">
                     <el-collapse-item
                      v-for="(middleItem,middleIndex) in mainItem.category" :key="middleIndex"
                      :title="middleItem.title"
@@ -156,9 +156,7 @@ export default {
     return {
       activeIndex: 0,
       activeName_selected: '1',
-      activeName_choice: '1',
       activeTitle_selected: ['3'],
-      activeTitle_choice: ['3'],
       tempNames: [],
       daoChuMuBan: [],
       keXuanZiDuan: []
