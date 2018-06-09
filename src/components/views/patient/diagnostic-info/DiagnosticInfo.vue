@@ -98,6 +98,7 @@ import Card from 'public/card/Card';
 import Bus from 'utils/bus.js';
 import { deleteDiagnosticInfo, queryExportTemplate } from 'api/patient.js';
 import { baseUrl } from 'api/common.js';
+import Util from 'utils/util.js';
 
 export default {
   props: {
@@ -442,8 +443,8 @@ export default {
       var templateId = this.templateId;
 
       var patientId = this.$route.params.id;
-      var startTime = this.startTime;
-      var endTime = this.endTime;
+      var startTime = Util.simplifyDate(this.startTime);
+      var endTime = Util.simplifyDate(this.endTime);
 
       var url = baseUrl + '/export/patientTemplateExport' + '?userId=' + userId +
         '&accountNumber=' + accountNumber + '&userType=' + userType + '&orgId=' +
