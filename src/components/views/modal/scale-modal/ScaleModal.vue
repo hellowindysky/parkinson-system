@@ -1149,12 +1149,17 @@ export default {
           height: auto;
           line-height: 40px;
           white-space: nowrap;
-          .el-radio__label {
+          .el-radio__label,
+          .el-checkbox__label {
             display: inline-block;
             width: auto;
+            vertical-align: top;
             white-space: normal;
             word-wrap: break-word;
             word-break: break-all;
+            span {
+              vertical-align: middle;
+            }
             .el-radio__input {
               vertical-align: top;
               margin-top: 10px;
@@ -1173,6 +1178,13 @@ export default {
                   color: @gray-color;
                 }
               }
+            }
+          }
+          .el-radio__input {
+            vertical-align: top;
+            line-height: 40px;
+            .el-radio__inner {
+              vertical-align: middle;
             }
           }
           .is-disabled {
