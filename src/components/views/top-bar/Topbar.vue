@@ -47,7 +47,7 @@
       <div class="seperate-line" v-if="allowAuthorization"></div>
       <p class="operate-item" v-if="isSupportAccount" @click="reselectDoctor">更换授权医生</p>
       <div class="seperate-line" v-if="isSupportAccount"></div>
-      <p class="operate-item" @click="setPrintTemp">打印模板设置</p>
+      <p class="operate-item" @click="setPrintTemp">导出模板设置</p>
       <div class="seperate-line"></div>
       <p class="operate-item" @click="resetPassword">修改密码</p>
       <div class="seperate-line"></div>

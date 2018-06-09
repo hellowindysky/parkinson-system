@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="print-template-modal-wrapper">
     <div class="print-template-modal">
-      <h3 class="title">设置打印模板 <i class="icon el-icon-circle-close" @click="closeModal"></i></h3>
+      <h3 class="title">设置导出模板 <i class="icon el-icon-circle-close" @click="closeModal"></i></h3>
       <div class="content">
 
         <!-- 左边部分 -->
