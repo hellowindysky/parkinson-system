@@ -958,7 +958,9 @@ export default {
       this.quicklyMode = !this.quicklyMode;
       if (this.mode === this.EDIT_CURRENT_CARD) {
         if (this.answerModeChanged === false && this.quicklyMode === false) {
-          this.scrollToQuestion();
+          this.$nextTick(() => {
+            this.scrollToQuestion();
+          });
         }
         this.answerModeChanged = true;
       }
@@ -975,16 +977,16 @@ export default {
             // console.log(this.$el.querySelector('#questions_' + index).offsetTop, i, 'child');
             unAnsweredQuestionOffsetTop = this.$el.querySelector('#questions_' + index).offsetTop;
             break;
-          } else if (!this.targetScale.questions[i].questionLevel) {
+          } else if (!this.targetScale.questions[i].parentId) {
             // console.log(this.$el.querySelector('#questions_' + index).offsetTop, i, 'parent');
             unAnsweredQuestionOffsetTop = this.$el.querySelector('#questions_' + index).offsetTop;
             break;
           }
-        } else if (!this.targetScale.questions[i].questionLevel) {
+        } else if (!this.targetScale.questions[i].parentId) {
           parentSelected.push(this.targetScale.questions[i].scaleInfoId);
         }
       }
-      console.log(unAnsweredQuestionOffsetTop);
+      console.log('unAnsweredQuestionOffsetTop', unAnsweredQuestionOffsetTop);
       if (unAnsweredQuestionOffsetTop !== '') {
         Bus.$on(this.CONFIRM, () => {
           // 跳转到未答题目
