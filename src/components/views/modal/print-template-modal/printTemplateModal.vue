@@ -463,7 +463,13 @@ export default {
         this.queryTemplate();
       }, (error) => {
         loadingInstance.close();
-        console.error(error);
+        if (error.code === 10) {
+          this.$message({
+            message: error.message,
+            type: 'warning'
+          });
+        }
+        // console.log(error);
       });
     },
     editTemplate(index) {
