@@ -180,7 +180,7 @@
             <div class="cell-input">
               <span class="field-value">
                 <el-select v-model="copyInfo.patientOptions[index].scaleOptionId" filterable placeholder="请选择"
-                  :disabled='mode === VIEW_CURRENT_CARD'>
+                  :disabled='mode === VIEW_CURRENT_CARD' @change="autoFocus(index)" :ref="'quick_selector_' + index">
                   <el-option
                     v-for="option in item.options"
                     :key="option.scaleOptionId"
@@ -963,6 +963,13 @@ export default {
           });
         }
         this.answerModeChanged = true;
+      }
+    },
+    // 快速答题模式 选择答案后自动跳转到下一题目
+    autoFocus(index) {
+      let nextIndex = index + 1;
+      if (this.$refs['quick_selector_' + nextIndex]) {
+        this.$refs['quick_selector_' + nextIndex][0].$el.querySelector('input').focus();
       }
     },
     // 编辑模式下 跳转至第一道未答题目
