@@ -13,8 +13,8 @@
                 <el-date-picker v-else
                   v-model="copyInfo.acquisitionStartTime"
                   placeholder="请选择开始时间"
-                  type="date"
-                  format="yyyy-MM-dd"
+                  type="datetime"
+                  format="yyyy-MM-dd HH:mm"
                   :picker-options="pickerOptions">
                 </el-date-picker>
             </span>
@@ -28,8 +28,8 @@
               <el-date-picker v-else
                 v-model="copyInfo.acquisitionEndTime"
                 placeholder="请选择结束时间"
-                type="date"
-                format="yyyy-MM-dd"
+                type="datetime"
+                format="yyyy-MM-dd HH:mm"
                 :picker-options="pickerOptions">
               </el-date-picker>
           </span>
@@ -77,8 +77,21 @@
           <span class="field-name">
             数据来源：
           </span>
-          <span class="field-input">
-            {{"手动录入"}}
+          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+            <span>{{transform(copyInfo.dataSources, 'dataSources')}}</span>
+          </span>
+          <span class="field-input" v-else>
+            <el-select
+              clearable
+              placeholder="请选择数据来源"
+              v-model="copyInfo.dataSources">
+              <el-option
+                v-for="item in getOptions('dataSources')"
+                :key="item.code"
+                :label="item.name"
+                :value="item.code">
+                </el-option>
+            </el-select>
           </span>
         </div>
         <div class="field whole-line">
@@ -162,24 +175,18 @@
             <td class="col col-width-25">{{item.referenceValue}}</td>
           </tr>
         </table>
-          <!-- <tr class="row">
-            <td class="col col-width-10">
-              <span class="text-button" v-if="mode===VIEW_CURRENT_CARD" @click.stop="updataPatientGaitMaInfo(reaction.type, reaction.typeCode, reaction.typeName)">查&nbsp;&nbsp;看</span>
-              <span class="text-button" v-if="mode===VIEW_CURRENT_CARD" @click.stop="updataPatientGaitMaInfo(reaction.type, reaction.typeCode, reaction.typeName)">编&nbsp;&nbsp;辑</span>
-            </td>
-          </tr> -->
       </div>
 
-      <span v-if="tableMode===FATHER_OPEN">
-        <div class="button cancel-button" @click="cancel">取消</div>
+      <span>
+        <div class="button cancel-button" v-if="mode===VIEW_CURRENT_CARD && showEdit" @click="cancel">取消</div>
         <div class="button edit-button" v-if="mode===VIEW_CURRENT_CARD && showEdit" @click="switchToEditingMode">编辑</div>
-        <div class="button submit-button" v-else-if="mode!==VIEW_CURRENT_CARD" @click="submit">确认</div>
+        <!-- <div class="button submit-button" v-if="mode!==VIEW_CURRENT_CARD" @click="submit">确认</div> -->
       </span>
-      <span v-else-if="tableMode===SON_OPEN">
-        <div class="button cancel-button" v-if="mode===VIEW_CURRENT_CARD" @click="closeSubTable">返回</div>
-        <span v-else-if="mode!==VIEW_CURRENT_CARD">
-          <div class="button reset-button" @click="">重置</div>
-          <div class="button submit-button" @click="closeSubTable">完成</div>
+      <span>
+        <!-- <div class="button cancel-button"  @click="closeSubTable">返回</div> -->
+        <span>
+          <div class="button reset-button" v-if="mode!==VIEW_CURRENT_CARD"  @click="resetForm">重置</div>
+          <div class="button submit-button" v-if="mode!==VIEW_CURRENT_CARD"  @click="submit">完成</div>
         </span>
       </span>
     </div>
@@ -192,7 +199,7 @@ import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import { vueCopy, deepCopy, reviseDateFormat, pruneObj } from 'utils/helper';
 import Util from 'utils/util.js';
-import {queryPatientGaitInfo, addPatientGait, modifyPatientGait } from 'api/patient.js';
+import {queryPatientGaitInfo, addPatientMaGait, modifyPatientMaGait } from 'api/patient.js';
 
 export default {
   data() {
@@ -207,6 +214,8 @@ export default {
       type: '',
       typeCode: '',
       typeName: '',
+      id: '',
+      patientGaitMa: '',
 
       copyInfo: {},
       copyItem: {},   //  用来缓存传递进来的数据
@@ -217,172 +226,293 @@ export default {
         {
           'type': '1',
           'typeCode': 'ma10Parameters',
-          'typeName': '步长（右）（m）'
+          'typeName': '步长（右）（m）',
+          'leftNormal': '',
+          'leftError': '',
+          'rightNormal': '',
+          'rightError': '',
+          'referenceValue': ''
         },
         {
           'type': '2',
           'typeCode': 'ma10Parameters',
-          'typeName': '跨步长（m）'
+          'typeName': '跨步长（m）',
+          'leftNormal': '',
+          'leftError': '',
+          'rightNormal': '',
+          'rightError': '',
+          'referenceValue': ''
         },
         {
           'type': '3',
           'typeCode': 'ma10Parameters',
-          'typeName': '平均速度（m/s）'
+          'typeName': '平均速度（m/s）',
+          'leftNormal': '',
+          'leftError': '',
+          'rightNormal': '',
+          'rightError': '',
+          'referenceValue': ''
         },
         {
           'type': '4',
           'typeCode': 'ma10Parameters',
-          'typeName': '摆动相（%）'
+          'typeName': '摆动相（%）',
+          'leftNormal': '',
+          'leftError': '',
+          'rightNormal': '',
+          'rightError': '',
+          'referenceValue': ''
         },
         {
           'type': '5',
           'typeCode': 'ma10Parameters',
-          'typeName': '站立相（%）'
+          'typeName': '站立相（%）',
+          'leftNormal': '',
+          'leftError': '',
+          'rightNormal': '',
+          'rightError': '',
+          'referenceValue': ''
         },
         {
           'type': '6',
           'typeCode': 'ma10Parameters',
-          'typeName': '转身中的步数(右脚)'
+          'typeName': '转身中的步数(右脚)',
+          'leftNormal': '',
+          'leftError': '',
+          'rightNormal': '',
+          'rightError': '',
+          'referenceValue': ''
         },
         {
           'type': '7',
           'typeCode': 'ma10Parameters',
-          'typeName': '跨步时长（s）'
+          'typeName': '跨步时长（s）',
+          'leftNormal': '',
+          'leftError': '',
+          'rightNormal': '',
+          'rightError': '',
+          'referenceValue': ''
         },
         {
           'type': '8',
           'typeCode': 'ma10Parameters',
-          'typeName': '步频（step/minutes）'
+          'typeName': '步频（step/minutes）',
+          'leftNormal': '',
+          'leftError': '',
+          'rightNormal': '',
+          'rightError': '',
+          'referenceValue': ''
         },
         {
           'type': '9',
           'typeCode': 'ma10Parameters',
-          'typeName': '手臂摆动角度 （degree/step）'
+          'typeName': '手臂摆动角度 （degree/step）',
+          'leftNormal': '',
+          'leftError': '',
+          'rightNormal': '',
+          'rightError': '',
+          'referenceValue': ''
         },
         {
           'type': '10',
           'typeCode': 'ma10Parameters',
-          'typeName': '手臂最快角速度（degree/s）'
+          'typeName': '手臂最快角速度（degree/s）',
+          'leftNormal': '',
+          'leftError': '',
+          'rightNormal': '',
+          'rightError': '',
+          'referenceValue': ''
         },
         {
           'type': '11',
           'typeCode': 'ma10Parameters',
-          'typeName': '手臂摆动角度 （degree/step）'
+          'typeName': '手臂摆动角度 （degree/step）',
+          'dataNormal': '',
+          'dataError': '',
+          'referenceValue': ''
         },
         {
           'type': '12',
           'typeCode': 'ma10Parameters',
-          'typeName': '手臂最快角速度（左右手平均 degree/s）'
+          'typeName': '手臂最快角速度（左右手平均 degree/s）',
+          'dataNormal': '',
+          'dataError': '',
+          'referenceValue': ''
         },
         {
           'type': '13',
           'typeCode': 'ma10Parameters',
-          'typeName': '步频（step/minutes）'
+          'typeName': '步频（step/minutes）',
+          'dataNormal': '',
+          'dataError': '',
+          'referenceValue': ''
         },
         {
           'type': '14',
           'typeCode': 'ma10Parameters',
-          'typeName': '躯干旋转角度（沿重力方向）'
+          'typeName': '躯干旋转角度（沿重力方向）',
+          'dataNormal': '',
+          'dataError': '',
+          'referenceValue': ''
         },
         {
           'type': '15',
           'typeCode': 'ma10Parameters',
-          'typeName': '躯干旋转最快角速度（沿重力方向）'
+          'typeName': '躯干旋转最快角速度（沿重力方向）',
+          'dataNormal': '',
+          'dataError': '',
+          'referenceValue': ''
         },
         {
           'type': '16',
           'typeCode': 'ma10Parameters',
-          'typeName': '双腿支撑相（%）'
+          'typeName': '双腿支撑相（%）',
+          'dataNormal': '',
+          'dataError': '',
+          'referenceValue': ''
         },
         {
           'type': '17',
           'typeCode': 'ma10Parameters',
-          'typeName': '步速对称相 （%）'
+          'typeName': '步速对称相 （%）',
+          'dataNormal': '',
+          'dataError': '',
+          'referenceValue': ''
         },
         {
           'type': '18',
           'typeCode': 'ma10Parameters',
-          'typeName': '步长对称相 （%）'
+          'typeName': '步长对称相 （%）',
+          'dataNormal': '',
+          'dataError': '',
+          'referenceValue': ''
         },
         {
           'type': '19',
           'typeCode': 'ma10Parameters',
-          'typeName': '摆动对称相 （%）'
+          'typeName': '摆动对称相 （%）',
+          'dataNormal': '',
+          'dataError': '',
+          'referenceValue': ''
         },
         {
           'type': '20',
           'typeCode': 'ma10Parameters',
-          'typeName': '站立对称相 （%）'
+          'typeName': '站立对称相 （%）',
+          'dataNormal': '',
+          'dataError': '',
+          'referenceValue': ''
         },
         {
           'type': '21',
           'typeCode': 'ma10Parameters',
-          'typeName': '大腿角速度对称相 （%）'
+          'typeName': '大腿角速度对称相 （%）',
+          'dataNormal': '',
+          'dataError': '',
+          'referenceValue': ''
         },
         {
           'type': '22',
           'typeCode': 'ma10Parameters',
-          'typeName': '大腿最大角速度对称相 （%）'
+          'typeName': '大腿最大角速度对称相 （%）',
+          'dataNormal': '',
+          'dataError': ''
         },
         {
           'type': '23',
           'typeCode': 'ma10Parameters',
-          'typeName': '手臂摆动时间对称相（%）'
+          'typeName': '手臂摆动时间对称相（%）',
+          'dataNormal': '',
+          'dataError': '',
+          'referenceValue': ''
         },
         {
           'type': '24',
           'typeCode': 'ma10Parameters',
-          'typeName': '大腿活动对称（SSI）（%）'
+          'typeName': '大腿活动对称（SSI）（%）',
+          'dataNormal': '',
+          'dataError': '',
+          'referenceValue': ''
         },
         {
           'type': '25',
           'typeCode': 'ma10Parameters',
-          'typeName': '协调相位差 （%）'
+          'typeName': '协调相位差 （%）',
+          'dataNormal': '',
+          'dataError': '',
+          'referenceValue': ''
         },
         {
           'type': '26',
           'typeCode': 'ma10Parameters',
-          'typeName': '协调相指数（%）'
+          'typeName': '协调相指数（%）',
+          'dataNormal': '',
+          'dataError': '',
+          'referenceValue': ''
         },
         {
           'type': '27',
           'typeCode': 'ma10Parameters',
-          'typeName': '坐到站时间 （s）'
+          'typeName': '坐到站时间 （s）',
+          'dataNormal': '',
+          'dataError': '',
+          'referenceValue': ''
         },
         {
           'type': '28',
           'typeCode': 'ma10Parameters',
-          'typeName': '由坐到站过程中最快角速度（degree/s）'
+          'typeName': '由坐到站过程中最快角速度（degree/s）',
+          'dataNormal': '',
+          'dataError': '',
+          'referenceValue': ''
         },
         {
           'type': '29',
           'typeCode': 'ma10Parameters',
-          'typeName': '由坐到站过程中侧面变化的角度（degree）'
+          'typeName': '由坐到站过程中侧面变化的角度（degree）',
+          'dataNormal': '',
+          'dataError': '',
+          'referenceValue': ''
         },
         {
           'type': '30',
           'typeCode': 'ma10Parameters',
-          'typeName': '站到坐所花时间（s）'
+          'typeName': '站到坐所花时间（s）',
+          'dataNormal': '',
+          'dataError': '',
+          'referenceValue': ''
         },
         {
           'type': '31',
           'typeCode': 'ma10Parameters',
-          'typeName': '由站到坐过程中最快角速度（degree/s）'
+          'typeName': '由站到坐过程中最快角速度（degree/s）',
+          'dataNormal': '',
+          'dataError': '',
+          'referenceValue': ''
         },
         {
           'type': '32',
           'typeCode': 'ma10Parameters',
-          'typeName': '整个实验过程中的身体躯干变化的角度（由侧面观察）（degree）'
+          'typeName': '整个实验过程中的身体躯干变化的角度（由侧面观察）（degree）',
+          'dataNormal': '',
+          'dataError': '',
+          'referenceValue': ''
         },
         {
           'type': '33',
           'typeCode': 'ma10Parameters',
-          'typeName': '每一步身体躯干变化的角度（由侧面观察）（degree）'
+          'typeName': '每一步身体躯干变化的角度（由侧面观察）（degree）',
+          'dataNormal': '',
+          'dataError': '',
+          'referenceValue': ''
         },
         {
           'type': '34',
           'typeCode': 'ma10Parameters',
-          'typeName': '整个实验过程中最快角速度（由侧面观察）（degree/s）'
+          'typeName': '整个实验过程中最快角速度（由侧面观察）（degree/s）',
+          'dataNormal': '',
+          'dataError': '',
+          'referenceValue': ''
         }
       ],
       warningResults: {
@@ -410,19 +540,12 @@ export default {
         return 'MA10';
       }
     }
-    // subTableTitle() {
-    //   if (this.tableMode === this.SON_OPEN) {
-    //     let targetType = Util.getElement('typeCode', this.subTableCode, this.tableTypes);
-    //     return targetType.typeName ? targetType.typeName : '';
-    //   } else {
-    //     return '';
-    //   }
-    // }
   },
   methods: {
     showPanel(cardOperation, item, showEdit) {
       this.mode = cardOperation;
       this.showEdit = showEdit;
+      this.id = item.id;
 
       this.tableMode = this.FATHER_OPEN;
       this.initCopyInfo();
@@ -430,7 +553,11 @@ export default {
       if (this.copyItem.equipmentModel) {
         this.copyItem.equipmentModel = Number(this.copyItem.equipmentModel);
       }
+      if (this.copyItem.dataSources) {
+        this.copyItem.dataSources = Number(this.copyItem.dataSources);
+      }
       vueCopy(this.copyItem, this.copyInfo);
+      vueCopy(item.maGait, this.maGait);
 
       this.$nextTick(() => {
         this.clearWarning();
@@ -441,10 +568,10 @@ export default {
       this.copyInfo = {};
       this.$set(this.copyInfo, 'patientCaseId', this.$route.params.caseId);
       this.$set(this.copyInfo, 'patientId', this.$route.params.id);
-      this.$set(this.copyInfo, 'id', this.$route.params.id);
       this.$set(this.copyInfo, 'acquisitionStartTime', '');
       this.$set(this.copyInfo, 'acquisitionEndTime', '');
       this.$set(this.copyInfo, 'equipmentModel', '');
+      this.$set(this.copyInfo, 'dataSources', '');
       this.$set(this.copyInfo, 'equipmentNumber', '');
       this.$set(this.copyInfo, 'checkNumber', '');
       this.$set(this.copyInfo, 'remark', '');
@@ -452,25 +579,22 @@ export default {
       // this.initSubTableData();
       this.updateScrollbar();
     },
-    // initSubTableData() {
-    //   this.$set(this.copyInfo, 'patientFieldCode', {});
-    //   for (let type of this.tableTypes) {
-    //     let typeCode = type.typeCode;
-    //     this.initSubTableDataForTypeCode(typeCode);
-    //   }
-    // },
-    // initSubTableDataForTypeCode(typeCode) {
-    //   this.$set(this.copyInfo.patientFieldCode, typeCode, {});
-    // },
+    resetForm() {
+      for (let item of this.maGait) {
+        item.leftNormal = '';
+        item.leftError = '';
+        item.rightNormal = '';
+        item.rightError = '';
+        item.dataNormal = '';
+        item.dataError = '';
+      };
+    },
     updataPatientGaitMaInfo(type, typeCode, typeName) {
-      // 查询姿势步态表格
-      // if (!this.existed) {
-      //   return;
-      // }
-      queryPatientGaitInfo(type, typeCode).then((data) =>{
+      let id = this.id;
+      queryPatientGaitInfo(type, typeCode, id).then((patientGaitMa) =>{
         // this.subTableCode = typeCode;
         this.tableMode = this.SON_OPEN;
-        this.maGait = data.maGait;
+        this.maGait = patientGaitMa.maGait;
         this.type = type;
         this.typeName = typeName;
         // console.log(type, typeCode, typeName);
@@ -490,27 +614,22 @@ export default {
       }
 
       let submitData = deepCopy(this.copyInfo);
-      submitData.patientId = this.$route.params.id;
-      submitData.id = this.$route.params.id;
+      submitData.patientCaseId = this.$route.params.caseId;
+      submitData.patientGaitMa = this.patientGaitMa;
       submitData.equipmentModel = submitData.equipmentModel;
+      submitData.dataSources = submitData.dataSources;
       submitData.equipmentNumber = submitData.equipmentNumber;
       submitData.checkNumber = submitData.checkNumber;
       submitData.remark = submitData.remark;
-      submitData.acquisitionStartTime = Util.simplifyDate(submitData.acquisitionStartTime);
-      submitData.acquisitionEndTime = Util.simplifyDate(submitData.acquisitionEndTime);
+      submitData.acquisitionStartTime = Util.simplifyTime(submitData.acquisitionStartTime, false);
+      submitData.acquisitionEndTime = Util.simplifyTime(submitData.acquisitionEndTime, false);
 
       submitData.maGait = deepCopy(this.maGait);
 
       reviseDateFormat(submitData);
       pruneObj(submitData);
-
-      // submitData.patientFieldCode = {};
-      // for (let type of this.tableTypes) {
-      //   submitData.patientFieldCode[type.typeCode] = deepCopy(this.copyInfo.patientFieldCode[type.typeCode]);
-      // }
-
       if (this.mode === this.ADD_NEW_CARD) {
-        addPatientGait(submitData).then(() => {
+        addPatientMaGait(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
           this.updateAndClose();
         }, this._handleError);
@@ -518,7 +637,7 @@ export default {
       } else if (this.mode === this.EDIT_CURRENT_CARD) {
         // delete submitData.patientSpephysicalId;
         submitData.id = submitData.id;
-        modifyPatientGait(submitData).then(() => {
+        modifyPatientMaGait(submitData).then(() => {
           Bus.$emit(this.UPDATE_CASE_INFO);
           this.updateAndClose();
         }, this._handleError);
@@ -691,7 +810,7 @@ export default {
         display: inline-block;
         position: relative;
         left: @field-name-width;
-        width: calc(~"92% - @{field-name-width}");
+        width: calc(~"96% - @{field-name-width}");
         line-height: @field-line-height;
         font-size: @normal-font-size;
         color: @light-font-color;
