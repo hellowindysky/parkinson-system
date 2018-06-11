@@ -119,6 +119,28 @@
           </span>
         </div>
 
+        <table class="table">
+          <thead>
+            <tr class="row title-row">
+              <th class="col"></th>
+              <th class="col">左侧</th>
+              <th class="col">右侧</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="row">
+              <td class="col">中脑中线回声连续性</td>
+              <td class="col"></td>
+              <td class="col"></td>
+            </tr>
+            <tr class="row">
+              <td class="col">中脑中线回声连续性</td>
+              <td class="col"></td>
+              <td class="col"></td>
+            </tr>
+          </tbody>
+        </table>
+
         <div class="field whole-line">
           <span class="field-name">
             检查结论:
@@ -887,6 +909,38 @@ export default {
         margin-top: 5px;
         margin-bottom: 15px;
       }
+      .table {
+        margin: 10px 0 20px;
+        width: 96%;
+        margin-left: 10px;
+        border: 1px solid @light-gray-color;
+        border-collapse: collapse;
+        text-align: center;
+        .row {
+          height: 35px;
+          font-size: @normal-font-size;
+          th {
+            font-weight: normal;
+          }
+          &.title-row {
+            background-color: @font-color;
+            color: #fff;
+          }
+          .col {
+            position: relative;
+            width: 10%;
+            border: 1px solid @light-gray-color;
+            // &.wide-col {
+            //   width: 80%;
+            //   text-align: center !important;
+            // }
+            // &:first-child {
+            //   text-align: left;
+            //   padding-left:10px;
+            // }
+          }
+        }
+      }
       .field {
         display: inline-block;
         position: relative;
@@ -1090,10 +1144,8 @@ export default {
               line-height: normal;
               margin-top:0;
             }
-            .el-upload-list {
-              // max-height: 80px;
-              // overflow-y: scroll;
-            }
+            // .el-upload-list {
+            // }
           }
         }
       }
