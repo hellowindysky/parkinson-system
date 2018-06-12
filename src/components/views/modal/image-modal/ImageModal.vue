@@ -130,13 +130,37 @@
           <tbody>
             <tr class="row">
               <td class="col">中脑中线回声连续性</td>
-              <td class="col"></td>
-              <td class="col"></td>
+              <td class="col">
+                <el-select v-model="imageType" placeholder="请选择" @change="updateWarning('imageType')"
+                 :class="{'warning': warningResults.imageType}" clearable>
+                  <el-option
+                   v-for="item in getOptions('examType')"
+                   :key="item.code"
+                   :label="item.name"
+                   :value="item.code">
+                  </el-option>
+                </el-select>
+              </td>
+              <td class="col">
+                <el-select v-model="imageType" placeholder="请选择" @change="updateWarning('imageType')"
+                 :class="{'warning': warningResults.imageType}" clearable>
+                  <el-option
+                   v-for="item in getOptions('examType')"
+                   :key="item.code"
+                   :label="item.name"
+                   :value="item.code">
+                  </el-option>
+                </el-select>
+              </td>
             </tr>
             <tr class="row">
-              <td class="col">中脑中线回声连续性</td>
-              <td class="col"></td>
-              <td class="col"></td>
+              <td class="col">中脑回声面积</td>
+              <td class="col">
+                <el-input v-model="checkDevice" placeholder="请输入第三脑室宽"></el-input>
+              </td>
+              <td class="col">
+                <el-input v-model="checkDevice" placeholder="请输入第三脑室宽"></el-input>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -930,6 +954,18 @@ export default {
             position: relative;
             width: 10%;
             border: 1px solid @light-gray-color;
+            .el-select {
+              width: 100%;
+            }
+            .el-input {
+              width: 100%;
+              .el-input__inner {
+                height: 30px;
+                border: none;
+                text-align: center;
+                background-color: #ffffff;
+              }
+            }
             // &.wide-col {
             //   width: 80%;
             //   text-align: center !important;
