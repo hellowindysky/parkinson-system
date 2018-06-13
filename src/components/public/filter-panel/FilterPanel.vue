@@ -1093,11 +1093,14 @@
               <el-checkbox class="item-checkbox" v-model="diagnosticScaleSelectedStatus.scaleName"></el-checkbox>
               <span class="item-name">量表名称</span>
               <span class="item-value">
-                <el-select class="normal-input" v-model="diagnosticScaleCondition.scaleName"
-                  :disabled="!diagnosticScaleSelectedStatus.scaleName">
-                  <el-option v-for="option in getOptions('scaleName')" :label="option.name" :value="option.code"
-                    :key="option.code"></el-option>
-              </el-select>
+                <el-popover placement="right-end" width="200" trigger="hover" :disabled="!diagnosticScaleCondition.scaleName"
+                  :content="selectedScaleInfo.gaugeName">
+                  <el-select class="normal-input" filterable v-model="diagnosticScaleCondition.scaleName" slot="reference"
+                    :disabled="!diagnosticScaleSelectedStatus.scaleName">
+                    <el-option v-for="option in getOptions('scaleName')" :label="option.name" :value="option.code"
+                      :key="option.code"></el-option>
+                  </el-select>
+                </el-popover>
               </span>
               <div class="item-list scale-question-list" v-show="diagnosticScaleSelectedStatus.scaleName && diagnosticScaleCondition.scaleName">
                 <!-- <span class="item-name">量表题目</span> -->
@@ -1514,12 +1517,14 @@ export default {
      * 根据已选量表scaleInfoId生成该量表的问题选项列表
      */
     selectedScaleInfo() {
+      let name = '';
       let type = '';
       let questionList = [];
       for (let scaleIndex = 0; scaleIndex < this.allScale.length; scaleIndex++) {
         if (this.allScale[scaleIndex].scaleInfoId === this.diagnosticScaleCondition.scaleName) {
           questionList = this.allScale[scaleIndex].questions;
           type = this.allScale[scaleIndex].gaugeTaskType;
+          name = this.allScale[scaleIndex].gaugeName;
         }
       }
       let index = 0;
@@ -1551,6 +1556,7 @@ export default {
         }
       }
       let scaleInfo = {
+        gaugeName: name,
         gaugeTaskType: type,
         questions: questionList
       };
@@ -1563,7 +1569,7 @@ export default {
       var userName = sessionStorage.getItem('userName');
       queryExportUsername().then((res) => {
         let specialUserList = res.split(',');
-        console.log(userName, specialUserList);
+        // console.log(userName, specialUserList);
         if (specialUserList.indexOf(userName) >= 0) {
           this.isShowOperationBar = true;
         }
@@ -1929,6 +1935,45 @@ export default {
       return questionInfo;
     },
     /**
+     * 量表联想输入框
+     */
+    queryScaleSearch(queryString, cb) {
+      // v2.3.1 筛选非废除量表
+      let scalesIsUse = this.allScale.filter((item) => {
+        return item.isUse === 1;
+      });
+
+      let allScale = [];
+      let subjectId = this.$store.state.subjectId;
+      this.scaleList = [];
+
+      // 根据量表分类判断可选择的量表数组
+      if (this.scaleCategory === 1) {
+        scalesIsUse.map((item) => {
+          if (item.gaugeTaskType === subjectId) {
+            this.scaleList.push(item);
+            allScale.push({'value': item.gaugeName});
+          }
+        });
+      } else {
+        scalesIsUse.map((item) => {
+          if (item.gaugeTaskType === 0) {
+            this.scaleList.push(item);
+            allScale.push({'value': item.gaugeName});
+          }
+        });
+      }
+
+      // console.log(this.scaleList);
+
+      var results = queryString ? allScale.filter((item) => {
+        return (item.value.toLowerCase().indexOf(queryString.toLowerCase()) >= 0);
+      }) : allScale;
+
+      // 调用 callback 返回建议列表的数据
+      cb(results);
+    },
+    /**
      * 根据scaleOptionId检查选项得分是否被选中，如果选中则在其他列表的下拉框中设置成disabled
      */
     checkScaleOptionId(optionId) {
@@ -1955,7 +2000,15 @@ export default {
     },
     applyCondition() {
       // 根据表单数据生成一个 condition 对象
-      var condition = {};
+      var condition = {
+        taskId: ''
+      };
+
+      // console.log(this.$store.state.subjectId);
+      // if (this.$store.state.subjectId !== -1) {
+      //   condition.taskId = this.$store.state.subjectId;
+      // }
+      // console.log(condition, condition.taskId);
 
       // 只有当项目前面当确认框被选中，且该栏目的字段不为空的时候，才把所填的值加到 condition 的对应位置
       condition.patientInfo = {};
@@ -2168,6 +2221,9 @@ export default {
     queryPatients(condition) {
       if (!condition) {
         condition = {};
+      }
+      if (this.$store.state.subjectId !== -1) {
+        condition.taskId = this.$store.state.subjectId;
       }
       this.patientList = [];
       this.patientSeletedStatusList = [];
@@ -2557,6 +2613,7 @@ export default {
                   height: 30px;
                   border: none;
                   background-color: @screen-color;
+                  text-overflow: ellipsis;
                 }
               }
               .el-select {
@@ -2584,6 +2641,7 @@ export default {
               // }
               .normal-input {
                 display: inline-block;
+                width: 100%;
               }
             }
             .item-list {
