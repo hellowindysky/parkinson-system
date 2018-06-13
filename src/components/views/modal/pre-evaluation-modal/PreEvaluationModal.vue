@@ -1100,10 +1100,10 @@ export default {
         };
         getEvaluationPreopsScale(params).then((data) => {
           if (!data) {
-            this.$message({
-              message: '没有符合条件的数据',
-              type: 'warning',
-              duration: 2000
+            this.$notify({
+              title: '提示',
+              message: '没有符合条件的非运动症状评估量表数据',
+              type: 'warning'
             });
           } else {
             let patientPreopsScaleList = this.copyInfo.preopsNonMotorDTO.patientPreopsScaleList;
@@ -1114,28 +1114,29 @@ export default {
                 }
               }
             }
-            this.$message({
-              message: '导入成功',
-              type: 'success',
-              duration: 2000
+            this.$notify({
+              title: '成功',
+              message: '导入非运动症状评估量表数据成功',
+              type: 'success'
             });
           }
         });
         getEvaluationMdsScale(params).then((data) => {
           if (!data) {
-            this.$message({
-              message: '没有符合条件的数据',
-              type: 'warning',
-              duration: 2000
+            this.$notify({
+              title: '提示',
+              message: '没有符合条件的运动症状评估量表数据',
+              type: 'warning'
             });
           } else {
             let preopsMotorScaleList = this.copyInfo.preopsMotorDTO.preopsMotorScaleList;
             preopsMotorScaleList[0].scaleScoreBefore = data['1'];
             preopsMotorScaleList[0].scaleScoreAfter = data['2'];
-            this.$message({
-              message: '导入成功',
-              type: 'success',
-              duration: 2000
+            this.updateMotorScaleMedImproveRatio();
+            this.$notify({
+              title: '成功',
+              message: '导入运动症状评估量表数据成功',
+              type: 'success'
             });
           }
         });
