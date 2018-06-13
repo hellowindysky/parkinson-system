@@ -1120,7 +1120,7 @@
                         {{getQuestionGrade(item.scaleQuestionId).questionNumber}}
                       </td>
                       <td>
-                        <el-popover placement="right-end" width="200" trigger="hover" :disabled="!getQuestionGrade(item.scaleQuestionId).questionName"
+                        <el-popover placement="bottom-start" width="200" trigger="hover" :disabled="!getQuestionGrade(item.scaleQuestionId).questionName"
                           :content="getQuestionGrade(item.scaleQuestionId).questionName">
                           <el-select class="normal-input" slot="reference" v-model="item.scaleQuestionId" @change="item.scaleOptionId = ''" popper-class="scale-question-selector">
                             <el-option v-for="option in selectedScaleInfo.questions" v-if="!option.noValue" :label="option.subjectName" :value="option.scaleQuestionId"
@@ -2167,12 +2167,16 @@ export default {
           if (value instanceof Array && fieldName !== 'scaleQuestionList') {
             value.sort((a, b) => a > b);
             value = value.join(',');
-          } else if (value instanceof Array && fieldName === 'scaleQuestionList') {
+          } else if (fieldName === 'scaleQuestionList' && value instanceof Array && value.length > 0) {
+            console.log(value);
             let tempValue = [];
             for (let j = 0; j < value.length; j++) {
               if (value[j].scaleOptionId) {
                 tempValue.push(value[j]);
               }
+            }
+            if (tempValue.length === 0) {
+              continue;
             }
             value = tempValue;
           }
