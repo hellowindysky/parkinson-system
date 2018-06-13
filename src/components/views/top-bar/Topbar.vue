@@ -48,7 +48,7 @@
       <div class="seperate-line" v-if="allowAuthorization"></div>
       <p class="operate-item" v-if="isSupportAccount" @click="reselectDoctor">更换授权医生</p>
       <div class="seperate-line" v-if="isSupportAccount"></div>
-      <p class="operate-item" @click="setPrintTemp">导出模板设置</p>
+      <p class="operate-item" @click="setPrintTemp" v-if="isShowPrintTemplate">导出模板设置</p>
       <div class="seperate-line"></div>
       <p class="operate-item" @click="resetPassword">修改密码</p>
       <div class="seperate-line"></div>
@@ -60,6 +60,7 @@
 <script>
 import Bus from 'utils/bus.js';
 import { getAuthenticationList } from 'api/user.js';
+import { queryExportUsername } from 'api/patient.js';
 
 const WAITING_TO_CHANGE = 'waitingToChange';
 const NEED_TO_QUERY_AGAIN = 'needToQueryAgain';
@@ -75,7 +76,8 @@ export default {
       showOranizationPanel: false,
       showAccountPanel: false,
       blockSensitiveInfo: true,
-      technicalSupportAccountInfo: null
+      technicalSupportAccountInfo: null,
+      isShowPrintTemplate: false
     };
   },
   computed: {
@@ -260,6 +262,19 @@ export default {
       });
       let message = '即将退出当前账号，是否继续？';
       Bus.$emit(this.REQUEST_CONFIRMATION, '提醒', message, '确定退出');
+    },
+    /**
+     * 判断是否有权限查看导出模版设置
+     */
+    showPrintTemplate() {
+      var userName = sessionStorage.getItem('userName');
+      queryExportUsername().then((res) => {
+        let specialUserList = res.split(',');
+        // console.log(userName, specialUserList);
+        if (specialUserList.indexOf(userName) >= 0) {
+          this.isShowPrintTemplate = true;
+        }
+      });
     }
   },
   mounted() {
@@ -271,6 +286,7 @@ export default {
     this.$store.dispatch('getExportFields');
 
     this.updateAuthorizedStatus();
+    this.showPrintTemplate();
 
     var commonRequest = JSON.parse(sessionStorage.getItem('commonRequest'));
     this.blockSensitiveInfo = commonRequest.viewType !== 1;
