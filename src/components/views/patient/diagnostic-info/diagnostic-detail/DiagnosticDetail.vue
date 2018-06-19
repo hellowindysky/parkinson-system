@@ -5,6 +5,7 @@
       <div class="button back-button" @click="goBack" v-show="!isNewCase">返回</div>
       <div class="button archive-button" :class="{'disabled': !existed}" @click="archiveCase"
         v-if="!isNewCase && canEdit && !patientDuringExperiment">归档</div>
+      <div class="button next-follow-button" @click="appointNextFollowUp">预约下次随访</div>
     </div>
     <div class="scroll-area" ref="scrollArea">
       <diagnostic-basic :canEdit="canEdit" class="folding-panel" :mode="mode" ref="diagnosticBasic"
@@ -331,6 +332,10 @@ export default {
       });
 
       Bus.$emit(this.REQUEST_CONFIRMATION, '', '诊断记录归档后将无法编辑修改，是否继续？');
+    },
+    appointNextFollowUp() {
+      // Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'appointmentNextFollowUpModal', this.SHOW_FIRSTSYMPTOMS_MODAL, this.ADD_NEW_CARD, {});
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'appointmentNextFollowUpModal');
     }
   },
   components: {
@@ -434,6 +439,11 @@ export default {
             opacity: 1;
           }
         }
+      }
+      &.next-follow-button {
+        background-color: @button-color;
+        width: 100px;
+        right: 50px + @small-button-width * 2;
       }
     }
   }

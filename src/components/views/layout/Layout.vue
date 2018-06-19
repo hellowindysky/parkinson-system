@@ -33,6 +33,7 @@ const firstSymptomsModal = () => import(/* webpackChunkName: 'personalInfoModal'
 const firstTreatmentModal = () => import(/* webpackChunkName: 'personalInfoModal' */ 'modal/first-treatment-modal/FirstTreatmentModal');
 const diagnosticRecordModal = () => import(/* webpackChunkName: 'personalInfoModal' */ 'modal/diagnostic-record-modal/DiagnosticRecordModal');
 const chiefComplaintSymptomsModal = () => import(/* webpackChunkName: 'personalInfoModal' */ 'modal/chief-complaint-symptoms-modal/ChiefComplaintSymptomsModal');
+const appointmentNextFollowUpModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/appointment-next-follow-up-modal/AppointmentNextFollowUpModal');
 const medicineModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/medicine-modal/MedicineModal');
 const medicineAdverseEventModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/medicine-adverse-event-modal/MedicineAdverseEventModal');
 const preEvaluationModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/pre-evaluation-modal/PreEvaluationModal');
@@ -91,6 +92,7 @@ export default {
     groupModal,
     subjectCirculationModal,
     modalBox,
+    appointmentNextFollowUpModal,
     medicineModal,
     medicineAdverseEventModal,
     preEvaluationModal,
