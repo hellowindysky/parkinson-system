@@ -284,7 +284,7 @@ export default {
     right: 15px;
     text-align: right;
     color: #999;
-    z-index: 5000;
+    z-index: 200;
     span {
       padding-left: 20px;
     }

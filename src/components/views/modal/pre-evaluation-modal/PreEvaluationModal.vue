@@ -1442,6 +1442,7 @@ export default {
         var scoreAfter = scale.scaleScoreAfter;
         if (scoreBefore === undefined || scoreBefore === '' || scoreBefore === 0 || isNaN(scoreBefore) ||
         scoreAfter === undefined || scoreAfter === '' || isNaN(scoreAfter)) {
+          scale.medImproveRatio = '';
           return;
         } else {
           var medImproveRatio = (Number(scoreBefore) - Number(scoreAfter) * 1.0) / Number(scoreBefore);
