@@ -2,25 +2,18 @@
   <transition name="el-zoom-in-top" @after-leave="$emit('dodestroy')">
     <div
       v-show="visible"
-      :style="{
-        width: width + 'px'
-      }"
-      class="el-picker-panel el-date-picker"
-      :class="[{
-        'has-sidebar': $slots.sidebar || shortcuts,
-        'has-time': showTime
-      }, popperClass]">
+      class="el-picker-panel el-date-picker">
       <div class="el-picker-panel__body-wrapper">
-        <slot name="sidebar" class="el-picker-panel__sidebar"></slot>
+        <!-- <slot name="sidebar" class="el-picker-panel__sidebar"></slot>
         <div class="el-picker-panel__sidebar" v-if="shortcuts">
           <button
             type="button"
             class="el-picker-panel__shortcut"
             v-for="shortcut in shortcuts"
             @click="handleShortcutClick(shortcut)">{{ shortcut.text }}</button>
-        </div>
+        </div> -->
         <div class="el-picker-panel__body">
-          <div class="el-date-picker__time-header" v-if="showTime">
+          <!-- <div class="el-date-picker__time-header" v-if="showTime">
             <span class="el-date-picker__editor-wrap">
               <el-input
                 :placeholder="t('el.datepicker.selectDate')"
@@ -45,7 +38,7 @@
                 @mounted="$refs.timepicker.format=timeFormat">
               </time-picker>
             </span>
-          </div>
+          </div> -->
           <div class="el-date-picker__header" v-show="currentView !== 'time'">
             <button
               type="button"
@@ -127,6 +120,13 @@
 </template>
 
 <script type="text/babel">
+  /**
+   * 基于elementUI的date-picker组件源文件制作
+   * 目前仅支持日期选择 使用v-model进行数据绑定 如果初始值为空则需要将初始值设为null 以免提示类型错误
+   * 暂时不引入timepicker组件 引入timepicker时scrollerbar组件会报错 是因为此处引用的是elementUI的源文件导致
+   * 如后续版本需要引入timepicker 则需要在webpack加入jsx编译
+   */
+
   import { formatDate, parseDate, getWeekNumber } from 'element-ui/packages/date-picker/src/util';
   import Locale from 'element-ui/src/mixins/locale';
   import ElInput from 'element-ui/packages/input';
@@ -158,7 +158,7 @@
         popperClass: '',
         pickerWidth: 0,
         date: this.selectedDate ? new Date(this.selectedDate) : new Date(),
-        // value: '',
+        value: '',
         showTime: false,
         selectionMode: 'day',
         shortcuts: '',
@@ -412,16 +412,16 @@
     },
 
     watch: {
-      showTime(val) {
-        /* istanbul ignore if */
-        if (!val) return;
-        this.$nextTick(_ => {
-          const inputElm = this.$refs.input.$el;
-          if (inputElm) {
-            this.pickerWidth = inputElm.getBoundingClientRect().width + 10;
-          }
-        });
-      },
+      // showTime(val) {
+      //   /* istanbul ignore if */
+      //   if (!val) return;
+      //   this.$nextTick(_ => {
+      //     const inputElm = this.$refs.input.$el;
+      //     if (inputElm) {
+      //       this.pickerWidth = inputElm.getBoundingClientRect().width + 10;
+      //     }
+      //   });
+      // },
 
       value(newVal) {
         if (!newVal) return;
