@@ -4,6 +4,10 @@
       <h3 class="title">预约下次随访</h3>
       <div class="content">
 
+        <div class="paved-canledar">
+          <ele-calendar v-model="test"></ele-calendar>
+        </div>
+
         <div class="field whole-line">
           <span class="field-name">
             注意事项：
@@ -51,18 +55,23 @@
 </template>
 
 <script>
+import eleCalendar from 'public/ele-calendar/EleCalendar';
 import Bus from 'utils/bus.js';
 export default {
   data() {
     return {
       mode: '',
-      msg: ''
+      msg: '',
+      test: new Date()
     };
   },
   methods: {
     cancel() {
       Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
     }
+  },
+  components: {
+    eleCalendar
   }
 };
 </script>
@@ -169,6 +178,11 @@ export default {
             border: 1px solid red;
           }
         }
+      }
+      .paved-canledar {
+        padding-left: 35px;
+        width: calc(~"92% - 26px");
+        margin-bottom: 10px;
       }
     }
     .button {
