@@ -45,7 +45,7 @@ export default {
     experimentStatusIcon() {
       if (this.patient.status !== undefined &&
         Number(this.patient.status) !== 0 &&
-        Number(this.patient.status) !== 5 &&
+        Number(this.patient.status) !== 50 &&
         this.$store.state.subjectId === this.SUBJECT_ID_FOR_HOSPITAL &&
         this.listType === this.MY_PATIENTS_TYPE) {
         return 'icon-experiment';
@@ -55,21 +55,22 @@ export default {
         ([this.MY_PATIENTS_TYPE, this.THERAPISTS_PATIENTS_TYPE, this.APPRAISERS_PATIENTS_TYPE,
           this.SUBJECT_PATIENTS_TYPE].indexOf(this.listType) >= 0)) {
         let status = Number(this.patient.status);
-        if (status === this.EXPERIMENT_STEP_FILTERING) {
+        let isInThisSubject = this.patient.taskInfoId === this.$store.state.subjectId;
+        if (status === this.EXPERIMENT_STEP_FILTERING && isInThisSubject) {
           if (this.hospitalType === 2 || this.hospitalType === 1) {
             return 'icon-shai';
           }
-        } else if (status === this.EXPERIMENT_STEP_SCREENING) {
+        } else if (status === this.EXPERIMENT_STEP_SCREENING && isInThisSubject) {
           if (this.hospitalType === 1) {
             return 'icon-shai';
           } else if (this.hospitalType === 2) {
             return 'icon-ji';
           }
-        } else if (status === this.EXPERIMENT_STEP_THERAPY) {
+        } else if (status === this.EXPERIMENT_STEP_THERAPY && isInThisSubject) {
           return 'icon-zhi';
-        } else if (status === this.EXPERIMENT_STEP_FOLLOW_UP) {
+        } else if (status === this.EXPERIMENT_STEP_FOLLOW_UP && isInThisSubject) {
           return 'icon-sui';
-        } else if (status === this.EXPERIMENT_STEP_COMPLETE) {
+        } else if (status === this.EXPERIMENT_STEP_COMPLETE && isInThisSubject) {
           return 'icon-wan';
         }
       }

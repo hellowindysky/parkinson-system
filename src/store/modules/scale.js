@@ -10,9 +10,7 @@ const getters = {
   allScale: (state) => {
     // 基础信息
     let scales = state.all.scales ? state.all.scales : [];
-    return scales.filter((item) => {
-      return item.isUse === 1;
-    });
+    return scales;
   }
 };
 

@@ -126,8 +126,8 @@
                 </span>
                 <span v-if="mode===VIEW_CURRENT_CARD">
                   {{copyInfo.bioexamResult[index].result}}
-                  <span class="iconfont" :class="getComparisonIcon(copyInfo.bioexamResult[index].result, item.referenceRanges)"></span>
                 </span>
+                <span v-if="mode===VIEW_CURRENT_CARD" class="iconfont" :class="getComparisonIcon(copyInfo.bioexamResult[index].result, item.referenceRanges)"></span>
                 <el-input v-else v-model="copyInfo.bioexamResult[index].result"
                  :class="{'warning': warningResults.bioexamResult[index].result}"
                  @change="updateWarning('bioexamResult', index, item.id, item.regularExpression, item.message)"
@@ -683,7 +683,6 @@ export default {
               .iconfont {
                 display: inline-block;
                 position: absolute;
-                right: 40px;
                 transform: translateY(-1px);
                 &.icon-long-arrow-up {
                   color: @green-color;

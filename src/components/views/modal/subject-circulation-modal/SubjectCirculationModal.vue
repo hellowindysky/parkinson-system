@@ -73,6 +73,7 @@
               type="datetime"
               v-model="copyInfo.startDate"
               :class="{'warning': warningResults.startDate}"
+              :picker-options="startDateOptions"
               @change="updateStartDate"
               placeholder="请选择下次随访时间" clearable>
             </el-date-picker>
@@ -204,6 +205,13 @@ export default {
   computed: {
     hospitalType() {
       return this.$store.state.hospitalType;
+    },
+    startDateOptions() {
+      let option = {};
+      option.disabledDate = (time) => {
+        return time.getTime() > Date.now() || time.getTime() < new Date(this.lastStepStartDate).getTime() - 8.64e7;
+      };
+      return option;
     }
   },
   methods: {

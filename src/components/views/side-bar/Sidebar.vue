@@ -47,7 +47,7 @@
         录入统计
       </li>
       <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'historyStatistics'}"
-        @click="chooseHistoryStatistics">
+        @click="chooseHistoryStatistics" v-if="isMockUser()">
         历史统计
       </li>
     </ul>
@@ -220,6 +220,11 @@ export default {
     }
   },
   methods: {
+    isMockUser() {
+      var accountNumber = sessionStorage.getItem('userName');
+      var mockUser = {'admin2': true, 'test1': true};
+      return !(accountNumber in mockUser);
+    },
     togglePatientsList() {
       this.showPatientsList = !this.showPatientsList;
     },

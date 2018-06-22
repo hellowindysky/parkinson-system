@@ -457,6 +457,7 @@
         this.year = newVal.getFullYear();
         this.month = newVal.getMonth();
         if (this.selectionMode === 'week') this.week = getWeekNumber(newVal);
+        this.$emit('pick', newVal, false);
       }
     },
 

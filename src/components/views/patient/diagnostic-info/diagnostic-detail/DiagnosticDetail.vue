@@ -1,5 +1,6 @@
 <template lang="html">
-  <div class="diagnostic-detail-wrapper" :class="{'slide-outside':!displayDetail, 'with-animation':withAnimation}">
+  <div class="diagnostic-detail-wrapper" :class="{'slide-outside':!displayDetail, 'with-animation':withAnimation}"
+    v-loading="loading" element-loading-text="加载中">
     <div class="title-bar">
       <h2 class="title">{{title}}</h2>
       <div class="button back-button" @click="goBack" v-show="!isNewCase">返回</div>
@@ -82,7 +83,8 @@ export default {
       caseDetail: {},
       mode: this.READING_MODE,
       hasBeenArchived: true,
-      existed: true  // 用来标记当前诊断信息是否存在，新增诊断时该变量为 false
+      existed: true, // 用来标记当前诊断信息是否存在，新增诊断时该变量为 false
+      loading: false // Loading遮罩
     };
   },
   computed: {
@@ -126,19 +128,25 @@ export default {
       return this.caseDetail.taskInfoId ? this.caseDetail.taskInfoId : this.SUBJECT_ID_FOR_HOSPITAL;
     },
     diagnosticExperimentStep() {
-      var status = parseInt(this.caseDetail.status, 10);  // 实验阶段 (从 2 开始)
+      let status;
+      if (this.caseDetail.status === '10.3') {
+        // 特殊处理 判断患者是否处于省人医课题排除阶段
+        status = 0;
+      } else {
+        status = parseInt(this.caseDetail.status, 10); // 实验阶段 (从 2 开始)
+      }
       return status > 0 ? status : this.EXPERIMENT_STEP_OUT;
     },
     diagnosticExperimentStage() {
-      var stage = parseInt(this.caseDetail.stage, 10);  // 实验阶段的子阶段 (从 0 开始)
+      var stage = parseInt(this.caseDetail.stage, 10); // 实验阶段的子阶段 (从 0 开始)
       return stage >= 0 ? stage : 0;
     },
     patientExperimentStep() {
-      var status = parseInt(this.caseDetail.patientCurrentStatus, 10);   // 实验阶段 (从 2 开始)
+      var status = parseInt(this.caseDetail.patientCurrentStatus, 10); // 实验阶段 (从 2 开始)
       return status > 0 ? status : this.EXPERIMENT_STEP_OUT;
     },
     patientExperimentStage() {
-      var stage = parseInt(this.caseDetail.patientCurrentStage, 10);  // 实验阶段的子阶段 (从 0 开始)
+      var stage = parseInt(this.caseDetail.patientCurrentStage, 10); // 实验阶段的子阶段 (从 0 开始)
       return stage >= 0 ? stage : 0;
     },
     patientDuringExperiment() {
@@ -262,6 +270,10 @@ export default {
         this.$refs.diagnosticBasic.$emit(this.EDIT);
       } else {
         var patientId = this.$route.params.id;
+
+        // 请求时间较长 显示Loading动画
+        this.loading = true;
+
         getPatientCase(patientId, this.caseId).then((data) => {
           this.existed = true;
           this.caseDetail = Object.assign({}, data.patientCase);
@@ -271,9 +283,13 @@ export default {
           } else if (data.patientCase.archiveStatus === 2) {
             this.hasBeenArchived = false;
           }
+
+          this.loading = false;
         }, (error) => {
           console.log(error);
           this.hasBeenArchived = true;
+
+          this.loading = false;
         });
       }
       this.updateScrollbar();

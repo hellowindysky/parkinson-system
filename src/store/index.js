@@ -7,6 +7,7 @@ import state from './state';
 import dictionary from './modules/dictionary';
 import template from './modules/template';
 import scale from './modules/scale';
+import exportField from './modules/exportField';
 
 Vue.use(Vuex);
 
@@ -20,7 +21,8 @@ export default new Vuex.Store({
   modules: {
     dictionary,
     template,
-    scale
+    scale,
+    exportField
   },
   strict: debug
 });

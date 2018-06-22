@@ -127,7 +127,8 @@ export default {
       pageParam: {
         pageNo: 1,
         pageSize: 500
-      }
+      },
+      lockSubmitButton: false
     };
   },
   computed: {
@@ -157,10 +158,15 @@ export default {
       }
     },
     inStatisticsMenu() {
-      return this.$route.matched.some(record => record.meta.statistics);
+      return this.$route.matched.some(record => record.meta.statistics) && !this.isMockUser();
     }
   },
   methods: {
+    isMockUser() {
+      var accountNumber = sessionStorage.getItem('userName');
+      var mockUser = {'admin2': true, 'test1': true};
+      return accountNumber in mockUser;
+    },
     initDate() {
       var now = new Date();
       this.endTime = now;
@@ -301,6 +307,11 @@ export default {
 
       this.updatingFormData = true;
 
+      if (this.lockSubmitButton) {
+        return;
+      }
+      this.lockSubmitButton = true;
+
       var options = {
         target: this.$refs.formWrapper,
         text: '正在加载',
@@ -309,12 +320,14 @@ export default {
       let loadingInstance = this.$loading(options);
 
       f(params, this.supportedDoctorNumber).then((res) => {
+        this.lockSubmitButton = false;
         this.tableData = res;
         this.tableData.data = res.data && res.data[0] ? res.data : [];
         // this.updateScrollbar();
         this.updatingFormData = false;
         loadingInstance.close();
       }, (error) => {
+        this.lockSubmitButton = false;
         console.log(error);
         this.updatingFormData = false;
         loadingInstance.close();
@@ -369,7 +382,9 @@ export default {
     this.updateSupportedDoctorNumber();
 
     this.updateActiveTab();
-    this.updateFormData(this.pageParam);
+
+    // v2.3.1 屏蔽进入页面自动查询 只支持手动查询
+    // this.updateFormData(this.pageParam);
   },
   components: {
     customTable
@@ -384,7 +399,13 @@ export default {
       // this.updateScrollbar();
     },
     activeTab() {
-      this.updateFormData(this.pageParam);
+      // this.updateFormData(this.pageParam);
+
+      // v2.3.1 屏蔽点击tab自动查询 只支持手动查询
+      this.tableData = {
+        template: [],
+        data: []
+      };
     }
   }
 };

@@ -17,7 +17,7 @@
       <div v-if="editable && mode===EDITING_MODE" class="button submit-button" @click="submit">
         {{submitText}}
       </div>
-
+      <el-button type="warning" v-if="false" class="button export-button" @click="popDialog">批量导出</el-button>
       <el-select v-if="isCardsPanel" v-model="filterCondition" size="small" placeholder="筛选"
         class="button filter-button" @change="filterCards"
         :class="{'without-other-button': !editable}">
@@ -98,6 +98,9 @@ export default {
     },
     filterCards() {
       this.$emit(this.UPDATE_FILTER_CONDITION, this.filterCondition);
+    },
+    popDialog() {
+      this.$emit(this.POPEXPORTDIALOG);
     }
   },
   mounted() {
@@ -188,6 +191,20 @@ export default {
       &.submit-button {
         right: 10px;
         background-color: @button-color;
+      }
+      &.export-button {
+        right: 130px + @small-button-width * 2;
+        padding: 0;
+        border: none;
+        border-radius: 0;
+        outline: none;
+        width: 90px;
+        height: 28px;
+        line-height: 28px;
+        background-color: #ff9c00;
+        color: #fff;
+        font-size: 14px;
+        cursor: pointer;
       }
       &.filter-button {
         right: 50px + @small-button-width * 2;
