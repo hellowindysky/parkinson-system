@@ -32,15 +32,15 @@
         </el-form-item>
 
         <el-form class="input-wrapper" v-if="loginType===4" :model="resetFormPassword" :rules="resetRulesPassword" ref="resetFormPassword" label-width="0">
-        <el-form-item prop="formNewPassword" v-if="loginType===4">
-          <el-input class="round-input" v-model="resetFormPassword.formNewPassword" type="password" auto-complete="new-password"
-            placeholder="请输入6-16位数字或字母的新密码" @keyup.enter.native="submitResetFormPassword"></el-input>
-          <div class="password-strength">{{passwordStrength}}</div>
-        </el-form-item>
-        <el-form-item prop="repeatedFormNewPassword" v-if="loginType===4">
-          <el-input class="round-input" clearable v-model="resetFormPassword.repeatedFormNewPassword" auto-complete="new-password" placeholder="请确认输入6-16位数字或字母的新密码" @keyup.enter.native="submitResetFormPassword" autofocus="autofocus"></el-input>
-          <div class="password-strength">{{passwordStrength}}</div>
-        </el-form-item>
+          <el-form-item prop="formNewPassword" v-if="loginType===4">
+            <el-input class="round-input" v-model="resetFormPassword.formNewPassword" type="password" auto-complete="new-password"
+              placeholder="请输入8-16位数字或字母的新密码" @keyup.enter.native="submitResetFormPassword"></el-input>
+            <div class="password-strength">{{passwordStrength}}</div>
+          </el-form-item>
+          <el-form-item prop="repeatedFormNewPassword" v-if="loginType===4">
+            <el-input class="round-input" clearable type="password" v-model="resetFormPassword.repeatedFormNewPassword" auto-complete="new-password" placeholder="请确认输入8-16位数字或字母的新密码" @keyup.enter.native="submitResetFormPassword" autofocus="autofocus"></el-input>
+            <div class="password-strength">{{passwordStrength}}</div>
+          </el-form-item>
         </el-form>
 
         <el-form-item prop="remember">
