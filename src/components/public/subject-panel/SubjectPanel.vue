@@ -84,6 +84,13 @@ export default {
           lockList.splice(listIndex, 1);
         });
       } else {
+        if (subjectId === this.$store.state.subjectId) {
+          Bus.$emit(this.NOTICE, '注意', '在当前课题页面无法移除当前课题，请确定患者不处于实验阶段并在医院入口进行移除操作');
+          let listIndex = lockList.indexOf(index);
+          lockList.splice(listIndex, 1);
+          return;
+        }
+        console.log('remove');
         removePatientFromSubject([patientSubject]).then(() => {
           let listIndex = lockList.indexOf(index);
           this.$emit(this.UPDATE_PATIENT_SUBJECT_INFO);

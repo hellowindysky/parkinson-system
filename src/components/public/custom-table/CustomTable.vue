@@ -9,7 +9,7 @@
            :rowspan="rowSpan(item)"
            :colspan="colSpan(item)"
            @click="dataSort(item)">
-            <div :style="{width:colStyle[item.dataKey] ? colStyle[item.dataKey].width : ''}">
+            <div :style="{width:colStyle[item.dataKey] ? colStyle[item.dataKey].width : ''}" class="coldiv">
               {{item.colName}}
             </div>
             <i class="iconfont" v-if="!item.subCol" :class="iconClass(item.dataKey)"></i>
@@ -20,7 +20,7 @@
            v-for="(item,index) in tableTitleData_sub"
            :key="'tbtitle_sub'+index"
            @click="dataSort(item)">
-            <div :style="{width:colStyle[item.dataKey] ? colStyle[item.dataKey].width : ''}">
+            <div :style="{width:colStyle[item.dataKey] ? colStyle[item.dataKey].width : ''}" class="coldiv">
               {{item.colName}}
             </div>
             <i class="iconfont" :class="iconClass(item.dataKey)"></i>
@@ -108,7 +108,15 @@ export default {
   computed: {
     tableTitleData() {
       if (this.tableData && Array.isArray(this.tableData.template)) {
-        return this.tableData.template;
+        var titles = [];
+        this.tableData.template.forEach((title) => {
+          if (this.isMockUser() && this.isMockTitle(title.dataKey)) {
+            console.log('skip mock column ' + JSON.stringify(title));
+          } else {
+            titles.push(title);
+          }
+        });
+        return titles;
       } else {
         return [];
       }
@@ -117,7 +125,13 @@ export default {
       let sub = [];
       this.tableTitleData.forEach((item) => {
         if (item.subCol) {
-          sub = sub.concat(item.subCol);
+          item.subCol.forEach((col)=> {
+            if (this.isMockUser() && this.isMockTitle(col.dataKey)) {
+              console.log('skip mock sub column ' + JSON.stringify(col));
+            } else {
+              sub.push(col);
+            }
+          });
         }
       });
       return sub;
@@ -127,16 +141,24 @@ export default {
       this.tableTitleData.forEach((item) => {
         if (item.subCol && Array.isArray(item.subCol)) {
           item.subCol.forEach((subItem) => {
-            items.push({
-              key: subItem.dataKey,
-              type: subItem.dataType
-            });
+            if (this.isMockUser() && this.isMockTitle(subItem.dataKey)) {
+              console.log('skip mock column item ' + JSON.stringify(subItem));
+            } else {
+              items.push({
+                key: subItem.dataKey,
+                type: subItem.dataType
+              });
+            }
           });
         } else {
-          items.push({
-            key: item.dataKey,
-            type: item.dataType
-          });
+          if (this.isMockUser() && this.isMockTitle(item.dataKey)) {
+            console.log('skip mock column item ' + JSON.stringify(item));
+          } else {
+            items.push({
+              key: item.dataKey,
+              type: item.dataType
+            });
+          }
         }
       });
       return items;
@@ -150,6 +172,15 @@ export default {
     }
   },
   methods: {
+    isMockUser() {
+      var accountNumber = sessionStorage.getItem('userName');
+      var mockUser = {'admin2': true, 'test1': true};
+      return accountNumber in mockUser;
+    },
+    isMockTitle(val) {
+      var mockTitle = {'techSupport': true, 'validNewNumber': true, 'validFollowCase': true, 'patientModify': true, 'caseModify': true};
+      return val in mockTitle;
+    },
     handleSizeChange(val) {
       this.pageSize = val;
       setTimeout(() => {
@@ -180,7 +211,15 @@ export default {
     },
     colSpan(item) {
       if (item.subCol && item.subCol.length > 0) {
-        return item.subCol.length;
+        var len = 0;
+        item.subCol.forEach((col)=> {
+          if (this.isMockUser() && this.isMockTitle(col.dataKey)) {
+            console.log('skip mock sub column ' + JSON.stringify(col));
+          } else {
+            len++;
+          }
+        });
+        return len;
       } else {
         return 1;
       }
@@ -284,6 +323,13 @@ export default {
     }
   },
   mounted() {
+    window.addEventListener('resize', () => {
+      if (this.$refs.tbhead) {
+        let h1 = this.$refs.tbhead.offsetHeight;
+        let h2 = this.$refs.customtable.offsetHeight;
+        this.$set(this.tableBoxStyle, 'height', h2 - h1 + 'px');
+      }
+    });
   },
   watch: {
     tableData: {
@@ -363,6 +409,10 @@ export default {
           position: relative;
           padding-left:16px;
           padding-right:16px;
+          .coldiv {
+            word-break: break-all;
+            word-wrap:break-word;
+          }
           i.iconfont {
             font-size: 12px;
             position: absolute;

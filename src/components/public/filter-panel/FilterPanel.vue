@@ -1078,7 +1078,7 @@
                   :disabled="!diagnosticScaleSelectedStatus.inspectTimeFrom"></el-date-picker>
               </span>
             </div>
-            <div class="item">
+            <!-- <div class="item">
               <el-checkbox class="item-checkbox" v-model="diagnosticScaleSelectedStatus.scaleType"></el-checkbox>
               <span class="item-name">量表类型</span>
               <span class="item-value">
@@ -1088,17 +1088,62 @@
                     :key="option.code"></el-option>
                 </el-select>
               </span>
-            </div>
+            </div> -->
             <div class="item">
               <el-checkbox class="item-checkbox" v-model="diagnosticScaleSelectedStatus.scaleName"></el-checkbox>
               <span class="item-name">量表名称</span>
               <span class="item-value">
-                <el-select class="normal-input" v-model="diagnosticScaleCondition.scaleName"
-                  :disabled="!diagnosticScaleSelectedStatus.scaleName">
-                  <el-option v-for="option in getOptions('scaleName')" :label="option.name" :value="option.code"
-                    :key="option.code"></el-option>
-              </el-select>
+                <el-popover placement="right-end" width="200" trigger="hover" :disabled="!diagnosticScaleCondition.scaleName"
+                  :content="selectedScaleInfo.gaugeName">
+                  <el-select class="normal-input" filterable v-model="diagnosticScaleCondition.scaleName" slot="reference"
+                    :disabled="!diagnosticScaleSelectedStatus.scaleName">
+                    <el-option v-for="option in getOptions('scaleName')" :label="option.name" :value="option.code"
+                      :key="option.code"></el-option>
+                  </el-select>
+                </el-popover>
               </span>
+              <div class="item-list scale-question-list" v-show="diagnosticScaleSelectedStatus.scaleName && diagnosticScaleCondition.scaleName">
+                <!-- <span class="item-name">量表题目</span> -->
+                <table>
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th>题号</th>
+                      <th>题目名称</th>
+                      <th>得分</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(item, index) in diagnosticScaleCondition.scaleQuestionList" :key="index">
+                      <td @click="removeQuestionRow(index)"><i class="iconfont icon-remove"></i></td>
+                      <td>
+                        {{getQuestionGrade(item.scaleQuestionId).questionNumber}}
+                      </td>
+                      <td>
+                        <el-popover placement="bottom-start" width="200" trigger="hover" :disabled="!getQuestionGrade(item.scaleQuestionId).questionName"
+                          :content="getQuestionGrade(item.scaleQuestionId).questionName">
+                          <el-select class="normal-input" slot="reference" v-model="item.scaleQuestionId" @change="item.scaleOptionId = ''" popper-class="scale-question-selector">
+                            <el-option v-for="option in selectedScaleInfo.questions" v-if="!option.noValue" :label="option.subjectName" :value="option.scaleQuestionId"
+                              :key="option.code"></el-option>
+                          </el-select>
+                        </el-popover>
+                      </td>
+                      <td>
+                        <el-select class="normal-input" v-model="item.scaleOptionId"
+                          :disabled="!item.scaleQuestionId">
+                          <el-option v-for="option in getQuestionGrade(item.scaleQuestionId).gradeList" :label="option.grade" :value="option.scaleOptionId"
+                            :key="option.code" :disabled="checkScaleOptionId(option.scaleOptionId)"></el-option>
+                        </el-select>
+                      </td>
+                    </tr>
+                    <tr v-show="diagnosticScaleCondition.scaleQuestionList.length < 10">
+                      <td colspan="4" @click="addQuestionRow">
+                        <i class="iconfont icon-plus"></i>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
             <div class="item">
               <el-checkbox class="item-checkbox" v-model="diagnosticScaleSelectedStatus.scalePointFrom"></el-checkbox>
@@ -1193,14 +1238,14 @@
       <div class="iconfont" :class="toggleIconClass"></div>
     </div>
     <div class="content-area" :class="{'hide-condition-status': !displayCondition}">
-      <div class="operation-bar" v-show="showOperationBar">
-        <div class="export-button" @click="batchExportPatients">批量导出</div>
+      <div class="operation-bar" v-show="isShowOperationBar">
+        <div class="export-button" @click="popDialog">批量导出</div>
       </div>
       <div class="content-scroll-area" ref="scrollContent">
         <div class="form-head">
-          <table class="form form-head" :class="{'selectable': showOperationBar}">
+          <table class="form form-head" :class="{'selectable': isShowOperationBar}">
             <tr class="row top-row">
-              <td class="col col-select" v-show="showOperationBar">
+              <td class="col col-select" v-show="isShowOperationBar">
                 <el-checkbox v-model="allPatientsSelectedStatus"
                   @change="toggleAllPatientsSeletedStatus"></el-checkbox>
               </td>
@@ -1215,9 +1260,9 @@
           </table>
         </div>
         <div class="form-body" ref="formBody">
-          <table class="form" :class="{'selectable': showOperationBar}">
+          <table class="form" :class="{'selectable': isShowOperationBar}">
             <tr class="row" v-for="(patient, i) in patientList">
-              <td class="col col-select" v-show="showOperationBar">
+              <td class="col col-select" v-show="isShowOperationBar">
                 <el-checkbox v-model="patientSeletedStatusList[i]"></el-checkbox>
               </td>
               <td class="col col-num">{{i + 1}}</td>
@@ -1238,6 +1283,34 @@
       <group-panel class="group-panel" :class="{'hide': !displayGroupPanel}" :belongGroups="belongGroups"
         :display="displayGroupPanel" :patientId="Number(patientId)" @hideGroupPanel="hideGroupPanel"></group-panel>
     </div>
+
+    <el-dialog title="导出模板" :visible.sync="dialogVisible" size="tiny" :modal-append-to-body="false">
+      <div>
+        <div class="field whole-line">
+          <span class="field-name">
+            选择导出模板:
+          </span>
+          <span class="field-input">
+            <el-select v-model="templateId" placeholder="请选择导出模板" clearable
+             :class="{'warning': warningResults.templateId}"
+             @change="updateWarning('templateId')">
+              <el-option
+               v-for="(item,index) in exportTemp"
+               :key="item.templateId"
+               :label="item.templateName"
+               :value="item.templateId">
+              </el-option>
+            </el-select>
+            <span class="warning-text">{{warningResults.templateId}}</span>
+          </span>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="canel">取 消</el-button>
+        <el-button type="primary" @click="submitTemp">确 定</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -1245,7 +1318,7 @@
 import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
-import { queryPatientsByCondition, getPatientGroupInfo } from 'api/patient.js';
+import { queryPatientsByCondition, getPatientGroupInfo, queryExportTemplate, queryExportUsername } from 'api/patient.js';
 import { baseUrl } from 'api/common.js';
 import { vueCopy, pruneObj, reviseDateFormat, isEmptyObject } from 'utils/helper.js';
 import Util from 'utils/util.js';
@@ -1255,6 +1328,7 @@ import GroupPanel from 'public/group-panel/GroupPanel';
 const PERSONAL_INFO = 'personalInfo';
 const DIAGNOSTIC_INFO = 'diagnosticInfo';
 
+// 基本情况
 let basicInfoFieldNames = ['ageFrom', 'ageTo', 'birthDateFrom', 'birthDateTo',
   'nation', 'sex', 'marryType', 'qualification', 'career', 'yearsOfEducationMin', 'yearsOfEducationMax', 'bmiMin', 'bmiMax', 'bloodType', 'econType',
   'liveType', 'homeProvince'];
@@ -1262,6 +1336,7 @@ let basicInfoSelectedFieldNames = ['ageFrom', 'ageFrom', 'birthDateFrom', 'birth
   'nation', 'sex', 'marryType', 'qualification', 'career', 'yearsOfEducationMin', 'yearsOfEducationMin', 'bmiMin', 'bmiMin', 'bloodType', 'econType',
   'liveType', 'homeProvince'];
 
+// 现病史
 let diseaseInfoFieldNames = ['diseaseType', 'specificDisease', 'diagnoseState', 'ariAgeFrom', 'ariAgeTo', 'diseaseProcessFrom', 'diseaseProcessTo',
   'motorSymptom', 'motorComplication', 'nonMotorSymptom', 'firSym',
   'firBody', 'symmetries', 'symmetriesTimeFrom', 'symmetriesTimeTo', 'firTimeFrom',
@@ -1273,26 +1348,31 @@ let diseaseInfoSelectedFieldNames = ['diseaseType', 'specificDisease', 'diagnose
   'firTimeFrom', 'firTimeFrom', 'surTimeFrom', 'surTimeFrom',
   'diagMode', 'medType', 'medId', 'treatMethod', 'treatPro', 'firMed', 'getDisFac', 'getDisFac0'];
 
+// 其它信息
 let otherInfoFieldNames = ['medType', 'diseaseRelationId', 'similarRole', 'patientSmokeId',
   'patientWineId', 'patientTeaId', 'patientCoffeeId', 'grade', 'exposedType'];
 let otherInfoSelectedFieldNames = ['medType', 'diseaseRelationId', 'similarRole', 'patientSmokeId',
   'patientWineId', 'patientTeaId', 'patientCoffeeId', 'grade', 'exposedType'];
 
+// 基本情况
 let diagnosticBasicFieldNames = ['caseType', 'diagTimeFrom', 'diagTimeTo',
   'diseaseYearFrom', 'diseaseYearTo'];
 let diagnosticBasicSelectedFieldNames = ['caseType', 'diagTimeFrom', 'diagTimeFrom',
   'diseaseYearFrom', 'diseaseYearFrom'];
 
+// 病症情况
 let diagnosticDiseaseFieldNames = ['diseaseType', 'specificDisease', 'diagnoseState', 'motorSymptomTypeId',
   'motorComplicationsSymptomTypeId', 'nonMotorSymptomTypeId'];
 let diagnosticDiseaseSelectedFieldNames = ['diseaseType', 'specificDisease', 'diagnoseState', 'motorSymptomTypeId',
   'motorComplicationsSymptomTypeId', 'nonMotorSymptomTypeId'];
 
+// 药物治疗
 let diagnosticMedicineFieldNames = ['medicineType', 'medicineId', 'medicineSpecId',
   'levodopaSingleIntakeFrom', 'levodopaSingleIntakeTo', 'levodopaTotalIntakeFrom', 'levodopaTotalIntakeTo'];
 let diagnosticMedicineSelectedFieldNames = ['medicineType', 'medicineId', 'medicineSpecId',
   'levodopaSingleIntakeFrom', 'levodopaSingleIntakeFrom', 'levodopaTotalIntakeFrom', 'levodopaTotalIntakeFrom'];
 
+// 手术治疗
 let diagnosticSurgeryFieldNames = ['preopsTimeFrom', 'preopsTimeTo', 'deviceId', 'devicePowerType',
   'operationIntension', 'intensionTimeFrom', 'intensionTimeTo', 'surgicalInfoId', 'surgicalDateFrom',
   'surgicalDateTo', 'dbsDateFrom', 'dbsDateTo', 'occurrenceTimeFrom', 'occurrenceTimeTo', 'majorComplicationType',
@@ -1302,10 +1382,11 @@ let diagnosticSurgerySelectedFieldNames = ['preopsTimeFrom', 'preopsTimeFrom', '
   'surgicalDateFrom', 'dbsDateFrom', 'dbsDateFrom', 'occurrenceTimeFrom', 'occurrenceTimeFrom', 'majorComplicationType',
   'minorComplicationType', 'treatment', 'result'];
 
+// 医学量表
 let diagnosticScaleFieldNames = ['inspectTimeFrom', 'inspectTimeTo', 'scaleType', 'scaleName',
-  'scaleQuestionFrom', 'scaleQuestionTo', 'scalePointFrom', 'scalePointTo', 'switchType'];
+  'scaleQuestionFrom', 'scaleQuestionTo', 'scalePointFrom', 'scalePointTo', 'scaleQuestionList', 'switchType'];
 let diagnosticScaleSelectedFieldNames = ['inspectTimeFrom', 'inspectTimeFrom', 'scaleType', 'scaleName',
-  'scaleQuestionFrom', 'scaleQuestionFrom', 'scalePointFrom', 'scalePointFrom', 'switchType'];
+  'scaleQuestionFrom', 'scaleQuestionFrom', 'scalePointFrom', 'scalePointFrom', 'scaleName', 'switchType'];
 
 // 物理治疗
 let diagnosticPhysiFieldNames = ['physiType', 'recordDateStart', 'recordDateEnd', 'leftThresholdBeforeMin', 'leftThresholdBeforeMax',
@@ -1330,6 +1411,14 @@ export default {
   },
   data() {
     return {
+      dialogVisible: false,
+      exportTemp: [],
+      templateId: '',
+      isShowOperationBar: false,
+      warningResults: {
+        templateId: ''
+      },
+
       currentTab: PERSONAL_INFO,
       PERSONAL_INFO: PERSONAL_INFO,
       DIAGNOSTIC_INFO: DIAGNOSTIC_INFO,
@@ -1424,17 +1513,68 @@ export default {
       this.diagnosticSurgeryCondition.minorComplicationType = '';
       return majorComplicationType;
     },
-    showOperationBar() {
-      var userName = sessionStorage.getItem('userName');
-      let specialUserList = ['chenshengdi', 'zeng'];
-      if (specialUserList.indexOf(userName) >= 0) {
-        return true;
-      } else {
-        return false;
+    /**
+     * 根据已选量表scaleInfoId生成该量表的问题选项列表
+     */
+    selectedScaleInfo() {
+      let name = '';
+      let type = '';
+      let questionList = [];
+      for (let scaleIndex = 0; scaleIndex < this.allScale.length; scaleIndex++) {
+        if (this.allScale[scaleIndex].scaleInfoId === this.diagnosticScaleCondition.scaleName) {
+          questionList = this.allScale[scaleIndex].questions;
+          type = this.allScale[scaleIndex].gaugeTaskType;
+          name = this.allScale[scaleIndex].gaugeName;
+        }
       }
+      let index = 0;
+      for (let i = 0; i < questionList.length; i++) {
+        let noValue = false;
+        questionList[i].answerIndex = index;
+        index++;
+        for (let j = 0; j < questionList[i].options.length; j++) {
+          if (questionList[i].options[j].openFlag === 1 && questionList[i].options[j].questions && questionList[i].options[j].questions.length > 0) {
+            let parentId = questionList[i].options[j].scaleOptionId;
+            for (let k = 0; k < questionList[i].options[j].questions.length; k++) {
+              questionList[i].options[j].questions[k].parentId = parentId;
+              questionList[i].options[j].questions[k].questionNumber = questionList[i].questionNumber + ' - ' + questionList[i].options[j].questions[k].questionNumber;
+              questionList[i].options[j].questions[k].subjectName = questionList[i].subjectName + ' - ' + questionList[i].options[j].questions[k].subjectName;
+              questionList.splice(i + k + 1, 0, questionList[i].options[j].questions[k]);
+            }
+            delete questionList[i].options[j].questions;
+          } else if (questionList[i].options[j].options && questionList[i].options[j].options.length > 0) {
+            questionList[i].options[j].answerIndex = index;
+            index++;
+          }
+          // 判断该题目的选项是否均为0分，如果是，则该题目按照不计分处理
+          if (questionList[i].options[j].grade !== 0) {
+            noValue = true;
+          }
+        }
+        if (!noValue) {
+          questionList[i].noValue = true;
+        }
+      }
+      let scaleInfo = {
+        gaugeName: name,
+        gaugeTaskType: type,
+        questions: questionList
+      };
+
+      return scaleInfo;
     }
   },
   methods: {
+    showOperationBar() {
+      var userName = sessionStorage.getItem('userName');
+      queryExportUsername().then((res) => {
+        let specialUserList = res.split(',');
+        // console.log(userName, specialUserList);
+        if (specialUserList.indexOf(userName) >= 0) {
+          this.isShowOperationBar = true;
+        }
+      });
+    },
     clearVal(flag) {
       if (flag === 'specificDisease') {
         this.$set(this.diseaseInfoCondition, 'specificDisease', '');
@@ -1603,7 +1743,14 @@ export default {
         this.$set(this.diagnosticPhysiSelectedStatus, fieldName, false);
       });
       diagnosticScaleFieldNames.forEach((fieldName) => {
-        this.$set(this.diagnosticScaleCondition, fieldName, '');
+        if (fieldName === 'scaleQuestionList') {
+          this.$set(this.diagnosticScaleCondition, fieldName, [{
+            scaleQuestionId: '',
+            scaleOptionId: ''
+          }]);
+        } else {
+          this.$set(this.diagnosticScaleCondition, fieldName, '');
+        }
       });
       diagnosticScaleSelectedFieldNames.forEach((fieldName) => {
         this.$set(this.diagnosticScaleSelectedStatus, fieldName, false);
@@ -1756,13 +1903,112 @@ export default {
       }
       return options;
     },
+    /**
+     * 根据量表题目scaleQuestionId查询题目名称、题号以及选项得分枚举值
+     */
+    getQuestionGrade(scaleQuestionId) {
+      let id = scaleQuestionId;
+      let type = this.selectedScaleInfo.gaugeTaskType;
+      let list = this.selectedScaleInfo.questions;
+      let questionInfo = {
+        questionName: '',
+        questionNumber: '',
+        gradeList: []
+      };
+      for (let i = 0; i < list.length; i++) {
+        if (list[i].scaleQuestionId === id) {
+          questionInfo.questionName = list[i].subjectName;
+          if (type === 0 && list[i].questionNumber) {
+            questionInfo.questionNumber = list[i].questionNumber;
+          } else {
+            questionInfo.questionNumber = i + 1;
+          }
+          for (let j = 0; j < list[i].options.length; j++) {
+            questionInfo.gradeList.push({
+              grade: list[i].options[j].grade === 0 ? '0' : list[i].options[j].grade,
+              scaleOptionId: list[i].options[j].scaleOptionId
+            });
+          }
+          break;
+        }
+      }
+      return questionInfo;
+    },
+    /**
+     * 量表联想输入框
+     */
+    queryScaleSearch(queryString, cb) {
+      // v2.3.1 筛选非废除量表
+      let scalesIsUse = this.allScale.filter((item) => {
+        return item.isUse === 1;
+      });
+
+      let allScale = [];
+      let subjectId = this.$store.state.subjectId;
+      this.scaleList = [];
+
+      // 根据量表分类判断可选择的量表数组
+      if (this.scaleCategory === 1) {
+        scalesIsUse.map((item) => {
+          if (item.gaugeTaskType === subjectId) {
+            this.scaleList.push(item);
+            allScale.push({'value': item.gaugeName});
+          }
+        });
+      } else {
+        scalesIsUse.map((item) => {
+          if (item.gaugeTaskType === 0) {
+            this.scaleList.push(item);
+            allScale.push({'value': item.gaugeName});
+          }
+        });
+      }
+
+      // console.log(this.scaleList);
+
+      var results = queryString ? allScale.filter((item) => {
+        return (item.value.toLowerCase().indexOf(queryString.toLowerCase()) >= 0);
+      }) : allScale;
+
+      // 调用 callback 返回建议列表的数据
+      cb(results);
+    },
+    /**
+     * 根据scaleOptionId检查选项得分是否被选中，如果选中则在其他列表的下拉框中设置成disabled
+     */
+    checkScaleOptionId(optionId) {
+      let list = this.diagnosticScaleCondition.scaleQuestionList;
+      for (let i = 0; i < list.length; i++) {
+        if (optionId === list[i].scaleOptionId) {
+          return true;
+        }
+      }
+      return false;
+    },
+    removeQuestionRow(index) {
+      this.diagnosticScaleCondition.scaleQuestionList.splice(index, 1);
+    },
+    addQuestionRow() {
+      this.diagnosticScaleCondition.scaleQuestionList.push({
+        scaleQuestionId: '',
+        scaleOptionId: ''
+      });
+    },
     resetCondition() {
       this.initCondition();
       this.queryPatients({});
     },
     applyCondition() {
       // 根据表单数据生成一个 condition 对象
-      var condition = {};
+      var condition = {
+        taskId: ''
+      };
+
+      // console.log(this.$store.state.subjectId);
+      // if (this.$store.state.subjectId !== -1) {
+      //   condition.taskId = this.$store.state.subjectId;
+      // }
+      // console.log(condition, condition.taskId);
 
       // 只有当项目前面当确认框被选中，且该栏目的字段不为空的时候，才把所填的值加到 condition 的对应位置
       condition.patientInfo = {};
@@ -1918,9 +2164,21 @@ export default {
           this.diagnosticScaleCondition[fieldName] !== undefined &&
           this.diagnosticScaleCondition[fieldName] !== '') {
           let value = this.diagnosticScaleCondition[fieldName];
-          if (value instanceof Array) {
+          if (value instanceof Array && fieldName !== 'scaleQuestionList') {
             value.sort((a, b) => a > b);
             value = value.join(',');
+          } else if (fieldName === 'scaleQuestionList' && value instanceof Array && value.length > 0) {
+            console.log(value);
+            let tempValue = [];
+            for (let j = 0; j < value.length; j++) {
+              if (value[j].scaleOptionId) {
+                tempValue.push(value[j]);
+              }
+            }
+            if (tempValue.length === 0) {
+              continue;
+            }
+            value = tempValue;
           }
           condition.caseScale[fieldName] = value;
         }
@@ -1968,6 +2226,9 @@ export default {
       if (!condition) {
         condition = {};
       }
+      if (this.$store.state.subjectId !== -1) {
+        condition.taskId = this.$store.state.subjectId;
+      }
       this.patientList = [];
       this.patientSeletedStatusList = [];
       this.allPatientsSelectedStatus = false;
@@ -1986,7 +2247,70 @@ export default {
         this.$set(this.patientSeletedStatusList, i, this.allPatientsSelectedStatus);
       }
     },
-    batchExportPatients() {
+    // batchExportPatients() {
+    //   var patientIdList = [];
+    //   for (var i = 0; i < this.patientList.length; i++) {
+    //     if (this.patientSeletedStatusList[i]) {
+    //       patientIdList.push(this.patientList[i].patientId);
+    //     }
+    //   }
+    //   if (patientIdList.length === 0) {
+    //     // 如果没有选择患者则不发出请求
+    //     return;
+    //   }
+
+    //   var userId = sessionStorage.getItem('userId');
+    //   var accountNumber = sessionStorage.getItem('accountNumber');
+    //   var userType = sessionStorage.getItem('userType');
+    //   var orgId = sessionStorage.getItem('orgId');
+    //   var orgType = sessionStorage.getItem('orgType');
+
+    //   var url = baseUrl + '/export/ruiJinPatientExport' + '?userId=' + userId +
+    //     '&accountNumber=' + accountNumber + '&userType=' + userType + '&orgId=' +
+    //     orgId + '&orgType=' + orgType + '&patientIds=' + patientIdList.join(',');
+    //   window.location.href = url;
+    // },
+    popDialog() {
+      var patientIdList = [];
+      for (var i = 0; i < this.patientList.length; i++) {
+        if (this.patientSeletedStatusList[i]) {
+          patientIdList.push(this.patientList[i].patientId);
+        }
+      }
+      if (patientIdList.length === 0) {
+        // 如果没有选择患者则不打开弹窗
+        this.$message({
+          message: '请选择患者',
+          type: 'warning'
+        });
+        return;
+      }
+      this.queryTemp();
+      this.dialogVisible = true;
+    },
+    queryTemp() {
+      queryExportTemplate().then((res) => {
+        this.exportTemp = res;
+      });;
+    },
+    updateWarning(fieldName) {
+      if (!this[fieldName]) {
+        this.$set(this.warningResults, fieldName, '必填项');
+      } else {
+        this.$set(this.warningResults, fieldName, '');
+      }
+    },
+    submitTemp() {
+      for (let property in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(property)) {
+          this.updateWarning(property);
+        }
+      }
+      for (let property in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(property) && this.warningResults[property]) {
+          return;
+        }
+      }
       var patientIdList = [];
       for (var i = 0; i < this.patientList.length; i++) {
         if (this.patientSeletedStatusList[i]) {
@@ -2003,11 +2327,24 @@ export default {
       var userType = sessionStorage.getItem('userType');
       var orgId = sessionStorage.getItem('orgId');
       var orgType = sessionStorage.getItem('orgType');
+      var templateId = this.templateId;
 
-      var url = baseUrl + '/export/ruiJinPatientExport' + '?userId=' + userId +
+      var url = baseUrl + '/export/patientTemplateExport' + '?userId=' + userId +
         '&accountNumber=' + accountNumber + '&userType=' + userType + '&orgId=' +
-        orgId + '&orgType=' + orgType + '&patientIds=' + patientIdList.join(',');
+        orgId + '&orgType=' + orgType + '&templateId=' + templateId + '&patientIds=' + patientIdList.join(',');
       window.location.href = url;
+      this.canel();
+    },
+    canel() {
+      this.templateId = '';
+      for (let property in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(property)) {
+          this.$nextTick(() => {
+            this.$set(this.warningResults, property, '');
+          });
+        }
+      }
+      this.dialogVisible = false;
     },
     getNameByCode(code, typeGroupCode) {
       var types = Util.getElement('typegroupcode', typeGroupCode, this.typeGroup).types;
@@ -2089,6 +2426,7 @@ export default {
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollList);
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollContent);
     this.queryPatients();
+    this.showOperationBar();
   },
   watch: {
     '$route.path'() {
@@ -2096,6 +2434,12 @@ export default {
         // 在面板打开的情况下，一旦路由发生变化，则自动收起面板
         Bus.$emit(this.TOGGLE_FILTER_PANEL_DISPLAY);
       }
+    },
+    selectedScaleInfo() {
+      this.diagnosticScaleCondition.scaleQuestionList = [{
+        scaleQuestionId: '',
+        scaleOptionId: ''
+      }];
     }
   },
   beforeDestroy() {
@@ -2126,6 +2470,10 @@ export default {
 @table-width: @col-num-width + @col-id-width + @col-gender-width + @col-age-width +
   @col-disease-width + @col-symptom-width + @col-operation-width;
 @selectable-table-width: @table-width + @col-select-width;
+
+@field-line-height: 25px;
+@field-name-width: 110px;
+@long-field-name-width: 160px;
 
 .filter-panel {
   position: absolute;
@@ -2235,50 +2583,41 @@ export default {
             opacity: 0.3;
           }
           .item {
-            width: 100%;
-            height: 40px;
+            width: 330px;
+            padding: 0 10px;
             line-height: 40px;
             text-align: left;
             &.auto-resize {
               height: auto;
               .item-value {
-                position: relative;
-                width: 225px;
-                left: 110px;
+                width: 220px;
                 padding-bottom: 3px;
               }
             }
-            .item-checkbox {
-              position: absolute;
-              left: 10px;
-            }
+            // .item-checkbox {
+            // }
             .item-name {
               display: inline-block;
-              position: absolute;
-              left: 35px;
+              width: 80px;
+              vertical-align: middle;
               &.long-name {
                 left: 35px;
                 font-size: @small-font-size;
                 &.double-line {
-                  display: -webkit-box;
-                  -webkit-box-orient: vertical;
-                  -webkit-line-clamp: 2;
-                  width: 75px;
-                  padding-top: 5px;
-                  line-height: @normal-font-size;
+                  line-height: 20px;
                 }
               }
             }
             .item-value {
               display: inline-block;
-              position: absolute;
-              left: 110px;
-              right: 15px;
+              width: 220px;
+              vertical-align: middle;
               .el-input {
                 .el-input__inner {
                   height: 30px;
                   border: none;
                   background-color: @screen-color;
+                  text-overflow: ellipsis;
                 }
               }
               .el-select {
@@ -2289,8 +2628,6 @@ export default {
               }
               .left-input, .right-input {
                 display: inline-block;
-                position: absolute;
-                width: 100px;
                 .el-input__icon {
                   display: none;
                 }
@@ -2299,20 +2636,136 @@ export default {
                 }
               }
               .left-input {
-                left: 0;
+                width: 102px;
               }
               .right-input {
-                right: 0;
+                width: 102px;
               }
-              .middle-text {
-                position: absolute;
-                left: 110px;
-              }
+              // .middle-text {
+              // }
               .normal-input {
                 display: inline-block;
+                width: 100%;
+              }
+            }
+            .item-list {
+              &.scale-question-list {
+                .item-name {
+                  padding-left: 22px;
+                }
+                .icon-remove {
+                  color: #d20000f5;
+                }
+                table {
+                  text-align: center;
+                  thead {
+                    th {
+                      &:nth-child(1) {
+                        width: 20px;
+                      }
+                      &:nth-child(2) {
+                        width: 50px;
+                      }
+                      &:nth-child(3) {
+                        width: 146px;
+                      }
+                      &:nth-child(4) {
+                        width: 100px;
+                      }
+                    }
+                  }
+                  tbody {
+                    tr:last-child td {
+                      height: 30px;
+                      line-height: 30px;
+                      border: 1px dashed #3c485a;
+                      border-radius: 4px;
+                      cursor: pointer;
+                    }
+                  }
+                }
               }
             }
           }
+          // .item {
+          //   width: 100%;
+          //   height: 40px;
+          //   line-height: 40px;
+          //   text-align: left;
+          //   &.auto-resize {
+          //     height: auto;
+          //     .item-value {
+          //       position: relative;
+          //       width: 225px;
+          //       left: 110px;
+          //       padding-bottom: 3px;
+          //     }
+          //   }
+          //   .item-checkbox {
+          //     position: absolute;
+          //     left: 10px;
+          //   }
+          //   .item-name {
+          //     display: inline-block;
+          //     position: absolute;
+          //     left: 35px;
+          //     &.long-name {
+          //       left: 35px;
+          //       font-size: @small-font-size;
+          //       &.double-line {
+          //         display: -webkit-box;
+          //         -webkit-box-orient: vertical;
+          //         -webkit-line-clamp: 2;
+          //         width: 75px;
+          //         padding-top: 5px;
+          //         line-height: @normal-font-size;
+          //       }
+          //     }
+          //   }
+          //   .item-value {
+          //     display: inline-block;
+          //     position: absolute;
+          //     left: 110px;
+          //     right: 15px;
+          //     .el-input {
+          //       .el-input__inner {
+          //         height: 30px;
+          //         border: none;
+          //         background-color: @screen-color;
+          //       }
+          //     }
+          //     .el-select {
+          //       width: 100%;
+          //     }
+          //     .el-date-editor{
+          //       width: 100%;
+          //     }
+          //     .left-input, .right-input {
+          //       display: inline-block;
+          //       position: absolute;
+          //       width: 100px;
+          //       .el-input__icon {
+          //         display: none;
+          //       }
+          //       .el-input__inner {
+          //         padding: 3px 10px;
+          //       }
+          //     }
+          //     .left-input {
+          //       left: 0;
+          //     }
+          //     .right-input {
+          //       right: 0;
+          //     }
+          //     .middle-text {
+          //       position: absolute;
+          //       left: 110px;
+          //     }
+          //     .normal-input {
+          //       display: inline-block;
+          //     }
+          //   }
+          // }
         }
       }
       .ps__scrollbar-y-rail {
@@ -2568,5 +3021,96 @@ export default {
       }
     }
   }
+  .v-modal {
+    background-color: rgba(110, 132, 159, 1);
+  }
+  .el-dialog__wrapper {
+    text-align: left;
+    .field {
+      display: inline-block;
+      position: relative;
+      width: 50%;
+      min-height: 45px;
+      line-height: @field-line-height;
+      box-sizing: border-box;
+      text-align: left;
+      vertical-align: top;
+      transform: translate3d(10px, 5px, 0); // 这一行是为了修补视觉上的偏移
+      &.whole-line {
+        width: 100%;
+        .field-input {
+          width: calc(~"96% - @{field-name-width}");
+        }
+      }
+      .field-name {
+        display: inline-block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: @field-name-width;
+        line-height: @field-line-height;
+        font-size: @normal-font-size;
+        color: @font-color;
+        // &.long-field-name {
+        //   width: @long-field-name-width;
+        // }
+        .required-mark {
+          color: red;
+          font-size: 20px;
+          vertical-align: middle;
+        }
+      }
+      .field-input {
+        display: inline-block;
+        position: relative;
+        left: @field-name-width;
+        width: calc(~"92% - @{field-name-width}");
+        line-height: @field-line-height;
+        font-size: @normal-font-size;
+        color: @light-font-color;
+        // &.long-field-name {
+        //   left: @long-field-name-width;
+        // }
+        .warning-text {
+          position: absolute;
+          top: 22px;
+          left: 10px;
+          height: 15px;
+          color: red;
+          font-size: @small-font-size;
+        }
+        .el-input {
+          transform: translateY(-3px);
+          .el-input__inner {
+            height: 30px;
+            border: none;
+            background-color: @screen-color;
+          }
+        }
+        .el-textarea {
+          margin-bottom: 10px;
+          vertical-align: middle;
+          transform: translateY(-3px);
+          .el-textarea__inner {
+            border: none;
+            background-color: @screen-color;
+          }
+        }
+        .el-select {
+          width: 100%;
+        }
+        .el-date-editor {
+          width: 100%;
+        }
+        .warning .el-input__inner,
+        .warning .el-textarea__inner {
+          border: 1px solid red;
+        }
+      }
+    }
+  }
+}
+.scale-question-selector {
+  max-width: 500px;
 }
 </style>

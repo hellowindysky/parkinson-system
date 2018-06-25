@@ -4,7 +4,7 @@
     <div class="diagnostic-scale" ref="diagnosticscale">
       <extensible-panel class="panel" :mode="mutableMode" :title="normalScaleTitle"
         v-on:addNewCard="addScale(0)" :editable="canEdit">
-        <card class="card" :class="devideWidth" :mode="mutableMode"
+        <card class="card iconfont" :class="[devideWidth, {'uncompleted': item.unCompleteCount !== 0}]" :mode="mutableMode"
           v-for="(item, index) in scaleListFomat.normalScaleList"
           :key="item.id + '' + index" :title="getTitle(item.scaleInfoId)"
           v-on:deleteCurrentCard="deleteScaleRecord(item)"
@@ -19,10 +19,13 @@
               <span v-else-if="item.npiPoint" v-html="item.npiPoint" class="spanPaddingLeft">
                 {{item.npiPoint}}
               </span>
+              <span v-else-if="item.totalICDPoint" class="spanPaddingLeft">
+                {{item.scalePoint + ' ' + item.totalICDPoint}}
+              </span>
               <span v-else>
                 {{item.scalePoint}}
               </span>
-              <span v-if="!item.npiPoint" class="mark">{{getCompleteStatus(item)}}</span>
+              <!-- <span v-if="!item.npiPoint" class="mark">{{getCompleteStatus(item)}}</span> -->
             </div>
           </div>
           <div class="text second-line">
@@ -45,7 +48,7 @@
       </extensible-panel>
       <extensible-panel class="panel" :mode="mutableMode" :title="subjectScaleTitle"
         v-if="subjectId !== -1" v-on:addNewCard="addScale(1)" :editable="canEdit">
-        <card class="card" :class="devideWidth" :mode="mutableMode"
+        <card class="card iconfont" :class="[devideWidth, {'uncompleted': item.unCompleteCount !== 0}]" :mode="mutableMode"
           v-for="(item, index) in scaleListFomat.subjectScaleList"
           :key="item.id + '' + index" :title="getTitle(item.scaleInfoId)"
           v-on:deleteCurrentCard="deleteScaleRecord(item)"
@@ -414,6 +417,11 @@ export default {
       }
       &.width-1-10 {
         width: calc(~"10% - @{card-horizontal-margin} * 2");
+      }
+      &.uncompleted{
+        background-image: url("~img/uncompleted.png");
+        background-position:100% 100%;
+        background-repeat: no-repeat;
       }
       .text {
         position: absolute;

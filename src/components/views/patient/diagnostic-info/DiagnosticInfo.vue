@@ -2,7 +2,7 @@
   <div class="diagnostic-info-wrapper" ref="diagnosticInfo">
     <folding-panel class="panel" :title="title" :mode="mode" :isCardsPanel="true" :folded-status="foldedStatus"
       v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit" v-on:addNewCard="addRecord"
-      v-on:updateFilterCondition="changeFilterCondition" :editable="canEdit">
+      v-on:updateFilterCondition="changeFilterCondition" v-on:popExportDialog="popDialog" :editable="canEdit">
       <card class="card" :class="cardClass" :mode="mode" v-for="item in patientCaseList" :key="item.patientCaseId"
         :title="item.caseName" :disable-delete="checkIfDisabledToDelete(item)" v-on:editCurrentCard="seeDetail(item)"
         v-on:deleteCurrentCard="deleteRecord(item)"
@@ -25,6 +25,70 @@
         </div>
       </card>
     </folding-panel>
+
+    <el-dialog title="导出模板" :visible.sync="dialogVisible" size="tiny" :modal-append-to-body="false">
+      <div>
+
+        <div class="field whole-line">
+          <span class="field-name">
+            开始时间:
+          </span>
+          <span class="field-input">
+            <el-date-picker
+             v-model="startTime"
+             :class="{'warning': warningResults.startTime}"
+             type="date"
+             placeholder="选择日期"
+             :picker-options="pickerOptions"
+             @change="updateWarning('startTime')">
+            </el-date-picker>
+            <span class="warning-text">{{warningResults.startTime}}</span>
+          </span>
+        </div>
+
+        <div class="field whole-line">
+          <span class="field-name">
+            结束时间:
+          </span>
+          <span class="field-input">
+            <el-date-picker
+             v-model="endTime"
+             :class="{'warning': warningResults.endTime}"
+             type="date"
+             placeholder="选择日期"
+             :picker-options="pickerOptions"
+             @change="updateWarning('endTime')">
+            </el-date-picker>
+            <span class="warning-text">{{warningResults.endTime}}</span>
+          </span>
+        </div>
+
+        <div class="field whole-line">
+          <span class="field-name">
+            选择导出模板:
+          </span>
+          <span class="field-input">
+            <el-select v-model="templateId" placeholder="请选择导出模板" clearable
+             :class="{'warning': warningResults.templateId}"
+             @change="updateWarning('templateId')">
+              <el-option
+               v-for="(item,index) in exportTemp"
+               :key="item.templateId"
+               :label="item.templateName"
+               :value="item.templateId">
+              </el-option>
+            </el-select>
+            <span class="warning-text">{{warningResults.templateId}}</span>
+          </span>
+        </div>
+
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="canel">取 消</el-button>
+        <el-button type="primary" @click="submitTemp">确 定</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -32,7 +96,9 @@
 import FoldingPanel from 'public/folding-panel/FoldingPanel';
 import Card from 'public/card/Card';
 import Bus from 'utils/bus.js';
-import { deleteDiagnosticInfo } from 'api/patient.js';
+import { deleteDiagnosticInfo, queryExportTemplate } from 'api/patient.js';
+import { baseUrl } from 'api/common.js';
+import Util from 'utils/util.js';
 
 export default {
   props: {
@@ -49,6 +115,22 @@ export default {
   },
   data() {
     return {
+      dialogVisible: false,
+      exportTemp: [],
+      templateId: '',
+      startTime: '',
+      endTime: '',
+      warningResults: {
+        templateId: '',
+        startTime: '',
+        endTime: ''
+      },
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        }
+      },
+
       mode: this.READING_MODE,
       devideWidth: '',
       filterCondition: this.FILTER_ALL,
@@ -85,8 +167,12 @@ export default {
         // 如果是北京医院的实验流程，这里的可编辑状态不受 listType 的影响
         return true;
 
-      } else if ((this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_OUT || this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_FILTERING) && this.listType === this.MY_PATIENTS_TYPE) {
+      } else if ((this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_OUT) && this.listType === this.MY_PATIENTS_TYPE) {
         // 如果患者不处于实验期，只有所属医生在“我的患者”下才能 添加／删除 诊断卡片
+        return true;
+
+      } else if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_FILTERING && this.hospitalType !== -1) {
+        // 如果患者处于入组阶段，只有所属医生才能在课题中 添加／删除 诊断卡片
         return true;
 
       } else if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_SCREENING && this.listType === this.APPRAISERS_PATIENTS_TYPE) {
@@ -235,26 +321,35 @@ export default {
         return true;
       }
 
+      // 判读当前角色是否为患者的所属医生
       var createdByCurrentUser = item.createUser === sessionStorage.getItem('userName');
 
       var diagnosticExperimentStep = item.status !== undefined ? Number(item.status) : this.EXPERIMENT_STEP_OUT;
       var diagnosticExperimentStage = item.stage !== undefined ? Number(item.stage) : this.EXPERIMENT_STEP_OUT;
       if (this.patientCurrentExperimentStep !== this.EXPERIMENT_STEP_OUT) {
+        // console.log(this.patientCurrentExperimentStep, diagnosticExperimentStep, this.patientCurrentExperimentStage, diagnosticExperimentStage);
         // 如果该患者正处在实验期，则只有当患者所处实验阶段和诊断记录的实验阶段相同，
         // 而且该诊断的创建人和当前登录账号一致时，该阶段的特定的角色才能删除该诊断卡片
         if (this.patientCurrentExperimentStep === diagnosticExperimentStep &&
           this.patientCurrentExperimentStage === diagnosticExperimentStage &&
           createdByCurrentUser) {
-          if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_SCREENING &&
-            this.listType === this.APPRAISERS_PATIENTS_TYPE) {
-            return false;
-          } else if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_THERAPY &&
-            this.listType === this.THERAPISTS_PATIENTS_TYPE) {
-            return false;
-          } else if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_FOLLOW_UP &&
-            this.listType === this.APPRAISERS_PATIENTS_TYPE) {
+          if (this.hospitalType === 1) {
+            if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_SCREENING &&
+              this.listType === this.APPRAISERS_PATIENTS_TYPE) {
+              return false;
+            } else if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_THERAPY &&
+              this.listType === this.THERAPISTS_PATIENTS_TYPE) {
+              return false;
+            } else if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_FOLLOW_UP &&
+              this.listType === this.APPRAISERS_PATIENTS_TYPE) {
+              return false;
+            }
+          } else if (this.hospitalType === 2) {
             return false;
           }
+        } else if (this.patientCurrentExperimentStep === diagnosticExperimentStep && this.patientCurrentExperimentStep === 10 && createdByCurrentUser) {
+          // 如果该患者处于筛选期入组阶段 则该诊断创建人可以删除该诊断卡片
+          return false;
         }
         if (this.patientCurrentExperimentStep === this.EXPERIMENT_STEP_COMPLETE &&
           diagnosticExperimentStep === this.EXPERIMENT_STEP_OUT &&
@@ -267,6 +362,12 @@ export default {
       } else {
         // 如果该患者不处于实验期，只有所属医生在“我的患者”里面可以对非实验期添加的卡片进行删除
         if (diagnosticExperimentStep === this.EXPERIMENT_STEP_OUT && this.listType === this.MY_PATIENTS_TYPE) {
+          return false;
+        }
+        // 如果该患者处于排除阶段时入组诊断也可以删除
+        // 此处存在问题 在患者处于入组或者排除阶段 queryPatientCaseList 返回的 status 始终为10 无法区分诊断创建阶段
+        // 同时在入组阶段创建的诊断 手动将患者排除后 诊断状态会被处理成排除阶段创建
+        if (this.hospitalType !== -1 && diagnosticExperimentStep === 10) {
           return false;
         }
         return true;
@@ -308,6 +409,64 @@ export default {
     _rejectDeletion() {
       // 即使删除不成功，也要解除 [确认对话框] 的 “确认” 回调函数
       Bus.$off(this.CONFIRM);
+    },
+    canel() {
+      this.templateId = '';
+      this.startTime = '';
+      this.endTime = '';
+      for (let property in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(property)) {
+          this.$nextTick(() => {
+            this.$set(this.warningResults, property, '');
+          });
+        }
+      }
+      this.dialogVisible = false;
+    },
+    submitTemp() {
+      for (let property in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(property)) {
+          this.updateWarning(property);
+        }
+      }
+      for (let property in this.warningResults) {
+        if (this.warningResults.hasOwnProperty(property) && this.warningResults[property]) {
+          return;
+        }
+      }
+
+      var userId = sessionStorage.getItem('userId');
+      var accountNumber = sessionStorage.getItem('accountNumber');
+      var userType = sessionStorage.getItem('userType');
+      var orgId = sessionStorage.getItem('orgId');
+      var orgType = sessionStorage.getItem('orgType');
+      var templateId = this.templateId;
+
+      var patientId = this.$route.params.id;
+      var startTime = Util.simplifyDate(this.startTime);
+      var endTime = Util.simplifyDate(this.endTime);
+
+      var url = baseUrl + '/export/patientTemplateExport' + '?userId=' + userId +
+        '&accountNumber=' + accountNumber + '&userType=' + userType + '&orgId=' +
+        orgId + '&orgType=' + orgType + '&templateId=' + templateId + '&startTime=' + startTime + '&endTime=' + endTime + '&patientIds=' + patientId;
+      window.location.href = url;
+      this.canel();
+    },
+    updateWarning(fieldName) {
+      if (!this[fieldName]) {
+        this.$set(this.warningResults, fieldName, '必填项');
+      } else {
+        this.$set(this.warningResults, fieldName, '');
+      }
+    },
+    queryTemp() {
+      queryExportTemplate().then((res) => {
+        this.exportTemp = res;
+      });;
+    },
+    popDialog() {
+      this.queryTemp();
+      this.dialogVisible = true;
     }
   },
   components: {
@@ -338,6 +497,10 @@ export default {
 <style lang="less">
 @import "~styles/variables.less";
 @this-card-horizontal-margin: 5px;
+
+@field-line-height: 25px;
+@field-name-width: 110px;
+@long-field-name-width: 160px;
 
 .diagnostic-info-wrapper {
   background-color: @screen-color;
@@ -446,6 +609,94 @@ export default {
         font-size: @normal-font-size;
         font-weight: bold;
         color: @theme-color;
+      }
+    }
+  }
+  .v-modal {
+    background-color: rgba(110, 132, 159, 1);
+  }
+  .el-dialog__wrapper {
+    text-align: left;
+    .field {
+      display: inline-block;
+      position: relative;
+      width: 50%;
+      min-height: 45px;
+      line-height: @field-line-height;
+      box-sizing: border-box;
+      text-align: left;
+      vertical-align: top;
+      transform: translate3d(10px, 5px, 0); // 这一行是为了修补视觉上的偏移
+      &.whole-line {
+        width: 100%;
+        .field-input {
+          width: calc(~"96% - @{field-name-width}");
+        }
+      }
+      .field-name {
+        display: inline-block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: @field-name-width;
+        line-height: @field-line-height;
+        font-size: @normal-font-size;
+        color: @font-color;
+        // &.long-field-name {
+        //   width: @long-field-name-width;
+        // }
+        .required-mark {
+          color: red;
+          font-size: 20px;
+          vertical-align: middle;
+        }
+      }
+      .field-input {
+        display: inline-block;
+        position: relative;
+        left: @field-name-width;
+        width: calc(~"92% - @{field-name-width}");
+        line-height: @field-line-height;
+        font-size: @normal-font-size;
+        color: @light-font-color;
+        // &.long-field-name {
+        //   left: @long-field-name-width;
+        // }
+        .warning-text {
+          position: absolute;
+          top: 22px;
+          left: 10px;
+          height: 15px;
+          color: red;
+          font-size: @small-font-size;
+        }
+        .el-input {
+          transform: translateY(-3px);
+          .el-input__inner {
+            height: 30px;
+            border: none;
+            background-color: @screen-color;
+          }
+        }
+        .el-textarea {
+          margin-bottom: 10px;
+          vertical-align: middle;
+          transform: translateY(-3px);
+          .el-textarea__inner {
+            border: none;
+            background-color: @screen-color;
+          }
+        }
+        .el-select {
+          width: 100%;
+        }
+        .el-date-editor {
+          width: 100%;
+        }
+        .warning .el-input__inner,
+        .warning .el-textarea__inner {
+          border: 1px solid red;
+        }
       }
     }
   }

@@ -477,7 +477,7 @@ export default {
       });
     },
     diagnosisDuringExperiment() {
-      return [this.EXPERIMENT_STEP_SCREENING, this.EXPERIMENT_STEP_THERAPY,
+      return [this.EXPERIMENT_STEP_FILTERING, this.EXPERIMENT_STEP_SCREENING, this.EXPERIMENT_STEP_THERAPY,
         this.EXPERIMENT_STEP_FOLLOW_UP].indexOf(this.diagnosticExperimentStep) >= 0;
     },
     showMedicinePanel() {

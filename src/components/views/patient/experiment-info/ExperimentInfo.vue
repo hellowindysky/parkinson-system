@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="experiment-info">
+  <div class="experiment-info" v-loading="loading" element-loading-text="加载中">
     <div class="top-bar">
       <span class="title">实验流程</span>
       <span v-if="showExperimentInfo" class="info-text">
@@ -90,7 +90,7 @@ import { queryExperimentProgress, startExperiment, completeFollowUp } from 'api/
 export default {
   data() {
     return {
-      subjectIdForOngoingExperiment: '',
+      subjectIdForOngoingExperiment: '', // 患者当前进行中的实验所处课题ID
       progressList: [],
       status: '',
       milestoneNum: '',
@@ -98,7 +98,8 @@ export default {
       therapist: '',
       appraiser: '',
       doctor: '',
-      currentStage: '' // 当前患者所处随访期阶段 处于随访期中才会存在此字段
+      currentStage: '', // 当前患者所处随访期阶段 处于随访期中才会存在此字段
+      loading: false // Loading遮罩
     };
   },
   computed: {
@@ -168,6 +169,7 @@ export default {
       }
     },
     startExperiment() {
+      this.loading = true;
       var patientExperimentModel = {
         'patientId': this.$route.params.id,
         'tcTaskId': this.$store.state.subjectId
@@ -177,10 +179,12 @@ export default {
       };
       startExperiment(experimentInfo, this.hospitalType).then(() => {
         this.updateExperimentProgress();
+        this.loading = false;
         Bus.$off(this.CONFIRM);
 
       }, (error) => {
         console.log(error);
+        this.loading = false;
         Bus.$off(this.CONFIRM);
       });
     },
@@ -206,6 +210,7 @@ export default {
     },
     completeFollowUp() {
       if (this.hospitalType === 2) {
+        this.loading = true;
         Bus.$on(this.CONFIRM, () => {
           Bus.$off(this.CONFIRM);
 
@@ -218,9 +223,10 @@ export default {
 
           completeFollowUp(experimentInfo, this.hospitalType).then(() => {
             this.updateExperimentProgress();
-
+            this.loading = false;
           }, (error) => {
             console.log(error);
+            this.loading = false;
           });
         });
 

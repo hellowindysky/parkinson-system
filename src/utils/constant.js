@@ -49,6 +49,7 @@ export default {
   EDIT: 'edit',
   CANCEL: 'cancel',
   SUBMIT: 'submit',
+  POPEXPORTDIALOG: 'popExportDialog',
 
   GIVE_UP: 'giveUpDecision',
   CONFIRM: 'confirmDecision',

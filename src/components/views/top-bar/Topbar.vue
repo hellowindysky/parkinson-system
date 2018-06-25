@@ -11,7 +11,8 @@
         <span class="text right" @click="switchBlockSensitiveStatus(false)">全部显示</span>
       </div>
       <div class="operation-wrapper">
-        <a class="iconfont icon-question" target="_blank" href="https://shimo.im/doc/gu8wxBjX9U8GMiy2?r=ZY24LK//"></a>
+        <!-- <a class="iconfont icon-question" target="_blank" href="https://shimo.im/docs/kkrtBy4AuA0v24t5/"></a> -->
+        <a class="iconfont icon-question" target="_blank" href="/static/files/欢迎使用睿云2.3-PC端.pdf"></a>
         <span class="iconfont icon-search" :class="{'on': showFilterPanel}" @click="toggleFilterPanelDisplay"></span>
         <span class="iconfont icon-notice" v-show="false"></span>
         <span class="iconfont icon-task" v-show="false"></span>
@@ -47,6 +48,8 @@
       <div class="seperate-line" v-if="allowAuthorization"></div>
       <p class="operate-item" v-if="isSupportAccount" @click="reselectDoctor">更换授权医生</p>
       <div class="seperate-line" v-if="isSupportAccount"></div>
+      <p class="operate-item" @click="setPrintTemp" v-if="isShowPrintTemplate">导出模板设置</p>
+      <div class="seperate-line"></div>
       <p class="operate-item" @click="resetPassword">修改密码</p>
       <div class="seperate-line"></div>
       <p class="operate-item" @click="logout">退出登录</p>
@@ -57,6 +60,7 @@
 <script>
 import Bus from 'utils/bus.js';
 import { getAuthenticationList } from 'api/user.js';
+import { queryExportUsername } from 'api/patient.js';
 
 const WAITING_TO_CHANGE = 'waitingToChange';
 const NEED_TO_QUERY_AGAIN = 'needToQueryAgain';
@@ -72,7 +76,8 @@ export default {
       showOranizationPanel: false,
       showAccountPanel: false,
       blockSensitiveInfo: true,
-      technicalSupportAccountInfo: null
+      technicalSupportAccountInfo: null,
+      isShowPrintTemplate: false
     };
   },
   computed: {
@@ -242,6 +247,9 @@ export default {
       let message = '更换操作需要先退出当前医生的授权管理页，退出后需要医生重新进行手机验证才能登录，是否继续？';
       Bus.$emit(this.REQUEST_CONFIRMATION, '确认提醒', message, '确定');
     },
+    setPrintTemp() {
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'printTemplateModal');
+    },
     resetPassword() {
       Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'passwordModal', this.SHOW_PASSWORD_MODAL);
       // Bus.$emit(this.SHOW_PASSWORD_MODAL);
@@ -254,6 +262,19 @@ export default {
       });
       let message = '即将退出当前账号，是否继续？';
       Bus.$emit(this.REQUEST_CONFIRMATION, '提醒', message, '确定退出');
+    },
+    /**
+     * 判断是否有权限查看导出模版设置
+     */
+    showPrintTemplate() {
+      var userName = sessionStorage.getItem('userName');
+      queryExportUsername().then((res) => {
+        let specialUserList = res.split(',');
+        // console.log(userName, specialUserList);
+        if (specialUserList.indexOf(userName) >= 0) {
+          this.isShowPrintTemplate = true;
+        }
+      });
     }
   },
   mounted() {
@@ -262,8 +283,10 @@ export default {
     this.$store.dispatch('getWholeDictionary');
     this.$store.dispatch('getWholeTemplate');
     this.$store.dispatch('getScaleList');
+    this.$store.dispatch('getExportFields');
 
     this.updateAuthorizedStatus();
+    this.showPrintTemplate();
 
     var commonRequest = JSON.parse(sessionStorage.getItem('commonRequest'));
     this.blockSensitiveInfo = commonRequest.viewType !== 1;
@@ -474,7 +497,7 @@ export default {
     top: @header-height;
     left: 0;
     padding: 10px 0;
-    width: 500px;
+    width: 700px;
     background-color: rgba(24,34,48,0.95);
     color: #fff;
     font-size: 0;
@@ -487,10 +510,10 @@ export default {
     .item {
       display: block;
       margin: 5px 0;
-      padding-left: 30px;
+      padding: 7px 10px 7px 30px;
       width: 100%;
-      height: 40px;
-      line-height: 40px;
+      height: auto;
+      line-height: 22px;
       box-sizing: border-box;
       text-align: left;
       font-size: @normal-font-size;
@@ -509,9 +532,9 @@ export default {
       }
     }
     .sub-item {
-      padding-left: 50px;
-      height: 35px;
-      line-height: 35px;
+      height: auto;
+      padding: 7px 10px 7px 50px;
+      line-height: 20px;
     }
     .seperate-line {
       margin: 5px 30px;

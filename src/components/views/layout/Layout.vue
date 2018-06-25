@@ -12,8 +12,14 @@
     <choice-panel></choice-panel>
     <confirm-box></confirm-box>
     <notice-box></notice-box>
-
+    <!-- <print-template-modal></print-template-modal> -->
     <water-mark></water-mark>
+
+    <!-- 数据字典版本信息 -->
+    <div class="version-box">
+      <span v-if="version">当前数据版本：{{version}}</span>
+      <span v-if="updateTime">最后更新日期：{{updateTime}}</span>
+    </div>
   </div>
 </template>
 
@@ -66,6 +72,7 @@ const endExperimentModal = () => import(/* webpackChunkName: 'experimentModal' *
 const subjectCirculationModal = () => import(/* webpackChunkName: 'experimentModal' */ 'modal/subject-circulation-modal/SubjectCirculationModal');
 
 const filterPanel = () => import(/* webpackChunkName: 'filterPanel' */ 'public/filter-panel/FilterPanel');
+const printTemplateModal = () => import(/* webpackChunkName: 'printTemplateModal' */ 'modal/print-template-modal/printTemplateModal');
 
 import authorizationModal from 'modal/authorization-modal/AuthorizationModal';
 import choicePanel from 'public/choice-panel/ChoicePanel';
@@ -130,10 +137,17 @@ export default {
     choicePanel,
     confirmBox,
     noticeBox,
+    printTemplateModal,
 
     waterMark
   },
   computed: {
+    version() {
+      return this.$store.state.dictionary.all.version;
+    },
+    updateTime() {
+      return this.$store.state.dictionary.all.lastest;
+    },
     isSupportAccount() {
       // 1 患者 2 医生 3 管理员 4 医院管理员 5 技术支持人员
       var userType = parseInt(sessionStorage.getItem('userType'), 10);
@@ -267,6 +281,17 @@ export default {
     top: @header-height + @header-margin-bottom;
     width: calc(~"100% - @{sidebar-width}");
     height: calc(~"100% - @{header-height} - @{header-margin-bottom}");
+  }
+  .version-box {
+    position: absolute;
+    bottom: 5px;
+    right: 15px;
+    text-align: right;
+    color: #999;
+    z-index: 200;
+    span {
+      padding-left: 20px;
+    }
   }
 }
 </style>

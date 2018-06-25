@@ -20,7 +20,7 @@
             <el-date-picker v-else
               v-model="copyInfo.preopsTime"
               :editable="false"
-              @change="checkWarning(['preopsTime'], 'preopsTime')"
+              @change="checkWarning(['preopsTime'], 'preopsTime'); getScaleData();"
               :class="{'warning': warningResults['preopsTime']}"
               placeholder="请输入术前评估时间"
               :picker-options="pickerOptions">
@@ -546,7 +546,9 @@ import {
   getPatientSimpleInfo,
   getPreEvaluation,
   addPreEvaluation,
-  modifyPreEvaluation
+  modifyPreEvaluation,
+  getEvaluationPreopsScale,
+  getEvaluationMdsScale
 } from 'api/patient.js';
 
 // 本组件没有采用 template 动态生成模版，而是根据一个固定模版来绑定数据
@@ -955,6 +957,20 @@ export default {
     },
     initCopyInfo() {
       this.copyInfo = {};
+      // 动态获取typegroup中的量表列表 覆盖原有的固定列表
+      dataModel.preopsNonMotorDTO.patientPreopsScaleList = [];
+      let typesInfo = Util.getElement('typegroupcode', 'nmScale', this.typeGroup);
+      console.log(typesInfo);
+      for (let i = 0; i < typesInfo.types.length; i++) {
+        let item = {
+          'ariseTime': '',
+          'scaleInfo': typesInfo.types[i].typeCode,
+          'scaleScore': '',
+          'scaleType': 3,
+          'remarks': ''
+        };
+        dataModel.preopsNonMotorDTO.patientPreopsScaleList.push(item);
+      }
       vueCopy(dataModel, this.copyInfo);
     },
     updateScrollbar() {
@@ -1073,6 +1089,61 @@ export default {
         type: 'warning',
         duration: 2000
       });
+    },
+    // 获取和评估时间同一天的量表数据 自动填入
+    getScaleData() {
+      Bus.$on(this.CONFIRM, () => {
+        let params = {
+          patientId: Number(this.$route.params.id),
+          patientCaseId: this.$route.params.caseId,
+          checkTime: Util.simplifyDate(this.copyInfo.preopsTime)
+        };
+        getEvaluationPreopsScale(params).then((data) => {
+          if (!data) {
+            this.$notify({
+              title: '提示',
+              message: '没有符合条件的非运动症状评估量表数据',
+              type: 'warning'
+            });
+          } else {
+            let patientPreopsScaleList = this.copyInfo.preopsNonMotorDTO.patientPreopsScaleList;
+            for (let i in data) {
+              for (let j = 0; j < patientPreopsScaleList.length; j++) {
+                if (i === String(patientPreopsScaleList[j].scaleInfo)) {
+                  patientPreopsScaleList[j].scaleScore = data[i];
+                }
+              }
+            }
+            this.$notify({
+              title: '成功',
+              message: '导入非运动症状评估量表数据成功',
+              type: 'success'
+            });
+          }
+        });
+        getEvaluationMdsScale(params).then((data) => {
+          if (!data) {
+            this.$notify({
+              title: '提示',
+              message: '没有符合条件的运动症状评估量表数据',
+              type: 'warning'
+            });
+          } else {
+            let preopsMotorScaleList = this.copyInfo.preopsMotorDTO.preopsMotorScaleList;
+            preopsMotorScaleList[0].scaleScoreBefore = data['1'];
+            preopsMotorScaleList[0].scaleScoreAfter = data['2'];
+            this.updateMotorScaleMedImproveRatio();
+            this.$notify({
+              title: '成功',
+              message: '导入运动症状评估量表数据成功',
+              type: 'success'
+            });
+          }
+        });
+        Bus.$off(this.CONFIRM);
+      });
+
+      Bus.$emit(this.REQUEST_CONFIRMATION, '提示', '是否导入评估日期相关量表得分？此操作会覆盖已有量表得分数据！', '是', '否');
     },
     getRealName(code, typeGroupCode) {
       var typesInfo = Util.getElement('typegroupcode', typeGroupCode, this.typeGroup);
@@ -1371,6 +1442,7 @@ export default {
         var scoreAfter = scale.scaleScoreAfter;
         if (scoreBefore === undefined || scoreBefore === '' || scoreBefore === 0 || isNaN(scoreBefore) ||
         scoreAfter === undefined || scoreAfter === '' || isNaN(scoreAfter)) {
+          scale.medImproveRatio = '';
           return;
         } else {
           var medImproveRatio = (Number(scoreBefore) - Number(scoreAfter) * 1.0) / Number(scoreBefore);

@@ -161,9 +161,9 @@ export default {
         }
       };
 
-      // 随访期开始阶段的status 默认值为2
+      // 省人医随访期开始阶段的status 默认值为1
       if (this.nextStep === 40) {
-        experimentInfo.patientExperimentModel.statusDetail = 2;
+        experimentInfo.patientExperimentModel.statusDetail = 1;
       }
 
       completeExperiment(experimentInfo, this.hospitalType).then(this.updateAndClose, this._handleError);

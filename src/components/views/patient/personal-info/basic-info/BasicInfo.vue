@@ -518,6 +518,15 @@ export default {
           return;
         }
 
+        if (fieldName === 'phone' && copyFieldValue === this.copyInfo['phone2']) {
+          this.$set(this.warningResults, fieldName, '不能和次要联系电话相同');
+          return;
+        }
+        if (fieldName === 'phone2' && copyFieldValue === this.copyInfo['phone']) {
+          this.$set(this.warningResults, fieldName, '不能和联系电话相同');
+          return;
+        }
+
       } else if (copyFieldValue !== '' && ['yearsOfEducation'].indexOf(fieldName) >= 0) {
         if (!Util.checkIfNonNegativeInteger(copyFieldValue)) {
           this.$set(this.warningResults, fieldName, '只能填入非负整数');

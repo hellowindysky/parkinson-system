@@ -3,12 +3,13 @@
 
 import Vue from 'vue';
 import ElementUI from 'element-ui';
+import { Popover } from 'element-ui';
 import axios from 'axios';
 
 import 'normalize.css';  // 引入normalize.css
 // import 'element-ui/lib/theme-default/index.css';  // 放弃默认的element-theme
 import 'styles/element-theme/index.css';  // 改用自定义配置生成的css
-// import 'styles/iconfont/iconfont.css';  // 加入自定义图标字体（引入线上 iconfont 之后，就不需要这一行了）
+import 'styles/iconfont/iconfont.css';  // 加入自定义图标字体（引入线上 iconfont 之后，就不需要这一行了）
 
 import 'es6-promise/auto'; // 为了兼容 IE 11，引入对 promise 的支持，否则 Vuex 会报错
 
@@ -33,6 +34,7 @@ router.afterEach(() => {
 Vue.config.productionTip = false;
 
 Vue.use(ElementUI);
+Vue.use(Popover);
 
 /* eslint-disable no-new */
 new Vue({
