@@ -6,9 +6,9 @@
         <div class="field" v-for="field in group" :class="checkIfWholeLine(field)">
           <span class="field-name">
             {{field.cnfieldName}}
-            <span class="required-mark" v-show="field.must===1">*</span>
-            <span class="required-mark" v-show="field.fieldName === 'cardId'">*</span>
-            <span class="required-mark" v-show="field.fieldName === 'phone'">*</span>
+            <span class="required-mark" v-show="field.must===1 || field.fieldName === 'cardId' ||field.fieldName === 'phone'">*</span>
+            <!-- <span class="required-mark" v-show="field.fieldName === 'cardId'">*</span>
+            <span class="required-mark" v-show="field.fieldName === 'phone'">*</span> -->
           </span>
 
           <div class="field-value" v-show="mode===READING_MODE">
