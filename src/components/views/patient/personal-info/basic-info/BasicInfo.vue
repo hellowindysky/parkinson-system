@@ -7,6 +7,8 @@
           <span class="field-name">
             {{field.cnfieldName}}
             <span class="required-mark" v-show="field.must===1">*</span>
+            <span class="required-mark" v-show="field.fieldName === 'cardId'">*</span>
+            <span class="required-mark" v-show="field.fieldName === 'phone'">*</span>
           </span>
 
           <div class="field-value" v-show="mode===READING_MODE">
@@ -433,7 +435,7 @@ export default {
 
         let result = Util.checkId(copyFieldValue).split(',');
         if (copyFieldValue === '' || copyFieldValue === undefined || result[0] === '港澳台身份证') {
-          this.$set(this.warningResults, fieldName, null);
+          this.$set(this.warningResults, fieldName, '必填项');
           return;
         } else if (result.length <= 1) {
           // 下面这句 if 是为了提升体验，在第一次输入且还没输完的时候，避免显示“非法身份证”的警告文字
@@ -490,6 +492,9 @@ export default {
         this.$set(this.warningResults, fieldName, '必填项');
         return;
 
+      } else if (field.fieldName === 'phone' && !copyFieldValue && copyFieldValue !== 0) {
+        this.$set(this.warningResults, fieldName, '必填项');
+        return;
       } else if (field.must === 2 && (copyFieldValue === '' || copyFieldValue === undefined)) {
         this.$set(this.warningResults, fieldName, null);
         return;
