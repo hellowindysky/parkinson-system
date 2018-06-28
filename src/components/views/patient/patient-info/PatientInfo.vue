@@ -73,7 +73,7 @@
       :display="displayGroupPanel" :patientId="Number(patientId)" @hideGroupPanel="hideGroupPanel"
       @updatePatientGroupInfo="updatePatientGroupInfo"></group-panel>
     <subject-panel class="subject-panel" :class="{'hide': !displaySubjectPanel}" :belongSubjects="belongSubjects"
-      :display="displaySubjectPanel" :patientId="Number(patientId)" @hideSubjectPanel="hideSubjectPanel"
+      :display="displaySubjectPanel" :patientName="patientInfo.patientInfo ? patientInfo.patientInfo.name : ''" :patientId="Number(patientId)" @hideSubjectPanel="hideSubjectPanel"
       @updatePatientSubjectInfo="updatePatientSubjectInfo"></subject-panel>
   </div>
 </template>

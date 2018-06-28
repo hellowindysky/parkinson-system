@@ -29,6 +29,10 @@ export default {
       type: Boolean,
       default: false
     },
+    patientName: {
+      type: String,
+      dafault: ''
+    },
     patientId: {
       type: Number,
       default: ''
@@ -73,16 +77,25 @@ export default {
         patientId: patientId
       };
       if (value) {
-        addPatientToSubject([patientSubject]).then(() => {
-          let listIndex = lockList.indexOf(index);
-          this.$emit(this.UPDATE_PATIENT_SUBJECT_INFO);
-          lockList.splice(listIndex, 1);
-          this.$set(this.subjectSelectedList, index, value);
-        }, (error) => {
-          console.log(error);
+        Bus.$on(this.CONFIRM, () => {
+          addPatientToSubject([patientSubject]).then(() => {
+            let listIndex = lockList.indexOf(index);
+            this.$emit(this.UPDATE_PATIENT_SUBJECT_INFO);
+            lockList.splice(listIndex, 1);
+            this.$set(this.subjectSelectedList, index, value);
+          }, (error) => {
+            console.log(error);
+            let listIndex = lockList.indexOf(index);
+            lockList.splice(listIndex, 1);
+          });
+          Bus.$off(this.CONFIRM);
+        });
+        Bus.$on(this.GIVE_UP, () => {
           let listIndex = lockList.indexOf(index);
           lockList.splice(listIndex, 1);
         });
+        let message = '您正在将【' + this.patientName + '】添加到【' + this.allSubjects[index].taskName + '】中，添加后课题组长将有权限查看该患者的相关数据，是否确认此操作。';
+        Bus.$emit(this.REQUEST_CONFIRMATION, '提示', message);
       } else {
         if (subjectId === this.$store.state.subjectId) {
           Bus.$emit(this.NOTICE, '注意', '在当前课题页面无法移除当前课题，请确定患者不处于实验阶段并在医院入口进行移除操作');
@@ -91,19 +104,24 @@ export default {
           return;
         }
         console.log('remove');
-        removePatientFromSubject([patientSubject]).then(() => {
-          let listIndex = lockList.indexOf(index);
-          this.$emit(this.UPDATE_PATIENT_SUBJECT_INFO);
-          lockList.splice(listIndex, 1);
-          this.$set(this.subjectSelectedList, index, value);
-        }, (error) => {
-          console.log(error);
-          if (error.code === 2010) {
-            Bus.$emit(this.NOTICE, '注意', '患者正在该课题中进行实验，不允许移出课题');
-          }
-          let listIndex = lockList.indexOf(index);
-          lockList.splice(listIndex, 1);
+        Bus.$on(this.CONFIRM, () => {
+          removePatientFromSubject([patientSubject]).then(() => {
+            let listIndex = lockList.indexOf(index);
+            this.$emit(this.UPDATE_PATIENT_SUBJECT_INFO);
+            lockList.splice(listIndex, 1);
+            this.$set(this.subjectSelectedList, index, value);
+          }, (error) => {
+            console.log(error);
+            if (error.code === 2010) {
+              Bus.$emit(this.NOTICE, '注意', '患者正在该课题中进行实验，不允许移出课题');
+            }
+            let listIndex = lockList.indexOf(index);
+            lockList.splice(listIndex, 1);
+          });
+          Bus.$off(this.CONFIRM);
         });
+        let message = '您正在将【' + this.patientName + '】移出【' + this.allSubjects[index].taskName + '】，移出后课题组长将不再拥有权限查看该患者的相关数据，可能会对课题产生影响，是否确认此操作。';
+        Bus.$emit(this.REQUEST_CONFIRMATION, '提示', message);
       }
     }
   },
