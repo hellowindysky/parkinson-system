@@ -105,7 +105,7 @@
           </span>
         </div>
 
-        <div class="field field-brain">
+        <div class="field field-brain" v-show="imageType===9">
           <span class="field-name">
             第三脑室宽:
           </span>
@@ -119,47 +119,65 @@
           </span>
         </div>
 
-        <table class="table">
+        <table class="table" v-show="itemGroups.length > 0" v-for="(group, groupIndex) in itemGroups">
           <thead>
             <tr class="row title-row">
-              <th class="col"></th>
-              <th class="col">左侧</th>
-              <th class="col">右侧</th>
+              <td class="col col-width-10"></td>
+              <td class="col col-width-10" v-if="col.rowSpan>0" v-for="col in group.colItems" :rowspan="col.rowSpan" :colspan="col.colSpan">
+                {{col.fieldName}}
+              </td>
             </tr>
           </thead>
           <tbody>
-            <tr class="row">
-              <td class="col">中脑中线回声连续性</td>
-              <td class="col">
-                <el-select v-model="imageType" placeholder="请选择" @change="updateWarning('imageType')"
-                 :class="{'warning': warningResults.imageType}" clearable>
+            <tr class="row" v-for="row in group.rowItems" v-if="group.colItems.length>0">
+              <td class="col col-width-10">
+                {{row.fieldName}}
+              </td>
+              <td class="col col-width-10" v-for="col in group.colItems">
+                <span v-if="mode===VIEW_CURRENT_CARD && row.uiType===3">
+                  <span v-if="row.fieldEnumId">
+                    {{transform(patientFieldCode[imageType][row.id][col.id].fieldValue, row.fieldEnumId)}}
+                  </span>
+                  <span v-else>
+                    {{transform(patientFieldCode[imageType][row.id][col.id].fieldValue, col.fieldEnumId)}}
+                  </span>
+                </span>
+                <span v-else-if="mode===VIEW_CURRENT_CARD">
+                  {{patientFieldCode[imageType][row.id][col.id].fieldValue}}
+                </span>
+                <el-input v-else-if="row.uiType===1" v-model="patientFieldCode[imageType][row.id][col.id].fieldValue"></el-input>
+                <el-select v-else-if="row.uiType===3 && row.fieldEnumId" v-model="patientFieldCode[imageType][row.id][col.id].fieldValue"
+                  placeholder="">
                   <el-option
-                   v-for="item in getOptions('examType')"
-                   :key="item.code"
-                   :label="item.name"
-                   :value="item.code">
+                    v-for="(option, index) in getOptions(row.fieldEnumId)"
+                    :label="option.name"
+                    :key="'row.fieldEnumId'+ index"
+                    :value="String(option.code)">
                   </el-option>
                 </el-select>
-              </td>
-              <td class="col">
-                <el-select v-model="imageType" placeholder="请选择" @change="updateWarning('imageType')"
-                 :class="{'warning': warningResults.imageType}" clearable>
+                <el-select v-else-if="row.uiType===3" v-model="patientFieldCode[imageType][row.id][col.id].fieldValue"
+                  placeholder="">
                   <el-option
-                   v-for="item in getOptions('examType')"
-                   :key="item.code"
-                   :label="item.name"
-                   :value="item.code">
+                    v-for="(option, index) in getOptions(col.fieldEnumId)"
+                    :label="option.name"
+                    :key="'col.fieldEnumId'+ index"
+                    :value="option.code">
                   </el-option>
                 </el-select>
-              </td>
-            </tr>
-            <tr class="row">
-              <td class="col">中脑回声面积</td>
-              <td class="col">
-                <el-input v-model="checkDevice" placeholder="请输入第三脑室宽"></el-input>
-              </td>
-              <td class="col">
-                <el-input v-model="checkDevice" placeholder="请输入第三脑室宽"></el-input>
+                <el-date-picker
+                  v-else-if="row.uiType===6"
+                  v-model="patientFieldCode[imageType][row.id][col.id].fieldValue"
+                  :picker-options="pickerOptions">
+                </el-date-picker>
+                <el-date-picker
+                  v-else-if="row.uiType===7"
+                  type="datetime"
+                  format="yyyy-MM-dd HH:mm"
+                  v-model="patientFieldCode[imageType][row.id][col.id].fieldValue"
+                  :picker-options="pickerOptions">
+                </el-date-picker>
+                <el-time-select v-else-if="row.uiType===8" v-model="patientFieldCode[imageType][row.id][col.id].fieldValue"
+                  :picker-options="{start:'00:00', end:'24:00'}"></el-time-select>
               </td>
             </tr>
           </tbody>
@@ -192,6 +210,7 @@
 
         <!-- 以下是 MRI 才有的序列 ↓↓↓↓↓↓↓↓ -->
         <div v-show="imageType===2">
+
         <hr class="seperate-line">
         <div class="field-file">
           <span class="field-name">
@@ -228,6 +247,7 @@
             </el-upload>
           </span>
         </div>
+
         <hr class="seperate-line">
         <div class="field-file">
           <span class="field-name">
@@ -264,6 +284,7 @@
             </el-upload>
           </span>
         </div>
+
         <hr class="seperate-line">
         <div class="field-file">
           <span class="field-name">
@@ -300,7 +321,6 @@
             </el-upload>
           </span>
         </div>
-
 
         <hr class="seperate-line">
         <div class="field-file">
@@ -464,7 +484,7 @@ import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
-import { reviseDateFormat, pruneObj } from 'utils/helper.js';
+import { vueCopy, reviseDateFormat, pruneObj } from 'utils/helper.js';
 import { baseUrl, getCommonRequest } from 'api/common.js';
 import { addImage, modifyImage } from 'api/patient.js';
 
@@ -473,6 +493,8 @@ export default {
     return {
       mode: '',
       completeInit: false,
+      hasTable: false,
+      copyItem: {},
 
       id: '',
       name: '',
@@ -490,6 +512,9 @@ export default {
         imageType: '',
         checkDate: ''
       },
+
+      typeGroupCode: 'examType',  // 此字段无特殊用途，后端接口需要
+      patientFieldCode: {},
 
       t1: [],
       t2: [],
@@ -536,7 +561,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'typeGroup'
+      'typeGroup',
+      'typeField'
     ]),
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
@@ -544,10 +570,32 @@ export default {
       } else {
         return '医学影像';
       }
+    },
+    itemGroups() {
+      var items = this.typeField.filter(item => {
+        return Number(item.typeCode) === this.imageType &&
+        item.typeGroupCode === 'examType';
+      });
+      if (items.length === 0) {
+        this.hasTable = false;
+        return [];
+      } else {
+        this.hasTable = true;
+        var groups = this.filterItemsIntoGroups(items);
+        var resultGroups = [];
+        for (let i = 0; i < groups.length; i += 1) {
+          resultGroups.push({});
+          resultGroups[i].rowItems = groups[i].filter(item => item.fieldType === 0);
+          resultGroups[i].colItems = groups[i].filter(item => item.fieldType === 1);
+          resultGroups[i].anotherColItems = groups[i].filter(item => item.fieldType === 2);
+        }
+        return resultGroups;
+      }
     }
   },
   methods: {
     showPanel(cardOperation, item, showEdit) {
+      this.copyItem = item;
       this.completeInit = false;
       this.mode = cardOperation;
       this.showEdit = showEdit;
@@ -709,6 +757,11 @@ export default {
       reviseDateFormat(imageInfo);
       pruneObj(imageInfo);
 
+      if (this.hasTable) {
+        imageInfo.patientFieldCode = this.patientFieldCode;
+        imageInfo.typeGroupCode = this.typeGroupCode;
+      }
+
       imageInfo.t1 = this.newT1;
       imageInfo.t2 = this.newT2;
       imageInfo.t2Flair = this.newT2Flair;
@@ -716,7 +769,7 @@ export default {
       imageInfo.dti = this.newDti;
       imageInfo.fmr = this.newFmr;
       imageInfo.other = this.newOther;
-      console.log(imageInfo);
+      // console.log(imageInfo);
       if (this.mode === this.ADD_NEW_CARD) {
         addImage(imageInfo).then(() => {
           this.updateAndClose();
@@ -871,6 +924,90 @@ export default {
           });
         }
       });
+    },
+    // TCD 动态表格处理
+    transform(typeId, fieldName) {
+      var typeInfo = Util.getElement('typegroupcode', fieldName, this.typeGroup);
+      var types = typeInfo.types ? typeInfo.types : [];
+      console.log(types);
+      var name = Util.getElement('typeCode', parseInt(typeId, 10), types).typeName;
+      return name;
+    },
+    initSubTableData() {
+      this.patientFieldCode = {};
+      // this.$set(this.patientFieldCode, 'patientFieldCode', {});
+
+      for (let type of this.getOptions('examType')) {
+        let typeCode = type.code;
+        let items = this.typeField.filter(item => {
+          return Number(item.typeCode) === typeCode &&
+          item.typeGroupCode === 'examType';
+        });
+        if (items.length > 0) {
+          let groups = this.filterItemsIntoGroups(items);
+          this.initSubTableDataForTypeCode(typeCode, groups);
+        }
+      }
+    },
+    initSubTableDataForTypeCode(typeCode, groups) {
+      this.$set(this.patientFieldCode, typeCode, {});
+
+      // let items = this.typeField.filter(item => {
+      //   return Number(item.typeCode) === typeCode &&
+      //   item.typeGroupCode === 'examType';
+      // });
+      // let groups = this.filterItemsIntoGroups(items);
+      let resultGroups = [];
+      for (let i = 0; i < groups.length; i += 1) {
+        resultGroups.push({});
+        resultGroups[i].rowItems = groups[i].filter(item => item.fieldType === 0);
+        resultGroups[i].colItems = groups[i].filter(item => item.fieldType === 1);
+      }
+
+      for (let group of resultGroups) {
+        for (let rowItem of group.rowItems) {
+          var rowItemCode = rowItem.id;
+          this.$set(this.patientFieldCode[typeCode], rowItemCode, {});
+
+          let colItems = group.colItems;
+          if (colItems.length === 0) {
+            // 特殊情况：如果没有列，则新建一个code为 0 的虚拟列
+            colItems = [{id: 0}];
+          }
+
+          for (let colItem of colItems) {
+            var colItemCode = colItem.id;
+            this.$set(this.patientFieldCode[typeCode][rowItemCode], colItemCode, {});
+
+            this.$set(this.patientFieldCode[typeCode][rowItemCode][colItemCode], 'typeGroupCode', 'examType');
+            this.$set(this.patientFieldCode[typeCode][rowItemCode][colItemCode], 'typeCode', typeCode);
+            this.$set(this.patientFieldCode[typeCode][rowItemCode][colItemCode], 'rowFieldId', rowItemCode);
+            this.$set(this.patientFieldCode[typeCode][rowItemCode][colItemCode], 'columnFieldId', colItemCode);
+            this.$set(this.patientFieldCode[typeCode][rowItemCode][colItemCode], 'fieldValue', '');
+          }
+        }
+      }
+    },
+    filterItemsIntoGroups(items) {
+      // 根据 item 的 groupNo 属性，装到不同的子数组里面，最后返回最外层的数组
+      var groups = [];
+      var hasSameGroupNumberBefore = false;
+
+      for (let item of items) {
+        hasSameGroupNumberBefore = false;
+        for (let i = 0; i < groups.length; i++) {
+          if (groups[i][0].groupNo === item.groupNo) {
+            hasSameGroupNumberBefore = true;
+            groups[i].push(item);
+          }
+        }
+        if (!hasSameGroupNumberBefore) {
+          let newGroup = [];
+          newGroup.push(item);
+          groups.push(newGroup);
+        }
+      }
+      return groups;
     }
   },
   mounted() {
@@ -884,6 +1021,10 @@ export default {
     Bus.$off(this.SHOW_IMG_MODAL);
   },
   watch: {
+    imageType() {
+      this.initSubTableData();
+      vueCopy(this.copyItem.patientFieldCode, this.patientFieldCode);
+    },
     '$route.path'() {
       this.cancel();
     }

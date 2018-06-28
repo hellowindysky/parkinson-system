@@ -209,7 +209,8 @@
                 {{option.optionName}}
             </el-checkbox>
             <!-- 子选项列表 -->
-            <div class="subOptions" v-if="option.options.length > 0" v-show="checkOptionListIsShow(option.scaleOptionId, item.answerIndex, option.answerIndex)">
+            <div class="subOptions" v-if="option.options instanceof Array && option.options.length > 0"
+              v-show="checkOptionListIsShow(option.scaleOptionId, item.answerIndex, option.answerIndex)">
               <el-radio-group v-model="copyInfo.patientOptions[option.answerIndex].scaleOptionId" :style="'padding-left: 20px;'">
                 <el-radio class="question-selection" v-for="(subOption, subOptionIndex) in option.options"
                   :label="subOption.scaleOptionId" :key="subOptionIndex" :disabled="mode===VIEW_CURRENT_CARD">
