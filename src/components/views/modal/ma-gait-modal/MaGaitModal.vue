@@ -704,13 +704,13 @@ export default {
             minScrollbarLength: 40
           });
         }
-        // if (this.$refs.scrollArea) {
-        //   Ps.destroy(this.$refs.scrollArea);
-        //   Ps.initialize(this.$refs.scrollArea, {
-        //     wheelSpeed: 1,
-        //     minScrollbarLength: 40
-        //   });
-        // }
+        if (this.$refs.scrollArea) {
+          Ps.destroy(this.$refs.scrollArea);
+          Ps.initialize(this.$refs.scrollArea, {
+            wheelSpeed: 1,
+            minScrollbarLength: 40
+          });
+        }
       });
     }
   },
