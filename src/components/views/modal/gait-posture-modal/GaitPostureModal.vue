@@ -139,7 +139,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="left"
-                  v-model="item.leftNormal">
+                  v-model="item.leftNormal"
+                  @blur="transformToNumber(item, 'leftNormal')">
                 </el-input>
               </span>
               <span>±</span>
@@ -148,7 +149,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="right"
-                  v-model="item.leftError">
+                  v-model="item.leftError"
+                  @blur="transformToNumber(item, 'leftError')">
                 </el-input>
               </span>
             </td>
@@ -158,7 +160,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="left"
-                  v-model="item.rightNormal">
+                  v-model="item.rightNormal"
+                  @blur="transformToNumber(item, 'rightNormal')">
                 </el-input>
               </span>
               <span>±</span>
@@ -167,7 +170,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="right"
-                  v-model="item.rightError">
+                  v-model="item.rightError"
+                  @blur="transformToNumber(item, 'rightError')">
                 </el-input>
               </span>
             </td>
@@ -177,7 +181,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="left"
-                  v-model="item.dataNormal">
+                  v-model="item.dataNormal"
+                  @blur="transformToNumber(item, 'dataNormal')">
                 </el-input>
               </span>
               <span>±</span>
@@ -186,7 +191,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="right"
-                  v-model="item.dataError">
+                  v-model="item.dataError"
+                  @blur="transformToNumber(item, 'dataError')">
                 </el-input>
               </span>
             </td>
@@ -207,7 +213,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="left"
-                  v-model="item.leftNormal">
+                  v-model="item.leftNormal"
+                  @blur="transformToNumber(item, 'leftNormal')">
                 </el-input>
               </span>
               <span>±</span>
@@ -216,7 +223,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="right"
-                  v-model="item.leftError">
+                  v-model="item.leftError"
+                  @blur="transformToNumber(item, 'leftError')">
                 </el-input>
               </span>
             </td>
@@ -226,7 +234,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="left"
-                  v-model="item.rightNormal">
+                  v-model="item.rightNormal"
+                  @blur="transformToNumber(item, 'rightNormal')">
                 </el-input>
               </span>
               <span>±</span>
@@ -235,7 +244,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="right"
-                  v-model="item.rightError">
+                  v-model="item.rightError"
+                  @blur="transformToNumber(item, 'rightError')">
                 </el-input>
               </span>
             </td>
@@ -245,7 +255,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="left"
-                  v-model="item.dataNormal">
+                  v-model="item.dataNormal"
+                  @blur="transformToNumber(item, 'dataNormal')">
                 </el-input>
               </span>
               <span>±</span>
@@ -254,7 +265,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="right"
-                  v-model="item.dataError">
+                  v-model="item.dataError"
+                  @blur="transformToNumber(item, 'dataError')">
                 </el-input>
               </span>
             </td>
@@ -275,7 +287,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="left"
-                  v-model="item.leftNormal">
+                  v-model="item.leftNormal"
+                  @blur="transformToNumber(item, 'leftNormal')">
                 </el-input>
               </span>
               <span>±</span>
@@ -284,7 +297,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="right"
-                  v-model="item.leftError">
+                  v-model="item.leftError"
+                  @blur="transformToNumber(item, 'leftError')">
                 </el-input>
               </span>
             </td>
@@ -294,7 +308,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="left"
-                  v-model="item.rightNormal">
+                  v-model="item.rightNormal"
+                  @blur="transformToNumber(item, 'rightNormal')">
                 </el-input>
               </span>
               <span>±</span>
@@ -303,7 +318,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="right"
-                  v-model="item.rightError">
+                  v-model="item.rightError"
+                  @blur="transformToNumber(item, 'rightError')">
                 </el-input>
               </span>
             </td>
@@ -328,7 +344,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="left"
-                  v-model="item.leftNormal">
+                  v-model="item.leftNormal"
+                  @blur="transformToNumber(item, 'leftNormal')">
                 </el-input>
               </span>
               <span>±</span>
@@ -337,7 +354,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="right"
-                  v-model="item.leftError">
+                  v-model="item.leftError"
+                  @blur="transformToNumber(item, 'leftError')"
                 </el-input>
               </span>
             </td>
@@ -348,7 +366,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="left"
-                  v-model="item.rightNormal">
+                  v-model="item.rightNormal"
+                  @blur="transformToNumber(item, 'rightNormal')">
                 </el-input>
               </span>
               <span>±</span>
@@ -357,7 +376,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="right"
-                  v-model="item.rightError">
+                  v-model="item.rightError"
+                  @blur="transformToNumber(item, 'rightError')">
                 </el-input>
               </span>
             </td>
@@ -382,7 +402,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="left"
-                  v-model="item.leftNormal">
+                  v-model="item.leftNormal"
+                  @blur="transformToNumber(item, 'leftNormal')">
                 </el-input>
               </span>
               <span>±</span>
@@ -391,7 +412,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="right"
-                  v-model="item.leftError">
+                  v-model="item.leftError"
+                  @blur="transformToNumber(item, 'leftError')">
                 </el-input>
               </span>
             </td>
@@ -402,7 +424,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="left"
-                  v-model="item.rightNormal">
+                  v-model="item.rightNormal"
+                  @blur="transformToNumber(item, 'rightNormal')">
                 </el-input>
               </span>
               <span>±</span>
@@ -411,7 +434,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="right"
-                  v-model="item.rightError">
+                  v-model="item.rightError"
+                  @blur="transformToNumber(item, 'rightError')">
                 </el-input>
               </span>
             </td>
@@ -436,7 +460,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="left"
-                  v-model="item.leftNormal">
+                  v-model="item.leftNormal"
+                  @blur="transformToNumber(item, 'leftNormal')">
                 </el-input>
               </span>
               <span>±</span>
@@ -445,7 +470,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="right"
-                  v-model="item.leftError">
+                  v-model="item.leftError"
+                  @blur="transformToNumber(item, 'leftError')">
                 </el-input>
               </span>
             </td>
@@ -456,7 +482,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="left"
-                  v-model="item.rightNormal">
+                  v-model="item.rightNormal"
+                  @blur="transformToNumber(item, 'rightNormal')">
                 </el-input>
               </span>
               <span>±</span>
@@ -465,7 +492,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="right"
-                  v-model="item.rightError">
+                  v-model="item.rightError"
+                  @blur="transformToNumber(item, 'rightError')">
                 </el-input>
               </span>
             </td>
@@ -491,7 +519,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="left"
-                  v-model="item.leftNormal">
+                  v-model="item.leftNormal"
+                  @blur="transformToNumber(item, 'leftNormal')">
                 </el-input>
               </span>
               <span>±</span>
@@ -500,7 +529,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="right"
-                  v-model="item.leftError">
+                  v-model="item.leftError"
+                  @blur="transformToNumber(item, 'leftError')">
                 </el-input>
               </span>
             </td>
@@ -511,7 +541,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="left"
-                  v-model="item.rightNormal">
+                  v-model="item.rightNormal"
+                  @blur="transformToNumber(item, 'rightNormal')">
                 </el-input>
               </span>
               <span>±</span>
@@ -823,11 +854,15 @@ export default {
       var name = Util.getElement('typeCode', parseInt(typeId, 10), types).typeName;
       return name;
     },
-    // transform(code, fieldName) {
-    //   var options = this.getOptions(fieldName);
-    //   var targetOption = Util.getElement('code', code, options);
-    //   return targetOption.name;
-    // },
+    transformToNumber(obj, property, decimalDigits) {
+      var value = parseFloat(obj[property]);
+      if (obj[property] !== '' && obj[property] !== value) {
+        obj[property] = isNaN(value) ? '' : value;
+      }
+      if (decimalDigits !== undefined && obj[property] !== '') {
+        obj[property] = Number(obj[property].toFixed(decimalDigits));
+      }
+    },
     updateWarning(fieldName) {
       if (this.copyInfo[fieldName] === undefined || this.copyInfo[fieldName] === '') {
         this.$set(this.warningResults, fieldName, '必填项');

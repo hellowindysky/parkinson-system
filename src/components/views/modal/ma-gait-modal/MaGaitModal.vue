@@ -121,7 +121,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="left"
-                  v-model="item.leftNormal">
+                  v-model="item.leftNormal"
+                  @blur="transformToNumber(item, 'leftNormal')">
               </el-input>
               </span>
               <span>±</span>
@@ -131,7 +132,8 @@
               <span class="field-input" v-else>
                 <el-input class="right"
                   v-model="item.leftError"
-                ></el-input>
+                  @blur="transformToNumber(item, 'leftError')">
+                </el-input>
               </span>
             </td>
             <td class="col col-width-25" v-show="index <10">
@@ -140,7 +142,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="left"
-                  v-model="item.rightNormal">
+                  v-model="item.rightNormal"
+                  @blur="transformToNumber(item, 'rightNormal')">
                 </el-input>
               </span>
               <span>±</span>
@@ -149,7 +152,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="right"
-                  v-model="item.rightError">
+                  v-model="item.rightError"
+                  @blur="transformToNumber(item, 'rightError')">
                 </el-input>
               </span>
             </td>
@@ -159,7 +163,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="left"
-                  v-model="item.dataNormal">
+                  v-model="item.dataNormal"
+                  @blur="transformToNumber(item, 'dataNormal')">
                 </el-input>
               </span>
               <span>±</span>
@@ -168,7 +173,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="right"
-                  v-model="item.dataError">
+                  v-model="item.dataError"
+                  @blur="transformToNumber(item, 'dataError')">
                 </el-input>
               </span>
             </td>
@@ -674,6 +680,15 @@ export default {
         });
       };
       return options;
+    },
+    transformToNumber(obj, property, decimalDigits) {
+      var value = parseFloat(obj[property]);
+      if (obj[property] !== '' && obj[property] !== value) {
+        obj[property] = isNaN(value) ? '' : value;
+      }
+      if (decimalDigits !== undefined && obj[property] !== '') {
+        obj[property] = Number(obj[property].toFixed(decimalDigits));
+      }
     },
     transform(typeId, fieldName) {
       var typeInfo = Util.getElement('typegroupcode', fieldName, this.typeGroup);
