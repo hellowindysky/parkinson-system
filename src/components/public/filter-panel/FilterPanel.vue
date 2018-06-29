@@ -1238,7 +1238,7 @@
       <div class="iconfont" :class="toggleIconClass"></div>
     </div>
     <div class="content-area" :class="{'hide-condition-status': !displayCondition}">
-      <div class="operation-bar" v-show="isShowOperationBar">
+      <div class="operation-bar" v-show="isHasRightToExport">
         <div class="export-button" @click="popDialog">批量导出</div>
       </div>
       <div class="content-scroll-area" ref="scrollContent">
@@ -1485,7 +1485,8 @@ export default {
       'complicationTypeList',
       'allScale',
       'neurologicCheckTypeList',
-      'bioexamTypeList'
+      'bioexamTypeList',
+      'isHasRightToExport'
     ]),
     currentTabBottomBar() {
       if (this.currentTab === PERSONAL_INFO) {

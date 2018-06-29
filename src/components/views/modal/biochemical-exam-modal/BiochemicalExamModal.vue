@@ -46,6 +46,19 @@
             <el-input v-else placeholder="请输入血液标本编号" v-model="copyInfo.bloodCode"></el-input>
           </span>
         </div>
+        <div class="field" v-if="copyInfo.bioexamId === 27">
+          <span class="field-name">
+            基因突变:
+            <span class="required-mark"></span>
+          </span>
+          <span class="field-input">
+            <span v-if="mode===VIEW_CURRENT_CARD">{{isHaveGeneMutation ? '有' : '无'}}</span>
+            <el-select v-else placeholder="请选择是否有基因突变" v-model="isHaveGeneMutation" @change="geneMutationCheckedList = []">
+              <el-option :label="'有'" :value="true"></el-option>
+              <el-option :label="'无'" :value="false"></el-option>
+            </el-select>
+          </span>
+        </div>
 
         <div class="field whole-line">
           <span class="field-name">
@@ -67,6 +80,41 @@
           </span>
         </div>
 
+        <div class="field-file whole-line">
+          <span class="field-name">
+            附件上传:
+          </span>
+          <span class="field-input">
+            <div class="last-files">
+              <div class="last-files-title">已上传的附件</div>
+              <div class="file" :class="{'editing': mode!==VIEW_CURRENT_CARD}" v-for="file in other">
+                <i class="el-icon-document icon"></i>
+                <span class="file-name" @click="downloadFile(file)">{{file.fileName}}</span>
+                <i class="close-button iconfont icon-cancel" @click="removeFile(file, other, newOther)"></i>
+              </div>
+            </div>
+            <el-upload
+              class="upload-area"
+              :action="uploadUrl"
+              ref="upload4"
+              name="attachment"
+              :disabled="mode===VIEW_CURRENT_CARD"
+              :multiple="true"
+              :auto-upload="true"
+              :on-change="fileChange"
+              :on-preview="handlePreview"
+              :on-remove="handleOtherRemove"
+              :on-success="uploadOtherSuccess"
+              :on-error="uploadErr"
+              :before-upload="beforeUpload">
+              <el-button slot="trigger" size="small" type="text" :disabled="mode===VIEW_CURRENT_CARD" v-show="mode!==VIEW_CURRENT_CARD">
+                点击上传附件
+              </el-button>
+              <div slot="tip" class="el-upload__tip"></div>
+            </el-upload>
+          </span>
+        </div>
+
         <div class="field whole-line">
           <span class="field-name">
             备注:
@@ -83,7 +131,7 @@
           </span>
         </div>
 
-        <div class="form-wrapper" ref="formWrapper" v-if="copyInfo.bioexamId!==27">
+        <div class="form-wrapper" ref="formWrapper" v-if="copyInfo.bioexamId !== 27">
           <table class="form">
             <tr class="row first-row">
               <td class="col col-id">
@@ -158,7 +206,32 @@
             </tr>
           </table>
         </div>
+
+        <el-checkbox-group v-model="geneMutationCheckedList">
+          <div class="form-wrapper" ref="formWrapper" v-if="copyInfo.bioexamId === 27 && isHaveGeneMutation">
+            <table class="form">
+              <tr class="row first-row">
+                <td class="col">
+                </td>
+                <td class="col">
+                  基因
+                </td>
+                <td class="col">
+                  位点
+                </td>
+              </tr>
+              <tr v-for="(item, index) in geneMutationList" class="row">
+                <td class="col">
+                  <el-checkbox :label="item.id" :disabled="mode===VIEW_CURRENT_CARD"><span></span></el-checkbox>
+                </td>
+                <td class="col">{{item.gene}}</td>
+                <td class="col">{{item.site}}</td>
+              </tr>
+            </table>
+          </div>
+        </el-checkbox-group>
       </div>
+      
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
       <div class="button edit-button" @click="switchToEditingMode" v-if="mode===VIEW_CURRENT_CARD && showEdit">编辑</div>
@@ -173,6 +246,7 @@ import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import { deepCopy, vueCopy } from 'utils/helper';
+import { baseUrl } from 'api/common.js';
 import { addBiochemical, modifyBiochemical } from 'api/patient.js';
 export default {
   data() {
@@ -193,13 +267,28 @@ export default {
       },
       copyInfo: {},
       targetBioexam: [],
+      isHaveGeneMutation: false,
+      geneMutationCheckedList: [],
       lockSubmitButton: false,
-      showEdit: false
+      showEdit: false,
+
+      // 附件上传相关参数
+      other: [],
+      newOther: [],
+      fileList: [],
+      uploadingFilesNum: 0,
+      // uploadUrl: baseUrl + '/upload/uploadPatientFamilyTree',
+      uploadUrl: baseUrl + '/pdms/synFile',
+      downloadUrl: baseUrl + '/download/',
+      header: {
+        'Content-Type': 'multipart/form-data'
+      }
     };
   },
   computed: {
     ...mapGetters([
       'bioexamTypeList',
+      'geneMutationList',
       'typeGroup'
     ]),
     title() {
@@ -215,6 +304,12 @@ export default {
     patientCaseId() {
       return this.$route.params.caseId;
     }
+    // fileParam() {
+    //   let param = {
+    //     'data': JSON.stringify(this.fileList)
+    //   };
+    //   return param;
+    // }
   },
   methods: {
     checkRequired(id) {
@@ -238,7 +333,6 @@ export default {
       if (this.mode === this.ADD_NEW_CARD) {
         this.$set(this.copyInfo, 'patientCaseId', this.patientCaseId);
         this.$set(this.copyInfo, 'patientId', this.patientId);
-
       } else {
         vueCopy(item, this.copyInfo);
         this.copyInfo.bioexamResult.forEach((item, i) => {
@@ -246,6 +340,16 @@ export default {
             this.$set(this.copyInfo.bioexamResult[i], 'isReference', '');
           }
         });
+
+        if (this.copyInfo.bioexamId === 27) {
+          this.geneMutationCheckedList = [];
+          if (this.copyInfo.patientGenMutationInfoModel.length > 0) {
+            this.isHaveGeneMutation = true;
+            this.copyInfo.patientGenMutationInfoModel.forEach((item) => {
+              this.geneMutationCheckedList.push(Number(item.id));
+            });
+          }
+        }
 
         this.$set(this.warningResults, 'bioexamResult', []);
         vueCopy(item.bioexamResult.map((elem) => {return {bioexamProjectId: elem.bioexamProjectId, result: elem.result};}), this.warningResults.bioexamResult);
@@ -292,6 +396,15 @@ export default {
         this.$set(this.copyInfo.bioexamResult[i], 'remarks', '');
         this.$set(this.copyInfo.bioexamResult[i], 'result', '');
         this.$set(this.copyInfo.bioexamResult[i], 'isReference', '');
+      }
+
+      // 判断是否为基因检查 然后添加/删除基因检查表单属性
+      this.isHaveGeneMutation = false;
+      if (this.copyInfo.bioexamId === 27) {
+        this.$set(this.copyInfo, 'patientGenMutationInfoModel', []);
+        this.geneMutationCheckedList = [];
+      } else {
+        this.$delete(this.copyInfo, 'patientGenMutationInfoModel');
       }
 
       // if (this.copyInfo.bioexamId === 12) {
@@ -372,6 +485,18 @@ export default {
 
       let submitData = deepCopy(this.copyInfo);
       submitData.checkDate = Util.simplifyTime(submitData.checkDate, true);
+
+      // 基因检查附件
+      if (this.uploadingFilesNum > 0) {
+        this.$message({
+          message: '请等待文件上传后再提交',
+          type: 'warning',
+          duration: 2000
+        });
+        this.lockSubmitButton = false;
+        return;
+      }
+      submitData.file = this.newOther;
 
       if (this.mode === this.EDIT_CURRENT_CARD) {
         modifyBiochemical(submitData).then(() => {
@@ -458,6 +583,92 @@ export default {
       } else {
         return '';
       }
+    },
+    // 基因检查 附件上传相关方法
+    downloadFile(file) {
+      window.location.href = this.downloadUrl + file.realPath;
+    },
+    removeFile(file, showingList, transferringList) {
+      // console.log(file);
+      for (let i = 0; i < showingList.length; i++) {
+        if (file.id === showingList[i].id) {
+          showingList.splice(i, 1);
+          break;
+        }
+      }
+      for (let i = 0; i < transferringList.length; i++) {
+        if (file.id === transferringList[i].id) {
+          transferringList.splice(i, 1);
+          break;
+        }
+      }
+      this.updateScrollbar();
+    },
+    uploadOtherSuccess(response, file, fileList) {
+      this.uploadSuccess(response, file, fileList, this.newOther);
+    },
+    uploadSuccess(response, file, fileList, list) {
+      this.uploadingFilesNum -= 1;
+      // this.fileList = [];
+      if (response.code === 0) {
+        let id = response.data.patientFamilyTreeId;
+        list.push({
+          'id': id
+        });
+      } else {
+        this.$message({
+          message: '文件上传出错',
+          type: 'warning',
+          duration: 2000
+        });
+        console.log('response: ', response);
+        console.log('file: ', file);
+        console.log('fileList', fileList);
+      }
+    },
+    uploadErr(err, file, fileList) {
+      this.uploadingFilesNum -= 1;
+      // this.fileList = [];
+      console.log('upload error: ', err);
+      console.log('file: ', file);
+      console.log('fileList', fileList);
+    },
+    beforeUpload(file) {
+      console.log(this.fileList, this.fileParam);
+      const isUnderLimit = file.size / 1024 / 1024 < 300;
+      if (!isUnderLimit) {
+        this.$message({
+          message: '上传文件大小不能超过 300MB',
+          type: 'error',
+          duration: 2000
+        });
+      } else {
+        this.uploadingFilesNum += 1;
+      }
+      return isUnderLimit;
+    },
+    fileChange() {
+      this.updateScrollbar();
+    },
+    handleOtherRemove(file) {
+      this.handleRemove(file, this.newOther);
+    },
+    handleRemove(file, list) {
+      console.log(file);
+      if (file.status === 'uploading') {
+        this.uploadingFilesNum -= 1;
+      }
+      for (var i = 0; i < list.length; i++) {
+        if (file.response.data.attachmentId === list[i].id) {
+          list.splice(i, 1);
+          break;
+        }
+      }
+      this.updateScrollbar();
+    },
+    handlePreview(file) {
+      console.log(file);
+      // window.location.href = file.url;
     }
   },
   mounted() {
@@ -476,6 +687,14 @@ export default {
     Bus.$off(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
   },
   watch: {
+    geneMutationCheckedList() {
+      this.copyInfo.patientGenMutationInfoModel = [];
+      this.geneMutationCheckedList.forEach((item) => {
+        this.copyInfo.patientGenMutationInfoModel.push({
+          'gid': item
+        });
+      });
+    },
     '$route.path'() {
       this.cancel();
     }
@@ -498,6 +717,9 @@ export default {
 @col-range-width: 100px;
 @col-clinical-width:200px;
 @col-remarks-width: 180px;
+
+@title-left-padding: 30px;
+@select-top-padding: 12px;
 
 .biochemical-modal-wrapper {
   position: absolute;
@@ -612,6 +834,122 @@ export default {
           }
           .warning .el-input__inner, .warning .el-textarea__inner {
             border: 1px solid red;
+          }
+        }
+      }
+      .field-file {
+        position: relative;
+        padding: @select-top-padding @title-left-padding;
+        background-color: @background-color;
+        margin-bottom: 10px;
+        .field-name {
+          display: inline-block;
+          position: absolute;
+          left: 13px;
+          top: 13px;
+          width: @field-name-width;
+          line-height: 20px;
+          font-size: @normal-font-size;
+          color: @font-color;
+        }
+        .field-input {
+          display: block;
+          position: relative;
+          left: @field-name-width;
+          width: 98%;
+          padding-right: @field-name-width;
+          box-sizing: border-box;
+          font-size: @normal-font-size;
+          .last-files {
+            margin-bottom: 10px;
+            width: 100%;
+            .last-files-title {
+              transform: translateY(-5px);
+              margin-bottom: 5px;
+              height: 30px;
+              line-height: 30px;
+              background-color: @font-color;
+              color: #fff;
+              text-align: center;
+              cursor: default;
+            }
+            .file {
+              position: relative;
+              padding-left: 5px;
+              height: 30px;
+              line-height: 30px;
+              transition: 0.2s;
+              cursor: default;
+              .icon {
+                display: inline-block;
+                width: 20px;
+              }
+              .file-name {
+                display: inline-block;
+                padding: 0 3px;
+                line-height: 20px;
+                transform: translateX(-3px);
+                cursor: pointer;
+                &:hover {
+                  border-bottom: 1px solid @font-color;
+                }
+              }
+              .close-button {
+                display: none;
+                position: absolute;
+                right: 0;
+                width: 22px;
+                text-align: center;
+                color: @light-font-color;
+                font-size: 13px;
+              }
+              &.editing {
+                cursor: pointer;
+                &:hover {
+                  background-color: @screen-color;
+                  .close-button {
+                    display: inline-block;
+                    &:hover {
+                      color: @font-color;
+                    }
+                  }
+                }
+              }
+            }
+          }
+          .upload-area {
+            .el-upload {
+              width: 100%;
+              text-align: left;
+              .el-button {
+                width: 100%;
+                height: 30px;
+                border-radius: 10px;
+                &:hover {
+                  opacity: 0.7;
+                }
+                &:active {
+                  opacity: 0.85;
+                }
+                &.el-button--text {
+                  background-color: @light-font-color;
+                  color: #fff;
+                  font-size: @normal-font-size;
+                  &:disabled {
+                    background-color: @gray-color;
+                    cursor: not-allowed;
+                  }
+                }
+              }
+            }
+            .el-upload__tip {
+              line-height: normal;
+              margin-top:0;
+            }
+            .el-upload-list {
+              // max-height: 80px;
+              // overflow-y: scroll;
+            }
           }
         }
       }
