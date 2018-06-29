@@ -522,13 +522,14 @@ export default {
 
       if (this.modalType === this.FAMILY_HISTORY_MODAL) {
         this.geneMutationCheckedList = [];
-        if (originalInfo.patientGenMutationInfoModel.length > 0) {
+        if (originalInfo.patientGenMutationInfoModel && originalInfo.patientGenMutationInfoModel.length > 0) {
           this.$set(this.copyInfo, 'isGenMutationInfo', 1);
           originalInfo.patientGenMutationInfoModel.forEach((item) => {
             this.geneMutationCheckedList.push(Number(item.id));
           });
         } else {
           this.$set(this.copyInfo, 'isGenMutationInfo', 2);
+          this.$set(this.copyInfo, 'patientGenMutationInfoModel', []);
         }
       }
       // 每次打开这个模态框，都会重新初始化 this.copyInfo
@@ -746,9 +747,6 @@ export default {
           }
 
         }
-      }
-      if (this.modalType === this.FAMILY_HISTORY_MODAL && this.copyInfo.patientGenMutationInfoModel === undefined) {
-        this.$set(this.copyInfo, 'patientGenMutationInfoModel', []);
       }
     },
     getMatchedField(field) {
