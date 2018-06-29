@@ -451,6 +451,27 @@ export default {
         }
       }
 
+      /**
+       * 判断开始时间与结束时间之间没有诊断记录则提示并返回
+       */
+      let timeFlag = false;
+      let timeStart = this.startTime.getTime();
+      let timeEnd = this.endTime.getTime();
+      let caseTimeList = [];
+      for (let i = 0; i < this.patientCaseList.length; i++) {
+        caseTimeList.push(new Date(this.patientCaseList[i].diagTime).getTime());
+      }
+      for (let j = 0; j < caseTimeList.length; j++) {
+        if (caseTimeList >= timeStart && caseTimeList <= timeEnd) {
+          timeFlag = true;
+          break;
+        }
+      }
+      if (!timeFlag) {
+        this.$message.error('所选时间区间没有诊断记录，请重新选择时间！');
+        return;
+      }
+
       var userId = sessionStorage.getItem('userId');
       var accountNumber = sessionStorage.getItem('accountNumber');
       var userType = sessionStorage.getItem('userType');
