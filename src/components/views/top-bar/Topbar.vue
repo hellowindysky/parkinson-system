@@ -48,7 +48,7 @@
       <div class="seperate-line" v-if="allowAuthorization"></div>
       <p class="operate-item" v-if="isSupportAccount" @click="reselectDoctor">更换授权医生</p>
       <div class="seperate-line" v-if="isSupportAccount"></div>
-      <p class="operate-item" @click="setPrintTemp" v-if="isShowPrintTemplate">导出模板设置</p>
+      <p class="operate-item" @click="setPrintTemp" v-if="isHasRightToExport">导出模板设置</p>
       <div class="seperate-line"></div>
       <p class="operate-item" @click="resetPassword">修改密码</p>
       <div class="seperate-line"></div>
@@ -58,6 +58,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import { getAuthenticationList } from 'api/user.js';
 import { queryExportUsername } from 'api/patient.js';
@@ -81,6 +82,9 @@ export default {
     };
   },
   computed: {
+    ...mapGetters([
+      'isHasRightToExport'
+    ]),
     toggleOranizationPanelIcon() {
       return this.showOranizationPanel ? 'icon-up' : 'icon-down';
     },
@@ -271,8 +275,8 @@ export default {
       queryExportUsername().then((res) => {
         let specialUserList = res.split(',');
         // console.log(userName, specialUserList);
-        if (specialUserList.indexOf(userName) >= 0) {
-          this.isShowPrintTemplate = true;
+        if (specialUserList.indexOf(userName) >= 0 && !this.$store.state.hasRightToExport) {
+          this.$store.commit('CHANGE_EXPORT_RIGHT');
         }
       });
     }

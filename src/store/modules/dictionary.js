@@ -190,6 +190,13 @@ const getters = {
     }
     return state.all.tableData.bioexamInfo;
   },
+  geneMutationList: (state) => {
+    // 基因检查 基因 位点
+    if (!state.all.tableData || !state.all.tableData.geneMutationInfo) {
+      return [];
+    }
+    return state.all.tableData.geneMutationInfo;
+  },
   emgTypeList: (state) => {
     // 肌电图
     if (!state.all.tableData || !state.all.tableData.elecTroGramInfo) {

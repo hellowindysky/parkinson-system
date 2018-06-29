@@ -17,7 +17,7 @@
       <div v-if="editable && mode===EDITING_MODE" class="button submit-button" @click="submit">
         {{submitText}}
       </div>
-      <el-button type="warning" v-if="false" class="button export-button" @click="popDialog">批量导出</el-button>
+      <el-button type="warning" v-if="canExport && isHasRightToExport" class="button export-button" @click="popDialog">批量导出</el-button>
       <el-select v-if="isCardsPanel" v-model="filterCondition" size="small" placeholder="筛选"
         class="button filter-button" @change="filterCards"
         :class="{'without-other-button': !editable}">
@@ -33,6 +33,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 
 export default {
@@ -57,6 +58,10 @@ export default {
     editable: {
       type: Boolean,
       default: true
+    },
+    canExport: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -66,6 +71,9 @@ export default {
     };
   },
   computed: {
+    ...mapGetters([
+      'isHasRightToExport'
+    ]),
     iconToggleFolded() {
       return this.folded ? 'icon-down' : 'icon-up';
     },

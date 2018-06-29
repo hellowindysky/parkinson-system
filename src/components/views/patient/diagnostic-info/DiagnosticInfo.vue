@@ -2,7 +2,7 @@
   <div class="diagnostic-info-wrapper" ref="diagnosticInfo">
     <folding-panel class="panel" :title="title" :mode="mode" :isCardsPanel="true" :folded-status="foldedStatus"
       v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit" v-on:addNewCard="addRecord"
-      v-on:updateFilterCondition="changeFilterCondition" v-on:popExportDialog="popDialog" :editable="canEdit">
+      v-on:updateFilterCondition="changeFilterCondition" v-on:popExportDialog="popDialog" :editable="canEdit" :canExport="true">
       <card class="card" :class="cardClass" :mode="mode" v-for="item in patientCaseList" :key="item.patientCaseId"
         :title="item.caseName" :disable-delete="checkIfDisabledToDelete(item)" v-on:editCurrentCard="seeDetail(item)"
         v-on:deleteCurrentCard="deleteRecord(item)"
