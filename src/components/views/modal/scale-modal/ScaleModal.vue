@@ -402,12 +402,12 @@ export default {
 
       // 根据量表分类判断可选择的量表数组
       if (this.scaleCategory === 1) {
-          scalesIsUse.map((item) => {
-            if (item.gaugeTaskType === subjectId) {
-              this.scaleList.push(item);
-              allScale.push({'value': item.gaugeName});
-            }
-          });
+        scalesIsUse.map((item) => {
+          if (item.gaugeTaskType === subjectId) {
+            this.scaleList.push(item);
+            allScale.push({'value': item.gaugeName});
+          }
+        });
       } else {
         // 苏州大学附属第二医院 特殊处理
         if (sessionStorage.getItem('orgName') === '苏州大学附属第二医院' && subjectId !== -1) {
