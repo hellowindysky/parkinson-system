@@ -402,19 +402,30 @@ export default {
 
       // 根据量表分类判断可选择的量表数组
       if (this.scaleCategory === 1) {
-        scalesIsUse.map((item) => {
-          if (item.gaugeTaskType === subjectId) {
-            this.scaleList.push(item);
-            allScale.push({'value': item.gaugeName});
-          }
-        });
+          scalesIsUse.map((item) => {
+            if (item.gaugeTaskType === subjectId) {
+              this.scaleList.push(item);
+              allScale.push({'value': item.gaugeName});
+            }
+          });
       } else {
-        scalesIsUse.map((item) => {
-          if (item.gaugeTaskType === 0) {
-            this.scaleList.push(item);
-            allScale.push({'value': item.gaugeName});
-          }
-        });
+        // 苏州大学附属第二医院 特殊处理
+        if (sessionStorage.getItem('orgName') === '苏州大学附属第二医院' && subjectId !== -1) {
+          let list = ['RBD-HK', 'RBDSQ', 'MMSE', '北京版(MoCA)', 'XJCS-12', 'BM-6', '苏州二院版（NMSQ）', 'SCOPA-AUT', 'HAMA/HARMS', 'Hoehn-Yahr', 'UPDRS-Ⅰ', 'UPDRS-Ⅱ', 'UPDRS-Ⅲ', 'UPDRS-Ⅳ', 'UMSARS-I', 'UMSARS-II', 'UMSARS-III', 'UMSARS-IV', 'ESS', 'FSS', 'PSQI', 'PDQ-39', 'HAMD-24'];
+          scalesIsUse.map((item) => {
+            if (list.indexOf(item.gaugeNameEn) !== -1) {
+              this.scaleList.push(item);
+              allScale.push({'value': item.gaugeName});
+            }
+          });
+        } else {
+          scalesIsUse.map((item) => {
+            if (item.gaugeTaskType === 0) {
+              this.scaleList.push(item);
+              allScale.push({'value': item.gaugeName});
+            }
+          });
+        }
       }
 
       // console.log(this.scaleList);
