@@ -77,7 +77,8 @@
           <span class="field-name">
             数据来源：
           </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+          <span class="field-input">{{'手动录入'}}</span>
+          <!-- <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span>{{transform(copyInfo.dataSources, 'dataSources')}}</span>
           </span>
           <span class="field-input" v-else>
@@ -92,7 +93,7 @@
                 :value="item.code">
                 </el-option>
             </el-select>
-          </span>
+          </span> -->
         </div>
         <div class="field whole-line">
           <span class="field-name">
