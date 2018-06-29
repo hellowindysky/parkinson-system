@@ -24,6 +24,7 @@ export default {
   // status
   NORMAL_STATUS: 'normal',
   EXTENDED_STATUS: 'extended',
+  NEXT_FOLLOW_UP_STATUS: 'nextFollowUpStatus',
 
   // event
   UPDATE_USER_ID: 'updateUserId',
@@ -145,6 +146,7 @@ export default {
   SHOW_NEXT_EXPERIMENT_STEP_MODAL: 'showNextExperimentStepModal',
   SHOW_EXPERIMENT_STEP_MODAL: 'showExperimentStepModal',
   SHOW_SUBJECT_CIRCULATION_MODAL: 'showSubjectCirculationModal',
+  SHOW_APPOINT_NEXT_FOLLOW_UP_MODAL: 'showAppointNextFollowUpModal',
 
   SHOW_CHOICE_PANEL: 'showChoicePanel',
 

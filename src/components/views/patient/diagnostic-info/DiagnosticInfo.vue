@@ -3,7 +3,7 @@
     <folding-panel class="panel" :title="title" :mode="mode" :isCardsPanel="true" :folded-status="foldedStatus"
       v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit" v-on:addNewCard="addRecord"
       v-on:updateFilterCondition="changeFilterCondition" v-on:popExportDialog="popDialog" :editable="canEdit">
-      <card class="card" :class="cardClass" :mode="mode" v-for="item in patientCaseList" :key="item.patientCaseId"
+      <card class="card" :class="cardClass(item.appointmentStatusCode)" :mode="mode" v-for="item in patientCaseList" :key="item.patientCaseId"
         :title="item.caseName" :disable-delete="checkIfDisabledToDelete(item)" v-on:editCurrentCard="seeDetail(item)"
         v-on:deleteCurrentCard="deleteRecord(item)"
         v-show="passFilter(item)" v-on:viewCurrentCard="seeDetail(item)">
@@ -153,9 +153,9 @@ export default {
     showRecordSource() {
       return this.$store.state.subjectId === this.SUBJECT_ID_FOR_HOSPITAL && this.listType === this.MY_PATIENTS_TYPE;
     },
-    cardClass() {
-      return this.showRecordSource ? this.devideWidth + ' tall-card' : this.devideWidth;
-    },
+    // cardClass() {
+    //   return this.showRecordSource ? this.devideWidth + ' tall-card' : this.devideWidth;
+    // },
     patientCurrentExperimentStep() {
       return this.patientInfo.patientCurrentStatus !== undefined ? Number(this.patientInfo.patientCurrentStatus) : this.EXPERIMENT_STEP_OUT;
     },
@@ -196,6 +196,15 @@ export default {
     }
   },
   methods: {
+    cardClass(status) {
+      let diagnosticClass = this.showRecordSource ? this.devideWidth + ' tall-card' : this.devideWidth;
+      if (status === 'nostart') {
+        diagnosticClass += ' appointed';
+      } else if (status === 'expire') {
+        diagnosticClass += 'overdue';
+      }
+      return diagnosticClass;
+    },
     startEditing() {
       this.mode = this.EDITING_MODE;
     },
@@ -277,6 +286,7 @@ export default {
     seeDetail(item) {
       this.routerJumpWithCaseId(item.patientCaseId);
       // Bus.$emit(this.UPDATE_COMPLAINTSYMPTOMS_INFO);
+      Bus.$emit(this.NEXT_FOLLOW_UP_STATUS, item.appointmentStatusCode);
     },
     addRecord() {
       this.routerJumpWithCaseId('newCase');
@@ -529,6 +539,16 @@ export default {
       }
       &.tall-card {
         height: 150px;
+      }
+      &.appointed{
+        background-image: url("~img/appointed.png");
+        background-position:100% 100%;
+        background-repeat: no-repeat;
+      }
+      &.overdue{
+        background-image: url("~img/overdue.png");
+        background-position:100% 100%;
+        background-repeat: no-repeat;
       }
       &.width-1-1, &.width-1-0 {
         width: calc(~"100% - @{this-card-horizontal-margin} * 2");

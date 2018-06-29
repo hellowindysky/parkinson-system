@@ -5,7 +5,7 @@
       <div class="content">
 
         <div class="paved-canledar">
-          <ele-calendar v-model="test"></ele-calendar>
+          <ele-calendar v-model="copyInfo.appointDate"></ele-calendar>
         </div>
 
         <div class="field whole-line">
@@ -13,11 +13,11 @@
             注意事项：
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            {{msg}}
+            {{copyInfo.noticeMatter}}
           </span>
           <span class="field-input" v-else>
             <el-input
-              v-model="msg"
+              v-model="copyInfo.noticeMatter"
               type="textarea"
               :rows="4"
               :maxlength="500"
@@ -32,13 +32,14 @@
             <span class="required-mark"></span>
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-            {{msg}}
+            {{transformId(copyInfo.hospitalId)}}
           </span>
           <span class="field-input" v-else>
-            <el-select v-model="msg" placeholder="请选择就诊医院" clearable >
+            <el-select v-model="copyInfo.hospitalId" placeholder="请选择就诊医院" clearable >
               <el-option
-                :label="'ddd医院'"
-                :value="5">
+               v-for="(item,index) in hospitalOpts" :key="item.hospitalId"
+               :label="item.hospitalName"
+               :value="item.hospitalId">
               </el-option>
             </el-select>
           </span>
@@ -47,8 +48,8 @@
       </div>
 
       <div class="button cancel-button" @click="cancel">取消</div>
-      <div v-if="mode!==VIEW_CURRENT_CARD" class="button submit-button" @click="">确定</div>
-      <div v-else-if="mode===VIEW_CURRENT_CARD && canEdit" class="button submit-button btn-margin" @click="">编辑</div>
+      <div v-if="mode!==VIEW_CURRENT_CARD" class="button submit-button" @click="submitFollowUp">确定</div>
+      <div v-else-if="mode===VIEW_CURRENT_CARD" class="button submit-button btn-margin" @click="switchToEditingMode">编辑</div>
 
     </div>
   </div>
@@ -57,21 +58,85 @@
 <script>
 import eleCalendar from 'public/ele-calendar/EleCalendar';
 import Bus from 'utils/bus.js';
+// import Util from 'utils/util.js';
+// import { deepCopy, reviseDateFormat } from 'utils/helper.js';
+import { reviseDateFormat } from 'utils/helper.js';
+import {queryHospital, addAppointmentNextFollowUp } from 'api/patient.js';
 export default {
   data() {
     return {
       mode: '',
       msg: '',
-      test: new Date()
+      copyInfo: {
+        appointDate: new Date(),
+        noticeMatter: '',
+        hospitalId: '',
+        id: ''
+      },
+      hospitalOpts: []
     };
   },
   methods: {
+    showModal(cardOperation, item) {
+      // console.log(cardOperation, item);
+      this.mode = cardOperation;
+      if (cardOperation === this.VIEW_CURRENT_CARD) {
+        this.$set(this.copyInfo, 'appointDate', new Date(item.appointDate));
+        this.$set(this.copyInfo, 'noticeMatter', item.noticeMatter);
+        this.$set(this.copyInfo, 'hospitalId', item.hospitalId);
+        this.$set(this.copyInfo, 'id', item.id);
+      }
+    },
+    getHospitals() {
+      queryHospital().then((res) => {
+        this.hospitalOpts = res;
+      });
+    },
+    submitFollowUp() {
+      let paras = Object.assign({}, this.copyInfo);
+      reviseDateFormat(paras);
+      paras.patientCaseId = this.$route.params.caseId;
+      paras.patientInfoId = this.$route.params.id;
+      addAppointmentNextFollowUp(paras).then(() => {
+        this.updateAndClose();
+      }, this._handleError);
+    },
+    switchToEditingMode() {
+      this.mode = this.EDIT_CURRENT_CARD;
+      // this.updateScrollbar();
+    },
     cancel() {
       Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
+    },
+    _handleError(error) {
+      console.log(error);
+      // this.lockSubmitButton = false;
+    },
+    updateAndClose() {
+      Bus.$emit(this.UPDATE_PATIENT_CASE_LIST);
+      // this.lockSubmitButton = false;
+      Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
+    },
+    transformId(id) {
+      for (let item of this.hospitalOpts) {
+        if (item.hospitalId === id) {
+          return item.hospitalName;
+        }
+      }
+      // return Util.getElement('id', id, this.hospitalOpts);
     }
   },
   components: {
     eleCalendar
+  },
+  mounted() {
+    this.getHospitals();
+
+    // 先在本组件注册该事件，等待Layout组件接收动态组件挂载完毕的通知，再在本组件执行 showPanel 或 showModal
+    Bus.$on(this.SHOW_APPOINT_NEXT_FOLLOW_UP_MODAL, this.showModal);
+
+    // 动态组件挂载完毕，通知Layout组件，动态组件已挂载完毕
+    Bus.$emit(this.DYNAMIC_COMPONENT_MOUNTED);
   }
 };
 </script>

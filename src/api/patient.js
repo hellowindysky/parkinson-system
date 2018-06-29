@@ -592,6 +592,37 @@ export function archivePatientCase(patientCaseId) {
   return encapsulatePromise(url, request);
 };
 
+// 新增预约随访
+export function addAppointmentNextFollowUp(nextFollowUpOpts) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientCaseId = nextFollowUpOpts.patientCaseId;
+  request.patientInfoId = nextFollowUpOpts.patientInfoId;
+  request.appointDate = nextFollowUpOpts.appointDate;
+  request.hospitalId = nextFollowUpOpts.hospitalId;
+  request.noticeMatter = nextFollowUpOpts.noticeMatter;
+  request.id = nextFollowUpOpts.id;
+  var url = '/pdms/appointment/appointmentSubmit';
+
+  return encapsulatePromise(url, request);
+};
+
+// 查询医生所属医院
+export function queryHospital() {
+  var request = Object.assign({}, getCommonRequest());
+  var url = '/pdms/appointment/queryDoctorHospital';
+
+  return encapsulatePromise(url, request);
+};
+
+// 查询预约随访
+export function queryAppointmentNextFollowUp(patientCaseId) {
+  var request = Object.assign({}, getCommonRequest());
+  request.patientCaseId = patientCaseId;
+  var url = '/pdms/appointment/appointmentQuery';
+
+  return encapsulatePromise(url, request);
+};
+
 // 新增药物方案
 export function addPatientMedicine(patientMedicine) {
   var request = Object.assign({}, getCommonRequest());

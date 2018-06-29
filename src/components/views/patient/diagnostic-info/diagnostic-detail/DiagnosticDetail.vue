@@ -6,7 +6,8 @@
       <div class="button back-button" @click="goBack" v-show="!isNewCase">返回</div>
       <div class="button archive-button" :class="{'disabled': !existed}" @click="archiveCase"
         v-if="!isNewCase && canEdit && !patientDuringExperiment">归档</div>
-      <div class="button next-follow-button" @click="appointNextFollowUp">预约下次随访</div>
+      <div class="button next-follow-button" v-if="nextFollowUpStatus==='none'" @click="appointNextFollowUp('')">预约下次随访</div>
+      <div class="button next-follow-button" v-if="nextFollowUpStatus!=='none'" @click="appointNextFollowUp(VIEW_CURRENT_CARD)">查看下次随访</div>
     </div>
     <div class="scroll-area" ref="scrollArea">
       <diagnostic-basic :canEdit="canEdit" class="folding-panel" :mode="mode" ref="diagnosticBasic"
@@ -58,7 +59,7 @@
 <script>
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
-import { getPatientCase, archivePatientCase } from 'api/patient.js';
+import { getPatientCase, archivePatientCase, queryAppointmentNextFollowUp } from 'api/patient.js';
 
 import DiagnosticBasic from 'patient/diagnostic-info/diagnostic-basic/DiagnosticBasic';
 import DiagnosticDisease from 'patient/diagnostic-info/diagnostic-disease/DiagnosticDisease';
@@ -82,6 +83,7 @@ export default {
       caseId: 0,
       caseDetail: {},
       mode: this.READING_MODE,
+      nextFollowUpStatus: '',
       hasBeenArchived: true,
       existed: true, // 用来标记当前诊断信息是否存在，新增诊断时该变量为 false
       loading: false // Loading遮罩
@@ -349,9 +351,16 @@ export default {
 
       Bus.$emit(this.REQUEST_CONFIRMATION, '', '诊断记录归档后将无法编辑修改，是否继续？');
     },
-    appointNextFollowUp() {
-      // Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'appointmentNextFollowUpModal', this.SHOW_FIRSTSYMPTOMS_MODAL, this.ADD_NEW_CARD, {});
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'appointmentNextFollowUpModal');
+    appointNextFollowUp(cardOperation) {
+      let patientCaseId = this.$route.params.caseId;
+      if (cardOperation === this.VIEW_CURRENT_CARD) {
+        queryAppointmentNextFollowUp(patientCaseId).then((res) => {
+          Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'appointmentNextFollowUpModal', this.SHOW_APPOINT_NEXT_FOLLOW_UP_MODAL, cardOperation, res[0]);
+        });
+      } else {
+        // Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'appointmentNextFollowUpModal', this.SHOW_FIRSTSYMPTOMS_MODAL, this.ADD_NEW_CARD, {});
+        Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'appointmentNextFollowUpModal', this.SHOW_APPOINT_NEXT_FOLLOW_UP_MODAL, cardOperation, {});
+      }
     }
   },
   components: {
@@ -371,6 +380,10 @@ export default {
     setTimeout(() => {
       this.withAnimation = true;
     }, 500);
+    Bus.$on(this.NEXT_FOLLOW_UP_STATUS, (status) => {
+      console.log(status);
+      this.nextFollowUpStatus = status;
+    });
   },
   beforeDestroy() {
     Bus.$off(this.SCROLL_AREA_SIZE_CHANGE);
@@ -378,6 +391,7 @@ export default {
     Bus.$off(this.UPDATE_CASE_INFO);
     Bus.$off(this.GIVE_UP);
     Bus.$off(this.CONFIRM);
+    Bus.$off(this.NEXT_FOLLOW_UP_STATUS);
   },
   watch: {
     '$route.path'() {
@@ -421,7 +435,6 @@ export default {
       display: inline-block;
       padding-left: 20px;
       left: 0;
-      width: 100%;
       height: @title-bar-height;
       line-height: @title-bar-height;
       text-align: left;
@@ -429,8 +442,11 @@ export default {
       color: @font-color;
     }
     .button {
-      position: absolute;
-      top: 6px;
+      float: right;
+      margin-top: 6px;
+      margin-left: 10px;
+      // position: absolute;
+      // top: 6px;
       width: @small-button-width;
       height: @small-button-height;
       line-height: @small-button-height;
@@ -444,11 +460,11 @@ export default {
       }
       &.back-button {
         background-color: @secondary-button-color;
-        right: 10px;
+        margin-right: 10px;
       }
       &.archive-button {
         background-color: @font-color;
-        right: 30px + @small-button-width;
+        // right: 30px + @small-button-width;
         &.disabled {
           background-color: @light-gray-color;
           &:hover, &:active {
@@ -459,7 +475,6 @@ export default {
       &.next-follow-button {
         background-color: @button-color;
         width: 100px;
-        right: 50px + @small-button-width * 2;
       }
     }
   }
