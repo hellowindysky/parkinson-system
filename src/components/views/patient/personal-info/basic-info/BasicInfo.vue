@@ -458,7 +458,7 @@ export default {
             this.copyInfo.sex = gender === '男' ? 0 : 1;
           }
         }
-      } else if (fieldName === 'thighLength' || fieldName === '' || fieldName === 'waist') {
+      } else if (fieldName === 'thighLength' || fieldName === 'calfLength' || fieldName === 'waist') {
         if (copyFieldValue === '' || copyFieldValue === undefined) {
           this.$set(this.warningResults, fieldName, null);
         } else {
