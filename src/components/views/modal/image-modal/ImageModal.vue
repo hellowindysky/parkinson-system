@@ -122,18 +122,18 @@
         <table class="table" v-show="itemGroups.length > 0" v-for="(group, groupIndex) in itemGroups">
           <thead>
             <tr class="row title-row">
-              <td class="col col-width-10"></td>
-              <td class="col col-width-10" v-if="col.rowSpan>0" v-for="col in group.colItems" :rowspan="col.rowSpan" :colspan="col.colSpan">
+              <td class="col"></td>
+              <td class="col" v-if="col.rowSpan>0" v-for="col in group.colItems" :rowspan="col.rowSpan" :colspan="col.colSpan">
                 {{col.fieldName}}
               </td>
             </tr>
           </thead>
           <tbody>
             <tr class="row" v-for="row in group.rowItems" v-if="group.colItems.length>0">
-              <td class="col col-width-10">
+              <td class="col">
                 {{row.fieldName}}
               </td>
-              <td class="col col-width-10" v-for="col in group.colItems">
+              <td class="col" v-for="col in group.colItems">
                 <span v-if="mode===VIEW_CURRENT_CARD && row.uiType===3">
                   <span v-if="row.fieldEnumId">
                     {{transform(patientFieldCode[imageType][row.id][col.id].fieldValue, row.fieldEnumId)}}
@@ -929,7 +929,6 @@ export default {
     transform(typeId, fieldName) {
       var typeInfo = Util.getElement('typegroupcode', fieldName, this.typeGroup);
       var types = typeInfo.types ? typeInfo.types : [];
-      console.log(types);
       var name = Util.getElement('typeCode', parseInt(typeId, 10), types).typeName;
       return name;
     },
