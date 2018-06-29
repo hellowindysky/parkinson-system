@@ -1238,7 +1238,7 @@
       <div class="iconfont" :class="toggleIconClass"></div>
     </div>
     <div class="content-area" :class="{'hide-condition-status': !displayCondition}">
-      <div class="operation-bar" v-show="isShowOperationBar">
+      <div class="operation-bar" v-show="isHasRightToExport">
         <div class="export-button" @click="popDialog">批量导出</div>
       </div>
       <div class="content-scroll-area" ref="scrollContent">
@@ -1318,7 +1318,7 @@
 import { mapGetters } from 'vuex';
 import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
-import { queryPatientsByCondition, getPatientGroupInfo, queryExportTemplate, queryExportUsername } from 'api/patient.js';
+import { queryPatientsByCondition, getPatientGroupInfo, queryExportTemplate } from 'api/patient.js';
 import { baseUrl } from 'api/common.js';
 import { vueCopy, pruneObj, reviseDateFormat, isEmptyObject } from 'utils/helper.js';
 import Util from 'utils/util.js';
@@ -1485,7 +1485,8 @@ export default {
       'complicationTypeList',
       'allScale',
       'neurologicCheckTypeList',
-      'bioexamTypeList'
+      'bioexamTypeList',
+      'isHasRightToExport'
     ]),
     currentTabBottomBar() {
       if (this.currentTab === PERSONAL_INFO) {
@@ -1565,16 +1566,6 @@ export default {
     }
   },
   methods: {
-    showOperationBar() {
-      var userName = sessionStorage.getItem('userName');
-      queryExportUsername().then((res) => {
-        let specialUserList = res.split(',');
-        // console.log(userName, specialUserList);
-        if (specialUserList.indexOf(userName) >= 0) {
-          this.isShowOperationBar = true;
-        }
-      });
-    },
     clearVal(flag) {
       if (flag === 'specificDisease') {
         this.$set(this.diseaseInfoCondition, 'specificDisease', '');
@@ -2426,7 +2417,6 @@ export default {
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollList);
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollContent);
     this.queryPatients();
-    this.showOperationBar();
   },
   watch: {
     '$route.path'() {

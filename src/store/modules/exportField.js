@@ -10,18 +10,29 @@ var transfer = function(res) {
 };
 
 const state = {
-  exportFields: []
+  exportFields: [],
+
+  // 是否拥有导出权限 涉及到 导出模版设置/筛选页面批量导出/诊断导出
+  hasRightToExport: false
 };
 
 const getters = {
   totalExportFields(state) {
     return transfer(state.exportFields);
+  },
+
+  isHasRightToExport(state) {
+    return state.hasRightToExport;
   }
 };
 
 const mutations = {
   [types.UPDATE_EXPORT_FIELDS](state, res) {
     state.exportFields = res;
+  },
+
+  [types.CHANGE_EXPORT_RIGHT](state) {
+    state.hasRightToExport = !state.hasRightToExport;
   }
 };
 

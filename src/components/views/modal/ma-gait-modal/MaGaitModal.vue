@@ -77,7 +77,8 @@
           <span class="field-name">
             数据来源：
           </span>
-          <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+          <span class="field-input">{{'手动录入'}}</span>
+          <!-- <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span>{{transform(copyInfo.dataSources, 'dataSources')}}</span>
           </span>
           <span class="field-input" v-else>
@@ -92,7 +93,7 @@
                 :value="item.code">
                 </el-option>
             </el-select>
-          </span>
+          </span> -->
         </div>
         <div class="field whole-line">
           <span class="field-name">
@@ -121,7 +122,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="left"
-                  v-model="item.leftNormal">
+                  v-model="item.leftNormal"
+                  @blur="transformToNumber(item, 'leftNormal')">
               </el-input>
               </span>
               <span>±</span>
@@ -131,7 +133,8 @@
               <span class="field-input" v-else>
                 <el-input class="right"
                   v-model="item.leftError"
-                ></el-input>
+                  @blur="transformToNumber(item, 'leftError')">
+                </el-input>
               </span>
             </td>
             <td class="col col-width-25" v-show="index <10">
@@ -140,7 +143,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="left"
-                  v-model="item.rightNormal">
+                  v-model="item.rightNormal"
+                  @blur="transformToNumber(item, 'rightNormal')">
                 </el-input>
               </span>
               <span>±</span>
@@ -149,7 +153,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="right"
-                  v-model="item.rightError">
+                  v-model="item.rightError"
+                  @blur="transformToNumber(item, 'rightError')">
                 </el-input>
               </span>
             </td>
@@ -159,7 +164,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="left"
-                  v-model="item.dataNormal">
+                  v-model="item.dataNormal"
+                  @blur="transformToNumber(item, 'dataNormal')">
                 </el-input>
               </span>
               <span>±</span>
@@ -168,7 +174,8 @@
               </span>
               <span class="field-input" v-else>
                 <el-input class="right"
-                  v-model="item.dataError">
+                  v-model="item.dataError"
+                  @blur="transformToNumber(item, 'dataError')">
                 </el-input>
               </span>
             </td>
@@ -178,16 +185,14 @@
       </div>
 
       <span>
-        <div class="button cancel-button" v-if="mode===VIEW_CURRENT_CARD && showEdit" @click="cancel">取消</div>
-        <div class="button edit-button" v-if="mode===VIEW_CURRENT_CARD && showEdit" @click="switchToEditingMode">编辑</div>
-        <!-- <div class="button submit-button" v-if="mode!==VIEW_CURRENT_CARD" @click="submit">确认</div> -->
+        <div class="button cancel-button" v-show="mode===ADD_NEW_CARD && !hasTableExisted || mode===VIEW_CURRENT_CARD && showEdit" @click="cancel">取消</div>
+        <div class="button edit-button" v-show="mode===VIEW_CURRENT_CARD && showEdit" @click="switchToEditingMode">编辑</div>
+        <div class="button submit-button" v-show="mode===ADD_NEW_CARD &&!hasTableExisted" @click="submit">确定</div>
       </span>
-      <span>
         <!-- <div class="button cancel-button"  @click="closeSubTable">返回</div> -->
-        <span>
-          <div class="button reset-button" v-if="mode!==VIEW_CURRENT_CARD"  @click="resetForm">重置</div>
-          <div class="button submit-button" v-if="mode!==VIEW_CURRENT_CARD"  @click="submit">完成</div>
-        </span>
+      <span v-show="mode!==VIEW_CURRENT_CARD && hasTableExisted">
+        <div class="button reset-button" @click="resetForm">重置</div>
+        <div class="button submit-button" @click="submit">完成</div>
       </span>
     </div>
   </div>
@@ -677,6 +682,15 @@ export default {
       };
       return options;
     },
+    transformToNumber(obj, property, decimalDigits) {
+      var value = parseFloat(obj[property]);
+      if (obj[property] !== '' && obj[property] !== value) {
+        obj[property] = isNaN(value) ? '' : value;
+      }
+      if (decimalDigits !== undefined && obj[property] !== '') {
+        obj[property] = Number(obj[property].toFixed(decimalDigits));
+      }
+    },
     transform(typeId, fieldName) {
       var typeInfo = Util.getElement('typegroupcode', fieldName, this.typeGroup);
       var types = typeInfo.types ? typeInfo.types : [];
@@ -704,13 +718,13 @@ export default {
             minScrollbarLength: 40
           });
         }
-        // if (this.$refs.scrollArea) {
-        //   Ps.destroy(this.$refs.scrollArea);
-        //   Ps.initialize(this.$refs.scrollArea, {
-        //     wheelSpeed: 1,
-        //     minScrollbarLength: 40
-        //   });
-        // }
+        if (this.$refs.scrollArea) {
+          Ps.destroy(this.$refs.scrollArea);
+          Ps.initialize(this.$refs.scrollArea, {
+            wheelSpeed: 1,
+            minScrollbarLength: 40
+          });
+        }
       });
     }
   },

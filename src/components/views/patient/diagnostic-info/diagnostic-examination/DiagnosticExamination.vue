@@ -205,7 +205,7 @@
           </div>
           <div class="text fourth-line">
             <span class="name">数据来源:</span>
-            <span>{{transform(item.dataSources, 'dataSources')}}</span>
+            <span>{{('手动录入')}}</span>
           </div>
         </card>
         <card class="card gaitPosture-card"
@@ -231,7 +231,7 @@
           </div>
           <div class="text fourth-line">
             <span class="name">数据来源:</span>
-            <span>{{transform(item.dataSources, 'dataSources')}}</span>
+            <span>{{'手动录入'}}</span>
           </div>
         </card>
 

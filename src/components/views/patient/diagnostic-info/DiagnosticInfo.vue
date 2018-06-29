@@ -2,7 +2,7 @@
   <div class="diagnostic-info-wrapper" ref="diagnosticInfo">
     <folding-panel class="panel" :title="title" :mode="mode" :isCardsPanel="true" :folded-status="foldedStatus"
       v-on:edit="startEditing" v-on:cancel="cancel" v-on:submit="submit" v-on:addNewCard="addRecord"
-      v-on:updateFilterCondition="changeFilterCondition" v-on:popExportDialog="popDialog" :editable="canEdit">
+      v-on:updateFilterCondition="changeFilterCondition" v-on:popExportDialog="popDialog" :editable="canEdit" :canExport="true">
       <card class="card" :class="cardClass(item.appointmentStatusCode)" :mode="mode" v-for="item in patientCaseList" :key="item.patientCaseId"
         :title="item.caseName" :disable-delete="checkIfDisabledToDelete(item)" v-on:editCurrentCard="seeDetail(item)"
         v-on:deleteCurrentCard="deleteRecord(item)"
@@ -32,6 +32,7 @@
         <div class="field whole-line">
           <span class="field-name">
             开始时间:
+            <span class="required-mark">*</span>
           </span>
           <span class="field-input">
             <el-date-picker
@@ -39,7 +40,7 @@
              :class="{'warning': warningResults.startTime}"
              type="date"
              placeholder="选择日期"
-             :picker-options="pickerOptions"
+             :picker-options="startTimePickerOptions"
              @change="updateWarning('startTime')">
             </el-date-picker>
             <span class="warning-text">{{warningResults.startTime}}</span>
@@ -49,6 +50,7 @@
         <div class="field whole-line">
           <span class="field-name">
             结束时间:
+            <span class="required-mark">*</span>
           </span>
           <span class="field-input">
             <el-date-picker
@@ -56,7 +58,7 @@
              :class="{'warning': warningResults.endTime}"
              type="date"
              placeholder="选择日期"
-             :picker-options="pickerOptions"
+             :picker-options="endTimePickerOptions"
              @change="updateWarning('endTime')">
             </el-date-picker>
             <span class="warning-text">{{warningResults.endTime}}</span>
@@ -66,6 +68,7 @@
         <div class="field whole-line">
           <span class="field-name">
             选择导出模板:
+            <span class="required-mark">*</span>
           </span>
           <span class="field-input">
             <el-select v-model="templateId" placeholder="请选择导出模板" clearable
@@ -124,11 +127,6 @@ export default {
         templateId: '',
         startTime: '',
         endTime: ''
-      },
-      pickerOptions: {
-        disabledDate(time) {
-          return time.getTime() > Date.now();
-        }
       },
 
       mode: this.READING_MODE,
@@ -193,6 +191,24 @@ export default {
 
       }
       return false;
+    },
+    startTimePickerOptions() {
+      let option = {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        }
+      };
+      return option;
+    },
+    endTimePickerOptions() {
+      let startTime = new Date(this.startTime);
+      console.log(startTime);
+      let option = {
+        disabledDate(time) {
+          return time.getTime() > Date.now() || time.getTime() < startTime.getTime();
+        }
+      };
+      return option;
     }
   },
   methods: {
@@ -443,6 +459,27 @@ export default {
         if (this.warningResults.hasOwnProperty(property) && this.warningResults[property]) {
           return;
         }
+      }
+
+      /**
+       * 判断开始时间与结束时间之间没有诊断记录则提示并返回
+       */
+      let timeFlag = false;
+      let timeStart = this.startTime.getTime();
+      let timeEnd = this.endTime.getTime();
+      let caseTimeList = [];
+      for (let i = 0; i < this.patientCaseList.length; i++) {
+        caseTimeList.push(new Date(this.patientCaseList[i].diagTime).getTime());
+      }
+      for (let j = 0; j < caseTimeList.length; j++) {
+        if (caseTimeList >= timeStart && caseTimeList <= timeEnd) {
+          timeFlag = true;
+          break;
+        }
+      }
+      if (!timeFlag) {
+        this.$message.error('所选时间区间没有诊断记录，请重新选择时间！');
+        return;
       }
 
       var userId = sessionStorage.getItem('userId');
