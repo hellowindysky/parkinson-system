@@ -37,7 +37,7 @@
           </span>
           <span v-else-if="getUIType(field)===9">
             <div class="last-files">
-              <div class="last-files-title">已上传的家系图</div>
+              <div class="last-files-title">已上传的家系图/基因检测报告</div>
               <div class="file" :class="{'editing': mode!==VIEW_CURRENT_CARD}" v-for="file in familyTreeView">
                 <i class="el-icon-document icon"></i>
                 <span class="file-name" @click="downloadFile(file)">{{file.fileName}}</span>
@@ -67,7 +67,7 @@
           </span>
           <span v-else-if="getUIType(field)===9">
             <div class="last-files">
-              <div class="last-files-title">已上传的家系图</div>
+              <div class="last-files-title">已上传的家系图/基因检测报告</div>
               <div class="file" :class="{'editing': mode!==VIEW_CURRENT_CARD}" v-for="file in familyTreeView">
                 <i class="el-icon-document icon"></i>
                 <span class="file-name" @click="downloadFile(file)">{{file.fileName}}</span>
@@ -96,6 +96,31 @@
           </span>
         </span>
       </div>
+
+      <el-checkbox-group v-model="geneMutationCheckedList" v-if="this.modalType === this.FAMILY_HISTORY_MODAL && copyInfo.isGenMutationInfo === 1">
+        <div class="form-wrapper" ref="formWrapper">
+          <table class="form">
+            <tr class="row first-row">
+              <td class="col">
+              </td>
+              <td class="col">
+                基因
+              </td>
+              <td class="col">
+                位点
+              </td>
+            </tr>
+            <tr v-for="(item, index) in geneMutationList" class="row">
+              <td class="col">
+                <el-checkbox :label="item.id" :disabled="mode===VIEW_CURRENT_CARD"><span></span></el-checkbox>
+              </td>
+              <td class="col">{{item.gene}}</td>
+              <td class="col">{{item.site}}</td>
+            </tr>
+          </table>
+        </div>
+      </el-checkbox-group>
+
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
       <div v-if="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD"
@@ -146,7 +171,8 @@ export default {
         disabledDate(time) {
           return time.getTime() > Date.now();
         }
-      }
+      },
+      geneMutationCheckedList: []
     };
   },
   computed: {
@@ -173,7 +199,8 @@ export default {
       'exerciseHistoryDictionary',
       'toxicExposureHistoryDictionary',
 
-      'typeGroup'
+      'typeGroup',
+      'geneMutationList'
     ]),
     dictionary() {
       if (this.modalType === this.PRESENT_HISTORY_MODAL) {
@@ -492,6 +519,18 @@ export default {
       this.title = title;
       this.copyInfo = Object.assign({}, originalInfo);
       this.familyTreeView = Object.assign([], originalInfo.patientFamilyTree);
+
+      if (this.modalType === this.FAMILY_HISTORY_MODAL) {
+        this.geneMutationCheckedList = [];
+        if (originalInfo.patientGenMutationInfoModel.length > 0) {
+          this.$set(this.copyInfo, 'isGenMutationInfo', 1);
+          originalInfo.patientGenMutationInfoModel.forEach((item) => {
+            this.geneMutationCheckedList.push(Number(item.id));
+          });
+        } else {
+          this.$set(this.copyInfo, 'isGenMutationInfo', 2);
+        }
+      }
       // 每次打开这个模态框，都会重新初始化 this.copyInfo
       this.initCopyInfo();
 
@@ -519,6 +558,13 @@ export default {
           wheelSpeed: 1,
           minScrollbarLength: 40
         });
+        if (this.$refs.formWrapper) {
+          Ps.destroy(this.$refs.formWrapper);
+          Ps.initialize(this.$refs.formWrapper, {
+            wheelSpeed: 1,
+            minScrollbarLength: 40
+          });
+        }
       });
     },
     cancel() {
@@ -701,6 +747,9 @@ export default {
 
         }
       }
+      if (this.modalType === this.FAMILY_HISTORY_MODAL && this.copyInfo.patientGenMutationInfoModel === undefined) {
+        this.$set(this.copyInfo, 'patientGenMutationInfoModel', []);
+      }
     },
     getMatchedField(field) {
       // 这个函数根据实际数据，在字典项中查询到对应的字段，从而方便我们得到其 uiType 等信息
@@ -809,6 +858,19 @@ export default {
     Bus.$emit(this.DYNAMIC_COMPONENT_MOUNTED);
   },
   watch: {
+    'copyInfo.isGenMutationInfo'(newVal) {
+      if (newVal === 2) {
+        this.geneMutationCheckedList = [];
+      }
+    },
+    geneMutationCheckedList() {
+      this.copyInfo.patientGenMutationInfoModel = [];
+      this.geneMutationCheckedList.forEach((item) => {
+        this.copyInfo.patientGenMutationInfoModel.push({
+          'gid': item
+        });
+      });
+    },
     template: function() {
       // 只有在 template 更新后，才去初始化 this.copyInfo 的值
       this.initCopyInfo();
@@ -830,6 +892,15 @@ export default {
 
 @field-line-height: 25px;
 @field-name-width: 125px;
+
+@col-id-width: 40px;
+@col-name-width: 180px;
+@col-english-width: 70px;
+@col-result-width: 160px;
+@col-unit-width: 70px;
+@col-range-width: 100px;
+@col-clinical-width:200px;
+@col-remarks-width: 180px;
 
 .modal-box-wrapper {
   position: absolute;
@@ -1079,6 +1150,119 @@ export default {
         opacity: 0.6;
         &:hover {
           padding: 0;
+        }
+      }
+    }
+    .form-wrapper {
+      position: relative;
+      max-height: 250px;
+      height: auto;
+      width: 100%;
+      margin-top:14px;
+      // padding-right: 10px;
+      border: 1px solid @inverse-font-color;
+      overflow: hidden;
+      .form {
+        position: relative;
+        width: 100%;
+        // left: calc(~"50% - (@{col-id-width} + @{col-time-width} + @{col-amount-width} + @{col-unit-width}) / 2");
+        border-spacing: 0;
+        .row {
+          height: 45px;
+          &.first-row {
+            background-color: @screen-color;
+            height: 30px;
+          }
+          .col {
+            font-size: @normal-font-size;
+            text-align: center;
+            &.col-id {
+              width: @col-id-width;
+            }
+            &.col-name {
+              width: @col-name-width;
+            }
+            &.col-english {
+              width: @col-english-width;
+            }
+            &.col-result {
+              width: @col-result-width;
+              position: relative;
+              .warning-text {
+                position: absolute;
+                top: 38px;
+                left: 10px;
+                height: 15px;
+                color: red;
+                font-size: @small-font-size;
+              }
+              .warning .el-input__inner {
+                border: 1px solid red;
+              }
+            }
+            &.col-unit {
+              width: @col-unit-width;
+            }
+            &.col-range {
+              width: @col-range-width;
+            }
+            &.col-clinical {
+              width: @col-clinical-width;
+            }
+            &.col-remarks {
+              padding-right: 5px;
+              width: @col-remarks-width;
+            }
+            .required-mark {
+              color: red;
+              font-size: 20px;
+              vertical-align: middle;
+            }
+            .iconfont {
+              display: inline-block;
+              position: absolute;
+              transform: translateY(-1px);
+              &.icon-long-arrow-up {
+                color: @green-color;
+              }
+              &.icon-long-arrow-down {
+                color: @alert-color;
+              }
+            }
+            .el-input {
+              margin-left: 2%;
+              width: 90%;
+              .el-input__inner {
+                height: 30px;
+                border: none;
+                background-color: @screen-color;
+                text-align: center;
+              }
+            }
+            .warning .el-input__inner {
+              border: 1px solid red;
+            }
+          }
+        }
+      }
+      .ps__scrollbar-y-rail {
+        position: absolute;
+        padding: 0;
+        top: 0;
+        width: 10px !important;
+        right: 0;
+        box-sizing: border-box;
+        opacity: 0.3;
+        transition: opacity 0.3s;
+        .ps__scrollbar-y {
+          position: relative;
+          border-radius: 0 !important;
+          background-color: #aaa;
+        }
+      }
+      &:hover {
+        .ps__scrollbar-y-rail {
+          opacity: 0.6;
         }
       }
     }

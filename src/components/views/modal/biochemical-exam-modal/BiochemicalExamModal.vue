@@ -340,13 +340,17 @@ export default {
             this.$set(this.copyInfo.bioexamResult[i], 'isReference', '');
           }
         });
+
         this.other = item.patientAttachmentModelList;
+        for (let fileItem of this.other) {
+          this.newOther.push(fileItem.id);
+        }
 
         if (this.copyInfo.bioexamId === 27) {
           this.geneMutationCheckedList = [];
-          if (this.copyInfo.patientGenMutationInfoModel.length > 0) {
+          if (item.patientGenMutationInfoModel.length > 0) {
             this.isHaveGeneMutation = true;
-            this.copyInfo.patientGenMutationInfoModel.forEach((item) => {
+            item.patientGenMutationInfoModel.forEach((item) => {
               this.geneMutationCheckedList.push(Number(item.id));
             });
           }
