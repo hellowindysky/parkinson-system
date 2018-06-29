@@ -178,16 +178,14 @@
       </div>
 
       <span>
-        <div class="button cancel-button" v-if="mode===VIEW_CURRENT_CARD && showEdit" @click="cancel">取消</div>
-        <div class="button edit-button" v-if="mode===VIEW_CURRENT_CARD && showEdit" @click="switchToEditingMode">编辑</div>
-        <!-- <div class="button submit-button" v-if="mode!==VIEW_CURRENT_CARD" @click="submit">确认</div> -->
+        <div class="button cancel-button" v-show="mode===ADD_NEW_CARD && !hasTableExisted || mode===VIEW_CURRENT_CARD && showEdit" @click="cancel">取消</div>
+        <div class="button edit-button" v-show="mode===VIEW_CURRENT_CARD && showEdit" @click="switchToEditingMode">编辑</div>
+        <div class="button submit-button" v-show="mode===ADD_NEW_CARD &&!hasTableExisted" @click="submit">确定</div>
       </span>
-      <span>
         <!-- <div class="button cancel-button"  @click="closeSubTable">返回</div> -->
-        <span>
-          <div class="button reset-button" v-if="mode!==VIEW_CURRENT_CARD"  @click="resetForm">重置</div>
-          <div class="button submit-button" v-if="mode!==VIEW_CURRENT_CARD"  @click="submit">完成</div>
-        </span>
+      <span v-show="mode!==VIEW_CURRENT_CARD && hasTableExisted">
+        <div class="button reset-button" @click="resetForm">重置</div>
+        <div class="button submit-button" @click="submit">完成</div>
       </span>
     </div>
   </div>

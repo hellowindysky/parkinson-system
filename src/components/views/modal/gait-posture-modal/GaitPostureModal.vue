@@ -530,7 +530,7 @@
       <span v-if="tableMode===FATHER_OPEN">
         <div class="button cancel-button" @click="cancel">取消</div>
         <div class="button edit-button" v-if="mode===VIEW_CURRENT_CARD && showEdit" @click="switchToEditingMode">编辑</div>
-        <div class="button submit-button" v-else-if="mode!==VIEW_CURRENT_CARD" @click="submit">确认</div>
+        <div class="button submit-button" v-else-if="mode!==VIEW_CURRENT_CARD" @click="submit">确定</div>
       </span>
       <span v-else-if="tableMode===SON_OPEN">
         <div class="button cancel-button" v-if="mode===VIEW_CURRENT_CARD" @click="closeSubTable">返回</div>
