@@ -340,6 +340,7 @@ export default {
             this.$set(this.copyInfo.bioexamResult[i], 'isReference', '');
           }
         });
+        this.other = item.patientAttachmentModelList;
 
         if (this.copyInfo.bioexamId === 27) {
           this.geneMutationCheckedList = [];
@@ -496,7 +497,7 @@ export default {
         this.lockSubmitButton = false;
         return;
       }
-      submitData.file = this.newOther;
+      submitData.file = this.newOther.join(',');
 
       if (this.mode === this.EDIT_CURRENT_CARD) {
         modifyBiochemical(submitData).then(() => {
@@ -611,10 +612,8 @@ export default {
       this.uploadingFilesNum -= 1;
       // this.fileList = [];
       if (response.code === 0) {
-        let id = response.data.patientFamilyTreeId;
-        list.push({
-          'id': id
-        });
+        let id = response.data.attachment[0].id;
+        list.push(id);
       } else {
         this.$message({
           message: '文件上传出错',
