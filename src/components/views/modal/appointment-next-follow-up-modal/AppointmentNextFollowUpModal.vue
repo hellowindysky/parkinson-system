@@ -5,7 +5,11 @@
       <div class="content">
 
         <div class="paved-canledar">
-          <ele-calendar v-model="copyInfo.appointDate"></ele-calendar>
+          <ele-calendar
+           v-model="copyInfo.appointDate"
+           :disabledDate="disabledDate"
+           :disabled="calendarDisabled">
+          </ele-calendar>
         </div>
 
         <div class="field whole-line">
@@ -73,8 +77,16 @@ export default {
         hospitalId: '',
         id: ''
       },
+      disabledDate: (time) => {
+        return time.getTime() < Date.now() - 8.64e7;
+      },
       hospitalOpts: []
     };
+  },
+  computed: {
+    calendarDisabled() {
+      return this.mode === this.VIEW_CURRENT_CARD;
+    }
   },
   methods: {
     showModal(cardOperation, item) {
