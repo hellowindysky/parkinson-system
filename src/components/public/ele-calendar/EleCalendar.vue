@@ -1,7 +1,7 @@
 <template>
   <transition name="el-zoom-in-top" @after-leave="$emit('dodestroy')">
     <div
-      v-show="visible"
+      v-show="visible" @click.capture="getEvent($event)"
       class="el-picker-panel el-date-picker">
       <div class="el-picker-panel__body-wrapper">
         <!-- <slot name="sidebar" class="el-picker-panel__sidebar"></slot>
@@ -144,11 +144,24 @@
     },
 
     props: {
+      /**
+       * v-model传入的时间
+       */
       selectedDate: {
         type: Date,
+        default: null
+      },
+      /**
+       * disabled为true时禁止所有点击事件
+       */
+      disabled: {
+        type: Boolean,
+        default: false
+      },
+      disabledDate: {
+        type: Function,
         default: function() {
-          let date = new Date();
-          return date;
+          return false;
         }
       }
     },
@@ -157,14 +170,13 @@
       return {
         popperClass: '',
         pickerWidth: 0,
-        date: this.selectedDate ? new Date(this.selectedDate) : new Date(),
+        date: new Date(),
         value: '',
         showTime: false,
         selectionMode: 'day',
         shortcuts: '',
         visible: true,
         currentView: 'date',
-        disabledDate: '',
         firstDayOfWeek: 7,
         year: null,
         month: null,
@@ -254,6 +266,11 @@
     },
 
     methods: {
+      getEvent(e) {
+        if (this.disabled) {
+          e.stopPropagation();
+        }
+      },
       handleClear() {
         this.date = this.selectedDate ? new Date(this.selectedDate) : new Date();
         this.$emit('pick');
@@ -453,11 +470,16 @@
         }
       },
 
-      date(newVal) {
-        this.year = newVal.getFullYear();
-        this.month = newVal.getMonth();
-        if (this.selectionMode === 'week') this.week = getWeekNumber(newVal);
-        this.$emit('pick', newVal, false);
+      // date(newVal) {
+      //   this.year = newVal.getFullYear();
+      //   this.month = newVal.getMonth();
+      //   if (this.selectionMode === 'week') this.week = getWeekNumber(newVal);
+      //   this.$emit('pick', newVal, false);
+      // },
+
+      selectedDate(newVal) {
+        this.date = this.selectedDate;
+        this.resetView();
       }
     },
 
@@ -466,6 +488,7 @@
     },
 
     mounted() {
+      this.date = this.selectedDate;
       if (this.date && !this.year) {
         this.year = this.date.getFullYear();
         this.month = this.date.getMonth();
