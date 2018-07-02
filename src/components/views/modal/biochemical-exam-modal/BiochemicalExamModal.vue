@@ -690,6 +690,9 @@ export default {
     Bus.$off(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
   },
   watch: {
+    isHaveGeneMutation() {
+      this.updateScrollbar();
+    },
     geneMutationCheckedList() {
       this.copyInfo.patientGenMutationInfoModel = [];
       this.geneMutationCheckedList.forEach((item) => {
