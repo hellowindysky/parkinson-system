@@ -204,6 +204,14 @@ export default {
     getTitle(scaleInfoId) {
       // 通过量表的ID来找到量表的名字
       var targetScale = Util.getElement('scaleInfoId', scaleInfoId, this.allScale);
+      // 苏州大学附属第二医院 特殊处理
+      if (sessionStorage.getItem('subjectCode') === 'SQ2017YFSF090146-01' && this.$store.state.subjectId !== -1) {
+        if (targetScale.gaugeNameEn === 'RBD-HK') {
+          return '快动眼睡眠行为障碍量表-香港版（RBDQ-HK）';
+        } else if (targetScale.gaugeNameEn === 'PSQI') {
+          return '匹兹堡睡眠质量指数（PSQI）_苏州二院';
+        }
+      }
       return targetScale.gaugeName;
     },
     getScaleFormType(scaleInfoId) {

@@ -527,8 +527,11 @@ export default {
           originalInfo.patientGenMutationInfoModel.forEach((item) => {
             this.geneMutationCheckedList.push(Number(item.id));
           });
-        } else {
+        } else if (this.mode !== this.ADD_NEW_CARD) {
           this.$set(this.copyInfo, 'isGenMutationInfo', 2);
+          this.$set(this.copyInfo, 'patientGenMutationInfoModel', []);
+        } else {
+          this.$set(this.copyInfo, 'isGenMutationInfo', '');
           this.$set(this.copyInfo, 'patientGenMutationInfoModel', []);
         }
       }

@@ -354,7 +354,16 @@ export default {
       return scale ? scale : {};
     },
     scaleTitle() {
-      return this.targetScale.gaugeName ? this.targetScale.gaugeName : '';
+      // 苏州大学附属第二医院 特殊处理
+      if (sessionStorage.getItem('subjectCode') === 'SQ2017YFSF090146-01' && this.$store.state.subjectId !== -1) {
+        if (this.targetScale.gaugeNameEn === 'RBD-HK') {
+          return '快动眼睡眠行为障碍量表-香港版（RBDQ-HK）';
+        } else if (this.targetScale.gaugeNameEn === 'PSQI') {
+          return '匹兹堡睡眠质量指数（PSQI）_苏州二院';
+        }
+      } else {
+        return this.targetScale.gaugeName ? this.targetScale.gaugeName : '';
+      }
     },
     scaleType() {
       var options = this.getOptions('gaugeType');
@@ -438,6 +447,12 @@ export default {
           let list = ['RBD-HK', 'RBDSQ', 'MMSE', '北京版(MoCA)', 'XJCS-12', 'BM-6', '苏州二院版（NMSQ）', 'SCOPA-AUT', 'HAMA/HARMS', 'Hoehn-Yahr', 'UPDRS-Ⅰ', 'UPDRS-Ⅱ', 'UPDRS-Ⅲ', 'UPDRS-Ⅳ', 'UMSARS-I', 'UMSARS-II', 'UMSARS-III', 'UMSARS-IV', 'ESS', 'FSS', 'PSQI', 'PDQ-39', 'HAMD-24'];
           scalesIsUse.map((item) => {
             if (list.indexOf(item.gaugeNameEn) !== -1) {
+              if (item.gaugeNameEn === 'RBD-HK') {
+                item.gaugeName = '快动眼睡眠行为障碍量表-香港版（RBDQ-HK）';
+              } else if (item.gaugeNameEn === 'PSQI') {
+                item.gaugeName = '匹兹堡睡眠质量指数（PSQI）_苏州二院';
+              }
+              console.log(item);
               this.scaleList.push(item);
               allScale.push({'value': item.gaugeName});
             }

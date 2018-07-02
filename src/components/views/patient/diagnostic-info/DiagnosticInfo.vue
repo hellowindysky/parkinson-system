@@ -202,7 +202,7 @@ export default {
     },
     endTimePickerOptions() {
       let startTime = new Date(this.startTime);
-      console.log(startTime);
+      // console.log(startTime);
       let option = {
         disabledDate(time) {
           return time.getTime() > Date.now() || time.getTime() < startTime.getTime();
