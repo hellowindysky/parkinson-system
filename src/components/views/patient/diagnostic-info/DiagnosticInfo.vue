@@ -217,7 +217,7 @@ export default {
       if (status === 'nostart') {
         diagnosticClass += ' appointed';
       } else if (status === 'expire') {
-        diagnosticClass += 'overdue';
+        diagnosticClass += ' overdue';
       }
       return diagnosticClass;
     },

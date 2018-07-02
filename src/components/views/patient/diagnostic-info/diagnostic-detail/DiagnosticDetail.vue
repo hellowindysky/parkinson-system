@@ -6,8 +6,8 @@
       <div class="button back-button" @click="goBack" v-show="!isNewCase">返回</div>
       <div class="button archive-button" :class="{'disabled': !existed}" @click="archiveCase"
         v-if="!isNewCase && canEdit && !patientDuringExperiment">归档</div>
-      <div class="button next-follow-button" v-if="nextFollowUpStatus==='none'" @click="appointNextFollowUp('')">预约下次随访</div>
-      <div class="button next-follow-button" v-if="nextFollowUpStatus!=='none'" @click="appointNextFollowUp(VIEW_CURRENT_CARD)">查看下次随访</div>
+      <div class="button next-follow-button" v-if="nextFollowUpStatus==='none'||isNewCase" @click="appointNextFollowUp('')">预约下次随访</div>
+      <div class="button next-follow-button" v-if="nextFollowUpStatus!=='none'&&!isNewCase" @click="appointNextFollowUp(VIEW_CURRENT_CARD)">查看下次随访</div>
     </div>
     <div class="scroll-area" ref="scrollArea">
       <diagnostic-basic :canEdit="canEdit" class="folding-panel" :mode="mode" ref="diagnosticBasic"
