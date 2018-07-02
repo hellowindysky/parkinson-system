@@ -857,6 +857,7 @@ export default {
   },
   watch: {
     'copyInfo.isGenMutationInfo'(newVal) {
+      this.updateScrollbar();
       if (newVal === 2) {
         this.geneMutationCheckedList = [];
       }
