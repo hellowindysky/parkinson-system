@@ -114,7 +114,7 @@
             <span>{{checkDevice}}</span>
           </span>
           <span class="field-input" v-else>
-            <el-input v-model="checkDevice" placeholder="请输入第三脑室宽"></el-input>
+            <el-input v-model="diaceleWidth" placeholder="请输入第三脑室宽"></el-input>
             <span class="unit">cm</span>
           </span>
         </div>
@@ -504,6 +504,7 @@ export default {
       magneticIntensity: '',
       checkNum: '',
       checkDevice: '',
+      diaceleWidth: '',
       checkConclusion: '',
       remarks: '',
 
@@ -756,6 +757,10 @@ export default {
       imageInfo.remarks = this.remarks;
       reviseDateFormat(imageInfo);
       pruneObj(imageInfo);
+
+      if (this.imageType === 9 && this.diaceleWidth) {
+        imageInfo.diaceleWidth = this.diaceleWidth;
+      }
 
       if (this.hasTable) {
         imageInfo.patientFieldCode = this.patientFieldCode;
@@ -1022,6 +1027,7 @@ export default {
   watch: {
     imageType() {
       this.initSubTableData();
+      this.diaceleWidth = '';
       vueCopy(this.copyItem.patientFieldCode, this.patientFieldCode);
     },
     '$route.path'() {
