@@ -420,6 +420,13 @@ export default {
       });
     },
     deleteRecord(item) {
+      if (item.appointmentStatusCode === this.NOSTART || item.appointmentStatusCode === this.EXPIRE) {
+        this.$message({
+          message: '已预约下次随访，不能删除',
+          type: 'warning'
+        });
+        return;
+      }
       Bus.$on(this.CONFIRM, () => {
         deleteDiagnosticInfo({
           'patientCaseId': item.patientCaseId
