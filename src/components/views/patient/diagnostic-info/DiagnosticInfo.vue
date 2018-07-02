@@ -469,9 +469,12 @@ export default {
       let timeEnd = this.endTime.getTime();
       let caseTimeList = [];
       for (let i = 0; i < this.patientCaseList.length; i++) {
-        caseTimeList.push(new Date(this.patientCaseList[i].diagTime).getTime());
+        let caseTime = new Date(this.patientCaseList[i].diagTime);
+        caseTime.setHours(0, 0, 0, 0);
+        caseTimeList.push(caseTime.getTime());
       }
       for (let j = 0; j < caseTimeList.length; j++) {
+        console.log(timeStart, timeEnd, caseTimeList);
         if (caseTimeList >= timeStart && caseTimeList <= timeEnd) {
           timeFlag = true;
           break;

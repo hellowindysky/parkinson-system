@@ -477,7 +477,7 @@
       //   this.$emit('pick', newVal, false);
       // },
 
-      selectedDate(newVal) {
+      selectedDate() {
         this.date = this.selectedDate;
         this.resetView();
       }
