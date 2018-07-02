@@ -474,7 +474,7 @@ export default {
         caseTimeList.push(caseTime.getTime());
       }
       for (let j = 0; j < caseTimeList.length; j++) {
-        console.log(timeStart, timeEnd, caseTimeList);
+        // console.log(timeStart, timeEnd, caseTimeList);
         if (caseTimeList >= timeStart && caseTimeList <= timeEnd) {
           timeFlag = true;
           break;

@@ -172,25 +172,49 @@
           <div @click="changeAnswerMode" class="quickly-button">{{quicklyMode === true ? '常规答题' : '快速答题'}}</div>
         </div>
         <div class="answer-form" v-show="quicklyMode === true">
-          <div class="form-cell" v-for="(item, index) in targetScale.questions" 
-          :class="{'notice-empty': !copyInfo.patientOptions[index].scaleOptionId && mode === EDIT_CURRENT_CARD}">
-            <div class="cell-title">
-              {{item.scaleQuestionNumber ? item.scaleQuestionNumber : index + 1}}
+          <div v-for="(item, index) in targetScale.questions"  :class="{ 'form-cell' : item.questionType===0 || item.questionType===1 }">
+            <div class="scale-questions" v-if="(item.questionType===2 || item.questionType===3)">
+              <p class="question-title" v-html="item.questionNumber + ' ' + item.subjectName" 
+              :class="{'notice-empty': !questionIsAnswered(item) && mode === EDIT_CURRENT_CARD}"></p>
+
+              <el-input v-model="copyInfo.patientOptions[index].remarks" :disabled="mode===VIEW_CURRENT_CARD"
+                class="question-body" v-if="item.questionType===2"></el-input>
+              <div v-if="item.questionType===3">
+                <el-input v-model="copyInfo.patientOptions[index].optionPoint"
+                  :disabled="mode===VIEW_CURRENT_CARD" class="question-body point-input"
+                  @blur="transformToNum(copyInfo.patientOptions[index], 'optionPoint', item.stepping, item.maxPoint)">
+                </el-input>
+                <span class="extra-info">
+                  <span v-if="item.maxPoint !== undefined">
+                    &nbsp;/ {{item.maxPoint}}
+                  </span>
+                  <span v-if="item.stepping !== undefined && false">
+                    （填写分数应为{{item.stepping}}的整数倍）
+                  </span>
+                </span>
+              </div>
             </div>
-            <div class="cell-input">
-              <span class="field-value">
-                <el-select v-model="copyInfo.patientOptions[index].scaleOptionId" filterable placeholder="请选择"
-                  :disabled='mode === VIEW_CURRENT_CARD' @change="autoFocus(index)" :ref="'quick_selector_' + index">
-                  <el-option
-                    v-for="option in item.options"
-                    :key="option.scaleOptionId"
-                    :label="String(option.grade)"
-                    :value="option.scaleOptionId">
-                    {{ option.grade }}
-                  </el-option>
-                </el-select>
-              </span>
-              <span class="cell-key">分</span>
+
+            <div v-if="(item.questionType===0 || item.questionType===1)"
+            :class="{'notice-empty': !copyInfo.patientOptions[index].scaleOptionId && mode === EDIT_CURRENT_CARD}">
+              <div class="cell-title">
+                {{item.scaleQuestionNumber ? item.scaleQuestionNumber : index + 1}}
+              </div>
+              <div class="cell-input">
+                <span class="field-value">
+                  <el-select v-model="copyInfo.patientOptions[index].scaleOptionId" filterable placeholder="请选择"
+                    :disabled='mode === VIEW_CURRENT_CARD' @change="autoFocus(index)" :ref="'quick_selector_' + index">
+                    <el-option
+                      v-for="option in item.options"
+                      :key="option.scaleOptionId"
+                      :label="String(option.grade)"
+                      :value="option.scaleOptionId">
+                      {{ option.grade }}
+                    </el-option>
+                  </el-select>
+                </span>
+                <span class="cell-key">分</span>
+              </div>
             </div>
           </div>
         </div>
@@ -1043,6 +1067,9 @@ export default {
     },
     targetScale: function() {
       this.quickAnswer = this.targetScale.quickAnswer === 1;
+      if (!this.quickAnswer) {
+        this.quicklyMode = false;
+      }
       if (this.mode === this.ADD_NEW_CARD) {
         // 只有在新增模式下，才允许更换量表，一旦这样做，就要清空答题信息
         this.$set(this.copyInfo, 'patientOptions', []);
@@ -1134,6 +1161,7 @@ export default {
     width: 100%;
     height: calc(~"100% - @{title-bar-height} - @{title-bar-margin-bottom}");
     padding-right: @margin-right;
+    padding-bottom: 20px;
     box-sizing: border-box;
     overflow: hidden;
     .scale-questions {
@@ -1531,21 +1559,28 @@ export default {
         width: 100%;
         text-align: left;
         background-color: #fff;
-        border-width: 1px;
-        border-style: solid;
-        border-color: #ccc;
+        // border-width: 1px;
+        // border-style: solid;
+        // border-color: #ccc;
         border-collapse: collapse;
         .form-cell{
           display: inline-block;
-          width: 20%;
+          width: 19.8%;
           height: 100px;
+          margin: 0.1%;
           padding: 0 20px;
           line-height: 50px;
           text-align: center;
           border-style: solid;
-          border-width: 0 1px 1px 0;
+          border-width: 1px;
           border-color: #ccc;
           box-sizing: border-box;
+          &.cell-top {
+            border-top: 1px solid #ccc;
+          }
+          &.cell-left {
+            border-left: 1px solid #ccc;
+          }
           &.notice-empty {
             color: #ff0000;
             .el-input__inner {
