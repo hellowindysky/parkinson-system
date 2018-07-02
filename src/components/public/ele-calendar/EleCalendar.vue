@@ -496,3 +496,9 @@
     }
   };
 </script>
+
+<style>
+.el-date-table th {
+  text-align: center;
+}
+</style>
