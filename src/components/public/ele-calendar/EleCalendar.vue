@@ -73,7 +73,7 @@
           </div>
 
           <div class="el-picker-panel__content">
-            <date-table
+            <date-table :class="{'custom-date-table':disabled}"
               v-show="currentView === 'date'"
               @pick="handleDatePick"
               :year="year"
@@ -500,5 +500,11 @@
 <style>
 .el-date-table th {
   text-align: center;
+}
+.custom-date-table .el-date-table__row td.available {
+  background-color: #f4f4f4;
+  opacity: 1;
+  cursor: not-allowed;
+  color: #ccc;
 }
 </style>
