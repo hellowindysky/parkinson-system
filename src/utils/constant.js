@@ -26,6 +26,11 @@ export default {
   EXTENDED_STATUS: 'extended',
   NEXT_FOLLOW_UP_STATUS: 'nextFollowUpStatus',
 
+  // 预约随访的状态 nostart未执行 expire已过期 none没有预约
+  NOSTART: 'nostart',
+  EXPIRE: 'expire',
+  NONE: 'none',
+
   // event
   UPDATE_USER_ID: 'updateUserId',
   UNSUBSCRIBE: 'unsubscribe',

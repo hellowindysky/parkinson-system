@@ -214,9 +214,9 @@ export default {
   methods: {
     cardClass(status) {
       let diagnosticClass = this.showRecordSource ? this.devideWidth + ' tall-card' : this.devideWidth;
-      if (status === 'nostart') {
+      if (status === this.NOSTART) {
         diagnosticClass += ' appointed';
-      } else if (status === 'expire') {
+      } else if (status === this.EXPIRE) {
         diagnosticClass += ' overdue';
       }
       return diagnosticClass;

@@ -99,7 +99,7 @@ export default {
       paras.patientInfoId = this.$route.params.id;
       addAppointmentNextFollowUp(paras).then(() => {
         this.updateAndClose();
-        Bus.$emit(this.NEXT_FOLLOW_UP_STATUS, 'nostart');
+        Bus.$emit(this.NEXT_FOLLOW_UP_STATUS, this.NOSTART);
       }, this._handleError);
     },
     switchToEditingMode() {
