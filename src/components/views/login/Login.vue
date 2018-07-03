@@ -174,6 +174,21 @@ export default {
         callback();
       }
     };
+    var differentiateAccount = (rule, value, callback) => {
+      if (value === '') {
+        if (this.loginType === 1) {
+          callback(new Error('请输入账号'));
+        } else if (this.loginType === 2 || this.loginType === 3) {
+          callback(new Error('请输入手机号'));
+        }
+      } else if (!(/^\S{2,20}$/.test(value)) && this.loginType === 1) {
+        callback(new Error('请输入长度在 2 到 20 个字符'));
+      } else if (!(/^1(3|4|5|7|8)\d{9}$/.test(value)) && this.loginType !== 1) {
+        callback(new Error('请输入正确的手机号'));
+      } else {
+        callback();
+      }
+    };
     return {
       loginType: 1,
 
@@ -212,8 +227,9 @@ export default {
       },
       rules: {
         account: [
-          { required: true, message: '请输入账号/手机号码', trigger: 'change' },
-          { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
+          // { required: true, message: '请输入账号/手机号码', trigger: 'change' },
+          // { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
+          {validator: differentiateAccount, trigger: 'blur'}
         ],
         password: [
           { required: true, message: '请输入密码', trigger: 'change' },
