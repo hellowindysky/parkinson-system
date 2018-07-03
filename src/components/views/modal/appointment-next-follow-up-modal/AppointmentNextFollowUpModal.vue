@@ -138,6 +138,10 @@ export default {
       paras.patientCaseId = this.$route.params.caseId;
       paras.patientInfoId = this.$route.params.id;
       addAppointmentNextFollowUp(paras).then(() => {
+        this.$message({
+          message: '预约成功',
+          type: 'success'
+        });
         this.updateAndClose();
         Bus.$emit(this.NEXT_FOLLOW_UP_STATUS, this.NOSTART);
       }, this._handleError);
@@ -157,7 +161,7 @@ export default {
       // this.lockSubmitButton = false;
     },
     updateAndClose() {
-      Bus.$emit(this.UPDATE_PATIENT_CASE_LIST);
+      // Bus.$emit(this.UPDATE_PATIENT_CASE_LIST);
       // this.lockSubmitButton = false;
       Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
     },

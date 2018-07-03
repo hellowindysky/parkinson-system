@@ -302,7 +302,6 @@ export default {
     seeDetail(item) {
       this.routerJumpWithCaseId(item.patientCaseId);
       // Bus.$emit(this.UPDATE_COMPLAINTSYMPTOMS_INFO);
-      Bus.$emit(this.NEXT_FOLLOW_UP_STATUS, item.appointmentStatusCode);
     },
     addRecord() {
       this.routerJumpWithCaseId('newCase');
