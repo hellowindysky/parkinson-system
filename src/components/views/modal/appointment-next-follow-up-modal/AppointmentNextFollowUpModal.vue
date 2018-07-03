@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="appoint-next-follow-up-wrapper">
-    <div class="appoint-next-follow-up-modal">
+    <div class="appoint-next-follow-up-modal" ref="scrollArea">
       <h3 class="title">预约下次随访</h3>
       <div class="content">
 
@@ -85,6 +85,7 @@
 <script>
 import eleCalendar from 'public/ele-calendar/EleCalendar';
 import Bus from 'utils/bus.js';
+import Ps from 'perfect-scrollbar';
 // import Util from 'utils/util.js';
 // import { deepCopy, reviseDateFormat } from 'utils/helper.js';
 import { reviseDateFormat } from 'utils/helper.js';
@@ -126,6 +127,7 @@ export default {
         this.$set(this.copyInfo, 'hospitalId', item.hospitalId);
         this.$set(this.copyInfo, 'id', item.id);
       }
+      this.updateScrollbar();
     },
     getHospitals() {
       queryHospital().then((res) => {
@@ -138,13 +140,17 @@ export default {
       paras.patientCaseId = this.$route.params.caseId;
       paras.patientInfoId = this.$route.params.id;
       addAppointmentNextFollowUp(paras).then(() => {
+        this.$message({
+          message: '预约成功',
+          type: 'success'
+        });
         this.updateAndClose();
         Bus.$emit(this.NEXT_FOLLOW_UP_STATUS, this.NOSTART);
       }, this._handleError);
     },
     switchToEditingMode() {
       this.mode = this.EDIT_CURRENT_CARD;
-      // this.updateScrollbar();
+      this.updateScrollbar();
     },
     cancel() {
       Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
@@ -157,7 +163,7 @@ export default {
       // this.lockSubmitButton = false;
     },
     updateAndClose() {
-      Bus.$emit(this.UPDATE_PATIENT_CASE_LIST);
+      // Bus.$emit(this.UPDATE_PATIENT_CASE_LIST);
       // this.lockSubmitButton = false;
       Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
     },
@@ -196,6 +202,17 @@ export default {
       } else {
         this.$set(this.warningResultsDialog, fieldName, '请填写正确的手机号或固话(带区号)');
       }
+    },
+    updateScrollbar() {
+      this.$nextTick(() => {
+        if (this.$refs.scrollArea) {
+          Ps.destroy(this.$refs.scrollArea);
+          Ps.initialize(this.$refs.scrollArea, {
+            wheelSpeed: 1,
+            minScrollbarLength: 40
+          });
+        }
+      });
     }
   },
   components: {
@@ -344,6 +361,28 @@ export default {
       }
       &.btn-margin {
         margin-top: 10px;
+      }
+    }
+    .ps__scrollbar-y-rail {
+      position: absolute;
+      width: 15px;
+      right: 0;
+      padding: 0 3px;
+      box-sizing: border-box;
+      opacity: 0.3;
+      transition: opacity 0.3s, padding 0.2s;
+      .ps__scrollbar-y {
+        position: relative;
+        background-color: #aaa;
+        border-radius: 20px;
+      }
+    }
+    &:hover {
+      .ps__scrollbar-y-rail {
+        opacity: 0.6;
+        &:hover {
+          padding: 0;
+        }
       }
     }
   }

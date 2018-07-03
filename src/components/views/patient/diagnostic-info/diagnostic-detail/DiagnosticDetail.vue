@@ -280,6 +280,7 @@ export default {
           this.existed = true;
           this.caseDetail = Object.assign({}, data.patientCase);
           this.mode = this.READING_MODE;
+          this.nextFollowUpStatus = data.patientCase.appointmentStatusCode;
           if (data.patientCase.archiveStatus === 1) {
             this.hasBeenArchived = true;
           } else if (data.patientCase.archiveStatus === 2) {
