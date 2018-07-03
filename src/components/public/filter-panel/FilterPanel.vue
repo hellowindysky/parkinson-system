@@ -557,7 +557,7 @@
           <div class="content" :class="{'folded': !displayDiagnosticBasicCondition}">
             <div class="item">
               <el-checkbox class="item-checkbox" v-model="diagnosticBasicSelectedStatus.caseType"></el-checkbox>
-              <span class="item-name">诊断类型</span>
+              <span class="item-name">就诊类型</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="diagnosticBasicCondition.caseType"
                   :disabled="!diagnosticBasicSelectedStatus.caseType">
@@ -568,7 +568,7 @@
             </div>
             <div class="item">
               <el-checkbox class="item-checkbox" v-model="diagnosticBasicSelectedStatus.diagTimeFrom"></el-checkbox>
-              <span class="item-name">诊断时间</span>
+              <span class="item-name">就诊时间</span>
               <span class="item-value">
                 <el-date-picker class="left-input" v-model="diagnosticBasicCondition.diagTimeFrom" placeholder="最早时间"
                   :disabled="!diagnosticBasicSelectedStatus.diagTimeFrom"></el-date-picker>
@@ -599,7 +599,7 @@
           <div class="content" :class="{'folded': !displayDiagnosticDiseaseCondition}">
             <div class="item">
               <el-checkbox class="item-checkbox" v-model="diagnosticDiseaseSelectedStatus.diseaseType"></el-checkbox>
-              <span class="item-name">病症类型</span>
+              <span class="item-name">诊断类型</span>
               <span class="item-value">
                 <el-select class="normal-input" v-model="diagnosticDiseaseCondition.diseaseType" @change="clearVal('specificDisease2')"
                   :disabled="!diagnosticDiseaseSelectedStatus.diseaseType">
