@@ -497,14 +497,21 @@
   };
 </script>
 
-<style>
-.el-date-table th {
-  text-align: center;
-}
+<style lang="less">
 .custom-date-table .el-date-table__row td.available {
   background-color: #f4f4f4;
   opacity: 1;
   cursor: not-allowed;
   color: #ccc;
+}
+.el-date-table {
+  th {
+    text-align: center;
+  }
+  .el-date-table__row {
+    td.current.disabled {
+      background-color: #e2e2e6;
+    }
+  }
 }
 </style>
