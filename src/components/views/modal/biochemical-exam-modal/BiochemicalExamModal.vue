@@ -52,10 +52,12 @@
             <span class="required-mark"></span>
           </span>
           <span class="field-input">
-            <span v-if="mode===VIEW_CURRENT_CARD">{{isHaveGeneMutation ? '有' : '无'}}</span>
-            <el-select v-else placeholder="请选择是否有基因突变" v-model="isHaveGeneMutation" @change="geneMutationCheckedList = []">
-              <el-option :label="'有'" :value="true"></el-option>
-              <el-option :label="'无'" :value="false"></el-option>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{geneMutationText}}</span>
+            <el-select v-else placeholder="请选择是否有基因突变" v-model="copyInfo.isGenMutationInfo" @change="geneMutationCheckedList = []">
+              <el-option v-for="item in getOptions('ifGeneMutation')" :key="item.code"
+                :label="item.name"
+                :value="item.code">
+              </el-option>
             </el-select>
           </span>
         </div>
@@ -208,7 +210,7 @@
         </div>
 
         <el-checkbox-group v-model="geneMutationCheckedList">
-          <div class="form-wrapper" ref="formWrapper" v-if="copyInfo.bioexamId === 27 && isHaveGeneMutation">
+          <div class="form-wrapper" ref="formWrapper" v-if="copyInfo.bioexamId === 27 && copyInfo.isGenMutationInfo === 1">
             <table class="form">
               <tr class="row first-row">
                 <td class="col">
@@ -267,7 +269,6 @@ export default {
       },
       copyInfo: {},
       targetBioexam: [],
-      isHaveGeneMutation: '',
       geneMutationCheckedList: [],
       lockSubmitButton: false,
       showEdit: false,
@@ -303,6 +304,15 @@ export default {
     },
     patientCaseId() {
       return this.$route.params.caseId;
+    },
+    geneMutationText() {
+      if (this.copyInfo.isGenMutationInfo === 1) {
+        return '有';
+      } else if (this.copyInfo.isGenMutationInfo === 1) {
+        return '无';
+      } else {
+        return '';
+      }
     }
     // fileParam() {
     //   let param = {
@@ -349,7 +359,6 @@ export default {
         if (this.copyInfo.bioexamId === 27) {
           this.geneMutationCheckedList = [];
           if (item.patientGenMutationInfoModel.length > 0) {
-            this.isHaveGeneMutation = true;
             item.patientGenMutationInfoModel.forEach((item) => {
               this.geneMutationCheckedList.push(Number(item.id));
             });
@@ -404,7 +413,7 @@ export default {
       }
 
       // 判断是否为基因检查 然后添加/删除基因检查表单属性
-      this.isHaveGeneMutation = false;
+      this.copyInfo.isGenMutationInfo = '';
       if (this.copyInfo.bioexamId === 27) {
         this.$set(this.copyInfo, 'patientGenMutationInfoModel', []);
         this.geneMutationCheckedList = [];
@@ -690,7 +699,7 @@ export default {
     Bus.$off(this.SCREEN_SIZE_CHANGE, this.updateScrollbar);
   },
   watch: {
-    isHaveGeneMutation() {
+    'copyInfo.isGenMutationInfo'() {
       this.updateScrollbar();
     },
     geneMutationCheckedList() {

@@ -523,15 +523,10 @@ export default {
       if (this.modalType === this.FAMILY_HISTORY_MODAL) {
         this.geneMutationCheckedList = [];
         if (originalInfo.patientGenMutationInfoModel && originalInfo.patientGenMutationInfoModel.length > 0) {
-          this.$set(this.copyInfo, 'isGenMutationInfo', 1);
           originalInfo.patientGenMutationInfoModel.forEach((item) => {
             this.geneMutationCheckedList.push(Number(item.id));
           });
-        } else if (this.mode !== this.ADD_NEW_CARD) {
-          this.$set(this.copyInfo, 'isGenMutationInfo', 2);
-          this.$set(this.copyInfo, 'patientGenMutationInfoModel', []);
         } else {
-          this.$set(this.copyInfo, 'isGenMutationInfo', '');
           this.$set(this.copyInfo, 'patientGenMutationInfoModel', []);
         }
       }
