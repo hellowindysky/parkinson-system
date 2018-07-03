@@ -1243,9 +1243,9 @@
       </div>
       <div class="content-scroll-area" ref="scrollContent">
         <div class="form-head">
-          <table class="form form-head" :class="{'selectable': isShowOperationBar}">
+          <table class="form form-head" :class="{'selectable': isHasRightToExport}">
             <tr class="row top-row">
-              <td class="col col-select" v-show="isShowOperationBar">
+              <td class="col col-select" v-show="isHasRightToExport">
                 <el-checkbox v-model="allPatientsSelectedStatus"
                   @change="toggleAllPatientsSeletedStatus"></el-checkbox>
               </td>
@@ -1260,9 +1260,9 @@
           </table>
         </div>
         <div class="form-body" ref="formBody">
-          <table class="form" :class="{'selectable': isShowOperationBar}">
+          <table class="form" :class="{'selectable': isHasRightToExport}">
             <tr class="row" v-for="(patient, i) in patientList">
-              <td class="col col-select" v-show="isShowOperationBar">
+              <td class="col col-select" v-show="isHasRightToExport">
                 <el-checkbox v-model="patientSeletedStatusList[i]"></el-checkbox>
               </td>
               <td class="col col-num">{{i + 1}}</td>
@@ -1414,7 +1414,6 @@ export default {
       dialogVisible: false,
       exportTemp: [],
       templateId: '',
-      isShowOperationBar: false,
       warningResults: {
         templateId: ''
       },
