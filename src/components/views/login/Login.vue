@@ -27,7 +27,7 @@
         </el-form-item>
 
         <el-form-item prop="identifyingCode" v-if="loginType===3">
-          <el-input class="round-input short" clearable v-model="loginForm.identifyingCode" auto-complete="new-password" placeholder="请输入短信验证码" @keyup.enter.native="submitResetForm" autofocus="autofocus"></el-input>
+          <el-input class="round-input short" clearable v-model="loginForm.identifyingCode" auto-complete="new-password" placeholder="请输入短信验证码" @keyup.enter.native="submitForm" autofocus="autofocus"></el-input>
           <el-button class="button code-button" type="primary" @click="sendCodes" :disabled="codeButtonStatus===1">{{codeButtonText}}</el-button>
         </el-form-item>
 
@@ -176,14 +176,14 @@ export default {
     };
     var differentiateAccount = (rule, value, callback) => {
       if (value === '') {
-        if (this.loginType === 1) {
+        if (this.loginType === 1 || this.loginType === 5) {
           callback(new Error('请输入账号'));
         } else if (this.loginType === 2 || this.loginType === 3) {
           callback(new Error('请输入手机号'));
         }
-      } else if (!(/^\S{2,20}$/.test(value)) && this.loginType === 1) {
+      } else if (!(/^\S{2,20}$/.test(value)) && this.loginType !== 2 && this.loginType !== 3) {
         callback(new Error('请输入长度在 2 到 20 个字符'));
-      } else if (!(/^1(3|4|5|7|8)\d{9}$/.test(value)) && this.loginType !== 1) {
+      } else if (!(/^1(3|4|5|7|8)\d{9}$/.test(value)) && this.loginType !== 1 && this.loginType !== 5) {
         callback(new Error('请输入正确的手机号'));
       } else {
         callback();
