@@ -1665,6 +1665,8 @@ export default {
         submitData.imageType = submitData.elecExamType;
         submitData.other = this.newOther;
         // delete submitData.newOther;
+        delete submitData.patientFieldCode;
+
         pruneObj(submitData);
 
         if (this.mode === this.ADD_NEW_CARD) {

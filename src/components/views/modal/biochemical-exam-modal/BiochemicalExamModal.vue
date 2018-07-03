@@ -267,7 +267,7 @@ export default {
       },
       copyInfo: {},
       targetBioexam: [],
-      isHaveGeneMutation: false,
+      isHaveGeneMutation: '',
       geneMutationCheckedList: [],
       lockSubmitButton: false,
       showEdit: false,
@@ -602,7 +602,7 @@ export default {
         }
       }
       for (let i = 0; i < transferringList.length; i++) {
-        if (file.id === transferringList[i].id) {
+        if (file.id === transferringList[i]) {
           transferringList.splice(i, 1);
           break;
         }
