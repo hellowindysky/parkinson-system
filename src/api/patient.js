@@ -606,6 +606,16 @@ export function addAppointmentNextFollowUp(nextFollowUpOpts) {
   return encapsulatePromise(url, request);
 };
 
+// 设定患者电话
+export function addPatientMobile(PatientMobileOpts) {
+  var request = Object.assign({}, getCommonRequest());
+  request.newMobile = PatientMobileOpts.newMobile;
+  request.patientId = PatientMobileOpts.patientId;
+  var url = '/pdms/appointment/updatePatientMobile';
+
+  return encapsulatePromise(url, request);
+};
+
 // 查询医生所属医院
 export function queryHospital() {
   var request = Object.assign({}, getCommonRequest());

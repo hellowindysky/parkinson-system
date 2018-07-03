@@ -56,6 +56,29 @@
       <div v-else-if="mode===VIEW_CURRENT_CARD" class="button submit-button btn-margin" @click="switchToEditingMode">编辑</div>
 
     </div>
+
+    <el-dialog title="该患者没留存联系电话，请重新填写" :visible.sync="dialogVisible" size="tiny" :modal-append-to-body="false" :show-close="false">
+      <div>
+        <div class="field whole-line">
+          <span class="field-name">
+            联系电话
+          </span>
+          <span class="field-input">
+            <el-input
+             v-model="newMobile"
+             :class="{'warning': warningResultsDialog.newMobile}"
+             @change="updateWarningDialog('newMobile')">
+            </el-input>
+            <span class="warning-text">{{warningResultsDialog.newMobile}}</span>
+          </span>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogCancel">取 消</el-button>
+        <el-button type="primary" @click="dialogSubmit">确 定</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -65,7 +88,7 @@ import Bus from 'utils/bus.js';
 // import Util from 'utils/util.js';
 // import { deepCopy, reviseDateFormat } from 'utils/helper.js';
 import { reviseDateFormat } from 'utils/helper.js';
-import {queryHospital, addAppointmentNextFollowUp } from 'api/patient.js';
+import {queryHospital, addAppointmentNextFollowUp, addPatientMobile } from 'api/patient.js';
 export default {
   data() {
     return {
@@ -80,7 +103,12 @@ export default {
       disabledDate: (time) => {
         return time.getTime() < Date.now() - 8.64e7;
       },
-      hospitalOpts: []
+      hospitalOpts: [],
+      dialogVisible: false,
+      newMobile: '',
+      warningResultsDialog: {
+        newMobile: ''
+      }
     };
   },
   computed: {
@@ -123,6 +151,9 @@ export default {
     },
     _handleError(error) {
       console.log(error);
+      if (error.code === 2012) {
+        this.dialogVisible = true;
+      }
       // this.lockSubmitButton = false;
     },
     updateAndClose() {
@@ -136,7 +167,35 @@ export default {
           return item.hospitalName;
         }
       }
-      // return Util.getElement('id', id, this.hospitalOpts);
+    },
+    dialogCancel() {
+      this.newMobile = '';
+      this.$set(this.warningResultsDialog, 'newMobile', null);
+      this.dialogVisible = false;
+    },
+    dialogSubmit() {
+      this.updateWarningDialog('newMobile');
+      if (this.warningResultsDialog.newMobile) {
+        return;
+      }
+
+      // 提交联系电话
+      addPatientMobile({
+        newMobile: this.newMobile,
+        patientId: Number(this.$route.params.id)
+      }).then(() => {
+        this.dialogCancel();
+      });
+    },
+    updateWarningDialog(fieldName) {
+      let fieldVal = this[fieldName];
+      let regMobile = /^1[34578]\d{9}$/;
+      let regPhone = /^[0]\d{2}([-]?)\d{8}$|^[0]\d{3}([-]?)\d{7,8}$/;
+      if (fieldName === 'newMobile' && (regMobile.test(fieldVal) || regPhone.test(fieldVal))) {
+        this.$set(this.warningResultsDialog, fieldName, null);
+      } else {
+        this.$set(this.warningResultsDialog, fieldName, '请填写正确的手机号或固话(带区号)');
+      }
     }
   },
   components: {
@@ -288,5 +347,86 @@ export default {
       }
     }
   }
+
+  .el-dialog__wrapper {
+    text-align: left;
+    .field {
+      display: inline-block;
+      position: relative;
+      width: 50%;
+      min-height: 45px;
+      line-height: @field-line-height;
+      box-sizing: border-box;
+      text-align: left;
+      vertical-align: top;
+      &.whole-line {
+        width: 100%;
+        .field-input {
+          width: calc(~"96% - @{field-name-width}");
+        }
+      }
+      .field-name {
+        display: inline-block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 80px;
+        line-height: @field-line-height;
+        font-size: @normal-font-size;
+        color: @font-color;
+        .required-mark {
+          color: red;
+          font-size: 20px;
+          vertical-align: middle;
+        }
+      }
+      .field-input {
+        display: inline-block;
+        position: relative;
+        left: 80px;
+        width: calc(~"92% - 80px");
+        line-height: @field-line-height;
+        font-size: @normal-font-size;
+        color: @light-font-color;
+        .warning-text {
+          position: absolute;
+          top: 26px;
+          height: 15px;
+          color: red;
+          font-size: @small-font-size;
+        }
+        .el-input {
+          .el-input__inner {
+            height: 30px;
+            border: none;
+            background-color: @screen-color;
+          }
+        }
+        .warning .el-input__inner {
+          border: 1px solid red;
+        }
+      }
+    }
+
+    .dialog-footer {
+      .el-button {
+        display: inline-block;
+        width: 100px;
+        margin: 10px 20px 20px 20px;
+        color: #fff;
+        cursor: pointer;
+        border: none;
+        border-radius: 0;
+        &.el-button--default {
+          background-color: @light-font-color;
+        }
+        &.el-button--primary {
+          background-color: @button-color;
+        }
+      }
+    }
+
+  }
+
 }
 </style>
