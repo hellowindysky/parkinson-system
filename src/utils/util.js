@@ -218,14 +218,11 @@ function checkIfNotMoreThanNDecimalNums(num, n) {
 }
 
 // 检查 num 是否为0-999（至多 1 位小数）
-function checkIfNotMoreThanNums(num, n) {
-  n = checkIfPositiveInteger(n) ? n : 1;
+function checkIfNotMoreThanNums(num) {
   // var reg = new RegExp('^999$|^(\d|[1-9]\d)(\.\d{1, ' + n + '})*$');
   var reg = /^[1-9]\d?\d?(\.\d)?$/;
   return reg.test(num);
 }
-
-
 // 检查 num 是否为电话号码（由数字和短横线组成，且第一位是数字）
 function checkIfValidPhoneNum(num) {
   var reg = /^[0-9][0-9-]*$/;

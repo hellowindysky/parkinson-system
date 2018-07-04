@@ -421,7 +421,6 @@ export default {
     },
     updateWarning(field) {
       var fieldName = field.fieldName;
-      let subjectId = this.$store.state.subjectId;
       var copyFieldValue = this.copyInfo[fieldName];
       // 如果是身份证信息，先对其进行校验
       if (fieldName === 'cardId') {
