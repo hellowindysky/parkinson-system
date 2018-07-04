@@ -663,6 +663,9 @@ export default {
     // 每次回到登录界面的时候，都要清空显示敏感信息的权限
     this.$store.commit('DISCARD_RIGHT_OF_DISPLAYING_SENSITIVE_INFO');
 
+    // 清空导出权限
+    this.$store.commit('CHANGE_EXPORT_RIGHT', false);
+
     // 取消之前登录产生的订阅
     Bus.$emit(this.UNSUBSCRIBE);
   }

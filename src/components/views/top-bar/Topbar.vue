@@ -49,7 +49,7 @@
       <p class="operate-item" v-if="isSupportAccount" @click="reselectDoctor">更换授权医生</p>
       <div class="seperate-line" v-if="isSupportAccount"></div>
       <p class="operate-item" @click="setPrintTemp" v-if="isHasRightToExport">导出模板设置</p>
-      <div class="seperate-line"></div>
+      <div class="seperate-line" v-if="isHasRightToExport"></div>
       <p class="operate-item" @click="resetPassword">修改密码</p>
       <div class="seperate-line"></div>
       <p class="operate-item" @click="logout">退出登录</p>
@@ -278,7 +278,7 @@ export default {
         let specialUserList = res.split(',');
         // console.log(userName, specialUserList);
         if (specialUserList.indexOf(userName) >= 0 && !this.$store.state.hasRightToExport) {
-          this.$store.commit('CHANGE_EXPORT_RIGHT');
+          this.$store.commit('CHANGE_EXPORT_RIGHT', true);
         }
       });
     }
