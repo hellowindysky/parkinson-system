@@ -421,6 +421,7 @@ export default {
     },
     updateWarning(field) {
       var fieldName = field.fieldName;
+      let subjectId = this.$store.state.subjectId;
       var copyFieldValue = this.copyInfo[fieldName];
       // 如果是身份证信息，先对其进行校验
       if (fieldName === 'cardId') {
@@ -458,7 +459,7 @@ export default {
             this.copyInfo.sex = gender === '男' ? 0 : 1;
           }
         }
-      } else if (fieldName === 'thighLength' || fieldName === 'calfLength' || fieldName === 'waist') {
+      } else if (fieldName === 'thighLength' || fieldName === 'calfLength') {
         if (copyFieldValue === '' || copyFieldValue === undefined) {
           this.$set(this.warningResults, fieldName, null);
         } else {
@@ -466,6 +467,18 @@ export default {
             this.$set(this.warningResults, fieldName, null);
           } else {
             this.$set(this.warningResults, fieldName, '请输入数字，最多1位小数');
+          }
+        }
+        return;
+      } else if (fieldName === 'waist') {
+        if (copyFieldValue === '' || copyFieldValue === undefined) {
+          this.$set(this.warningResults, fieldName, null);
+        } else {
+          if (Util.checkIfNotMoreThanNums(copyFieldValue, 1)) {
+            this.$set(this.warningResults, fieldName, null);
+          } else {
+            console.log(copyFieldValue);
+            this.$set(this.warningResults, fieldName, '请输入1-999之间的数字，且最多1位小数');
           }
         }
         return;

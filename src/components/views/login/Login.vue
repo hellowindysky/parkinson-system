@@ -349,6 +349,7 @@ export default {
     },
     forgetPassword() {
       this.loginType = FORGET_PASSWORD;
+      this.$refs['loginForm'].validate();
     },
     toChangePassword() {
       this.loginType = TO_CHANGE_PASSWORD;
