@@ -111,7 +111,7 @@
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span class="warning-text"></span>
-            <span>{{checkDevice}}</span>
+            <span>{{diaceleWidth}}</span>
           </span>
           <span class="field-input" v-else>
             <el-input v-model="diaceleWidth" placeholder="请输入第三脑室宽"></el-input>
@@ -596,6 +596,7 @@ export default {
   },
   methods: {
     showPanel(cardOperation, item, showEdit) {
+      console.log(item);
       this.copyItem = item;
       this.completeInit = false;
       this.mode = cardOperation;
@@ -660,6 +661,11 @@ export default {
         this.newOther.push({
           id: fileItem.id
         });
+      }
+
+      console.log(this.imageType, item.diaceleWidth);
+      if (this.imageType === 9) {
+        this.diaceleWidth = item.diaceleWidth ? item.diaceleWidth : '';
       }
 
       this.$nextTick(() => {
@@ -1027,7 +1033,9 @@ export default {
   watch: {
     imageType() {
       this.initSubTableData();
-      this.diaceleWidth = '';
+      if (this.mode !== this.VIEW_CURRENT_CARD) {
+        this.diaceleWidth = '';
+      }
       vueCopy(this.copyItem.patientFieldCode, this.patientFieldCode);
     },
     '$route.path'() {
