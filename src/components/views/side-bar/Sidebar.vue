@@ -18,8 +18,8 @@
         科室患者
       </li>
       <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'subjectPatients'}"
-        @click="chooseSubjectPatients" v-if="false">
-        项目患者
+        @click="chooseSubjectPatients" v-if="inSubject">
+        课题患者
       </li>
     </ul>
     <li class="item" :class="{'current-item': currentItem === 'analytics'}" @click="toggleAnalyticsList" v-if="showAnalytics">

@@ -196,57 +196,57 @@ export default new Router({
                 }
               ]
             },
-            // {
-            //   path: 'subjectList',
-            //   name: 'subjectPatients',
-            //   meta: {
-            //     subjectPatients: true
-            //   }
-            // },
-            // {
-            //   path: 'subjectList/:id',
-            //   components: {
-            //     content: PatientInfo
-            //   },
-            //   name: 'subjectPatientInfo',
-            //   meta: {
-            //     subjectPatients: true
-            //   },
-            //   children: [
-            //     {
-            //       path: 'personalInfo',
-            //       component: PersonalInfo,
-            //       name: 'subjectPersonalInfo',
-            //       meta: {
-            //         personalInfo: true
-            //       }
-            //     },
-            //     {
-            //       path: 'diagnosticInfo',
-            //       component: DiagnosticInfo,
-            //       name: 'subjectDiagnosticInfo',
-            //       meta: {
-            //         diagnosticInfo: true
-            //       }
-            //     },
-            //     {
-            //       path: 'diagnosticInfo/:caseId',
-            //       component: DiagnosticInfo,
-            //       name: 'subjectDiagnosticDetail',
-            //       meta: {
-            //         diagnosticInfo: true
-            //       }
-            //     },
-            //     {
-            //       path: 'experimentInfo',
-            //       component: ExperimentInfo,
-            //       name: 'subjectExperimentInfo',
-            //       meta: {
-            //         experimentInfo: true
-            //       }
-            //     }
-            //   ]
-            // },
+            {
+              path: 'subjectList',
+              name: 'subjectPatients',
+              meta: {
+                subjectPatients: true
+              }
+            },
+            {
+              path: 'subjectList/:id',
+              components: {
+                content: PatientInfo
+              },
+              name: 'subjectPatientInfo',
+              meta: {
+                subjectPatients: true
+              },
+              children: [
+                {
+                  path: 'personalInfo',
+                  component: PersonalInfo,
+                  name: 'subjectPersonalInfo',
+                  meta: {
+                    personalInfo: true
+                  }
+                },
+                {
+                  path: 'diagnosticInfo',
+                  component: DiagnosticInfo,
+                  name: 'subjectDiagnosticInfo',
+                  meta: {
+                    diagnosticInfo: true
+                  }
+                },
+                {
+                  path: 'diagnosticInfo/:caseId',
+                  component: DiagnosticInfo,
+                  name: 'subjectDiagnosticDetail',
+                  meta: {
+                    diagnosticInfo: true
+                  }
+                },
+                {
+                  path: 'experimentInfo',
+                  component: ExperimentInfo,
+                  name: 'subjectExperimentInfo',
+                  meta: {
+                    experimentInfo: true
+                  }
+                }
+              ]
+            },
             {
               path: 'therapistsPatientList',
               name: 'therapistsPatients',
