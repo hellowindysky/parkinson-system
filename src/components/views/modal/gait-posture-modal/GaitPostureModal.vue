@@ -356,7 +356,7 @@
               <span class="field-input" v-else>
                 <el-input class="right"
                   v-model="item.leftError"
-                  @blur="transformToNumber(item, 'leftError')"
+                  @blur="transformToNumber(item, 'leftError')">
                 </el-input>
               </span>
             </td>

@@ -308,7 +308,7 @@ export default {
     geneMutationText() {
       if (this.copyInfo.isGenMutationInfo === 1) {
         return '有';
-      } else if (this.copyInfo.isGenMutationInfo === 1) {
+      } else if (this.copyInfo.isGenMutationInfo === 2) {
         return '无';
       } else {
         return '';
@@ -413,11 +413,12 @@ export default {
       }
 
       // 判断是否为基因检查 然后添加/删除基因检查表单属性
-      this.copyInfo.isGenMutationInfo = '';
       if (this.copyInfo.bioexamId === 27) {
+        this.$set(this.copyInfo, 'isGenMutationInfo', '');
         this.$set(this.copyInfo, 'patientGenMutationInfoModel', []);
         this.geneMutationCheckedList = [];
       } else {
+        this.$delete(this.copyInfo, 'isGenMutationInfo');
         this.$delete(this.copyInfo, 'patientGenMutationInfoModel');
       }
 
