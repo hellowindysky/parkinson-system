@@ -481,7 +481,7 @@ export default {
       }
       for (let j = 0; j < caseTimeList.length; j++) {
         // console.log(timeStart, timeEnd, caseTimeList);
-        if (caseTimeList >= timeStart && caseTimeList <= timeEnd) {
+        if (caseTimeList[j] >= timeStart && caseTimeList[j] <= timeEnd) {
           timeFlag = true;
           break;
         }
