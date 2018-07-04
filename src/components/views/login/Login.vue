@@ -39,7 +39,7 @@
           </el-form-item>
           <el-form-item prop="repeatedFormNewPassword" v-if="loginType===4">
             <el-input class="round-input" clearable type="password" v-model="resetFormPassword.repeatedFormNewPassword" auto-complete="new-password" placeholder="请确认输入8-16位数字或字母的新密码" @keyup.enter.native="submitResetFormPassword" autofocus="autofocus"></el-input>
-            <div class="password-strength">{{passwordStrength}}</div>
+            <span class="iconfont icon-ok note" v-show="repeatedSuccessfully"></span>
           </el-form-item>
         </el-form>
 
@@ -294,7 +294,8 @@ export default {
       return md5(this.password);
     },
     passwordStrength() {
-      var value = this.resetForm.newPassword;
+      // var value = this.resetForm.newPassword;
+      var value = this.resetFormPassword.formNewPassword;
       if (value !== '' && value !== this.resetForm.originalPassword && value.indexOf(' ') < 0 &&
         value.length >= 8 && value.length <= 16) {
 
@@ -308,6 +309,14 @@ export default {
         }
       } else {
         return '';
+      }
+    },
+    repeatedSuccessfully() {
+      if (this.resetFormPassword.repeatedFormNewPassword === this.resetFormPassword.formNewPassword &&
+        this.resetFormPassword.formNewPassword.length >= 8 && this.resetFormPassword.formNewPassword.length <= 16) {
+        return true;
+      } else {
+        return false;
       }
     },
     codeButtonText() {
@@ -837,6 +846,15 @@ export default {
           border-color: @theme-color;
           background-color: @gray-color;
           color: #fff;
+        }
+      }
+      .note {
+        position: absolute;
+        left: calc(~"110%");
+        top: 12px;
+        font-size: @normal-font-size;
+        &.icon-ok {
+          color: #00aa60;
         }
       }
     }
