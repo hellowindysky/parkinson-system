@@ -341,9 +341,11 @@ export default {
   methods: {
     accountLogin() {
       this.loginType = ACCOUNT_LOGIN;
+      this.$refs['loginForm'].validate();
     },
     dynamicPassword() {
       this.loginType = DYNAMIC_PASSWORD;
+      this.$refs['loginForm'].validate();
     },
     forgetPassword() {
       this.loginType = FORGET_PASSWORD;
@@ -353,6 +355,10 @@ export default {
     },
     backHomepage() {
       this.loginType = BACK_HOMEPAGE;
+      localStorage.removeItem('account');
+      this.loginForm.remember = false;
+      this.loginForm.account = '';
+      this.loginForm.identifyingCode = '';
     },
     sendCode() {
       if (this.lockSendButton) {
