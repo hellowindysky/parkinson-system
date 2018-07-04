@@ -596,7 +596,6 @@ export default {
   },
   methods: {
     showPanel(cardOperation, item, showEdit) {
-      console.log(item);
       this.copyItem = item;
       this.completeInit = false;
       this.mode = cardOperation;
@@ -663,7 +662,6 @@ export default {
         });
       }
 
-      console.log(this.imageType, item.diaceleWidth);
       if (this.imageType === 9) {
         this.diaceleWidth = item.diaceleWidth ? item.diaceleWidth : '';
       }
