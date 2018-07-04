@@ -31,8 +31,8 @@ const mutations = {
     state.exportFields = res;
   },
 
-  [types.CHANGE_EXPORT_RIGHT](state) {
-    state.hasRightToExport = !state.hasRightToExport;
+  [types.CHANGE_EXPORT_RIGHT](state, hasRight) {
+    state.hasRightToExport = hasRight;
   }
 };
 
