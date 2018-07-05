@@ -5,6 +5,9 @@
         <span class="title">{{title}}</span>
         <span class="iconfont" :class="iconToggleFolded"></span>
       </h2>
+      <div v-if="editable && mode===EDITING_MODE" class="button submit-button" @click="submit">
+        {{submitText}}
+      </div>
       <div v-if="editable && mode===READING_MODE" class="button edit-button" @click="edit">
         编辑
       </div>
@@ -13,9 +16,6 @@
       </div>
       <div v-if="editable && isCardsPanel" class="button add-button" @click="add">
         添加
-      </div>
-      <div v-if="editable && mode===EDITING_MODE" class="button submit-button" @click="submit">
-        {{submitText}}
       </div>
       <el-button type="warning" v-if="canExport && isHasRightToExport" class="button export-button" @click="popDialog">批量导出</el-button>
       <el-select v-if="isCardsPanel" v-model="filterCondition" size="small" placeholder="筛选"
@@ -142,15 +142,12 @@ export default {
   font-size: 0;
   overflow: hidden;
   .header {
-    position: relative;
     height: @panel-header-height;
     .bar {
       margin: 0;
-      position: absolute;
       display: inline-block;
       padding-left: 20px;
-      left: 0;
-      width: calc(~"100% - @{small-button-width} * 2 - 60px");
+      // width: calc(~"100% - @{small-button-width} * 2 - 60px");
       height: @panel-header-height;
       line-height: @panel-header-height;
       text-align: left;
@@ -173,8 +170,10 @@ export default {
       }
     }
     .button {
-      position: absolute;
-      top: 6px;
+      position: static;
+      float: right;
+      margin-top: 6px;
+      margin-left: 10px;
       width: @small-button-width;
       height: @small-button-height;
       line-height: @small-button-height;
@@ -189,19 +188,15 @@ export default {
         opacity: 0.9;
       }
       &.edit-button {
-        right: 10px;
         background-color: @button-color;
       }
       &.cancel-button, &.add-button {
-        right: 30px + @small-button-width;
         background-color: @light-font-color;
       }
       &.submit-button {
-        right: 10px;
         background-color: @button-color;
       }
       &.export-button {
-        right: 130px + @small-button-width * 2;
         padding: 0;
         border: none;
         border-radius: 0;
@@ -215,7 +210,6 @@ export default {
         cursor: pointer;
       }
       &.filter-button {
-        right: 50px + @small-button-width * 2;
         &.without-other-button {
           right: 10px;
         }
