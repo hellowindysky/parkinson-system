@@ -141,7 +141,8 @@ export default {
   background-color: @background-color;
   font-size: 0;
   overflow: hidden;
-  .header {
+  >.header {
+    text-align: left;
     height: @panel-header-height;
     .bar {
       margin: 0;
@@ -170,10 +171,9 @@ export default {
       }
     }
     .button {
-      position: static;
       float: right;
       margin-top: 6px;
-      margin-left: 10px;
+      margin-right: 10px;
       width: @small-button-width;
       height: @small-button-height;
       line-height: @small-button-height;
