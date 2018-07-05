@@ -2429,6 +2429,11 @@ export default {
         scaleQuestionId: '',
         scaleOptionId: ''
       }];
+    },
+    showFilterPanel(newVal) {
+      if (newVal) {
+        this.queryPatients();
+      }
     }
   },
   beforeDestroy() {
