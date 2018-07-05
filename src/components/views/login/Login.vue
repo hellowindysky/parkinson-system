@@ -57,7 +57,7 @@
         </el-form-item>
         <el-form-item>
           <el-button class="button" type="primary" v-if="loginType===1 || loginType===2 || loginType===5 || loginType===6" @click="submitForm">登 录</el-button>
-          <el-button class="button" type="primary" v-if="loginType===3 || loginType===7" :class="{'current-tab':loginType===4}"  @click="submitForm">确定</el-button>
+          <el-button class="button" type="primary" v-if="loginType===3 || loginType===7" :class="{'current-tab':loginType===4}"  @click="submitForgetPwd">确定</el-button>
           <el-button class="button" type="primary" v-if="loginType===4" :class="{'current-tab':loginType===4}" @click="submitResetFormPassword">确定</el-button>
         </el-form-item>
       </el-form>
@@ -101,7 +101,7 @@
 
 <script>
 import md5 from 'md5';
-import { getLoginInfo } from 'api/login';
+import { getLoginInfo, getLoginInfoByNewPwd } from 'api/login';
 import { setRequestToken, clearRequestToken } from 'api/common';
 import { sendVerificationCode, sendVerificationCodes, resetPassword, resetPasswordByIdentifyingCode } from 'api/user';
 import Bus from 'utils/bus';
@@ -113,8 +113,6 @@ const DYNAMIC_PASSWORD = 2;
 const FORGET_PASSWORD = 3;
 const TO_CHANGE_PASSWORD = 4;
 const BACK_HOMEPAGE = 5;
-const UP_HOMEPAGE = 6;
-const UP_PAGE = 7;
 
 export default {
   name: 'login',
@@ -306,9 +304,9 @@ export default {
       }
     },
     holderText() {
-      if (this.loginType === ACCOUNT_LOGIN || this.loginType === BACK_HOMEPAGE || this.loginType === UP_HOMEPAGE) {
+      if (this.loginType === ACCOUNT_LOGIN || this.loginType === BACK_HOMEPAGE) {
         return '请输入您的睿云账号/手机号码';
-      } else if (this.loginType === DYNAMIC_PASSWORD || this.loginType === FORGET_PASSWORD || this.loginType === UP_PAGE) {
+      } else if (this.loginType === DYNAMIC_PASSWORD || this.loginType === FORGET_PASSWORD) {
         return '请输入您的手机号码';
       }
     },
@@ -394,7 +392,7 @@ export default {
       this.$refs['loginForm'].validate();
     },
     upHomepage() {
-      this.loginType = UP_HOMEPAGE;
+      this.loginType = ACCOUNT_LOGIN;
       this.$refs['loginForm'].validate();
       if (this.loginForm.account !== '' && this.loginForm.identifyingCode !== '') {
         localStorage.removeItem('account');
@@ -597,6 +595,62 @@ export default {
                 duration: 2000
               });
             } else if (error.code === 21 && this.loginType === 3) {
+              this.$message({
+                message: '手机号码或者验证码错误',
+                type: 'warning',
+                duration: 2000
+              });
+            }
+          });
+        } else {
+          this.lockSubmitButton = false;
+          console.log('input invalid');
+          return;
+        }
+      });
+    },
+    submitForgetPwd() {
+      if (this.lockSubmitButton) {
+        return;
+      }
+      this.lockSubmitButton = true;
+      this.$refs['loginForm'].validate((valid) => {
+        if (valid) {
+
+          getLoginInfoByNewPwd(this.loginForm.account, this.loginForm.password, this.loginForm.identifyingCode).then((data) => {
+            this.lockSubmitButton = false;
+            this.token = data.loginToken;
+            this.userId = data.user.userIdV1;
+            this.accountNumber = data.user.accountNumber;
+            this.userName = data.user.userName;
+            this.name = data.user.name;
+            // this.identifyingCode = data.user.identifyingCode;
+            this.userType = data.user.userType;
+            this.orgName = data.orgs && data.orgs[0] && data.orgs[0].orgName ? data.orgs[0].orgName : '';
+            this.subjects = data.tasks ? data.tasks : [];
+
+            setRequestToken(this.token);
+
+            var commonRequest = {
+              'userId': 93242,
+              'accountNumber': this.accountNumber,
+              'userType': this.userType,
+              'orgId': 34,
+              'orgType': 2,
+              'viewType': 2   // 1 表示全部显示，2表示脱敏显示
+            };
+            sessionStorage.setItem('commonRequest', JSON.stringify(commonRequest));
+
+            // 将正确密码缓存起来，在重置密码的时候会用到
+            this.currentPassword = this.loginForm.password;
+
+            // 0 需要修改密码 1表示已经修改过密码
+            var changePassword = data.user.changePassword;
+            this.mustResetPassword = changePassword === 0;
+            this.toChangePassword();
+          }, (error) => {
+            this.lockSubmitButton = false;
+            if (error.code === 21) {
               this.$message({
                 message: '手机号码或者验证码错误',
                 type: 'warning',
