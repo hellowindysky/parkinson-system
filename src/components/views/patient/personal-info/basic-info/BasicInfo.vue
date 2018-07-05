@@ -6,9 +6,9 @@
         <div class="field" v-for="field in group" :class="checkIfWholeLine(field)">
           <span class="field-name">
             {{field.cnfieldName}}
-            <span class="required-mark" v-show="field.must===1 || field.fieldName === 'cardId' ||field.fieldName === 'phone'">*</span>
-            <!-- <span class="required-mark" v-show="field.fieldName === 'cardId'">*</span>
-            <span class="required-mark" v-show="field.fieldName === 'phone'">*</span> -->
+            <span class="required-mark" v-show="field.must===1">*</span>
+            <span class="required-mark" v-show="soochowMust && field.fieldName === 'cardId'">*</span>
+            <span class="required-mark" v-show="soochowMust && field.fieldName === 'phone'">*</span>
           </span>
 
           <div class="field-value" v-show="mode===READING_MODE">
@@ -113,6 +113,10 @@ export default {
       'basicInfoTemplateGroups',
       'typeGroup'
     ]),
+    soochowMust() {
+      // 苏州大学附属第二医院 特殊处理
+      return sessionStorage.getItem('subjectCode') === 'SQ2017YFSF090146-01' && this.$store.state.subjectId !== -1;
+    },
     basicInfoDictionary() {
       // 对 basicInfoDictionaryGroups 进行扁平化处理，方便之后操作
       var flattenedGroup = [];
@@ -424,41 +428,45 @@ export default {
       var copyFieldValue = this.copyInfo[fieldName];
       // 如果是身份证信息，先对其进行校验
       if (fieldName === 'cardId') {
+        if (this.soochowMust) {
         // 这里插入一段特殊逻辑，如果是修改病患信息（不是新增），而且处于脱敏显示状态下，
         // 那么由于服务器返回的加密字段是连续18个星号，这里就得让其通过校验
-        if (this.$route.params.id !== 'newPatient' &&
-          !this.$store.state.showSensitiveInfo &&
-          /^[*]{18}$/.test(copyFieldValue)) {
-          this.$set(this.warningResults, fieldName, null);
-          return;
-        }
-
-        let result = Util.checkId(copyFieldValue).split(',');
-        if (copyFieldValue === '' || copyFieldValue === undefined || result[0] === '港澳台身份证') {
-          this.$set(this.warningResults, fieldName, '必填项');
-          return;
-        } else if (result.length <= 1) {
-          // 下面这句 if 是为了提升体验，在第一次输入且还没输完的时候，避免显示“非法身份证”的警告文字
-          if (result[0] !== '非法身份证' || this.completeEditingForTheFirstTime) {
-            this.$set(this.warningResults, fieldName, result[0]);
+          if (this.$route.params.id !== 'newPatient' &&
+            !this.$store.state.showSensitiveInfo &&
+            /^[*]{18}$/.test(copyFieldValue)) {
+            this.$set(this.warningResults, fieldName, null);
             return;
           }
+
+          let result = Util.checkId(copyFieldValue).split(',');
+          if (copyFieldValue === '' || copyFieldValue === undefined || result[0] === '港澳台身份证') {
+            this.$set(this.warningResults, fieldName, '必填项');
+            return;
+          } else if (result.length <= 1) {
+            // 下面这句 if 是为了提升体验，在第一次输入且还没输完的时候，避免显示“非法身份证”的警告文字
+            if (result[0] !== '非法身份证' || this.completeEditingForTheFirstTime) {
+              this.$set(this.warningResults, fieldName, result[0]);
+              return;
+            }
+          } else {
+            // 这里插入一段逻辑,如果身份证信息变化，而且输入合法，则相应地更新出生日期和性别（应该还加上籍贯信息）
+            this.$set(this.warningResults, fieldName, null);
+            // var province = result[0];
+            var birthday = result[1];
+            var gender = result[2];
+            // 只有在相应的字段没有初始值的时候才会去覆盖它们
+            if (this.copyInfo.birthday === '') {
+              this.copyInfo.birthday = birthday;
+              // this.homeProvince = province;
+            }
+            if (this.copyInfo.sex === '') {
+              this.copyInfo.sex = gender === '男' ? 0 : 1;
+            }
+          }
         } else {
-          // 这里插入一段逻辑,如果身份证信息变化，而且输入合法，则相应地更新出生日期和性别（应该还加上籍贯信息）
-          this.$set(this.warningResults, fieldName, null);
-          // var province = result[0];
-          var birthday = result[1];
-          var gender = result[2];
-          // 只有在相应的字段没有初始值的时候才会去覆盖它们
-          if (this.copyInfo.birthday === '') {
-            this.copyInfo.birthday = birthday;
-            // this.homeProvince = province;
-          }
-          if (this.copyInfo.sex === '') {
-            this.copyInfo.sex = gender === '男' ? 0 : 1;
-          }
+          return;
         }
-      } else if (fieldName === 'thighLength' || fieldName === 'calfLength' || fieldName === 'waist') {
+      } else if (fieldName === 'thighLength' || fieldName === 'calfLength') {
         if (copyFieldValue === '' || copyFieldValue === undefined) {
           this.$set(this.warningResults, fieldName, null);
         } else {
@@ -466,6 +474,18 @@ export default {
             this.$set(this.warningResults, fieldName, null);
           } else {
             this.$set(this.warningResults, fieldName, '请输入数字，最多1位小数');
+          }
+        }
+        return;
+      } else if (fieldName === 'waist') {
+        if (copyFieldValue === '' || copyFieldValue === undefined) {
+          this.$set(this.warningResults, fieldName, null);
+        } else {
+          if (Util.checkIfNotMoreThanNums(copyFieldValue, 1)) {
+            this.$set(this.warningResults, fieldName, null);
+          } else {
+            console.log(copyFieldValue);
+            this.$set(this.warningResults, fieldName, '请输入1-999之间的数字，且最多1位小数');
           }
         }
         return;
@@ -493,8 +513,12 @@ export default {
         return;
 
       } else if (field.fieldName === 'phone' && !copyFieldValue && copyFieldValue !== 0) {
-        this.$set(this.warningResults, fieldName, '必填项');
-        return;
+        if (this.soochowMust) {
+          this.$set(this.warningResults, fieldName, '必填项');
+          return;
+        } else {
+          return;
+        }
       } else if (field.must === 2 && (copyFieldValue === '' || copyFieldValue === undefined)) {
         this.$set(this.warningResults, fieldName, null);
         return;

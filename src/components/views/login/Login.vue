@@ -16,7 +16,7 @@
           <el-input class="round-input" clearable v-model="loginForm.account" auto-complete="off" :placeholder="holderText"
             @keyup.enter.native="submitForm" autofocus="autofocus"></el-input>
         </el-form-item>
-        <el-form-item prop="password" v-if="loginType===1 || loginType===5">
+        <el-form-item prop="password" v-if="loginType===1 || loginType===5 || loginType===6">
           <el-input class="round-input" clearable v-model="loginForm.password" type="password" auto-complete="new-password"
             placeholder="请输入6-16位数字和字母的密码" @keyup.enter.native="submitForm"></el-input>
         </el-form-item>
@@ -26,7 +26,7 @@
         <el-button class="button code-button" type="primary" @click="sendCodes" :disabled="codeButtonStatus===1">{{codeButtonText}}</el-button>
         </el-form-item>
 
-        <el-form-item prop="identifyingCode" v-if="loginType===3">
+        <el-form-item prop="identifyingCode" v-if="loginType===3 || loginType===7">
           <el-input class="round-input short" clearable v-model="loginForm.identifyingCode" auto-complete="new-password" placeholder="请输入短信验证码" @keyup.enter.native="submitForm" autofocus="autofocus"></el-input>
           <el-button class="button code-button" type="primary" @click="sendCodes" :disabled="codeButtonStatus===1">{{codeButtonText}}</el-button>
         </el-form-item>
@@ -50,8 +50,14 @@
           <span class="forget" type="primary" v-if="loginType!==3 && loginType !== 4" :class="{'current-tab':loginType===3}" @click="forgetPassword">忘记密码</span>
         </el-form-item>
         <el-form-item>
-          <el-button class="button" type="primary" v-if="loginType===1 || loginType===2 || loginType===5" @click="submitForm">登 录</el-button>
-          <el-button class="button" type="primary" v-if="loginType===3" :class="{'current-tab':loginType===4}"  @click="submitForm">确定</el-button>
+          <span class="up-homepage" type="primary" v-if="loginType===3 || loginType===7" :class="{'current-tab':loginType===3}" @click="upHomepage">上一页</span>
+        </el-form-item>
+        <el-form-item>
+          <span class="up-page" type="primary" v-if="loginType===4" :class="{'current-tab':loginType===4}" @click="upPage">上一页</span>
+        </el-form-item>
+        <el-form-item>
+          <el-button class="button" type="primary" v-if="loginType===1 || loginType===2 || loginType===5 || loginType===6" @click="submitForm">登 录</el-button>
+          <el-button class="button" type="primary" v-if="loginType===3 || loginType===7" :class="{'current-tab':loginType===4}"  @click="submitForgetPwd">确定</el-button>
           <el-button class="button" type="primary" v-if="loginType===4" :class="{'current-tab':loginType===4}" @click="submitResetFormPassword">确定</el-button>
         </el-form-item>
       </el-form>
@@ -95,7 +101,7 @@
 
 <script>
 import md5 from 'md5';
-import { getLoginInfo } from 'api/login';
+import { getLoginInfo, getLoginInfoByNewPwd } from 'api/login';
 import { setRequestToken, clearRequestToken } from 'api/common';
 import { sendVerificationCode, sendVerificationCodes, resetPassword, resetPasswordByIdentifyingCode } from 'api/user';
 import Bus from 'utils/bus';
@@ -166,9 +172,22 @@ export default {
       }
     };
     var identifyingCodeCode = (rule, value, callback) => {
+      // if (value === '') {
+      //   callback(new Error('请输入验证码'));
+      // } else if (!(/^[0-9]*$/.test(value))) {
+      //   callback(new Error('请输入数字'));
+      // } else {
+      //   callback();
+      // }
       if (value === '') {
-        callback(new Error('请输入验证码'));
-      } else if (!(/^[0-9]*$/.test(value))) {
+        if (this.loginType === 1 || this.loginType === 5 || this.loginType === 6) {
+          callback(new Error('请输入密码'));
+        } else if (this.loginType === 2 || this.loginType === 3) {
+          callback(new Error('请输入验证码'));
+        }
+      } else if (!(/^\S{6,20}$/.test(value)) && this.loginType !== 2 && this.loginType !== 3) {
+        callback(new Error('请输入至少为 6 个字符'));
+      } else if (!(/^[0-9]*$/.test(value)) && this.loginType !== 1 && this.loginType !== 5 && this.loginType !== 6) {
         callback(new Error('请输入数字'));
       } else {
         callback();
@@ -176,14 +195,14 @@ export default {
     };
     var differentiateAccount = (rule, value, callback) => {
       if (value === '') {
-        if (this.loginType === 1 || this.loginType === 5) {
+        if (this.loginType === 1 || this.loginType === 5 || this.loginType === 6) {
           callback(new Error('请输入账号'));
         } else if (this.loginType === 2 || this.loginType === 3) {
           callback(new Error('请输入手机号'));
         }
       } else if (!(/^\S{2,20}$/.test(value)) && this.loginType !== 2 && this.loginType !== 3) {
         callback(new Error('请输入长度在 2 到 20 个字符'));
-      } else if (!(/^1(3|4|5|7|8)\d{9}$/.test(value)) && this.loginType !== 1 && this.loginType !== 5) {
+      } else if (!(/^1(3|4|5|7|8)\d{9}$/.test(value)) && this.loginType !== 1 && this.loginType !== 5 && this.loginType !== 6) {
         callback(new Error('请输入正确的手机号'));
       } else {
         callback();
@@ -231,9 +250,12 @@ export default {
           // { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
           {validator: differentiateAccount, trigger: 'blur'}
         ],
+        // password: [
+        //   { required: true, message: '请输入密码', trigger: 'change' },
+        //   { min: 6, message: '长度至少为 6 个字符', trigger: 'blur' }
+        // ],
         password: [
-          { required: true, message: '请输入密码', trigger: 'change' },
-          { min: 6, message: '长度至少为 6 个字符', trigger: 'blur' }
+          {validator: identifyingCodeCode, trigger: 'blur'}
         ],
         identifyingCode: [
           {validator: identifyingCodeCode, trigger: 'blur'}
@@ -275,7 +297,7 @@ export default {
     tabPlaceClass() {
       if (this.loginType === 1 || this.loginType === 2) {
         return 'tab-place-' + this.loginType;
-      } else if (this.loginType === 5) {
+      } else if (this.loginType === 5 || this.loginType === 6) {
         return 'tab-place-1';
       } else {
         return 'tab-place-0';
@@ -284,9 +306,7 @@ export default {
     holderText() {
       if (this.loginType === ACCOUNT_LOGIN || this.loginType === BACK_HOMEPAGE) {
         return '请输入您的睿云账号/手机号码';
-      } else if (this.loginType === DYNAMIC_PASSWORD) {
-        return '请输入您的手机号码';
-      } else if (this.loginType === FORGET_PASSWORD) {
+      } else if (this.loginType === DYNAMIC_PASSWORD || this.loginType === FORGET_PASSWORD) {
         return '请输入您的手机号码';
       }
     },
@@ -349,16 +369,47 @@ export default {
     },
     forgetPassword() {
       this.loginType = FORGET_PASSWORD;
+      this.$refs['loginForm'].validate();
     },
     toChangePassword() {
       this.loginType = TO_CHANGE_PASSWORD;
+      this.$refs['loginForm'].validate();
+      if (this.resetFormPassword.formNewPassword !== '' && this.resetFormPassword.repeatedFormNewPassword !== '') {
+        localStorage.removeItem('formNewPassword');
+        localStorage.removeItem('repeatedFormNewPassword');
+        this.resetFormPassword.formNewPassword = '';
+        this.resetFormPassword.repeatedFormNewPassword = '';
+      }
     },
     backHomepage() {
       this.loginType = BACK_HOMEPAGE;
-      localStorage.removeItem('account');
+      if (this.loginForm.account !== '') {
+        localStorage.removeItem('account');
+      }
       this.loginForm.remember = false;
       this.loginForm.account = '';
       this.loginForm.identifyingCode = '';
+      this.$refs['loginForm'].validate();
+    },
+    upHomepage() {
+      this.loginType = ACCOUNT_LOGIN;
+      this.$refs['loginForm'].validate();
+      if (this.loginForm.account !== '' && this.loginForm.identifyingCode !== '') {
+        localStorage.removeItem('account');
+        localStorage.removeItem('identifyingCode');
+        this.loginForm.account = '';
+        this.loginForm.identifyingCode = '';
+      }
+    },
+    upPage() {
+      this.loginType = FORGET_PASSWORD;
+      this.$refs['loginForm'].validate();
+      if (this.loginForm.account !== '' && this.loginForm.identifyingCode !== '') {
+        localStorage.removeItem('account');
+        localStorage.removeItem('identifyingCode');
+        this.loginForm.account = '';
+        this.loginForm.identifyingCode = '';
+      }
     },
     sendCode() {
       if (this.lockSendButton) {
@@ -544,6 +595,62 @@ export default {
                 duration: 2000
               });
             } else if (error.code === 21 && this.loginType === 3) {
+              this.$message({
+                message: '手机号码或者验证码错误',
+                type: 'warning',
+                duration: 2000
+              });
+            }
+          });
+        } else {
+          this.lockSubmitButton = false;
+          console.log('input invalid');
+          return;
+        }
+      });
+    },
+    submitForgetPwd() {
+      if (this.lockSubmitButton) {
+        return;
+      }
+      this.lockSubmitButton = true;
+      this.$refs['loginForm'].validate((valid) => {
+        if (valid) {
+
+          getLoginInfoByNewPwd(this.loginForm.account, this.loginForm.password, this.loginForm.identifyingCode).then((data) => {
+            this.lockSubmitButton = false;
+            this.token = data.loginToken;
+            this.userId = data.user.userIdV1;
+            this.accountNumber = data.user.accountNumber;
+            this.userName = data.user.userName;
+            this.name = data.user.name;
+            // this.identifyingCode = data.user.identifyingCode;
+            this.userType = data.user.userType;
+            this.orgName = data.orgs && data.orgs[0] && data.orgs[0].orgName ? data.orgs[0].orgName : '';
+            this.subjects = data.tasks ? data.tasks : [];
+
+            setRequestToken(this.token);
+
+            var commonRequest = {
+              'userId': 93242,
+              'accountNumber': this.accountNumber,
+              'userType': this.userType,
+              'orgId': 34,
+              'orgType': 2,
+              'viewType': 2   // 1 表示全部显示，2表示脱敏显示
+            };
+            sessionStorage.setItem('commonRequest', JSON.stringify(commonRequest));
+
+            // 将正确密码缓存起来，在重置密码的时候会用到
+            this.currentPassword = this.loginForm.password;
+
+            // 0 需要修改密码 1表示已经修改过密码
+            var changePassword = data.user.changePassword;
+            this.mustResetPassword = changePassword === 0;
+            this.toChangePassword();
+          }, (error) => {
+            this.lockSubmitButton = false;
+            if (error.code === 21) {
               this.$message({
                 message: '手机号码或者验证码错误',
                 type: 'warning',
@@ -826,6 +933,32 @@ export default {
         position: absolute;
         right: 0;
         top: -55px;
+        border: none;
+        color:#fff;
+        &:hover {
+          opacity: .6;
+          background-color: #505b6b;
+        }
+      }
+      .up-homepage {
+        float: right;
+        margin-right: 8px;
+        position: absolute;
+        right: 0;
+        top: -50px;
+        border: none;
+        color:#fff;
+        &:hover {
+          opacity: .6;
+          background-color: #505b6b;
+        }
+      }
+      .up-page {
+        float: right;
+        margin-right: 8px;
+        position: absolute;
+        right: 0;
+        top: -50px;
         border: none;
         color:#fff;
         &:hover {
