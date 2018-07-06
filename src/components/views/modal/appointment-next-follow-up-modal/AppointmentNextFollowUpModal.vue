@@ -296,6 +296,7 @@ export default {
           line-height: @field-line-height;
           font-size: @normal-font-size;
           color: @light-font-color;
+          word-break: break-all;
           .warning-text {
             position: absolute;
             top: 22px;
