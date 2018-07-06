@@ -752,26 +752,10 @@ export default {
       }
     },
     updataPatientGaitInfo(type, typeCode, typeName) {
-      let id = this.id;
       this.tableMode = this.SON_OPEN;
       this.updateScrollbar();
       this.type = type;
       this.typeName = typeName;
-      // queryPatientGaitInfo(type, typeCode, id).then((patientGait) =>{
-      //   // this.subTableCode = typeCode;
-      //   this.tableMode = this.SON_OPEN;
-      //   this.timeParameter = patientGait.timeParameter;
-      //   this.spatialParameters = patientGait.spatialParameters;
-      //   this.standingAngle = patientGait.standingAngle;
-      //   this.kinematicAnalysis = patientGait.kinematicAnalysis;
-      //   this.moment = patientGait.moment;
-      //   this.doWork = patientGait.doWork;
-      //   this.pressurePlatform = patientGait.pressurePlatform;
-      //   this.type = type;
-      //   this.typeName = typeName;
-      //   // console.log(type, typeCode, typeName);
-      //   this.updateScrollbar();
-      // });
     },
     submit() {
       if (this.lockSubmitButton) {
