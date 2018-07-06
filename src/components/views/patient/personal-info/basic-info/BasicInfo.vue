@@ -464,7 +464,38 @@ export default {
             }
           }
         } else {
-          return;
+          if (this.$route.params.id !== 'newPatient' &&
+            !this.$store.state.showSensitiveInfo &&
+            /^[*]{18}$/.test(copyFieldValue)) {
+            this.$set(this.warningResults, fieldName, null);
+            return;
+          }
+
+          let result = Util.checkId(copyFieldValue).split(',');
+          if (copyFieldValue === '' || copyFieldValue === undefined || result[0] === '港澳台身份证') {
+            this.$set(this.warningResults, fieldName, null);
+            return;
+          } else if (result.length <= 1) {
+            // 下面这句 if 是为了提升体验，在第一次输入且还没输完的时候，避免显示“非法身份证”的警告文字
+            if (result[0] !== '非法身份证' || this.completeEditingForTheFirstTime) {
+              this.$set(this.warningResults, fieldName, result[0]);
+              return;
+            }
+          } else {
+            // 这里插入一段逻辑,如果身份证信息变化，而且输入合法，则相应地更新出生日期和性别（应该还加上籍贯信息）
+            this.$set(this.warningResults, fieldName, null);
+            // var province = result[0];
+            var birthday1 = result[1];
+            var gender1 = result[2];
+            // 只有在相应的字段没有初始值的时候才会去覆盖它们
+            if (this.copyInfo.birthday1 === '') {
+              this.copyInfo.birthday1 = birthday1;
+              // this.homeProvince = province;
+            }
+            if (this.copyInfo.sex === '') {
+              this.copyInfo.sex = gender1 === '男' ? 0 : 1;
+            }
+          };
         }
       } else if (fieldName === 'thighLength' || fieldName === 'calfLength') {
         if (copyFieldValue === '' || copyFieldValue === undefined) {
