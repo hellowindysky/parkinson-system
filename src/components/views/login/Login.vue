@@ -18,7 +18,9 @@
         </el-form-item>
         <el-form-item prop="password" v-if="loginType===1 || loginType===5 || loginType===6">
           <el-input class="round-input" clearable v-model="loginForm.password" type="password" auto-complete="new-password"
-            placeholder="请输入6-16位数字和字母的密码" @keyup.enter.native="submitForm"></el-input>
+            placeholder="请输入6-16位数字和字母的密码"
+
+            @keyup.enter.native="submitForm"></el-input>
         </el-form-item>
 
         <el-form-item prop="identifyingCode" v-if="loginType===2">
@@ -185,8 +187,12 @@ export default {
         } else if (this.loginType === 2 || this.loginType === 3) {
           callback(new Error('请输入验证码'));
         }
-      } else if (!(/^\S{6,20}$/.test(value)) && this.loginType !== 2 && this.loginType !== 3) {
-        callback(new Error('请输入至少为 6 个字符'));
+      } else if (!(/^\S{6,16}$/.test(value)) && this.loginType !== 2 && this.loginType !== 3) {
+          if (this.loginForm.password.length < 6) {
+            callback(new Error('请输入至少为 6 个字符'));
+          } else if (this.loginForm.password.length > 16) {
+            callback(new Error('密码长度不能多于16位'));
+         }
       } else if (!(/^[0-9]*$/.test(value)) && this.loginType !== 1 && this.loginType !== 5 && this.loginType !== 6) {
         callback(new Error('请输入数字'));
       } else {
