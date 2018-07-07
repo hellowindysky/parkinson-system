@@ -690,7 +690,7 @@
                   :picker-options="pickerOptions" :placeholder="getPlaceHolder(col.fieldDesc, row.fieldDesc, '请输入')">
                 </el-date-picker>
                 <el-time-picker v-else-if="col.uiType===8 || (col.uiType===undefined && row.uiType===8)" format="HH:mm:ss"
-                  v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue"
+                  v-model="transformToDate(copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row.id][col.id].fieldValue)"
                   @change="recordValuePath(['patientFieldCode',sleepMonitoringSubTableCode,row.id,col.id], 8)"
                   :picker-options="pickerOptions" :placeholder="getPlaceHolder(col.fieldDesc, row.fieldDesc, '请输入')">
                 </el-time-picker>
@@ -1531,6 +1531,21 @@ export default {
         totalMinutes = '0' + totalMinutes;
       }
       return totalHours + ':' + totalMinutes + ':' + totalSeconds;
+    },
+    transformToDate(time) {
+      let date = new Date();
+      if (time instanceof Date) {
+        date = time;
+      } else if (typeof time === 'string') {
+        var timeStringList = time.split(':');
+        let hours = timeStringList[0] ? timeStringList[0] : 0;
+        let minutes = timeStringList[1] ? timeStringList[1] : 0;
+        let seconds = timeStringList[2] ? timeStringList[2] : 0;
+        date.setHours(Number(hours));
+        date.setMinutes(Number(minutes));
+        date.setSeconds(Number(seconds));
+      }
+      return date;
     },
     getPlaceHolder(val1, val2, val3) {
       if (val1) {

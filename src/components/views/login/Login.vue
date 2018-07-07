@@ -182,7 +182,7 @@ export default {
       //   callback();
       // }
       if (value === '') {
-        if (this.loginType === 1 || this.loginType === 5 || this.loginType === 6) {
+        if (this.loginType === 1 || this.loginType === 5) {
           callback(new Error('请输入密码'));
         } else if (this.loginType === 2 || this.loginType === 3) {
           callback(new Error('请输入验证码'));
@@ -202,7 +202,7 @@ export default {
     };
     var differentiateAccount = (rule, value, callback) => {
       if (value === '') {
-        if (this.loginType === 1 || this.loginType === 5 || this.loginType === 6) {
+        if (this.loginType === 1 || this.loginType === 5) {
           callback(new Error('请输入账号'));
         } else if (this.loginType === 2 || this.loginType === 3) {
           callback(new Error('请输入手机号'));
@@ -304,7 +304,7 @@ export default {
     tabPlaceClass() {
       if (this.loginType === 1 || this.loginType === 2) {
         return 'tab-place-' + this.loginType;
-      } else if (this.loginType === 5 || this.loginType === 6) {
+      } else if (this.loginType === 5) {
         return 'tab-place-1';
       } else {
         return 'tab-place-0';
