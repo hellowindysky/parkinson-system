@@ -65,7 +65,7 @@
        @size-change="handleSizeChange"
        @current-change="handleCurrentChange"
        :page-size="pageSize"
-       :page-sizes="[500, 1000, 1500, 2000]"
+       :page-sizes="[500, 1000, 1500, 2000, 10000]"
        layout="sizes, prev, pager, next"
        :total="tableData.totalNum">
       </el-pagination>
