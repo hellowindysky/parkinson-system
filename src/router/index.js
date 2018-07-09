@@ -50,6 +50,8 @@ const FamilyHistory = () => import(/* webpackChunkName: 'configuration' */ 'view
 const PersonalHistory = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/dictionarymanagement/personal-history/PersonalHistory');
 const ToxicExposure = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/dictionarymanagement/toxic-exposure/ToxicExposure');
 
+import SysConfigRoute from 'router/sys.config.route';
+
 Vue.use(Router);
 
 export default new Router({
@@ -564,7 +566,8 @@ export default new Router({
               ]
             }
           ]
-        }
+        },
+        SysConfigRoute
       ]
     }
   ]

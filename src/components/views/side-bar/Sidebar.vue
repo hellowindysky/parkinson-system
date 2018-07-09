@@ -88,6 +88,27 @@
         档案管理
       </li>
     </ul>
+
+    <!--(↓↓↓) 系统配置 v2.5.0 -->
+    <li class="item" :class="{'current-item': currentItem === 'configuration'}" @click="toggleConfigurationList"
+      v-if="showConfiguration">
+      <div class="menu-icon iconfont icon-configuration"></div>
+      <div class="title">系统配置</div>
+      <div class="fold-icon iconfont" :class="showConfigurationList ? 'icon-up' : 'icon-down'"></div>
+    </li>
+    <ul class="sub-item-list" :class="{'folded': !showConfigurationList}" v-if="showConfiguration">
+      <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'userManagement'}" @click="loadUserManagement">
+        用户管理
+      </li>
+      <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'dictionaryManagement'}" @click="chooseDictionaryManagement">
+        机构管理
+      </li>
+      <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'roleManagement'}" @click="chooseRoleManagement">
+        角色管理
+      </li>
+    </ul>
+    <!--(↑↑↑) 系统配置 v2.5.0 -->
+
     <li class="item" :class="{'current-item': currentItem === 'institutionConfiguration'}" @click="toggleInstitutionList"
       v-if="showInstitutionConfiguration">
       <div class="menu-icon iconfont icon-organization"></div>
@@ -320,6 +341,14 @@ export default {
         this.$router.push({name: 'dictionaryManagement'});
       }
     },
+    /* (↓↓↓)系统配置 v2.5.0 */
+    loadUserManagement() {
+      // 如果当前路径不是以“/sysconfiguration/usermanagement”开头了，才发生跳转
+      if (!/^\/sysconfiguration\/usermanagement/.test(this.$route.path)) {
+        this.$router.push({name: 'usermanagement'});
+      }
+    },
+    /* (↑↑↑)系统配置 v2.5.0 */
     chooseInstitutionInfo() {},
     chooseFunctionConfiguration() {},
     chooseUserConfiguration() {},
