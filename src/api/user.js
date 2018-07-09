@@ -12,9 +12,10 @@ export function resetPassword(oldPassword, newPassword, verificationCode, verifi
   return encapsulatePromise(url, request);
 };
 
-export function resetPasswordByIdentifyingCode(newPassword) {
+export function resetPasswordByIdentifyingCode(newPassword, verifyCode) {
   var request = Object.assign({}, getCommonRequest());
   request.newPassword = newPassword;
+  request.verifyCode = verifyCode;
   var url = '/usermgr/modPasswordByIdentifyingCode';
 
   return encapsulatePromise(url, request);

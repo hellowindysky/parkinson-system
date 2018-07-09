@@ -132,7 +132,7 @@
             <td class="col col-width-25">左&nbsp;&nbsp;侧</td>
             <td class="col col-width-25">正&nbsp;&nbsp;常&nbsp;&nbsp;值</td>
           </tr>
-          <tr class="row" v-for="(item, index) in timeParameter">
+          <tr class="row" v-for="(item, index) in copyInfo.timeParameter">
             <td class="col col-width-25">{{item.typeName}}</td>
             <td class="col col-width-25" v-show="index <6">
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -206,7 +206,7 @@
             <td class="col col-width-25">左&nbsp;&nbsp;侧</td>
             <td class="col col-width-25">正&nbsp;&nbsp;常&nbsp;&nbsp;值</td>
           </tr>
-          <tr class="row" v-for="(item, index) in spatialParameters">
+          <tr class="row" v-for="(item, index) in copyInfo.spatialParameters">
             <td class="col col-width-25">{{item.typeName}}</td>
             <td class="col col-width-25" v-show="index <3">
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -280,7 +280,7 @@
             <td class="col col-width-25">左&nbsp;&nbsp;侧</td>
             <td class="col col-width-25"></td>
           </tr>
-          <tr class="row" v-for="(item, index) in standingAngle">
+          <tr class="row" v-for="(item, index) in copyInfo.standingAngle">
             <td class="col col-width-25">{{item.typeName}}</td>
             <td class="col col-width-25">
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -337,7 +337,7 @@
             <td class="col col-width-25">参&nbsp;&nbsp;考&nbsp;&nbsp;值</td>
             <td class="col col-width-25">左&nbsp;&nbsp;侧</td>
           </tr>
-          <tr class="row" v-for="(item, index) in kinematicAnalysis">
+          <tr class="row" v-for="(item, index) in copyInfo.kinematicAnalysis">
             <td class="col col-width-25" rowspan = 2 v-show="index % 2 === 0">{{item.typeName}}</td>
             <td class="col col-width-25">
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -395,7 +395,7 @@
             <td class="col col-width-25">参&nbsp;&nbsp;考&nbsp;&nbsp;值</td>
             <td class="col col-width-25">左&nbsp;&nbsp;侧</td>
           </tr>
-          <tr class="row" v-for="(item, index) in moment">
+          <tr class="row" v-for="(item, index) in copyInfo.moment">
             <td class="col col-width-25" rowspan = 2 v-show="index % 2 === 0">{{item.typeName}}</td>
             <td class="col col-width-25">
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -453,7 +453,7 @@
             <td class="col col-width-25">参&nbsp;&nbsp;考&nbsp;&nbsp;值</td>
             <td class="col col-width-25">左&nbsp;&nbsp;侧</td>
           </tr>
-          <tr class="row" v-for="(item, index) in doWork">
+          <tr class="row" v-for="(item, index) in copyInfo.doWork">
             <td class="col col-width-25" rowspan = 2 v-show="index % 2 === 0">{{item.typeName}}</td>
             <td class="col col-width-25">
               <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -511,7 +511,7 @@
             <td class="col col-width-25">参&nbsp;&nbsp;考&nbsp;&nbsp;值</td>
             <td class="col col-width-25">左&nbsp;&nbsp;侧</td>
           </tr>
-          <tr class="row" v-for="(item, index) in pressurePlatform">
+          <tr class="row" v-for="(item, index) in copyInfo.pressurePlatform">
             <td class="col col-width-25" rowspan = 3 v-if="index % 4 === 0 && index >=4">{{item.typeName}}</td>
             <td class="col col-width-25" rowspan = 2 v-else-if="index % 2 === 0 && index <4">{{item.typeName}}</td>
             <td class="col col-width-25">
@@ -667,6 +667,7 @@ export default {
   },
   methods: {
     showPanel(cardOperation, item, showEdit) {
+      // console.log(item);
       this.mode = cardOperation;
       this.showEdit = showEdit;
       this.id = item.id;
@@ -751,22 +752,10 @@ export default {
       }
     },
     updataPatientGaitInfo(type, typeCode, typeName) {
-      let id = this.id;
-      queryPatientGaitInfo(type, typeCode, id).then((patientGait) =>{
-        // this.subTableCode = typeCode;
-        this.tableMode = this.SON_OPEN;
-        this.timeParameter = patientGait.timeParameter;
-        this.spatialParameters = patientGait.spatialParameters;
-        this.standingAngle = patientGait.standingAngle;
-        this.kinematicAnalysis = patientGait.kinematicAnalysis;
-        this.moment = patientGait.moment;
-        this.doWork = patientGait.doWork;
-        this.pressurePlatform = patientGait.pressurePlatform;
-        this.type = type;
-        this.typeName = typeName;
-        // console.log(type, typeCode, typeName);
-        this.updateScrollbar();
-      });
+      this.tableMode = this.SON_OPEN;
+      this.updateScrollbar();
+      this.type = type;
+      this.typeName = typeName;
     },
     submit() {
       if (this.lockSubmitButton) {
@@ -790,13 +779,13 @@ export default {
       submitData.acquisitionStartTime = Util.simplifyTime(submitData.acquisitionStartTime, false);
       submitData.acquisitionEndTime = Util.simplifyTime(submitData.acquisitionEndTime, false);
 
-      submitData.timeParameter = deepCopy(this.timeParameter);
-      submitData.spatialParameters = deepCopy(this.spatialParameters);
-      submitData.standingAngle = deepCopy(this.standingAngle);
-      submitData.kinematicAnalysis = deepCopy(this.kinematicAnalysis);
-      submitData.moment = deepCopy(this.moment);
-      submitData.doWork = deepCopy(this.doWork);
-      submitData.pressurePlatform = deepCopy(this.pressurePlatform);
+      submitData.timeParameter = deepCopy(this.copyInfo.timeParameter);
+      submitData.spatialParameters = deepCopy(this.copyInfo.spatialParameters);
+      submitData.standingAngle = deepCopy(this.copyInfo.standingAngle);
+      submitData.kinematicAnalysis = deepCopy(this.copyInfo.kinematicAnalysis);
+      submitData.moment = deepCopy(this.copyInfo.moment);
+      submitData.doWork = deepCopy(this.copyInfo.doWork);
+      submitData.pressurePlatform = deepCopy(this.copyInfo.pressurePlatform);
 
       reviseDateFormat(submitData);
       pruneObj(submitData);
@@ -908,6 +897,15 @@ export default {
     Bus.$off(this.SHOW_GAIT_POSTURE_MODAL);
   },
   watch: {
+    'copyInfo.equipmentModel'(newVal) {
+      if (newVal === 1) {
+        queryPatientGaitInfo('', 'threeDimensionalGait', '').then((patientGait) =>{
+          vueCopy(patientGait, this.copyInfo);
+          this.$delete(this.copyInfo, 'maGait');
+          this.updateScrollbar();
+        });
+      }
+    },
     tableTypes() {
       this.initSubTableData();
       vueCopy(this.copyItem, this.copyInfo);

@@ -156,6 +156,10 @@ export default {
         this.EXPERIMENT_STEP_FOLLOW_UP].indexOf(this.patientExperimentStep) >= 0;
     },
     canEdit() {
+      // 2.4.0 课题患者入口禁止所有编辑权限
+      if (this.$store.state.listType === this.SUBJECT_PATIENTS_TYPE) {
+        return false;
+      }
       var createdByCurrentUser = this.diagnosisCreator === sessionStorage.getItem('userName');
       var isExperimentPatientsList = this.listType === this.THERAPISTS_PATIENTS_TYPE || this.listType === this.APPRAISERS_PATIENTS_TYPE;
 

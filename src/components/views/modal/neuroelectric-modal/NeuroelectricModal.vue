@@ -559,7 +559,7 @@
               <td class="col col-width-10">
                 <span v-if="mode===VIEW_CURRENT_CARD">
                   <span v-if="row[0].uiType===8">
-                    {{simplifyTimeWithoutDate(copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue)}}
+                    {{simplifyTimeWithoutDate(copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue)}}
                   </span>
                   <span v-else>
                     {{copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue}}
@@ -1418,7 +1418,7 @@ export default {
       return options;
     },
     simplifyTimeWithoutDate(time) {
-      return Util.simplifyTimeWithoutDate(time);
+      return Util.simplifyTimeWithoutDate(time, true);
     },
     transformToNumber(obj) {
       var value = parseFloat(obj.fieldValue);
@@ -1440,7 +1440,13 @@ export default {
         obj[rowId][colId].fieldValue = '';
         return obj[rowId][colId].fieldValue;
       }
-
+      // 判断显式字符串
+      if (typeof bedTime === 'string') {
+        bedTime = new Date(bedTime);
+      }
+      if (typeof totalSleepTime === 'string') {
+        totalSleepTime = new Date(totalSleepTime);
+      }
       bedTime = this.addTime('00:00:00', bedTime);
       totalSleepTime = this.addTime('00:00:00', totalSleepTime);
       var bedTimeNumList = bedTime.split(':');
@@ -1498,7 +1504,7 @@ export default {
         addHours = time.getHours();
         addMinutes = time.getMinutes();
         addSeconds = time.getSeconds();
-      } else if (time instanceof String) {
+      } else if (typeof time === 'string') {
         var timeStringList = time.split(':');
         addHours = timeStringList[0] ? timeStringList[0] : 0;
         addMinutes = timeStringList[1] ? timeStringList[1] : 0;
