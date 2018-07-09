@@ -2224,6 +2224,12 @@ export default {
       this.allPatientsSelectedStatus = false;
       queryPatientsByCondition(condition).then((data) => {
         vueCopy(data, this.patientList);
+        if (data.length === 0) {
+          this.$message({
+            message: '没有符合条件的患者',
+            type: 'warning'
+          });
+        }
         for (var i = 0; i < data.length; i++) {
           this.$set(this.patientSeletedStatusList, i, false);
         }
@@ -2261,6 +2267,13 @@ export default {
     //   window.location.href = url;
     // },
     popDialog() {
+      if (this.patientList.length === 0) {
+        this.$message({
+          message: '没有患者可供选择',
+          type: 'warning'
+        });
+        return;
+      }
       var patientIdList = [];
       for (var i = 0; i < this.patientList.length; i++) {
         if (this.patientSeletedStatusList[i]) {
@@ -2270,7 +2283,7 @@ export default {
       if (patientIdList.length === 0) {
         // 如果没有选择患者则不打开弹窗
         this.$message({
-          message: '请选择患者',
+          message: '请先选择患者',
           type: 'warning'
         });
         return;
