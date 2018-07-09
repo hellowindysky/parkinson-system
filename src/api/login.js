@@ -17,6 +17,6 @@ export function getLoginInfoByNewPwd(accountNumber, pwd, identifyingCode) {
     'pwd': pwd,
     'identifyingCode': identifyingCode
   };
-  var url = '/usermgr/forgetPasswordChec';
+  var url = '/usermgr/forgetPasswordCheck';
   return encapsulatePromise(url, request);
 };

@@ -187,7 +187,8 @@ export default {
         } else if (this.loginType === 2 || this.loginType === 3) {
           callback(new Error('请输入验证码'));
         }
-      } else if (!(/^\S{6,16}$/.test(value)) && this.loginType !== 2 && this.loginType !== 3) {
+      // } else if (!(/^\S{6,16}$/.test(value)) && this.loginType !== 2 && this.loginType !== 3) {
+        } else if (!(/^\S{6,16}$/.test(value)) && this.loginType !== 1 && this.loginType !== 2 && this.loginType !== 3) {
         if (this.loginForm.password.length < 6) {
           callback(new Error('请输入至少为 6 个字符'));
         } else if (this.loginForm.password.length > 16) {
@@ -458,6 +459,9 @@ export default {
         'businessType': 5,
         'accountNumber': this.loginForm.account
       };
+      if (this.loginType === 3) {
+        verificationInfos.ifForgetPassword = 1;
+      }
       sendVerificationCodes(verificationInfos).then(() => {
         this.lockSendButton = false;
         this.codeButtonStatus = 1;
@@ -725,7 +729,7 @@ export default {
         // 校验字段之后，发送修改密码的请求，如果再返回正确，则跳转到系统
         if (valid) {
 
-          resetPasswordByIdentifyingCode(this.resetFormPassword.formNewPassword).then(() => {
+          resetPasswordByIdentifyingCode(this.resetFormPassword.formNewPassword, this.loginForm.identifyingCode).then(() => {
             this.$message({
               message: '已成功修改密码',
               type: 'success',
