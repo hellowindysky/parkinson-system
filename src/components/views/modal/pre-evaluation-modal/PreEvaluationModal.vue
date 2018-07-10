@@ -35,6 +35,43 @@
               type="textarea" :maxlength="200"></el-input>
           </span>
         </div>
+
+        <div class="field-file">
+          <span class="field-name">
+            附件上传:
+          </span>
+          <span class="field-input">
+            <div class="last-files">
+              <div class="last-files-title">已上传的附件</div>
+              <div class="file" :class="{'editing': mode!==VIEW_CURRENT_CARD}" v-for="file in other">
+                <i class="el-icon-document icon"></i>
+                <span class="file-name" @click="downloadFile(file)">{{file.fileName}}</span>
+                <i class="close-button iconfont icon-cancel" @click="removeFile(file, other, newOther)"></i>
+              </div>
+            </div>
+            <el-upload
+              class="upload-area"
+              :action="uploadUrl"
+              ref="uploadbtn"
+              :disabled="mode===VIEW_CURRENT_CARD"
+              :data="fileParam"
+              :multiple="true"
+              :auto-upload="true"
+              :on-change="fileChange"
+              :on-preview="handlePreview"
+              :on-remove="handleOtherRemove"
+              :on-success="uploadOtherSuccess"
+              :on-error="uploadErr"
+              :before-upload="beforeUpload"
+              :file-list="fileList4">
+              <el-button slot="trigger" size="small" type="text" :disabled="mode===VIEW_CURRENT_CARD" v-show="mode!==VIEW_CURRENT_CARD">
+                点击上传附件
+              </el-button>
+              <div slot="tip" class="el-upload__tip"></div>
+            </el-upload>
+          </span>
+        </div>
+
       </div>
 
       <div class="seperate-line"></div>
@@ -541,6 +578,7 @@ import Ps from 'perfect-scrollbar';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import { vueCopy, pruneObj, reviseDateFormat } from 'utils/helper.js';
+import { baseUrl, getCommonRequest } from 'api/common.js';
 
 import {
   getPatientSimpleInfo,
@@ -548,7 +586,8 @@ import {
   addPreEvaluation,
   modifyPreEvaluation,
   getEvaluationPreopsScale,
-  getEvaluationMdsScale
+  getEvaluationMdsScale,
+  getPatientCase // 为了获取诊断创建日期
 } from 'api/patient.js';
 
 // 本组件没有采用 template 动态生成模版，而是根据一个固定模版来绑定数据
@@ -881,7 +920,14 @@ export default {
         }
       },
       lockSubmitButton: false,
-      showEdit: false
+      showEdit: false,
+
+      other: [],
+      newOther: [],
+      uploadingFilesNum: 0,
+      uploadUrl: baseUrl + '/upload/uploadAttachment',
+      fileParam: getCommonRequest(),
+      fileList4: [] // other
     };
   },
   computed: {
@@ -911,6 +957,75 @@ export default {
     }
   },
   methods: {
+    downloadFile(file) {
+      console.log(file);
+      // window.location.href = this.downloadUrl + file.realPath;
+    },
+    removeFile(file, showingList, transferringList) {
+      console.log(file, showingList, transferringList);
+      // for (let i = 0; i < showingList.length; i++) {
+      //   if (file.id === showingList[i].id) {
+      //     showingList.splice(i, 1);
+      //     break;
+      //   }
+      // }
+      // for (let i = 0; i < transferringList.length; i++) {
+      //   if (file.id === transferringList[i].id) {
+      //     transferringList.splice(i, 1);
+      //     break;
+      //   }
+      // }
+      // this.updateScrollbar();
+    },
+    fileChange() {
+      this.updateScrollbar();
+    },
+    handlePreview(file) {
+      console.log(file);
+    },
+    handleOtherRemove(file) {
+      this.handleRemove(file, this.newOther);
+    },
+    uploadOtherSuccess(response, file, fileList) {
+      this.uploadSuccess(response, file, fileList, this.newOther);
+    },
+    uploadSuccess(response, file, fileList, list) {
+      this.uploadingFilesNum -= 1;
+      if (response.code === 0) {
+        let id = response.data.patientAttachmentId;
+        list.push({
+          'id': id
+        });
+      } else {
+        this.$message({
+          message: '文件上传出错',
+          type: 'warning',
+          duration: 2000
+        });
+        console.log('response: ', response);
+        console.log('file: ', file);
+        console.log('fileList', fileList);
+      }
+    },
+    uploadErr(err, file, fileList) {
+      this.uploadingFilesNum -= 1;
+      console.log('upload error: ', err);
+      console.log('file: ', file);
+      console.log('fileList', fileList);
+    },
+    beforeUpload(file) {
+      const isUnderLimit = file.size / 1024 / 1024 < 300;
+      if (!isUnderLimit) {
+        this.$message({
+          message: '上传文件大小不能超过 300MB',
+          type: 'error',
+          duration: 2000
+        });
+      } else {
+        this.uploadingFilesNum += 1;
+      }
+      return isUnderLimit;
+    },
     showModal(cardOperation, info, showEdit) {
       this.mode = cardOperation;
       this.showEdit = showEdit;
@@ -929,6 +1044,13 @@ export default {
       }, (error) => {
         console.log(error);
       });
+
+      if (cardOperation === this.ADD_NEW_CARD) {
+        getPatientCase(this.$route.params.id, this.$route.params.caseId).then((res) => {
+          let preopsTime = res.patientCase.caseName.split(' ')[0];
+          this.$set(this.copyInfo, 'preopsTime', preopsTime);
+        });
+      }
 
       // 获取术前评估详情
       if (this.mode === this.EDIT_CURRENT_CARD || this.mode === this.VIEW_CURRENT_CARD) {
@@ -1956,6 +2078,120 @@ export default {
           }
         }
       }
+      // 文件上传
+      .field-file {
+        margin-bottom: 10px;
+        transform: translateX(10px);
+        .field-name {
+          display: inline-block;
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: @field-name-width;
+          line-height: 20px;
+          font-size: @normal-font-size;
+          color: @font-color;
+        }
+        .field-input {
+          display: block;
+          position: relative;
+          left: @field-name-width;
+          width: 96%;
+          padding-right: @field-name-width;
+          box-sizing: border-box;
+          font-size: @normal-font-size;
+          .last-files {
+            margin-bottom: 10px;
+            width: 100%;
+            .last-files-title {
+              transform: translateY(-5px);
+              margin-bottom: 5px;
+              height: 30px;
+              line-height: 30px;
+              background-color: @font-color;
+              color: #fff;
+              text-align: center;
+              cursor: default;
+            }
+            .file {
+              position: relative;
+              padding-left: 5px;
+              height: 30px;
+              line-height: 30px;
+              transition: 0.2s;
+              cursor: default;
+              .icon {
+                display: inline-block;
+                width: 20px;
+              }
+              .file-name {
+                display: inline-block;
+                padding: 0 3px;
+                line-height: 20px;
+                transform: translateX(-3px);
+                cursor: pointer;
+                &:hover {
+                  border-bottom: 1px solid @font-color;
+                }
+              }
+              .close-button {
+                display: none;
+                position: absolute;
+                right: 0;
+                width: 22px;
+                text-align: center;
+                color: @light-font-color;
+                font-size: 13px;
+              }
+              &.editing {
+                cursor: pointer;
+                &:hover {
+                  background-color: @screen-color;
+                  .close-button {
+                    display: inline-block;
+                    &:hover {
+                      color: @font-color;
+                    }
+                  }
+                }
+              }
+            }
+          }
+          .upload-area {
+            .el-upload {
+              width: 100%;
+              text-align: left;
+              .el-button {
+                width: 100%;
+                height: 30px;
+                border-radius: 10px;
+                &:hover {
+                  opacity: 0.7;
+                }
+                &:active {
+                  opacity: 0.85;
+                }
+                &.el-button--text {
+                  background-color: @light-font-color;
+                  color: #fff;
+                  font-size: @normal-font-size;
+                  &:disabled {
+                    background-color: @gray-color;
+                    cursor: not-allowed;
+                  }
+                }
+              }
+            }
+            .el-upload__tip {
+              line-height: normal;
+              margin-top:0;
+            }
+            // .el-upload-list {
+            // }
+          }
+        }
+      }
+      // 文件上传
     }
     .seperate-line {
       width: 90%;
