@@ -1012,6 +1012,35 @@ export default {
         resultGroups[i].rowItems = groups[i].filter(item => item.fieldType === 0);
         resultGroups[i].colItems = groups[i].filter(item => item.fieldType === 1);
       }
+
+      /**
+       * 格式化表格中使用TimePicker控件对应的接口返回值
+       * 目前只有睡眠总结表单中的 卧床时间 总睡眠时间 睡眠潜伏期 睡眠期时间会返回"HH:MM:SS"格式
+       * 如果返回是YYYY-MM-DD HH-MM-SS格式则不做处理
+       * 如果是HH-MM-SS则转为YYYY-MM-DD
+       */
+      for (let i = 0; i < resultGroups.length; i++) {
+        console.log('formate hhmmss');
+        let group = resultGroups[i];
+        for (let j = 0; j < group.rowItems.length; j++) {
+          let row = group.rowItems[j];
+          if (group.colItems.length > 0) {
+            for (let k = 0; k < group.colItems.length; k++) {
+              let col = group.colItems[k];
+              if (col.uiType === 8 || (col.uiType === undefined && row.uiType === 8)) {
+                console.log(row.id, col.id);
+                this.copyInfo.patientFieldCode[this.sleepMonitoringSubTableCode][row.id][col.id].fieldValue = this.transformtodate(this.copyInfo.patientFieldCode[this.sleepMonitoringSubTableCode][row.id][col.id].fieldValue);
+              }
+            }
+          } else {
+            if (row.uiType === 8) {
+              console.log(row.id);
+              this.copyInfo.patientFieldCode[this.sleepMonitoringSubTableCode][row.id][0].fieldValue = this.transformtodate(this.copyInfo.patientFieldCode[this.sleepMonitoringSubTableCode][row.id][0].fieldValue);
+            }
+          }
+        }
+      }
+
       return resultGroups;
     }
   },
@@ -1531,6 +1560,23 @@ export default {
         totalMinutes = '0' + totalMinutes;
       }
       return totalHours + ':' + totalMinutes + ':' + totalSeconds;
+    },
+    transformtodate(time) {
+      let date = new Date();
+      if (time instanceof Date) {
+        date = time;
+      } else if (typeof time === 'string' && time.length === 8) {
+        var timeStringList = time.split(':');
+        let hours = timeStringList[0] ? timeStringList[0] : 0;
+        let minutes = timeStringList[1] ? timeStringList[1] : 0;
+        let seconds = timeStringList[2] ? timeStringList[2] : 0;
+        date.setHours(Number(hours));
+        date.setMinutes(Number(minutes));
+        date.setSeconds(Number(seconds));
+      } else if (typeof time === 'string' && time.length === 16) {
+        date = time;
+      }
+      return date;
     },
     getPlaceHolder(val1, val2, val3) {
       if (val1) {
