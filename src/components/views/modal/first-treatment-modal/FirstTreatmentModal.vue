@@ -29,7 +29,70 @@
         <div v-if="copyInfo.firstVisitType===1">
           <div class="field half-line">
             <span class="field-name">
-              药物分类
+              药物商品名
+              <span class="required-mark">*</span>
+            </span>
+            <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+              <span>{{transform(copyInfo.medicineName,medicineNameOpt)}}</span>
+            </span>
+            <span class="field-input" v-else>
+              <span class="warning-text">{{warningResults.medicineName}}</span>
+              <el-select v-model="copyInfo.medicineName" placeholder="请选择药物商品名" clearable
+               @change="updateWarning('medicineName')"
+               :class="{'warning': warningResults.medicineName}">
+                <el-option
+                 v-for="item in medicineNameOpt"
+                 :key="item.code"
+                 :label="item.name"
+                 :value="item.code">
+                </el-option>
+              </el-select>
+            </span>
+          </div>
+
+          <div class="field half-line">
+            <span class="field-name">
+              化学名
+              <span class="required-mark">*</span>
+            </span>
+            <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+              <span>{{commonMedicineName}}</span>
+            </span>
+            <span class="field-input" v-else>
+              <span class="warning-text">{{warningResults.commonMedicineName}}</span>
+              <el-input v-model="commonMedicineName" placeholder="选择药物名称自动匹配" disabled
+              @change="updateWarning('commonMedicineName')"
+              :class="{'warning': warningResults.commonMedicineName}">
+              </el-input>
+            </span>
+          </div>
+
+          <div class="field half-line">
+            <span class="field-name">
+              药物规格
+              <span class="required-mark">*</span>
+            </span>
+            <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+              <span>{{copyInfo.medicalSpecUsed}}</span>
+            </span>
+            <span class="field-input" v-else>
+              <span class="warning-text">{{warningResults.medicalSpecUsed}}</span>
+              <el-select v-model="copyInfo.medicalSpecUsed" placeholder="请选择药物规格" clearable
+               @change="updateWarning('medicalSpecUsed')"
+               :class="{'warning': warningResults.medicalSpecUsed}">
+                <el-option
+                 v-for="(item,index) in medicineSpec"
+                 :key="item.specOral+index"
+                 :label="item.specOral"
+                 :value="item.specOral">
+                </el-option>
+              </el-select>
+            </span>
+          </div>
+
+          <div class="field half-line">
+            <span class="field-name">
+              药物类型
               <span class="required-mark">*</span>
             </span>
             <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
@@ -50,61 +113,7 @@
             </span>
           </div>
 
-          <div class="field half-line">
-            <span class="field-name">
-              药物商品名
-              <!-- <span class="required-mark">*</span> -->
-            </span>
-            <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-              <span>{{transform(copyInfo.medicineName,medicineNameOpt)}}</span>
-            </span>
-            <span class="field-input" v-else>
-              <!-- <span class="warning-text">{{warningResults.medicineName}}</span> -->
-              <el-select v-model="copyInfo.medicineName" placeholder="请选择药物商品名" clearable
-               @change="updateWarning('medicineName')">
-                <el-option
-                 v-for="item in medicineNameOpt"
-                 :key="item.code"
-                 :label="item.name"
-                 :value="item.code">
-                </el-option>
-              </el-select>
-            </span>
-          </div>
 
-          <div class="field half-line">
-            <span class="field-name">
-              药物规格
-              <!-- <span class="required-mark">*</span> -->
-            </span>
-            <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-              <span>{{copyInfo.medicalSpecUsed}}</span>
-            </span>
-            <span class="field-input" v-else>
-              <!-- <span class="warning-text">{{warningResults.medicalSpecUsed}}</span> -->
-              <el-select v-model="copyInfo.medicalSpecUsed" placeholder="请选择药物规格" clearable
-               @change="updateWarning('medicalSpecUsed')">
-                <el-option
-                 v-for="(item,index) in medicineSpec"
-                 :key="item.specOral+index"
-                 :label="item.specOral"
-                 :value="item.specOral">
-                </el-option>
-              </el-select>
-            </span>
-          </div>
-
-          <div class="field half-line">
-            <span class="field-name">
-              化学名
-            </span>
-            <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
-              <span>{{commonMedicineName}}</span>
-            </span>
-            <span class="field-input" v-else>
-              <el-input v-model="commonMedicineName" placeholder="选择药物名称自动匹配" disabled></el-input>
-            </span>
-          </div>
 
           <div class="field half-line">
             <span class="field-name">
@@ -379,7 +388,7 @@ export default {
         medicineClassification: '', // 药物分类
         medicineName: '', // 药物商品名
         medicalSpecUsed: '', // 药物规格
-        // commonMedicineName: '', // 化学名
+        commonMedicineName: '', // 化学名
         dailyDosage: '', // 每日用量
         ledd: '',
         firstTime: '', // 初次用药时间
@@ -395,8 +404,8 @@ export default {
         firstVisitType: '',
         treatmentType: '',
         medicineClassification: '',
-        // medicineName: '', // 药物商品名
-        // medicalSpecUsed: '', // 药物规格
+        medicineName: '', // 药物商品名
+        medicalSpecUsed: '', // 药物规格
         dailyDosage: '',
         yearsOfMedicine: ''
       },
@@ -431,7 +440,7 @@ export default {
     },
     verificationFieldList() {
       if (this.copyInfo.firstVisitType === 1) {
-        return ['firstVisitType', 'medicineClassification'];
+        return ['firstVisitType', 'medicineClassification', 'medicineName', 'commonMedicineName', 'medicalSpecUsed'];
       } else if (this.copyInfo.firstVisitType === 2) {
         return ['firstVisitType', 'treatmentType'];
       } else {
@@ -443,7 +452,8 @@ export default {
       return this.getOptions('firstVisitType');
     },
     medicineClassOpt() {
-      // 药物分类的select
+      // 药物类型的select
+      console.log(this.getOptions('firstVisitMedType'));
       return this.getOptions('firstVisitMedType');
     },
     medicineNameOpt() {
