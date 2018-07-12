@@ -596,7 +596,7 @@ let dataModel = {
   'dbsPatientCode': '',
   'preopsTime': '',
   'preopsRemark': '',
-  'preopsTerminalDTO': {
+  'preopsTerminalDTO': { // 剂末现象评估
     'terminalTime': '',
     'terminalScale': 1,
     'terminalExist': '',
@@ -606,7 +606,7 @@ let dataModel = {
     'terminalRemark': ''
   },
   'preopsDiaryDTO': {
-    'patientPreopsDiaryList': [
+    'patientPreopsDiaryList': [ // 患者日记
       {
         'oneDayDiaryHour': '',
         'oneDayDiaryType': 1,
@@ -772,7 +772,7 @@ let dataModel = {
     'closeRatio': '',
     'diaryRemark': ''
   },
-  'preopsDyskinesiaDTO': {
+  'preopsDyskinesiaDTO': { // 统一异动症评估
     'patientPreopsScaleList': [
       {
         'ariseTime': '',
@@ -791,7 +791,7 @@ let dataModel = {
     ],
     'dyskinesiaRemark': ''
   },
-  'preopsNonMotorDTO': {
+  'preopsNonMotorDTO': { // 综合评估
     'patientPreopsScaleList': [
       {
         'ariseTime': '',
@@ -887,7 +887,7 @@ let dataModel = {
     ],
     'nonmotorRemark': ''
   },
-  'preopsMotorDTO': {
+  'preopsMotorDTO': { // 运动症状评估(急性左旋多巴冲击试验)
     'motorTestTime': '',
     'loadingDoseCount': '',
     'patientPreopsMedicineList': [],
@@ -909,7 +909,7 @@ let dataModel = {
     ],
     'motorRemark': ''
   },
-  'preopsIntensionDTO': {
+  'preopsIntensionDTO': { // 患者手术意愿
     'intensionAriseTime': '',
     'operationIntension': '',
     'deviceId': '',
@@ -952,6 +952,7 @@ export default {
       newOther: [],
       uploadingFilesNum: 0,
       uploadUrl: baseUrl + '/upload/uploadAttachment',
+      downloadUrl: baseUrl + '/download/',
       fileParam: getCommonRequest(),
       fileList4: [] // other
     };
@@ -984,24 +985,22 @@ export default {
   },
   methods: {
     downloadFile(file) {
-      console.log(file);
-      // window.location.href = this.downloadUrl + file.realPath;
+      window.location.href = this.downloadUrl + file.realPath;
     },
     removeFile(file, showingList, transferringList) {
-      console.log(file, showingList, transferringList);
-      // for (let i = 0; i < showingList.length; i++) {
-      //   if (file.id === showingList[i].id) {
-      //     showingList.splice(i, 1);
-      //     break;
-      //   }
-      // }
-      // for (let i = 0; i < transferringList.length; i++) {
-      //   if (file.id === transferringList[i].id) {
-      //     transferringList.splice(i, 1);
-      //     break;
-      //   }
-      // }
-      // this.updateScrollbar();
+      for (let i = 0; i < showingList.length; i++) {
+        if (file.id === showingList[i].id) {
+          showingList.splice(i, 1);
+          break;
+        }
+      }
+      for (let i = 0; i < transferringList.length; i++) {
+        if (file.id === transferringList[i]) {
+          transferringList.splice(i, 1);
+          break;
+        }
+      }
+      this.updateScrollbar();
     },
     fileChange() {
       this.updateScrollbar();
@@ -1019,9 +1018,7 @@ export default {
       this.uploadingFilesNum -= 1;
       if (response.code === 0) {
         let id = response.data.patientAttachmentId;
-        list.push({
-          'id': id
-        });
+        list.push(id);
       } else {
         this.$message({
           message: '文件上传出错',
@@ -1083,6 +1080,10 @@ export default {
         var preEvaluationId = info.preopsInfoId ? info.preopsInfoId : -1;
         getPreEvaluation(preEvaluationId).then((data) => {
           vueCopy(data, this.copyInfo);
+          this.other = Object.assign([], data.patientAttachmentModelList);
+          this.other.forEach((item) => {
+            this.newOther.push(item.id);
+          });
           this.updateDiaryDayTime();
           this.updateDiaryHour();
           if (this.copyInfo.preopsMotorDTO.patientPreopsMedicineList.length === 0) {
@@ -1108,7 +1109,6 @@ export default {
       // 动态获取typegroup中的量表列表 覆盖原有的固定列表
       dataModel.preopsNonMotorDTO.patientPreopsScaleList = [];
       let typesInfo = Util.getElement('typegroupcode', 'nmScale', this.typeGroup);
-      console.log(typesInfo);
       for (let i = 0; i < typesInfo.types.length; i++) {
         let item = {
           'ariseTime': '',
@@ -1132,6 +1132,7 @@ export default {
       });
     },
     cancel() {
+      this.$refs.uploadbtn.clearFiles();
       this.lockSubmitButton = false;
       Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
     },
@@ -1185,6 +1186,16 @@ export default {
 
       this.copyInfo.patientId = this.$route.params.id;
       this.copyInfo.patientCaseId = this.$route.params.caseId;
+      this.copyInfo.file = this.newOther.join(',');
+      if (this.uploadingFilesNum > 0) {
+        this.$message({
+          message: '请等待文件上传完成后再提交',
+          type: 'warning',
+          duration: 2000
+        });
+        this.lockSubmitButton = false;
+        return;
+      }
       if (this.mode === this.ADD_NEW_CARD) {
         addPreEvaluation(this.copyInfo).then(() => {
           this.updateAndClose();
@@ -1206,6 +1217,7 @@ export default {
       }
     },
     updateAndClose() {
+      this.$refs.uploadbtn.clearFiles();
       Bus.$emit(this.UPDATE_CASE_INFO);
       this.lockSubmitButton = false;
       Bus.$emit(this.UNLOAD_DYNAMIC_COMPONENT);
