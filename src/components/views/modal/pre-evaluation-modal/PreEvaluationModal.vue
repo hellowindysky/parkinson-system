@@ -890,7 +890,7 @@ let dataModel = {
   'preopsMotorDTO': { // 运动症状评估(急性左旋多巴冲击试验)
     'motorTestTime': '',
     'loadingDoseCount': '',
-    'patientPreopsMedicineList': [],
+    'patientPreopsMedicineList': [], // 晨用药物
     'preopsMotorScaleList': [
       {
         'scaleInfo': 1,
@@ -900,7 +900,7 @@ let dataModel = {
         'medImproveRatio': ''
       },
       {
-        'scaleInfo': 1,
+        'scaleInfo': 2,
         'scaleType': 4,
         'scaleScoreBefore': '',
         'scaleScoreAfter': '',
