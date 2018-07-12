@@ -1070,7 +1070,7 @@ export default {
 
       if (cardOperation === this.ADD_NEW_CARD) {
         getPatientCase(this.$route.params.id, this.$route.params.caseId).then((res) => {
-          let preopsTime = res.patientCase.caseName.split(' ')[0];
+          let preopsTime = res.patientCase.diagTime;
           this.$set(this.copyInfo, 'preopsTime', preopsTime);
         });
       }
