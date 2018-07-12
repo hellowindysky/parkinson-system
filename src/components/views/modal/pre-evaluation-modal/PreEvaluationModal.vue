@@ -890,7 +890,7 @@ let dataModel = {
   'preopsMotorDTO': { // 运动症状评估(急性左旋多巴冲击试验)
     'motorTestTime': '',
     'loadingDoseCount': '',
-    'patientPreopsMedicineList': [],
+    'patientPreopsMedicineList': [], // 晨用药物
     'preopsMotorScaleList': [
       {
         'scaleInfo': 1,
@@ -900,7 +900,7 @@ let dataModel = {
         'medImproveRatio': ''
       },
       {
-        'scaleInfo': 1,
+        'scaleInfo': 2,
         'scaleType': 4,
         'scaleScoreBefore': '',
         'scaleScoreAfter': '',
@@ -1070,7 +1070,7 @@ export default {
 
       if (cardOperation === this.ADD_NEW_CARD) {
         getPatientCase(this.$route.params.id, this.$route.params.caseId).then((res) => {
-          let preopsTime = res.patientCase.caseName.split(' ')[0];
+          let preopsTime = res.patientCase.diagTime;
           this.$set(this.copyInfo, 'preopsTime', preopsTime);
         });
       }
