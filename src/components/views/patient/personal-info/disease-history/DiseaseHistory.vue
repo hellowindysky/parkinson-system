@@ -456,18 +456,37 @@ export default {
     },
     diseaseOrderOpt() {
       // 发病顺序集合
-      let firBody = this.getTypeGroupitem('firBody');
-      let part = this.copyInfo.patientDiseaseOrders.map((option) => {
-        return option.arisePart;
-      });
-      firBody.forEach((item) => {
-        if (part.indexOf(item.typeCode) !== -1) {
-          item.disabled = true;
-        } else {
-          item.disabled = false;
+      if (this.copyInfo.symmetries === 1) {
+        let firBody = this.getTypeGroupitem('firBody');
+        // console.log(firBody);
+        for (let i = 0; i < firBody.length; i++) {
+          let firBody1 = firBody.slice(4, 9);
+          // console.log(firBody1);
+          firBody.forEach((item) => {
+            if (firBody1.indexOf(item.typeCode) !== -1) {
+              item.disabled = true;
+            } else {
+              item.disabled = false;
+            }
+          });
+          return firBody1;
         }
-      });
-      return firBody;
+      } else if (this.copyInfo.symmetries === 0) {
+        let firBody = this.getTypeGroupitem('firBody');
+        // console.log(firBody);
+        for (let i = 0; i < firBody.length; i++) {
+          let firBody1 = firBody.slice(0, 6);
+          // console.log(firBody1);
+          firBody.forEach((item) => {
+            if (firBody1.indexOf(item.typeCode) !== -1) {
+              item.disabled = true;
+            } else {
+              item.disabled = false;
+            }
+          });
+          return firBody1;
+        }
+      }
     },
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients)) {
