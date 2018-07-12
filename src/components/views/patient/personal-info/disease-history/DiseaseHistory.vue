@@ -120,7 +120,7 @@
             <div class="custom-item" v-for="(item,index) in copyInfo['patientDiseaseOrders']" :key="index">
               <i class="iconfont icon-remove" @click="reduceOrder(index)"></i>
               <span class="sub-item">
-                <el-select v-model="item.arisePart" placeholder="请选择">
+                <el-select v-model="item.arisePart" clearable placeholder="请选择">
                   <el-option
                    v-for="item in diseaseOrderOpt" :key="item.typeCode"
                    :label="item.typeName"
@@ -135,7 +135,8 @@
                   type="month"
                   placeholder="选择发生年月"
                   :clearable="false"
-                  :picker-options="pickerOptions">
+                  :picker-options="pickerOptions"
+                  clearable>
                 </el-date-picker>
               </span>
             </div>
@@ -663,7 +664,7 @@ export default {
         classNameList.push('half-line');
       }
       // 判断该字段的名字是否比较长
-      if (field.cnfieldName.length > 6 && field.cnfieldName !== '备注') {
+      if (field.cnfieldName.length > 6) {
         classNameList.push('long-label-field');
       }
       if (field.cnfieldName === '备注') {
