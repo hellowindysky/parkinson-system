@@ -120,7 +120,7 @@
             <div class="custom-item" v-for="(item,index) in copyInfo['patientDiseaseOrders']" :key="index">
               <i class="iconfont icon-remove" @click="reduceOrder(index)"></i>
               <span class="sub-item">
-                <el-select v-model="item.arisePart" placeholder="请选择">
+                <el-select v-model="item.arisePart" clearable placeholder="请选择">
                   <el-option
                    v-for="item in diseaseOrderOpt" :key="item.typeCode"
                    :label="item.typeName"
@@ -135,7 +135,8 @@
                   type="month"
                   placeholder="选择发生年月"
                   :clearable="false"
-                  :picker-options="pickerOptions">
+                  :picker-options="pickerOptions"
+                  clearable>
                 </el-date-picker>
               </span>
             </div>
@@ -455,18 +456,37 @@ export default {
     },
     diseaseOrderOpt() {
       // 发病顺序集合
-      let firBody = this.getTypeGroupitem('firBody');
-      let part = this.copyInfo.patientDiseaseOrders.map((option) => {
-        return option.arisePart;
-      });
-      firBody.forEach((item) => {
-        if (part.indexOf(item.typeCode) !== -1) {
-          item.disabled = true;
-        } else {
-          item.disabled = false;
+      if (this.copyInfo.symmetries === 1) {
+        let firBody = this.getTypeGroupitem('firBody');
+        // console.log(firBody);
+        for (let i = 0; i < firBody.length; i++) {
+          let firBody1 = firBody.slice(4, 9);
+          // console.log(firBody1);
+          firBody.forEach((item) => {
+            if (firBody1.indexOf(item.typeCode) !== -1) {
+              item.disabled = true;
+            } else {
+              item.disabled = false;
+            }
+          });
+          return firBody1;
         }
-      });
-      return firBody;
+      } else if (this.copyInfo.symmetries === 0) {
+        let firBody = this.getTypeGroupitem('firBody');
+        // console.log(firBody);
+        for (let i = 0; i < firBody.length; i++) {
+          let firBody1 = firBody.slice(0, 6);
+          // console.log(firBody1);
+          firBody.forEach((item) => {
+            if (firBody1.indexOf(item.typeCode) !== -1) {
+              item.disabled = true;
+            } else {
+              item.disabled = false;
+            }
+          });
+          return firBody1;
+        }
+      }
     },
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients)) {
@@ -663,7 +683,7 @@ export default {
         classNameList.push('half-line');
       }
       // 判断该字段的名字是否比较长
-      if (field.cnfieldName.length > 6 && field.cnfieldName !== '备注') {
+      if (field.cnfieldName.length > 6) {
         classNameList.push('long-label-field');
       }
       if (field.cnfieldName === '备注') {
