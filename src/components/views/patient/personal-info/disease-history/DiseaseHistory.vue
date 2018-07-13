@@ -61,6 +61,15 @@
               </span>
               <span>月</span>
             </span>
+
+
+            <span v-else-if="getUIType(field)===1" v-show="copyInfo.diseaseType === 7">
+              <el-input v-model="copyInfo[field.fieldName]"
+                :placeholder="getMatchedField(field.fieldName).cnFieldDesc"
+                type= text
+                :maxlength="50"></el-input>
+            </span>
+
             <span v-else-if="getUIType(field)===1">
               <el-input v-model="copyInfo[field.fieldName]" :disabled="field.fieldName==='ariAge'"
                 :placeholder="getMatchedField(field.fieldName).cnFieldDesc"></el-input>
@@ -111,7 +120,7 @@
             <div class="custom-item" v-for="(item,index) in copyInfo['patientDiseaseOrders']" :key="index">
               <i class="iconfont icon-remove" @click="reduceOrder(index)"></i>
               <span class="sub-item">
-                <el-select v-model="item.arisePart" placeholder="请选择">
+                <el-select v-model="item.arisePart" clearable placeholder="请选择">
                   <el-option
                    v-for="item in diseaseOrderOpt" :key="item.typeCode"
                    :label="item.typeName"
@@ -126,7 +135,8 @@
                   type="month"
                   placeholder="选择发生年月"
                   :clearable="false"
-                  :picker-options="pickerOptions">
+                  :picker-options="pickerOptions"
+                  clearable>
                 </el-date-picker>
               </span>
             </div>
@@ -346,7 +356,7 @@ import ExtensiblePanel from 'public/extensible-panel/ExtensiblePanel';
 import Card from 'public/card/Card';
 import {queryPatientFirstSymbol, deletePatientFirstSymbol, queryPatientFirstVisitTreatment, delPatientFirstVisitTreatment, queryVisitDignosticRecord, delVisitDignosticRecord, modDiseaseHistory } from 'api/patient.js';
 
-const HALF_LINE_FIELD_LIST = ['diseaseType', 'specificDisease', 'diagnoseState', 'ariTime', 'courseOfDisease', 'firTime', 'surTime', 'firMedinfo',
+const HALF_LINE_FIELD_LIST = ['diseaseType', 'specificDisease', 'diagnoseState', 'diseaseTypeRemark', 'ariTime', 'courseOfDisease', 'firTime', 'surTime', 'firMedinfo',
   'firMedtime', 'ariAge', 'symmetries', 'symmetriesTime', 'firHosp', 'surHosp'];
 
 export default {
@@ -446,18 +456,37 @@ export default {
     },
     diseaseOrderOpt() {
       // 发病顺序集合
-      let firBody = this.getTypeGroupitem('firBody');
-      let part = this.copyInfo.patientDiseaseOrders.map((option) => {
-        return option.arisePart;
-      });
-      firBody.forEach((item) => {
-        if (part.indexOf(item.typeCode) !== -1) {
-          item.disabled = true;
-        } else {
-          item.disabled = false;
+      if (this.copyInfo.symmetries === 1) {
+        let firBody = this.getTypeGroupitem('firBody');
+        // console.log(firBody);
+        for (let i = 0; i < firBody.length; i++) {
+          let firBody1 = firBody.slice(4, 9);
+          // console.log(firBody1);
+          firBody.forEach((item) => {
+            if (firBody1.indexOf(item.typeCode) !== -1) {
+              item.disabled = true;
+            } else {
+              item.disabled = false;
+            }
+          });
+          return firBody1;
         }
-      });
-      return firBody;
+      } else if (this.copyInfo.symmetries === 0) {
+        let firBody = this.getTypeGroupitem('firBody');
+        // console.log(firBody);
+        for (let i = 0; i < firBody.length; i++) {
+          let firBody1 = firBody.slice(0, 6);
+          // console.log(firBody1);
+          firBody.forEach((item) => {
+            if (firBody1.indexOf(item.typeCode) !== -1) {
+              item.disabled = true;
+            } else {
+              item.disabled = false;
+            }
+          });
+          return firBody1;
+        }
+      }
     },
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients)) {
@@ -657,6 +686,9 @@ export default {
       if (field.cnfieldName.length > 6) {
         classNameList.push('long-label-field');
       }
+      if (field.cnfieldName === '备注') {
+        classNameList.push('short-label-field');
+      }
       // 判断该字段是否是多选框
       if (this.getUIType(field) === 5) {
         classNameList.push('multiple-select');
@@ -756,7 +788,7 @@ export default {
     },
     cancel() {
       // 点击取消按钮，将我们对 copyInfo 所做的临时修改全部放弃，还原其为 diseaseInfo 的复制对象，同时不要忘了重新对其进行特殊处理
-      let field = ['diseaseType', 'specificDisease', 'diagnoseState',
+      let field = ['diseaseType', 'specificDisease', 'diagnoseState', 'diseaseTypeRemark',
         'ariTime', 'ariAge', 'courseOfDisease', 'symmetries', 'patientDiseaseOrders',
         'firBody', 'chiefComplaint', 'diagMode', 'getDisFac', 'getDisFac0'];
       let transDiseaseInfo = Object.assign({}, this.diseaseInfo);
@@ -821,8 +853,11 @@ export default {
       if (this.warningResults['year'] || this.warningResults['month']) {
         return;
       }
-      // let staTime = Util.simplifyDate(this.copyInfo.ariTime).split('-');
-      // this.copyInfo.ariTime = staTime[0] + '-' + staTime[1];
+      if (this.copyInfo.diseaseType !== 7) {
+        this.copyInfo.diseaseTypeRemark = '';
+      }
+      let staTime = Util.simplifyDate(this.copyInfo.ariTime).split('-');
+      this.copyInfo.ariTime = staTime[0] + '-' + staTime[1];
       this.copyInfo.ariTime = Util.simplifyDate(this.copyInfo.ariTime);
 
       var submitData = deepCopy(this.copyInfo);
@@ -1256,6 +1291,12 @@ export default {
         }
         .field-input {
           left: @long-field-name-width;
+        }
+      }
+      &.short-label-field {
+        .field-name {
+          width: 0;
+          font-size: 0;
         }
       }
       &.multiple-select {

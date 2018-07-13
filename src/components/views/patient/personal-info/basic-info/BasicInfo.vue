@@ -27,6 +27,12 @@
               {{ copyInfo[field.fieldName] }}
             </span>
 
+            <span v-else-if="getUIType(field)===1" v-show="copyInfo.econType === 6">
+              <el-input v-model="copyInfo[field.fieldName]"
+                :placeholder="getMatchedField(field).cnFieldDesc"
+                type= text
+                :maxlength="100"></el-input>
+            </span>
             <span v-else-if="getUIType(field)===1">
               <el-autocomplete v-if="field.fieldName==='nation'" v-model="copyInfo[field.fieldName]"
                 :fetch-suggestions="querySearchAsync"
@@ -183,6 +189,10 @@ export default {
     submit() {
       if (this.lockSubmitButton) {
         return;
+      }
+      // 提交时，如果经济状况一栏不是'其他'，清空备注框
+      if (this.copyInfo.econType !== 6) {
+        this.copyInfo.remarks = '';
       }
       this.lockSubmitButton = true;
       this.completeEditingForTheFirstTime = true;
@@ -386,6 +396,9 @@ export default {
       }
       if (field.fieldName === 'homeCity') {
         fieldClass.push('field-city');
+      }
+      if (field.cnfieldName === '备注') {
+        fieldClass.push('short-label-field');
       }
       return fieldClass.join(' ');
     },
@@ -744,6 +757,12 @@ export default {
         width: 46%;
         .field-input,.field-value {
           left: 0;
+        }
+      }
+      &.short-label-field {
+        .field-name {
+          width: 0;
+          font-size: 0;
         }
       }
       .field-name {

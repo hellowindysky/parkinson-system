@@ -761,6 +761,10 @@ export default {
           callback: this.addSurgicalRecord
         },
         {
+          text: '术后评估',
+          callback: this.addAfterEvaluationRecord
+        },
+        {
           text: '术后并发症',
           callback: this.addPostComplicationRecord
         },
@@ -814,6 +818,10 @@ export default {
         deleteSurgicalMethod(surgicalMethod).then(this._resolveDeletion, this._rejectDeletion);
       });
       Bus.$emit(this.REQUEST_CONFIRMATION);
+    },
+    addAfterEvaluationRecord() {
+      var showEdit = this.canEdit && this.showSurgeryPanel;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'afterEvaluationModal', this.SHOW_AFTER_EVALUATION_MODAL, this.ADD_NEW_CARD, {}, showEdit);
     },
     addPostComplicationRecord() {
       var showEdit = this.canEdit && this.showSurgeryPanel;

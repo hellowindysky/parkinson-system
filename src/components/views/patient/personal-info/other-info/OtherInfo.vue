@@ -306,7 +306,7 @@ export default {
       return '个人史（' + totalCount + '条记录）';
     },
     toxicHistoryTitle() {
-      return '毒物接触史（' + this.processedToxicList.length + '条记录）';
+      return '职业或环境毒物接触史（' + this.processedToxicList.length + '条记录）';
     },
     processedToxicList() {
       if (this.toxicExposureHistoryList.length === 0) {

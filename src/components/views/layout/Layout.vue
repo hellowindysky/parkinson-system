@@ -43,6 +43,7 @@ const appointmentNextFollowUpModal = () => import(/* webpackChunkName: 'treatmen
 const medicineModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/medicine-modal/MedicineModal');
 const medicineAdverseEventModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/medicine-adverse-event-modal/MedicineAdverseEventModal');
 const preEvaluationModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/pre-evaluation-modal/PreEvaluationModal');
+const afterEvaluationModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/after-evaluation-modal/AfterEvaluationModal');
 const surgicalMethodModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/surgical-method-modal/SurgicalMethodModal');
 const operativeComplicationModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/operative-complication-modal/OperativeComplicationModal');
 const dbsModal = () => import(/* webpackChunkName: 'treatmentModal' */ 'modal/dbs-modal/DbsModal');
@@ -103,6 +104,7 @@ export default {
     medicineModal,
     medicineAdverseEventModal,
     preEvaluationModal,
+    afterEvaluationModal,
     surgicalMethodModal,
     operativeComplicationModal,
     dbsModal,

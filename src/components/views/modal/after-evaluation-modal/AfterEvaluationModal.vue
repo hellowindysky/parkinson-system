@@ -383,9 +383,9 @@
       </div>
 
       <div class="seperate-line"></div>
-      <div class="sub-title-bar">运动症状评估(急性左旋多巴冲击试验)</div>
+      <div class="sub-title-bar">运动症状评估</div>
       <div class="content">
-        <div class="field">
+        <!-- <div class="field">
           <span class="field-name">试验日期时间</span>
           <span class="field-input">
             <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.preopsMotorDTO.motorTestTime}}</span>
@@ -397,26 +397,26 @@
               :picker-options="pickerOptions">
             </el-date-picker>
           </span>
-        </div>
-        <div class="field">
+        </div> -->
+        <!-- <div class="field">
           <span class="field-name">总冲击量</span>
           <span class="field-input">
             {{ getTotalLoadingDose() }}
           </span>
-        </div>
-        <div class="field">
+        </div> -->
+        <!-- <div class="field">
           <span class="field-name long-field-name">等效美多芭量(片)</span>
           <span class="field-input long-field-name">
             {{ getEqualMadoparCount() }}
           </span>
-        </div>
-        <div class="field">
+        </div> -->
+        <!-- <div class="field">
           <span class="field-name">LED</span>
           <span class="field-input">
             {{ getTotalLevodopaLoadingDose() }}
           </span>
-        </div>
-        <table class="table">
+        </div> -->
+        <!-- <table class="table">
           <tr class="row title-row">
             <td class="col">
               <span v-show="mode!==VIEW_CURRENT_CARD" class="iconfont icon-plus" @click="addMedicine"></span>
@@ -461,19 +461,14 @@
               {{ getLevodopaLoadingDose(medicine) }}
             </td>
           </tr>
-        </table>
+        </table> -->
         <table class="table">
           <tr class="row title-row">
             <td class="col wide-col">量表</td>
-            <td class="col">
-              服药前得分
-              <!-- <span class="required-mark">*</span> -->
-            </td>
-            <td class="col">
-              服药后最低分
-              <!-- <span class="required-mark">*</span> -->
-            </td>
-            <td class="col">改善率%</td>
+            <td class="col">服药开机</td>
+            <td class="col">服药关机</td>
+            <td class="col">未服药开机</td>
+            <td class="col">未服药关机</td>
           </tr>
           <tr class="row" v-for="(scale, index) in copyInfo.preopsMotorDTO.preopsMotorScaleList">
             <td class="col wide-col">
@@ -488,6 +483,9 @@
               <span v-if="mode===VIEW_CURRENT_CARD">{{scale.scaleScoreAfter}}</span>
               <el-input v-else v-model="scale.scaleScoreAfter" @blur="transformToNum(scale, 'scaleScoreAfter', index, 'motorDTOScaleScoreAfter')"
                 :class="{'warning': warningResults['motorDTOScaleScoreAfter']}"></el-input>
+            </td>
+            <td class="col">
+              {{ scale.medImproveRatio }}
             </td>
             <td class="col computed-cell">
               {{ scale.medImproveRatio }}
@@ -504,10 +502,10 @@
         </div>
       </div>
 
-      <div class="seperate-line"></div>
-      <div class="sub-title-bar">患者手术意愿</div>
+      <!-- <div class="seperate-line"></div> -->
+      <!-- <div class="sub-title-bar">患者手术意愿</div> -->
       <div class="content">
-        <div class="field">
+        <!-- <div class="field">
           <span class="field-name">表态时间</span>
           <span class="field-input">
             <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.preopsIntensionDTO.intensionAriseTime}}</span>
@@ -519,11 +517,11 @@
               :picker-options="pickerOptions">
               </el-date-picker>
           </span>
-        </div>
-        <div class="field">
+        </div> -->
+        <!-- <div class="field">
           <span class="field-name">
             手术意愿
-            <!-- <span class="required-mark">*</span> -->
+            <span class="required-mark">*</span>
           </span>
           <span class="field-input">
             <span v-if="mode===VIEW_CURRENT_CARD">{{getFieldValue(copyInfo.preopsIntensionDTO.operationIntension, 'operationIntension')}}</span>
@@ -534,8 +532,8 @@
               <el-option label="不同意" :value="0"></el-option>
             </el-select>
           </span>
-        </div>
-        <div class="field">
+        </div> -->
+        <!-- <div class="field">
           <span class="field-name">设备品牌</span>
           <span class="field-input">
             <span v-if="mode===VIEW_CURRENT_CARD">{{getFieldValue(copyInfo.preopsIntensionDTO.deviceId, 'deviceId')}}</span>
@@ -544,8 +542,8 @@
                 :value="option.code" :key="option.code"></el-option>
             </el-select>
           </span>
-        </div>
-        <div class="field">
+        </div> -->
+        <!-- <div class="field">
           <span class="field-name">设备类型</span>
           <span class="field-input">
             <span v-if="mode===VIEW_CURRENT_CARD">{{getFieldValue(copyInfo.preopsIntensionDTO.devicePowerType, 'devicePowerType')}}</span>
@@ -554,15 +552,15 @@
               <el-option label="不充电" :value="0"></el-option>
             </el-select>
           </span>
-        </div>
-        <div class="field whole-line">
+        </div> -->
+        <!-- <div class="field whole-line">
           <span class="field-name">备注</span>
           <span class="field-input">
             <span v-if="mode===VIEW_CURRENT_CARD">{{copyInfo.preopsIntensionDTO.intensionRemark}}</span>
             <el-input v-else v-model="copyInfo.preopsIntensionDTO.intensionRemark" placeholder="请输入患者手术意愿相关内容"
               type="textarea" :maxlength="200"></el-input>
           </span>
-        </div>
+        </div> -->
       </div>
 
       <div class="seperate-line"></div>
@@ -965,9 +963,9 @@ export default {
     ]),
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
-        return '新增术前评估';
+        return '新增术后评估';
       } else {
-        return '术前评估';
+        return '术后评估';
       }
     },
     terminalDurationNote() {
@@ -1236,6 +1234,7 @@ export default {
       this.copyInfo.patientId = this.$route.params.id;
       this.copyInfo.patientCaseId = this.$route.params.caseId;
       this.copyInfo.file = this.newOther.join(',');
+      this.copyInfo.type = 2; // 表示是术后评估
       if (this.uploadingFilesNum > 0) {
         this.$message({
           message: '请等待文件上传完成后再提交',
@@ -1903,13 +1902,13 @@ export default {
   mounted() {
     this.updateScrollbar();
     // 先在本组件注册该事件，等待Layout组件接收动态组件挂载完毕的通知，再在本组件执行 showPanel 或 showModal
-    Bus.$on(this.SHOW_PRE_EVALUATION_MODAL, this.showModal);
+    Bus.$on(this.SHOW_AFTER_EVALUATION_MODAL, this.showModal);
 
     // 动态组件挂载完毕，通知Layout组件，动态组件已挂载完毕
     Bus.$emit(this.DYNAMIC_COMPONENT_MOUNTED);
   },
   beforeDestroy() {
-    Bus.$off(this.SHOW_PRE_EVALUATION_MODAL, this.showModal);
+    Bus.$off(this.SHOW_AFTER_EVALUATION_MODAL, this.showModal);
   },
   watch: {
     '$route.path'() {
