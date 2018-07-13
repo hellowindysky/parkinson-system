@@ -1068,13 +1068,6 @@ export default {
         console.log(error);
       });
 
-      if (cardOperation === this.ADD_NEW_CARD) {
-        getPatientCase(this.$route.params.id, this.$route.params.caseId).then((res) => {
-          let preopsTime = res.patientCase.diagTime;
-          this.$set(this.copyInfo, 'preopsTime', preopsTime);
-        });
-      }
-
       // 获取术前评估详情
       if (this.mode === this.EDIT_CURRENT_CARD || this.mode === this.VIEW_CURRENT_CARD) {
         var preEvaluationId = info.preopsInfoId ? info.preopsInfoId : -1;
@@ -1096,9 +1089,56 @@ export default {
           console.log(error);
         });
       } else if (this.mode === this.ADD_NEW_CARD) {
-        this.addMedicine();
+        // this.addMedicine();
         this.$nextTick(() => {
           this.completeInit = true;
+        });
+      }
+
+      if (cardOperation === this.ADD_NEW_CARD) {
+        getPatientCase(this.$route.params.id, this.$route.params.caseId).then((res) => {
+          let preopsTime = res.patientCase.diagTime;
+          this.$set(this.copyInfo, 'preopsTime', preopsTime);
+
+          // 这是晨用药物select下拉列表中显示的药物，那么可以确定它们一定是晨用药
+          let preopsMedicineSelect = this.getOptions('medicineName');
+          console.log(preopsMedicineSelect);
+          // 把他们的code都拿出来，也就是晨用药的id;
+          let preopsMedicineSelectId = preopsMedicineSelect.map((item) => {
+            return item.code;
+          });
+          // console.log(preopsMedicineSelectId);
+
+          // 将符合以下两个条件的药物治疗卡片过滤出来
+          // 1. 服药时间符合 00:00 - 10:00
+          // 2. 必须是晨用药
+          console.log(res.patientCase.patientMedicineNew);
+          let medicineNew = res.patientCase.patientMedicineNew.filter((item) => {
+            let flag = false;
+            let flag2 = preopsMedicineSelectId.indexOf(item.medicineId);
+
+            let medicineDetail = item.patientMedicineDetail;
+            for (let subItem of medicineDetail) {
+              let temporary = '2018-07-12';
+              let temporary2 = '23:00';
+              let zeroClock = new Date(temporary + ' 00:00').getTime();
+              let tenClock = new Date(temporary + ' 10:00').getTime();
+              let takeTime = new Date(temporary + ' ' + (subItem.takeTime ? subItem.takeTime : temporary2)).getTime();
+              if (takeTime >= zeroClock && takeTime < tenClock) {
+                flag = true;
+                break;
+              }
+            }
+            return flag && (flag2 !== -1);
+          });
+          //
+          //
+          medicineNew.forEach((item, index) => {
+            console.log(item);
+            this.addMedicine();
+            this.$set(this.copyInfo.preopsMotorDTO.patientPreopsMedicineList[index], 'medicineInfo', item.medicineId);
+          });
+          // console.log(this.copyInfo.preopsMotorDTO.patientPreopsMedicineList);
         });
       }
 
