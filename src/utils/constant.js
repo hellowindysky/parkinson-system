@@ -127,6 +127,7 @@ export default {
   SHOW_MA_GAIT_MODAL: 'showMaGaitModal',
   SHOW_IMG_MODAL: 'showImgModal',
   SHOW_PRE_EVALUATION_MODAL: 'showPreEvaluationModal',
+  SHOW_AFTER_EVALUATION_MODAL: 'showAfterEvaluationModal',
   SHOW_SURGICAL_METHOD_MODAL: 'showSurgicalMethodModal',
   SHOW_OPERATIVE_COMPLICATION_MODAL: 'showOperativeComplication',
   SHOW_DBS_MODAL: 'showDbsModal',
