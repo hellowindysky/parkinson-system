@@ -43,6 +43,19 @@
         </div>
         <div class="field whole-line" v-if="copyInfo.elecExamType===1">
           <span class="field-name">
+            肌震颤频率
+          </span>
+          <span class="field-input">
+            <span class="warning-text"></span>
+            <span v-if="mode===VIEW_CURRENT_CARD">{{getFieldValue(copyInfo.myotremorFrequency, 'myotremorFrequency')}}</span>
+            <el-select v-else placeholder="请选择肌震颤频率" v-model="copyInfo.myotremorFrequency" @change="chooseElecExamType"
+              :class="{'warning': warningResults.elecExamType}" :disabled="mode===VIEW_CURRENT_CARD" size="small">
+              <el-option v-for="option in getOptions('myotremorFrequency')" :key="option.code" :label="option.name" :value="option.code" ></el-option>
+            </el-select>
+          </span>
+        </div>
+        <div class="field whole-line" v-if="copyInfo.elecExamType===1">
+          <span class="field-name">
             检查结果
           </span>
           <span class="field-input">
@@ -1085,6 +1098,7 @@ export default {
       this.$set(this.copyInfo, 'elecTroGramId', '');
       this.$set(this.copyInfo, 'etgType', '');
       this.$set(this.copyInfo, 'patEleHint', '');
+      this.$set(this.copyInfo, 'myotremorFrequency', '');
       this.$set(this.copyInfo, 'patEleResule', '');
       this.$set(this.copyInfo, 'patientMotNerCondResu', []);
       this.$set(this.copyInfo, 'patienFWaStuResu', []);
@@ -1751,7 +1765,8 @@ export default {
         'elecExam': 'elecExam',
         'emgType': 'eleType',
         'nerveType': 'nervType',
-        'muscle': 'muscleType'
+        'muscle': 'muscleType',
+        'myotremorFrequency': 'myotremorFrequency'
       };
       if (code === '' || code === undefined) {
         return '';

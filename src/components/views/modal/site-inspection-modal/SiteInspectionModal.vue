@@ -626,6 +626,9 @@ export default {
           line-height: @field-line-height;
           font-size: @normal-font-size;
           color: @light-font-color;
+          .el-radio+.el-radio {
+            margin-left: 20px;
+          }
         }
         .field-input {
           display: inline-block;

@@ -6,7 +6,7 @@
       <h1 class="title">{{title}}</h1>
       <h3 class="subtitle"></h3>
 
-      <div class="tabs-wrapper">
+      <div class="tabs-wrapper" v-show="!mustResetPassword">
         <span class="tab tab-place-1" v-if="loginType!==3 && loginType !== 4 " :class="{'current-tab':loginType===1}" @click="accountLogin">用户名密码</span>
         <span class="tab tab-place-2" v-if="loginType!==3 && loginType !== 4" :class="{'current-tab':loginType===2}" @click="dynamicPassword">动态密码</span>
         <div class="tab-bottom-bar" :class="tabPlaceClass"></div>
@@ -70,7 +70,7 @@
         <a class="link" target="_blank" href="https://www.wjx.top/jq/19488329.aspx">点击这里</a>申请试用
       </div>
 
-      <el-form class="input-wrapper" v-if="mustResetPassword" :model="resetForm" :rules="resetRules" ref="resetForm" label-width="0">
+      <el-form class="input-wrapper" v-show="mustResetPassword" :model="resetForm" :rules="resetRules" ref="resetForm" label-width="0">
         <div class="notice" v-if="mustResetPassword">
           首次登录需要修改初始密码<span class="phone-num">【手机尾号 {{lastNumbers}}】</span>
         </div>
@@ -93,7 +93,7 @@
           <el-button class="button code-button" type="primary" @click="sendCode" :disabled="codeButtonStatus===1">{{codeButtonText}}</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button class="button" type="primary" @click="submitResetForm">确认修改</el-button>
+          <el-button class="button" type="primary" @click.native="submitResetForm">确认修改</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -147,6 +147,7 @@ export default {
         if (strengthLevel === 0) {
           callback(new Error('含有非法字符'));
         } else if (strengthLevel > 0 && this.resetForm.newPassword !== '') {
+          console.log('ref', this.$refs);
           this.$refs.resetForm.validateField('repeatedNewPassword');
           callback();
         } else if (strengthLevel > 0 && this.resetFormPassword.formNewPassword !== '') {
