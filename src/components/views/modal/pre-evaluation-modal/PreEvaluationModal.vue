@@ -449,7 +449,7 @@
             </td>
             <td class="col">
               <span v-if="mode===VIEW_CURRENT_CARD">{{medicine.medUsage}}</span>
-              <el-input v-else v-model="medicine.medUsage" @blur="updateMedicineUsage(medicine)"></el-input>
+              <el-input v-else v-model="medicine.medUsage" @blur="updateMedicineUsage(medicine)" @input="updateMedicineUsage(medicine)"></el-input>
             </td>
             <td class="col computed-cell">
               {{ getMorningDose(medicine) }}
@@ -1095,14 +1095,16 @@ export default {
         });
       }
 
+      // 将药物治疗卡片里的晨用药信息带到术前评估晨用药里
       if (cardOperation === this.ADD_NEW_CARD) {
         getPatientCase(this.$route.params.id, this.$route.params.caseId).then((res) => {
           let preopsTime = res.patientCase.diagTime;
           this.$set(this.copyInfo, 'preopsTime', preopsTime);
+          this.getScaleData();
 
-          // 这是晨用药物select下拉列表中显示的药物，那么可以确定它们一定是晨用药
+          // 这是术前评估晨用药物select下拉列表中显示的药物，那么可以确定它们一定是晨用药
           let preopsMedicineSelect = this.getOptions('medicineName');
-          console.log(preopsMedicineSelect);
+          // console.log(preopsMedicineSelect);
           // 把他们的code都拿出来，也就是晨用药的id;
           let preopsMedicineSelectId = preopsMedicineSelect.map((item) => {
             return item.code;
@@ -1110,9 +1112,9 @@ export default {
           // console.log(preopsMedicineSelectId);
 
           // 将符合以下两个条件的药物治疗卡片过滤出来
-          // 1. 服药时间符合 00:00 - 10:00
+          // 1. 其中一次服药时间符合 00:00 - 10:00 (注意：服药时间可能是多次，意味着其中可能存在不符合该时间区间的值)
           // 2. 必须是晨用药
-          console.log(res.patientCase.patientMedicineNew);
+          // console.log(res.patientCase.patientMedicineNew);
           let medicineNew = res.patientCase.patientMedicineNew.filter((item) => {
             let flag = false;
             let flag2 = preopsMedicineSelectId.indexOf(item.medicineId);
@@ -1134,11 +1136,26 @@ export default {
           //
           //
           medicineNew.forEach((item, index) => {
-            console.log(item);
             this.addMedicine();
             this.$set(this.copyInfo.preopsMotorDTO.patientPreopsMedicineList[index], 'medicineInfo', item.medicineId);
+
+            this.selectMedicine(this.copyInfo.preopsMotorDTO.patientPreopsMedicineList[index]);
+            let medicineDetail = item.patientMedicineDetail;
+
+            let takeDose = 0;
+            for (let subItem of medicineDetail) {
+              let temporary = '2018-07-12';
+              let temporary2 = '23:00';
+              let zeroClock = new Date(temporary + ' 00:00').getTime();
+              let tenClock = new Date(temporary + ' 10:00').getTime();
+              let takeTime = new Date(temporary + ' ' + (subItem.takeTime ? subItem.takeTime : temporary2)).getTime();
+              if (takeTime >= zeroClock && takeTime < tenClock) {
+                takeDose += Number(subItem.takeDose);
+              }
+            }
+            this.$set(this.copyInfo.preopsMotorDTO.patientPreopsMedicineList[index], 'medUsage', takeDose);
           });
-          // console.log(this.copyInfo.preopsMotorDTO.patientPreopsMedicineList);
+
         });
       }
 
@@ -1437,6 +1454,7 @@ export default {
       return options;
     },
     selectMedicine(medicine) {
+      // console.log(medicine);
       // 重新选择药物后，会将使用量清空，同时因为可选的规格只有一个，所以会自动选上
       medicine.medUsage = '';
       var medSpecificationOptions = this.getOptions('medicineSpec', medicine.medicineInfo);
