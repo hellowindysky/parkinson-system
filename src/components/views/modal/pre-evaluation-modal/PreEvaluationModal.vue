@@ -1112,25 +1112,26 @@ export default {
           // console.log(preopsMedicineSelectId);
 
           // 将符合以下两个条件的药物治疗卡片过滤出来
-          // 1. 其中一次服药时间符合 00:00 - 10:00 (注意：服药时间可能是多次，意味着其中可能存在不符合该时间区间的值)
+          // 1. 其中一次服药时间符合 00:00 - 10:00 (注意：服药时间可能是多次，意味着其中可能存在不符合该时间区间的值,在里面也过滤掉)
           // 2. 必须是晨用药
           // console.log(res.patientCase.patientMedicineNew);
           let medicineNew = res.patientCase.patientMedicineNew.filter((item) => {
             let flag = false;
             let flag2 = preopsMedicineSelectId.indexOf(item.medicineId);
 
-            let medicineDetail = item.patientMedicineDetail;
-            for (let subItem of medicineDetail) {
+            item.patientMedicineDetail = item.patientMedicineDetail.filter((subItem) => {
               let temporary = '2018-07-12';
               let temporary2 = '23:00';
               let zeroClock = new Date(temporary + ' 00:00').getTime();
               let tenClock = new Date(temporary + ' 10:00').getTime();
               let takeTime = new Date(temporary + ' ' + (subItem.takeTime ? subItem.takeTime : temporary2)).getTime();
-              if (takeTime >= zeroClock && takeTime < tenClock) {
-                flag = true;
-                break;
+
+              let status = (takeTime >= zeroClock && takeTime < tenClock);
+              if (status) {
+                flag = status;
               }
-            }
+              return status;
+            });
             return flag && (flag2 !== -1);
           });
           //
@@ -1138,21 +1139,12 @@ export default {
           medicineNew.forEach((item, index) => {
             this.addMedicine();
             this.$set(this.copyInfo.preopsMotorDTO.patientPreopsMedicineList[index], 'medicineInfo', item.medicineId);
-
             this.selectMedicine(this.copyInfo.preopsMotorDTO.patientPreopsMedicineList[index]);
-            let medicineDetail = item.patientMedicineDetail;
 
             let takeDose = 0;
-            for (let subItem of medicineDetail) {
-              let temporary = '2018-07-12';
-              let temporary2 = '23:00';
-              let zeroClock = new Date(temporary + ' 00:00').getTime();
-              let tenClock = new Date(temporary + ' 10:00').getTime();
-              let takeTime = new Date(temporary + ' ' + (subItem.takeTime ? subItem.takeTime : temporary2)).getTime();
-              if (takeTime >= zeroClock && takeTime < tenClock) {
-                takeDose += Number(subItem.takeDose);
-              }
-            }
+            item.patientMedicineDetail.forEach((subItem) => {
+              takeDose += Number(subItem.takeDose);
+            });
             this.$set(this.copyInfo.preopsMotorDTO.patientPreopsMedicineList[index], 'medUsage', takeDose);
           });
 
