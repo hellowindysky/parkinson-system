@@ -389,6 +389,7 @@ export default {
     },
     backHomepage() {
       this.loginType = BACK_HOMEPAGE;
+      this.mustResetPassword = false;
       if (this.loginForm.account !== '') {
         localStorage.removeItem('account');
       }
@@ -688,7 +689,8 @@ export default {
               type: 'success',
               duration: 2000
             });
-            this.enterApp();
+            // this.enterApp();
+            this.backHomepage();
             this.lockSubmitButton = false;
 
           }, (error) => {
