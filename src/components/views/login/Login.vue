@@ -395,6 +395,7 @@ export default {
       }
       this.loginForm.remember = false;
       this.loginForm.account = '';
+      this.loginForm.password = '';
       this.loginForm.identifyingCode = '';
       this.$refs['loginForm'].validate();
     },
@@ -689,10 +690,9 @@ export default {
               type: 'success',
               duration: 2000
             });
+            this.lockSubmitButton = false;
             // this.enterApp();
             this.backHomepage();
-            this.lockSubmitButton = false;
-
           }, (error) => {
             if (error.code === 25) {
               // 由于我们在前端就做了校验，所以正常情况下不会执行到这里
