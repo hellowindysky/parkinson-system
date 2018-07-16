@@ -86,7 +86,7 @@
             <span class="value">{{item.dyskinesiaDesc}}</span>
           </div>
           <div class="text line-4">
-            <span class="name">非运动症状</span>
+            <span class="name">综合评估</span>
             <span class="value">{{item.nonMotorDesc}}</span>
           </div>
           <div class="text line-5">
@@ -120,6 +120,42 @@
           <div class="text line-3">
             <span class="name">手术时间</span>
             <span class="value">{{item.surgicalDate}}</span>
+          </div>
+        </card>
+        <card class="card surgery-card" :class="bigCardWidth" :mode="mutableMode"
+          v-for="(item, index) in afterEvaluationList"
+          :key="'afterEvaluation'+index"
+          :title="'术后评估'"
+          v-on:editCurrentCard="editAfterEvaluationRecord(item)"
+          v-on:viewCurrentCard="viewAfterEvaluationRecord(item)"
+          v-on:deleteCurrentCard="deleteAfterEvaluationRecord(item)">
+          <div class="text line-1">
+            <span class="name">剂末现象</span>
+            <span class="value">{{item.terminalDesc}}</span>
+          </div>
+          <div class="text line-2">
+            <span class="name">患者日记</span>
+            <span class="value">{{item.diaryDesc}}</span>
+          </div>
+          <div class="text line-3">
+            <span class="name">统一异动症</span>
+            <span class="value">{{item.dyskinesiaDesc}}</span>
+          </div>
+          <div class="text line-4">
+            <span class="name">综合评估</span>
+            <span class="value">{{item.nonMotorDesc}}</span>
+          </div>
+          <div class="text line-5">
+            <span class="name">运动症状</span>
+            <span class="value">{{item.motorDesc}}</span>
+          </div>
+          <!-- <div class="text line-6">
+            <span class="name">手术意愿</span>
+            <span class="value">{{item.intensionDesc}}</span>
+          </div> -->
+          <div class="text line-6">
+            <span class="name">评估时间</span>
+            <span class="value">{{item.preopsTime}}</span>
           </div>
         </card>
         <card class="card surgery-card" :class="bigCardWidth" :mode="mutableMode"
@@ -432,23 +468,23 @@ export default {
       return '药物治疗' + '（' + count + '条记录） LEDD: ' + ledd + ' mg';
     },
     surgeryTitle() {
-      var count = this.preEvaluationList.length + this.surgicalMethodList.length +
+      var count = this.preEvaluationList.length + this.surgicalMethodList.length + this.afterEvaluationList.length +
         this.postComplicationList.length + this.dbsFirstList.length + this.dbsFollowList.length;
       return '手术治疗' + '（' + count + '条记录）';
     },
-    preEvaluationTitle() {
-      return '术前评估（' + this.preEvaluationList.length + '条记录）';
-    },
-    surgicalMethodTitle() {
-      return '手术方案（' + this.surgicalMethodList.length + '条记录）';
-    },
-    postComplicationTitle() {
-      return '术后并发症（' + this.postComplicationList.length + '条记录）';
-    },
-    dbsTitle() {
-      var amount = this.dbsFirstList.length + this.dbsFollowList.length;
-      return '程控记录（' + amount + '条记录）';
-    },
+    // preEvaluationTitle() {
+    //   return '术前评估（' + this.preEvaluationList.length + '条记录）';
+    // },
+    // surgicalMethodTitle() {
+    //   return '手术方案（' + this.surgicalMethodList.length + '条记录）';
+    // },
+    // postComplicationTitle() {
+    //   return '术后并发症（' + this.postComplicationList.length + '条记录）';
+    // },
+    // dbsTitle() {
+    //   var amount = this.dbsFirstList.length + this.dbsFollowList.length;
+    //   return '程控记录（' + amount + '条记录）';
+    // },
     physiontherapyTitle() {
       var totalCount = this.diagnosticPhysiontherapy.length + this.diagnosticTreatmentEvaluation.length + this.diagnosticAdverseEvent.length + this.diagnosticSeriousAdverseEvent.length;
       return '物理治疗（' + totalCount + '条记录）';
@@ -458,6 +494,9 @@ export default {
     },
     surgicalMethodList() {
       return this.diagnosticSurgery.patientTreatmentList ? this.diagnosticSurgery.patientTreatmentList : [];
+    },
+    afterEvaluationList() {
+      return this.diagnosticSurgery.patientPostoperativelyList ? this.diagnosticSurgery.patientPostoperativelyList : [];
     },
     postComplicationList() {
       return this.diagnosticSurgery.patientComplicationList ? this.diagnosticSurgery.patientComplicationList : [];
@@ -822,6 +861,23 @@ export default {
     addAfterEvaluationRecord() {
       var showEdit = this.canEdit && this.showSurgeryPanel;
       Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'afterEvaluationModal', this.SHOW_AFTER_EVALUATION_MODAL, this.ADD_NEW_CARD, {}, showEdit);
+    },
+    viewAfterEvaluationRecord(item) {
+      var showEdit = this.canEdit && this.showSurgeryPanel;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'afterEvaluationModal', this.SHOW_AFTER_EVALUATION_MODAL, this.VIEW_CURRENT_CARD, item, showEdit);
+    },
+    editAfterEvaluationRecord(item) {
+      var showEdit = this.canEdit && this.showSurgeryPanel;
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'afterEvaluationModal', this.SHOW_AFTER_EVALUATION_MODAL, this.EDIT_CURRENT_CARD, item, showEdit);
+    },
+    deleteAfterEvaluationRecord(item) {
+      var afterEvaluation = {
+        'preopsInfoId': item.preopsInfoId
+      };
+      Bus.$on(this.CONFIRM, () => {
+        deletePreEvaluation(afterEvaluation).then(this._resolveDeletion, this._rejectDeletion);
+      });
+      Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addPostComplicationRecord() {
       var showEdit = this.canEdit && this.showSurgeryPanel;
