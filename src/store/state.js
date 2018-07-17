@@ -12,7 +12,10 @@ const state = {
   showSensitiveInfo: false,
 
   // 列表类型，默认为空
-  listType: ''
+  listType: '',
+
+  // 诊断里的 就诊时间 因为很多地方需要同步这个时间
+  treatmentTime: '1970-01-02'
 };
 
 export default state;
