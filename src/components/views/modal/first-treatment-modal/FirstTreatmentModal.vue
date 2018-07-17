@@ -37,15 +37,21 @@
             </span>
             <span class="field-input" v-else>
               <span class="warning-text">{{warningResults.medicineName}}</span>
-              <el-select v-model="copyInfo.medicineName" placeholder="请选择药物商品名" clearable
-               @change="updateWarning('medicineName')"
+              <el-select v-model="copyInfo.medicineName" placeholder="请选择药物商品名" clearable filterable
+               @change="getMedicalType()"
                :class="{'warning': warningResults.medicineName}">
                 <el-option
+                 v-for="item in medicineInfo"
+                 :key="item.medicineId"
+                 :label="item.medicineName"
+                 :value="item.medicineId">
+                </el-option>
+                <!-- <el-option
                  v-for="item in medicineNameOpt"
                  :key="item.code"
                  :label="item.name"
                  :value="item.code">
-                </el-option>
+                </el-option> -->
               </el-select>
             </span>
           </div>
@@ -99,10 +105,9 @@
               <span>{{transform(copyInfo.medicineClassification, medicineClassOpt)}}</span>
             </span>
             <span class="field-input" v-else>
-              <span class="warning-text">{{warningResults.medicineClassification}}</span>
-              <el-select v-model="copyInfo.medicineClassification" placeholder="请选择药物分类" clearable
-               @change="updateWarning('medicineClassification')"
-               :class="{'warning': warningResults.medicineClassification}" >
+              <!-- <span class="warning-text">{{warningResults.medicineClassification}}</span> -->
+              <el-select v-model="copyInfo.medicineClassification" placeholder="选择药物名称自动匹配" disabled
+               @change="updateWarning('medicineClassification')">
                 <el-option
                  v-for="item in medicineClassOpt"
                  :key="item.code"
@@ -403,7 +408,7 @@ export default {
       warningResults: {
         firstVisitType: '',
         treatmentType: '',
-        medicineClassification: '',
+        // medicineClassification: '',
         medicineName: '', // 药物商品名
         medicalSpecUsed: '', // 药物规格
         dailyDosage: '',
@@ -466,20 +471,25 @@ export default {
     },
     medicineSpec() {
       // 药物规格的select
-      let spec = Util.getElement('code', this.copyInfo.medicineName, this.medicineNameOpt).spec;
+      let spec = Util.getElement('medicineId', this.copyInfo.medicineName, this.medicineInfo).spec;
       spec = spec ? spec : [];
       // 如果只有一项，就把这一项自动显示出来
-      if (spec && spec.length === 1) {
-        this.$nextTick(() => {
-          this.$set(this.copyInfo, 'medicalSpecUsed', spec[0].specOral);
-        });
-      }
+      // if (spec && spec.length === 1) {
+      //   this.$nextTick(() => {
+      //     this.$set(this.copyInfo, 'medicalSpecUsed', spec[0].specOral);
+      //   });
+      // }
       return spec;
     },
     commonMedicineName() {
       // 通用名
-      return this.medicineNameOpt.filter((obj) => {
-        return obj.code === this.copyInfo.medicineName;
+      // return this.medicineNameOpt.filter((obj) => {
+      //   return obj.code === this.copyInfo.medicineName;
+      // }).map((obj) => {
+      //   return obj.commonName;
+      // })[0];
+      return this.medicineInfo.filter((obj) => {
+        return obj.medicineId === this.copyInfo.medicineName;
       }).map((obj) => {
         return obj.commonName;
       })[0];
@@ -641,6 +651,20 @@ export default {
       };
       return options;
     },
+    getMedicalType() {
+      let type = this.medicineInfo.filter((obj) => {
+        return obj.medicineId === this.copyInfo.medicineName;
+      }).map((obj) => {
+        return obj.firstTreatMedicalType;
+      })[0];
+
+      // let type = this.medicineInfo.filter(function(obj) {
+      //   return obj.medicineId === this.copyInfo.medicineName;
+      // });
+
+      this.copyInfo.medicineClassification = type;
+      this.updateWarning('medicineName');
+    },
     getMedNameOptions(fieldType) {
       return this.medicineInfo.filter((obj) => {
         return obj.firstTreatMedicalType === fieldType;
@@ -721,11 +745,11 @@ export default {
     '$route.path'() {
       this.cancel();
     },
-    medicineNameOpt: function() {
-      if (this.completeInit) {
-        this.$set(this.copyInfo, 'medicineName', '');
-      }
-    },
+    // medicineNameOpt: function() {
+    //   if (this.completeInit) {
+    //     this.$set(this.copyInfo, 'medicineName', '');
+    //   }
+    // },
     medicineSpec: function() {
       if (this.completeInit) {
         this.$set(this.copyInfo, 'medicalSpecUsed', '');
