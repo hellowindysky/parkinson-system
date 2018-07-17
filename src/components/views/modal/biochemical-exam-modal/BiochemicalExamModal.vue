@@ -968,10 +968,6 @@ export default {
               line-height: normal;
               margin-top:0;
             }
-            .el-upload-list {
-              // max-height: 80px;
-              // overflow-y: scroll;
-            }
           }
         }
       }
@@ -987,7 +983,6 @@ export default {
         .form {
           position: relative;
           width: 100%;
-          // left: calc(~"50% - (@{col-id-width} + @{col-time-width} + @{col-amount-width} + @{col-unit-width}) / 2");
           border-spacing: 0;
           .row {
             height: 45px;

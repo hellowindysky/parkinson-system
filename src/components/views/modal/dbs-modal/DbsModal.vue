@@ -2707,11 +2707,6 @@ export default {
       .form-left, .form-right {
         display: inline-block;
       }
-      .form-right {
-        // position: absolute; // 这里利用两个表格高度相等，只定义一个为 absolute，从而避免容器坍塌
-        // left: @unit-width * 17;
-        // top: 0;
-      }
       .form {
         margin: 10px auto 0;
         border-spacing: 0;

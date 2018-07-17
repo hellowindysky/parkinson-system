@@ -1484,10 +1484,6 @@ export default {
             line-height: normal;
             margin-top:0;
           }
-          .el-upload-list {
-            // max-height: 80px;
-            // overflow-y: scroll;
-          }
         }
       }
     }

@@ -329,9 +329,6 @@ export default {
         width: calc(~"98% - @{field-name-width}");
       }
     }
-    &.multi-line {
-      // height: @field-height * 1.5;
-    }
     .field-name {
       display: inline-block;
       position: absolute;
