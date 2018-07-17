@@ -283,6 +283,7 @@ export default {
         getPatientCase(patientId, this.caseId).then((data) => {
           this.existed = true;
           this.caseDetail = Object.assign({}, data.patientCase);
+          this.$store.commit('UPDATE_TREATMENT_TIME', data.patientCase.diagTime);
           this.mode = this.READING_MODE;
           this.nextFollowUpStatus = data.patientCase.appointmentStatusCode;
           if (data.patientCase.archiveStatus === 1) {

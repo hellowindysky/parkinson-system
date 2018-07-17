@@ -32,6 +32,10 @@ const mutations = {
 
   [types.UPDATE_LIST_TYPE](state, type) {
     state.listType = type;
+  },
+
+  [types.UPDATE_TREATMENT_TIME](state, treatmentTime) {
+    state.treatmentTime = treatmentTime;
   }
 };
 
