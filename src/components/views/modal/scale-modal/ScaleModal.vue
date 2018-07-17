@@ -174,7 +174,7 @@
         <div class="answer-form" v-show="quicklyMode === true">
           <div v-for="(item, index) in targetScale.questions"  :class="{ 'form-cell' : item.questionType===0 || item.questionType===1 }">
             <div class="scale-questions" v-if="(item.questionType===2 || item.questionType===3)">
-              <p class="question-title" v-html="item.questionNumber + ' ' + item.subjectName" 
+              <p class="question-title" v-html="item.questionNumber + ' ' + item.subjectName"
               :class="{'notice-empty': !questionIsAnswered(item) && mode === EDIT_CURRENT_CARD}"></p>
 
               <el-input v-model="copyInfo.patientOptions[index].remarks" :disabled="mode===VIEW_CURRENT_CARD"
@@ -222,13 +222,13 @@
 
       <!-- 题目列表 -->
       <div v-for="(item, index) in targetScale.questions" class="scale-questions" v-show="(item.parentId ? checkQuestionListIsShow(item.parentId, item.answerIndex) : true) && quicklyMode === false" :id="'questions_' + item.answerIndex" :style="item.parentId ? 'padding-left: 50px;' : ''">
-        <p class="question-title" v-html="item.questionNumber + ' ' + item.subjectName" 
+        <p class="question-title" v-html="item.questionNumber + ' ' + item.subjectName"
         :class="{'notice-empty': !questionIsAnswered(item) && mode === EDIT_CURRENT_CARD}"></p>
 
         <el-checkbox-group v-if="(item.questionType===0 || item.questionType===1) && item.multipleChoose === 1"
           class="question-body" :key="index" v-model="copyInfo.patientOptions[item.answerIndex].scaleOptionId">
           <div class="question-selection" v-for="(option, i) in item.options">
-            <el-checkbox 
+            <el-checkbox
               :label="option.scaleOptionId" :key="i" :disabled="mode===VIEW_CURRENT_CARD">
                 {{option.optionName}}
             </el-checkbox>
@@ -333,7 +333,8 @@ export default {
     ...mapGetters([
       'scaleTemplateGroups',
       'typeGroup',
-      'allScale'
+      'allScale',
+      'treatmentTime'
     ]),
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
@@ -552,6 +553,11 @@ export default {
         this.scrollToQuestion();
       }
       // console.log('copyInfo: ', this.copyInfo);
+
+      // 同步就诊时间
+      if (cardOperation === this.ADD_NEW_CARD) {
+        this.$set(this.copyInfo, 'inspectTime', this.treatmentTime);
+      }
     },
     edit() {
       this.mode = this.EDIT_CURRENT_CARD;

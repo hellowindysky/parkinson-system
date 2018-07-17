@@ -1147,7 +1147,8 @@ export default {
     ...mapGetters([
       'typeGroup',
       'deviceInfo',
-      'medicineInfo'
+      'medicineInfo',
+      'treatmentTime'
     ]),
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
@@ -1277,6 +1278,11 @@ export default {
       }
       this.clearWarning();
       this.updateScrollbar();
+
+      // 同步就诊时间
+      if (cardOperation === this.ADD_NEW_CARD) {
+        this.$set(this.copyInfo, 'programDate', this.treatmentTime);
+      }
     },
     switchToEditingMode() {
       this.mode = this.EDIT_CURRENT_CARD;

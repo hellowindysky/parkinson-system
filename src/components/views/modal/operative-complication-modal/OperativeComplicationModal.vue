@@ -76,7 +76,8 @@ export default {
       'operativeComplicationDictionary',
       'operativeComplicationTemplate',
       'complicationTypeList',
-      'typeGroup'
+      'typeGroup',
+      'treatmentTime'
     ]),
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
@@ -92,6 +93,11 @@ export default {
       this.originalInfo = info;
       this.initCopyInfo();
       this.showEdit = showEdit;
+
+      // 同步就诊时间
+      if (cardOperation === this.ADD_NEW_CARD) {
+        this.$set(this.copyInfo, 'occurrenceTime', this.treatmentTime);
+      }
 
     },
     initCopyInfo() {

@@ -233,7 +233,7 @@
           </div>
         </el-checkbox-group>
       </div>
-      
+
       <div class="seperate-line"></div>
       <div class="button cancel-button" @click="cancel">取消</div>
       <div class="button edit-button" @click="switchToEditingMode" v-if="mode===VIEW_CURRENT_CARD && showEdit">编辑</div>
@@ -290,7 +290,8 @@ export default {
     ...mapGetters([
       'bioexamTypeList',
       'geneMutationList',
-      'typeGroup'
+      'typeGroup',
+      'treatmentTime'
     ]),
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
@@ -374,6 +375,11 @@ export default {
       this.$nextTick(() => {
         this.clearWarning();
       });
+
+      // 同步就诊时间
+      if (cardOperation === this.ADD_NEW_CARD) {
+        this.$set(this.copyInfo, 'checkDate', this.treatmentTime);
+      }
     },
     updateTemplate() {
       this.targetBioexam = [];

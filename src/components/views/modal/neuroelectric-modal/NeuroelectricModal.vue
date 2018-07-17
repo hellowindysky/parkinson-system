@@ -934,7 +934,8 @@ export default {
     ...mapGetters([
       'emgTypeList',
       'typeGroup',
-      'typeField'
+      'typeField',
+      'treatmentTime'
     ]),
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
@@ -1090,6 +1091,11 @@ export default {
       this.selectEmg();
       this.clearWarning();
       this.updateScrollbar();
+
+      // 同步就诊时间
+      if (cardOperation === this.ADD_NEW_CARD) {
+        this.$set(this.copyInfo, 'checkDate', this.treatmentTime);
+      }
     },
     initCopyInfo() {
       this.$set(this.copyInfo, 'elecExamType', '');

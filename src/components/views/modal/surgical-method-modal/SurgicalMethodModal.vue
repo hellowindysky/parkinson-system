@@ -73,7 +73,8 @@ export default {
     ...mapGetters([
       'surgicalMethodDictionary',
       'surgicalMethodTemplate',
-      'surgicalTypeList'
+      'surgicalTypeList',
+      'treatmentTime'
     ]),
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
@@ -91,6 +92,12 @@ export default {
 
       this.$nextTick(() => {
         this.initCopyInfo();
+
+        // 同步就诊时间
+        if (cardOperation === this.ADD_NEW_CARD) {
+          this.$set(this.copyInfo, 'surgicalDate', this.treatmentTime);
+        }
+
       });
       // console.log(this.copyInfo);
 

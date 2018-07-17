@@ -586,7 +586,7 @@ import {
   modifyPreEvaluation,
   getEvaluationPreopsScale,
   getEvaluationMdsScale,
-  getPatientCase // 为了获取诊断创建日期
+  getPatientCase // 为了获取药物治疗卡片
 } from 'api/patient.js';
 
 // 本组件没有采用 template 动态生成模版，而是根据一个固定模版来绑定数据
@@ -959,7 +959,8 @@ export default {
     ...mapGetters([
       'typeGroup',
       'medicineInfo',
-      'deviceInfo'
+      'deviceInfo',
+      'treatmentTime'
     ]),
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
@@ -1095,10 +1096,10 @@ export default {
 
       // 将药物治疗卡片里的晨用药信息带到术前评估晨用药里
       if (cardOperation === this.ADD_NEW_CARD) {
+        // 同步就诊时间
+        this.$set(this.copyInfo, 'preopsTime', this.treatmentTime);
+        this.getScaleData();
         getPatientCase(this.$route.params.id, this.$route.params.caseId).then((res) => {
-          let preopsTime = res.patientCase.diagTime;
-          this.$set(this.copyInfo, 'preopsTime', preopsTime);
-          this.getScaleData();
 
           // 这是术前评估晨用药物select下拉列表中显示的药物，那么可以确定它们一定是晨用药
           let preopsMedicineSelect = this.getOptions('medicineName');

@@ -1,5 +1,5 @@
 const getters = {
-  TreatmentTime(state) {
+  treatmentTime(state) {
     return state.treatmentTime;
   }
 };
