@@ -303,13 +303,6 @@
             </td>
             <td class="col">
               {{getFieldValue(scale.bodyStatus, 'bodyStatus')}}
-              <!-- <span v-if="mode===VIEW_CURRENT_CARD">{{getFieldValue(scale.bodyStatus, 'bodyStatus')}}</span>
-              <el-select v-else v-model="scale.bodyStatus" :disabled="true"
-                @change="checkWarning(['preopsDyskinesiaDTO', 'patientPreopsScaleList', index, 'bodyStatus'], 'dyskinesiaDTOScaleStatus')"
-                :class="{'warning': warningResults['dyskinesiaDTOScaleStatus']}">
-                <el-option label="开期" :value="1"></el-option>
-                <el-option label="关期" :value="0"></el-option>
-              </el-select> -->
             </td>
             <td class="col">
               <span v-if="mode===VIEW_CURRENT_CARD">{{scale.scaleScore}}</span>
@@ -475,20 +468,24 @@
               {{getRealName(scale.scaleInfo, 'mScale')}}
             </td>
             <td class="col">
-              <span v-if="mode===VIEW_CURRENT_CARD">{{scale.scaleScoreBefore}}</span>
-              <el-input v-else v-model="scale.scaleScoreBefore" @blur="transformToNum(scale, 'scaleScoreBefore', index, 'motorDTOScaleScoreBefore')"
+              <span v-if="mode===VIEW_CURRENT_CARD">{{scale.takeMedicineOpen}}</span>
+              <el-input v-else v-model="scale.takeMedicineOpen" @blur="transformToNum(scale, 'takeMedicineOpen', index, 'motorDTOScaleScoreBefore')"
                 :class="{'warning': warningResults['motorDTOScaleScoreBefore']}"></el-input>
             </td>
             <td class="col">
-              <span v-if="mode===VIEW_CURRENT_CARD">{{scale.scaleScoreAfter}}</span>
-              <el-input v-else v-model="scale.scaleScoreAfter" @blur="transformToNum(scale, 'scaleScoreAfter', index, 'motorDTOScaleScoreAfter')"
+              <span v-if="mode===VIEW_CURRENT_CARD">{{scale.takeMedicineClose}}</span>
+              <el-input v-else v-model="scale.takeMedicineClose" @blur="transformToNum(scale, 'takeMedicineClose', index, 'motorDTOScaleScoreAfter')"
                 :class="{'warning': warningResults['motorDTOScaleScoreAfter']}"></el-input>
             </td>
             <td class="col">
-              {{ scale.medImproveRatio }}
+              <span v-if="mode===VIEW_CURRENT_CARD">{{scale.noTakeMedicineOpen}}</span>
+              <el-input v-else v-model="scale.noTakeMedicineOpen" @blur="transformToNum(scale, 'noTakeMedicineOpen')">
+              </el-input>
             </td>
-            <td class="col computed-cell">
-              {{ scale.medImproveRatio }}
+            <td class="col">
+              <span v-if="mode===VIEW_CURRENT_CARD">{{scale.noTakeMedicineClose}}</span>
+              <el-input v-else v-model="scale.noTakeMedicineClose" @blur="transformToNum(scale, 'noTakeMedicineClose')">
+              </el-input>
             </td>
           </tr>
         </table>
@@ -585,8 +582,7 @@ import {
   addPreEvaluation,
   modifyPreEvaluation,
   getEvaluationPreopsScale,
-  getEvaluationMdsScale,
-  getPatientCase // 为了获取药物治疗卡片
+  getEvaluationMdsScale
 } from 'api/patient.js';
 
 // 本组件没有采用 template 动态生成模版，而是根据一个固定模版来绑定数据
@@ -886,23 +882,39 @@ let dataModel = {
     'nonmotorRemark': ''
   },
   'preopsMotorDTO': { // 运动症状评估(急性左旋多巴冲击试验)
-    'motorTestTime': '',
+    // 'motorTestTime': '',
     'loadingDoseCount': '',
-    'patientPreopsMedicineList': [], // 晨用药物
+    // 'patientPreopsMedicineList': [], // 晨用药物
     'preopsMotorScaleList': [
+      // {
+      //   'scaleInfo': 1,
+      //   'scaleType': 4,
+      //   'scaleScoreBefore': '',
+      //   'scaleScoreAfter': '',
+      //   'medImproveRatio': ''
+      // },
+      // {
+      //   'scaleInfo': 2,
+      //   'scaleType': 4,
+      //   'scaleScoreBefore': '',
+      //   'scaleScoreAfter': '',
+      //   'medImproveRatio': ''
+      // }
       {
         'scaleInfo': 1,
         'scaleType': 4,
-        'scaleScoreBefore': '',
-        'scaleScoreAfter': '',
-        'medImproveRatio': ''
+        'takeMedicineOpen': '',
+        'takeMedicineClose': '',
+        'noTakeMedicineOpen': '',
+        'noTakeMedicineClose': ''
       },
       {
         'scaleInfo': 2,
         'scaleType': 4,
-        'scaleScoreBefore': '',
-        'scaleScoreAfter': '',
-        'medImproveRatio': ''
+        'takeMedicineOpen': '',
+        'takeMedicineClose': '',
+        'noTakeMedicineOpen': '',
+        'noTakeMedicineClose': ''
       }
     ],
     'motorRemark': ''
@@ -1099,55 +1111,6 @@ export default {
         // 同步就诊时间
         this.$set(this.copyInfo, 'preopsTime', this.treatmentTime);
         this.getScaleData();
-        getPatientCase(this.$route.params.id, this.$route.params.caseId).then((res) => {
-
-          // 这是术前评估晨用药物select下拉列表中显示的药物，那么可以确定它们一定是晨用药
-          let preopsMedicineSelect = this.getOptions('medicineName');
-          // console.log(preopsMedicineSelect);
-          // 把他们的code都拿出来，也就是晨用药的id;
-          let preopsMedicineSelectId = preopsMedicineSelect.map((item) => {
-            return item.code;
-          });
-          // console.log(preopsMedicineSelectId);
-
-          // 将符合以下两个条件的药物治疗卡片过滤出来
-          // 1. 其中一次服药时间符合 00:00 - 10:00 (注意：服药时间可能是多次，意味着其中可能存在不符合该时间区间的值,在里面也过滤掉)
-          // 2. 必须是晨用药
-          // console.log(res.patientCase.patientMedicineNew);
-          let medicineNew = res.patientCase.patientMedicineNew.filter((item) => {
-            let flag = false;
-            let flag2 = preopsMedicineSelectId.indexOf(item.medicineId);
-
-            item.patientMedicineDetail = item.patientMedicineDetail.filter((subItem) => {
-              let temporary = '2018-07-12';
-              let temporary2 = '23:00';
-              let zeroClock = new Date(temporary + ' 00:00').getTime();
-              let tenClock = new Date(temporary + ' 10:00').getTime();
-              let takeTime = new Date(temporary + ' ' + (subItem.takeTime ? subItem.takeTime : temporary2)).getTime();
-
-              let status = (takeTime >= zeroClock && takeTime < tenClock);
-              if (status) {
-                flag = status;
-              }
-              return status;
-            });
-            return flag && (flag2 !== -1);
-          });
-          //
-          //
-          medicineNew.forEach((item, index) => {
-            this.addMedicine();
-            this.$set(this.copyInfo.preopsMotorDTO.patientPreopsMedicineList[index], 'medicineInfo', item.medicineId);
-            this.selectMedicine(this.copyInfo.preopsMotorDTO.patientPreopsMedicineList[index]);
-
-            let takeDose = 0;
-            item.patientMedicineDetail.forEach((subItem) => {
-              takeDose += Number(subItem.takeDose);
-            });
-            this.$set(this.copyInfo.preopsMotorDTO.patientPreopsMedicineList[index], 'medUsage', takeDose);
-          });
-
-        });
       }
 
       this.updateScrollbar();
@@ -1195,13 +1158,13 @@ export default {
       this.lockSubmitButton = true;
 
       // 先检查药物方案列表是否符合规则（出现COMT抑制剂就必须要有多巴胺类制剂）
-      for (let medicine of this.copyInfo.preopsMotorDTO.patientPreopsMedicineList) {
-        if (!this.isMedicineValid(medicine)) {
-          this.alertForCOMTWithoutLDopa();
-          this.lockSubmitButton = false;
-          return;
-        }
-      }
+      // for (let medicine of this.copyInfo.preopsMotorDTO.patientPreopsMedicineList) {
+      //   if (!this.isMedicineValid(medicine)) {
+      //     this.alertForCOMTWithoutLDopa();
+      //     this.lockSubmitButton = false;
+      //     return;
+      //   }
+      // }
 
       // 再检查，患者日记里面，是否每天的时间只和都是 24 小时，如果有一列不符合，都不允许通过
       if (!this.allTotalHourOk) {
@@ -1339,8 +1302,12 @@ export default {
             });
           } else {
             let preopsMotorScaleList = this.copyInfo.preopsMotorDTO.preopsMotorScaleList;
-            preopsMotorScaleList[0].scaleScoreBefore = data['1'];
-            preopsMotorScaleList[0].scaleScoreAfter = data['2'];
+            // preopsMotorScaleList[0].scaleScoreBefore = data['1'];
+            // preopsMotorScaleList[0].scaleScoreAfter = data['2'];
+            preopsMotorScaleList[0].takeMedicineOpen = data['2'];
+            preopsMotorScaleList[0].takeMedicineClose = data['2'];
+            preopsMotorScaleList[0].noTakeMedicineOpen = data['2'];
+            preopsMotorScaleList[0].noTakeMedicineClose = data['2'];
             this.updateMotorScaleMedImproveRatio();
             this.$notify({
               title: '成功',
@@ -1590,40 +1557,40 @@ export default {
         }
       });
     },
-    getTotalLoadingDose() {
-      var totalLoadingDose = 0;
-      var loadingDose = 0;
-      for (let medicine of this.copyInfo.preopsMotorDTO.patientPreopsMedicineList) {
-        loadingDose = this.getLoadingDose(medicine);
-        if (loadingDose !== '') {
-          totalLoadingDose += loadingDose;
-        }
-      }
-      this.copyInfo.preopsMotorDTO.loadingDoseCount = totalLoadingDose !== 0 ? totalLoadingDose : '';
-      return this.copyInfo.preopsMotorDTO.loadingDoseCount;
-    },
-    getEqualMadoparCount() {
-      var totalMorningDose = 0;
-      var morningDose = 0;
-      for (let medicine of this.copyInfo.preopsMotorDTO.patientPreopsMedicineList) {
-        morningDose = this.getMorningDose(medicine);
-        if (morningDose !== '') {
-          totalMorningDose += morningDose;
-        }
-      }
-      return totalMorningDose !== 0 ? totalMorningDose / 250.0 : '';
-    },
-    getTotalLevodopaLoadingDose() {
-      var totalLevodopaLoadingDose = 0;
-      var levodopaLoadingDose = 0;
-      for (let medicine of this.copyInfo.preopsMotorDTO.patientPreopsMedicineList) {
-        levodopaLoadingDose = this.getLevodopaLoadingDose(medicine);
-        if (levodopaLoadingDose !== '') {
-          totalLevodopaLoadingDose += levodopaLoadingDose;
-        }
-      }
-      return totalLevodopaLoadingDose !== 0 ? totalLevodopaLoadingDose : '';
-    },
+    // getTotalLoadingDose() {
+    //   var totalLoadingDose = 0;
+    //   var loadingDose = 0;
+    //   for (let medicine of this.copyInfo.preopsMotorDTO.patientPreopsMedicineList) {
+    //     loadingDose = this.getLoadingDose(medicine);
+    //     if (loadingDose !== '') {
+    //       totalLoadingDose += loadingDose;
+    //     }
+    //   }
+    //   this.copyInfo.preopsMotorDTO.loadingDoseCount = totalLoadingDose !== 0 ? totalLoadingDose : '';
+    //   return this.copyInfo.preopsMotorDTO.loadingDoseCount;
+    // },
+    // getEqualMadoparCount() {
+    //   var totalMorningDose = 0;
+    //   var morningDose = 0;
+    //   for (let medicine of this.copyInfo.preopsMotorDTO.patientPreopsMedicineList) {
+    //     morningDose = this.getMorningDose(medicine);
+    //     if (morningDose !== '') {
+    //       totalMorningDose += morningDose;
+    //     }
+    //   }
+    //   return totalMorningDose !== 0 ? totalMorningDose / 250.0 : '';
+    // },
+    // getTotalLevodopaLoadingDose() {
+    //   var totalLevodopaLoadingDose = 0;
+    //   var levodopaLoadingDose = 0;
+    //   for (let medicine of this.copyInfo.preopsMotorDTO.patientPreopsMedicineList) {
+    //     levodopaLoadingDose = this.getLevodopaLoadingDose(medicine);
+    //     if (levodopaLoadingDose !== '') {
+    //       totalLevodopaLoadingDose += levodopaLoadingDose;
+    //     }
+    //   }
+    //   return totalLevodopaLoadingDose !== 0 ? totalLevodopaLoadingDose : '';
+    // },
     transformToNum(obj, property, index, fieldName) {
       // 如果填写的不是一个数字，则转换成一个空字符串，如果是一个数字，则将这个数字字符串转化为真正的数字
       var value = obj[property];
