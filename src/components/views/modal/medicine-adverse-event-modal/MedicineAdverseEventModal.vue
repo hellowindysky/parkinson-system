@@ -105,7 +105,7 @@
         </div>
         <div class="field whole-line">
           <span class="field-name">
-           对药物的计量影响:
+           对药物的剂量影响:
           </span>
           <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
             <span>{{transform(medicineDoseEffect,'medicineDoseEffect')}}</span>
