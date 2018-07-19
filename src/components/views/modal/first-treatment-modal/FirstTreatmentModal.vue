@@ -475,7 +475,6 @@ export default {
     },
     medicineClassOpt() {
       // 药物类型的select
-      console.log(this.getOptions('firstVisitMedType'));
       return this.getOptions('firstVisitMedType');
     },
     medicineNameOpt() {
@@ -532,13 +531,13 @@ export default {
       return res;
     },
     leddAttr1() {
-        let medicalSpecUsed = parseFloat(this.copyInfo.medicalSpecUsed, 10); // 药物规格（mg/片）
-        let pieces = this.copyInfo.dailyDosagePian;
-        let dailyDosage = pieces * medicalSpecUsed;
+      let medicalSpecUsed = parseFloat(this.copyInfo.medicalSpecUsed, 10); // 药物规格（mg/片）
+      let pieces = this.copyInfo.dailyDosagePian;
+      let dailyDosage = pieces * medicalSpecUsed;
 
-        dailyDosage = dailyDosage || (dailyDosage === 0) ? dailyDosage : '';
-        this.$set(this.copyInfo, 'dailyDosage', dailyDosage);
-        return dailyDosage;
+      dailyDosage = dailyDosage || (dailyDosage === 0) ? dailyDosage : '';
+      this.$set(this.copyInfo, 'dailyDosage', dailyDosage);
+      return dailyDosage;
     },
     levodopaFactor() {
       // 左旋多巴等效系数
