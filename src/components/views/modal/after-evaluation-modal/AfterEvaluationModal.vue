@@ -1302,12 +1302,17 @@ export default {
             });
           } else {
             let preopsMotorScaleList = this.copyInfo.preopsMotorDTO.preopsMotorScaleList;
+            preopsMotorScaleList.forEach((item) => {
+              let obj = data.filter((sub) => {
+                return sub.scaleInfo === item.scaleInfo;
+              })[0];
+              item.takeMedicineOpen = obj.takeMedicineOpen;
+              item.takeMedicineClose = obj.takeMedicineClose;
+              item.noTakeMedicineOpen = obj.noTakeMedicineOpen;
+              item.noTakeMedicineClose = obj.noTakeMedicineClose;
+            });
             // preopsMotorScaleList[0].scaleScoreBefore = data['1'];
             // preopsMotorScaleList[0].scaleScoreAfter = data['2'];
-            preopsMotorScaleList[0].takeMedicineOpen = data['2'];
-            preopsMotorScaleList[0].takeMedicineClose = data['2'];
-            preopsMotorScaleList[0].noTakeMedicineOpen = data['2'];
-            preopsMotorScaleList[0].noTakeMedicineClose = data['2'];
             this.updateMotorScaleMedImproveRatio();
             this.$notify({
               title: '成功',

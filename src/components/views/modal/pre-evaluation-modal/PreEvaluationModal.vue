@@ -1340,8 +1340,15 @@ export default {
             });
           } else {
             let preopsMotorScaleList = this.copyInfo.preopsMotorDTO.preopsMotorScaleList;
-            preopsMotorScaleList[0].scaleScoreBefore = data['1'];
-            preopsMotorScaleList[0].scaleScoreAfter = data['2'];
+            preopsMotorScaleList.forEach((item) => {
+              let obj = data.filter((sub) => {
+                return sub.scaleInfo === item.scaleInfo;
+              })[0];
+              item.scaleScoreBefore = obj.scaleScoreBefore;
+              item.scaleScoreAfter = obj.scaleScoreAfter;
+            });
+            // preopsMotorScaleList[0].scaleScoreBefore = data['1'];
+            // preopsMotorScaleList[0].scaleScoreAfter = data['2'];
             this.updateMotorScaleMedImproveRatio();
             this.$notify({
               title: '成功',
