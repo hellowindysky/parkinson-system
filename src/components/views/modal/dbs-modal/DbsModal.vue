@@ -758,8 +758,9 @@
             <td class="col w1" colspan="1">频率<br></br>(Hz)</td>
             <td class="col w1" colspan="1">脉宽<br></br>(μs)</td>
             <td class="col w1" colspan="1">电压<br></br>(V)</td>
-            <td class="col w1" colspan="1">电阻<br></br>(Ω)</td>
-            <td class="col w1" colspan="1">电流<br></br>(mA)</td>
+            <!-- <td class="col w1" colspan="1">电阻<br></br>(Ω)</td> -->
+            <td class="col w1" colspan="2">效果及副作用</td>
+            <!-- <td class="col w1" colspan="1">电流<br></br>(mA)</td> -->
             <td class="col w3" colspan="4">备注</td>
           </tr>
           <tr class="row" v-for="(param, index) in copyInfo.followDbsParams.adjustMoreParameter">
@@ -808,14 +809,18 @@
               <span v-if="mode===VIEW_CURRENT_CARD">{{param.voltage}}</span>
               <el-input v-else v-model="param.voltage"></el-input>
             </td>
-            <td class="col w1" colspan="1">
+            <!-- <td class="col w1" colspan="1">
               <span v-if="mode===VIEW_CURRENT_CARD">{{param.resistance}}</span>
               <el-input v-else v-model="param.resistance"></el-input>
+            </td> -->
+            <td class="col w1" colspan="2">
+              <span v-if="mode===VIEW_CURRENT_CARD">{{param.xiaoguofuzuoy}}</span>
+              <el-input v-else v-model="param.xiaoguofuzuoy"></el-input>
             </td>
-            <td class="col w1" colspan="1">
+            <!-- <td class="col w1" colspan="1">
               <span v-if="mode===VIEW_CURRENT_CARD">{{param.electric}}</span>
               <el-input v-else v-model="param.electric"></el-input>
-            </td>
+            </td> -->
             <td class="col w4 single-row" colspan="4">
               <span v-if="mode===VIEW_CURRENT_CARD">{{param.remarks}}</span>
               <el-input v-else v-model="param.remarks"></el-input>
@@ -2096,7 +2101,8 @@ export default {
         }
 
         let order = count / 2 + 1;
-        let propertyList = ['exciteMod', 'negativePole', 'positivePole', 'frequency', 'pulseWidth', 'voltage', 'resistance', 'electric'];
+        // let propertyList = ['exciteMod', 'negativePole', 'positivePole', 'frequency', 'pulseWidth', 'voltage', 'resistance', 'electric'];
+        let propertyList = ['exciteMod', 'negativePole', 'positivePole', 'frequency', 'pulseWidth', 'voltage', 'xiaoguofuzuoy'];// 效果及副作用
         for (let limbSideNum of [1, 2]) {
           let index = count - 1 + limbSideNum;
           this.$set(paramList, (index), {});
