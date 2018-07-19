@@ -191,8 +191,8 @@
            v-on:deleteCurrentCard="deleteFirstSymptomsRecord(item)">
             <div class="text first-line">
               <span class="name">症状名称：</span>
-              <span class="value" v-if="item.symType === 2">{{transform(item.symName, getNoSportOptions(item.notSportTypeId))}}</span>
-              <span class="value" v-else >{{transform(item.symName, getSymOptions(item.symType))}}</span>
+              <!-- <span class="value" v-if="item.symType === 2">{{transform(item.symName, getNoSportOptions(item.notSportTypeId))}}</span> -->
+              <span class="value">{{transform(item.symName, getSymOptions(item.symType))}}</span>
             </div>
             <div class="text second-line">
               <span class="name">是否规律出现：</span>
