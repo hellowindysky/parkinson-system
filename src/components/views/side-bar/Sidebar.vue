@@ -110,7 +110,7 @@
 
     <!--(↑↑↑) 档案管理 v2.5.0 -->
     <li class="item" :class="{'current-item': currentItem === 'institutionConfiguration'}" @click="toggleInstitutionList"
-      v-if="showInstitutionConfiguration || true">
+      v-if="showInstitutionConfiguration">
       <div class="menu-icon iconfont icon-organization"></div>
       <div class="title">档案管理</div>
       <div class="fold-icon iconfont" :class="showInstitutionList ? 'icon-up' : 'icon-down'"></div>
