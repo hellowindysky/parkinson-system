@@ -14,6 +14,7 @@ export default {
   MAX_NO_OPERATION_TIME: 1000 * 60 * 60,
 
   // mode
+  ADDING_MODE: 'adding',
   READING_MODE: 'reading',
   EDITING_MODE: 'editing',
 

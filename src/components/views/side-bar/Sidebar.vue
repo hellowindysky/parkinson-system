@@ -107,29 +107,17 @@
         角色管理
       </li>
     </ul>
-    <!--(↑↑↑) 系统配置 v2.5.0 -->
 
+    <!--(↑↑↑) 档案管理 v2.5.0 -->
     <li class="item" :class="{'current-item': currentItem === 'institutionConfiguration'}" @click="toggleInstitutionList"
-      v-if="showInstitutionConfiguration">
+      v-if="showInstitutionConfiguration || true">
       <div class="menu-icon iconfont icon-organization"></div>
-      <div class="title">机构配置</div>
+      <div class="title">档案管理</div>
       <div class="fold-icon iconfont" :class="showInstitutionList ? 'icon-up' : 'icon-down'"></div>
     </li>
-    <ul class="sub-item-list" :class="{'folded': !showInstitutionList}" v-if="showInstitutionConfiguration">
-      <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'institutionInfo'}" @click="chooseInstitutionInfo">
-        机构信息
-      </li>
-      <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'functionConfiguration'}" @click="chooseFunctionConfiguration">
-        功能配置
-      </li>
-      <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'userConfiguration'}" @click="chooseUserConfiguration">
-        用户配置
-      </li>
-      <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'roleConfiguration'}" @click="chooseRoleConfiguration">
-        角色配置
-      </li>
-      <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'projectConfiguration'}" @click="chooseProjectConfiguration">
-        课题配置
+    <ul class="sub-item-list" :class="{'folded': !showInstitutionList}" v-if="showInstitutionConfiguration || true">
+      <li class="sub-item" :class="{'current-sub-item': currentSubItem === 'institutionInfo'}" @click="chooseScaleManagement">
+        量表管理
       </li>
     </ul>
   </ul>
@@ -353,7 +341,13 @@ export default {
     chooseFunctionConfiguration() {},
     chooseUserConfiguration() {},
     chooseRoleConfiguration() {},
-    chooseProjectConfiguration() {}
+    chooseProjectConfiguration() {},
+    chooseScaleManagement() {
+      // 如果当前路径不是以“dataconfiguration/scalemanagement/”开头了，才发生跳转
+      if (!/^\/dataconfiguration\/scalemanagement/.test(this.$route.path)) {
+        this.$router.push({name: 'scalemanagement'});
+      }
+    }
   },
   mounted() {
     // 加载菜单栏这个组件的时候，自动跳转到病患管理

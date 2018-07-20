@@ -464,6 +464,7 @@ export default {
     },
     medicineTitle() {
       var count = this.diagnosticMedicine.length + this.diagnosticMedicineAdverseEvent.length;
+      console.log(this.calcTotalLevodopaDoseOfAllOtherMedicine({}));
       var ledd = Number(this.calcTotalLevodopaDoseOfAllOtherMedicine({}).toFixed(5));
       return '药物治疗' + '（' + count + '条记录） LEDD: ' + ledd + ' mg';
     },
@@ -654,7 +655,7 @@ export default {
       var totalLevodopaDose = 0;
       for (let item of this.diagnosticMedicine) {
         // 用来计算的药物要满足 2 个条件：未停药，不是当前药物
-        if (item.stopFlag === 1 && item.medicineId !== targetMedicine.medicineId) {
+        if (item.stopFlag === 1 && item.medicineId !== targetMedicine.medicineId && item.levodopaDose) {
           totalLevodopaDose += item.levodopaDose;
         }
       }
