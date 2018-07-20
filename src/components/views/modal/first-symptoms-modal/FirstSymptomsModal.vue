@@ -36,7 +36,7 @@
             </span>
             <span class="field-input" v-else>
             <span class="warning-text">{{warningResults.symType}}</span>
-            <el-select v-model="copyInfo.symType" placeholder="请选择首发症状类型" clearable disabled
+            <el-select v-model="copyInfo.symType" placeholder="-选择症状名称自动匹配-" clearable disabled
             @change="updateWarning('symType')" :class="{'warning': warningResults.symType}" >
                 <el-option
                   v-for="item in getOptions('SympType')"
