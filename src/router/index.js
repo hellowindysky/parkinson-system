@@ -51,6 +51,7 @@ const PersonalHistory = () => import(/* webpackChunkName: 'configuration' */ 'vi
 const ToxicExposure = () => import(/* webpackChunkName: 'configuration' */ 'views/configuration/dictionarymanagement/toxic-exposure/ToxicExposure');
 
 import SysConfigRoute from 'router/sys.config.route';
+import DataConfigRoute from 'router/data.config.route';
 
 Vue.use(Router);
 
@@ -567,7 +568,8 @@ export default new Router({
             }
           ]
         },
-        SysConfigRoute
+        SysConfigRoute,
+        DataConfigRoute
       ]
     }
   ]

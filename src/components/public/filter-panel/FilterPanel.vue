@@ -2428,7 +2428,7 @@ export default {
     this.updateScrollContent();
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollList);
     Bus.$on(this.SCREEN_SIZE_CHANGE, this.updateScrollContent);
-    this.queryPatients();
+    // this.queryPatients();
   },
   watch: {
     '$route.path'() {

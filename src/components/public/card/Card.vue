@@ -60,6 +60,7 @@ export default {
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     cursor: pointer;
+    word-break: break-all;
   }
   .iconfont {
     position: absolute;
