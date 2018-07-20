@@ -549,10 +549,30 @@
                   (mode!==VIEW_CURRENT_CARD && checkIfDisabledContact(param.exciteMod, contact, true))">
                 </el-checkbox>
               </el-checkbox-group>
+
+              <!-- 交叉电脉冲 才有的 -->
+              <el-checkbox-group v-show="param.exciteMod===4" v-model="followDbsAdjustBeforeParamPole_two[index].positive"
+                :max="getMaxNumOfContact(param.exciteMod, true)">
+                <el-checkbox v-for="(contact, i) in getSidePositiveContact(param.limbSide)"
+                  :label="contact" :key="'sidePositiveContact' + i"
+                  :disabled="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==VALUE_FOR_CUSTOM ||
+                  (mode!==VIEW_CURRENT_CARD && checkIfDisabledContact(param.exciteMod, contact, true))">
+                </el-checkbox>
+              </el-checkbox-group>
             </td>
             <td class="col w4" colspan="4">
               <el-checkbox-group v-model="followDbsAdjustBeforeParamPole[index].negative"
                 @change="updateParamPole('followDbsAdjustBefore', index)"
+                :max="getMaxNumOfContact(param.exciteMod, false)">
+                <el-checkbox v-for="(contact, i) in getSideNegativeContact(param.limbSide)"
+                  :label="contact" :key="'sideNegativeContact' + i"
+                  :disabled="mode===VIEW_CURRENT_CARD || followDbsAdjustBeforeFirstSchemeOrder!==VALUE_FOR_CUSTOM ||
+                  (mode!==VIEW_CURRENT_CARD && checkIfDisabledContact(param.exciteMod, contact, false))">
+                </el-checkbox>
+              </el-checkbox-group>
+
+              <!-- 交叉电脉冲 才有的 -->
+              <el-checkbox-group v-show="param.exciteMod===4" v-model="followDbsAdjustBeforeParamPole_two[index].negative"
                 :max="getMaxNumOfContact(param.exciteMod, false)">
                 <el-checkbox v-for="(contact, i) in getSideNegativeContact(param.limbSide)"
                   :label="contact" :key="'sideNegativeContact' + i"
@@ -667,8 +687,17 @@
             </td>
             <td class="col w5" colspan="5">
               <el-checkbox-group v-model="followDbsAdjustVoltageParamPole[index].positive"
-                @change="updateParagmPole('followDbsAdjustVoltage', index)"
+                @change="updateParamPole('followDbsAdjustVoltage', index)"
                 :max="getMaxNumOfContact(param.exciteMod, true)">
+                <el-checkbox v-for="(contact, i) in getSidePositiveContact(param.limbSide)"
+                  :label="contact" :key="'sidePositiveContact' + i"
+                  :disabled="checkIfDisabledContact(param.exciteMod, contact, true)">
+                </el-checkbox>
+              </el-checkbox-group>
+
+              <!-- 交叉电脉冲 才有的 -->
+              <el-checkbox-group v-show="param.exciteMod===4" v-model="followDbsAdjustVoltageParamPole_two[index].positive"
+               :max="getMaxNumOfContact(param.exciteMod, true)">
                 <el-checkbox v-for="(contact, i) in getSidePositiveContact(param.limbSide)"
                   :label="contact" :key="'sidePositiveContact' + i"
                   :disabled="checkIfDisabledContact(param.exciteMod, contact, true)">
@@ -679,6 +708,15 @@
               <el-checkbox-group v-model="followDbsAdjustVoltageParamPole[index].negative"
                 @change="updateParamPole('followDbsAdjustVoltage', index)"
                 :max="getMaxNumOfContact(param.exciteMod, false)">
+                <el-checkbox v-for="(contact, i) in getSideNegativeContact(param.limbSide)"
+                  :label="contact" :key="'sideNegativeContact' + i"
+                  :disabled="checkIfDisabledContact(param.exciteMod, contact, false)">
+                </el-checkbox>
+              </el-checkbox-group>
+
+              <!-- 交叉电脉冲 才有的 -->
+              <el-checkbox-group v-show="param.exciteMod===4" v-model="followDbsAdjustVoltageParamPole_two[index].negative"
+               :max="getMaxNumOfContact(param.exciteMod, true)">
                 <el-checkbox v-for="(contact, i) in getSideNegativeContact(param.limbSide)"
                   :label="contact" :key="'sideNegativeContact' + i"
                   :disabled="checkIfDisabledContact(param.exciteMod, contact, false)">
@@ -758,8 +796,9 @@
             <td class="col w1" colspan="1">频率<br></br>(Hz)</td>
             <td class="col w1" colspan="1">脉宽<br></br>(μs)</td>
             <td class="col w1" colspan="1">电压<br></br>(V)</td>
-            <td class="col w1" colspan="1">电阻<br></br>(Ω)</td>
-            <td class="col w1" colspan="1">电流<br></br>(mA)</td>
+            <!-- <td class="col w1" colspan="1">电阻<br></br>(Ω)</td> -->
+            <td class="col w1" colspan="2">效果及副作用</td>
+            <!-- <td class="col w1" colspan="1">电流<br></br>(mA)</td> -->
             <td class="col w3" colspan="4">备注</td>
           </tr>
           <tr class="row" v-for="(param, index) in copyInfo.followDbsParams.adjustMoreParameter">
@@ -785,10 +824,28 @@
                   :disabled="checkIfDisabledContact(param.exciteMod, contact, true)">
                 </el-checkbox>
               </el-checkbox-group>
+
+              <!-- 交叉电脉冲 才有的 -->
+              <el-checkbox-group v-show="param.exciteMod===4" v-model="followDbsAdjustMoreParamPole_two[index].positive"
+                :max="getMaxNumOfContact(param.exciteMod, true)">
+                <el-checkbox v-for="(contact, i) in getSidePositiveContact(param.limbSide)"
+                  :label="contact" :key="'sidePositiveContact' + i"
+                  :disabled="checkIfDisabledContact(param.exciteMod, contact, true)">
+                </el-checkbox>
+              </el-checkbox-group>
             </td>
             <td class="col w5" colspan="5">
               <el-checkbox-group v-model="followDbsAdjustMoreParamPole[index].negative"
                 @change="updateParamPole('followDbsAdjustMore', index)"
+                :max="getMaxNumOfContact(param.exciteMod, false)">
+                <el-checkbox v-for="(contact, i) in getSideNegativeContact(param.limbSide)"
+                  :label="contact" :key="'sideNegativeContact' + i"
+                  :disabled="checkIfDisabledContact(param.exciteMod, contact, false)">
+                </el-checkbox>
+              </el-checkbox-group>
+
+              <!-- 交叉电脉冲 才有的 -->
+              <el-checkbox-group v-show="param.exciteMod===4" v-model="followDbsAdjustMoreParamPole_two[index].negative"
                 :max="getMaxNumOfContact(param.exciteMod, false)">
                 <el-checkbox v-for="(contact, i) in getSideNegativeContact(param.limbSide)"
                   :label="contact" :key="'sideNegativeContact' + i"
@@ -808,14 +865,18 @@
               <span v-if="mode===VIEW_CURRENT_CARD">{{param.voltage}}</span>
               <el-input v-else v-model="param.voltage"></el-input>
             </td>
-            <td class="col w1" colspan="1">
+            <!-- <td class="col w1" colspan="1">
               <span v-if="mode===VIEW_CURRENT_CARD">{{param.resistance}}</span>
               <el-input v-else v-model="param.resistance"></el-input>
+            </td> -->
+            <td class="col w1" colspan="2">
+              <span v-if="mode===VIEW_CURRENT_CARD">{{param.effectInfo}}</span>
+              <el-input v-else v-model="param.effectInfo"></el-input>
             </td>
-            <td class="col w1" colspan="1">
+            <!-- <td class="col w1" colspan="1">
               <span v-if="mode===VIEW_CURRENT_CARD">{{param.electric}}</span>
               <el-input v-else v-model="param.electric"></el-input>
-            </td>
+            </td> -->
             <td class="col w4 single-row" colspan="4">
               <span v-if="mode===VIEW_CURRENT_CARD">{{param.remarks}}</span>
               <el-input v-else v-model="param.remarks"></el-input>
@@ -883,6 +944,16 @@
                   :disabled="checkIfDisabledContact(param.exciteMod, contact, true)">
                 </el-checkbox>
               </el-checkbox-group>
+
+              <!-- 交叉电脉冲 才有的 -->
+              <el-checkbox-group v-show="param.exciteMod===4" v-model="followDbsAdjustAfterParamPole_two[index].positive"
+               :max="getMaxNumOfContact(param.exciteMod, true)">
+                <el-checkbox v-for="(contact, i) in getSidePositiveContact(param.limbSide)"
+                  :label="contact" :key="'sidePositiveContact' + i"
+                  :disabled="checkIfDisabledContact(param.exciteMod, contact, true)">
+                </el-checkbox>
+              </el-checkbox-group>
+
             </td>
             <td class="col w5" colspan="5">
               <el-checkbox-group v-model="followDbsAdjustAfterParamPole[index].negative"
@@ -893,6 +964,16 @@
                   :disabled="checkIfDisabledContact(param.exciteMod, contact, false)">
                 </el-checkbox>
               </el-checkbox-group>
+
+              <!-- 交叉电脉冲 才有的 -->
+              <el-checkbox-group v-show="param.exciteMod===4" v-model="followDbsAdjustAfterParamPole_two[index].negative"
+               :max="getMaxNumOfContact(param.exciteMod, true)">
+                <el-checkbox v-for="(contact, i) in getSideNegativeContact(param.limbSide)"
+                  :label="contact" :key="'sideNegativeContact' + i"
+                  :disabled="checkIfDisabledContact(param.exciteMod, contact, false)">
+                </el-checkbox>
+              </el-checkbox-group>
+
             </td>
             <td class="col w1" colspan="1">
               <span v-if="mode===VIEW_CURRENT_CARD">{{param.frequency}}</span>
@@ -981,10 +1062,28 @@
                   :disabled="checkIfDisabledContact(param.exciteMod, contact, true)">
                 </el-checkbox>
               </el-checkbox-group>
+
+              <!-- 交叉电脉冲 才有的 -->
+              <el-checkbox-group v-model="firstDbsAdjustAfterParamPole_two[index].positive"
+                :max="getMaxNumOfContact(param.exciteMod, true)">
+                <el-checkbox v-for="(contact, i) in getSidePositiveContact(param.limbSide)"
+                  :label="contact" :key="'sidePositiveContact' + i"
+                  :disabled="checkIfDisabledContact(param.exciteMod, contact, true)">
+                </el-checkbox>
+              </el-checkbox-group>
             </td>
             <td class="col w5" colspan="5">
               <el-checkbox-group v-model="firstDbsAdjustAfterParamPole[index].negative"
                 @change="updateParamPole('firstDbsAdjustAfter', index)"
+                :max="getMaxNumOfContact(param.exciteMod, false)">
+                <el-checkbox v-for="(contact, i) in getSideNegativeContact(param.limbSide)"
+                  :label="contact" :key="'sideNegativeContact' + i"
+                  :disabled="checkIfDisabledContact(param.exciteMod, contact, false)">
+                </el-checkbox>
+              </el-checkbox-group>
+
+              <!-- 交叉电脉冲 才有的 -->
+              <el-checkbox-group v-model="firstDbsAdjustAfterParamPole_two[index].negative"
                 :max="getMaxNumOfContact(param.exciteMod, false)">
                 <el-checkbox v-for="(contact, i) in getSideNegativeContact(param.limbSide)"
                   :label="contact" :key="'sideNegativeContact' + i"
@@ -1129,6 +1228,57 @@ export default {
       followDbsAdjustVoltageParamPole: [],
       followDbsAdjustMoreParamPole: [],
 
+      followDbsAdjustBeforeParamPole_two: [
+        {
+          positive: [],
+          negative: []
+        },
+        {
+          positive: [],
+          negative: []
+        }
+      ],
+      followDbsAdjustAfterParamPole_two: [
+        {
+          positive: [],
+          negative: []
+        },
+        {
+          positive: [],
+          negative: []
+        }
+      ],
+      followDbsAdjustMoreParamPole_two: [
+        {
+          positive: [],
+          negative: []
+        },
+        {
+          positive: [],
+          negative: []
+        }
+      ],
+      followDbsAdjustVoltageParamPole_two: [
+        {
+          positive: [],
+          negative: []
+        },
+        {
+          positive: [],
+          negative: []
+        }
+      ],
+      firstDbsAdjustAfterParamPole_two: [
+        {
+          positive: [],
+          negative: []
+        },
+        {
+          positive: [],
+          negative: []
+        }
+      ],
+
       firstDbsAdjustAfterParameterChosenStatus: [],
       followDbsAdjustAfterParameterChosenStatus: [],
 
@@ -1147,7 +1297,8 @@ export default {
     ...mapGetters([
       'typeGroup',
       'deviceInfo',
-      'medicineInfo'
+      'medicineInfo',
+      'treatmentTime'
     ]),
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
@@ -1201,6 +1352,19 @@ export default {
       this.lastProgramDate = '';
       this.lastDbsParameter = [];
 
+      var handler = (tmpArr, target) => {
+        tmpArr = Array.isArray(tmpArr) ? tmpArr : [];
+        if (tmpArr.length === 0) {
+          return;
+        }
+        target.forEach((item, index) => {
+          let positivePole2 = tmpArr[index].positivePole2 ? tmpArr[index].positivePole2.split('#') : [];
+          let negativePole2 = tmpArr[index].negativePole2 ? tmpArr[index].negativePole2.split('#') : [];
+          this.$set(item, 'positive', positivePole2);
+          this.$set(item, 'negative', negativePole2);
+        });
+      };
+
       // 获取患者的 DBS 编码
       getPatientSimpleInfo(this.$route.params.id).then((data) => {
         if (data && data.patientInfo && data.patientInfo.dbsPatientCode) {
@@ -1215,7 +1379,9 @@ export default {
         info.patientDbsFirstId) {
         this.modelType = 1;
         this.initByFirstModel();
+
         getDbsFirstInfo(info.patientDbsFirstId).then((data) => {
+          handler(data.firstDbsParams.adjustAfterParameter, this.firstDbsAdjustAfterParamPole_two);// 开机完成参数
           vueCopy(data, this.copyInfo);
 
           // 不知道什么原因，在执行上面的 vueCopy 之后，会切掉一些空的字段，影响了【副作用持续时间】的数据绑定
@@ -1252,6 +1418,12 @@ export default {
         var patientId = this.$route.params.id;
         getDbsFollowInfo(patientId, info.patientDbsFollowId).then((data) => {
           vueCopy(data, this.copyInfo);
+
+          handler(data.followDbsParams.adjustVoltageParameter, this.followDbsAdjustVoltageParamPole_two);// 单纯调整电压
+          // handler(data.firstDbsParams.adjustAfterParameter, this.firstDbsAdjustAfterParamPole_two);// 开机完成参数
+          handler(data.followDbsParams.adjustMoreParameter, this.followDbsAdjustMoreParamPole_two);// 调整多个参数
+          handler(data.followDbsParams.adjustBeforeParameter, this.followDbsAdjustBeforeParamPole_two);// 调整前参数
+          handler(data.followDbsParams.adjustAfterParameter, this.followDbsAdjustAfterParamPole_two);// 程控完成参数
           this.updateCheckBoxModel('followDbsAdjustAfter');
           this.updateCheckBoxModel('followDbsAdjustBefore');
           this.updateCheckBoxModel('followDbsAdjustVoltage');
@@ -1277,6 +1449,11 @@ export default {
       }
       this.clearWarning();
       this.updateScrollbar();
+
+      // 同步就诊时间
+      if (cardOperation === this.ADD_NEW_CARD) {
+        this.$set(this.copyInfo, 'programDate', this.treatmentTime);
+      }
     },
     switchToEditingMode() {
       this.mode = this.EDIT_CURRENT_CARD;
@@ -1331,6 +1508,18 @@ export default {
 
       submitData.patientCaseId = this.$route.params.caseId;
       pruneObj(submitData);
+
+      var handler = (target, tempArr) => {
+        target.forEach((item, index) => {
+          item.positivePole2 = tempArr[index].positive.join('#');
+          item.negativePole2 = tempArr[index].negative.join('#');
+        });
+      };
+      handler(submitData.followDbsParams.adjustVoltageParameter, this.followDbsAdjustVoltageParamPole_two);// 单纯调整电压
+      handler(submitData.firstDbsParams.adjustAfterParameter, this.firstDbsAdjustAfterParamPole_two);// 开机完成参数
+      handler(submitData.followDbsParams.adjustMoreParameter, this.followDbsAdjustMoreParamPole_two);// 调整多个参数
+      handler(submitData.followDbsParams.adjustBeforeParameter, this.followDbsAdjustBeforeParamPole_two);// 调整前参数
+      handler(submitData.followDbsParams.adjustAfterParameter, this.followDbsAdjustAfterParamPole_two);// 程控完成参数
 
       if (this.modelType === 1) {
         // 首次程控
@@ -2090,7 +2279,8 @@ export default {
         }
 
         let order = count / 2 + 1;
-        let propertyList = ['exciteMod', 'negativePole', 'positivePole', 'frequency', 'pulseWidth', 'voltage', 'resistance', 'electric'];
+        // let propertyList = ['exciteMod', 'negativePole', 'positivePole', 'frequency', 'pulseWidth', 'voltage', 'resistance', 'electric'];
+        let propertyList = ['exciteMod', 'negativePole', 'positivePole', 'frequency', 'pulseWidth', 'voltage', 'effectInfo'];// 效果及副作用
         for (let limbSideNum of [1, 2]) {
           let index = count - 1 + limbSideNum;
           this.$set(paramList, (index), {});
@@ -2279,7 +2469,7 @@ export default {
       } else if (exciteMod === 3) {
         return isPositive ? 1 : 2;
       } else if (exciteMod === 4) {
-        return 2;
+        return Infinity;
       } else if (exciteMod === 5) {
         return 5;
       }
@@ -2700,11 +2890,6 @@ export default {
       }
       .form-left, .form-right {
         display: inline-block;
-      }
-      .form-right {
-        // position: absolute; // 这里利用两个表格高度相等，只定义一个为 absolute，从而避免容器坍塌
-        // left: @unit-width * 17;
-        // top: 0;
       }
       .form {
         margin: 10px auto 0;

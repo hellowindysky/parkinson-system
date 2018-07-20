@@ -185,14 +185,14 @@
 
         <extensible-panel class="disease-card" :title="firstSymTitle" @addNewCard="addFirstSymptomsRecord" :editable="canEdit">
           <Card class="card symptoms-card" :mode="mode" :class="cardWidth"
-           v-for="item in firstSymbolData" :key="item.id" :title="transform(item.symType, allFirstSymptomsType)"
+           v-for="item in firstSymbolData" :key="item.id" :title="transform(item.symName, getSymOptions(item.symType))"
            v-on:editCurrentCard="editFirstSymptomsRecord(item)"
            v-on:viewCurrentCard="viewFirstSymptomsRecord(item)"
            v-on:deleteCurrentCard="deleteFirstSymptomsRecord(item)">
             <div class="text first-line">
-              <span class="name">症状名称：</span>
-              <span class="value" v-if="item.symType === 2">{{transform(item.symName, getNoSportOptions(item.notSportTypeId))}}</span>
-              <span class="value" v-else >{{transform(item.symName, getSymOptions(item.symType))}}</span>
+              <span class="name">首发症状类型：</span>
+              <!-- <span class="value" v-if="item.symType === 2">{{transform(item.symName, getNoSportOptions(item.notSportTypeId))}}</span> -->
+              <span class="value">{{transform(item.symType, allFirstSymptomsType)}}</span>
             </div>
             <div class="text second-line">
               <span class="name">是否规律出现：</span>

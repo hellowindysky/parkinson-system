@@ -736,6 +736,7 @@ export default {
               .el-tabs__item {
                 width: 50%;
                 text-align: center;
+                font-size: 16px;
                 &.is-active {
                   color: #ff9c00;
                 }
@@ -743,6 +744,7 @@ export default {
             }
             .el-tabs__content {
               height: calc(~"100% - 57px");
+              padding-left: 10px;
               .el-tab-pane {
                 height: 100%;
               }
@@ -752,10 +754,16 @@ export default {
             position: relative;
             height: 100%;
             overflow: hidden;
+            .el-collapse-item {
+              .el-collapse-item__header {
+                font-size: 16px;
+              }
+            }
             .tags-box {
               .tags-item {
                 border-bottom: 1px solid #e6e6e6;
                 padding: 10px 0;
+                padding-left: 10px;
                 .tagsbox-subItem {
                   margin-left: 28px;
                   .el-tag {
@@ -812,6 +820,7 @@ export default {
               .el-tabs__item {
                 width: 50%;
                 text-align: center;
+                font-size: 16px;
                 &.is-active {
                   color: #ff9c00;
                 }
@@ -819,6 +828,7 @@ export default {
             }
             .el-tabs__content {
               height: calc(~"100% - 57px");
+              padding-left: 10px;
               .el-tab-pane {
                 height: 100%;
               }
@@ -828,10 +838,16 @@ export default {
             position: relative;
             height: 100%;
             overflow: hidden;
+            .el-collapse-item {
+              .el-collapse-item__header {
+                font-size: 16px;
+              }
+            }
             .checkbox-box {
               .checkbox-item {
                 border-bottom: 1px solid #e6e6e6;
                 padding: 10px 0;
+                padding-left: 10px;
                 .checkbox-subItem {
                   margin-left: 28px;
                   .el-checkbox {

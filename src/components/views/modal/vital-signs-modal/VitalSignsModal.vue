@@ -277,7 +277,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'typeGroup'
+      'typeGroup',
+      'treatmentTime'
     ]),
     title() {
       if (this.mode === this.ADD_NEW_CARD) {
@@ -320,6 +321,11 @@ export default {
 
       this.completeInit = true;
       this.updateScrollbar();
+
+      // 同步就诊时间
+      if (cardOperation === this.ADD_NEW_CARD) {
+        this.$set(this, 'checkTime', this.treatmentTime);
+      }
     },
     transform(code, fieldName) {
       var options = this.getOptions(fieldName);

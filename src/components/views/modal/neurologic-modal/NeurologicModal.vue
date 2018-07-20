@@ -334,7 +334,8 @@ export default {
     ...mapGetters([
       'typeGroup',
       'typeField',
-      'neurologicCheckTypeList'
+      'neurologicCheckTypeList',
+      'treatmentTime'
     ]),
     hasTableExisted() {
       this.updateScrollbar();
@@ -399,6 +400,11 @@ export default {
         this.clearWarning();
       });
       this.updateScrollbar();
+
+      // 同步就诊时间
+      if (cardOperation === this.ADD_NEW_CARD) {
+        this.$set(this.copyInfo, 'ariseTime', this.treatmentTime);
+      }
     },
     initCopyInfo() {
       this.copyInfo = {};

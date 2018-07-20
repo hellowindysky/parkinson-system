@@ -37,15 +37,21 @@
             </span>
             <span class="field-input" v-else>
               <span class="warning-text">{{warningResults.medicineName}}</span>
-              <el-select v-model="copyInfo.medicineName" placeholder="请选择药物商品名" clearable
-               @change="updateWarning('medicineName')"
+              <el-select v-model="copyInfo.medicineName" placeholder="请选择药物商品名" clearable filterable
+               @change="getMedicalType()"
                :class="{'warning': warningResults.medicineName}">
                 <el-option
+                 v-for="item in medicineInfo"
+                 :key="item.medicineId"
+                 :label="item.medicineName"
+                 :value="item.medicineId">
+                </el-option>
+                <!-- <el-option
                  v-for="item in medicineNameOpt"
                  :key="item.code"
                  :label="item.name"
                  :value="item.code">
-                </el-option>
+                </el-option> -->
               </el-select>
             </span>
           </div>
@@ -99,10 +105,9 @@
               <span>{{transform(copyInfo.medicineClassification, medicineClassOpt)}}</span>
             </span>
             <span class="field-input" v-else>
-              <span class="warning-text">{{warningResults.medicineClassification}}</span>
-              <el-select v-model="copyInfo.medicineClassification" placeholder="请选择药物分类" clearable
-               @change="updateWarning('medicineClassification')"
-               :class="{'warning': warningResults.medicineClassification}" >
+              <!-- <span class="warning-text">{{warningResults.medicineClassification}}</span> -->
+              <el-select v-model="copyInfo.medicineClassification" placeholder="选择药物名称自动匹配" disabled
+               @change="updateWarning('medicineClassification')">
                 <el-option
                  v-for="item in medicineClassOpt"
                  :key="item.code"
@@ -114,6 +119,20 @@
           </div>
 
 
+          <div class="field half-line">
+            <span class="field-name">
+              每日用量（片）
+              <!-- <span class="required-mark">*</span> -->
+            </span>
+            <span class="field-input" v-if="mode===VIEW_CURRENT_CARD">
+              <span>{{copyInfo.dailyDosagePian}}</span>
+            </span>
+            <span class="field-input" v-else>
+              <span class="warning-text">{{warningResults.dailyDosagePian}}</span>
+              <el-input v-model="copyInfo.dailyDosagePian" placeholder="请输入每日用量" :class="{'warning': warningResults.dailyDosagePian}"
+               @change="updateWarning('dailyDosagePian')"></el-input>
+            </span>
+          </div>
 
           <div class="field half-line">
             <span class="field-name">
@@ -125,11 +144,12 @@
             </span>
             <span class="field-input" v-else>
               <span class="warning-text">{{warningResults.dailyDosage}}</span>
-              <el-input v-model="copyInfo.dailyDosage" placeholder="请输入每日用量" :class="{'warning': warningResults.dailyDosage}"
-               @change="updateWarning('dailyDosage')"></el-input>
+              <!-- <el-input v-model="copyInfo.dailyDosage" placeholder="请输入每日用量" :class="{'warning': warningResults.dailyDosage}"
+               @change="updateWarning('dailyDosage')"></el-input> -->
+               <span v-if="leddAttr1||leddAttr1===0">{{leddAttr1}}</span>
+               <span v-else>{{fieldHint('dailyDosage')}}</span>
             </span>
           </div>
-
           <div class="field half-line">
             <span class="field-name">
               LEDD（mg）
@@ -389,7 +409,8 @@ export default {
         medicineName: '', // 药物商品名
         medicalSpecUsed: '', // 药物规格
         commonMedicineName: '', // 化学名
-        dailyDosage: '', // 每日用量
+        dailyDosage: '', // 每日用量（mg）
+        dailyDosagePian: '', // 每日用量（片）
         ledd: '',
         firstTime: '', // 初次用药时间
         yearsOfMedicine: '', // 用药年限
@@ -403,10 +424,11 @@ export default {
       warningResults: {
         firstVisitType: '',
         treatmentType: '',
-        medicineClassification: '',
+        // medicineClassification: '',
         medicineName: '', // 药物商品名
         medicalSpecUsed: '', // 药物规格
         dailyDosage: '',
+        dailyDosagePian: '',
         yearsOfMedicine: ''
       },
       runClearVal: true, // 是否执行clearVal方法中的置空copyInfo操作
@@ -453,7 +475,6 @@ export default {
     },
     medicineClassOpt() {
       // 药物类型的select
-      console.log(this.getOptions('firstVisitMedType'));
       return this.getOptions('firstVisitMedType');
     },
     medicineNameOpt() {
@@ -466,20 +487,25 @@ export default {
     },
     medicineSpec() {
       // 药物规格的select
-      let spec = Util.getElement('code', this.copyInfo.medicineName, this.medicineNameOpt).spec;
+      let spec = Util.getElement('medicineId', this.copyInfo.medicineName, this.medicineInfo).spec;
       spec = spec ? spec : [];
       // 如果只有一项，就把这一项自动显示出来
-      if (spec && spec.length === 1) {
-        this.$nextTick(() => {
-          this.$set(this.copyInfo, 'medicalSpecUsed', spec[0].specOral);
-        });
-      }
+      // if (spec && spec.length === 1) {
+      //   this.$nextTick(() => {
+      //     this.$set(this.copyInfo, 'medicalSpecUsed', spec[0].specOral);
+      //   });
+      // }
       return spec;
     },
     commonMedicineName() {
       // 通用名
-      return this.medicineNameOpt.filter((obj) => {
-        return obj.code === this.copyInfo.medicineName;
+      // return this.medicineNameOpt.filter((obj) => {
+      //   return obj.code === this.copyInfo.medicineName;
+      // }).map((obj) => {
+      //   return obj.commonName;
+      // })[0];
+      return this.medicineInfo.filter((obj) => {
+        return obj.medicineId === this.copyInfo.medicineName;
       }).map((obj) => {
         return obj.commonName;
       })[0];
@@ -495,9 +521,7 @@ export default {
     },
     leddAttr() {
       // LEDD
-      let medicalSpecUsed = parseFloat(this.copyInfo.medicalSpecUsed, 10); // 药物规格（mg/片）
-      let dailyDosage = parseFloat(this.copyInfo.dailyDosage, 10); // 每日用量（mg）
-      let pieces = dailyDosage / medicalSpecUsed;
+      let pieces = this.copyInfo.dailyDosagePian;
 
       let coefficient = this.enhanceEffect ? 1.33 : 1;
 
@@ -505,6 +529,15 @@ export default {
       res = res || (res === 0) ? res : '';
       this.$set(this.copyInfo, 'ledd', res);
       return res;
+    },
+    leddAttr1() {
+      let medicalSpecUsed = parseFloat(this.copyInfo.medicalSpecUsed, 10); // 药物规格（mg/片）
+      let pieces = this.copyInfo.dailyDosagePian;
+      let dailyDosage = pieces * medicalSpecUsed;
+
+      dailyDosage = dailyDosage || (dailyDosage === 0) ? dailyDosage : '';
+      this.$set(this.copyInfo, 'dailyDosage', dailyDosage);
+      return dailyDosage;
     },
     levodopaFactor() {
       // 左旋多巴等效系数
@@ -528,6 +561,8 @@ export default {
   methods: {
     fieldHint(fieldName) {
       if (fieldName === 'ledd') {
+        return '--根据用量自动计算--';
+      } else if (fieldName === 'dailyDosage') {
         return '--根据用量自动计算--';
       }
     },
@@ -567,6 +602,7 @@ export default {
       this.$set(this.copyInfo, 'medicineName', item.medicineName);
       this.$set(this.copyInfo, 'medicalSpecUsed', item.medicalSpecUsed);
       this.$set(this.copyInfo, 'dailyDosage', item.dailyDosage);
+      this.$set(this.copyInfo, 'dailyDosagePian', item.dailyDosagePian);
       this.$set(this.copyInfo, 'ledd', item.ledd);
       this.$set(this.copyInfo, 'firstTime', item.firstTime);
       this.$set(this.copyInfo, 'yearsOfMedicine', item.yearsOfMedicine);
@@ -615,7 +651,7 @@ export default {
       });
     },
     updateWarning(fieldName) {
-      if (fieldName === 'dailyDosage' || fieldName === 'yearsOfMedicine') {
+      if (fieldName === 'dailyDosage' || fieldName === 'dailyDosagePian' || fieldName === 'yearsOfMedicine') {
         let fieldVal = this.copyInfo[fieldName];
         if (fieldVal !== '' && !Util.checkIfNotMoreThanNDecimalNums(fieldVal, 5)) {
           this.$set(this.warningResults, fieldName, '请填入正数，最多5位小数');
@@ -640,6 +676,20 @@ export default {
         });
       };
       return options;
+    },
+    getMedicalType() {
+      let type = this.medicineInfo.filter((obj) => {
+        return obj.medicineId === this.copyInfo.medicineName;
+      }).map((obj) => {
+        return obj.firstTreatMedicalType;
+      })[0];
+
+      // let type = this.medicineInfo.filter(function(obj) {
+      //   return obj.medicineId === this.copyInfo.medicineName;
+      // });
+
+      this.copyInfo.medicineClassification = type;
+      this.updateWarning('medicineName');
     },
     getMedNameOptions(fieldType) {
       return this.medicineInfo.filter((obj) => {
@@ -721,11 +771,11 @@ export default {
     '$route.path'() {
       this.cancel();
     },
-    medicineNameOpt: function() {
-      if (this.completeInit) {
-        this.$set(this.copyInfo, 'medicineName', '');
-      }
-    },
+    // medicineNameOpt: function() {
+    //   if (this.completeInit) {
+    //     this.$set(this.copyInfo, 'medicineName', '');
+    //   }
+    // },
     medicineSpec: function() {
       if (this.completeInit) {
         this.$set(this.copyInfo, 'medicalSpecUsed', '');

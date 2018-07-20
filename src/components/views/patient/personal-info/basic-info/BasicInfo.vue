@@ -27,7 +27,7 @@
               {{ copyInfo[field.fieldName] }}
             </span>
 
-            <span v-else-if="getUIType(field)===1" v-show="copyInfo.econType === 6">
+            <span v-else-if="getUIType(field)===1 && field.fieldName==='remarks'" v-show="copyInfo.econType === 6">
               <el-input v-model="copyInfo[field.fieldName]"
                 :placeholder="getMatchedField(field).cnFieldDesc"
                 type= text
