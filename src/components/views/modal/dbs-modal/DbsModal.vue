@@ -870,8 +870,8 @@
               <el-input v-else v-model="param.resistance"></el-input>
             </td> -->
             <td class="col w1" colspan="2">
-              <span v-if="mode===VIEW_CURRENT_CARD">{{param.xiaoguofuzuoy}}</span>
-              <el-input v-else v-model="param.xiaoguofuzuoy"></el-input>
+              <span v-if="mode===VIEW_CURRENT_CARD">{{param.effectInfo}}</span>
+              <el-input v-else v-model="param.effectInfo"></el-input>
             </td>
             <!-- <td class="col w1" colspan="1">
               <span v-if="mode===VIEW_CURRENT_CARD">{{param.electric}}</span>
@@ -1352,6 +1352,19 @@ export default {
       this.lastProgramDate = '';
       this.lastDbsParameter = [];
 
+      var handler = (tmpArr, target) => {
+        tmpArr = Array.isArray(tmpArr) ? tmpArr : [];
+        if (tmpArr.length === 0) {
+          return;
+        }
+        target.forEach((item, index) => {
+          let positivePole2 = tmpArr[index].positivePole2 ? tmpArr[index].positivePole2.split('#') : [];
+          let negativePole2 = tmpArr[index].negativePole2 ? tmpArr[index].negativePole2.split('#') : [];
+          this.$set(item, 'positive', positivePole2);
+          this.$set(item, 'negative', negativePole2);
+        });
+      };
+
       // 获取患者的 DBS 编码
       getPatientSimpleInfo(this.$route.params.id).then((data) => {
         if (data && data.patientInfo && data.patientInfo.dbsPatientCode) {
@@ -1366,19 +1379,6 @@ export default {
         info.patientDbsFirstId) {
         this.modelType = 1;
         this.initByFirstModel();
-
-        var handler = (tmpArr, target) => {
-          tmpArr = Array.isArray(tmpArr) ? tmpArr : [];
-          if (tmpArr.length === 0) {
-            return;
-          }
-          target.forEach((item, index) => {
-            let positivePole2 = tmpArr[index].positivePole2 ? tmpArr[index].positivePole2.split('#') : [];
-            let negativePole2 = tmpArr[index].negativePole2 ? tmpArr[index].negativePole2.split('#') : [];
-            this.$set(item, 'positive', positivePole2);
-            this.$set(item, 'negative', negativePole2);
-          });
-        };
 
         getDbsFirstInfo(info.patientDbsFirstId).then((data) => {
           handler(data.firstDbsParams.adjustAfterParameter, this.firstDbsAdjustAfterParamPole_two);// 开机完成参数
@@ -2280,7 +2280,7 @@ export default {
 
         let order = count / 2 + 1;
         // let propertyList = ['exciteMod', 'negativePole', 'positivePole', 'frequency', 'pulseWidth', 'voltage', 'resistance', 'electric'];
-        let propertyList = ['exciteMod', 'negativePole', 'positivePole', 'frequency', 'pulseWidth', 'voltage', 'xiaoguofuzuoy'];// 效果及副作用
+        let propertyList = ['exciteMod', 'negativePole', 'positivePole', 'frequency', 'pulseWidth', 'voltage', 'effectInfo'];// 效果及副作用
         for (let limbSideNum of [1, 2]) {
           let index = count - 1 + limbSideNum;
           this.$set(paramList, (index), {});
