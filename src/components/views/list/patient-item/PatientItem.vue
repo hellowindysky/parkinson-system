@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="item" :class="{'current': selected}" @click="select">
-    <img class="image" src="~img/profile.png" alt="">
+    <img class="image" src="~img/profile.png" alt="" :class="{'image-die' :patient.liveStatus===2}">
     <span class="experiment-icon iconfont" :class="experimentStatusIcon" v-if="experimentStatusIcon"></span>
     <div class="name">{{patient.name}}</div>
     <div class="date">{{patient.createDate}}</div>
@@ -118,6 +118,9 @@ export default {
     top: 10px;
     width: 35px;
     height: 35px;
+    &.image-die {
+      filter: grayscale(100%);
+    }
   }
   .experiment-icon {
     display: inline-block;

@@ -97,7 +97,7 @@
         </el-form-item>
       </el-form>
     </div>
-    <div class="version-info">版本 V2.4.0</div>
+    <div class="version-info">版本 V2.5.0</div>
   </div>
 </template>
 
@@ -369,14 +369,38 @@ export default {
     accountLogin() {
       this.loginType = ACCOUNT_LOGIN;
       this.$refs['loginForm'].validate();
+      if (this.loginForm.account !== '' || this.loginForm.identifyingCode !== '' || this.loginForm.password !== '') {
+        localStorage.removeItem('identifyingCode');
+        localStorage.removeItem('account');
+        localStorage.removeItem('password');
+        this.loginForm.account = '';
+        this.loginForm.identifyingCode = '';
+        this.loginForm.password = '';
+      }
     },
     dynamicPassword() {
       this.loginType = DYNAMIC_PASSWORD;
       this.$refs['loginForm'].validate();
+      if (this.loginForm.account !== '' || this.loginForm.identifyingCode !== '') {
+        localStorage.removeItem('account');
+        localStorage.removeItem('identifyingCode');
+        this.loginForm.account = '';
+        this.loginForm.identifyingCode = '';
+      }
     },
     forgetPassword() {
       this.loginType = FORGET_PASSWORD;
       this.$refs['loginForm'].validate();
+      if (this.loginForm.account !== '' || this.loginForm.identifyingCode !== '' | this.loginForm.password !== '' || this.loginForm.remember !== '') {
+        localStorage.removeItem('account');
+        localStorage.removeItem('identifyingCode');
+        localStorage.removeItem('password');
+        localStorage.removeItem('remember');
+        this.loginForm.account = '';
+        this.loginForm.identifyingCode = '';
+        this.loginForm.password = '';
+        this.loginForm.remember = '';
+      }
     },
     toChangePassword() {
       this.loginType = TO_CHANGE_PASSWORD;

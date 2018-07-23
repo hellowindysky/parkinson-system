@@ -121,7 +121,14 @@ export default {
     ]),
     soochowMust() {
       // 苏州大学附属第二医院 特殊处理
-      return sessionStorage.getItem('subjectCode') === 'SQ2017YFSF090146-01' && this.$store.state.subjectId !== -1;
+      let isSuSubject = false;
+      let suSubjectCodeList = ['2017YFC0909100', '2017YFC0909101', '2017YFC0909102', '2017YFC0909103'];
+      suSubjectCodeList.forEach((ele) => {
+        if (sessionStorage.getItem('subjectCode') === ele) {
+          isSuSubject = true;
+        }
+      });
+      return isSuSubject && this.$store.state.subjectId !== -1;
     },
     basicInfoDictionary() {
       // 对 basicInfoDictionaryGroups 进行扁平化处理，方便之后操作
@@ -396,6 +403,12 @@ export default {
       }
       if (field.fieldName === 'homeCity') {
         fieldClass.push('field-city');
+      }
+      if (field.fieldName === 'nationality') {
+        fieldClass.push('field-nationality');
+      }
+      if (field.fieldName === 'liveType') {
+        fieldClass.push('field-liveType');
       }
       if (field.cnfieldName === '备注') {
         fieldClass.push('short-label-field');
@@ -738,7 +751,7 @@ export default {
     }
     .field {
       display: inline-block;
-      position: relative;
+      // position: relative;
       width: 50%;
       min-height: 50px;
       text-align: left;
@@ -750,13 +763,26 @@ export default {
           width: calc(~"98% - @{field-name-width}");
         }
       }
+      &.field-liveType {
+        width: 100%;
+      }
+      &.field-nationality {
+        width: 50%;
+      }
       &.field-Province {
-        width: 30%;
+        width: 40%;
+        .field-name {
+          left: -3px;
+        }
+        .field-input {
+          left: 30px;
+        }
       }
       &.field-city {
-        width: 46%;
-        .field-input,.field-value {
-          left: 0;
+        width: 40%;
+        .field-input .field-value {
+          left: 585px;
+          top: -50px;
         }
       }
       &.short-label-field {

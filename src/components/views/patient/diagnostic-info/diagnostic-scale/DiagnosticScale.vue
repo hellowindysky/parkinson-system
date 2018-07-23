@@ -448,9 +448,11 @@ export default {
       .first-line {
         left: 10px;
         top: 50px;
-        .spanPaddingLeft{
-          span{
-            display: block;
+        .value {
+          max-width: 210px;
+          .spanPaddingLeft{
+            white-space: normal;
+            word-break: break-all;
           }
         }
       }

@@ -14,7 +14,7 @@
 
     <div class="scroll-area" ref="scrollArea">
       <div class="scale-selector" v-if="mode!==VIEW_CURRENT_CARD">
-        <div class="field whole-line" v-if="mode===ADD_NEW_CARD">
+        <div class="field" v-if="mode===ADD_NEW_CARD">
           <span class="field-name">
             选择量表:
             <span class="required-mark">*</span>
@@ -39,19 +39,6 @@
           </span>
         </div>
         <div class="field">
-          <span class="field-name">量表类型:</span>
-          <span class="field-value">{{scaleType}}</span>
-        </div>
-        <div class="field">
-          <span class="field-name">开关状态:</span>
-          <span class="field-value">
-            <el-select v-model="copyInfo.switchType" placeholder="请选择量表开关状态">
-              <el-option v-for="option in getOptions('switchType')" :label="option.name"
-                :value="option.code" :key="option.code"></el-option>
-            </el-select>
-          </span>
-        </div>
-        <div class="field">
           <span class="field-name">量表填写时间:</span>
           <span class="field-value">
             <el-date-picker
@@ -64,6 +51,10 @@
           </span>
         </div>
         <div class="field">
+          <span class="field-name">量表类型:</span>
+          <span class="field-value">{{scaleType}}</span>
+        </div>
+        <div class="field">
           <span class="field-name">末次服药时间:</span>
           <span class="field-value">
             <el-date-picker
@@ -73,6 +64,24 @@
               placeholder="请选择末次服药时间"
               :picker-options="pickerOptions">
             </el-date-picker>
+          </span>
+        </div>
+        <div class="field">
+          <span class="field-name">开关状态:</span>
+          <span class="field-value">
+            <el-select v-model="copyInfo.switchType" placeholder="请选择量表开关状态">
+              <el-option v-for="option in getOptions('switchType')" :label="option.name"
+                :value="option.code" :key="option.code"></el-option>
+            </el-select>
+          </span>
+        </div>
+        <div class="field">
+          <span class="field-name">设备开关机:</span>
+          <span class="field-value">
+            <el-select v-model="copyInfo.equipmentSwitchgear" placeholder="请选择量表开关状态">
+              <el-option v-for="option in getOptions('equipmentSwitchgear')" :label="option.name"
+                :value="option.code" :key="option.code"></el-option>
+            </el-select>
           </span>
         </div>
         <div class="field whole-line">
@@ -89,12 +98,16 @@
           <span class="field-value">{{scaleType}}</span>
         </div>
         <div class="field">
+          <span class="field-name">量表填写时间:</span>
+          <span class="field-value">{{copyInfo.inspectTime}}</span>
+        </div>
+        <div class="field">
           <span class="field-name">开关状态:</span>
           <span class="field-value">{{getFieldValue(copyInfo.switchType, 'switchType')}}</span>
         </div>
         <div class="field">
-          <span class="field-name">量表填写时间:</span>
-          <span class="field-value">{{copyInfo.inspectTime}}</span>
+          <span class="field-name">设备开关机:</span>
+          <span class="field-value">{{getFieldValue(copyInfo.switchType, 'switchType')}}</span>
         </div>
         <div class="field">
           <span class="field-name">末次服药时间:</span>
@@ -166,11 +179,13 @@
         </div>
       </folding-panel>
 
+      <div class="function-bar">
+        <div @click="changeAnswerMode" v-if="quickAnswer === true" class="function-button">{{quicklyMode === true ? '常规答题' : '快速答题'}}</div>
+        <div @click="selectOptionByZero" v-if="targetScale.oneQuickAnswer === 1" class="function-button">一键快答</div>
+      </div>
+
       <!-- 快速答题 -->
       <div class="quickly-answer" v-if="quickAnswer === true">
-        <div class="quickly-title">
-          <div @click="changeAnswerMode" class="quickly-button">{{quicklyMode === true ? '常规答题' : '快速答题'}}</div>
-        </div>
         <div class="answer-form" v-show="quicklyMode === true">
           <div v-for="(item, index) in targetScale.questions"  :class="{ 'form-cell' : item.questionType===0 || item.questionType===1 }">
             <div class="scale-questions" v-if="(item.questionType===2 || item.questionType===3)">
@@ -444,7 +459,14 @@ export default {
         });
       } else {
         // 苏州大学附属第二医院 特殊处理
-        if (sessionStorage.getItem('subjectCode') === 'SQ2017YFSF090146-01' && subjectId !== -1) {
+        let isSuSubject = false;
+        let suSubjectCodeList = ['2017YFC0909100', '2017YFC0909101', '2017YFC0909102', '2017YFC0909103'];
+        suSubjectCodeList.forEach((ele) => {
+          if (sessionStorage.getItem('subjectCode') === ele) {
+            isSuSubject = true;
+          }
+        });
+        if (isSuSubject && subjectId !== -1) {
           let list = ['苏州二院版（RBDQ-HK）', 'RBDSQ', 'MMSE', '北京版(MoCA)', 'XJCS-12', 'BM-6', '苏州二院版（NMSQ）', 'SCOPA-AUT', 'HAMA/HARMS', 'Hoehn-Yahr', 'UPDRS-Ⅰ', 'UPDRS-Ⅱ', 'UPDRS-Ⅲ', 'UPDRS-Ⅳ', 'UMSARS-I', 'UMSARS-II', 'UMSARS-III', 'UMSARS-IV', 'ESS', 'FSS', '苏州二院版（PSQI）', 'PDQ-39', 'HAMD-24'];
           scalesIsUse.map((item) => {
             if (list.indexOf(item.gaugeNameEn) !== -1) {
@@ -761,6 +783,7 @@ export default {
       }
       this.$set(this.copyInfo, 'scaleInfoId', '');
       this.$set(this.copyInfo, 'switchType', '');
+      this.$set(this.copyInfo, 'equipmentSwitchgear', '');
       this.$set(this.copyInfo, 'inspectTime', '');
       this.$set(this.copyInfo, 'lastTakingTime', '');
       this.$set(this.copyInfo, 'scaleExtraInfo', '');
@@ -1004,6 +1027,17 @@ export default {
         }
       }
       return false;
+    },
+    // 一键选无
+    selectOptionByZero() {
+      for (let i = 0; i < this.targetScale.questions.length; i++) {
+        for (let j = 0; j < this.targetScale.questions[i].options.length; j++) {
+          let option = this.targetScale.questions[i].options[j];
+          if (option.oneQuickAnswer === 1) {
+            this.copyInfo.patientOptions[i].scaleOptionId = option.scaleOptionId;
+          }
+        }
+      }
     },
     // 切换答题模式，第一次由快速答题切换至常规答题时序弹窗提示是否跳转到第一道未答题目
     changeAnswerMode() {
@@ -1552,12 +1586,10 @@ export default {
         }
       }
     }
-    .quickly-answer{
-      .quickly-title{
-        height: 28px;
-        margin-bottom: 10px;
-      }
-      .quickly-button{
+    .function-bar {
+      height: 28px;
+      margin: 10px auto;
+      .function-button{
         float: right;
         width: @small-button-width;
         height: @small-button-height;
@@ -1567,6 +1599,8 @@ export default {
         cursor: pointer;
         background-color: @button-color;
       }
+    }
+    .quickly-answer{
       .answer-form{
         width: 100%;
         text-align: left;

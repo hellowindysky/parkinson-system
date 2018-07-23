@@ -16,7 +16,7 @@ const getters = {
 
 const actions = {
   getScaleList({ commit }) {
-    getScaleInfo().then(data => {
+    return getScaleInfo().then(data => {
       commit(types.UPDATE_SCALE_INFO, data);
     }, (error) => {
       console.log(error);
