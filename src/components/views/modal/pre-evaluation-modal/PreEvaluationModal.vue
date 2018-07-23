@@ -1312,7 +1312,7 @@ export default {
           if (!data) {
             this.$notify({
               title: '提示',
-              message: '没有符合条件的非运动症状评估量表数据',
+              message: '没有符合条件的综合评估量表数据',
               type: 'warning'
             });
           } else {
@@ -1326,7 +1326,7 @@ export default {
             }
             this.$notify({
               title: '成功',
-              message: '导入非运动症状评估量表数据成功',
+              message: '导入综合评估量表数据成功',
               type: 'success'
             });
           }
@@ -1360,7 +1360,7 @@ export default {
         Bus.$off(this.CONFIRM);
       });
 
-      Bus.$emit(this.REQUEST_CONFIRMATION, '提示', '是否导入评估日期相关量表得分？此操作会覆盖已有量表得分数据！', '是', '否');
+      Bus.$emit(this.REQUEST_CONFIRMATION, '提示', '是否导入评估日期相关量表得分及晨用药数据？此操作会覆盖已有量表得分数据！', '是', '否');
     },
     getRealName(code, typeGroupCode) {
       var typesInfo = Util.getElement('typegroupcode', typeGroupCode, this.typeGroup);
