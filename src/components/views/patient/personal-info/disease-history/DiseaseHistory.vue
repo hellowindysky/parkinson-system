@@ -856,8 +856,7 @@ export default {
       if (this.copyInfo.diseaseType !== 7) {
         this.copyInfo.diseaseTypeRemark = '';
       }
-      let staTime = Util.simplifyDate(this.copyInfo.ariTime).split('-');
-      this.copyInfo.ariTime = staTime[0] + '-' + staTime[1];
+
       this.copyInfo.ariTime = Util.simplifyDate(this.copyInfo.ariTime);
 
       var submitData = deepCopy(this.copyInfo);
