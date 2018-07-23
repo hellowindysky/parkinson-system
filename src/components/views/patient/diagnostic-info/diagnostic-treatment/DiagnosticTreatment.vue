@@ -615,7 +615,7 @@ export default {
       var totalLevodopaDose = 0;
       for (let item of this.diagnosticMedicine) {
         // 用来计算的药物要满足 2 个条件：未停药，不是当前药物
-        if (item.stopFlag === 1 && item.medicineId !== targetMedicine.medicineId) {
+        if (item.stopFlag === 1 && item.medicineId !== targetMedicine.medicineId && item.levodopaDose) {
           totalLevodopaDose += item.levodopaDose;
         }
       }
