@@ -1064,7 +1064,7 @@
               </el-checkbox-group>
 
               <!-- 交叉电脉冲 才有的 -->
-              <el-checkbox-group v-model="firstDbsAdjustAfterParamPole_two[index].positive"
+              <el-checkbox-group v-show="param.exciteMod===4" v-model="firstDbsAdjustAfterParamPole_two[index].positive"
                 :max="getMaxNumOfContact(param.exciteMod, true)">
                 <el-checkbox v-for="(contact, i) in getSidePositiveContact(param.limbSide)"
                   :label="contact" :key="'sidePositiveContact' + i"
@@ -1083,7 +1083,7 @@
               </el-checkbox-group>
 
               <!-- 交叉电脉冲 才有的 -->
-              <el-checkbox-group v-model="firstDbsAdjustAfterParamPole_two[index].negative"
+              <el-checkbox-group v-show="param.exciteMod===4" v-model="firstDbsAdjustAfterParamPole_two[index].negative"
                 :max="getMaxNumOfContact(param.exciteMod, false)">
                 <el-checkbox v-for="(contact, i) in getSideNegativeContact(param.limbSide)"
                   :label="contact" :key="'sideNegativeContact' + i"
