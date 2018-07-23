@@ -72,7 +72,7 @@
             {{modelType === 1 ? '是' : '否'}}
           </span>
           <span class="field-input" v-else>
-            <el-select v-model="modelType" :disabled="mode !== ADD_NEW_CARD" @change="selectFirstOrFollow">
+            <el-select v-model="modelType" :disabled="mode !== ADD_NEW_CARD" @change="selectFirstOrFollow;changeDevice">
               <el-option label="是" :value="1"></el-option>
               <el-option label="否" :value="0"></el-option>
             </el-select>
@@ -1831,7 +1831,7 @@ export default {
       }
     },
     initContactForm() {
-      if (this.modelType === 1) {
+      if (this.modelType === 1 || true) {
         // 如果是首次开机，则选择设备后，会生成触点电压表格（左右两部分），这个函数为其做好数据准备工作
         this.$set(this.copyInfo, 'patientDbsFirstDetail', []);
         let leftContactList = this.getSideDeviceContact('left');
