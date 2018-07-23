@@ -1360,7 +1360,7 @@ export default {
         Bus.$off(this.CONFIRM);
       });
 
-      Bus.$emit(this.REQUEST_CONFIRMATION, '提示', '是否导入评估日期相关量表得分及晨用药数据？此操作会覆盖已有量表得分数据！', '是', '否');
+      Bus.$emit(this.REQUEST_CONFIRMATION, '提示', '是否导入评估日期相关量表得分和晨用药信息？此操作会覆盖已有数据！', '是', '否');
     },
     getRealName(code, typeGroupCode) {
       var typesInfo = Util.getElement('typegroupcode', typeGroupCode, this.typeGroup);
