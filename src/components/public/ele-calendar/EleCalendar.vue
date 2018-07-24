@@ -605,6 +605,16 @@
 </script>
 
 <style lang="less">
+.el-picker-panel.el-date-picker {
+  width: 100%;
+  .el-picker-panel__body-wrapper {
+    width: 100%;
+    .el-picker-panel__content {
+      width: auto;
+    }
+  }
+}
+//------
 .custom-date-table .el-date-table__row td.available {
   background-color: #f4f4f4;
   opacity: 1;
