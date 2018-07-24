@@ -1,7 +1,9 @@
 <template lang="html">
   <div class="symptoms-modal-wrapper">
-    <div class="symptoms-modal" ref="scrollArea">
+    <div class="symptoms-modal">
       <h3 class="title">{{title}}</h3>
+      <i class="el-alert__closebtn el-icon-close large-icon" @click="cancel"></i>
+      <div class="modal-body">
       <div class="content">
         <div class="field">
           <span class="field-name long-field-name">
@@ -42,7 +44,7 @@
                 <el-option
                  v-for="item in getSymOptions(copyInfo.symType)"
                  :key="item.code"
-                 :label="item.name" 
+                 :label="item.name"
                  :value="item.code"></el-option>
               </el-select>
             </span>
@@ -152,7 +154,7 @@
 
         <!-- 以下是 运动并发症才有的序列 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
         <div v-show="copyInfo.symType===1">
-          
+
           <div class="field">
             <span class="field-name long-field-name">
               症状名称:
@@ -167,8 +169,8 @@
                @change="updateWarning('symName')" :class="{'warning': warningResults.symName}" >
                 <el-option
                  v-for="item in getSymOptions(copyInfo.symType)"
-                 :key="item.code" 
-                 :label="item.name" 
+                 :key="item.code"
+                 :label="item.name"
                  :value="item.code">
                 </el-option>
               </el-select>
@@ -256,7 +258,7 @@
             </span>
             <span class="field-input" v-else>
               <span class="warning-text">{{warningResults.notSportTypeId}}</span>
-              <el-select v-model="copyInfo.notSportTypeId" placeholder="请选择非运动症状类型" clearable 
+              <el-select v-model="copyInfo.notSportTypeId" placeholder="请选择非运动症状类型" clearable
                @change="updateWarning('notSportTypeId'),clearVal(['symType','notSportTypeId'])" :class="{'warning': warningResults.notSportTypeId}" >
                 <el-option
                  v-for="item in getOptions('noSportSymType')"
@@ -283,8 +285,8 @@
                @change="updateWarning('symName')" :class="{'warning': warningResults.symName}" >
                 <el-option
                  v-for="item in getNoSportOptions(copyInfo.notSportTypeId)"
-                 :key="item.code" 
-                 :label="item.name" 
+                 :key="item.code"
+                 :label="item.name"
                  :value="item.code">
                 </el-option>
               </el-select>
@@ -351,10 +353,12 @@
 
 
 
+      </div>
+      <div class="modal-footer">
       <div class="button cancel-button" @click="cancel">取消</div>
       <div v-show="mode!==VIEW_CURRENT_CARD" class="button submit-button" @click="submit">确定</div>
       <div v-show="mode===VIEW_CURRENT_CARD && showEdit" class="button edit-button" @click="switchToEditingMode">编辑</div>
-
+      </div>
     </div>
   </div>
 </template>
@@ -657,7 +661,6 @@ export default {
   .symptoms-modal{
     position: relative;
     margin: auto;
-    padding: 0 40px;
     top: 3%;
     width: 660px;
     max-height: 94%;
@@ -667,6 +670,22 @@ export default {
       padding: 30px 0 10px;
       font-size: @large-font-size;
     }
+    .large-icon {
+      font-size: @large-font-size;
+    }
+    .modal-body {
+      position: relative;
+      max-height: 80%;
+      overflow-y: auto;
+      padding: 0 30px;
+      overflow-x: hidden;
+    }
+
+    .modal-footer {
+      position: relative;
+      bottom: 0px;
+    }
+
     .content{
       text-align: left;
       font-size: 0;

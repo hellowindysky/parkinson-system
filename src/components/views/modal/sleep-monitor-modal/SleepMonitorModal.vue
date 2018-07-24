@@ -1,7 +1,9 @@
 <template lang="html">
   <div class="sleep-monitor-modal-warpper">
-    <div class="sleep-monitor-modal" ref="scrollArea">
+    <div class="sleep-monitor-modal">
       <h3 class="title">{{title}}</h3>
+      <i class="el-alert__closebtn el-icon-close large-icon" @click="cancel"></i>
+      <div class="modal-body">
       <div class="content">
         <div class="field half-line">
           <span class="field-name">
@@ -396,10 +398,12 @@
 
       </div>
 
+      </div>
+      <div class="modal-footer">
       <div class="button cancel-button">取消</div>
       <div class="button edit-button" v-if="mode===VIEW_CURRENT_CARD && showEdit">编辑</div>
       <div class="button submit-button" v-else-if="mode!==VIEW_CURRENT_CARD">确定</div>
-
+      </div>
     </div>
   </div>
 </template>
@@ -472,7 +476,6 @@ export default {
   .sleep-monitor-modal {
     position: relative;
     margin: auto;
-    padding: 0 40px;
     top: 3%;
     width: 660px;
     max-height: 94%;
@@ -481,6 +484,21 @@ export default {
     .title {
       padding: 30px 0 10px;
       font-size: @large-font-size;
+    }
+    .large-icon {
+      font-size: @large-font-size;
+    }
+    .modal-body {
+      position: relative;
+      max-height: 80%;
+      overflow-y: auto;
+      padding: 0 30px;
+      overflow-x: hidden;
+    }
+
+    .modal-footer {
+      position: relative;
+      bottom: 0px;
     }
     .content {
       text-align: left;

@@ -1,7 +1,9 @@
 <template lang="html">
   <div class="symptoms-modal-wrapper">
-    <div class="symptoms-modal" ref="scrollArea">
+    <div class="symptoms-modal">
       <h3 class="title">{{title}}</h3>
+      <i class="el-alert__closebtn el-icon-close large-icon" @click="cancel"></i>
+      <div class="modal-body">
       <div class="content">
         <!-- 以下是 运动症状才有的序列 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
         <div class="field">
@@ -364,11 +366,13 @@
       <div class="seperate-line" v-show="true"></div>
 
 
+      </div>
+      <div class="modal-footer">
 
       <div class="button cancel-button" @click="cancel">取消</div>
       <div v-show="mode!==VIEW_CURRENT_CARD" class="button submit-button" @click="submit">确定</div>
       <div v-show="mode===VIEW_CURRENT_CARD && canEdit" class="button edit-button" @click="switchToEditingMode">编辑</div>
-
+      </div>
     </div>
   </div>
 </template>
@@ -693,7 +697,6 @@ export default {
   .symptoms-modal{
     position: relative;
     margin: auto;
-    padding: 0 40px;
     top: 3%;
     width: 660px;
     max-height: 94%;
@@ -702,6 +705,21 @@ export default {
     .title {
       padding: 30px 0 10px;
       font-size: @large-font-size;
+    }
+    .large-icon {
+      font-size: @large-font-size;
+    }
+    .modal-body {
+      position: relative;
+      max-height: 80%;
+      overflow-y: auto;
+      padding: 0 30px;
+      overflow-x: hidden;
+    }
+
+    .modal-footer {
+      position: relative;
+      bottom: 0px;
     }
     .content{
       text-align: left;

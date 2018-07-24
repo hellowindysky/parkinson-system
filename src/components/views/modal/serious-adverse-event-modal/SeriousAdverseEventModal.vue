@@ -1,7 +1,9 @@
 <template lang="html">
   <div class="serious-adverse-event-modal-wrapper">
-    <div class="serious-adverse-event-modal" ref="scrollArea">
+    <div class="serious-adverse-event-modal">
       <h3 class="title">{{title}}</h3>
+      <i class="el-alert__closebtn el-icon-close large-icon" @click="cancel"></i>
+      <div class="modal-body">
       <div class="content">
         <div class="field whole-line">
           <span class="field-name">
@@ -277,9 +279,12 @@
         </div>
       </div>
       <div class="seperate-line"></div>
+      </div>
+      <div class="modal-footer">
       <div class="button cancel-button" @click="cancel">取消</div>
       <div v-if="mode!==VIEW_CURRENT_CARD" class="button submit-button" @click="submit">确定</div>
       <div v-else-if="mode===VIEW_CURRENT_CARD && showEdit" class="button submit-button btn-margin" @click="switchToEditingMode">编辑</div>
+      </div>
     </div>
   </div>
 </template>
@@ -575,7 +580,6 @@ export default {
   .serious-adverse-event-modal {
     position: relative;
     margin: 10px auto;
-    padding: 0 40px;
     top: 5%;
     width: 660px;
     max-height: 90%;
@@ -596,6 +600,21 @@ export default {
     .title {
       padding: 30px 0 10px;
       font-size: @large-font-size;
+    }
+    .large-icon {
+      font-size: @large-font-size;
+    }
+    .modal-body {
+      position: relative;
+      max-height: 80%;
+      overflow-y: auto;
+      padding: 0 30px;
+      overflow-x: hidden;
+    }
+
+    .modal-footer {
+      position: relative;
+      bottom: 0px;
     }
     .content {
       text-align: left;
