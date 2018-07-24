@@ -475,7 +475,7 @@ export default {
         let firBody = this.getTypeGroupitem('firBody');
         // console.log(firBody);
         for (let i = 0; i < firBody.length; i++) {
-          let firBody1 = firBody.slice(0, 6);
+          let firBody1 = firBody.slice(0, 7);
           // console.log(firBody1);
           firBody.forEach((item) => {
             if (firBody1.indexOf(item.typeCode) !== -1) {
