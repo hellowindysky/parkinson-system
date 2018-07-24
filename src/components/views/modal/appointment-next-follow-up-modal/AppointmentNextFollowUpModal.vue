@@ -191,6 +191,7 @@ export default {
         patientId: Number(this.$route.params.id)
       }).then(() => {
         this.dialogCancel();
+        Bus.$emit(this.UPDATE_PATIENT_INFO);
       });
     },
     updateWarningDialog(fieldName) {
