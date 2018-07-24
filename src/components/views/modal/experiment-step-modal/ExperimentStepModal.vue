@@ -1,8 +1,10 @@
 <template lang="html">
   <div class="experiment-step-modal-wrapper">
     <div class="experiment-step-modal"
-      :class="{'follow-up-modal': milestoneNum===EXPERIMENT_STEP_FOLLOW_UP}" ref="scrollArea">
+      :class="{'follow-up-modal': milestoneNum===EXPERIMENT_STEP_FOLLOW_UP}" >
       <h3 class="title">{{title}}</h3>
+      <i class="el-alert__closebtn el-icon-close large-icon" @click="cancel"></i>
+      <div class="modal-body">
       <div class="content">
         <div class="field whole-line">
           <span class="field-name">
@@ -258,10 +260,12 @@
 
       </div>
 
+      </div>
+      <div class="modal-footer">
       <div class="button cancel-button" @click="cancel">取消</div>
       <div v-if="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD" class="button submit-button">确定</div>
       <div v-else-if="mode===VIEW_CURRENT_CARD && showEdit" class="button submit-button">编辑</div>
-
+      </div>
     </div>
   </div>
 </template>
@@ -456,7 +460,6 @@ export default {
   .experiment-step-modal {
     position: relative;
     margin: auto;
-    padding: 0 40px;
     top: 10%;
     width: 500px;
     max-height: 80%;
@@ -469,6 +472,21 @@ export default {
     .title {
       padding: 30px 0 10px;
       font-size: @large-font-size;
+    }
+    .large-icon {
+      font-size: @large-font-size;
+    }
+    .modal-body {
+      position: relative;
+      max-height: 80%;
+      overflow-y: auto;
+      padding: 0 30px;
+      overflow-x: hidden;
+    }
+
+    .modal-footer {
+      position: relative;
+      bottom: 0px;
     }
     .content{
       text-align: left;

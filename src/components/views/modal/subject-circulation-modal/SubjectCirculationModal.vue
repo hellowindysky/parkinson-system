@@ -1,6 +1,8 @@
 <template lang="html">
   <div class="subject-circulation-modal-wrapper">
-    <div class="subject-circulation-modal" ref="scrollArea">
+    <div class="subject-circulation-modal">
+      <i class="el-alert__closebtn el-icon-close large-icon" @click="cancel"></i>
+      <div class="modal-body">
       <h3 class="title">课题流转</h3>
       <div class="content">
 
@@ -44,17 +46,17 @@
               @change="updateWarning('step')"
               :class="{'warning': warningResults.step}" clearable >
               <el-option :label="'随访（V2）'" :value="2"
-                v-if="patientCurrentStage < 2"></el-option>              
+                v-if="patientCurrentStage < 2"></el-option>
               <el-option :label="'随访（V3）'" :value="3"
-                v-if="patientCurrentStage < 3"></el-option>              
+                v-if="patientCurrentStage < 3"></el-option>
               <el-option :label="'随访（V4）'" :value="4"
-                v-if="patientCurrentStage < 4"></el-option>              
+                v-if="patientCurrentStage < 4"></el-option>
               <el-option :label="'随访（V5）'" :value="5"
-                v-if="patientCurrentStage < 5"></el-option>              
+                v-if="patientCurrentStage < 5"></el-option>
               <el-option :label="'随访（V6）'" :value="6"
-                v-if="patientCurrentStage < 6"></el-option>              
+                v-if="patientCurrentStage < 6"></el-option>
               <el-option :label="'随访（V7）'" :value="7"
-                v-if="patientCurrentStage < 7"></el-option>            
+                v-if="patientCurrentStage < 7"></el-option>
             </el-select>
           </span>
         </div>
@@ -158,13 +160,15 @@
       </div>
 
       <div class="seperate-line"></div>
+      </div>
+      <div class="modal-footer">
       <div class="button cancel-button" @click="cancel">取消</div>
       <div v-if="mode!==VIEW_CURRENT_CARD && !readyToEndExperiment"
         class="button submit-button" @click="submit">确定</div>
       <div v-else-if="mode!==VIEW_CURRENT_CARD && readyToEndExperiment"
         class="button submit-button" @click="submit">结束随访</div>
       <div v-else-if="mode===VIEW_CURRENT_CARD && showEdit" class="button submit-button">编辑</div>
-
+      </div>
     </div>
   </div>
 </template>
@@ -456,7 +460,6 @@ export default {
   .subject-circulation-modal {
     position: relative;
     margin: auto;
-    padding: 0 40px;
     top: 10%;
     width: 500px;
     max-height: 80%;
@@ -465,6 +468,21 @@ export default {
     .title {
       padding: 30px 0 10px;
       font-size: @large-font-size;
+    }
+    .large-icon {
+      font-size: @large-font-size;
+    }
+    .modal-body {
+      position: relative;
+      max-height: 80%;
+      overflow-y: auto;
+      padding: 0 30px;
+      overflow-x: hidden;
+    }
+
+    .modal-footer {
+      position: relative;
+      bottom: 0px;
     }
     .content {
       text-align: left;

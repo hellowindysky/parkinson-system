@@ -1,7 +1,9 @@
 <template lang="html">
   <div class="vital-signs-modal-wrapper">
-    <div class="vital-signs-modal" ref="scrollArea">
+    <div class="vital-signs-modal">
       <h3 class="title">{{title}}</h3>
+      <i class="el-alert__closebtn el-icon-close large-icon" @click="cancel"></i>
+      <div class="modal-body">
       <div class="content">
         <div class="field whole-line">
           <span class="field-name">
@@ -174,9 +176,12 @@
         </table>
         </div>
         <div class="seperate-line"></div>
+      </div>
+      <div class="modal-footer">
         <div class="button cancel-button btn-margin" @click="cancel">取消</div>
         <div v-show="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD" class="button submit-button btn-margin" @click="submit">确定</div>
         <div v-show="mode===VIEW_CURRENT_CARD && showEdit" class="button submit-button btn-margin" @click="switchToEditingMode">编辑</div>
+        </div>
     </div>
   </div>
 </template>
@@ -483,7 +488,6 @@ export default {
   .vital-signs-modal {
     position: relative;
     margin: auto;
-    padding: 0 40px;
     top: 5%;
     width: 660px;
     max-height: 90%;
@@ -492,6 +496,21 @@ export default {
     .title {
       padding: 30px 0 10px;
       font-size: @large-font-size;
+    }
+    .large-icon {
+      font-size: @large-font-size;
+    }
+    .modal-body {
+      position: relative;
+      max-height: 80%;
+      overflow-y: auto;
+      padding: 0 30px;
+      overflow-x: hidden;
+    }
+
+    .modal-footer {
+      position: relative;
+      bottom: 0px;
     }
     .content {
       text-align: left;

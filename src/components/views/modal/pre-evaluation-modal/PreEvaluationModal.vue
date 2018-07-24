@@ -1,7 +1,9 @@
 <template lang="html">
   <div class="pre-evaluation-modal-wrapper">
-    <div class="pre-evaluation-modal" ref="scrollArea">
+    <div class="pre-evaluation-modal" >
       <h3 class="title">{{title}}</h3>
+      <i class="el-alert__closebtn el-icon-close large-icon" @click="cancel"></i>
+      <div class="modal-body">
       <div class="content">
         <div class="field">
           <span class="field-name">DBS患者编码</span>
@@ -566,9 +568,12 @@
       </div>
 
       <div class="seperate-line"></div>
+      </div>
+      <div class="modal-footer">
       <div class="button cancel-button" @click="cancel">取消</div>
       <div class="button edit-button" v-if="mode===VIEW_CURRENT_CARD && showEdit" @click="switchToEditingMode">编辑</div>
       <div class="button submit-button" v-else-if="mode!==VIEW_CURRENT_CARD" @click="submit">确定</div>
+      </div>
     </div>
   </div>
 </template>
@@ -1956,12 +1961,12 @@ export default {
   .pre-evaluation-modal {
     position: relative;
     margin: auto;
-    padding: 0 40px;
     top: 3%;
     width: 800px;
-    max-height: 94%;
+    height: 94%;
     background-color: @background-color;
     overflow: hidden;
+
     .title {
       padding: 30px 0 10px;
       font-size: @large-font-size;
@@ -1971,6 +1976,24 @@ export default {
       text-align: left;
       font-weight: bold;
     }
+
+
+    .large-icon {
+      font-size: @large-font-size;
+    }
+    .modal-body {
+      position: relative;
+      max-height: 80%;
+      overflow-y: auto;
+      padding: 0 30px;
+      overflow-x: hidden;
+    }
+
+    .modal-footer {
+      position: relative;
+      bottom: 0px;
+    }
+
     .content {
       text-align: left;
       font-size: 0;
