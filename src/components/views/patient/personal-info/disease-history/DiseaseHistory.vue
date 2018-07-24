@@ -458,6 +458,9 @@ export default {
       // 发病顺序集合
       if (this.copyInfo.symmetries === 1) {
         let firBody = this.getTypeGroupitem('firBody');
+        let part = this.copyInfo.patientDiseaseOrders.map((option) => {
+        return option.arisePart;
+      });
         // console.log(firBody);
         for (let i = 0; i < firBody.length; i++) {
           let firBody1 = firBody.slice(7, 9);
@@ -465,8 +468,8 @@ export default {
           // console.log(firBody2);
           let firBody3 = firBody1.concat(firBody2);
           // console.log(firBody3);
-          firBody3.forEach((item) => {
-            if (firBody3.indexOf(item.typeCode) !== -1) {
+          firBody.forEach((item) => {
+            if (part.indexOf(item.typeCode) !== -1) {
               item.disabled = true;
             } else {
               item.disabled = false;
@@ -476,12 +479,15 @@ export default {
         }
       } else if (this.copyInfo.symmetries === 0) {
         let firBody = this.getTypeGroupitem('firBody');
+        let part = this.copyInfo.patientDiseaseOrders.map((option) => {
+        return option.arisePart;
+      });
         // console.log(firBody);
         for (let i = 0; i < firBody.length; i++) {
           let firBody1 = firBody.slice(0, 7);
           // console.log(firBody1);
-          firBody1.forEach((item) => {
-            if (firBody1.indexOf(item.typeCode) !== -1) {
+          firBody.forEach((item) => {
+            if (part.indexOf(item.typeCode) !== -1) {
               item.disabled = true;
             } else {
               item.disabled = false;
