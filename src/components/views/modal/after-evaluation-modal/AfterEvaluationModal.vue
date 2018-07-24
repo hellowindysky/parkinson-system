@@ -1279,7 +1279,7 @@ export default {
           if (!data) {
             this.$notify({
               title: '提示',
-              message: '没有符合条件的非运动症状评估量表数据',
+              message: '没有符合条件的综合评估量表数据',
               type: 'warning'
             });
           } else {
@@ -1293,7 +1293,7 @@ export default {
             }
             this.$notify({
               title: '成功',
-              message: '导入非运动症状评估量表数据成功',
+              message: '导入综合评估量表数据成功',
               type: 'success'
             });
           }
@@ -1311,10 +1311,10 @@ export default {
               let obj = data.filter((sub) => {
                 return sub.scaleInfo === item.scaleInfo;
               })[0];
-              item.takeMedicineOpen = obj.takeMedicineOpen;
-              item.takeMedicineClose = obj.takeMedicineClose;
-              item.noTakeMedicineOpen = obj.noTakeMedicineOpen;
-              item.noTakeMedicineClose = obj.noTakeMedicineClose;
+              this.$set(item, 'takeMedicineOpen', obj ? obj.takeMedicineOpen : '');
+              this.$set(item, 'takeMedicineClose', obj ? obj.takeMedicineClose : '');
+              this.$set(item, 'noTakeMedicineOpen', obj ? obj.noTakeMedicineOpen : '');
+              this.$set(item, 'noTakeMedicineClose', obj ? obj.noTakeMedicineClose : '');
             });
             // preopsMotorScaleList[0].scaleScoreBefore = data['1'];
             // preopsMotorScaleList[0].scaleScoreAfter = data['2'];
