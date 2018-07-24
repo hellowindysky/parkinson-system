@@ -91,7 +91,7 @@
               @select="handleDateSelect"
               :selection-mode="selectionMode"
               :first-day-of-week="firstDayOfWeek"
-              :value="new Date(value)"
+              :value="new Date(propDate)"
               :default-value="defaultValue ? new Date(defaultValue) : null"
               :date="date"
               :disabled-date="disabledDate"
@@ -100,7 +100,7 @@
             <year-table
               v-show="currentView === 'year'"
               @pick="handleYearPick"
-              :value="new Date(value)"
+              :value="new Date(propDate)"
               :default-value="defaultValue ? new Date(defaultValue) : null"
               :date="date"
               :disabled-date="disabledDate">
@@ -108,7 +108,7 @@
             <month-table
               v-show="currentView === 'month'"
               @pick="handleMonthPick"
-              :value="new Date(value)"
+              :value="new Date(propDate)"
               :default-value="defaultValue ? new Date(defaultValue) : null"
               :date="date"
               :disabled-date="disabledDate">
