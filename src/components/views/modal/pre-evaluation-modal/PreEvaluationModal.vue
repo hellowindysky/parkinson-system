@@ -1116,7 +1116,9 @@ export default {
           // 1. 其中一次服药时间符合 00:00 - 10:00 (注意：服药时间可能是多次，意味着其中可能存在不符合该时间区间的值,在里面也过滤掉)
           // 2. 必须是晨用药
           // console.log(res.patientCase.patientMedicineNew);
-          let medicineNew = res.patientCase.patientMedicineNew.filter((item) => {
+          let medicineNew = res.patientCase.patientMedicineNew;
+          medicineNew = medicineNew ? medicineNew : [];
+          medicineNew = medicineNew.filter((item) => {
             let flag = false;
             let flag2 = preopsMedicineSelectId.indexOf(item.medicineId);
 
@@ -1344,8 +1346,8 @@ export default {
               let obj = data.filter((sub) => {
                 return sub.scaleInfo === item.scaleInfo;
               })[0];
-              item.scaleScoreBefore = obj.scaleScoreBefore;
-              item.scaleScoreAfter = obj.scaleScoreAfter;
+              this.$set(item, 'scaleScoreBefore', obj ? obj.scaleScoreBefore : '');
+              this.$set(item, 'scaleScoreAfter', obj ? obj.scaleScoreAfter : '');
             });
             // preopsMotorScaleList[0].scaleScoreBefore = data['1'];
             // preopsMotorScaleList[0].scaleScoreAfter = data['2'];
