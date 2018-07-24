@@ -1306,10 +1306,10 @@ export default {
               let obj = data.filter((sub) => {
                 return sub.scaleInfo === item.scaleInfo;
               })[0];
-              item.takeMedicineOpen = obj.takeMedicineOpen;
-              item.takeMedicineClose = obj.takeMedicineClose;
-              item.noTakeMedicineOpen = obj.noTakeMedicineOpen;
-              item.noTakeMedicineClose = obj.noTakeMedicineClose;
+              this.$set(item, 'takeMedicineOpen', obj ? obj.takeMedicineOpen : '');
+              this.$set(item, 'takeMedicineClose', obj ? obj.takeMedicineClose : '');
+              this.$set(item, 'noTakeMedicineOpen', obj ? obj.noTakeMedicineOpen : '');
+              this.$set(item, 'noTakeMedicineClose', obj ? obj.noTakeMedicineClose : '');
             });
             // preopsMotorScaleList[0].scaleScoreBefore = data['1'];
             // preopsMotorScaleList[0].scaleScoreAfter = data['2'];
