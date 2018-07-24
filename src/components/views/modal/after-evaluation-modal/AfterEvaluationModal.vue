@@ -1274,7 +1274,7 @@ export default {
           if (!data) {
             this.$notify({
               title: '提示',
-              message: '没有符合条件的非运动症状评估量表数据',
+              message: '没有符合条件的综合评估量表数据',
               type: 'warning'
             });
           } else {
@@ -1288,7 +1288,7 @@ export default {
             }
             this.$notify({
               title: '成功',
-              message: '导入非运动症状评估量表数据成功',
+              message: '导入综合评估量表数据成功',
               type: 'success'
             });
           }
