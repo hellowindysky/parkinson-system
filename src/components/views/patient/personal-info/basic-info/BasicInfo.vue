@@ -27,7 +27,7 @@
               :content="copyInfo.remarks">
               <span slot="reference">{{ copyInfo[field.fieldName] }}</span>
             </el-popover>
-            <span v-else-if="field.fieldName === 'nationality'">{{ copyInfo.nationality + ' ' +  copyInfo.homeProvince ? copyInfo.homeProvince : '' + ' ' + copyInfo.homeCityTxt ? copyInfo.homeCityTxt : '' }}</span>
+            <span v-else-if="field.fieldName === 'nationality'">{{ getBirthPlaceText }}</span>
             <span v-else>
               {{ copyInfo[field.fieldName] }}
             </span>
@@ -180,6 +180,7 @@ export default {
         return false;
       }
     },
+    // 从localStorage中查询国籍列表
     geographicalList() {
       if (localStorage.getItem('geographicalList')) {
         return JSON.parse(localStorage.getItem('geographicalList'));
@@ -197,6 +198,7 @@ export default {
         return [];
       }
     },
+    // 根据国籍code获取下级城市列表
     provinceList() {
       if (this.copyInfo.nationalityCode) {
         return Util.getElement('typeCode', this.copyInfo.nationalityCode, this.geographicalList).childType;
@@ -204,12 +206,20 @@ export default {
         return [];
       }
     },
+    // 根据省code获取下级城市列表
     cityList() {
       if (this.copyInfo.homeProvinceCode) {
         return Util.getElement('typeCode', this.copyInfo.homeProvinceCode, this.provinceList).childType;
       } else {
         return [];
       }
+    },
+    // 获取出生地文本
+    getBirthPlaceText() {
+      let nationText = this.copyInfo.nationality ? this.copyInfo.nationality : '';
+      let provinceText = this.copyInfo.provinceText ? this.copyInfo.provinceText : '';
+      let cityText = this.copyInfo.cityText ? this.copyInfo.cityText : '';
+      return nationText + ' ' + provinceText + ' ' + cityText;
     }
   },
   methods: {
@@ -748,9 +758,11 @@ export default {
     querySearchAsync(queryStr, callback) {
       callback(this.autoComplete(this.allNation, queryStr));
     },
+    // 国籍输入框输入联想
     queryNationList(queryStr, callback) {
       callback(this.autoComplete(this.geographicalList, queryStr));
     },
+    // 根据国籍name查询国籍code
     setNationalityCode() {
       this.$nextTick(() => {
         if (this.copyInfo.nationality) {
@@ -761,6 +773,7 @@ export default {
         }
       });
     },
+    // 根据所选省份code查询省份name
     setProvinceName() {
       if (this.copyInfo.homeProvinceCode) {
         let homeProvinceName = Util.getElement('typeCode', this.copyInfo.homeProvinceCode, this.provinceList).typeName;
@@ -770,6 +783,7 @@ export default {
       }
 
     },
+    // 根据所选城市code查询省份name
     setCityName() {
       if (this.copyInfo.homeCity) {
         let cityName = Util.getElement('typeCode', this.copyInfo.homeCity, this.cityList).typeName;
