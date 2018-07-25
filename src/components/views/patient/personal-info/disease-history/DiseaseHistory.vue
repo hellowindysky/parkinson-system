@@ -458,27 +458,36 @@ export default {
       // 发病顺序集合
       if (this.copyInfo.symmetries === 1) {
         let firBody = this.getTypeGroupitem('firBody');
+        let part = this.copyInfo.patientDiseaseOrders.map((option) => {
+          return option.arisePart;
+        });
         // console.log(firBody);
         for (let i = 0; i < firBody.length; i++) {
-          let firBody1 = firBody.slice(4, 9);
-          // console.log(firBody1);
+          let firBody1 = firBody.slice(7, 9);
+          let firBody2 = firBody.slice(4, 7);
+          // console.log(firBody2);
+          let firBody3 = firBody1.concat(firBody2);
+          // console.log(firBody3);
           firBody.forEach((item) => {
-            if (firBody1.indexOf(item.typeCode) !== -1) {
+            if (part.indexOf(item.typeCode) !== -1) {
               item.disabled = true;
             } else {
               item.disabled = false;
             }
           });
-          return firBody1;
+          return firBody3;
         }
       } else if (this.copyInfo.symmetries === 0) {
         let firBody = this.getTypeGroupitem('firBody');
+        let part = this.copyInfo.patientDiseaseOrders.map((option) => {
+          return option.arisePart;
+        });
         // console.log(firBody);
         for (let i = 0; i < firBody.length; i++) {
-          let firBody1 = firBody.slice(0, 6);
+          let firBody1 = firBody.slice(0, 7);
           // console.log(firBody1);
           firBody.forEach((item) => {
-            if (firBody1.indexOf(item.typeCode) !== -1) {
+            if (part.indexOf(item.typeCode) !== -1) {
               item.disabled = true;
             } else {
               item.disabled = false;
@@ -686,8 +695,8 @@ export default {
       if (field.cnfieldName.length > 6) {
         classNameList.push('long-label-field');
       }
-      if (field.cnfieldName === '备注') {
-        classNameList.push('short-label-field');
+      if (field.cnfieldName === '备注' && this.copyInfo.diseaseType !== 7) {
+         classNameList.push('short-label-field');
       }
       // 判断该字段是否是多选框
       if (this.getUIType(field) === 5) {
@@ -1294,8 +1303,9 @@ export default {
       }
       &.short-label-field {
         .field-name {
-          width: 0;
-          font-size: 0;
+          // width: 0;
+          // font-size: 0;
+          display: none;
         }
       }
       &.multiple-select {
@@ -1352,6 +1362,11 @@ export default {
         line-height: @field-height;
         font-size: @normal-font-size;
         color: @light-font-color;
+        max-width: 350px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
       }
       .field-input {
         display: inline-block;
