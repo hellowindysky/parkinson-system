@@ -1,7 +1,9 @@
 <template lang="html">
   <div class="pre-evaluation-modal-wrapper">
-    <div class="pre-evaluation-modal" ref="scrollArea">
+    <div class="pre-evaluation-modal" >
       <h3 class="title">{{title}}</h3>
+      <i class="el-alert__closebtn el-icon-close large-icon" @click="cancel"></i>
+      <div class="modal-body">
       <div class="content">
         <div class="field">
           <span class="field-name">DBS患者编码</span>
@@ -566,9 +568,12 @@
       </div>
 
       <div class="seperate-line"></div>
+      </div>
+      <div class="modal-footer">
       <div class="button cancel-button" @click="cancel">取消</div>
       <div class="button edit-button" v-if="mode===VIEW_CURRENT_CARD && showEdit" @click="switchToEditingMode">编辑</div>
       <div class="button submit-button" v-else-if="mode!==VIEW_CURRENT_CARD" @click="submit">确定</div>
+      </div>
     </div>
   </div>
 </template>
@@ -1050,6 +1055,59 @@ export default {
       }
       return isUnderLimit;
     },
+    getMorningMedicine() {
+      getPatientCase(this.$route.params.id, this.$route.params.caseId).then((res) => {
+
+        // 这是术前评估晨用药物select下拉列表中显示的药物，那么可以确定它们一定是晨用药
+        let preopsMedicineSelect = this.getOptions('medicineName');
+        // console.log(preopsMedicineSelect);
+        // 把他们的code都拿出来，也就是晨用药的id;
+        let preopsMedicineSelectId = preopsMedicineSelect.map((item) => {
+          return item.code;
+        });
+        // console.log(preopsMedicineSelectId);
+
+        // 将符合以下两个条件的药物治疗卡片过滤出来
+        // 1. 其中一次服药时间符合 00:00 - 10:00 (注意：服药时间可能是多次，意味着其中可能存在不符合该时间区间的值,在里面也过滤掉)
+        // 2. 必须是晨用药
+        // console.log(res.patientCase.patientMedicineNew);
+        let medicineNew = res.patientCase.patientMedicineNew;
+        medicineNew = medicineNew ? medicineNew : [];
+        medicineNew = medicineNew.filter((item) => {
+          let flag = false;
+          let flag2 = preopsMedicineSelectId.indexOf(item.medicineId);
+
+          item.patientMedicineDetail = item.patientMedicineDetail.filter((subItem) => {
+            let temporary = '2018-07-12';
+            let temporary2 = '23:00';
+            let zeroClock = new Date(temporary + ' 00:00').getTime();
+            let tenClock = new Date(temporary + ' 10:00').getTime();
+            let takeTime = new Date(temporary + ' ' + (subItem.takeTime ? subItem.takeTime : temporary2)).getTime();
+
+            let status = (takeTime >= zeroClock && takeTime < tenClock);
+            if (status) {
+              flag = status;
+            }
+            return status;
+          });
+          return flag && (flag2 !== -1);
+        });
+        //
+        //
+        medicineNew.forEach((item, index) => {
+          this.addMedicine();
+          this.$set(this.copyInfo.preopsMotorDTO.patientPreopsMedicineList[index], 'medicineInfo', item.medicineId);
+          this.selectMedicine(this.copyInfo.preopsMotorDTO.patientPreopsMedicineList[index]);
+
+          let takeDose = 0;
+          item.patientMedicineDetail.forEach((subItem) => {
+            takeDose += Number(subItem.takeDose);
+          });
+          this.$set(this.copyInfo.preopsMotorDTO.patientPreopsMedicineList[index], 'medUsage', takeDose);
+        });
+
+      });
+    },
     showModal(cardOperation, info, showEdit) {
       this.mode = cardOperation;
       this.showEdit = showEdit;
@@ -1101,57 +1159,6 @@ export default {
         // 同步就诊时间
         this.$set(this.copyInfo, 'preopsTime', this.treatmentTime);
         this.getScaleData();
-        getPatientCase(this.$route.params.id, this.$route.params.caseId).then((res) => {
-
-          // 这是术前评估晨用药物select下拉列表中显示的药物，那么可以确定它们一定是晨用药
-          let preopsMedicineSelect = this.getOptions('medicineName');
-          // console.log(preopsMedicineSelect);
-          // 把他们的code都拿出来，也就是晨用药的id;
-          let preopsMedicineSelectId = preopsMedicineSelect.map((item) => {
-            return item.code;
-          });
-          // console.log(preopsMedicineSelectId);
-
-          // 将符合以下两个条件的药物治疗卡片过滤出来
-          // 1. 其中一次服药时间符合 00:00 - 10:00 (注意：服药时间可能是多次，意味着其中可能存在不符合该时间区间的值,在里面也过滤掉)
-          // 2. 必须是晨用药
-          // console.log(res.patientCase.patientMedicineNew);
-          let medicineNew = res.patientCase.patientMedicineNew;
-          medicineNew = medicineNew ? medicineNew : [];
-          medicineNew = medicineNew.filter((item) => {
-            let flag = false;
-            let flag2 = preopsMedicineSelectId.indexOf(item.medicineId);
-
-            item.patientMedicineDetail = item.patientMedicineDetail.filter((subItem) => {
-              let temporary = '2018-07-12';
-              let temporary2 = '23:00';
-              let zeroClock = new Date(temporary + ' 00:00').getTime();
-              let tenClock = new Date(temporary + ' 10:00').getTime();
-              let takeTime = new Date(temporary + ' ' + (subItem.takeTime ? subItem.takeTime : temporary2)).getTime();
-
-              let status = (takeTime >= zeroClock && takeTime < tenClock);
-              if (status) {
-                flag = status;
-              }
-              return status;
-            });
-            return flag && (flag2 !== -1);
-          });
-          //
-          //
-          medicineNew.forEach((item, index) => {
-            this.addMedicine();
-            this.$set(this.copyInfo.preopsMotorDTO.patientPreopsMedicineList[index], 'medicineInfo', item.medicineId);
-            this.selectMedicine(this.copyInfo.preopsMotorDTO.patientPreopsMedicineList[index]);
-
-            let takeDose = 0;
-            item.patientMedicineDetail.forEach((subItem) => {
-              takeDose += Number(subItem.takeDose);
-            });
-            this.$set(this.copyInfo.preopsMotorDTO.patientPreopsMedicineList[index], 'medUsage', takeDose);
-          });
-
-        });
       }
 
       this.updateScrollbar();
@@ -1359,6 +1366,10 @@ export default {
             });
           }
         });
+
+        // 带入晨用药
+        this.getMorningMedicine();
+
         Bus.$off(this.CONFIRM);
       });
 
@@ -1950,12 +1961,12 @@ export default {
   .pre-evaluation-modal {
     position: relative;
     margin: auto;
-    padding: 0 40px;
     top: 3%;
     width: 800px;
-    max-height: 94%;
+    height: 94%;
     background-color: @background-color;
     overflow: hidden;
+
     .title {
       padding: 30px 0 10px;
       font-size: @large-font-size;
@@ -1965,6 +1976,24 @@ export default {
       text-align: left;
       font-weight: bold;
     }
+
+
+    .large-icon {
+      font-size: @large-font-size;
+    }
+    .modal-body {
+      position: relative;
+      max-height: 80%;
+      overflow-y: auto;
+      padding: 0 30px;
+      overflow-x: hidden;
+    }
+
+    .modal-footer {
+      position: relative;
+      bottom: 0px;
+    }
+
     .content {
       text-align: left;
       font-size: 0;

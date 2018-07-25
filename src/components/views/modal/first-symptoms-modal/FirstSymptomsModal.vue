@@ -1,7 +1,9 @@
 <template lang="html">
   <div class="symptoms-modal-wrapper">
-    <div class="symptoms-modal" ref="scrollArea">
+    <div class="symptoms-modal">
       <h3 class="title">{{title}}</h3>
+      <i class="el-alert__closebtn el-icon-close large-icon" @click="cancel"></i>
+      <div class="modal-body">
       <div class="content">
         <!-- 以下是 运动症状才有的序列 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
         <div class="field">
@@ -17,37 +19,57 @@
             <el-select v-model="copyInfo.symName" placeholder="请选择症状名称" clearable filterable
               @change="getMedicalType()" :class="{'warning': warningResults.symName}" >
               <el-option
-                v-for="item in symptomType"
-                :key="item.id"
-                :label="item.sympName"
-                :value="item.id">
+                v-for="item in allSymptoms"
+                :key="item.sortId"
+                :label="item.getAllSymptomsName"
+                :value="item.sortId">
               </el-option>
           </el-select>
           </span>
         </div>
 
-          <div class="field">
-            <span class="field-name long-field-name">
-              症状类型:
-              <span class="required-mark">*</span>
-            </span>
-            <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{transformII(copyInfo.symType, getOptions('SympType'))}}</span>
-            </span>
-            <span class="field-input" v-else>
-            <span class="warning-text">{{warningResults.symType}}</span>
-            <el-select v-model="copyInfo.symType" placeholder="-选择症状名称自动匹配-" clearable disabled
-            @change="updateWarning('symType')" :class="{'warning': warningResults.symType}" >
-                <el-option
-                  v-for="item in getOptions('SympType')"
-                 :key="item.code"
-                 :label="item.name"
-                 :value="item.code">
-                </el-option>
-              </el-select>
-            </span>
-          </div>
-
+        <div class="field">
+          <span class="field-name long-field-name">
+            症状类型:
+            <span class="required-mark">*</span>
+          </span>
+          <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
+          <span>{{transformII(copyInfo.symType, getOptions('SympType'))}}</span>
+          </span>
+          <span class="field-input" v-else>
+          <span class="warning-text">{{warningResults.symType}}</span>
+          <el-select v-model="copyInfo.symType" placeholder="-选择症状名称自动匹配-" clearable disabled
+          @change="updateWarning('symType')" :class="{'warning': warningResults.symType}" >
+            <el-option
+              v-for="item in getOptions('SympType')"
+              :key="item.code"
+              :label="item.name"
+              :value="item.code">
+            </el-option>
+            </el-select>
+          </span>
+        </div>
+        <div class="field" v-if="copyInfo.symType===2">
+          <span class="field-name long-field-name">
+            非运动症状类型:
+            <span class="required-mark">*</span>
+          </span>
+          <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
+            <span>{{transform(copyInfo.notSportTypeId, 'noSportSymType')}}</span>
+          </span>
+          <span class="field-input" v-else>
+            <span class="warning-text">{{warningResults.notSportTypeId}}</span>
+            <el-select v-model="copyInfo.notSportTypeId" placeholder="请选择非运动症状类型" clearable
+              @change="updateWarning('notSportTypeId')" :class="{'warning': warningResults.notSportTypeId}" >
+              <el-option
+                v-for="item in getOptions('noSportSymType')"
+                :key="item.code"
+                :label="item.name"
+                :value="item.code">
+              </el-option>
+            </el-select>
+          </span>
+        </div>
         <div class="field" v-if="copyInfo.symType===0">
             <span class="field-name long-field-name">
               左上肢出现时间:
@@ -364,11 +386,13 @@
       <div class="seperate-line" v-show="true"></div>
 
 
+      </div>
+      <div class="modal-footer">
 
       <div class="button cancel-button" @click="cancel">取消</div>
       <div v-show="mode!==VIEW_CURRENT_CARD" class="button submit-button" @click="submit">确定</div>
       <div v-show="mode===VIEW_CURRENT_CARD && canEdit" class="button edit-button" @click="switchToEditingMode">编辑</div>
-
+      </div>
     </div>
   </div>
 </template>
@@ -395,14 +419,14 @@ export default {
         whetherLaw: '',
         remarks: '',
         ariseTime: '', // 出现时间
-        lastTime: '' // 持续时间
-        // notSportTypeId: '' // 非运动症状类型
+        lastTime: '', // 持续时间
+        notSportTypeId: '' // 非运动症状类型
       },
       id: '',
       warningResults: {
         symType: '',
-        symName: ''
-        // notSportTypeId: ''
+        symName: '',
+        notSportTypeId: ''
       },
       runClearVal: true, // 是否执行clearVal方法中的置空copyInfo操作
       pickerOptions: {
@@ -443,6 +467,35 @@ export default {
       // } else {
       //   return ['symType'];
       // }
+    },
+    allSymptoms() {
+      let getAllSymptoms = this.symptomType.concat(this.noSportType);
+      // let allName = this.sympName.concat(this.noSportName);
+      for (let i = 0; i < getAllSymptoms.length; i++) {
+        let allSymptoms = getAllSymptoms[i];
+        // console.log(allSymptoms);
+        let symptomTypeName = allSymptoms.sympName;
+        let noSportTypeName = allSymptoms.noSportName;
+        // let allSymptomsId = allSymptoms.id;
+
+        let name = '';
+        if (symptomTypeName === undefined) {
+          // console.log(noSportTypeName);
+          name = noSportTypeName;
+        } else if (noSportTypeName === undefined) {
+          // console.log(symptomTypeName);
+          name = symptomTypeName;
+        }
+        allSymptoms.getAllSymptomsName = name;
+
+        let sortId = i;
+        allSymptoms.sortId = sortId;
+
+        // let allSymptomsName = symptomTypeName.concat(noSportTypeName);
+        // console.log(noSportTypeName);
+      }
+
+      return getAllSymptoms;
     }
   },
   methods: {
@@ -477,7 +530,7 @@ export default {
       this.$set(this.copyInfo, 'remarks', item.remarks);
       this.$set(this.copyInfo, 'ariseTime', item.ariseTime);
       this.$set(this.copyInfo, 'lastTime', item.lastTime);
-      // this.$set(this.copyInfo, 'notSportTypeId', item.notSportTypeId);
+      this.$set(this.copyInfo, 'notSportTypeId', item.notSportTypeId);
       // ---------
       this.id = item.id;
       // ********************************
@@ -556,19 +609,22 @@ export default {
       return options;
     },
     getMedicalType() {
-      let type = this.symptomType.filter((obj) => {
-        // console.log(this.symptomType);
-        return obj.id === this.copyInfo.symName;
+      let type = this.symptomType.concat(this.noSportType).filter((obj) => {
+      // let type = this.symptomType.filter((obj) => {
+        // console.log(this.symptomType.concat(this.noSportType));
+        return obj.sortId === this.copyInfo.symName;
       }).map((obj) => {
         // console.log(obj);
         return obj.symptomtype;
       })[0];
       this.copyInfo.symType = type;
+      // this.copyInfo.symType = type.concat(noSportArr[0]);
       // console.log(this.copyInfo.symType);
       this.updateWarning('symName');
     },
     getSymOptions(fieldType) {
-      return this.symptomType.filter((obj) => {
+      return this.symptomType.concat(this.noSportType).filter((obj) => {
+      // let type1 = this.symptomType.filter((obj) => {
         // console.log(this.symptomType);
         return obj.symptomtype === fieldType;
       }).map((obj) => {
@@ -579,14 +635,14 @@ export default {
       });
     },
     // getNoSportOptions(fieldType) {
-    //   let noSportArr = this.noSportType.filter((obj) => {
-    //     return obj.noSportType === fieldType;
-    //   }).map((obj) => {
-    //     return {
-    //       name: obj.noSportName,
-    //       code: obj.id
-    //     };
-    //   });
+      // let noSportArr = this.noSportType.filter((obj) => {
+      //   return obj.noSportType === fieldType;
+      // }).map((obj) => {
+      //   return {
+      //     name: obj.noSportName,
+      //     code: obj.id
+      //   };
+      // });
     //   // 特殊要求：如果select列表只有一项自动把这一项显示出来
     //   if (noSportArr.length === 1) {
     //     this.$set(this.copyInfo, 'symName', noSportArr[0].code);
@@ -693,7 +749,6 @@ export default {
   .symptoms-modal{
     position: relative;
     margin: auto;
-    padding: 0 40px;
     top: 3%;
     width: 660px;
     max-height: 94%;
@@ -702,6 +757,21 @@ export default {
     .title {
       padding: 30px 0 10px;
       font-size: @large-font-size;
+    }
+    .large-icon {
+      font-size: @large-font-size;
+    }
+    .modal-body {
+      position: relative;
+      max-height: 80%;
+      overflow-y: auto;
+      padding: 0 30px;
+      overflow-x: hidden;
+    }
+
+    .modal-footer {
+      position: relative;
+      bottom: 0px;
     }
     .content{
       text-align: left;

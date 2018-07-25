@@ -518,13 +518,13 @@ export default {
       Bus.$emit(this.REQUEST_CONFIRMATION);
     },
     addToxicRecord() {
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'modalBox', this.SHOW_MODAL_BOX, this.ADD_NEW_CARD, '新增毒物接触史', {}, this.TOXIC_HISTORY_MODAL);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'modalBox', this.SHOW_MODAL_BOX, this.ADD_NEW_CARD, '新增职业或环境毒物接触史', {}, this.TOXIC_HISTORY_MODAL);
     },
     viewToxicRecord(item) {
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'modalBox', this.SHOW_MODAL_BOX, this.VIEW_CURRENT_CARD, '毒物接触史', item, this.TOXIC_HISTORY_MODAL);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'modalBox', this.SHOW_MODAL_BOX, this.VIEW_CURRENT_CARD, '职业或环境毒物接触史', item, this.TOXIC_HISTORY_MODAL);
     },
     editToxicRecord(item) {
-      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'modalBox', this.SHOW_MODAL_BOX, this.EDIT_CURRENT_CARD, '毒物接触史', item, this.TOXIC_HISTORY_MODAL);
+      Bus.$emit(this.MOUNT_DYNAMIC_COMPONENT, 'modalBox', this.SHOW_MODAL_BOX, this.EDIT_CURRENT_CARD, '职业或环境毒物接触史', item, this.TOXIC_HISTORY_MODAL);
     },
     deleteToxicRecord(item) {
       var patientToxicExposure = {

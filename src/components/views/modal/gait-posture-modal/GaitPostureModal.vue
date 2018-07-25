@@ -1,7 +1,9 @@
 <template lang="html">
   <div class="gait-posture-modal-wrapper">
-    <div class="gait-posture-modal" ref="scrollArea">
+    <div class="gait-posture-modal"  refs="scrollArea">
       <h3 class="title">{{title}}</h3>
+      <i class="el-alert__closebtn el-icon-close large-icon" @click="cancel"></i>
+      <div class="modal-body">
       <div class="content">
         <div class="field">
           <span class="field-name">
@@ -559,6 +561,8 @@
           </tr>
         </table>
       </div>
+      </div>
+      <div class="modal-footer">
       <span v-if="tableMode===FATHER_OPEN">
         <div class="button cancel-button" @click="cancel">取消</div>
         <div class="button edit-button" v-if="mode===VIEW_CURRENT_CARD && showEdit" @click="switchToEditingMode">编辑</div>
@@ -571,6 +575,7 @@
           <div class="button submit-button" @click="closeSubTable">完成</div>
         </span>
       </span>
+      </div>
     </div>
   </div>
 </template>
@@ -934,10 +939,9 @@ export default {
   .gait-posture-modal {
     position: relative;
     margin: auto;
-    padding: 0 40px;
     top: 5%;
     width: 600px;
-    max-height: 94%;
+    height: 94%;
     background-color: @background-color;
     overflow: hidden;
     .moveLeft {
@@ -947,6 +951,21 @@ export default {
     .title {
       padding: 30px 0 10px;
       font-size: @large-font-size;
+    }
+    .large-icon {
+      font-size: @large-font-size;
+    }
+    .modal-body {
+      position: relative;
+      max-height: 80%;
+      overflow-y: auto;
+      padding: 0 30px;
+      overflow-x: hidden;
+    }
+
+    .modal-footer {
+      position: relative;
+      bottom: 0px;
     }
     .content {
       text-align: left;
