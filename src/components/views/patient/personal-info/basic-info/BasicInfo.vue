@@ -27,7 +27,7 @@
               :content="copyInfo.remarks">
               <span slot="reference">{{ copyInfo[field.fieldName] }}</span>
             </el-popover>
-            <span v-else-if="field.fieldName === 'nationality'">{{ copyInfo.nationality + ' ' +  copyInfo.homeProvince + ' ' + copyInfo.homeCityTxt }}</span>
+            <span v-else-if="field.fieldName === 'nationality'">{{ copyInfo.nationality + ' ' +  copyInfo.homeProvince ? copyInfo.homeProvince : '' + ' ' + copyInfo.homeCityTxt ? copyInfo.homeCityTxt : '' }}</span>
             <span v-else>
               {{ copyInfo[field.fieldName] }}
             </span>
@@ -637,13 +637,18 @@ export default {
         };
         return;
       } else if (fieldName === 'nationality') {
-        let nationalityCode = Util.getElement('typeName', this.copyInfo.nationality, this.geographicalList).typeCode;
-        if (!nationalityCode) {
+        if (this.copyInfo.nationality === '') {
           this.$set(this.warningResults, fieldName, '请输入正确的国家名称');
+          return;
         } else {
-          this.$set(this.warningResults, fieldName, null);
+          let nationalityCode = Util.getElement('typeName', this.copyInfo.nationality, this.geographicalList).typeCode;
+          if (!nationalityCode) {
+            this.$set(this.warningResults, fieldName, '请输入正确的国家名称');
+          } else {
+            this.$set(this.warningResults, fieldName, null);
+          }
+          return;
         }
-        return;
       }
 
       if (this.getUIType(field) === 6) {
