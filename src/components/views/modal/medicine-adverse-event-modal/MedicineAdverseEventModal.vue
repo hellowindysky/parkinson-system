@@ -789,7 +789,7 @@ export default {
     margin: 10px auto;
     top: 5%;
     width: 660px;
-    max-height: 90%;
+    height: 90%;
     background-color: @background-color;
     overflow: hidden;
     .medicine-adverse-event {
