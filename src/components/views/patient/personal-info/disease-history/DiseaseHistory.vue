@@ -174,8 +174,8 @@
             <span v-else-if="getUIType(field)===5">
               <el-checkbox-group v-model="copyInfo[field.fieldName]" @change="updateWarning(field)"
                 :placeholder="getMatchedField(field.fieldName).cnFieldDesc" :class="{'warning': warningResults[field.fieldName]}">
-                <el-checkbox v-for="type in getTypes(field.fieldName)" :label="type.typeCode"
-                 :key="type.typeCode">{{type.typeName}}</el-checkbox>
+                <el-checkbox v-for="type in checkType" :label="type.typeCode"
+                :key="type.typeCode">{{type.typeName}}</el-checkbox>
               </el-checkbox-group>
             </span>
             <span class="warning-text">{{getWarningText(field.fieldName)}}</span>
@@ -461,7 +461,7 @@ export default {
         let part = this.copyInfo.patientDiseaseOrders.map((option) => {
           return option.arisePart;
         });
-        // console.log(firBody);
+        console.log(firBody);
         for (let i = 0; i < firBody.length; i++) {
           let firBody1 = firBody.slice(7, 9);
           let firBody2 = firBody.slice(4, 7);
@@ -496,6 +496,12 @@ export default {
           return firBody1;
         }
       }
+    },
+    checkType() {
+      let firBody = this.getTypeGroupitem('firBody');
+      for (let i = 0; i < firBody.length; i++) {
+        return firBody.slice(0, 7);
+      };
     },
     canEdit() {
       if (this.$route.matched.some(record => record.meta.myPatients)) {
