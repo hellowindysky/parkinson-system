@@ -107,7 +107,7 @@
         </div>
         <div class="field">
           <span class="field-name">设备开关机:</span>
-          <span class="field-value">{{getFieldValue(copyInfo.switchType, 'switchType')}}</span>
+          <span class="field-value">{{getFieldValue(copyInfo.equipmentSwitchgear, 'equipmentSwitchgear')}}</span>
         </div>
         <div class="field">
           <span class="field-name">末次服药时间:</span>
@@ -513,7 +513,7 @@ export default {
       }
     },
     getFieldValue(code, fieldName) {
-      if (fieldName === 'switchType') {
+      if (fieldName === 'switchType' || fieldName === 'equipmentSwitchgear') {
         code = parseInt(code, 10);
         var options = this.getOptions(fieldName);
         var targetOption = Util.getElement('code', code, options);

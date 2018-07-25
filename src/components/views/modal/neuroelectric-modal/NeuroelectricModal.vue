@@ -588,7 +588,7 @@
                   </span>
                   <el-input v-else-if="row[0].uiType===1"
                     v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"
-                    :placeholder="row[0].fieldDesc">
+                    :placeholder="getPlaceHolder(row[0].fieldDesc, '请输入')">
                   </el-input>
                   <el-input v-else-if="row[0].uiType===2"
                     v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[0].id][0].fieldValue"
@@ -632,16 +632,16 @@
                   </span>
                   <el-input v-else-if="row[1].uiType===1"
                     v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"
-                    :placeholder="row[1].fieldDesc">
+                    :placeholder="getPlaceHolder(row[1].fieldDesc, '请输入')">
                   </el-input>
                   <el-input v-else-if="row[1].uiType===2"
                     v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"
                     @blur="transformToNumber(copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0])"
-                    :placeholder="row[1].fieldDesc">
+                    :placeholder="getPlaceHolder(row[1].fieldDesc, '请输入')">
                   </el-input>
                   <el-select v-else-if="row[1].uiType===3"
                     v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"
-                    :placeholder="row[1].fieldDesc">
+                    :placeholder="getPlaceHolder(row[1].fieldDesc, '请输入')">
                   </el-select>
                   <el-date-picker v-else-if="row[1].uiType===6"
                     v-model="copyInfo.patientFieldCode[sleepMonitoringSubTableCode][row[1].id][0].fieldValue"
@@ -1040,34 +1040,6 @@ export default {
         resultGroups.push({});
         resultGroups[i].rowItems = groups[i].filter(item => item.fieldType === 0);
         resultGroups[i].colItems = groups[i].filter(item => item.fieldType === 1);
-      }
-
-      /**
-       * 格式化表格中使用TimePicker控件对应的接口返回值
-       * 目前只有睡眠总结表单中的 卧床时间 总睡眠时间 睡眠潜伏期 睡眠期时间会返回"HH:MM:SS"格式
-       * 如果返回是YYYY-MM-DD HH-MM-SS格式则不做处理
-       * 如果是HH-MM-SS则转为YYYY-MM-DD
-       */
-      for (let i = 0; i < resultGroups.length; i++) {
-        console.log('formate hhmmss');
-        let group = resultGroups[i];
-        for (let j = 0; j < group.rowItems.length; j++) {
-          let row = group.rowItems[j];
-          if (group.colItems.length > 0) {
-            for (let k = 0; k < group.colItems.length; k++) {
-              let col = group.colItems[k];
-              if (col.uiType === 8 || (col.uiType === undefined && row.uiType === 8)) {
-                console.log(row.id, col.id);
-                this.copyInfo.patientFieldCode[this.sleepMonitoringSubTableCode][row.id][col.id].fieldValue = this.transformtodate(this.copyInfo.patientFieldCode[this.sleepMonitoringSubTableCode][row.id][col.id].fieldValue);
-              }
-            }
-          } else {
-            if (row.uiType === 8) {
-              console.log(row.id);
-              this.copyInfo.patientFieldCode[this.sleepMonitoringSubTableCode][row.id][0].fieldValue = this.transformtodate(this.copyInfo.patientFieldCode[this.sleepMonitoringSubTableCode][row.id][0].fieldValue);
-            }
-          }
-        }
       }
 
       return resultGroups;
@@ -1610,6 +1582,8 @@ export default {
         date.setSeconds(Number(seconds));
       } else if (typeof time === 'string' && time.length === 16) {
         date = time;
+      } else if (typeof time === 'string' && time.length === 0) {
+        date = '';
       }
       return date;
     },
@@ -1719,6 +1693,38 @@ export default {
             obj.fieldValue = Util.simplifyDate(obj.fieldValue);
           } else if (uiType === 7 || uiType === 8) {
             obj.fieldValue = Util.simplifyTime(obj.fieldValue, true);
+          }
+        }
+
+        /**
+         * 格式化表格中使用TimePicker控件对应的接口返回值
+         * 目前只有睡眠总结表单中的 卧床时间 总睡眠时间 睡眠潜伏期 睡眠期时间会返回"HH:MM:SS"格式
+         * 如果返回是YYYY-MM-DD HH-MM-SS格式则不做处理
+         * 如果是HH-MM-SS则转为YYYY-MM-DD
+         */
+        for (let i = 0; i < this.sleepMonitoringItemGroups.length; i++) {
+          console.log('formate hhmmss');
+          let group = this.sleepMonitoringItemGroups[i];
+          for (let j = 0; j < group.rowItems.length; j++) {
+            let row = group.rowItems[j];
+            if (group.colItems.length > 0) {
+              for (let k = 0; k < group.colItems.length; k++) {
+                let col = group.colItems[k];
+                if (col.uiType === 8 || (col.uiType === undefined && row.uiType === 8)) {
+                  console.log(row.id, col.id);
+                  if (this.copyInfo.patientFieldCode[this.sleepMonitoringSubTableCode][row.id][0].fieldValue !== '') {
+                    this.copyInfo.patientFieldCode[this.sleepMonitoringSubTableCode][row.id][col.id].fieldValue = this.transformtodate(this.copyInfo.patientFieldCode[this.sleepMonitoringSubTableCode][row.id][col.id].fieldValue);
+                  }
+                }
+              }
+            } else {
+              if (row.uiType === 8) {
+                console.log(row.id);
+                if (this.copyInfo.patientFieldCode[this.sleepMonitoringSubTableCode][row.id][0].fieldValue !== '') {
+                  this.copyInfo.patientFieldCode[this.sleepMonitoringSubTableCode][row.id][0].fieldValue = this.transformtodate(this.copyInfo.patientFieldCode[this.sleepMonitoringSubTableCode][row.id][0].fieldValue);
+                }
+              }
+            }
           }
         }
 

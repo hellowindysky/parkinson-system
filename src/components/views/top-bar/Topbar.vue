@@ -61,7 +61,7 @@
 import { mapGetters } from 'vuex';
 import Bus from 'utils/bus.js';
 import { getAuthenticationList } from 'api/user.js';
-import { queryExportUsername } from 'api/patient.js';
+import { queryExportUsername, getGeographicalList } from 'api/patient.js';
 
 const WAITING_TO_CHANGE = 'waitingToChange';
 const NEED_TO_QUERY_AGAIN = 'needToQueryAgain';
@@ -290,6 +290,18 @@ export default {
     this.$store.dispatch('getWholeTemplate');
     this.$store.dispatch('getScaleList');
     this.$store.dispatch('getExportFields');
+
+    // 查询地理信息列表 存储在LocalStorage中
+    getGeographicalList().then((data) => {
+      // console.log(data);
+      localStorage.setItem('geographicalList', JSON.stringify(data));
+    }, (error) => {
+      console.log(error);
+      this.$notify.error({
+        title: '错误',
+        message: '获取城市列表失败！'
+      });
+    });
 
     this.updateAuthorizedStatus();
     this.showPrintTemplate();

@@ -436,8 +436,10 @@ export default {
       return '首发症状（' + (this.firstSymbolData ? this.firstSymbolData : []).length + '条记录）';
     },
     firstTreatmentsTitle() {
-      var ledd = Number(this.calcTotalLevodopaDoseOfAllOtherMedicine().toFixed(5));
-      return '初诊治疗（' + (this.firstVisitTreatmentData ? this.firstVisitTreatmentData : []).length + '条记录） LEDD: ' + ledd + ' mg';
+      // v2.5.0 [RY-971] 初诊治疗-药物治疗-LEDD概念有歧义，暂时隐藏，不做业务显示
+      // var ledd = Number(this.calcTotalLevodopaDoseOfAllOtherMedicine().toFixed(5));
+      // return '初诊治疗（' + (this.firstVisitTreatmentData ? this.firstVisitTreatmentData : []).length + '条记录） LEDD: ' + ledd + ' mg';
+      return '初诊治疗（' + (this.firstVisitTreatmentData ? this.firstVisitTreatmentData : []).length + '条记录）';
     },
     visitRecordTitle() {
       return '就诊记录（' + (this.patientHistorysData ? this.patientHistorysData : []).length + '条记录）';
