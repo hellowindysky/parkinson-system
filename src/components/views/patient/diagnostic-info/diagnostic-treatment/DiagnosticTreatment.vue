@@ -464,7 +464,7 @@ export default {
     },
     medicineTitle() {
       var count = this.diagnosticMedicine.length + this.diagnosticMedicineAdverseEvent.length;
-      console.log(this.calcTotalLevodopaDoseOfAllOtherMedicine({}));
+      // console.log(this.calcTotalLevodopaDoseOfAllOtherMedicine({}));
       var ledd = Number(this.calcTotalLevodopaDoseOfAllOtherMedicine({}).toFixed(5));
       return '药物治疗' + '（' + count + '条记录） LEDD: ' + ledd + ' mg';
     },

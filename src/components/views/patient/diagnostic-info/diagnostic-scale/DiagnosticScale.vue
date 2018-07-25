@@ -449,7 +449,7 @@ export default {
         left: 10px;
         top: 50px;
         .value {
-          max-width: 210px;
+          max-width: 200px;
           .spanPaddingLeft{
             white-space: normal;
             word-break: break-all;
