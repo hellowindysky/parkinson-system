@@ -1,9 +1,9 @@
 <template lang="html">
   <div class="dbs-modal-wrapper">
-    <div class="dbs-modal">
+    <div class="dbs-modal" >
       <h3 class="title">{{title}}</h3>
       <i class="el-alert__closebtn el-icon-close large-icon" @click="cancel"></i>
-      <div class="modal-body">
+      <div class="modal-body"  ref="scrollArea">
       <div class="content">
         <div class="field">
           <span class="field-name">
@@ -1623,8 +1623,6 @@ export default {
           wheelSpeed: 1,
           minScrollbarLength: 40
         };
-        Ps.destroy(this.$refs.scrollArea);
-        Ps.initialize(this.$refs.scrollArea, scrollSettings);
 
         Ps.destroy(this.$refs.form1);
         Ps.initialize(this.$refs.form1, scrollSettings);
