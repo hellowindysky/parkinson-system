@@ -1,9 +1,11 @@
 <template lang="html">
   <div class="diagnostic-record-wrapper">
 
-    <div class="modal-box" ref="scrollArea">
+    <div class="modal-box">
       <h3 class="title">{{title}}</h3>
 
+      <i class="el-alert__closebtn el-icon-close large-icon" @click="cancel"></i>
+      <div class="modal-body">
       <div class="field">
         <span class="field-name">
           就诊时间:
@@ -93,10 +95,12 @@
       </div>
 
       <div class="seperate-line"></div>
+      </div>
+      <div class="modal-footer">
       <div class="button cancel-button" @click="cancel">取消</div>
       <div class="button edit-button" @click="switchToEditingMode" v-if="mode===VIEW_CURRENT_CARD && canEdit">编辑</div>
       <div class="button submit-button" @click="submit" v-else-if="mode!==VIEW_CURRENT_CARD">确定</div>
-
+      </div>
     </div>
 
   </div>
@@ -296,7 +300,6 @@ export default {
   .modal-box{
     position: relative;
     margin: auto;
-    padding: 0 40px;
     top: 5%;
     width: 600px;
     max-height: 90%;
@@ -305,6 +308,21 @@ export default {
     .title {
       padding: 30px 0 10px;
       font-size: @large-font-size;
+    }
+    .large-icon {
+      font-size: @large-font-size;
+    }
+    .modal-body {
+      position: relative;
+      max-height: 80%;
+      overflow-y: auto;
+      padding: 0 30px;
+      overflow-x: hidden;
+    }
+
+    .modal-footer {
+      position: relative;
+      bottom: 0px;
     }
     .field {
       display: inline-block;

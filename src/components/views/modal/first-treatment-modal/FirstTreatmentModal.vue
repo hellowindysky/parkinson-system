@@ -1,7 +1,9 @@
 <template lang="html">
   <div class="treatment-modal-wrapper">
-    <div class="treatment-modal" ref="scrollArea">
+    <div class="treatment-modal">
       <h3 class="title">{{title}}</h3>
+      <i class="el-alert__closebtn el-icon-close large-icon" @click="cancel"></i>
+      <div class="modal-body">
       <div class="content">
         <div class="field">
           <span class="field-name">
@@ -377,10 +379,12 @@
 
 
 
+      </div>
+      <div class="modal-footer">
       <div class="button cancel-button" @click="cancel">取消</div>
       <div v-if="mode!==VIEW_CURRENT_CARD" class="button submit-button" @click="submit">确定</div>
       <div v-if="mode===VIEW_CURRENT_CARD && canEdit" class="button edit-button" @click="switchToEditingMode">编辑</div>
-
+      </div>
     </div>
   </div>
 </template>
@@ -803,7 +807,6 @@ export default {
   .treatment-modal{
     position: relative;
     margin: auto;
-    padding: 0 40px;
     top: 3%;
     width: 660px;
     max-height: 94%;
@@ -812,6 +815,21 @@ export default {
     .title {
       padding: 30px 0 10px;
       font-size: @large-font-size;
+    }
+    .large-icon {
+      font-size: @large-font-size;
+    }
+    .modal-body {
+      position: relative;
+      max-height: 80%;
+      overflow-y: auto;
+      padding: 0 30px;
+      overflow-x: hidden;
+    }
+
+    .modal-footer {
+      position: relative;
+      bottom: 0px;
     }
     .content{
       text-align: left;

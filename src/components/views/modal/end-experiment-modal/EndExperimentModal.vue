@@ -1,7 +1,9 @@
 <template lang="html">
   <div class="end-experiment-modal-wrapper">
-    <div class="end-experiment-modal" ref="scrollArea">
+    <div class="end-experiment-modal">
       <h3 class="title">结束实验</h3>
+      <i class="el-alert__closebtn el-icon-close large-icon" @click="cancel"></i>
+      <div class="modal-body">
       <div class="content">
 
         <div class="field whole-line">
@@ -179,10 +181,12 @@
       </div>
 
       <div class="seperate-line"></div>
+      </div>
+      <div class="modal-footer">
       <div class="button cancel-button" @click="cancel">取消</div>
       <div v-if="mode!==VIEW_CURRENT_CARD" class="button submit-button" @click="submit">确定</div>
       <div v-else-if="mode===VIEW_CURRENT_CARD && showEdit" class="button submit-button btn-margin">编辑</div>
-
+      </div>
     </div>
   </div>
 </template>
@@ -384,7 +388,6 @@ export default {
   .end-experiment-modal {
     position: relative;
     margin: auto;
-    padding: 0 60px;
     top: 10%;
     width: 500px;
     max-height: 80%;
@@ -393,6 +396,21 @@ export default {
     .title {
       padding: 30px 0 10px;
       font-size: @large-font-size;
+    }
+    .large-icon {
+      font-size: @large-font-size;
+    }
+    .modal-body {
+      position: relative;
+      max-height: 80%;
+      overflow-y: auto;
+      padding: 0 30px;
+      overflow-x: hidden;
+    }
+
+    .modal-footer {
+      position: relative;
+      bottom: 0px;
     }
     .content {
       text-align: left;

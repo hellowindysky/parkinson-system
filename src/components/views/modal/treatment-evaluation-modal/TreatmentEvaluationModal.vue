@@ -1,7 +1,9 @@
 <template lang="html">
   <div class="treatment-evaluation-modal-wrapper">
-    <div class="treatment-evaluation-modal" ref="scrollArea">
+    <div class="treatment-evaluation-modal">
       <h3 class="title">{{title}}</h3>
+      <i class="el-alert__closebtn el-icon-close large-icon" @click="cancel"></i>
+      <div class="modal-body">
       <div class="content">
         <div class="field whole-line">
           <span class="field-name">
@@ -151,9 +153,12 @@
       </div>
       <p>0，无该症状；轻度 1-3；中度 4-7；重度 8-10；数值越大越严重</p>
       <div class="seperate-line"></div>
+      </div>
+      <div class="modal-footer">
       <div class="button cancel-button btn-margin" @click="cancel">取消</div>
       <div v-show="mode===EDIT_CURRENT_CARD || mode===ADD_NEW_CARD" class="button submit-button btn-margin" @click="submit">确定</div>
       <div v-show="mode===VIEW_CURRENT_CARD && showEdit" class="button submit-button btn-margin" @click="switchToEditingMode">编辑</div>
+      </div>
     </div>
   </div>
 </template>
@@ -461,10 +466,9 @@ export default {
   .treatment-evaluation-modal {
     position: relative;
     margin: 10px auto;
-    padding: 0 40px;
     top: 3%;
     width: 600px;
-    max-height: 90%;
+    height: 90%;
     background-color: @background-color;
     overflow: hidden;
     .moveLeft {
@@ -474,6 +478,21 @@ export default {
     .title {
       padding: 30px 0 10px;
       font-size: @large-font-size;
+    }
+    .large-icon {
+      font-size: @large-font-size;
+    }
+    .modal-body {
+      position: relative;
+      max-height: 80%;
+      overflow-y: auto;
+      padding: 0 30px;
+      overflow-x: hidden;
+    }
+
+    .modal-footer {
+      position: relative;
+      bottom: 0px;
     }
     .content {
       text-align: left;

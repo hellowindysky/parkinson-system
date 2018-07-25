@@ -91,7 +91,7 @@
               @select="handleDateSelect"
               :selection-mode="selectionMode"
               :first-day-of-week="firstDayOfWeek"
-              :value="new Date(value)"
+              :value="new Date(propDate)"
               :default-value="defaultValue ? new Date(defaultValue) : null"
               :date="date"
               :disabled-date="disabledDate"
@@ -100,7 +100,7 @@
             <year-table
               v-show="currentView === 'year'"
               @pick="handleYearPick"
-              :value="new Date(value)"
+              :value="new Date(propDate)"
               :default-value="defaultValue ? new Date(defaultValue) : null"
               :date="date"
               :disabled-date="disabledDate">
@@ -108,7 +108,7 @@
             <month-table
               v-show="currentView === 'month'"
               @pick="handleMonthPick"
-              :value="new Date(value)"
+              :value="new Date(propDate)"
               :default-value="defaultValue ? new Date(defaultValue) : null"
               :date="date"
               :disabled-date="disabledDate">
@@ -605,20 +605,35 @@
 </script>
 
 <style lang="less">
-.custom-date-table .el-date-table__row td.available {
-  background-color: #f4f4f4;
-  opacity: 1;
-  cursor: not-allowed;
-  color: #ccc;
+.el-picker-panel.el-date-picker {
+  width: 100%;
+  .el-picker-panel__body-wrapper {
+    width: 100%;
+    .el-picker-panel__content {
+      width: auto;
+    }
+  }
+}
+.custom-date-table {
+  .el-date-table__row {
+    td.available {
+      &.current {
+        span {
+          background-color: #989898;
+        }
+      }
+      div {
+        background-color: #f5f7fa;
+        opacity: 1;
+        cursor: not-allowed;
+        color: #c0c4cc;
+      }
+    }
+  }
 }
 .el-date-table {
   th {
     text-align: center;
-  }
-  .el-date-table__row {
-    td.current.disabled {
-      background-color: #e2e2e6;
-    }
   }
 }
 </style>

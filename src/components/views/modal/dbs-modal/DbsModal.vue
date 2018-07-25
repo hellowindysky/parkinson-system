@@ -1,7 +1,9 @@
 <template lang="html">
   <div class="dbs-modal-wrapper">
-    <div class="dbs-modal" ref="scrollArea">
+    <div class="dbs-modal">
       <h3 class="title">{{title}}</h3>
+      <i class="el-alert__closebtn el-icon-close large-icon" @click="cancel"></i>
+      <div class="modal-body">
       <div class="content">
         <div class="field">
           <span class="field-name">
@@ -72,7 +74,7 @@
             {{modelType === 1 ? '是' : '否'}}
           </span>
           <span class="field-input" v-else>
-            <el-select v-model="modelType" :disabled="mode !== ADD_NEW_CARD" @change="selectFirstOrFollow">
+            <el-select v-model="modelType" :disabled="mode !== ADD_NEW_CARD" @change="selectFirstOrFollow;changeDevice">
               <el-option label="是" :value="1"></el-option>
               <el-option label="否" :value="0"></el-option>
             </el-select>
@@ -1064,7 +1066,7 @@
               </el-checkbox-group>
 
               <!-- 交叉电脉冲 才有的 -->
-              <el-checkbox-group v-model="firstDbsAdjustAfterParamPole_two[index].positive"
+              <el-checkbox-group v-show="param.exciteMod===4" v-model="firstDbsAdjustAfterParamPole_two[index].positive"
                 :max="getMaxNumOfContact(param.exciteMod, true)">
                 <el-checkbox v-for="(contact, i) in getSidePositiveContact(param.limbSide)"
                   :label="contact" :key="'sidePositiveContact' + i"
@@ -1083,7 +1085,7 @@
               </el-checkbox-group>
 
               <!-- 交叉电脉冲 才有的 -->
-              <el-checkbox-group v-model="firstDbsAdjustAfterParamPole_two[index].negative"
+              <el-checkbox-group v-show="param.exciteMod===4" v-model="firstDbsAdjustAfterParamPole_two[index].negative"
                 :max="getMaxNumOfContact(param.exciteMod, false)">
                 <el-checkbox v-for="(contact, i) in getSideNegativeContact(param.limbSide)"
                   :label="contact" :key="'sideNegativeContact' + i"
@@ -1119,9 +1121,12 @@
         </table>
       </div>
       <div class="seperate-line"></div>
+      </div>
+      <div class="modal-footer">
       <div class="button cancel-button" @click="cancel">取消</div>
       <div class="button submit-button" @click="submit" v-if="mode!==VIEW_CURRENT_CARD">确定</div>
       <div class="button edit-button" @click="switchToEditingMode" v-else-if="mode===VIEW_CURRENT_CARD && showEdit">编辑</div>
+      </div>
     </div>
   </div>
 </template>
@@ -1831,7 +1836,7 @@ export default {
       }
     },
     initContactForm() {
-      if (this.modelType === 1) {
+      if (this.modelType === 1 || true) {
         // 如果是首次开机，则选择设备后，会生成触点电压表格（左右两部分），这个函数为其做好数据准备工作
         this.$set(this.copyInfo, 'patientDbsFirstDetail', []);
         let leftContactList = this.getSideDeviceContact('left');
@@ -2619,18 +2624,33 @@ export default {
   .dbs-modal {
     position: relative;
     margin: auto;
-    padding: 0 40px;
     top: 3%;
     width: 80%;
     min-width: 660px;
     max-width: 1500px;
-    max-height: 94%;
+    height: 94%;
     background-color: @background-color;
     overflow: hidden;
     .title {
       padding: 30px 0 10px;
       font-size: @large-font-size;
     }
+    .large-icon {
+      font-size: @large-font-size;
+    }
+    .modal-body {
+      position: relative;
+      max-height: 80%;
+      overflow-y: auto;
+      padding: 0 30px;
+      overflow-x: hidden;
+    }
+
+    .modal-footer {
+      position: relative;
+      bottom: 0px;
+    }
+
     .content {
       text-align: left;
       font-size: 0;

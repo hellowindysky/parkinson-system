@@ -159,6 +159,15 @@ export default {
     checkIfBlocking(fieldName) {
       // 1.脱敏字段；2.在脱敏状态下；3.非新增病患 ———— 这个函数用来返回是否同时满足前面 3 个条件
       let blockingFieldList = ['name', 'cardId', 'phone', 'phone2', 'homeAddress'];
+
+      // 特殊的脱敏字段，本来是不可编辑，但没填的时候需要编辑，上面其余3个也是脱敏字段，没填也不能再重新填，
+      let specialBlockingField = ['phone', 'phone2'];
+      for (let item of specialBlockingField) {
+        if (fieldName === item && !this.basicInfo[fieldName]) {
+          return false;
+        }
+      };
+
       if (!this.$store.state.showSensitiveInfo && blockingFieldList.indexOf(fieldName) >= 0 &&
         this.$route.params.id !== 'newPatient') {
         return true;

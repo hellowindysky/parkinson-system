@@ -1,7 +1,9 @@
 <template lang="html">
   <div class="pre-evaluation-modal-wrapper">
-    <div class="pre-evaluation-modal" ref="scrollArea">
+    <div class="pre-evaluation-modal">
       <h3 class="title">{{title}}</h3>
+      <i class="el-alert__closebtn el-icon-close large-icon" @click="cancel"></i>
+      <div class="modal-body">
       <div class="content">
         <div class="field">
           <span class="field-name">DBS患者编码</span>
@@ -561,9 +563,12 @@
       </div>
 
       <div class="seperate-line"></div>
+      </div>
+      <div class="modal-footer">
       <div class="button cancel-button" @click="cancel">取消</div>
       <div class="button edit-button" v-if="mode===VIEW_CURRENT_CARD && showEdit" @click="switchToEditingMode">编辑</div>
       <div class="button submit-button" v-else-if="mode!==VIEW_CURRENT_CARD" @click="submit">确定</div>
+      </div>
     </div>
   </div>
 </template>
@@ -1274,7 +1279,7 @@ export default {
           if (!data) {
             this.$notify({
               title: '提示',
-              message: '没有符合条件的非运动症状评估量表数据',
+              message: '没有符合条件的综合评估量表数据',
               type: 'warning'
             });
           } else {
@@ -1288,7 +1293,7 @@ export default {
             }
             this.$notify({
               title: '成功',
-              message: '导入非运动症状评估量表数据成功',
+              message: '导入综合评估量表数据成功',
               type: 'success'
             });
           }
@@ -1306,10 +1311,10 @@ export default {
               let obj = data.filter((sub) => {
                 return sub.scaleInfo === item.scaleInfo;
               })[0];
-              item.takeMedicineOpen = obj.takeMedicineOpen;
-              item.takeMedicineClose = obj.takeMedicineClose;
-              item.noTakeMedicineOpen = obj.noTakeMedicineOpen;
-              item.noTakeMedicineClose = obj.noTakeMedicineClose;
+              this.$set(item, 'takeMedicineOpen', obj ? obj.takeMedicineOpen : '');
+              this.$set(item, 'takeMedicineClose', obj ? obj.takeMedicineClose : '');
+              this.$set(item, 'noTakeMedicineOpen', obj ? obj.noTakeMedicineOpen : '');
+              this.$set(item, 'noTakeMedicineClose', obj ? obj.noTakeMedicineClose : '');
             });
             // preopsMotorScaleList[0].scaleScoreBefore = data['1'];
             // preopsMotorScaleList[0].scaleScoreAfter = data['2'];
@@ -1912,7 +1917,6 @@ export default {
   .pre-evaluation-modal {
     position: relative;
     margin: auto;
-    padding: 0 40px;
     top: 3%;
     width: 800px;
     max-height: 94%;
@@ -1927,6 +1931,24 @@ export default {
       text-align: left;
       font-weight: bold;
     }
+
+    .large-icon {
+      font-size: @large-font-size;
+    }
+    .modal-body {
+      position: relative;
+      max-height: 80%;
+      overflow-y: auto;
+      padding: 0 30px;
+      overflow-x: hidden;
+    }
+
+    .modal-footer {
+      position: relative;
+      bottom: 0px;
+    }
+
+
     .content {
       text-align: left;
       font-size: 0;
