@@ -65,7 +65,7 @@
             </span>
             <span v-else-if="getUIType(field)===3">
               <el-select v-if="field.fieldName==='homeProvinceCode'" v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-                :placeholder="getMatchedField(field).cnFieldDesc" @change="setProvinceName(); updateWarning(field)" :clearable="true">
+                :placeholder="getMatchedField(field).cnFieldDesc" @change="setProvinceName(); updateWarning(field)" :clearable="true" :disabled="!copyInfo.nationalityCode">
                 <el-option v-for="(province, index) in provinceList"
                  :key="province.typeCode"
                  :label="province.typeName"
@@ -73,7 +73,7 @@
                 </el-option>
               </el-select>
               <el-select v-else-if="field.fieldName==='homeCity'" v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
-                :placeholder="getMatchedField(field).cnFieldDesc" @change="setCityName(); updateWarning(field)" :clearable="true">
+                :placeholder="getMatchedField(field).cnFieldDesc" @change="setCityName(); updateWarning(field)" :clearable="true" :disabled="!copyInfo.homeProvinceCode">
                 <el-option v-for="(city, index) in cityList"
                  :key="city.typeCode"
                  :label="city.typeName"
@@ -992,7 +992,7 @@ export default {
         .el-input {
           transform: translateY(-3px);
           .el-input__inner {
-            height: 30px;
+            height: 30px !important;
             border: none;
             background-color: @screen-color;
           }
