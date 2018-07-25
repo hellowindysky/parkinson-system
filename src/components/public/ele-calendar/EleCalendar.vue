@@ -614,21 +614,26 @@
     }
   }
 }
-//------
-.custom-date-table .el-date-table__row td.available {
-  background-color: #f4f4f4;
-  opacity: 1;
-  cursor: not-allowed;
-  color: #ccc;
+.custom-date-table {
+  .el-date-table__row {
+    td.available {
+      &.current {
+        span {
+          background-color: #989898;
+        }
+      }
+      div {
+        background-color: #f5f7fa;
+        opacity: 1;
+        cursor: not-allowed;
+        color: #c0c4cc;
+      }
+    }
+  }
 }
 .el-date-table {
   th {
     text-align: center;
-  }
-  .el-date-table__row {
-    td.current.disabled {
-      background-color: #e2e2e6;
-    }
   }
 }
 </style>
