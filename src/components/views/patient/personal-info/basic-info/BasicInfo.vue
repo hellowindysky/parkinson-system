@@ -638,7 +638,7 @@ export default {
         return;
       } else if (fieldName === 'nationality') {
         if (this.copyInfo.nationality === '') {
-          this.$set(this.warningResults, fieldName, '请输入正确的国家名称');
+          this.$set(this.warningResults, fieldName, null);
           return;
         } else {
           let nationalityCode = Util.getElement('typeName', this.copyInfo.nationality, this.geographicalList).typeCode;
