@@ -185,7 +185,7 @@
 
         <extensible-panel class="disease-card" :title="firstSymTitle" @addNewCard="addFirstSymptomsRecord" :editable="canEdit">
           <Card class="card symptoms-card" :mode="mode" :class="cardWidth"
-           v-for="item in firstSymbolData" :key="item.id" :title="transform(item.symName, getSymOptions(item.symType))"
+           v-for="item in firstSymbolData" :key="item.sortId" :title="transform(item.symName, getSymOptions(item.symType))"
            v-on:editCurrentCard="editFirstSymptomsRecord(item)"
            v-on:viewCurrentCard="viewFirstSymptomsRecord(item)"
            v-on:deleteCurrentCard="deleteFirstSymptomsRecord(item)">
@@ -622,6 +622,7 @@ export default {
     },
     getSymOptions(fieldType) {
       return this.symptomType.filter((obj) => {
+        console.log(this.symptomType);
         return obj.symptomtype === fieldType;
       }).map((obj) => {
         return {
@@ -630,6 +631,18 @@ export default {
         };
       });
     },
+    // getSymOptions(fieldType) {
+    //   return this.symptomType.concat(this.noSportType).filter((obj) => {
+    //     // let type1 = this.symptomType.filter((obj) => {
+    //     console.log(this.symptomType.concat(this.noSportType));
+    //     return obj.symptomtype === fieldType;
+    //   }).map((obj) => {
+    //     return {
+    //       name: obj.sympName,
+    //       code: obj.id
+    //     };
+    //   });
+    // },
     getNoSportOptions(fieldType) {
       return this.noSportType.filter((obj) => {
         return obj.noSportType === fieldType;
@@ -666,6 +679,24 @@ export default {
         return obj.typeName;
       })[0];
     },
+    // getTransform(id, fieldName) {
+    //   id = parseInt(id, 10);
+    //   let typesArr = this.getOptions(fieldName);
+    //   let item = Util.getElement('code', id, typesArr);
+    //   return item.name ? item.name : '';
+    // },
+    // getOptions(fieldName) {
+    //   var options = [];
+    //   var types = Util.getElement('typegroupcode', fieldName, this.typeGroup).types;
+    //   types = types ? types : [];
+    //   for (let type of types) {
+    //     options.push({
+    //       name: type.typeName,
+    //       code: type.typeCode
+    //     });
+    //   };
+    //   return options;
+    // },
     addOrder() {
       this.copyInfo.patientDiseaseOrders.push({
         arisePart: '',
@@ -702,7 +733,7 @@ export default {
         classNameList.push('long-label-field');
       }
       if (field.cnfieldName === '备注' && this.copyInfo.diseaseType !== 7) {
-         classNameList.push('short-label-field');
+        classNameList.push('short-label-field');
       }
       // 判断该字段是否是多选框
       if (this.getUIType(field) === 5) {

@@ -12,7 +12,7 @@
             <span class="required-mark">*</span>
           </span>
           <span class="field-input long-field-name" v-if="mode===VIEW_CURRENT_CARD">
-            <span>{{transformII(copyInfo.symName, getSymOptions(this.copyInfo.symType))}}</span>
+            <span>{{transformII(copyInfo.symName, getSymOptions(copyInfo.symType))}}</span>
           </span>
           <span class="field-input" v-else>
             <span class="warning-text">{{warningResults.symName}}</span>
@@ -630,7 +630,7 @@ export default {
       }).map((obj) => {
         return {
           name: obj.sympName,
-          code: obj.id
+          code: obj.sortId
         };
       });
     },
