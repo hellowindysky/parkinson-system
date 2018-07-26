@@ -4,17 +4,30 @@
     <div class="basic-info">
       <div class="group" v-for="group in basicInfoTemplateGroups">
         <div class="field" v-for="field in group" :class="checkIfWholeLine(field)">
-          <span class="field-name">
+          <span class="field-name" v-if="getUIType(field) === 1 && field.fieldName === 'remarks'" v-show="copyInfo.econType === 6">
+            {{field.cnfieldName}}
+            <span class="required-mark" v-show="field.must === 1">*</span>
+            <span class="required-mark" v-show="soochowMust && field.fieldName === 'cardId'">*</span>
+            <span class="required-mark" v-show="soochowMust && field.fieldName === 'phone'">*</span>
+          </span>
+          <span class="field-name" v-else-if="field.fieldName !== 'remarks'">
             {{field.cnfieldName}}
             <span class="required-mark" v-show="field.must===1">*</span>
             <span class="required-mark" v-show="soochowMust && field.fieldName === 'cardId'">*</span>
             <span class="required-mark" v-show="soochowMust && field.fieldName === 'phone'">*</span>
           </span>
 
-          <div class="field-value" v-show="mode===READING_MODE">
-            <span v-if="getUIType(field)===3 && field.fieldName!=='homeProvince'">
+          <div class="field-value" v-if="field.fieldName !== 'homeProvinceCode' && field.fieldName !== 'homeCity'" v-show="mode === READING_MODE">
+            <span v-if="getUIType(field) === 3 && field.fieldName !== 'homeProvinceCode'">
               {{ transformTypeCode(copyInfo[field.fieldName], field) }}
             </span>
+            <el-popover
+              v-else-if="field.fieldName === 'remarks'"
+              placement="bottom-start" width="400" trigger="hover"
+              :content="copyInfo.remarks">
+              <span slot="reference">{{ copyInfo[field.fieldName] }}</span>
+            </el-popover>
+            <span v-else-if="field.fieldName === 'nationality'">{{ getBirthPlaceText }}</span>
             <span v-else>
               {{ copyInfo[field.fieldName] }}
             </span>
@@ -27,12 +40,15 @@
               {{ copyInfo[field.fieldName] }}
             </span>
 
+            
             <span v-else-if="getUIType(field)===1 && field.fieldName==='remarks'" v-show="copyInfo.econType === 6">
               <el-input v-model="copyInfo[field.fieldName]"
                 :placeholder="getMatchedField(field).cnFieldDesc"
-                type= text
-                :maxlength="100"></el-input>
+                type="text"
+                :maxlength="getMaxLength(field)"
+                @input="inputing(field, getMaxLength(field))"></el-input>
             </span>
+            
             <span v-else-if="getUIType(field)===1">
               <el-autocomplete v-if="field.fieldName==='nation'" v-model="copyInfo[field.fieldName]"
                 :fetch-suggestions="querySearchAsync"
@@ -40,15 +56,31 @@
                 :placeholder="getMatchedField(field).cnFieldDesc">
               </el-autocomplete>
               <el-autocomplete v-else-if="field.fieldName==='nationality'" v-model="copyInfo[field.fieldName]"
-                :fetch-suggestions="querySearchAsync2"
-                @select="handleSelect"
+                :class="{'warning': warningResults[field.fieldName]}"
+                :fetch-suggestions="queryNationList" clearable
                 :placeholder="getMatchedField(field).cnFieldDesc">
               </el-autocomplete>
               <el-input v-else v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}" :disabled="field.fieldName==='bmi'"
-                :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)" :maxlength="50" @input="inputing(field)"></el-input>
+                :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)" :maxlength="getMaxLength(field)" @input="inputing(field, getMaxLength(field))"></el-input>
             </span>
             <span v-else-if="getUIType(field)===3">
-              <el-select v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
+              <el-select v-if="field.fieldName==='homeProvinceCode'" v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
+                :placeholder="getMatchedField(field).cnFieldDesc" @change="setProvinceName(); updateWarning(field)" :clearable="true" :disabled="!copyInfo.nationalityCode">
+                <el-option v-for="(province, index) in provinceList"
+                 :key="province.typeCode"
+                 :label="province.typeName"
+                 :value="province.typeCode">
+                </el-option>
+              </el-select>
+              <el-select v-else-if="field.fieldName==='homeCity'" v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
+                :placeholder="getMatchedField(field).cnFieldDesc" @change="setCityName(); updateWarning(field)" :clearable="true" :disabled="!copyInfo.homeProvinceCode">
+                <el-option v-for="(city, index) in cityList"
+                 :key="city.typeCode"
+                 :label="city.typeName"
+                 :value="city.typeCode">
+                </el-option>
+              </el-select>
+              <el-select v-else v-model="copyInfo[field.fieldName]" :class="{'warning': warningResults[field.fieldName]}"
                 :placeholder="getMatchedField(field).cnFieldDesc" @change="updateWarning(field)" :clearable="true">
                 <el-option v-for="(type, index) in getTypes(field)" :key="type.typeName + type.typeCode + '-' + index"
                  :label="type.typeName"
@@ -75,7 +107,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import { modifyPatientInfo, addPatientInfo } from 'api/patient.js';
+import { modifyPatientInfo, addPatientInfo, getGeographicalList } from 'api/patient.js';
 import Bus from 'utils/bus.js';
 import Util from 'utils/util.js';
 import { reviseDateFormat, pruneObj, deepCopy } from 'utils/helper.js';
@@ -109,8 +141,8 @@ export default {
       },
       completeEditingForTheFirstTime: false,  // 用来控制某些字段是否需要校验
       lockSubmitButton: false,
-      allNation: [], // 所有民族
-      allNationality: [] // 所有国籍
+      allNation: [] // 所有民族
+      // allNationality: [] // 所有国籍
     };
   },
   computed: {
@@ -147,6 +179,47 @@ export default {
       } else {
         return false;
       }
+    },
+    // 从localStorage中查询国籍列表
+    geographicalList() {
+      if (localStorage.getItem('geographicalList')) {
+        return JSON.parse(localStorage.getItem('geographicalList'));
+      } else {
+        getGeographicalList().then((data) => {
+          console.log(data);
+          localStorage.setItem('geographicalList', JSON.stringify(data));
+        }, (error) => {
+          console.log(error);
+          this.$notify.error({
+            title: '错误',
+            message: '获取城市列表失败！'
+          });
+        });
+        return [];
+      }
+    },
+    // 根据国籍code获取下级城市列表
+    provinceList() {
+      if (this.copyInfo.nationalityCode) {
+        return Util.getElement('typeCode', this.copyInfo.nationalityCode, this.geographicalList).childType;
+      } else {
+        return [];
+      }
+    },
+    // 根据省code获取下级城市列表
+    cityList() {
+      if (this.copyInfo.homeProvinceCode) {
+        return Util.getElement('typeCode', this.copyInfo.homeProvinceCode, this.provinceList).childType;
+      } else {
+        return [];
+      }
+    },
+    // 获取出生地文本
+    getBirthPlaceText() {
+      let nationText = this.copyInfo.nationality ? this.copyInfo.nationality : '';
+      let provinceText = this.copyInfo.provinceText ? this.copyInfo.provinceText : '';
+      let cityText = this.copyInfo.cityText ? this.copyInfo.cityText : '';
+      return nationText + ' ' + provinceText + ' ' + cityText;
     }
   },
   methods: {
@@ -369,9 +442,9 @@ export default {
       // 进行浅复制之后，修改复制对象的属性，不会影响到原始对象
       // 下面这行有一个特殊作用，能让 Vue 动态检测已有对象的新添加的属性，参看 https://cn.vuejs.org/v2/guide/reactivity.html
       this.copyInfo = Object.assign({}, obj);
-      if (this.copyInfo.homeCity) {
-        this.copyInfo.homeCity = parseInt(this.copyInfo.homeCity, 10);
-      }
+      // if (this.copyInfo.homeCity) {
+      //   this.copyInfo.homeCity = parseInt(this.copyInfo.homeCity, 10);
+      // }
       // 如果传过来的数据对象缺少某些属性，则根据 template 补上
       for (let group of this.basicInfoTemplateGroups) {
         for (let field of group) {
@@ -407,7 +480,7 @@ export default {
       if (WHOLE_LINE_FIELD_LIST.indexOf(dictionaryField.fieldName) > -1) {
         fieldClass.push('whole-line');
       };
-      if (field.fieldName === 'homeProvince') {
+      if (field.fieldName === 'homeProvinceCode') {
         fieldClass.push('field-Province');
       }
       if (field.fieldName === 'homeCity') {
@@ -417,7 +490,7 @@ export default {
         fieldClass.push('field-nationality');
       }
       if (field.fieldName === 'liveType') {
-        fieldClass.push('field-liveType');
+        fieldClass.push('whole-line');
       }
       if (field.cnfieldName === '备注') {
         fieldClass.push('short-label-field');
@@ -441,24 +514,34 @@ export default {
       }
       return typeInfo.types ? typeInfo.types : [];
     },
+    getMaxLength(field) {
+      let maxLength = 50;
+      if (field.fieldName === 'patientCode' || field.fieldName === 'outpatientMedicalRecords' || field.fieldName === 'medicalRecordNumber') {
+        maxLength = 32;
+      } else if (field.fieldName === 'remarks') {
+        maxLength = 100;
+      }
+      return maxLength;
+    },
     transformTypeCode(typeCode, field) {
       // 根据 typeCode 找到对应的 typeName
       var types = this.getTypes(field);
       var matchedType = Util.getElement('typeCode', parseInt(typeCode, 10), types);
       return matchedType.typeName ? matchedType.typeName : '';
     },
-    inputing(field) {
+    inputing(field, length) {
       var fieldName = field.fieldName;
       var copyFieldValue = this.copyInfo[fieldName];
-      if (copyFieldValue.length === 50) {
+      if (copyFieldValue.length === length) {
         this.$message({
-          message: '不能超过50个字',
+          message: '不能超过' + length + '个字',
           type: 'warning',
           duration: 2000
         });
       }
     },
     updateWarning(field) {
+      // console.log(field);
       var fieldName = field.fieldName;
       var copyFieldValue = this.copyInfo[fieldName];
       // 如果是身份证信息，先对其进行校验
@@ -563,6 +646,19 @@ export default {
           this.$set(this.warningResults, fieldName, '请输入正确的邮箱');
         };
         return;
+      } else if (fieldName === 'nationality') {
+        if (this.copyInfo.nationality === '') {
+          this.$set(this.warningResults, fieldName, null);
+          return;
+        } else {
+          let nationalityCode = Util.getElement('typeName', this.copyInfo.nationality, this.geographicalList).typeCode;
+          if (!nationalityCode) {
+            this.$set(this.warningResults, fieldName, '请输入正确的国家名称');
+          } else {
+            this.$set(this.warningResults, fieldName, null);
+          }
+          return;
+        }
       }
 
       if (this.getUIType(field) === 6) {
@@ -662,8 +758,39 @@ export default {
     querySearchAsync(queryStr, callback) {
       callback(this.autoComplete(this.allNation, queryStr));
     },
-    querySearchAsync2(queryStr, callback) {
-      callback(this.autoComplete(this.allNationality, queryStr));
+    // 国籍输入框输入联想
+    queryNationList(queryStr, callback) {
+      callback(this.autoComplete(this.geographicalList, queryStr));
+    },
+    // 根据国籍name查询国籍code
+    setNationalityCode() {
+      this.$nextTick(() => {
+        if (this.copyInfo.nationality) {
+          let nationalityCode = Util.getElement('typeName', this.copyInfo.nationality, this.geographicalList).typeCode;
+          this.$set(this.copyInfo, 'nationalityCode', nationalityCode);
+        } else {
+          this.$set(this.copyInfo, 'nationalityCode', '');
+        }
+      });
+    },
+    // 根据所选省份code查询省份name
+    setProvinceName() {
+      if (this.copyInfo.homeProvinceCode) {
+        let homeProvinceName = Util.getElement('typeCode', this.copyInfo.homeProvinceCode, this.provinceList).typeName;
+        this.$set(this.copyInfo, 'homeProvince', homeProvinceName);
+      } else {
+        this.$set(this.copyInfo, 'homeProvince', '');
+      }
+
+    },
+    // 根据所选城市code查询省份name
+    setCityName() {
+      if (this.copyInfo.homeCity) {
+        let cityName = Util.getElement('typeCode', this.copyInfo.homeCity, this.cityList).typeName;
+        this.$set(this.copyInfo, 'homeCityTxt', cityName);
+      } else {
+        this.$set(this.copyInfo, 'homeCityTxt', '');
+      }
     },
     handleSelect() {
       // console.log(item);
@@ -706,7 +833,23 @@ export default {
         this.copyInfo.bmi = '';
       }
     },
-    'copyInfo.homeProvince': function() {
+    'copyInfo.nationality': function() {
+      if (this.completeInit && this.mode === this.EDITING_MODE) {
+        // 国籍改变时 清空之前选择的省 市字段
+        this.$set(this.copyInfo, 'homeProvinceCode', '');
+        this.$set(this.copyInfo, 'homeCity', '');
+
+        // 存储国籍代码
+        this.setNationalityCode();
+
+        // 校验输入的国籍是否存在于后端返回的列表中
+        let field = {
+          fieldName: 'nationality'
+        };
+        this.updateWarning(field);
+      }
+    },
+    'copyInfo.homeProvinceCode': function() {
       if (this.completeInit) {
         this.$set(this.copyInfo, 'homeCity', '');
       }
@@ -715,8 +858,8 @@ export default {
   mounted() {
     // console.log(this.basicInfoTemplateGroups);
     // console.log(this.basicInfoDictionaryGroups);
-    this.allNation = Util.getElement('typegroupcode', 'nation', this.typeGroup).types;
-    this.allNationality = Util.getElement('typegroupcode', 'nationality', this.typeGroup).types;
+    this.allNation = Util.getElement('typegroupcode', 'nationality', this.typeGroup).types;
+    // this.allNationality = Util.getElement('typegroupcode', 'nationality', this.typeGroup).types;
     this.$on(this.EDIT, this.startEditing);
     Bus.$on(this.FOLD_BASIC_INFO, () => {
       this.foldedStatus = true;
@@ -772,32 +915,35 @@ export default {
           width: calc(~"98% - @{field-name-width}");
         }
       }
-      &.field-liveType {
-        width: 100%;
-      }
+      // &.field-liveType {
+      //   width: 100%;
+      // }
       &.field-nationality {
-        width: 50%;
-      }
-      &.field-Province {
         width: 40%;
+      }
+      &.field-Province,
+      &.field-city {
+        width: 30%;
         .field-name {
-          left: -3px;
+          display: none;
         }
         .field-input {
-          left: 30px;
-        }
-      }
-      &.field-city {
-        width: 40%;
-        .field-input .field-value {
-          left: 585px;
-          top: -50px;
+          left: 0;
+          width: calc(~"100% - @{field-name-width}*0.3");
         }
       }
       &.short-label-field {
-        .field-name {
-          width: 0;
-          font-size: 0;
+        // .field-name {
+        //   width: 0;
+        //   font-size: 0;
+        // }
+        .field-value {
+          span {
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
         }
       }
       .field-name {
@@ -846,7 +992,7 @@ export default {
         .el-input {
           transform: translateY(-3px);
           .el-input__inner {
-            height: 30px;
+            height: 30px !important;
             border: none;
             background-color: @screen-color;
           }

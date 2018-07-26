@@ -255,7 +255,7 @@ export default {
     margin: auto;
     top: 10%;
     width: 600px;
-    max-height: 80%;
+    height: 80%;
     background-color: @background-color;
     overflow: hidden;
     .title {
