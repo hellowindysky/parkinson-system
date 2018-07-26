@@ -1403,18 +1403,18 @@ export default {
       this.lastProgramDate = '';
       this.lastDbsParameter = [];
 
-      var handler = (tmpArr, target) => {
-        tmpArr = Array.isArray(tmpArr) ? tmpArr : [];
-        if (tmpArr.length === 0) {
-          return;
-        }
-        target.forEach((item, index) => {
-          let positivePole2 = tmpArr[index].positivePole2 ? tmpArr[index].positivePole2.split('#') : [];
-          let negativePole2 = tmpArr[index].negativePole2 ? tmpArr[index].negativePole2.split('#') : [];
-          this.$set(item, 'positive', positivePole2);
-          this.$set(item, 'negative', negativePole2);
-        });
-      };
+      // var handler = (tmpArr, target) => {
+      //   tmpArr = Array.isArray(tmpArr) ? tmpArr : [];
+      //   if (tmpArr.length === 0) {
+      //     return;
+      //   }
+      //   target.forEach((item, index) => {
+      //     let positivePole2 = tmpArr[index].positivePole2 ? tmpArr[index].positivePole2.split('#') : [];
+      //     let negativePole2 = tmpArr[index].negativePole2 ? tmpArr[index].negativePole2.split('#') : [];
+      //     this.$set(item, 'positive', positivePole2);
+      //     this.$set(item, 'negative', negativePole2);
+      //   });
+      // };
 
       // 获取患者的 DBS 编码
       getPatientSimpleInfo(this.$route.params.id).then((data) => {
@@ -1560,12 +1560,12 @@ export default {
       submitData.patientCaseId = this.$route.params.caseId;
       pruneObj(submitData);
 
-      var handler = (target, tempArr) => {
-        target.forEach((item, index) => {
-          item.positivePole2 = tempArr[index].positive.join('#');
-          item.negativePole2 = tempArr[index].negative.join('#');
-        });
-      };
+      // var handler = (target, tempArr) => {
+      //   target.forEach((item, index) => {
+      //     item.positivePole2 = tempArr[index].positive.join('#');
+      //     item.negativePole2 = tempArr[index].negative.join('#');
+      //   });
+      // };
       // handler(submitData.followDbsParams.adjustVoltageParameter, this.followDbsAdjustVoltageParamPole_two);// 单纯调整电压
       // handler(submitData.firstDbsParams.adjustAfterParameter, this.firstDbsAdjustAfterParamPole_two);// 开机完成参数
       // handler(submitData.followDbsParams.adjustMoreParameter, this.followDbsAdjustMoreParamPole_two);// 调整多个参数
